@@ -6,7 +6,7 @@ import { successNotice } from 'calypso/state/notices/actions';
 import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const createRemoveSiteActionModal =
-	( onRefetchSite: () => Promise< unknown > ) =>
+	( onRefetchSite?: () => Promise< unknown > ) =>
 	( {
 		items,
 		closeModal,

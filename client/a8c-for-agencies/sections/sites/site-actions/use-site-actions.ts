@@ -208,7 +208,7 @@ export default function useSiteActions( {
 
 type SiteActions = {
 	isLargeScreen: boolean;
-	onRefetchSite: () => Promise< unknown >;
+	onRefetchSite?: () => Promise< unknown >;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
 	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 };
