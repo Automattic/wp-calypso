@@ -7,6 +7,8 @@ config.description = 'WordPress Desktop';
 config.version = pkg.version;
 config.author = pkg.author;
 
+config.protocol = 'wpdesktop';
+
 config.loginURL = function () {
 	return this.baseURL() + 'log-in';
 };

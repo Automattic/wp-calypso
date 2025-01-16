@@ -16,6 +16,7 @@ module.exports = function () {
 	require( './app-handlers/logging' )();
 	require( './app-handlers/crash-reporting' )();
 	require( './app-handlers/updater' )();
+	require( './app-handlers/protocol' )();
 	require( './app-handlers/preferences' )();
 	require( './app-handlers/secrets' )();
 	require( './app-handlers/printer' )();
