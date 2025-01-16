@@ -12,12 +12,7 @@ import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
 import { goToCheckout } from '../../utils/checkout';
 import { STEPS } from '../internals/steps';
 import siteMigrationFlow from '../site-migration-flow';
-import {
-	getAssertionConditionResult,
-	getFlowLocation,
-	renderFlow,
-	runFlowNavigation,
-} from './helpers';
+import { getAssertionConditionResult, renderFlow, runFlowNavigation } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
@@ -65,7 +60,7 @@ describe( 'Site Migration Flow', () => {
 	} );
 
 	describe( 'useAssertConditions', () => {
-		it( 'redirects the user to home when there is not siteSlug and SiteID', () => {
+		it( 'redirects the user to home when there is no siteSlug and siteId', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
 			runUseAssertionCondition( {
@@ -76,7 +71,7 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( '/' );
 		} );
 
-		it( 'redirects the user to the start page when the user is not the site admin', () => {
+		it( 'redirects the user to the start page when the user is not a site admin', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 			( useIsSiteAdmin as jest.Mock ).mockReturnValue( { isAdmin: false } );
 
@@ -87,7 +82,7 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
 		} );
 
-		it( 'renders the step with success', () => {
+		it( 'renders the step successfully', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
 
 			runUseAssertionCondition( {
@@ -118,7 +113,7 @@ describe( 'Site Migration Flow', () => {
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
 			beforeEach( () => jest.clearAllMocks() );
 
-			it( 'redirects the user to the migrate or import page when the platform is wordpress', async () => {
+			it( 'redirects to SITE_MIGRATION_IMPORT_OR_MIGRATE step when the platform is WordPress', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
@@ -139,7 +134,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects the user to the import content flow when was not possible to identify the platform', async () => {
+			it( 'redirects to import flow when it is not possible to identify the platform', async () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
@@ -162,7 +157,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects the user to the import content flow when the user skip the platform identification', async () => {
+			it( 'redirects to the import content flow when the user skips platform identification', async () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
 					dependencies: {
@@ -184,7 +179,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the identify step', () => {
+				it( 'redirects back to SITE_MIGRATION_IDENTIFY step', () => {
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
 						dependencies: {},
@@ -200,7 +195,7 @@ describe( 'Site Migration Flow', () => {
 					} );
 				} );
 
-				it( 'redirects back to initial-intent when the ref is GUIDED_ONBOARDING_FLOW_REFERRER', () => {
+				it( 'redirects back to initial-intent flow when the ref is GUIDED_ONBOARDING_FLOW_REFERRER', () => {
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
 						dependencies: {},
@@ -219,7 +214,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_IMPORT_OR_MIGRATE', () => {
-			it( 'redirects to how-to-migrate page', () => {
+			it( 'redirects to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					dependencies: {},
@@ -235,7 +230,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to the import flow when the user choose to import', () => {
+			it( 'redirects to the import flow when the user chooses to import', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					dependencies: {
@@ -260,7 +255,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to regular import page when they come from there (ref=calypso-importer)', () => {
+			it( 'redirects to regular import page when coming from there (ref=calypso-importer)', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					dependencies: {
@@ -282,7 +277,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the identify step', () => {
+				it( 'redirects back to the SITE_MIGRATION_IDENTIFY step', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 						dependencies: {},
@@ -311,7 +306,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_HOW_TO_MIGRATE', () => {
-			it( 'redirects to site-migration-upgrade-plan step when upgrade is required', () => {
+			it( 'redirects to SITE_MIGRATION_UPGRADE_PLAN step when an upgrade is required', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					dependencies: {
@@ -334,7 +329,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to credentials step when DIFM is selected', () => {
+			it( 'redirects to SITE_MIGRATION_CREDENTIALS step when DIFM is selected', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					dependencies: {
@@ -357,7 +352,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to instructions page when myself is selected', () => {
+			it( 'redirects to SITE_MIGRATION_INSTRUCTIONS when step "myself" is selected', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					dependencies: {
@@ -376,7 +371,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'migrate redirects from the how-to-migrate (do it for me) page to credential collection step', () => {
+			it( 'redirects from SITE_MIGRATION_HOW_TO_MIGRATE (do it for me) page to SITE_MIGRATION_CREDENTIALS step', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 					dependencies: {
@@ -399,7 +394,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the identify step', () => {
+				it( 'redirects back to SITE_MIGRATION_IMPORT_OR_MIGRATE step', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
 						dependencies: {},
@@ -414,7 +409,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_UPGRADE_PLAN', () => {
-			it( 'redirects the user to the checkout page with the correct destination params', () => {
+			it( 'redirects the user to the checkout page with the correct destination parameters', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 					dependencies: {
@@ -440,7 +435,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the how-to-migrate step', () => {
+				it( 'redirects back to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 						dependencies: {},
@@ -455,7 +450,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_INSTRUCTIONS', () => {
-			it( 'redirects to the migration started step when the migration is started', () => {
+			it( 'redirects to SITE_MIGRATION_STARTED step when the migration has started', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_INSTRUCTIONS,
 					dependencies: {
@@ -480,7 +475,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_ASSISTED_MIGRATION', () => {
-			it( 'redirects back to the credentials step when failing to create the ticket', () => {
+			it( 'redirects back to SITE_MIGRATION_CREDENTIALS step when failing to create the ticket', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
 					dependencies: {
@@ -506,7 +501,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_CREDENTIALS', () => {
-			it( 'redirects the user to the instructions page when the user submits the credentials step', () => {
+			it( 'redirects the user to SITE_MIGRATION_ASSISTED_MIGRATION step when the user submits the credentials', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {},
@@ -527,7 +522,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to the instructions step when user skips the form and enables the ticket creation', () => {
+			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION step when the user skips the form and enables ticket creation', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -550,7 +545,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to site-migration-assisted-migration step skipping ticket creation', () => {
+			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION step while skipping ticket creation', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -574,7 +569,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to site-migration-already-wpcom step when the user is already on WPCOM', () => {
+			it( 'redirects to SITE_MIGRATION_ALREADY_WPCOM step when the user is already on WPCOM', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -597,7 +592,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to site-migration-other-platform-detected-import step when the site platform is not wordpress', () => {
+			it( 'redirects to SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT step when the site platform is not WordPress', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -620,7 +615,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION when the user uses the application passwords', () => {
+			it( 'redirects to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION when the user uses application passwords', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -643,7 +638,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to FALLBACK_CREDENTIALS when credentials are required', () => {
+			it( 'redirects to SITE_MIGRATION_FALLBACK_CREDENTIALS when credentials are required', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_CREDENTIALS,
 					dependencies: {
@@ -667,7 +662,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the SITE_MIGRATION_CREDENTIALS', () => {
+				it( 'redirects back to SITE_MIGRATION_HOW_TO_MIGRATE step', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_CREDENTIALS,
 						dependencies: {},
@@ -683,7 +678,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_FALLBACK_CREDENTIALS', () => {
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION when the user skips the form enabling the ticket creation', () => {
+			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION when the user skips the form and enables ticket creation', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 					dependencies: {
@@ -707,7 +702,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION disabling the ticket creation', () => {
+			it( 'redirects to SITE_MIGRATION_ASSISTED_MIGRATION while disabling ticket creation', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 					query: {
@@ -729,7 +724,7 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
-				it( 'redirects back to the SITE_MIGRATION_CREDENTIALS', () => {
+				it( 'redirects back to SITE_MIGRATION_CREDENTIALS', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 						dependencies: {},
@@ -742,7 +737,7 @@ describe( 'Site Migration Flow', () => {
 					} );
 				} );
 
-				it( 'redirects back to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION is query backTo is set to this steps', () => {
+				it( 'redirects back to SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION when query backTo is set to this step', () => {
 					const destination = runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS,
 						dependencies: {},
@@ -762,8 +757,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_ASSIGN_TRIAL_PLAN', () => {
-			//TODO: Verify why there is two error cases pointing to the same error step
-			it( 'redirects to error there is any error', () => {
+			it( 'redirects to ERROR step when there is any error', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN,
 					query: {
@@ -971,126 +965,6 @@ describe( 'Site Migration Flow', () => {
 						siteId: 123,
 					},
 				} );
-			} );
-		} );
-	} );
-
-	describe( 'goBack', () => {
-		it( 'redirect the user back to the identify step from how to migrate', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user back the calypso import page when they come from there', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug,
-				currentURL: `/setup/site-migration/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?ref=calypso-importer&siteSlug=site-to-be-migrated.com`,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				`/import/site-to-be-migrated.com?ref=site-migration`
-			);
-		} );
-
-		it( 'redirects the user back to the internal import list selection from migrate or import screen when they come from', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the goal step when going back from the identify step', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-			} );
-
-			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-setup/goals?siteSlug=example.wordpress.com'
-			);
-		} );
-
-		it( 'redirects the user to the how-to-migrate step when going back from the credentials step', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_CREDENTIALS.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?siteSlug=example.wordpress.com`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the credentials step when going back from the application password authorization step', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the credentials step when going back from the fallback step', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the application password authorization step when going back from the fallback step with the backTo query param', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug,
-				currentURL: `/setup/${ STEPS.SITE_MIGRATION_FALLBACK_CREDENTIALS.slug }?siteSlug=example.wordpress.com&backTo=${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }`,
-			} );
-
-			//TODO: Check if really make sense to have this backTo url here
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }?siteSlug=example.wordpress.com&backTo=${ STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug }`,
-				state: null,
-			} );
-		} );
-
-		it( 'redirects the user to the other platform detected import step when going back from the credentials step', async () => {
-			const { runUseStepNavigationGoBack } = renderFlow( siteMigrationFlow );
-
-			runUseStepNavigationGoBack( {
-				currentStep: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT.slug,
-			} );
-
-			expect( getFlowLocation() ).toEqual( {
-				path: `/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com`,
-				state: null,
 			} );
 		} );
 	} );
