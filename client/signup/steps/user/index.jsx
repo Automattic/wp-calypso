@@ -636,7 +636,6 @@ export class UserStep extends Component {
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
-					isReskinned={ isReskinned }
 					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }

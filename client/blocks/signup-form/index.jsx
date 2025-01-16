@@ -734,7 +734,7 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooPasswordlessJPC )
+							{ this.props.isWoo && ! this.props.isWooPasswordlessJPC
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -1124,23 +1124,19 @@ class SignupForm extends Component {
 		}
 
 		return (
-			<>
-				{ ! this.props.isReskinned && (
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
-								? translate( 'Log in to create a site for your existing account.' )
-								: translate( 'Already have a WordPress.com account?' ) }
-						</LoggedOutFormLinkItem>
-						{ this.props.oauth2Client && (
-							<LoggedOutFormBackLink
-								oauth2Client={ this.props.oauth2Client }
-								recordClick={ this.recordBackLinkClick }
-							/>
-						) }
-					</LoggedOutFormLinks>
+			<LoggedOutFormLinks>
+				<LoggedOutFormLinkItem href={ this.getLoginLink() }>
+					{ flowName === 'onboarding' || flowName === 'onboarding-pm'
+						? translate( 'Log in to create a site for your existing account.' )
+						: translate( 'Already have a WordPress.com account?' ) }
+				</LoggedOutFormLinkItem>
+				{ this.props.oauth2Client && (
+					<LoggedOutFormBackLink
+						oauth2Client={ this.props.oauth2Client }
+						recordClick={ this.recordBackLinkClick }
+					/>
 				) }
-			</>
+			</LoggedOutFormLinks>
 		);
 	}
 
