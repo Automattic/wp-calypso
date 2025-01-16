@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
+import { trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -292,17 +293,18 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isUrlOnly = ( item: SiteData ) =>
-		item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
-	const isWPComSite = ( item: SiteData ) => item.site.value.is_atomic || item.site.value.is_simple;
-	const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
-	const hasRemoveManagedSitesCapability = () => {
-		// TODO: implement this based on the item data.
-		return true;
-	};
+	return useMemo( () => {
+		const isUrlOnly = ( item: SiteData ) =>
+			item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+		const isWPComSite = ( item: SiteData ) =>
+			item.site.value.is_atomic || item.site.value.is_simple;
+		const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
+		const hasRemoveManagedSitesCapability = () => {
+			// TODO: implement this based on the item data.
+			return true;
+		};
 
-	return useMemo(
-		() => [
+		return [
 			{
 				id: 'delete_site',
 				label: translate( 'Delete site' ),
@@ -317,8 +319,9 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 			{
 				id: 'remove_site',
 				label: translate( 'Remove site' ),
+				icon: trash,
 				isEligible( item: SiteData ) {
-					return ! isDevSite( item ) && hasRemoveManagedSitesCapability( item );
+					return ! isDevSite( item ) && hasRemoveManagedSitesCapability();
 				},
 				RenderModal: createRemoveSiteActionModal( onRefetchSite ),
 				isDestructive: true,
@@ -334,7 +337,6 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
 				},
 			},
-		],
-		[ isLargeScreen, translate, dispatch ]
-	);
+		];
+	}, [ isLargeScreen, translate, dispatch, onRefetchSite ] );
 }
