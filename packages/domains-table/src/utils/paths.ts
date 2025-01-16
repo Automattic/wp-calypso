@@ -117,9 +117,17 @@ export function domainManagementAllRoot() {
 export function domainManagementEditContactInfo(
 	siteName: string,
 	domainName: string,
-	relativeTo: string | null = null
+	relativeTo: string | null = null,
+	context?: DomainsTableContext
 ) {
-	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	}
 }
 
 export function domainMappingSetup(

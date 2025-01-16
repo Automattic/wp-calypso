@@ -104,7 +104,7 @@ export const DomainsTableRowActions = ( {
 			canManageContactInfo && (
 				<MenuItemLink
 					key="manageContactInfo"
-					href={ domainManagementEditContactInfo( siteSlug, domain.name ) }
+					href={ domainManagementEditContactInfo( siteSlug, domain.name, null, context ) }
 				>
 					{ __( 'Manage contact information' ) }
 				</MenuItemLink>
