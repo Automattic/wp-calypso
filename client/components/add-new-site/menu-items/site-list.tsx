@@ -78,7 +78,10 @@ const AddNewSiteSiteListMenuItems = () => {
 					) }
 					buttonProps={ {
 						onClick: () => {
-							// TODO
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_migrate' );
+							page(
+								'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=migrate'
+							);
 						},
 					} }
 				/>
@@ -90,7 +93,10 @@ const AddNewSiteSiteListMenuItems = () => {
 					) }
 					buttonProps={ {
 						onClick: () => {
-							// TODO
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+							page(
+								'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=import'
+							);
 						},
 					} }
 				/>
