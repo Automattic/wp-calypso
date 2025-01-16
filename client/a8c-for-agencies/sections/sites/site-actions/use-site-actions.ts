@@ -208,6 +208,7 @@ export default function useSiteActions( {
 }
 
 type SiteActions = {
+	isLoading: boolean;
 	isLargeScreen: boolean;
 	onRefetchSite?: () => Promise< unknown >;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
@@ -215,6 +216,7 @@ type SiteActions = {
 };
 
 export function useSiteActionsDataViews( {
+	isLoading,
 	isLargeScreen,
 	onRefetchSite,
 	setDataViewsState,
@@ -246,6 +248,7 @@ export function useSiteActionsDataViews( {
 		// TODO: review isEligible logic for all actions and make sure there are no duplicate ones.
 		const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 		const canHaveActions = ( item: SiteData ) =>
+			! isLoading &&
 			( ! item.site.value.sticker?.includes( 'migration-in-process' ) || isNotProduction ) &&
 			! item.site.error &&
 			! item.site.value.is_simple;

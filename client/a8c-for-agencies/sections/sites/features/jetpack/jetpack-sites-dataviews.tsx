@@ -503,6 +503,7 @@ export const JetpackSitesDataViews = ( {
 	}, [ dataViewsState ] );
 
 	const actions = useSiteActionsDataViews( {
+		isLoading,
 		isLargeScreen,
 		onRefetchSite,
 		setDataViewsState,
