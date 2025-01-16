@@ -226,11 +226,11 @@
 
                 .breadcrumbs li {
                     &.navigation-header__domain-name {
-                    > a,
-                    > span {
-                        word-break: break-word;
-                        overflow-wrap: break-word;
-                        white-space: normal;
+                        > a,
+                        > span {
+                            word-break: break-word;
+                            overflow-wrap: break-word;
+                            white-space: normal;
                         }
                     }
 
