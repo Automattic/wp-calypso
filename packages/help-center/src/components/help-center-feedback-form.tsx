@@ -57,7 +57,12 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		);
 	};
 
-	const handleContactSupportClick = async () => {
+	const handleContactSupportClick = async ( destination: string ) => {
+		recordTracksEvent( 'calypso_odie_chat_get_support', {
+			location: 'article-feedback',
+			destination,
+			is_user_eligible: isUserEligibleForPaidSupport,
+		} );
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
 			await resetSupportInteraction();

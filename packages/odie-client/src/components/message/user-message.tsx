@@ -41,7 +41,7 @@ export const UserMessage = ( {
 
 	const handleContactSupportClick = ( destination: string ) => {
 		trackEvent( 'chat_get_support', {
-			location: 'chat',
+			location: 'user-message',
 			destination,
 		} );
 	};
