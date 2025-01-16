@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -17,6 +18,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
+import LaunchpadOnlyHome from './main-v2-launchpad';
 
 export default async function ( context, next ) {
 	const state = await context.store.getState();
@@ -27,8 +29,12 @@ export default async function ( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } />;
-
+	const isLaunchpadOnlyHome = config.isEnabled( 'home-launchpad' );
+	if ( isLaunchpadOnlyHome ) {
+		context.primary = <LaunchpadOnlyHome key={ siteId } />;
+	} else {
+		context.primary = <CustomerHome key={ siteId } />;
+	}
 	next();
 }
 

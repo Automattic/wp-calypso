@@ -41,6 +41,7 @@
 		"global-styles/on-personal-plan": false,
 		"help": true,
 		"home/layout-dev": true,
+		"home-launchpad": false,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
