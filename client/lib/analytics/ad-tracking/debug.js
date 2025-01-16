@@ -1,16 +1,18 @@
 export function circularReferenceSafeJSONStringify( json, space ) {
-	function removeCircularRefs( input ) {
-		let i = 0;
-
-		return function ( key, value ) {
-			if ( i !== 0 && typeof input === 'object' && typeof value === 'object' && input === value ) {
-				return '[Circular reference]';
+	let cache = [];
+	const str = JSON.stringify(
+		json,
+		function ( key, value ) {
+			if ( typeof value === 'object' && value !== null ) {
+				if ( cache.indexOf( value ) !== -1 ) {
+					return 'Circular reference';
+				}
+				cache.push( value );
 			}
-
-			++i;
-
 			return value;
-		};
-	}
-	return JSON.stringify( json, removeCircularRefs( json ), space );
+		},
+		space
+	);
+	cache = null;
+	return str;
 }
