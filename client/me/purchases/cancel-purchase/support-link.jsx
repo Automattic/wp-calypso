@@ -33,15 +33,10 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 
 	const getHelp = useCallback( () => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
-			openZendeskWidget( {
-				siteUrl: siteUrl,
-				siteId: siteId,
-				message: `${ status }: Purchase cancellation flow`,
-				onSuccess: () => {
-					resetStore();
-					setShowHelpCenter( false );
-				},
-			} );
+			setShowHelpCenter( true );
+			setNavigateToRoute(
+				`/odie?provider=zendesk&initialMessage=Purchase cancellation flow&siteUrl=${ siteUrl }&siteId=${ siteId }`
+			);
 		} else {
 			setNavigateToRoute( '/contact-options' );
 			setShowHelpCenter( true );
