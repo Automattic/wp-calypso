@@ -23,7 +23,7 @@ import SiteActions from '../../site-actions';
 import { useSiteActionsDataViews } from '../../site-actions/use-site-actions';
 import useGetSiteErrors from '../../sites-dataviews/hooks/use-get-site-errors';
 import { AllowedTypes, Site, SiteData } from '../../types';
-import type { Field } from '@wordpress/dataviews';
+import type { Action, Field } from '@wordpress/dataviews';
 import type { MouseEvent, KeyboardEvent } from 'react';
 
 export const JetpackSitesDataViews = ( {
@@ -31,6 +31,7 @@ export const JetpackSitesDataViews = ( {
 	isLoading,
 	isLargeScreen,
 	setDataViewsState,
+	setSelectedSiteFeature,
 	dataViewsState,
 	forceTourExampleSite = false,
 	className,
@@ -554,7 +555,12 @@ export const JetpackSitesDataViews = ( {
 		[ translate ]
 	);*/
 
-	const actions = useSiteActionsDataViews( { isLargeScreen, onRefetchSite } );
+	const actions = useSiteActionsDataViews( {
+		isLargeScreen,
+		onRefetchSite,
+		setDataViewsState,
+		setSelectedSiteFeature,
+	} );
 
 	// Update the data packet
 	useEffect( () => {
@@ -562,7 +568,7 @@ export const JetpackSitesDataViews = ( {
 			...prevState,
 			items: sites,
 			fields: fields,
-			actions,
+			actions: actions as Action< SiteData >[],
 			pagination: {
 				totalItems: totalSites,
 				totalPages: totalPages,
@@ -571,7 +577,7 @@ export const JetpackSitesDataViews = ( {
 			dataViewsState: dataViewsState,
 			selectedItem: dataViewsState.selectedItem,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data ] ); // add actions when implemented
+	}, [ fields, dataViewsState, setDataViewsState, data, actions ] );
 
 	return <ItemsDataViews data={ itemsData } isLoading={ isLoading } className={ className } />;
 };

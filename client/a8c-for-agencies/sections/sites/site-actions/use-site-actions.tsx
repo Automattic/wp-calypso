@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
-import { trash } from '@wordpress/icons';
+import { external, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -210,7 +210,9 @@ export default function useSiteActions( {
 
 type SiteActions = {
 	isLargeScreen: boolean;
-	onRefetchSite?: any;
+	onRefetchSite?: () => Promise< unknown >;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 };
 
 const createRemoveSiteActionModal =
@@ -289,7 +291,12 @@ const createRemoveSiteActionModal =
 		);
 	};
 
-export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteActions ) {
+export function useSiteActionsDataViews( {
+	isLargeScreen,
+	onRefetchSite,
+	setDataViewsState,
+	setSelectedSiteFeature,
+}: SiteActions ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -303,6 +310,7 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 			// TODO: implement this based on the item data.
 			return true;
 		};
+		const getBlogId = ( item: SiteData ) => item.site.value.blog_id;
 
 		return [
 			{
@@ -376,6 +384,35 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 				},
 			},
 			{
+				id: 'view_activity_wpcom',
+				label: translate( 'View activity' ),
+				isEligible( item: SiteData ) {
+					return ! isWPComSite( item ) && ! item.site.error && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					const item = items[ 0 ];
+					setDataViewsState( ( prevState: DataViewsState ) => ( {
+						...prevState,
+						selectedItem: item.site?.value,
+						type: DATAVIEWS_LIST,
+					} ) );
+					setSelectedSiteFeature( JETPACK_ACTIVITY_ID );
+					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'view_activity_external',
+				label: translate( 'View activity' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return isWPComSite( item ) && ! item.site.error && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
+					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
+				},
+			},
+			{
 				id: 'remove_site',
 				label: translate( 'Remove site' ),
 				icon: trash,
@@ -397,5 +434,12 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 				},
 			},
 		];
-	}, [ isLargeScreen, translate, dispatch, onRefetchSite ] );
+	}, [
+		isLargeScreen,
+		translate,
+		dispatch,
+		onRefetchSite,
+		setDataViewsState,
+		setSelectedSiteFeature,
+	] );
 }
