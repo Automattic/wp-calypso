@@ -1,5 +1,10 @@
 import page from '@automattic/calypso-router';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { redirectJetpack, redirectLostPassword, login } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
@@ -10,6 +15,31 @@ jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
 jest.mock( 'calypso/state/oauth2-clients/selectors', () => ( {
 	...jest.requireActual( 'calypso/state/oauth2-clients/selectors' ),
 	getOAuth2Client: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/oauth2-clients', () => ( {
+	...jest.requireActual( 'calypso/lib/oauth2-clients' ),
+	isWooOAuth2Client: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/oauth2-clients/ui/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/oauth2-clients/ui/selectors' ),
+	getCurrentOAuth2Client: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-is-blaze-pro', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/selectors/get-is-woo-passwordless', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/state/selectors/is-woo-passwordless-jpc-flow', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 } ) );
 
 jest.mock( '@automattic/calypso-router' );
@@ -114,9 +144,15 @@ describe( 'redirectLostPassword', () => {
 		context = {
 			params: {},
 			query: {},
+			store: {
+				getState: jest.fn(),
+			},
 			redirect: jest.fn(),
 		};
 		next = jest.fn();
+
+		// Reset all mocks before each test
+		jest.clearAllMocks();
 	} );
 
 	it( 'should call next() if action is not "lostpassword"', () => {
@@ -128,27 +164,11 @@ describe( 'redirectLostPassword', () => {
 		expect( context.redirect ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should redirect to "/wp-login.php?action=lostpassword" if redirect_to is undefined', () => {
+	it( 'should call next() if isWooOAuth2Client returns true', () => {
 		context.params.action = 'lostpassword';
-
-		redirectLostPassword( context, next );
-
-		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
-	} );
-
-	it( 'should redirect to "/wp-login.php?action=lostpassword" if redirect_to does not include the WooCommerce URI', () => {
-		context.params.action = 'lostpassword';
-		context.query.redirect_to = 'https://example.com/some-other-uri';
-
-		redirectLostPassword( context, next );
-
-		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
-	} );
-
-	it( 'should not redirect if redirect_to includes the WooCommerce URI', () => {
-		context.params.action = 'lostpassword';
-		context.query.redirect_to =
-			'https://example.com?redirect_uri=https://woocommerce.com/wc-api/wpcom-signin';
+		context.store.getState.mockReturnValueOnce( {} );
+		getCurrentOAuth2Client.mockReturnValueOnce( 'mocked-client' );
+		isWooOAuth2Client.mockReturnValueOnce( true );
 
 		redirectLostPassword( context, next );
 
@@ -156,14 +176,17 @@ describe( 'redirectLostPassword', () => {
 		expect( next ).toHaveBeenCalled();
 	} );
 
-	it( 'should not redirect if redirect_to includes the Blaze Pro URI', () => {
+	it( 'should redirect to "/wp-login.php?action=lostpassword" if none of the conditions are true', () => {
 		context.params.action = 'lostpassword';
-		context.query.redirect_to =
-			'https://example.com?redirect_uri=https://blazepro.tumblr.com/auth/connected';
+		context.store.getState.mockReturnValueOnce( {} );
+		getIsBlazePro.mockReturnValueOnce( false );
+		getIsWooPasswordless.mockReturnValueOnce( false );
+		isWooOAuth2Client.mockReturnValueOnce( false );
+		isWooPasswordlessJPCFlow.mockReturnValueOnce( false );
 
 		redirectLostPassword( context, next );
 
-		expect( context.redirect ).not.toHaveBeenCalled();
-		expect( next ).toHaveBeenCalled();
+		expect( context.redirect ).toHaveBeenCalledWith( 301, '/wp-login.php?action=lostpassword' );
+		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

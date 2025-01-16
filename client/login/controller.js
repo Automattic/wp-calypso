@@ -1,11 +1,15 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -304,26 +308,27 @@ export function redirectJetpack( context, next ) {
 /**
  * Redirect clients to use PHP lost password. Excludes WooCommerce and Tumblr Blaze Pro.
  * @param {Object} context - The context object containing request parameters and query strings.
- * @param {Object} context.params - The parameters from the URL, including the action.
- * @param {Object} context.query - The query string from the URL, including the `redirect_to` URL.
  * @param {Function} next - The next middleware function to call if conditions are met.
  * @returns {void} Either redirects the user or invokes the `next()` middleware function.
  */
 export function redirectLostPassword( context, next ) {
 	const { action } = context.params;
-	const { redirect_to } = context.query;
 
 	if ( action !== 'lostpassword' ) {
 		next();
 		return;
 	}
 
-	const exclusions = [ 'blazepro.tumblr.com', 'woocommerce.com' ];
+	const state = context.store.getState();
+	const oauth2Client = getCurrentOAuth2Client( state );
 
-	if (
-		redirect_to === undefined ||
-		! exclusions.some( ( exclusion ) => redirect_to.includes( exclusion ) )
-	) {
+	const shouldRedirectToLostPassword = () =>
+		! getIsBlazePro( state ) &&
+		! getIsWooPasswordless( state ) &&
+		! isWooOAuth2Client( oauth2Client ) &&
+		! isWooPasswordlessJPCFlow( state );
+
+	if ( shouldRedirectToLostPassword() ) {
 		return context.redirect( 301, '/wp-login.php?action=lostpassword' );
 	}
 
