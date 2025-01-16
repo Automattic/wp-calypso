@@ -1,20 +1,38 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
-import { createSiteWithCart, EXAMPLE_FLOW } from '@automattic/onboarding';
+import { EXAMPLE_FLOW } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { useCreateSite } from '../hooks/use-create-site';
 import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { ONBOARD_STORE } from '../stores';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
-import { ProvidedDependencies } from './internals/types';
-import type { Flow } from './internals/types';
-import { setPendingAction } from '@automattic/data-stores/src/onboard/actions';
+import type { Flow, ProvidedDependencies } from './internals/types';
+
+const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+
+function initialize() {
+	const privateSteps = stepsWithRequiredLogin( [
+		STEPS.NEWSLETTER_SETUP,
+		STEPS.NEWSLETTER_GOALS,
+		STEPS.UNIFIED_DOMAINS,
+		STEPS.UNIFIED_PLANS,
+		STEPS.PROCESSING,
+		STEPS.SUBSCRIBERS,
+		STEPS.SITE_CREATION_STEP,
+		STEPS.LAUNCHPAD,
+	] );
+
+	return [ STEPS.INTRO, ...privateSteps ] as const;
+}
 
 const newsletter: Flow = {
 	name: EXAMPLE_FLOW,
@@ -35,12 +53,12 @@ const newsletter: Flow = {
 			STEPS.LAUNCHPAD,
 		] );
 
-		return [ STEPS.INTRO, ...privateSteps ];
-
-		return privateSteps;
+		return [ STEPS.INTRO, ...privateSteps ] as const;
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		const a = this.initialize();
+
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
@@ -48,6 +66,8 @@ const newsletter: Flow = {
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 		const { get, set } = useFlowState();
+		const createSite = useCreateSite();
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
@@ -64,41 +84,42 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		function submit< T extends typeof _currentStep >(
+			providedDependencies: ProvidedDependencies< T >
+		) {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 			switch ( _currentStep ) {
 				case 'intro':
 					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
+					set( 'newsletterSetup', providedDependencies );
 					return navigate( 'newsletterGoals' );
 
 				case 'newsletterGoals':
+					set( 'newsletterGoals', providedDependencies );
 					return navigate( 'domains' );
 
 				case 'domains':
 					set( 'domains', providedDependencies );
 					return navigate( 'plans' );
 
-				case 'plans':
+				case 'plans': {
 					set( 'plan', providedDependencies );
-					const domains = get('domains');
+					const siteTitle = get( 'newsletterSetup' )?.siteTitle;
 
-					setPendingAction( () => {
-						return createSiteWithCart( 
-							flowName,
-							userIsLoggedIn: true,
-							siteVisibility: 'public',
-							planSlug: providedDependencies.planSlug,
-							domainCartItems: domains?.domainCart,
-							isPurchasingDomainItem: domains?.isPurchasingDomainItem,
-					 );
-					} );
+					setPendingAction( () =>
+						createSite( {
+							theme: DEFAULT_NEWSLETTER_THEME,
+							siteIntent: 'newsletter',
+							siteTitle,
+						} )
+					);
 
-					return navigate( 'processing' )
-				case 'processing':
-					const site = get( 'site' );
-					debugger;
+					return navigate( 'processing' );
+				}
+				case 'processing': {
+					const site = set( 'site', providedDependencies );
 					if ( site?.goToHome && site?.siteSlug ) {
 						return window.location.replace(
 							addQueryArgs( `/home/${ siteId ?? site?.siteSlug }`, {
@@ -128,6 +149,7 @@ const newsletter: Flow = {
 							siteSlug: site?.siteSlug as string,
 						} )
 					);
+				}
 
 				case 'subscribers':
 					completeSubscribersTask();
@@ -160,6 +182,6 @@ const newsletter: Flow = {
 
 		return { goNext, goBack, goToStep, submit };
 	},
-};
+} as const;
 
 export default newsletter;

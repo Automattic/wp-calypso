@@ -3,11 +3,10 @@ import {
 	getFlowFromURL,
 	getSessionIdFromURL,
 } from 'calypso/landing/stepper/utils/get-flow-from-url';
+import { FlowStateManifest } from './stepper-state-manifest';
 
 const PREFIX = 'stepper-state-item';
 const VERSION = 'v1';
-
-type FlowState = Record< string, unknown >;
 
 const PERSISTENCE_CONFIG = {
 	staleTime: Infinity,
@@ -22,20 +21,21 @@ export function useFlowState() {
 	const flow = getFlowFromURL() || 'flow';
 	const session = getSessionIdFromURL();
 
-	const { data: state } = useQuery< FlowState >( {
+	const { data: state = {} } = useQuery< FlowStateManifest >( {
 		queryKey: [ PREFIX, flow, session, VERSION ],
 		...PERSISTENCE_CONFIG,
 	} );
 
-	function get( key: string ): unknown {
-		return state?.[ key ];
+	function get< T extends keyof FlowStateManifest >( key: T ) {
+		return state[ key ];
 	}
 
-	function set( key: string, value: unknown ) {
+	function set< T extends keyof FlowStateManifest >( key: T, value: FlowStateManifest[ T ] ) {
 		queryClient.setQueryData( [ PREFIX, flow, session, VERSION ], {
 			...state,
 			[ key ]: value,
 		} );
+		return value;
 	}
 
 	return {

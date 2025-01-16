@@ -1,6 +1,7 @@
 import { StepperInternal } from '@automattic/data-stores';
 import React from 'react';
 import { STEPPER_TRACKS_EVENTS } from '../../constants';
+//import { FlowStateManifest } from './state-manager/stepper-state-manifest';
 
 /**
  * This is the return type of useStepNavigation hook
@@ -97,11 +98,11 @@ export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 /**
  * This is the return type of useSteps hook
  */
-export type UseStepsHook = () => StepperStep[];
+export type UseStepsHook< FlowStepsType > = () => FlowStepsType;
 
-export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
-	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: Navigate< FlowSteps >
+export type UseStepNavigationHook< FlowStepsType extends StepperStep[] > = (
+	currentStepSlug: FlowStepsType[ number ][ 'slug' ],
+	navigate: Navigate< FlowStepsType >
 ) => NavigationControls;
 
 export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
@@ -130,7 +131,7 @@ export type UseTracksEventPropsHook = () => {
 /**
  * @deprecated Use FlowV2 instead.
  */
-export type FlowV1 = {
+export type FlowV1< FlowStepsType extends StepperStep[] > = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -161,20 +162,22 @@ export type FlowV1 = {
 	/**
 	 * @deprecated use `initialize` method instead.
 	 */
-	useSteps: UseStepsHook;
+	useSteps: UseStepsHook< FlowStepsType >;
 	/**
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
 	 */
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	useStepNavigation: UseStepNavigationHook< FlowStepsType >;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
-	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useAssertConditions?: UseAssertConditionsHook<
+		ReturnType< FlowV1< FlowStepsType >[ 'useSteps' ] >
+	>;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1< FlowStepsType >[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
@@ -183,7 +186,7 @@ export type FlowV1 = {
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
 
-export type FlowV2 = {
+interface FlowV2 {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -193,12 +196,12 @@ export type FlowV2 = {
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's means to be used internally by the Stepper.
 	 * Use `getSteps` instead.
 	 */
-	__flowSteps?: readonly StepperStep[];
+	__flowSteps?: ReturnType< FlowV2[ 'initialize' ] >;
 
 	/**
 	 * Use this method to retrieve the steps of the flow.
 	 */
-	getSteps?(): readonly StepperStep[];
+	getSteps?(): Awaited< ReturnType< FlowV2[ 'initialize' ] > >;
 
 	name: string;
 	/**
@@ -229,12 +232,12 @@ export type FlowV2 = {
 	 *
 	 * Returning false will kill the app.
 	 */
-	initialize():
-		| false
-		| Promise< false >
-		| Promise< readonly StepperStep[] >
-		| readonly StepperStep[];
-	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	initialize(): Promise< StepperStep[] | false > | false;
+	useStepNavigation: UseStepNavigationHook<
+		ReturnType< FlowV2[ 'initialize' ] > extends readonly StepperStep[]
+			? ReturnType< FlowV2[ 'initialize' ] >
+			: StepperStep[]
+	>;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
@@ -249,9 +252,9 @@ export type FlowV2 = {
 	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
 	 */
 	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
-};
+}
 
-export type Flow = FlowV1 | FlowV2;
+export type Flow = FlowV2;
 
 export type StepProps = {
 	navigation: NavigationControls;
@@ -272,7 +275,7 @@ export type StepProps = {
 
 export type Step = React.FC< StepProps >;
 
-export type ProvidedDependencies = Record< string, unknown >;
+export type ProvidedDependencies< T > = Record< string, T >;
 
 export enum AssertConditionState {
 	SUCCESS = 'success',

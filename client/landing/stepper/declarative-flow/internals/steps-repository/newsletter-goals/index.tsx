@@ -30,7 +30,7 @@ const NewsletterGoals: Step = ( { navigation } ) => {
 			goal: goal?.toString() ?? 'free',
 		} );
 
-		submit?.();
+		submit?.( { goals: [ goal ] } );
 	};
 
 	return (

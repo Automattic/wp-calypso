@@ -5,13 +5,13 @@ import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useLocation } from 'react-router';
 import wpcomRequest from 'wpcom-proxy-request';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import type { SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { useFlowState } from '../declarative-flow/internals/state-manager/store';
 
 type Params = {
 	flowName: string;
@@ -30,6 +30,7 @@ type Params = {
 	sourceSlug?: string;
 	siteIntent?: string;
 	siteGoals?: SiteGoal[];
+	planCartItems?: MinimalRequestCartProduct[] | null;
 };
 
 export const createSite = async ( {
@@ -48,7 +49,7 @@ export const createSite = async ( {
 	domainItem,
 	sourceSlug,
 	siteIntent,
-	siteGoals = [],
+	planCartItems,
 }: Params ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = themeSlugWithRepo.startsWith( 'pub' );
@@ -69,10 +70,6 @@ export const createSite = async ( {
 	} );
 
 	const locale = getLocaleSlug();
-	const hasSegmentationSurvey: boolean =
-		newSiteParams[ 'options' ][ 'site_creation_flow' ] === 'entrepreneur';
-	const segmentationSurveyAnswersAnonId = localStorage.getItem( 'ss-anon-id' );
-	localStorage.removeItem( 'ss-anon-id' );
 
 	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
 		path: '/sites/new',
@@ -84,24 +81,19 @@ export const createSite = async ( {
 			lang_id: getLanguage( locale as string )?.value,
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
-			options: {
-				...newSiteParams.options,
-				has_segmentation_survey: hasSegmentationSurvey,
-				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
-					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
-					: {} ),
-				...( siteGoals && { site_goals: siteGoals } ),
-			},
+			options: newSiteParams.options,
 		},
 	} );
 
 	const parsedBlogURL = new URL( siteCreationResponse?.blog_details.url );
 	const siteSlug = parsedBlogURL.hostname;
 	const siteId = siteCreationResponse?.blog_details.blogid;
-	const providedDependencies = {
+	const siteDetails = {
 		siteId,
 		siteSlug,
 		domainItem,
+		siteCreated: true,
+		goToCheckout: Boolean( planCartItems?.length ),
 	};
 
 	if ( domainCartItems.length ) {
@@ -117,7 +109,7 @@ export const createSite = async ( {
 		}
 	}
 
-	return providedDependencies;
+	return siteDetails;
 };
 
 export const useCreateSite = () => {
@@ -126,26 +118,49 @@ export const useCreateSite = () => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const { get } = useFlowState();
 	const domains = get( 'domains' );
+	const username = useSelector( getCurrentUserName );
+	const planCartItems = get( 'plan' )?.cartItems;
+	/**
+	 * Support singular and multiple domain cart items.
+	 */
+	const mergedDomainCartItems = Array.isArray( domains?.domainCart )
+		? domains?.domainCart.slice( 0 )
+		: [];
+
+	if ( domains?.domainItem ) {
+		mergedDomainCartItems.push( domains?.domainItem );
+	}
 
 	return useMutation( {
-		mutationFn: () =>
+		mutationFn: ( {
+			theme,
+			siteIntent,
+			siteTitle,
+		}: {
+			theme: string;
+			siteIntent: string;
+			siteTitle: string;
+			siteGoals?: SiteGoal[];
+		} ) =>
 			createSite( {
 				flowName,
 				userIsLoggedIn,
 				isPurchasingDomainItem: false,
-				themeSlugWithRepo: 'pub/wordpress-theme-2021',
+				themeSlugWithRepo: theme,
 				siteVisibility: 1,
-				siteTitle: 'My New Site',
-				siteAccentColor: '#007cba',
+				siteTitle,
+				// We removed the color option during newsletter onboarding.
+				// But backend still expects/needs a value, so supplying the default.
+				// Ideally should remove this and update code downstream to handle this.
+				siteAccentColor: '#113AF5',
 				useThemeHeadstart: true,
-				username: 'username',
-				domainCartItems: [],
+				username,
+				domainCartItems: mergedDomainCartItems,
 				partnerBundle: null,
-				storedSiteUrl: null,
-				domainItem: null,
-				sourceSlug: null,
-				siteIntent: null,
-				siteGoals: [],
+				storedSiteUrl: domains?.siteUrl,
+				domainItem: domains?.domainItem,
+				siteIntent,
+				planCartItems,
 			} ),
-	} );
+	} ).mutateAsync;
 };
