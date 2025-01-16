@@ -104,9 +104,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const removeDislike = experimentVariationName === 'give_wapuu_a_chance';
+	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
 
-	const availableStatusWithFeedback = removeDislike
+	const availableStatusWithFeedback = removeDislikeStatus
 		? [ 'sending', 'transfer' ]
 		: [ 'sending', 'dislike', 'transfer' ];
 
@@ -140,7 +140,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && ! removeDislike && <DislikeThumb /> }
+						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
 						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
