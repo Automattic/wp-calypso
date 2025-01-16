@@ -17,6 +17,7 @@ import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils'
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { LinkWithRedirect } from './link-with-redirect';
 import 'calypso/components/add-new-site/style.scss';
+import './sites-dashboard-header.scss';
 
 interface SitesDashboardHeaderProps {
 	isPreviewPaneOpen: boolean;
@@ -123,7 +124,7 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 	};
 
 	return (
-		<PageHeader>
+		<PageHeader className="sites-dashboard-header">
 			<HeaderControls>
 				{ isDriveMigrationEnabled && (
 					<>

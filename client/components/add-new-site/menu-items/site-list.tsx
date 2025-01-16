@@ -56,6 +56,7 @@ const AddNewSiteSiteListMenuItems = () => {
 						},
 					} }
 				/>
+				{ /* TODO: Do we really need a Pressable menu item? */ }
 				<AddNewSiteMenuItem
 					icon={ <img src={ pressableIcon } alt="Pressable" /> }
 					heading="Pressable"
