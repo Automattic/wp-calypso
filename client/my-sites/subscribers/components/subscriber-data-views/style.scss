@@ -61,7 +61,8 @@ body.is-section-subscribers.is-subscribers-dataviews {
                 .navigation-header {
                     padding: $padding-standard 48px;
         
-                    @media ( max-width: $break-small ) {
+                    // 430px is the DataViews padding breakpoint.
+                    @media ( max-width: 430px ) {
                         padding: $padding-standard 24px;
                     }
 
