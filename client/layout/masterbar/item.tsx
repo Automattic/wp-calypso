@@ -251,7 +251,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				>
 					{ this.renderChildren() }
 				</MenuItem>
-				{ /* { this.renderSubItems() } */ }
+				{ this.renderSubItems() }
 			</div>
 		);
 	}
