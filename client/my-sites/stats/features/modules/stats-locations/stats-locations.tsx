@@ -164,7 +164,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ isRequestingData && (
 				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
-			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGateStatsModule ) && (
+			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
@@ -222,7 +222,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					/>
 				</>
 			) }
-			{ ! isRequestingData && ! hasLocationData && ! shouldGateStatsModule && (
+			{ ! isRequestingData && ! hasLocationData && ! shouldGate && (
 				// show empty state
 				<StatsCard
 					title={ translate( 'Locations' ) }
