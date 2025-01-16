@@ -199,7 +199,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
 	);
 
-	const moduleToggles = useModuleVisibilitySettings( siteId );
+	const moduleVisibility = useModuleVisibilitySettings( siteId );
 
 	const {
 		supportsPlanUsage,
@@ -304,7 +304,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isModuleHidden = ( moduleName ) => {
 		// Determine which modules are hidden.
 		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
-		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleToggles[ moduleName ] === false ) {
+		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleVisibility[ moduleName ] === false ) {
 			return true;
 		}
 	};
