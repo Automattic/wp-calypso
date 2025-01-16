@@ -309,12 +309,7 @@ export function useSiteActionsDataViews( {
 				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
-					return (
-						canHaveActions( item ) &&
-						! item.site.error &&
-						! isWPComSite( item ) &&
-						! isUrlOnly( item )
-					);
+					return canHaveActions( item ) && ! isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback: () => {
 					page( A4A_MARKETPLACE_LINK );
@@ -325,12 +320,7 @@ export function useSiteActionsDataViews( {
 				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
 				isEligible( item: SiteData ) {
-					return (
-						canHaveActions( item ) &&
-						! isWPComSite( item ) &&
-						! item.site.error &&
-						! isUrlOnly( item )
-					);
+					return canHaveActions( item ) && ! isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					const item = items[ 0 ];
@@ -348,12 +338,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'View activity' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return (
-						canHaveActions( item ) &&
-						isWPComSite( item ) &&
-						! item.site.error &&
-						! isUrlOnly( item )
-					);
+					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					page( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
