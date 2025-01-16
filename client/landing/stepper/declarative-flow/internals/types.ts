@@ -39,7 +39,7 @@ export type NavigationControls = {
 	/**
 	 * Submits the answers provided in the flow
 	 */
-	submit?< T >( providedDependencies?: ProvidedDependencies< T >, ...params: string[] ): void;
+	submit?( providedDependencies?: ProvidedDependencies, ...params: string[] ): void;
 
 	/**
 	 * Exits the flow and continue to the given path
@@ -105,12 +105,6 @@ export type Navigate = (
  */
 export type UseStepsHook = () => StepperStep[];
 
-export type UseStepNavigationHook = (
-	// Once all the steps are put in steps.tsx, we should remove `| string`.
-	currentStepSlug: StateItemKey | ActualStepperStepSlug | string,
-	navigate: Navigate
-) => NavigationControls;
-
 export type UseAssertConditionsHook = ( navigate?: Navigate ) => AssertConditionResult;
 
 export type UseSideEffectHook = (
@@ -171,7 +165,11 @@ export type FlowV1 = {
 	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
 	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
 	 */
-	useStepNavigation: UseStepNavigationHook;
+	useStepNavigation: (
+		// Once all the steps are put in steps.tsx, we should remove `| string`.
+		currentStepSlug: StateItemKey | ActualStepperStepSlug | string,
+		navigate: Navigate
+	) => NavigationControls;
 	/**
 	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
 	 */
@@ -243,6 +241,7 @@ export type FlowV2 = {
 	useStepNavigation: (
 		// Once all the steps are put in steps.tsx, we should remove `| string`.
 		currentStepSlug: StateItemKey | ActualStepperStepSlug | string,
+		// When navigating to the processing step, always replace the URL.
 		navigate: Navigate
 	) => NavigationControls;
 	/**
@@ -282,7 +281,7 @@ export type StepProps = {
 
 export type Step = React.FC< StepProps >;
 
-export type ProvidedDependencies< T > = Record< string, T >;
+export type ProvidedDependencies = Record< string, unknown >;
 
 export enum AssertConditionState {
 	SUCCESS = 'success',

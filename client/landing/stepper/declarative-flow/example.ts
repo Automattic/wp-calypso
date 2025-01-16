@@ -1,4 +1,4 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { EXAMPLE_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -86,11 +86,11 @@ const newsletter: Flow = {
 					setPendingAction( () =>
 						createSite( {
 							theme: DEFAULT_NEWSLETTER_THEME,
-							siteIntent: 'newsletter',
+							siteIntent: Onboard.SiteIntent.Newsletter,
 						} )
 					);
 
-					return navigate( 'processing' );
+					return navigate( 'processing', null, true );
 				}
 				case 'processing': {
 					const result = set( 'processing', providedDependencies );
