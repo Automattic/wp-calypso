@@ -172,8 +172,18 @@
 	}
 
 	.domain-settings-page {
-		margin-left: 0;
-		max-width: 1200px;
+		margin: 0 auto;
+		max-width: 1400px;
+
+		.two-columns-layout .two-columns-layout__content {
+			> div:first-child .card {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> div:last-child .card {
+				border-radius: 0 0 4px 4px;
+			}
+		}
 	}
 
 	.domains-overview__details.main {
