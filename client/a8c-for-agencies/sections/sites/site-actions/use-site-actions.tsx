@@ -315,14 +315,12 @@ export function useSiteActionsDataViews( {
 		return [
 			{
 				label: translate( 'Prepare for launch' ),
-				supportsBulk: false,
+				icon: external,
 				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
 					);
-
-					const blog_id = items[ 0 ].site.value.blog_id;
-					window.open( `https://wordpress.com/settings/general/${ blog_id }`, '_blank' );
 				},
 				isEligible( item: SiteData ) {
 					return isDevSite( item );
@@ -331,12 +329,10 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'set_up_site',
 				label: translate( 'Set up site' ),
-				supportsBulk: false,
+				icon: external,
 				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'set_up_site', isLargeScreen ) ) );
-
-					const blog_id = items[ 0 ].site.value.blog_id;
-					window.open( `https://wordpress.com/overview/${ blog_id }`, '_blank' );
 				},
 				isEligible( item: SiteData ) {
 					return isWPComSite( item ) && ! isUrlOnly( item );
@@ -345,12 +341,10 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'change_domain',
 				label: translate( 'Change domain' ),
-				supportsBulk: false,
+				icon: external,
 				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'change_domain', isLargeScreen ) ) );
-
-					const blog_id = items[ 0 ].site.value.blog_id;
-					window.open( `https://wordpress.com/domains/manage/${ blog_id }`, '_blank' );
 				},
 				isEligible( item: SiteData ) {
 					return isWPComSite( item ) && ! isUrlOnly( item );
@@ -359,14 +353,12 @@ export function useSiteActionsDataViews( {
 			{
 				id: 'hosting_configuration',
 				label: translate( 'Hosting configuration' ),
-				supportsBulk: false,
+				icon: external,
 				callback( items: SiteData[] ) {
+					page( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
 					);
-
-					const blog_id = items[ 0 ].site.value.blog_id;
-					window.open( `https://wordpress.com/hosting-config/${ blog_id }`, '_blank' );
 				},
 				isEligible( item: SiteData ) {
 					return isWPComSite( item ) && ! isUrlOnly( item );
