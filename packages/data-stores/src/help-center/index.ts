@@ -5,6 +5,7 @@ import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
+import { isHelpCenterShown } from './resolvers';
 import * as selectors from './selectors';
 export type { State };
 
@@ -20,6 +21,7 @@ export function register(): typeof STORE_KEY {
 			controls: { ...controls, ...wpcomRequestControls },
 			selectors,
 			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
+			resolvers: { isHelpCenterShown },
 		} );
 		isRegistered = true;
 	}

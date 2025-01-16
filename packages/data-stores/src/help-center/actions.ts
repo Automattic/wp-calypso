@@ -1,5 +1,6 @@
+import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { apiFetch } from '@wordpress/data-controls';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -99,6 +100,26 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 	} ) as const;
 
 export const setShowHelpCenter = function* ( show: boolean ) {
+	if ( canAccessWpcomApis() ) {
+		// Use the promise version to do that action without waiting for the result.
+		wpcomRequestPromise( {
+			path: `/me/preferences`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+			body: {
+				calypso_preferences: { help_center_open: show },
+			},
+		} );
+	} else {
+		// Use the promise version to do that action without waiting for the result.
+		apiFetchPromise( {
+			global: true,
+			path: `/help-center/open-state`,
+			method: 'PUT',
+			data: { help_center_open: show },
+		} as APIFetchOptions );
+	}
+
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 	} else {
