@@ -4,12 +4,12 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
+import { PARTNER_PAYPAL_EXPRESS, PARTNER_PAYPAL_PPCP } from 'calypso/lib/checkout/payment-methods';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import { useDispatch } from 'calypso/state';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getTransactionTermLabel, transactionIncludesTax } from './utils';
+import { getTransactionTermLabel, transactionIncludesTax, formatDisplayDate } from './utils';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
 
 import './style-modal.scss';
@@ -44,7 +44,7 @@ function ReceiptLabels( { hideDetailsLabelOnPrint }: { hideDetailsLabelOnPrint?:
 	);
 }
 
-function BillingDetails( { transaction }: { transaction: BillingTransaction } ) {
+function BillingDetails() {
 	const [ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ] = useState( true );
 	const onChange = useCallback(
 		( e: React.ChangeEvent< HTMLTextAreaElement > ) => {
@@ -58,31 +58,53 @@ function BillingDetails( { transaction }: { transaction: BillingTransaction } ) 
 		[ hideDetailsLabelOnPrint, setHideDetailsLabelOnPrint ]
 	);
 
-	const defaultValue =
-		transaction.cc_name === 'Not Stored' && transaction.cc_email === 'Not Stored'
-			? ''
-			: `${ transaction.cc_name !== 'Not Stored' ? transaction.cc_name || '' : '' }\n${
-					transaction.cc_email !== 'Not Stored' ? transaction.cc_email || '' : ''
-			  }`.trim();
-
 	return (
-		<li className="billing-history__billing-details">
+		<div className="billing-history__billing-details">
 			<ReceiptLabels hideDetailsLabelOnPrint={ hideDetailsLabelOnPrint } />
 			<TextareaAutosize
 				className="billing-history__billing-details-editable"
 				aria-labelledby="billing-history__billing-details-description"
 				id="billing-history__billing-details-textarea"
 				rows={ 1 }
-				defaultValue={ defaultValue }
+				defaultValue=""
 				onChange={ onChange }
 			/>
-		</li>
+		</div>
+	);
+}
+
+function ReceiptPaymentMethod( { transaction }: { transaction: BillingTransaction } ) {
+	const translate = useTranslate();
+	let text;
+
+	if (
+		transaction.pay_part === PARTNER_PAYPAL_EXPRESS ||
+		transaction.pay_part === PARTNER_PAYPAL_PPCP
+	) {
+		text = translate( 'PayPal' );
+	} else if ( 'XXXX' !== transaction.cc_num ) {
+		text = translate( '%(cardType)s ending in %(cardNum)s', {
+			args: {
+				cardType:
+					transaction.cc_display_brand?.replace( '_', ' ' ).toUpperCase() ??
+					transaction.cc_type.toUpperCase(),
+				cardNum: transaction.cc_num,
+			},
+		} );
+	} else {
+		return null;
+	}
+
+	return (
+		<div className="billing-history__receipt-detail">
+			<strong>{ translate( 'Payment Method' ) }</strong>
+			<span>{ text }</span>
+		</div>
 	);
 }
 
 export default function ReceiptModal( { item }: ReceiptModalProps ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
 	const taxName = useTaxName( item.tax_country_code );
 	const reduxDispatch = useDispatch();
 
@@ -107,7 +129,7 @@ export default function ReceiptModal( { item }: ReceiptModalProps ) {
 					<small className="billing-history__organization-address">{ item.address }</small>
 				</h2>
 				<span className="billing-history__transaction-date">
-					{ moment( item.date ).format( 'll' ) }
+					{ formatDisplayDate( new Date( item.date ) ) }
 				</span>
 			</div>
 
@@ -122,13 +144,8 @@ export default function ReceiptModal( { item }: ReceiptModalProps ) {
 						<span>{ item.pay_ref }</span>
 					</div>
 				) }
-				<div className="billing-history__receipt-detail">
-					<strong>{ translate( 'Payment Method' ) }</strong>
-					<span>
-						{ item.cc_type } { item.cc_num }
-					</span>
-				</div>
-				<BillingDetails transaction={ item } />
+				<ReceiptPaymentMethod transaction={ item } />
+				<BillingDetails />
 			</div>
 
 			<div className="billing-history__receipt">

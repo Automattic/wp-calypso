@@ -17,13 +17,7 @@ import './style-data-view.scss';
 
 const DEFAULT_LAYOUT = { table: {} };
 
-export interface BillingHistoryListProps {
-	getReceiptUrlFor: ( receiptId: string ) => string;
-}
-
-export default function BillingHistoryListDataView( {
-	getReceiptUrlFor,
-}: BillingHistoryListProps ) {
+export default function BillingHistoryListDataView() {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
 	const viewState = useViewStateUpdate();

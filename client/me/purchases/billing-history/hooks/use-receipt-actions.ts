@@ -27,9 +27,7 @@ function handleEmailReceipt( items: BillingTransaction[], dispatch: AppDispatch 
 	dispatch( sendBillingReceiptEmail( items[ 0 ].id ) );
 }
 
-export function useReceiptActions(
-	getReceiptUrlFor?: ( receiptId: string ) => string
-): ReceiptAction[] {
+export function useReceiptActions(): ReceiptAction[] {
 	const dispatch = useDispatch< AppDispatch >();
 	const translate = useTranslate();
 
