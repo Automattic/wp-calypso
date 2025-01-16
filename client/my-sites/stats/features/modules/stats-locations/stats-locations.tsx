@@ -131,7 +131,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
-	const hasLocationData = Array.isArray( data ) && data.length;
+	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
 	return (
 		<>
