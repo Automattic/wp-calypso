@@ -81,13 +81,15 @@ function ConnectDomainStep( {
 
 	const dispatch = useDispatch();
 	const recordMappingSetupTracksEvent = useCallback(
-		( resolvedPageSlug ) => {
+		( resolvedPageSlug, supportsOurDomainConnectTemplate, domainConnectProviderId ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_domain_mapping_setup_page_view', {
 					domain,
 					page_slug: resolvedPageSlug,
 					query_error: queryError,
 					query_error_description: queryErrorDescription,
+					supports_our_domain_connect_template: supportsOurDomainConnectTemplate,
+					domain_connect_provider_id: domainConnectProviderId,
 				} )
 			);
 		},
@@ -189,7 +191,11 @@ function ConnectDomainStep( {
 					domain
 				);
 				setPageSlug( resolvedPageSlug );
-				recordMappingSetupTracksEvent( resolvedPageSlug );
+				recordMappingSetupTracksEvent(
+					resolvedPageSlug,
+					!! data?.domain_connect_apply_wpcom_hosting,
+					data?.domain_connect_provider_id
+				);
 				statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
 			} )
 			.catch( ( error ) => setDomainSetupInfoError( { error } ) )
