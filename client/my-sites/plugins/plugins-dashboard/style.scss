@@ -366,6 +366,10 @@
 				margin-left: 0;
 			}
 		}
+
+		li {
+			cursor: inherit;
+		}
 	}
 }
 
@@ -399,5 +403,6 @@ body.is-section-plugins .hosting-dashboard-layout,
 		padding: 0;
 		text-align: start;
 		height: auto;
+		width: 100%;
 	}
 }
