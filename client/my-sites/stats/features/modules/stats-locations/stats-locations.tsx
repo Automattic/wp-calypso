@@ -14,7 +14,6 @@ import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
@@ -37,9 +36,9 @@ const OPTION_KEYS = {
 	CITIES: 'cities',
 };
 
-type StatQueryType = 'country' | 'region' | 'city';
+type GeoMode = 'country' | 'region' | 'city';
 
-const STAT_QUERY_TYPES: Record< string, StatQueryType > = {
+const GEO_MODES: Record< string, GeoMode > = {
 	[ OPTION_KEYS.COUNTRIES ]: 'country',
 	[ OPTION_KEYS.REGIONS ]: 'region',
 	[ OPTION_KEYS.CITIES ]: 'city',
@@ -56,7 +55,6 @@ interface StatsModuleLocationsProps {
 }
 
 const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summaryUrl } ) => {
-	const { locations: moduleStrings } = statsStrings();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
@@ -89,13 +87,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateStatsModule = useShouldGateStats( statType );
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
-	const statQueryType = STAT_QUERY_TYPES[ selectedOption ];
+	const geoMode = GEO_MODES[ selectedOption ];
+	const title = optionLabels[ selectedOption ]?.selectLabel;
 
 	const {
 		data = [],
 		isLoading: isRequestingData,
 		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, statQueryType, query );
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query );
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -162,19 +161,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && (
-				<StatsCardSkeleton
-					isLoading={ isRequestingData }
-					title={ moduleStrings.title }
-					type={ 3 }
-					withHero
-				/>
+				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
 			{ ( ( ! isRequestingData && ! isError && data ) || shouldGate ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
-						title={ moduleStrings.title }
+						title={ title }
 						titleNodes={
 							<StatsInfoArea>
 								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
@@ -198,7 +192,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart query={ query } skipQuery /> }
+						heroElement={ <Geochart data={ data } geoMode={ geoMode } skipQuery /> }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={

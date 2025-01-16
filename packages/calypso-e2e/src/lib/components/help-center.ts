@@ -114,7 +114,7 @@ export class HelpCenterComponent {
 	 * Go back to the previous page.
 	 */
 	async goBack(): Promise< void > {
-		await this.popup.locator( 'span.back-button__help-center' ).click();
+		await this.popup.getByTestId( 'help-center-back-button' ).click();
 	}
 
 	/**

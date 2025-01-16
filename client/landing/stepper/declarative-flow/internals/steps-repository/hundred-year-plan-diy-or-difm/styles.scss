@@ -1,10 +1,15 @@
-.hundred-year-plan-setup__diy-or-difm {
+@import "@automattic/onboarding/styles/variables";
 
+.hundred-year-plan-setup__diy-or-difm {
 	.step-container__header {
-		margin-bottom: 0;
+		margin-top: 60px;
+
+		@include break-large {
+			margin-top: 0;	
+		}
 	}
 
-	ul {
+	.hundred-year-plan__benefits {
 		margin: 0 0.5rem 2.5rem 0.5rem;
 		list-style-type: none;
 

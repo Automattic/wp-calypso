@@ -1,11 +1,20 @@
-.is-section-reader .user-stream {
-	padding: 20px;
-
-	&__header {
-		margin-bottom: 24px;
+.is-section-reader {
+	.user-profile {
+		.empty-content {
+			margin-top: 150px;
+		}
 	}
 
-	.section-nav {
-		height: auto !important;
+	.user-profile__404.empty-content {
+		max-width: initial;
+		margin: initial;
+		padding-top: initial;
+	}
+
+	div.user-profile__content {
+		main.main.is-user-stream {
+			padding: 0;
+			border-block-end: none;
+		}
 	}
 }

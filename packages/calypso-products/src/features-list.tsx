@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
-import { englishLocales, localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
 import { MemoExoticComponent } from 'react';
@@ -2438,36 +2438,15 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_FAST_SUPPORT_FROM_EXPERTS ]: {
 		getSlug: () => FEATURE_FAST_SUPPORT_FROM_EXPERTS,
-		getTitle: () => {
-			if (
-				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-				i18n.hasTranslation( 'Fast support from our expert team' )
-			) {
-				return i18n.translate( 'Fast support from our expert team' );
-			}
-
-			return i18n.translate( 'Expert support' );
-		},
+		getTitle: () => i18n.translate( 'Fast support from our expert team' ),
 		getDescription: () =>
 			i18n.translate( 'Prompt support from our expert, friendly Happiness team' ),
 	},
 	[ FEATURE_PRIORITY_24_7_SUPPORT ]: {
 		getSlug: () => FEATURE_PRIORITY_24_7_SUPPORT,
-		getTitle: () => {
-			if (
-				englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-				i18n.hasTranslation( 'Priority 24/7 support from our expert team' )
-			) {
-				return i18n.translate( 'Priority 24/7 support from our expert team' );
-			}
-
-			return i18n.translate( '24/7 priority support' );
-		},
+		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert team' ),
 		getDescription: () =>
-			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-			i18n.hasTranslation( 'The fastest 24/7 support from our expert, friendly Happiness team' )
-				? i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' )
-				: i18n.translate( '24/7 priority support' ),
+			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
@@ -2635,11 +2614,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SENSEI_SELL_COURSES ]: {
 		getSlug: () => FEATURE_SENSEI_SELL_COURSES,
-		getTitle: () =>
-			englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-			i18n.hasTranslation( 'Sell courses' )
-				? i18n.translate( 'Sell courses' )
-				: i18n.translate( 'Sell courses and subscriptions' ),
+		getTitle: () => i18n.translate( 'Sell courses' ),
 	},
 	[ FEATURE_SENSEI_STORAGE ]: {
 		getSlug: () => FEATURE_SENSEI_STORAGE,

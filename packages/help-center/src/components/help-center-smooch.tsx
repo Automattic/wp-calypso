@@ -58,8 +58,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat && enableAuth,
-		isEligibleForChat && enableAuth,
-		true
+		isEligibleForChat && enableAuth
 	);
 	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();

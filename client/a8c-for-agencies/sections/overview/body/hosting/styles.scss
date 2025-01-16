@@ -26,3 +26,21 @@
 	width: 24px;
 	height: 24px;
 }
+
+.is-section-a8c-for-agencies-overview {
+	.a4a-migration-offer-v3 {
+		padding: 24px !important;
+		margin-bottom: 10px;
+		background-color: var(--color-primary-0);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 4px;
+
+		@media (min-width: 480px) {
+			margin-bottom: 16px;
+		}
+
+		.a4a-migration-offer-v3__view-toggle {
+			padding: 0;
+		}
+	}
+}

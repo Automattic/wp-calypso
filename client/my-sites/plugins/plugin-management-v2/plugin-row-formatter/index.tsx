@@ -225,6 +225,7 @@ export default function PluginRowFormatter( {
 				<div className="plugin-row-formatter__toggle">
 					<PluginAutoupdateToggle
 						plugin={ pluginOnSite }
+						hideLabel
 						site={ selectedSite }
 						wporg={ !! item.wporg }
 						isMarketplaceProduct={ isFromMarketplace }

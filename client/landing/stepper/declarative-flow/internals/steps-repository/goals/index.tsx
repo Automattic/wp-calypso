@@ -100,7 +100,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const recordNavigationSelectTracksEvent = ( intent: Onboard.SiteIntent, action: string ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
-		recordTracksEvent( 'calypso_signup_goals_nav_click', { action } );
+		recordTracksEvent( 'calypso_signup_goals_nav_click', {
+			action,
+			is_goals_first: isGoalsAtFrontExperiment,
+		} );
 	};
 
 	const getStepSubmissionHandler =
@@ -115,7 +118,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			navigation.submit?.( { intent, ...eventProps } );
 		};
 
-	const handleSkip = getStepSubmissionHandler( 'skip', { shouldSkipSubmitTracking: true } );
+	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );
 
 	const handleImportClick = () => {

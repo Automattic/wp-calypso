@@ -15,14 +15,9 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getJetpackStatsAdminVersion,
-	getSiteOption,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -67,6 +62,7 @@ class StatsNavigation extends Component {
 		isWordAds: PropTypes.bool,
 		isSubscriptionsModuleActive: PropTypes.bool,
 		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -140,14 +136,7 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const {
-			isGoogleMyBusinessLocationConnected,
-			isStore,
-			isWordAds,
-			isSubscriptionsModuleActive,
-			isSimple,
-			siteId,
-		} = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -167,8 +156,6 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
-
-				return isSimple || isSubscriptionsModuleActive;
 
 			default:
 				return true;
@@ -311,8 +298,6 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
-			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
-			isSimple: isSimpleSite( state, siteId ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),

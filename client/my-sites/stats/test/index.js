@@ -45,6 +45,7 @@ const validModules = [
 	'referrers',
 	'clicks',
 	'countryviews',
+	'locations',
 	'authors',
 	'videoplays',
 	'videodetails',
