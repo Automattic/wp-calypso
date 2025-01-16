@@ -113,8 +113,8 @@
 					border-radius: 2px;
 				}
 
-				.form-text-input-with-affixes__prefix select {
-					border-right: 0;
+				> :not(:first-child):not(:last-child) {
+					border-radius: 0;
 				}
 			}
 		}
