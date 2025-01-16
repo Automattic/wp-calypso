@@ -487,7 +487,11 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
-			/>
+			>
+				<span class="masterbar__icon-label masterbar__item-reader-label">
+					{ translate( 'Reader' ) }
+				</span>
+			</Item>
 		);
 	}
 
