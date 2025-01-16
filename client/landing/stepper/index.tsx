@@ -114,6 +114,10 @@ window.AppBoot = async () => {
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
+	const flowLoader = determineFlow();
+	// Load the flow asynchronously while things happen in parallel.
+	const flowPromise = flowLoader();
+
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
 
@@ -144,8 +148,7 @@ window.AppBoot = async () => {
 
 	setupErrorLogger( reduxStore );
 
-	const flowLoader = determineFlow();
-	const { default: rawFlow } = await flowLoader();
+	const { default: rawFlow } = await flowPromise;
 	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
