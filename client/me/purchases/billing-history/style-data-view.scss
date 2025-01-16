@@ -1,0 +1,219 @@
+.billing-history {
+    .navigation-header::after {
+        display: none;
+    }
+
+    .dataviews-wrapper {
+        width: 100%;
+        margin-bottom: 1rem;
+
+        .dataviews-view-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+
+            &__actions-column {
+                .components-button.is-compact.has-icon:not(.dataviews-all-actions-button) {
+                    .gridicon {
+                        opacity: 0;
+                        transition: opacity 0.15s ease-in-out;
+                    }
+                }
+            }
+        }
+
+        .dataviews-view-table__row {
+            background: var(--studio-white);
+            opacity: 1;
+
+            &:hover {
+                background-color: var(--color-neutral-0);
+                .dataviews-view-table__actions-column {
+                    .components-button.is-compact.has-icon {
+                        .gridicon {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+
+            th {
+                border-bottom: 1px solid var(--color-border-subtle);
+                font-size: 0.875rem;
+                font-weight: 600;
+                vertical-align: middle;
+                padding: 12px;
+                text-align: left;
+                text-transform: uppercase;
+
+				button {
+					padding: 0;
+					text-transform: uppercase;
+				}
+            }
+
+            td {
+                border-bottom: 1px solid var(--color-border-subtle);
+                vertical-align: middle;
+                padding: 12px;
+                text-align: left;
+
+				strong {
+					display: block;
+					font-size: 0.875rem;
+					font-weight: 600;
+					margin-bottom: 0.25rem;
+				}
+	
+				small {
+                    display: block;
+                    font-size: 0.875rem;
+                    color: var(--color-text-subtle);
+                    margin-top: 0.25rem;
+                }
+            }
+			
+			.dataviews-view-table__actions-column {
+				text-align: right;
+			}
+        }
+
+        .dataviews-view-table__cell {
+            font-size: 0.875rem;
+
+            &--align-right {
+                text-align: right;
+            }
+
+            &--align-center {
+                text-align: center;
+            }
+
+            &--actions {
+                .dataviews-view-table__cell-content {
+                    justify-content: flex-end;
+                }
+            }
+        }
+
+        .dataviews-view-table__cell-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+
+            strong {
+                display: block;
+                font-size: 0.875rem;
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+            small {
+                display: block;
+                font-size: 0.875rem;
+                color: var(--color-text-subtle);
+            }
+        }
+
+        .dataviews-view-table__cell-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .dataviews-view-table__cell-action {
+            border-radius: 2px;
+            font-size: 0.875rem;
+            padding: 0.25rem 0.5rem;
+            color: var(--color-text-inverted);
+            background-color: var(--color-primary);
+            border: none;
+            cursor: pointer;
+
+            &:hover {
+                background-color: var(--color-primary-60);
+            }
+
+            &--secondary {
+                font-size: 0.875rem;
+                background-color: var(--color-surface);
+                color: var(--color-text);
+                border: 1px solid var(--color-border);
+
+                &:hover {
+                    background-color: var(--color-neutral-0);
+                }
+            }
+        }
+    }
+
+    .dataviews-no-results, .dataviews-loading {
+        min-height: 500px;
+    }
+
+    .dataviews__view-actions {
+        margin-top: 1em;
+		padding-left: 0;
+		padding-right: 0;
+    }
+
+	.dataviews-filters__container {
+		padding: 0;
+	}
+
+    .section-nav {
+        box-shadow: none;
+    }
+
+    .section-nav-group {
+        border-bottom: 1px solid var(--color-neutral-5);
+    }
+
+    .card.billing-history__receipts {
+        box-shadow: none;
+    }
+
+    &__email-button {
+        background: none;
+        border: none;
+        color: var(--color-link);
+        cursor: pointer;
+        font-weight: normal;
+        padding: 0;
+        text-decoration: underline;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        .gridicon {
+            display: inline-block;
+            vertical-align: middle;
+            fill: currentColor;
+        }
+
+        &:hover {
+            color: var(--color-link-dark);
+        }
+    }
+
+    &__transaction-links {
+        display: flex;
+        gap: 1em;
+    }
+}
+
+@media screen and (min-width: 782px) {
+    body.is-section-me .navigation-header::after {
+        display: none;
+    }
+}
+
+body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .billing-history.main > * {
+    max-width: 100%;
+}
+
+@media screen and (min-width: 782px) {
+    body.is-section-me .navigation-header::after {
+       display: none !important;
+    }
+}
