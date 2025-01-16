@@ -133,7 +133,6 @@ export class AllFormFieldsFlow implements BlockFlow {
 		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
 			await context.editorPage.selectParentBlock( 'Form' );
 			const addBlockLocater = editorCanvas.getByRole( 'button', { name: 'Add block' } );
-			console.log( addBlockLocater );
 			if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 				// See: https://github.com/Automattic/jetpack/issues/32695
 				// On mobile, we can't click the inline button directly due to an overlay z-index bug.
