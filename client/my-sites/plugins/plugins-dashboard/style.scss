@@ -342,6 +342,35 @@
 	.margin-top-16 {
 		margin-top: 16px;
 	}
+
+	.dataviews-view-list {
+		.dataviews-view-list__media-wrapper {
+			background-color: transparent;
+			&::after {
+				display: none;
+			}
+		}
+		.dataviews-view-list__field-wrapper {
+			.sites-manage-plugin-button {
+				height: auto;
+				color: var( --color-gray-70 );
+			}
+			.components-button.is-secondary {
+				padding: 0;
+				box-shadow: none;
+				height: auto;
+				background-color: transparent;
+				color: var( --color-gray-70 );
+			}
+			.plugin-action-status-container {
+				margin-left: 0;
+			}
+		}
+
+		li {
+			cursor: inherit;
+		}
+	}
 }
 
 body.is-section-plugins .hosting-dashboard-layout,
@@ -374,5 +403,6 @@ body.is-section-plugins .hosting-dashboard-layout,
 		padding: 0;
 		text-align: start;
 		height: auto;
+		width: 100%;
 	}
 }
