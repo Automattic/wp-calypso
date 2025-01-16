@@ -104,10 +104,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
-	const stopConflatingNegativeRatingWithContactSupport =
-		experimentVariationName === 'give_wapuu_a_chance';
+	const removeDislike = experimentVariationName === 'give_wapuu_a_chance';
 
-	const availableStatusWithFeedback = stopConflatingNegativeRatingWithContactSupport
+	const availableStatusWithFeedback = removeDislike
 		? [ 'sending', 'transfer' ]
 		: [ 'sending', 'dislike', 'transfer' ];
 
@@ -141,9 +140,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && stopConflatingNegativeRatingWithContactSupport && (
-							<DislikeThumb />
-						) }
+						{ chat.status === 'dislike' && ! removeDislike && <DislikeThumb /> }
 						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
