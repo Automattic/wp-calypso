@@ -17,6 +17,7 @@ export function account( context, next ) {
 		page.replace( context.pathname );
 	}
 
+	// testing...
 	const AccountTitle = () => {
 		const translate = useTranslate();
 
