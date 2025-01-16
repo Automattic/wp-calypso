@@ -98,71 +98,70 @@ const SubscriberDataViews = ( {
 		[]
 	);
 
-	const handleCloseDetails = () => {
-		setSelectedSubscriber( null );
-	};
-
-	const fields = [
-		{
-			id: 'media',
-			getValue: ( { item }: { item: Subscriber } ) => item.avatar,
-			render: ( { item }: { item: Subscriber } ) => (
-				<Gravatar
-					user={ { avatar_URL: item.avatar, name: item.display_name } }
-					size={ 40 }
-					imgSize={ 80 }
-					className="subscriber-data-views__square-avatar"
-				/>
-			),
-			enableHiding: false,
-			enableSorting: false,
-		},
-		{
-			id: 'name',
-			label: translate( 'Name' ),
-			getValue: ( { item }: { item: Subscriber } ) => item.display_name,
-			render: ( { item }: { item: Subscriber } ) => (
-				<button
-					type="button"
-					onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
-				>
-					{ selectedSubscriber ? (
-						<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-					) : (
-						<div className="subscriber-data-views__list-item">
-							<div className="subscriber-data-views__list-item-avatar">
-								<Gravatar
-									user={ { avatar_URL: item.avatar, name: item.display_name } }
-									size={ 52 }
-									imgSize={ 80 }
-									className="subscriber-data-views__square-avatar"
-								/>
-							</div>
+	const fields = useMemo(
+		() => [
+			{
+				id: 'media',
+				getValue: ( { item }: { item: Subscriber } ) => item.avatar,
+				render: ( { item }: { item: Subscriber } ) => (
+					<Gravatar
+						user={ { avatar_URL: item.avatar, name: item.display_name } }
+						size={ 40 }
+						imgSize={ 80 }
+						className="subscriber-data-views__square-avatar"
+					/>
+				),
+				enableHiding: false,
+				enableSorting: false,
+			},
+			{
+				id: 'name',
+				label: translate( 'Name' ),
+				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
+				render: ( { item }: { item: Subscriber } ) => (
+					<button
+						type="button"
+						onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
+					>
+						{ selectedSubscriber ? (
 							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-						</div>
-					) }
-				</button>
-			),
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'subscription_type',
-			label: translate( 'Subscription type' ),
-			getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
-			render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
-			enableHiding: false,
-			enableSorting: true,
-		},
-		{
-			id: 'date_subscribed',
-			label: translate( 'Since' ),
-			getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
-			render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
-			enableHiding: false,
-			enableSorting: true,
-		},
-	];
+						) : (
+							<div className="subscriber-data-views__list-item">
+								<div className="subscriber-data-views__list-item-avatar">
+									<Gravatar
+										user={ { avatar_URL: item.avatar, name: item.display_name } }
+										size={ 52 }
+										imgSize={ 80 }
+										className="subscriber-data-views__square-avatar"
+									/>
+								</div>
+								<SubscriberName displayName={ item.display_name } email={ item.email_address } />
+							</div>
+						) }
+					</button>
+				),
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'subscription_type',
+				label: translate( 'Subscription type' ),
+				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
+				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
+				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'date_subscribed',
+				label: translate( 'Since' ),
+				getValue: ( { item }: { item: Subscriber } ) => item.date_subscribed,
+				render: ( { item }: { item: Subscriber } ) => <TimeSince date={ item.date_subscribed } />,
+				enableHiding: false,
+				enableSorting: true,
+			},
+		],
+		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
+	);
 
 	const { desktopFields, mobileFields, listViewFields } = useMemo(
 		() => ( {
@@ -214,28 +213,40 @@ const SubscriberDataViews = ( {
 		onClickUnsubscribe,
 	] );
 
-	const handleViewChange = ( newView: View ) => {
-		if ( typeof newView.page === 'number' && newView.page !== page ) {
-			pageChangeCallback( newView.page );
-		}
-
-		if ( typeof newView.perPage === 'number' && newView.perPage !== perPage ) {
-			setPerPage( newView.perPage );
-			pageChangeCallback( 1 );
-		}
-
-		if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
-			handleSearch( newView.search );
-		}
-
-		if ( newView.sort?.field ) {
-			const newSortTerm =
-				newView.sort.field === 'name' ? SubscribersSortBy.Name : SubscribersSortBy.DateSubscribed;
-			if ( newSortTerm !== sortTerm ) {
-				setSortTerm( newSortTerm );
+	const handleViewChange = useCallback(
+		( newView: View ) => {
+			if ( typeof newView.page === 'number' && newView.page !== page ) {
+				pageChangeCallback( newView.page );
 			}
-		}
-	};
+
+			if ( typeof newView.perPage === 'number' && newView.perPage !== perPage ) {
+				setPerPage( newView.perPage );
+				pageChangeCallback( 1 );
+			}
+
+			if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
+				handleSearch( newView.search );
+			}
+
+			if ( newView.sort?.field ) {
+				const newSortTerm =
+					newView.sort.field === 'name' ? SubscribersSortBy.Name : SubscribersSortBy.DateSubscribed;
+				if ( newSortTerm !== sortTerm ) {
+					setSortTerm( newSortTerm );
+				}
+			}
+		},
+		[
+			page,
+			perPage,
+			searchTerm,
+			sortTerm,
+			pageChangeCallback,
+			setPerPage,
+			handleSearch,
+			setSortTerm,
+		]
+	);
 
 	const currentView = useMemo< View >(
 		() => ( {
@@ -308,7 +319,7 @@ const SubscriberDataViews = ( {
 						subscriber={ selectedSubscriber }
 						siteId={ siteId }
 						subscriptionId={ selectedSubscriber.subscription_id }
-						onClose={ handleCloseDetails }
+						onClose={ () => setSelectedSubscriber( null ) }
 					/>
 				</section>
 			) }
