@@ -98,36 +98,38 @@ const newsletter: Flow = {
 				}
 				case 'processing': {
 					const result = set( 'processing', providedDependencies );
-					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ result?.siteSlug }`;
-					if ( result?.goToHome && result?.siteSlug ) {
-						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? result?.siteSlug }`, {
-								celebrateLaunch: true,
-								launchpadComplete: true,
+					if ( result ) {
+						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ result.siteSlug }`;
+						if ( result.goToHome && result.siteSlug ) {
+							return window.location.replace(
+								addQueryArgs( `/home/${ siteId ?? result?.siteSlug }`, {
+									celebrateLaunch: true,
+									launchpadComplete: true,
+								} )
+							);
+						}
+
+						if ( result.goToCheckout && result.siteSlug ) {
+							return window.location.assign(
+								`/checkout/${ encodeURIComponent(
+									result?.siteSlug as string
+								) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
+							);
+						}
+
+						initializeLaunchpadState( {
+							siteId: result.siteId,
+							siteSlug: result.siteSlug,
+						} );
+
+						return window.location.assign(
+							getPostFlowUrl( {
+								flow: flowName,
+								siteId: result.siteId,
+								siteSlug: result.siteSlug,
 							} )
 						);
 					}
-
-					if ( result?.goToCheckout && result?.siteSlug ) {
-						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								result?.siteSlug as string
-							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
-						);
-					}
-
-					initializeLaunchpadState( {
-						siteId: result?.siteId as number,
-						siteSlug: result?.siteSlug as string,
-					} );
-
-					return window.location.assign(
-						getPostFlowUrl( {
-							flow: flowName,
-							siteId: result?.siteId as number,
-							siteSlug: result?.siteSlug as string,
-						} )
-					);
 				}
 
 				case 'subscribers':
