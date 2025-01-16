@@ -502,59 +502,6 @@ export const JetpackSitesDataViews = ( {
 		};
 	}, [ dataViewsState ] );
 
-	// Actions: Pause Monitor, Resume Monitor, Custom Notification, Reset Notification
-	// todo: Currently not in use until bulk selections are properly implemented.
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	/*const actions = useMemo(
-		() => [
-			{
-				id: 'pause-monitor',
-				label: translate( 'Pause Monitor' ),
-				supportsBulk: true,
-				isEligible( site: SiteData ) {
-					return site.monitor.status === 'active';
-				},
-				callback() {
-					// todo: pause monitor. Param: sites: SiteData[]
-				},
-			},
-			{
-				id: 'resume-monitor',
-				label: translate( 'Resume Monitor' ),
-				supportsBulk: true,
-				isEligible( site: SiteData ) {
-					return site.monitor.status === 'inactive';
-				},
-				callback() {
-					// todo: resume monitor. Param: sites: SiteData[]
-				},
-			},
-			{
-				id: 'custom-notification',
-				label: translate( 'Custom Notification' ),
-				supportsBulk: true,
-				isEligible( site: SiteData ) {
-					return site.monitor.status === 'active';
-				},
-				callback() {
-					// todo: custom notification. Param: sites: SiteData[]
-				},
-			},
-			{
-				id: 'reset-notification',
-				label: translate( 'Reset Notification' ),
-				supportsBulk: true,
-				isEligible( site: SiteData ) {
-					return site.monitor.status === 'active';
-				},
-				callback() {
-					// todo: reset notification. Param: sites: SiteData[]
-				},
-			},
-		],
-		[ translate ]
-	);*/
-
 	const actions = useSiteActionsDataViews( {
 		isLargeScreen,
 		onRefetchSite,
