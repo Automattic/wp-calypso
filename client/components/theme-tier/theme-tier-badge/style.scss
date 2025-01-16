@@ -23,6 +23,8 @@
 		.premium-badge__label {
 			overflow: hidden;
 			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-size: $font-body-small;;
 		}
 	}
 
@@ -42,6 +44,10 @@
 		background-color: #EBEEFC; /* 50% of wordpress-blue-10 */
 		font-family: $sans;
 	}
+}
+
+.theme-tier-included-label {
+	border-radius: 4px;
 }
 
 .theme-tier-badge-tooltip,

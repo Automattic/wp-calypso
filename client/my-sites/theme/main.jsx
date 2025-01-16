@@ -10,9 +10,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Button, Card, Gridicon } from '@automattic/components';
 import {
-	BUNDLED_THEME,
 	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
-	DOT_ORG_THEME,
 	ThemePreview as ThemeWebPreview,
 	getDesignPreviewUrl,
 	isDefaultGlobalStylesVariationSlug,
@@ -553,26 +551,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderThemeBadge = () => {
-		const { themeId, themeTier, themeType } = this.props;
-
-		const isCommunityTheme = themeType === DOT_ORG_THEME;
-		const isPartnerTheme = themeTier.slug === 'partner';
-		const isSenseiOrWooCommerceTheme = themeType === BUNDLED_THEME;
-
-		if ( ! isCommunityTheme && ! isPartnerTheme && ! isSenseiOrWooCommerceTheme ) {
-			return null;
-		}
-
-		return (
-			<ThemeTierBadge
-				className="theme__sheet-main-info-type"
-				showUpgradeBadge={ false }
-				themeId={ themeId }
-			/>
-		);
-	};
-
 	renderHeader = () => {
 		const {
 			author,
@@ -596,8 +574,14 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-main">
 					<div className="theme__sheet-main-info">
 						<h1 className="theme__sheet-main-info-title">
+							<ThemeTierBadge
+								className="theme__sheet-main-info-type"
+								showUpgradeBadge
+								showPartnerPrice
+								themeId={ themeId }
+							/>
+
 							{ title }
-							{ this.renderThemeBadge() }
 							{ softLaunched && (
 								<span className="theme__sheet-bar-soft-launched">{ translate( 'A8C Only' ) }</span>
 							) }

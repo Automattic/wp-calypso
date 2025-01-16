@@ -335,7 +335,13 @@ export class Theme extends Component {
 			shouldLimitGlobalStyles,
 		} );
 
-		return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
+		return (
+			<ThemeTierBadge
+				themeId={ theme.id }
+				isLockedStyleVariation={ isLocked }
+				hideBackgroundOnUpgrade
+			/>
+		);
 	};
 
 	render() {
