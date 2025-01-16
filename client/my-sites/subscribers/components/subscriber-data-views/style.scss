@@ -5,7 +5,9 @@
     padding: 0;
     max-width: none;
     background-color: var( --studio-gray-0 );
-    min-height: 100vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 
     .navigation-header {
         padding: 0 48px;
@@ -19,10 +21,11 @@
 .subscriber-data-views {
 	display: flex;
 	flex-direction: row;
-	height: 100%;
+	flex: 1 1 auto;
 	position: relative;
 	padding: 24px 48px;
 	gap: 24px;
+	max-height: calc(100vh - 100px);
 
 	@media ( max-width: $break-small ) {
 		padding: 16px 24px;
@@ -38,8 +41,9 @@
 	}
 
 	&__list {
-		flex: 1;
-		overflow: auto;
+		flex: 1 1 auto;
+		min-height: 0;
+		overflow-y: auto;
 		transition: width 0.15s ease-in-out;
 		width: 100%;
 		background: var( --color-surface );
@@ -51,22 +55,24 @@
 		.subscriber-data-views__list {
 			flex: 0 0 25%;
 			width: 25%;
+			min-width: 300px;
 		}
 
 		.subscriber-data-views__details {
 			display: block;
-			flex: 1;
+			flex: 1 1 auto;
+			min-height: 0;
 			background: var( --color-surface );
 			/* stylelint-disable-next-line scales/radii */
 			border-radius: 8px;
+			overflow-y: auto;
 		}
 	}
 
 	&__details {
 		background: var( --color-surface );
 		display: none;
-		height: 100%;
-		overflow: auto;
+		overflow-y: auto;
 	}
 
 	&__square-avatar {
@@ -89,6 +95,8 @@
 
 		&__table {
 			padding: 0;
+			max-height: calc(100vh - 200px);
+			overflow-y: auto;
 		}
 	}
 
