@@ -64,6 +64,7 @@ export type TranslateResult = ExistingReactNode;
 
 export interface NumberFormatOptions {
 	decimals?: number;
+	notation: Intl.NumberFormatOptions[ 'notation' ];
 }
 
 export type TranslateHook = (

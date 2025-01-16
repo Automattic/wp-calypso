@@ -202,7 +202,7 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'getBrowserSafeLocale()', function () {
-		it( 'should return locale without variant when localeVariant is set', function () {
+		it( 'should return locale without variant when localeVariant is set with underscore _', function () {
 			i18n.setLocale( {
 				'': {
 					localeVariant: 'de_AT',
@@ -212,7 +212,7 @@ describe( 'I18n', function () {
 			expect( i18n.getBrowserSafeLocale() ).toBe( 'de' );
 		} );
 
-		it( 'should return locale with region code when localeVariant is set', function () {
+		it( 'should return locale with region code when localeVariant is set with dash -', function () {
 			i18n.setLocale( {
 				'': {
 					localeVariant: 'en-US',

@@ -182,6 +182,7 @@ I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true
 			minimumFractionDigits: decimals, // default is 0
 			maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
 			// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
+			...( options?.notation && { notation: options.notation } ),
 		} ).format( number );
 	} catch ( error ) {
 		warn( 'Error formatting number with Intl.NumberFormat: ', number, error );

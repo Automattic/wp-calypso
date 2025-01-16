@@ -1,13 +1,12 @@
 import { Button } from '@automattic/components';
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useBloggingPrompts } from 'calypso/data/blogging-prompt/use-blogging-prompts';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
-import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -86,13 +85,13 @@ const ReaderTagSidebar = ( {
 				<div className="reader-tag-sidebar-stats">
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumberCompact( tagStats?.data?.total_posts ) }
+							{ numberFormat( tagStats?.data?.total_posts, { notation: 'compact' } ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Posts' ) }</span>
 					</div>
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ formatNumberCompact( tagStats?.data?.total_sites ) }
+							{ numberFormat( tagStats?.data?.total_sites, { notation: 'compact' } ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>
