@@ -53,6 +53,10 @@ const ActiveDomainsCard: FC = () => {
 		? `/start/domain/domain-only`
 		: `/domains/add/${ site?.slug }?redirect_to=${ window.location.pathname }`;
 
+	const manageDomainsLink = isEnabled( 'calypso/all-domain-management' )
+		? `/domains/manage`
+		: `/domains/manage/${ site?.slug }`;
+
 	return (
 		<HostingCard className="hosting-overview__active-domains">
 			<HostingCardHeading title={ translate( 'Active domains' ) }>
@@ -66,7 +70,7 @@ const ActiveDomainsCard: FC = () => {
 					{ translate( 'Add new domain' ) }
 				</HostingCardLinkButton>
 				<HostingCardLinkButton
-					to={ `/domains/manage/${ site?.slug }` }
+					to={ manageDomainsLink }
 					onClick={ () =>
 						dispatch( recordTracksEvent( 'calypso_overview_manage_domains_button_click' ) )
 					}
