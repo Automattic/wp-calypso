@@ -74,8 +74,6 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		),
 	} );
 
-	const isLoadingSiteDomains = allSiteDomains.some( ( query ) => query.isLoading );
-
 	const siteDomains = useMemo( () => {
 		const fetchedSiteDomains: Record< number, ResponseDomain[] > = {};
 		for ( const { data } of allSiteDomains ) {
@@ -163,7 +161,6 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 
 	const context: Context = {
 		sites,
-		isLoadingSiteDomains,
 		getFullDomain,
 		getSiteSlug,
 		isLoadingSites,

@@ -76,7 +76,6 @@ export type DomainsDataViewsProps =
  */
 export interface Context {
 	sites: Record< number, SiteExcerptData >;
-	isLoadingSiteDomains?: boolean;
 	getFullDomain: ( domain: PartialDomainData ) => ResponseDomain | undefined;
 	getSiteSlug: ( domain: PartialDomainData ) => string;
 	isLoadingSites?: boolean;
