@@ -13,6 +13,7 @@ import {
 } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/constants';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 type Type = 'all' | 'featured' | 'launched';
 
@@ -48,10 +49,10 @@ export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): { queryKey: QueryKey; queryFn: QueryFunction< any[] > } => {
+): { queryKey: QueryKey; queryFn: QueryFunction< Plugin[] > } => {
 	const queryKey = getCacheKey( type + searchTerm + tag + '-normalized' );
 	const queryFn = () =>
-		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
+		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: Plugin[] } ) =>
 			normalizePluginsList( data.results )
 		);
 	return { queryKey, queryFn };
@@ -73,8 +74,8 @@ export const useWPCOMPluginsList = (
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
 		refetchOnMount = true,
-	}: Omit< UseQueryOptions< any >, 'queryKey' > = {}
-): UseQueryResult => {
+	}: Omit< UseQueryOptions< Plugin[] >, 'queryKey' > = {}
+): UseQueryResult< Plugin[] > => {
 	return useQuery( {
 		...getWPCOMPluginsQueryParams( type, searchTerm, tag ),
 		enabled: enabled,
