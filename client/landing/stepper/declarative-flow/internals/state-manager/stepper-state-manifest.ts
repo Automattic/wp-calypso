@@ -22,5 +22,6 @@ export type FlowStateManifest = Partial< {
 		siteSlug: string;
 		domainItem?: DomainStepResult[ 'domainItem' ];
 		goToCheckout?: true;
+		goToHome?: true;
 	};
 } >;

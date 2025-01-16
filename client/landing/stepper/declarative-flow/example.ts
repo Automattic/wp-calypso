@@ -48,7 +48,7 @@ const newsletter: Flow = {
 		const query = useQuery();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
-		const { get, set } = useFlowState();
+		const { set } = useFlowState();
 		const createSite = useCreateSite();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
@@ -86,49 +86,46 @@ const newsletter: Flow = {
 
 				case 'plans': {
 					set( 'plans', providedDependencies );
-					const siteTitle = get( 'newsletterSetup' )?.siteTitle;
 
 					setPendingAction( () =>
 						createSite( {
 							theme: DEFAULT_NEWSLETTER_THEME,
 							siteIntent: 'newsletter',
-							siteTitle,
 						} )
 					);
 
 					return navigate( 'processing' );
 				}
 				case 'processing': {
-					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
-
-					const site = set( 'processing', providedDependencies );
-					if ( site?.goToHome && site?.siteSlug ) {
+					const result = set( 'processing', providedDependencies );
+					const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ result?.siteSlug }`;
+					if ( result?.goToHome && result?.siteSlug ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? site?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteId ?? result?.siteSlug }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
 						);
 					}
 
-					if ( site?.goToCheckout && site?.siteSlug ) {
+					if ( result?.goToCheckout && result?.siteSlug ) {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								site?.siteSlug as string
+								result?.siteSlug as string
 							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
 
 					initializeLaunchpadState( {
-						siteId: site?.siteId as number,
-						siteSlug: site?.siteSlug as string,
+						siteId: result?.siteId as number,
+						siteSlug: result?.siteSlug as string,
 					} );
 
 					return window.location.assign(
 						getPostFlowUrl( {
 							flow: flowName,
-							siteId: site?.siteId as number,
-							siteSlug: site?.siteSlug as string,
+							siteId: result?.siteId as number,
+							siteSlug: result?.siteSlug as string,
 						} )
 					);
 				}

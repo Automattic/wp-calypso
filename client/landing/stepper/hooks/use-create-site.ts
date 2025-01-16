@@ -119,7 +119,9 @@ export const useCreateSite = () => {
 	const { get } = useFlowState();
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
-	const planCartItems = get( 'plan' )?.cartItems;
+	const planCartItems = get( 'plans' )?.cartItems;
+	const siteTitle = get( 'newsletterSetup' )?.siteTitle as string;
+
 	/**
 	 * Support singular and multiple domain cart items.
 	 */
@@ -135,11 +137,9 @@ export const useCreateSite = () => {
 		mutationFn: ( {
 			theme,
 			siteIntent,
-			siteTitle,
 		}: {
 			theme: string;
 			siteIntent: string;
-			siteTitle: string;
 			siteGoals?: SiteGoal[];
 		} ) =>
 			createSite( {

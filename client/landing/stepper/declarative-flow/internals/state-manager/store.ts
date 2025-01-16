@@ -30,12 +30,15 @@ export function useFlowState() {
 		return state[ key ];
 	}
 
-	function set( key: keyof FlowStateManifest, value: unknown ) {
+	function set< T extends keyof FlowStateManifest >(
+		key: T,
+		value: unknown
+	): FlowStateManifest[ T ] {
 		queryClient.setQueryData( [ PREFIX, flow, session, VERSION ], {
 			...state,
 			[ key ]: value,
 		} );
-		return value;
+		return value as FlowStateManifest[ T ];
 	}
 
 	return {
