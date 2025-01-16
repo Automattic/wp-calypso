@@ -1,14 +1,14 @@
 .skeleton {
 	box-sizing: border-box;
 	background-color: var( --studio-gray-5 );
-	animation: pulse 1.5s infinite;
+	animation: skeleton-shimmer 1.5s infinite;
 	border-radius: 4px;
 
 	&--circle {
 		border-radius: 50%;
 	}
 
-	@keyframes pulse {
+	@keyframes skeleton-shimmer {
 		0% {
 			opacity: 1;
 		}
