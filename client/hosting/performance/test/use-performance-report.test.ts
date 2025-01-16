@@ -92,4 +92,65 @@ describe( 'usePerformanceReport', () => {
 		} );
 		expect( mockSetIsSaving ).toHaveBeenCalledWith( true );
 	} );
+
+	it( 'should set isLoading=false and isError=true when report fails', () => {
+		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				pagespeed: {
+					mobile: 'failed',
+					desktop: 'failed',
+				},
+			},
+			status: 'success',
+			isError: false,
+			isLoading: false,
+		} );
+
+		const { result } = renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'test.com', hash: 'test-hash' },
+				'mobile'
+			)
+		);
+
+		expect( result.current.isLoading ).toBe( false );
+		expect( result.current.isError ).toBe( true );
+	} );
+
+	it( 'should handle successful report correctly', () => {
+		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+			data: {
+				pagespeed: {
+					mobile: {
+						performance: 90,
+					},
+					desktop: {
+						performance: 85,
+					},
+				},
+			},
+			status: 'success',
+			isError: false,
+			isLoading: false,
+		} );
+
+		const { result } = renderHook( () =>
+			usePerformanceReport(
+				mockSetIsSaving,
+				mockRefetchPages,
+				mockSavePerformanceReportUrl,
+				'123',
+				{ url: 'test.com', hash: 'test-hash' },
+				'mobile'
+			)
+		);
+
+		expect( result.current.isLoading ).toBe( false );
+		expect( result.current.isError ).toBe( false );
+		expect( result.current.performanceReport?.performance ).toEqual( 90 );
+	} );
 } );

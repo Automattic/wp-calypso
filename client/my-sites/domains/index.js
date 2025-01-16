@@ -487,7 +487,7 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementAllEmailRoot() + '/:site/titan/new/:domain',
+		paths.domainManagementAllEmailRoot() + '/:domain/titan/new/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
