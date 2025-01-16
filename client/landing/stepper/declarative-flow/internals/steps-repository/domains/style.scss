@@ -471,6 +471,10 @@
 		}
 	}
 
+	.register-domain-step__search-card {
+		background: none;
+	}
+
 	.search-component {
 		overflow: hidden;
 	}
@@ -591,6 +595,12 @@
 
 		.domain-search-results__domain-available-notice {
 			background: transparent;
+			display: flex;
+			margin-left: 0;
+
+			.domain-search-results__domain-available-notice-icon {
+				margin-right: 4px;
+			}
 
 			/* hide transfer link */
 			a {
