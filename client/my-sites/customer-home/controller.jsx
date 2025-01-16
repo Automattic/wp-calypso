@@ -29,7 +29,7 @@ export default async function ( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	const isLaunchpadOnlyHome = config.isEnabled( 'home-launchpad' );
+	const isLaunchpadOnlyHome = config.isEnabled( 'home/launchpad-first' );
 	if ( isLaunchpadOnlyHome ) {
 		context.primary = <LaunchpadOnlyHome key={ siteId } />;
 	} else {
