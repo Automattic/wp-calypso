@@ -378,7 +378,7 @@ export function useSiteActionsDataViews( {
 				},
 			},
 			{
-				id: 'view_activity_wpcom',
+				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
 				isEligible( item: SiteData ) {
 					return ! isWPComSite( item ) && ! item.site.error && ! isUrlOnly( item );
@@ -395,7 +395,7 @@ export function useSiteActionsDataViews( {
 				},
 			},
 			{
-				id: 'view_activity_external',
+				id: 'view_activity_wpcom',
 				label: translate( 'View activity' ),
 				icon: external,
 				isEligible( item: SiteData ) {
