@@ -38,7 +38,8 @@ const AddNewSiteSiteListMenuItems = () => {
 					) }
 					buttonProps={ {
 						onClick: () => {
-							// TODO
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_wordpress' );
+							page( '/start?source=sites-dashboard&ref=topbar' );
 						},
 					} }
 				/>
