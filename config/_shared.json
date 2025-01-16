@@ -198,6 +198,7 @@
 	"restricted_me_access": true,
 	"theme_color": "",
 	"reskinned_flows": [
+		"wpcc",
 		"launch-site",
 		"onboarding",
 		"onboarding-with-email",

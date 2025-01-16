@@ -228,7 +228,9 @@ body.is-section-signup .layout:not(.dops) {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
+body.is-section-signup
+.signup:not(.is-wpcc2)
+.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
