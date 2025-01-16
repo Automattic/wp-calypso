@@ -225,16 +225,16 @@ export function useSiteActionsDataViews( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const hasRemoveManagedSitesCapability = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_managed_sites' )
+	);
+
 	return useMemo( () => {
 		const isUrlOnly = ( item: SiteData ) =>
 			item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
 		const isWPComSite = ( item: SiteData ) =>
 			item.site.value.is_atomic || item.site.value.is_simple;
 		const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
-		const hasRemoveManagedSitesCapability = () => {
-			// TODO: implement this based on the item data.
-			return true;
-		};
 		const getBlogId = ( item: SiteData ) => item.site.value.blog_id;
 		const hasBackup = ( item: SiteData ) => item.site.value.has_backup;
 		const getSiteSlug = ( item: SiteData ) => urlToSlug( item.site.value.url );
@@ -439,7 +439,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Remove site' ),
 				icon: trash,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && ! isDevSite( item ) && hasRemoveManagedSitesCapability();
+					return canHaveActions( item ) && ! isDevSite( item ) && hasRemoveManagedSitesCapability;
 				},
 				RenderModal: createRemoveSiteActionModal( onRefetchSite ),
 				isDestructive: true,
@@ -457,11 +457,13 @@ export function useSiteActionsDataViews( {
 			},
 		];
 	}, [
-		isLargeScreen,
 		translate,
-		dispatch,
 		onRefetchSite,
+		isLoading,
+		dispatch,
+		isLargeScreen,
 		setDataViewsState,
 		setSelectedSiteFeature,
+		hasRemoveManagedSitesCapability,
 	] );
 }
