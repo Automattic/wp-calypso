@@ -110,6 +110,68 @@ describe( 'Site Migration Flow', () => {
 				.reply( 200, { success: true } );
 		} );
 
+		describe( 'SITE_CREATION_STEP', () => {
+			it( 'redirects to PROCESSING', () => {
+				const destination = runNavigation( {
+					from: STEPS.SITE_CREATION_STEP,
+					dependencies: {
+						siteCreated: true,
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.PROCESSING,
+				} );
+			} );
+		} );
+
+		describe( 'PROCESSING', () => {
+			it( 'redirects to SITE_MIGRATION_IMPORT_OR_MIGRATE when the site is created', () => {
+				const destination = runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						from: 'https://site-to-be-migrated.com',
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						from: 'https://site-to-be-migrated.com',
+					},
+				} );
+			} );
+
+			it( 'redirects to the import flow if there is no from query parameter', () => {
+				runNavigation( {
+					from: STEPS.PROCESSING,
+					dependencies: {
+						siteCreated: true,
+					},
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+					},
+				} );
+
+				expect( window.location.assign ).toMatchURL( {
+					path: '/setup/site-setup/importList',
+					query: {
+						siteId: 123,
+						siteSlug: 'example.wordpress.com',
+						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+						backToFlow: `/site-migration/site-migration-identify`,
+					},
+				} );
+			} );
+		} );
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
 			beforeEach( () => jest.clearAllMocks() );
 
@@ -301,6 +363,42 @@ describe( 'Site Migration Flow', () => {
 							ref: 'site-migration',
 						},
 					} );
+				} );
+			} );
+		} );
+
+		describe( 'PICK_SITE', () => {
+			it( 'redirects to IMPORT_OR_MIGRATE if a site is selected', () => {
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					dependencies: {
+						action: 'select-site',
+						site: {
+							ID: 123,
+							slug: 'example.wordpress.com',
+						},
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+					},
+				} );
+			} );
+
+			it( 'redirects to SITE_CREATION_STEP the user decides to create a new site', () => {
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					dependencies: {
+						action: 'create-site',
+					},
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_CREATION_STEP,
 				} );
 			} );
 		} );
