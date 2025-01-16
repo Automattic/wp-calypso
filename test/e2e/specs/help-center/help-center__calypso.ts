@@ -45,6 +45,10 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )( 'Help Center in Calyp
 	 * These tests check the general interaction with the Help Center popover.
 	 */
 	describe( 'General Interaction', () => {
+		afterAll( async () => {
+			await helpCenterComponent.closePopover();
+		} );
+
 		it( 'is initially closed', async () => {
 			expect( await helpCenterComponent.isVisible() ).toBeFalsy();
 		} );

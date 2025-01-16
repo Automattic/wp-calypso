@@ -11,6 +11,12 @@ export type { State };
 
 let isRegistered = false;
 
+// All end-to-end tests use a custom user agent containing this string.
+const E2E_USER_AGENT = 'wp-e2e-tests';
+
+export const isE2ETest = () =>
+	typeof window !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT );
+
 export function register(): typeof STORE_KEY {
 	registerPlugins();
 
@@ -21,7 +27,8 @@ export function register(): typeof STORE_KEY {
 			controls: { ...controls, ...wpcomRequestControls },
 			selectors,
 			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
-			resolvers: { isHelpCenterShown },
+			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
+			resolvers: isE2ETest() ? undefined : { isHelpCenterShown },
 		} );
 		isRegistered = true;
 	}
