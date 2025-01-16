@@ -46,7 +46,6 @@ import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
 import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
@@ -931,19 +930,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		navigate( `/setup/site-setup/launch-big-sky?siteSlug=${ siteSlug }&siteId=${ site?.ID }` );
 	}
 
-	const bigSkyButton = isBigSkyEligible && (
-		<>
-			<Button onClick={ onDesignWithAI }>{ translate( 'Design with AI' ) }</Button>
-			<TrackComponentView
-				eventName="calypso_design_picker_big_sky_button_impression"
-				eventProperties={ commonFilterProperties }
-			/>
-		</>
-	);
-
 	const stepContent = (
 		<>
-			<div className="setup-container__big-sky-container">{ bigSkyButton }</div>
 			<UnifiedDesignPicker
 				designs={ designs }
 				locale={ locale }

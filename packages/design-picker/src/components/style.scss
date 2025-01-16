@@ -27,11 +27,21 @@
 	}
 
 	.design-picker__design-card-group {
+		margin-bottom: 24px;
+
+		@include break-medium {
+			margin-bottom: 40px;
+		}
+
+		@include break-large {
+			margin-bottom: 64px;
+		}
+		
 		.design-picker__design-card-title {
 			position: sticky;
 			top: 0;
 			padding: 16px 12px 12px;
-			margin: -16px -12px 0;
+			margin: 0 -12px 0;
 			color: var(--studio-black);
 			background-color: var(--color-body-background);
 			font-size: $font-title-small;
@@ -47,7 +57,11 @@
 		}
 
 		.design-picker__grid {
-			margin-bottom: 32px;
+			margin-bottom: 24px;
+
+			@include break-medium {
+				margin-bottom: 32px;
+			}
 		}
 
 		.theme-card__info {
@@ -57,11 +71,6 @@
 			@include break-small {
 				margin-top: 12px;
 			}
-		}
-
-		.design-picker__design-card-group-footer {
-			margin-top: -12px;
-			margin-bottom: 36px;
 		}
 	}
 
@@ -121,7 +130,7 @@
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 40px;
-				row-gap: 48px;
+				row-gap: 40px;
 			}
 		}
 
@@ -311,11 +320,6 @@
 			}
 		}
 	}
-
-	.design-button-container .design-picker__design-option .design-picker__image-frame:hover::after,
-	.theme-card--is-actionable .theme-card__image:hover::after {
-		background-color: rgba(255, 255, 255, 0.72);
-	}
 }
 
 .design-button-container {
@@ -393,11 +397,12 @@
 
 	.design-picker__grid {
 		@supports ( display: grid ) {
-			row-gap: 48px;
+			row-gap: 24px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 40px;
+				row-gap: 40px;
 			}
 		}
 	}
