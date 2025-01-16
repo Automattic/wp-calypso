@@ -306,6 +306,65 @@ export function useSiteActionsDataViews( { isLargeScreen, onRefetchSite }: SiteA
 
 		return [
 			{
+				label: translate( 'Prepare for launch' ),
+				supportsBulk: false,
+				callback( items: SiteData[] ) {
+					dispatch(
+						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
+					);
+
+					const blog_id = items[ 0 ].site.value.blog_id;
+					window.open( `https://wordpress.com/settings/general/${ blog_id }`, '_blank' );
+				},
+				isEligible( item: SiteData ) {
+					return isDevSite( item );
+				},
+			},
+			{
+				id: 'set_up_site',
+				label: translate( 'Set up site' ),
+				supportsBulk: false,
+				callback( items: SiteData[] ) {
+					dispatch( recordTracksEvent( getActionEventName( 'set_up_site', isLargeScreen ) ) );
+
+					const blog_id = items[ 0 ].site.value.blog_id;
+					window.open( `https://wordpress.com/overview/${ blog_id }`, '_blank' );
+				},
+				isEligible( item: SiteData ) {
+					return isWPComSite( item ) && ! isUrlOnly( item );
+				},
+			},
+			{
+				id: 'change_domain',
+				label: translate( 'Change domain' ),
+				supportsBulk: false,
+				callback( items: SiteData[] ) {
+					dispatch( recordTracksEvent( getActionEventName( 'change_domain', isLargeScreen ) ) );
+
+					const blog_id = items[ 0 ].site.value.blog_id;
+					window.open( `https://wordpress.com/domains/manage/${ blog_id }`, '_blank' );
+				},
+				isEligible( item: SiteData ) {
+					return isWPComSite( item ) && ! isUrlOnly( item );
+				},
+			},
+			{
+				id: 'hosting_configuration',
+				label: translate( 'Hosting configuration' ),
+				supportsBulk: false,
+				callback( items: SiteData[] ) {
+					dispatch(
+						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
+					);
+
+					const blog_id = items[ 0 ].site.value.blog_id;
+					window.open( `https://wordpress.com/hosting-config/${ blog_id }`, '_blank' );
+				},
+				isEligible( item: SiteData ) {
+					return isWPComSite( item ) && ! isUrlOnly( item );
+				},
+			},
+			{
 				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
