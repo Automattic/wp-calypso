@@ -23,6 +23,7 @@ export default function MigrationsCommissionsList( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: [ 'site', 'migratedOn', 'reviewStatus', 'remove' ],
 	} );
 
 	const pagination = {
