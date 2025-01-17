@@ -79,6 +79,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		( message: ZendeskMessage ) => {
 			if ( message?.source?.type === 'web' && message.source?.id ) {
 				setZendeskClientId( message.source?.id );
+				// Unregister the listener after setting the client ID
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch?.off?.( 'message:sent', clientIdListener );
 			}
 		},
 		[ setZendeskClientId ]
