@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
+import { type ZendeskMessage } from '@automattic/odie-client';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
@@ -64,7 +65,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
-		( message: unknown, data: { conversation: { id: string } } ) => {
+		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
 			if ( isHelpCenterShown ) {
 				return;
 			}
@@ -72,6 +73,15 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
 		[ isHelpCenterShown ]
+	);
+
+	const clientIdListener = useCallback(
+		( message: ZendeskMessage ) => {
+			if ( message?.source?.type === 'web' && message.source?.id ) {
+				setZendeskClientId( message.source?.id );
+			}
+		},
+		[ setZendeskClientId ]
 	);
 
 	// Initialize Smooch which communicates with Zendesk
@@ -110,11 +120,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			getUnreadNotifications( allConversations );
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
+			Smooch.on( 'message:sent', clientIdListener );
 		}
 
 		return () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', getUnreadListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'message:sent', clientIdListener );
 		};
 	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
 
