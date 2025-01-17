@@ -71,6 +71,7 @@ const ActiveDomainsCard: FC = () => {
 
 			<DomainsTable
 				className="hosting-overview__domains-table"
+				context="site"
 				hideCheckbox
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
