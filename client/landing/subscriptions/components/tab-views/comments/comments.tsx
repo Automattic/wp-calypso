@@ -8,7 +8,7 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice, NoticeType } from 'calypso/landing/subscriptions/components/notice';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
-import { useSearch, useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks';
+import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 import './styles.scss';
 
@@ -26,7 +26,7 @@ const useSortOptions = () => {
 const Comments = () => {
 	const translate = useTranslate();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
-	const { searchTerm, handleSearch } = useSearch();
+	const [ searchTerm, setSearchTerm ] = useState< string >();
 	const sortOptions = useSortOptions();
 	const availableFilterOptions = useSiteSubscriptionsFilterOptions();
 	const [ filterOption, setFilterOption ] = useState( FilterBy.All );
@@ -52,9 +52,10 @@ const Comments = () => {
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
 			<div className="comments-list-actions-bar">
 				<SearchInput
+					delaySearch
 					placeholder={ translate( 'Search by post, site title, or address…' ) }
 					searchIcon={ <SearchIcon size={ 18 } /> }
-					onSearch={ handleSearch }
+					onSearch={ setSearchTerm }
 				/>
 
 				<SelectDropdown
