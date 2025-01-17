@@ -25,7 +25,7 @@ function ToggleLandingPageSettings() {
 		return 'default';
 	};
 
-	async function handlePreferenceChange( selectedOption ) {
+	async function handlePreferenceChange( selectedOption: string ) {
 		const preference = { landingPage: selectedOption, updatedAt: Date.now() };
 		const preferenceKey =
 			selectedOption === 'my-sites' ? 'sites-landing-page' : 'reader-landing-page';
@@ -50,12 +50,11 @@ function ToggleLandingPageSettings() {
 	return (
 		<div>
 			<RadioControl
-				label={ translate( 'Choose your default landing page:' ) }
 				selected={ getSelectedOption() }
 				options={ [
-					{ label: translate( 'Default site home page' ), value: 'default' },
-					{ label: translate( 'My sites page' ), value: 'my-sites' },
-					{ label: translate( 'Reader page' ), value: 'reader' },
+					{ label: translate( 'My primary site' ), value: 'default' },
+					{ label: translate( 'All sites' ), value: 'my-sites' },
+					{ label: translate( 'The reader' ), value: 'reader' },
 				] }
 				onChange={ handlePreferenceChange }
 				disabled={ isSaving }
