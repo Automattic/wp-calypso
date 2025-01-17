@@ -94,7 +94,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		data = [],
 		isLoading: isRequestingData,
 		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query );
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, {
+		enabled: ! shouldGate,
+	} );
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -163,7 +165,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ isRequestingData && (
+			{ isRequestingData && ! shouldGate && (
 				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
 			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
