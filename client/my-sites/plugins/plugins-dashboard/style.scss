@@ -351,6 +351,8 @@ body.is-section-plugins .hosting-dashboard-layout,
 	}
 	.dataviews-wrapper {
 		margin: auto;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
 
 		.dataviews-view-table {
 			.dataviews-view-table__row {
