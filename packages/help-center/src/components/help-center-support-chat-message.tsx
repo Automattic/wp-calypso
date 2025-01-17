@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar } from '@automattic/components';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
-import { type ZendeskMessage } from '@automattic/odie-client';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
 import { useGetSupportInteractionById } from '@automattic/odie-client/src/data/use-get-support-interaction-by-id';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -11,6 +10,7 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
+import type { ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
