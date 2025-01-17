@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/request-external-access",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Utility for requesting authorization of sharing services.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -30,11 +30,12 @@
 	],
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "transpile",
+		"build": "run -T transpile",
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/popup-monitor": "workspace:^"
+		"@automattic/popup-monitor": "workspace:^",
+		"@babel/runtime": "^7.26.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

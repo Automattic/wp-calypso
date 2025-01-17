@@ -1802,6 +1802,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/popup-monitor": "workspace:^"
+    "@babel/runtime": "npm:^7.26.0"
   languageName: unknown
   linkType: soft
 
