@@ -196,8 +196,6 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
-		"signup/design-picker-preview-colors": true,
-		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
