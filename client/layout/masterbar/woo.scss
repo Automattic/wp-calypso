@@ -92,6 +92,7 @@ $breakpoint-mobile: 660px;
 	--woo-purple-50: #7f54b3;
 	--woo-purple-60: #674399;
 	--woo-purple-70: #533582;
+	--woo-font-family-header: proxima-nova, sans-serif;
 	$woo-label-color: #50575e;
 	$woo-gray-100: #101517;
 	$woo-gray-40: #787c82;
@@ -110,10 +111,6 @@ $breakpoint-mobile: 660px;
 
 	background: #fff;
 	min-height: 100%;
-
-	* {
-		font-family: proxima-nova, sans-serif;
-	}
 
 	&.layout.is-section-login {
 		min-height: 100%;
@@ -1285,10 +1282,15 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
+		h2,
+		h3 {
+			font-family: var(--woo-font-family-header);
+			font-feature-settings: "ss01" on, "salt" on;
+		}
+
+		h1,
 		h3 {
 			color: var(--studio-gray-100);
-			font-feature-settings: "ss01" on, "salt" on;
-			font-family: proxima-nova, sans-serif;
 			text-align: center;
 			font-size: 2.25rem;
 			font-weight: 700;
@@ -1724,9 +1726,8 @@ $breakpoint-mobile: 660px;
 			margin-top: 0;
 
 			h1.magic-login__form-header {
+				font-family: var(--woo-font-family-header);
 				color: var(--studio-gray-100);
-				font-feature-settings: "ss01" on, "salt" on;
-				font-family: proxima-nova, sans-serif;
 				text-align: center;
 				font-size: 2.25rem;
 				font-weight: 700;
@@ -2248,6 +2249,13 @@ $breakpoint-mobile: 660px;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
 	--woo-purple-70: #5007AA;
+	--woo-font-family-header: proxima-vara, 'Proxima Fallback', sans-serif;
+
+	h1,
+	h2,
+	h3 {
+		font-feature-settings: "ss04";
+	}
 
 	.masterbar__woo {
 		.masterbar__woo-nav {
