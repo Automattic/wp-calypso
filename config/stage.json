@@ -184,7 +184,6 @@
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/text-search-lots": true,
-		"themes/assembler-first": true,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
