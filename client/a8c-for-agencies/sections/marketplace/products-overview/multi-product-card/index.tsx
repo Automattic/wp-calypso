@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -156,6 +157,8 @@ export default function MultiProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, translate ] );
 
+	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
+
 	return (
 		<>
 			<div
@@ -175,14 +178,16 @@ export default function MultiProductCard( props: Props ) {
 							<div className="product-card__heading">
 								<h3 className="product-card__title">{ getProductShortTitle( product, true ) }</h3>
 
-								<MultipleChoiceQuestion
-									name={ `${ product.family_slug }-variant-options` }
-									question={ translate( 'Select variant:' ) }
-									answers={ variantOptions }
-									selectedAnswerId={ product.slug }
-									onAnswerChange={ onChangeOption }
-									shouldShuffleAnswers={ false }
-								/>
+								{ ! isRedesign && (
+									<MultipleChoiceQuestion
+										name={ `${ product.family_slug }-variant-options` }
+										question={ translate( 'Select variant:' ) }
+										answers={ variantOptions }
+										selectedAnswerId={ product.slug }
+										onAnswerChange={ onChangeOption }
+										shouldShuffleAnswers={ false }
+									/>
+								) }
 
 								<div className="product-card__pricing is-compact">
 									<ProductPriceWithDiscount
@@ -193,14 +198,25 @@ export default function MultiProductCard( props: Props ) {
 									/>
 								</div>
 
+								{ isRedesign && (
+									<MultipleChoiceQuestion
+										name={ `${ product.family_slug }-variant-options` }
+										question={ translate( 'Select variant:' ) }
+										answers={ variantOptions }
+										selectedAnswerId={ product.slug }
+										onAnswerChange={ onChangeOption }
+										shouldShuffleAnswers={ false }
+									/>
+								) }
+
 								<div className="product-card__description">{ productDescription }</div>
 							</div>
 						</div>
 					</div>
 					<div className="product-card__buttons">
 						<Button
-							className="product-card__select-button"
-							primary={ ! isSelected }
+							className={ clsx( { 'product-card__select-button': ! isRedesign } ) }
+							variant={ ! isSelected ? 'primary' : 'secondary' }
 							tabIndex={ -1 }
 						>
 							{ isSelected && <Icon icon={ check } /> }
@@ -211,6 +227,7 @@ export default function MultiProductCard( props: Props ) {
 								customText={ translate( 'View details' ) }
 								productName={ getProductShortTitle( product ) }
 								onClick={ onShowLightbox }
+								showIcon={ ! isRedesign }
 							/>
 						) }
 					</div>
