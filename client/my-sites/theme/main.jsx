@@ -1,5 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
@@ -66,6 +66,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -677,7 +678,7 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 		} = this.props;
 
-		const isGlobalStylesEnabled = isEnabled( 'global-styles/on-personal-plan' );
+		const isGlobalStylesEnabled = this.props.isGlobalStylesOnPersonal;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
 		const hasLimitedFeatures =
@@ -1077,7 +1078,7 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' ) ? 'personal' : 'premium';
+		const upgradeToPlan = this.props.isGlobalStylesOnPersonal ? 'personal' : 'premium';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
@@ -1485,4 +1486,6 @@ export default connect(
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
 	}
-)( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
+)(
+	withSiteGlobalStylesStatus( withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) ) )
+);

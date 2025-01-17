@@ -1,4 +1,5 @@
 import AsyncLoad from 'calypso/components/async-load';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
@@ -20,6 +21,7 @@ const ThemeStyleVariations = ( {
 	needsUpgrade,
 	onClick,
 }: ThemeStyleVariationsProps ) => {
+	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal();
 	return (
 		<div className="theme__sheet-style-variations">
 			{ !! description && <p>{ description }</p> }
@@ -35,6 +37,7 @@ const ThemeStyleVariations = ( {
 					showOnlyHoverViewDefaultVariation={ false }
 					needsUpgrade={ needsUpgrade }
 					onSelect={ onClick }
+					isGlobalStylesOnPersonal={ isGlobalStylesOnPersonal }
 				/>
 			</div>
 		</div>

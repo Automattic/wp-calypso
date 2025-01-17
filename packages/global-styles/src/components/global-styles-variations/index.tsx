@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
@@ -33,6 +32,7 @@ interface GlobalStylesVariationsProps {
 	showOnlyHoverViewDefaultVariation?: boolean;
 	splitDefaultVariation?: boolean;
 	needsUpgrade?: boolean;
+	isGlobalStylesOnPersonal?: boolean;
 	onSelect: ( globalStylesVariation: GlobalStylesObject ) => void;
 }
 
@@ -100,13 +100,12 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	splitDefaultVariation = true,
 	needsUpgrade = true,
+	isGlobalStylesOnPersonal = false,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
-		? PLAN_PERSONAL
-		: PLAN_PREMIUM;
+	const upgradeToPlan = isGlobalStylesOnPersonal ? PLAN_PERSONAL : PLAN_PREMIUM;
 
 	const variationDescription = needsUpgrade
 		? translate(

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Button, Gridicon, Dialog, ScreenReaderText, PlanPrice } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
@@ -10,6 +9,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useGlobalStylesUpgradeTranslations from './use-global-styles-upgrade-translations';
 import './style.scss';
@@ -34,9 +34,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
-		? PLAN_PERSONAL
-		: PLAN_PREMIUM;
+	const upgradeToPlan = useSiteGlobalStylesOnPersonal() ? PLAN_PERSONAL : PLAN_PREMIUM;
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, upgradeToPlan ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );

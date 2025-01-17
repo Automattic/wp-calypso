@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_STYLE_CUSTOMIZATION,
 	PLAN_PREMIUM,
@@ -8,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface SiteSettingPrivacyNoticeProps {
@@ -18,7 +18,7 @@ interface SiteSettingPrivacyNoticeProps {
 const SiteSettingPrivacyNotice = ( { selectedSite, siteSlug }: SiteSettingPrivacyNoticeProps ) => {
 	const translate = useTranslate();
 	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
+	const upgradeToPlan = useSiteGlobalStylesOnPersonal( selectedSite?.ID )
 		? PLAN_PERSONAL
 		: PLAN_PREMIUM;
 	const upgradeUrl = `/plans/${ siteSlug }?plan=${ upgradeToPlan }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;

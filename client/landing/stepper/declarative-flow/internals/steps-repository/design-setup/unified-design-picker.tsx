@@ -41,6 +41,7 @@ import {
 	THEME_TIERS,
 	THEME_TIER_PARTNER,
 	THEME_TIER_PREMIUM,
+	THEME_TIER_FREE,
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
@@ -58,6 +59,7 @@ import {
 	getProductsByBillingSlug,
 } from 'calypso/state/products-list/selectors';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
@@ -151,6 +153,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteDescription = site?.description;
 	const { shouldLimitGlobalStyles } = useSiteGlobalStylesStatus( site?.ID );
 	const { data: siteActiveTheme } = useActiveThemeQuery( site?.ID ?? 0, !! site?.ID );
+	// @TODO Cleanup once the test phase is over.
+	const isGlobalStylesOnPersonal = useSiteGlobalStylesOnPersonal( site?.ID );
 
 	const isDesignFirstFlow =
 		flow === DESIGN_FIRST_FLOW || queryParams.get( 'flowToReturnTo' ) === DESIGN_FIRST_FLOW;
@@ -592,16 +596,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} )
 			);
 
-			// @TODO Cleanup once the test phase is over.
-			const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' ) ? 'personal' : 'premium';
-
 			goToCheckout( {
 				flowName: flow,
 				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				// When the user is done with checkout, send them back to the current url
 				destination: window.location.href.replace( window.location.origin, '' ),
-				plan: upgradeToPlan,
+				plan: isGlobalStylesOnPersonal ? 'personal' : 'premium',
 			} );
 
 			setShowPremiumGlobalStylesModal( false );
@@ -747,7 +748,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 	}
 	function getPrimaryActionButtonAction(): () => void {
-		if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
+		if ( isGlobalStylesOnPersonal ) {
 			if ( isLockedTheme ) {
 				return upgradePlan;
 			}
@@ -852,12 +853,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					placeholder={ null }
 					previewUrl={ previewUrl }
 					splitDefaultVariation={
-						! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
-						! isBundled &&
-						! isPremiumThemeAvailable &&
-						! didPurchaseSelectedTheme &&
-						! isPluginBundleEligible &&
-						shouldLimitGlobalStyles
+						( isGlobalStylesOnPersonal &&
+							selectedDesign?.design_tier === THEME_TIER_FREE &&
+							shouldLimitGlobalStyles ) ||
+						( ! ( selectedDesign?.design_tier === THEME_TIER_PREMIUM ) &&
+							! isBundled &&
+							! isPremiumThemeAvailable &&
+							! didPurchaseSelectedTheme &&
+							! isPluginBundleEligible &&
+							! isGlobalStylesOnPersonal &&
+							shouldLimitGlobalStyles )
 					}
 					needsUpgrade={ shouldLimitGlobalStyles || isLockedTheme }
 					title={ headerDesignTitle }

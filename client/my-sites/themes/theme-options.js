@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_INSTALL_PLUGINS,
 	PLAN_PERSONAL,
@@ -25,6 +24,7 @@ import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
@@ -74,7 +74,7 @@ function getPlanPathSlugForThemes( state, siteId, minimumPlan ) {
 	return mappedPlan?.getPathSlug();
 }
 
-function getAllThemeOptions( { translate, isFSEActive } ) {
+function getAllThemeOptions( { translate, isFSEActive, isGlobalStylesOnPersonal } ) {
 	const purchase = {
 		label: translate( 'Purchase', {
 			context: 'verb',
@@ -102,7 +102,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 
 			// @TODO Cleanup once the test phase is over.
 			let minimumPlan;
-			if ( isEnabled( 'global-styles/on-personal-plan' ) ) {
+			if ( isGlobalStylesOnPersonal ) {
 				minimumPlan = tierMinimumUpsellPlan;
 			} else if ( tierMinimumUpsellPlan === PLAN_PERSONAL && isLockedStyleVariation ) {
 				minimumPlan = PLAN_PREMIUM;
@@ -524,4 +524,9 @@ const connectOptionsHoc = connect(
 	}
 );
 
-export const connectOptions = compose( localize, withIsFSEActive, connectOptionsHoc );
+export const connectOptions = compose(
+	localize,
+	withIsFSEActive,
+	withSiteGlobalStylesOnPersonal,
+	connectOptionsHoc
+);
