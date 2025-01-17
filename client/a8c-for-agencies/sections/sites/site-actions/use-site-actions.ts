@@ -261,7 +261,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isDevSite( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
 					);
@@ -275,7 +275,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'set_up_site', isLargeScreen ) ) );
 				},
 			},
@@ -287,7 +287,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'change_domain', isLargeScreen ) ) );
 				},
 			},
@@ -299,7 +299,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
 					dispatch(
 						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
 					);
@@ -341,7 +341,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
 				},
 			},
@@ -358,7 +358,7 @@ export function useSiteActionsDataViews( {
 					);
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/backup/${ getSiteSlug( items[ 0 ] ) }/clone` );
+					window.open( `https://wordpress.com/backup/${ getSiteSlug( items[ 0 ] ) }/clone` );
 					dispatch( recordTracksEvent( getActionEventName( 'clone_site', isLargeScreen ) ) );
 				},
 			},
@@ -391,7 +391,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
 					dispatch( recordTracksEvent( getActionEventName( 'site_settings', isLargeScreen ) ) );
 				},
 			},
@@ -403,7 +403,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item );
 				},
 				callback( items: SiteData[] ) {
-					page( getUrlWithScheme( items[ 0 ] ) );
+					window.open( getUrlWithScheme( items[ 0 ] ) );
 					dispatch( recordTracksEvent( getActionEventName( 'view_site', isLargeScreen ) ) );
 				},
 			},
@@ -415,7 +415,7 @@ export function useSiteActionsDataViews( {
 					return canHaveActions( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
-					page( `${ getUrlWithScheme( items[ 0 ] ) }/wp-admin` );
+					window.open( `${ getUrlWithScheme( items[ 0 ] ) }/wp-admin` );
 					dispatch( recordTracksEvent( getActionEventName( 'visit_wp_admin', isLargeScreen ) ) );
 				},
 			},
