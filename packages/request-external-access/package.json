@@ -34,7 +34,8 @@
 		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@automattic/popup-monitor": "workspace:^"
+		"@automattic/popup-monitor": "workspace:^",
+		"@babel/runtime": "^7.26.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"
