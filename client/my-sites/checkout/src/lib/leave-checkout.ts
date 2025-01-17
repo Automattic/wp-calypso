@@ -22,12 +22,14 @@ export const leaveCheckout = ( {
 	previousPath,
 	tracksEvent,
 	createUserAndSiteBeforeTransaction,
+	clearedCart = false,
 }: {
 	siteSlug?: string;
 	forceCheckoutBackUrl?: string;
 	previousPath?: string;
 	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
+	clearedCart?: boolean;
 } ): void => {
 	recordTracksEvent( tracksEvent );
 	debug( 'leaving checkout with args', {
@@ -69,14 +71,18 @@ export const leaveCheckout = ( {
 	}
 
 	let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-
 	if (
 		previousPath &&
 		'' !== previousPath &&
 		previousPath !== window.location.href &&
 		! previousPath.includes( '/checkout/' )
 	) {
-		closeUrl = previousPath;
+		// If the previous page was the email upsell page, then we want to close the modal and go back to the domain page.
+		if ( clearedCart && /\/domains\/add\/[^/]+\/email\/[^/]+\?/.test( previousPath ) ) {
+			closeUrl = '/domains/add/' + siteSlug;
+		} else {
+			closeUrl = previousPath;
+		}
 	}
 
 	try {
