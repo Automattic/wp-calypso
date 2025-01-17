@@ -37,7 +37,7 @@ interface DomainsDataViewsUpdatingDomain {
 }
 
 /**
- * Shared props for the domains DataViews.
+ * Base props for the domains DataViews.
  */
 interface BaseDomainsDataViewsProps {
 	className?: string;
