@@ -1,7 +1,7 @@
-import { isDesktop } from '@automattic/viewport';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -177,6 +177,25 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
 		getSitesWithSecondarySites( state, sites )
 	);
+
+	useEffect( () => {
+		// Sets the correct fields when route changes or viewport changes
+		setDataViewsState( ( dVwState ) => ( {
+			...dVwState,
+			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+		} ) );
+
+		// Subscribe to viewport changes
+		const unsubscribe = subscribeIsDesktop( ( matches ) => {
+			const shouldUseListView = ! matches;
+			setDataViewsState( ( dVwState ) => ( {
+				...dVwState,
+				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			} ) );
+		} );
+
+		return () => unsubscribe();
+	}, [ plugin.slug, shouldUseListView ] );
 
 	if ( ! sitesWithSecondarySites?.length ) {
 		return null;

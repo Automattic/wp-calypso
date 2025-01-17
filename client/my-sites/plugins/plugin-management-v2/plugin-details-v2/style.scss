@@ -162,4 +162,13 @@
 			justify-content: flex-end;
 		}
 	}
+// Hiding this here because in this version the mediaField is not hiddable
+// https://github.com/WordPress/gutenberg/tree/d59faffa3d270dbc7716f653b4cdab6020812658/packages/dataviews#properties-of-layout
+// In future versions, a showMedia property can be used
+	.dataviews-view-list {
+		.dataviews-view-list__media-wrapper {
+			background-color: transparent;
+			display: none;
+		}
+	}
 }
