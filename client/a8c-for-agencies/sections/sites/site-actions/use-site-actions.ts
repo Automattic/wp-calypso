@@ -244,8 +244,15 @@ export function useSiteActionsDataViews( {
 				: item.site.value.url_with_scheme;
 		};
 
-		// This implements logic that was previously in the Actions field.
-		// TODO: review isEligible logic for all actions and make sure there are no duplicate ones.
+		// In the previous field-based Actions implementation (see useSiteActions above),
+		// some of the logic to enable action lived in the Actions field and some other in the isEnabled flag.
+		// This meant that some conditions in isEnabled were redundant (e.g.: "! item.site.error")
+		// or conflicting (checking for "! item.site.value.is_simple" in the field but checking
+		// for "item.site.value.is_simple" in the isEnabled flag).
+		//
+		// canHaveActions represents the logic common to all actions that previously lived in the field,
+		// and isEligible has been updated to remove redundant and conflicting checks,
+		// that's why it's not exactly the same as isEnable above.
 		const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
 		const canHaveActions = ( item: SiteData ) =>
 			! isLoading &&
