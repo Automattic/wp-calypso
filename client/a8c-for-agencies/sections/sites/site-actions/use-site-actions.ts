@@ -261,6 +261,9 @@ export function useSiteActionsDataViews( {
 			! item.site.error &&
 			! item.site.value.is_simple;
 
+		const recordTracksEventRemoveSite = () =>
+			dispatch( recordTracksEvent( getActionEventName( 'remove_site', isLargeScreen ) ) );
+
 		return [
 			{
 				label: translate( 'Prepare for launch' ),
@@ -434,7 +437,10 @@ export function useSiteActionsDataViews( {
 				isEligible( item: SiteData ) {
 					return canHaveActions( item ) && ! isDevSite( item ) && hasRemoveManagedSitesCapability;
 				},
-				RenderModal: createRemoveSiteActionModal( onRefetchSite ),
+				RenderModal: createRemoveSiteActionModal( {
+					onRefetchSite,
+					recordTracksEventRemoveSite,
+				} ),
 				isDestructive: true,
 			},
 			{

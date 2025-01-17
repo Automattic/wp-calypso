@@ -6,7 +6,13 @@ import { successNotice } from 'calypso/state/notices/actions';
 import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const createRemoveSiteActionModal =
-	( onRefetchSite?: () => Promise< unknown > ) =>
+	( {
+		onRefetchSite,
+		recordTracksEventRemoveSite,
+	}: {
+		onRefetchSite?: () => Promise< unknown >;
+		recordTracksEventRemoveSite: () => void;
+	} ) =>
 	( {
 		items,
 		closeModal,
@@ -19,6 +25,8 @@ const createRemoveSiteActionModal =
 		const translate = useTranslate();
 		const dispatch = useDispatch();
 		const { mutate: removeSite } = useRemoveSiteMutation();
+
+		recordTracksEventRemoveSite();
 
 		const item = items[ 0 ];
 		const siteName = item.site.value.url;
