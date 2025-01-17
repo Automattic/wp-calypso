@@ -11,6 +11,7 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SiteLanguagePicker from 'calypso/components/language-picker/site-language-picker';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -372,16 +373,21 @@ export class SiteSettingsFormGeneral extends Component {
 				<ToggleControl
 					id="site-settings__wpcom_hide_action_bar"
 					__nextHasNoMarginBottom
-					label={ translate( 'Hide the Action Bar on the front end of the site.' ) }
+					label={ translate( 'Hide the Action Bar.' ) }
 					checked={ !! fields?.wpcom_hide_action_bar }
 					onChange={ ( newValue ) => {
 						updateFields( { wpcom_hide_action_bar: newValue } );
 					} }
 				/>
 				<FormSettingExplanation>
-					<a href="https://en.support.wordpress.com/action-bar/">
-						{ translate( 'Learn more about the Action Bar.' ) }
-					</a>
+					{ translate(
+						'The Action Bar can be found in the lower right corner of any WordPress.com website you’re viewing. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink showIcon={ false } supportContext="action-bar" />,
+							},
+						}
+					) }
 				</FormSettingExplanation>
 			</FormFieldset>
 		);
