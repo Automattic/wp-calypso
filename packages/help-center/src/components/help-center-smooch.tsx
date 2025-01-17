@@ -1,7 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
-import { type ZendeskMessage } from '@automattic/odie-client';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
@@ -17,6 +16,7 @@ import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
+import type { ZendeskMessage } from '@automattic/odie-client';
 
 const destroy = () => {
 	Smooch.destroy();
