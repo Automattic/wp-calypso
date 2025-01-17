@@ -100,7 +100,7 @@ const GlobalStylesVariations = ( {
 	showOnlyHoverViewDefaultVariation,
 	splitDefaultVariation = true,
 	needsUpgrade = true,
-	isGlobalStylesOnPersonal = false,
+	isGlobalStylesOnPersonal = window.isGlobalStylesOnPersonal ?? false,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
 	const hasEnTranslation = useHasEnTranslation();
