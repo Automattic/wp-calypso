@@ -281,6 +281,27 @@ describe( 'I18n', function () {
 				).toBe( '2.500,330' );
 			} );
 		} );
+
+		describe( 'compact notation', function () {
+			describe( 'ar', () => {
+				beforeEach( function () {
+					i18n.setLocale( {
+						'': {
+							localeVariant: undefined,
+							localeSlug: 'ar',
+						},
+					} );
+				} );
+				test( 'defaults to latin notation and localised unit', () => {
+					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 } ) ).toEqual( '1.2 ألف' );
+				} );
+				test( 'non-latin/original notation and localised unit', () => {
+					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 }, false ) ).toEqual(
+						'١٫٢ ألف'
+					);
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'hashed locale data', function () {
