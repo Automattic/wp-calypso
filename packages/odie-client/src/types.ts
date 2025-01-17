@@ -16,7 +16,7 @@ export type OdieAssistantContextInterface = {
 	odieBroadcastClientId: string;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
-	initialMessage?: string | null;
+	userFieldMessage?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
@@ -38,7 +38,7 @@ export type OdieAssistantProviderProps = {
 	extraContactOptions?: ReactNode;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
-	initialMessage?: string | null;
+	userFieldMessage?: string | null;
 	version?: string | null;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;

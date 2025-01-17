@@ -12,7 +12,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
-		initialMessage,
+		userFieldMessage,
 		setChat,
 		setWaitAnswerToFirstMessageFromHumanSupport,
 		chat,
@@ -39,7 +39,7 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		} ) );
 
 		await submitUserFields( {
-			messaging_initial_message: initialMessage || undefined,
+			messaging_initial_message: userFieldMessage || undefined,
 			messaging_site_id: selectedSiteId || null,
 			messaging_ai_chat_id: chatId || undefined,
 			messaging_url: selectedSiteURL || null,

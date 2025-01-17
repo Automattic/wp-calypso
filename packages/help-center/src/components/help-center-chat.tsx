@@ -26,7 +26,7 @@ export function HelpCenterChat( {
 	const { currentUser, site, canConnectToZendesk } = useHelpCenterContext();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
-	const initialMessage = params.get( 'initialMessage' );
+	const userFieldMessage = params.get( 'userFieldMessage' );
 	const siteUrl = params.get( 'siteUrl' );
 	const siteId = params.get( 'siteId' );
 
@@ -46,7 +46,7 @@ export function HelpCenterChat( {
 			canConnectToZendesk={ canConnectToZendesk }
 			selectedSiteId={ Number( siteId ) || ( site?.ID as number ) }
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
-			initialMessage={ initialMessage }
+			userFieldMessage={ userFieldMessage }
 			isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
 			extraContactOptions={
 				<ExtraContactOptions isUserEligible={ isUserEligibleForPaidSupport } />

@@ -122,7 +122,7 @@ const ChatButton: FC< Props > = ( {
 				onClick?.();
 				setShowHelpCenter( true );
 				setNavigateToRoute(
-					`/odie?provider=zendesk&initialMessage=${ initialMessage }&siteUrl=${ siteUrl }&siteId=${ siteId }`
+					`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteUrl }&siteId=${ siteId }`
 				);
 			} else {
 				openZendeskWidget( {
