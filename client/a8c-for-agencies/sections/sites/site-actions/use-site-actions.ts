@@ -232,8 +232,9 @@ export function useSiteActionsDataViews( {
 	return useMemo( () => {
 		const isUrlOnly = ( item: SiteData ) =>
 			item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
-		const isWPComSite = ( item: SiteData ) =>
-			item.site.value.is_atomic || item.site.value.is_simple;
+		const isAtomicSite = ( item: SiteData ) => item.site.value.is_atomic;
+		const isSimpleSite = ( item: SiteData ) => item.site.value.is_simple;
+		const isWPComSite = ( item: SiteData ) => isAtomicSite( item ) || isSimpleSite( item );
 		const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
 		const getBlogId = ( item: SiteData ) => item.site.value.blog_id;
 		const hasBackup = ( item: SiteData ) => item.site.value.has_backup;
@@ -279,7 +280,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Set up site' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
@@ -291,7 +292,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Change domain' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
@@ -303,7 +304,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Hosting configuration' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
@@ -316,7 +317,7 @@ export function useSiteActionsDataViews( {
 				id: 'issue_license',
 				label: translate( 'Issue new license' ),
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && ! isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback: () => {
 					page( A4A_MARKETPLACE_LINK );
@@ -327,7 +328,7 @@ export function useSiteActionsDataViews( {
 				id: 'view_activity_not_wpcom',
 				label: translate( 'View activity' ),
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && ! isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					const item = items[ 0 ];
@@ -345,7 +346,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'View activity' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
@@ -359,7 +360,7 @@ export function useSiteActionsDataViews( {
 				isEligible( item: SiteData ) {
 					return (
 						canHaveActions( item ) &&
-						isWPComSite( item ) &&
+						isAtomicSite( item ) &&
 						hasBackup( item ) &&
 						! isUrlOnly( item )
 					);
@@ -375,7 +376,7 @@ export function useSiteActionsDataViews( {
 				isEligible( item: SiteData ) {
 					return (
 						canHaveActions( item ) &&
-						! isWPComSite( item ) &&
+						! isAtomicSite( item ) &&
 						hasBackup( item ) &&
 						! isUrlOnly( item )
 					);
@@ -395,7 +396,7 @@ export function useSiteActionsDataViews( {
 				label: translate( 'Site settings' ),
 				icon: external,
 				isEligible( item: SiteData ) {
-					return canHaveActions( item ) && isWPComSite( item ) && ! isUrlOnly( item );
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
 				},
 				callback( items: SiteData[] ) {
 					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
