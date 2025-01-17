@@ -488,7 +488,7 @@ class MasterbarLoggedIn extends Component {
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
 			>
-				<span class="masterbar__icon-label masterbar__item-reader-label">
+				<span className="masterbar__icon-label masterbar__item-reader-label">
 					{ translate( 'Reader' ) }
 				</span>
 			</Item>
