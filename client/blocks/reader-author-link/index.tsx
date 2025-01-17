@@ -5,7 +5,7 @@ import * as stats from 'calypso/reader/stats';
 import {
 	getUserProfileUrl,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
@@ -11,7 +11,7 @@ import {
 import {
 	getUserProfileBasePath,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 import {
 	blogListing,
 	feedDiscovery,
@@ -30,16 +30,16 @@ import {
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
 } from './controller';
-import { userPosts, userLists } from './user-stream/controller';
+import { userPosts, userLists } from './user-profile/controller';
 
 import './style.scss';
 
-function forceTeamA8C( context, next ) {
+function forceTeamA8C( context: Context, next: () => void ): void {
 	context.params.team = 'a8c';
 	next();
 }
 
-export async function lazyLoadDependencies() {
+export async function lazyLoadDependencies(): Promise< void > {
 	const isBrowser = typeof window === 'object';
 	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
 		const lasagnaMiddleware = await import(
@@ -49,7 +49,7 @@ export async function lazyLoadDependencies() {
 	}
 }
 
-export default async function () {
+export default async function (): Promise< void > {
 	await lazyLoadDependencies();
 
 	if ( config.isEnabled( 'reader' ) ) {

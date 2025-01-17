@@ -6,7 +6,7 @@ import Gravatar from 'calypso/components/gravatar';
 import {
 	getUserProfileUrl,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 

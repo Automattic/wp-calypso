@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
-import UserProfileHeader from 'calypso/reader/user-stream/components/user-profile-header';
+import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 import { requestUserLists } from 'calypso/state/reader/lists/actions';
 
 interface AppState {
