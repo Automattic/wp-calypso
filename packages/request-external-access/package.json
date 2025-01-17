@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/request-external-access",
-	"version": "1.0.0",
+	"version": "1.0.1-rc.1",
 	"description": "Utility for requesting authorization of sharing services.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
