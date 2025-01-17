@@ -54,13 +54,13 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-	const closeAndLeave = ( clearedCart: boolean = false ) =>
+	const closeAndLeave = ( userHasClearedCart: boolean = false ) =>
 		leaveCheckout( {
 			siteSlug,
 			forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
-			clearedCart: clearedCart,
+			userHasClearedCart: userHasClearedCart,
 		} );
 
 	const clickClose = () => {

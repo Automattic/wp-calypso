@@ -70,7 +70,7 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( {
 				siteSlug: siteSlug,
 				tracksEvent: 'checkout_cancel',
-				clearedCart: true,
+				userHasClearedCart: true,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( `/plans/${ siteSlug }` );
@@ -79,7 +79,7 @@ describe( 'leaveCheckout', () => {
 		it( 'returns to /start if missing site slug', () => {
 			leaveCheckout( {
 				tracksEvent: 'checkout_cancel',
-				clearedCart: true,
+				userHasClearedCart: true,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( '/start' );
@@ -92,7 +92,7 @@ describe( 'leaveCheckout', () => {
 				siteSlug: siteSlug,
 				tracksEvent: 'checkout_cancel',
 				previousPath: '/domains/add/my-search-domain/email/mywpsite.wordpress.com?',
-				clearedCart: true,
+				userHasClearedCart: true,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( `/domains/add/${ siteSlug }` );
@@ -104,7 +104,7 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( {
 				tracksEvent: 'checkout_cancel',
 				previousPath: previousPath,
-				clearedCart: false,
+				userHasClearedCart: false,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( previousPath );
@@ -119,7 +119,7 @@ describe( 'leaveCheckout', () => {
 				siteSlug: siteSlug,
 				tracksEvent: 'checkout_cancel',
 				previousPath: previousPath,
-				clearedCart: false,
+				userHasClearedCart: false,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( previousPath );
@@ -134,7 +134,7 @@ describe( 'leaveCheckout', () => {
 				siteSlug: siteSlug,
 				tracksEvent: 'checkout_cancel',
 				previousPath: previousPath,
-				clearedCart: false,
+				userHasClearedCart: false,
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( previousPath );

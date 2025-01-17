@@ -17,11 +17,11 @@ import { sendMessageToOpener } from './popup';
 const debug = debugFactory( 'calypso:leave-checkout' );
 
 const getCloseURL = ( {
-	clearedCart,
+	userHasClearedCart,
 	previousPath,
 	siteSlug,
 }: {
-	clearedCart: boolean;
+	userHasClearedCart: boolean;
 	previousPath?: string;
 	siteSlug?: string;
 } ): string => {
@@ -34,7 +34,7 @@ const getCloseURL = ( {
 		/* Regex to match /domains/add/abc123/email/def456? */
 		const emailUpsellRegex = /\/domains\/add\/[^/]+\/email\/[^/]+(\?|\/|$)/;
 
-		if ( clearedCart && emailUpsellRegex.test( previousPath ) ) {
+		if ( userHasClearedCart && emailUpsellRegex.test( previousPath ) ) {
 			return '/domains/add/' + siteSlug;
 		}
 		return previousPath;
@@ -49,14 +49,14 @@ export const leaveCheckout = ( {
 	previousPath,
 	tracksEvent,
 	createUserAndSiteBeforeTransaction,
-	clearedCart = false,
+	userHasClearedCart = false,
 }: {
 	siteSlug?: string;
 	forceCheckoutBackUrl?: string;
 	previousPath?: string;
 	tracksEvent: string;
 	createUserAndSiteBeforeTransaction?: boolean;
-	clearedCart?: boolean;
+	userHasClearedCart?: boolean;
 } ): void => {
 	recordTracksEvent( tracksEvent );
 	debug( 'leaving checkout with args', {
@@ -97,7 +97,7 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	const closeUrl = getCloseURL( { clearedCart, previousPath, siteSlug } );
+	const closeUrl = getCloseURL( { userHasClearedCart, previousPath, siteSlug } );
 
 	try {
 		const searchParams = new URLSearchParams( window.location.search );
