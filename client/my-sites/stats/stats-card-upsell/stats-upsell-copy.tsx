@@ -8,6 +8,8 @@ import {
 } from 'calypso/my-sites/stats/const';
 import {
 	STATS_FEATURE_DATE_CONTROL,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
 	STAT_TYPE_CLICKS,
@@ -71,6 +73,17 @@ const getUpsellCopy = ( statType: string ) => {
 		case STAT_TYPE_COUNTRY_VIEWS:
 			return translate(
 				'Discover where your {{link}}visitors are located{{/link}} and identify where your traffic is coming from.',
+				{
+					components: {
+						link: jetpackTrafficSupportLinkWithAnchor( 'countries' ),
+					},
+				}
+			);
+		case STATS_FEATURE_LOCATION_REGION_VIEWS:
+		case STATS_FEATURE_LOCATION_CITY_VIEWS:
+			// TODO: Add link to proper support page
+			return translate(
+				'Access to visitor stats at the {{link}}regional and city{{/link}} level for more accurate analysis.',
 				{
 					components: {
 						link: jetpackTrafficSupportLinkWithAnchor( 'countries' ),

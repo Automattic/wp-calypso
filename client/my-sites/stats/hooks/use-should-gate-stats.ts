@@ -48,6 +48,8 @@ import {
 	STATS_FEATURE_PAGE_INSIGHTS,
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 } from '../constants';
 import {
 	hasSupportedCommercialUse,
@@ -67,7 +69,12 @@ const defaultDateControlGates = [
 ];
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
-const jetpackStatsAdvancedPaywall = [ STATS_TYPE_DEVICE_STATS, STATS_FEATURE_UTM_STATS ];
+const jetpackStatsAdvancedPaywall = [
+	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_UTM_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
+];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
 // gate modules or cards accordingly.
@@ -107,6 +114,8 @@ const gatedStats = [
 	STAT_TYPE_VIDEO_PLAYS,
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 
 	// Paid Stats
 	STAT_TYPE_TOP_POSTS,
@@ -135,6 +144,8 @@ const freeStats = [
 	// New Commercial stats are the only thing we gate for legacy sites.
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 ];
 
 // wpcom: Gate UTM and device stats for sites with STATS_BASIC feature, this is the feature applied to legacy sites.
@@ -145,6 +156,8 @@ const basicStats = [
 	STAT_TYPE_VIDEO_PLAYS,
 	STATS_FEATURE_UTM_STATS,
 	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 
 	// Paid stats
 	STAT_TYPE_REFERRERS,
@@ -170,6 +183,8 @@ export const paidStats = [
 	STAT_TYPE_VIDEO_PLAYS,
 	STATS_TYPE_DEVICE_STATS,
 	STATS_FEATURE_UTM_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 ];
 
 /*

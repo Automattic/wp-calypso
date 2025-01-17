@@ -20,6 +20,12 @@ $break-large-stats-countries: 1280px;
 		}
 	}
 
+	// Ensure the tabs are above the overlay
+	.stats-module-locations__tabs {
+		position: relative;
+		z-index: 2;
+	}
+
 	@media (min-width: $break-large-stats-countries) {
 
 		.stats__module-wrapper--countryviews .stats-module,
