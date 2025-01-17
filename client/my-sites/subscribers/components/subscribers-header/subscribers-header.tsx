@@ -27,14 +27,13 @@ export const SubscribersHeader = ( {
 	const HELP_CENTER_STORE = HelpCenter.register();
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
-	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 
 	const openHelpCenter = () => {
-		setShowHelpCenter( true );
-		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ), 168381 );
+		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
 	};
 
 	const paidNewsletterUrl = ! isWPCOMSite
