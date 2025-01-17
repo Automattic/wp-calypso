@@ -62,8 +62,12 @@ const useSubscriberRemoveMutation = (
 				try {
 					await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
 				} catch ( e ) {
-					if ( ( e as ApiResponseError )?.error !== 'not_found' && subscriber.subscription_id ) {
-						throw new Error( 'Something went wrong while unsubscribing.' );
+					// Only throw if subscription_id is empty
+					if ( ( e as ApiResponseError )?.error === 'not_found' && ! subscriber.subscription_id ) {
+						throw new Error( ( e as ApiResponseError )?.message );
+					} else {
+						// Throw for any other error
+						throw new Error( ( e as ApiResponseError )?.message );
 					}
 				}
 			}
