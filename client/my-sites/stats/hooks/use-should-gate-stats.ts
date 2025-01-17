@@ -69,7 +69,12 @@ const defaultDateControlGates = [
 ];
 
 // If Jetpack sites don't have any purchase that supports commercial use, gate advanced modules accordingly.
-const jetpackStatsAdvancedPaywall = [ STATS_TYPE_DEVICE_STATS, STATS_FEATURE_UTM_STATS ];
+const jetpackStatsAdvancedPaywall = [
+	STATS_TYPE_DEVICE_STATS,
+	STATS_FEATURE_UTM_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
+];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
 // gate modules or cards accordingly.
@@ -99,8 +104,6 @@ const granularControlForJetpackStatsCommercialPaywall = [
 	STATS_FEATURE_INTERVAL_DROPDOWN_MONTH,
 	STATS_FEATURE_INTERVAL_DROPDOWN_YEAR,
 	STATS_FEATURE_DOWNLOAD_CSV,
-	STATS_FEATURE_LOCATION_REGION_VIEWS,
-	STATS_FEATURE_LOCATION_CITY_VIEWS,
 ];
 
 // wpcom: All stats are gated for WPCOM sites without the STATS_FREE, STATS_BASIC, STATS_PAID or STATS_COMMERCIAL feature.
