@@ -65,7 +65,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	 * Handle the case where we are forwarding to Zendesk.
 	 */
 	useEffect( () => {
-		if ( isForwardingToZendesk && ! chat.conversationId ) {
+		if (
+			isForwardingToZendesk &&
+			! chat.conversationId &&
+			createZendeskConversation &&
+			resetSupportInteraction
+		) {
 			resetSupportInteraction().then( () => {
 				if ( isChatLoaded ) {
 					createZendeskConversation().then( () => {
@@ -74,7 +79,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				}
 			} );
 		}
-	}, [ isForwardingToZendesk, isChatLoaded ] );
+	}, [
+		isForwardingToZendesk,
+		isChatLoaded,
+		createZendeskConversation,
+		resetSupportInteraction,
+		chat?.conversationId,
+	] );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
