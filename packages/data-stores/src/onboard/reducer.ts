@@ -386,9 +386,14 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && action?.skipFlags?.includes( 'skipGoals' ) ) {
+		return state;
+	}
+
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
+
 	return state;
 };
 

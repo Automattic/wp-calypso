@@ -96,6 +96,7 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -222,6 +223,7 @@ const siteSetupFlow: Flow = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
+								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
@@ -247,7 +249,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
