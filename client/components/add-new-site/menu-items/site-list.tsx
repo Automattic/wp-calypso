@@ -4,11 +4,8 @@ import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
-import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
 import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -16,8 +13,6 @@ import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 
 const AddNewSiteSiteListMenuItems = () => {
 	const translate = useTranslate();
-
-	const pressableOwnership = usePressableOwnershipType();
 
 	const popoverOfferEnabled = true;
 	const popoverCardEnabled = true;
@@ -49,19 +44,6 @@ const AddNewSiteSiteListMenuItems = () => {
 							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
 							page( `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` );
 						},
-					} }
-				/>
-				{ /* TODO: Do we really need a Pressable menu item? */ }
-				<AddNewSiteMenuItem
-					icon={ <img src={ pressableIcon } alt="Pressable" /> }
-					heading="Pressable"
-					description={ translate( 'Bring your theme, plugins, and content to WordPress.com.' ) }
-					buttonProps={ {
-						href:
-							pressableOwnership === 'regular'
-								? 'https://my.pressable.com/agency/auth'
-								: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
-						target: pressableOwnership === 'regular' ? '_blank' : undefined,
 					} }
 				/>
 			</AddNewSitePopoverColumn>
