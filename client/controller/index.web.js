@@ -399,7 +399,12 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 
 	loadExperimentAssignment( aaTestName );
 	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
-	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+
+	if (
+		config( 'env_id' ) !== 'production' ||
+		isE2ETest() ||
+		duplicateViewsExperimentAssignment.variationName === 'treatment'
+	) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
