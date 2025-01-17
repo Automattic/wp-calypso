@@ -65,9 +65,6 @@ const useSubscriberRemoveMutation = (
 					// Only throw if subscription_id is empty
 					if ( ( e as ApiResponseError )?.error === 'not_found' && ! subscriber.subscription_id ) {
 						throw new Error( ( e as ApiResponseError )?.message );
-					} else {
-						// Throw for any other error
-						throw new Error( ( e as ApiResponseError )?.message );
 					}
 				}
 			}
