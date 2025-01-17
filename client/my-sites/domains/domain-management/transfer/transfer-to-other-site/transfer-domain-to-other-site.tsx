@@ -131,10 +131,11 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 		const { selectedSite, selectedDomainName, currentRoute, showHeader } = this.props;
 		const slug = selectedSite?.slug;
 		const componentClassName = 'transfer-domain-to-other-site';
+
 		if ( ! this.isDataReady() ) {
 			return (
 				<DomainMainPlaceholder
-					breadcrumbs={ this.renderHeader }
+					breadcrumbs={ showHeader && this.renderHeader }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				/>
 			);
