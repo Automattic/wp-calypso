@@ -22,6 +22,28 @@ import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-cha
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
 import type { Moment } from 'moment';
 
+function StatsSubscribersPageError() {
+	const translate = useTranslate();
+	const classes = clsx( 'stats-module__placeholder', 'is-void' );
+
+	return (
+		<div className={ classes }>
+			<p>
+				{ translate(
+					'An error occurred while loading your subscriber stats. If you continue to have issues loading this page, please get in touch via our {{link}}contact form{{/link}} for assistance.',
+					{
+						components: {
+							link: (
+								<a target="_blank" rel="noreferrer" href="https://jetpack.com/contact-support/" />
+							),
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+}
+
 interface StatsSubscribersPageProps {
 	period: {
 		// Subscribers page only use this period but other properties and this format is needed for StatsModule to construct a URL to email's summary page
@@ -63,7 +85,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 
 	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
-	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
+	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
@@ -98,7 +120,9 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
+				{ isError && <StatsSubscribersPageError /> }
 				{ ! isLoading &&
+					! isError &&
 					( showLaunchpad ? (
 						emptyComponent
 					) : (

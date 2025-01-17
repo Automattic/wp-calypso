@@ -17,4 +17,23 @@
 			border-block-end: none;
 		}
 	}
+
+	.user-profile__lists-body {
+		max-width: 768px;
+		margin: 0 auto;
+
+		&-link {
+			color: var(--color-neutral-100);
+			cursor: pointer;
+			display: block;
+			line-height: 29px;
+			text-wrap: pretty;
+
+			.reader-post-card__title {
+				margin-top: 0;
+				font-size: 1.25rem;
+				font-weight: 600;
+			}
+		}
+	}
 }

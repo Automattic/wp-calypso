@@ -51,7 +51,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		search: '',
-		fields: [ 'icon', 'post' ],
+		fields: [],
 		perPage: 10,
 		page: 1,
 		layout: {
@@ -146,7 +146,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem ]
+		[ getPostFromItem, handleItemFocus ]
 	);
 
 	const fetchData = useCallback( () => {
@@ -226,17 +226,17 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<aside className="recent-feed__list-column-content">
-					<DataViews
-						getItemId={ ( item: ReaderPost, index = 0 ) =>
+					<DataViews< ReaderPost | PaddingItem >
+						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
-						view={ view as View }
+						view={ view }
 						fields={ fields }
 						data={ shownData }
-						onChangeView={ ( newView: View ) =>
+						onChangeView={ ( newView ) =>
 							setView( {
 								type: newView.type,
-								fields: newView.fields ?? [],
+								fields: [],
 								layout: view.layout,
 								perPage: newView.perPage,
 								page: newView.page,

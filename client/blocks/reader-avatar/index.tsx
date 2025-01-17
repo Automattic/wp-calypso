@@ -1,9 +1,12 @@
-import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import SiteIcon from 'calypso/blocks/site-icon';
 import Gravatar from 'calypso/components/gravatar';
+import {
+	getUserProfileUrl,
+	isUserProfileEnabled,
+} from 'calypso/reader/user-stream/user-profile.utils';
 
 import './style.scss';
 
@@ -117,8 +120,7 @@ export default function ReaderAvatar( {
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
-	const avatarUrl =
-		config.isEnabled( 'reader/user-profile' ) && author?.ID ? `/read/users/${ author.ID }` : null;
+	const avatarUrl = isUserProfileEnabled() && author?.ID ? getUserProfileUrl( author.ID ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);

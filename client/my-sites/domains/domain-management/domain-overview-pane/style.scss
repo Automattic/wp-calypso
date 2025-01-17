@@ -79,6 +79,47 @@
 		}
 	}
 
+	.domain-forwarding-card__fields {
+		.accordion .foldable-card {
+			.foldable-card__header,
+			.foldable-card__content {
+				padding: 0;
+			}
+	
+			.foldable-card__main > div {
+				flex-grow: 0;
+			}
+	
+			&.is-expanded .foldable-card__content {
+				padding: 0 24px 24px 0;
+			}
+		}
+	}
+
+	.domain-forwarding-card__fields,
+	.domain-glue-records-card__accordion {
+		@media (min-width: $break-small) {
+			.form-text-input-with-affixes {
+				> :first-child,
+				.form-text-input-with-affixes__prefix select {
+					border-radius: 2px 0 0 2px;
+				}
+
+				> :last-child {
+					border-radius: 0 2px 2px 0;
+				}
+
+				> :first-child:last-child {
+					border-radius: 2px;
+				}
+
+				> :not(:first-child):not(:last-child) {
+					border-radius: 0;
+				}
+			}
+		}
+	}
+	
 	.domain-info-card.action-card {
 		padding: 24px;
 
@@ -172,14 +213,38 @@
 	}
 
 	.domain-settings-page {
-		margin-left: 0;
-		max-width: 1200px;
+		margin: 0 auto;
+		max-width: 1400px;
+
+		.two-columns-layout .two-columns-layout__content {
+			> div:first-child .card {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> div:last-child .card {
+				border-radius: 0 0 4px 4px;
+			}
+		}
 	}
 
 	.domains-overview__details.main {
 		&,
 		.hosting-dashboard-layout-column__container {
 			height: 100%;
+		}
+	}
+
+	.domain__main-placeholder {
+		max-width: 1400px;
+
+		.vertical-nav {
+			> .domain__main-placeholder-card:first-child {
+				border-radius: 4px 4px 0 0;
+			}
+
+			> .domain__main-placeholder-card:last-child {
+				border-radius: 0 0 4px 4px;
+			}
 		}
 	}
 }

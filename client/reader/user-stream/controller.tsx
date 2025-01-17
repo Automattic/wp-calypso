@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
+import { getUserProfileBasePath } from 'calypso/reader/user-stream/user-profile.utils';
 import type { AppState } from 'calypso/types';
 
 interface Context {
@@ -17,7 +18,7 @@ const analyticsPageTitle = 'Reader';
 
 export function userPosts( context: Context, next: () => void ): void {
 	const userId = context.params.user_id;
-	const basePath = '/read/users/:user_id';
+	const basePath = getUserProfileBasePath();
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId + ' > Posts';
 	const mcKey = 'user_posts';
 	const streamKey = 'user:' + userId;
@@ -45,7 +46,7 @@ export function userPosts( context: Context, next: () => void ): void {
 
 export function userLists( context: Context, next: () => void ): void {
 	const userId = context.params.user_id;
-	const basePath = '/read/users/:user_id/lists';
+	const basePath = getUserProfileBasePath( 'lists' );
 	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId + ' > Lists';
 	const mcKey = 'user_lists';
 

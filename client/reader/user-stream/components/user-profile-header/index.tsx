@@ -5,6 +5,7 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { UserData } from 'calypso/lib/user/user';
+import { getUserProfileUrl } from 'calypso/reader/user-stream/user-profile.utils';
 
 import './style.scss';
 
@@ -16,17 +17,17 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
 	const userId = user.ID;
-
+	const userProfileUrl = getUserProfileUrl( Number( userId ) );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
-			path: `/read/users/${ userId }`,
-			selected: currentPath === `/read/users/${ userId }`,
+			path: userProfileUrl,
+			selected: currentPath === userProfileUrl,
 		},
 		{
 			label: translate( 'Lists' ),
-			path: `/read/users/${ userId }/lists`,
-			selected: currentPath === `/read/users/${ userId }/lists`,
+			path: `${ userProfileUrl }/lists`,
+			selected: currentPath === `${ userProfileUrl }/lists`,
 		},
 	];
 

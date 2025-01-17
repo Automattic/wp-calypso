@@ -66,7 +66,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowMailboxes = ! isP2;
 
-	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
+	const shouldShowAddOns = ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 	const showP2s = useSelector( hasSiteWithP2 );
