@@ -1,3 +1,11 @@
+declare global {
+	interface Window {
+		isGlobalStylesOnPersonal?: boolean;
+	}
+}
 export function isGlobalStylesOnPersonalEnabled(): boolean {
-	return !! ( window as any ).isGlobalStylesOnPersonal;
+	if ( typeof window === 'undefined' ) {
+		return false;
+	}
+	return !! window.isGlobalStylesOnPersonal;
 }
