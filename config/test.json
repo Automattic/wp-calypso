@@ -15,6 +15,7 @@
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "development",
 	"google_recaptcha_site_key": "",
+	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
 	"signup_url": "/start",
 	"login_url": "https://wordpress.com/wp-login.php",
