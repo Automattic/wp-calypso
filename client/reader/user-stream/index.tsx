@@ -4,11 +4,11 @@ import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
+import { getUserProfileUrl } from 'calypso/reader/user-stream/user-profile.utils';
 import UserLists from 'calypso/reader/user-stream/views/lists';
 import UserPosts from 'calypso/reader/user-stream/views/posts';
 import { requestUser } from 'calypso/state/reader/users/actions';
 import './style.scss';
-
 interface UserStreamProps {
 	streamKey?: string;
 	userId: string;
@@ -51,13 +51,14 @@ export function UserStream( { userId, requestUser, user, streamKey, isLoading }:
 	}
 
 	const currentPath = page.current;
+	const userProfileUrl = getUserProfileUrl( Number( userId ) );
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
 		switch ( basePath ) {
-			case `/read/users/${ userId }`:
+			case userProfileUrl:
 				return <UserPosts streamKey={ streamKey as string } user={ user } />;
-			case `/read/users/${ userId }/lists`:
+			case `${ userProfileUrl }/lists`:
 				return <UserLists user={ user } />;
 			default:
 				return null;

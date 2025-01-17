@@ -18,7 +18,7 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
-export default async function ( context, next ) {
+export default async function renderHome( context, next ) {
 	const state = await context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
@@ -28,7 +28,6 @@ export default async function ( context, next ) {
 	}
 
 	context.primary = <CustomerHome key={ siteId } />;
-
 	next();
 }
 

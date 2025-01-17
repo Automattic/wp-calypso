@@ -131,6 +131,8 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const hasLocationData = Array.isArray( data ) && data.length > 0;
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
@@ -139,7 +141,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ isRequestingData && (
 				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
 			) }
-			{ ( ( ! isRequestingData && ! isError && data ) || shouldGateStatsModule ) && (
+			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGateStatsModule ) && (
 				// show data or an overlay
 				<>
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
@@ -189,25 +191,22 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					/>
 				</>
 			) }
-			{ ! isRequestingData &&
-				Array.isArray( data ) &&
-				! data?.length &&
-				! shouldGateStatsModule && (
-					// show empty state
-					<StatsCard
-						title={ translate( 'Locations' ) }
-						isEmpty
-						emptyMessage={ emptyMessage }
-						footerAction={
-							summaryUrl
-								? {
-										url: summaryUrl,
-										label: translate( 'View more' ),
-								  }
-								: undefined
-						}
-					/>
-				) }
+			{ ! isRequestingData && ! hasLocationData && ! shouldGateStatsModule && (
+				// show empty state
+				<StatsCard
+					title={ translate( 'Locations' ) }
+					isEmpty
+					emptyMessage={ emptyMessage }
+					footerAction={
+						summaryUrl
+							? {
+									url: summaryUrl,
+									label: translate( 'View more' ),
+							  }
+							: undefined
+					}
+				/>
+			) }
 		</>
 	);
 };

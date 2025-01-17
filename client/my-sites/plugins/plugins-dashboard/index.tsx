@@ -1,11 +1,14 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { hasMarketplaceProduct } from '@automattic/calypso-products';
 import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
@@ -36,6 +39,7 @@ import {
 } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -108,11 +112,25 @@ const PluginsDashboard = ( {
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
 	);
-	const allPlugins = useSelector( ( state ) => getPlugins( state, siteIds, 'all' ) ).map(
-		( plugin: Plugin ) => {
-			const pluginData = wporgPlugins?.[ plugin.slug ];
-			return Object.assign( {}, plugin, pluginData ) as Plugin;
-		}
+	const productsList = useSelector( ( state ) => getProductsList( state ) );
+	const { data: dotComPlugins }: { data: Plugin[] | undefined } = useWPCOMPluginsList( 'all' );
+	const allPlugins = useSelector( ( state ) =>
+		getPlugins( state, siteIds, 'all' ).map( ( plugin: Plugin ) => {
+			let dotComPluginData: Plugin | undefined;
+			if ( dotComPlugins ) {
+				dotComPluginData = dotComPlugins.find(
+					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
+				);
+				if ( dotComPluginData ) {
+					dotComPluginData.isMarketplaceProduct = hasMarketplaceProduct(
+						productsList,
+						plugin.slug
+					);
+				}
+			}
+			const dotOrgPluginData = wporgPlugins?.[ plugin.slug ];
+			return Object.assign( {}, plugin, dotOrgPluginData, dotComPluginData ) as Plugin;
+		} )
 	);
 	const currentPlugins = useSelector( ( state ) =>
 		getPluginsWithUpdateStatuses( state, allPlugins )
@@ -129,8 +147,10 @@ const PluginsDashboard = ( {
 			! item?.options?.is_wpforteams_site
 	);
 
-	const sitesWithoutPlugin = sitesToShow.filter(
-		( site ) => ! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID )
+	const sitesWithoutPluginAvailable = sitesToShow.filter(
+		( site ) =>
+			! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID ) &&
+			! ( isJetpackCloud() && hasMarketplaceProduct( productsList, pluginSlug ) )
 	);
 
 	const doActionOverSelected = (
@@ -323,6 +343,7 @@ const PluginsDashboard = ( {
 			/>
 			<QueryJetpackSitesFeatures />
 			<QueryPlugins />
+			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
 					<LayoutHeader>
@@ -376,7 +397,7 @@ const PluginsDashboard = ( {
 						/>
 
 						<PluginAvailableOnSitesList
-							sites={ sitesWithoutPlugin }
+							sites={ sitesWithoutPluginAvailable }
 							isLoading={ isLoading }
 							plugin={ selectedPlugin }
 						/>

@@ -194,6 +194,12 @@ describe( 'path helper functions', () => {
 				relativeTo
 			) }`
 		);
+		const relativeToSiteDomain = '/overview/site-domain/email';
+		expect( getEmailInDepthComparisonPath( siteName, domainName, relativeToSiteDomain ) ).toEqual(
+			`/overview/site-domain/email/${ domainName }/compare/${ siteName }?referrer=${ encodeURIComponent(
+				relativeToSiteDomain
+			) }`
+		);
 	} );
 
 	it( 'getMailboxesPath', () => {

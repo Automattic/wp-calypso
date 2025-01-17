@@ -21,6 +21,7 @@ import {
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
 	ADD_FORWARDING_EMAIL,
+	COMPARE_EMAIL_PROVIDERS,
 	EDIT_CONTACT_INFO,
 } from 'calypso/my-sites/domains/domain-management/subpage-wrapper/subpages';
 import emailController from 'calypso/my-sites/email/controller';
@@ -176,6 +177,15 @@ export default function () {
 		controllers: [
 			domainManagementController.domainManagementSubpageParams( ADD_FORWARDING_EMAIL ),
 			emailController.emailManagementAddEmailForwards,
+			domainManagementController.domainManagementSubpageView,
+		],
+	} );
+
+	registerSiteDomainPage( {
+		path: '/overview/site-domain/email/:domain/compare/:site',
+		controllers: [
+			domainManagementController.domainManagementSubpageParams( COMPARE_EMAIL_PROVIDERS ),
+			emailController.emailManagementInDepthComparison,
 			domainManagementController.domainManagementSubpageView,
 		],
 	} );
