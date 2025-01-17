@@ -34,6 +34,7 @@ export const createBaseTransaction = (): BillingTransaction => ( {
 			variation_slug: '',
 			months_per_renewal_interval: 0,
 			wpcom_product_slug: '',
+			price_tier_slug: null,
 		},
 	],
 	address: '',
