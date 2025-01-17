@@ -8,7 +8,9 @@ import { useOdieAssistantContext } from '../context';
 import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
 
-export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
+export const useCreateZendeskConversation = (): ( (
+	avoidTransfer?: boolean
+) => Promise< void > ) => {
 	const {
 		selectedSiteId,
 		selectedSiteURL,
@@ -27,16 +29,18 @@ export const useCreateZendeskConversation = (): ( () => Promise< void > ) => {
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
-	const createConversation = async () => {
+	const createConversation = async ( avoidTransfer = false ) => {
 		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
 			return;
 		}
 
-		setChat( ( prevChat ) => ( {
-			...prevChat,
-			messages: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
-			status: 'transfer',
-		} ) );
+		if ( ! avoidTransfer ) {
+			setChat( ( prevChat ) => ( {
+				...prevChat,
+				messages: [ ...prevChat.messages, ...ODIE_TRANSFER_MESSAGE ],
+				status: 'transfer',
+			} ) );
+		}
 
 		await submitUserFields( {
 			messaging_initial_message: userFieldMessage || undefined,

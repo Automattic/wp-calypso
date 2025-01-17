@@ -57,9 +57,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useAutoScroll( messagesContainerRef );
 
 	useEffect( () => {
-		( chat?.status === 'loaded' || chat?.status === 'closed' ) &&
+		if ( chat?.status === 'loaded' || chat?.status === 'closed' ) {
 			setChatMessagesLoaded( ! isForwardingToZendesk );
-	}, [ chat, isForwardingToZendesk ] );
+		}
+	}, [ chat?.status, isForwardingToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
@@ -69,23 +70,18 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			isForwardingToZendesk &&
 			! chat.conversationId &&
 			createZendeskConversation &&
-			resetSupportInteraction
+			resetSupportInteraction &&
+			isChatLoaded
 		) {
 			resetSupportInteraction().then( () => {
 				if ( isChatLoaded ) {
-					createZendeskConversation().then( () => {
+					createZendeskConversation( true ).then( () => {
 						setChatMessagesLoaded( true );
 					} );
 				}
 			} );
 		}
-	}, [
-		isForwardingToZendesk,
-		isChatLoaded,
-		createZendeskConversation,
-		resetSupportInteraction,
-		chat?.conversationId,
-	] );
+	}, [ isForwardingToZendesk, isChatLoaded, chat?.conversationId ] );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
