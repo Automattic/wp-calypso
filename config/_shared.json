@@ -242,8 +242,16 @@
 		"with-plugin",
 		"with-theme",
 		"woocommerce-install",
-		"wpcc"
+		"wpcc",
+		"__disabled_onboarding",
+		"onboarding-registrationless",
+		"rewind-setup",
+		"rewind-auto-config",
+		"clone-site",
+		"crowdsignal",
+		"launch-only"
 	],
+	"reskin_breaking": [ "videopress-account" ],
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

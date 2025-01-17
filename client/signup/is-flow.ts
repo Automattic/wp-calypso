@@ -1,6 +1,10 @@
 import config from '@automattic/calypso-config';
+import { getQueryArg } from '@wordpress/url';
 
 export const isReskinnedFlow = ( flowName: string ) => {
+	if ( getQueryArg( window.location.href, 'nr' ) ) {
+		return false;
+	}
 	return config< string[] >( 'reskinned_flows' ).includes( flowName );
 };
 
