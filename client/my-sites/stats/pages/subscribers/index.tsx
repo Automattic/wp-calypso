@@ -24,12 +24,22 @@ import type { Moment } from 'moment';
 
 function StatsSubscribersPageError() {
 	const translate = useTranslate();
-	const message = translate( 'An error occurred while loading your subscriber stats.' );
 	const classes = clsx( 'stats-module__placeholder', 'is-void' );
 
 	return (
 		<div className={ classes }>
-			<p>{ message }</p>
+			<p>
+				{ translate(
+					'An error occurred while loading your subscriber stats. If you continue to have issues loading this page, please get in touch via our {{link}}contact form{{/link}} for assistance.',
+					{
+						components: {
+							link: (
+								<a target="_blank" rel="noreferrer" href="https://jetpack.com/contact-support/" />
+							),
+						},
+					}
+				) }
+			</p>
 		</div>
 	);
 }
