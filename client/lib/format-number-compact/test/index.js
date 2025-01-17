@@ -290,11 +290,11 @@ describe( 'formatNumberCompact', () => {
 		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'ar' );
-			expect( counts ).toEqual( '١٫٢ ألف' );
+			expect( counts ).toEqual( '1.2 ألف' );
 		} );
 		test( 'shows leading sig figs for counts > 10000', () => {
 			const counts = formatNumberCompact( 123456, 'ar' );
-			expect( counts ).toEqual( '١٢٣ ألف' );
+			expect( counts ).toEqual( '123 ألف' );
 		} );
 	} );
 	describe( 'sv', () => {
