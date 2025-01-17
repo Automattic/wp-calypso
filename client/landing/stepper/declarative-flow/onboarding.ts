@@ -2,7 +2,7 @@ import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
@@ -50,28 +50,38 @@ const onboarding: Flow = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
-		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const [ isLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 			[]
 		);
 
+		// we are only interested in the initial values and not when they values change
+		const initialGoals = useRef( goals );
+		const initialLoggedOut = useRef( ! userIsLoggedIn );
+
 		return useMemo(
 			() => ( {
-				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-					is_goals_first: isGoalsAtFrontExperiment.toString(),
-					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
-					is_logged_out: ( ! userIsLoggedIn ).toString(),
-				},
-				[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
-					...( isGoalsAtFrontExperiment && {
+				isLoading,
+				eventsProperties: {
+					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
 						is_goals_first: isGoalsAtFrontExperiment.toString(),
-					} ),
-					...( goals.length && { goals: goals.join( ',' ) } ),
+						...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+						is_logged_out: initialLoggedOut.current.toString(),
+					},
+
+					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+						...( isGoalsAtFrontExperiment && {
+							is_goals_first: 'true',
+						} ),
+						...( initialGoals.current.length && {
+							goals: initialGoals.current.join( ',' ),
+						} ),
+					},
 				},
 			} ),
-			[ isGoalsAtFrontExperiment, userIsLoggedIn, goals ]
+			[ isGoalsAtFrontExperiment, initialLoggedOut, initialGoals, isLoading ]
 		);
 	},
 	useSteps() {
@@ -116,6 +126,7 @@ const onboarding: Flow = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
@@ -276,6 +287,12 @@ const onboarding: Flow = {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
 					}
+
+					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
+					if ( cartItems?.length > 0 ) {
+						setProductCartItems( cartItems.slice( 1 ) );
+					}
+
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
 				}

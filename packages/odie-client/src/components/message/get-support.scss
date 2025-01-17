@@ -44,6 +44,20 @@
 .help-center__container-chat .chatbox-messages {
 	.odie__transfer-chat {
 		margin-left: 46px;
+		flex-direction: column;
+    	align-items: flex-start;
+		gap: 8px;
+
+		.odie__transfer-chat--button-container {
+			display: flex;
+			gap: 8px;
+
+			.odie__transfer-chat--wait-time {
+				font-size: 0.75rem;	
+				color: var(--studio-gray-50);
+				align-content: center;
+			}
+		}
 	}
 
 	.help-center__cookie-warning {

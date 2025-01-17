@@ -2,7 +2,7 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
-import { getOdieTransferMessageConstant } from '../constants';
+import { ODIE_TRANSFER_MESSAGE } from '../constants';
 import { emptyChat } from '../context';
 import { useGetZendeskConversation, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
@@ -11,10 +11,7 @@ import type { Chat, Message } from '../types';
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
-export const useGetCombinedChat = (
-	canConnectToZendesk: boolean,
-	shouldUseHelpCenterExperience: boolean | undefined
-) => {
+export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -38,7 +35,7 @@ export const useGetCombinedChat = (
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		if ( odieId && ( ! conversationId || ! shouldUseHelpCenterExperience ) ) {
+		if ( odieId && ! conversationId ) {
 			if ( odieChat ) {
 				setMainChatState( {
 					...odieChat,
@@ -48,7 +45,7 @@ export const useGetCombinedChat = (
 					status: 'loaded',
 				} );
 			}
-		} else if ( odieId && conversationId && shouldUseHelpCenterExperience && canConnectToZendesk ) {
+		} else if ( odieId && conversationId && canConnectToZendesk ) {
 			if ( odieChat && isChatLoaded ) {
 				getZendeskConversation( {
 					chatId: odieChat.odieId,
@@ -61,7 +58,7 @@ export const useGetCombinedChat = (
 							conversationId: conversation.id,
 							messages: [
 								...odieChat.messages,
-								...getOdieTransferMessageConstant( true ),
+								...ODIE_TRANSFER_MESSAGE,
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',
@@ -86,7 +83,6 @@ export const useGetCombinedChat = (
 		conversationId,
 		odieId,
 		currentSupportInteraction,
-		shouldUseHelpCenterExperience,
 		canConnectToZendesk,
 		getZendeskConversation,
 	] );

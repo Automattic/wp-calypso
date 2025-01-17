@@ -1,7 +1,7 @@
 import { isFreePlanProduct } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import i18n, { getLocaleSlug, localize, translate } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -57,24 +57,7 @@ class DeleteSite extends Component {
 		}
 
 		const warningText = () => {
-			if (
-				getLocaleSlug() === 'en' ||
-				getLocaleSlug() === 'en-gb' ||
-				i18n.hasTranslation(
-					'Before deleting your site, consider exporting its content as a backup'
-				)
-			) {
-				return translate( 'Before deleting your site, consider exporting its content as a backup' );
-			}
-
-			return translate( '{{strong}}%(siteDomain)s{{/strong}} will be unavailable in the future.', {
-				components: {
-					strong: <strong />,
-				},
-				args: {
-					siteDomain,
-				},
-			} );
+			return translate( 'Before deleting your site, consider exporting its content as a backup' );
 		};
 
 		return (
@@ -93,40 +76,21 @@ class DeleteSite extends Component {
 			this.state.confirmDomain.replace( /\s/g, '' ) !== siteDomain;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 
-		let deletionText = translate(
-			'Please type in {{warn}}%(siteAddress)s{{/warn}} in the field below to confirm. ' +
-				'Your site will then be gone forever.',
-			{
-				components: {
-					warn: <span className="delete-site__target-domain" />,
-				},
-				args: {
-					siteAddress: this.props.siteId && this.props.siteDomain,
-				},
-			}
-		);
-
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'Before deleting your site, consider exporting its content as a backup' )
-		) {
-			deletionText = translate(
-				'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
-				{
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						siteDomain: this.props.siteDomain,
-					},
-				}
-			);
-		}
-
 		return (
 			<>
-				<p>{ deletionText }</p>
+				<p>
+					{ translate(
+						'Type {{strong}}%(siteDomain)s{{/strong}} below to confirm you want to delete the site:',
+						{
+							components: {
+								strong: <strong />,
+							},
+							args: {
+								siteDomain: this.props.siteDomain,
+							},
+						}
+					) }
+				</p>
 				<>
 					<FormTextInput
 						autoCapitalize="off"

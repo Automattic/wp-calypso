@@ -35,7 +35,7 @@ const EmailProvidersInDepthComparison = ( {
 	selectedDomainName,
 	selectedIntervalLength = IntervalLength.ANNUALLY,
 	source,
-	context,
+	showBackButton = true,
 }: EmailProvidersInDepthComparisonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -45,7 +45,6 @@ const EmailProvidersInDepthComparison = ( {
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
-	const hideNavigation = context === 'domains';
 	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
@@ -98,7 +97,7 @@ const EmailProvidersInDepthComparison = ( {
 	return (
 		<Main wideLayout>
 			<QueryProductsList />
-			{ ! hideNavigation && (
+			{ showBackButton && (
 				<EmailUpsellNavigation
 					backUrl={
 						isDomainInCart

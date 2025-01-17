@@ -106,7 +106,8 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 				<BlockEditorProvider
 					settings={ editorSettings( isRTL ) }
 					value={ editorContent }
-					useSubRegistry={ false }
+					// This allows multiple editors to be used on the same page (namely inside QueryLoop).
+					useSubRegistry
 					onInput={ handleContentUpdate }
 					onChange={ handleContentUpdate }
 				>

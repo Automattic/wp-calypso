@@ -19,6 +19,7 @@ describe( 'I18n', function () {
 	} );
 
 	afterEach( function () {
+		jest.clearAllMocks();
 		i18n.configure(); // ensure everything is reset
 	} );
 
@@ -280,6 +281,54 @@ describe( 'I18n', function () {
 			expect( translate( 'red' ) ).toBe( 'edra' );
 			expect( translate( 'grey' ) ).toBe( 'reyga' );
 			expect( translate( 'green', { context: 'color' } ) ).toBe( 'cursus' );
+		} );
+	} );
+
+	describe( 'fixMe', () => {
+		it( 'should return null if text is missing or wrong type', () => {
+			const result = i18n.fixMe( {} );
+			expect( result ).toBe( null );
+		} );
+
+		it( 'should return newCopy if locale is en', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'hello',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return newCopy if locale is en-gb', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en-gb' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'hello',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return newCopy if text has a translation', () => {
+			i18n.hasTranslation = jest.fn().mockReturnValue( true );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'bonjour' );
+		} );
+
+		it( 'should return oldCopy if text does not have a translation and locale is not English', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'fr' );
+			i18n.hasTranslation = jest.fn().mockReturnValue( false );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hi' );
 		} );
 	} );
 } );

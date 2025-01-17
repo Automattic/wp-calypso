@@ -77,6 +77,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
@@ -92,17 +93,17 @@ export class FullPostView extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+		currentPath: PropTypes.string,
 	};
 
 	hasScrolledToCommentAnchor = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
+	mountedPath;
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
-		maxScrollDepth: 0, // Track the maximum scroll depth achieved
-		hasCompleted: false, // Track whether the user completed the post
 	};
 
 	openSuggestedFollowsModal = ( followClicked ) => {
@@ -113,12 +114,14 @@ export class FullPostView extends Component {
 	};
 
 	componentDidMount() {
+		this.scrollTracker = new ScrollTracker();
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
+		this.mountedPath = this.props.currentPath;
 
 		this.checkForCommentAnchor();
 
@@ -141,8 +144,8 @@ export class FullPostView extends Component {
 			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
 			document.querySelector( '#primary > div > div' ); // for Recent Feed in Stream
 		if ( scrollableContainer ) {
-			scrollableContainer.addEventListener( 'scroll', this.setScrollDepth );
-			this.scrollableContainer = scrollableContainer; // Save reference for cleanup
+			this.scrollableContainer = scrollableContainer;
+			this.scrollTracker.setContainer( scrollableContainer );
 			this.resetScroll();
 		}
 	}
@@ -197,9 +200,9 @@ export class FullPostView extends Component {
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
 		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 
-		if ( this.scrollableContainer ) {
-			this.scrollableContainer.removeEventListener( 'scroll', this.setScrollDepth );
-		}
+		// Track scroll depth and remove related instruments
+		this.trackScrollDepth( this.props.post );
+		this.scrollTracker.cleanup();
 		this.clearResetScrollTimeout();
 	}
 
@@ -261,10 +264,16 @@ export class FullPostView extends Component {
 		if ( this.readingStartTime && post.ID ) {
 			const endTime = Math.floor( Date.now() );
 			const engagementTime = endTime - this.readingStartTime;
-			recordTrackForPost( 'calypso_reader_article_engaged_time', post, {
-				context: 'full-post',
-				engagement_time: engagementTime / 1000,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_engaged_time',
+				post,
+				{
+					context: 'full-post',
+					engagement_time: engagementTime / 1000,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 			// check if the user exited early
 			this.checkFastExit( post, engagementTime );
 		}
@@ -280,66 +289,70 @@ export class FullPostView extends Component {
 	resetScroll = () => {
 		this.clearResetScrollTimeout();
 		this.resetScrollTimeout = setTimeout( () => {
-			if ( this.scrollableContainer ) {
-				this.scrollableContainer.scrollTo( {
-					top: 0,
-					left: 0,
-					behavior: 'instant',
-				} );
-			}
-			this.setState( { maxScrollDepth: 0, hasCompleted: false } );
+			this.scrollableContainer.scrollTo( {
+				top: 0,
+				left: 0,
+				behavior: 'instant',
+			} );
+			this.scrollTracker.resetMaxScrollDepth();
 		}, 0 ); // Defer until after the DOM update
 	};
 
-	setScrollDepth = () => {
-		if ( this.scrollableContainer ) {
-			const scrollTop = this.scrollableContainer.scrollTop;
-			const scrollHeight = this.scrollableContainer.scrollHeight;
-			const clientHeight = this.scrollableContainer.clientHeight;
-			const scrollDepth = ( scrollTop / ( scrollHeight - clientHeight ) ) * 100;
-			this.setState( ( prevState ) => ( {
-				maxScrollDepth: Math.max( prevState.maxScrollDepth, scrollDepth ) || 0,
-				hasCompleted: prevState.hasCompleted || scrollDepth >= 90,
-			} ) );
-		}
-	};
-
 	trackScrollDepth = ( post = null ) => {
-		const { maxScrollDepth } = this.state;
 		if ( ! post ) {
 			post = this.props.post;
 		}
 
 		if ( this.scrollableContainer && post.ID ) {
-			const roundedDepth = Math.round( maxScrollDepth * 100 ) / 100;
-			recordTrackForPost( 'calypso_reader_article_scroll_depth', post, {
-				context: 'full-post',
-				scroll_depth: roundedDepth,
-			} );
+			const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
+			recordTrackForPost(
+				'calypso_reader_article_scroll_depth',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 		}
 	};
 
 	trackExitBeforeCompletion = ( post = null ) => {
-		const { hasCompleted, maxScrollDepth } = this.state;
 		if ( ! post ) {
 			post = this.props.post;
 		}
 
+		const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
+		const hasCompleted = maxScrollDepth >= 90; // User has read 90% of the post
+
 		if ( this.scrollableContainer && post.ID && ! hasCompleted ) {
-			recordTrackForPost( 'calypso_reader_article_exit_before_completion', post, {
-				context: 'full-post',
-				scroll_depth: maxScrollDepth,
-			} );
+			recordTrackForPost(
+				'calypso_reader_article_exit_before_completion',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
 		}
 	};
 
 	trackFastExit = ( post, elapsedSeconds, fastExitThreshold ) => {
-		recordTrackForPost( 'calypso_reader_article_fast_exit', post, {
-			context: 'full-post',
-			estimated_reading_time: post.minutes_to_read,
-			elapsed_seconds: elapsedSeconds,
-			fast_exit_threshold: fastExitThreshold,
-		} );
+		recordTrackForPost(
+			'calypso_reader_article_fast_exit',
+			post,
+			{
+				context: 'full-post',
+				estimated_reading_time: post.minutes_to_read,
+				elapsed_seconds: elapsedSeconds,
+				fast_exit_threshold: fastExitThreshold,
+				path: this.mountedPath,
+			},
+			{ pathnameOverride: this.mountedPath }
+		);
 	};
 
 	checkFastExit = ( post = null, engagementTime ) => {
@@ -847,6 +860,7 @@ export default connect(
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
@@ -857,6 +871,7 @@ export default connect(
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
+			currentPath,
 		};
 
 		if ( ! isExternal && siteId ) {

@@ -10,7 +10,7 @@ import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
-	domainMagementDNS,
+	domainManagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
@@ -35,6 +35,7 @@ interface DomainsTableRowActionsProps {
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
+	isHostingOverview?: boolean;
 }
 
 export const DomainsTableRowActions = ( {
@@ -44,6 +45,7 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
+	isHostingOverview,
 }: DomainsTableRowActionsProps ) => {
 	const {
 		onDomainAction,
@@ -93,7 +95,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="manageDNS"
 					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
-					href={ domainMagementDNS( siteSlug, domain.name ) }
+					href={ domainManagementDNS( siteSlug, domain.name, isHostingOverview ) }
 				>
 					{ __( 'Manage DNS' ) }
 				</MenuItemLink>

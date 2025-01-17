@@ -254,11 +254,9 @@
 
 /**
  * Layout for the following flows
- * - ai-assembler
  * - assembler-first
  * - domain-upsell
  */
-.ai-assembler.domains,
 .assembler-first.domains,
 .domain-upsell.domains {
 	$domain-stepper-component-width: 1040px;
@@ -446,6 +444,8 @@
 	}
 
 	.step-container__header {
+		margin-bottom: 0;
+
 		@include break-small {
 			margin-bottom: 40px;
 		}
@@ -469,6 +469,10 @@
 				margin-top: 0;
 			}
 		}
+	}
+
+	.register-domain-step__search-card {
+		background: none;
 	}
 
 	.search-component {
@@ -591,6 +595,12 @@
 
 		.domain-search-results__domain-available-notice {
 			background: transparent;
+			display: flex;
+			margin-left: 0;
+
+			.domain-search-results__domain-available-notice-icon {
+				margin-right: 4px;
+			}
 
 			/* hide transfer link */
 			a {
