@@ -19,10 +19,11 @@ export const SiteSubscriptionsQueryProps = createContext< SiteSubscriptionsQuery
 	setFilterOption: () => undefined,
 } );
 
-export const SiteSubscriptionsQueryPropsProvider: React.FC< { children: React.ReactNode } > = ( {
-	children,
-} ) => {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
+export const SiteSubscriptionsQueryPropsProvider: React.FC< {
+	initialSearchTerm?: string | ( () => string );
+	children: React.ReactNode;
+} > = ( { children, initialSearchTerm = '' } ) => {
+	const [ searchTerm, setSearchTerm ] = useState( initialSearchTerm );
 	const [ sortTerm, setSortTerm ] = useState( SiteSubscriptionsSortBy.DateSubscribed );
 	const [ filterOption, setFilterOption ] = useState( SiteSubscriptionsFilterBy.All );
 
