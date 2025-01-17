@@ -75,7 +75,7 @@ export const useCredentialsForm = (
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const locale = useLocale();
-	const { sendTicketAsync } = useSubmitMigrationTicket();
+	const { sendTicketAsync, isPending: isSendingTicket } = useSubmitMigrationTicket();
 
 	const {
 		mutateAsync: requestAutomatedMigration,
@@ -103,8 +103,8 @@ export const useCredentialsForm = (
 	const accessMethod = watch( 'migrationType' );
 
 	useEffect( () => {
-		setIsBusy( isSubmitting );
-	}, [ isSubmitting ] );
+		setIsBusy( isSubmitting || isSendingTicket );
+	}, [ isSubmitting, isSendingTicket ] );
 
 	const isLoginFailed =
 		error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
