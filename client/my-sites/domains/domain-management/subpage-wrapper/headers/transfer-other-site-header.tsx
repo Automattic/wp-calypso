@@ -2,8 +2,10 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
-import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import {
+	domainManagementAllOverview,
+	domainManagementTransfer,
+} from 'calypso/my-sites/domains/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -30,13 +32,7 @@ const TransferOtherSiteHeader: CustomHeaderComponentType = ( {
 			},
 			{
 				label: translate( 'Attach' ),
-				href: getEmailManagementPath(
-					selectedSiteSlug,
-					selectedDomainName,
-					null,
-					undefined,
-					inSiteContext
-				),
+				href: domainManagementTransfer( selectedSiteSlug, selectedDomainName ),
 			},
 			{
 				label: translate( 'Existing site' ),
