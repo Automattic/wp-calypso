@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./grid-mixins";
 
 body.is-section-plugins .plugin-management-wrapper {
 	@include break-small {

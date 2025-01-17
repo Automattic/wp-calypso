@@ -7,17 +7,14 @@ import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
-import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
-import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainDiagnosticsQuery from 'calypso/data/domains/diagnostics/use-domain-diagnostics-query';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery, { getCacheKey } from 'calypso/data/home/use-home-layout-query';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -50,11 +47,11 @@ import {
 } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import CelebrateLaunchModal from './components/celebrate-launch-modal';
+import CelebrateLaunchModal from '../celebrate-launch-modal';
 
 import './style.scss';
 
-const Home = ( {
+const HomeContent = ( {
 	canUserUseCustomerHome,
 	hasWooCommerceInstalled,
 	isJetpack,
@@ -291,9 +288,7 @@ const Home = ( {
 	};
 
 	return (
-		<Main wideLayout className="customer-home__main">
-			<PageViewTracker path="/home/:site" title={ translate( 'My Home' ) } />
-			<DocumentHead title={ translate( 'My Home' ) } />
+		<div className="customer-home__main">
 			{ siteId && isJetpack && isPossibleJetpackConnectionProblem && (
 				<JetpackConnectionHealthBanner siteId={ siteId } />
 			) }
@@ -338,7 +333,7 @@ const Home = ( {
 				/>
 			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
-		</Main>
+		</div>
 	);
 };
 
@@ -396,6 +391,8 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	};
 };
 
-const connectHome = connect( mapStateToProps, mapDispatchToProps, mergeProps );
-
-export default connectHome( withJetpackConnectionProblem( Home ) );
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
+)( withJetpackConnectionProblem( HomeContent ) );

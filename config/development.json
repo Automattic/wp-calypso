@@ -74,6 +74,7 @@
 		"global-styles/on-personal-plan": false,
 		"help": true,
 		"help/gpt-response": true,
+		"home/launchpad-first": false,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
 		"hosting/datacenter-picker": true,

@@ -40,6 +40,7 @@
 		"google-my-business": false,
 		"global-styles/on-personal-plan": false,
 		"help": true,
+		"home/launchpad-first": false,
 		"home/layout-dev": true,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": false,
