@@ -1,12 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
@@ -21,11 +19,8 @@ const AddNewSiteSiteListMenuItems = () => {
 
 	const pressableOwnership = usePressableOwnershipType();
 
-	const { data: devLicenses } = useFetchDevLicenses();
-
-	const hasAvailableDevSites = devLicenses?.available > 0;
-
-	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
+	const popoverOfferEnabled = true;
+	const popoverCardEnabled = true;
 
 	return (
 		<>
@@ -102,7 +97,7 @@ const AddNewSiteSiteListMenuItems = () => {
 					} }
 				/>
 			</AddNewSitePopoverColumn>
-			{ devSitesEnabled && (
+			{ popoverCardEnabled && (
 				<AddNewSitePopoverColumn>
 					<AddNewSiteMenuItem
 						isBanner
@@ -113,7 +108,7 @@ const AddNewSiteSiteListMenuItems = () => {
 								'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
 							)
 						) }
-						disabled={ ! hasAvailableDevSites }
+						disabled={ ! popoverOfferEnabled }
 						buttonProps={ {
 							onClick: () => {
 								// TODO
@@ -123,7 +118,7 @@ const AddNewSiteSiteListMenuItems = () => {
 						<div>
 							<div
 								className={ clsx( 'add-new-site-popover__cta', {
-									disabled: ! hasAvailableDevSites,
+									disabled: ! popoverOfferEnabled,
 								} ) }
 							>
 								{ translate( 'Unlock Offer' ) }
