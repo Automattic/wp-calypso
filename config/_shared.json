@@ -201,7 +201,7 @@
 	],
 	"restricted_me_access": true,
 	"theme_color": "",
-	"theme_color_override_with_admin_color_scheme": true,
+	"theme_color_admin_color_scheme_override": true,
 	"reskinned_flows": [
 		"account",
 		"business",

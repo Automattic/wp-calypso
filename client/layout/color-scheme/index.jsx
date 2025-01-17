@@ -51,7 +51,7 @@ export function refreshColorScheme( prevColorScheme, nextColorScheme ) {
 		classList.add( `is-${ nextColorScheme }` );
 	}
 
-	if ( config( 'theme_color_override_with_admin_color_scheme' ) ) {
+	if ( config( 'theme_color_admin_color_scheme_override' ) ) {
 		const themeColor = getComputedStyle( document.body )
 			.getPropertyValue( '--color-masterbar-background' )
 			.trim();
