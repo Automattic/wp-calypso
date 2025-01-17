@@ -28,7 +28,10 @@ export default function SubscriptionsList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState( {
+		...initialDataViewsState,
+		fields: [ 'purchase', 'price', 'subscription-status', 'actions' ],
+	} );
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
 	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();
