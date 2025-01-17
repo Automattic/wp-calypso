@@ -133,6 +133,13 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		/**
+		 * Hide signup for OAuth flow (it doesn't correctly route the arugments)
+		 */
+		if ( currentQuery?.client_id !== null && currentQuery?.redirect_to != null ) {
+			return null;
+		}
+
+		/**
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
