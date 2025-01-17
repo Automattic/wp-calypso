@@ -28,6 +28,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Write;
 	}
 
+	// Newsletter flow
+	if ( goals.includes( SiteGoal.Newsletter ) ) {
+		return SiteIntent.Newsletter;
+	}
+
 	return SiteIntent.Build;
 };
 
