@@ -51,14 +51,14 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ searchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
-	const [ chatMessagesLoaded, setChatLoaded ] = useState( false );
+	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 
 	useEffect( () => {
 		( chat?.status === 'loaded' || chat?.status === 'closed' ) &&
-			setChatLoaded( ! isForwardingToZendesk );
+			setChatMessagesLoaded( ! isForwardingToZendesk );
 	}, [ chat, isForwardingToZendesk ] );
 
 	/**
@@ -74,7 +74,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			resetSupportInteraction().then( () => {
 				if ( isChatLoaded ) {
 					createZendeskConversation().then( () => {
-						setChatLoaded( true );
+						setChatMessagesLoaded( true );
 					} );
 				}
 			} );
