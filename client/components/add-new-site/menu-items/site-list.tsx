@@ -93,7 +93,8 @@ const AddNewSiteSiteListMenuItems = () => {
 						disabled={ ! popoverOfferEnabled }
 						buttonProps={ {
 							onClick: () => {
-								// TODO
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_offer' );
+								window.location.href = 'https://wordpress.com/pricing/';
 							},
 						} }
 					>
