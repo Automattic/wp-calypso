@@ -69,6 +69,11 @@
 
 .plugin-common-card__card.card {
 	padding: 16px;
+	&.is-compact:last-child {
+		box-shadow: none;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
+	}
 }
 
 .plugin-common-card__left-checkbox {

@@ -2271,10 +2271,14 @@ $breakpoint-mobile: 660px;
 	input[type="tel"].form-text-input,
 	textarea.form-text-input {
 		border: 1px solid var(--studio-gray-30);
+
 		&:focus,
+		&:focus-visible,
 		&:hover,
-		&:focus:hover {
-			border: 1px solid var(--woo-purple-40);
+		&:active {
+			border: 1px solid transparent;
+			box-shadow: inset 0 0 0 2px var(--woo-purple-40);
+			outline: none;
 		}
 	}
 

@@ -126,8 +126,6 @@
 		"settings/newsletter-settings-page": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
-		"signup/design-picker-preview-colors": true,
-		"signup/design-picker-preview-fonts": true,
 		"signup/professional-email-step": false,
 		"signup/social": true,
 		"signup/social-first": true,
@@ -168,5 +166,6 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": false,
 	"boom_analytics_key": "horizon",
+	"theme_color": "#1D2327",
 	"hotjar_enabled": true
 }

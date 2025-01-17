@@ -58,7 +58,7 @@
 		.plugin-details-v2__title {
 			color: var( --studio-gray-100 );
 			font-size: 1.25rem;
-			padding: 16px 0;
+			padding: 16px 16px;
 		}
 	}
 
@@ -380,6 +380,8 @@ body.is-section-plugins .hosting-dashboard-layout,
 	}
 	.dataviews-wrapper {
 		margin: auto;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
 
 		.dataviews-view-table {
 			.dataviews-view-table__row {
