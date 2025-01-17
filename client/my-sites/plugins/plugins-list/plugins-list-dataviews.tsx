@@ -23,7 +23,7 @@ interface Props {
 	bulkActionDialog: ( action: string, plugins: Array< Plugin > ) => void;
 }
 
-const defaultLayouts = { table: {}, list: {} };
+const defaultLayouts = { table: {} };
 
 const pluginsListFields = [ 'plugins', 'sites', 'update' ];
 const pluginViewFields = [ 'plugins' ];
