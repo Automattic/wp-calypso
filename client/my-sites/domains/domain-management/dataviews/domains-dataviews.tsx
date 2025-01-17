@@ -10,7 +10,12 @@ import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
 import './style.scss';
 import { useFields } from './use-fields';
-import useQueryParams, { DEFAULT_PER_PAGE, buildPathWithQueryParams } from './use-query-params';
+import useQueryParams, {
+	DEFAULT_PER_PAGE,
+	DEFAULT_SORT_FIELD,
+	DEFAULT_SORT_DIRECTION,
+	buildPathWithQueryParams,
+} from './use-query-params';
 import useView, { getFieldsByBreakpoint, useInitializeDataViewsPage } from './use-view';
 
 type Props = {
@@ -63,13 +68,16 @@ export const DomainsDataViews = ( {
 			search: view.search?.trim(),
 			page: view.page && view.page > 1 ? view.page : undefined,
 			perPage: view.perPage === DEFAULT_PER_PAGE ? undefined : view.perPage,
+			sortField: view.sort?.field === DEFAULT_SORT_FIELD ? undefined : view.sort?.field,
+			sortDirction:
+				view.sort?.direction === DEFAULT_SORT_DIRECTION ? undefined : view.sort?.direction,
 		};
 
 		window.setTimeout( () => {
 			const url = buildPathWithQueryParams( queryParams );
 			navigate( url, false, false );
 		} );
-	}, [ view.search, view.page, view.perPage ] );
+	}, [ view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction ] );
 
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 	return (

@@ -1,7 +1,13 @@
 import { usePrevious } from '@wordpress/compose';
 import { View } from '@wordpress/dataviews';
 import { useEffect, useRef, useState } from 'react';
-import { DEFAULT_PAGE, DEFAULT_PER_PAGE, QueryParams } from './use-query-params';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PER_PAGE,
+	DEFAULT_SORT_FIELD,
+	DEFAULT_SORT_DIRECTION,
+	QueryParams,
+} from './use-query-params';
 
 type ViewProps = {
 	sidebarMode?: boolean;
@@ -21,13 +27,13 @@ export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean
 export default function useView( {
 	sidebarMode,
 	isDesktop,
-	queryParams: { page, perPage, search },
+	queryParams: { page, perPage, search, sortField, sortDirection },
 }: ViewProps ) {
 	const initialDataViewsState: View = {
 		filters: [],
 		sort: {
-			field: '',
-			direction: 'asc',
+			field: sortField || DEFAULT_SORT_FIELD,
+			direction: sortDirection || DEFAULT_SORT_DIRECTION,
 		},
 		page: page || DEFAULT_PAGE,
 		perPage: perPage || DEFAULT_PER_PAGE,
