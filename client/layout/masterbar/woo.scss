@@ -2241,7 +2241,8 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
+.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
@@ -2307,6 +2308,17 @@ $breakpoint-mobile: 660px;
 	.security-key-form__help-text,
 	.formatted-header__subtitle {
 		a {
+			@include link-woo;
+		}
+	}
+
+	// Woo DNA Flow
+	.jetpack-connect__main {
+		--studio-woocommerce-purple: var(--woo-purple-40);
+		--studio-woocommerce-purple-60: var(--woo-purple-40);
+		--color-accent: var(--woo-purple-40);
+
+		.login__social-tos a {
 			@include link-woo;
 		}
 	}
