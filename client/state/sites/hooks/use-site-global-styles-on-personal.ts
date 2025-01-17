@@ -26,7 +26,9 @@ export function useSiteGlobalStylesOnPersonal( siteIdOrSlug: SiteIdOrSlug = null
 	const isGlobalStylesOnPersonalEnabled =
 		globalStylesInPersonalPlan || isEnabled( 'global-styles/on-personal-plan' );
 
-	( window as any ).isGlobalStylesOnPersonal = isGlobalStylesOnPersonalEnabled;
+	if ( typeof window !== 'undefined' ) {
+		( window as any ).isGlobalStylesOnPersonal = isGlobalStylesOnPersonalEnabled;
+	}
 
 	return isGlobalStylesOnPersonalEnabled;
 }
