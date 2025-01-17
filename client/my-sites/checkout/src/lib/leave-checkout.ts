@@ -16,6 +16,33 @@ import { sendMessageToOpener } from './popup';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
+const getCloseURL = ( {
+	clearedCart,
+	previousPath,
+	siteSlug,
+}: {
+	clearedCart: boolean;
+	previousPath?: string;
+	siteSlug?: string;
+} ): string => {
+	if (
+		previousPath &&
+		previousPath !== '' &&
+		previousPath !== window.location.href &&
+		! previousPath.includes( '/checkout/' )
+	) {
+		/* Regex to match /domains/add/abc123/email/def456? */
+		const emailUpsellRegex = /\/domains\/add\/[^/]+\/email\/[^/]+(\?|\/|$)/;
+
+		if ( clearedCart && emailUpsellRegex.test( previousPath ) ) {
+			return '/domains/add/' + siteSlug;
+		}
+		return previousPath;
+	}
+
+	return siteSlug ? '/plans/' + siteSlug : '/start';
+};
+
 export const leaveCheckout = ( {
 	siteSlug,
 	forceCheckoutBackUrl,
@@ -70,20 +97,7 @@ export const leaveCheckout = ( {
 		return;
 	}
 
-	let closeUrl = siteSlug ? '/plans/' + siteSlug : '/start';
-	if (
-		previousPath &&
-		'' !== previousPath &&
-		previousPath !== window.location.href &&
-		! previousPath.includes( '/checkout/' )
-	) {
-		// If the previous page was the email upsell page, then we want to close the modal and go back to the domain page.
-		if ( clearedCart && /\/domains\/add\/[^/]+\/email\/[^/]+\?/.test( previousPath ) ) {
-			closeUrl = '/domains/add/' + siteSlug;
-		} else {
-			closeUrl = previousPath;
-		}
-	}
+	const closeUrl = getCloseURL( { clearedCart, previousPath, siteSlug } );
 
 	try {
 		const searchParams = new URLSearchParams( window.location.search );
