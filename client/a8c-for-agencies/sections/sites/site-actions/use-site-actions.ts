@@ -16,6 +16,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import { JETPACK_ACTIVITY_ID, JETPACK_BACKUP_ID } from '../features/features';
 import SitesDashboardContext from '../sites-dashboard-context';
+import createDeleteSiteActionModal from './delete-site-action-modal';
 import getActionEventName from './get-action-event-name';
 import createRemoveSiteActionModal from './remove-site-action-modal';
 import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
@@ -263,6 +264,8 @@ export function useSiteActionsDataViews( {
 
 		const recordTracksEventRemoveSite = () =>
 			dispatch( recordTracksEvent( getActionEventName( 'remove_site', isLargeScreen ) ) );
+		const recordTracksEventDeleteSite = () =>
+			dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
 
 		return [
 			{
@@ -449,10 +452,9 @@ export function useSiteActionsDataViews( {
 				isEligible( item: SiteData ) {
 					return canHaveActions( item ) && false; // Feature is always disabled, see canDelete above.
 				},
-				callback() {
-					dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
-					// TODO: implement modal. See setShowDeleteDevSiteDialog in SiteActions.
-				},
+				RenderModal: createDeleteSiteActionModal( {
+					recordTracksEventDeleteSite,
+				} ),
 			},
 		];
 	}, [
