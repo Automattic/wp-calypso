@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import BillingHistoryComponent from 'calypso/me/purchases/billing-history/main';
-import Receipt from './receipt';
+import { Receipt } from './main';
 
 export function billingHistory( context, next ) {
 	context.primary = createElement( BillingHistoryComponent );

@@ -10,6 +10,8 @@ import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
 import BillingHistoryListDataView from 'calypso/me/purchases/billing-history/billing-history-list-data-view';
+import ModernReceipt from 'calypso/me/purchases/billing-history/modern-receipt';
+import BillingReceipt from 'calypso/me/purchases/billing-history/receipt';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
@@ -86,4 +88,19 @@ function BillingHistory() {
 		</Main>
 	);
 }
+
+function BillingHistoryReceipt( { transactionId }: { transactionId: number } ) {
+	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
+
+	return useDataViewBillingHistoryList ? (
+		<ModernReceipt transactionId={ transactionId } />
+	) : (
+		<BillingReceipt transactionId={ transactionId } />
+	);
+}
+
+export function Receipt( { transactionId }: { transactionId: number } ) {
+	return <BillingHistoryReceipt transactionId={ transactionId } />;
+}
+
 export default BillingHistory;
