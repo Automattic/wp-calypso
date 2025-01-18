@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
@@ -80,11 +79,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		return false;
 	}
 
-	return (
-		( isEnabled( 'plans/term-savings-price-display' ) ||
-			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-		isInSignup
-	);
+	return longerPlanTermDefaultExperiment.isEligibleForTermSavings && isInSignup;
 };
 
 export default useEligibilityForTermSavingsPriceDisplay;
