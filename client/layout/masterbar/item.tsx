@@ -227,17 +227,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				<button ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > } { ...props } />
 			);
 
-		// Differences:
-		// - the wrapper div is always rendered, even when props.url is set
-		// - the menu item is either a `button` or an `a` (no `a` nested in `button`)'
-		// - as a consequence, `componentButtonRef` is not necessary anymore
-
-		// Notes to self:
-		// - TODO: revisit closeMenuOnOutsideInteraction logic
-		// - is onTouchEnd necessary?
-		// - are we ok without tabindex = -1?
-		// - is always rendering the wrapper ok?
-
 		return (
 			<div
 				className={ clsx( 'masterbar__item-wrapper', this.props.wrapperClassName ) }
@@ -246,7 +235,6 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 				<MenuItem
 					{ ...attributes }
 					onKeyDown={ this.props.subItems ? this.toggleMenuByKey : undefined }
-					// Is this necessary
 					onTouchEnd={ this.props.subItems ? this.toggleMenuByTouch : undefined }
 				>
 					{ this.renderChildren() }
