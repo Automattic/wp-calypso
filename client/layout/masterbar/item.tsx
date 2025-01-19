@@ -234,8 +234,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			>
 				<MenuItem
 					{ ...attributes }
-					onKeyDown={ this.props.subItems ? this.toggleMenuByKey : undefined }
-					onTouchEnd={ this.props.subItems ? this.toggleMenuByTouch : undefined }
+					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
+					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
 					{ this.renderChildren() }
 				</MenuItem>
