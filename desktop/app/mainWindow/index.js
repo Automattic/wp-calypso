@@ -173,11 +173,5 @@ function showAppWindow() {
 }
 
 module.exports = function () {
-	if ( ! app.requestSingleInstanceLock() ) {
-		log.info( 'App is already running, quitting' );
-		app.quit();
-		return;
-	}
-
 	app.on( 'ready', showAppWindow );
 };
