@@ -335,7 +335,7 @@ function ConnectDomainStep( {
 			return <div className={ baseClassName + '__sidebar-placeholder' }></div>;
 		}
 
-		if ( ! isStepStart ) {
+		if ( ! isStepStart || ! domainSetupInfo?.data?.is_supported_tld ) {
 			return null;
 		}
 
