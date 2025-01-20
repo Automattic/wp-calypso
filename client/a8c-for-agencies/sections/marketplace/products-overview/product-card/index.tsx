@@ -1,4 +1,5 @@
-import { Button } from '@automattic/components';
+import { isEnabled } from '@automattic/calypso-config';
+import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -130,6 +131,8 @@ export default function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, translate ] );
 
+	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
+
 	return (
 		<>
 			<div
@@ -167,8 +170,8 @@ export default function ProductCard( props: Props ) {
 					</div>
 					<div className="product-card__buttons">
 						<Button
-							className="product-card__select-button"
-							primary={ ! isSelected }
+							className={ clsx( { 'product-card__select-button': ! isRedesign } ) }
+							variant={ ! isSelected ? 'primary' : 'secondary' }
 							tabIndex={ -1 }
 						>
 							{ isSelected && <Icon icon={ check } /> }
@@ -179,6 +182,7 @@ export default function ProductCard( props: Props ) {
 								customText={ translate( 'View details' ) }
 								productName={ productTitle }
 								onClick={ onShowLightbox }
+								showIcon={ ! isRedesign }
 							/>
 						) }
 					</div>
