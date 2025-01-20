@@ -1,4 +1,4 @@
-import { ListTile, Button } from '@automattic/components';
+import { ListTile } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
@@ -27,11 +27,14 @@ import type { SiteExcerptData } from '@automattic/sites';
 
 type Props = {
 	site: SiteExcerptData;
-	openSitePreviewPane?: (
-		site: SiteExcerptData,
-		source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
-		openInNewTab?: boolean
-	) => void;
+	sitePreviewPane: {
+		open: (
+			site: SiteExcerptData,
+			source: 'site_field' | 'action' | 'list_row_click' | 'environment_switcher',
+			openInNewTab?: boolean
+		) => void;
+		getUrl: ( site: SiteExcerptData ) => string;
+	};
 };
 
 const SiteListTile = styled( ListTile )`
@@ -60,7 +63,7 @@ const ListTileTitle = styled.div`
 	align-items: center;
 `;
 
-const SiteField = ( { site, openSitePreviewPane }: Props ) => {
+const SiteField = ( { site, sitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
 
 	let siteUrl = site.URL;
@@ -76,6 +79,12 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isTrialSitePlan = useSelector( ( state ) => isTrialSite( state, site.ID ) );
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
+
+	const shouldOpenSitePreviewPane =
+		isAdmin &&
+		! isP2Site &&
+		! isNotAtomicJetpack( site ) &&
+		! isDisconnectedJetpackAndNotAtomic( site );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
@@ -94,13 +103,8 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 			openInNewTab = true;
 		}
 
-		if (
-			isAdmin &&
-			! isP2Site &&
-			! isNotAtomicJetpack( site ) &&
-			! isDisconnectedJetpackAndNotAtomic( site )
-		) {
-			openSitePreviewPane && openSitePreviewPane( site, 'site_field', openInNewTab );
+		if ( shouldOpenSitePreviewPane ) {
+			sitePreviewPane.open( site, 'site_field', openInNewTab );
 		} else {
 			navigate( adminUrl, openInNewTab );
 		}
@@ -109,13 +113,14 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
 
+	const MaybeLink = site.is_deleted ? 'div' : 'a';
+
 	return (
-		<Button
+		<MaybeLink
 			className="sites-dataviews__site"
+			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
 			onClick={ onSiteClick }
 			onAuxClick={ onSiteClick }
-			borderless
-			disabled={ site.is_deleted }
 		>
 			<SiteListTile
 				contentClassName={ clsx(
@@ -145,7 +150,7 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 					</div>
 				}
 			/>
-		</Button>
+		</MaybeLink>
 	);
 };
 
