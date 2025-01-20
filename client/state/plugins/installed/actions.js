@@ -77,8 +77,40 @@ const pluginHasTruthySiteProp = ( prop, plugin, siteId ) => {
  * @returns {any} SitePlugin instance
  */
 const getPluginHandler = ( siteId, pluginId ) => {
-	const siteHandler = wpcom.site( siteId );
-	return siteHandler.plugin( pluginId );
+	const pluginHandler = wpcom.site( siteId ).plugin( pluginId );
+
+	// For wp/v2 we need to override the encoded pluginId otherwise the plugin will not be found.
+	pluginHandler.pluginPath = pluginHandler.pluginPath.replace(
+		encodeURIComponent( pluginId ),
+		pluginId
+	);
+	pluginHandler._slug = pluginId;
+
+	// Create handlers for all plugin methods with wp/v2 namespace.
+	const methods = [
+		'get',
+		'update',
+		'updateVersion',
+		'install',
+		'delete',
+		'enableAutoupdate',
+		'disableAutoupdate',
+	];
+
+	const handlers = methods.reduce( ( acc, method ) => {
+		acc[ method ] = ( query, ...args ) =>
+			pluginHandler[ method ]( { ...query, apiNamespace: 'wp/v2' }, ...args );
+		return acc;
+	}, {} );
+
+	// Custom methods for wp/v2 requiring different payloads.
+	handlers.activate = ( query, ...args ) =>
+		pluginHandler.update( { ...query, apiNamespace: 'wp/v2' }, { status: 'active' }, ...args );
+
+	handlers.deactivate = ( query, ...args ) =>
+		pluginHandler.update( { ...query, apiNamespace: 'wp/v2' }, { status: 'inactive' }, ...args );
+
+	return handlers;
 };
 
 /**
@@ -159,7 +191,7 @@ export function activatePlugin( siteId, plugin ) {
 			// Activation error is ok, because it means the plugin is already active
 			if (
 				( error && error.error !== 'activation_error' ) ||
-				( ! ( data && data.active ) && ! error )
+				( ! ( data && data.status === 'active' ) && ! error )
 			) {
 				dispatch( bumpStat( 'calypso_plugin_activated', 'failed' ) );
 				dispatch(
@@ -616,7 +648,7 @@ export function fetchSitePlugins( siteId ) {
 
 		return wpcom
 			.site( siteId )
-			.pluginsList()
+			.pluginsList( { apiNamespace: 'wp/v2' } )
 			.then( receivePluginsDispatchSuccess )
 			.catch( receivePluginsDispatchFail );
 	};
