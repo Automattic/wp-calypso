@@ -53,6 +53,7 @@ export default function ReferralsOverview( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: [ 'completed-orders', 'pending-orders', 'commissions', 'subscription-status' ],
 		titleField: 'client',
 	} );
 	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
