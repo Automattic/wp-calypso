@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Button, CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
@@ -26,7 +25,7 @@ export default function SubscriptionGiftingForm( {
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
 
-	if ( ! isEnabled( 'subscription-gifting' ) || ! hasSubscriptionGifting || isWpcomStagingSite ) {
+	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
 		return;
 	}
 

@@ -358,6 +358,9 @@ $y-axis-padding: 0 20px;
 // Chart tooltip
 
 .chart__tooltip {
+	// The tooltip doesn't trigger pointer events to prevent causing a premature
+	// mouseleave event when the tooltip is hovered over
+	pointer-events: none;
 	.popover__inner {
 		width: 230px;
 		text-align: left;

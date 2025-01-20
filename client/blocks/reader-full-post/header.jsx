@@ -11,7 +11,7 @@ import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
+const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -128,10 +128,6 @@ ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
-};
-
-ReaderFullPostHeader.defaultProps = {
-	layout: 'default',
 };
 
 export default ReaderFullPostHeader;

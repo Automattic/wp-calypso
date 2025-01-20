@@ -19,6 +19,8 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	READER_USER_LISTS_RECEIVE,
+	READER_USER_LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema } from './schema';
@@ -198,6 +200,35 @@ export function isRequestingLists( state = false, action ) {
 	return state;
 }
 
+export const userLists = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_USER_LISTS_RECEIVE:
+			return {
+				...state,
+				[ action.userSlug ]: action.lists,
+			};
+		default:
+			return state;
+	}
+};
+
+export const isRequestingUserLists = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case READER_USER_LISTS_REQUEST:
+			return {
+				...state,
+				[ action.userSlug ]: true,
+			};
+		case READER_USER_LISTS_RECEIVE:
+			return {
+				...state,
+				[ action.userSlug ]: false,
+			};
+		default:
+			return state;
+	}
+};
+
 export default combineReducers( {
 	items,
 	listItems,
@@ -206,4 +237,6 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	isUpdatingList,
+	userLists,
+	isRequestingUserLists,
 } );

@@ -71,10 +71,12 @@ const ActiveDomainsCard: FC = () => {
 
 			<DomainsTable
 				className="hosting-overview__domains-table"
+				context="site"
 				hideCheckbox
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
 				isAllSitesView={ false }
+				isHostingOverview
 				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
 				userCanSetPrimaryDomains={ userCanSetPrimaryDomains }

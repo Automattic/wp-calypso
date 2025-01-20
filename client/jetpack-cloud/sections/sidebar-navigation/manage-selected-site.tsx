@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -81,8 +80,6 @@ const useMenuItems = ( {
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) ) &&
 		isSectionNameEnabled( 'site-purchases' );
 
-	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
-
 	return useMemo(
 		() =>
 			[
@@ -101,7 +98,7 @@ const useMenuItems = ( {
 					link: pluginsPath( siteSlug ),
 					title: translate( 'Plugins' ),
 					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
-					enabled: isPluginManagementEnabled && isAgency,
+					enabled: isAgency,
 					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
 				},
 				{
@@ -190,7 +187,7 @@ const useMenuItems = ( {
 		[
 			isAdmin,
 			isAgency,
-			isPluginManagementEnabled,
+			showScanHistory,
 			isWPCOM,
 			isWPForTeamsSite,
 			path,

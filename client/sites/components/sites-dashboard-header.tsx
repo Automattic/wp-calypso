@@ -1,17 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { JetpackLogo } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { download, Icon } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
+import { useState, useRef } from 'react';
+import AddNewSiteButton from 'calypso/components/add-new-site/button';
+import AddNewSiteContent from 'calypso/components/add-new-site/content';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { LinkWithRedirect } from './link-with-redirect';
+import 'calypso/components/add-new-site/style.scss';
+import './sites-dashboard-header.scss';
 
 interface SitesDashboardHeaderProps {
 	isPreviewPaneOpen: boolean;
@@ -100,57 +106,85 @@ const popoverHoverStyles = css`
 `;
 
 const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPreviewPaneOpen } ) => {
-	const { __ } = useI18n();
+	const [ isMenuVisible, setMenuVisible ] = useState( false );
+	const popoverMenuContext = useRef( null );
+	const translate = useTranslate();
+	const isDriveMigrationEnabled = config.isEnabled( 'sites/drive-migrations' );
 	const isMobile = useMobileBreakpoint();
-
 	const createSiteUrl = useAddNewSiteUrl( {
 		source: TRACK_SOURCE_NAME,
 		ref: 'topbar',
 	} );
-
 	const importSiteUrl = useSitesDashboardImportSiteUrl( {
 		ref: 'topbar',
 	} );
 
+	const toggleMenu = () => {
+		setMenuVisible( ( isVisible ) => ! isVisible );
+	};
+
 	return (
-		<PageHeader>
+		<PageHeader className="sites-dashboard-header">
 			<HeaderControls>
-				<AddNewSiteSplitButton
-					primary={ ! isPreviewPaneOpen }
-					whiteSeparator={ ! isPreviewPaneOpen }
-					className="sites-add-new-site-split-button"
-					label={ __( 'Add new site' ) }
-					onClick={ () => {
-						recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-					} }
-					href={ createSiteUrl }
-					toggleIcon={ isMobile ? 'plus' : undefined }
-					isMobile={ isMobile }
-				>
-					<PopoverMenuItem
+				{ isDriveMigrationEnabled && (
+					<>
+						<AddNewSiteButton
+							showMainButtonLabel={ ! isPreviewPaneOpen }
+							mainButtonLabelText={ translate( 'Add new site' ) }
+							isMenuVisible={ isMenuVisible }
+							toggleMenu={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+								toggleMenu();
+							} }
+							popoverMenuContext={ popoverMenuContext }
+						/>
+
+						<AddNewSiteContent
+							isMenuVisible={ isMenuVisible }
+							toggleMenu={ toggleMenu }
+							popoverMenuContext={ popoverMenuContext }
+							setMenuVisible={ setMenuVisible }
+						/>
+					</>
+				) }
+				{ ! isDriveMigrationEnabled && (
+					<AddNewSiteSplitButton
+						primary={ ! isPreviewPaneOpen }
+						whiteSeparator={ ! isPreviewPaneOpen }
+						className="sites-add-new-site-split-button"
+						label={ translate( 'Add new site' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
 						} }
-						href={ addQueryArgs( '/jetpack/connect', {
-							cta_from: TRACK_SOURCE_NAME,
-							cta_id: 'add-site',
-						} ) }
+						href={ createSiteUrl }
+						toggleIcon={ isMobile ? 'plus' : undefined }
+						isMobile={ isMobile }
 					>
-						<JetpackLogo className="gridicon" size={ 18 } />
-						<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
-					</PopoverMenuItem>
-					<PopoverMenuItem
-						className={ `${ popoverHoverStyles }` }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-						} }
-						href={ importSiteUrl }
-						itemComponent={ LinkWithRedirect }
-					>
-						<DownloadIcon icon={ download } size={ 18 } />
-						<span>{ __( 'Import an existing site' ) }</span>
-					</PopoverMenuItem>
-				</AddNewSiteSplitButton>
+						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+							} }
+							href={ addQueryArgs( '/jetpack/connect', {
+								cta_from: TRACK_SOURCE_NAME,
+								cta_id: 'add-site',
+							} ) }
+						>
+							<JetpackLogo className="gridicon" size={ 18 } />
+							<span>{ translate( 'Add Jetpack to a self-hosted site' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							className={ `${ popoverHoverStyles }` }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+							} }
+							href={ importSiteUrl }
+							itemComponent={ LinkWithRedirect }
+						>
+							<DownloadIcon icon={ download } size={ 18 } />
+							<span>{ translate( 'Import an existing site' ) }</span>
+						</PopoverMenuItem>
+					</AddNewSiteSplitButton>
+				) }
 			</HeaderControls>
 		</PageHeader>
 	);

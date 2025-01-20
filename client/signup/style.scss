@@ -914,3 +914,9 @@ body.is-section-signup .is-gravatar {
 		--signup-form-column-max-width: 408px;
 	}
 }
+
+body.is-section-signup
+.signup:not(.is-wpcc2)
+.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
+	margin: 0 0 16px;
+}

@@ -351,15 +351,15 @@ const SyncCardContainer = ( {
 	currentSiteType: 'production' | 'staging';
 	progress: number;
 	isSyncInProgress: boolean;
-	siteToSync: 'production' | 'staging' | null;
+	siteToSync: 'production' | 'staging';
 	siteUrls: SyncCardProps[ 'siteUrls' ];
 	error?: string | null;
 	onRetry?: () => void;
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error ) && siteToSync;
-	const isFailedSyncError = useIsFailedSyncError( error ) && siteToSync;
+	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error );
+	const isFailedSyncError = useIsFailedSyncError( error );
 
 	return (
 		<StagingSyncCardBody>
@@ -421,9 +421,18 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize the %s environment.', {
-								args: [ siteToSync ?? '' ],
-							} ) }
+							text={
+								error === 'studio_import_in_progress'
+									? translate(
+											'We couldn’t synchronize the %s environment. Studio push operation is currently in progress.',
+											{
+												args: [ siteToSync ],
+											}
+									  )
+									: translate( 'We couldn’t synchronize the %s environment.', {
+											args: [ siteToSync ],
+									  } )
+							}
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
@@ -524,12 +533,8 @@ export const SiteSyncCard = ( {
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
 		selectedOption === null;
 
-	let siteToSync: 'production' | 'staging' | null = null;
-	if ( targetSite ) {
-		siteToSync = targetSite;
-	} else {
-		siteToSync = selectedOption === actionForType ? 'production' : 'staging';
-	}
+	const siteToSync: 'production' | 'staging' =
+		targetSite || ( selectedOption === actionForType ? 'production' : 'staging' );
 
 	useEffect( () => {
 		if ( selectedOption && status === SiteSyncStatus.COMPLETED && ! syncError ) {

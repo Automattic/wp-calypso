@@ -1,10 +1,8 @@
 import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	DesignPreviewImage,
-	PREMIUM_THEME,
 	ThemeCard,
 	isDefaultGlobalStylesVariationSlug,
-	isLockedStyleVariation,
 } from '@automattic/design-picker';
 import { localize } from 'i18n-calypso';
 import { isEmpty, isEqual } from 'lodash';
@@ -325,17 +323,9 @@ export class Theme extends Component {
 	};
 
 	renderBadge = () => {
-		const { selectedStyleVariation, shouldLimitGlobalStyles, theme } = this.props;
+		const { theme } = this.props;
 
-		const isPremiumTheme = theme.theme_tier?.slug === PREMIUM_THEME;
-
-		const isLocked = isLockedStyleVariation( {
-			isPremiumTheme,
-			styleVariationSlug: selectedStyleVariation?.slug,
-			shouldLimitGlobalStyles,
-		} );
-
-		return <ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } />;
+		return <ThemeTierBadge themeId={ theme.id } />;
 	};
 
 	render() {

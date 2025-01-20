@@ -142,7 +142,8 @@
 
 // The `/domains/manage` page
 // Generic domains table styles should go in `packages/domains-table/src/domains-table/style.scss`
-.is-bulk-all-domains-page .layout__content {
+.is-bulk-all-domains-page .layout__content,
+.is-domain-in-site-context .layout__content {
 	overflow: auto;
 	.main {
 		.navigation-header {

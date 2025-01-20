@@ -372,6 +372,20 @@ function PatternPreviewFragment( {
 	);
 }
 
+function PatternPreviewResizerHandle() {
+	const translate = useTranslate();
+	const tooltipText = translate( 'Resize', {
+		comment: 'Tooltip text in Pattern Library for pattern preview resize handle',
+		textOnly: true,
+	} );
+
+	return (
+		<Tooltip delay={ 300 } placement="top" text={ tooltipText }>
+			<div className="pattern-preview__resizer-handle" />
+		</Tooltip>
+	);
+}
+
 export function PatternPreview( props: PatternPreviewProps ) {
 	const { isResizable, pattern } = props;
 	const { category, patternTypeFilter } = usePatternsContext();
@@ -410,6 +424,10 @@ export function PatternPreview( props: PatternPreviewProps ) {
 				bottomRight: false,
 				bottomLeft: false,
 				topLeft: false,
+			} }
+			handleComponent={ {
+				left: <PatternPreviewResizerHandle />,
+				right: <PatternPreviewResizerHandle />,
 			} }
 			handleWrapperClass="pattern-preview__resizer"
 			minWidth={ 335 }

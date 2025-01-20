@@ -19,17 +19,7 @@ $container-padding-large: 48px;
 			padding-inline-start: $container-padding-large;
 			padding-inline-end: $container-padding-large;
 		}
-
-		.setup-container__big-sky-container {
-			position: absolute;
-			top: $container-padding-small;
-			right: $container-padding-small;
-
-			@include break-small {
-				display: none;
-			}
-		}
-
+		
 		.step-container__content {
 			margin-top: 32px;
 		}
@@ -66,7 +56,7 @@ $container-padding-large: 48px;
 		.formatted-header {
 			margin: 0;
 			flex-grow: 1;
-			text-align: start;
+			text-align: center;
 
 			.formatted-header__title {
 				@include onboarding-font-recoleta;
@@ -75,7 +65,7 @@ $container-padding-large: 48px;
 				font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 				font-weight: 400;
 				padding: 0;
-				text-align: start;
+				text-align: center;
 				margin: 0;
 
 				@include break-large {
@@ -85,10 +75,10 @@ $container-padding-large: 48px;
 
 			.formatted-header__subtitle {
 				padding: 0;
-				text-align: start;
+				text-align: center;
 				color: $gray-60;
 				font-size: 1rem;
-				margin: 12px 0 32px;
+				margin: 8px 0 32px;
 				line-height: 24px;
 			}
 		}

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
@@ -176,21 +175,19 @@ export default function ( router ) {
 		clientRender
 	);
 
-	if ( isEnabled( 'plugins/multisite-scheduled-updates' ) ) {
-		router(
-			[
-				`/${ langParam }/plugins/scheduled-updates`,
-				`/${ langParam }/plugins/scheduled-updates/:action(create)`,
-				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
-			],
-			redirectLoggedOut,
-			navigation,
-			renderPluginsSidebar,
-			scheduledUpdatesMultisite,
-			makeLayout,
-			clientRender
-		);
-	}
+	router(
+		[
+			`/${ langParam }/plugins/scheduled-updates`,
+			`/${ langParam }/plugins/scheduled-updates/:action(create)`,
+			`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
+		],
+		redirectLoggedOut,
+		navigation,
+		renderPluginsSidebar,
+		scheduledUpdatesMultisite,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		[

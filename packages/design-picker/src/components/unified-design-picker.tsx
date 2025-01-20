@@ -1,6 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -272,16 +271,24 @@ const DesignCardGroup = ( {
 interface DesignPickerFilterGroupProps {
 	title?: string;
 	grow?: boolean;
+	isBigSkyEligible?: boolean;
 	children: React.ReactNode;
 }
 
 const DesignPickerFilterGroup: React.FC< DesignPickerFilterGroupProps > = ( {
 	title,
 	grow,
+	isBigSkyEligible,
 	children,
 } ) => {
 	return (
-		<div className={ clsx( 'design-picker__category-group', { grow } ) }>
+		<div
+			className={ clsx( 'design-picker__category-group', {
+				// eslint-disable-next-line eqeqeq
+				'design-picker__category-group--flex': grow && ! isBigSkyEligible,
+				'design-picker__category-group--grow': isBigSkyEligible,
+			} ) }
+		>
 			<div className="design-picker__category-group-label">{ title }</div>
 			<div className="design-picker__category-group-content">{ children }</div>
 		</div>
@@ -324,7 +331,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	isBigSkyEligible = false,
 } ) => {
 	const translate = useTranslate();
-	const hasEnTranslation = useHasEnTranslation();
 	const { selectedCategoriesWithoutDesignTier } = useDesignPickerFilters();
 
 	const categories = categorization?.categories || [];
@@ -379,7 +385,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					</DesignPickerFilterGroup>
 				) }
 				{ categorization && categoryTopics.length && (
-					<DesignPickerFilterGroup title={ isMultiFilterEnabled ? translate( 'Topic' ) : '' } grow>
+					<DesignPickerFilterGroup
+						title={ isMultiFilterEnabled ? translate( 'Topic' ) : '' }
+						grow={ ! isBigSkyEligible }
+						isBigSkyEligible={ isBigSkyEligible }
+					>
 						<DesignPickerCategoryFilter
 							categories={ isMultiFilterEnabled ? categoryTopics : categorization.categories }
 							onSelect={ categorization.onSelect }
@@ -408,11 +418,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (
 				<DesignCardGroup
 					{ ...designCardProps }
-					title={
-						hasEnTranslation( 'Best theme matches' )
-							? translate( 'Best theme matches' )
-							: translate( 'Best matching themes' )
-					}
+					title={ translate( 'Best matching themes' ) }
 					category="best"
 					designs={ best }
 				/>

@@ -24,7 +24,7 @@ export const migrationsOverviewContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Overview" path={ context.path } />
-			<MigrationsOverviewV2 isSiteMigrationsEnabled />
+			<MigrationsOverviewV2 />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;

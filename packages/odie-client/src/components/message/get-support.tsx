@@ -1,5 +1,5 @@
-import { localizeUrl } from '@automattic/i18n-utils';
-import { __ } from '@wordpress/i18n';
+import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { __, hasTranslation } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
@@ -14,6 +14,7 @@ interface GetSupportProps {
 interface ButtonConfig {
 	text: string;
 	action: () => Promise< void >;
+	waitTimeText?: string;
 }
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
@@ -50,6 +51,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk,
 	} = useOdieAssistantContext();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
@@ -63,36 +65,66 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		return <NewThirdPartyCookiesNotice />;
 	}
 
-	const getButtonConfig = (): ButtonConfig => {
+	const getButtonConfig = (): ButtonConfig[] => {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			return {
-				text: __( 'Get instant support', __i18n_text_domain__ ),
-				action: async () => {
-					onClickAdditionalEvent?.( 'chat' );
-					await newConversation();
+			return [
+				{
+					text:
+						isEnglishLocale || hasTranslation( 'Chat with support' )
+							? __( 'Chat with support', __i18n_text_domain__ )
+							: __( 'Get instant support', __i18n_text_domain__ ),
+					waitTimeText:
+						isEnglishLocale || hasTranslation( 'Average wait time < 5 minutes' )
+							? __( 'Average wait time < 5 minutes', __i18n_text_domain__ )
+							: undefined,
+					action: async () => {
+						onClickAdditionalEvent?.( 'chat' );
+						await newConversation();
+					},
 				},
-			};
+				{
+					text: __( 'Email support', __i18n_text_domain__ ),
+					waitTimeText:
+						isEnglishLocale || hasTranslation( 'Average wait time < 8 hours' )
+							? __( 'Average wait time < 8 hours', __i18n_text_domain__ )
+							: undefined,
+					action: async () => {
+						onClickAdditionalEvent?.( 'email' );
+						await newConversation();
+					},
+				},
+			];
 		}
 
-		return {
-			text: __( 'Ask in our forums', __i18n_text_domain__ ),
-			action: async () => {
-				onClickAdditionalEvent?.( 'forum' );
-				navigate( '/contact-form?mode=FORUM' );
+		return [
+			{
+				text: __( 'Ask in our forums', __i18n_text_domain__ ),
+				action: async () => {
+					onClickAdditionalEvent?.( 'forum' );
+					navigate( '/contact-form?mode=FORUM' );
+				},
 			},
-		};
+		];
 	};
 
 	const buttonConfig = getButtonConfig();
 
-	const handleClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
+	const handleClick = async (
+		event: React.MouseEvent< HTMLButtonElement >,
+		button: ButtonConfig
+	) => {
 		event.preventDefault();
-		await buttonConfig.action();
+		await button.action();
 	};
 
 	return (
 		<div className="odie__transfer-chat">
-			<button onClick={ handleClick }>{ buttonConfig.text }</button>
+			{ buttonConfig.map( ( button, index ) => (
+				<div className="odie__transfer-chat--button-container" key={ index }>
+					<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
+					<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+				</div>
+			) ) }
 		</div>
 	);
 };

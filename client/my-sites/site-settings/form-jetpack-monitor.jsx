@@ -1,14 +1,13 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import withSiteMonitorSettings from 'calypso/data/site-monitor/with-site-monitor-settings';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
@@ -87,34 +86,32 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="site-settings__security-settings">
+			<PanelCard className="jetpack-monitor-settings">
 				<QueryJetpackModules siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Downtime monitoring' ) } />
+				<PanelCardHeading>{ translate( 'Downtime monitoring' ) }</PanelCardHeading>
 
-				<Card className="jetpack-monitor-settings">
-					<SupportInfo
-						text={ translate(
-							'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
-						) }
-						link="https://jetpack.com/support/monitor/"
-					/>
+				<SupportInfo
+					text={ translate(
+						'Jetpack will continuously monitor your site, and alert you the moment downtime is detected.'
+					) }
+					link="https://jetpack.com/support/monitor/"
+				/>
 
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="monitor"
-						label={ translate(
-							'Get alerts if your site goes offline. We’ll let you know when it’s back up, too.'
-						) }
-						disabled={ this.disableForm() }
-					/>
+				<JetpackModuleToggle
+					siteId={ siteId }
+					moduleSlug="monitor"
+					label={ translate(
+						'Get alerts if your site goes offline. We’ll let you know when it’s back up, too.'
+					) }
+					disabled={ this.disableForm() }
+				/>
 
-					<div className="site-settings__child-settings">
-						{ this.settingsMonitorEmailCheckbox() }
-						{ this.settingsMonitorWpNoteCheckbox() }
-					</div>
-				</Card>
-			</div>
+				<div className="jetpack-monitor-settings__child-settings">
+					{ this.settingsMonitorEmailCheckbox() }
+					{ this.settingsMonitorWpNoteCheckbox() }
+				</div>
+			</PanelCard>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

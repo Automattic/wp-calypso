@@ -530,7 +530,7 @@ describe( 'Site Migration Flow', () => {
 			expect( getFlowLocation() ).toEqual( {
 				path: addQueryArgs(
 					{ siteId: 123, from: 'oldsite.com', siteSlug: 'example.wordpress.com' },
-					`/${ STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug }`
+					`/${ STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug }`
 				),
 				state: null,
 			} );
