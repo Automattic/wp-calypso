@@ -1,38 +1,56 @@
-
-
-.help-center__container-chat .chatbox-messages .odie__transfer-chat,
-.help-center-article-content .help-center-feedback__form .odie__transfer-chat {
-	display: flex;
-	width: 100%;
-	padding-bottom: 16px;
-
-	button {
-		border-radius: 2px;
-		border: 1px solid var(--studio-gray-10);
-		background: var(--studio-white);
+.help-center__container-chat .chatbox-messages,
+.help-center-article-content .help-center-feedback__form {
+	.odie__transfer-chat {
 		display: flex;
-		height: 40px;
-		padding: 8px 14px;
-		justify-content: center;
-		align-items: center;
-		gap: 4px;
-		color: var(--studio-gray-70);
+		width: 100%;
+		padding-bottom: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 8px;
 
-		&:hover {
-			border: 1px solid var(--studio-gray-20);
-			cursor: pointer;
+		.odie__transfer-chat--button-container {
+			display: flex;
+			gap: 8px;
+
+			.odie__transfer-chat--wait-time {
+				font-size: 0.75rem;
+				color: var( --studio-gray-50 );
+				align-content: center;
+			}
 		}
 
-		&:focus,
-		&:active {
-			outline: none;
+		button {
+			border-radius: 2px;
+			border: 1px solid var( --studio-gray-10 );
+			background: var( --studio-white );
+			display: flex;
+			height: 40px;
+			padding: 8px 14px;
+			justify-content: center;
+			align-items: center;
+			gap: 4px;
+			color: var( --studio-gray-70 );
+
+			&:hover {
+				border: 1px solid var( --studio-gray-20 );
+				cursor: pointer;
+			}
+
+			&:focus,
+			&:active {
+				outline: none;
+			}
 		}
+	}
+
+	.help-center__cookie-warning {
+		margin-top: 16px;
 	}
 }
 
 .help-center__cookie-warning {
-	background-color: var(--studio-yellow-0);
-	border-left: 4px solid var(--studio-yellow-20);
+	background-color: var( --studio-yellow-0 );
+	border-left: 4px solid var( --studio-yellow-20 );
 	padding: 8px 16px;
 	margin-bottom: 30px;
 
@@ -41,26 +59,6 @@
 	}
 }
 
-.help-center__container-chat .chatbox-messages {
-	.odie__transfer-chat {
-		margin-left: 46px;
-		flex-direction: column;
-    	align-items: flex-start;
-		gap: 8px;
-
-		.odie__transfer-chat--button-container {
-			display: flex;
-			gap: 8px;
-
-			.odie__transfer-chat--wait-time {
-				font-size: 0.75rem;	
-				color: var(--studio-gray-50);
-				align-content: center;
-			}
-		}
-	}
-
-	.help-center__cookie-warning {
-		margin-top: 16px;
-	}
+.help-center__container-chat .chatbox-messages .odie__transfer-chat {
+	margin-left: 46px;
 }

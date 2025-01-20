@@ -9,6 +9,7 @@ import './get-support.scss';
 interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;
+	canConnectToZendesk?: boolean;
 }
 
 interface ButtonConfig {
@@ -43,13 +44,14 @@ export const NewThirdPartyCookiesNotice: React.FC = () => {
 export const GetSupport: React.FC< GetSupportProps > = ( {
 	onClickAdditionalEvent,
 	isUserEligibleForPaidSupport,
+	canConnectToZendesk = false,
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
-		canConnectToZendesk,
+		canConnectToZendesk: contextCanConnectToZendesk,
 	} = useOdieAssistantContext();
 	const isEnglishLocale = useIsEnglishLocale();
 
@@ -59,7 +61,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	}
 
 	if (
-		! canConnectToZendesk &&
+		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
 		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
 	) {
 		return <NewThirdPartyCookiesNotice />;
