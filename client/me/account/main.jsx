@@ -32,7 +32,10 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
+import {
+	domainManagementEditContactInfo,
+	domainManagementRoot,
+} from 'calypso/my-sites/domains/paths';
 import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -636,13 +639,14 @@ class Account extends Component {
 			} else {
 				// User has one domain so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own multiple domains, please check whether your WHOIS email needs to be updated for these domains.',
+					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
 					{
 						args: {
 							email: newEmail || '',
 						},
 						components: {
 							br: <br />,
+							a: <a href={ domainManagementRoot() } />,
 						},
 					}
 				);
@@ -671,10 +675,14 @@ class Account extends Component {
 			} else {
 				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
-					'Since you own multiple domains, we sent an email to %(email)s. Please check your inbox to verify your email to avoid any domain service interruption.',
+					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
 					{
 						args: {
 							email: newEmail || '',
+						},
+						components: {
+							br: <br />,
+							a: <a href={ domainManagementRoot() } />,
 						},
 					}
 				);
