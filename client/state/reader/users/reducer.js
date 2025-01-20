@@ -1,19 +1,19 @@
 import { combineReducers } from 'calypso/state/utils';
 import {
-	READER_USER_REQUEST,
-	READER_USER_REQUEST_SUCCESS,
-	READER_USER_REQUEST_FAILURE,
+	READER_USER__REQUEST,
+	READER_USER__REQUEST_SUCCESS,
+	READER_USER__REQUEST_FAILURE,
 } from '../action-types';
 
 // Stores the user data
 const items = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_USER_REQUEST_SUCCESS:
+		case READER_USER__REQUEST_SUCCESS:
 			return {
 				...state,
 				[ action.userId ]: action.userData,
 			};
-		case READER_USER_REQUEST_FAILURE:
+		case READER_USER__REQUEST_FAILURE:
 			return {
 				...state,
 				[ action.userId ]: null,
@@ -26,13 +26,13 @@ const items = ( state = {}, action ) => {
 // Tracks loading states
 const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_USER_REQUEST:
+		case READER_USER__REQUEST:
 			return {
 				...state,
 				[ action.userId ]: true,
 			};
-		case READER_USER_REQUEST_SUCCESS:
-		case READER_USER_REQUEST_FAILURE:
+		case READER_USER__REQUEST_SUCCESS:
+		case READER_USER__REQUEST_FAILURE:
 			return {
 				...state,
 				[ action.userId ]: false,

@@ -12,8 +12,8 @@ import {
 	READER_LIST__UNFOLLOW,
 	READER_LIST__UPDATE,
 	READER_LISTS__REQUEST,
-	READER_USER_LISTS_REQUEST,
-	READER_USER_LISTS_RECEIVE,
+	READER_USER__LISTS_REQUEST,
+	READER_USER__LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import {
 	handleReaderListRequestFailure,
@@ -155,7 +155,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 		} ),
 	],
 	// Request only public lists for a specific user
-	[ READER_USER_LISTS_REQUEST ]: [
+	[ READER_USER__LISTS_REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -167,7 +167,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => ( {
-				type: READER_USER_LISTS_RECEIVE,
+				type: READER_USER__LISTS_RECEIVE,
 				userSlug: action.userSlug,
 				lists: apiResponse?.lists,
 			} ),

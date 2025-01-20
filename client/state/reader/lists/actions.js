@@ -22,7 +22,7 @@ import {
 	READER_LIST__ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS__RECEIVE,
 	READER_LISTS__REQUEST,
-	READER_USER_LISTS_REQUEST,
+	READER_USER__LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -275,7 +275,7 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 
 export function requestUserLists( userSlug ) {
 	return {
-		type: READER_USER_LISTS_REQUEST,
+		type: READER_USER__LISTS_REQUEST,
 		userSlug,
 	};
 }
