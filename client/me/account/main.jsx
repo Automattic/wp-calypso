@@ -88,9 +88,6 @@ const getOwnedDomainsData = ( state ) => {
 	const domains = getFlatDomainsList( state );
 	const ownedDomains = domains.filter( ( domain ) => domain.currentUserIsOwner === true ) || [];
 
-	console.log( 'All domains:', domains );
-	console.log( 'Owned domains:', ownedDomains );
-
 	return {
 		domainCount: ownedDomains.length,
 		firstDomain:
