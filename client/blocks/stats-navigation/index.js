@@ -98,7 +98,8 @@ class StatsNavigation extends Component {
 				// TODO: Review this logic.
 				// By default, all sites have the ability to upload a single video.
 				// Therefore, it probably doesn't make sense to disable the module by default.
-				if ( toggleItem.key === 'videos' ) {
+				const optionallyDisableVideoPress = false;
+				if ( toggleItem.key === 'videos' && optionallyDisableVideoPress ) {
 					return {
 						...toggleItem,
 						disabled: ! nextProps.hasVideoPress, // This value is currently ignored.
