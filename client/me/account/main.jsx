@@ -637,7 +637,7 @@ class Account extends Component {
 					}
 				);
 			} else {
-				// User has one domain so WHOIS email needs to be checked and updated. Redirect user to general domain management page
+				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
 					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
 					{
