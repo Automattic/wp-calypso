@@ -2,23 +2,23 @@
 
 import { filter, some, includes, keyBy, map, omit, reject } from 'lodash';
 import {
-	READER_LIST_CREATE,
-	READER_LIST_DELETE,
-	READER_LIST_FOLLOW_RECEIVE,
-	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_SUCCESS,
-	READER_LIST_REQUEST_FAILURE,
-	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_UPDATE,
-	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_UPDATE_FAILURE,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
-	READER_LIST_ITEMS_RECEIVE,
-	READER_LIST_ITEM_DELETE_FEED,
-	READER_LIST_ITEM_DELETE_SITE,
-	READER_LIST_ITEM_DELETE_TAG,
-	READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	READER_LIST__CREATE,
+	READER_LIST__DELETE,
+	READER_LIST__FOLLOW_RECEIVE,
+	READER_LIST__REQUEST,
+	READER_LIST__REQUEST_SUCCESS,
+	READER_LIST__REQUEST_FAILURE,
+	READER_LIST__UNFOLLOW_RECEIVE,
+	READER_LIST__UPDATE,
+	READER_LIST__UPDATE_SUCCESS,
+	READER_LIST__UPDATE_FAILURE,
+	READER_LISTS__RECEIVE,
+	READER_LISTS__REQUEST,
+	READER_LIST__ITEMS_RECEIVE,
+	READER_LIST__ITEM_DELETE_FEED,
+	READER_LIST__ITEM_DELETE_SITE,
+	READER_LIST__ITEM_DELETE_TAG,
+	READER_LIST__ITEM_ADD_FEED_RECEIVE,
 	READER_USER_LISTS_RECEIVE,
 	READER_USER_LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
@@ -33,12 +33,12 @@ import { itemsSchema, subscriptionsSchema } from './schema';
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_LISTS_RECEIVE:
+		case READER_LISTS__RECEIVE:
 			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
-		case READER_LIST_REQUEST_SUCCESS:
-		case READER_LIST_UPDATE_SUCCESS:
+		case READER_LIST__REQUEST_SUCCESS:
+		case READER_LIST__UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
-		case READER_LIST_DELETE:
+		case READER_LIST__DELETE:
 			if ( ! ( action.listId in state ) ) {
 				return state;
 			}
@@ -62,12 +62,12 @@ function removeItemBy( state, action, predicate ) {
 
 export const listItems = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case READER_LIST_ITEMS_RECEIVE:
+		case READER_LIST__ITEMS_RECEIVE:
 			return {
 				...state,
 				[ action.listId ]: action.listItems,
 			};
-		case READER_LIST_ITEM_ADD_FEED_RECEIVE: {
+		case READER_LIST__ITEM_ADD_FEED_RECEIVE: {
 			const currentItems = state[ action.listId ] || [];
 			if ( some( currentItems, { feed_ID: action.feedId } ) ) {
 				return state;
@@ -77,13 +77,13 @@ export const listItems = ( state = {}, action ) => {
 				[ action.listId ]: [ ...currentItems, { feed_ID: action.feedId } ],
 			};
 		}
-		case READER_LIST_ITEM_DELETE_FEED:
+		case READER_LIST__ITEM_DELETE_FEED:
 			return removeItemBy( state, action, ( item ) => item.feed_ID === action.feedId );
-		case READER_LIST_ITEM_DELETE_TAG:
+		case READER_LIST__ITEM_DELETE_TAG:
 			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
-		case READER_LIST_ITEM_DELETE_SITE:
+		case READER_LIST__ITEM_DELETE_SITE:
 			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
-		case READER_LIST_DELETE:
+		case READER_LIST__DELETE:
 			if ( ! ( action.listId in state ) ) {
 				return state;
 			}
@@ -102,15 +102,15 @@ export const subscribedLists = withSchemaValidation(
 	subscriptionsSchema,
 	( state = [], action ) => {
 		switch ( action.type ) {
-			case READER_LISTS_RECEIVE:
+			case READER_LISTS__RECEIVE:
 				return map( action.lists, 'ID' );
-			case READER_LIST_FOLLOW_RECEIVE:
+			case READER_LIST__FOLLOW_RECEIVE:
 				const followedListId = action.list?.ID;
 				if ( ! followedListId || includes( state, followedListId ) ) {
 					return state;
 				}
 				return [ ...state, followedListId ];
-			case READER_LIST_UNFOLLOW_RECEIVE:
+			case READER_LIST__UNFOLLOW_RECEIVE:
 				// Remove the unfollowed list ID from subscribedLists
 				const unfollowedListId = action.list?.ID;
 				if ( ! unfollowedListId ) {
@@ -119,11 +119,11 @@ export const subscribedLists = withSchemaValidation(
 				return filter( state, ( listId ) => {
 					return listId !== unfollowedListId;
 				} );
-			case READER_LIST_DELETE:
+			case READER_LIST__DELETE:
 				return filter( state, ( listId ) => {
 					return listId !== action.listId;
 				} );
-			case READER_LIST_REQUEST_SUCCESS:
+			case READER_LIST__REQUEST_SUCCESS:
 				if ( ! state.includes( action.data.list.ID ) ) {
 					return [ ...state, action.data.list.ID ];
 				}
@@ -141,10 +141,10 @@ export const subscribedLists = withSchemaValidation(
  */
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
-		case READER_LIST_REQUEST:
-		case READER_LIST_REQUEST_SUCCESS:
-		case READER_LIST_REQUEST_FAILURE:
-			return READER_LIST_REQUEST === action.type;
+		case READER_LIST__REQUEST:
+		case READER_LIST__REQUEST_SUCCESS:
+		case READER_LIST__REQUEST_FAILURE:
+			return READER_LIST__REQUEST === action.type;
 	}
 
 	return state;
@@ -158,10 +158,10 @@ export function isRequestingList( state = false, action ) {
  */
 export function isCreatingList( state = false, action ) {
 	switch ( action.type ) {
-		case READER_LIST_CREATE:
-		case READER_LIST_REQUEST_SUCCESS:
-		case READER_LIST_REQUEST_FAILURE:
-			return READER_LIST_CREATE === action.type;
+		case READER_LIST__CREATE:
+		case READER_LIST__REQUEST_SUCCESS:
+		case READER_LIST__REQUEST_FAILURE:
+			return READER_LIST__CREATE === action.type;
 	}
 
 	return state;
@@ -175,10 +175,10 @@ export function isCreatingList( state = false, action ) {
  */
 export function isUpdatingList( state = false, action ) {
 	switch ( action.type ) {
-		case READER_LIST_UPDATE:
-		case READER_LIST_UPDATE_SUCCESS:
-		case READER_LIST_UPDATE_FAILURE:
-			return READER_LIST_UPDATE === action.type;
+		case READER_LIST__UPDATE:
+		case READER_LIST__UPDATE_SUCCESS:
+		case READER_LIST__UPDATE_FAILURE:
+			return READER_LIST__UPDATE === action.type;
 	}
 
 	return state;
@@ -192,9 +192,9 @@ export function isUpdatingList( state = false, action ) {
  */
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
-		case READER_LISTS_REQUEST:
-		case READER_LISTS_RECEIVE:
-			return READER_LISTS_REQUEST === action.type;
+		case READER_LISTS__REQUEST:
+		case READER_LISTS__RECEIVE:
+			return READER_LISTS__REQUEST === action.type;
 	}
 
 	return state;

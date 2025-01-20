@@ -4,10 +4,10 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import { READER_LIST_ITEM_DELETE_FEED } from 'calypso/state/reader/action-types';
+import { READER_LIST__ITEM_DELETE_FEED } from 'calypso/state/reader/action-types';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
-	[ READER_LIST_ITEM_DELETE_FEED ]: [
+	[ READER_LIST__ITEM_DELETE_FEED ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(

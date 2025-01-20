@@ -6,12 +6,12 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import {
-	READER_LIST_CREATE,
-	READER_LIST_FOLLOW,
-	READER_LIST_REQUEST,
-	READER_LIST_UNFOLLOW,
-	READER_LIST_UPDATE,
-	READER_LISTS_REQUEST,
+	READER_LIST__CREATE,
+	READER_LIST__FOLLOW,
+	READER_LIST__REQUEST,
+	READER_LIST__UNFOLLOW,
+	READER_LIST__UPDATE,
+	READER_LISTS__REQUEST,
 	READER_USER_LISTS_REQUEST,
 	READER_USER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
@@ -28,7 +28,7 @@ import {
 const noop = () => {};
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
-	[ READER_LIST_CREATE ]: [
+	[ READER_LIST__CREATE ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -62,7 +62,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			],
 		} ),
 	],
-	[ READER_LIST_FOLLOW ]: [
+	[ READER_LIST__FOLLOW ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -80,7 +80,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onError: () => [ errorNotice( translate( 'Unable to follow list.' ) ) ],
 		} ),
 	],
-	[ READER_LIST_REQUEST ]: [
+	[ READER_LIST__REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -95,7 +95,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onError: ( action, error ) => [ handleReaderListRequestFailure( error ) ],
 		} ),
 	],
-	[ READER_LIST_UNFOLLOW ]: [
+	[ READER_LIST__UNFOLLOW ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -113,7 +113,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onError: () => [ errorNotice( translate( 'Unable to unfollow list.' ) ) ],
 		} ),
 	],
-	[ READER_LIST_UPDATE ]: [
+	[ READER_LIST__UPDATE ]: [
 		dispatchRequest( {
 			fetch: ( action ) => {
 				return http(
@@ -139,7 +139,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 		} ),
 	],
 	// Request public and private lists for the current user
-	[ READER_LISTS_REQUEST ]: [
+	[ READER_LISTS__REQUEST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(

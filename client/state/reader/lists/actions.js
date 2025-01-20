@@ -1,27 +1,27 @@
 import {
-	READER_LIST_CREATE,
-	READER_LIST_DELETE,
-	READER_LIST_FOLLOW,
-	READER_LIST_FOLLOW_RECEIVE,
-	READER_LIST_ITEMS_REQUEST,
-	READER_LIST_ITEMS_RECEIVE,
-	READER_LIST_ITEM_DELETE_FEED,
-	READER_LIST_ITEM_DELETE_SITE,
-	READER_LIST_ITEM_DELETE_TAG,
-	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_SUCCESS,
-	READER_LIST_REQUEST_FAILURE,
-	READER_LIST_UNFOLLOW,
-	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_UPDATE,
-	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_UPDATE_FAILURE,
-	READER_LIST_ITEM_ADD_FEED,
-	READER_LIST_ITEM_ADD_FEED_RECEIVE,
-	READER_LIST_ITEM_ADD_TAG,
-	READER_LIST_ITEM_ADD_TAG_RECEIVE,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
+	READER_LIST__CREATE,
+	READER_LIST__DELETE,
+	READER_LIST__FOLLOW,
+	READER_LIST__FOLLOW_RECEIVE,
+	READER_LIST__ITEMS_REQUEST,
+	READER_LIST__ITEMS_RECEIVE,
+	READER_LIST__ITEM_DELETE_FEED,
+	READER_LIST__ITEM_DELETE_SITE,
+	READER_LIST__ITEM_DELETE_TAG,
+	READER_LIST__REQUEST,
+	READER_LIST__REQUEST_SUCCESS,
+	READER_LIST__REQUEST_FAILURE,
+	READER_LIST__UNFOLLOW,
+	READER_LIST__UNFOLLOW_RECEIVE,
+	READER_LIST__UPDATE,
+	READER_LIST__UPDATE_SUCCESS,
+	READER_LIST__UPDATE_FAILURE,
+	READER_LIST__ITEM_ADD_FEED,
+	READER_LIST__ITEM_ADD_FEED_RECEIVE,
+	READER_LIST__ITEM_ADD_TAG,
+	READER_LIST__ITEM_ADD_TAG_RECEIVE,
+	READER_LISTS__RECEIVE,
+	READER_LISTS__REQUEST,
 	READER_USER_LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
@@ -41,7 +41,7 @@ import 'calypso/state/reader/init';
  */
 export function receiveLists( lists ) {
 	return {
-		type: READER_LISTS_RECEIVE,
+		type: READER_LISTS__RECEIVE,
 		lists,
 	};
 }
@@ -52,12 +52,12 @@ export function receiveLists( lists ) {
  */
 export function requestSubscribedLists() {
 	return {
-		type: READER_LISTS_REQUEST,
+		type: READER_LISTS__REQUEST,
 	};
 }
 
 export function createReaderList( list ) {
-	return { type: READER_LIST_CREATE, list };
+	return { type: READER_LIST__CREATE, list };
 }
 
 /**
@@ -67,19 +67,19 @@ export function createReaderList( list ) {
  * @returns {Object}       Action object
  */
 export function requestList( listOwner, listSlug ) {
-	return { type: READER_LIST_REQUEST, listOwner, listSlug };
+	return { type: READER_LIST__REQUEST, listOwner, listSlug };
 }
 
 export function receiveReaderList( data ) {
 	return {
-		type: READER_LIST_REQUEST_SUCCESS,
+		type: READER_LIST__REQUEST_SUCCESS,
 		data,
 	};
 }
 
 export function handleReaderListRequestFailure( errorInfo ) {
 	return {
-		type: READER_LIST_REQUEST_FAILURE,
+		type: READER_LIST__REQUEST_FAILURE,
 		error: errorInfo.error,
 		owner: errorInfo.owner,
 		slug: errorInfo.slug,
@@ -94,7 +94,7 @@ export function handleReaderListRequestFailure( errorInfo ) {
  */
 export function followList( listOwner, listSlug ) {
 	return {
-		type: READER_LIST_FOLLOW,
+		type: READER_LIST__FOLLOW,
 		listOwner,
 		listSlug,
 	};
@@ -107,7 +107,7 @@ export function followList( listOwner, listSlug ) {
  */
 export function receiveFollowList( list ) {
 	return {
-		type: READER_LIST_FOLLOW_RECEIVE,
+		type: READER_LIST__FOLLOW_RECEIVE,
 		list,
 	};
 }
@@ -120,7 +120,7 @@ export function receiveFollowList( list ) {
  */
 export function unfollowList( listOwner, listSlug ) {
 	return {
-		type: READER_LIST_UNFOLLOW,
+		type: READER_LIST__UNFOLLOW,
 		listOwner,
 		listSlug,
 	};
@@ -133,7 +133,7 @@ export function unfollowList( listOwner, listSlug ) {
  */
 export function receiveUnfollowList( list ) {
 	return {
-		type: READER_LIST_UNFOLLOW_RECEIVE,
+		type: READER_LIST__UNFOLLOW_RECEIVE,
 		list,
 	};
 }
@@ -149,7 +149,7 @@ export function updateReaderList( list ) {
 	}
 
 	return {
-		type: READER_LIST_UPDATE,
+		type: READER_LIST__UPDATE,
 		list,
 	};
 }
@@ -161,7 +161,7 @@ export function updateReaderList( list ) {
  */
 export function receiveUpdatedListDetails( data ) {
 	return {
-		type: READER_LIST_UPDATE_SUCCESS,
+		type: READER_LIST__UPDATE_SUCCESS,
 		data,
 	};
 }
@@ -174,26 +174,26 @@ export function receiveUpdatedListDetails( data ) {
  */
 export function handleUpdateListDetailsError( error, list ) {
 	return {
-		type: READER_LIST_UPDATE_FAILURE,
+		type: READER_LIST__UPDATE_FAILURE,
 		error,
 		list,
 	};
 }
 
 export const requestReaderListItems = ( listOwner, listSlug ) => ( {
-	type: READER_LIST_ITEMS_REQUEST,
+	type: READER_LIST__ITEMS_REQUEST,
 	listOwner,
 	listSlug,
 } );
 
 export const receiveReaderListItems = ( listId, listItems ) => ( {
-	type: READER_LIST_ITEMS_RECEIVE,
+	type: READER_LIST__ITEMS_RECEIVE,
 	listId,
 	listItems,
 } );
 
 export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
-	type: READER_LIST_ITEM_DELETE_FEED,
+	type: READER_LIST__ITEM_DELETE_FEED,
 	listId,
 	listOwner,
 	listSlug,
@@ -201,7 +201,7 @@ export const deleteReaderListFeed = ( listId, listOwner, listSlug, feedId ) => (
 } );
 
 export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
-	type: READER_LIST_ITEM_DELETE_SITE,
+	type: READER_LIST__ITEM_DELETE_SITE,
 	listId,
 	listOwner,
 	listSlug,
@@ -209,7 +209,7 @@ export const deleteReaderListSite = ( listId, listOwner, listSlug, siteId ) => (
 } );
 
 export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug ) => ( {
-	type: READER_LIST_ITEM_DELETE_TAG,
+	type: READER_LIST__ITEM_DELETE_TAG,
 	listId,
 	listOwner,
 	listSlug,
@@ -218,7 +218,7 @@ export const deleteReaderListTag = ( listId, listOwner, listSlug, tagId, tagSlug
 } );
 
 export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
-	type: READER_LIST_ITEM_ADD_FEED,
+	type: READER_LIST__ITEM_ADD_FEED,
 	listId,
 	listOwner,
 	listSlug,
@@ -226,7 +226,7 @@ export const addReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
 } );
 
 export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) => ( {
-	type: READER_LIST_ITEM_ADD_FEED,
+	type: READER_LIST__ITEM_ADD_FEED,
 	listId,
 	listOwner,
 	listSlug,
@@ -234,7 +234,7 @@ export const addReaderListFeedByUrl = ( listId, listOwner, listSlug, feedUrl ) =
 } );
 
 export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
-	type: READER_LIST_ITEM_ADD_FEED,
+	type: READER_LIST__ITEM_ADD_FEED,
 	listId,
 	listOwner,
 	listSlug,
@@ -242,7 +242,7 @@ export const addReaderListSite = ( listId, listOwner, listSlug, siteId ) => ( {
 } );
 
 export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
-	type: READER_LIST_ITEM_ADD_TAG,
+	type: READER_LIST__ITEM_ADD_TAG,
 	listId,
 	listOwner,
 	listSlug,
@@ -250,7 +250,7 @@ export const addReaderListTag = ( listId, listOwner, listSlug, tagSlug ) => ( {
 } );
 
 export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) => ( {
-	type: READER_LIST_ITEM_ADD_FEED_RECEIVE,
+	type: READER_LIST__ITEM_ADD_FEED_RECEIVE,
 	listId,
 	listOwner,
 	listSlug,
@@ -258,7 +258,7 @@ export const receiveAddReaderListFeed = ( listId, listOwner, listSlug, feedId ) 
 } );
 
 export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, tagId ) => ( {
-	type: READER_LIST_ITEM_ADD_TAG_RECEIVE,
+	type: READER_LIST__ITEM_ADD_TAG_RECEIVE,
 	listId,
 	listOwner,
 	listSlug,
@@ -267,7 +267,7 @@ export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, t
 } );
 
 export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
-	type: READER_LIST_DELETE,
+	type: READER_LIST__DELETE,
 	listId,
 	listOwner,
 	listSlug,

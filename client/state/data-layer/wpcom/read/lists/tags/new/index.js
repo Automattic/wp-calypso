@@ -4,11 +4,11 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
-import { READER_LIST_ITEM_ADD_TAG } from 'calypso/state/reader/action-types';
+import { READER_LIST__ITEM_ADD_TAG } from 'calypso/state/reader/action-types';
 import { receiveAddReaderListTag } from 'calypso/state/reader/lists/actions';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/tags/new/index.js', {
-	[ READER_LIST_ITEM_ADD_TAG ]: [
+	[ READER_LIST__ITEM_ADD_TAG ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
