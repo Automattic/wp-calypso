@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import CoursesComponent from './help-courses';
 import HelpComponent from './main';
 
 export function loggedOut( context, next ) {
@@ -49,11 +48,6 @@ export function help( context, next ) {
 			<HelpComponent path={ context.path } />
 		</>
 	);
-	next();
-}
-
-export function courses( context, next ) {
-	context.primary = <CoursesComponent />;
 	next();
 }
 

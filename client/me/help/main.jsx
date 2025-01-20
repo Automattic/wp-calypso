@@ -221,7 +221,6 @@ class Help extends PureComponent {
 	getPlaceholders = () => (
 		<Main className="help" wideLayout>
 			<div className="help-search is-placeholder" />
-			<div className="help__help-teaser-button is-placeholder" />
 			<div className="help-results is-placeholder" />
 			<div className="help__support-links is-placeholder" />
 		</Main>
