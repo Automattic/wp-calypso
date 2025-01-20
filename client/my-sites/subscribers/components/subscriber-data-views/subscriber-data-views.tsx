@@ -50,17 +50,6 @@ const SubscriberDataViews = ( {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<1040px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const [ currentView, setCurrentView ] = useState< View >( {
-		type: 'table',
-		layout: {},
-		page: 1,
-		perPage: 10,
-		sort: {
-			field: 'date_subscribed',
-			direction: 'desc',
-		},
-	} );
-
 	const {
 		grandTotal,
 		page,
@@ -73,9 +62,22 @@ const SubscriberDataViews = ( {
 		perPage,
 		setPerPage,
 		handleSearch,
+		sortTerm,
+		sortOrder,
 		setSortTerm,
 		setSortOrder,
 	} = useSubscribersPage();
+
+	const [ currentView, setCurrentView ] = useState< View >( {
+		type: 'table',
+		layout: {},
+		page,
+		perPage,
+		sort: {
+			field: sortTerm,
+			direction: sortOrder,
+		},
+	} );
 
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
@@ -201,11 +203,6 @@ const SubscriberDataViews = ( {
 
 	const handleViewChange = useCallback(
 		( newView: View ) => {
-			// If the new view is the same as the current view, do nothing
-			if ( newView === currentView ) {
-				return;
-			}
-
 			// Handle pagination
 			if ( typeof newView.page === 'number' && newView.page !== page ) {
 				pageChangeCallback( newView.page );
@@ -236,8 +233,13 @@ const SubscriberDataViews = ( {
 				setSortOrder( newView.sort.direction );
 			}
 
-			// Update the view
-			setCurrentView( newView );
+			// Handle field order change
+			if ( newView.fields && newView.fields !== currentView.fields ) {
+				setCurrentView( ( oldCurrentView ) => ( {
+					...oldCurrentView,
+					fields: newView.fields,
+				} ) );
+			}
 		},
 		[
 			page,
@@ -264,27 +266,32 @@ const SubscriberDataViews = ( {
 
 	// Update the view when a subscriber is selected
 	useEffect( () => {
-		if ( selectedSubscriber ) {
-			setCurrentView( ( oldCurrentView ) => ( {
-				...oldCurrentView,
-				type: 'list',
-				layout: {
-					showMedia: true,
-					mediaSize: 40,
-					mediaField: 'media',
-					primaryField: 'name',
-				},
-				fields: [ 'media', 'name' ],
-			} ) );
-		} else {
-			setCurrentView( ( oldCurrentView ) => ( {
-				...oldCurrentView,
-				type: 'table',
-				layout: {},
-				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
-			} ) );
-		}
-	}, [ isMobile, selectedSubscriber ] );
+		const commonViewProps = {
+			page,
+			perPage,
+			sort: {
+				field: sortTerm,
+				direction: sortOrder,
+			},
+		};
+
+		setCurrentView( ( oldCurrentView ) => ( {
+			...oldCurrentView,
+			...commonViewProps,
+			type: selectedSubscriber ? 'list' : 'table',
+			layout: selectedSubscriber
+				? {
+						showMedia: true,
+						mediaSize: 40,
+						mediaField: 'media',
+						primaryField: 'name',
+				  }
+				: {},
+			fields: selectedSubscriber
+				? [ 'media', 'name' ]
+				: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+		} ) );
+	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder ] );
 
 	return (
 		<div
