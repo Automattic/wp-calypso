@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import Smooch from 'smooch';
+import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
 import type { ZendeskMessage } from '../types';
@@ -22,6 +23,7 @@ const parseResponse = ( conversation: Conversation ) => {
  */
 export const useGetZendeskConversation = () => {
 	const getUnreadNotifications = useGetUnreadConversations();
+	const { trackEvent } = useOdieAssistantContext();
 
 	return useCallback(
 		( {
@@ -35,7 +37,9 @@ export const useGetZendeskConversation = () => {
 				return null;
 			}
 
-			const conversation = Smooch.getConversations().find( ( conversation ) => {
+			const conversations = Smooch.getConversations();
+
+			const conversation = conversations.find( ( conversation ) => {
 				if ( conversationId ) {
 					return conversation.id === conversationId;
 				}
@@ -44,6 +48,14 @@ export const useGetZendeskConversation = () => {
 			} );
 
 			if ( ! conversation ) {
+				// Conversation id was passed but the conversion was not found. Something went wrong.
+				if ( conversationId ) {
+					trackEvent( 'zendesk_conversation_not_found', {
+						conversationId,
+						chatId,
+						conversationsCount: conversations?.length ?? null,
+					} );
+				}
 				return null;
 			}
 
@@ -56,6 +68,6 @@ export const useGetZendeskConversation = () => {
 				} )
 				.catch( () => parseResponse( conversation ) );
 		},
-		[ getUnreadNotifications ]
+		[ getUnreadNotifications, trackEvent ]
 	);
 };
