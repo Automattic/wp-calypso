@@ -1,9 +1,9 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "../variables";
 
-$background-color: #05374A;
 $header-height: 300px;
-$header-height-mobile: 330px;
+$header-height-mobile: 350px;
 $header-compact-height: 114px;
 $header-compact-height-mobile: 128px;
 
@@ -16,7 +16,7 @@ $header-compact-height-mobile: 128px;
 
 	.hosting-dashboard-layout__top-wrapper {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $header-background-color;
         border-block-end: none;
 		position: sticky;
 		top: 0;
@@ -30,6 +30,10 @@ $header-compact-height-mobile: 128px;
 			height: $header-height;
 		}
     }
+
+	.hosting-dashboard-layout__header > * {
+		z-index: 10;
+	}
 
 	.hosting-dashboard-layout__header-breadcrumb {
 		color: var(--color-neutral-40);
