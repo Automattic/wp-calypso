@@ -1,0 +1,49 @@
+
+.is-launchpad-first .customer-home-launchpad {
+	max-width: 536px;
+	margin: auto;
+	box-shadow: none;
+
+	.checklist-item__task {
+		a, button {
+			padding: 20px 24px;
+			margin: 0;
+			border: 1px solid var(--studio-gray-5);
+			border-bottom: none;
+
+			&:hover {
+				border-bottom: none;
+			}
+		}
+
+		&:first-child a,
+		&:first-child button {
+			border-radius: 4px 4px 0 0;
+		}
+
+		&:last-child a, &:last-child button {
+			border-radius: 0 0 4px 4px;
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+
+		&.completed .gridicons-checkmark {
+			fill: var(--studio-green-50);
+		}
+
+		&.highlighted {
+			margin: 0 -12px;
+
+			a,
+			button {
+				border-bottom: 1px solid var(--studio-gray-5);
+				margin: 0 0 -1px 0;
+				padding: 28px 24px;
+			}
+		}
+
+		.checklist-item__text {
+			font-weight: 400;
+			font-size: 1rem;
+		}
+	}
+}
