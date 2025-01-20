@@ -43,6 +43,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	beforeAll( async () => {
 		page = await browser.newPage();
+		page.setDefaultTimeout( 15000 );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
