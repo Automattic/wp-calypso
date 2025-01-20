@@ -10,6 +10,7 @@ import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subs
 import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
+import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
@@ -22,6 +23,7 @@ type SubscriberDataViewsProps = {
 	siteId: number | undefined;
 	isUnverified?: boolean;
 	isStagingSite?: boolean;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -42,10 +44,14 @@ const SubscriberDataViews = ( {
 	siteId = undefined,
 	isUnverified = false,
 	isStagingSite = false,
+	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<660px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
 
 	const {
 		grandTotal,
@@ -186,12 +192,11 @@ const SubscriberDataViews = ( {
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
-		// If we're in list view (when a subscriber is selected), return empty actions array.
 		if ( selectedSubscriber ) {
 			return [];
 		}
 
-		return [
+		const baseActions = [
 			{
 				id: 'view',
 				label: translate( 'View' ),
@@ -206,14 +211,32 @@ const SubscriberDataViews = ( {
 				id: 'remove',
 				label: translate( 'Remove' ),
 				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				isPrimary: false,
 			},
 		];
+
+		if ( couponsAndGiftsEnabled ) {
+			baseActions.push( {
+				id: 'gift',
+				label: translate( 'Gift a subscription' ),
+				callback: ( items: Subscriber[] ) => {
+					if ( items[ 0 ] && items[ 0 ].user_id ) {
+						onGiftSubscription( items[ 0 ] );
+					}
+				},
+				isPrimary: false,
+			} );
+		}
+
+		return baseActions;
 	}, [
 		selectedSubscriber,
 		translate,
 		handleSubscriberSelect,
 		getSubscriberId,
 		handleUnsubscribe,
+		onGiftSubscription,
+		couponsAndGiftsEnabled,
 	] );
 
 	const handleViewChange = useCallback(
