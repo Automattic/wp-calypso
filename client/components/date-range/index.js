@@ -437,6 +437,11 @@ export class DateRange extends Component {
 		this.props.onDateSelect && this.props.onDateSelect( startDate, endDate );
 	};
 
+	// Expose closePopoverAndCommit to the parent component for shortcut clicks.
+	handleShortcutClick = ( shortcut ) => {
+		this.props.onShortcutClick( shortcut, this.closePopoverAndCommit );
+	};
+
 	/**
 	 * Renders the Popover component
 	 * @returns {import('react').Element} the Popover component
@@ -493,7 +498,7 @@ export class DateRange extends Component {
 								locked={ !! this.props.overlay }
 								startDate={ this.state.startDate }
 								endDate={ this.state.endDate }
-								onShortcutClick={ this.props.onShortcutClick } // for tracking shortcut clicks
+								onShortcutClick={ this.handleShortcutClick } // for tracking shortcut clicks
 							/>
 						</div>
 					) }

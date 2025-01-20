@@ -175,7 +175,10 @@ const StatsDateControl = ( {
 	};
 
 	// handler for shortcut clicks
-	const onShortcutClickHandler = ( shortcut: DateRangePickerShortcut ) => {
+	const onShortcutClickHandler = (
+		shortcut: DateRangePickerShortcut,
+		closePopoverAndCommit: () => void
+	) => {
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 
 		if ( shortcut.isGated ) {
@@ -187,6 +190,7 @@ const StatsDateControl = ( {
 				);
 		} else {
 			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
+			closePopoverAndCommit();
 		}
 	};
 

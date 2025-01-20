@@ -9,7 +9,7 @@ interface DateControlProps {
 		daysInRange: number;
 	};
 	shortcutList: DateRangePickerShortcut[];
-	onShortcutClick: ( shortcut: DateRangePickerShortcut ) => void;
+	onShortcutClick: ( shortcut: DateRangePickerShortcut, closePopoverAndCommit: () => void ) => void;
 	tooltip?: string;
 	overlay?: JSX.Element;
 }
