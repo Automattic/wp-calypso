@@ -426,7 +426,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ ! isA8CForAgencies() && ! isJetpackCloud() && (
+				{ config.isEnabled( 'layout/global-notifications' ) && (
 					<AsyncLoad require="calypso/layout/global-notifications" placeholder={ null } />
 				) }
 				{ shouldEnableCommandPalette && (

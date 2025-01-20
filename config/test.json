@@ -75,6 +75,7 @@
 		"launchpad/new-task-definition-parser/build": true,
 		"launchpad/new-task-definition-parser/link-in-bio": true,
 		"layout/app-banner": true,
+		"layout/global-notifications": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
 		"layout/site-level-user-profile": true,
