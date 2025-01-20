@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
+import { useAllDomainsQuery } from '@automattic/data-stores';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
@@ -80,6 +81,13 @@ const INTERFACE_FIELDS = [
 	'enable_translator',
 	'calypso_preferences',
 ];
+
+// Get all the domains that the user owns
+function DomainCountProvider( { children } ) {
+	const { data: domainsData } = useAllDomainsQuery( { current_user_is_owner: true } );
+	const domainCount = domainsData?.domains?.length || 0;
+	return children( domainCount );
+}
 
 class Account extends Component {
 	constructor( props ) {
@@ -571,46 +579,103 @@ class Account extends Component {
 			( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
 		);
 
-		// Default case.
-		let successMessage = this.props.translate( 'Settings saved successfully!' );
-		if ( newEmail && moreThanEmailChanged ) {
-			// Email and other settings changed.
-			successMessage = this.props.translate(
-				'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.',
-				{
-					args: {
-						email: newEmail || '',
-					},
-					components: {
-						br: <br />,
-					},
-				}
-			);
-		} else if ( newEmail ) {
-			// Only email changed.
-			successMessage = this.props.translate(
-				'We sent an email to %(email)s. Please check your inbox to verify your email.',
-				{
-					args: {
-						email: newEmail || '',
-					},
-				}
-			);
-		}
+		return (
+			<DomainCountProvider>
+				{ ( domainCount ) => {
+					// Default case.
+					let successMessage = this.props.translate( 'Settings saved successfully!' );
 
-		this.setState(
-			{
-				submittingForm: false,
-				formsSubmitting: {
-					...this.state.formsSubmitting,
-					...( formName && { [ formName ]: false } ),
-				},
-			},
-			() => {
-				this.props.successNotice( successMessage, noticeOptions );
-			}
+					if ( newEmail && moreThanEmailChanged ) {
+						// Email and other settings changed. User does not have any domains so WHOIS email does not need to be checked and updated.
+						if ( domainCount === 0 ) {
+							successMessage = this.props.translate(
+								'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+									components: {
+										br: <br />,
+									},
+								}
+							);
+						} else if ( domainCount === 1 ) {
+							// User has one domain so WHOIS email needs to be checked and updated. Redirect user to a specific domain
+							successMessage = this.props.translate(
+								'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own a custom domain, please check whether your WHOIS email needs to be updated.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+									components: {
+										br: <br />,
+									},
+								}
+							);
+						} else {
+							// User has one domain so WHOIS email needs to be checked and updated. Redirect user to general domain management page
+							successMessage = this.props.translate(
+								'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email. As you also own multiple domains, please check whether your WHOIS email needs to be updated for these domains.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+									components: {
+										br: <br />,
+									},
+								}
+							);
+						}
+					} else if ( newEmail ) {
+						// Only email changed. The user does not have any domains so WHOIS email does not need to be checked and updated.
+						if ( domainCount === 0 ) {
+							successMessage = this.props.translate(
+								'We sent an email to %(email)s. Please check your inbox to verify your email.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+								}
+							);
+						} else if ( domainCount === 1 ) {
+							// User has one domain so WHOIS email needs to be checked and updated. Redirect user to a specific domain
+							successMessage = this.props.translate(
+								'Since you own a domain, we sent an email to %(email)s. Please check your inbox to verify your email to avoid any domain service interruption.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+								}
+							);
+						} else {
+							// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
+							successMessage = this.props.translate(
+								'Since you own multiple domains, we sent an email to %(email)s. Please check your inbox to verify your email to avoid any domain service interruption.',
+								{
+									args: {
+										email: newEmail || '',
+									},
+								}
+							);
+						}
+					}
+
+					this.setState(
+						{
+							submittingForm: false,
+							formsSubmitting: {
+								...this.state.formsSubmitting,
+								...( formName && { [ formName ]: false } ),
+							},
+						},
+						() => {
+							this.props.successNotice( successMessage, noticeOptions );
+						}
+					);
+					debug( 'Settings saved successfully ' + JSON.stringify( response ) );
+				} }
+			</DomainCountProvider>
 		);
-		debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 	}
 
 	async submitForm( event, fields, formName = '' ) {
