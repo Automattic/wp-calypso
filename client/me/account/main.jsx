@@ -86,7 +86,6 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
-// Update the selector
 const getOwnedDomainsData = ( state ) => {
 	const domains = getFlatDomainsList( state );
 	const ownedDomains = domains.filter( ( domain ) => domain.currentUserIsOwner === true ) || [];
@@ -97,7 +96,7 @@ const getOwnedDomainsData = ( state ) => {
 			ownedDomains.length === 1
 				? {
 						domain: ownedDomains[ 0 ]?.domain,
-						siteSlug: ownedDomains[ 0 ]?.site_slug,
+						siteSlug: ownedDomains[ 0 ]?.siteSlug,
 				  }
 				: null,
 	};
@@ -627,9 +626,7 @@ class Account extends Component {
 								<a
 									href={ domainManagementEditContactInfo(
 										firstDomain.siteSlug,
-										firstDomain.domain,
-										null,
-										'domains'
+										firstDomain.domain
 									) }
 								/>
 							),
@@ -676,9 +673,7 @@ class Account extends Component {
 								<a
 									href={ domainManagementEditContactInfo(
 										firstDomain.siteSlug,
-										firstDomain.domain,
-										null,
-										'domains'
+										firstDomain.domain
 									) }
 								/>
 							),
