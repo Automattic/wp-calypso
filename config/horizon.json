@@ -14,7 +14,6 @@
 		"ad-tracking": false,
 		"a4a-dev-sites": true,
 		"automated-migration/application-password": true,
-		"automated-migration/pending-status": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
 		"calypso/big-sky": true,
