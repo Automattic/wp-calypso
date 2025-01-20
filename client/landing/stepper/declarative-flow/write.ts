@@ -63,7 +63,6 @@ const write: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: 'write',
 						siteId,
 						siteSlug,
 					} );

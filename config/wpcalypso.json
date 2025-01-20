@@ -86,7 +86,6 @@
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
-		"launchpad/navigator": false,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,

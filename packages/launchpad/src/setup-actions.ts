@@ -28,7 +28,7 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen, setActiveChecklist } = extraActions;
+	const { setShareSiteModalIsOpen } = extraActions;
 	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
 
 	// Add actions to the tasks.
@@ -164,9 +164,6 @@ export const setUpActionsForTasks = ( {
 		}
 
 		const actionDispatch = () => {
-			if ( siteSlug && setActiveChecklist && config.isEnabled( 'launchpad/navigator' ) ) {
-				setActiveChecklist( siteSlug, checklistSlug );
-			}
 			onTaskClick?.( task );
 			action?.();
 		};

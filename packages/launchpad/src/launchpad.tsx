@@ -1,12 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
-	LaunchpadNavigator,
 	Site,
 	type SiteSelect,
 	sortLaunchpadTasksByCompletionStatus,
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { ShareSiteModal } from './action-components';
 import LaunchpadInternal from './launchpad-internal';
@@ -35,7 +34,6 @@ const Launchpad = ( {
 	const {
 		data: { checklist },
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
-	const { setActiveChecklist } = useDispatch( LaunchpadNavigator.store );
 
 	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
 
@@ -55,7 +53,6 @@ const Launchpad = ( {
 			siteSlug,
 			tracksData,
 			extraActions: {
-				setActiveChecklist,
 				setShareSiteModalIsOpen,
 			},
 			eventHandlers: {

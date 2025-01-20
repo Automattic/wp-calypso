@@ -173,7 +173,6 @@ const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: 'newsletter',
 						siteId,
 						siteSlug,
 					} );

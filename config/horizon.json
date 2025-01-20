@@ -69,7 +69,6 @@
 		"jitms": true,
 		"lasagna": true,
 		"launchpad-updates": false,
-		"launchpad/navigator": false,
 		"launchpad/new-task-definition-parser": true,
 		"layout/app-banner": true,
 		"layout/guided-tours": true,

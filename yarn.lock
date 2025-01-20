@@ -1325,38 +1325,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launchpad-navigator@workspace:^, @automattic/launchpad-navigator@workspace:packages/launchpad-navigator":
-  version: 0.0.0-use.local
-  resolution: "@automattic/launchpad-navigator@workspace:packages/launchpad-navigator"
-  dependencies:
-    "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/components": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/launchpad": "workspace:^"
-    "@wordpress/components": "npm:^28.8.0"
-    clsx: "npm:^2.1.1"
-    i18n-calypso: "workspace:^"
-    postcss: "npm:^8.4.5"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    redux: "npm:^5.0.1"
-    tslib: "npm:^2.3.0"
-    typescript: "npm:^5.3.3"
-    webpack: "npm:^5.97.1"
-    wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@wordpress/data": ^10.8.0
-    "@wordpress/element": ^6.8.0
-    "@wordpress/i18n": ^5.8.0
-    debug: ^4.3.3
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/launchpad@workspace:^, @automattic/launchpad@workspace:packages/launchpad":
   version: 0.0.0-use.local
   resolution: "@automattic/launchpad@workspace:packages/launchpad"
@@ -13120,7 +13088,6 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/lasagna": "npm:^0.6.1"
     "@automattic/launchpad": "workspace:^"
-    "@automattic/launchpad-navigator": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
     "@automattic/mini-cart": "workspace:^"

@@ -232,7 +232,6 @@ const startWriting: Flow = {
 			switch ( currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: 'start-writing',
 						siteId,
 						siteSlug,
 					} );
