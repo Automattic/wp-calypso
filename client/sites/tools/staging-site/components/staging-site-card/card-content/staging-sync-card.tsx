@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { SiteSyncStatus } from 'calypso/state/sync/constants';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useCheckSyncStatus } from '../../../hooks/use-site-sync-status';
 import { ConfirmationModal } from '../confirmation-modal';
