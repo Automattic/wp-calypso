@@ -2229,6 +2229,24 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Support multiple payment methods' ),
 		translate( 'View detailed transaction reports in WooCommerce dashboard' ),
 	];
+	const woocommerceProductFiltersBenefits = [
+		translate( 'Create ajax product filters for quick and simple product search' ),
+		translate( 'Filter by categories, attributes, tags, taxonomies, price, and stock status' ),
+		translate( 'Use AJAX technology for fast filtering without page reloads' ),
+		translate(
+			'Offer multiple filter elements: price slider, checkbox list, radio list, dropdown, color list, box list, text list, and more'
+		),
+		translate( 'Provide widgets for "Products Filter" and "Notes for Product Filters"' ),
+		translate( 'Include shortcodes and integration with product shortcodes' ),
+		translate( 'Feature adaptive filter options and product counts' ),
+		translate( 'Display adaptive product thumbnails' ),
+		translate( 'Easy 5-minute setup for beginners and developers' ),
+		translate( 'Improve user experience by helping customers find products quickly' ),
+		translate( 'Increase sales by directing customers to desired products' ),
+		translate( 'Allow expansion of inventory without confusing customers' ),
+		translate( 'Potentially boost SEO when implemented correctly' ),
+	];
+
 	const monitorBenefits = [
 		translate(
 			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
@@ -2342,6 +2360,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]: woocommerceAccommodationsBookingsBenefits,
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxBenefits,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommerceProductFiltersBenefits,
 	};
 };
 
