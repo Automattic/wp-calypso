@@ -1,16 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
 import { log } from '../logger';
 import { MigrationStatus } from '../types';
-
-const shouldSkipStatus = ( status: MigrationStatus ) => {
-	const isPendingStatusEnabled = isEnabled( 'automated-migration/pending-status' );
-	const isPendingStatus = status.includes( 'pending' );
-
-	return isPendingStatus && ! isPendingStatusEnabled;
-};
 
 const request = async ( {
 	siteId,
@@ -19,10 +11,6 @@ const request = async ( {
 	siteId: SiteId;
 	status: MigrationStatus;
 } ): Promise< Response > => {
-	if ( shouldSkipStatus( status ) ) {
-		return { status: 'skipped' };
-	}
-
 	await wp.req.post( {
 		path: `/sites/${ siteId }/site-migration-status-sticker`,
 		apiNamespace: 'wpcom/v2',
