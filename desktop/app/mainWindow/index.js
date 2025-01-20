@@ -1,5 +1,4 @@
 const { app, BrowserWindow, BrowserView, ipcMain: ipc } = require( 'electron' );
-const appInstance = require( '../lib/app-instance' );
 const { getPath } = require( '../lib/assets' );
 const Config = require( '../lib/config' );
 const log = require( '../lib/logger' )( 'desktop:runapp' );
@@ -174,7 +173,11 @@ function showAppWindow() {
 }
 
 module.exports = function () {
-	if ( appInstance.isSingleInstance() ) {
-		app.on( 'ready', showAppWindow );
+	if ( ! app.requestSingleInstanceLock() ) {
+		log.info( 'App is already running, quitting' );
+		app.quit();
+		return;
 	}
+
+	app.on( 'ready', showAppWindow );
 };
