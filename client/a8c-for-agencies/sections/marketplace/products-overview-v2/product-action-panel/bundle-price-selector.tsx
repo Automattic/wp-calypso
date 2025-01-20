@@ -12,20 +12,6 @@ type Props = {
 	onChange: ( value: number ) => void;
 };
 
-const getDiscountPercentage = ( bundleSize: number ) => {
-	// FIXME: Need to calculate based on average discount per bundle size.
-	return (
-		{
-			1: '',
-			5: '10%',
-			10: '20%',
-			20: '40%',
-			50: '70%',
-			100: '80%',
-		}[ bundleSize ] ?? ''
-	);
-};
-
 export function BundlePriceSelector( { options, value, onChange }: Props ) {
 	const translate = useTranslate();
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
@@ -38,6 +24,23 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 			onChange( option );
 		},
 		[ onChange ]
+	);
+
+	const getDiscountPercentage = useCallback(
+		( bundleSize: number ) => {
+			// FIXME: Need to calculate based on average discount per bundle size.
+			return (
+				{
+					1: '',
+					5: translate( '10%' ),
+					10: translate( '20%' ),
+					20: translate( '40%' ),
+					50: translate( '70%' ),
+					100: translate( '80%' ),
+				}[ bundleSize ] ?? ''
+			);
+		},
+		[ translate ]
 	);
 
 	const getLabel = useCallback(
@@ -55,7 +58,7 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 				  } )
 				: translate( 'Buy single license' );
 		},
-		[ translate ]
+		[ translate, getDiscountPercentage ]
 	);
 
 	return (
