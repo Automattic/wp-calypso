@@ -71,6 +71,7 @@
 		"launchpad-updates": false,
 		"launchpad/new-task-definition-parser": true,
 		"layout/app-banner": true,
+		"layout/global-notifications": true,
 		"layout/guided-tours": true,
 		"layout/query-selected-editor": true,
 		"layout/support-article-dialog": true,
