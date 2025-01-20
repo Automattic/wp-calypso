@@ -202,14 +202,18 @@
     }
 }
 
-@media screen and (min-width: 782px) {
-    body.is-section-me .navigation-header::after {
-        display: none;
+// Sets max-width of all payment sections
+body.is-section-me div.layout.is-global-sidebar-visible .layout__primary {
+    .billing-history.main,
+    .purchases-list.main,
+    .payment-methods__main.main,
+    .add-new-payment-method.main,
+    .receipt.main,
+    .vat-details.main {
+        > * {
+            max-width: 100%;
+        }
     }
-}
-
-body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .billing-history.main > * {
-    max-width: 100%;
 }
 
 @media screen and (min-width: 782px) {
