@@ -216,7 +216,6 @@ const assemblerFirstFlow: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: ASSEMBLER_FIRST_FLOW,
 						siteId,
 						siteSlug,
 					} );

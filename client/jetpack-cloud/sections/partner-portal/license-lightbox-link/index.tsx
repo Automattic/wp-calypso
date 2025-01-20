@@ -10,12 +10,14 @@ type Props = {
 	productName: string;
 	customText?: string;
 	onClick: ( e: React.MouseEvent< HTMLElement > ) => void;
+	showIcon?: boolean;
 };
 
 const LicenseLightboxLink: FunctionComponent< Props > = ( {
 	productName,
 	customText,
 	onClick,
+	showIcon = true,
 } ) => {
 	const translate = useTranslate();
 
@@ -37,7 +39,7 @@ const LicenseLightboxLink: FunctionComponent< Props > = ( {
 					  } ) }
 			</span>
 
-			<img className="license-lightbox-link-icon" src={ ModalLinkIcon } alt="" />
+			{ showIcon && <img className="license-lightbox-link-icon" src={ ModalLinkIcon } alt="" /> }
 		</Button>
 	);
 };

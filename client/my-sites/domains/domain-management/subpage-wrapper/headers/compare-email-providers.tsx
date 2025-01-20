@@ -28,6 +28,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 					currentRoute,
 					inSiteContext
 				),
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: translate( 'Email' ),
@@ -56,7 +57,7 @@ const CompareEmailProvidersHeader: CustomHeaderComponentType = ( {
 		}
 
 		return baseNavigationItems;
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
+	}, [ currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
 
 	return (
 		<NavigationHeader

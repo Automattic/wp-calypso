@@ -40,7 +40,7 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 	}
 
 	return (
-		<div>
+		<div className="plugin-details-v2__sites-list separators-top-bottom">
 			<div className="plugin-details-v2__title">{ translate( 'Available on' ) }</div>
 			<SitesList
 				{ ...props }

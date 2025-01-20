@@ -20,7 +20,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 
 	const { data } = useSupportStatus();
 	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
-	const { site } = useHelpCenterContext();
+	const { canConnectToZendesk } = useHelpCenterContext();
 	const navigate = useNavigate();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const { startNewInteraction } = useManageSupportInteraction();
@@ -57,7 +57,12 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		);
 	};
 
-	const handleContactSupportClick = async () => {
+	const handleContactSupportClick = async ( destination: string ) => {
+		recordTracksEvent( 'calypso_odie_chat_get_support', {
+			location: 'article-feedback',
+			destination,
+			is_user_eligible: isUserEligibleForPaidSupport,
+		} );
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
 			await resetSupportInteraction();
@@ -75,7 +80,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 			{ startedFeedback !== null && answerValue === 1 && (
 				<p>{ __( 'Great! Thanks.', __i18n_text_domain__ ) }</p>
 			) }
-			{ startedFeedback !== null && answerValue === 2 && site && (
+			{ startedFeedback !== null && answerValue === 2 && (
 				<>
 					<div className="odie-chatbox-dislike-feedback-message">
 						<p>
@@ -88,6 +93,7 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 					<GetSupport
 						onClickAdditionalEvent={ handleContactSupportClick }
 						isUserEligibleForPaidSupport={ isUserEligibleForPaidSupport }
+						canConnectToZendesk={ canConnectToZendesk }
 					/>
 				</>
 			) }

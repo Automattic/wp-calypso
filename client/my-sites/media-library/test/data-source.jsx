@@ -18,7 +18,7 @@ jest.mock( 'calypso/components/popover-menu', () => {
 // electron related build error
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = ( property ) => property.startsWith( 'external-media' );
+	config.isEnabled = jest.fn();
 	return config;
 } );
 

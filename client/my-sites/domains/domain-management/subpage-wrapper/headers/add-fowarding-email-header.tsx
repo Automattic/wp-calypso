@@ -29,6 +29,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 					currentRoute,
 					inSiteContext
 				),
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: translate( 'Email' ),
@@ -57,7 +58,7 @@ const AddForwardingEmailHeader: CustomHeaderComponentType = ( {
 		}
 
 		return baseNavigationItems;
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
+	}, [ currentRoute, inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
 
 	return (
 		<>
