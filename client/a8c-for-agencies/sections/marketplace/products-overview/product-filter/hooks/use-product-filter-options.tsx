@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WooCommerceWooLogo } from '@automattic/components';
-import JetpackLogo from '@automattic/components/src/logos/jetpack-logo';
 import {
 	lock,
 	people,
@@ -15,6 +14,7 @@ import {
 	next,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import {
 	PRODUCT_CATEGORY_CONVERSION,
 	PRODUCT_CATEGORY_CUSTOMER_SERVICE,
@@ -50,7 +50,7 @@ export default function useProductFilterOptions() {
 						{
 							key: PRODUCT_CATEGORY_JETPACK,
 							label: translate( 'Jetpack' ) as string,
-							image: <JetpackLogo />,
+							image: <JetpackLogo full />,
 						},
 						{
 							key: PRODUCT_CATEGORY_WOOCOMMERCE,
