@@ -26,7 +26,7 @@ const SitesGuide = () => {
 		<Guide
 			className={ `sites-guide ${ isImageLoading ? 'is-loading' : '' }` }
 			contentLabel={ __( 'Hosting Panel' ) }
-			finishButtonText={ __( 'Got it', 'jetpack-mu-wpcom' ) }
+			finishButtonText={ __( 'Got it' ) }
 			onFinish={ dismiss }
 			pages={ [
 				{
