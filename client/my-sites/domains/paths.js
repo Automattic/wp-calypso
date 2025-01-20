@@ -358,6 +358,10 @@ export function domainManagementTransferToAnyUser( siteName, domainName, relativ
  * @param {string?} relativeTo
  */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/transfer/other-site/' + siteName;
+	}
+
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
 

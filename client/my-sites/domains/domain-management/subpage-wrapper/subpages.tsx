@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import TransferOtherSiteHeader from 'calypso/my-sites/domains/domain-management/subpage-wrapper/headers/transfer-other-site-header';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
 import MailboxHeader from './headers/add-mailbox-header';
 import CompareEmailProvidersHeader from './headers/compare-email-providers';
@@ -30,6 +31,7 @@ export const DNS_RECORDS = 'dns-records';
 export const ADD_DNS_RECORD = 'add-dns-record';
 export const EDIT_DNS_RECORD = 'edit-dns-record';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
+export const TRANSFER_OTHER_SITE = 'transfer-other-site';
 
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
@@ -72,6 +74,10 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		showFormHeader: false,
 		showPageHeader: false,
 		customFormHeader: __( 'New mailbox' ),
+	},
+	[ TRANSFER_OTHER_SITE ]: {
+		CustomHeader: TransferOtherSiteHeader,
+		showPageHeader: false,
 	},
 };
 
