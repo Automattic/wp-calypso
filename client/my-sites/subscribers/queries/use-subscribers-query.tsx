@@ -36,10 +36,10 @@ const useSubscribersQuery = ( {
 			perPage,
 			search,
 			sortTerm,
-			sortOrder,
 			filterOption,
 			hasManySubscribers,
-			timestamp
+			timestamp,
+			sortOrder
 		),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.

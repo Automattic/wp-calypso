@@ -6,10 +6,10 @@ const getSubscribersCacheKey = (
 	perPage?: number,
 	search?: string,
 	sortTerm?: string,
-	sortOrder?: 'asc' | 'desc',
 	filterOption?: string,
 	hasManySubscribers?: boolean,
-	timestamp?: number
+	timestamp?: number,
+	sortOrder?: 'asc' | 'desc'
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -24,14 +24,14 @@ const getSubscribersCacheKey = (
 	if ( sortTerm ) {
 		cacheKey.push( 'sort-term', sortTerm );
 	}
-	if ( sortOrder ) {
-		cacheKey.push( 'sort-order', sortOrder );
-	}
 	if ( filterOption ) {
 		cacheKey.push( 'filter-option', filterOption );
 	}
 	if ( timestamp ) {
 		cacheKey.push( timestamp );
+	}
+	if ( sortOrder ) {
+		cacheKey.push( 'sort-order', sortOrder );
 	}
 	if ( hasManySubscribers ) {
 		cacheKey.push( 'many-subscribers' );
