@@ -48,7 +48,7 @@ export class Banner extends Component {
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
