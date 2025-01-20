@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
 import { ResponseDomain } from './types';
+import type { DomainsTableContext } from '../domains-table/domains-table';
 
 export const emailManagementAllSitesPrefix = '/email/all';
 
@@ -116,9 +117,17 @@ export function domainManagementAllRoot() {
 export function domainManagementEditContactInfo(
 	siteName: string,
 	domainName: string,
-	relativeTo: string | null = null
+	relativeTo: string | null = null,
+	context?: DomainsTableContext
 ) {
-	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	}
 }
 
 export function domainMappingSetup(
@@ -193,16 +202,23 @@ export function isUnderEmailManagementAll( path: string ) {
 export function domainManagementDNS(
 	siteName: string,
 	domainName: string,
-	isHostingOverview?: boolean
+	context?: DomainsTableContext
 ) {
-	if ( isHostingOverview ) {
-		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'dns' );
 	}
-
-	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
-export function emailManagementEdit( siteSlug: string, domainName: string ) {
+export function emailManagementEdit(
+	siteSlug: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
 	// Encodes only real domain names and not parameter placeholders
 	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
@@ -210,5 +226,12 @@ export function emailManagementEdit( siteSlug: string, domainName: string ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return '/email/' + domainName + '/manage/' + siteSlug;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/email/${ domainName }/${ siteSlug }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/email/${ domainName }/${ siteSlug }`;
+		default:
+			return '/email/' + domainName + '/manage/' + siteSlug;
+	}
 }
