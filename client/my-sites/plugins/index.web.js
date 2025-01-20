@@ -12,7 +12,6 @@ import {
 	renderPluginsDashboard,
 	browsePlugins,
 	browsePluginsOrPlugin,
-	renderPluginWarnings,
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
@@ -244,19 +243,6 @@ export default function ( router ) {
 		redirectTrialSites,
 		renderPluginsSidebar,
 		browsePluginsOrPlugin,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		`/${ langParam }/plugins/:plugin/eligibility/:site_id`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		redirectTrialSites,
-		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);
