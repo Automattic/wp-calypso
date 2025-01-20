@@ -152,6 +152,13 @@ body.is-section-subscribers.is-subscribers-dataviews {
                                 flex-flow: column;
                             }
                         }
+
+                        &__footer {
+                            button.is-destructive {
+                                background: var(--color-error);
+                                color: var(--color-text-inverted);
+                            }
+                        }
                     }
                 }
             }
