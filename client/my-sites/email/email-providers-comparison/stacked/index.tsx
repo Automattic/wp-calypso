@@ -37,10 +37,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	getEmailManagementPath,
-	getEmailInDepthComparisonPath,
-} from 'calypso/my-sites/email/paths';
+import { getEmailInDepthComparisonPath } from 'calypso/my-sites/email/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
@@ -251,14 +248,10 @@ const EmailProvidersStackedComparison = ( {
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			{ ! hideNavigation && (
+			{ ! hideNavigation && isDomainInCart && (
 				<EmailUpsellNavigation
-					backUrl={
-						isDomainInCart
-							? domainAddNew( selectedSite?.slug )
-							: getEmailManagementPath( selectedSite?.slug, null )
-					}
-					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+					backUrl={ domainAddNew( selectedSite?.slug ) }
+					skipUrl={ `/checkout/${ selectedSite?.slug }` }
 				/>
 			) }
 
