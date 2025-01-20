@@ -665,10 +665,23 @@ class Account extends Component {
 			} else if ( domainCount === 1 ) {
 				// User has one domain so WHOIS email needs to be checked and updated. Redirect user to a specific domain
 				successMessage = this.props.translate(
-					'Since you own a domain, we sent an email to %(email)s. Please check your inbox to verify your email to avoid any domain service interruption.',
+					'We sent an email to %(email)s. Please check your inbox to verify your email. As you also own a custom domain, please check whether your {{a}}WHOIS email{{/a}} needs to be updated.',
 					{
 						args: {
 							email: newEmail || '',
+						},
+						components: {
+							br: <br />,
+							a: (
+								<a
+									href={ domainManagementEditContactInfo(
+										firstDomain.siteSlug,
+										firstDomain.domain,
+										null,
+										'domains'
+									) }
+								/>
+							),
 						},
 					}
 				);
