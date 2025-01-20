@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Dialog, FormInputValidation, FormLabel } from '@automattic/components';
-import { useAllDomainsQuery } from '@automattic/data-stores';
 import { canBeTranslated, getLanguage, isLocaleVariant } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import debugFactory from 'debug';
@@ -46,6 +45,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -83,11 +83,14 @@ const INTERFACE_FIELDS = [
 	'calypso_preferences',
 ];
 
-// Create a custom hook to get domain data
-function useOwnedDomains() {
-	const { data: domainsData } = useAllDomainsQuery( { current_user_is_owner: true } );
-	const ownedDomains =
-		domainsData?.domains?.filter( ( domain ) => domain.current_user_is_owner === true ) || [];
+// Update the selector
+const getOwnedDomainsData = ( state ) => {
+	const domains = getFlatDomainsList( state );
+	const ownedDomains = domains.filter( ( domain ) => domain.currentUserIsOwner === true ) || [];
+
+	console.log( 'All domains:', domains );
+	console.log( 'Owned domains:', ownedDomains );
+
 	return {
 		domainCount: ownedDomains.length,
 		firstDomain:
@@ -97,14 +100,6 @@ function useOwnedDomains() {
 						siteSlug: ownedDomains[ 0 ]?.site_slug,
 				  }
 				: null,
-	};
-}
-
-// Create a HOC to inject domain data
-const withDomainData = ( WrappedComponent ) => {
-	return function WithDomainData( props ) {
-		const domainData = useOwnedDomains();
-		return <WrappedComponent { ...props } domainData={ domainData } />;
 	};
 };
 
@@ -1077,9 +1072,9 @@ export default compose(
 	withLocalizedMoment,
 	withGeoLocation,
 	protectForm,
-	withDomainData,
 	connect(
 		( state ) => ( {
+			domainData: getOwnedDomainsData( state ),
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
