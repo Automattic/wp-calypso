@@ -41,10 +41,10 @@ const SitesGuide = () => {
 					),
 					content: (
 						<>
-							<h1>{ __( 'Meet your new starting point' ) }</h1>
+							<h1>{ __( 'Meet your starting point' ) }</h1>
 							<p>
 								{ __(
-									"Access all your sites, domains, plugins and other tools from one central location. Explore what's new and get started!"
+									'Access all your sites, domains, plugins and other tools from one central location.'
 								) }
 							</p>
 						</>
