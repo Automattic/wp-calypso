@@ -31,7 +31,7 @@ import { useCheckStagingSiteStatus } from '../../hooks/use-check-staging-site-st
 import { useDeleteStagingSite } from '../../hooks/use-delete-staging-site';
 import { useGetLockQuery, USE_STAGING_SITE_LOCK_QUERY_KEY } from '../../hooks/use-get-lock-query';
 import { useHasValidQuotaQuery } from '../../hooks/use-has-valid-quota';
-import { useStagingSite, USE_STAGING_SITE_QUERY_KEY } from '../../hooks/use-staging-site';
+import { useStagingSite } from '../../hooks/use-staging-site';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { ManageStagingSiteCardContent } from './card-content/manage-staging-site-card-content';
@@ -246,13 +246,12 @@ export const StagingSiteCard = ( {
 	useEffect( () => {
 		// If we are done with the transfer, and we have not errored we want to set the action to NONE, and display a success notice.
 		if ( stagingSiteStatus === StagingSiteStatus.REVERTED ) {
-			queryClient.invalidateQueries( [ USE_STAGING_SITE_QUERY_KEY, siteId ] );
 			dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.NONE ) );
 			dispatch(
 				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
 			);
 		}
-	}, [ __, dispatch, queryClient, siteId, stagingSiteStatus ] );
+	}, [ __, dispatch, siteId, stagingSiteStatus ] );
 
 	useEffect( () => {
 		setProgress( ( prevProgress ) => {
