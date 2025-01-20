@@ -1,4 +1,4 @@
-import { commentAuthorAvatar, video } from '@wordpress/icons';
+import { commentAuthorAvatar, search, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -30,6 +30,15 @@ export const AVAILABLE_PAGE_MODULES: Record< string, ModuleToggleItem[] > = {
 			},
 			icon: commentAuthorAvatar,
 			defaultValue: true,
+			disabled: false,
+		},
+		{
+			key: 'search-terms',
+			get label() {
+				return translate( 'Search terms' );
+			},
+			icon: search,
+			defaultValue: false,
 			disabled: false,
 		},
 		{
