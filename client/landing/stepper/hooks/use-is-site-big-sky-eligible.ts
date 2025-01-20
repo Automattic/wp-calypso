@@ -16,7 +16,6 @@ const invalidGoals = [
 	SiteGoal.Courses,
 	SiteGoal.DIFM,
 	SiteGoal.Import,
-	SiteGoal.Newsletter,
 	SiteGoal.SellPhysical,
 	SiteGoal.SellDigital,
 ];
