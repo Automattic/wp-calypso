@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
@@ -52,7 +53,7 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 						},
 						comment: '%(size)s is the number of licenses, %(discount)s is the discount percentage',
 				  } )
-				: translate( 'Explore bundle discounts to apply' );
+				: translate( 'Buy single license' );
 		},
 		[ translate ]
 	);
@@ -67,7 +68,7 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 					variant="secondary"
 					onClick={ () => setIsMenuOpen( ! isMenuOpen ) }
 				>
-					{ getLabel( value ) }
+					{ value > 1 ? getLabel( value ) : translate( 'Explore bundle discounts to apply' ) }
 					<Icon icon={ chevronDown } />
 				</Button>
 			</div>
@@ -82,6 +83,9 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 			>
 				{ options.map( ( option ) => (
 					<PopoverMenuItem
+						className={ clsx( {
+							'is-selected': value === option,
+						} ) }
 						onClick={ () => onSelect( option ) }
 						key={ `bundle-price-option-${ option }` }
 					>

@@ -61,4 +61,9 @@
 
 .bundle-price-selector__popover {
 	margin-inline-start: -135px;
+
+	.popover__menu-item.is-selected {
+		background: var( --color-neutral-5 );
+		color: var( --color-text );
+	}
 }
