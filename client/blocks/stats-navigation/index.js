@@ -95,13 +95,18 @@ class StatsNavigation extends Component {
 			( toggleItem ) => {
 				// disable the "videos" toggle on sites that do not have VideoPress enabled
 				// the toggle will be disabled (grayed out and non interactive)
-				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
+				// TODO: Review this logic.
+				// By default, all sites have the ability to upload a single video.
+				// Therefore, it probably doesn't make sense to disable the module by default.
+				if ( toggleItem.key === 'videos' ) {
+					return {
+						...toggleItem,
+						disabled: ! nextProps.hasVideoPress, // This value is currently ignored.
+						defaultValue: nextProps.hasVideoPress,
+					};
+				}
 
-				return {
-					...toggleItem,
-					disabled: shouldDisableVideoToggle,
-					defaultValue: shouldDisableVideoToggle === false,
-				};
+				return toggleItem;
 			}
 		);
 
