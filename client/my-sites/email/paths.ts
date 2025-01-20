@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
 import {
 	isUnderDomainManagementAll,
@@ -23,6 +24,10 @@ export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
+}
+
+export function isUnderCheckoutRoute( path?: string | null ) {
+	return path?.startsWith( '/checkout' );
 }
 
 // Builds a URL query string from an object. Handles null values.
@@ -173,7 +178,11 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	urlParameters = {},
 	inSiteContext = false
 ) => {
-	if ( inSiteContext || isUnderDomainManagementAll( relativeTo ) ) {
+	if (
+		inSiteContext ||
+		isUnderDomainManagementAll( relativeTo ) ||
+		( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) )
+	) {
 		const prefix =
 			inSiteContext || isUnderDomainSiteContext( relativeTo )
 				? emailSiteContextPrefix
