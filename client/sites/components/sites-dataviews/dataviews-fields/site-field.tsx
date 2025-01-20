@@ -80,6 +80,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
+	// TODO: Consolidate with `isActionEligible` logic in actions.tsx
 	const shouldOpenSitePreviewPane =
 		isAdmin &&
 		! isP2Site &&
@@ -87,6 +88,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 		! isDisconnectedJetpackAndNotAtomic( site );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
+		// TODO: Link click handling boilerplate should be extracted to be reused
 		event.preventDefault();
 
 		// Ignore if not left or middle click
@@ -116,6 +118,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 	const MaybeLink = site.is_deleted ? 'div' : 'a';
 
 	return (
+		// TODO: Consolidate behavior with `SiteIcon` link
 		<MaybeLink
 			className="sites-dataviews__site"
 			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
