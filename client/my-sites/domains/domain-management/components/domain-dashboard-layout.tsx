@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
 import DomainManagement from 'calypso/my-sites/domains/domain-management';
@@ -13,9 +14,11 @@ type DomainDashboardLayoutProps = {
 };
 
 function DomainDashboardLayout( props: DomainDashboardLayoutProps ) {
+	const translate = useTranslate();
+
 	return (
 		<Layout
-			title="Domain Management"
+			title={ translate( 'Domain Management' ) }
 			wide
 			className={ `domains-overview${ props.selectedDomainName ? ' is-domain-selected' : '' }` }
 		>
