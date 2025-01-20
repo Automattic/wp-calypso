@@ -64,6 +64,8 @@ export default function BillingSummary() {
 	const moment = useLocalizedMoment();
 	const billing = useBillingDashboardQuery();
 
+	// TODO clk numberFormat no need  for default 0 but confirm
+
 	return (
 		<Card className="billing-summary">
 			<div className="billing-summary__stat billing-summary__total-licenses">

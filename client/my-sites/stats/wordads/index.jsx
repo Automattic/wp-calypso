@@ -39,6 +39,8 @@ import HighlightsSection from './highlights-section';
 import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
 
+// TODO clk numberFormat decimal points set to 2
+
 const formatCurrency = ( value ) => {
 	return '$' + numberFormat( value, 2 );
 };

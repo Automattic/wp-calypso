@@ -137,6 +137,7 @@ function addTooltipData( chartTab, item, period, customRange = {} ) {
 				} );
 				tooltipData.push( {
 					label: translate( 'Views Per Visitor' ),
+					// TODO clk numberFormat decimal points set to 2
 					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
 					className: 'is-views-per-visitor',
 					icon: <Icon className="gridicon" icon={ chevronRight } />,

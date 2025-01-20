@@ -26,6 +26,8 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 		} );
 	};
 
+	// TODO clk numberFormat decimal points set to 2 conditionally
+
 	return (
 		<SectionNav>
 			<NavTabs>

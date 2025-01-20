@@ -111,6 +111,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+	// TODO clk numberFormat no need  for default 0
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';

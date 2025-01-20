@@ -42,6 +42,8 @@ const SiteSubscriptionSubheader = ( {
 
 	const subheaderItems = [];
 
+	// TODO clk numberFormat no need for default 0 but confirm
+
 	if ( subscriberCount > 0 ) {
 		subheaderItems.push(
 			<div key={ `subscriber-count-${ subscriberCount }` }>

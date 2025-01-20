@@ -150,6 +150,8 @@ function Chart( {
 
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
 
+	// TODO clk numberFormat decimal points set to 2
+
 	const ChartYAxis = () => (
 		<div ref={ yAxisRef } className="chart__y-axis">
 			<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>

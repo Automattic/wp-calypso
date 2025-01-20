@@ -14,6 +14,7 @@ export default function productAboveButtonText(
 		siteProduct &&
 		( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product.productSlug )
 	) {
+		// TODO clk numberFormat no need  for default 0 but confirm
 		return translate(
 			'*estimated price based on %(records_and_or_requests)s records and/or monthly requests',
 			{

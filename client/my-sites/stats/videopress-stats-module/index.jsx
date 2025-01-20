@@ -225,7 +225,7 @@ class VideoPressStatsModule extends Component {
 										role="button"
 									>
 										{ row.watch_time > 1
-											? numberFormat( row.watch_time, 1 )
+											? numberFormat( row.watch_time, 1 ) // TODO clk numberFormat decimal points set to 1
 											: `< ${ numberFormat( 1, 1 ) }` }
 									</span>
 								</div>

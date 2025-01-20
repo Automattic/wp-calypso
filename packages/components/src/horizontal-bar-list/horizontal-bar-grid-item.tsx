@@ -111,6 +111,7 @@ const HorizontalBarListItem = ( {
 		if ( formatValue ) {
 			return formatValue( value, data );
 		}
+		// TODO clk numberFormat no need for default 0 but confirm
 		return usePlainCard ? value : numberFormat( value, 0 );
 	};
 

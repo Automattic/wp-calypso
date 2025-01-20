@@ -88,6 +88,8 @@ function createSeries( series: Array< SeriesProp > ) {
 						return '-';
 					}
 
+					// TODO clk numberFormat no need for default 0 but confirm
+
 					return numberFormat( rawValue, 0 );
 				},
 			},

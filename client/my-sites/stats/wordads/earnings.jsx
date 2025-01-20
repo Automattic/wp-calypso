@@ -115,7 +115,7 @@ class WordAdsEarnings extends Component {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
 			earnings && earnings.total_amount_owed
-				? numberFormat( earnings.total_amount_owed, 2 )
+				? numberFormat( earnings.total_amount_owed, 2 ) // TODO clk numberFormat decimal points set to 2
 				: '0.00';
 		const notice = translate(
 			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
@@ -191,6 +191,8 @@ class WordAdsEarnings extends Component {
 		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
 		const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
 		const paid = total - owed;
+
+		// TODO clk numberFormat decimal points set to 2
 
 		return (
 			<ul className="ads__earnings-breakdown-list">

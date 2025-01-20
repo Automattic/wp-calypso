@@ -65,13 +65,14 @@ export default function BillingSummary() {
 	const moment = useLocalizedMoment();
 	const billing = useFetchBillingSummary();
 
+	// TODO clk numberFormat no need for default 0 but confirm
+
 	return (
 		<Card className="billing-summary">
 			<div className="billing-summary__stat billing-summary__total-licenses">
 				<span className="billing-summary__label">{ translate( 'Total licenses' ) }</span>
 				<strong className="billing-summary__value">
 					{ billing.isSuccess && numberFormat( billing.data.licenses.total, 0 ) }
-
 					{ billing.isLoading && <TextPlaceholder /> }
 
 					{ billing.isError && <Gridicon icon="minus" /> }

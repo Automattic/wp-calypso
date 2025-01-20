@@ -63,6 +63,8 @@ const WordAdsPayments = () => {
 		const rows: React.ReactNode[] = [];
 		const classes = clsx( 'payments_history' );
 
+		// TODO clk numberFormat decimal points set to 2
+
 		currentPayments.forEach( ( payment ) => {
 			rows.push(
 				<tr key={ type + '-' + payment.id }>
