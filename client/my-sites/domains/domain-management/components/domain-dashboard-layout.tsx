@@ -14,7 +14,11 @@ type DomainDashboardLayoutProps = {
 
 function DomainDashboardLayout( props: DomainDashboardLayoutProps ) {
 	return (
-		<Layout title="Domain Management" wide className="domains-overview">
+		<Layout
+			title="Domain Management"
+			wide
+			className={ `domains-overview${ props.selectedDomainName ? ' is-domain-selected' : '' }` }
+		>
 			<LayoutColumn className="domains-overview__list">
 				<DomainManagement.BulkAllDomains
 					analyticsPath={ domainManagementRoot() }

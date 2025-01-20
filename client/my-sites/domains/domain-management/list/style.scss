@@ -335,6 +335,10 @@
 	}
 }
 
+.domains-overview.is-domain-selected .main.domains-overview__list {
+	height: calc(100vh - 32px - var(--masterbar-height));
+}
+
 main.domains-overview main.domains-overview__list .hosting-dashboard-layout-column__container {
 	// Header navigation styles
 	.navigation-header {
