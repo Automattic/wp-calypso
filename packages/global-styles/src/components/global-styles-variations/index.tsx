@@ -18,6 +18,12 @@ import GlobalStylesVariationPreview from './preview';
 import type { GlobalStylesObject } from '../../types';
 import './style.scss';
 
+declare global {
+	interface Window {
+		isGlobalStylesOnPersonal?: boolean;
+	}
+}
+
 interface GlobalStylesVariationProps {
 	globalStylesVariation: GlobalStylesObject;
 	isActive: boolean;
