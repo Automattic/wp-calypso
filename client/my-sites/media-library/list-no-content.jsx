@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -75,7 +74,6 @@ class MediaLibraryListNoContent extends Component {
 		let line = '';
 		let action = '';
 		const showFreeLibraryButton =
-			config.isEnabled( 'external-media/free-photo-library' ) &&
 			userCan( 'upload_files', this.props.site ) &&
 			! this.props.source &&
 			( 'images' === this.props.filter || 'undefined' === typeof this.props.filter ); // Filter to where we would allow selecting an image.
