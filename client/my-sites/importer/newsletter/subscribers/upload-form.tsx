@@ -32,14 +32,10 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 	const [ hasImportError, setHasImportError ] = useState( false );
 
 	const { importCsvSubscribers, importCsvSubscribersUpdate } = useDispatch( Subscriber.store );
-	const { importSelector } = useSelect( ( select ) => {
-		const subscriber = select( Subscriber.store );
-
-		return {
-			importSelector: subscriber.getImportSubscribersSelector(),
-			imports: subscriber.getImportJobsSelector(),
-		};
-	}, [] );
+	const { importSelector } = useSelect(
+		( select ) => ( { importSelector: select( Subscriber.store ).getImportSubscribersSelector() } ),
+		[]
+	);
 
 	useEffect( () => {
 		if ( importSelector?.error ) {
@@ -51,7 +47,7 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 	const onSubmit = useCallback(
 		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
-			selectedFile && importCsvSubscribers( siteId, selectedFile, [], true );
+			selectedFile && importCsvSubscribers( siteId, selectedFile, [], [], true );
 		},
 		[ selectedFile, importCsvSubscribers, siteId ]
 	);

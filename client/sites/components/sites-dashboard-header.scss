@@ -1,0 +1,23 @@
+.sites-dashboard-header {
+	.add-new-site__button {
+		&.is-secondary {
+			background-color: rgb(56, 88, 233);
+			border-color: rgb(56, 88, 233);
+			color: rgb(255, 255, 255);
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 22px
+		}
+
+		outline: none;
+		border-radius: 2px 0 0 2px;
+		-moz-osx-font-smoothing: grayscale;
+
+	}
+
+	.components-button.is-secondary:hover {
+		color: rgb(255, 255, 255);
+		background-color: rgb(33, 69, 230);
+	}
+} 

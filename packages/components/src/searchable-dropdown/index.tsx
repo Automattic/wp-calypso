@@ -7,7 +7,7 @@ type Props = React.ComponentProps< typeof ComboboxControl > & {
 	disabled?: boolean;
 };
 
-export default function SearchableDropdown( props: Props ) {
+export function SearchableDropdown( props: Props ) {
 	const { disabled = false } = props;
 
 	return (
@@ -22,3 +22,5 @@ export default function SearchableDropdown( props: Props ) {
 		</div>
 	);
 }
+
+export default SearchableDropdown;

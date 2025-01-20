@@ -33,14 +33,12 @@
 		"a4a/site-migration": true,
 		"a4a-automated-referrals": true,
 		"a4a-partner-directory": false,
-		"a4a-hosting-page-redesign": true,
+		"a4a-product-page-redesign": false,
 		"a4a-hosting-page-redesign-v3": true,
 		"a4a-dev-sites": true,
 		"a4a-migrations-page-v2": true,
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
-		"a4a-tracking-site-migrations": true,
-		"a4a-product-feedback": true,
 		"a4a-updated-add-new-site": true
 	},
 	"enable_all_sections": false,
@@ -66,5 +64,6 @@
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
+	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true
 }

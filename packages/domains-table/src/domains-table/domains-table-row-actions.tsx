@@ -10,7 +10,7 @@ import { isRecentlyRegistered } from '../utils/is-recently-registered';
 import { isDomainRenewable } from '../utils/is-renewable';
 import { isDomainUpdateable } from '../utils/is-updateable';
 import {
-	domainMagementDNS,
+	domainManagementDNS,
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
@@ -18,7 +18,7 @@ import {
 } from '../utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
 import { ResponseDomain } from '../utils/types';
-import { useDomainsTable } from './domains-table';
+import { useDomainsTable, DomainsTableContext } from './domains-table';
 
 export type DomainAction = 'change-site-address' | 'manage-dns-settings' | 'set-primary-address';
 
@@ -35,6 +35,8 @@ interface DomainsTableRowActionsProps {
 	canSetPrimaryDomainForSite: boolean;
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
+	isHostingOverview?: boolean;
+	context?: DomainsTableContext;
 }
 
 export const DomainsTableRowActions = ( {
@@ -44,6 +46,8 @@ export const DomainsTableRowActions = ( {
 	canSetPrimaryDomainForSite,
 	isSiteOnFreePlan,
 	isSimpleSite,
+	isHostingOverview,
+	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
 		onDomainAction,
@@ -84,7 +88,13 @@ export const DomainsTableRowActions = ( {
 			canViewDetails && (
 				<MenuItemLink
 					key="actionDetails"
-					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
+					href={ domainManagementLink(
+						domain,
+						siteSlug,
+						isAllSitesView,
+						undefined,
+						isHostingOverview
+					) }
 				>
 					{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 				</MenuItemLink>
@@ -93,7 +103,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="manageDNS"
 					onClick={ () => onDomainAction?.( 'manage-dns-settings', domain ) }
-					href={ domainMagementDNS( siteSlug, domain.name ) }
+					href={ domainManagementDNS( siteSlug, domain.name, context ) }
 				>
 					{ __( 'Manage DNS' ) }
 				</MenuItemLink>
@@ -101,7 +111,7 @@ export const DomainsTableRowActions = ( {
 			canManageContactInfo && (
 				<MenuItemLink
 					key="manageContactInfo"
-					href={ domainManagementEditContactInfo( siteSlug, domain.name ) }
+					href={ domainManagementEditContactInfo( siteSlug, domain.name, null, context ) }
 				>
 					{ __( 'Manage contact information' ) }
 				</MenuItemLink>

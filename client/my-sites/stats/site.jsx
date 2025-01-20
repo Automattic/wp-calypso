@@ -58,6 +58,7 @@ import StatsModuleDevices, {
 	StatsModuleUpgradeDevicesOverlay,
 } from './features/modules/stats-devices';
 import StatsModuleDownloads from './features/modules/stats-downloads';
+import StatsModuleLocations from './features/modules/stats-locations';
 import StatsModuleReferrers from './features/modules/stats-referrers';
 import StatsModuleSearch from './features/modules/stats-search';
 import StatsModuleTopPosts from './features/modules/stats-top-posts';
@@ -216,6 +217,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	};
 
 	const navigationFromChartBar = ( periodStartDate, currentPeriod ) => {
+		// Mark the drilled-down period page should use the go-back action.
+		sessionStorage.setItem( 'jetpack_stats_date_range_is_drilling_down', 1 );
+
 		let chartStart = periodStartDate;
 		let chartEnd = moment( chartStart )
 			.endOf( currentPeriod === 'week' ? 'isoWeek' : currentPeriod )
@@ -287,9 +291,11 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
 		if ( inputDate === undefined ) {
-			const appliedShortcutId = localStorage.getItem(
-				'jetpack_stats_stored_date_range_shortcut_id'
-			);
+			const appliedShortcutId =
+				localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+				// Fallback for the compatibility.
+				localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
 			const appliedShortcut = supportedShortcutList.find(
 				( shortcut ) => shortcut.id === appliedShortcutId
 			);
@@ -336,7 +342,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	useEffect( () => {
 		// Use the stored period if it's different from the current period.
-		const storedPeriod = localStorage.getItem( 'jetpack_stats_stored_period' );
+		const storedPeriod =
+			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
+			localStorage.getItem( 'jetpack_stats_stored_period' );
 		if (
 			hasSiteLoadedFeatures &&
 			! shouldForceDefaultPeriod &&
@@ -561,13 +569,25 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								className={ halfWidthModuleClasses }
 							/>
 
-							<StatsModuleCountries
-								moduleStrings={ moduleStrings.countries }
-								period={ props.period }
-								query={ query }
-								summaryUrl={ getStatHref( 'countryviews', query ) }
-								className={ clsx( 'stats__flexible-grid-item--full' ) }
-							/>
+							{ config.isEnabled( 'stats/locations' ) ? (
+								<>
+									<StatsModuleLocations
+										moduleStrings={ moduleStrings.locations }
+										period={ props.period }
+										query={ query }
+										summaryUrl={ getStatHref( 'locations', query ) }
+										className={ clsx( 'stats__flexible-grid-item--full' ) }
+									/>
+								</>
+							) : (
+								<StatsModuleCountries
+									moduleStrings={ moduleStrings.countries }
+									period={ props.period }
+									query={ query }
+									summaryUrl={ getStatHref( 'countryviews', query ) }
+									className={ clsx( 'stats__flexible-grid-item--full' ) }
+								/>
+							) }
 
 							{ /* If UTM if supported display the module or update Jetpack plugin card */ }
 							{ supportsUTMStats && ! isOldJetpack && (

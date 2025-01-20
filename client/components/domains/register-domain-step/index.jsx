@@ -348,7 +348,7 @@ class RegisterDomainStep extends Component {
 			this.save();
 		}
 		this._isMounted = true;
-		this.props.recordSearchFormView( this.props.analyticsSection );
+		this.props.recordSearchFormView( this.props.analyticsSection, this.props.flowName );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -542,6 +542,10 @@ class RegisterDomainStep extends Component {
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
+
+		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) ) {
+			return null;
+		}
 
 		return (
 			showFilters && (
@@ -925,7 +929,12 @@ class RegisterDomainStep extends Component {
 	};
 
 	onFiltersReset = ( ...keysToReset ) => {
-		this.props.recordFiltersReset( this.state.filters, keysToReset, this.props.analyticsSection );
+		this.props.recordFiltersReset(
+			this.state.filters,
+			keysToReset,
+			this.props.analyticsSection,
+			this.props.flowName
+		);
 		const filters = {
 			...this.state.filters,
 			...( Array.isArray( keysToReset ) && keysToReset.length > 0
@@ -940,7 +949,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	onFiltersSubmit = () => {
-		this.props.recordFiltersSubmit( this.state.filters, this.props.analyticsSection );
+		this.props.recordFiltersSubmit(
+			this.state.filters,
+			this.props.analyticsSection,
+			this.props.flowName
+		);
 		this.repeatSearch( { pageNumber: 1 } );
 	};
 
@@ -1199,7 +1212,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						timeDiff,
-						this.props.analyticsSection
+						this.props.analyticsSection,
+						this.props.flowName
 					);
 
 					this.props.onDomainsAvailabilityChange( true );
@@ -1245,7 +1259,8 @@ class RegisterDomainStep extends Component {
 					analyticsResults,
 					timeDiff,
 					domainSuggestions.length,
-					this.props.analyticsSection
+					this.props.analyticsSection,
+					this.props.flowName
 				);
 
 				return domainSuggestions;
@@ -1270,7 +1285,8 @@ class RegisterDomainStep extends Component {
 					analyticsResults,
 					timeDiff,
 					-1,
-					this.props.analyticsSection
+					this.props.analyticsSection,
+					this.props.flowName
 				);
 				throw error;
 			} );
@@ -1374,7 +1390,8 @@ class RegisterDomainStep extends Component {
 			analyticsResults,
 			timeDiff,
 			subdomainSuggestions.length,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		// This part handles the other end of the condition handled by the line 282:
@@ -1412,7 +1429,8 @@ class RegisterDomainStep extends Component {
 			analyticsResults,
 			timeDiff,
 			-1,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		this.setState( {
@@ -1442,7 +1460,12 @@ class RegisterDomainStep extends Component {
 		}
 
 		enqueueSearchStatReport(
-			{ query: searchQuery, section: this.props.analyticsSection, vendor: this.props.vendor },
+			{
+				query: searchQuery,
+				section: this.props.analyticsSection,
+				vendor: this.props.vendor,
+				flowName: this.props.flowName,
+			},
 			this.props.recordSearchFormSubmit
 		);
 
@@ -1483,7 +1506,8 @@ class RegisterDomainStep extends Component {
 		this.props.recordShowMoreResults(
 			this.state.lastQuery,
 			pageNumber,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
@@ -1560,7 +1584,8 @@ class RegisterDomainStep extends Component {
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
-						this.props.analyticsSection
+						this.props.analyticsSection,
+						this.props.flowName
 					);
 
 					const skipAvailabilityErrors =
@@ -1753,7 +1778,7 @@ class RegisterDomainStep extends Component {
 	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
+		this.props.recordMapDomainButtonClick( this.props.analyticsSection, this.props.flowName );
 
 		page( this.getMapDomainUrl() );
 	};
@@ -1763,7 +1788,11 @@ class RegisterDomainStep extends Component {
 
 		const source = event.currentTarget.dataset.tracksButtonClickSource;
 
-		this.props.recordTransferDomainButtonClick( this.props.analyticsSection, source );
+		this.props.recordTransferDomainButtonClick(
+			this.props.analyticsSection,
+			source,
+			this.props.flowName
+		);
 
 		page( this.getTransferDomainUrl() );
 	};
@@ -1771,7 +1800,11 @@ class RegisterDomainStep extends Component {
 	goToUseYourDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordUseYourDomainButtonClick( this.props.analyticsSection );
+		this.props.recordUseYourDomainButtonClick(
+			this.props.analyticsSection,
+			null,
+			this.props.flowName
+		);
 
 		page( this.getUseYourDomainUrl() );
 	};

@@ -51,11 +51,13 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
 	const {
+		context,
 		canSelectAnyDomains,
 		domainsTableColumns,
 		isCompact,
 		currentlySelectedDomainName,
 		selectedFeature,
+		isHostingOverview,
 	} = useDomainsTable();
 
 	const renderSiteCell = () => {
@@ -79,8 +81,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const domainTypeText =
 		currentDomainData && getDomainTypeText( currentDomainData, __, domainInfoContext.DOMAIN_ROW );
 
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink( domain, siteSlug, isAllSitesView, selectedFeature )
+		? getDomainManagementLink(
+				domain,
+				siteSlug,
+				isAllSitesView,
+				selectedFeature,
+				isHostingOverview
+		  )
 		: '';
 
 	const renderOwnerCell = () => {
@@ -98,15 +108,16 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleSelect = () => {
-		const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
-
-		if ( isAllDomainManagementEnabled && isAllSitesView ) {
+		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
 			page.show( domainManagementLink );
 			return;
 		}
 
 		window.location.href = domainManagementLink;
 	};
+
+	const handleDomainLinkClick = ( e: MouseEvent ) =>
+		isAllDomainManagementEnabled ? e.preventDefault() : e.stopPropagation();
 
 	return (
 		<tr
@@ -149,7 +160,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 								<a
 									className="domains-table__domain-name"
 									href={ domainManagementLink }
-									onClick={ ( e: MouseEvent ) => e.stopPropagation() }
+									onClick={ handleDomainLinkClick }
 								>
 									{ domain.domain }
 								</a>
@@ -213,7 +224,11 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td key={ domain.domain + column.name }>
-							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+							<DomainsTableEmailIndicator
+								domain={ domain }
+								siteSlug={ siteSlug }
+								context={ context }
+							/>
 						</td>
 					);
 				}
@@ -248,6 +263,8 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 									}
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
 									isSimpleSite={ ! site?.is_wpcom_atomic }
+									isHostingOverview={ isHostingOverview }
+									context={ context }
 								/>
 							) }
 						</td>

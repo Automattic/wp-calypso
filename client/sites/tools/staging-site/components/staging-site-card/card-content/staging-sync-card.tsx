@@ -1,7 +1,6 @@
 import { FormLabel } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import i18n, { translate, useTranslate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
@@ -233,22 +232,7 @@ const StagingToProductionSync = ( {
 		],
 		[ translate ]
 	);
-	const syncWarningTranslation =
-		englishLocales.includes( i18n.getLocaleSlug() || 'en' ) ||
-		i18n.hasTranslation(
-			'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
-		)
-			? translate(
-					'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
-					{
-						components: {
-							span: <ConfirmationModalRedSpan />,
-						},
-					}
-			  )
-			: translate(
-					'We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.'
-			  );
+
 	return (
 		<>
 			{ showSyncPanel && (
@@ -284,7 +268,16 @@ const StagingToProductionSync = ( {
 							{ isSiteWooStore && isSqlSyncOptionChecked && (
 								<SyncWarningContainer>
 									<SyncWarningTitle>{ translate( 'Warning:' ) }</SyncWarningTitle>
-									<SyncWarningContent>{ syncWarningTranslation }</SyncWarningContent>
+									<SyncWarningContent>
+										{ translate(
+											'{{span}}This site has WooCommerce installed.{{/span}} We do not recommend syncing or pushing data from a staging site to live production news sites or sites that use eCommerce plugins, such as WooCommerce, without proper planning and testing. Keep in mind that data on the destination site could have newer transactions, such as customers and orders, and would be lost when overwritten by the staging site’s data.',
+											{
+												components: {
+													span: <ConfirmationModalRedSpan />,
+												},
+											}
+										) }
+									</SyncWarningContent>
 								</SyncWarningContainer>
 							) }
 							<ConfirmationModalInputTitle>
@@ -358,15 +351,15 @@ const SyncCardContainer = ( {
 	currentSiteType: 'production' | 'staging';
 	progress: number;
 	isSyncInProgress: boolean;
-	siteToSync: 'production' | 'staging' | null;
+	siteToSync: 'production' | 'staging';
 	siteUrls: SyncCardProps[ 'siteUrls' ];
 	error?: string | null;
 	onRetry?: () => void;
 } ) => {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error ) && siteToSync;
-	const isFailedSyncError = useIsFailedSyncError( error ) && siteToSync;
+	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error );
+	const isFailedSyncError = useIsFailedSyncError( error );
 
 	return (
 		<StagingSyncCardBody>
@@ -428,9 +421,18 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate( 'We couldn’t synchronize the %s environment.', {
-								args: [ siteToSync ?? '' ],
-							} ) }
+							text={
+								error === 'studio_import_in_progress'
+									? translate(
+											'We couldn’t synchronize the %s environment. Studio push operation is currently in progress.',
+											{
+												args: [ siteToSync ],
+											}
+									  )
+									: translate( 'We couldn’t synchronize the %s environment.', {
+											args: [ siteToSync ],
+									  } )
+							}
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
@@ -531,12 +533,8 @@ export const SiteSyncCard = ( {
 		( selectedItems.length === 0 && selectedOption === actionForType ) ||
 		selectedOption === null;
 
-	let siteToSync: 'production' | 'staging' | null = null;
-	if ( targetSite ) {
-		siteToSync = targetSite;
-	} else {
-		siteToSync = selectedOption === actionForType ? 'production' : 'staging';
-	}
+	const siteToSync: 'production' | 'staging' =
+		targetSite || ( selectedOption === actionForType ? 'production' : 'staging' );
 
 	useEffect( () => {
 		if ( selectedOption && status === SiteSyncStatus.COMPLETED && ! syncError ) {

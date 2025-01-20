@@ -8,7 +8,6 @@ import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import FormSecurity from 'calypso/my-sites/site-settings/form-security';
 import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
 import JetpackCredentialsBanner from 'calypso/my-sites/site-settings/jetpack-credentials-banner';
@@ -64,7 +63,6 @@ export const SiteSettingsSecurity = ( {
 			<SiteSettingsNavigation site={ site } section="security" />
 			{ showCredentials && <JetpackCredentials /> }
 			{ showJetpackBanner && <JetpackCredentialsBanner siteSlug={ site.slug } /> }
-			<JetpackMonitor />
 			<FormSecurity />
 		</Main>
 	);

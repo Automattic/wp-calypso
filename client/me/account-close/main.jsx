@@ -175,9 +175,11 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
-									{ translate(
-										'Deleting your account will also delete all your sites and their content.'
-									) }
+									<strong>
+										{ translate(
+											'Deleting your account will also delete all your sites and their content.'
+										) }
+									</strong>
 								</p>
 								{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 									<Fragment>

@@ -5,10 +5,17 @@ import { useMergeRefs } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import * as paths from 'calypso/my-sites/domains/paths';
+import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { FEATURE_TO_ROUTE_MAP, DOMAIN_OVERVIEW, EMAIL_MANAGEMENT } from './constants';
+import {
+	FEATURE_TO_ROUTE_MAP,
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+	FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT,
+} from './constants';
 import type {
 	ItemData,
 	FeaturePreviewInterface,
@@ -22,6 +29,7 @@ interface Props {
 	selectedFeature: string;
 	siteSlug: string;
 	site: SiteExcerptData;
+	inSiteContext?: boolean;
 }
 
 export function showDomainManagementPage( route: string ) {
@@ -56,6 +64,7 @@ const DomainOverviewPane = ( {
 	selectedFeature,
 	siteSlug,
 	site,
+	inSiteContext,
 }: Props ) => {
 	const itemData: ItemData = {
 		title: selectedDomain,
@@ -117,8 +126,12 @@ const DomainOverviewPane = ( {
 					selected,
 					onTabClick: () => {
 						if ( enabled && ! selected ) {
+							const featureMap = inSiteContext
+								? FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT
+								: FEATURE_TO_ROUTE_MAP;
+
 							showDomainManagementPage(
-								FEATURE_TO_ROUTE_MAP[ defaultFeatureId ]
+								featureMap[ defaultFeatureId ]
 									.replace( ':domain', selectedDomain )
 									.replace( ':site', siteSlug )
 							);
@@ -129,20 +142,40 @@ const DomainOverviewPane = ( {
 				preview: enabled ? selectedDomainPreview : null,
 			};
 		} );
-	}, [ __, selectedDomain, selectedFeature, selectedDomainPreview ] );
+	}, [ selectedFeature, selectedDomainPreview, inSiteContext, selectedDomain, siteSlug ] );
 
 	return (
-		<ItemView
-			itemData={ itemData }
-			closeItemView={ () => {
-				page.show( paths.domainManagementRoot() );
-			} }
-			features={ features }
-			enforceTabsView
-			itemViewHeaderExtraProps={ {
-				headerButtons: PreviewPaneHeaderButtons,
-			} }
-		/>
+		<>
+			{ inSiteContext && (
+				<div className="domain-overview__breadcrumb">
+					<NavigationHeader
+						navigationItems={ [
+							{
+								label: site.name || selectedDomain,
+								href: `/overview/${ siteSlug }`,
+								icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
+							},
+							{
+								label: selectedDomain,
+							},
+						] }
+					/>
+				</div>
+			) }
+
+			<ItemView
+				itemData={ itemData }
+				closeItemView={ () => {
+					inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
+				} }
+				features={ features }
+				enforceTabsView
+				itemViewHeaderExtraProps={ {
+					headerButtons: PreviewPaneHeaderButtons,
+				} }
+				hideHeader={ inSiteContext }
+			/>
+		</>
 	);
 };
 

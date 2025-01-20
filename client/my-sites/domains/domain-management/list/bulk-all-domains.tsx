@@ -285,7 +285,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					header.navigation-header {
 						padding-top: 24px;
 						padding-inline: 16px;
-						border-block-end: 1px solid var( --color-border-secondary );
+						border-block-end: 1px solid var( --color-neutral-5 );
 					}
 				}
 			}
@@ -427,6 +427,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
 				{ ! isDomainsEmpty ? (
 					<DomainsTable
+						context="domains"
 						isLoadingDomains={ isLoading }
 						domains={ domains }
 						isAllSitesView

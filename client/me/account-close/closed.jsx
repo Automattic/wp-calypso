@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -67,28 +66,19 @@ function AccountDeletedPage() {
 				<FormattedHeader
 					brandFont
 					headerText={ translate( 'Your account has been deleted' ) }
-					subHeaderText={
-						config.isEnabled( 'me/account-restore' )
-							? translate(
-									'Thanks for flying with WordPress.com. You have 30 days to restore your account if you change your mind.'
-							  )
-							: translate( 'Thanks for flying with WordPress.com.' )
-					}
+					subHeaderText={ translate(
+						'Thanks for flying with WordPress.com. You have 30 days to restore your account if you change your mind.'
+					) }
 				/>
 				<div className="account-deleted__buttons">
-					<Button variant="secondary" onClick={ onCancelClick }>
-						{ translate( 'Return to WordPress.com' ) }
-					</Button>
-					{ config.isEnabled( 'me/account-restore' ) && (
-						<Button
-							variant="link"
-							className="account-deleted__button-link"
-							onClick={ onRestoreClick }
-							isBusy={ isRestoring }
-						>
+					{ restoreToken && (
+						<Button variant="secondary" onClick={ onRestoreClick } isBusy={ isRestoring }>
 							{ translate( 'I made a mistake! Restore my account' ) }
 						</Button>
 					) }
+					<Button variant="link" onClick={ onCancelClick } className="account-deleted__button-link">
+						{ translate( 'Return to WordPress.com' ) }
+					</Button>
 				</div>
 			</BlankCanvas.Content>
 		</BlankCanvas>

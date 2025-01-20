@@ -1,7 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import Markdown from 'react-markdown';
-import { useOdieAssistantContext } from '../../context';
 import { zendeskMessageConverter } from '../../utils';
 import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
@@ -26,18 +25,15 @@ export const MessageContent = ( {
 	displayChatWithSupportLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		shouldUseHelpCenterExperience &&
-			message?.context?.flags?.show_ai_avatar === false &&
-			`odie-chatbox-message-no-avatar`
+		message?.context?.flags?.show_ai_avatar === false && `odie-chatbox-message-no-avatar`
 	);
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
-		shouldUseHelpCenterExperience && isNextMessageFromSameSender && 'next-chat-message-same-sender'
+		isNextMessageFromSameSender && 'next-chat-message-same-sender'
 	);
 
 	const isMessageWithOnlyText =
@@ -106,7 +102,7 @@ export const MessageContent = ( {
 				</div>
 				{ ! isMessageWithOnlyText && <Sources message={ message } /> }
 			</div>
-			{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+			{ displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 		</>
 	);
 };

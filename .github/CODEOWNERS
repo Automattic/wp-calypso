@@ -101,26 +101,6 @@
 /packages/data-stores/add-ons @Automattic/martech-decepticons
 /packages/data-stores/wpcom-plans-ui @Automattic/martech-decepticons
 
-# Importing
-/client/my-sites/importer @Automattic/caribou
-/client/blocks/import @Automattic/caribou
-/client/blocks/import-light @Automattic/caribou
-/client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-list @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-not @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-preview @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-wpcom @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-blogger @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-medium @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-squarespace @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wix @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wordpress @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou
-
 # Support
 /packages/help-center @Automattic/vertex
 

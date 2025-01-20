@@ -71,8 +71,11 @@ interface BaseDomainsTableProps {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	selectedFeature?: string;
+	isHostingOverview?: boolean;
+	context?: DomainsTableContext;
 }
 
+export type DomainsTableContext = 'site' | 'domains' | string;
 export type DomainsTableProps =
 	| ( BaseDomainsTableProps & { isAllSitesView: true } )
 	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
@@ -128,6 +131,8 @@ type Value = {
 	isCompact: boolean;
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
+	isHostingOverview?: boolean;
+	context?: DomainsTableContext;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -152,6 +157,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		sidebarMode = false,
 		selectedDomainName,
 		selectedFeature,
+		isHostingOverview = false,
+		context,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -454,6 +461,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isCompact,
 		currentlySelectedDomainName: selectedDomainName,
 		selectedFeature,
+		isHostingOverview,
+		context,
 	};
 
 	return value;

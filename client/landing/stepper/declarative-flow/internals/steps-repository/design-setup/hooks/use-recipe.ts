@@ -113,7 +113,7 @@ const useRecipe = (
 		setSelectedStyleVariation( variation );
 		setSearchParams(
 			makeSearchParams( ( currentSearchParams ) => {
-				if ( variation ) {
+				if ( variation && variation.slug ) {
 					currentSearchParams.set( 'style_variation', variation.slug );
 				} else {
 					currentSearchParams.delete( 'style_variation' );

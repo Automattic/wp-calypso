@@ -8,6 +8,7 @@ import {
 import { Suspense } from 'react';
 import { useFlowNavigation } from '../../hooks/use-flow-navigation';
 import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
+import { Flow } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
 const MIGRATION_SURVEY_FLOWS = [
@@ -17,8 +18,8 @@ const MIGRATION_SURVEY_FLOWS = [
 	MIGRATION_SIGNUP_FLOW,
 ];
 
-const SurveyManager = ( { disabled }: { disabled: boolean } ) => {
-	const { params } = useFlowNavigation();
+const SurveyManager = ( { disabled, flow }: { disabled: boolean; flow: Flow } ) => {
+	const { params } = useFlowNavigation( flow );
 	const isEnLocale = useIsEnglishLocale();
 
 	if ( ! params.flow || disabled ) {

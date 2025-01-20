@@ -1,29 +1,60 @@
-import { SegmentedControl } from '@automattic/components';
-import { translate } from 'i18n-calypso';
+import { Button } from '@wordpress/components';
+import { translate, useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { navigate } from 'calypso/lib/navigate';
+import { buildFilterParam, LogType } from 'calypso/sites/tools/logs';
+import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
+import type { Moment } from 'moment';
 
 import './style.scss';
 
-export function SiteLogsHeader( { logType }: { logType: string } ) {
-	const options = [
-		{
-			value: 'php',
-			label: translate( 'PHP error' ),
-		},
-		{
-			value: 'web',
-			label: translate( 'Web server' ),
-		},
-	];
+const SiteLogsToolbarDownloadProgress = ( {
+	recordsDownloaded = 0,
+	totalRecordsAvailable = 0,
+} ) => {
+	const translate = useTranslate();
 
-	const switchType = ( newType: string ) => {
-		navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + newType ) );
-	};
+	if ( totalRecordsAvailable === 0 ) {
+		return null;
+	}
 
 	return (
-		<div className="logs-header">
+		<span className="site-logs-toolbar__download-progress">
+			{ translate(
+				'Download progress: %(logRecordsDownloaded)d of %(totalLogRecordsAvailable)d records',
+				{
+					args: {
+						logRecordsDownloaded: recordsDownloaded,
+						totalLogRecordsAvailable: totalRecordsAvailable,
+					},
+				}
+			) }
+		</span>
+	);
+};
+
+type SiteLogsHeaderProps = {
+	endDateTime: Moment;
+	logType: LogType;
+	requestStatus: string;
+	requestType: string;
+	severity: string;
+	startDateTime: Moment;
+};
+
+export function SiteLogsHeader( {
+	endDateTime,
+	logType,
+	requestStatus,
+	requestType,
+	severity,
+	startDateTime,
+}: SiteLogsHeaderProps ) {
+	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const isDownloading = state.status === 'downloading';
+
+	return (
+		<div className="site-logs-header">
 			<NavigationHeader
 				title={ translate( 'Logs' ) }
 				subtitle={ translate(
@@ -35,22 +66,26 @@ export function SiteLogsHeader( { logType }: { logType: string } ) {
 					}
 				) }
 			/>
-			<div className="logs-header__selector-container">
-				<div className="logs-header__selector-heading">{ translate( 'Log type' ) }</div>
-				<SegmentedControl className="logs-header__selector-controls">
-					{ options.map( ( option ) => {
-						return (
-							<SegmentedControl.Item
-								key={ option.value }
-								value={ option.value }
-								selected={ option.value === logType }
-								onClick={ () => switchType( option.value ) }
-							>
-								{ option.label }
-							</SegmentedControl.Item>
-						);
-					} ) }
-				</SegmentedControl>
+
+			<div className="site-logs-header__download-container">
+				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+
+				<Button
+					className="site-logs-toolbar__download"
+					disabled={ isDownloading }
+					isBusy={ isDownloading }
+					variant="primary"
+					onClick={ () =>
+						downloadLogs( {
+							logType,
+							startDateTime,
+							endDateTime,
+							filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+						} )
+					}
+				>
+					{ translate( 'Download logs' ) }
+				</Button>
 			</div>
 		</div>
 	);

@@ -1,17 +1,24 @@
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { pathToUrl } from 'calypso/lib/url';
 import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteSlug,
+	clearSignupCompleteSlug,
+	clearSignupCompleteFlowName,
+	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
+	STEPPER_TRACKS_EVENT_SIGNUP_STEP_START,
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
@@ -43,16 +50,38 @@ const onboarding: Flow = {
 	isSignupFlow: true,
 	__experimentalUseBuiltinAuth: true,
 	useTracksEventProps() {
-		const isGoalsAtFrontExperiment = useGoalsFirstExperiment()[ 1 ];
+		const [ isLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+
+		// we are only interested in the initial values and not when they values change
+		const initialGoals = useRef( goals );
+		const initialLoggedOut = useRef( ! userIsLoggedIn );
 
 		return useMemo(
 			() => ( {
-				[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
-					is_goals_first: isGoalsAtFrontExperiment.toString(),
-					...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+				isLoading,
+				eventsProperties: {
+					[ STEPPER_TRACKS_EVENT_SIGNUP_START ]: {
+						is_goals_first: isGoalsAtFrontExperiment.toString(),
+						...( isGoalsAtFrontExperiment && { step: 'goals' } ),
+						is_logged_out: initialLoggedOut.current.toString(),
+					},
+
+					[ STEPPER_TRACKS_EVENT_SIGNUP_STEP_START ]: {
+						...( isGoalsAtFrontExperiment && {
+							is_goals_first: 'true',
+						} ),
+						...( initialGoals.current.length && {
+							goals: initialGoals.current.join( ',' ),
+						} ),
+					},
 				},
 			} ),
-			[ isGoalsAtFrontExperiment ]
+			[ isGoalsAtFrontExperiment, initialLoggedOut, initialGoals, isLoading ]
 		);
 	},
 	useSteps() {
@@ -97,6 +126,7 @@ const onboarding: Flow = {
 			setDomainCartItem,
 			setDomainCartItems,
 			setPlanCartItem,
+			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE );
@@ -257,6 +287,12 @@ const onboarding: Flow = {
 							setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.FREE );
 						}
 					}
+
+					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
+					if ( cartItems?.length > 0 ) {
+						setProductCartItems( cartItems.slice( 1 ) );
+					}
+
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
 				}
@@ -343,6 +379,26 @@ const onboarding: Flow = {
 		return {
 			state: isLoading ? AssertConditionState.CHECKING : AssertConditionState.SUCCESS,
 		};
+	},
+	useSideEffect( currentStepSlug ) {
+		const reduxDispatch = useReduxDispatch();
+		const { resetOnboardStore } = useDispatch( ONBOARD_STORE );
+
+		/**
+		 * Clears every state we're persisting during the flow
+		 * when entering it. This is to ensure that the user
+		 * starts on a clean slate.
+		 */
+		useEffect( () => {
+			if ( ! currentStepSlug ) {
+				resetOnboardStore();
+				reduxDispatch( setSelectedSiteId( null ) );
+				clearStepPersistedState( this.name );
+				clearSignupDestinationCookie();
+				clearSignupCompleteFlowName();
+				clearSignupCompleteSlug();
+			}
+		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 	},
 };
 

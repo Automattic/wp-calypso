@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { isBlankCanvasDesign, getDesignSlug } from '../utils';
+import { isBlankCanvasDesign } from '../utils';
 import { useDesignPickerFilters } from './use-design-picker-filters';
 import type { Design } from '../types';
 
@@ -45,7 +45,7 @@ export const getFilteredDesignsByCategory = (
 
 		// For designs that match all selected categories.
 		// Limit the best matches to at least 2 selected categories.
-		if ( categorySlugs.length > 1 && matchedCount === categorySlugs.length ) {
+		if ( categorySlugs.length > 1 && matchedCount > 1 ) {
 			filteredDesignsByCategory.best.push( design );
 			continue;
 		}
@@ -59,41 +59,40 @@ export const getFilteredDesignsByCategory = (
 		}
 	}
 
+	// sort best designs by highest number of matched categories
+	filteredDesignsByCategory.best.sort( ( a, b ) => {
+		const aMatchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			a.categories.map( ( category ) => category.slug ).includes( categorySlug )
+		);
+		const bMatchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			b.categories.map( ( category ) => category.slug ).includes( categorySlug )
+		);
+
+		return bMatchedCategorySlugs.length - aMatchedCategorySlugs.length;
+	} );
+
+	// limit the best designs to 6
+	filteredDesignsByCategory.best = filteredDesignsByCategory.best.slice( 0, 6 );
+
 	return filteredDesignsByCategory;
 };
 
-interface UseFilteredDesignsByGroupOptions {
-	excludeDesigns?: Design[];
-}
-
-export const useFilteredDesignsByGroup = (
-	designs: Design[],
-	{ excludeDesigns }: UseFilteredDesignsByGroupOptions = {}
-): { [ key: string ]: Design[] } => {
+export const useFilteredDesignsByGroup = ( designs: Design[] ): { [ key: string ]: Design[] } => {
 	const { selectedCategoriesWithoutDesignTier, selectedDesignTiers } = useDesignPickerFilters();
 
 	const filteredDesigns = useMemo( () => {
-		const excludeDesignSlugs = excludeDesigns
-			? excludeDesigns.map( ( design ) => getDesignSlug( design ) )
-			: [];
-		const excludeDesignSlugsSet = new Set( excludeDesignSlugs );
-		const all =
-			excludeDesignSlugs.length > 0
-				? designs.filter( ( design ) => ! excludeDesignSlugsSet.has( getDesignSlug( design ) ) )
-				: designs;
-
 		if ( selectedCategoriesWithoutDesignTier.length > 0 || selectedDesignTiers.length > 0 ) {
 			return getFilteredDesignsByCategory(
-				all,
+				designs,
 				selectedCategoriesWithoutDesignTier,
 				selectedDesignTiers
 			);
 		}
 
 		return {
-			all,
+			all: designs,
 		};
-	}, [ designs, excludeDesigns, selectedCategoriesWithoutDesignTier, selectedDesignTiers ] );
+	}, [ designs, selectedCategoriesWithoutDesignTier, selectedDesignTiers ] );
 
 	return filteredDesigns;
 };

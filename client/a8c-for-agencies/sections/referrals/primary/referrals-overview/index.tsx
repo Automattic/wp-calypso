@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -6,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
-import A4APaymentDelayedNotice from 'calypso/a8c-for-agencies/components/a4a-payment-delayed-notice';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
@@ -67,7 +65,6 @@ export default function ReferralsOverview( {
 	);
 
 	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -132,8 +129,6 @@ export default function ReferralsOverview( {
 						</div>
 					) }
 
-					{ hasReferrals && isPayable && ! actionRequiredNotice && <A4APaymentDelayedNotice /> }
-
 					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
 					<LayoutHeader>
@@ -184,7 +179,7 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback && isProductFeedbackEnabled ? (
+					{ showFeedback ? (
 						<A4AFeedback { ...feedbackProps } />
 					) : (
 						<LayoutBodyContent

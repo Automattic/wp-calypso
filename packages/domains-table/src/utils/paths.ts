@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
 import { ResponseDomain } from './types';
+import type { DomainsTableContext } from '../domains-table/domains-table';
 
 export const emailManagementAllSitesPrefix = '/email/all';
 
@@ -9,7 +10,8 @@ export function domainManagementLink(
 	{ domain, type }: Pick< ResponseDomain, 'domain' | 'type' >,
 	siteSlug: string,
 	isAllSitesView: boolean,
-	feature?: string
+	feature?: string,
+	isHostingOverview?: boolean
 ) {
 	const viewSlug = domainManagementViewSlug( type );
 
@@ -22,14 +24,16 @@ export function domainManagementLink(
 
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
-	if ( isAllDomainManagementEnabled && isAllSitesView ) {
+	if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
 		switch ( feature ) {
 			case 'email-management':
 				return `${ domainManagementAllRoot() }/email/${ domain }/${ siteSlug }`;
 
 			case 'domain-overview':
 			default:
-				return `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`;
+				return isAllSitesView
+					? `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`
+					: `/overview/site-domain/domain/${ domain }/${ siteSlug }`;
 		}
 	}
 
@@ -113,9 +117,17 @@ export function domainManagementAllRoot() {
 export function domainManagementEditContactInfo(
 	siteName: string,
 	domainName: string,
-	relativeTo: string | null = null
+	relativeTo: string | null = null,
+	context?: DomainsTableContext
 ) {
-	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	}
 }
 
 export function domainMappingSetup(
@@ -187,11 +199,26 @@ export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
-export function domainMagementDNS( siteName: string, domainName: string ) {
-	return domainManagementEditBase( siteName, domainName, 'dns' );
+export function domainManagementDNS(
+	siteName: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		default:
+			return domainManagementEditBase( siteName, domainName, 'dns' );
+	}
 }
 
-export function emailManagementEdit( siteSlug: string, domainName: string ) {
+export function emailManagementEdit(
+	siteSlug: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
 	// Encodes only real domain names and not parameter placeholders
 	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
@@ -199,5 +226,12 @@ export function emailManagementEdit( siteSlug: string, domainName: string ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return '/email/' + domainName + '/manage/' + siteSlug;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/email/${ domainName }/${ siteSlug }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/email/${ domainName }/${ siteSlug }`;
+		default:
+			return '/email/' + domainName + '/manage/' + siteSlug;
+	}
 }

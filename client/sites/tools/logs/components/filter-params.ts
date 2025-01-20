@@ -1,7 +1,6 @@
 import page from '@automattic/calypso-router';
+import { LogType } from 'calypso/sites/tools/logs';
 import type { Moment } from 'moment';
-
-export type SiteLogsTab = 'php' | 'web';
 
 interface SiteLogsTabParamsType {
 	[ key: string ]: string[];
@@ -12,9 +11,9 @@ const SiteLogsTabParams: SiteLogsTabParamsType = {
 	web: [ 'from', 'to', 'request_type', 'request_status' ],
 };
 
-export function getPageQueryParam(): SiteLogsTab | null {
+export function getPageQueryParam(): LogType | null {
 	const param = new URL( window.location.href ).searchParams.get( 'page' );
-	return param && [ 'php', 'web' ].includes( param ) ? ( param as SiteLogsTab ) : null;
+	return param && [ 'php', 'web' ].includes( param ) ? ( param as LogType ) : null;
 }
 
 export function getDateRangeQueryParam( moment: typeof import('moment') ): {

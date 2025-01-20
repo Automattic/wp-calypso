@@ -128,12 +128,13 @@ button, a {
 
 		.add-new-site__popover-button-heading {
 			font-size: rem(14px);
+			font-weight: 600;
 		}
 
 		.add-new-site__popover-button-description {
 			font-size: rem(12px);
 			font-weight: 400;
-			color: var(--color-accent);
+			color: var(--color-text-black);
 			padding-top: 4px;
 		}
 	}

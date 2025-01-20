@@ -37,7 +37,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 		siteHasFeature( state, site?.ID, FEATURE_UNLIMITED_SUBSCRIBERS )
 	);
 	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, site?.ID ) );
-	const isSubscriberCsvUploadEnabled = isEnabled( 'subscriber-csv-upload' );
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
@@ -165,16 +164,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 								trackAndSetAddingMethod( 'manually' );
 							} }
 						/>
-						{ isSubscriberCsvUploadEnabled && (
-							<FlowQuestion
-								icon={ upload }
-								title={ translate( 'Use a CSV file' ) }
-								text={ translate( 'Upload a file with your existing subscribers list.' ) }
-								onClick={ () => {
-									trackAndSetAddingMethod( 'upload' );
-								} }
-							/>
-						) }
+						<FlowQuestion
+							icon={ upload }
+							title={ translate( 'Use a CSV file' ) }
+							text={ translate( 'Upload a file with your existing subscribers list.' ) }
+							onClick={ () => {
+								trackAndSetAddingMethod( 'upload' );
+							} }
+						/>
 						{ isSubstackSubscriberImporterEnabled && (
 							<FlowQuestion
 								icon={ reusableBlock }
@@ -237,6 +234,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
@@ -297,12 +295,14 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 					) }
 					<UploadSubscribersForm
 						siteId={ site.ID }
+						siteUrl={ site.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
 						recordTracksEvent={ recordTracksEvent }
 						hidden={ isUploading }
 						disabled={ isImportInProgress }
+						isWPCOMSite={ ! isJetpack }
 					/>
 				</>
 			) }

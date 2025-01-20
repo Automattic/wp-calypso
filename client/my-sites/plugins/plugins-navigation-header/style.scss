@@ -9,7 +9,7 @@
 	}
 
 	@include break-medium {
-		border-block-end: 1px solid var(--color-border-secondary);
+		border-block-end: 1px solid var(--color-neutral-5);
 	}
 
 	@media (max-width: $break-medium) {
