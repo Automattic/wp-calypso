@@ -615,7 +615,9 @@ class Account extends Component {
 			} else if ( domainCount === 1 && firstDomain ) {
 				// User has one domain so WHOIS email needs to be checked and updated
 				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}As you also own a custom domain, please check whether your {{a}}WHOIS email{{/a}} needs to be updated.',
+					'Settings saved successfully!{{br/}}' +
+						'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}' +
+						'As you also own a custom domain, please check whether your {{a}}WHOIS email{{/a}} needs to be updated.',
 					{
 						args: {
 							email: newEmail || '',
@@ -686,8 +688,7 @@ class Account extends Component {
 			} else {
 				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}' +
-						'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}' +
+					'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}' +
 						'As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
 					{
 						args: {
