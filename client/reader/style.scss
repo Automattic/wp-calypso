@@ -265,7 +265,7 @@ body.is-section-reader {
 }
 
 .is-group-reader {
-	@media screen and (min-width: 782px) {
+	@media screen and (min-width: $break-medium) {
 		.navigation-header::after {
 			content: "";
 			display: block;

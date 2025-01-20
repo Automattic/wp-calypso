@@ -3,10 +3,10 @@
 @import "@wordpress/base-styles/variables";
 
 .is-section-reader .search-stream__fixed-area {
-	// Main layout already has mx
 	.navigation-header {
-		margin: 0 auto;
-		padding: 16px 0 16px 0;
+		@include break-medium {
+			padding: 0;
+		}
 	}
 }
 
@@ -31,7 +31,6 @@
 	max-width: 905px;
 	margin: 0 auto;
 	padding-inline: 24px;
-	padding-top: 0 !important;
 }
 
 .search-stream__intro {
@@ -95,13 +94,25 @@
 }
 
 .search-stream .search-stream__input-card.card {
-	margin-bottom: 0;
+	margin-inline: 16px;
 	border-radius: 4px;
-	@include breakpoint-deprecated( "<660px" ) {
 
+	@include break-small {
+		margin-inline: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
 		.search__icon-navigation {
 			border-radius: 4px;
 		}
+	}
+}
+
+.reader-blank-suggestions {
+	padding: 0 16px;
+
+	@include break-small {
+		padding: 0;
 	}
 }
 
