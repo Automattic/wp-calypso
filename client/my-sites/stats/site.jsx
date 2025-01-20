@@ -155,6 +155,16 @@ const getDefaultDaysForPeriod = ( period ) => {
 	}
 };
 
+function moduleVisibilityWithUserConfiguration( userConfig ) {
+	// Merge user configuration with default values.
+	const defaults = {};
+	AVAILABLE_PAGE_MODULES.traffic.forEach( ( module ) => {
+		defaults[ module.key ] = module.defaultValue;
+	} );
+
+	return { ...defaults, ...userConfig };
+}
+
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
 	const { period } = props.period;
@@ -175,6 +185,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+
+	// Determine module visibility based on user settings AND defaults.
+	const moduleVisibility = moduleVisibilityWithUserConfiguration( moduleToggles );
 
 	const upsellModalView = useSelector(
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
@@ -283,7 +296,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isModuleHidden = ( moduleName ) => {
 		// Determine which modules are hidden.
 		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
-		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleToggles[ moduleName ] === false ) {
+		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleVisibility[ moduleName ] === false ) {
 			return true;
 		}
 	};
