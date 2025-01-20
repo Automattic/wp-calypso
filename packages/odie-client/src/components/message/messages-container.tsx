@@ -48,7 +48,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const { chat, botNameSlug, isChatLoaded } = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const [ searchParams ] = useSearchParams();
+	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
@@ -73,6 +73,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			resetSupportInteraction &&
 			isChatLoaded
 		) {
+			searchParams.delete( 'provider' );
+			setSearchParams( searchParams );
+
 			resetSupportInteraction().then( () => {
 				if ( isChatLoaded ) {
 					createZendeskConversation( true ).then( () => {
