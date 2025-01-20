@@ -6,6 +6,7 @@ const getSubscribersCacheKey = (
 	perPage?: number,
 	search?: string,
 	sortTerm?: string,
+	sortOrder?: 'asc' | 'desc',
 	filterOption?: string,
 	hasManySubscribers?: boolean,
 	timestamp?: number
@@ -22,6 +23,9 @@ const getSubscribersCacheKey = (
 	}
 	if ( sortTerm ) {
 		cacheKey.push( 'sort-term', sortTerm );
+	}
+	if ( sortOrder ) {
+		cacheKey.push( 'sort-order', sortOrder );
 	}
 	if ( filterOption ) {
 		cacheKey.push( 'filter-option', filterOption );

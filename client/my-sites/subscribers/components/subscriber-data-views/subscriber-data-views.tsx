@@ -1,7 +1,7 @@
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews } from '@wordpress/dataviews';
-import { useMemo, useState, useCallback } from '@wordpress/element';
+import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -29,13 +29,7 @@ type SubscriberDataViewsProps = {
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
 	const plans = useSubscriptionPlans( subscriber );
-	return (
-		<>
-			{ plans.map( ( plan, index ) => (
-				<div key={ index }>{ plan.plan }</div>
-			) ) }
-		</>
-	);
+	return plans.map( ( plan, index ) => <div key={ index }>{ plan.plan }</div> );
 };
 
 const SubscriberName = ( { displayName, email }: { displayName: string; email: string } ) => (
@@ -56,6 +50,17 @@ const SubscriberDataViews = ( {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<1040px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
+	const [ currentView, setCurrentView ] = useState< View >( {
+		type: 'table',
+		layout: {},
+		page: 1,
+		perPage: 10,
+		sort: {
+			field: 'date_subscribed',
+			direction: 'desc',
+		},
+	} );
+
 	const {
 		grandTotal,
 		page,
@@ -68,8 +73,8 @@ const SubscriberDataViews = ( {
 		perPage,
 		setPerPage,
 		handleSearch,
-		sortTerm,
 		setSortTerm,
+		setSortOrder,
 	} = useSubscribersPage();
 
 	const isSimple = useSelector( isSimpleSite );
@@ -149,7 +154,7 @@ const SubscriberDataViews = ( {
 				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				enableHiding: false,
-				enableSorting: true,
+				enableSorting: false,
 			},
 			{
 				id: 'date_subscribed',
@@ -161,25 +166,6 @@ const SubscriberDataViews = ( {
 			},
 		],
 		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
-	);
-
-	const { desktopFields, mobileFields, listViewFields } = useMemo(
-		() => ( {
-			desktopFields: [ 'name', 'subscription_type', 'date_subscribed' ],
-			mobileFields: [ 'name' ],
-			listViewFields: [ 'media', 'name' ],
-		} ),
-		[]
-	);
-
-	const getFieldsByView = useCallback(
-		( selectedSubscriber: boolean, isMobileView: boolean ) => {
-			if ( selectedSubscriber ) {
-				return listViewFields;
-			}
-			return isMobileView ? mobileFields : desktopFields;
-		},
-		[ desktopFields, mobileFields, listViewFields ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -215,60 +201,55 @@ const SubscriberDataViews = ( {
 
 	const handleViewChange = useCallback(
 		( newView: View ) => {
+			// If the new view is the same as the current view, do nothing
+			if ( newView === currentView ) {
+				return;
+			}
+
+			// Handle pagination
 			if ( typeof newView.page === 'number' && newView.page !== page ) {
 				pageChangeCallback( newView.page );
 			}
 
+			// Handle per page
 			if ( typeof newView.perPage === 'number' && newView.perPage !== perPage ) {
 				setPerPage( newView.perPage );
 				pageChangeCallback( 1 );
 			}
 
+			// Handle search
 			if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
 				handleSearch( newView.search );
 			}
 
-			if ( newView.sort?.field ) {
-				const newSortTerm =
-					newView.sort.field === 'name' ? SubscribersSortBy.Name : SubscribersSortBy.DateSubscribed;
-				if ( newSortTerm !== sortTerm ) {
-					setSortTerm( newSortTerm );
-				}
+			// Handle sort field change
+			if (
+				newView.sort?.field &&
+				newView.sort.field !== currentView.sort?.field &&
+				Object.values( SubscribersSortBy ).includes( newView.sort.field as SubscribersSortBy )
+			) {
+				setSortTerm( newView.sort.field as SubscribersSortBy );
 			}
+
+			// Handle sort order change
+			if ( newView.sort?.direction && newView.sort.direction !== currentView.sort?.direction ) {
+				setSortOrder( newView.sort.direction );
+			}
+
+			// Update the view
+			setCurrentView( newView );
 		},
 		[
 			page,
 			perPage,
 			searchTerm,
-			sortTerm,
 			pageChangeCallback,
 			setPerPage,
 			handleSearch,
 			setSortTerm,
+			setSortOrder,
+			currentView,
 		]
-	);
-
-	const currentView = useMemo< View >(
-		() => ( {
-			type: selectedSubscriber ? 'list' : 'table',
-			layout: selectedSubscriber
-				? {
-						showMedia: true,
-						mediaSize: 40,
-						mediaField: 'media',
-						primaryField: 'name',
-				  }
-				: {},
-			search: searchTerm,
-			page,
-			perPage,
-			sort: {
-				field: sortTerm === SubscribersSortBy.Name ? 'name' : 'date_subscribed',
-				direction: 'desc',
-			},
-			fields: getFieldsByView( !! selectedSubscriber, isMobile ),
-		} ),
-		[ selectedSubscriber, searchTerm, page, perPage, sortTerm, getFieldsByView, isMobile ]
 	);
 
 	const { data, paginationInfo } = useMemo( () => {
@@ -280,6 +261,30 @@ const SubscriberDataViews = ( {
 			},
 		};
 	}, [ subscribers, grandTotal, pages ] );
+
+	// Update the view when a subscriber is selected
+	useEffect( () => {
+		if ( selectedSubscriber ) {
+			setCurrentView( ( oldCurrentView ) => ( {
+				...oldCurrentView,
+				type: 'list',
+				layout: {
+					showMedia: true,
+					mediaSize: 40,
+					mediaField: 'media',
+					primaryField: 'name',
+				},
+				fields: [ 'media', 'name' ],
+			} ) );
+		} else {
+			setCurrentView( ( oldCurrentView ) => ( {
+				...oldCurrentView,
+				type: 'table',
+				layout: {},
+				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+			} ) );
+		}
+	}, [ isMobile, selectedSubscriber ] );
 
 	return (
 		<div
