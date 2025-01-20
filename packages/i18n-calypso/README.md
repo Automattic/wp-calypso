@@ -225,6 +225,8 @@ Using the method `fixMe` you can apply a translation (`newCopy` parameter) only 
 
 Important: Due to the way our string extraction mechanism works, always pass `i18n.translate( '...' )` for `newCopy` parameter as otherwise the new string will not be picked up for translation.
 
+For React context, refer to `useFixMe` hook below, which is reactive to locale and other i18n state changes.
+
 ### Usage
 
 ```js
@@ -323,6 +325,25 @@ export default Greeting;
 
 Unlike the `localize` HOC, the component doesn't need to be wrapped and receives the `translate`
 function from the hook call rather than a prop.
+
+## `useFixMe` React Hook
+
+Similar to `useTranslate`, this is an alternative to the `i18n.fixMe` that will cause the consuming component to
+rerender when the `i18n` locale or other state changes.
+
+### Usage
+
+```jsx
+import { useFixMe, useTranslate } from 'i18n-calypso';
+
+function Greeting( { className } ) {
+	const fixMe = useFixMe();
+	const translate = useTranslate();
+	return <h1>{ fixMe( { text: 'hello', newCopy: translate( 'Hello!' ), oldCopy: translate( 'hello' ) } ) }</h1>;
+}
+
+export default Greeting;
+```
 
 ## React Localization Helpers for RTL
 

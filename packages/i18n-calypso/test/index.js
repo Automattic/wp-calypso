@@ -285,11 +285,6 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'fixMe', () => {
-		it( 'should return null if text is missing or wrong type', () => {
-			const result = i18n.fixMe( {} );
-			expect( result ).toBe( null );
-		} );
-
 		it( 'should return newCopy if locale is en', () => {
 			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
 			const result = i18n.fixMe( {
