@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
@@ -187,7 +187,10 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 
 	// Determine module visibility based on user settings AND defaults.
-	const moduleVisibility = moduleVisibilityWithUserConfiguration( moduleToggles );
+	const moduleVisibility = useMemo(
+		() => moduleVisibilityWithUserConfiguration( moduleToggles ),
+		[ moduleToggles ]
+	);
 
 	const upsellModalView = useSelector(
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
