@@ -915,7 +915,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'redirects to the assisted migration step when the user skips the import', () => {
+			it( 'redirects to the MIGRATION_SUPPORT_INSTRUCTIONS step when the user skips the import', () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 					query: {
@@ -926,7 +926,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_ASSISTED_MIGRATION,
+					step: STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
