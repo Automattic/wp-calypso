@@ -396,7 +396,7 @@ const SitesDashboard = ( {
 		>
 			<DocumentHead title={ dashboardTitle } />
 
-			<SitesGuide />
+			{ ! selectedSite && <SitesGuide /> }
 
 			{ ! hideListing && (
 				<LayoutColumn className="sites-overview" wide>

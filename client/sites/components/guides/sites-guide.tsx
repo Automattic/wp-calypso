@@ -5,21 +5,25 @@ import React from 'react';
 import guideStep1 from 'calypso/assets/images/sites/sites-guide-1.png';
 import guideStep2 from 'calypso/assets/images/sites/sites-guide-2.png';
 import './sites-guide.scss';
+import { useDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
-const storageKey = `sites_guide_is_dismissed`;
+const PREFERENCE_KEY = `sites_guide_is_dismissed`;
 
 const SitesGuide = () => {
 	const [ isOpen, setIsOpen ] = useState( true );
 	const [ isImageLoading, setIsImageLoading ] = useState( true );
+	const dispatch = useDispatch();
+	const isDismissed = useSelector( ( state ) => getPreference( state, PREFERENCE_KEY ) );
 
-	if ( ! isOpen || localStorage.getItem( storageKey ) ) {
+	if ( ! isOpen || isDismissed ) {
 		return null;
 	}
 
 	const dismiss = () => {
-		localStorage.setItem( storageKey, 'true' );
-
 		setIsOpen( false );
+		dispatch( savePreference( PREFERENCE_KEY, true ) );
 	};
 
 	return (
