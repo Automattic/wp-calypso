@@ -6,15 +6,18 @@
 	}
 
 	.sites-guide__image {
-		background-color: #7b90ff;
-		padding-top: 60px;
-		padding-left: 32px;
-		padding-right: 32px;
+		background-color: var(--studio-wordpress-blue-30);
+		max-height: 300px;
+		display: flex;
+		flex-grow: 1;
+		align-items: self-end;
+		justify-content: center;
+		padding: 20px 40px 0;
 
 		img {
 			border-top-left-radius: 4px;
 			border-top-right-radius: 4px;
-			width: 100%;
+			max-height: 40vh;
 			display: block;
 		}
 	}
