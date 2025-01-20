@@ -1,0 +1,101 @@
+// ==========================================================================
+// Core Typography definitions
+//
+// Based on: https://wordpress.github.io/gutenberg/?path=/docs/tokens-typography--page
+// ==========================================================================
+
+$font-family-headings: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-family-body: -apple-system, "system-ui", "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-family-mono: Menlo, Consolas, monaco, monospace;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+
+$font-line-height-x-small: 16px;
+$font-line-height-small: 20px;
+$font-line-height-medium: 24px;
+$font-line-height-large: 28px;
+$font-line-height-x-large: 32px;
+$font-line-height-2x-large: 40px;
+
+$font-size-x-small: 11px;
+$font-size-small: 12px;
+$font-size-medium: 13px;
+$font-size-large: 15px;
+$font-size-x-large: 20px;
+$font-size-2x-large: 32px;
+
+/* Internal mixin for heading */
+@mixin _text-heading() {
+	font-family: $font-family-headings;
+	font-weight: $font-weight-medium;
+}
+
+/* Internal mixin for body */
+@mixin _text-body() {
+	font-family: $font-family-body;
+	font-weight: $font-weight-regular;
+}
+
+/* Heading 2X Large */
+@mixin heading-2x-large() {
+	@include _text-heading();
+	font-size: $font-size-2x-large;
+	line-height: $font-line-height-2x-large;
+}
+
+/* Heading X Large */
+@mixin heading-x-large() {
+	@include _text-heading();
+	font-size: $font-size-x-large;
+	line-height: $font-line-height-large;
+}
+
+/* Heading Large */
+@mixin heading-large() {
+	@include _text-heading();
+	font-size: $font-size-large;
+	line-height: $font-line-height-large;
+}
+
+/* Heading Medium */
+@mixin heading-medium() {
+	@include _text-heading();
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+}
+
+/* Heading Small */
+@mixin heading-small() {
+	@include _text-heading();
+	font-size: $font-size-small;
+	line-height: $font-line-height-small;
+}
+
+/* Body X Large */
+@mixin body-x-large() {
+	@include _text-body();
+	font-size: $font-size-x-large;
+	line-height: $font-line-height-x-large;
+}
+
+/* Body Large */
+@mixin body-large() {
+	@include _text-body();
+	font-size: $font-size-large;
+	line-height: $font-line-height-medium;
+}
+
+/* Body Medium */
+@mixin body-medium() {
+	@include _text-body();
+	font-size: $font-size-medium;
+	line-height: $font-line-height-small;
+}
+
+/* Body Small */
+@mixin body-small() {
+	@include _text-body();
+	font-size: $font-size-small;
+	line-height: $font-line-height-x-small;
+}
