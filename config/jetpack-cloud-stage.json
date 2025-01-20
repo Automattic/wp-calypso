@@ -109,5 +109,6 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
+	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true
 }
