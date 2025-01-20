@@ -41,7 +41,6 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
 		"design-picker/goal-centric": true,
-		"desktop-promo": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"external-media": true,
