@@ -1,11 +1,13 @@
 import { RadioControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, isSavingPreference } from 'calypso/state/preferences/selectors';
-import { useState, useEffect } from 'react';
+import { READER_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
+import { SITES_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 
 function ToggleLandingPageSettings() {
 	const translate = useTranslate();
@@ -21,43 +23,39 @@ function ToggleLandingPageSettings() {
 	// Local state to handle selected option
 	const [ selectedOption, setSelectedOption ] = useState( 'default' );
 
-	// Sync local state with Redux state when component mounts or Redux state changes
 	useEffect( () => {
 		if ( useSitesAsLandingPage ) {
-			setSelectedOption( useReaderAsLandingPage ? 'reader' : 'my-sites' );
-		} else {
-			setSelectedOption( 'default' );
+			setSelectedOption( 'my-sites' );
+		} else if ( useReaderAsLandingPage ) {
+			setSelectedOption( 'reader' );
 		}
 	}, [ useSitesAsLandingPage, useReaderAsLandingPage ] );
 
 	async function handlePreferenceChange( selectedOption: string ) {
-		// Update local state for instant UI feedback
-		setSelectedOption( selectedOption );
+		try {
+			setSelectedOption( selectedOption );
 
-		console.log( 'selectedOption', selectedOption );
+			const useSitesAsLandingPagePreference = {
+				useSitesAsLandingPage: false,
+				updatedAt: Date.now(),
+			};
+			const useReaderAsLandingPagePreference = {
+				useReaderAsLandingPage: false,
+				updatedAt: Date.now(),
+			};
 
-		let preferenceKey = null;
-		let preference = { landingPage: selectedOption, updatedAt: Date.now() };
+			if ( selectedOption === 'my-sites' ) {
+				useSitesAsLandingPagePreference.useSitesAsLandingPage = true;
+			} else if ( selectedOption === 'reader' ) {
+				useReaderAsLandingPagePreference.useReaderAsLandingPage = true;
+			}
 
-		if ( selectedOption === 'my-sites' ) {
-			preferenceKey = 'sites-landing-page';
-		} else if ( selectedOption === 'reader' ) {
-			preferenceKey = 'reader-landing-page';
-		} else if ( selectedOption === 'default' ) {
-			// Handle default case: reset both preferences to unset state
-			await dispatch( savePreference( 'sites-landing-page', null ) );
-			await dispatch( savePreference( 'reader-landing-page', null ) );
-			dispatch(
-				successNotice( translate( 'Settings reset to default successfully!' ), {
-					id: 'sites-landing-page-reset',
-					duration: 10000,
-				} )
+			await dispatch(
+				savePreference( SITES_AS_LANDING_PAGE_PREFERENCE, useSitesAsLandingPagePreference )
 			);
-			return;
-		}
-
-		if ( preferenceKey ) {
-			await dispatch( savePreference( preferenceKey, preference ) );
+			await dispatch(
+				savePreference( READER_AS_LANDING_PAGE_PREFERENCE, useReaderAsLandingPagePreference )
+			);
 
 			dispatch(
 				successNotice( translate( 'Settings saved successfully!' ), {
@@ -70,6 +68,16 @@ function ToggleLandingPageSettings() {
 				recordTracksEvent( 'calypso_settings_sites_dashboard_landing_page_toggle', {
 					landing_page_option: selectedOption,
 				} )
+			);
+		} catch ( error ) {
+			dispatch(
+				errorNotice(
+					translate( 'An error occurred while saving your preferences. Please try again.' ),
+					{
+						id: 'sites-landing-page-error',
+						duration: 10000,
+					}
+				)
 			);
 		}
 	}
