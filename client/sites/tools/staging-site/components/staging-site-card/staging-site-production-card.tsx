@@ -10,18 +10,10 @@ import { urlToSlug } from 'calypso/lib/url';
 import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-<<<<<<< HEAD
 import { getSiteUrl } from 'calypso/state/sites/selectors';
-=======
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
-import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
-import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
->>>>>>> f1eb4d401b9 (Add `Delete staging site` button to the staging site)
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
-import { useDeleteStagingSite } from '../../hooks/use-delete-staging-site';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
@@ -55,7 +47,6 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ syncError, setSyncError ] = useState< string | null >( null );
-	const [ deleteError, setDeleteError ] = useState< string | null >( null );
 	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const {
@@ -112,45 +103,15 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		},
 	} );
 
-	const {
-		deleteStagingSite,
-		isLoading: isDeleting,
-		isReverting,
-	} = useDeleteStagingSite( {
-		siteId: productionSite?.id as number,
-		stagingSiteId: siteId,
-		transferStatus: null,
-		onMutate: () => {
-			// After the mutation starts, wait a bit for the deletion to be initiated
-			setTimeout( () => {
-				// Fetch the automated transfer status to update the UI state
-				dispatch( fetchAutomatedTransferStatus( siteId ) );
-				// Then redirect to the staging site page
-				navigate( `/staging-site/${ urlToSlug( productionSite?.url || '' ) }` );
-			}, 1000 );
-		},
-		onError: ( error ) => {
-			dispatch(
-				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
-					code: error.code,
-				} )
-			);
-			setDeleteError( error.code );
-		},
-	} );
-
 	const handleDeleteClick = () => {
-		dispatch(
-			setStagingSiteStatus( productionSite?.id as number, StagingSiteStatus.INITIATE_REVERTING )
-		);
-		deleteStagingSite();
+		sessionStorage.setItem( 'deleteStagingSite', 'true' );
+		navigate( `/staging-site/${ urlToSlug( productionSite?.url || '' ) }` );
 	};
 
 	const DeleteStagingSiteButton = () => (
 		<ConfirmationModal
-			disabled={ disabled || isSyncInProgress || isDeleting || isReverting }
+			disabled={ disabled || isSyncInProgress }
 			onConfirm={ handleDeleteClick }
-			isBusy={ isDeleting }
 			isScary
 			modalTitle={ translate( 'Confirm staging site deletion' ) }
 			modalMessage={ translate(
@@ -204,13 +165,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	};
 
 	let cardContent;
-	if ( deleteError ) {
-		cardContent = (
-			<Notice status="is-error" showDismiss={ false }>
-				{ translate( 'Failed to delete staging site. Please try again.' ) }
-			</Notice>
-		);
-	} else if ( ! isLoading && productionSite ) {
+	if ( ! isLoading && productionSite ) {
 		cardContent = getManageStagingSiteContent( productionSite );
 	} else if ( isLoading ) {
 		cardContent = <LoadingPlaceholder />;
