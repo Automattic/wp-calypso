@@ -44,6 +44,8 @@ const buildFilters = ( { issueTypes }: { issueTypes: string } ): Filter[] => {
 	);
 };
 
+const EMPTY_ARRAY: string[] = [];
+
 export const SitesDashboardProvider = ( {
 	showOnlyFavoritesInitialState = false,
 	showOnlyDevelopmentInitialState = false,
@@ -88,23 +90,13 @@ export const SitesDashboardProvider = ( {
 
 	// Limit fields on breakpoints smaller than 960px wide.
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
-	const desktopFields = [
-		'url',
-		'stats',
-		'boost',
-		'backup',
-		'monitor',
-		'scan',
-		'plugins',
-		'favorite',
-		'actions',
-	];
-	const mobileFields = [ 'url', 'actions' ];
+	const desktopFields = [ 'stats', 'boost', 'backup', 'monitor', 'scan', 'plugins', 'favorite' ];
 	const getFieldsByBreakpoint = ( isDesktop: boolean ) =>
-		isDesktop ? desktopFields : mobileFields;
+		isDesktop ? desktopFields : EMPTY_ARRAY;
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		titleField: 'url',
 		fields: getFieldsByBreakpoint( isDesktop ),
 		page: currentPage,
 		search: searchQuery,
