@@ -34,6 +34,7 @@ import Breadcrumb from 'calypso/components/breadcrumb/docs/example';
 import BulkSelect from 'calypso/components/bulk-select/docs/example';
 import ButtonGroups from 'calypso/components/button-group/docs/example';
 import CardHeading from 'calypso/components/card-heading/docs/example';
+import CategoryPillNavigationExample from 'calypso/components/category-pill-navigation/docs/example';
 import Chart from 'calypso/components/chart/docs/example';
 import Checklist from 'calypso/components/checklist/docs/example';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input/docs/example';
@@ -186,6 +187,7 @@ export default class DesignAssets extends Component {
 					<Buttons readmeFilePath="/packages/components/src/button" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Cards readmeFilePath="/packages/components/src/card" />
+					<CategoryPillNavigationExample readmeFilePath="category-pill-navigation" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />
