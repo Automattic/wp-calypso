@@ -592,7 +592,6 @@ class Account extends Component {
 			( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
 		);
 
-		// Get domain info first
 		const { domainCount, firstDomain } = this.props.domainData;
 
 		// Default case.
