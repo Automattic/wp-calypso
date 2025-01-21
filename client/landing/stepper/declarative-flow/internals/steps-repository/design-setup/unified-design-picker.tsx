@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
