@@ -192,6 +192,7 @@ const SubscriberDataViews = ( {
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
+		// If we're in list view (when a subscriber is selected), return empty actions array.
 		if ( selectedSubscriber ) {
 			return [];
 		}
