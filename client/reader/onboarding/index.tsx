@@ -44,6 +44,7 @@ const ReaderOnboarding = ( {
 
 	const dispatch = useDispatch();
 
+	// a foobar comment to remove...
 	const shouldShowOnboarding =
 		forceShow ||
 		isEnabled( 'reader/force-onboarding' ) ||
