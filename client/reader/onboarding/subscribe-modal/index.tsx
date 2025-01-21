@@ -28,6 +28,7 @@ import {
 	requestPaginatedStream,
 } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
 
@@ -316,6 +317,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				headerActions={ headerActions }
 				isDismissible={ false }
 			>
+				{ promptVerification && <SubscribeVerificationNudge /> }
 				<div
 					className={ clsx( 'subscribe-modal__content', {
 						'subscribe-modal__disabled-for-verification': promptVerification,
