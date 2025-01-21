@@ -10,12 +10,10 @@ type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Va
 type ActivityTypes =
 	| { tab: 'Traffic'; type: TrafficActivityType }
 	| { tab: 'Store'; type: StoreActivityType };
-type HighlightStatsPeriod = '7-day' | '30-day';
 type StatsPeriod = 'Days' | 'Weeks' | 'Months' | 'Years';
 type SubscriberOrigin = 'WordPress.com' | 'Email';
 
 const selectors = {
-	highlightPeriodSelectButton: '.highlight-cards-heading__settings-action',
 	graph: '.chart__bars',
 	statsTabs: '.stats-tabs',
 };
@@ -169,29 +167,6 @@ export class StatsPage {
 			.locator( '.is-selected' )
 			.filter( { hasText: activityType.type } )
 			.waitFor();
-	}
-
-	// Traffic
-
-	/**
-	 * Selects the period to show for the highlights.
-	 *
-	 * @param {HighlightStatsPeriod} period Highlight period to show.
-	 */
-	async selectHighlightPeriod( period: HighlightStatsPeriod ): Promise< void > {
-		await this.dismissTooltip();
-
-		// CSS selector has to be used here because of lack of accessible locators.
-		const switcherButton = this.anchor.locator( selectors.highlightPeriodSelectButton );
-		await switcherButton.click();
-
-		// Tooltips live outside the normal DOM tree.
-		const tooltip = this.page.getByRole( 'tooltip', { name: /highlights/ } );
-		await tooltip.waitFor();
-		await tooltip.getByRole( 'button', { name: period } ).click();
-
-		// Dismiss.
-		await switcherButton.click();
 	}
 
 	// Insights
