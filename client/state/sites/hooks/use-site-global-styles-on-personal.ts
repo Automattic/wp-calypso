@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -26,9 +27,11 @@ export function useSiteGlobalStylesOnPersonal( siteIdOrSlug: SiteIdOrSlug = null
 	const isGlobalStylesOnPersonalEnabled =
 		globalStylesInPersonalPlan || isEnabled( 'global-styles/on-personal-plan' );
 
-	if ( typeof window !== 'undefined' ) {
-		( window as any ).isGlobalStylesOnPersonal = isGlobalStylesOnPersonalEnabled;
-	}
+	useEffect( () => {
+		if ( typeof window !== 'undefined' ) {
+			( window as any ).isGlobalStylesOnPersonal = isGlobalStylesOnPersonalEnabled;
+		}
+	}, [ isGlobalStylesOnPersonalEnabled ] );
 
 	return isGlobalStylesOnPersonalEnabled;
 }
