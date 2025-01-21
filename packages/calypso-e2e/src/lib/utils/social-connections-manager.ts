@@ -22,11 +22,11 @@ export class SocialConnectionsManager {
 		return {
 			CONNECTION_TESTS_ON_SIMPLE: new RegExp(
 				// The request that deals with connection test results on Simple sites
-				`wpcom/v2/sites/${ this.siteId }/publicize/connection-test-results`
+				`wpcom/v2/sites/${ this.siteId }/publicize/connections`
 			),
 			CONNECTION_TESTS_ON_ATOMIC: new RegExp(
 				// The request that deals with connection test results on Atomic sites
-				'wpcom/v2/publicize/connection-test-results'
+				'wpcom/v2/publicize/connections'
 			),
 			GET_POST: new RegExp(
 				// The request that gets the post data in the editor
@@ -70,8 +70,9 @@ export class SocialConnectionsManager {
 		}
 
 		return (
-			CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) ||
-			CONNECTION_TESTS_ON_ATOMIC.test( url.toString() )
+			( CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) ||
+				CONNECTION_TESTS_ON_ATOMIC.test( url.toString() ) ) &&
+			url.searchParams.get( 'test_connections' ) === '1'
 		);
 	}
 
