@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
+import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -156,14 +156,14 @@ const getDefaultDaysForPeriod = ( period ) => {
 	}
 };
 
-function moduleVisibilityWithOverrides( userConfig, siteConfig ) {
-	// Determine visibility based on defaults, site configuration, and user configuration.
+function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 	const defaults = {};
-	AVAILABLE_PAGE_MODULES.traffic.forEach( ( module ) => {
+	const modules = getAvailablePageModules( 'traffic', hasVideoPress );
+	modules.forEach( ( module ) => {
 		defaults[ module.key ] = module.defaultValue;
 	} );
 
-	return { ...defaults, ...siteConfig, ...userConfig };
+	return { ...defaults, ...userConfig };
 }
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
@@ -190,7 +190,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
-		() => moduleVisibilityWithOverrides( moduleToggles, { videos: hasVideoPress } ),
+		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
 		[ hasVideoPress, moduleToggles ]
 	);
 
