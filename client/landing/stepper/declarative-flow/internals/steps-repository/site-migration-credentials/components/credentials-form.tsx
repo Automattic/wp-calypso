@@ -21,10 +21,9 @@ interface CredentialsFormProps {
 		siteInfo?: UrlData | undefined,
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => void;
-	onSkip: () => void;
 }
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -115,16 +114,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						{ getContinueButtonText() }
 					</NextButton>
 				</div>
-			</div>
-
-			<div className="site-migration-credentials__skip">
-				<button
-					className="button navigation-link step-container__navigation-link has-underline is-borderless"
-					onClick={ onSkip }
-					type="button"
-				>
-					{ translate( 'I need help, please contact me' ) }
-				</button>
 			</div>
 		</form>
 	);

@@ -104,5 +104,6 @@
 	"site_filter": [ "jetpack", "atomic", "wpcom" ],
 	"theme": "jetpack-cloud",
 	"hotjar_enabled": true,
-	"theme_color": "#2fb41f"
+	"theme_color": "#2fb41f",
+	"theme_color_admin_color_scheme_override": false
 }

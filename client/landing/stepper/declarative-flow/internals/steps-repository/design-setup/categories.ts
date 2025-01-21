@@ -47,24 +47,8 @@ function makeSortCategoryToTop( slugs: string[] ) {
 	};
 }
 
-interface CategorizationOptions {
-	isMultiSelection?: boolean;
-}
-
-export function getCategorizationOptions(
-	goals: Onboard.SiteGoal[],
-	{ isMultiSelection = false }: CategorizationOptions = {}
-) {
-	let defaultSelections = Array.from(
-		new Set(
-			goals
-				.map( ( goal ) => {
-					const preferredCategories = getGoalsPreferredCategories( goal );
-					return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
-				} )
-				.flat()
-		)
-	);
+export function getCategorizationOptions( goals: Onboard.SiteGoal[] ) {
+	let defaultSelections = Array.from( new Set( goals.map( getGoalsPreferredCategories ).flat() ) );
 
 	if ( defaultSelections.length === 0 ) {
 		defaultSelections = [ CATEGORIES.BLOG ];

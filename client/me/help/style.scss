@@ -116,12 +116,6 @@
 	margin-bottom: 15px;
 }
 
-.help__help-teaser-button.is-placeholder {
-	@include placeholder();
-	height: 64px;
-	margin-bottom: 15px;
-}
-
 .help-results.is-placeholder {
 	@include placeholder();
 	height: 380px;

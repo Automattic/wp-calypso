@@ -57,40 +57,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	display: flex;
 	align-items: center;
 
-	.highlight-cards-heading__description {
-		display: flex;
-		align-items: flex-end;
-		height: 31px;
-		font-family: $font-sf-pro-text;
-		font-weight: 400;
-		font-size: $font-body-small;
-		color: var(--studio-gray-60);
-		line-height: 20px;
-		letter-spacing: -0.15px;
-	}
-
-	.highlight-cards-heading__tooltip {
-		margin-left: 6px;
-	}
-
-	.highlight-cards-heading__settings {
-		margin-left: auto;
-	}
-
-	.highlight-cards-heading__settings-action {
-		width: 24px;
-		height: 24px;
-		cursor: pointer;
-
-		&:focus {
-			box-shadow: 0 0 0 2px var(--color-primary-light);
-		}
-
-		svg {
-			fill: $gray-900;
-		}
-	}
-
 	small {
 		font-family: $highlight-card-heading-font;
 		font-size: $font-body-small;
@@ -107,13 +73,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	svg {
 		fill: var(--studio-gray-30);
 	}
-}
-
-.highlight-cards-heading-icon {
-	display: inline-flex;
-	width: 24px;
-	height: 24px;
-	cursor: pointer;
 }
 
 .highlight-cards-list {
@@ -350,35 +309,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	line-height: 20px;
 	font-family: $highlight-card-tooltip-font;
 	letter-spacing: -0.24px;
-
-	&.comparing-info {
-		display: block;
-
-		& > p {
-			margin-bottom: 10px;
-		}
-
-		& > div {
-			height: 66px;
-			text-align: center;
-		}
-
-		.comparing-info-chart {
-			& > small {
-				display: block;
-				font-family: $font-sf-pro-text;
-				font-weight: 400;
-				color: var(--studio-gray-0);
-				margin-bottom: -8px;
-				letter-spacing: -0.02em;
-
-				& > span {
-					color: var(--studio-gray-30);
-					margin: 0 6px;
-				}
-			}
-		}
-	}
 
 	.highlight-card-tooltip-label {
 		display: flex;

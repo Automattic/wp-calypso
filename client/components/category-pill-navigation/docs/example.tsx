@@ -9,7 +9,7 @@ const categories = Array.from( { length: 15 }, ( _, i ) => ( {
 	link: '#',
 } ) );
 
-export const CategoryPillNavigationExample: FunctionComponent = () => {
+const CategoryPillNavigationExample: FunctionComponent = () => {
 	return (
 		<div>
 			<Card>
@@ -39,3 +39,5 @@ export const CategoryPillNavigationExample: FunctionComponent = () => {
 		</div>
 	);
 };
+
+export default CategoryPillNavigationExample;

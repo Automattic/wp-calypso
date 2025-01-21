@@ -154,7 +154,7 @@ const SubscribersPage = ( {
 		if ( siteId ) {
 			getSubscribersImports( siteId );
 		}
-	}, [ siteId ] );
+	}, [ siteId, getSubscribersImports ] );
 
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
@@ -181,26 +181,25 @@ const SubscribersPage = ( {
 			sortTermChanged={ sortTermChanged }
 		>
 			<QueryMembershipsSettings siteId={ siteId ?? 0 } source="calypso" />
-			<Main
-				wideLayout
-				className={ `subscribers${
-					isEnabled( 'subscribers-dataviews' ) ? ' subscribers--dataviews' : ''
-				}` }
-			>
+			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader
-					selectedSiteId={ selectedSite?.ID }
-					disableCta={ isUnverified || isStagingSite }
-				/>
+				{ ! isEnabled( 'subscribers-dataviews' ) && (
+					<SubscribersHeader
+						selectedSiteId={ selectedSite?.ID }
+						disableCta={ isUnverified || isStagingSite }
+					/>
+				) }
 				<SubscriberValidationGate siteId={ siteId }>
 					{ isEnabled( 'subscribers-dataviews' ) ? (
 						// Your new dataviews component
 						<SubscriberDataViews
-							siteId={ siteId }
+							siteId={ selectedSite?.ID }
 							onClickView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }
 							onClickUnsubscribe={ onClickUnsubscribe }
+							isUnverified={ isUnverified }
+							isStagingSite={ isStagingSite }
 						/>
 					) : (
 						// Existing subscriber list
