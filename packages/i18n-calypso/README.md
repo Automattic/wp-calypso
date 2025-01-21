@@ -289,7 +289,7 @@ import Greeting from './greeting';
 render( <Greeting className="greeting" />, document.body );
 ```
 
-## `useTranslate` React Hook
+## React Hook
 
 The `useTranslate` hook is a modern alternative to the `localize` higher-order component that
 exposes the `translate` method to React components as a return value of a React hook. The
@@ -323,25 +323,6 @@ export default Greeting;
 
 Unlike the `localize` HOC, the component doesn't need to be wrapped and receives the `translate`
 function from the hook call rather than a prop.
-
-## `useFixMe` React Hook
-
-Similar to `useTranslate`, this is an alternative to the `i18n.fixMe` that will cause the consuming component to
-rerender when the `i18n` locale or other state changes.
-
-### Usage
-
-```jsx
-import { useFixMe, useTranslate } from 'i18n-calypso';
-
-function Greeting( { className } ) {
-	const fixMe = useFixMe();
-	const translate = useTranslate();
-	return <h1>{ fixMe( { text: 'hello', newCopy: translate( 'Hello!' ), oldCopy: translate( 'hello' ) } ) }</h1>;
-}
-
-export default Greeting;
-```
 
 ## React Localization Helpers for RTL
 
