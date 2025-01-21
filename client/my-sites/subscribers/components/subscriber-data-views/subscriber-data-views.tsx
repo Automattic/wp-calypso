@@ -280,15 +280,13 @@ const SubscriberDataViews = ( {
 			const baseView = {
 				...oldCurrentView,
 				...commonViewProps,
-				fields: selectedSubscriber
-					? [ 'media', 'name' ]
-					: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
 			};
 
 			if ( selectedSubscriber ) {
 				return {
 					...baseView,
 					type: 'list',
+					fields: [ 'media', 'name' ],
 					layout: {
 						primaryField: 'name',
 						mediaField: 'media',
@@ -299,6 +297,7 @@ const SubscriberDataViews = ( {
 			return {
 				...baseView,
 				type: 'table',
+				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
 				layout: {
 					styles: {
 						media: { width: '60px' },
