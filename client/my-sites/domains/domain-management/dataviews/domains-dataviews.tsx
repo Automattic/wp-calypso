@@ -69,7 +69,7 @@ export const DomainsDataViews = ( {
 			page: view.page && view.page > 1 ? view.page : undefined,
 			perPage: view.perPage === DEFAULT_PER_PAGE ? undefined : view.perPage,
 			sortField: view.sort?.field === DEFAULT_SORT_FIELD ? undefined : view.sort?.field,
-			sortDirction:
+			sortDirection:
 				view.sort?.direction === DEFAULT_SORT_DIRECTION ? undefined : view.sort?.direction,
 		};
 
