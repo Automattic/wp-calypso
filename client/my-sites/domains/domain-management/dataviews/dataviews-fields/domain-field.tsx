@@ -6,7 +6,9 @@ import { domainManagementLink as getDomainManagementLink } from '@automattic/dom
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs } from 'calypso/lib/url';
 import { useDomainsDataViewsContext } from '../use-context';
+import useQueryParams from '../use-query-params';
 
 interface Props {
 	domain: PartialDomainData;
@@ -22,6 +24,7 @@ const DomainField = ( {
 	openDomainPane,
 }: Props ) => {
 	const { __ } = useI18n();
+	const queryParams = useQueryParams();
 
 	const { getFullDomain, getSiteSlug } = useDomainsDataViewsContext();
 
@@ -29,7 +32,10 @@ const DomainField = ( {
 	const siteSlug = getSiteSlug( partialDomain );
 
 	const domainManagementLink = ! partialDomain.wpcom_domain
-		? getDomainManagementLink( partialDomain, siteSlug, true, selectedFeature )
+		? addQueryArgs(
+				queryParams,
+				getDomainManagementLink( partialDomain, siteSlug, true, selectedFeature )
+		  )
 		: '';
 
 	const domainTypeText = domain

@@ -1,9 +1,18 @@
 import { View } from '@wordpress/dataviews';
 import { useState } from 'react';
+import {
+	DEFAULT_PAGE,
+	DEFAULT_PER_PAGE,
+	DEFAULT_SORT_FIELD,
+	DEFAULT_SORT_DIRECTION,
+	QueryParams,
+} from './use-query-params';
 
 type ViewProps = {
 	sidebarMode?: boolean;
 	isDesktop: boolean;
+	selectedDomain?: string;
+	queryParams: QueryParams;
 };
 
 export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean ) {
@@ -14,24 +23,26 @@ export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean
 	return [ 'domain_name' ];
 }
 
-export default function useView( { sidebarMode, isDesktop }: ViewProps ) {
+export default function useView( {
+	sidebarMode,
+	isDesktop,
+	queryParams: { page, perPage, search, sortField, sortDirection },
+}: ViewProps ) {
 	const initialDataViewsState: View = {
 		filters: [],
 		sort: {
-			field: '',
-			direction: 'asc',
+			field: sortField || DEFAULT_SORT_FIELD,
+			direction: sortDirection || DEFAULT_SORT_DIRECTION,
 		},
+		page: page || DEFAULT_PAGE,
+		perPage: perPage || DEFAULT_PER_PAGE,
+		search: search || '',
 		type: sidebarMode ? 'list' : 'table',
-		perPage: 50,
-		page: 1,
-		search: '',
 		layout: {},
 	};
 
 	const [ view, setView ] = useState< View >( () => ( {
 		...initialDataViewsState,
-		perPage: 15,
-		search: '',
 		fields: getFieldsByBreakpoint( isDesktop, sidebarMode ),
 		layout: {
 			primaryField: 'domain_name',

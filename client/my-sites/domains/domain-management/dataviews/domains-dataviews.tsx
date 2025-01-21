@@ -3,12 +3,19 @@ import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
+import { navigate } from 'calypso/lib/navigate';
 import { BulkUpdateNotice } from './components/bulk-update-notice';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
 import './style.scss';
 import { useFields } from './use-fields';
+import useQueryParams, {
+	DEFAULT_PER_PAGE,
+	DEFAULT_SORT_FIELD,
+	DEFAULT_SORT_DIRECTION,
+	buildPathWithQueryParams,
+} from './use-query-params';
 import useView, { getFieldsByBreakpoint } from './use-view';
 
 type Props = {
@@ -28,8 +35,9 @@ export const DomainsDataViews = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop } = useDomainsDataViewsContext();
+	const queryParams = useQueryParams();
 
-	const { view, setView } = useView( { sidebarMode, isDesktop } );
+	const { view, setView } = useView( { sidebarMode, isDesktop, queryParams } );
 	const fields = useFields( { openDomainPane } );
 	const actions = useActions( { sidebarMode } );
 	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
@@ -52,25 +60,44 @@ export const DomainsDataViews = ( {
 		}
 	}, [ isDesktop, sidebarMode, view, setView ] );
 
+	// Update URL with view control params on change.
+	useEffect( () => {
+		const queryParams = {
+			search: view.search?.trim(),
+			page: view.page && view.page > 1 ? view.page : undefined,
+			perPage: view.perPage === DEFAULT_PER_PAGE ? undefined : view.perPage,
+			sortField: view.sort?.field === DEFAULT_SORT_FIELD ? undefined : view.sort?.field,
+			sortDirection:
+				view.sort?.direction === DEFAULT_SORT_DIRECTION ? undefined : view.sort?.direction,
+		};
+
+		window.setTimeout( () => {
+			const url = buildPathWithQueryParams( queryParams );
+			navigate( url, false, false );
+		} );
+	}, [ view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction ] );
+
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 	return (
-		<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
+		<>
 			{ ! sidebarMode && <BulkUpdateNotice /> }
-			<DataViews
-				data={ domainsToDisplay }
-				fields={ fields }
-				onChangeView={ ( newView ) => setView( () => newView ) }
-				view={ view }
-				actions={ actions }
-				search
-				searchLabel={ translate( 'Search by domain…' ) }
-				paginationInfo={ paginationInfo }
-				getItemId={ getDomainId }
-				selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
-				onChangeSelection={ setSelectedIds }
-				isLoading={ isLoading }
-				defaultLayouts={ layout }
-			/>
-		</div>
+			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
+				<DataViews
+					data={ domainsToDisplay }
+					fields={ fields }
+					onChangeView={ ( newView ) => setView( () => newView ) }
+					view={ view }
+					actions={ actions }
+					search
+					searchLabel={ translate( 'Search by domain…' ) }
+					paginationInfo={ paginationInfo }
+					getItemId={ getDomainId }
+					selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
+					onChangeSelection={ setSelectedIds }
+					isLoading={ isLoading }
+					defaultLayouts={ layout }
+				/>
+			</div>
+		</>
 	);
 };
