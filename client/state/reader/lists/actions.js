@@ -8,9 +8,9 @@ import {
 	READER_LIST__ITEM_DELETE_FEED,
 	READER_LIST__ITEM_DELETE_SITE,
 	READER_LIST__ITEM_DELETE_TAG,
-	READER_LIST__REQUEST,
-	READER_LIST__REQUEST_SUCCESS,
-	READER_LIST__REQUEST_FAILURE,
+	READER_LIST__REQUEST_TARGET_LIST,
+	READER_LIST__CREATE_SUCCESS,
+	READER_LIST__CREATE_FAILURE,
 	READER_LIST__UNFOLLOW,
 	READER_LIST__UNFOLLOW_RECEIVE,
 	READER_LIST__UPDATE,
@@ -20,9 +20,9 @@ import {
 	READER_LIST__ITEM_ADD_FEED_RECEIVE,
 	READER_LIST__ITEM_ADD_TAG,
 	READER_LIST__ITEM_ADD_TAG_RECEIVE,
-	READER_LISTS__RECEIVE,
-	READER_LISTS__REQUEST,
-	READER_USER__LISTS_REQUEST,
+	READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
+	READER_LIST__REQUEST_CURRENT_USER_SUBSCRIBED_LISTS,
+	READER_USER__REQUEST_LISTS,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -39,9 +39,9 @@ import 'calypso/state/reader/init';
  * @param  {Array}  lists Lists received
  * @returns {Object}       Action object
  */
-export function receiveLists( lists ) {
+export function receiveCurrentUserSubscribedLists( lists ) {
 	return {
-		type: READER_LISTS__RECEIVE,
+		type: READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 		lists,
 	};
 }
@@ -50,9 +50,9 @@ export function receiveLists( lists ) {
  * Request the current user's subscribed lists.
  * @returns {Object}       Action object
  */
-export function requestSubscribedLists() {
+export function requestCurrentUserSubscribedLists() {
 	return {
-		type: READER_LISTS__REQUEST,
+		type: READER_LIST__REQUEST_CURRENT_USER_SUBSCRIBED_LISTS,
 	};
 }
 
@@ -66,20 +66,20 @@ export function createReaderList( list ) {
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
  */
-export function requestList( listOwner, listSlug ) {
-	return { type: READER_LIST__REQUEST, listOwner, listSlug };
+export function requestTargetList( listOwner, listSlug ) {
+	return { type: READER_LIST__REQUEST_TARGET_LIST, listOwner, listSlug };
 }
 
-export function receiveReaderList( data ) {
+export function receiveCreateReaderList( data ) {
 	return {
-		type: READER_LIST__REQUEST_SUCCESS,
+		type: READER_LIST__CREATE_SUCCESS,
 		data,
 	};
 }
 
-export function handleReaderListRequestFailure( errorInfo ) {
+export function handleCreateReaderListFailure( errorInfo ) {
 	return {
-		type: READER_LIST__REQUEST_FAILURE,
+		type: READER_LIST__CREATE_FAILURE,
 		error: errorInfo.error,
 		owner: errorInfo.owner,
 		slug: errorInfo.slug,
@@ -275,7 +275,7 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 
 export function requestUserLists( userSlug ) {
 	return {
-		type: READER_USER__LISTS_REQUEST,
+		type: READER_USER__REQUEST_LISTS,
 		userSlug,
 	};
 }

@@ -8,20 +8,20 @@ import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 import {
 	READER_LIST__CREATE,
 	READER_LIST__FOLLOW,
-	READER_LIST__REQUEST,
+	READER_LIST__REQUEST_TARGET_LIST,
 	READER_LIST__UNFOLLOW,
 	READER_LIST__UPDATE,
-	READER_LISTS__REQUEST,
-	READER_USER__LISTS_REQUEST,
-	READER_USER__LISTS_RECEIVE,
+	READER_LIST__REQUEST_CURRENT_USER_SUBSCRIBED_LISTS,
+	READER_USER__REQUEST_LISTS,
+	READER_USER__RECEIVE_LISTS,
 } from 'calypso/state/reader/action-types';
 import {
-	handleReaderListRequestFailure,
+	handleCreateReaderListFailure,
 	handleUpdateListDetailsError,
 	receiveFollowList,
-	receiveLists,
+	receiveCurrentUserSubscribedLists,
 	receiveUnfollowList,
-	receiveReaderList,
+	receiveCreateReaderList,
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
 
@@ -47,7 +47,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onSuccess: ( action, { list } ) => {
 				if ( list?.owner && list?.slug ) {
 					return [
-						receiveReaderList( { list } ),
+						receiveCreateReaderList( { list } ),
 						() => page( `/read/list/${ list.owner }/${ list.slug }/edit` ),
 						successNotice( translate( 'List created successfully.' ), {
 							duration: DEFAULT_NOTICE_DURATION,
@@ -58,7 +58,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			},
 			onError: ( action, error ) => [
 				errorNotice( translate( 'Unable to create new list.' ) ),
-				handleReaderListRequestFailure( error ),
+				handleCreateReaderListFailure( error ),
 			],
 		} ),
 	],
@@ -80,7 +80,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onError: () => [ errorNotice( translate( 'Unable to follow list.' ) ) ],
 		} ),
 	],
-	[ READER_LIST__REQUEST ]: [
+	[ READER_LIST__REQUEST_TARGET_LIST ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -91,8 +91,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					},
 					action
 				),
-			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [ handleReaderListRequestFailure( error ) ],
+			onSuccess: ( action, { list } ) => receiveCreateReaderList( { list } ),
+			onError: ( action, error ) => [ handleCreateReaderListFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST__UNFOLLOW ]: [
@@ -139,7 +139,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 		} ),
 	],
 	// Request public and private lists for the current user
-	[ READER_LISTS__REQUEST ]: [
+	[ READER_LIST__REQUEST_CURRENT_USER_SUBSCRIBED_LISTS ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -150,12 +150,12 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					},
 					action
 				),
-			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
+			onSuccess: ( action, apiResponse ) => receiveCurrentUserSubscribedLists( apiResponse?.lists ),
 			onError: () => noop,
 		} ),
 	],
 	// Request only public lists for a specific user
-	[ READER_USER__LISTS_REQUEST ]: [
+	[ READER_USER__REQUEST_LISTS ]: [
 		dispatchRequest( {
 			fetch: ( action ) =>
 				http(
@@ -167,7 +167,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => ( {
-				type: READER_USER__LISTS_RECEIVE,
+				type: READER_USER__RECEIVE_LISTS,
 				userSlug: action.userSlug,
 				lists: apiResponse?.lists,
 			} ),
