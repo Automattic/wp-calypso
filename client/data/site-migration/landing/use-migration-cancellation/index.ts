@@ -28,7 +28,7 @@ export const useMigrationCancellation = ( siteId: SiteId | undefined ) => {
 				throw new Error( 'Site ID is required' );
 			}
 
-			return request( { siteId } );
+			return request( { s1iteId } );
 		},
 		onError: ( error ) => {
 			log( {
