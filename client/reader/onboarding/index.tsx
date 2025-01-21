@@ -99,6 +99,21 @@ const ReaderOnboarding = ( {
 		}
 	}, [ shouldShowOnboarding, hasSeenOnboarding, dispatch ] );
 
+	// Reopen subscription onboarding page if prompted by query param.
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		const loadSubsStep = params.get( 'reloadSubscriptionOnboarding' );
+		if ( loadSubsStep ) {
+			openDiscoverModal();
+		}
+		params.delete( 'reloadSubscriptionOnboarding' );
+		window.history.replaceState(
+			{},
+			'',
+			`${ window.location.pathname }${ params.toString() ? '?' + params.toString() : '' }`
+		);
+	}, [] );
+
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
 
