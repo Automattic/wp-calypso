@@ -3,7 +3,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { SiteDetails, Subscriber } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
@@ -12,28 +12,24 @@ import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
-import { successNotice } from 'calypso/state/notices/actions';
+import './style.scss';
+import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
-import './style.scss';
 
 type AddSubscribersModalProps = {
 	site: SiteDetails;
 };
 
-type CompletedImportJob = Subscriber.CompletedImportJob;
-
 const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const [ addingMethod, setAddingMethod ] = useState( '' );
 	const { showAddSubscribersModal, setShowAddSubscribersModal, addSubscribersCallback } =
 		useSubscribersPage();
@@ -71,42 +67,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
-	const onImportFinished = ( completedJob?: CompletedImportJob ) => {
+	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
-		if ( completedJob ) {
-			const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
-				completedJob;
-			dispatch(
-				successNotice(
-					translate(
-						'Import complete: %(added)d added, %(skipped)d skipped, %(failed)d failed out of %(total)d subscribers.',
-						{
-							args: {
-								added: subscribed_count,
-								skipped: already_subscribed_count,
-								failed: failed_subscribed_count,
-								total: email_count,
-							},
-						}
-					),
-					{
-						duration: 5000,
-					}
-				)
-			);
-		} else {
-			dispatch(
-				successNotice(
-					translate(
-						"Your subscriber list is being processed. We'll send you an email when it's finished importing."
-					),
-					{
-						duration: 5000,
-					}
-				)
-			);
-		}
 		addSubscribersCallback();
 	};
 
