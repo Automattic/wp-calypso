@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
@@ -39,7 +40,9 @@ type SubscribersPageContextProps = {
 	grandTotal: number;
 	pageChangeCallback: ( page: number ) => void;
 	sortTerm: SubscribersSortBy;
+	sortOrder?: 'asc' | 'desc';
 	setSortTerm: ( term: SubscribersSortBy ) => void;
+	setSortOrder: ( order: 'asc' | 'desc' ) => void;
 	filterOption: SubscribersFilterBy;
 	setFilterOption: ( option: SubscribersFilterBy ) => void;
 	showAddSubscribersModal: boolean;
@@ -77,7 +80,12 @@ export const SubscribersPageProvider = ( {
 	searchTermChanged,
 	sortTermChanged,
 }: SubscribersPageProviderProps ) => {
+	const isDataView = isEnabled( 'subscribers-dataviews' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
+	const [ sortOrder, setSortOrder ] = useState< 'asc' | 'desc' >();
+	const [ dataViewSortTerm, setDataViewSortTerm ] = useState< SubscribersSortBy >(
+		SubscribersSortBy.DateSubscribed
+	);
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
@@ -112,7 +120,8 @@ export const SubscribersPageProvider = ( {
 		perPage,
 		search: debouncedSearchTerm,
 		siteId,
-		sortTerm,
+		sortTerm: isDataView ? dataViewSortTerm : sortTerm,
+		sortOrder,
 		filterOption: subscriberType,
 		timestamp,
 	} );
@@ -219,8 +228,10 @@ export const SubscribersPageProvider = ( {
 				setPerPage,
 				subscribers,
 				pageChangeCallback,
-				sortTerm,
-				setSortTerm: sortTermChanged,
+				sortTerm: isDataView ? dataViewSortTerm : sortTerm,
+				setSortTerm: isDataView ? setDataViewSortTerm : sortTermChanged,
+				sortOrder,
+				setSortOrder,
 				filterOption,
 				setFilterOption: filterOptionChanged,
 				showAddSubscribersModal,

@@ -8,7 +8,8 @@ const getSubscribersCacheKey = (
 	sortTerm?: string,
 	filterOption?: string,
 	hasManySubscribers?: boolean,
-	timestamp?: number
+	timestamp?: number,
+	sortOrder?: 'asc' | 'desc'
 ) => {
 	const cacheKey = [ 'subscribers', siteId ];
 	if ( currentPage ) {
@@ -28,6 +29,9 @@ const getSubscribersCacheKey = (
 	}
 	if ( timestamp ) {
 		cacheKey.push( timestamp );
+	}
+	if ( sortOrder ) {
+		cacheKey.push( 'sort-order', sortOrder );
 	}
 	if ( hasManySubscribers ) {
 		cacheKey.push( 'many-subscribers' );
