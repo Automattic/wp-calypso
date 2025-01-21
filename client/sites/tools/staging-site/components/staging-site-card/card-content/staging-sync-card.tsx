@@ -1,4 +1,5 @@
 import { FormLabel } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { translate, useTranslate } from 'i18n-calypso';
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -360,6 +361,16 @@ const SyncCardContainer = ( {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error );
 	const isFailedSyncError = useIsFailedSyncError( error );
+	const hasEnTranslation = useHasEnTranslation();
+	const hasNewTranslations =
+		hasEnTranslation(
+			'We couldn’t synchronize the production environment. Studio push operation is currently in progress.'
+		) &&
+		hasEnTranslation(
+			'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.'
+		) &&
+		hasEnTranslation( 'We couldn’t synchronize the production environment.' ) &&
+		hasEnTranslation( 'We couldn’t synchronize the staging environment.' );
 
 	const getConnectionErrorText = (
 		siteToSync: 'production' | 'staging',
@@ -402,6 +413,22 @@ const SyncCardContainer = ( {
 		return siteToSync === 'production'
 			? translate( 'We couldn’t synchronize the production environment.' )
 			: translate( 'We couldn’t synchronize the staging environment.' );
+	};
+
+	const getOldSyncErrorText = (
+		error: string | null | undefined,
+		siteToSync: 'production' | 'staging'
+	): React.ReactNode => {
+		return error === 'studio_import_in_progress'
+			? translate(
+					'We couldn’t synchronize the %s environment. Studio push operation is currently in progress.',
+					{
+						args: [ siteToSync ],
+					}
+			  )
+			: translate( 'We couldn’t synchronize the %s environment.', {
+					args: [ siteToSync ],
+			  } );
 	};
 
 	return (
@@ -451,7 +478,11 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ getSyncErrorText( error, siteToSync ) }
+							text={
+								hasNewTranslations
+									? getSyncErrorText( error, siteToSync )
+									: getOldSyncErrorText( error, siteToSync )
+							}
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
