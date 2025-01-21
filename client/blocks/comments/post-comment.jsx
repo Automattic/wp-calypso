@@ -317,8 +317,8 @@ class PostComment extends PureComponent {
 		const commentAuthorName = decodeEntities( commentAuthor.name );
 
 		let commentAuthorUrl;
-		if ( isUserProfileEnabled() && commentAuthor.ID ) {
-			commentAuthorUrl = getUserProfileUrl( commentAuthor.ID );
+		if ( isUserProfileEnabled() && commentAuthor.login ) {
+			commentAuthorUrl = getUserProfileUrl( commentAuthor.login );
 		} else if ( commentAuthor.site_ID ) {
 			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
 		} else {
