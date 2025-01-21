@@ -47,7 +47,7 @@ const SubscriberDataViews = ( {
 	isStagingSite = false,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
-	const isMobile = useBreakpoint( '<1040px' );
+	const isMobile = useBreakpoint( '<660px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
 	const {
 		grandTotal,

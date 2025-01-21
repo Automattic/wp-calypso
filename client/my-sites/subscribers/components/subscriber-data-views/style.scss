@@ -162,7 +162,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
             }
         
             .subscriber-profile.subscriber-profile--compact {
-                @media ( max-width: $break-small ) {
+                @media ( max-width: $break-wide ) {
                     max-width: 195px;
                 }
         
