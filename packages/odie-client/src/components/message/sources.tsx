@@ -36,7 +36,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 			];
 		}
 		return [];
-	}, [ message.context?.sources, message?.message_id, trackEvent ] );
+	}, [ message?.context?.sources, message?.message_id, trackEvent ] );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	if ( ! hasSources ) {
