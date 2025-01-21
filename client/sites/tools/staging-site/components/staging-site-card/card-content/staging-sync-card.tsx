@@ -370,7 +370,9 @@ const SyncCardContainer = ( {
 			'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.'
 		) &&
 		hasEnTranslation( 'We couldn’t synchronize the production environment.' ) &&
-		hasEnTranslation( 'We couldn’t synchronize the staging environment.' );
+		hasEnTranslation( 'We couldn’t synchronize the staging environment.' ) &&
+		hasEnTranslation( "We couldn't connect to the production site: {{br/}} %(siteUrl)s" ) &&
+		hasEnTranslation( "We couldn't connect to the staging site: {{br/}} %(siteUrl)s" );
 
 	const getConnectionErrorText = (
 		siteToSync: 'production' | 'staging',
@@ -395,6 +397,21 @@ const SyncCardContainer = ( {
 			} ),
 		};
 		return messages[ siteToSync ];
+	};
+
+	const getOldConnectionErrorText = (
+		siteToSync: 'production' | 'staging',
+		siteUrls: { production: string | null; staging: string | null }
+	): React.ReactNode => {
+		return translate( 'We couldn’t connect to the %(siteType)s site: {{br/}} %(siteUrl)s', {
+			args: {
+				siteType: siteToSync,
+				siteUrl: siteUrls[ siteToSync ] ? urlToSlug( siteUrls[ siteToSync ] as string ) : '',
+			},
+			components: {
+				br: <br />,
+			},
+		} );
 	};
 
 	const getSyncErrorText = (
@@ -451,7 +468,11 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ getConnectionErrorText( siteToSync, siteUrls ) }
+							text={
+								hasNewTranslations
+									? getConnectionErrorText( siteToSync, siteUrls )
+									: getOldConnectionErrorText( siteToSync, siteUrls )
+							}
 						>
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
