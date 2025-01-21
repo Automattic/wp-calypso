@@ -78,6 +78,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			isChatLoaded
 		) {
 			searchParams.delete( 'provider' );
+			searchParams.set( 'direct-zd-chat', '1' );
 			setSearchParams( searchParams );
 			setHasForwardedToZendesk( true );
 
