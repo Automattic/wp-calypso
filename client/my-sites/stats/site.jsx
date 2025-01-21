@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
-import StatsNavigation from 'calypso/blocks/stats-navigation';
+import StatsNavigation, { getAvailablePageModules } from 'calypso/blocks/stats-navigation';
 import { AVAILABLE_PAGE_MODULES, navItems } from 'calypso/blocks/stats-navigation/constants';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -46,6 +46,7 @@ import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-featu
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -155,6 +156,16 @@ const getDefaultDaysForPeriod = ( period ) => {
 	}
 };
 
+function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
+	const defaults = {};
+	const modules = getAvailablePageModules( 'traffic', hasVideoPress );
+	modules.forEach( ( module ) => {
+		defaults[ module.key ] = module.defaultValue;
+	} );
+
+	return { ...defaults, ...userConfig };
+}
+
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
 	const { period } = props.period;
@@ -190,6 +201,13 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
+
+	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
+	const moduleVisibility = useMemo(
+		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
+		[ hasVideoPress, moduleToggles ]
+	);
 
 	const upsellModalView = useSelector(
 		( state ) => config.isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId )
@@ -298,7 +316,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const isModuleHidden = ( moduleName ) => {
 		// Determine which modules are hidden.
 		// @TODO: Rearrange the layout of modules to be more flexible with hidden blocks.
-		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleToggles[ moduleName ] === false ) {
+		if ( HIDDABLE_MODULES.includes( moduleName ) && moduleVisibility[ moduleName ] === false ) {
 			return true;
 		}
 	};
@@ -659,13 +677,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								/>
 							) }
 
-							<StatsModuleSearch
-								moduleStrings={ moduleStrings.search }
-								period={ props.period }
-								query={ query }
-								summaryUrl={ getStatHref( 'searchterms', query ) }
-								className={ halfWidthModuleClasses }
-							/>
+							{ ! isModuleHidden( 'search-terms' ) && (
+								<StatsModuleSearch
+									moduleStrings={ moduleStrings.search }
+									period={ props.period }
+									query={ query }
+									summaryUrl={ getStatHref( 'searchterms', query ) }
+									className={ halfWidthModuleClasses }
+								/>
+							) }
 
 							{ ! isModuleHidden( 'videos' ) && (
 								<StatsModuleVideos
