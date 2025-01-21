@@ -59,7 +59,7 @@ const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
+const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
 
 const fillAllFields = async () => {
 	await userEvent.click( credentialsOption() );
