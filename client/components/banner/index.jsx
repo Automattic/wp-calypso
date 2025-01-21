@@ -32,8 +32,8 @@ const noop = () => {};
 
 export class Banner extends Component {
 	static propTypes = {
-		callToAction: PropTypes.string,
-		secondaryCallToAction: PropTypes.string,
+		callToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		secondaryCallToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
 		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
