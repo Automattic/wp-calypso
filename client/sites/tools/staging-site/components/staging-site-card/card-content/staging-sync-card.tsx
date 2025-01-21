@@ -372,7 +372,13 @@ const SyncCardContainer = ( {
 		hasEnTranslation( 'We couldn’t synchronize the production environment.' ) &&
 		hasEnTranslation( 'We couldn’t synchronize the staging environment.' ) &&
 		hasEnTranslation( "We couldn't connect to the production site: {{br/}} %(siteUrl)s" ) &&
-		hasEnTranslation( "We couldn't connect to the staging site: {{br/}} %(siteUrl)s" );
+		hasEnTranslation( "We couldn't connect to the staging site: {{br/}} %(siteUrl)s" ) &&
+		hasEnTranslation(
+			'We couldn’t synchronize changes to the production site. Please contact support.'
+		) &&
+		hasEnTranslation(
+			'We couldn’t synchronize changes to the staging site. Please contact support.'
+		);
 
 	const getConnectionErrorText = (
 		siteToSync: 'production' | 'staging',
@@ -448,6 +454,25 @@ const SyncCardContainer = ( {
 			  } );
 	};
 
+	const getFailedSyncErrorText = ( siteToSync: 'production' | 'staging' ) => {
+		return siteToSync === 'production'
+			? translate(
+					'We couldn’t synchronize changes to the production site. Please contact support.'
+			  )
+			: translate( 'We couldn’t synchronize changes to the staging site. Please contact support.' );
+	};
+
+	const getOldFailedSyncErrorText = ( siteToSync: 'production' | 'staging' ) => {
+		return translate(
+			'We couldn’t synchronize changes to the %(siteType)s site. Please contact support.',
+			{
+				args: {
+					siteType: siteToSync,
+				},
+			}
+		);
+	};
+
 	return (
 		<StagingSyncCardBody>
 			<SyncContainerTitle>{ translate( 'Database and file synchronization' ) }</SyncContainerTitle>
@@ -482,14 +507,11 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate(
-								'We couldn’t synchronize changes to the %(siteType)s site. Please contact support.',
-								{
-									args: {
-										siteType: siteToSync,
-									},
-								}
-							) }
+							text={
+								hasNewTranslations
+									? getFailedSyncErrorText( siteToSync )
+									: getOldFailedSyncErrorText( siteToSync )
+							}
 						>
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
