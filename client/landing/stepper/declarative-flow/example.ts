@@ -32,8 +32,6 @@ const newsletter: Flow = {
 			STEPS.UNIFIED_PLANS,
 			STEPS.PROCESSING,
 			STEPS.SUBSCRIBERS,
-			STEPS.SITE_CREATION_STEP,
-			STEPS.LAUNCHPAD,
 		] );
 
 		return [ STEPS.INTRO, ...privateSteps ] as const;
@@ -42,26 +40,9 @@ const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const siteId = useSiteIdParam();
-		const siteSlug = useSiteSlug();
-		const { exitFlow } = useExitFlow();
 		const { set } = useFlowState();
 		const createSite = useCreateSite();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-
-		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
-			exitFlow,
-			navigate,
-		} );
-
-		const completeSubscribersTask = async () => {
-			if ( siteSlug ) {
-				await updateLaunchpadSettings( siteSlug, {
-					checklist_statuses: { subscribers_added: true },
-				} );
-			}
-		};
-
-		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -94,6 +75,7 @@ const newsletter: Flow = {
 				}
 				case 'processing': {
 					const result = set( 'processing', providedDependencies );
+
 					if ( result ) {
 						const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ result.siteSlug }`;
 						if ( result.goToHome && result.siteSlug ) {
@@ -112,24 +94,11 @@ const newsletter: Flow = {
 								) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 							);
 						}
-
-						initializeLaunchpadState( {
-							siteId: result.siteId,
-							siteSlug: result.siteSlug,
-						} );
-
-						return window.location.assign(
-							getPostFlowUrl( {
-								flow: flowName,
-								siteId: result.siteId,
-								siteSlug: result.siteSlug,
-							} )
-						);
+						return navigate( 'subscribers' );
 					}
 				}
 
 				case 'subscribers':
-					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}

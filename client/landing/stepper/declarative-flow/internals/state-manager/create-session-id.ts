@@ -29,3 +29,5 @@ export function createSessionId() {
 
 	return SESSION_ID_SIGNATURE + base10ToBase62( seed );
 }
+
+// base64 [0000, 0000, 0000, 00] "asdf", "sdsd" , "sdfdf", "dd=="
