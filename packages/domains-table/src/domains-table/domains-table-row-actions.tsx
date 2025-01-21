@@ -36,6 +36,7 @@ interface DomainsTableRowActionsProps {
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
 	isHostingOverview?: boolean;
+	hasConnectableSites: boolean;
 	context?: DomainsTableContext;
 }
 
@@ -47,6 +48,7 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isSimpleSite,
 	isHostingOverview,
+	hasConnectableSites,
 	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
@@ -139,7 +141,12 @@ export const DomainsTableRowActions = ( {
 			canConnectDomainToASite && (
 				<MenuItemLink
 					key="connectToSite"
-					href={ domainManagementTransferToOtherSiteLink( siteSlug, domain.domain ) }
+					href={ domainManagementTransferToOtherSiteLink(
+						siteSlug,
+						domain.blogId,
+						domain.domain,
+						hasConnectableSites
+					) }
 				>
 					{ __( 'Add site' ) }
 				</MenuItemLink>

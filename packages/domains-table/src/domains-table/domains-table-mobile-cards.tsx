@@ -12,6 +12,7 @@ export const DomainsTableMobileCards = () => {
 		changeBulkSelection,
 		getBulkSelectionStatus,
 		isLoadingDomains,
+		hasConnectableSites,
 	} = useDomainsTable();
 
 	const bulkSelectionStatus = getBulkSelectionStatus();
@@ -60,7 +61,11 @@ export const DomainsTableMobileCards = () => {
 			) }
 
 			{ filteredData.map( ( domain ) => (
-				<DomainsTableMobileCard key={ domain.domain } domain={ domain } />
+				<DomainsTableMobileCard
+					key={ domain.domain }
+					domain={ domain }
+					hasConnectableSites={ hasConnectableSites }
+				/>
 			) ) }
 		</div>
 	);
