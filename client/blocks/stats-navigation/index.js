@@ -30,6 +30,23 @@ import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
 
+// Helper to expose logic for default module listing.
+export function getAvailablePageModules( selectedItem, hasVideoPress ) {
+	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
+		// Set the default VideoPress visibility based on the hasVideoPress parameter.
+		// We update the disabled state as well but that value is currently ignored.
+		if ( toggleItem.key === 'videos' ) {
+			return {
+				...toggleItem,
+				disabled: ! hasVideoPress,
+				defaultValue: hasVideoPress,
+			};
+		}
+
+		return toggleItem;
+	} );
+}
+
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
 	return function WrappedComponent( props ) {
@@ -91,20 +108,9 @@ class StatsNavigation extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
-			( toggleItem ) => {
-				// Set the default VideoPress visibility based on the hasVideoPress prop.
-				// We update the disabled state as well but that value is currently ignored.
-				if ( toggleItem.key === 'videos' ) {
-					return {
-						...toggleItem,
-						disabled: ! nextProps.hasVideoPress,
-						defaultValue: nextProps.hasVideoPress,
-					};
-				}
-
-				return toggleItem;
-			}
+		const availableModuleToggles = getAvailablePageModules(
+			nextProps.selectedItem,
+			nextProps.hasVideoPress
 		);
 
 		if (
