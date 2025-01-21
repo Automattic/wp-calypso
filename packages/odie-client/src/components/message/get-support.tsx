@@ -1,5 +1,5 @@
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
-import { __, hasTranslation } from '@wordpress/i18n';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../../hooks';
@@ -53,7 +53,6 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk: contextCanConnectToZendesk,
 	} = useOdieAssistantContext();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
@@ -71,14 +70,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			return [
 				{
-					text:
-						isEnglishLocale || hasTranslation( 'Chat with support' )
-							? __( 'Chat with support', __i18n_text_domain__ )
-							: __( 'Get instant support', __i18n_text_domain__ ),
-					waitTimeText:
-						isEnglishLocale || hasTranslation( 'Average wait time < 5 minutes' )
-							? __( 'Average wait time < 5 minutes', __i18n_text_domain__ )
-							: undefined,
+					text: __( 'Chat with support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'chat' );
 						await newConversation();
@@ -86,10 +79,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				},
 				{
 					text: __( 'Email support', __i18n_text_domain__ ),
-					waitTimeText:
-						isEnglishLocale || hasTranslation( 'Average wait time < 8 hours' )
-							? __( 'Average wait time < 8 hours', __i18n_text_domain__ )
-							: undefined,
+					waitTimeText: __( 'Average wait time < 8 hours', __i18n_text_domain__ ),
 					action: async () => {
 						onClickAdditionalEvent?.( 'email' );
 						await newConversation();

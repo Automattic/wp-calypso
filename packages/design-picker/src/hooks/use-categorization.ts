@@ -11,7 +11,6 @@ export interface Categorization {
 
 interface UseCategorizationOptions {
 	defaultSelections: string[];
-	isMultiSelection?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
 	handleSelect?: ( slug: string ) => void;
 	handleDeselect?: ( slug: string ) => void;
@@ -19,13 +18,7 @@ interface UseCategorizationOptions {
 
 export function useCategorization(
 	categoryMap: Record< string, Category >,
-	{
-		defaultSelections,
-		isMultiSelection,
-		sort,
-		handleSelect,
-		handleDeselect,
-	}: UseCategorizationOptions
+	{ defaultSelections, sort, handleSelect, handleDeselect }: UseCategorizationOptions
 ): Categorization {
 	const isInitRef = useRef( false );
 	const categories = useMemo( () => {
@@ -48,12 +41,6 @@ export function useCategorization(
 
 	const onSelect = useCallback(
 		( value: string ) => {
-			if ( ! isMultiSelection ) {
-				handleSelect?.( value );
-				setSelectedCategories( [ value ] );
-				return;
-			}
-
 			const index = selectedCategories.findIndex( ( selection ) => selection === value );
 			if ( index === -1 ) {
 				handleSelect?.( value );
@@ -66,14 +53,7 @@ export function useCategorization(
 				...selectedCategories.slice( index + 1 ),
 			] );
 		},
-		[
-			selectedCategories,
-			isMultiSelection,
-			isSelectionsChanged,
-			setSelectedCategories,
-			handleSelect,
-			handleDeselect,
-		]
+		[ selectedCategories, isSelectionsChanged, setSelectedCategories, handleSelect, handleDeselect ]
 	);
 
 	useEffect( () => {

@@ -1,7 +1,9 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 export type ThankYouGoogleWorkspaceProductProps = {
 	productFamily: string;
@@ -17,7 +19,8 @@ export function ThankYouGoogleWorkspaceProduct( {
 	siteSlug,
 }: ThankYouGoogleWorkspaceProductProps ) {
 	const translate = useTranslate();
-	const emailManagementPath = getEmailManagementPath( siteSlug, domainName );
+	const currentRoute = useSelector( getCurrentRoute );
+	const emailManagementPath = getEmailManagementPath( siteSlug, domainName, currentRoute );
 
 	let details;
 	if ( numberOfMailboxesPurchased && numberOfMailboxesPurchased > 1 ) {
