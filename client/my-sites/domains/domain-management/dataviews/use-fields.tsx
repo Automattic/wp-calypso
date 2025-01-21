@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import { DomainsTableExpiresRenewsOnCell } from '@automattic/domains-table/src/domains-table/domains-table-expires-renews-cell';
 import { DomainsTableSiteCell } from '@automattic/domains-table/src/domains-table/domains-table-site-cell';
@@ -19,6 +20,7 @@ export function useFields( { openDomainPane }: Props ) {
 		isAllSitesView,
 		domainsRequiringAttention,
 		sites,
+		isLoadingSites,
 		selectedFeature,
 		getSiteSlug,
 		getFullDomain,
@@ -58,7 +60,10 @@ export function useFields( { openDomainPane }: Props ) {
 				},
 				render: ( { item }: { item: PartialDomainData } ) => {
 					const domain = getFullDomain( item );
-					if ( ! domain || ! domain.owner ) {
+					if ( ! domain ) {
+						return <LoadingPlaceholder />;
+					}
+					if ( ! domain.owner ) {
 						return '-';
 					}
 					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
@@ -72,6 +77,10 @@ export function useFields( { openDomainPane }: Props ) {
 				getValue: ( { item }: { item: PartialDomainData } ) => sites[ item.blog_id ]?.name ?? '',
 				render: ( { item }: { item: PartialDomainData } ) => {
 					const domain = getFullDomain( item );
+					if ( isLoadingSites || ! domain ) {
+						return <LoadingPlaceholder />;
+					}
+
 					const site = sites[ item.blog_id ];
 					const userCanAddSiteToDomain = domain?.currentUserCanCreateSiteFromDomainOnly ?? false;
 
@@ -132,6 +141,7 @@ export function useFields( { openDomainPane }: Props ) {
 			getFullDomain,
 			getSiteSlug,
 			selectedFeature,
+			isLoadingSites,
 		]
 	);
 
