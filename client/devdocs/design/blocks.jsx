@@ -11,7 +11,6 @@ import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/exa
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
-import { CategoryPillNavigationExample } from 'calypso/blocks/category-pill-navigation/docs/example';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import CommentButtons from 'calypso/blocks/comment-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
@@ -173,7 +172,6 @@ export default class AppComponents extends Component {
 					<UpsellNudge />
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 					<ReaderJoinConversationDialogExample readmeFilePath="reader-join-conversation" />
-					<CategoryPillNavigationExample readmeFilePath="category-pill-navigation" />
 				</Collection>
 			</Main>
 		);

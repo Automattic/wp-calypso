@@ -208,6 +208,21 @@
             }
         }
 	}
+
+	&.subpage-wrapper--transfer-other-site {
+		.transfer-domain-to-other-site__card > p {
+			font-size: 1.25rem;
+			margin-bottom: 1.25rem;
+
+			strong {
+				font-weight: 500;
+			}
+		}
+
+		.domain__main-placeholder {
+			max-width: $break-xlarge;
+		}
+	}
 }
 
 .is-bulk-all-domains-page .layout__content .main,

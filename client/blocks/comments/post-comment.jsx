@@ -20,7 +20,7 @@ import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reade
 import {
 	getUserProfileUrl,
 	isUserProfileEnabled,
-} from 'calypso/reader/user-stream/user-profile.utils';
+} from 'calypso/reader/user-profile/user-profile.utils';
 import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';

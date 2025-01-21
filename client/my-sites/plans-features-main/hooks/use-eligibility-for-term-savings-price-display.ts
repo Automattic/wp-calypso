@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
@@ -17,6 +16,7 @@ import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-te
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 
 const useEligibilityForTermSavingsPriceDisplay = ( {
+	flowName,
 	hiddenPlans,
 	intent,
 	isSubdomainNotGenerated,
@@ -27,6 +27,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	siteId,
 	isInSignup,
 }: {
+	flowName?: string | null;
 	hiddenPlans?: HiddenPlans;
 	intent?: PlansIntent;
 	isSubdomainNotGenerated?: boolean;
@@ -37,7 +38,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	siteId?: number | null;
 	isInSignup?: boolean;
 } ) => {
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent,
@@ -78,11 +79,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		return false;
 	}
 
-	return (
-		( isEnabled( 'plans/term-savings-price-display' ) ||
-			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-		isInSignup
-	);
+	return longerPlanTermDefaultExperiment.isEligibleForTermSavings && isInSignup;
 };
 
 export default useEligibilityForTermSavingsPriceDisplay;

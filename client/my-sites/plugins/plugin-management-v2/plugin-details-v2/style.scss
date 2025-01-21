@@ -133,18 +133,21 @@
 .plugin-details-v2__title {
 	font-size: 0.875rem;
 	color: var( --color-text );
-	margin: 16px 0;
 }
 
 .plugin-details-v2__sites-list {
+	border: 1px solid var( --studio-gray-10 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+
+	&.separators-top-bottom {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
 	.dataviews-view-table tr {
 		th:last-child {
 			text-align: right;
-			padding-right: 0;
-		}
-
-		td:last-child {
-			padding-right: 16px;
 		}
 
 		td:first-child .dataviews-view-table__cell-content-wrapper > span {
