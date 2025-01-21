@@ -44,7 +44,7 @@ interface Props {
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportStarted?: ( hasFile: boolean ) => void;
-	onImportFinished?: ( completedJob?: CompletedImportJob ) => void;
+	onImportFinished?: () => void;
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
@@ -53,8 +53,6 @@ interface Props {
 	isWPCOMSite?: boolean;
 	disabled?: boolean;
 }
-
-type CompletedImportJob = Subscriber.CompletedImportJob;
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
@@ -132,8 +130,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			disabled: inProgress || disabled,
 		} )
 	);
-
-	const { completedJob } = useActiveJobRecognition( siteId );
 
 	const getValidEmails = useCallback( () => {
 		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
@@ -290,11 +286,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function importFinishedRecognition() {
 		if ( ! importSelector?.error && prevInProgress.current && ! inProgress ) {
 			resetFormState();
-			if ( completedJob ) {
-				onImportFinished?.( completedJob );
-			} else {
-				onImportFinished?.();
-			}
+			onImportFinished?.();
 		}
 	}
 
