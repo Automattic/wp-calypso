@@ -110,10 +110,6 @@ $blueberry-color: #3858e9;
 	}
 
 	.chat-feedback-wrapper {
-		
-		$foldable-header-font-size: 0.75rem;
-		$foldable-header-icon-color: #1E1E1E;
-
 		width: 100%;
 		margin-left: 46px;
 		margin-right: 44px;
@@ -129,7 +125,7 @@ $blueberry-color: #3858e9;
 			}
 
 			.odie-foldable-card__header {
-				font-size: $foldable-header-font-size;
+				font-size: $font-body-extra-small;
 				min-height: 48px;
 				padding: 12px 16px;
 
@@ -138,7 +134,7 @@ $blueberry-color: #3858e9;
 						outline: none;
 					}
 					.gridicon {
-						fill: $foldable-header-icon-color;
+						fill: #1E1E1E;
 					}
 				}
 			}
@@ -155,7 +151,7 @@ $blueberry-color: #3858e9;
 					a {
 						color: $blueberry-color;
 						& span {
-							font-size: 0.75rem;
+							font-size: $font-body-extra-small;
 						}
 						> svg:last-child {
 							display: none;
