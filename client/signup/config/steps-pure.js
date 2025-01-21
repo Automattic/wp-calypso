@@ -643,11 +643,6 @@ export function generateSteps( {
 			providesDependencies: [],
 		},
 
-		'reader-landing': {
-			stepName: 'reader-landing',
-			providesDependencies: [],
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
