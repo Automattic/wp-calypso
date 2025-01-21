@@ -230,7 +230,7 @@ class MagicLogin extends Component {
 		const loginParameters = {
 			isJetpack: this.props.isJetpackLogin,
 			locale: this.props.locale,
-			emailAddress: this.props.query?.email_address,
+			emailAddress: this.props.userEmail,
 			signupUrl: this.props.query?.signup_url,
 			usernameOnly: true,
 		};
