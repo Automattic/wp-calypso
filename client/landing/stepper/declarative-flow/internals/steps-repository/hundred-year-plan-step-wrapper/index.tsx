@@ -5,7 +5,6 @@ import { formatCurrency } from '@automattic/format-currency';
 import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
-	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	StepContainer,
 } from '@automattic/onboarding';
 import { useBreakpoint } from '@automattic/viewport-react';
@@ -212,12 +211,10 @@ function InfoColumn( {
 	isMobile,
 	openModal,
 	flowName,
-	variantSlug,
 }: {
 	isMobile: boolean;
 	openModal: () => void;
 	flowName: string;
-	variantSlug?: string;
 } ) {
 	const translate = useTranslate();
 
@@ -229,17 +226,12 @@ function InfoColumn( {
 		( select ) => select( ProductsList.store ).getProductBySlug( PLAN_100_YEARS )?.currency_code,
 		[]
 	);
-	let displayCost =
+	const displayCost =
 		productPrice &&
 		currencyCode &&
 		formatCurrency( productPrice, currencyCode, {
 			stripZeros: true,
 		} );
-
-	// TODO: Replace hardcoded value/checks by 100-year domain product price when we have it
-	if ( variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER || flowName === HUNDRED_YEAR_DOMAIN_FLOW ) {
-		displayCost = '$2,000';
-	}
 
 	const planTitle =
 		flowName === HUNDRED_YEAR_PLAN_FLOW ? getPlan( PLAN_100_YEARS )?.getTitle() : '100-Year Domain';
@@ -294,7 +286,6 @@ function HundredYearPlanStepWrapper( props: Props ) {
 		formattedHeader,
 		justifyStepContent,
 		hideInfoColumn,
-		variantSlug,
 		mobileBreakpoint,
 	} = props;
 
@@ -321,7 +312,7 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
 							<InfoColumnWrapper isMobile={ isMobile } flowName={ flowName }>
-								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } variantSlug={ variantSlug } />
+								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
 							</InfoColumnWrapper>
 						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>

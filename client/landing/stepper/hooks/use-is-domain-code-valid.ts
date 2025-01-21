@@ -99,9 +99,6 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					query: `auth_code=${ encodeURIComponent( pair.auth ) }`,
 				} ).catch( () => ( { success: false } ) );
 
-				// TODO: Replace hardcoded value/checks by 100-year domain product price when we have it.
-				const price = pair.options?.is_hundred_year_domain ? 2000 : availability.raw_price;
-
 				return {
 					domain: pair.domain,
 					registered: true,
@@ -109,7 +106,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 					auth_code_valid: response.success,
 					status: availability.status,
 					transferrability: availability.transferrability,
-					raw_price: price,
+					raw_price: availability.raw_price,
 					sale_cost: availability.sale_cost,
 					currency_code: availability.currency_code,
 					cannot_transfer_due_to_unsupported_premium_tld:
