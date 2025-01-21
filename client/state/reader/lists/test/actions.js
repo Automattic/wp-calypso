@@ -1,10 +1,10 @@
 import {
-	READER_LIST_DELETE,
-	READER_LIST_REQUEST,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_REQUEST,
-	READER_LIST_FOLLOW,
-	READER_LIST_UNFOLLOW,
+	READER_LIST__DELETE,
+	READER_LIST__REQUEST,
+	READER_LISTS__RECEIVE,
+	READER_LISTS__REQUEST,
+	READER_LIST__FOLLOW,
+	READER_LIST__UNFOLLOW,
 } from 'calypso/state/reader/action-types';
 import {
 	deleteReaderList,
@@ -22,7 +22,7 @@ describe( 'actions', () => {
 			const action = receiveLists( lists );
 
 			expect( action ).toEqual( {
-				type: READER_LISTS_RECEIVE,
+				type: READER_LISTS__RECEIVE,
 				lists,
 			} );
 		} );
@@ -33,7 +33,7 @@ describe( 'actions', () => {
 			const action = requestList( 'pob', 'things-i-like' );
 
 			expect( action ).toEqual( {
-				type: READER_LIST_REQUEST,
+				type: READER_LIST__REQUEST,
 				listOwner: 'pob',
 				listSlug: 'things-i-like',
 			} );
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 			const action = requestSubscribedLists();
 
 			expect( action ).toEqual( {
-				type: READER_LISTS_REQUEST,
+				type: READER_LISTS__REQUEST,
 			} );
 		} );
 	} );
@@ -55,7 +55,7 @@ describe( 'actions', () => {
 			const action = followList( 'restapitests', 'testlist' );
 
 			expect( action ).toEqual( {
-				type: READER_LIST_FOLLOW,
+				type: READER_LIST__FOLLOW,
 				listOwner: 'restapitests',
 				listSlug: 'testlist',
 			} );
@@ -67,7 +67,7 @@ describe( 'actions', () => {
 			const action = unfollowList( 'restapitests', 'testlist' );
 
 			expect( action ).toEqual( {
-				type: READER_LIST_UNFOLLOW,
+				type: READER_LIST__UNFOLLOW,
 				listOwner: 'restapitests',
 				listSlug: 'testlist',
 			} );
@@ -78,7 +78,7 @@ describe( 'actions', () => {
 		test( 'should return the correct action', () => {
 			const action = deleteReaderList( 123, 'restapitests', 'testlist' );
 			expect( action ).toEqual( {
-				type: READER_LIST_DELETE,
+				type: READER_LIST__DELETE,
 				listId: 123,
 				listOwner: 'restapitests',
 				listSlug: 'testlist',
