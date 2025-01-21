@@ -1,3 +1,8 @@
+## 7.2.0
+
+- Add new `ueFixMe` method
+- Update default parameters to `fixMe`
+
 ## 7.1.0
 
 - Add new `fixMe` method for conditionally loading a copy given a respective translation exists
