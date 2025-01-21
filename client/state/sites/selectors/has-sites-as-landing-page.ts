@@ -8,8 +8,5 @@ export const hasSitesAsLandingPage = ( state: AppState ): boolean => {
 		state,
 		SITES_AS_LANDING_PAGE_PREFERENCE
 	);
-	if ( useSitesAsLandingPage ) {
-		return useSitesAsLandingPage;
-	}
-	return false;
+	return !! useSitesAsLandingPage;
 };
