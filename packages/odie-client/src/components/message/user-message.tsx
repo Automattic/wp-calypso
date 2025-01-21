@@ -7,6 +7,7 @@ import { useOdieAssistantContext } from '../../context';
 import CustomALink from './custom-a-link';
 import { DirectEscalationLink } from './direct-escalation-link';
 import { GetSupport } from './get-support';
+import Sources from './sources';
 import { uriTransformer } from './uri-transformer';
 import WasThisHelpfulButtons from './was-this-helpful-buttons';
 import type { Message } from '../../types';
@@ -64,12 +65,6 @@ export const UserMessage = ( {
 
 	const renderDisclaimers = () => (
 		<>
-			{ ! isConnectedToZendesk && (
-				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
-			) }
-
-			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
-
 			<div className="disclaimer">
 				{ createInterpolateElement(
 					__(
@@ -87,6 +82,10 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
+			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
+			{ ! isConnectedToZendesk && (
+				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
+			) }
 		</>
 	);
 
@@ -106,6 +105,7 @@ export const UserMessage = ( {
 			</div>
 			{ ! isMessageWithoutEscalationOption && isBot && (
 				<div className="chat-feedback-wrapper">
+					<Sources message={ message } />
 					{ showExtraContactOptions && renderExtraContactOptions() }
 					{ isMessageShowingDisclaimer && renderDisclaimers() }
 				</div>
