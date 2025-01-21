@@ -393,3 +393,9 @@ main.domains-overview main.domains-overview__list .hosting-dashboard-layout-colu
 		}
 	}
 }
+
+.is-bulk-all-domains-page .popover.status-popover__tooltip .popover__inner {
+	word-break: break-word;
+	overflow-wrap: break-word;
+	white-space: normal;
+}
