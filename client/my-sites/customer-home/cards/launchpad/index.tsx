@@ -12,13 +12,11 @@ import './style.scss';
 interface CustomerHomeLaunchpadProps {
 	checklistSlug: string;
 	onSiteLaunched?: () => void;
-	highlightNextAction?: boolean;
 }
 
 const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	checklistSlug,
 	onSiteLaunched,
-	highlightNextAction,
 }: CustomerHomeLaunchpadProps ) => {
 	const launchpadContext = 'customer-home';
 	const translate = useTranslate();
@@ -90,7 +88,6 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 				checklistSlug={ checklistSlug }
 				launchpadContext={ launchpadContext }
 				onSiteLaunched={ onSiteLaunched }
-				highlightNextAction={ highlightNextAction }
 			/>
 		</div>
 	);

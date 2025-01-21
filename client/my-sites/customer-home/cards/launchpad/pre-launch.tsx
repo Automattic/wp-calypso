@@ -10,7 +10,6 @@ import type { AppState } from 'calypso/types';
 
 type LaunchpadPreLaunchProps = {
 	checklistSlug?: string;
-	highlightNextAction?: boolean;
 };
 
 const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
@@ -29,7 +28,6 @@ const LaunchpadPreLaunch = ( props: LaunchpadPreLaunchProps ): JSX.Element => {
 			<CustomerHomeLaunchpad
 				checklistSlug={ props.checklistSlug ?? checklistSlug }
 				onSiteLaunched={ () => handleSiteLaunched( !! site?.is_wpcom_atomic ) }
-				highlightNextAction={ props.highlightNextAction }
 			/>
 			{ isOpen && (
 				<CelebrateLaunchModal
