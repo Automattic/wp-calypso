@@ -55,13 +55,18 @@ export const BulkUpdateNotice = () => {
 				);
 			}
 
+			const message =
+				job.success.length > 1
+					? translate( 'Bulk domain updates finished successfully.' )
+					: translate( 'Domain update finished successfully.' );
+
 			return (
 				<Notice
 					key={ job.id }
 					status="is-success"
 					onDismissClick={ () => handleDismissNotice( job.id ) }
 				>
-					{ translate( 'Bulk domain updates finished successfully.' ) }
+					{ message }
 				</Notice>
 			);
 		} );

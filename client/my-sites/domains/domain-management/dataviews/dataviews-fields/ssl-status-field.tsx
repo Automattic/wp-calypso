@@ -1,3 +1,4 @@
+import { LoadingPlaceholder } from '@automattic/components';
 import { PartialDomainData } from '@automattic/data-stores';
 import DomainsTableSslCell from '@automattic/domains-table/src/domains-table/domains-table-ssl-cell';
 import { domainManagementLink as getDomainManagementLink } from '@automattic/domains-table/src/utils/paths';
@@ -8,11 +9,11 @@ interface Props {
 }
 
 const SslStatusField = ( props: Props ) => {
-	const { getFullDomain, getSiteSlug } = useDomainsDataViewsContext();
+	const { getFullDomain, getSiteSlug, isLoadingSites } = useDomainsDataViewsContext();
 	const domain = getFullDomain( props.domain );
 
-	if ( ! domain ) {
-		return <></>;
+	if ( ! domain || isLoadingSites ) {
+		return <LoadingPlaceholder />;
 	}
 
 	const siteSlug = getSiteSlug( props.domain );
