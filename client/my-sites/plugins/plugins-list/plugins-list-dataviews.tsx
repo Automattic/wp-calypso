@@ -3,7 +3,7 @@ import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	DATAVIEWS_LIST,
 	DATAVIEWS_TABLE,
@@ -173,6 +173,17 @@ export default function PluginsListDataViews( {
 		};
 	}, [ currentPlugins, dataViewsState, fields ] );
 
+	const updatePluginOnChangeSelection = useCallback(
+		( selection: string[] ) => {
+			if ( dataViewsState.type === 'list' ) {
+				const newPluginSelected = selection[ 0 ].split( '/' )[ 0 ];
+				// @ts-expect-error The openPluginSitesPane function only requires a slug to work and we don't have a way to know the other required props.
+				openPluginSitesPane( { slug: newPluginSelected } );
+			}
+		},
+		[ dataViewsState.type ]
+	);
+
 	return (
 		<>
 			<QueryDotorgPlugins pluginSlugList={ data.map( ( plugin ) => plugin.slug ) } />
@@ -180,6 +191,7 @@ export default function PluginsListDataViews( {
 				data={ data }
 				view={ dataViewsState }
 				onChangeView={ setDataViewsState }
+				onChangeSelection={ updatePluginOnChangeSelection }
 				fields={ fields }
 				search
 				searchLabel={ translate( 'Search' ) }
