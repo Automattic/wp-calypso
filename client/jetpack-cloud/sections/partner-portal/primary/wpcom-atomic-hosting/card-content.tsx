@@ -49,7 +49,7 @@ export default function CardContent( {
 	const { data: agencyProducts } = useProductsQuery();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
-	// Load if Global Styles is available on the Personal plan.
+	// Set a prop on the window object on whether Global Styles is available on the Personal plan.
 	useSiteGlobalStylesOnPersonal();
 
 	const getLogo = ( planSlug: string ) => {
