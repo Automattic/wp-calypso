@@ -8,7 +8,7 @@ export default function ListEmptyContent(): JSX.Element {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryParams = new URLSearchParams( location.search );
-	const lastPageLink = queryParams.get( 'last_page' );
+	const lastPageLink = encodeURIComponent( queryParams.get( 'last_page' ) ?? '' );
 
 	function onClickActionBtn(): void {
 		if ( lastPageLink ) {
@@ -20,20 +20,25 @@ export default function ListEmptyContent(): JSX.Element {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_following_on_empty_list_stream_clicked' ) );
 	}
 
-	function getActionBtnText(): string {
-		const userProfileRegEx = new RegExp( '^/read/users/[^/]+/lists$' );
-		if ( lastPageLink && userProfileRegEx.test( lastPageLink ) ) {
-			return translate( 'Back to User Profile' );
-		}
+	function lastPageIsUserProfileLists(): boolean {
+		return /^\/read\/users\/[a-z0-9]+\/lists$/.test( lastPageLink );
+	}
 
-		return translate( 'Back to Following' );
+	function getActionBtnLink(): string {
+		return lastPageIsUserProfileLists() ? lastPageLink : '/read';
+	}
+
+	function getActionBtnText(): string {
+		return lastPageIsUserProfileLists()
+			? translate( 'Back to User Profile' )
+			: translate( 'Back to Following' );
 	}
 
 	const action = (
 		<a
 			className="empty-content__action button is-primary"
 			onClick={ onClickActionBtn }
-			href={ lastPageLink ?? '/read' }
+			href={ getActionBtnLink() }
 		>
 			{ getActionBtnText() }
 		</a>
