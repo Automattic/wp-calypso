@@ -93,16 +93,12 @@ class StatsNavigation extends Component {
 	static getDerivedStateFromProps( nextProps, prevState ) {
 		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
 			( toggleItem ) => {
-				// disable the "videos" toggle on sites that do not have VideoPress enabled
-				// the toggle will be disabled (grayed out and non interactive)
-				// TODO: Review this logic.
-				// By default, all sites have the ability to upload a single video.
-				// Therefore, it probably doesn't make sense to disable the module by default.
-				const optionallyDisableVideoPress = false;
-				if ( toggleItem.key === 'videos' && optionallyDisableVideoPress ) {
+				// Set the default VideoPress visibility based on the hasVideoPress prop.
+				// We update the disabled state as well but that value is currently ignored.
+				if ( toggleItem.key === 'videos' ) {
 					return {
 						...toggleItem,
-						disabled: ! nextProps.hasVideoPress, // This value is currently ignored.
+						disabled: ! nextProps.hasVideoPress,
 						defaultValue: nextProps.hasVideoPress,
 					};
 				}
