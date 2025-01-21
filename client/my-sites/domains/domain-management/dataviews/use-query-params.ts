@@ -1,5 +1,5 @@
 export const DEFAULT_PAGE = 1;
-export const DEFAULT_PER_PAGE = 15;
+export const DEFAULT_PER_PAGE = 50;
 export const DEFAULT_SORT_FIELD = 'domain_name';
 export const DEFAULT_SORT_DIRECTION = 'asc';
 
