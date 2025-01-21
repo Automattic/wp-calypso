@@ -67,7 +67,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				<DomainsTableSiteCell
 					site={ site }
 					siteSlug={ siteSlug }
+					domainName={ domain.domain }
 					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+					hasConnectableSites={ hasConnectableSites }
 				/>
 			);
 		}
