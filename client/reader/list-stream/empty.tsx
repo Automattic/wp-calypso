@@ -7,20 +7,35 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 export default function ListEmptyContent(): JSX.Element {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const queryParams = new URLSearchParams( location.search );
+	const lastPageLink = queryParams.get( 'last_page' );
 
 	function onClickActionBtn(): void {
+		if ( lastPageLink ) {
+			return;
+		}
+
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
 		dispatch( recordReaderTracksEvent( 'calypso_reader_following_on_empty_list_stream_clicked' ) );
+	}
+
+	function getActionBtnText(): string {
+		const userProfileRegEx = new RegExp( '^/read/users/[^/]+/lists$' );
+		if ( lastPageLink && userProfileRegEx.test( lastPageLink ) ) {
+			return translate( 'Back to User Profile' );
+		}
+
+		return translate( 'Back to Following' );
 	}
 
 	const action = (
 		<a
 			className="empty-content__action button is-primary"
 			onClick={ onClickActionBtn }
-			href="/read"
+			href={ lastPageLink ?? '/read' }
 		>
-			{ translate( 'Back to Following' ) }
+			{ getActionBtnText() }
 		</a>
 	);
 
