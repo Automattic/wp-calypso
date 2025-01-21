@@ -81,7 +81,7 @@ export default function PageModuleToggler( {
 								<FormToggle
 									className="page-modules-settings-toggle-control"
 									checked={
-										pageModules[ toggleItem.key ] != null
+										pageModules[ toggleItem.key ]
 											? pageModules[ toggleItem.key ]
 											: toggleItem.defaultValue
 									}
