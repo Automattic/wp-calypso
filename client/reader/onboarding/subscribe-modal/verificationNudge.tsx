@@ -8,26 +8,24 @@ const SubscribeVerificationNudge: React.FC = () => {
 	const reloadLink = addQueryArgs( '/read', { reloadSubscriptionOnboarding: 'true' } );
 
 	return (
-		<>
-			<EmailVerificationBanner
-				customDescription={ translate(
-					'Verifying your email helps you secure your WordPress.com account and enables key features such as subscribing to sites. If necessary, please {{link}}click here{{/link}} to reload when complete.',
-					{
-						components: {
-							link: (
-								<a
-									href={ reloadLink }
-									onClick={ ( e ) => {
-										e.preventDefault();
-										window.location.replace( reloadLink );
-									} }
-								/>
-							),
-						},
-					}
-				) }
-			/>
-		</>
+		<EmailVerificationBanner
+			customDescription={ translate(
+				'Verifying your email helps you secure your WordPress.com account and enables key features such as subscribing to sites. If necessary, please {{link}}click here{{/link}} to reload when complete.',
+				{
+					components: {
+						link: (
+							<a
+								href={ reloadLink }
+								onClick={ ( e ) => {
+									e.preventDefault();
+									window.location.replace( reloadLink );
+								} }
+							/>
+						),
+					},
+				}
+			) }
+		/>
 	);
 };
 
