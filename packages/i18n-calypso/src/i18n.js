@@ -168,13 +168,10 @@ I18N.prototype.emit = function ( ...args ) {
 
 /**
  * Formats numbers using locale settings and/or passed options.
- * @param   {string | number}  number to format (required)
- * @param   {number | Object}  options  Number of decimal places or options object (optional)
- * @param   {boolean}          forceLatin Whether to use latin numbers by default (optional. default = true)
- * @returns {string | number}  Formatted number as string, or original number if formatting fails. Null otherwise.
+ * @returns {string | number}  Formatted number as string, or original number if formatting fails
  */
-I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true ) {
-	const decimals = typeof options === 'number' ? options : options.decimals || 0;
+I18N.prototype.numberFormat = function ( number, options = {} ) {
+	const decimals = options.decimals ?? 0;
 	const browserSafeLocale = this.getBrowserSafeLocale();
 
 	/**
@@ -187,11 +184,11 @@ I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true
 	}
 
 	try {
-		return Intl.NumberFormat( `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`, {
+		return Intl.NumberFormat( `${ browserSafeLocale }${ options.forceLatin ? '-u-nu-latn' : '' }`, {
 			minimumFractionDigits: decimals, // default is 0
 			maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
 			// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
-			...( options?.notation && { notation: options.notation } ),
+			...options.numberFormatOptions,
 		} ).format( number );
 	} catch ( error ) {
 		warn( 'numberFormat(): Error formatting number with Intl.NumberFormat: ', number, error );
