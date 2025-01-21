@@ -26,7 +26,7 @@ export class SocialConnectionsManager {
 			),
 			CONNECTION_TESTS_ON_ATOMIC: new RegExp(
 				// The request that deals with connection test results on Atomic sites
-				'wpcom/v2/publicize/connection-test-results'
+				'wpcom/v2/publicize/connections'
 			),
 			GET_POST: new RegExp(
 				// The request that gets the post data in the editor
@@ -69,9 +69,12 @@ export class SocialConnectionsManager {
 			return true;
 		}
 
+		if ( url.searchParams.get( 'test_connections' ) !== '1' ) {
+			return false;
+		}
+
 		return (
-			( CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) &&
-				url.searchParams.get( 'test_connections' ) === '1' ) ||
+			CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) ||
 			CONNECTION_TESTS_ON_ATOMIC.test( url.toString() )
 		);
 	}
@@ -120,9 +123,17 @@ export class SocialConnectionsManager {
 	 */
 	async waitForConnectionTests() {
 		await this.page.waitForResponse( ( response ) => {
+			const url = new URL( response.url() );
+
+			const { CONNECTION_TESTS_ON_SIMPLE, CONNECTION_TESTS_ON_ATOMIC } = this.patterns;
+
+			if ( url.searchParams.get( 'test_connections' ) !== '1' ) {
+				return false;
+			}
+
 			return (
-				this.patterns.CONNECTION_TESTS_ON_SIMPLE.test( response.url() ) ||
-				this.patterns.CONNECTION_TESTS_ON_ATOMIC.test( response.url() )
+				CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) ||
+				CONNECTION_TESTS_ON_ATOMIC.test( url.toString() )
 			);
 		} );
 	}
