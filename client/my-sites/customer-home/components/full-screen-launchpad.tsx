@@ -22,7 +22,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 
 	const launchpadContext = 'customer-home';
 
-	const { siteSlug, isDismissed, numberOfSteps, completedSteps } = useLaunchpad( {
+	const { siteSlug, isDismissed, numberOfSteps, completedSteps, launchpadTitle } = useLaunchpad( {
 		checklistSlug,
 		launchpadContext,
 	} );
@@ -53,7 +53,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 							currentStep={ completedSteps }
 						/>
 						<h2>{ __( 'Let’s get started!' ) }</h2>
-						<span>{ __( 'Welcome! It’s time to set up your Newsletter.' ) }</span>
+						<span>{ launchpadTitle }</span>
 					</div>
 					<Launchpad
 						siteSlug={ siteSlug }
