@@ -118,7 +118,7 @@ export class DateRange extends Component {
 			staleEndDate: null,
 			startDate: startDate,
 			endDate: endDate,
-			selectedShortcutId: selectedShortcutId,
+			selectedShortcutId,
 			staleDatesSaved: false,
 			// this needs to be independent from startDate because we must independently validate them
 			// before updating the central source of truth (ie: startDate)
