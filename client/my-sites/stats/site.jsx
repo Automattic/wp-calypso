@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
@@ -171,6 +171,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		shortcutId: context.query?.shortcut,
 	} );
 
+	const storedShortcut = useMemo( () => {
+		const storedShortcutId =
+			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+			// Fallback for the compatibility.
+			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
+		return supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
+	}, [ siteId, supportedShortcutList ] );
+
 	const moduleStrings = statsStrings();
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -294,21 +303,8 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 	};
 
-	const findStoredShortcut = () => {
-		const storedShortcutId =
-			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
-			// Fallback for the compatibility.
-			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
-
-		const storedShortcut =
-			supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
-
-		return storedShortcut;
-	};
-
 	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
 		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
-		const storedShortcut = findStoredShortcut();
 		if ( inputDate === undefined ) {
 			if ( storedShortcut ) {
 				const storedValue = storedShortcut[ inputKey ];
@@ -405,7 +401,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	customChartRange.daysInRange = daysInRange;
 
 	// Apply the stored shortcut ID if the date range is not set.
-	const storedShortcut = findStoredShortcut();
 	if ( ! context.query?.chartStart && ! context.query?.chartEnd && storedShortcut ) {
 		customChartRange.shortcutId = storedShortcut.id;
 		// TODO: Handle the redirection when the applied shortcut period differs from the current period.
