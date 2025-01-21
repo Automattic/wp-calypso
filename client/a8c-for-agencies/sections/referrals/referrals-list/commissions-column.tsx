@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useGetConsolidatedPayoutData from '../hooks/use-get-consolidated-payout-data';
 import { getConsolidatedData } from '../lib/commissions';
 import type { Referral, ReferralInvoice } from '../types';
 
@@ -27,6 +28,8 @@ export default function CommissionsColumn( {
 		pendingCommission: 0,
 	} );
 
+	const { expectedCommission } = useGetConsolidatedPayoutData( [ referral ], data );
+
 	useEffect( () => {
 		if ( data?.length ) {
 			const consolidatedData = getConsolidatedData( [ referral ], data || [], referralInvoices );
@@ -35,7 +38,7 @@ export default function CommissionsColumn( {
 	}, [ data, referral, referralInvoices ] );
 
 	const allTimeCommissions = formatCurrency( consolidatedData.allTimeCommissions, 'USD' );
-	const pendingCommission = formatCurrency( consolidatedData.pendingCommission, 'USD' );
+	const pendingCommission = formatCurrency( expectedCommission, 'USD' );
 
 	return isFetching ? (
 		<TextPlaceholder />
