@@ -525,7 +525,7 @@ export class DateRange extends Component {
 					{ this.props.displayShortcuts && (
 						<div className="date-range-picker-shortcuts">
 							<Shortcuts
-								currentShortcutId={ this.state.selectedShortcutId }
+								selectedShortcutId={ this.state.selectedShortcutId }
 								shortcutList={ this.props.shortcutList }
 								onClick={ this.handleDateRangeChangeByShortcutClick }
 								locked={ !! this.props.overlay }

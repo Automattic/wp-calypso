@@ -19,7 +19,7 @@ export interface DateRangePickerShortcut {
 }
 
 const DateRangePickerShortcuts = ( {
-	currentShortcutId,
+	selectedShortcutId,
 	onClick,
 	onShortcutClick, // Optional callback function for tracking shortcut clicks
 	locked = false,
@@ -27,7 +27,7 @@ const DateRangePickerShortcuts = ( {
 	endDate,
 	shortcutList,
 }: {
-	currentShortcutId?: string;
+	selectedShortcutId?: string;
 	onClick: (
 		newFromDate: moment.Moment,
 		newToDate: moment.Moment,
@@ -50,7 +50,7 @@ const DateRangePickerShortcuts = ( {
 	const { supportedShortcutList: defaultShortcutList, selectedShortcut } = useShortcuts( {
 		chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
 		chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
-		shortcutId: currentShortcutId,
+		shortcutId: selectedShortcutId,
 	} );
 
 	shortcutList = shortcutList || defaultShortcutList;
@@ -65,7 +65,7 @@ const DateRangePickerShortcuts = ( {
 		onShortcutClick && onShortcutClick( shortcut );
 	};
 
-	currentShortcutId = currentShortcutId || selectedShortcut?.id || 'custom_date_range';
+	selectedShortcutId = selectedShortcutId || selectedShortcut?.id || 'custom_date_range';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">
@@ -73,13 +73,13 @@ const DateRangePickerShortcuts = ( {
 				{ shortcutList.map( ( shortcut, idx ) => (
 					<li
 						className={ clsx( 'date-range-picker-shortcuts__shortcut', {
-							'is-selected': shortcut.id === currentShortcutId,
+							'is-selected': shortcut.id === selectedShortcutId,
 						} ) }
 						key={ shortcut.id || idx }
 					>
 						<Button onClick={ () => handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
-							{ shortcut.id === currentShortcutId && <Icon icon={ check } /> }
+							{ shortcut.id === selectedShortcutId && <Icon icon={ check } /> }
 							{ shortcut.isGated && <Icon icon={ lock } /> }
 						</Button>
 					</li>
@@ -90,7 +90,7 @@ const DateRangePickerShortcuts = ( {
 };
 
 DateRangePickerShortcuts.propTypes = {
-	currentShortcutId: PropTypes.string,
+	selectedShortcutId: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 	onShortcutClick: PropTypes.func,
 	locked: PropTypes.bool,
