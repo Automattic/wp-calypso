@@ -6,6 +6,7 @@ export interface QueryStatsParams {
 	num?: number;
 	period?: string;
 	summarize?: number;
+	filter_by_country?: string;
 }
 
 const getDaysOfMonthFromDate = ( date: string ): number => {

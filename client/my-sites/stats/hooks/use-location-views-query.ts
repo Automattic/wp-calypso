@@ -30,8 +30,13 @@ const useLocationViewsQuery = < T = StatsLocationViewsData >(
 	siteId: number,
 	geoMode: 'country' | 'region' | 'city',
 	query: QueryStatsParams,
+	countryFilter: string | null,
 	options?: CustomQueryOptions< T, Error >
 ) => {
+	if ( ( geoMode === 'region' || geoMode === 'city' ) && countryFilter ) {
+		query.filter_by_country = countryFilter;
+	}
+
 	return useQuery( {
 		...getDefaultQueryParams(),
 		...options,
