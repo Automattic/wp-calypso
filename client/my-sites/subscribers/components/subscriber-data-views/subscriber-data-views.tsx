@@ -3,6 +3,10 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import {
+	DATAVIEWS_LIST,
+	DATAVIEWS_TABLE,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
@@ -74,7 +78,7 @@ const SubscriberDataViews = ( {
 		page,
 		perPage,
 		sort: {
-			field: SubscribersSortBy.DateSubscribed,
+			field: sortTerm,
 			direction: 'desc',
 		},
 	} );
@@ -268,27 +272,48 @@ const SubscriberDataViews = ( {
 
 	// Update the view when a subscriber is selected
 	useEffect( () => {
-		setCurrentView( ( oldCurrentView ) => ( {
-			...oldCurrentView,
-			type: selectedSubscriber ? 'list' : 'table',
-			layout: selectedSubscriber
-				? {
-						showMedia: true,
-						mediaSize: 40,
-						mediaField: 'media',
-						primaryField: 'name',
-				  }
-				: {},
-			fields: selectedSubscriber
-				? [ 'media', 'name' ]
-				: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
-			sort: {
-				field: sortTerm,
-				direction: sortOrder ?? sortTerm === SubscribersSortBy.DateSubscribed ? 'desc' : 'asc',
-			},
+		const commonViewProps = {
 			page,
 			perPage,
-		} ) );
+			sort: {
+				field: sortTerm,
+				direction: sortOrder,
+			},
+		};
+
+		setCurrentView( ( oldCurrentView ) => {
+			const baseView = {
+				...oldCurrentView,
+				...commonViewProps,
+				fields: selectedSubscriber
+					? [ 'media', 'name' ]
+					: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+			};
+
+			if ( selectedSubscriber ) {
+				return {
+					...baseView,
+					type: DATAVIEWS_LIST,
+					layout: {
+						primaryField: 'name',
+						mediaField: 'media',
+					},
+				} as View;
+			}
+
+			return {
+				...baseView,
+				type: DATAVIEWS_TABLE,
+				layout: {
+					styles: {
+						media: { width: '60px' },
+						name: { width: '55%', minWidth: '195px' },
+						subscription_type: { width: '25%' },
+						date_subscribed: { width: '25%' },
+					},
+				},
+			} as View;
+		} );
 	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder ] );
 
 	return (
