@@ -377,25 +377,24 @@ const SyncCardContainer = ( {
 		siteToSync: 'production' | 'staging',
 		siteUrls: { production: string | null; staging: string | null }
 	): React.ReactNode => {
-		const messages = {
-			production: translate( 'We couldn’t connect to the production site: {{br/}} %(siteUrl)s', {
+		if ( siteToSync === 'production' ) {
+			return translate( 'We couldn’t connect to the production site: {{br/}} %(siteUrl)s', {
 				args: {
 					siteUrl: siteUrls.production ? urlToSlug( siteUrls.production ) : '',
 				},
 				components: {
 					br: <br />,
 				},
-			} ),
-			staging: translate( 'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s', {
-				args: {
-					siteUrl: siteUrls.staging ? urlToSlug( siteUrls.staging ) : '',
-				},
-				components: {
-					br: <br />,
-				},
-			} ),
-		};
-		return messages[ siteToSync ];
+			} );
+		}
+		return translate( 'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s', {
+			args: {
+				siteUrl: siteUrls.staging ? urlToSlug( siteUrls.staging ) : '',
+			},
+			components: {
+				br: <br />,
+			},
+		} );
 	};
 
 	const getOldConnectionErrorText = (
