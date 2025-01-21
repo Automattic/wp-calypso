@@ -807,8 +807,12 @@ body.is-mobile-app-view {
 		}
 
 		+ .masterbar__item-subitems {
-			.masterbar__item-howdy-account-details {
-				padding: 0 !important;
+			.masterbar__item-howdy-account-wrapper {
+				padding-inline-start: 0;
+
+				.masterbar__item-howdy-account-details {
+					padding: 0;
+				}
 			}
 
 			.masterbar__item-subitems-item {
