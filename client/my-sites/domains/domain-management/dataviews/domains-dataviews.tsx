@@ -79,23 +79,25 @@ export const DomainsDataViews = ( {
 
 	const layout = sidebarMode ? { list: {} } : { table: {} };
 	return (
-		<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
+		<>
 			{ ! sidebarMode && <BulkUpdateNotice /> }
-			<DataViews
-				data={ domainsToDisplay }
-				fields={ fields }
-				onChangeView={ ( newView ) => setView( () => newView ) }
-				view={ view }
-				actions={ actions }
-				search
-				searchLabel={ translate( 'Search by domain…' ) }
-				paginationInfo={ paginationInfo }
-				getItemId={ getDomainId }
-				selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
-				onChangeSelection={ setSelectedIds }
-				isLoading={ isLoading }
-				defaultLayouts={ layout }
-			/>
-		</div>
+			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
+				<DataViews
+					data={ domainsToDisplay }
+					fields={ fields }
+					onChangeView={ ( newView ) => setView( () => newView ) }
+					view={ view }
+					actions={ actions }
+					search
+					searchLabel={ translate( 'Search by domain…' ) }
+					paginationInfo={ paginationInfo }
+					getItemId={ getDomainId }
+					selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
+					onChangeSelection={ setSelectedIds }
+					isLoading={ isLoading }
+					defaultLayouts={ layout }
+				/>
+			</div>
+		</>
 	);
 };
