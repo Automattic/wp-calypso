@@ -16,7 +16,7 @@ import useQueryParams, {
 	DEFAULT_SORT_DIRECTION,
 	buildPathWithQueryParams,
 } from './use-query-params';
-import useView, { getFieldsByBreakpoint, useInitializeDataViewsPage } from './use-view';
+import useView, { getFieldsByBreakpoint } from './use-view';
 
 type Props = {
 	domains: PartialDomainData[] | undefined;
@@ -59,8 +59,6 @@ export const DomainsDataViews = ( {
 			setView( ( prevState ) => ( { ...prevState, fields: fieldsForBreakpoint } ) );
 		}
 	}, [ isDesktop, sidebarMode, view, setView ] );
-
-	useInitializeDataViewsPage( view, setView );
 
 	// Update URL with view control params on change.
 	useEffect( () => {
