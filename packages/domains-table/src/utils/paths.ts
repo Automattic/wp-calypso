@@ -45,7 +45,7 @@ export function domainManagementLink(
 }
 
 export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
+	return `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
