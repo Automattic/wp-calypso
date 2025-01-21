@@ -367,10 +367,10 @@ const SyncCardContainer = ( {
 		'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.',
 		'We couldn’t synchronize the production environment.',
 		'We couldn’t synchronize the staging environment.',
-		'We couldn’t connect to the production site: {{br/}} %(siteUrl)s',
-		'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s',
 		'We couldn’t synchronize changes to the production site. Please contact support.',
 		'We couldn’t synchronize changes to the staging site. Please contact support.',
+		'We couldn’t connect to the production site: {{br/}} %(siteUrl)s',
+		'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s',
 	].every( ( value ) => hasEnTranslation( value ) );
 
 	const getConnectionErrorText = (
