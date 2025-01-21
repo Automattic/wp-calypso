@@ -14,6 +14,7 @@ import {
 	domainManagementEditContactInfo,
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
+	domainOnlySiteCreationLink,
 	domainUseMyDomain,
 } from '../utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '../utils/should-upgrade-to-make-domain-primary';
@@ -141,12 +142,11 @@ export const DomainsTableRowActions = ( {
 			canConnectDomainToASite && (
 				<MenuItemLink
 					key="connectToSite"
-					href={ domainManagementTransferToOtherSiteLink(
-						siteSlug,
-						domain.blogId,
-						domain.domain,
+					href={
 						hasConnectableSites
-					) }
+							? domainManagementTransferToOtherSiteLink( siteSlug, domain.domain )
+							: domainOnlySiteCreationLink( siteSlug, domain.blogId )
+					}
 					data-testid="add-site-menu-link"
 				>
 					{ __( 'Add site' ) }

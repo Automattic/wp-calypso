@@ -1,6 +1,9 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { useI18n } from '@wordpress/react-i18n';
-import { domainManagementTransferToOtherSiteLink } from '../utils/paths';
+import {
+	domainManagementTransferToOtherSiteLink,
+	domainOnlySiteCreationLink,
+} from '../utils/paths';
 import type { MouseEvent } from 'react';
 
 interface DomainsTableSiteCellProps {
@@ -24,12 +27,11 @@ export const DomainsTableSiteCell = ( {
 		return (
 			<a
 				className="domains-table__add-site-link"
-				href={ domainManagementTransferToOtherSiteLink(
-					siteSlug,
-					site.ID,
-					domainName,
+				href={
 					hasConnectableSites
-				) }
+						? domainManagementTransferToOtherSiteLink( siteSlug, domainName )
+						: domainOnlySiteCreationLink( siteSlug, site.ID )
+				}
 				onClick={ ( e: MouseEvent ) => e.stopPropagation() }
 			>
 				{ __( 'Add site' ) }

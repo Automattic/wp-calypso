@@ -44,15 +44,8 @@ export function domainManagementLink(
 	return `${ domainManagementRoot() }/${ domain }/${ viewSlug }/${ siteSlug }`;
 }
 
-export function domainManagementTransferToOtherSiteLink(
-	siteSlug: string,
-	siteId: number,
-	domainName: string,
-	hasConnectableSites: boolean
-) {
-	return hasConnectableSites
-		? `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`
-		: domainOnlySiteCreationLink( siteSlug, siteId );
+export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
+	return `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
