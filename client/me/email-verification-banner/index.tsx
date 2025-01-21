@@ -6,6 +6,8 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 
+import './style.scss';
+
 const EmailVerificationBanner: React.FC< { customDescription?: string | React.ReactNode } > = ( {
 	customDescription,
 } ) => {
