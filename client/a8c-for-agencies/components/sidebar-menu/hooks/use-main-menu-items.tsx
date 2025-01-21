@@ -130,15 +130,19 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
-			{
-				icon: plugins,
-				path: '/',
-				link: A4A_PLUGINS_LINK,
-				title: translate( 'Plugins' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Plugins',
-				},
-			},
+			...( isSectionNameEnabled( 'a8c-for-agencies-plugins-management' )
+				? [
+						{
+							icon: plugins,
+							path: '/',
+							link: A4A_PLUGINS_LINK,
+							title: translate( 'Plugins' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Plugins',
+							},
+						},
+				  ]
+				: [] ),
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [

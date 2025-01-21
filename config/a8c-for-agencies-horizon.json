@@ -39,7 +39,8 @@
 		"a4a-migrations-page-v2": true,
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
-		"a4a-updated-add-new-site": true
+		"a4a-updated-add-new-site": true,
+		"a4a-plugins-management": true
 	},
 	"enable_all_sections": false,
 	"sections": {
@@ -58,7 +59,8 @@
 		"a8c-for-agencies-migrations": true,
 		"a8c-for-agencies-client": true,
 		"a8c-for-agencies-team": true,
-		"a8c-for-agencies-agency-tier": true
+		"a8c-for-agencies-agency-tier": true,
+		"a8c-for-agencies-plugins-management": true
 	},
 	"site_filter": [],
 	"theme": "a8c-for-agencies",
