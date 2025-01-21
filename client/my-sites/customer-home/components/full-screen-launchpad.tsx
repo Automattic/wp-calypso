@@ -42,15 +42,19 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 	}
 
 	return (
-		<div css={ { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' } }>
+		<div css={ { display: 'flex', flexDirection: 'column', alignItems: 'center' } }>
 			<div className="is-launchpad-first" css={ { width: '100%' } }>
 				<div className="customer-home-launchpad customer-home__card is-small-hero">
-					<CircularProgressBar
-						size={ 40 }
-						enableDesktopScaling
-						numberOfSteps={ numberOfSteps }
-						currentStep={ completedSteps }
-					/>
+					<div className="customer-home__launchpad-header">
+						<CircularProgressBar
+							size={ 40 }
+							enableDesktopScaling
+							numberOfSteps={ numberOfSteps }
+							currentStep={ completedSteps }
+						/>
+						<h2>{ __( 'Let’s get started!' ) }</h2>
+						<span>{ __( 'Welcome! It’s time to set up your Newsletter.' ) }</span>
+					</div>
 					<Launchpad
 						siteSlug={ siteSlug }
 						checklistSlug={ checklistSlug }
@@ -67,7 +71,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 					) }
 				</div>
 			</div>
-			<Button onClick={ onClose }>{ __( 'Hide onboarding setup' ) }</Button>
+			<Button onClick={ onClose }>{ __( 'Skip onboarding setup' ) }</Button>
 		</div>
 	);
 };
