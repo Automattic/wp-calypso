@@ -1,12 +1,8 @@
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews } from '@wordpress/dataviews';
+import { DataViews, type View, type Action } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import {
-	DATAVIEWS_LIST,
-	DATAVIEWS_TABLE,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
@@ -19,7 +15,6 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
-import type { View, Action } from '@wordpress/dataviews';
 import './style.scss';
 
 type SubscriberDataViewsProps = {
@@ -293,7 +288,7 @@ const SubscriberDataViews = ( {
 			if ( selectedSubscriber ) {
 				return {
 					...baseView,
-					type: DATAVIEWS_LIST,
+					type: 'list',
 					layout: {
 						primaryField: 'name',
 						mediaField: 'media',
@@ -303,7 +298,7 @@ const SubscriberDataViews = ( {
 
 			return {
 				...baseView,
-				type: DATAVIEWS_TABLE,
+				type: 'table',
 				layout: {
 					styles: {
 						media: { width: '60px' },
