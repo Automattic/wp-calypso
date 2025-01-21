@@ -4,6 +4,7 @@ import { ProductsList } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	HUNDRED_YEAR_PLAN_FLOW,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -211,10 +212,12 @@ function InfoColumn( {
 	isMobile,
 	openModal,
 	flowName,
+	variantSlug,
 }: {
 	isMobile: boolean;
 	openModal: () => void;
 	flowName: string;
+	variantSlug?: string;
 } ) {
 	const translate = useTranslate();
 
@@ -269,9 +272,10 @@ function InfoColumn( {
 							<Gridicon icon="info-outline" size={ 16 } />
 						</>
 					</LearnMore>
-					{ flowName !== HUNDRED_YEAR_DOMAIN_FLOW && (
-						<Price className={ ! displayCost ? 'is-price-loading' : '' }>{ displayCost }</Price>
-					) }
+					{ flowName !== HUNDRED_YEAR_DOMAIN_FLOW &&
+						variantSlug !== HUNDRED_YEAR_DOMAIN_TRANSFER && (
+							<Price className={ ! displayCost ? 'is-price-loading' : '' }>{ displayCost }</Price>
+						) }
 				</Info>
 			</InfoColumnContainer>
 		</>
@@ -286,6 +290,7 @@ function HundredYearPlanStepWrapper( props: Props ) {
 		formattedHeader,
 		justifyStepContent,
 		hideInfoColumn,
+		variantSlug,
 		mobileBreakpoint,
 	} = props;
 
@@ -312,7 +317,12 @@ function HundredYearPlanStepWrapper( props: Props ) {
 						{ isOpen && <InfoModal flowName={ flowName } onClose={ closeModal } /> }
 						{ ! hideInfoColumn && (
 							<InfoColumnWrapper isMobile={ isMobile } flowName={ flowName }>
-								<InfoColumn isMobile={ isMobile } openModal={ openModal } flowName={ flowName } />
+								<InfoColumn
+									isMobile={ isMobile }
+									openModal={ openModal }
+									flowName={ flowName }
+									variantSlug={ variantSlug }
+								/>
 							</InfoColumnWrapper>
 						) }
 						<FlexWrapper justifyStepContent={ justifyStepContent }>
