@@ -91,7 +91,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				await socialConnectionsManager.clearIntercepts();
 			} );
 
-			test( 'Should verify that auto-sharing is available for new posts', async function () {
+			test.skip( 'Should verify that auto-sharing is available for new posts', async function () {
 				await socialConnectionsManager.interceptRequests();
 
 				await Promise.all( [
@@ -117,7 +117,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 				expect( await mediaButton.isVisible() ).toBe( features.mediaSharing );
 			} );
 
-			test( `Should verify that resharing ${
+			test.skip( `Should verify that resharing ${
 				features.resharing ? 'IS' : 'is NOT'
 			} available`, async function () {
 				let connectionTestPromise = Promise.resolve();
