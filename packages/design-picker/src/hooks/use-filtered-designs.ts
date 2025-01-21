@@ -45,7 +45,7 @@ export const getFilteredDesignsByCategory = (
 
 		// For designs that match all selected categories.
 		// Limit the best matches to at least 2 selected categories.
-		if ( categorySlugs.length > 1 && matchedCount === categorySlugs.length ) {
+		if ( categorySlugs.length > 1 && matchedCount > 1 ) {
 			filteredDesignsByCategory.best.push( design );
 			continue;
 		}
@@ -58,6 +58,21 @@ export const getFilteredDesignsByCategory = (
 			filteredDesignsByCategory[ lastMatchedCategorySlug ].push( design );
 		}
 	}
+
+	// sort best designs by highest number of matched categories
+	filteredDesignsByCategory.best.sort( ( a, b ) => {
+		const aMatchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			a.categories.map( ( category ) => category.slug ).includes( categorySlug )
+		);
+		const bMatchedCategorySlugs = categorySlugs.filter( ( categorySlug ) =>
+			b.categories.map( ( category ) => category.slug ).includes( categorySlug )
+		);
+
+		return bMatchedCategorySlugs.length - aMatchedCategorySlugs.length;
+	} );
+
+	// limit the best designs to 6
+	filteredDesignsByCategory.best = filteredDesignsByCategory.best.slice( 0, 6 );
 
 	return filteredDesignsByCategory;
 };

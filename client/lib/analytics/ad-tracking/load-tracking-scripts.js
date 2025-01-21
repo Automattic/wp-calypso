@@ -21,6 +21,7 @@ import {
 	REDDIT_TRACKING_SCRIPT_URL,
 	WPCOM_REDDIT_PIXEL_ID,
 } from './constants';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { setup } from './setup';
 
 export const loadTrackingScripts = attemptLoad( async () => {
@@ -50,7 +51,10 @@ export const loadTrackingScripts = attemptLoad( async () => {
 	initLoadedTrackingScripts();
 
 	// uses JSON.stringify for consistency with recordOrder()
-	debug( 'loadTrackingScripts: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug(
+		'loadTrackingScripts: dataLayer:',
+		circularReferenceSafeJSONStringify( window.dataLayer, 2 )
+	);
 
 	return scripts;
 } );

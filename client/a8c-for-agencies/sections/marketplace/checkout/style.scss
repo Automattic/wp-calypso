@@ -370,3 +370,8 @@
 		text-decoration: underline;
 	}
 }
+
+.product-info__pressable-limit-warning {
+	margin-block-start: 8px;
+	@include a4a-font-body-sm;
+}

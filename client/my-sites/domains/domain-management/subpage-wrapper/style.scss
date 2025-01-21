@@ -2,10 +2,15 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.domains-overview.main .subpage-wrapper {
+.domains-overview.main .subpage-wrapper,
+.domains-overview.main .site-preview-pane.domains-overview__details {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+	.navigation-header__actions, .foldable-card__action {
+		flex-grow: initial;
+	}
 
 	.form-text-input-with-affixes .form-text-input {
 		border-radius: 2px 0 0 2px;
@@ -38,6 +43,14 @@
 		}
 	}
 
+    .email-forwards-add,
+    .edit-contact-info-page {
+		.button {
+			padding: 10px 24px;
+			border-radius: 4px;
+		}
+    }
+
 	.email-forwards-add {
 		.card {
 			border-radius: 4px;
@@ -50,11 +63,6 @@
 			margin-top: 0;
 			margin-bottom: 16px;
 		}
-
-		.button {
-			padding: 10px 24px;
-			border-radius: 4px;
-		}
 	}
 
 	.edit-contact-info-page {
@@ -66,6 +74,10 @@
 		.contact-details-form-fields {
 			padding: 0;
 		}
+
+        .contact-details-form-fields__submit-button {
+            margin-right: 16px;
+        }
 	}
 
     .dns-records {
@@ -194,7 +206,8 @@
 	}
 }
 
-.is-bulk-all-domains-page .layout__content .main {
+.is-bulk-all-domains-page .layout__content .main,
+.is-domain-in-site-context .layout__content .main {
     .navigation-header {
         &__breadcrumb,
         &__title {
@@ -202,8 +215,19 @@
         }
 
         &__breadcrumb {
+            padding-top: 24px;
+
             @media ( max-width: $break-medium ) {
                 padding-top: 16px;
+
+                .breadcrumbs li {
+                    > a,
+                    > span {
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                        white-space: normal;
+                    }
+                }
             }
         }
 

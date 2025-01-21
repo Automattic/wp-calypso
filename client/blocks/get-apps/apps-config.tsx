@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, Substitution } from 'i18n-calypso';
 import Apple from 'calypso/assets/images/icons/apple-logo.svg';
 import DesktopAppLogo from 'calypso/assets/images/icons/desktop-app-logo.svg';
 import Linux from 'calypso/assets/images/icons/linux-logo.svg';
@@ -34,6 +34,7 @@ export interface DesktopAppConfig {
 	logoName: string;
 	title: string;
 	subtitle: string;
+	link: Substitution;
 	platforms: Partial< Record< PlatformType, PlatformConfig > >;
 	isPrimary?: boolean;
 }
@@ -103,6 +104,11 @@ export const createWordPressDesktopConfig = (
 		subtitle: translate(
 			'The full WordPress.com experience packaged as an app for your laptop or desktop.'
 		),
+		link: translate( 'Visit {{a}}desktop.wordpress.com{{/a}} on your desktop.', {
+			components: {
+				a: <a href="https://desktop.wordpress.com" />,
+			},
+		} ),
 		platforms: {
 			[ PlatformType.MacIntel ]: {
 				...platformConfigs[ PlatformType.MacIntel ],
@@ -144,6 +150,11 @@ export const createWordPressStudioConfig = (
 		logoName: 'studio-app-logo',
 		title: translate( 'Studio by WordPress.com' ),
 		subtitle: translate( 'A fast, free way to develop locally with WordPress.' ),
+		link: translate( 'Visit {{a}}developer.wordpress.com/studio{{/a}} on your desktop.', {
+			components: {
+				a: <a href="https://developer.wordpress.com/studio/" />,
+			},
+		} ),
 		isPrimary: true,
 		platforms: {
 			[ PlatformType.MacIntel ]: {
