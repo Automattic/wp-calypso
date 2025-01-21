@@ -47,7 +47,7 @@ export default function BillingHistoryListDataView( {
 	const handleViewChange = ( view: View ) => viewState.updateView( view as ViewStateUpdate );
 
 	return (
-		<div className="billing-history">
+		<div className="billing-history with-dataviews">
 			<div className="dataviews-wrapper">
 				<DataViews
 					data={ paginatedItems }
