@@ -70,7 +70,6 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
-import { useIsGoalsHoldout } from '../../../../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -118,17 +117,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const variantName = experimentAssignment?.variationName;
 	const oldHighResImageLoading = ! isLoadingExperiment && variantName === 'treatment';
 
-	const isGoalsHoldout = useIsGoalsHoldout( stepName );
-
-	const isGoalCentricFeature = isEnabled( 'design-picker/goal-centric' ) && ! isGoalsHoldout;
-
 	const [ isGoalsAtFrontExperimentLoading, isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 	const isSiteRequired = flow !== ONBOARDING_FLOW || ! isGoalsAtFrontExperiment;
 
 	const isUpdatedBadgeDesign = useIsUpdatedBadgeDesign();
 
-	const { isEligible } = useIsBigSkyEligible();
-	const isBigSkyEligible = isEligible && isGoalCentricFeature;
+	const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 
 	const queryParams = useQuery();
 	const { goBack, submit, exitFlow } = navigation;
@@ -232,19 +226,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const designs = allDesigns?.designs ?? EMPTY_ARRAY;
-	const categorizationOptions = getCategorizationOptions( goals, {
-		isMultiSelection: isGoalCentricFeature,
-	} );
+	const categorizationOptions = getCategorizationOptions( goals );
 
 	const { commonFilterProperties, handleSelectFilter, handleDeselectFilter } = useTrackFilters( {
 		preselectedFilters: categorizationOptions.defaultSelections,
 		isBigSkyEligible,
-		isMultiSelection: isGoalCentricFeature,
 	} );
 
 	const categorization = useCategorization( allDesigns?.filters?.subject || EMPTY_OBJECT, {
 		...categorizationOptions,
-		isMultiSelection: isGoalCentricFeature,
 		handleSelect: handleSelectFilter,
 		handleDeselect: handleDeselectFilter,
 	} );
@@ -899,7 +889,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
-				hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
+				hideSkip={ ! isGoalsAtFrontExperiment }
 				skipLabelText={ translate( 'Skip setup' ) }
 				skipButtonAlign="top"
 				hideBack={ shouldHideActionButtons }
@@ -955,7 +945,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
 				showActiveThemeBadge={ intent !== 'build' }
-				isMultiFilterEnabled={ isGoalCentricFeature }
+				isMultiFilterEnabled
 				isBigSkyEligible={ isBigSkyEligible }
 			/>
 		</>
@@ -967,7 +957,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			className="unified-design-picker__has-categories"
 			skipButtonAlign="top"
 			hideFormattedHeader
-			hideSkip={ isGoalsHoldout && ! isGoalsAtFrontExperiment }
+			hideSkip={ ! isGoalsAtFrontExperiment }
 			skipLabelText={ translate( 'Skip setup' ) }
 			backLabelText={ translate( 'Back' ) }
 			stepContent={ stepContent }
