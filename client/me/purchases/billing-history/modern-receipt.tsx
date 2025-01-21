@@ -1,6 +1,6 @@
-import page from '@automattic/calypso-router';
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { formatCurrency } from '@automattic/format-currency';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -47,6 +47,8 @@ export default function ModernReceipt( { transactionId }: ModernReceiptProps ) {
 		isPastBillingTransactionError( state, transactionId )
 	);
 
+	const isLoading = ! transaction && ! transactionError;
+
 	const handlePrint = useCallback( () => {
 		dispatch(
 			recordGoogleEvent( 'Me', 'Clicked on Print Receipt Button in Billing History Receipt' )
@@ -59,8 +61,22 @@ export default function ModernReceipt( { transactionId }: ModernReceiptProps ) {
 		dispatch( sendBillingReceiptEmail( transactionId.toString() ) );
 	}, [ dispatch, transactionId ] );
 
+	if ( isLoading ) {
+		return <ReceiptPlaceholder />;
+	}
+
 	if ( transactionError ) {
-		page.redirect( billingHistory );
+		return (
+			<Card className="modern-receipt__error">
+				<p>{ translate( "Sorry, we couldn't load this receipt. Please try again later." ) }</p>
+				<Button href={ billingHistory } variant="primary">
+					{ translate( 'Return to Billing History' ) }
+				</Button>
+			</Card>
+		);
+	}
+
+	if ( ! transaction ) {
 		return null;
 	}
 
@@ -83,14 +99,16 @@ export default function ModernReceipt( { transactionId }: ModernReceiptProps ) {
 					<h1 className="modern-receipt__title">
 						{ translate( 'Receipt %(id)s', { args: { id: transactionId } } ) }
 					</h1>
-					<div className="modern-receipt__actions">
-						<Button onClick={ handlePrint }>{ translate( 'Print Receipt' ) }</Button>
-						<Button onClick={ handleEmailReceipt }>{ translate( 'Email Receipt' ) }</Button>
-					</div>
+					{ ! isLoading && (
+						<div className="modern-receipt__actions">
+							<Button onClick={ handlePrint }>{ translate( 'Print Receipt' ) }</Button>
+							<Button onClick={ handleEmailReceipt }>{ translate( 'Email Receipt' ) }</Button>
+						</div>
+					) }
 				</div>
 			</div>
 
-			{ transaction ? <ReceiptContent transaction={ transaction } /> : <ReceiptPlaceholder /> }
+			<ReceiptContent transaction={ transaction } />
 		</Main>
 	);
 }
@@ -250,53 +268,70 @@ function ReceiptTotal( { transaction }: { transaction: BillingTransaction } ) {
 }
 
 function ReceiptPlaceholder() {
+	const translate = useTranslate();
+
 	return (
-		<Card className="modern-receipt__content is-placeholder">
-			<div className="modern-receipt__header">
-				<div className="modern-receipt__branding">
-					<div className="modern-receipt__logo" />
-					<div className="modern-receipt__company">
-						<div className="modern-receipt__company-name" />
-						<div className="modern-receipt__org" />
-						<div className="modern-receipt__address" />
+		<Main wideLayout className="modern-receipt">
+			<div className="modern-receipt__page-header">
+				<div className="modern-receipt__breadcrumbs is-placeholder" />
+				<div className="modern-receipt__title-bar">
+					<h1
+						className="modern-receipt__title is-placeholder"
+						aria-label={ translate( 'Loading receipt' ) }
+					>
+						<span className="screen-reader-text">{ translate( 'Loading receipt' ) }</span>
+					</h1>
+					<div className="modern-receipt__actions is-placeholder" />
+				</div>
+			</div>
+
+			<Card className="modern-receipt__content is-placeholder">
+				<div className="modern-receipt__header">
+					<div className="modern-receipt__branding">
+						<div className="modern-receipt__logo" />
+						<div className="modern-receipt__company">
+							<div className="modern-receipt__company-name" />
+							<div className="modern-receipt__org" />
+							<div className="modern-receipt__address" />
+						</div>
+					</div>
+					<div className="modern-receipt__meta">
+						<div className="modern-receipt__date" />
+						<div className="modern-receipt__id" />
 					</div>
 				</div>
-				<div className="modern-receipt__meta">
-					<div className="modern-receipt__date" />
-					<div className="modern-receipt__id" />
-				</div>
-			</div>
 
-			<div className="modern-receipt__body">
-				<div className="modern-receipt__receipt-id-section">
-					<div className="modern-receipt__receipt-id-label" />
-					<div className="modern-receipt__receipt-id-value" />
-				</div>
+				<div className="modern-receipt__body">
+					<div className="modern-receipt__receipt-id-section">
+						<div className="modern-receipt__receipt-id-label" />
+						<div className="modern-receipt__receipt-id-value" />
+					</div>
 
-				<table className="modern-receipt__items">
-					<thead>
-						<tr>
-							<th className="modern-receipt__description" />
-							<th className="modern-receipt__amount-column" />
-						</tr>
-					</thead>
-					<tbody>
-						<tr className="modern-receipt__item">
-							<td>
-								<div className="modern-receipt__item-name" />
-								<div className="modern-receipt__item-type" />
-							</td>
-							<td className="modern-receipt__amount" />
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr className="modern-receipt__total">
-							<td />
-							<td className="modern-receipt__amount" />
-						</tr>
-					</tfoot>
-				</table>
-			</div>
-		</Card>
+					<table className="modern-receipt__items">
+						<thead>
+							<tr>
+								<th className="modern-receipt__description" />
+								<th className="modern-receipt__amount-column" />
+							</tr>
+						</thead>
+						<tbody>
+							<tr className="modern-receipt__item">
+								<td>
+									<div className="modern-receipt__item-name" />
+									<div className="modern-receipt__item-type" />
+								</td>
+								<td className="modern-receipt__amount" />
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr className="modern-receipt__total">
+								<td />
+								<td className="modern-receipt__amount" />
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</Card>
+		</Main>
 	);
 }

@@ -250,6 +250,18 @@ $receipt-width-max: 800px;
 	font-size: var(--font-body-small);
 }
 
+.modern-receipt__error.card {
+	text-align: center;
+	padding: $receipt-spacing-xxlarge;
+	max-width: $receipt-width-max;
+	margin: 0 auto;
+
+	.button {
+		margin-top: $receipt-spacing-medium;
+		min-width: 200px;
+	}
+}
+
 @media print {
 	@page {
 		margin: 0;
@@ -306,5 +318,86 @@ $receipt-width-max: 800px;
 	.masterbar,
     .modern-receipt__actions {
 		display: none !important;
+	}
+}
+
+.is-placeholder {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: var(--color-neutral-5);
+	color: transparent;
+
+	&::after {
+		content: '\00a0';
+	}
+}
+
+.modern-receipt__title.is-placeholder {
+	width: 200px;
+	height: 32px;
+}
+
+.modern-receipt__actions.is-placeholder {
+	width: 250px;
+	height: 36px;
+}
+
+.modern-receipt__content.is-placeholder {
+	.modern-receipt__logo {
+		width: 68px;
+		height: 68px;
+		border-radius: 4px;
+	}
+
+	.modern-receipt__company-name {
+		width: 200px;
+		height: 24px;
+		margin-bottom: $receipt-spacing-small;
+	}
+
+	.modern-receipt__org,
+	.modern-receipt__address {
+		width: 160px;
+		height: 20px;
+		margin-bottom: $receipt-spacing-small;
+	}
+
+	.modern-receipt__date,
+	.modern-receipt__id {
+		width: 120px;
+		height: 20px;
+		margin-bottom: $receipt-spacing-small;
+	}
+
+	.modern-receipt__receipt-id-label {
+		width: 80px;
+		height: 16px;
+		margin-bottom: $receipt-spacing-small;
+	}
+
+	.modern-receipt__receipt-id-value {
+		width: 160px;
+		height: 24px;
+	}
+
+	.modern-receipt__description {
+		width: 100px;
+		height: 16px;
+	}
+
+	.modern-receipt__amount-column,
+	.modern-receipt__amount {
+		width: 80px;
+		height: 16px;
+	}
+
+	.modern-receipt__item-name {
+		width: 240px;
+		height: 20px;
+		margin-bottom: $receipt-spacing-small;
+	}
+
+	.modern-receipt__item-type {
+		width: 160px;
+		height: 16px;
 	}
 }
