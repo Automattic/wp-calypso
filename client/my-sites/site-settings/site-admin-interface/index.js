@@ -14,18 +14,9 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import {
-	errorNotice,
-	infoNotice,
-	removeNotice,
-	successNotice,
-} from 'calypso/state/notices/actions';
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { useSiteInterfaceMutation } from './use-select-interface-mutation';
+import { useSiteInterfaceMutationWithNotices } from './use-select-interface-mutation';
 import './style.scss';
-const changeLoadingNoticeId = 'admin-interface-change-loading';
-const successNoticeId = 'admin-interface-change-success';
-const failureNoticeId = 'admin-interface-change-failure';
 
 const FormRadioStyled = styled( FormRadio )( {
 	'&.form-radio:disabled:checked::before': {
@@ -38,46 +29,13 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
-	const removeAllNotices = () => {
-		dispatch( removeNotice( successNoticeId ) );
-		dispatch( removeNotice( failureNoticeId ) );
-		dispatch( removeNotice( changeLoadingNoticeId ) );
-	};
 
 	const adminInterface = useSelector(
 		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
-	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
-		onMutate: () => {
-			removeAllNotices();
-			dispatch(
-				infoNotice( translate( 'Changing admin interface style…' ), {
-					id: changeLoadingNoticeId,
-					showDismiss: false,
-					isLoading: true,
-					icon: 'sync',
-				} )
-			);
-		},
-		onSuccess() {
-			dispatch( removeNotice( changeLoadingNoticeId ) );
-			dispatch(
-				successNotice( translate( 'Admin interface style changed.' ), {
-					id: successNoticeId,
-				} )
-			);
-		},
-		onError: () => {
-			dispatch( removeNotice( changeLoadingNoticeId ) );
-			dispatch(
-				errorNotice( translate( 'Failed to change admin interface style.' ), {
-					id: failureNoticeId,
-				} )
-			);
-		},
-	} );
+	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutationWithNotices( siteId );
 
 	const [ selectedAdminInterface, setSelectedAdminInterface ] = useState( adminInterface );
 

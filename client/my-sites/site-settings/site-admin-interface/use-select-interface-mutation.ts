@@ -1,17 +1,28 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import wp from 'calypso/lib/wp';
 import { useDispatch, useSelector } from 'calypso/state';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import {
+	errorNotice,
+	infoNotice,
+	removeNotice,
+	successNotice,
+} from 'calypso/state/notices/actions';
 import getRawSite from 'calypso/state/selectors/get-raw-site';
 import { receiveSite, requestSite } from 'calypso/state/sites/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 const SET_SITE_INTERFACE_MUTATION_KEY = 'set-site-interface-mutation-key';
 const PERSISTENT_DATA_DELAY = 1200;
+
+const changeLoadingNoticeId = 'admin-interface-change-loading';
+const successNoticeId = 'admin-interface-change-success';
+const failureNoticeId = 'admin-interface-change-failure';
 
 interface MutationResponse {
 	interface: 'wp-admin' | 'calypso';
@@ -104,4 +115,44 @@ export const useSiteInterfaceMutation = (
 		setSiteInterface: mutate,
 		isLoading: mutation.isPending || isRequestingMenu,
 	};
+};
+
+export const useSiteInterfaceMutationWithNotices = ( siteId: number ) => {
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+	const removeAllNotices = () => {
+		dispatch( removeNotice( successNoticeId ) );
+		dispatch( removeNotice( failureNoticeId ) );
+		dispatch( removeNotice( changeLoadingNoticeId ) );
+	};
+
+	return useSiteInterfaceMutation( siteId, {
+		onMutate: () => {
+			removeAllNotices();
+			dispatch(
+				infoNotice( translate( 'Changing admin interface style…' ), {
+					id: changeLoadingNoticeId,
+					showDismiss: false,
+					isLoading: true,
+					icon: 'sync',
+				} )
+			);
+		},
+		onSuccess() {
+			dispatch( removeNotice( changeLoadingNoticeId ) );
+			dispatch(
+				successNotice( translate( 'Admin interface style changed.' ), {
+					id: successNoticeId,
+				} )
+			);
+		},
+		onError: () => {
+			dispatch( removeNotice( changeLoadingNoticeId ) );
+			dispatch(
+				errorNotice( translate( 'Failed to change admin interface style.' ), {
+					id: failureNoticeId,
+				} )
+			);
+		},
+	} );
 };
