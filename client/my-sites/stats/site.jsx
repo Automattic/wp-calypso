@@ -303,23 +303,26 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		}
 	};
 
-	const getValidDateOrNullFromInput = ( inputDate, inputKey ) => {
-		// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
-		if ( inputDate === undefined ) {
-			if ( storedShortcut ) {
-				const storedValue = storedShortcut[ inputKey ];
-				const isStoredValueValid = moment( storedValue ).isValid();
+	const getValidDateOrNullFromInput = useCallback(
+		( inputDate, inputKey ) => {
+			// Use the stored chartStart and chartEnd if they are valid when the inputDate is absent.
+			if ( inputDate === undefined ) {
+				if ( storedShortcut ) {
+					const storedValue = storedShortcut[ inputKey ];
+					const isStoredValueValid = moment( storedValue ).isValid();
 
-				return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
-					? storedValue
-					: null;
+					return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
+						? storedValue
+						: null;
+				}
 			}
-		}
 
-		const isValid = moment( inputDate ).isValid();
+			const isValid = moment( inputDate ).isValid();
 
-		return isValid ? inputDate : null;
-	};
+			return isValid ? inputDate : null;
+		},
+		[ storedShortcut, hasSiteLoadedFeatures, shouldForceDefaultDateRange ]
+	);
 
 	// Note: This is only used in the empty version of the module.
 	// There's a similar function inside stats-module/index.jsx that is used when we have content.
@@ -370,8 +373,16 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// Set up a custom range for the chart.
 	// Dependant on new date range picker controls.
 	let customChartRange = null;
+
 	// Sort out end date for chart.
-	const chartEnd = getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
+	const chartEnd = useMemo( () => {
+		return getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
+	}, [ context.query?.chartEnd, getValidDateOrNullFromInput ] );
+
+	const chartStart = useMemo( () => {
+		return getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
+	}, [ context.query?.chartStart, getValidDateOrNullFromInput ] );
+
 	if ( chartEnd ) {
 		customChartRange = { chartEnd };
 	} else {
@@ -380,11 +391,9 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		};
 	}
 
+	const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
 	// Find the quantity of bars for the chart.
 	let daysInRange = getDefaultDaysForPeriod( period );
-	const chartStart = getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
-	const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
-
 	if ( chartStart && isSameOrBefore ) {
 		// Add one to calculation to include the start date.
 		daysInRange = moment( chartEnd ).diff( moment( chartStart ), 'days' ) + 1;
@@ -397,7 +406,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			.subtract( daysInRange - 1, 'days' )
 			.format( DATE_FORMAT );
 	}
-
 	customChartRange.daysInRange = daysInRange;
 
 	// Apply the stored shortcut ID if the date range is not set.
