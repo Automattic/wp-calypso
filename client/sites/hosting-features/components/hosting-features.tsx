@@ -46,7 +46,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	const { searchParams } = new URL( document.location.toString() );
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
-	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
 	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
 	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
 
