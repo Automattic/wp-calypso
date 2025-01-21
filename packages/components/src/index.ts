@@ -44,13 +44,6 @@ export {
 export { default as CountCard } from './highlight-cards/count-card';
 export { default as CountComparisonCard } from './highlight-cards/count-comparison-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
-export {
-	default as WeeklyHighlightCards,
-	PAST_SEVEN_DAYS,
-	PAST_THIRTY_DAYS,
-	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
-	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
-} from './highlight-cards/weekly-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
