@@ -246,7 +246,7 @@ const PlansFeaturesMain = ( {
 	const showUpgradeableStorage = config.isEnabled( 'plans/upgradeable-storage' );
 	const getPlanTypeDestination = usePlanTypeDestinationCallback();
 
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 
 	const resolveModal = useModalResolutionCallback( {
 		isCustomDomainAllowedOnFreePlan,
@@ -415,6 +415,7 @@ const PlansFeaturesMain = ( {
 	};
 
 	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
+		flowName: flowName,
 		selectedPlan,
 		hiddenPlans,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,

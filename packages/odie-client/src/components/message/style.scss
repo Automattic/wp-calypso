@@ -111,14 +111,104 @@ $blueberry-color: #3858e9;
 
 	.chat-feedback-wrapper {
 		width: 100%;
+		margin-left: 46px;
+		margin-right: 44px;
+
+		.card.odie-foldable-card.odie-sources-foldable-card {
+			margin-top: 4px;
+			border-radius: 4px;
+
+			&.is-expanded {
+				.odie-foldable-card__content {
+					border-top: none;
+				}
+			}
+
+			.odie-foldable-card__header {
+				font-size: $font-body-extra-small;
+				min-height: 48px;
+				padding: 12px 16px;
+
+				.odie-foldable-card__expand {
+					&:focus {
+						outline: none;
+					}
+					.gridicon {
+						fill: #1E1E1E;
+					}
+				}
+			}
+
+			.odie-chatbox-message-sources {
+				margin: 0 12px 12px 12px;
+				.odie-support-doc-link__link {
+					.icon-background {
+						padding: 4px;
+						svg {
+							fill: $blueberry-color;
+						}
+					}
+					a {
+						color: $blueberry-color;
+						& span {
+							font-size: $font-body-extra-small;
+						}
+						> svg:last-child {
+							display: none;
+						}
+					}
+				}
+			}
+
+		}
+
+		.disclaimer {
+			$disclaimer-font-color: #000;
+
+			color: #000;
+			font-size: $font-body-extra-small;
+			text-align: start;
+			margin: 16px 0;
+
+			.odie-button-link, .components-external-link {
+				color: $blueberry-color;
+			}
+
+			.components-external-link {
+				text-decoration: underline;
+
+				&:hover {
+					text-decoration: none;
+				}
+
+				& > span:first-child::after { 
+					content: "\00a0";
+	
+					&:hover {
+						text-decoration: none;
+					}
+				}
+
+				.components-external-link__contents:hover {
+					text-decoration: none;
+				}
+
+				.components-external-link__icon {
+					margin-left: 0;
+				}
+			}
+			
+		}
 	}
 
-	.disclaimer {
-		color: var( --studio-gray-80 );
-		font-size: $font-body-extra-small;
-		text-align: start;
-		margin: 16px 0;
+	.odie-feedback-component-container {
+		&.odie-question-collapse {
+			margin-top: 0;
+		}
+		margin-top: 32px;
+		font-size: 1rem;
 	}
+
 }
 
 .odie-button-link {
@@ -619,7 +709,7 @@ $custom-border-corner-size: 16px;
 }
 
 .odie-chatbox-message-sources-container {
-	padding-bottom: 16px;
+	padding-bottom: 28px;
 
 	.foldable-card {
 		margin: 0 !important;

@@ -427,6 +427,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
 				{ ! isDomainsEmpty ? (
 					<DomainsTable
+						context="domains"
 						isLoadingDomains={ isLoading }
 						domains={ domains }
 						isAllSitesView

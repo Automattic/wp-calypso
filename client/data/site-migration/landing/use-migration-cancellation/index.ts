@@ -1,14 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import { SiteId } from 'calypso/types';
 import { log } from '../logger';
 
 const request = async ( { siteId }: { siteId: SiteId } ): Promise< Response > => {
-	if ( ! isEnabled( 'automated-migration/pending-status' ) ) {
-		return { status: 'skipped' };
-	}
-
 	await wp.req.post( {
 		path: `/sites/${ siteId }/site-migration-status-sticker`,
 		apiNamespace: 'wpcom/v2',

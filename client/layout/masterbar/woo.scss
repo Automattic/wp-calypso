@@ -92,6 +92,7 @@ $breakpoint-mobile: 660px;
 	--woo-purple-50: #7f54b3;
 	--woo-purple-60: #674399;
 	--woo-purple-70: #533582;
+	--woo-font-family-header: proxima-nova, sans-serif;
 	$woo-label-color: #50575e;
 	$woo-gray-100: #101517;
 	$woo-gray-40: #787c82;
@@ -110,10 +111,6 @@ $breakpoint-mobile: 660px;
 
 	background: #fff;
 	min-height: 100%;
-
-	* {
-		font-family: proxima-nova, sans-serif;
-	}
 
 	&.layout.is-section-login {
 		min-height: 100%;
@@ -1285,10 +1282,15 @@ $breakpoint-mobile: 660px;
 		}
 
 		h1,
+		h2,
+		h3 {
+			font-family: var(--woo-font-family-header);
+			font-feature-settings: "ss01" on, "salt" on;
+		}
+
+		h1,
 		h3 {
 			color: var(--studio-gray-100);
-			font-feature-settings: "ss01" on, "salt" on;
-			font-family: proxima-nova, sans-serif;
 			text-align: center;
 			font-size: 2.25rem;
 			font-weight: 700;
@@ -1724,9 +1726,8 @@ $breakpoint-mobile: 660px;
 			margin-top: 0;
 
 			h1.magic-login__form-header {
+				font-family: var(--woo-font-family-header);
 				color: var(--studio-gray-100);
-				font-feature-settings: "ss01" on, "salt" on;
-				font-family: proxima-nova, sans-serif;
 				text-align: center;
 				font-size: 2.25rem;
 				font-weight: 700;
@@ -1917,7 +1918,7 @@ $breakpoint-mobile: 660px;
 			.two-factor-authentication__actions.card {
 				padding: 0;
 				border: 0;
-				margin-bottom: 32px;
+				margin: 32px auto;
 				clip-path: none;
 				display: flex;
 				flex-direction: column;
@@ -2241,12 +2242,20 @@ $breakpoint-mobile: 660px;
 	}
 }
 
-.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0 {
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
+.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
 	--woo-purple-0: #F2EDFF;
 	--woo-purple-40: #873EFF;
 	--woo-purple-50: #720EEC;
 	--woo-purple-60: #6108CE;
 	--woo-purple-70: #5007AA;
+	--woo-font-family-header: proxima-vara, 'Proxima Fallback', sans-serif;
+
+	h1,
+	h2,
+	h3 {
+		font-feature-settings: "ss04";
+	}
 
 	.masterbar__woo {
 		.masterbar__woo-nav {
@@ -2262,10 +2271,14 @@ $breakpoint-mobile: 660px;
 	input[type="tel"].form-text-input,
 	textarea.form-text-input {
 		border: 1px solid var(--studio-gray-30);
+
 		&:focus,
+		&:focus-visible,
 		&:hover,
-		&:focus:hover {
-			border: 1px solid var(--woo-purple-40);
+		&:active {
+			border: 1px solid transparent;
+			box-shadow: inset 0 0 0 2px var(--woo-purple-40);
+			outline: none;
 		}
 	}
 
@@ -2307,6 +2320,17 @@ $breakpoint-mobile: 660px;
 	.security-key-form__help-text,
 	.formatted-header__subtitle {
 		a {
+			@include link-woo;
+		}
+	}
+
+	// Woo DNA Flow
+	.jetpack-connect__main {
+		--studio-woocommerce-purple: var(--woo-purple-40);
+		--studio-woocommerce-purple-60: var(--woo-purple-40);
+		--color-accent: var(--woo-purple-40);
+
+		.login__social-tos a {
 			@include link-woo;
 		}
 	}

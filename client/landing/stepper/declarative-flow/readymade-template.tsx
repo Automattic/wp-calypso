@@ -182,7 +182,6 @@ const readymadeTemplateFlow: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: READYMADE_TEMPLATE_FLOW,
 						siteId,
 						siteSlug,
 					} );
