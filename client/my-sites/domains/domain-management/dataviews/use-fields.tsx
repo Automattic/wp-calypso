@@ -100,7 +100,7 @@ export function useFields( { openDomainPane }: Props ) {
 				enableSorting: true,
 				getValue: ( { item }: { item: PartialDomainData } ) => {
 					const domain = getFullDomain( item );
-					return domain?.sslStatus;
+					return domain?.sslStatus || '';
 				},
 				render: ( { item }: { item: PartialDomainData } ) => <SslStatusField domain={ item } />,
 			},
