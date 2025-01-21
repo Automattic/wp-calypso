@@ -74,8 +74,8 @@ const SubscriberDataViews = ( {
 		page,
 		perPage,
 		sort: {
-			field: sortTerm,
-			direction: sortOrder,
+			field: SubscribersSortBy.DateSubscribed,
+			direction: 'desc',
 		},
 	} );
 
@@ -92,7 +92,9 @@ const SubscriberDataViews = ( {
 				return;
 			}
 			const selectedId = items[ 0 ];
-			const subscriber = subscribers.find( ( s ) => s.subscription_id.toString() === selectedId );
+			const subscriber = subscribers.find(
+				( s: Subscriber ) => s.subscription_id.toString() === selectedId
+			);
 			if ( subscriber ) {
 				setSelectedSubscriber( subscriber );
 			}
@@ -266,18 +268,8 @@ const SubscriberDataViews = ( {
 
 	// Update the view when a subscriber is selected
 	useEffect( () => {
-		const commonViewProps = {
-			page,
-			perPage,
-			sort: {
-				field: sortTerm,
-				direction: sortOrder,
-			},
-		};
-
 		setCurrentView( ( oldCurrentView ) => ( {
 			...oldCurrentView,
-			...commonViewProps,
 			type: selectedSubscriber ? 'list' : 'table',
 			layout: selectedSubscriber
 				? {
@@ -290,6 +282,12 @@ const SubscriberDataViews = ( {
 			fields: selectedSubscriber
 				? [ 'media', 'name' ]
 				: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+			sort: {
+				field: sortTerm,
+				direction: sortOrder ?? sortTerm === SubscribersSortBy.DateSubscribed ? 'desc' : 'asc',
+			},
+			page,
+			perPage,
 		} ) );
 	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder ] );
 

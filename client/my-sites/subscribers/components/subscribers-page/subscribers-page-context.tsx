@@ -40,7 +40,7 @@ type SubscribersPageContextProps = {
 	grandTotal: number;
 	pageChangeCallback: ( page: number ) => void;
 	sortTerm: SubscribersSortBy;
-	sortOrder: 'asc' | 'desc';
+	sortOrder?: 'asc' | 'desc';
 	setSortTerm: ( term: SubscribersSortBy ) => void;
 	setSortOrder: ( order: 'asc' | 'desc' ) => void;
 	filterOption: SubscribersFilterBy;
@@ -82,7 +82,7 @@ export const SubscribersPageProvider = ( {
 }: SubscribersPageProviderProps ) => {
 	const isDataView = isEnabled( 'subscribers-dataviews' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
-	const [ sortOrder, setSortOrder ] = useState< 'asc' | 'desc' >( 'desc' );
+	const [ sortOrder, setSortOrder ] = useState< 'asc' | 'desc' >();
 	const [ dataViewSortTerm, setDataViewSortTerm ] = useState< SubscribersSortBy >(
 		SubscribersSortBy.DateSubscribed
 	);
