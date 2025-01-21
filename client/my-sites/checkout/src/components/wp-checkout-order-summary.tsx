@@ -146,14 +146,10 @@ export function CheckoutSummaryFeaturedList( {
 						? translate( 'WordPress.com Gift Subscription' )
 						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
-					<LoadingCheckoutSummaryFeaturesList />
-				) : (
-					<CheckoutSummaryFeaturesWrapper
-						siteId={ siteId }
-						nextDomainIsFree={ responseCart.next_domain_is_free }
-					/>
-				) }
+				<CheckoutSummaryFeaturesWrapper
+					siteId={ siteId }
+					nextDomainIsFree={ responseCart.next_domain_is_free }
+				/>
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />
@@ -228,16 +224,6 @@ function CheckoutSummaryPriceList() {
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-		</>
-	);
-}
-
-export function LoadingCheckoutSummaryFeaturesList() {
-	return (
-		<>
-			<LoadingCopy />
-			<LoadingCopy />
-			<LoadingCopy />
 		</>
 	);
 }
@@ -996,40 +982,6 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 
 	& .wp-checkout-order-summary__total-price {
 		font-size: 40px; line-height: 44px; }
-	}
-`;
-
-const LoadingCopy = styled.p`
-	animation: ${ pulse } 1.5s ease-in-out infinite;
-	background: ${ ( props ) => props.theme.colors.borderColorLight };
-	border-radius: 2px;
-	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	content: '';
-	font-size: 14px;
-	height: 18px;
-	margin: 8px 0 0 26px;
-	padding: 0;
-	position: relative;
-
-	::before {
-		content: '';
-		display: block;
-		position: absolute;
-		left: -26px;
-		top: 0;
-		width: 18px;
-		height: 18px;
-		background: ${ ( props ) => props.theme.colors.borderColorLight };
-		border-radius: 100%;
-	}
-
-	.rtl & {
-		margin: 8px 26px 0 0;
-
-		::before {
-			right: -26px;
-			left: auto;
-		}
 	}
 `;
 
