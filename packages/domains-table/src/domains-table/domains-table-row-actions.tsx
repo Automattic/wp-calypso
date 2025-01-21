@@ -147,6 +147,7 @@ export const DomainsTableRowActions = ( {
 						domain.domain,
 						hasConnectableSites
 					) }
+					data-testid="add-site-menu-link"
 				>
 					{ __( 'Add site' ) }
 				</MenuItemLink>
