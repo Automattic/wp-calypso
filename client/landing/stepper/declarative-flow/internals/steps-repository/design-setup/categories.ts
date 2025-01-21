@@ -8,10 +8,10 @@ const GOALS_TO_CATEGORIES: { [ key in Onboard.SiteGoal ]: string[] } = {
 	[ Onboard.SiteGoal.AnnounceEvents ]: [ CATEGORIES.EVENTS ],
 	[ Onboard.SiteGoal.Porfolio ]: [ CATEGORIES.PORTFOLIO ],
 	[ Onboard.SiteGoal.PaidSubscribers ]: [ CATEGORIES.NEWSLETTER, CATEGORIES.BLOG ],
-	[ Onboard.SiteGoal.Promote ]: [ CATEGORIES.BUSINESS, CATEGORIES.LINK_IN_BIO ],
+	[ Onboard.SiteGoal.Promote ]: [ CATEGORIES.BUSINESS ],
 	[ Onboard.SiteGoal.CollectDonations ]: [ CATEGORIES.COMMUNITY_NON_PROFIT ],
 	[ Onboard.SiteGoal.Newsletter ]: [ CATEGORIES.NEWSLETTER, CATEGORIES.BLOG ],
-	[ Onboard.SiteGoal.Engagement ]: [ CATEGORIES.BLOG, CATEGORIES.LINK_IN_BIO ],
+	[ Onboard.SiteGoal.Engagement ]: [ CATEGORIES.BLOG ],
 	[ Onboard.SiteGoal.SellPhysical ]: [ CATEGORIES.STORE ],
 	[ Onboard.SiteGoal.Videos ]: [ CATEGORIES.PORTFOLIO ],
 	[ Onboard.SiteGoal.ContactForm ]: [ CATEGORIES.BUSINESS ],
@@ -47,24 +47,8 @@ function makeSortCategoryToTop( slugs: string[] ) {
 	};
 }
 
-interface CategorizationOptions {
-	isMultiSelection?: boolean;
-}
-
-export function getCategorizationOptions(
-	goals: Onboard.SiteGoal[],
-	{ isMultiSelection = false }: CategorizationOptions = {}
-) {
-	let defaultSelections = Array.from(
-		new Set(
-			goals
-				.map( ( goal ) => {
-					const preferredCategories = getGoalsPreferredCategories( goal );
-					return isMultiSelection ? preferredCategories : preferredCategories.slice( 0, 1 );
-				} )
-				.flat()
-		)
-	);
+export function getCategorizationOptions( goals: Onboard.SiteGoal[] ) {
+	let defaultSelections = Array.from( new Set( goals.map( getGoalsPreferredCategories ).flat() ) );
 
 	if ( defaultSelections.length === 0 ) {
 		defaultSelections = [ CATEGORIES.BLOG ];

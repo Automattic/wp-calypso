@@ -128,6 +128,7 @@ const FAQSection = styled.div`
 const FoldableFAQ = styled( FoldableFAQComponent )`
 	border: 1px solid #e9e9ea;
 	padding: 0;
+	border-radius: 4px;
 	margin-bottom: 24px;
 	.foldable-faq__question {
 		padding: 24px 16px 24px 24px;
@@ -144,12 +145,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&.is-expanded {
-		border: 2px solid var( --studio-blue-50 );
-		background: linear-gradient(
-			180deg,
-			rgba( 6, 117, 196, 0.2 ) -44.3%,
-			rgba( 255, 255, 255, 0 ) 100%
-		);
+		border: 2px solid var( --studio-wordpress-blue-50 );
 		.foldable-faq__answer {
 			margin: 0 16px 24px 0;
 			ul {
@@ -158,8 +154,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&:not( .is-expanded ) .foldable-faq__question:focus {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus )
-			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+		box-shadow: 0 0 0 var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		outline: 3px solid transparent;
 	}
 	.foldable-faq__answer {
@@ -187,10 +182,12 @@ const CTASectionWrapper = styled.div`
 		}
 	}
 	.components-button.is-secondary {
-		box-shadow: inset 0 0 0 1px var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		border-radius: 4px;
+		box-shadow: inset 0 0 0 1px
+			var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		outline: 1px solid transparent;
 		white-space: nowrap;
-		color: var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		color: var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		background: transparent;
 		border: none;
 		&:focus {

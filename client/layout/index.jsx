@@ -427,7 +427,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ ! isA8CForAgencies() && <GlobalNotifications /> }
+				{ config.isEnabled( 'layout/global-notifications' ) && <GlobalNotifications /> }
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
@@ -498,9 +498,6 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
-
 		const colorScheme = isWooPasswordlessJPC
 			? getColorSchemeFromCurrentQuery( currentQuery )
 			: getColorScheme( {
@@ -539,7 +536,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
-			userAllowedToHelpCenter,
+			userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 			currentRoute,
 			isGlobalSidebarVisible,
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,

@@ -224,7 +224,9 @@ export function domainManagementEmail( siteName, domainName ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDns( siteName, domainName, relativeTo = null ) {
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		return domainManagementOverviewRoot() + '/' + domainName + '/dns/' + siteName;
 	}
 
@@ -237,7 +239,9 @@ export function domainManagementDns( siteName, domainName, relativeTo = null ) {
  * @param {string?} relativeTo
  */
 export function domainManagementDnsAddRecord( siteName, domainName, relativeTo = null ) {
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/domain/${ domainName }/dns/add/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		return domainManagementOverviewRoot() + '/' + domainName + '/dns/add/' + siteName;
 	}
 
@@ -252,7 +256,9 @@ export function domainManagementDnsEditRecord(
 ) {
 	let path;
 
-	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		path = `/overview/site-domain/domain/${ domainName }/dns/edit/${ siteName }`;
+	} else if ( isUnderDomainManagementOverview( relativeTo ) ) {
 		path = domainManagementOverviewRoot() + '/' + domainName + '/dns/edit/' + siteName;
 	} else {
 		path = domainManagementEditBase( siteName, domainName, 'edit-dns-record', relativeTo );
@@ -352,6 +358,10 @@ export function domainManagementTransferToAnyUser( siteName, domainName, relativ
  * @param {string?} relativeTo
  */
 export function domainManagementTransferToOtherSite( siteName, domainName, relativeTo = null ) {
+	if ( isUnderDomainManagementOverview( relativeTo ) ) {
+		return domainManagementOverviewRoot() + '/' + domainName + '/transfer/other-site/' + siteName;
+	}
+
 	return domainManagementTransferBase( siteName, domainName, 'other-site', relativeTo );
 }
 

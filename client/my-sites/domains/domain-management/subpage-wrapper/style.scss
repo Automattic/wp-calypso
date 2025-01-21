@@ -2,10 +2,15 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-.domains-overview.main .subpage-wrapper {
+.domains-overview.main .subpage-wrapper,
+.domains-overview.main .site-preview-pane.domains-overview__details {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+
+	.navigation-header__actions, .foldable-card__action {
+		flex-grow: initial;
+	}
 
 	.form-text-input-with-affixes .form-text-input {
 		border-radius: 2px 0 0 2px;
@@ -169,6 +174,10 @@
                 padding-top: 12px;
             }
         }
+
+        @media ( max-width: $break-small ) {
+            padding: 8px;
+        }
     }
 
 	&.subpage-wrapper--add-mailbox {
@@ -199,6 +208,21 @@
             }
         }
 	}
+
+	&.subpage-wrapper--transfer-other-site {
+		.transfer-domain-to-other-site__card > p {
+			font-size: 1.25rem;
+			margin-bottom: 1.25rem;
+
+			strong {
+				font-weight: 500;
+			}
+		}
+
+		.domain__main-placeholder {
+			max-width: $break-xlarge;
+		}
+	}
 }
 
 .is-bulk-all-domains-page .layout__content .main,
@@ -216,11 +240,17 @@
                 padding-top: 16px;
 
                 .breadcrumbs li {
-                    > a,
-                    > span {
-                        word-break: break-word;
-                        overflow-wrap: break-word;
-                        white-space: normal;
+                    &.navigation-header__domain-name {
+                        > a,
+                        > span {
+                            word-break: break-word;
+                            overflow-wrap: break-word;
+                            white-space: normal;
+                        }
+                    }
+
+                    > .gridicons-chevron-right {
+                        margin: 0 8px;
                     }
                 }
             }

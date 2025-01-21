@@ -2,6 +2,10 @@ import clsx from 'clsx';
 import React from 'react';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
+import {
+	getUserProfileUrl,
+	isUserProfileEnabled,
+} from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 
@@ -15,6 +19,7 @@ interface ReaderAuthorLinkProps {
 }
 
 export interface ReaderLinkAuthor {
+	ID?: number;
 	URL?: string;
 	name?: string;
 }
@@ -35,13 +40,12 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 		onClick?.();
 	};
 
-	let siteUrl = props.siteUrl;
-	if ( ! siteUrl ) {
-		siteUrl = author.URL;
-	}
+	const authorLinkUrl =
+		isUserProfileEnabled() && author.ID
+			? getUserProfileUrl( author.ID )
+			: props.siteUrl ?? author.URL;
 
 	const authorName = author.name;
-
 	// If the author name is blocked, don't return anything
 	if ( ! authorName || isAuthorNameBlocked( authorName ) ) {
 		return null;
@@ -50,12 +54,12 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 	const classes = clsx( 'reader-author-link', className );
 
 	// If we have neither author.URL or siteUrl, just return children in a wrapper
-	if ( ! siteUrl ) {
+	if ( ! authorLinkUrl ) {
 		return <span className={ classes }>{ children }</span>;
 	}
 
 	return (
-		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
+		<a className={ classes } href={ authorLinkUrl } onClick={ recordAuthorClick }>
 			{ children }
 		</a>
 	);

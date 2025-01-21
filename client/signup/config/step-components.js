@@ -42,7 +42,6 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'user-social': 'user',
-	'reader-landing': 'reader-landing',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 	'p2-confirm-email': 'p2-confirm-email',
@@ -85,6 +84,11 @@ export function getStepModuleMap() {
 }
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];
+	if ( ! moduleName ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Error: unknown `stepName` to retrieve the component for.' );
+		return;
+	}
 	const module = await import(
 		/* webpackChunkName: "async-load-signup-steps-[request]" */
 		/* webpackInclude: /signup\/steps\/[0-9a-z/-]+\/index\.[j|t]sx$/ */

@@ -16,6 +16,7 @@ import Smooch from 'smooch';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
+import type { ZendeskMessage } from '@automattic/odie-client';
 
 const destroy = () => {
 	Smooch.destroy();
@@ -58,14 +59,13 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
 		isEligibleForChat && enableAuth,
-		isEligibleForChat && enableAuth,
-		true
+		isEligibleForChat && enableAuth
 	);
 	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 
 	const getUnreadListener = useCallback(
-		( message: unknown, data: { conversation: { id: string } } ) => {
+		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
 			if ( isHelpCenterShown ) {
 				return;
 			}
@@ -73,6 +73,18 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
 		[ isHelpCenterShown ]
+	);
+
+	const clientIdListener = useCallback(
+		( message: ZendeskMessage ) => {
+			if ( message?.source?.type === 'web' && message.source?.id ) {
+				setZendeskClientId( message.source?.id );
+				// Unregister the listener after setting the client ID
+				// @ts-expect-error -- 'off' is not part of the def.
+				Smooch?.off?.( 'message:sent', clientIdListener );
+			}
+		},
+		[ setZendeskClientId ]
 	);
 
 	// Initialize Smooch which communicates with Zendesk
@@ -111,11 +123,14 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 			getUnreadNotifications( allConversations );
 			setZendeskClientId( getClientId( allConversations ) );
 			Smooch.on( 'message:received', getUnreadListener );
+			Smooch.on( 'message:sent', clientIdListener );
 		}
 
 		return () => {
 			// @ts-expect-error -- 'off' is not part of the def.
 			Smooch?.off?.( 'message:received', getUnreadListener );
+			// @ts-expect-error -- 'off' is not part of the def.
+			Smooch?.off?.( 'message:sent', clientIdListener );
 		};
 	}, [ getUnreadListener, isChatLoaded, getUnreadNotifications, setZendeskClientId ] );
 

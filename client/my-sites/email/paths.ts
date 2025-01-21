@@ -1,6 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
-import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import {
+	isUnderDomainManagementAll,
+	isUnderDomainSiteContext,
+	domainManagementRoot,
+	domainSiteContextRoot,
+} from 'calypso/my-sites/domains/paths';
 
 type QueryStringParameters = { [ key: string ]: string | undefined };
 
@@ -8,15 +13,21 @@ type EmailPathUtilityFunction = (
 	siteName: string | null | undefined,
 	domainName?: string | null,
 	relativeTo?: string | null,
-	urlParameters?: QueryStringParameters
+	urlParameters?: QueryStringParameters,
+	inSiteContext?: boolean
 ) => string;
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
 export const domainsManagementPrefix = '/domains/manage/all/email';
+export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
+}
+
+export function isUnderCheckoutRoute( path?: string | null ) {
+	return path?.startsWith( '/checkout' );
 }
 
 // Builds a URL query string from an object. Handles null values.
@@ -78,7 +89,11 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	urlParameters
 ) => {
 	if ( isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
 			urlParameters
 		) }`;
 	}
@@ -127,7 +142,11 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	relativeTo,
 	urlParameters
 ) => {
-	if ( isUnderDomainManagementAll( relativeTo ) ) {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/email/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	} else if ( isUnderDomainManagementAll( relativeTo ) ) {
 		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
 			urlParameters
 		) }`;
@@ -155,13 +174,21 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 export const getEmailManagementPath: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
-	relativeTo,
-	urlParameters
+	relativeTo = null,
+	urlParameters = {},
+	inSiteContext = false
 ) => {
-	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ siteName }/${ domainName }${ buildQueryString(
-			urlParameters
-		) }`;
+	if (
+		inSiteContext ||
+		isUnderDomainManagementAll( relativeTo ) ||
+		( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) )
+	) {
+		const prefix =
+			inSiteContext || isUnderDomainSiteContext( relativeTo )
+				? emailSiteContextPrefix
+				: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
 	}
 
 	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
@@ -193,8 +220,12 @@ export const getEmailInDepthComparisonPath = (
 	source?: string,
 	intervalLength?: string
 ) => {
-	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
 			interval: intervalLength,
 			referrer: relativeTo,
 			source,

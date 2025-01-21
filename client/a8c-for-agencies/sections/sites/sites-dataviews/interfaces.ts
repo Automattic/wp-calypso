@@ -16,6 +16,7 @@ export interface SitesDataViewsProps {
 	isLargeScreen: boolean;
 	isLoading: boolean;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
 	dataViewsState: DataViewsState;
 	onRefetchSite?: () => Promise< unknown >;
 }

@@ -39,6 +39,7 @@
 		"a4a-migrations-page-v2": true,
 		"a8c-for-agencies-agency-tier": true,
 		"a4a-pressable-referrals": true,
+		"a4a-updated-add-new-site": true,
 		"a4a-plugins-management": false
 	},
 	"enable_all_sections": false,
@@ -64,5 +65,6 @@
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
+	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true
 }

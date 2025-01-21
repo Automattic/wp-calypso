@@ -24,6 +24,7 @@ import {
 	ADD_DNS_RECORD,
 	EDIT_DNS_RECORD,
 	EDIT_CONTACT_INFO,
+	TRANSFER_OTHER_SITE,
 } from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
 
@@ -487,11 +488,23 @@ export default function () {
 	);
 
 	page(
-		paths.domainManagementAllEmailRoot() + '/:site/titan/new/:domain',
+		paths.domainManagementAllEmailRoot() + '/:domain/titan/new/:site',
 		siteSelection,
 		navigation,
 		domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
 		emailController.emailManagementNewTitanAccount,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/transfer/other-site/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( TRANSFER_OTHER_SITE ),
+		domainManagementController.domainManagementTransferToOtherSite,
 		domainManagementController.domainManagementSubpageView,
 		domainManagementController.domainDashboardLayout,
 		makeLayout,
