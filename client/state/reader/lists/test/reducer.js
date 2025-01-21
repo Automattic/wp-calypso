@@ -3,8 +3,8 @@ import {
 	READER_LIST__DELETE,
 	READER_LIST__FOLLOW_RECEIVE,
 	READER_LIST__UNFOLLOW_RECEIVE,
-	READER_LIST__REQUEST_SUCCESS,
-	READER_LISTS__RECEIVE,
+	READER_LIST__CREATE_SUCCESS,
+	READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 } from 'calypso/state/reader/action-types';
 import { items, listItems, subscribedLists } from '../reducer';
 
@@ -17,7 +17,7 @@ describe( 'reducer', () => {
 
 		test( 'should index lists by ID', () => {
 			const state = items( null, {
-				type: READER_LISTS__RECEIVE,
+				type: READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 				lists: [
 					{ ID: 841, title: 'Hello World' },
 					{ ID: 413, title: 'Mangos and feijoas' },
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 				841: { ID: 841, title: 'Hello World' },
 			} );
 			const state = items( original, {
-				type: READER_LISTS__RECEIVE,
+				type: READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 				lists: [ { ID: 413, title: 'Mangos and feijoas' } ],
 			} );
 
@@ -96,7 +96,7 @@ describe( 'reducer', () => {
 		test( 'should pick up the ids of the subscribed lists', () => {
 			expect(
 				subscribedLists( deepFreeze( [] ), {
-					type: READER_LISTS__RECEIVE,
+					type: READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 					lists: [ { ID: 1 }, { ID: 2 } ],
 				} )
 			).toEqual( expect.arrayContaining( [ 1, 2 ] ) );
@@ -106,7 +106,7 @@ describe( 'reducer', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
-					type: READER_LISTS__RECEIVE,
+					type: READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS,
 					lists: [ { ID: 3 }, { ID: 1 } ],
 				} )
 			).toEqual( expect.arrayContaining( [ 1, 3 ] ) );
@@ -144,7 +144,7 @@ describe( 'reducer', () => {
 			const initial = deepFreeze( [ 1 ] );
 			expect(
 				subscribedLists( initial, {
-					type: READER_LIST__REQUEST_SUCCESS,
+					type: READER_LIST__CREATE_SUCCESS,
 					data: {
 						list: { ID: 2 },
 					},
