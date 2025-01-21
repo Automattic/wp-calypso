@@ -362,30 +362,23 @@ const SyncCardContainer = ( {
 	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error );
 	const isFailedSyncError = useIsFailedSyncError( error );
 	const hasEnTranslation = useHasEnTranslation();
-	const hasNewTranslations =
-		hasEnTranslation(
-			'We couldn’t synchronize the production environment. Studio push operation is currently in progress.'
-		) &&
-		hasEnTranslation(
-			'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.'
-		) &&
-		hasEnTranslation( 'We couldn’t synchronize the production environment.' ) &&
-		hasEnTranslation( 'We couldn’t synchronize the staging environment.' ) &&
-		hasEnTranslation( "We couldn't connect to the production site: {{br/}} %(siteUrl)s" ) &&
-		hasEnTranslation( "We couldn't connect to the staging site: {{br/}} %(siteUrl)s" ) &&
-		hasEnTranslation(
-			'We couldn’t synchronize changes to the production site. Please contact support.'
-		) &&
-		hasEnTranslation(
-			'We couldn’t synchronize changes to the staging site. Please contact support.'
-		);
+	const hasNewTranslations = [
+		'We couldn’t synchronize the production environment. Studio push operation is currently in progress.',
+		'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.',
+		'We couldn’t synchronize the production environment.',
+		'We couldn’t synchronize the staging environment.',
+		'We couldn’t connect to the production site: {{br/}} %(siteUrl)s',
+		'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s',
+		'We couldn’t synchronize changes to the production site. Please contact support.',
+		'We couldn’t synchronize changes to the staging site. Please contact support.',
+	].every( ( value ) => hasEnTranslation( value ) );
 
 	const getConnectionErrorText = (
 		siteToSync: 'production' | 'staging',
 		siteUrls: { production: string | null; staging: string | null }
 	): React.ReactNode => {
 		const messages = {
-			production: translate( "We couldn't connect to the production site: {{br/}} %(siteUrl)s", {
+			production: translate( 'We couldn’t connect to the production site: {{br/}} %(siteUrl)s', {
 				args: {
 					siteUrl: siteUrls.production ? urlToSlug( siteUrls.production ) : '',
 				},
@@ -393,7 +386,7 @@ const SyncCardContainer = ( {
 					br: <br />,
 				},
 			} ),
-			staging: translate( "We couldn't connect to the staging site: {{br/}} %(siteUrl)s", {
+			staging: translate( 'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s', {
 				args: {
 					siteUrl: siteUrls.staging ? urlToSlug( siteUrls.staging ) : '',
 				},
