@@ -51,16 +51,19 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
+	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 
 	useEffect( () => {
-		if ( chat?.status === 'loaded' || chat?.status === 'closed' ) {
-			setChatMessagesLoaded( ! isForwardingToZendesk );
+		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
+			return;
 		}
-	}, [ chat?.status, isForwardingToZendesk ] );
+
+		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
+	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
 
 	/**
 	 * Handle the case where we are forwarding to Zendesk.
@@ -68,6 +71,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		if (
 			isForwardingToZendesk &&
+			! hasForwardedToZendesk &&
 			! chat.conversationId &&
 			createZendeskConversation &&
 			resetSupportInteraction &&
@@ -75,16 +79,24 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		) {
 			searchParams.delete( 'provider' );
 			setSearchParams( searchParams );
+			setHasForwardedToZendesk( true );
 
-			resetSupportInteraction().then( () => {
+			resetSupportInteraction().then( ( interaction ) => {
 				if ( isChatLoaded ) {
-					createZendeskConversation( true ).then( () => {
+					createZendeskConversation( true, interaction?.uuid ).then( () => {
 						setChatMessagesLoaded( true );
 					} );
 				}
 			} );
 		}
-	}, [ isForwardingToZendesk, isChatLoaded, chat?.conversationId ] );
+	}, [
+		isForwardingToZendesk,
+		hasForwardedToZendesk,
+		isChatLoaded,
+		chat?.conversationId,
+		resetSupportInteraction,
+		createZendeskConversation,
+	] );
 
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {

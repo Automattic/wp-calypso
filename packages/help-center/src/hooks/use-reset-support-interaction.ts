@@ -23,7 +23,7 @@ export const useResetSupportInteraction = () => {
 				queryKey: [ 'support-interactions', 'get-interactions', 'help-center' ],
 			} );
 
-			await startNewInteraction( {
+			return await startNewInteraction( {
 				event_source: 'help-center',
 				event_external_id: uuidv4(),
 			} );

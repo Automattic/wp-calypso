@@ -9,7 +9,8 @@ import { useManageSupportInteraction } from '../data';
 import { setHelpCenterZendeskConversationStarted } from '../utils';
 
 export const useCreateZendeskConversation = (): ( (
-	avoidTransfer?: boolean
+	avoidTransfer?: boolean,
+	interactionId?: string
 ) => Promise< void > ) => {
 	const {
 		selectedSiteId,
@@ -29,7 +30,8 @@ export const useCreateZendeskConversation = (): ( (
 		useUpdateZendeskUserFields();
 	const { addEventToInteraction } = useManageSupportInteraction();
 	const chatId = chat.odieId;
-	const createConversation = async ( avoidTransfer = false ) => {
+	const createConversation = async ( avoidTransfer = false, interactionId = '' ) => {
+		const currentInteractionID = interactionId ? interactionId : currentSupportInteraction!.uuid;
 		if ( isSubmittingZendeskUserFields || chat.conversationId ) {
 			return;
 		}
@@ -52,14 +54,14 @@ export const useCreateZendeskConversation = (): ( (
 		const conversation = await Smooch.createConversation( {
 			metadata: {
 				createdAt: Date.now(),
-				supportInteractionId: currentSupportInteraction!.uuid,
+				supportInteractionId: currentInteractionID,
 				...( chatId ? { odieChatId: chatId } : {} ),
 			},
 		} );
 		setHelpCenterZendeskConversationStarted();
 		setWaitAnswerToFirstMessageFromHumanSupport( true );
 		addEventToInteraction( {
-			interactionId: currentSupportInteraction!.uuid,
+			interactionId: currentInteractionID,
 			eventData: { event_source: 'zendesk', event_external_id: conversation.id },
 		} );
 
