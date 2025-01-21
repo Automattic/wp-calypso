@@ -9,6 +9,7 @@ import {
 	READER_LIST__ITEM_DELETE_SITE,
 	READER_LIST__ITEM_DELETE_TAG,
 	READER_LIST__REQUEST_TARGET_LIST,
+	READER_LIST__RECEIVE_TARGET_LIST,
 	READER_LIST__CREATE_SUCCESS,
 	READER_LIST__CREATE_FAILURE,
 	READER_LIST__UNFOLLOW,
@@ -68,6 +69,18 @@ export function createReaderList( list ) {
  */
 export function requestTargetList( listOwner, listSlug ) {
 	return { type: READER_LIST__REQUEST_TARGET_LIST, listOwner, listSlug };
+}
+
+/**
+ * Receive a single Reader list.
+ * @param  {Object} data List data
+ * @returns {Object}    Action object
+ */
+export function receiveTargetList( data ) {
+	return {
+		type: READER_LIST__RECEIVE_TARGET_LIST,
+		data,
+	};
 }
 
 export function receiveCreateReaderList( data ) {

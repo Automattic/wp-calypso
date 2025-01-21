@@ -23,6 +23,7 @@ import {
 	receiveUnfollowList,
 	receiveCreateReaderList,
 	receiveUpdatedListDetails,
+	receiveTargetList,
 } from 'calypso/state/reader/lists/actions';
 
 const noop = () => {};
@@ -91,7 +92,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					},
 					action
 				),
-			onSuccess: ( action, { list } ) => receiveCreateReaderList( { list } ),
+			onSuccess: ( action, { list } ) => receiveTargetList( { list } ),
 			onError: ( action, error ) => [ handleCreateReaderListFailure( error ) ],
 		} ),
 	],

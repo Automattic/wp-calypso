@@ -5,9 +5,10 @@ import {
 	READER_LIST__CREATE,
 	READER_LIST__DELETE,
 	READER_LIST__FOLLOW_RECEIVE,
-	READER_LIST__REQUEST_TARGET_LIST,
 	READER_LIST__CREATE_SUCCESS,
 	READER_LIST__CREATE_FAILURE,
+	READER_LIST__REQUEST_TARGET_LIST,
+	READER_LIST__RECEIVE_TARGET_LIST,
 	READER_LIST__UNFOLLOW_RECEIVE,
 	READER_LIST__UPDATE,
 	READER_LIST__UPDATE_SUCCESS,
@@ -35,6 +36,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	switch ( action.type ) {
 		case READER_LIST__RECEIVE_CURRENT_USER_SUBSCRIBED_LISTS:
 			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
+		case READER_LIST__RECEIVE_TARGET_LIST:
 		case READER_LIST__CREATE_SUCCESS:
 		case READER_LIST__UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
