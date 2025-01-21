@@ -4,6 +4,7 @@ import {
 	isGoogleWorkspace,
 	isTitanMail,
 	isTieredVolumeSpaceAddon,
+	isJetpackSearch,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
@@ -211,6 +212,24 @@ function renderDIFMTransactionQuantitySummary(
 	);
 }
 
+function renderJetpackSearchQuantitySummary(
+	licensed_quantity: number,
+	isRenewal: boolean,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( isRenewal ) {
+		translate( 'Renewal for %(quantity)d search records/requests', {
+			args: { quantity: licensed_quantity },
+			comment: '%(quantity)d is the number of search records or search requests',
+		} );
+	}
+
+	return translate( 'Purchase for %(quantity)d search records/requests', {
+		args: { quantity: licensed_quantity },
+		comment: '%(quantity)d is the number of search records or search requests',
+	} );
+}
+
 function renderSpaceAddOnquantitySummary(
 	licensed_quantity: number,
 	isRenewal: boolean,
@@ -281,6 +300,10 @@ export function renderTransactionQuantitySummary(
 	const product = { product_slug: wpcom_product_slug };
 	const isRenewal = 'recurring' === type;
 	const isUpgrade = 'new purchase' === type && new_quantity > 0;
+
+	if ( isJetpackSearch( product ) ) {
+		return renderJetpackSearchQuantitySummary( licensed_quantity, isRenewal, translate );
+	}
 
 	if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
 		return renderTransactionQuantitySummaryForMailboxes(
@@ -362,4 +385,46 @@ export function formatMonthYear( date: Date ): string {
 	const year = date.getFullYear();
 	const month = String( date.getMonth() + 1 ).padStart( 2, '0' );
 	return `${ year }-${ month }`;
+}
+
+export function isTransactionJetpackSearch10kTier( {
+	wpcom_product_slug,
+	licensed_quantity,
+	price_tier_slug,
+}: BillingTransactionItem ): boolean {
+	const product = { product_slug: wpcom_product_slug };
+	return (
+		isJetpackSearch( product ) &&
+		licensed_quantity !== null &&
+		price_tier_slug === 'additional_10k_queries_and_records'
+	);
+}
+
+export function renderJetpackSearch10kTierBreakdown(
+	{ licensed_quantity, currency }: BillingTransactionItem,
+	subtotal_integer: number,
+	translate: LocalizeProps[ 'translate' ]
+) {
+	if ( ! licensed_quantity ) {
+		return null;
+	}
+
+	const number_of_units = Math.ceil( licensed_quantity / 10000 );
+	const price_per_unit = subtotal_integer / number_of_units;
+	const formatted_price_per_unit = formatCurrency( price_per_unit, currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
+	return translate(
+		'%(number_of_units)d unit @ %(formatted_price_per_unit)s',
+		'%(number_of_units)d units @ %(formatted_price_per_unit)s',
+		{
+			args: {
+				number_of_units: number_of_units,
+				formatted_price_per_unit: formatted_price_per_unit,
+			},
+			count: number_of_units,
+			comment: '@ is a symbol representing the word "at" (in english)',
+		}
+	);
 }

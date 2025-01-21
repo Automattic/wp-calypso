@@ -18,7 +18,6 @@ import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-qu
 import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
-import { useIsGoalsHoldout } from '../hooks/use-is-goals-holdout';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
@@ -95,7 +94,7 @@ const siteSetupFlow: FlowV1 = {
 		return steps;
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const isGoalsHoldout = useIsGoalsHoldout( currentStep );
+		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 
 		const intent = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -108,10 +107,6 @@ const siteSetupFlow: FlowV1 = {
 		);
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
-		const startingPoint = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
 
@@ -222,6 +217,7 @@ const siteSetupFlow: FlowV1 = {
 						redirectionUrl = addQueryArgs(
 							{
 								showLaunchpad: true,
+								...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 								...( skippedCheckout && { skippedCheckout: 1 } ),
 							},
 							to
@@ -247,7 +243,7 @@ const siteSetupFlow: FlowV1 = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -278,15 +274,6 @@ const siteSetupFlow: FlowV1 = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
-					}
-
-					// If the user skips starting point, redirect them to the post editor
-					if ( isGoalsHoldout && intent === 'write' && startingPoint !== 'skip-to-my-home' ) {
-						if ( startingPoint !== 'write' ) {
-							window.sessionStorage.setItem( 'wpcom_signup_complete_show_draft_post_modal', '1' );
-						}
-
-						return exitFlow( `/post/${ siteSlug }` );
 					}
 
 					// End of woo flow
@@ -354,12 +341,6 @@ const siteSetupFlow: FlowV1 = {
 						case SiteIntent.DIFM:
 							return navigate( 'difmStartingPoint' );
 
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							// If we're not in the holdout, intentionally fall through to the default case
-							if ( isGoalsHoldout ) {
-								return navigate( 'options' );
-							}
 						default: {
 							if ( isDesignChoicesStepEnabled ) {
 								return navigate( 'design-choices' );
@@ -510,22 +491,13 @@ const siteSetupFlow: FlowV1 = {
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'designSetup':
-					switch ( intent ) {
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							// If we're not in the holdout, intentionally fall through to the default case
-							if ( isGoalsHoldout ) {
-								return navigate( 'options' );
-							}
-						default: {
-							if ( isDesignChoicesStepEnabled ) {
-								return navigate( 'design-choices' );
-							}
-							return navigate( 'goals' );
-						}
+					if ( intent === SiteIntent.DIFM ) {
+						return navigate( 'difmStartingPoint' );
 					}
+					if ( isDesignChoicesStepEnabled ) {
+						return navigate( 'design-choices' );
+					}
+					return navigate( 'goals' );
 
 				case 'design-choices': {
 					return navigate( 'goals' );

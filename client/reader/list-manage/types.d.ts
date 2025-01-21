@@ -3,6 +3,7 @@ export type List = {
 	description: string;
 	is_public: boolean;
 	is_owner: boolean;
+	owner: string;
 	slug: string;
 	title: string;
 };

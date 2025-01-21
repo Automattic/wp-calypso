@@ -101,6 +101,10 @@ window.AppBoot = async () => {
 		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
 	}
 
+	const flowLoader = determineFlow();
+	// Load the flow asynchronously while things happen in parallel.
+	const flowPromise = flowLoader();
+
 	// Start tracking performance, bearing in mind this is a full page load.
 	startStepperPerformanceTracking( { fullPageLoad: true } );
 
@@ -135,8 +139,7 @@ window.AppBoot = async () => {
 
 	setupErrorLogger( reduxStore );
 
-	const flowLoader = determineFlow();
-	let { default: flow } = await flowLoader();
+	let { default: flow } = await flowPromise;
 	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
 
 	/**
