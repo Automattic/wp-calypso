@@ -46,6 +46,7 @@ import hasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-featu
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
@@ -155,14 +156,14 @@ const getDefaultDaysForPeriod = ( period ) => {
 	}
 };
 
-function moduleVisibilityWithUserConfiguration( userConfig ) {
-	// Merge user configuration with default values.
+function moduleVisibilityWithOverrides( userConfig, siteConfig ) {
+	// Determine visibility based on defaults, site configuration, and user configuration.
 	const defaults = {};
 	AVAILABLE_PAGE_MODULES.traffic.forEach( ( module ) => {
 		defaults[ module.key ] = module.defaultValue;
 	} );
 
-	return { ...defaults, ...userConfig };
+	return { ...defaults, ...siteConfig, ...userConfig };
 }
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
@@ -185,11 +186,12 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const slug = useSelector( getSelectedSiteSlug );
 	const moduleToggles = useSelector( ( state ) => getModuleToggles( state, siteId, 'traffic' ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+	const hasVideoPress = useSelector( ( state ) => siteHasFeature( state, siteId, 'videopress' ) );
 
-	// Determine module visibility based on user settings AND defaults.
+	// Determine module visibility based on user settings, VideoPress availability, AND defaults.
 	const moduleVisibility = useMemo(
-		() => moduleVisibilityWithUserConfiguration( moduleToggles ),
-		[ moduleToggles ]
+		() => moduleVisibilityWithOverrides( moduleToggles, { videos: hasVideoPress } ),
+		[ hasVideoPress, moduleToggles ]
 	);
 
 	const upsellModalView = useSelector(
