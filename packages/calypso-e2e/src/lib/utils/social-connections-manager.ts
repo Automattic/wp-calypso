@@ -26,7 +26,7 @@ export class SocialConnectionsManager {
 			),
 			CONNECTION_TESTS_ON_ATOMIC: new RegExp(
 				// The request that deals with connection test results on Atomic sites
-				'wpcom/v2/publicize/connections'
+				'wpcom/v2/publicize/connection-test-results'
 			),
 			GET_POST: new RegExp(
 				// The request that gets the post data in the editor
@@ -70,9 +70,9 @@ export class SocialConnectionsManager {
 		}
 
 		return (
-			( CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) ||
-				CONNECTION_TESTS_ON_ATOMIC.test( url.toString() ) ) &&
-			url.searchParams.get( 'test_connections' ) === '1'
+			( CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) &&
+				url.searchParams.get( 'test_connections' ) === '1' ) ||
+			CONNECTION_TESTS_ON_ATOMIC.test( url.toString() )
 		);
 	}
 
