@@ -8,8 +8,5 @@ export const hasReadersAsLandingPage = ( state: AppState ): boolean => {
 		state,
 		READER_AS_LANDING_PAGE_PREFERENCE
 	);
-	if ( useReaderAsLandingPage ) {
-		return useReaderAsLandingPage;
-	}
-	return false;
+	return !! useReaderAsLandingPage;
 };
