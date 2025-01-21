@@ -1,6 +1,7 @@
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import Markdown from 'react-markdown';
 import { ODIE_FORWARD_TO_FORUMS_MESSAGE, ODIE_FORWARD_TO_ZENDESK_MESSAGE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
@@ -104,7 +105,11 @@ export const UserMessage = ( {
 				</Markdown>
 			</div>
 			{ ! isMessageWithoutEscalationOption && isBot && (
-				<div className="chat-feedback-wrapper">
+				<div
+					className={ clsx( 'chat-feedback-wrapper', {
+						'chat-feedback-wrapper-no-extra-contact': ! showExtraContactOptions,
+					} ) }
+				>
 					<Sources message={ message } />
 					{ showExtraContactOptions && renderExtraContactOptions() }
 					{ isMessageShowingDisclaimer && renderDisclaimers() }
