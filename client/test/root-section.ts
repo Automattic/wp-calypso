@@ -116,6 +116,7 @@ describe( 'Logged In Landing Page', () => {
 			preferences: {
 				localValues: {
 					'sites-landing-page': { useSitesAsLandingPage: true, updatedAt: 1111 },
+					'reader-landing-page': { useReaderAsLandingPage: false, updatedAt: 1111 },
 				},
 			},
 			ui: {},
@@ -149,6 +150,7 @@ describe( 'Logged In Landing Page', () => {
 			},
 			preferences: {
 				localValues: {
+					'sites-landing-page': { useSitesAsLandingPage: false, updatedAt: 1111 },
 					'reader-landing-page': { useReaderAsLandingPage: true, updatedAt: 1111 },
 				},
 			},
