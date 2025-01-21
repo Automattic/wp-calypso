@@ -110,7 +110,7 @@ export function DomainCodePair( {
 
 	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
 	const validation = useValidationMessage( domain, auth, hasDuplicates, {
-		is_hundred_year_domain: isHundredYearDomainsTransferFlow,
+		vendor: isHundredYearDomainsTransferFlow ? '100-year-domains' : null,
 	} );
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';

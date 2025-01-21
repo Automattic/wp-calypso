@@ -5,7 +5,7 @@ import { useIsDomainCodeValid } from 'calypso/landing/stepper/hooks/use-is-domai
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
 export type DomainValidationOptions = {
-	is_hundred_year_domain?: boolean;
+	vendor?: string;
 };
 
 export function useValidationMessage(
