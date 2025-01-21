@@ -35,7 +35,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
             overflow: hidden;
         
             @media ( max-width: $break-small ) {
-                padding: $padding-standard 0;
+                padding: 0;
             }
         
             button {
@@ -162,7 +162,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
             }
         
             .subscriber-profile.subscriber-profile--compact {
-                @media ( max-width: $break-wide ) {
+                @media ( max-width: $break-small ) {
                     max-width: 195px;
                 }
         
