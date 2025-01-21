@@ -627,6 +627,12 @@ class Account extends Component {
 										firstDomain.siteSlug,
 										firstDomain.domain
 									) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
+											link_text: 'WHOIS email',
+											domain: firstDomain.domain,
+										} );
+									} }
 								/>
 							),
 						},
@@ -642,7 +648,17 @@ class Account extends Component {
 						},
 						components: {
 							br: <br />,
-							a: <a href={ domainManagementRoot() } />,
+							a: (
+								<a
+									href={ domainManagementRoot() }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
+											link_text: 'WHOIS email',
+											domain: null,
+										} );
+									} }
+								/>
+							),
 						},
 					}
 				);
@@ -674,6 +690,12 @@ class Account extends Component {
 										firstDomain.siteSlug,
 										firstDomain.domain
 									) }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
+											link_text: 'WHOIS email',
+											domain: firstDomain.domain,
+										} );
+									} }
 								/>
 							),
 						},
@@ -689,7 +711,17 @@ class Account extends Component {
 						},
 						components: {
 							br: <br />,
-							a: <a href={ domainManagementRoot() } />,
+							a: (
+								<a
+									href={ domainManagementRoot() }
+									onClick={ () => {
+										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
+											link_text: 'WHOIS email',
+											domain: null,
+										} );
+									} }
+								/>
+							),
 						},
 					}
 				);
