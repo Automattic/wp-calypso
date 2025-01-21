@@ -36,7 +36,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 			];
 		}
 		return [];
-	}, [ message?.context?.sources, trackEvent ] );
+	}, [ message?.context?.sources, message?.message_id, trackEvent ] );
 
 	const hasSources = message?.context?.sources && message.context?.sources.length > 0;
 	if ( ! hasSources ) {
@@ -61,6 +61,7 @@ export const Sources = ( { message }: { message: Message } ) => {
 				} )
 			}
 			screenReaderText="More"
+			iconSize={ 16 }
 		>
 			<div className="odie-chatbox-message-sources">
 				{ sources.length > 0 &&
