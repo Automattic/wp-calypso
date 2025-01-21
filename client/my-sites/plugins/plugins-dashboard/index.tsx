@@ -47,6 +47,7 @@ import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
 import SitesWithInstalledPluginsList from '../plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
+import { PluginComponentProps } from '../plugin-management-v2/types';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
@@ -115,8 +116,8 @@ const PluginsDashboard = ( {
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
 	const { data: dotComPlugins }: { data: Plugin[] | undefined } = useWPCOMPluginsList( 'all' );
 	const allPlugins = useSelector( ( state ) =>
-		getPlugins( state, siteIds, 'all' ).map( ( plugin: Plugin ) => {
-			let dotComPluginData: Plugin | undefined;
+		getPlugins( state, siteIds, 'all' ).map( ( plugin: PluginComponentProps ) => {
+			let dotComPluginData: PluginComponentProps | undefined;
 			if ( dotComPlugins ) {
 				dotComPluginData = dotComPlugins.find(
 					( dotComPlugin ) => dotComPlugin.slug === plugin.slug
