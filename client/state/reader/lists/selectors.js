@@ -125,6 +125,17 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
 }
 
 /**
+ * Check if the requested list has been requested
+ * @param  {Object}  state  Global state tree
+ * @param  {string}  owner  List owner
+ * @param  {string}  slug  List slug
+ * @returns {boolean} Does the list request exist?
+ */
+export function hasRequestedListByOwnerAndSlug( state, owner, slug ) {
+	return state.reader?.lists?.listRequests?.hasOwnProperty( `${ owner }:${ slug }` );
+}
+
+/**
  * Check if the requested list is missing (i.e. API 404ed when requesting it)
  * @param  {Object}  state  Global state tree
  * @param  {string}  owner  List owner
@@ -132,5 +143,9 @@ export function isSubscribedByOwnerAndSlug( state, owner, slug ) {
  * @returns {boolean} Is the list missing?
  */
 export function isMissingByOwnerAndSlug( state, owner, slug ) {
-	return ! state.reader?.lists?.isRequestingLists && ! getListByOwnerAndSlug( state, owner, slug );
+	return (
+		! state.reader?.lists?.isRequestingLists &&
+		! state.reader?.lists?.isRequestingList &&
+		! getListByOwnerAndSlug( state, owner, slug )
+	);
 }
