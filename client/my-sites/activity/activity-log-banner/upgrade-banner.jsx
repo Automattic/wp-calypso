@@ -23,7 +23,9 @@ class UpgradeBanner extends Component {
 				{ isJetpack && ! isAtomic ? (
 					<UpsellNudge
 						callToAction={ translate( 'Upgrade now' ) }
-						event="activity_log_upgrade_click_jetpack"
+						event="activity_log_upgrade_jetpack_upsell"
+						tracksClickName="activity_log_upgrade_jetpack_click"
+						tracksImpressionName="activity_log_upgrade_jetpack_impression"
 						feature={ WPCOM_FEATURES_FULL_ACTIVITY_LOG }
 						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
 						title={ translate( 'Unlock more activities now' ) }
@@ -44,7 +46,9 @@ class UpgradeBanner extends Component {
 					<UpsellNudge
 						forceDisplay
 						callToAction={ translate( 'Upgrade now' ) }
-						event="activity_log_upgrade_click_wpcom"
+						event="activity_log_upgrade_wpcom_upsell"
+						tracksClickName="activity_log_upgrade_wpcom_click"
+						tracksImpressionName="activity_log_upgrade_wpcom_impression"
 						feature={ FEATURE_JETPACK_ESSENTIAL }
 						plan={ PLAN_PERSONAL }
 						title={ translate( 'Unlock more activities now' ) }
