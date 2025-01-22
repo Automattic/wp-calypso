@@ -15,3 +15,7 @@ export const LaunchpadIntentFreeNewsletter = (): JSX.Element => {
 export const LaunchpadIntentPaidNewsletter = (): JSX.Element => {
 	return <LaunchpadIntentNewsletter checklistSlug="intent-paid-newsletter" />;
 };
+
+export const LaunchpadIntentNewsletterV2 = (): JSX.Element => {
+	return <LaunchpadIntentNewsletter checklistSlug="intent-newsletter-v2" />;
+};

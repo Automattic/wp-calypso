@@ -48,6 +48,7 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
+	LAUNCHPAD_INTENT_NEWSLETTER_V2,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import DomainUpsellFeature from 'calypso/my-sites/customer-home/cards/features/domain-upsell';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
@@ -58,6 +59,7 @@ import LaunchpadIntentBuild from 'calypso/my-sites/customer-home/cards/launchpad
 import LaunchpadIntentHosting from 'calypso/my-sites/customer-home/cards/launchpad/intent-hosting';
 import {
 	LaunchpadIntentFreeNewsletter,
+	LaunchpadIntentNewsletterV2,
 	LaunchpadIntentPaidNewsletter,
 } from 'calypso/my-sites/customer-home/cards/launchpad/intent-newsletter';
 import LaunchpadIntentWrite from 'calypso/my-sites/customer-home/cards/launchpad/intent-write';
@@ -150,6 +152,7 @@ const CARD_COMPONENTS: CardComponentMap = {
 	[ LAUNCHPAD_INTENT_WRITE ]: LaunchpadIntentWrite,
 	[ LAUNCHPAD_PRE_LAUNCH ]: LaunchpadPreLaunch,
 	[ LAUNCHPAD_LEGACY_SITE_SETUP ]: LaunchpadSiteSetup,
+	[ LAUNCHPAD_INTENT_NEWSLETTER_V2 ]: LaunchpadIntentNewsletterV2,
 	[ LAUNCHPAD_POST_MIGRATION ]: LaunchpadPostMigration,
 	[ NOTICE_READER_FIRST_POSTS ]: ReaderFirstPosts,
 	[ SECTION_BLOGGING_PROMPT ]: BloggingPrompt,
