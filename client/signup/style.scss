@@ -242,7 +242,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		color: var(--color-text-inverted);
 	}
 
-	a {
+	.signup:not(.is-wpcc):not(.is-crowdsignal) a {
 		color: var(--color-neutral-0);
 		text-decoration: underline;
 
@@ -393,7 +393,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
  * Common styles for reskinSignupFlow a/b test
  */
 body.is-section-stepper,
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
