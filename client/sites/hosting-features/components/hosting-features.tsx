@@ -45,12 +45,11 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const siteId = useSelector( getSelectedSiteId );
-	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
-		siteSlug: getSiteSlug( state, siteId ) || '',
-		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
-		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
-		isPlanExpired: !! getSelectedSite( state )?.plan?.expired,
-	} ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
+	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
+
 	// The ref is required to persist the value of redirect_to after renders
 	const redirectToRef = useRef( searchParams.get( 'redirect_to' ) );
 
