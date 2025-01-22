@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useMemo } from 'react';
 import { SiteSubscriptionsFilterBy, SiteSubscriptionsSortBy } from '../constants';
 
 type SiteSubscriptionsQueryPropsType = {
@@ -19,24 +19,33 @@ export const SiteSubscriptionsQueryProps = createContext< SiteSubscriptionsQuery
 	setFilterOption: () => undefined,
 } );
 
-export const SiteSubscriptionsQueryPropsProvider: React.FC< { children: React.ReactNode } > = ( {
+type SiteSubscriptionsQueryPropsProviderProps = {
+	// initializer for `searchTerm` state, either a value or a callback, a standard initializer arg for `useState`
+	initialSearchTermState?: string | ( () => string );
+	children: React.ReactNode;
+};
+
+export const SiteSubscriptionsQueryPropsProvider = ( {
+	initialSearchTermState = '',
 	children,
-} ) => {
-	const [ searchTerm, setSearchTerm ] = useState( '' );
+}: SiteSubscriptionsQueryPropsProviderProps ) => {
+	const [ searchTerm, setSearchTerm ] = useState( initialSearchTermState );
 	const [ sortTerm, setSortTerm ] = useState( SiteSubscriptionsSortBy.DateSubscribed );
 	const [ filterOption, setFilterOption ] = useState( SiteSubscriptionsFilterBy.All );
 
+	const value = useMemo(
+		() => ( {
+			searchTerm,
+			setSearchTerm,
+			sortTerm,
+			setSortTerm,
+			filterOption,
+			setFilterOption,
+		} ),
+		[ searchTerm, setSearchTerm, sortTerm, setSortTerm, filterOption, setFilterOption ]
+	);
 	return (
-		<SiteSubscriptionsQueryProps.Provider
-			value={ {
-				searchTerm,
-				setSearchTerm,
-				sortTerm,
-				setSortTerm,
-				filterOption,
-				setFilterOption,
-			} }
-		>
+		<SiteSubscriptionsQueryProps.Provider value={ value }>
 			{ children }
 		</SiteSubscriptionsQueryProps.Provider>
 	);

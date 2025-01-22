@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
-import { getOptionLabel, getUrlQuerySearchTerm } from 'calypso/landing/subscriptions/helpers';
+import { getOptionLabel } from 'calypso/landing/subscriptions/helpers';
 import { useSiteSubscriptionsFilterOptions } from 'calypso/landing/subscriptions/hooks/';
 import './styles/site-subscriptions-list-actions-bar.scss';
 
@@ -17,11 +17,9 @@ const getSortOptions = ( translate: ReturnType< typeof useTranslate > ) => [
 	{ value: SortBy.SiteName, label: translate( 'Site name' ) },
 ];
 
-const initialUrlQuerySearchTerm = getUrlQuerySearchTerm();
-
 const ListActionsBar = () => {
 	const translate = useTranslate();
-	const { setSearchTerm, sortTerm, setSortTerm, filterOption, setFilterOption } =
+	const { searchTerm, setSearchTerm, sortTerm, setSortTerm, filterOption, setFilterOption } =
 		SubscriptionManager.useSiteSubscriptionsQueryProps();
 
 	const filterOptions = useSiteSubscriptionsFilterOptions();
@@ -30,10 +28,11 @@ const ListActionsBar = () => {
 	return (
 		<div className="site-subscriptions-list-actions-bar">
 			<SearchInput
+				delaySearch
 				placeholder={ translate( 'Search by site name or address…' ) }
 				searchIcon={ <SearchIcon size={ 18 } /> }
 				onSearch={ setSearchTerm }
-				defaultValue={ initialUrlQuerySearchTerm }
+				defaultValue={ searchTerm }
 			/>
 
 			<SelectDropdown
