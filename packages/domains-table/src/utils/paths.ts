@@ -45,7 +45,9 @@ export function domainManagementLink(
 }
 
 export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`;
+	return config.isEnabled( 'calypso/all-domain-management' )
+		? `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`
+		: `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
