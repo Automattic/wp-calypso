@@ -1,12 +1,13 @@
 import { DateRangePickerShortcut } from 'calypso/components/date-range/shortcuts';
 
 interface DateControlProps {
-	onApplyButtonClick: ( startDate: Moment, endDate: Moment ) => void;
+	onApplyButtonClick: ( startDate: Moment, endDate: Moment, selectedShortcutId?: string ) => void;
 	onDateControlClick?: () => void;
 	dateRange: {
 		chartStart: string;
 		chartEnd: string;
 		daysInRange: number;
+		shortcutId?: string;
 	};
 	shortcutList: DateRangePickerShortcut[];
 	onShortcutClick: ( shortcut: DateRangePickerShortcut, closePopoverAndCommit: () => void ) => void;

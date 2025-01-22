@@ -562,6 +562,7 @@ body.is-mobile-app-view {
 			display: inline-block;
 			margin-right: 2px;
 			margin-left: -1px;
+			cursor: pointer;
 		}
 	}
 
@@ -807,8 +808,12 @@ body.is-mobile-app-view {
 		}
 
 		+ .masterbar__item-subitems {
-			.masterbar__item-howdy-account-details {
-				padding: 0 !important;
+			.masterbar__item-howdy-account-wrapper {
+				padding-inline-start: 0;
+
+				.masterbar__item-howdy-account-details {
+					padding: 0;
+				}
 			}
 
 			.masterbar__item-subitems-item {

@@ -17,17 +17,26 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 
 export const findShortcutForRange = (
 	supportedShortcutList: DateRangePickerShortcut[],
-	dateRange: { chartStart: string; chartEnd: string }
+	dateRange: { chartStart: string; chartEnd: string; shortcutId?: string }
 ) => {
-	if ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) {
+	if ( ( ! dateRange?.chartEnd || ! dateRange?.chartStart ) && ! dateRange?.shortcutId ) {
 		return null;
 	}
 	// Search the shortcut array for something matching the current date range.
 	// Returns shortcut or null;
 	const shortcut = supportedShortcutList.find( ( element ) => {
-		if ( element.endDate === dateRange.chartEnd && element.startDate === dateRange.chartStart ) {
+		if ( element.id === dateRange.shortcutId ) {
 			return element;
 		}
+
+		if (
+			! dateRange.shortcutId &&
+			element.endDate === dateRange.chartEnd &&
+			element.startDate === dateRange.chartStart
+		) {
+			return element;
+		}
+
 		return null;
 	} );
 
@@ -40,6 +49,7 @@ export const getShortcuts = createSelector(
 		dateRange: {
 			chartStart: string;
 			chartEnd: string;
+			shortcutId?: string;
 		},
 		translateFromProps
 	) => {
@@ -89,13 +99,13 @@ export const getShortcuts = createSelector(
 				period: DATERANGE_PERIOD.MONTH,
 			},
 			// Temporarily hide this shortcut before we resolve the issue of identifying shortcuts.
-			// {
-			// 	id: 'year_to_date',
-			// 	label: translate( 'Year to date' ),
-			// 	startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
-			// 	endDate: siteTodayStr,
-			// 	period: DATERANGE_PERIOD.MONTH,
-			// },
+			{
+				id: 'year_to_date',
+				label: translate( 'Year to date' ),
+				startDate: siteToday.clone().startOf( 'year' ).format( DATE_FORMAT ),
+				endDate: siteTodayStr,
+				period: DATERANGE_PERIOD.MONTH,
+			},
 			{
 				id: 'last_3_years',
 				label: translate( 'Last 3 years' ),
@@ -122,19 +132,26 @@ export const getShortcuts = createSelector(
 		dateRange: {
 			chartStart: string;
 			chartEnd: string;
+			shortcutId?: string;
 		}
 	) => {
 		const siteId = getSelectedSiteId( state );
 		const siteToday = getMomentSiteZone( state, siteId );
 
-		return [ siteId, siteToday.format( DATE_FORMAT ), dateRange?.chartStart, dateRange?.chartEnd ];
+		return [
+			siteId,
+			siteToday.format( DATE_FORMAT ),
+			dateRange?.chartStart,
+			dateRange?.chartEnd,
+			dateRange?.shortcutId,
+		];
 	}
 );
 
 export function useShortcuts( dateRange: {
 	chartStart: string;
 	chartEnd: string;
-	daysInRange: number;
+	shortcutId?: string;
 } ) {
 	const translate = useTranslate();
 	const shortcuts = useSelector( ( state ) => getShortcuts( state, dateRange, translate ) );

@@ -20,13 +20,13 @@ export class SocialConnectionsManager {
 	 */
 	get patterns() {
 		return {
-			CONNECTION_TESTS_ON_SIMPLE: new RegExp(
+			CONNECTION_TESTS: new RegExp(
 				// The request that deals with connection test results on Simple sites
-				`wpcom/v2/sites/${ this.siteId }/publicize/connections`
+				`wpcom/v2/(?<site_prefix>sites/${ this.siteId }/)?publicize/connections`
 			),
-			CONNECTION_TESTS_ON_ATOMIC: new RegExp(
-				// The request that deals with connection test results on Atomic sites
-				'wpcom/v2/publicize/connection-test-results'
+			CONNECTION_TESTS__LEGACY: new RegExp(
+				// The request that deals with legacy connection test results on Simple sites
+				`wpcom/v2/publicize/connection-test-results`
 			),
 			GET_POST: new RegExp(
 				// The request that gets the post data in the editor
@@ -61,18 +61,50 @@ export class SocialConnectionsManager {
 	 * Whether the URL is the one we want to intercept
 	 */
 	isTargetUrl( url: URL ) {
-		const { GET_POST, POST_AUTOSAVES, CONNECTION_TESTS_ON_SIMPLE, CONNECTION_TESTS_ON_ATOMIC } =
-			this.patterns;
+		return (
+			this.isWpGetPostUrl( url ) ||
+			this.isSimpleConnectionTestUrl( url ) ||
+			this.isAtomicConnectionTestUrl( url )
+		);
+	}
 
-		// We don't want to intercept autosave requests.
-		if ( GET_POST.test( url.pathname ) && ! POST_AUTOSAVES.test( url.pathname ) ) {
+	/**
+	 * Check if the URL is a WP get post URL
+	 */
+	isWpGetPostUrl( url: URL ) {
+		return (
+			this.patterns.GET_POST.test( url.pathname ) &&
+			// We don't want to intercept autosave requests.
+			! this.patterns.POST_AUTOSAVES.test( url.pathname )
+		);
+	}
+
+	/**
+	 * Check if the URL is a connection test URL for simple sites
+	 */
+	isSimpleConnectionTestUrl( url: URL ) {
+		return Boolean(
+			url.searchParams.get( 'test_connections' ) === '1' &&
+				this.patterns.CONNECTION_TESTS.exec( url.pathname )?.groups?.site_prefix
+		);
+	}
+
+	/**
+	 * Check if the URL is a connection test URL for atomic sites
+	 */
+	isAtomicConnectionTestUrl( url: URL ) {
+		// TODO - Remove the legacy connection test check
+		if ( this.patterns.CONNECTION_TESTS__LEGACY.test( url.pathname ) ) {
 			return true;
 		}
 
-		return (
-			( CONNECTION_TESTS_ON_SIMPLE.test( url.pathname ) &&
-				url.searchParams.get( 'test_connections' ) === '1' ) ||
-			CONNECTION_TESTS_ON_ATOMIC.test( url.toString() )
+		const match = this.patterns.CONNECTION_TESTS.exec( url.pathname );
+
+		return Boolean(
+			url.searchParams.get( 'test_connections' ) === '1' &&
+				match &&
+				// Atomic sites don't have a site prefix in the URL.
+				! match.groups?.site_prefix
 		);
 	}
 
@@ -86,16 +118,16 @@ export class SocialConnectionsManager {
 
 			const result = await response.json();
 
-			const url = route.request().url();
+			const url = new URL( route.request().url() );
 
-			if ( this.patterns.GET_POST.test( url ) ) {
+			if ( this.isWpGetPostUrl( url ) ) {
 				// For posts, add a test connection to post attributes.
 				result.body.jetpack_publicize_connections.push( ...this.testConnections );
-			} else if ( this.patterns.CONNECTION_TESTS_ON_SIMPLE.test( url ) ) {
-				// For connection tests, add test connections to the body.
+			} else if ( this.isSimpleConnectionTestUrl( url ) ) {
+				// For connection tests on Simple sites, add test connections to the body.
 				// Because the response is an object {"body":[],"status":200,"headers":{}}
 				result.body.push( ...this.testConnections );
-			} else if ( this.patterns.CONNECTION_TESTS_ON_ATOMIC.test( url ) ) {
+			} else if ( this.isAtomicConnectionTestUrl( url ) ) {
 				// For Atomic connection tests, add test connections directly to the result.
 				// because the response is already an array.
 				result.push( ...this.testConnections );
@@ -120,10 +152,9 @@ export class SocialConnectionsManager {
 	 */
 	async waitForConnectionTests() {
 		await this.page.waitForResponse( ( response ) => {
-			return (
-				this.patterns.CONNECTION_TESTS_ON_SIMPLE.test( response.url() ) ||
-				this.patterns.CONNECTION_TESTS_ON_ATOMIC.test( response.url() )
-			);
+			const url = new URL( response.url() );
+
+			return this.isSimpleConnectionTestUrl( url ) || this.isAtomicConnectionTestUrl( url );
 		} );
 	}
 }

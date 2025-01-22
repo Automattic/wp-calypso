@@ -15,6 +15,7 @@ type DateRange = {
 	chartStart: string;
 	chartEnd: string;
 	daysInRange: number;
+	shortcutId?: string;
 };
 interface StatsDateControlProps {
 	slug: string;
@@ -113,16 +114,28 @@ const StatsDateControl = ( {
 	};
 
 	// Shared link generation helper.
-	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
+	const generateNewLink = (
+		period: string,
+		startDate: string,
+		endDate: string,
+		shortcutId?: string
+	) => {
 		const queryParamsObject = qs.parse( queryParams );
 		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
+		delete queryParamsObject.shortcut;
 
-		const newRangeQuery = qs.stringify(
-			Object.assign( {}, queryParamsObject, { chartStart: startDate, chartEnd: endDate } ),
-			{
-				addQueryPrefix: true,
-			}
-		);
+		const dateRangeParams = Object.assign( {}, queryParamsObject, {
+			chartStart: startDate,
+			chartEnd: endDate,
+		} );
+
+		if ( shortcutId ) {
+			dateRangeParams.shortcut = shortcutId;
+		}
+
+		const newRangeQuery = qs.stringify( dateRangeParams, {
+			addQueryPrefix: true,
+		} );
 		const url = `/stats/${ period }/${ slug }`;
 		return `${ url }${ newRangeQuery }`;
 	};
@@ -145,7 +158,11 @@ const StatsDateControl = ( {
 	};
 
 	// Handler for Apply button.
-	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
+	const onApplyButtonHandler = (
+		startDate: string,
+		endDate: string,
+		selectedShortcutId?: string
+	) => {
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
 		let period = bestPeriodForDays( rangeInDays );
@@ -156,6 +173,7 @@ const StatsDateControl = ( {
 		const appliedShortcut = findShortcutForRange( shortcutList, {
 			chartStart: startDate,
 			chartEnd: endDate,
+			shortcutId: selectedShortcutId,
 		} );
 
 		if ( appliedShortcut && appliedShortcut.id ) {
@@ -171,7 +189,10 @@ const StatsDateControl = ( {
 		}
 
 		// Update chart via routing.
-		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
+		setTimeout(
+			() => page( generateNewLink( period, startDate, endDate, selectedShortcutId ) ),
+			250
+		);
 	};
 
 	// handler for shortcut clicks
@@ -190,15 +211,22 @@ const StatsDateControl = ( {
 				);
 		} else {
 			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
-			closePopoverAndCommit();
+			if ( shortcut.id !== 'custom_date_range' ) {
+				// Prevent the unclickable shortcut from being applied.
+				closePopoverAndCommit();
+			}
 		}
 	};
 
 	return (
 		<DateControl
 			dateRange={ dateRange }
-			onApplyButtonClick={ ( startDate: Moment, endDate: Moment ) =>
-				onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
+			onApplyButtonClick={ ( startDate: Moment, endDate: Moment, selectedShortcutId?: string ) =>
+				onApplyButtonHandler(
+					startDate.format( 'YYYY-MM-DD' ),
+					endDate.format( 'YYYY-MM-DD' ),
+					selectedShortcutId
+				)
 			}
 			onShortcutClick={ onShortcutClickHandler }
 			onDateControlClick={ () => {

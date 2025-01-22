@@ -14,6 +14,7 @@ import {
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 	A4A_SITES_CONNECT_URL_LINK,
+	A4A_PLUGINS_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
@@ -91,6 +92,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_MIGRATIONS_PAYMENT_SETTINGS ]: [ 'a4a_read_migrations' ],
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
 	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
+	[ A4A_PLUGINS_LINK ]: [ 'a4a_read_managed_sites' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -98,6 +100,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	team: [ 'a4a_read_users' ],
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
+	plugins: [ 'a4a_read_managed_sites' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -105,6 +108,7 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
+	plugins: /^\/plugins(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {

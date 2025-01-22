@@ -1,3 +1,8 @@
+## 7.2.0
+
+- Replace `number_format` with `Intl.NumberFormat`
+- Add and export `getBrowserSafeLocal` method
+
 ## 7.1.0
 
 - Add new `fixMe` method for conditionally loading a copy given a respective translation exists
