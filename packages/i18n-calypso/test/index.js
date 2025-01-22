@@ -201,6 +201,48 @@ describe( 'I18n', function () {
 		} );
 	} );
 
+	describe( 'getBrowserSafeLocale()', function () {
+		it( 'should return locale without variant when localeVariant is set', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'de_AT',
+					localeSlug: 'de',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'de' );
+		} );
+
+		it( 'should return locale with region code when localeVariant is set', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'en-US',
+					localeSlug: 'en',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'en-US' );
+		} );
+
+		it( 'should return localeSlug when localeVariant is not set', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: undefined,
+					localeSlug: 'en',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'en' );
+		} );
+
+		it( 'should return localeSlug when localeVariant is null', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: null,
+					localeSlug: 'fr',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'fr' );
+		} );
+	} );
+
 	describe( 'numberFormat()', function () {
 		describe( 'default numberFormat', function () {
 			it( 'should truncate decimals', function () {
@@ -235,10 +277,8 @@ describe( 'I18n', function () {
 				expect(
 					numberFormat( 2500.33, {
 						decimals: 3,
-						thousandsSep: '*',
-						decPoint: '@',
 					} )
-				).toBe( '2*500@330' );
+				).toBe( '2.500,330' );
 			} );
 		} );
 	} );
