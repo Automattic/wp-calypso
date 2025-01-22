@@ -38,7 +38,9 @@ export default function OverviewHeaderActions() {
 				/>
 			) }
 			{ isEnabled( 'a4a-updated-add-new-site' ) ? (
-				<AddNewSite />
+				<div>
+					<AddNewSite />
+				</div>
 			) : (
 				<AddNewSiteButton
 					showMainButtonLabel={ ! isNarrowView }
