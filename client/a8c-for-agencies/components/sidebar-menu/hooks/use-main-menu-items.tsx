@@ -10,6 +10,7 @@ import {
 	commentAuthorAvatar,
 	people,
 	starEmpty,
+	plugins,
 } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -28,6 +29,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_LINK,
 	A4A_MIGRATIONS_LINK,
 	A4A_SETTINGS_LINK,
+	A4A_PLUGINS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_TEAM_LINK,
@@ -106,18 +108,6 @@ const useMainMenuItems = ( path: string ) => {
 				},
 				withChevron: true,
 			},
-			/*
-			// Hide this section until we support plugin management in A4A
-			{
-				icon: plugins,
-				path: '/',
-				link: A4A_PLUGINS_LINK,
-				title: translate( 'Plugins' ),
-				trackEventProps: {
-					menu_item: 'Automattic for Agencies / Plugins',
-				},
-			},
-			*/
 			{
 				icon: tag,
 				path: A4A_MARKETPLACE_LINK,
@@ -140,6 +130,19 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
+			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
+				? [
+						{
+							icon: plugins,
+							path: '/',
+							link: A4A_PLUGINS_LINK,
+							title: translate( 'Plugins' ),
+							trackEventProps: {
+								menu_item: 'Automattic for Agencies / Plugins',
+							},
+						},
+				  ]
+				: [] ),
 			...( config.isEnabled( 'a4a-partner-directory' ) ||
 			config.isEnabled( 'a8c-for-agencies-agency-tier' )
 				? [
