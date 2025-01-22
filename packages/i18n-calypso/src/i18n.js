@@ -171,7 +171,7 @@ I18N.prototype.emit = function ( ...args ) {
  * @param   {string | number}  number to format (required)
  * @param   {number | Object}  options  Number of decimal places or options object (optional)
  * @param   {boolean}          forceLatin Whether to use latin numbers by default (optional. default = true)
- * @returns {string | number | null}  Formatted number as string, or original number if formatting fails. Null otherwise.
+ * @returns {string | number}  Formatted number as string, or original number if formatting fails. Null otherwise.
  */
 I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
@@ -183,7 +183,7 @@ I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true
 	 */
 	if ( typeof number === 'undefined' || number === null ) {
 		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
-		return null;
+		return number;
 	}
 
 	try {
