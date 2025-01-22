@@ -36,7 +36,7 @@ export function ContactPageDetails( {
 					"Please shorten your text to under %(characterLimit)s characters for optimal formatting. If it remains over this limit, we'll optimize it with AI when building your site.",
 					{
 						args: {
-							characterLimit: numberFormat( CHARACTER_LIMIT, {} ),
+							characterLimit: numberFormat( CHARACTER_LIMIT ),
 						},
 						comment: '%(characterLimit)s is a formatted number, eg: 5,000.',
 					}
