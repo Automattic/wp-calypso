@@ -174,7 +174,12 @@ const SubscriberDetails = ( {
 			</div>
 			{ onUnsubscribe && (
 				<div className="subscriber-details__footer">
-					<Button onClick={ () => onUnsubscribe( subscriber ) } variant="secondary" isDestructive>
+					<Button
+						className="subscriber-details__delete-button"
+						onClick={ () => onUnsubscribe( subscriber ) }
+						variant="secondary"
+						isDestructive
+					>
 						{ translate( 'Delete subscriber' ) }
 					</Button>
 				</div>
