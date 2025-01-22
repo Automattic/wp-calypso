@@ -20,25 +20,28 @@
 	}
 
 	.checklist-item__task {
+        padding: 2px;
+        border: 1px solid var(--studio-gray-5);
+        border-bottom: none;
+
+        &:hover,
+        &:focus {
+            border-bottom: none;
+        }
+
 		a, button {
 			padding: 20px 24px;
 			margin: 0;
-			border: 1px solid var(--studio-gray-5);
 			border-bottom: none;
+			border-radius: 0;
 
-			&:hover {
-				border-bottom: none;
-			}
-		}
-
-		&:first-child a,
-		&:first-child button {
-			border-radius: 4px 4px 0 0;
-		}
-
-		&:last-child a, &:last-child button {
-			border-radius: 0 0 4px 4px;
-			border-bottom: 1px solid var(--studio-gray-5);
+            &:hover,
+            &:focus {
+                border-bottom: none;
+				span {
+					color: var(--color-accent);
+				}
+            }
 		}
 
 		&.completed .gridicons-checkmark {
@@ -47,18 +50,33 @@
 
 		&.highlighted {
 			margin: 0 -12px;
+            border-bottom: 1px solid var(--studio-gray-5);
+			border-radius: 4px;
 
 			a,
 			button {
-				border-bottom: 1px solid var(--studio-gray-5);
 				margin: 0 0 -1px 0;
 				padding: 28px 24px;
+				border-radius: 2px;
 			}
+		}
+
+		&.highlighted + .checklist-item__task {
+			border-top: none;
 		}
 
 		.checklist-item__text {
 			font-weight: 400;
 			font-size: 1rem;
+		}
+
+		&:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+
+		&:last-child {
+			border-radius: 0 0 4px 4px;
+			border-bottom: 1px solid var(--studio-gray-5);
 		}
 	}
 }
