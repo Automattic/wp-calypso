@@ -45,7 +45,9 @@ export function domainManagementLink(
 }
 
 export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`;
+	return config.isEnabled( 'calypso/all-domain-management' )
+		? `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`
+		: `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
@@ -120,14 +122,16 @@ export function domainManagementEditContactInfo(
 	relativeTo: string | null = null,
 	context?: DomainsTableContext
 ) {
-	switch ( context ) {
-		case 'site':
-			return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
-		case 'domains':
-			return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
-		default:
-			return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
+	if ( config.isEnabled( 'calypso/all-domain-management' ) ) {
+		switch ( context ) {
+			case 'site':
+				return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
+			case 'domains':
+				return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
+		}
 	}
+
+	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
 export function domainMappingSetup(
@@ -204,14 +208,16 @@ export function domainManagementDNS(
 	domainName: string,
 	context?: DomainsTableContext
 ) {
-	switch ( context ) {
-		case 'site':
-			return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
-		case 'domains':
-			return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
-		default:
-			return domainManagementEditBase( siteName, domainName, 'dns' );
+	if ( config.isEnabled( 'calypso/all-domain-management' ) ) {
+		switch ( context ) {
+			case 'site':
+				return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+			case 'domains':
+				return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		}
 	}
+
+	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
 export function emailManagementEdit(

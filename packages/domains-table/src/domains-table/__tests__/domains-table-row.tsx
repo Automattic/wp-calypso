@@ -448,7 +448,7 @@ describe( 'site linking ctas', () => {
 			expect( createLink ).toBeInTheDocument();
 			expect( createLink ).toHaveAttribute(
 				'href',
-				'/domains/manage/all/overview/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
+				'/domains/manage/all/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
 			);
 		} );
 
@@ -463,7 +463,7 @@ describe( 'site linking ctas', () => {
 			// The link itself is wrapped with a span element.
 			expect( connectAction.closest( '[role=menuitem]' ) ).toHaveAttribute(
 				'href',
-				'/domains/manage/all/overview/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
+				'/domains/manage/all/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
 			);
 		} );
 	} );
