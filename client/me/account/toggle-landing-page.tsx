@@ -1,6 +1,6 @@
 import { RadioControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -12,48 +12,37 @@ import { SITES_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/
 function ToggleLandingPageSettings() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { useSitesAsLandingPage, useReaderAsLandingPage } = useSelector( ( state ) => ( {
-		useSitesAsLandingPage: getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage,
-		useReaderAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
+	const { sitesAsLandingPage, readerAsLandingPage } = useSelector( ( state ) => ( {
+		sitesAsLandingPage: getPreference( state, 'sites-landing-page' )?.useSitesAsLandingPage,
+		readerAsLandingPage: getPreference( state, 'reader-landing-page' )?.useReaderAsLandingPage,
 	} ) );
 
-	const isSaving = useSelector( isSavingPreference );
+	let preference = 'default';
+	if ( sitesAsLandingPage ) {
+		preference = 'my-sites';
+	} else if ( readerAsLandingPage ) {
+		preference = 'reader';
+	}
 
 	// Local state to handle selected option
-	const [ selectedOption, setSelectedOption ] = useState( 'default' );
-
-	useEffect( () => {
-		if ( useSitesAsLandingPage ) {
-			setSelectedOption( 'my-sites' );
-		} else if ( useReaderAsLandingPage ) {
-			setSelectedOption( 'reader' );
-		}
-	}, [ useSitesAsLandingPage, useReaderAsLandingPage ] );
+	const [ selectedOption, setSelectedOption ] = useState( preference );
+	const isSaving = useSelector( isSavingPreference );
 
 	async function handlePreferenceChange( selectedOption: string ) {
+		setSelectedOption( selectedOption );
 		try {
-			setSelectedOption( selectedOption );
-
-			const useSitesAsLandingPagePreference = {
-				useSitesAsLandingPage: false,
-				updatedAt: Date.now(),
-			};
-			const useReaderAsLandingPagePreference = {
-				useReaderAsLandingPage: false,
-				updatedAt: Date.now(),
-			};
-
-			if ( selectedOption === 'my-sites' ) {
-				useSitesAsLandingPagePreference.useSitesAsLandingPage = true;
-			} else if ( selectedOption === 'reader' ) {
-				useReaderAsLandingPagePreference.useReaderAsLandingPage = true;
-			}
-
+			const updatedAt = Date.now();
 			await dispatch(
-				savePreference( SITES_AS_LANDING_PAGE_PREFERENCE, useSitesAsLandingPagePreference )
+				savePreference( SITES_AS_LANDING_PAGE_PREFERENCE, {
+					useSitesAsLandingPage: 'my-sites' === selectedOption,
+					updatedAt,
+				} )
 			);
 			await dispatch(
-				savePreference( READER_AS_LANDING_PAGE_PREFERENCE, useReaderAsLandingPagePreference )
+				savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
+					useReaderAsLandingPage: 'reader' === selectedOption,
+					updatedAt,
+				} )
 			);
 
 			dispatch(
