@@ -144,22 +144,43 @@ const DomainOverviewPane = ( {
 		} );
 	}, [ selectedFeature, selectedDomainPreview, inSiteContext, selectedDomain, siteSlug ] );
 
+	const navigationItems = useMemo( () => {
+		if ( ! inSiteContext ) {
+			return [];
+		}
+
+		const items = [
+			{
+				label: site.name || selectedDomain,
+				href: `/overview/${ siteSlug }`,
+				icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
+			},
+			{
+				label: selectedDomain,
+			},
+		];
+
+		if ( selectedFeature === EMAIL_MANAGEMENT ) {
+			items[ 1 ].href = paths.domainManagementAllOverview(
+				siteSlug,
+				selectedDomain,
+				undefined,
+				inSiteContext
+			);
+
+			items.push( {
+				label: translate( 'Email' ),
+			} );
+		}
+
+		return items;
+	}, [ inSiteContext, site, selectedDomain, siteSlug, selectedFeature, translate ] );
+
 	return (
 		<>
 			{ inSiteContext && (
 				<div className="domain-overview__breadcrumb">
-					<NavigationHeader
-						navigationItems={ [
-							{
-								label: site.name || selectedDomain,
-								href: `/overview/${ siteSlug }`,
-								icon: <SiteIcon site={ site } viewType="breadcrumb" disableClick />,
-							},
-							{
-								label: selectedDomain,
-							},
-						] }
-					/>
+					<NavigationHeader navigationItems={ navigationItems } />
 				</div>
 			) }
 

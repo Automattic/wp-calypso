@@ -2,7 +2,7 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { domainManagementOverviewRoot } from 'calypso/my-sites/domains/paths';
+import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
 import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSelector } from 'calypso/state';
@@ -23,7 +23,12 @@ const AddMailboxHeader: CustomHeaderComponentType = ( {
 		const baseNavigationItems = [
 			{
 				label: selectedDomainName,
-				href: `${ domainManagementOverviewRoot() }/${ selectedDomainName }/${ selectedSiteSlug }`,
+				href: domainManagementAllOverview(
+					selectedSiteSlug,
+					selectedDomainName,
+					currentRoute,
+					inSiteContext
+				),
 				className: 'navigation-header__domain-name',
 			},
 			{
