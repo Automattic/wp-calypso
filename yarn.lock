@@ -561,14 +561,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:0.3.0":
-  version: 0.3.0
-  resolution: "@automattic/charts@npm:0.3.0"
+"@automattic/charts@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@automattic/charts@npm:0.4.0"
   dependencies:
     "@babel/runtime": "npm:7.26.0"
     "@react-spring/web": "npm:9.7.3"
     "@visx/axis": "npm:^3.12.0"
     "@visx/event": "npm:^3.8.0"
+    "@visx/gradient": "npm:3.12.0"
     "@visx/grid": "npm:^3.12.0"
     "@visx/group": "npm:^3.12.0"
     "@visx/legend": "npm:^3.12.0"
@@ -583,7 +584,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
-  checksum: f4465fa990f29b2902332da57a542e5e71eee28f58069071ab3d37628279a2ca25c1504a64ee0da59fa3f74e8dfe7c2fb75992274f8313e25de93c3496b73605
+  checksum: 6d20245a54853f68be0bc53b1d8c6ca07c601b2c5160d548124b886ce0f2e55308cf71402935cef695e91963df22dd1072a53f89b4f9836bee539a6751a62f9a
   languageName: node
   linkType: hard
 
@@ -9637,6 +9638,18 @@ __metadata:
   peerDependencies:
     react: ^16.3.0-0 || ^17.0.0-0 || ^18.0.0-0
   checksum: 0595a1314e3daa9132c2d83f9f62d0a9624a675cee54500e72947a9bd4c3422f8c93107e8607853799535719f08f7f8f81cd2fd872c8af462aa28a2d9005031f
+  languageName: node
+  linkType: hard
+
+"@visx/gradient@npm:3.12.0":
+  version: 3.12.0
+  resolution: "@visx/gradient@npm:3.12.0"
+  dependencies:
+    "@types/react": "npm:*"
+    prop-types: "npm:^15.5.7"
+  peerDependencies:
+    react: ^16.0.0-0 || ^17.0.0-0 || ^18.0.0-0
+  checksum: 449e35bbb7b040cc4bbab44bd80f66f4e030801b01b833dd882f64b07900c3a1179e9b82a18d746d5d5aa765def42456af09338cfaf4f7a2fc0ff91cd7066d8d
   languageName: node
   linkType: hard
 
@@ -35302,7 +35315,7 @@ __metadata:
     "@automattic/calypso-razorpay": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:0.3.0"
+    "@automattic/charts": "npm:^0.4.0"
     "@automattic/color-studio": "npm:^3.0.1"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
