@@ -38,7 +38,7 @@
 		"automated-migration/application-password": true,
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": true,
-		"calypso/all-domain-management": false,
+		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"cancellation-offers": true,
 		"checkout/ebanx-pix": true,
