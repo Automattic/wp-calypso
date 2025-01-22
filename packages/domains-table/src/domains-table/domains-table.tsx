@@ -72,6 +72,7 @@ interface BaseDomainsTableProps {
 	selectedDomainName?: string;
 	selectedFeature?: string;
 	isHostingOverview?: boolean;
+	hasConnectableSites?: boolean;
 	context?: DomainsTableContext;
 }
 
@@ -132,6 +133,7 @@ type Value = {
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
 	isHostingOverview?: boolean;
+	hasConnectableSites: boolean;
 	context?: DomainsTableContext;
 };
 
@@ -158,6 +160,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		selectedDomainName,
 		selectedFeature,
 		isHostingOverview = false,
+		hasConnectableSites = false,
 		context,
 	} = props;
 
@@ -462,6 +465,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		currentlySelectedDomainName: selectedDomainName,
 		selectedFeature,
 		isHostingOverview,
+		hasConnectableSites,
 		context,
 	};
 

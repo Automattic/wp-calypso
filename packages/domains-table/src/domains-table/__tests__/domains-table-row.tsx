@@ -365,7 +365,7 @@ describe( 'site linking ctas', () => {
 		global.ResizeObserver = require( 'resize-observer-polyfill' );
 	} );
 
-	test( 'when a site is not associated with a domain, display the site linking ctas', async () => {
+	test( 'when a site is not associated with a domain and the user has no connectable sites, display the site linking ctas targeting site creation', async () => {
 		const [ primaryPartial, primaryFull ] = testDomain( {
 			domain: 'primary-domain.blog',
 			blog_id: 123,
@@ -391,7 +391,7 @@ describe( 'site linking ctas', () => {
 		} );
 
 		await waitFor( () => {
-			const createLink = screen.queryByText( 'Add site' );
+			const createLink = screen.getByRole( 'link', { name: 'Add site' } );
 
 			expect( createLink ).toBeInTheDocument();
 			expect( createLink ).toHaveAttribute(
@@ -406,12 +406,64 @@ describe( 'site linking ctas', () => {
 		fireEvent.click( domainActionsButton );
 
 		await waitFor( () => {
-			const connectAction = screen.getByText( 'Attach to an existing site' );
+			const connectAction = screen.getByTestId( 'add-site-menu-link' );
 
 			// The link itself is wrapped with a span element.
 			expect( connectAction.closest( '[role=menuitem]' ) ).toHaveAttribute(
 				'href',
-				'/domains/manage/all/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
+				'/start/site-selected/?siteSlug=primarydomainblog.wordpress.com&siteId=123'
+			);
+		} );
+	} );
+
+	test( 'when a site is not associated with a domain and the user has connectable sites, display the site linking ctas targeting site transfer', async () => {
+		const [ primaryPartial, primaryFull ] = testDomain( {
+			domain: 'primary-domain.blog',
+			blog_id: 123,
+			primary_domain: true,
+			current_user_can_create_site_from_domain_only: true,
+		} );
+
+		const fetchSiteDomains = jest.fn().mockResolvedValue( {
+			domains: [ primaryFull ],
+		} );
+
+		const fetchSite = jest.fn().mockResolvedValue( {
+			ID: 123,
+			URL: 'https://primarydomainblog.wordpress.com',
+			options: { is_redirect: false },
+		} );
+
+		render( <DomainsTableRow domain={ primaryPartial } />, {
+			domains: [ primaryPartial ],
+			fetchSite,
+			fetchSiteDomains,
+			isAllSitesView: true,
+			hasConnectableSites: true,
+		} );
+
+		await waitFor( () => {
+			const createLink = screen.getByRole( 'link', { name: 'Add site' } );
+
+			expect( createLink ).toBeInTheDocument();
+			expect( createLink ).toHaveAttribute(
+				'href',
+				'/domains/manage/all/overview/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
+			);
+		} );
+
+		const domainActionsButton = screen.getByLabelText( 'Domain actions' );
+
+		expect( domainActionsButton ).toBeInTheDocument();
+		fireEvent.click( domainActionsButton );
+
+		await waitFor( () => {
+			const connectAction = screen.getByTestId( 'add-site-menu-link' );
+
+			// The link itself is wrapped with a span element.
+			expect( connectAction.closest( '[role=menuitem]' ) ).toHaveAttribute(
+				'href',
+				'/domains/manage/all/overview/primary-domain.blog/transfer/other-site/primarydomainblog.wordpress.com'
 			);
 		} );
 	} );
