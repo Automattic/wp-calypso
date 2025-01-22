@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page, { Context } from '@automattic/calypso-router';
+import { loadScript } from '@automattic/load-script';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
@@ -51,6 +52,19 @@ export async function lazyLoadDependencies(): Promise< void > {
 
 export default async function (): Promise< void > {
 	await lazyLoadDependencies();
+
+	// TODO: Clean and harden this up
+	loadScript(
+		'https://app.crowdsignal.com/survey.js',
+		( error ) => {
+			if ( error ) {
+				// console.error( 'crowdsignal failed to load' );
+				return;
+			}
+			// console.log( 'crowdsignal loaded' );
+		},
+		{ id: 'crowdsignal' }
+	);
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(

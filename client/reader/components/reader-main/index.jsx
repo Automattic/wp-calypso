@@ -34,6 +34,21 @@ export default class ReaderMain extends Component {
 	componentDidMount() {
 		activeReaderMainRefCount++;
 		setIsReaderPage( true );
+
+		// TODO: Move this into a separate component/hook
+		// TODO: Handle if user has dismissed
+		// TODO: Clean up on unmount
+		const div = document.createElement( 'div' );
+		div.className = 'pd-embed';
+		div.dataset.settings = JSON.stringify( {
+			type: 'slider',
+			embed: 'poll',
+			delay: 100,
+			visit: 'multiple',
+			id: 14948860,
+		} );
+		document.body.appendChild( div );
+		window.polldaddy.display();
 	}
 
 	componentWillUnmount() {
