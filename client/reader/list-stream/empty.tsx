@@ -8,7 +8,7 @@ export default function ListEmptyContent(): JSX.Element {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryParams = new URLSearchParams( location.search );
-	const lastPageLink = encodeURIComponent( queryParams.get( 'last_page' ) ?? '' );
+	const lastPageLink = queryParams.get( 'last_page' ) ?? '';
 
 	function onClickActionBtn(): void {
 		if ( lastPageLink ) {
@@ -25,7 +25,7 @@ export default function ListEmptyContent(): JSX.Element {
 	}
 
 	function getActionBtnLink(): string {
-		return lastPageIsUserProfileLists() ? lastPageLink : '/read';
+		return lastPageIsUserProfileLists() ? encodeURIComponent( lastPageLink ) : '/read';
 	}
 
 	function getActionBtnText(): string {
