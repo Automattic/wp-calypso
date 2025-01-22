@@ -235,7 +235,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 							setView( {
 								type: newView.type,
 								fields: [],
-								layout: view.layout,
 								perPage: newView.perPage,
 								page: newView.page,
 								search: newView.search,
