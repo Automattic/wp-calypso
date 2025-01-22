@@ -178,7 +178,6 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"videomaker-trial": true,
-		"woop": false,
 		"woo/passwordless": true,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
