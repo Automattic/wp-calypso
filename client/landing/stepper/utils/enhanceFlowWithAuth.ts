@@ -1,8 +1,12 @@
 import { PRIVATE_STEPS } from '../declarative-flow/internals/steps';
-import type { Flow, StepperStep } from '../declarative-flow/internals/types';
+import type { FlowV1, StepperStep } from '../declarative-flow/internals/types';
 
-function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
+function useInjectUserStepIfNeededForV1( flow: FlowV1 ): readonly StepperStep[] {
 	const steps = flow.useSteps();
+	return injectUserStepInSteps( steps );
+}
+
+export function injectUserStepInSteps( steps: readonly StepperStep[] ) {
 	const firstAuthWalledStep = steps.findIndex( ( step ) => step.requiresLoggedInUser );
 
 	if ( firstAuthWalledStep === -1 ) {
@@ -16,9 +20,12 @@ function useInjectUserStepIfNeeded( flow: Flow ): StepperStep[] {
 	return [ ...steps, PRIVATE_STEPS.USER ];
 }
 
-export function enhanceFlowWithAuth( flow: Flow ): Flow {
+/**
+ * @deprecated should be removed once #97999 is merged and all flows are migrated to V2.
+ */
+export function enhanceFlowWithAuth( flow: FlowV1 ): FlowV1 {
 	return {
 		...flow,
-		useSteps: () => useInjectUserStepIfNeeded( flow ),
+		useSteps: () => useInjectUserStepIfNeededForV1( flow ) as StepperStep[],
 	};
 }

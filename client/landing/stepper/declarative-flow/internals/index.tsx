@@ -60,12 +60,18 @@ function flowStepComponent( flowStep: StepperStep | undefined ) {
  * 3. It's responsive to the dynamic changes in side the flow's hooks (useSteps and useStepsNavigation)
  * @param props
  * @param props.flow the flow you want to render
+ * @param props.steps the steps of the flow.
  * @returns A React router switch will all the routes
  */
-export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
+export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[] | null } > = ( {
+	flow,
+	steps,
+} ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-	const flowSteps = flow.useSteps();
+	const deprecatedFlowSteps = 'useSteps' in flow ? flow.useSteps() : null;
+	const flowSteps = steps ?? deprecatedFlowSteps ?? [];
+
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const firstStepSlug = useFirstStep( stepPaths );
 	const { navigate, params } = useFlowNavigation( flow );

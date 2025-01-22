@@ -25,7 +25,7 @@ export const useStepNavigationWithTracking = ( {
 	flow,
 	currentStepRoute,
 	navigate,
-}: Params< ReturnType< Flow[ 'useSteps' ] > > ) => {
+}: Params< StepperStep[] > ) => {
 	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
 	const { intent, goals } = useSelect( ( select ) => {
 		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
