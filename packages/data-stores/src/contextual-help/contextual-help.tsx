@@ -1,5 +1,8 @@
 import { __ } from '@wordpress/i18n';
+import debugFactory from 'debug';
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
+
+const debug = debugFactory( 'calypso:data-stores:contextual-help' );
 
 export type LinksForSection = {
 	readonly link: string;
@@ -611,8 +614,7 @@ export function getContextResults( section: string, siteIntent: string ) {
 	}
 
 	if ( siteIntent ) {
-		// eslint-disable-next-line no-console
-		console.warn( 'Site intent is', siteIntent );
+		debug( `Site intent: ${ siteIntent }` );
 	}
 
 	// make sure editorially to show at most one tour and one video at once
