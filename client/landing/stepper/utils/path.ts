@@ -2,7 +2,6 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Plans } from '@automattic/data-stores';
 import languages from '@automattic/languages';
 import { addQueryArgs } from '@wordpress/url';
-import { useMatch } from 'react-router-dom';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 
 const plansPaths = Plans.plansSlugs;
@@ -39,11 +38,6 @@ const routeFragments = {
 };
 
 export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
-
-export function useLangRouteParam() {
-	const match = useMatch( path );
-	return match?.params.lang;
-}
 
 export const getLoginUrl = ( {
 	variationName,
