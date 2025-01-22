@@ -1,6 +1,7 @@
 import { Guide } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import React from 'react';
 import guideStep1 from 'calypso/assets/images/sites/sites-guide-1.png';
 import guideStep2 from 'calypso/assets/images/sites/sites-guide-2.png';
@@ -28,7 +29,7 @@ const SitesGuide = () => {
 
 	return (
 		<Guide
-			className={ `sites-guide ${ isImageLoading ? 'is-loading' : '' }` }
+			className={ clsx( 'sites-guide', { 'is-loading': isImageLoading } ) }
 			contentLabel={ __( 'Hosting Panel' ) }
 			finishButtonText={ __( 'Got it' ) }
 			onFinish={ dismiss }
