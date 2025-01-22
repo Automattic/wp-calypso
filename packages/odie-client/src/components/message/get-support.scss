@@ -5,12 +5,12 @@
 		width: 100%;
 		padding-bottom: 16px;
 		flex-direction: column;
-		align-items: flex-start;
 		gap: 8px;
 
 		.odie__transfer-chat--button-container {
 			display: flex;
 			gap: 8px;
+			flex-direction: column;
 
 			.odie__transfer-chat--wait-time {
 				font-size: 0.75rem;
@@ -24,7 +24,7 @@
 			border: 1px solid var( --studio-gray-10 );
 			background: var( --studio-white );
 			display: flex;
-			height: 40px;
+			min-height: 40px;
 			padding: 8px 14px;
 			justify-content: center;
 			align-items: center;
