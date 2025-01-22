@@ -1,0 +1,92 @@
+
+.is-launchpad-first .customer-home-launchpad {
+	max-width: 536px;
+	margin: auto;
+	box-shadow: none;
+
+	.customer-home__launchpad-header{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		h2 {
+			margin-top: 24px;
+			font-size: 2rem;
+		}
+
+		span {
+			margin: 4px 0 24px 0;
+		}
+	}
+
+	.checklist-item__task {
+        padding: 2px;
+        border: 1px solid var(--studio-gray-5);
+        border-bottom: none;
+
+        &:hover,
+        &:focus {
+            border-bottom: none;
+        }
+
+		a, button {
+			padding: 20px 24px;
+			margin: 0;
+			border-bottom: none;
+			border-radius: 0;
+
+            &:hover,
+            &:focus {
+                border-bottom: none;
+				span {
+					color: var(--color-accent);
+				}
+            }
+		}
+
+		&.completed .gridicons-checkmark {
+			fill: var(--studio-green-50);
+		}
+
+		&.highlighted {
+			margin: 0 -12px;
+            border-bottom: 1px solid var(--studio-gray-5);
+			border-radius: 4px;
+
+			a,
+			button {
+				margin: 0 0 -1px 0;
+				padding: 28px 24px;
+				border-radius: 2px;
+			}
+		}
+
+		&.highlighted + .checklist-item__task {
+			border-top: none;
+		}
+
+		.checklist-item__text {
+			font-weight: 400;
+			font-size: 1rem;
+		}
+
+		&:first-child {
+            border-radius: 4px 4px 0 0;
+
+            a,
+            button {
+                border-radius: 2px 2px 0 0;
+            }
+        }
+
+		&:last-child {
+			border-radius: 0 0 4px 4px;
+            border-bottom: 1px solid var(--studio-gray-5);
+            
+            a,
+            button {
+                border-radius: 0 0 2px 2px;
+            }
+		}
+	}
+}
