@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -83,20 +84,32 @@ class PreviewToolbar extends Component {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		const { themeId, siteSlug, themeType } = this.props;
+		const { themeId, siteSlug, themeType, isAtomic } = this.props;
+		const baseEditorUrl = `https://${ siteSlug }/wp-admin/site-editor.php`;
+		const baseDashboardLink = `/theme/${ themeId }/${ siteSlug }`;
 
-		const isBundledTheme = themeType === BUNDLED_THEME;
-		const themePrefix = isBundledTheme ? 'premium' : 'pub';
+		const getParams = () => {
+			if ( isAtomic ) {
+				return {
+					wp_theme_preview: themeId,
+					wpcom_dashboard_link: `${ baseDashboardLink }?tab_filter=all`,
+					p: '/',
+				};
+			}
 
-		const params = new URLSearchParams( {
-			wp_theme_preview: `${ themePrefix }/${ themeId }`,
-			wpcom_dashboard_link: `/theme/${ themeId }/${ siteSlug }${
-				isBundledTheme ? '?tab_filter=recommended&tier_filter=woocommerce' : ''
-			}`,
-			p: '/',
-		} );
+			const isBundledTheme = themeType === BUNDLED_THEME;
+			const themePrefix = isBundledTheme ? 'premium' : 'pub';
+			const themeFilter = isBundledTheme ? '?tab_filter=recommended&tier_filter=woocommerce' : '';
 
-		window.location.href = `https://${ siteSlug }/wp-admin/site-editor.php?${ params.toString() }`;
+			return {
+				wp_theme_preview: `${ themePrefix }/${ themeId }`,
+				wpcom_dashboard_link: `${ baseDashboardLink }${ themeFilter }`,
+				p: '/',
+			};
+		};
+
+		const params = new URLSearchParams( getParams() );
+		window.location.href = `${ baseEditorUrl }?${ params.toString() }`;
 	};
 
 	render() {
@@ -230,6 +243,7 @@ export default connect(
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const siteSlug = getSiteSlug( state, siteId );
 		const themeType = getThemeType( state, ownProps.themeId );
+		const isAtomic = isSiteAtomic( state, siteId );
 
 		return {
 			canUserEditThemeOptions,
@@ -238,6 +252,7 @@ export default connect(
 			selectedSiteId,
 			siteSlug,
 			themeType,
+			isAtomic,
 		};
 	},
 	{ recordTracksEvent, launchSite }
