@@ -85,13 +85,13 @@ const ReaderTagSidebar = ( {
 				<div className="reader-tag-sidebar-stats">
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ numberFormat( tagStats?.data?.total_posts ?? null, { notation: 'compact' } ) }
+							{ numberFormat( tagStats?.data?.total_posts, { notation: 'compact' } ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Posts' ) }</span>
 					</div>
 					<div className="reader-tag-sidebar-stats__item">
 						<span className="reader-tag-sidebar-stats__count">
-							{ numberFormat( tagStats?.data?.total_sites ?? null, { notation: 'compact' } ) }
+							{ numberFormat( tagStats?.data?.total_sites, { notation: 'compact' } ) }
 						</span>
 						<span className="reader-tag-sidebar-stats__title">{ translate( 'Sites' ) }</span>
 					</div>
