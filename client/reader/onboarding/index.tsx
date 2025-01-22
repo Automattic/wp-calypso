@@ -16,12 +16,12 @@ import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import './style.scss';
 
 const ReaderOnboarding = ( {
 	onRender,
-	forceShow = false,
+	forceShow = true,
 }: {
 	onRender?: ( shown: boolean ) => void;
 	forceShow?: boolean;
@@ -85,6 +85,11 @@ const ReaderOnboarding = ( {
 		task?.actionDispatch?.();
 	};
 
+	const redirectToAccountProfile = () => {
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
+		window.location.href = '/me';
+	};
+
 	// Track if user viewed Reader Onboarding.
 	useEffect( () => {
 		if ( shouldShowOnboarding ) {
@@ -114,6 +119,36 @@ const ReaderOnboarding = ( {
 		);
 	}, [] );
 
+	// Check if the user has completed the account profile
+	const hasCompletedAccountProfile = useSelector( ( state ) => {
+		const userSettings = getUserSettings( state );
+		if ( ! userSettings?.has_gravatar ) {
+			return false;
+		}
+
+		if ( ! userSettings?.display_name ) {
+			return false;
+		}
+
+		if ( ! userSettings?.user_URL ) {
+			return false;
+		}
+
+		if ( ! userSettings?.description ) {
+			return false;
+		}
+
+		if ( ! userSettings?.first_name ) {
+			return false;
+		}
+
+		if ( ! userSettings?.last_name ) {
+			return false;
+		}
+
+		return true;
+	} );
+
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
 
@@ -136,6 +171,13 @@ const ReaderOnboarding = ( {
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: openDiscoverModal,
 			completed: false,
+			disabled: ! taskOneCompleted,
+		},
+		{
+			id: 'account-profile',
+			title: translate( 'Add your avatar and fill out your profile' ),
+			actionDispatch: redirectToAccountProfile,
+			completed: hasCompletedAccountProfile,
 			disabled: ! taskOneCompleted,
 		},
 	];
