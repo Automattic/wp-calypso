@@ -9,6 +9,8 @@ const SubscribeVerificationNudge: React.FC = () => {
 
 	return (
 		<EmailVerificationBanner
+			dialogCloseLabel={ translate( 'I just verified my email' ) }
+			dialogCloseAction={ () => window.location.replace( reloadLink ) }
 			customDescription={ translate(
 				'Verifying your email helps you secure your WordPress.com account and enables key features such as subscribing to sites. If necessary, please {{link}}click here{{/link}} to reload when complete.',
 				{

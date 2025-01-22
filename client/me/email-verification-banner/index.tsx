@@ -8,9 +8,11 @@ import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-chang
 
 import './style.scss';
 
-const EmailVerificationBanner: React.FC< { customDescription?: string | React.ReactNode } > = ( {
-	customDescription,
-} ) => {
+const EmailVerificationBanner: React.FC< {
+	customDescription?: string | React.ReactNode;
+	dialogCloseLabel?: string | React.ReactNode;
+	dialogCloseAction?: () => void;
+} > = ( { customDescription, dialogCloseLabel, dialogCloseAction = () => {} } ) => {
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const translate = useTranslate();
@@ -22,7 +24,15 @@ const EmailVerificationBanner: React.FC< { customDescription?: string | React.Re
 
 	return (
 		<>
-			{ isDialogOpen && <EmailVerificationDialog onClose={ () => setIsDialogOpen( false ) } /> }
+			{ isDialogOpen && (
+				<EmailVerificationDialog
+					onClose={ () => setIsDialogOpen( false ) }
+					closeLabel={ dialogCloseLabel }
+					// We only want this triggered from the close button, but not from clicking
+					// outside to close the modal (so not adding to onClose prop).
+					closeButtonAction={ dialogCloseAction }
+				/>
+			) }
 			<Banner
 				className="email-verification-banner"
 				title={ translate( 'Please, verify your email address.' ) }
