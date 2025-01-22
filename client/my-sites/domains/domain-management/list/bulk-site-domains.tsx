@@ -17,7 +17,6 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
-import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { hasDomainCredit as hasDomainCreditSelector } from 'calypso/state/sites/plans/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -58,7 +57,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
-	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return filterOutWpcomDomains( data?.domains ?? [] ).length > 0;
@@ -181,7 +179,6 @@ export default function BulkSiteDomains( props: BulkSiteDomainsProps ) {
 					createBulkAction={ createBulkAction }
 					fetchBulkActionStatus={ fetchBulkActionStatus }
 					deleteBulkActionStatus={ deleteBulkActionStatus }
-					hasConnectableSites={ hasConnectableSites }
 				/>
 				{ changeSiteAddressSourceDomain && (
 					<SiteAddressChanger
