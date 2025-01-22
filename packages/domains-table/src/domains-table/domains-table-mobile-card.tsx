@@ -16,10 +16,9 @@ import { DomainsTableStatusCTA } from './domains-table-status-cta';
 
 type Props = {
 	domain: PartialDomainData;
-	hasConnectableSites: boolean;
 };
 
-export const DomainsTableMobileCard = ( { domain, hasConnectableSites }: Props ) => {
+export const DomainsTableMobileCard = ( { domain }: Props ) => {
 	const { __ } = useI18n();
 
 	const {
@@ -79,7 +78,6 @@ export const DomainsTableMobileCard = ( { domain, hasConnectableSites }: Props )
 							}
 							isSiteOnFreePlan={ site?.plan?.is_free ?? true }
 							isSimpleSite={ ! site?.is_wpcom_atomic }
-							hasConnectableSites={ hasConnectableSites }
 						/>
 					) }
 				</div>

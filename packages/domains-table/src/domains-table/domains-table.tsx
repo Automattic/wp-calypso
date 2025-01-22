@@ -133,7 +133,7 @@ type Value = {
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
 	isHostingOverview?: boolean;
-	hasConnectableSites?: boolean;
+	hasConnectableSites: boolean;
 	context?: DomainsTableContext;
 };
 

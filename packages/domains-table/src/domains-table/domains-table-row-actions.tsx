@@ -37,7 +37,6 @@ interface DomainsTableRowActionsProps {
 	isSiteOnFreePlan: boolean;
 	isSimpleSite: boolean;
 	isHostingOverview?: boolean;
-	hasConnectableSites: boolean;
 	context?: DomainsTableContext;
 }
 
@@ -49,7 +48,6 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isSimpleSite,
 	isHostingOverview,
-	hasConnectableSites,
 	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
@@ -57,6 +55,7 @@ export const DomainsTableRowActions = ( {
 		userCanSetPrimaryDomains = false,
 		updatingDomain,
 		domainStatusPurchaseActions,
+		hasConnectableSites,
 	} = useDomainsTable();
 	const { __ } = useI18n();
 
