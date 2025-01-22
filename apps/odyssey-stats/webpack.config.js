@@ -201,6 +201,12 @@ module.exports = {
 			/^calypso\/components\/data\/query-memberships$/,
 			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
 		),
+		new webpack.NormalModuleReplacementPlugin( /@visx\/[^/]+.*\/lib/, function ( resource ) {
+			resource.request = resource.request.replace( '/lib/', '/esm/' );
+			if ( resource.createData ) {
+				resource.createData.request = resource.request;
+			}
+		} ),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
