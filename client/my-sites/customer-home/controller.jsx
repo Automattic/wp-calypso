@@ -50,8 +50,6 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
 
 	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
@@ -81,6 +79,9 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	try {
+		const site = getSelectedSite( state );
+		const isSiteLaunched = site?.launch_status === 'launched' || false;
+
 		const {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
