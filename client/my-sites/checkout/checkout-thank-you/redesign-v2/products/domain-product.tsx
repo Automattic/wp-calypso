@@ -2,12 +2,14 @@ import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products'
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import {
 	createSiteFromDomainOnly,
 	domainManagementEdit,
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
 type DomainTransferSectionProps = {
@@ -52,6 +54,7 @@ export default function ThankYouDomainProduct( {
 	isGravatarDomain,
 }: ThankYouDomainProductProps ) {
 	const translate = useTranslate();
+	const currentRoute = useSelector( getCurrentRoute );
 
 	domainName ??= purchase?.meta;
 
@@ -74,7 +77,7 @@ export default function ThankYouDomainProduct( {
 		const createSiteHref = siteSlug && createSiteFromDomainOnly( siteSlug, purchase.blogId );
 		const createSiteProps = createSiteHref ? { href: createSiteHref } : { disabled: true };
 
-		const manageDomainHref = siteSlug && domainManagementEdit( siteSlug, domainName );
+		const manageDomainHref = siteSlug && domainManagementEdit( siteSlug, domainName, currentRoute );
 		const manageDomainProps = manageDomainHref ? { href: manageDomainHref } : { disabled: true };
 
 		actions = (
