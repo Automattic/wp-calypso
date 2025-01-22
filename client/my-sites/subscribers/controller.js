@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { sanitizeInt } from './helpers';
@@ -26,6 +27,24 @@ const queryStringChanged = ( key ) => ( value ) => {
 	return page.show( addQueryArgs( path, { [ key ]: value } ) );
 };
 
+const addSubscribersDataviewsClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	if ( isEnabled( 'subscribers-dataviews' ) ) {
+		document.body.classList.add( 'is-subscribers-dataviews' );
+	}
+};
+
+const removeSubscribersDataviewsClassName = () => {
+	if ( ! document ) {
+		return;
+	}
+
+	document.body.classList.remove( 'is-subscribers-dataviews' );
+};
+
 export function subscribers( context, next ) {
 	const { query } = context;
 	const filterOption = query[ FILTER_KEY ];
@@ -33,6 +52,8 @@ export function subscribers( context, next ) {
 	const searchTerm = query[ SEARCH_KEY ];
 	const sortTerm = query[ SORT_KEY ];
 	const timestamp = query[ TIME_KEY ];
+
+	addSubscribersDataviewsClassName();
 
 	context.primary = (
 		<SubscribersPage
@@ -50,6 +71,9 @@ export function subscribers( context, next ) {
 	);
 
 	next();
+
+	// Clean up when navigating away
+	return () => removeSubscribersDataviewsClassName();
 }
 
 export function subscriberDetails( context, next ) {

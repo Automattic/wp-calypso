@@ -89,7 +89,7 @@ const ChatEllipsisMenu = () => {
 			<div className="clear-conversation__wrapper">
 				<button onClick={ clearChat }>
 					<Gridicon icon="comment" />
-					<div>{ __( 'Clear Conversation' ) }</div>
+					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
 				</button>
 			</div>
 		</EllipsisMenu>

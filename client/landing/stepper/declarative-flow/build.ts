@@ -102,7 +102,6 @@ const build: Flow = {
 			switch ( _currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: 'build',
 						siteId,
 						siteSlug,
 					} );
