@@ -1023,9 +1023,7 @@ class SignupForm extends Component {
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate>
-					{ this.props.disableEmailExplanation }
-				</FormSettingExplanation>
+				<FormSettingExplanation>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
 	}
