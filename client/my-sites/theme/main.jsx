@@ -678,28 +678,28 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 		} = this.props;
 
-		const isGlobalStylesEnabled = this.props.isGlobalStylesOnPersonal;
+		const isGlobalStylesOnPersonal = this.props.isGlobalStylesOnPersonal;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
 		const hasLimitedFeatures =
 			! isExternallyManagedTheme &&
 			! isBundledSoftwareSet &&
 			! isThemePurchased &&
-			! isGlobalStylesEnabled &&
+			! isGlobalStylesOnPersonal &&
 			! isPremium &&
 			shouldLimitGlobalStyles;
 
 		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
 
-		const needsUpgrade = isGlobalStylesEnabled
-			? isFreePlan
+		const needsUpgrade = isGlobalStylesOnPersonal
+			? isFreePlan || shouldLimitGlobalStyles
 			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
 		return (
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitDefaultVariation={ shouldSplitDefaultVariation }
+					splitDefaultVariation={ shouldSplitDefaultVariation || needsUpgrade }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }

@@ -2,6 +2,7 @@ import { ExperimentAssignment } from '@automattic/explat-client';
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -35,7 +36,10 @@ if ( typeof window !== 'undefined' ) {
 		.catch( () => {} );
 }
 
-function shouldRunGlobalStylesOnPersonalExperiment( siteId: number | null ): boolean {
+function shouldRunGlobalStylesOnPersonalExperiment(
+	siteId: number | null,
+	userLoggedIn: boolean
+): boolean {
 	// Do not run it on SSR contexts.
 	if ( typeof window === 'undefined' ) {
 		return false;
@@ -47,7 +51,7 @@ function shouldRunGlobalStylesOnPersonalExperiment( siteId: number | null ): boo
 	}
 
 	// Do not run it on the logged-out theme showcase.
-	if ( window.location.pathname.startsWith( '/theme' ) ) {
+	if ( ! userLoggedIn && window.location.pathname.startsWith( '/theme' ) ) {
 		return false;
 	}
 
@@ -58,8 +62,11 @@ function shouldRunGlobalStylesOnPersonalExperiment( siteId: number | null ): boo
 	return true;
 }
 
-const getGlobalStylesInfoForSite = ( siteId: number | null ): Promise< GlobalStylesStatus > => {
-	if ( ! shouldRunGlobalStylesOnPersonalExperiment( siteId ) ) {
+const getGlobalStylesInfoForSite = (
+	siteId: number | null,
+	userLoggedIn: boolean = false
+): Promise< GlobalStylesStatus > => {
+	if ( ! shouldRunGlobalStylesOnPersonalExperiment( siteId, userLoggedIn ) ) {
 		return Promise.resolve( {
 			shouldLimitGlobalStyles: true,
 			globalStylesInUse: false,
@@ -94,6 +101,7 @@ export function useSiteGlobalStylesStatus(
 	siteIdOrSlug: number | string | null = null
 ): GlobalStylesStatus {
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const userLoggedIn = useSelector( isUserLoggedIn );
 
 	// When site id is null it means that the site hasn't been created yet.
 	const siteId = useSelector( ( state ) => {
@@ -108,7 +116,7 @@ export function useSiteGlobalStylesStatus(
 
 	const { data: globalStylesInfo } = useQuery( {
 		queryKey: [ 'globalStylesInfo', siteId ],
-		queryFn: () => getGlobalStylesInfoForSite( siteId ),
+		queryFn: () => getGlobalStylesInfoForSite( siteId, userLoggedIn ),
 		placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
 		refetchOnWindowFocus: false,
 	} );
