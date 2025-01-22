@@ -76,8 +76,8 @@ function ToggleLandingPageSettings() {
 				selected={ selectedOption }
 				options={ [
 					{ label: translate( 'My primary site' ), value: 'default' },
-					{ label: translate( 'All sites' ), value: 'my-sites' },
-					{ label: translate( 'The reader' ), value: 'reader' },
+					{ label: translate( 'All my sites' ), value: 'my-sites' },
+					{ label: translate( 'The Reader' ), value: 'reader' },
 				] }
 				onChange={ handlePreferenceChange }
 				disabled={ isSaving }
