@@ -65,6 +65,43 @@ const SubscriberDataViews = ( {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
+
+	const {
+		grandTotal,
+		page,
+		pageChangeCallback,
+		searchTerm,
+		isLoading,
+		subscribers,
+		pages,
+		isOwnerSubscribed,
+		perPage,
+		setPerPage,
+		handleSearch,
+		sortTerm,
+		sortOrder,
+		filterOption,
+		setSortTerm,
+		setSortOrder,
+		setFilterOption,
+	} = useSubscribersPage();
+
+	const [ currentView, setCurrentView ] = useState< View >( {
+		type: 'table',
+		layout: {},
+		page,
+		perPage,
+		titleField: 'name',
+		mediaField: 'media',
+		sort: {
+			field: sortTerm,
+			direction: 'desc',
+		},
+	} );
+
 	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
 		isSimple: isSimpleSite( state ),
 		isAtomic: isAtomicSite( state, siteId ),
@@ -146,6 +183,18 @@ const SubscriberDataViews = ( {
 		[ subscribers ]
 	);
 
+	const getSubscriberId = useCallback(
+		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
+		[]
+	);
+
+	const handleSubscriberOnClick = useCallback(
+		( subscriber: Subscriber ) => {
+			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
+		},
+		[ getSubscriberId, handleSubscriberSelect ]
+	);
+
 	const fields = useMemo(
 		() => [
 			{
@@ -167,26 +216,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'Name' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
-					<button
-						type="button"
-						onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
-					>
-						{ selectedSubscriber ? (
-							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-						) : (
-							<div className="subscriber-data-views__list-item">
-								<div className="subscriber-data-views__list-item-avatar">
-									<Gravatar
-										user={ { avatar_URL: item.avatar, name: item.display_name } }
-										size={ 52 }
-										imgSize={ 80 }
-										className="subscriber-data-views__square-avatar"
-									/>
-								</div>
-								<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-							</div>
-						) }
-					</button>
+					<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -216,7 +246,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ handleSubscriberSelect, selectedSubscriber ]
+		[ translate ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -349,7 +379,7 @@ const SubscriberDataViews = ( {
 			return {
 				...baseView,
 				type: 'table',
-				fields: [ 'name', ...( ! isMobile ? [ 'plan', 'date_subscribed' ] : [] ) ],
+				fields: [ ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
 				layout: {
 					styles: {
 						media: { width: '60px' },
@@ -379,6 +409,7 @@ const SubscriberDataViews = ( {
 						data={ data }
 						fields={ fields }
 						view={ currentView }
+						onClickItem={ handleSubscriberOnClick }
 						onChangeView={ setCurrentView }
 						selection={
 							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
