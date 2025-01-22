@@ -130,7 +130,7 @@ const useMainMenuItems = ( path: string ) => {
 			},
 			...referralItems,
 			migrationMenuItem,
-			...( isSectionNameEnabled( 'a8c-for-agencies-plugins-management' )
+			...( isSectionNameEnabled( 'a8c-for-agencies-plugins' )
 				? [
 						{
 							icon: plugins,
