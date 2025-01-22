@@ -406,7 +406,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 		'remove_duplicate_views_experiment_assignment'
 	);
 
-	if ( ! isE2ETest() && 'treatment' !== overrideAssignment ) {
+	if ( 'control' === overrideAssignment ) {
 		next();
 		return;
 	}
