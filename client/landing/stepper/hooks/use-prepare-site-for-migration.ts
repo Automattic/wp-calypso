@@ -92,7 +92,7 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 		fetchStatus: migrationKeyFetchStatus,
 	} = useSiteMigrationKey( siteId, {
 		enabled: Boolean( siteTransferState.completed ),
-		retry: false,
+		retry: true,
 	} );
 
 	const completed = siteTransferState.completed;
