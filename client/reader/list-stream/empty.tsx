@@ -11,10 +11,6 @@ export default function ListEmptyContent(): JSX.Element {
 	const lastPageLink = queryParams.get( 'last_page' ) ?? '';
 
 	function onClickActionBtn(): void {
-		if ( lastPageLink ) {
-			return;
-		}
-
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
 		dispatch( recordReaderTracksEvent( 'calypso_reader_following_on_empty_list_stream_clicked' ) );
