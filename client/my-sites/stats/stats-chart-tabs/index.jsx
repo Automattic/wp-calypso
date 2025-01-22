@@ -141,8 +141,6 @@ class StatModuleChartTabs extends Component {
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<LineChart
-					width={ 800 }
-					height={ 400 }
 					data={ [ newChartData ] }
 					withTooltips
 					theme={ {
