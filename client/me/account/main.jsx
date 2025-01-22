@@ -957,7 +957,7 @@ class Account extends Component {
 
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
-								{ translate( 'Default screen' ) }
+								{ translate( 'Default Landing Page' ) }
 							</FormLabel>
 							<ToggleLandingPageSettings />
 							<FormSettingExplanation>
