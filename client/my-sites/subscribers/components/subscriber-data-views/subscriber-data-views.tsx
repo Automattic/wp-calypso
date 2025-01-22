@@ -324,11 +324,9 @@ const SubscriberDataViews = ( {
 				return {
 					...baseView,
 					type: 'list',
-					fields: [ 'media', 'name' ],
-					layout: {
-						primaryField: 'name',
+					fields: [],
+					titleField: 'name',
 						mediaField: 'media',
-					},
 				} as View;
 			}
 
