@@ -232,8 +232,8 @@ function getPressThisData( query ) {
 }
 
 function getBloggingPromptData( query ) {
-	const { answer_prompt } = query;
-	return answer_prompt ? { answer_prompt } : null;
+	const { answer_prompt, new_prompt } = query;
+	return answer_prompt || new_prompt ? { answer_prompt, new_prompt } : null;
 }
 
 function getAnchorFmData( query ) {
