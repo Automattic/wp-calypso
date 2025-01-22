@@ -206,14 +206,16 @@ export function domainManagementDNS(
 	domainName: string,
 	context?: DomainsTableContext
 ) {
-	switch ( context ) {
-		case 'site':
-			return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
-		case 'domains':
-			return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
-		default:
-			return domainManagementEditBase( siteName, domainName, 'dns' );
+	if ( config.isEnabled( 'calypso/all-domain-management' ) ) {
+		switch ( context ) {
+			case 'site':
+				return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+			case 'domains':
+				return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		}
 	}
+
+	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
 export function emailManagementEdit(
