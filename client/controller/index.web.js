@@ -394,8 +394,10 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 const redirectToAdminView =
-	( wpAdminPath, experimentName, testName ) => async ( context, next ) => {
-		loadExperimentAssignment( testName );
+	( wpAdminPath, experimentName, aaTestName ) => async ( context, next ) => {
+		if ( aaTestName ) {
+			loadExperimentAssignment( aaTestName );
+		}
 		const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
 		if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
 			const state = context.store.getState();
@@ -418,7 +420,5 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 
 export const redirectIfDuplicatedSettingsView = ( wpAdminPath ) => async ( context, next ) => {
 	const experimentName = 'calypso_post_onboarding_holdout_120924';
-	const aaTestName = 'calypso_post_onboarding_aa_150125';
-
-	await redirectToAdminView( wpAdminPath, experimentName, aaTestName )( context, next );
+	await redirectToAdminView( wpAdminPath, experimentName )( context, next );
 };
