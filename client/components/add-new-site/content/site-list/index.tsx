@@ -1,6 +1,7 @@
 import AddNewSiteSiteListMenuItems from 'calypso/components/add-new-site/menu-items/site-list';
 import AddNewSitePopover from 'calypso/components/add-new-site/popover';
 import type { AddNewSiteContentProps } from 'calypso/components/add-new-site/types';
+import './style.scss';
 
 const AddNewSiteSiteList = ( {
 	isMenuVisible,
@@ -12,6 +13,7 @@ const AddNewSiteSiteList = ( {
 			isMenuVisible={ isMenuVisible }
 			toggleMenu={ toggleMenu }
 			popoverMenuContext={ popoverMenuContext }
+			popoverClassName="site-list-popover"
 		>
 			<AddNewSiteSiteListMenuItems />
 		</AddNewSitePopover>

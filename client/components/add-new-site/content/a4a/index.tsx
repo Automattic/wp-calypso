@@ -2,6 +2,7 @@ import AddNewSiteA4AMenuItems from 'calypso/components/add-new-site/menu-items/a
 import AddNewSitesA4AModals from 'calypso/components/add-new-site/modals/a4a';
 import AddNewSitePopover from 'calypso/components/add-new-site/popover';
 import type { AddNewSiteContentProps } from 'calypso/components/add-new-site/types';
+import './style.scss';
 
 const AddNewSiteA4A = ( {
 	isMenuVisible,
@@ -15,6 +16,7 @@ const AddNewSiteA4A = ( {
 				isMenuVisible={ isMenuVisible }
 				toggleMenu={ toggleMenu }
 				popoverMenuContext={ popoverMenuContext }
+				popoverClassName="a4a-popover"
 			>
 				<AddNewSiteA4AMenuItems setMenuVisible={ setMenuVisible } />
 			</AddNewSitePopover>

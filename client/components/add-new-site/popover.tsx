@@ -1,4 +1,5 @@
 import { Popover } from '@automattic/components';
+import clsx from 'clsx';
 import React from 'react';
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
 	toggleMenu: () => void;
 	popoverMenuContext: React.RefObject< HTMLButtonElement >;
 	children: React.ReactNode;
+	popoverClassName?: string;
 };
 
 const AddNewSitePopover: React.FC< Props > = ( {
@@ -13,10 +15,11 @@ const AddNewSitePopover: React.FC< Props > = ( {
 	toggleMenu,
 	popoverMenuContext,
 	children,
+	popoverClassName,
 } ) => {
 	return (
 		<Popover
-			className="add-new-site__popover"
+			className={ clsx( 'add-new-site__popover', popoverClassName ) }
 			context={ popoverMenuContext?.current }
 			isVisible={ isMenuVisible }
 			closeOnEsc

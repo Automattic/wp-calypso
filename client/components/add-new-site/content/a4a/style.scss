@@ -1,0 +1,5 @@
+.a4a-popover {
+	@include breakpoint-deprecated(">660px") {
+		margin-inline-start: 32px;
+	}
+}

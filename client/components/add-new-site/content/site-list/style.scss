@@ -1,0 +1,5 @@
+.site-list-popover {
+	@include breakpoint-deprecated(">660px") {
+		margin-inline-start: 38px;
+	}
+}
