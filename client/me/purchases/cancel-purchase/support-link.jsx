@@ -17,15 +17,14 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const CancelPurchaseSupportLink = ( { purchase } ) => {
 	const translate = useTranslate();
 	const { siteId, siteUrl } = purchase;
-	const { setShowHelpCenter, setNavigateToRoute, resetStore } =
-		useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { isEligibleForChat } = useChatStatus();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 	const { data: isMessagingAvailable } = useZendeskMessagingAvailability(
 		'wpcom_messaging',
 		isEligibleForChat
 	);
-	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
+	const { isOpeningZendeskWidget } = useOpenZendeskMessaging(
 		'migration-error',
 		'zendesk_support_chat_key',
 		isEligibleForChat
@@ -33,22 +32,15 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 
 	const getHelp = useCallback( () => {
 		if ( isMessagingAvailable && canConnectToZendeskMessaging ) {
-			openZendeskWidget( {
-				siteUrl: siteUrl,
-				siteId: siteId,
-				message: `${ status }: Purchase cancellation flow`,
-				onSuccess: () => {
-					resetStore();
-					setShowHelpCenter( false );
-				},
-			} );
+			setShowHelpCenter( true );
+			setNavigateToRoute(
+				`/odie?provider=zendesk&userFieldMessage=${ 'Purchase cancellation flow' }&siteUrl=${ siteUrl }&siteId=${ siteId }`
+			);
 		} else {
 			setNavigateToRoute( '/contact-options' );
 			setShowHelpCenter( true );
 		}
 	}, [
-		resetStore,
-		openZendeskWidget,
 		siteId,
 		isMessagingAvailable,
 		siteUrl,

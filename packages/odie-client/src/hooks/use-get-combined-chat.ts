@@ -12,53 +12,59 @@ import type { Chat, Message } from '../types';
  * @returns The combined chat.
  */
 export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
-	const { currentSupportInteraction, isChatLoaded } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			isChatLoaded: store.getIsChatLoaded(),
-		};
-	}, [] );
+	const { currentSupportInteraction, conversationId, odieId, isChatLoaded } = useSelect(
+		( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			const currentSupportInteraction = store.getCurrentSupportInteraction();
+
+			// Get the current odie chat ID
+			const odieId =
+				currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+					?.event_external_id ?? null;
+
+			// Get the current Zendesk conversation ID
+			const conversationId =
+				currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
+					?.event_external_id ?? null;
+
+			return {
+				currentSupportInteraction,
+				conversationId,
+				odieId,
+				isChatLoaded: store.getIsChatLoaded(),
+			};
+		},
+		[]
+	);
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const getZendeskConversation = useGetZendeskConversation();
-	// Get the current odie chat
-	const odieId =
-		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
-			?.event_external_id ?? null;
-
-	// Get the current Zendesk conversation ID
-	const conversationId =
-		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'zendesk' )
-			?.event_external_id ?? null;
 
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
 
 	useEffect( () => {
-		if ( odieId && ! conversationId ) {
-			if ( odieChat ) {
-				setMainChatState( {
-					...odieChat,
-					provider: 'odie',
-					conversationId: null,
-					supportInteractionId: currentSupportInteraction!.uuid,
-					status: 'loaded',
-				} );
-			}
-		} else if ( odieId && conversationId && canConnectToZendesk ) {
-			if ( odieChat && isChatLoaded ) {
+		if ( odieId && odieChat && ! conversationId ) {
+			setMainChatState( {
+				...odieChat,
+				provider: 'odie',
+				conversationId: null,
+				supportInteractionId: currentSupportInteraction!.uuid,
+				status: 'loaded',
+			} );
+		} else if ( conversationId && canConnectToZendesk ) {
+			if ( isChatLoaded ) {
 				getZendeskConversation( {
-					chatId: odieChat.odieId,
+					chatId: odieChat?.odieId,
 					conversationId: conversationId.toString(),
 				} )?.then( ( conversation ) => {
 					if ( conversation ) {
 						setMainChatState( {
-							...odieChat,
+							...( odieChat ? odieChat : {} ),
 							supportInteractionId: currentSupportInteraction!.uuid,
 							conversationId: conversation.id,
 							messages: [
-								...odieChat.messages,
-								...ODIE_TRANSFER_MESSAGE,
+								...( odieChat ? odieChat.messages : [] ),
+								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
 								...( conversation.messages as Message[] ),
 							],
 							provider: 'zendesk',

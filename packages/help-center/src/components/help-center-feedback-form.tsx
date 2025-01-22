@@ -1,10 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { GetSupport } from '@automattic/odie-client/src/components/message/get-support';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
@@ -23,7 +21,6 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 	const { canConnectToZendesk } = useHelpCenterContext();
 	const navigate = useNavigate();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
 
 	const handleFeedbackClick = ( value: number ) => {
 		setStartedFeedback( true );
@@ -66,10 +63,6 @@ const HelpCenterFeedbackForm = ( { postId }: { postId: number } ) => {
 		generateContactOnClickEvent( 'chat', 'calypso_helpcenter_feedback_contact_support' );
 		if ( isUserEligibleForPaidSupport ) {
 			await resetSupportInteraction();
-			startNewInteraction( {
-				event_source: 'help-center',
-				event_external_id: uuidv4(),
-			} );
 			navigate( '/odie' );
 		}
 	};

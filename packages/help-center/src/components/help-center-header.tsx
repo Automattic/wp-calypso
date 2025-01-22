@@ -2,7 +2,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
@@ -11,7 +10,6 @@ import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@w
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -68,14 +66,9 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
-		startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: uuidv4(),
-		} );
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
