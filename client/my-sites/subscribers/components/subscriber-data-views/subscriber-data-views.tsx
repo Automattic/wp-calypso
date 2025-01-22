@@ -314,6 +314,54 @@ const SubscriberDataViews = ( {
 		};
 	}, [ subscribers, grandTotal, pages ] );
 
+	// Update the view when a subscriber is selected
+	useEffect( () => {
+		const commonViewProps = {
+			page,
+			perPage,
+			sort: {
+				field: sortTerm,
+				direction: sortOrder,
+			},
+			filters: [
+				...( filterOption !== SubscribersFilterBy.All
+					? [ { field: 'plan', operator: 'is', value: [ filterOption ] } ]
+					: [] ),
+			],
+		};
+
+		setCurrentView( ( oldCurrentView ) => {
+			const baseView = {
+				...oldCurrentView,
+				...commonViewProps,
+			};
+
+			if ( selectedSubscriber ) {
+				return {
+					...baseView,
+					type: 'list',
+					fields: [],
+					titleField: 'name',
+					mediaField: 'media',
+				} as View;
+			}
+
+			return {
+				...baseView,
+				type: 'table',
+				fields: [ 'name', ...( ! isMobile ? [ 'plan', 'date_subscribed' ] : [] ) ],
+				layout: {
+					styles: {
+						media: { width: '60px' },
+						name: { width: '55%', minWidth: '195px' },
+						plan: { width: '25%' },
+						date_subscribed: { width: '25%' },
+					},
+				},
+			} as View;
+		} );
+	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder, filterOption ] );
+
 	return (
 		<div
 			className={ `subscriber-data-views ${ selectedSubscriber ? 'has-selected-subscriber' : '' }` }
