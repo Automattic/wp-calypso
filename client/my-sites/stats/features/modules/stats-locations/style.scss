@@ -9,7 +9,8 @@ $break-large-stats-countries: 1280px;
 	.list-countryviews {
 		.stats-card--hero {
 			padding-bottom: 0;
-
+			width: 100%;
+			flex: 1;
 			.stats-geochart {
 				margin-bottom: 32px;
 
@@ -17,6 +18,10 @@ $break-large-stats-countries: 1280px;
 					margin-bottom: 0;
 				}
 			}
+		}
+
+		.stats-card--header-and-body {
+			max-width: 380px;
 		}
 	}
 

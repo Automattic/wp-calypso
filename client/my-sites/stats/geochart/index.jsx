@@ -146,6 +146,7 @@ class StatsGeochart extends Component {
 			region: 'world',
 			colorAxis: { colors: [ chartColorLight, chartColorDark ] },
 			domain: currentUserCountryCode,
+			height: 520,
 		};
 
 		if ( geoMode !== 'country' ) {
