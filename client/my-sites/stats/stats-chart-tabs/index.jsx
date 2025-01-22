@@ -1,4 +1,4 @@
-import { LineChart } from '@automattic/charts/components/line-chart';
+import { LineChart } from '@automattic/charts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -143,6 +143,7 @@ class StatModuleChartTabs extends Component {
 				<LineChart
 					data={ [ newChartData ] }
 					withTooltips
+					withGradientFill
 					theme={ {
 						backgroundColor: '#FFFFFF',
 						colors: [ '#98C8DF', '#006DAB', '#A6DC80', '#1F9828', '#FF8C8F' ],
