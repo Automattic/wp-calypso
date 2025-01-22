@@ -512,46 +512,6 @@ describe( 'SiteMigrationCredentials', () => {
 		}
 	);
 
-	it( 'shows Continue anyways button and an already on WPCOM', async () => {
-		config.disable( 'automated-migration/application-password' );
-		const submit = jest.fn();
-		render( { navigation: { submit } } );
-		await fillAllFields();
-		await fillNoteField();
-
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
-
-		( wpcomRequest as jest.Mock ).mockResolvedValue( {
-			status: 200,
-			body: {},
-		} );
-
-		await userEvent.click( continueButton() );
-
-		await waitFor( () => {
-			expect( continueButton( /Continue anyways/ ) ).toBeVisible();
-			expect( getByText( 'Your site is already on WordPress.com.' ) ).toBeVisible();
-		} );
-
-		await userEvent.click( continueButton( /Continue anyways/ ) );
-
-		expect( wpcomRequest ).toHaveBeenCalledWith( {
-			...requestPayload,
-			body: {
-				...requestPayload.body,
-				bypass_verification: true,
-			},
-		} );
-
-		await waitFor( () => {
-			expect( submit ).toHaveBeenCalledWith( {
-				action: 'already-wpcom',
-				from: 'https://site-url.wpcomstating.com',
-				platform: 'wordpress',
-			} );
-		} );
-	} );
-
 	it( 'creates a credentials ticket even when the siteinfo request faces an error', async () => {
 		config.disable( 'automated-migration/application-password' );
 		const submit = jest.fn();
@@ -683,8 +643,23 @@ describe( 'SiteMigrationCredentials', () => {
 		render( { navigation: { submit } } );
 		await fillAddressField();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			status: 200,
+			body: {},
+		} );
 		await userEvent.click( continueButton() );
 
+		expect( wpcomRequest ).toHaveBeenCalledWith( {
+			path: 'help/migration-ticket/new',
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+			method: 'POST',
+			body: {
+				locale: 'en',
+				blog_url: 'site-url.wordpress.com',
+				from_url: 'site-url.com',
+			},
+		} );
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'already-wpcom',
 			from: 'https://site-url.wpcomstating.com',

@@ -51,7 +51,7 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	}
 
 	const getContinueButtonText = () => {
-		if ( isBusy && ! canBypassVerification ) {
+		if ( isBusy ) {
 			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
 			if ( applicationPasswordEnabled && hasScanningTranslation ) {
 				return translate( 'Scanning site' );

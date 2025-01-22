@@ -25,7 +25,7 @@ export const useSubmitMigrationTicket = <
 >(
 	options: UseMutationOptions< TData, TError, TicketRequest, TContext > = {}
 ) => {
-	const { mutate, ...rest } = useMutation( {
+	const { mutate, mutateAsync, ...rest } = useMutation( {
 		mutationFn: ( { locale, blog_url, from_url } ) =>
 			wpcomRequest( {
 				path: 'help/migration-ticket/new',
@@ -43,6 +43,7 @@ export const useSubmitMigrationTicket = <
 
 	return {
 		sendTicket: mutate,
+		sendTicketAsync: mutateAsync,
 		...rest,
 	};
 };
