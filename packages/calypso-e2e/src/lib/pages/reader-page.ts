@@ -5,7 +5,6 @@ const selectors = {
 	// Reader main stream
 	readerCard: '.reader-post-card',
 	streamPlaceholder: 'span.reader__placeholder-text',
-	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
@@ -39,16 +38,6 @@ export class ReaderPage {
 	async visit(): Promise< void > {
 		await this.page.goto( getCalypsoURL( 'read' ) );
 		await this.page.waitForURL( /read/ );
-	}
-
-	/**
-	 * Get the URL of the latest post in Reader
-	 *
-	 * @returns {Promise<string>} String of URL for latest post.
-	 */
-	async siteOfLatestPost(): Promise< string > {
-		const href = await this.page.getAttribute( selectors.visitSiteLink, 'href' );
-		return new URL( href ? href : '' ).host;
 	}
 
 	/**
