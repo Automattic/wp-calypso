@@ -1,3 +1,4 @@
+import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -8,7 +9,7 @@ export default function ListEmptyContent(): JSX.Element {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryParams = new URLSearchParams( location.search );
-	const lastPageLink = queryParams.get( 'last_page' ) ?? '';
+	const lastPageLink = DOMPurify.sanitize( queryParams.get( 'last_page' ) ?? '' );
 
 	function onClickActionBtn(): void {
 		recordAction( 'clicked_following_on_empty' );
@@ -21,7 +22,7 @@ export default function ListEmptyContent(): JSX.Element {
 	}
 
 	function getActionBtnLink(): string {
-		return lastPageIsUserProfileLists() ? encodeURIComponent( lastPageLink ) : '/read';
+		return lastPageIsUserProfileLists() ? lastPageLink : '/read';
 	}
 
 	function getActionBtnText(): string {
