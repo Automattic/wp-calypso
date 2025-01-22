@@ -308,8 +308,7 @@ const siteSetupFlow: Flow = {
 					const intent = params[ 0 ];
 					switch ( intent ) {
 						case 'firstPost': {
-							const exitUrl = addQueryArgs( { new_prompt: true }, `/post/${ siteSlug }` );
-							return exitFlow( exitUrl );
+							return exitFlow( `/post/${ siteSlug }` );
 						}
 						case 'courses': {
 							return navigate( 'courses' );

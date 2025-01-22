@@ -40,7 +40,6 @@ describe( 'Signup: Tailored Start Writing Flow', () => {
 	it( 'Publish first post', async function () {
 		const editorPage = new EditorPage( page );
 		await editorPage.waitUntilLoaded();
-		await page.getByLabel( 'Close', { exact: true } ).click();
 		await editorPage.enterTitle( 'my first post title' );
 		await editorPage.publish();
 		await page.getByText( "Your blog's almost ready!" ).waitFor();

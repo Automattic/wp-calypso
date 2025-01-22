@@ -113,11 +113,6 @@ describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () 
 			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
 
-		it( 'Close writing topics modal', async function () {
-			const editorParent = await editorPage.getEditorParent();
-			await editorParent.getByLabel( 'Close', { exact: true } ).click();
-		} );
-
 		it( 'Enter blog title', async function () {
 			await editorPage.enterTitle( postTitle );
 		} );
