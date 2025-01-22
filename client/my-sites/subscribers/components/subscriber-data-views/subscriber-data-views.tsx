@@ -76,6 +76,8 @@ const SubscriberDataViews = ( {
 		layout: {},
 		page,
 		perPage,
+		titleField: 'name',
+		mediaField: 'media',
 		sort: {
 			field: sortTerm,
 			direction: 'desc',
@@ -126,6 +128,13 @@ const SubscriberDataViews = ( {
 		[]
 	);
 
+	const handleSubscriberOnClick = useCallback(
+		( subscriber: Subscriber ) => {
+			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
+		},
+		[ getSubscriberId, handleSubscriberSelect ]
+	);
+
 	const fields = useMemo(
 		() => [
 			{
@@ -147,26 +156,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'Name' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
-					<button
-						type="button"
-						onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
-					>
-						{ selectedSubscriber ? (
 							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-						) : (
-							<div className="subscriber-data-views__list-item">
-								<div className="subscriber-data-views__list-item-avatar">
-									<Gravatar
-										user={ { avatar_URL: item.avatar, name: item.display_name } }
-										size={ 52 }
-										imgSize={ 80 }
-										className="subscriber-data-views__square-avatar"
-									/>
-								</div>
-								<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-							</div>
-						) }
-					</button>
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -188,7 +178,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
+		[ translate ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -333,7 +323,7 @@ const SubscriberDataViews = ( {
 			return {
 				...baseView,
 				type: 'table',
-				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+				fields: [ ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
 				layout: {
 					styles: {
 						media: { width: '60px' },
@@ -363,6 +353,7 @@ const SubscriberDataViews = ( {
 						data={ data }
 						fields={ fields }
 						view={ currentView }
+						onClickItem={ handleSubscriberOnClick }
 						onChangeView={ handleViewChange }
 						selection={
 							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
