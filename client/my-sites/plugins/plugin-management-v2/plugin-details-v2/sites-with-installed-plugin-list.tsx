@@ -1,7 +1,12 @@
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useCallback } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import {
+	DATAVIEWS_LIST,
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { DataViews } from 'calypso/components/dataviews';
@@ -31,8 +36,10 @@ interface Props {
 export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isDesktopView = isDesktop();
+	const shouldUseListView = ! isDesktopView;
 
-	const compareBooleans =
+	const compareBooleans = useCallback(
 		( fieldName: keyof PluginSite ) => ( a: SiteDetails, b: SiteDetails, direction: string ) => {
 			const aValue = plugin.sites[ a.ID ][ fieldName ];
 			const bValue = plugin.sites[ b.ID ][ fieldName ];
@@ -43,7 +50,9 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 				return aValue ? 1 : -1;
 			}
 			return aValue ? -1 : 1;
-		};
+		},
+		[ plugin ]
+	);
 
 	const renderActions = useCallback(
 		( site: SiteDetails ) => {
@@ -155,18 +164,40 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 				enableSorting: false,
 			},
 		],
-		[ translate, plugin, sites.length, dispatch, renderActions ]
+		[ translate, compareBooleans, plugin, sites.length, dispatch, renderActions ]
 	);
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
+		type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 		fields: [ 'domain', 'activate', 'autoupdate', 'update', 'actions' ],
-		items: sites,
+		layout: {
+			primaryField: 'domain',
+		},
 	} ) );
 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
 		getSitesWithSecondarySites( state, sites )
 	);
+
+	useEffect( () => {
+		// Sets the correct fields when route changes or viewport changes
+		setDataViewsState( ( dVwState ) => ( {
+			...dVwState,
+			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+		} ) );
+
+		// Subscribe to viewport changes
+		const unsubscribe = subscribeIsDesktop( ( matches ) => {
+			const shouldUseListView = ! matches;
+			setDataViewsState( ( dVwState ) => ( {
+				...dVwState,
+				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			} ) );
+		} );
+
+		return () => unsubscribe();
+	}, [ plugin.slug, shouldUseListView ] );
 
 	if ( ! sitesWithSecondarySites?.length ) {
 		return null;

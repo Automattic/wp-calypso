@@ -35,7 +35,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
             overflow: hidden;
         
             @media ( max-width: $break-small ) {
-                padding: $padding-standard 0;
+                padding: 0;
             }
         
             button {
@@ -98,6 +98,11 @@ body.is-section-subscribers.is-subscribers-dataviews {
                             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
                             border-radius: inherit;
                         }
+
+                        @media ( max-width: $break-wide ) {
+                            height: 40px;
+                            width: 40px;
+                        }
                     }
                 }
             }
@@ -111,6 +116,10 @@ body.is-section-subscribers.is-subscribers-dataviews {
                     .navigation-header {
                         padding: $padding-standard 24px;
                     }
+
+                    @media ( max-width: $break-wide ) {
+                        display: none;
+                    }
                 }
         
                 .subscriber-data-views__details {
@@ -120,6 +129,10 @@ body.is-section-subscribers.is-subscribers-dataviews {
                     /* stylelint-disable-next-line scales/radii */
                     border-radius: 8px;
                     padding: 24px;
+
+                    @media ( max-width: $break-wide ) {
+                        overflow: auto;
+                    }
 
                     .subscriber-details {
                         &__header {
@@ -133,6 +146,12 @@ body.is-section-subscribers.is-subscribers-dataviews {
                             margin-left: auto;
                             border-radius: 4px;
                         }
+
+                        @media ( max-width: $break-large ) {
+                            .highlight-cards-list {
+                                flex-flow: column;
+                            }
+                        }
                     }
                 }
             }
@@ -143,8 +162,8 @@ body.is-section-subscribers.is-subscribers-dataviews {
             }
         
             .subscriber-profile.subscriber-profile--compact {
-                @media ( max-width: $break-xlarge ) {
-                    max-width: 225px;
+                @media ( max-width: $break-wide ) {
+                    max-width: 195px;
                 }
         
                 .subscriber-profile__user-details {

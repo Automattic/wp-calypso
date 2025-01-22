@@ -178,8 +178,10 @@ class MasterbarLoggedOut extends Component {
 			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
-		// Add referrer query parameter for tracking
+		// Use Reader-specific signup stepper
+		// and add referrer query parameter for tracking
 		if ( sectionName === 'reader' ) {
+			signupUrl += '/reader';
 			signupUrl = addQueryArgs( { ref: 'reader-lp' }, signupUrl );
 		}
 
