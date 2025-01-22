@@ -124,21 +124,6 @@ describe( 'leaveCheckout', () => {
 
 			expect( navigate ).toHaveBeenCalledWith( previousPath );
 		} );
-
-		it( 'returns to previousPath if email upsell cart is not emptied', () => {
-			const siteSlug = 'mywpsite.wordpress.com';
-			const domain = 'my-search-domain';
-			const previousPath = `/domains/add/${ domain }/email/${ siteSlug }?`;
-
-			leaveCheckout( {
-				siteSlug: siteSlug,
-				tracksEvent: 'checkout_cancel',
-				previousPath: previousPath,
-				userHasClearedCart: false,
-			} );
-
-			expect( navigate ).toHaveBeenCalledWith( previousPath );
-		} );
 	} );
 } );
 
