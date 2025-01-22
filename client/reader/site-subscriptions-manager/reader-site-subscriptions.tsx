@@ -79,7 +79,7 @@ const ReaderSiteSubscriptions = () => {
 
 export default () => (
 	<SubscriptionManager.SiteSubscriptionsQueryPropsProvider
-		initialSearchTerm={
+		initialSearchTermState={
 			getUrlQuerySearchTerm // Take the `?s=` url query param and set is as initial search term state.
 		}
 	>
