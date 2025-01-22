@@ -1,11 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import {
-	makeLayout,
-	render as clientRender,
-	redirectIfDuplicatedSettingsView,
-} from 'calypso/controller';
+import { makeLayout, render as clientRender, redirectIfDuplicatedView } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
@@ -33,7 +29,7 @@ export default function () {
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
-		redirectIfDuplicatedSettingsView( 'options-general.php' ),
+		redirectIfDuplicatedView( 'options-general.php' ),
 		navigation,
 		setScroll,
 		siteSettings,

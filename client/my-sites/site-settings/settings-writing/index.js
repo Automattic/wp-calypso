@@ -3,7 +3,6 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectIfDuplicatedView as _redirectIfDuplicatedView,
-	redirectIfDuplicatedSettingsView,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
@@ -20,7 +19,7 @@ export default function () {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,
-		redirectIfDuplicatedSettingsView( 'options-writing.php' ),
+		_redirectIfDuplicatedView( 'options-writing.php' ),
 		navigation,
 		siteSettings,
 		writing,
