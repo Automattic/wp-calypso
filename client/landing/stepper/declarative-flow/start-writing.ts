@@ -126,7 +126,7 @@ const startWriting: Flow = {
 
 						return redirect(
 							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
-								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
 								`&postFlowUrl=${ getPostFlowUrl( {
 									flow: START_WRITING_FLOW,
 									siteId: providedDependencies?.siteId as string,
@@ -157,7 +157,7 @@ const startWriting: Flow = {
 
 						return redirect(
 							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?` +
-								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }` +
+								`${ START_WRITING_FLOW }=true&origin=${ siteOrigin }&new_prompt=true` +
 								`&postFlowUrl=${ getPostFlowUrl( {
 									flow: START_WRITING_FLOW,
 									siteId: providedDependencies?.siteId as string,
