@@ -419,6 +419,6 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 };
 
 export const redirectIfDuplicatedSettingsView = ( wpAdminPath ) => async ( context, next ) => {
-	const experimentName = 'calypso_post_onboarding_holdout_120924';
+	const experimentName = 'calypso_post_onboarding_holdout_160125';
 	await redirectToAdminView( wpAdminPath, experimentName )( context, next );
 };
