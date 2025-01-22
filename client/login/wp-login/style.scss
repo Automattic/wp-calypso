@@ -406,7 +406,7 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links > .button:first-of-type,
+	.wp-login__links > .button,
 	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
 		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
 		background: transparent;
