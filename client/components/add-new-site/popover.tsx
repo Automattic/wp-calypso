@@ -2,11 +2,17 @@ import { Popover } from '@wordpress/components';
 
 type Props = {
 	isMenuVisible: boolean;
+	showAnchor?: boolean;
 	toggleMenu: () => void;
 	children: React.ReactNode;
 };
 
-const AddNewSitePopover: React.FC< Props > = ( { isMenuVisible, toggleMenu, children } ) => {
+const AddNewSitePopover: React.FC< Props > = ( {
+	isMenuVisible,
+	toggleMenu,
+	children,
+	showAnchor = false,
+} ) => {
 	if ( ! isMenuVisible ) {
 		return null;
 	}
@@ -15,7 +21,7 @@ const AddNewSitePopover: React.FC< Props > = ( { isMenuVisible, toggleMenu, chil
 		<Popover
 			isVisible={ isMenuVisible }
 			onClose={ toggleMenu }
-			noArrow={ false }
+			noArrow={ ! showAnchor }
 			offset={ 10 }
 			placement="bottom-end"
 		>

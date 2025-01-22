@@ -4,7 +4,7 @@ import type { AddNewSiteContentProps } from 'calypso/components/add-new-site/typ
 
 const AddNewSiteSiteList = ( { isMenuVisible, toggleMenu }: AddNewSiteContentProps ) => {
 	return (
-		<AddNewSitePopover isMenuVisible={ isMenuVisible } toggleMenu={ toggleMenu }>
+		<AddNewSitePopover isMenuVisible={ isMenuVisible } toggleMenu={ toggleMenu } showAnchor>
 			<AddNewSiteSiteListMenuItems />
 		</AddNewSitePopover>
 	);
