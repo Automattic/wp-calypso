@@ -130,7 +130,7 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 					<>
 						<AddNewSiteButton
 							showMainButtonLabel={ ! isPreviewPaneOpen }
-							mainButtonLabelText={ translate( 'Add new site' ) }
+							mainButtonLabelText={ translate( 'Add new site bigger word' ) }
 							isMenuVisible={ isMenuVisible }
 							toggleMenu={ () => {
 								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );

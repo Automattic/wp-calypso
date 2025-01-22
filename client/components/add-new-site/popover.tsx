@@ -1,6 +1,4 @@
-import { Popover } from '@automattic/components';
-import clsx from 'clsx';
-import React from 'react';
+import { Popover } from '@wordpress/components';
 
 type Props = {
 	isMenuVisible: boolean;
@@ -19,13 +17,15 @@ const AddNewSitePopover: React.FC< Props > = ( {
 } ) => {
 	return (
 		<Popover
-			className={ clsx( 'add-new-site__popover', popoverClassName ) }
-			context={ popoverMenuContext?.current }
+			// className={ clsx( 'add-new-site__popover', popoverClassName ) }
+			// context={ popoverMenuContext?.current }
 			isVisible={ isMenuVisible }
-			closeOnEsc
 			onClose={ toggleMenu }
+			noArrow={ false }
+			offset={ 10 }
+			closeOnEsc
 			autoPosition={ false }
-			position="bottom left"
+			placement="bottom-end"
 		>
 			<div className="add-new-site__popover-content">{ children }</div>
 		</Popover>
