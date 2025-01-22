@@ -162,19 +162,10 @@ class DomainProductPrice extends Component {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
-		if ( this.props.isReskinned ) {
-			return (
-				<div className={ className }>
-					{ this.renderReskinFreeWithPlanText() }
-					{ this.renderReskinDomainPrice() }
-				</div>
-			);
-		}
-
 		return (
 			<div className={ className }>
-				{ this.renderFreeWithPlanText() }
-				{ this.renderFreeWithPlanPrice() }
+				{ this.renderReskinFreeWithPlanText() }
+				{ this.renderReskinDomainPrice() }
 			</div>
 		);
 	}

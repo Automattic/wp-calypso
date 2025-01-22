@@ -36,7 +36,6 @@ class DomainSuggestion extends Component {
 			salePrice,
 			isSignupStep,
 			showStrikedOutPrice,
-			isReskinned,
 		} = this.props;
 
 		if ( hidePrice ) {
@@ -55,14 +54,12 @@ class DomainSuggestion extends Component {
 				rule={ priceRule }
 				isSignupStep={ isSignupStep }
 				showStrikedOutPrice={ showStrikedOutPrice }
-				isReskinned={ isReskinned }
 			/>
 		);
 	}
 
 	render() {
-		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice, isReskinned } =
-			this.props;
+		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice } = this.props;
 		const classes = clsx(
 			'domain-suggestion',
 			'card',
@@ -87,10 +84,8 @@ class DomainSuggestion extends Component {
 				<div className={ contentClassName }>
 					{ domainContent }
 					{ matchReason }
-					{ ( isReskinned || ! isFeatured ) && this.renderPrice() }
-					{ ! isReskinned && isFeatured && (
-						<div className="domain-suggestion__price-container">{ this.renderPrice() }</div>
-					) }
+					{ ! isFeatured && this.renderPrice() }
+
 					<div className="domain-suggestion__action-container">
 						<Button
 							className="domain-suggestion__action"

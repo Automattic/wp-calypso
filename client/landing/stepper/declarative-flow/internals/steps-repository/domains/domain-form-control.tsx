@@ -251,7 +251,6 @@ export function DomainFormControl( {
 					includeWordPressDotCom={ includeWordPressDotCom ?? true }
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
-					isReskinned
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"

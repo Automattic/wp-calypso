@@ -63,7 +63,6 @@ class EmailSignupTitanCard extends Component {
 			addButtonTitle,
 			extraClasses,
 			hideSkip = false,
-			isReskinned,
 			onAddButtonClick,
 			onSkipButtonClick,
 			showChevron,
@@ -73,14 +72,9 @@ class EmailSignupTitanCard extends Component {
 		const domainItem = signupDependencies.domainItem?.meta;
 		const classes = clsx( 'email-suggestion', extraClasses );
 
-		const wrapDivActionContainer = ( contentElement ) =>
-			isReskinned ? (
-				<div className="email-signup-titan-card__suggestion-action-container">
-					{ contentElement }
-				</div>
-			) : (
-				contentElement
-			);
+		const wrapDivActionContainer = ( contentElement ) => (
+			<div className="email-signup-titan-card__suggestion-action-container">{ contentElement }</div>
+		);
 
 		return (
 			<>

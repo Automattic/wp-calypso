@@ -33,7 +33,6 @@ import { connect } from 'react-redux';
 import { v4 as uuid } from 'uuid';
 import Illustration from 'calypso/assets/images/domains/domain.svg';
 import DomainSearchResults from 'calypso/components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
 import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	recordDomainAvailabilityReceive,
@@ -126,7 +125,6 @@ class RegisterDomainStep extends Component {
 		deemphasiseTlds: PropTypes.array,
 		recordFiltersSubmit: PropTypes.func.isRequired,
 		recordFiltersReset: PropTypes.func.isRequired,
-		isReskinned: PropTypes.bool,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
 		promoTlds: PropTypes.array,
@@ -533,12 +531,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSearchFilters() {
-		const isRenderingInitialSuggestions =
-			! Array.isArray( this.state.searchResults ) &&
-			! this.state.loadingResults &&
-			! this.props.showExampleSuggestions;
-		const showFilters = ! isRenderingInitialSuggestions || this.props.isReskinned;
-
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
@@ -548,18 +540,16 @@ class RegisterDomainStep extends Component {
 		}
 
 		return (
-			showFilters && (
-				<DropdownFilters
-					availableTlds={ this.state.availableTlds }
-					filters={ this.state.filters }
-					lastFilters={ this.state.lastFilters }
-					onChange={ this.onFiltersChange }
-					onReset={ this.onFiltersReset }
-					onSubmit={ this.onFiltersSubmit }
-					showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
-					showTldFilter={ showTldFilter }
-				/>
-			)
+			<DropdownFilters
+				availableTlds={ this.state.availableTlds }
+				filters={ this.state.filters }
+				lastFilters={ this.state.lastFilters }
+				onChange={ this.onFiltersChange }
+				onReset={ this.onFiltersReset }
+				onSubmit={ this.onFiltersSubmit }
+				showPlaceholder={ this.state.loadingResults || ! this.getSuggestionsFromProps() }
+				showTldFilter={ showTldFilter }
+			/>
 		);
 	}
 
@@ -622,7 +612,6 @@ class RegisterDomainStep extends Component {
 			onSearch: this.onSearch,
 			onSearchChange: this.onSearchChange,
 			ref: this.bindSearchCardReference,
-			isReskinned: this.props.isReskinned,
 			childrenBeforeCloseButton:
 				this.props.isDomainAndPlanPackageFlow && this.renderSearchFilters(),
 		};
@@ -766,7 +755,7 @@ class RegisterDomainStep extends Component {
 		}
 
 		if ( this.props.showExampleSuggestions ) {
-			return this.renderExampleSuggestions();
+			return this.renderBestNamesPrompt();
 		}
 
 		return null;
@@ -1523,26 +1512,6 @@ class RegisterDomainStep extends Component {
 		);
 	}
 
-	renderExampleSuggestions() {
-		const { isReskinned, domainsWithPlansOnly, offerUnavailableOption, products, path } =
-			this.props;
-
-		if ( isReskinned ) {
-			return this.renderBestNamesPrompt();
-		}
-
-		return (
-			<ExampleDomainSuggestions
-				domainsWithPlansOnly={ domainsWithPlansOnly }
-				offerUnavailableOption={ offerUnavailableOption }
-				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ path }
-				products={ products }
-				url={ this.getUseYourDomainUrl() }
-			/>
-		);
-	}
-
 	renderFreeDomainExplainer() {
 		return <FreeDomainExplainer onSkip={ this.props.hideFreePlan } />;
 	}
@@ -1646,16 +1615,8 @@ class RegisterDomainStep extends Component {
 			! this.state.loadingResults &&
 			this.props.showExampleSuggestions
 		) {
-			return this.renderExampleSuggestions();
+			return this.renderBestNamesPrompt();
 		}
-
-		const hasResults =
-			( Array.isArray( this.state.searchResults ) && this.state.searchResults.length ) > 0 &&
-			! this.state.loadingResults;
-
-		const isFreeDomainExplainerVisible =
-			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
-			this.props.isPlanSelectionAvailableInFlow;
 
 		return (
 			<DomainSearchResults
@@ -1694,24 +1655,18 @@ class RegisterDomainStep extends Component {
 				unavailableDomains={ this.state.unavailableDomains }
 				onSkip={ this.props.onSkip }
 				showSkipButton={ this.props.showSkipButton }
-				isReskinned={ this.props.isReskinned }
 				domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				useProvidedProductsList={ this.props.useProvidedProductsList }
 				isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 				wpcomSubdomainSelected={ this.props.wpcomSubdomainSelected }
 				temporaryCart={ this.props.temporaryCart }
 				domainRemovalQueue={ this.props.domainRemovalQueue }
-			>
-				{ ! this.props.isReskinned &&
-					hasResults &&
-					isFreeDomainExplainerVisible &&
-					this.renderFreeDomainExplainer() }
-			</DomainSearchResults>
+			></DomainSearchResults>
 		);
 	}
 
 	renderSideContent() {
-		return this.props.isReskinned && ! this.state.loadingResults && this.props.reskinSideContent;
+		return ! this.state.loadingResults && this.props.reskinSideContent;
 	}
 
 	getFetchAlgo() {

@@ -122,7 +122,6 @@ export class FeaturedDomainSuggestions extends Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
 						buttonStyles={ { primary: true } }
-						isReskinned={ this.props.isReskinned }
 						products={ this.props.products ?? undefined }
 						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
 						{ ...childProps }

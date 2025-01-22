@@ -32,7 +32,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -734,7 +733,7 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooPasswordlessJPC )
+							{ this.props.isWoo && ! this.props.isWooPasswordlessJPC
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -1091,7 +1090,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo, isBlazePro } = this.props;
+		const { isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1122,26 +1121,6 @@ class SignupForm extends Component {
 				</div>
 			);
 		}
-
-		return (
-			<>
-				{ ! this.props.isReskinned && (
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
-								? translate( 'Log in to create a site for your existing account.' )
-								: translate( 'Already have a WordPress.com account?' ) }
-						</LoggedOutFormLinkItem>
-						{ this.props.oauth2Client && (
-							<LoggedOutFormBackLink
-								oauth2Client={ this.props.oauth2Client }
-								recordClick={ this.recordBackLinkClick }
-							/>
-						) }
-					</LoggedOutFormLinks>
-				) }
-			</>
-		);
 	}
 
 	handleOnChangeAccount = () => {

@@ -58,7 +58,6 @@ type Props = {
 	displayOpenAndCloseIcons?: boolean;
 	fitsContainer?: boolean;
 	hideClose?: boolean;
-	isReskinned?: boolean;
 	hideOpenIcon?: boolean;
 	inputLabel?: string;
 	openIconSide?: 'left' | 'right';
@@ -147,7 +146,6 @@ const InnerSearch = (
 		minLength,
 		maxLength,
 		hideClose = false,
-		isReskinned = false,
 		searchMode = 'when-typing',
 		searchIcon,
 		submitOnOpenIconClick = false,

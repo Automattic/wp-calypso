@@ -9,10 +9,7 @@ import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-	parseMatchReasons,
-	VALID_MATCH_REASONS,
-} from 'calypso/components/domains/domain-registration-suggestion/utility';
+import { VALID_MATCH_REASONS } from 'calypso/components/domains/domain-registration-suggestion/utility';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -68,7 +65,6 @@ class DomainRegistrationSuggestion extends Component {
 		productCost: PropTypes.string,
 		renewCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
-		isReskinned: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		products: PropTypes.object,
 	};
@@ -392,34 +388,6 @@ class DomainRegistrationSuggestion extends Component {
 		}
 	}
 
-	renderMatchReason() {
-		if ( this.props.isReskinned ) {
-			return null;
-		}
-
-		const {
-			suggestion: { domain_name: domain },
-			isFeatured,
-		} = this.props;
-
-		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
-			return null;
-		}
-
-		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
-
-		return (
-			<div className="domain-registration-suggestion__match-reasons">
-				{ matchReasons.map( ( phrase, index ) => (
-					<div className="domain-registration-suggestion__match-reason" key={ index }>
-						<Gridicon icon="checkmark" size={ 18 } />
-						{ phrase }
-					</div>
-				) ) }
-			</div>
-		);
-	}
-
 	render() {
 		const {
 			domainsWithPlansOnly,
@@ -430,7 +398,6 @@ class DomainRegistrationSuggestion extends Component {
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
-			isReskinned,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -454,11 +421,9 @@ class DomainRegistrationSuggestion extends Component {
 				{ ...this.getButtonProps() }
 				isFeatured={ isFeatured }
 				showStrikedOutPrice={ showStrikedOutPrice }
-				isReskinned={ isReskinned }
 			>
 				{ this.renderBadges() }
 				{ this.renderDomain() }
-				{ this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}

@@ -316,7 +316,6 @@ export default function SearchBar( props: Props ) {
 				placeholder={ translate( 'Search…' ) }
 				delaySearch
 				delayTimeout={ 500 }
-				isReskinned
 				onSearch={ ( inputValue: string ) => {
 					if ( inputValue !== null ) {
 						onChangeSearch( inputValue );
