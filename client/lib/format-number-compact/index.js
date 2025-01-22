@@ -13,7 +13,7 @@ export default function formatNumberCompact( number, code = i18n.getLocaleSlug()
 		return null;
 	}
 
-	const { decimal, grouping, symbol, unitValue = 1000 } = THOUSANDS[ code ];
+	const { symbol, unitValue = 1000 } = THOUSANDS[ code ];
 
 	const sign = number < 0 ? '-' : '';
 	const absNumber = Math.abs( number );
@@ -26,10 +26,10 @@ export default function formatNumberCompact( number, code = i18n.getLocaleSlug()
 	//show 2 sig figs, otherwise take leading sig figs.
 	const decimals = absNumber < unitValue * 10 ? 1 : 0;
 
+	// TODO clk numberFormat
+	// can deprecate complately in favour of `{ notation: 'compact' }` in Intl.NumberFormat
 	const value = numberFormat( absNumber / unitValue, {
 		decimals,
-		thousandsSep: grouping,
-		decPoint: decimal,
 	} );
 
 	return `${ sign }${ value }${ symbol }`;

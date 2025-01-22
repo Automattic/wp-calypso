@@ -230,3 +230,66 @@
 	}
 }
 
+.products-overview-v2 {
+	.product-card__heading {
+		gap: 12px;
+	}
+
+	.product-card__inner {
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border-color: #ddd;
+		padding: 16px;
+	}
+
+	.product-card__title {
+		// TODO: Replace with Heading LG
+		font-size: rem(15px);
+		font-weight: 500;
+		line-height: 1.3;
+	}
+
+	.product-price-with-discount__price {
+		// TODO: Replace with Heading XL
+		font-size: rem(20px);
+		font-weight: 500;
+		line-height: 1.2;
+	}
+
+	.product-price-with-discount__price-interval {
+		// TODO: Replace with Body MD
+		font-size: rem(13px);
+		font-weight: 400;
+		line-height: 1.5;
+	}
+
+	.product-card__pricing {
+		margin: 0;
+	}
+
+	.product-card__description {
+		// TODO: Replace with Body LG
+		font-size: rem(15px);
+		font-weight: 400;
+		line-height: 1.6;
+
+		color: var(--color-neutral-80);
+		margin: 0;
+	}
+
+	// TODO: Create a new component for
+	// this on A4A when we remove the feature flag
+	.license-lightbox-link {
+		font-size: rem(13px);
+		font-weight: 400;
+		line-height: 1.5;
+		text-decoration: none;
+		color: var(--color-primary);
+	}
+}
+
+.product-card__types {
+	display: flex;
+	gap: 0.5rem;
+	margin-block-start: 4px;
+}
+

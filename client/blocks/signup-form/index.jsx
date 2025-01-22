@@ -1023,9 +1023,7 @@ class SignupForm extends Component {
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate>
-					{ this.props.disableEmailExplanation }
-				</FormSettingExplanation>
+				<FormSettingExplanation>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
 	}
@@ -1312,7 +1310,8 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo;
+			'wpcc' !== this.props.flowName &&
+			( ( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo );
 
 		if (
 			( this.props.isPasswordless &&

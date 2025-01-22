@@ -1,9 +1,14 @@
 import pagejs from '@automattic/calypso-router';
+import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
-import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+	DATAVIEWS_LIST,
+	DATAVIEWS_TABLE,
+	initialDataViewsState,
+} from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
@@ -25,15 +30,7 @@ interface Props {
 
 const defaultLayouts = { table: {} };
 
-const pluginsListFields = [ 'plugins', 'sites', 'update' ];
-const pluginViewFields = [ 'plugins' ];
-
-const getFieldsPerView = ( pluginSlug: string | null ) => {
-	if ( pluginSlug ) {
-		return pluginViewFields;
-	}
-	return pluginsListFields;
-};
+const pluginsFields = [ 'plugins', 'sites', 'update' ];
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
@@ -51,38 +48,69 @@ export default function PluginsListDataViews( {
 	bulkActionDialog,
 }: Props ) {
 	const translate = useTranslate();
+	const isDesktopView = isDesktop();
+	const shouldUseListView = pluginSlug !== undefined || ! isDesktopView;
 	const pluginUpdateCount = currentPlugins.filter(
 		( plugin ) => plugin.status?.includes( PLUGINS_STATUS.UPDATE )
 	).length;
 
-	const fields = useFields( bulkActionDialog, openPluginSitesPane );
+	const fields = useFields( bulkActionDialog, openPluginSitesPane, shouldUseListView );
+	const visibleFields = ( shouldUseListView: boolean ) =>
+		shouldUseListView ? [ 'icon', ...pluginsFields ] : pluginsFields;
 	const actions = useActions( bulkActionDialog );
 
-	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
-		...initialDataViewsState,
-		perPage: 15,
-		search: initialSearch,
-		fields: getFieldsPerView( pluginSlug ),
-		layout: {
-			styles: {
-				plugins: {
-					width: '60%',
-					minWidth: '300px',
-				},
-				sites: {
-					width: '70px',
-				},
-				update: {
-					minWidth: '200px',
-				},
-				actions: {
-					width: '50px',
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => {
+		return {
+			...initialDataViewsState,
+			perPage: 15,
+			search: initialSearch,
+			fields: visibleFields( shouldUseListView ),
+			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			layout: {
+				primaryField: 'plugins',
+				mediaField: 'icon',
+				styles: {
+					plugins: {
+						width: '60%',
+						minWidth: '300px',
+					},
+					sites: {
+						width: '70px',
+					},
+					update: {
+						minWidth: '200px',
+					},
+					actions: {
+						width: '50px',
+					},
 				},
 			},
-		},
-	} ) );
+		};
+	} );
 
 	const [ isFilteringUpdates, setIsFilteringUpdates ] = useState( false );
+
+	useEffect( () => {
+		// Sets the correct fields when route changes or viewport changes
+		setDataViewsState( {
+			...dataViewsState,
+			fields: visibleFields( shouldUseListView ),
+			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+		} );
+
+		// Subscribe to viewport changes
+		const unsubscribe = subscribeIsDesktop( ( matches ) => {
+			const shouldUseListView = pluginSlug !== undefined || ! matches;
+			setDataViewsState( {
+				...dataViewsState,
+				fields: visibleFields( shouldUseListView ),
+				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			} );
+		} );
+
+		return () => unsubscribe();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ pluginSlug ] );
 
 	const header = (
 		<>
@@ -125,15 +153,6 @@ export default function PluginsListDataViews( {
 	}, [ dataViewsState.search, onSearch, initialSearch ] );
 
 	useEffect( () => {
-		// Sets the correct fields when route changes
-		setDataViewsState( {
-			...dataViewsState,
-			fields: getFieldsPerView( pluginSlug ),
-		} );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginSlug ] );
-
-	useEffect( () => {
 		if (
 			dataViewsState.filters?.length === 1 &&
 			dataViewsState.filters[ 0 ].field === 'status' &&
@@ -154,6 +173,17 @@ export default function PluginsListDataViews( {
 		};
 	}, [ currentPlugins, dataViewsState, fields ] );
 
+	const updatePluginOnChangeSelection = useCallback(
+		( selection: string[] ) => {
+			if ( dataViewsState.type === 'list' ) {
+				const newPluginSelected = selection[ 0 ].split( '/' )[ 0 ];
+				// @ts-expect-error The openPluginSitesPane function only requires a slug to work and we don't have a way to know the other required props.
+				openPluginSitesPane( { slug: newPluginSelected } );
+			}
+		},
+		[ dataViewsState.type ]
+	);
+
 	return (
 		<>
 			<QueryDotorgPlugins pluginSlugList={ data.map( ( plugin ) => plugin.slug ) } />
@@ -161,6 +191,7 @@ export default function PluginsListDataViews( {
 				data={ data }
 				view={ dataViewsState }
 				onChangeView={ setDataViewsState }
+				onChangeSelection={ updatePluginOnChangeSelection }
 				fields={ fields }
 				search
 				searchLabel={ translate( 'Search' ) }

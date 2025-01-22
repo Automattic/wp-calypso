@@ -7,6 +7,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useSelector } from 'calypso/state';
+import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import DomainHeader from '../components/domain-header';
 import {
@@ -36,6 +37,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 	const { domains = [], isFetched, isLoading } = useDomainsTable( fetchAllDomains );
 	const translate = useTranslate();
 	const isInSupportSession = Boolean( useSelector( isSupportSession ) );
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 	const sitesDashboardGlobalStyles = css`
 		html {
 			overflow-y: auto;
@@ -427,6 +429,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				{ ! isLoading && ! isDomainsEmpty && <GoogleDomainOwnerBanner /> }
 				{ ! isDomainsEmpty ? (
 					<DomainsTable
+						context="domains"
 						isLoadingDomains={ isLoading }
 						domains={ domains }
 						isAllSitesView
@@ -441,6 +444,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 						sidebarMode={ props.sidebarMode }
 						selectedDomainName={ props.selectedDomainName }
 						selectedFeature={ props.selectedFeature }
+						hasConnectableSites={ hasConnectableSites }
 					/>
 				) : (
 					<div className="bulk-domains-empty-state">

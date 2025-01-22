@@ -542,6 +542,7 @@ function setUpCSP( req, res, next ) {
 			'*.wp.com',
 			'https://fonts.gstatic.com',
 			'use.typekit.net',
+			'https://woocommerce.com',
 			'data:', // should remove 'data:' ASAP
 		],
 		'media-src': [ "'self'" ],

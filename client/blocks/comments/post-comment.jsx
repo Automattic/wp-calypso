@@ -17,6 +17,10 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import withDimensions from 'calypso/lib/with-dimensions';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
+import {
+	getUserProfileUrl,
+	isUserProfileEnabled,
+} from 'calypso/reader/user-profile/user-profile.utils';
 import { expandComments } from 'calypso/state/comments/actions';
 import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -311,9 +315,16 @@ class PostComment extends PureComponent {
 		const comment = get( this.props.commentsTree, [ commentId, 'data' ], {} );
 		const commentAuthor = get( comment, 'author', {} );
 		const commentAuthorName = decodeEntities( commentAuthor.name );
-		const commentAuthorUrl = commentAuthor.site_ID
-			? getStreamUrl( null, commentAuthor.site_ID )
-			: commentAuthor && commentAuthor.URL;
+
+		let commentAuthorUrl;
+		if ( isUserProfileEnabled() && commentAuthor.ID ) {
+			commentAuthorUrl = getUserProfileUrl( commentAuthor.ID );
+		} else if ( commentAuthor.site_ID ) {
+			commentAuthorUrl = getStreamUrl( null, commentAuthor.site_ID );
+		} else {
+			commentAuthorUrl = commentAuthor?.URL;
+		}
+
 		return { comment, commentAuthor, commentAuthorUrl, commentAuthorName };
 	};
 

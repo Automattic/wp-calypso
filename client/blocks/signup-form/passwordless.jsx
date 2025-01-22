@@ -105,7 +105,7 @@ class PasswordlessSignupForm extends Component {
 		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
-			const response = await wpcom.req.post( '/users/new', {
+			const body = {
 				email: typeof this.state.email === 'string' ? this.state.email.trim() : '',
 				is_passwordless: true,
 				signup_flow_name: signup_flow_name,
@@ -120,7 +120,17 @@ class PasswordlessSignupForm extends Component {
 				anon_id: getTracksAnonymousUserId(),
 				is_dev_account: isDevAccount,
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
-			} );
+			};
+
+			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
+			const queryParams = new URLSearchParams( search );
+			const ref = queryParams.get( 'ref' );
+
+			if ( ref ) {
+				body.ref = ref;
+			}
+
+			const response = await wpcom.req.post( '/users/new', body );
 
 			this.createAccountCallback( response );
 		} catch ( error ) {

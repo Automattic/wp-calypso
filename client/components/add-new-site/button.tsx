@@ -6,6 +6,7 @@ import React from 'react';
 
 type Props = {
 	showMainButtonLabel: boolean;
+	mainButtonLabelText?: string;
 	isMenuVisible: boolean;
 	toggleMenu: () => void;
 	popoverMenuContext: React.RefObject< HTMLButtonElement >;
@@ -13,11 +14,13 @@ type Props = {
 
 const AddNewSiteButton: React.FC< Props > = ( {
 	showMainButtonLabel,
+	mainButtonLabelText,
 	isMenuVisible,
 	toggleMenu,
 	popoverMenuContext,
 } ) => {
 	const translate = useTranslate();
+	const mainButtonLabel = mainButtonLabelText || translate( 'Add sites' );
 
 	return (
 		<Button
@@ -27,7 +30,7 @@ const AddNewSiteButton: React.FC< Props > = ( {
 			onClick={ toggleMenu }
 		>
 			<>
-				{ showMainButtonLabel ? translate( 'Add sites' ) : null }
+				{ showMainButtonLabel ? mainButtonLabel : null }
 				<Gridicon
 					className={ clsx(
 						{ reverse: showMainButtonLabel && isMenuVisible },

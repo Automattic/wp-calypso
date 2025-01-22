@@ -60,8 +60,7 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		isOpenForNonMouseFlow: false,
 	};
 
-	componentButtonRef = React.createRef< HTMLButtonElement >();
-	componentDivRef = React.createRef< HTMLDivElement >();
+	wrapperRef = React.createRef< HTMLDivElement >();
 
 	_preloaded = false;
 
@@ -191,12 +190,8 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 		}
 
 		// Check refs to see if the touch event started inside our component, if it didn't, close the menu.
-		const isInComponentButtonRef = this.componentButtonRef.current?.contains(
-			event.target as Node
-		);
-		const isInComponentDivRef = this.componentDivRef.current?.contains( event.target as Node );
-
-		if ( ! isInComponentButtonRef && ! isInComponentDivRef ) {
+		const isInWrapper = this.wrapperRef.current?.contains( event.target as Node );
+		if ( ! isInWrapper ) {
 			this.setState( { isOpenForNonMouseFlow: false } );
 		}
 	};
@@ -221,49 +216,30 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			disabled: this.props.disabled,
 		};
 
-		if ( this.props.url && ! this.props.subItems ) {
-			return (
+		const MenuItem = ( props: React.HTMLAttributes< HTMLElement > ) =>
+			this.props.url ? (
 				<a
-					{ ...attributes }
 					href={ this.props.url }
 					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
-				>
-					{ this.renderChildren() }
-				</a>
+					{ ...props }
+				/>
+			) : (
+				<button ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > } { ...props } />
 			);
-		}
-
-		if ( this.props.url && this.props.subItems ) {
-			return (
-				<button
-					{ ...attributes }
-					ref={ this.componentButtonRef }
-					onKeyDown={ this.toggleMenuByKey }
-				>
-					<a
-						href={ this.props.url }
-						ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
-						onTouchEnd={ this.toggleMenuByTouch }
-						tabIndex={ -1 }
-					>
-						{ this.renderChildren() }
-					</a>
-					{ this.renderSubItems() }
-				</button>
-			);
-		}
 
 		return (
-			<div className={ this.props.wrapperClassName } ref={ this.componentDivRef }>
-				<button
+			<div
+				className={ clsx( 'masterbar__item-wrapper', this.props.wrapperClassName ) }
+				ref={ this.wrapperRef }
+			>
+				<MenuItem
 					{ ...attributes }
-					ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > }
 					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
 					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
 				>
 					{ this.renderChildren() }
-					{ this.renderSubItems() }
-				</button>
+				</MenuItem>
+				{ this.renderSubItems() }
 			</div>
 		);
 	}

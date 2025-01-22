@@ -85,7 +85,6 @@
 		"jetpack-cloud": true,
 		"jetpack-cloud-overview": true,
 		"jetpack-cloud-agency-dashboard": true,
-		"jetpack-cloud-agency-sites-v2": true,
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-features-comparison": true,
@@ -105,5 +104,6 @@
 	"site_filter": [ "jetpack", "atomic", "wpcom" ],
 	"theme": "jetpack-cloud",
 	"hotjar_enabled": true,
-	"theme_color": "#2fb41f"
+	"theme_color": "#2fb41f",
+	"theme_color_admin_color_scheme_override": false
 }

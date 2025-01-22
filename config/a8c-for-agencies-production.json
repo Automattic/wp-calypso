@@ -47,7 +47,7 @@
 		"a8c-for-agencies-auth": true,
 		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-overview": true,
-		"a8c-for-agencies-plugins": true,
+		"a8c-for-agencies-plugins": false,
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
@@ -64,5 +64,6 @@
 	"theme": "a8c-for-agencies",
 	"restricted_me_access": false,
 	"theme_color": "#029CD7",
+	"theme_color_admin_color_scheme_override": false,
 	"hotjar_enabled": true
 }

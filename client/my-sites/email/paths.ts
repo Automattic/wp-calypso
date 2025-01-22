@@ -26,6 +26,10 @@ export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
+export function isUnderCheckoutRoute( path?: string | null ) {
+	return path?.startsWith( '/checkout' );
+}
+
 // Builds a URL query string from an object. Handles null values.
 const buildQueryString = ( parameters?: QueryStringParameters ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
@@ -174,7 +178,11 @@ export const getEmailManagementPath: EmailPathUtilityFunction = (
 	urlParameters = {},
 	inSiteContext = false
 ) => {
-	if ( inSiteContext || isUnderDomainManagementAll( relativeTo ) ) {
+	if (
+		inSiteContext ||
+		isUnderDomainManagementAll( relativeTo ) ||
+		( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) )
+	) {
 		const prefix =
 			inSiteContext || isUnderDomainSiteContext( relativeTo )
 				? emailSiteContextPrefix
@@ -212,8 +220,12 @@ export const getEmailInDepthComparisonPath = (
 	source?: string,
 	intervalLength?: string
 ) => {
-	if ( isEnabled( 'calypso/all-domain-management' ) && isUnderDomainManagementAll( relativeTo ) ) {
-		return `${ domainsManagementPrefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
 			interval: intervalLength,
 			referrer: relativeTo,
 			source,

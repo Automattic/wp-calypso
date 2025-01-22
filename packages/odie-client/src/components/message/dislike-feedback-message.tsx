@@ -7,12 +7,12 @@ import { GetSupport } from './get-support';
 export const DislikeFeedbackMessage = () => {
 	const { botName, isUserEligibleForPaidSupport, trackEvent } = useOdieAssistantContext();
 
-	const handleContactSupportClick = () => {
-		trackEvent( 'chat_dislike_feedback', {
-			force_site_id: true,
-			bot_name: botName,
-			location: 'chat',
+	const handleContactSupportClick = ( destination: string ) => {
+		trackEvent( 'chat_get_support', {
+			location: 'dislike-feedback',
+			destination,
 			is_user_eligible: isUserEligibleForPaidSupport,
+			bot_name: botName,
 		} );
 	};
 

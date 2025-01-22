@@ -40,6 +40,7 @@ const DNSRecordsHeader: CustomHeaderComponentType = ( {
 					null,
 					inSiteContext
 				),
+				className: 'navigation-header__domain-name',
 			},
 			{
 				label: dnsRecordsTitle,
@@ -58,7 +59,7 @@ const DNSRecordsHeader: CustomHeaderComponentType = ( {
 		}
 
 		return baseNavigationItems;
-	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site, translate ] );
+	}, [ inSiteContext, selectedDomainName, selectedSiteSlug, site ] );
 
 	return (
 		<NavigationHeader

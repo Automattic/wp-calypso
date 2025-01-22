@@ -24,6 +24,9 @@ export type TransferDomainToOtherSitePassedProps = {
 	selectedDomainName: string;
 	selectedSite: SiteDataExtraInfo;
 	children?: React.ReactNode;
+	context?: {
+		params?: { [ key: string ]: any };
+	};
 };
 
 // state props
@@ -36,6 +39,7 @@ export type TransferDomainToOtherSiteStateProps = {
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;
 	sites: SiteDetails[];
+	showHeader?: boolean;
 };
 // state props added by redux connect
 export type TransferDomainToOtherSiteStateToProps = (
