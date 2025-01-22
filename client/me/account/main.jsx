@@ -52,7 +52,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
-import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+import ToggleLandingPageSettings from './toggle-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
 import './style.scss';
@@ -957,9 +957,14 @@ class Account extends Component {
 
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
-								{ translate( 'Admin home' ) }
+								{ translate( 'Default Landing Page' ) }
 							</FormLabel>
-							<ToggleSitesAsLandingPage />
+							<ToggleLandingPageSettings />
+							<FormSettingExplanation>
+								{ translate(
+									'When you type https://www.wordpress.com in your browser, this is the page you land on.'
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>

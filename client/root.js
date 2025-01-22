@@ -13,6 +13,7 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
+import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { getSelectedSiteId } from './state/ui/selectors';
 
@@ -91,6 +92,12 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( useSitesAsLandingPage ) {
 		return '/sites';
+	}
+
+	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
+
+	if ( useReaderAsLandingPage ) {
+		return '/read';
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
