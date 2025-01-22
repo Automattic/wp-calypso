@@ -94,6 +94,8 @@ const jetpackStatsCommercialPaywall = [
 	STAT_TYPE_COMMENTS,
 	STATS_TYPE_DEVICE_STATS,
 	STATS_FEATURE_UTM_STATS,
+	STATS_FEATURE_LOCATION_REGION_VIEWS,
+	STATS_FEATURE_LOCATION_CITY_VIEWS,
 ];
 
 // If Jetpack commerical sites don't have any purchase that supports commercial use,
