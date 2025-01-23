@@ -56,7 +56,7 @@ export function ReceiptContent( { transaction }: ReceiptContentProps ) {
 					<thead>
 						<tr>
 							<th>{ translate( 'Description' ) }</th>
-							<th className="receipt__amount-column">{ translate( 'Amount' ) }</th>
+							<th className="receipt__amount">{ translate( 'Amount' ) }</th>
 						</tr>
 					</thead>
 					<tbody>
