@@ -188,11 +188,11 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 				<StepComponent
 					navigation={ {
 						submit() {
-							navigate( postAuthStepSlug, undefined, true );
+							navigate( postAuthStepSlug, undefined );
 						},
 						...( previousAuthStepSlug && {
 							goBack() {
-								navigate( previousAuthStepSlug, undefined, true );
+								navigate( previousAuthStepSlug, undefined );
 							},
 						} ),
 					} }

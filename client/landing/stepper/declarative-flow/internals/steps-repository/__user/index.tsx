@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AnyAction } from 'redux';
 import { reloadProxy, requestAllBlogsAccess } from 'wpcom-proxy-request';
+import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
@@ -16,8 +17,8 @@ import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
-import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { fetchCurrentUser, redirectToLogout } from 'calypso/state/current-user/actions';
+import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { useSocialService } from './use-social-service';
@@ -34,6 +35,7 @@ const UserStepComponent: Step = function UserStep( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
+	const currentUser = useSelector( getCurrentUser );
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
@@ -43,12 +45,14 @@ const UserStepComponent: Step = function UserStep( {
 			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
 			reloadProxy();
 			requestAllBlogsAccess();
-			dispatch( fetchCurrentUser() as unknown as AnyAction );
+			dispatch( fetchCurrentUser() as unknown as AnyAction ).then( () => {
+				if ( isLoggedIn ) {
+					navigation.submit?.();
+				}
+			} );
 		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
-		} else {
-			navigation.submit?.();
 		}
 	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
 
@@ -67,6 +71,42 @@ const UserStepComponent: Step = function UserStep( {
 			setSignupIsNewUser( data.ID );
 		}
 	};
+
+	if ( isLoggedIn && currentUser ) {
+		return (
+			<>
+				<FormattedHeader align="center" headerText={ translate( 'Is this you?' ) } brandFont />
+				<ContinueAsUser
+					currentUser={ currentUser }
+					onChangeAccount={ redirectToLogout }
+					redirectPath={ redirectTo }
+					isWoo={ false }
+					isWooPasswordless={ false }
+					isBlazePro={ false }
+					notYouText={ translate(
+						'Not you?{{br/}} Sign out or log in with {{link}}another account{{/link}}',
+						{
+							components: {
+								br: <br />,
+								link: (
+									<button
+										type="button"
+										id="loginAsAnotherUser"
+										className="continue-as-user__change-user-link"
+										onClick={ redirectToLogout }
+									/>
+								),
+							},
+							args: {
+								userName: currentUser.display_name || currentUser.username || '',
+							},
+							comment: 'Link to continue login as different user',
+						}
+					) }
+				/>
+			</>
+		);
+	}
 
 	return (
 		<>
