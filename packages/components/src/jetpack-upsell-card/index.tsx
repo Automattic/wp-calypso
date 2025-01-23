@@ -20,14 +20,12 @@ type Product = {
 };
 
 type JetpackUpsellCardProps = {
-	purchasedProducts: string[];
 	siteSlug?: string | null;
 	siteFeatures: string[];
 	upgradeUrls: Record< string, string >;
 };
 
 export function JetpackUpsellCard( {
-	purchasedProducts,
 	siteSlug,
 	siteFeatures,
 	upgradeUrls = {},
@@ -117,16 +115,12 @@ export function JetpackUpsellCard( {
 		[ translate ]
 	) as Product[];
 
-	let visibleProducts = PRODUCTS.filter(
-		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
-	);
-	const hasProductsToUpsell = visibleProducts.length > 0;
-
 	// New product visibility testing based on siteFeatures.
 	// If any of the product features are not in siteFeatures, it's a potential upsell.
-	visibleProducts = PRODUCTS.filter( ( product ) =>
+	const visibleProducts = PRODUCTS.filter( ( product ) =>
 		product.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
 	);
+	const hasProductsToUpsell = visibleProducts.length > 0;
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">

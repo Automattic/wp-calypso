@@ -104,6 +104,8 @@ export default function JetpackUpsellSection() {
 
 	const bundledProducts = bundledProductsFromPurchases( sitePurchases );
 	const finalProducts = [ ...purchasedProducts, ...bundledProducts ];
+	// eslint-disable-next-line no-console
+	console.log( 'finalProducts', finalProducts );
 
 	// Build checkout URL prefixed with WordPress.com.
 	// TODO: Change URL to point at plugin installation within wp-admin.
@@ -132,7 +134,6 @@ export default function JetpackUpsellSection() {
 	return (
 		<div className="jetpack-upsell-section">
 			<JetpackUpsellCard
-				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
 				siteFeatures={ siteFeatures }
 				upgradeUrls={ upgradeUrls }
