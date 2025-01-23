@@ -14,33 +14,8 @@
 	}
 }
 
-.reader-post-actions:not(.has-views) .reader-post-actions__item {
-	&.reader-post-actions__visit {
-		flex: 1;
-	}
-}
-
 .reader-post-actions .reader-post-actions__item {
 	margin-right: 24px;
-
-	&.reader-post-actions__visit {
-		.reader-visit-link {
-			align-items: center;
-			box-sizing: border-box;
-			display: flex;
-			gap: 4px;
-		}
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
-		}
-	}
-
-	&.reader-post-actions__views {
-		flex: 1;
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
-		}
-	}
 
 	& > button {
 		margin: 0;

@@ -11,6 +11,7 @@ interface Props {
 	siteSlug: string | null;
 	checklistSlug: string | null;
 	makeLastTaskPrimaryAction?: boolean;
+	highlightNextAction?: boolean;
 	taskFilter?: ( tasks: Task[] ) => Task[];
 	useLaunchpadOptions?: UseLaunchpadOptions;
 	launchpadContext: string;
@@ -28,6 +29,7 @@ const LaunchpadInternal: FC< Props > = ( {
 	checklistSlug,
 	taskFilter,
 	makeLastTaskPrimaryAction,
+	highlightNextAction,
 	useLaunchpadOptions = {},
 	launchpadContext,
 } ) => {
@@ -66,7 +68,10 @@ const LaunchpadInternal: FC< Props > = ( {
 	return (
 		<div className="launchpad__checklist-wrapper">
 			{ isFetchedAfterMount ? (
-				<Checklist makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }>
+				<Checklist
+					makeLastTaskPrimaryAction={ makeLastTaskPrimaryAction }
+					highlightNextAction={ highlightNextAction }
+				>
 					{ tasks.map( ( task ) => (
 						<ChecklistItem
 							task={ task }

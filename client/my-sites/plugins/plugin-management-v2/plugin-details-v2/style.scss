@@ -153,13 +153,31 @@
 		td:first-child .dataviews-view-table__cell-content-wrapper > span {
 			flex-grow: 1;
 
-			.plugin-row-formatter__overlay {
-				display: none;
-			}
 		}
 
 		td:last-child .dataviews-view-table__cell-content-wrapper {
 			justify-content: flex-end;
+		}
+	}
+
+	.plugin-row-formatter__overlay {
+		display: none;
+	}
+
+	.dataviews-view-list {
+		// Hiding this here because in this version the mediaField is not hiddable
+		// https://github.com/WordPress/gutenberg/tree/d59faffa3d270dbc7716f653b4cdab6020812658/packages/dataviews#properties-of-layout
+		// In future versions, a showMedia property can be used
+		.dataviews-view-list__media-wrapper {
+			background-color: transparent;
+			display: none;
+		}
+		.dataviews-view-list__field-wrapper {
+			width: 100%;
+			.dataviews-view-list__field:last-child {
+				margin-left: auto;
+				order: 0;
+			}
 		}
 	}
 }

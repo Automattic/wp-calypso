@@ -21,6 +21,7 @@ type LaunchpadProps = {
 	onSiteLaunched?: () => void;
 	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
+	highlightNextAction?: boolean;
 };
 
 const Launchpad = ( {
@@ -30,6 +31,7 @@ const Launchpad = ( {
 	onSiteLaunched,
 	onTaskClick,
 	onPostFilterTasks,
+	highlightNextAction,
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
@@ -84,6 +86,7 @@ const Launchpad = ( {
 				taskFilter={ taskFilter }
 				useLaunchpadOptions={ launchpadOptions }
 				launchpadContext={ launchpadContext }
+				highlightNextAction={ highlightNextAction }
 			/>
 		</>
 	);

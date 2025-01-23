@@ -40,6 +40,7 @@ export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
+export const EXAMPLE_FLOW = 'example';
 export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {

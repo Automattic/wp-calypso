@@ -1,6 +1,16 @@
+import i18n from 'i18n-calypso';
 import formatNumberCompact, { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 describe( 'formatNumberCompact', () => {
+	beforeEach( function () {
+		i18n.configure(); // ensure everything is reset
+		i18n.setLocale( {
+			'': {
+				localeSlug: 'en',
+			},
+		} );
+	} );
+
 	test( 'does nothing if number is < 1000', () => {
 		const counts = formatNumberCompact( 999, 'en' );
 		expect( counts ).toEqual( '999' );
@@ -26,6 +36,13 @@ describe( 'formatNumberCompact', () => {
 		expect( counts ).toEqual( '-123,457K' );
 	} );
 	describe( 'es', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'es',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'es' );
 			expect( counts ).toEqual( '1,2 mil' );
@@ -36,6 +53,14 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'pt-br', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'pt-br',
+					localeSlug: 'pt',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'pt-br' );
 			expect( counts ).toEqual( '1,2 mil' );
@@ -46,6 +71,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'de', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'de',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'de' );
 			expect( counts ).toEqual( '1,2 Tsd.' );
@@ -56,6 +88,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'fr', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'fr',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'fr' );
 			expect( counts ).toEqual( '1,2 k' );
@@ -66,6 +105,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'he', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'he',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'he' );
 			expect( counts ).toEqual( '1.2K' );
@@ -76,6 +122,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'ja', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'ja',
+				},
+			} );
+		} );
 		test( 'does not modify counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'ja' );
 			expect( counts ).toEqual( '1234' );
@@ -90,12 +143,26 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'it', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'it',
+				},
+			} );
+		} );
 		test( 'does not support a compact format, use numberFormat directly from i18n', () => {
 			const counts = formatNumberCompact( 1234, 'it' );
 			expect( counts ).toEqual( null );
 		} );
 	} );
 	describe( 'nl', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'nl',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'nl' );
 			expect( counts ).toEqual( '1,2K' );
@@ -106,12 +173,26 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'ru', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'ru',
+				},
+			} );
+		} );
 		test( 'the short form is too long to be useful, use numberFormat directly from i18n', () => {
 			const counts = formatNumberCompact( 1234, 'ru' );
 			expect( counts ).toEqual( null );
 		} );
 	} );
 	describe( 'tr', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'tr',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'tr' );
 			expect( counts ).toEqual( '1,2 B' );
@@ -122,6 +203,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'id', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'id',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'id' );
 			expect( counts ).toEqual( '1,2 rb' );
@@ -132,6 +220,14 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'zh-cn', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'zh-cn',
+					localeSlug: 'zh',
+				},
+			} );
+		} );
 		test( 'does not modify counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'zh-cn' );
 			expect( counts ).toEqual( '1234' );
@@ -146,6 +242,14 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'zh-tw', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'zh-tw',
+					localeSlug: 'zh',
+				},
+			} );
+		} );
 		test( 'does not modify counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'zh-tw' );
 			expect( counts ).toEqual( '1234' );
@@ -160,6 +264,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'ko', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'ko',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'ko' );
 			expect( counts ).toEqual( '1.2천' );
@@ -170,9 +281,16 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'ar', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'ar',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'ar' );
-			expect( counts ).toEqual( '1٫2 ألف' );
+			expect( counts ).toEqual( '1.2 ألف' );
 		} );
 		test( 'shows leading sig figs for counts > 10000', () => {
 			const counts = formatNumberCompact( 123456, 'ar' );
@@ -180,6 +298,13 @@ describe( 'formatNumberCompact', () => {
 		} );
 	} );
 	describe( 'sv', () => {
+		beforeEach( function () {
+			i18n.setLocale( {
+				'': {
+					localeSlug: 'sv',
+				},
+			} );
+		} );
 		test( 'shows 2 sig figs for counts < 10000', () => {
 			const counts = formatNumberCompact( 1234, 'sv' );
 			expect( counts ).toEqual( '1,2 tn' );
