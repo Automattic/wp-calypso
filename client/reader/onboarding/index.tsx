@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import './style.scss';
@@ -29,7 +30,7 @@ const ReaderOnboarding = ( {
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
 	const followedTags = useSelector( getReaderFollowedTags );
-	const hasCompletedOnboarding = useSelector( ( state ) =>
+	let hasCompletedOnboarding = !! useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
 	);
 	const hasSeenOnboarding = useSelector( ( state ) =>
@@ -37,8 +38,36 @@ const ReaderOnboarding = ( {
 	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
+	const follows = useSelector( getReaderFollows );
+
+	const userSettings = useSelector( getUserSettings );
+	const hasCompletedAccountProfile = !! (
+		userSettings?.has_gravatar &&
+		userSettings?.description &&
+		userSettings?.first_name &&
+		userSettings?.last_name
+	);
+	let accountProfileTitle = translate( 'Add your avatar and fill out your profile' );
+	if ( ! hasCompletedAccountProfile && userSettings?.has_gravatar ) {
+		accountProfileTitle = translate( 'Fill out your profile' );
+	}
+
+	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
+	const taskTwoCompleted = follows?.length > 2;
 
 	const dispatch = useDispatch();
+
+	// If the user has completed the onboarding, save the preference and track the event.
+	if (
+		! hasCompletedOnboarding &&
+		taskOneCompleted &&
+		taskTwoCompleted &&
+		hasCompletedAccountProfile
+	) {
+		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
+		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
+		hasCompletedOnboarding = true;
+	}
 
 	const shouldShowOnboarding =
 		forceShow ||
@@ -46,6 +75,7 @@ const ReaderOnboarding = ( {
 		( preferencesLoaded &&
 			! hasCompletedOnboarding &&
 			userRegistrationDate &&
+			! hasCompletedAccountProfile &&
 			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
 
 	// Modal state handlers with tracking.
@@ -119,26 +149,12 @@ const ReaderOnboarding = ( {
 		);
 	}, [] );
 
-	const userSettings = useSelector( getUserSettings );
-	const hasCompletedAccountProfile = !! (
-		userSettings?.has_gravatar &&
-		userSettings?.description &&
-		userSettings?.first_name &&
-		userSettings?.last_name
-	);
-	let accountProfileTitle = translate( 'Add your avatar and fill out your profile' );
-	if ( ! hasCompletedAccountProfile && userSettings?.has_gravatar ) {
-		accountProfileTitle = translate( 'Fill out your profile' );
-	}
-
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
 
 	if ( ! shouldShowOnboarding ) {
 		return null;
 	}
-
-	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
 
 	const tasks: Task[] = [
 		{
@@ -152,7 +168,7 @@ const ReaderOnboarding = ( {
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: openDiscoverModal,
-			completed: false,
+			completed: taskTwoCompleted,
 			disabled: ! taskOneCompleted,
 		},
 		{
@@ -160,7 +176,7 @@ const ReaderOnboarding = ( {
 			title: accountProfileTitle,
 			actionDispatch: redirectToAccountProfile,
 			completed: hasCompletedAccountProfile,
-			disabled: ! taskOneCompleted,
+			disabled: ! taskTwoCompleted,
 		},
 	];
 
