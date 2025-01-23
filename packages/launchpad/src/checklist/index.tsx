@@ -5,13 +5,15 @@ import './style.scss';
 
 interface Props {
 	makeLastTaskPrimaryAction?: boolean;
+	highlightNextAction?: boolean;
 	children?:
 		| ReactElement< ComponentProps< typeof ChecklistItem > >
 		| ReactElement< ComponentProps< typeof ChecklistItem > >[];
 }
 
-const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction } ) => {
+const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction, highlightNextAction } ) => {
 	const lastChildIndex = Children.count( children ) - 1;
+	let hasHighlightedItem = false;
 
 	return (
 		<ul
@@ -21,8 +23,18 @@ const Checklist: FC< Props > = ( { children, makeLastTaskPrimaryAction } ) => {
 			aria-label="Launchpad Checklist"
 		>
 			{ Children.map( children || [], ( child, index ) => {
-				if ( index === lastChildIndex ) {
-					return cloneElement( child, { isPrimaryAction: makeLastTaskPrimaryAction } );
+				const shouldHighlightItem =
+					highlightNextAction && ! hasHighlightedItem && child.props.task.completed === false;
+
+				if ( shouldHighlightItem ) {
+					hasHighlightedItem = true;
+				}
+
+				if ( index === lastChildIndex || shouldHighlightItem ) {
+					return cloneElement( child, {
+						isPrimaryAction: makeLastTaskPrimaryAction,
+						isHighlighted: shouldHighlightItem,
+					} );
 				}
 				return child;
 			} ) }

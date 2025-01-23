@@ -61,6 +61,7 @@ export const LAUNCHPAD_INTENT_HOSTING = 'home-launchpad-intent-hosting';
 export const LAUNCHPAD_INTENT_WRITE = 'home-launchpad-intent-write';
 export const LAUNCHPAD_INTENT_FREE_NEWSLETTER = 'home-launchpad-intent-free-newsletter';
 export const LAUNCHPAD_INTENT_PAID_NEWSLETTER = 'home-launchpad-intent-paid-newsletter';
+export const LAUNCHPAD_INTENT_NEWSLETTER_GOAL = 'home-launchpad-intent-newsletter-goal';
 export const LAUNCHPAD_PRE_LAUNCH = 'home-launchpad-pre-launch';
 export const LAUNCHPAD_LEGACY_SITE_SETUP = 'home-launchpad-legacy-site-setup';
 export const LAUNCHPAD_POST_MIGRATION = 'home-launchpad-post-migration';

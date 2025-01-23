@@ -19,7 +19,6 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
 import DataCenterPicker from 'calypso/blocks/data-center-picker/docs/example';
 import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
-import DomainTip from 'calypso/blocks/domain-tip/docs/example';
 import FollowButton from 'calypso/blocks/follow-button/docs/example';
 import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example';
@@ -33,7 +32,6 @@ import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
-import ReaderCombinedCard from 'calypso/blocks/reader-combined-card/docs/example';
 import ReaderExportButton from 'calypso/blocks/reader-export-button/docs/example';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video/docs/example';
 import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example';
@@ -142,14 +140,12 @@ export default class AppComponents extends Component {
 					<Theme />
 					<ThemesListExample />
 					<PlanCompareCard />
-					<DomainTip />
 					<RelatedPostCard />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
-					<ReaderCombinedCard />
 					<PlanPrice />
 					<PostShare readmeFilePath="post-share" />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />

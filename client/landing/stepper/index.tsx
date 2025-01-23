@@ -3,7 +3,7 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import { User as UserStore } from '@automattic/data-stores';
+import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
@@ -12,7 +12,7 @@ import {
 	SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -41,12 +41,12 @@ import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
-import { enhanceFlowWithAuth } from './utils/enhanceFlowWithAuth';
+import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
+import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { Flow } from './declarative-flow/internals/types';
 import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
@@ -61,19 +61,6 @@ function determineFlow() {
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
-
-/**
- * TODO: this is no longer a switch and should be removed
- */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
-
-	return <FlowRenderer flow={ flow } />;
-};
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
@@ -141,15 +128,39 @@ window.AppBoot = async () => {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	if ( user ) {
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		receiveCurrentUser( user as UserStore.CurrentUser );
+	}
 
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
-	const { default: rawFlow } = await flowPromise;
-	const flow = rawFlow.__experimentalUseBuiltinAuth ? enhanceFlowWithAuth( rawFlow ) : rawFlow;
+	let { default: flow } = await flowPromise;
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
+
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
+
+	// Checking for initialize implies this is a V2 flow.
+	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
+	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
+	if ( 'initialize' in flow && flowSteps ) {
+		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
+		flowSteps = injectUserStepInSteps( flowSteps );
+		flow.__flowSteps = flowSteps;
+		enhanceFlowWithUtilityFunctions( flow );
+	} else if ( 'useSteps' in flow ) {
+		// V1 flows have to be enhanced by changing their `useSteps` hook.
+		flow = enhanceFlowWithAuth( flow );
+	}
 
 	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
 	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
@@ -166,7 +177,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }

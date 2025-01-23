@@ -55,6 +55,18 @@
 	line-height: $line-height;
 }
 
+
+/* Heading SM */
+@mixin a4a-font-heading-sm (
+	$font-size: rem(11px),
+	$font-weight: 500,
+	$line-height: 125%,
+) {
+	font-size: $font-size;
+	font-weight: $font-weight;
+	line-height: $line-height;
+}
+
 /* Body LG */
 @mixin a4a-font-body-lg (
 	$font-size: rem(16px),

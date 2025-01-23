@@ -58,6 +58,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		currentlySelectedDomainName,
 		selectedFeature,
 		isHostingOverview,
+		hasConnectableSites,
 	} = useDomainsTable();
 
 	const renderSiteCell = () => {
@@ -66,7 +67,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				<DomainsTableSiteCell
 					site={ site }
 					siteSlug={ siteSlug }
+					domainName={ domain.domain }
 					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+					hasConnectableSites={ hasConnectableSites }
 				/>
 			);
 		}
