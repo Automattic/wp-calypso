@@ -10,7 +10,7 @@ import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subs
 import {
 	useSubscriptionPlans,
 	useFetchPaidSubscribersCount,
-  useUnsubscribeModal,
+	useUnsubscribeModal,
 } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
