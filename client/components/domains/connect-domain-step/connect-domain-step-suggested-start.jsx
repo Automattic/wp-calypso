@@ -26,16 +26,18 @@ export default function ConnectDomainStepSuggestedStart( {
 	onNextStep,
 	progressStepList,
 	setPage,
+	domainSetupInfo,
 } ) {
 	const { __ } = useI18n();
+	const { data } = domainSetupInfo;
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const firstStep = isSubdomain( domain )
+	const firstStep = isSubdomain( domain, data?.tld )
 		? stepSlug.SUBDOMAIN_ADVANCED_START
 		: stepSlug.ADVANCED_START;
 	const switchToAdvancedSetup = () => setPage( firstStep );
 
-	const message = isSubdomain( domain )
+	const message = isSubdomain( domain, data?.tld )
 		? __(
 				'The easiest way to connect your subdomain is by changing NS records. But if you are unable to do this, then switch to our <a>advanced setup</a>, using A & CNAME records.'
 		  )
@@ -130,4 +132,5 @@ ConnectDomainStepSuggestedStart.propTypes = {
 	onNextStep: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
 	setPage: PropTypes.func.isRequired,
+	domainSetupInfo: PropTypes.object.isRequired,
 };
