@@ -16,6 +16,10 @@ type Props = {
 	showFormHeader?: boolean;
 };
 
+type OnAddEmailForwardProps =
+	| { index: number; name: 'mailbox'; value: string }
+	| { index: number; name: 'destinations'; value: string[] };
+
 const EmailForwardingAddNewCompactList = ( {
 	onAddedEmailForwards,
 	onBeforeAddEmailForwards,
@@ -24,9 +28,9 @@ const EmailForwardingAddNewCompactList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 
-	const [ emailForwards, setEmailForwards ] = useState( [
-		{ destination: '', mailbox: '', isValid: false },
-	] );
+	const [ emailForwards, setEmailForwards ] = useState<
+		Array< { destinations: string[]; mailbox: string; isValid: boolean } >
+	>( [ { destinations: [], mailbox: '', isValid: false } ] );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
@@ -52,8 +56,8 @@ const EmailForwardingAddNewCompactList = ( {
 
 		onBeforeAddEmailForwards?.();
 
-		emailForwards?.map( ( { mailbox, destination } ) => {
-			addEmailForward( { mailbox, destination } );
+		emailForwards?.map( ( { mailbox, destinations } ) => {
+			addEmailForward( { mailbox, destinations } );
 		} );
 
 		onAddedEmailForwards?.();
@@ -61,7 +65,7 @@ const EmailForwardingAddNewCompactList = ( {
 
 	const onAddNewEmailForward = () => {
 		setEmailForwards( ( prev ) => {
-			return [ ...prev, { destination: '', mailbox: '', isValid: false } ];
+			return [ ...prev, { destinations: [], mailbox: '', isValid: false } ];
 		} );
 	};
 
@@ -71,18 +75,17 @@ const EmailForwardingAddNewCompactList = ( {
 		setEmailForwards( newEmailForwards );
 	};
 
-	const onUpdateEmailForward = (
-		index: number,
-		name: 'destination' | 'mailbox',
-		value: string
-	) => {
+	const onUpdateEmailForward = ( { index, name, value }: OnAddEmailForwardProps ) => {
 		const newEmailForwards = [ ...emailForwards ];
-		newEmailForwards[ index ][ name ] = value;
+		if ( name === 'destinations' ) {
+			newEmailForwards[ index ].destinations = value;
+		} else {
+			newEmailForwards[ index ].mailbox = value;
+		}
 
 		const validEmailForward = validateAllFields( newEmailForwards[ index ], existingEmailForwards );
 		newEmailForwards[ index ].isValid =
-			validEmailForward.mailbox.length === 0 && validEmailForward.destination.length === 0;
-
+			validEmailForward.mailbox.length === 0 && validEmailForward.destinations.length === 0;
 		setEmailForwards( newEmailForwards );
 	};
 

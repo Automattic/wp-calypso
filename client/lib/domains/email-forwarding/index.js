@@ -2,7 +2,7 @@ import emailValidator from 'email-validator';
 import { mapValues } from 'lodash';
 import { hasDuplicatedEmailForwards } from 'calypso/lib/domains/email-forwarding/has-duplicated-email-forwards';
 
-function validateAllFields( fieldValues, existingEmailForwards = [] ) {
+export function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,
@@ -21,12 +21,12 @@ function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 	} );
 }
 
-function validateField( { name, value } ) {
+export function validateField( { name, value } ) {
 	switch ( name ) {
 		case 'mailbox':
 			return /^[a-z0-9._+-]{1,64}$/i.test( value ) && ! /(^\.)|(\.{2,})|(\.$)/.test( value );
-		case 'destination':
-			return emailValidator.validate( value );
+		case 'destinations':
+			return value.filter( ( v ) => v.trim() ).every( ( v ) => emailValidator.validate( v ) );
 		default:
 			return true;
 	}
@@ -35,4 +35,3 @@ function validateField( { name, value } ) {
 export { getEmailForwardsCount } from './get-email-forwards-count';
 export { hasEmailForwards } from './has-email-forwards';
 export { getDomainsWithEmailForwards } from './get-domains-with-email-forwards';
-export { validateAllFields };

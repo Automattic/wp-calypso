@@ -1,7 +1,8 @@
 import { Button, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import emailValidator from 'email-validator';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,6 +10,41 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import formState from 'calypso/lib/form-state';
+
+function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
+	const translate = useTranslate();
+	const value = values[ index ];
+	const isValid = emailValidator.validate( value );
+	const [ initialized, setInitialized ] = React.useState( false );
+
+	function handleChange( event ) {
+		const newValues = [ ...values ];
+		newValues[ index ] = event.target.value;
+		onChange( newValues );
+	}
+
+	return (
+		<>
+			<FormFieldset key={ index }>
+				<FormLabel>{ translate( 'Will be forwarded to this email address' ) }</FormLabel>
+				<FormTextInput
+					disabled={ disabled }
+					onChange={ handleChange }
+					isError={ ! isValid && initialized }
+					value={ value }
+					onBlur={ () => setInitialized( !! value ) }
+				/>
+				{ ! isValid && initialized && (
+					<FormInputValidation text={ translate( 'Invalid email address' ) } isError />
+				) }
+			</FormFieldset>
+			{ value?.trim() && index < 4 && (
+				<RecursiveInputField values={ values } onChange={ onChange } index={ index + 1 } />
+			) }
+		</>
+	);
+}
+
 class EmailForwardingAddNewCompact extends Component {
 	static propTypes = {
 		fields: PropTypes.object,
@@ -92,10 +128,8 @@ class EmailForwardingAddNewCompact extends Component {
 	renderFormFields() {
 		const { translate, selectedDomainName, index, fields, showFormHeader } = this.props;
 		const isValidMailbox = this.isValid( 'mailbox' );
-		const isValidDestination = this.isValid( 'destination' );
-		const { mailbox, destination } = fields;
+		const { mailbox, destinations } = fields;
 		const mailboxError = this.getError( 'mailbox' );
-		const destinationError = this.getError( 'destination' );
 
 		return (
 			<div className="email-forwarding__form-content">
@@ -107,25 +141,18 @@ class EmailForwardingAddNewCompact extends Component {
 					<FormTextInputWithAffixes
 						disabled={ this.props.disabled }
 						name="mailbox"
-						onChange={ ( event ) => this.onChange( event, index ) }
+						onChange={ ( event ) => this.onMailboxChange( event, index ) }
 						isError={ ! isValidMailbox }
 						suffix={ '@' + selectedDomainName }
 						value={ mailbox }
 					/>
 					{ ! isValidMailbox && <FormInputValidation text={ mailboxError } isError /> }
 				</FormFieldset>
-
-				<FormFieldset>
-					<FormLabel>{ translate( 'Will be forwarded to this email address' ) }</FormLabel>
-					<FormTextInput
-						disabled={ this.props.disabled }
-						name="destination"
-						onChange={ ( event ) => this.onChange( event, index ) }
-						isError={ ! isValidDestination }
-						value={ destination }
-					/>
-					{ ! isValidDestination && <FormInputValidation text={ destinationError } isError /> }
-				</FormFieldset>
+				<RecursiveInputField
+					values={ destinations }
+					disabled={ this.props.disabled }
+					onChange={ this.onDestinationsChange }
+				/>
 			</div>
 		);
 	}
@@ -139,22 +166,20 @@ class EmailForwardingAddNewCompact extends Component {
 		);
 	}
 
-	onChange = ( event, index ) => {
-		const { name } = event.target;
-		let { value } = event.target;
-
-		value = value.replace( /\s/g, '' );
-		if ( name === 'mailbox' ) {
-			// Removes the domain part
-			value = value.replace( /@.*$/, '' );
-		}
-
+	onMailboxChange = ( event ) => {
+		const value = event.target.value.replace( /\s/g, '' ).replace( /@.*$/, '' );
+		this.props.onUpdateEmailForward( { index: 0, name: 'mailbox', value } );
 		this.formStateController.handleFieldChange( {
-			name,
+			name: 'mailbox',
 			value,
 		} );
-
-		this.props.onUpdateEmailForward( index, name, value );
+	};
+	onDestinationsChange = ( value ) => {
+		this.formStateController.handleFieldChange( {
+			name: 'destinations',
+			value,
+		} );
+		this.props.onUpdateEmailForward( { index: 0, name: 'destinations', value } );
 	};
 
 	isValid( fieldName ) {
@@ -164,6 +189,7 @@ class EmailForwardingAddNewCompact extends Component {
 	getError( fieldName ) {
 		const { translate } = this.props;
 		const errorMessage = formState.getFieldErrorMessages( this.state.fields, fieldName );
+
 		if ( ! errorMessage ) {
 			return null;
 		}
@@ -175,12 +201,6 @@ class EmailForwardingAddNewCompact extends Component {
 
 			if ( errorMessage.filter( ( t ) => t === 'Duplicated' ).length === 1 ) {
 				return translate( 'Please use unique mailboxes' );
-			}
-		}
-
-		if ( fieldName === 'destination' ) {
-			if ( errorMessage.filter( ( t ) => t === 'Invalid' ).length === 1 ) {
-				return translate( 'Invalid email address' );
 			}
 		}
 

@@ -10,8 +10,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
+const ArrayOfFive = new Array( 5 );
+
 type AddMailboxFormData = {
-	destination: string;
+	destinations: typeof ArrayOfFive;
 	mailbox: string;
 };
 
@@ -65,7 +67,7 @@ export default function useAddEmailForwardMutation(
 	};
 
 	mutationOptions.onMutate = async ( variables ) => {
-		const { mailbox, destination } = variables;
+		const { mailbox, destinations } = variables;
 		suppliedOnMutate?.( variables );
 
 		await queryClient.cancelQueries( { queryKey: emailAccountsQueryKey } );
@@ -85,7 +87,7 @@ export default function useAddEmailForwardMutation(
 						is_verified: false,
 						mailbox,
 						role: 'standard',
-						target: destination,
+						target: destinations,
 						temporary: true,
 						warnings: [],
 					},
@@ -179,10 +181,10 @@ export default function useAddEmailForwardMutation(
 	};
 
 	return useMutation< any, unknown, AddMailboxFormData, Context >( {
-		mutationFn: ( { mailbox, destination } ) =>
-			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
+		mutationFn: ( { mailbox, destinations } ) =>
+			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/create-many`, {
 				mailbox,
-				destination,
+				destinations,
 			} ),
 		...mutationOptions,
 	} );
