@@ -1,6 +1,3 @@
-import { StepNavigationLink, MIGRATION_FLOW } from '@automattic/onboarding';
-import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
 import WordpressImporter from 'calypso/blocks/importer/wordpress';
 import { WPImportOption } from 'calypso/blocks/importer/wordpress/types';
 import { MigrationAssistanceModal } from 'calypso/landing/stepper/declarative-flow/internals/components/migration-assistance-modal';
@@ -19,7 +16,6 @@ interface Props extends StepProps {
 }
 
 const ImporterWordpress: FC< Props > = function ( props ) {
-	const translate = useTranslate();
 	const queryParams = useQuery();
 	const site = useSite();
 	const migrateFrom = queryParams.get( 'from' );
@@ -34,21 +30,6 @@ const ImporterWordpress: FC< Props > = function ( props ) {
 	);
 
 	let customizedActionButtons;
-	switch ( queryParams.get( 'ref' ) ) {
-		case MIGRATION_FLOW:
-			customizedActionButtons = (
-				<StepNavigationLink
-					direction="forward"
-					handleClick={ () => {
-						props.navigation.submit?.( { action: 'customized-action-go-to-flow' } );
-					} }
-					label={ translate( 'I want to migrate my entire site' ) }
-					cssClass={ clsx( 'step-container__navigation-link', 'forward', 'has-underline' ) }
-					borderless
-				/>
-			);
-			break;
-	}
 
 	return (
 		<>

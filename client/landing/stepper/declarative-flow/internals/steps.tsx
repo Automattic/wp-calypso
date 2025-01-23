@@ -289,18 +289,9 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-how-to-migrate' ),
 	},
 
-	MIGRATION_HOW_TO_MIGRATE: {
-		slug: 'migration-how-to-migrate',
-		asyncComponent: () => import( './steps-repository/migration-how-to-migrate' ),
-	},
-
 	SITE_MIGRATION_SOURCE_URL: {
 		slug: 'site-migration-source-url',
 		asyncComponent: () => import( './steps-repository/site-migration-source-url' ),
-	},
-	MIGRATION_SOURCE_URL: {
-		slug: 'migration-source-url',
-		asyncComponent: () => import( './steps-repository/migration-source-url' ),
 	},
 
 	SITE_MIGRATION_UPGRADE_PLAN: {
@@ -334,10 +325,6 @@ export const STEPS = {
 	PLATFORM_IDENTIFICATION: {
 		slug: 'platform-identification',
 		asyncComponent: () => import( './steps-repository/platform-identification' ),
-	},
-	MIGRATION_UPGRADE_PLAN: {
-		slug: 'migration-upgrade-plan',
-		asyncComponent: () => import( './steps-repository/migration-upgrade-plan' ),
 	},
 } satisfies Record< string, StepperStep >;
 
