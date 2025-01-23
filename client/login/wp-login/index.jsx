@@ -33,7 +33,6 @@ import {
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -58,7 +57,6 @@ export class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
-		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -447,7 +445,6 @@ export class Login extends Component {
 			isLoginView,
 			signupUrl,
 			isWoo,
-			isPartnerSignup,
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
@@ -487,12 +484,7 @@ export class Login extends Component {
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
 		const shouldRenderFooter =
-			! socialConnect &&
-			! isJetpackMagicLinkSignUpFlow &&
-			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWCCOM && ! isPartnerSignup ) &&
-			! isBlazePro &&
-			! isWooJPC;
+			! socialConnect && ! isJetpackMagicLinkSignUpFlow && ! isWCCOM && ! isBlazePro && ! isWooJPC;
 
 		if ( shouldRenderFooter ) {
 			return (
@@ -651,7 +643,6 @@ export default connect(
 				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
-			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),

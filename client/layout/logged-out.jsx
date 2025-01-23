@@ -1,6 +1,6 @@
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
+import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -14,7 +14,6 @@ import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
-import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -34,7 +33,6 @@ import isReaderTagEmbedPage from 'calypso/lib/reader/is-reader-tag-embed-page';
 import { getOnboardingUrl as getPatternLibraryOnboardingUrl } from 'calypso/my-sites/patterns/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isTwoFactorEnabled } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
@@ -74,8 +72,6 @@ const LayoutLoggedOut = ( {
 	redirectUri,
 	useOAuth2Layout,
 	showGdprBanner,
-	isPartnerSignup,
-	isPartnerSignupStart,
 	isWooJPC,
 	isWoo,
 	isBlazePro,
@@ -85,7 +81,6 @@ const LayoutLoggedOut = ( {
 	clearLastActionRequiresLogin,
 	colorScheme,
 } ) => {
-	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
 	const loggedInAction = useSelector( getLastActionRequiresLogin );
@@ -169,23 +164,15 @@ const LayoutLoggedOut = ( {
 	if ( useOAuth2Layout && ( isGravatar || isGravPoweredClient ) ) {
 		masterbar = null;
 	} else if ( useOAuth2Layout && oauth2Client && oauth2Client.name ) {
-		// Uses custom styles for DOPS clients and WooCommerce - which are the only ones with a name property defined
-		if ( isPartnerSignup && ! isPartnerSignupStart ) {
-			// Using localizeUrl directly to sidestep issue with useLocale use in SSR
-			masterbar = (
-				<MasterbarLogin goBackUrl={ localizeUrl( 'https://wordpress.com/partners/', locale ) } />
-			);
-		} else {
-			classes.dops = true;
-			classes[ oauth2Client.name ] = true;
+		classes.dops = true;
+		classes[ oauth2Client.name ] = true;
 
-			// Force masterbar for all Crowdsignal OAuth pages
-			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
-				classes[ 'has-no-masterbar' ] = false;
-			}
-
-			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
+		// Force masterbar for all Crowdsignal OAuth pages
+		if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
+			classes[ 'has-no-masterbar' ] = false;
 		}
+
+		masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
 	} else if (
 		config.isEnabled( 'jetpack-cloud' ) ||
 		isWpMobileApp() ||
@@ -332,8 +319,6 @@ export default withCurrentRoute(
 			const sectionName = currentSection?.name ?? null;
 			const sectionTitle = currentSection?.title ?? '';
 			const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
-			const isPartnerSignup = isPartnerSignupQuery( currentQuery );
-			const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 			const isInvitationURL = currentRoute.startsWith( '/accept-invite' );
 			const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 			const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
@@ -347,14 +332,10 @@ export default withCurrentRoute(
 				! isJetpackLogin &&
 				! isP2Login &&
 				Boolean( currentQuery?.client_id ) === false;
-			const isWhiteLogin =
-				isReskinLoginRoute ||
-				( isPartnerSignup && ! isPartnerSignupStart ) ||
-				isGravatar ||
-				isGravPoweredClient;
+			const isWhiteLogin = isReskinLoginRoute || isGravatar || isGravPoweredClient;
 			const noMasterbarForRoute =
 				isJetpackLogin ||
-				( isWhiteLogin && ! isPartnerSignup && ! isBlazePro ) ||
+				( isWhiteLogin && ! isBlazePro ) ||
 				isJetpackWooDnaFlow ||
 				isP2Login ||
 				isInvitationURL;
@@ -392,8 +373,6 @@ export default withCurrentRoute(
 				sectionTitle,
 				oauth2Client,
 				useOAuth2Layout: showOAuth2Layout( state ),
-				isPartnerSignup,
-				isPartnerSignupStart,
 				isWooJPC,
 				isWoo: getIsWoo( state ),
 				isBlazePro: getIsBlazePro( state ),

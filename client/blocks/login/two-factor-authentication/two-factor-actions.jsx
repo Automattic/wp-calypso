@@ -10,9 +10,7 @@ import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
 import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 import './two-factor-actions.scss';
@@ -94,7 +92,7 @@ class TwoFactorActions extends Component {
 
 		return (
 			<Fragment>
-				{ this.props.isWoo && ! this.props.isPartnerSignup && <FormDivider /> }
+				{ this.props.isWoo && <FormDivider /> }
 				<Card className="two-factor-authentication__actions wp-login__links">
 					{ isSecurityKeyAvailable && (
 						<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
@@ -136,7 +134,6 @@ export default connect(
 			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 			isWoo: getIsWoo( state ),
-			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		};
 	},
 	{

@@ -47,7 +47,7 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
-import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { isPasswordlessAccount } from 'calypso/state/login/utils';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -95,7 +95,6 @@ class Login extends Component {
 		onTwoFactorRequested: PropTypes.func,
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
-		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
@@ -203,7 +202,6 @@ class Login extends Component {
 			loginEmailAddress,
 			isWCCOM,
 			isBlazePro,
-			isPartnerSignup,
 		} = this.props;
 
 		return (
@@ -211,7 +209,7 @@ class Login extends Component {
 			! socialConnect &&
 			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
-			! ( oauth2Client && ! ( isWCCOM && ! isPartnerSignup ) && ! isBlazePro ) &&
+			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
@@ -231,7 +229,6 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
-					isPartnerSignup: this.props.isPartnerSignup,
 					// Pass oauth2 and redirectTo query params so that we can get the correct signup url for the user
 					oauth2ClientId: this.props.oauth2Client?.id,
 					redirectTo: this.props.redirectTo,
@@ -244,7 +241,6 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
-					isPartnerSignup: this.props.isPartnerSignup,
 					from: this.props.currentQuery?.from,
 				} )
 			);
@@ -359,7 +355,6 @@ class Login extends Component {
 			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
 			isP2Login,
-			isPartnerSignup,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isWhiteLogin,
@@ -435,9 +430,7 @@ class Login extends Component {
 			} );
 
 			if ( isWCCOM ) {
-				if ( isPartnerSignup ) {
-					headerText = translate( 'Log in to your account' );
-				} else if ( wccomFrom === 'cart' ) {
+				if ( wccomFrom === 'cart' ) {
 					preHeader = <WooCommerceConnectCartHeader />;
 					headerText = translate( 'Log in with a WordPress.com account' );
 					postHeader = (
@@ -823,7 +816,6 @@ class Login extends Component {
 			isWCCOM,
 			isBlazePro,
 			translate,
-			isPartnerSignup,
 			action,
 			currentQuery,
 			isGravPoweredClient,
@@ -895,7 +887,6 @@ class Login extends Component {
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
 						isBlazePro={ isBlazePro }
-						isPartnerSignup={ isPartnerSignup }
 						isGravPoweredClient={ isGravPoweredClient }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
@@ -1082,7 +1073,6 @@ export default connect(
 		currentQuery: getCurrentQueryArguments( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
 		isSignupExistingAccount: !! (

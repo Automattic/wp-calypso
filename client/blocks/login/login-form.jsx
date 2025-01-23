@@ -59,11 +59,7 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import {
-	isPartnerSignupQuery,
-	isPasswordlessAccount,
-	isRegularAccount,
-} from 'calypso/state/login/utils';
+import { isPasswordlessAccount, isRegularAccount } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -104,7 +100,6 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
-		isPartnerSignup: PropTypes.bool,
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
 		currentQuery: PropTypes.object,
@@ -579,7 +574,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email address' );
 		}
 
-		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
+		if ( this.props.isP2Login || this.props.isWoo ) {
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -1183,7 +1178,6 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
-			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
