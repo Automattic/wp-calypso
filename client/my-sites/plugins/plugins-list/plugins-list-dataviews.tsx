@@ -12,6 +12,7 @@ import {
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
@@ -178,6 +179,26 @@ export default function PluginsListDataViews( {
 		[ dataViewsState.type ]
 	);
 
+	const dispatch = useDispatch();
+	const trackPluginNameClick = useCallback(
+		( item: Plugin ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_manage_list_plugin_name_click', {
+					plugin_slug: item.slug,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const onClickItem = useCallback(
+		( item: Plugin ) => {
+			trackPluginNameClick( item );
+			openPluginSitesPane( item );
+		},
+		[ trackPluginNameClick ]
+	);
+
 	return (
 		<>
 			<QueryDotorgPlugins pluginSlugList={ data.map( ( plugin ) => plugin.slug ) } />
@@ -186,6 +207,7 @@ export default function PluginsListDataViews( {
 				view={ dataViewsState }
 				onChangeView={ setDataViewsState }
 				onChangeSelection={ updatePluginOnChangeSelection }
+				onClickItem={ onClickItem }
 				fields={ fields }
 				search
 				searchLabel={ translate( 'Search' ) }
