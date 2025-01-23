@@ -22,12 +22,14 @@ type Product = {
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
+	siteFeatures: string[];
 	upgradeUrls: Record< string, string >;
 };
 
 export function JetpackUpsellCard( {
 	purchasedProducts,
 	siteSlug,
+	siteFeatures,
 	upgradeUrls = {},
 }: JetpackUpsellCardProps ) {
 	// TODO: Make card collapsible
@@ -114,7 +116,6 @@ export function JetpackUpsellCard( {
 	// console.log( 'visibleProducts 1: ', visibleProducts );
 
 	// New product visibility testing based on siteFeatures.
-	const siteFeatures = [ 'videopress', 'search' ];
 	visibleProducts = PRODUCTS.filter( ( product ) =>
 		product.features.every( ( feature ) => ! siteFeatures.includes( feature ) )
 	);

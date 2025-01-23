@@ -58,6 +58,8 @@ export default function JetpackUpsellSection() {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
 
+	const siteFeatures = [ 'videopress', 'search' ];
+
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
 	if ( ! isOdysseyStats || shouldHideUpsells ) {
@@ -96,6 +98,7 @@ export default function JetpackUpsellSection() {
 			<JetpackUpsellCard
 				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
+				siteFeatures={ siteFeatures }
 				upgradeUrls={ upgradeUrls }
 			/>
 		</div>
