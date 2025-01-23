@@ -44,6 +44,32 @@ export function updateSiteSettings( siteId, settings ) {
 }
 
 /**
+ * Formats subscription_options to match the expected server format
+ * @param {Object} settings The settings object
+ * @returns {Object} The formatted settings object
+ */
+function formatSubscriptionOptions( settings ) {
+	if ( ! settings?.subscription_options ) {
+		return settings;
+	}
+
+	const allowedKeys = [ 'invitation', 'comment_follow', 'welcome' ];
+	const formattedOptions = [];
+	Object.entries( settings.subscription_options ).forEach( ( [ key, value ] ) => {
+		if ( allowedKeys.includes( key ) ) {
+			// Create an array-like object with numeric indices
+			formattedOptions.push( value );
+			formattedOptions[ key ] = value; // Also keep the key-value pairs
+		}
+	} );
+
+	return {
+		...settings,
+		subscription_options: formattedOptions,
+	};
+}
+
+/**
  * Returns an action thunk which, when invoked, triggers a network request to
  * retrieve site settings
  * @param  {number} siteId Site ID
@@ -89,8 +115,10 @@ export function saveSiteSettings( siteId, settings = {} ) {
 			siteId,
 		} );
 
+		const formattedSettings = formatSubscriptionOptions( settings );
+
 		return wpcom.req
-			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, settings )
+			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, formattedSettings )
 			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {
