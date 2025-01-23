@@ -699,7 +699,7 @@ export default function DIFMLanding( {
 										components: {
 											strong: <strong />,
 										},
-										args: [ numberFormat( CHARACTER_LIMIT, {} ) ],
+										args: [ numberFormat( CHARACTER_LIMIT ) ],
 									}
 								) }
 							</p>

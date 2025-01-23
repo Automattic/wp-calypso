@@ -1,3 +1,7 @@
+## 7.2.1
+
+- `compact` option for `numberFormat`
+
 ## 7.2.0
 
 - Replace `number_format` with `Intl.NumberFormat`

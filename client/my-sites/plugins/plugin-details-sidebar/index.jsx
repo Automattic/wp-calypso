@@ -4,12 +4,11 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
@@ -161,7 +160,7 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Active installations' ) }
 					</div>
 					<div className="plugin-details-sidebar__active-installs-value value">
-						{ formatNumberMetric( active_installs, 0 ) }
+						{ numberFormat( active_installs, { notation: 'compact' } ) }
 					</div>
 				</div>
 			) }

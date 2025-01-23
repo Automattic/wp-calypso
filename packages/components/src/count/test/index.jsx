@@ -11,9 +11,9 @@ describe( 'Count', () => {
 		expect( numberFormatSpy ).toHaveBeenCalledWith( 23 );
 	} );
 
-	test( 'should call `formatNumberCompact` if `compact` prop is `true`', () => {
+	test( 'should call `i18n.numberFormat` with `compact` if `true`', () => {
 		const { container } = render( <Count count={ 1000 } compact /> );
-		expect( container.firstChild ).toHaveTextContent( '1.0K' );
+		expect( container.firstChild ).toHaveTextContent( '1K' );
 	} );
 
 	test( 'should render with primary class', () => {
