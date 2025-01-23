@@ -13,14 +13,13 @@ import {
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
 import { preventWidows } from 'calypso/lib/formatting';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { recordTracksEvent as recordTracks } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 class SocialSignupForm extends Component {
 	static propTypes = {
@@ -154,8 +153,7 @@ export default connect(
 			currentRoute: getCurrentRoute( state ),
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isDevAccount: isDevAccount,
-			isWoo:
-				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) || isWooPasswordlessJPCFlow( state ),
+			isWoo: getIsWoo( state ),
 		};
 	},
 	{ showErrorNotice: errorNotice }

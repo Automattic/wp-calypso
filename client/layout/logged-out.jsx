@@ -44,7 +44,7 @@ import { getLastActionRequiresLogin } from 'calypso/state/reader-ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
@@ -77,7 +77,7 @@ const LayoutLoggedOut = ( {
 	isPartnerSignup,
 	isPartnerSignupStart,
 	isWooPasswordlessJPC,
-	isWooPasswordless,
+	isWoo,
 	isBlazePro,
 	locale,
 	twoFactorEnabled,
@@ -146,7 +146,7 @@ const LayoutLoggedOut = ( {
 		'is-woocommerce-core-profiler-flow': isWooPasswordlessJPC,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
-		'is-woo-passwordless': isWooPasswordless,
+		'is-woo-passwordless': isWoo,
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
@@ -397,7 +397,7 @@ export default withCurrentRoute(
 				isPartnerSignup,
 				isPartnerSignupStart,
 				isWooPasswordlessJPC,
-				isWooPasswordless: getIsWooPasswordless( state ),
+				isWoo: getIsWoo( state ),
 				isBlazePro: getIsBlazePro( state ),
 				twoFactorEnabled,
 				colorScheme,

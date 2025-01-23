@@ -23,7 +23,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
@@ -47,7 +46,8 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
@@ -64,20 +64,12 @@ function getRedirectToAfterLoginUrl( {
 	signupDependencies,
 	stepName,
 	userLoggedIn,
-	isWooPasswordless,
 } ) {
 	if (
 		oauth2Signup &&
 		initialContext?.query?.oauth2_redirect &&
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
-		if (
-			isWooPasswordless &&
-			! initialContext.query.oauth2_redirect.includes( 'woo-passwordless' )
-		) {
-			return initialContext.query.oauth2_redirect + '&woo-passwordless=yes';
-		}
-
 		return initialContext.query.oauth2_redirect;
 	}
 	if (
@@ -202,14 +194,14 @@ export class UserStep extends Component {
 			wccomFrom,
 			isReskinned,
 			isOnboardingAffiliateFlow,
-			isWoo,
+			isWCCOM,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
 		const loginUrl = this.getLoginUrl();
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
-			if ( isWoo && wccomFrom ) {
+			if ( isWCCOM ) {
 				switch ( wccomFrom ) {
 					case 'cart':
 						subHeaderText = translate(
@@ -242,18 +234,6 @@ export class UserStep extends Component {
 							}
 						);
 				}
-			} else if ( isWoo && ! wccomFrom ) {
-				subHeaderText = translate(
-					'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
-					{
-						components: {
-							a: <a href={ loginUrl } />,
-							br: <br />,
-						},
-						comment:
-							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
-					}
-				);
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
@@ -492,7 +472,7 @@ export class UserStep extends Component {
 			isSocialFirst,
 			userLoggedIn,
 			isBlazePro,
-			isWoo,
+			isWCCOM,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -506,7 +486,7 @@ export class UserStep extends Component {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
-		if ( isWoo ) {
+		if ( isWCCOM ) {
 			if ( 'cart' === wccomFrom ) {
 				return <WooCommerceConnectCartHeader />;
 			}
@@ -567,7 +547,7 @@ export class UserStep extends Component {
 	}
 
 	submitButtonText() {
-		const { translate, flowName, isWoo } = this.props;
+		const { translate, flowName, isWCCOM } = this.props;
 
 		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
@@ -577,7 +557,7 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWoo ) {
+		if ( isWCCOM ) {
 			return translate( 'Get started' );
 		}
 
@@ -589,17 +569,17 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isWoo } = this.props;
+		const { oauth2Client, isReskinned, isWCCOM, isWoo } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			this.props.isWooPasswordless;
+			isWoo;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWoo ) {
+		if ( isWCCOM ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -637,9 +617,9 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={ ! isWoo && ! isBlazeProOAuth2Client( oauth2Client ) }
+					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
-					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
+					labelText={ isWoo ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -732,7 +712,7 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.userCreationComplete() && ! this.props.isWoo ) {
+		if ( this.userCreationComplete() && ! this.props.isWCCOM ) {
 			return null; // return nothing so that we don't see the completed signup form flash but skip for Woo because it need to keep the form until the user is redirected back to original page (e.g. WooCommerce.com).
 		}
 
@@ -748,7 +728,7 @@ export class UserStep extends Component {
 			return this.renderGravatarSignupStep();
 		}
 
-		if ( this.props.isWoo && this.props.userLoggedIn ) {
+		if ( this.props.isWCCOM && this.props.userLoggedIn ) {
 			page( this.getLoginUrl() );
 			return null;
 		}
@@ -778,8 +758,8 @@ const ConnectedUser = connect(
 			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
-			isWooPasswordless: getIsWooPasswordless( state ),
+			isWCCOM: getIsWCCOM( state ),
+			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),

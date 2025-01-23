@@ -33,7 +33,6 @@ import {
 } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
@@ -71,7 +70,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import ErrorNotice from './error-notice';
@@ -245,7 +244,6 @@ export class LoginForm extends Component {
 		return (
 			socialAccountIsLinking ||
 			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) ||
 			this.props.isBlazePro
 		);
 	}
@@ -253,22 +251,14 @@ export class LoginForm extends Component {
 	isPasswordView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			! socialAccountIsLinking &&
-			hasAccountTypeLoaded &&
-			isRegularAccount( accountType ) &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
-		);
+		return ! socialAccountIsLinking && hasAccountTypeLoaded && isRegularAccount( accountType );
 	}
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking, isSendingEmail } = this.props;
 		return (
 			isSendingEmail ||
-			( ! socialAccountIsLinking &&
-				! hasAccountTypeLoaded &&
-				! ( this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless ) &&
-				! this.props.isBlazePro )
+			( ! socialAccountIsLinking && ! hasAccountTypeLoaded && ! this.props.isBlazePro )
 		);
 	}
 
@@ -302,15 +292,8 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const isWooAndNotPartnerSignup =
-			this.props.isWoo && ! this.props.isPartnerSignup && ! this.props.isWooPasswordless;
-
-		// Skip this step if we're in the ( ( Woo and not the partner ) or Blaze Pro ) signup flows, and hasAccountTypeLoaded.
-		if (
-			! isWooAndNotPartnerSignup &&
-			! this.props.hasAccountTypeLoaded &&
-			! this.props.isBlazePro
-		) {
+		// Skip this step if we're in the Blaze Pro signup flows, and hasAccountTypeLoaded.
+		if ( ! this.props.hasAccountTypeLoaded && ! this.props.isBlazePro ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -431,14 +414,13 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooPasswordlessJPC, isWooPasswordless, loginButtonText } =
-			this.props;
+		const { translate, isWoo, isWooPasswordlessJPC, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
 		}
 
-		if ( this.isUsernameOrEmailView() || isWooPasswordless ) {
+		if ( this.isUsernameOrEmailView() ) {
 			return translate( 'Continue' );
 		}
 
@@ -590,11 +572,11 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isWooPasswordless ) {
+		if ( this.props.isWoo ) {
 			return this.props.translate( 'Your email or username' );
 		}
 
-		if ( this.props.isWooPasswordlessJPC || this.props.isBlazePro ) {
+		if ( this.props.isBlazePro ) {
 			return this.props.translate( 'Your email address' );
 		}
 
@@ -833,8 +815,6 @@ export class LoginForm extends Component {
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
-			isWooPasswordless,
-			isPartnerSignup,
 			isWooPasswordlessJPC,
 			isBlazePro,
 			hideSignupLink,
@@ -847,10 +827,7 @@ export class LoginForm extends Component {
 
 		let loginUrl;
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
-		const isFormFilled =
-			this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0;
-		const isSubmitButtonDisabled =
-			isWoo && ! isPartnerSignup && ! isWooPasswordless ? isFormFilled : isFormDisabled;
+		const isSubmitButtonDisabled = isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 		const isCoreProfilerLostPasswordFlow = isWooPasswordlessJPC && currentQuery.lostpassword_flow;
@@ -941,8 +918,7 @@ export class LoginForm extends Component {
 			isFromGravatar3rdPartyApp ||
 			isGravatarFlowWithEmail;
 
-		const shouldRenderForgotPasswordLink =
-			! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless;
+		const shouldRenderForgotPasswordLink = ! isPasswordHidden && isWoo;
 
 		const signUpUrlWithEmail = addQueryArgs(
 			{
@@ -955,7 +931,7 @@ export class LoginForm extends Component {
 			<form
 				className={ clsx( {
 					'is-social-first': isSocialFirst,
-					'is-woo-passwordless': isWooPasswordless,
+					'is-woo-passwordless': isWoo,
 					'is-blaze-pro': isBlazePro,
 				} ) }
 				onSubmit={ this.onSubmitForm }
@@ -1121,13 +1097,7 @@ export class LoginForm extends Component {
 									} ) }
 									aria-hidden={ isPasswordHidden }
 								>
-									<FormLabel htmlFor="password">
-										{ this.props.isWoo &&
-										! this.props.isPartnerSignup &&
-										! this.props.isWooPasswordless
-											? this.props.translate( 'Your password' )
-											: this.props.translate( 'Password' ) }
-									</FormLabel>
+									<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
 									<FormPasswordInput
 										autoCapitalize="off"
@@ -1188,8 +1158,8 @@ export class LoginForm extends Component {
 							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
 							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
 							socialServiceResponse={ this.props.socialServiceResponse }
-							shouldRenderToS={ isWoo && ! isPartnerSignup && ! isWooPasswordless }
-							isWoo={ isWoo && isWooPasswordless }
+							shouldRenderToS={ false }
+							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
 							magicLoginLink={ ! isWooPasswordlessJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
@@ -1226,8 +1196,7 @@ export default connect(
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
-			isWoo:
-				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) || isWooPasswordlessJPCFlow( state ),
+			isWoo: getIsWoo( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
@@ -1241,7 +1210,6 @@ export default connect(
 			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery: getCurrentQueryArguments( state ),
-			isWooPasswordless: getIsWooPasswordless( state ),
 			isBlazePro: getIsBlazePro( state ),
 		};
 	},
