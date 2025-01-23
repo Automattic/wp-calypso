@@ -46,7 +46,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'security',
 				title: translate( 'Security', { context: 'Jetpack product name' } ),
-				features: [],
+				features: [ 'scan' ],
 			},
 			{
 				description: translate(
@@ -57,7 +57,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'backup',
 				title: translate( 'Backup' ),
-				features: [],
+				features: [ 'backups', 'restore' ],
 			},
 			{
 				description: translate(
@@ -68,7 +68,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'search',
 				title: translate( 'Search' ),
-				features: [ 'search' ],
+				features: [ 'search', 'instant-search' ],
 			},
 			{
 				description: translate(
@@ -79,7 +79,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'video',
 				title: translate( 'VideoPress' ),
-				features: [ 'videopress' ],
+				features: [ 'videopress', 'videopress-1tb-storage' ],
 			},
 			{
 				description: translate(
@@ -90,7 +90,14 @@ export function JetpackUpsellCard( {
 				isFree: true,
 				slug: 'boost',
 				title: translate( 'Boost' ),
-				features: [],
+				features: [
+					'cloud-critical-css',
+					'cornerstone-10-pages',
+					'image-cdn-liar',
+					'image-cdn-quality',
+					'image-size-analysis',
+					'performance-history',
+				],
 			},
 			{
 				description: translate(
@@ -101,7 +108,11 @@ export function JetpackUpsellCard( {
 				isFree: true,
 				slug: 'social',
 				title: translate( 'Social' ),
-				features: [],
+				features: [
+					'social-enhanced-publishing',
+					'social-image-generator',
+					'subscriber-unlimited-imports',
+				],
 			},
 			// TODO: Add Jetpack CRM upsell.
 		],
