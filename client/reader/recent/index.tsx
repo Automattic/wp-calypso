@@ -233,11 +233,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 						data={ shownData }
 						onChangeView={ ( newView ) =>
 							setView( {
-								type: newView.type,
-								fields: [],
-								perPage: newView.perPage,
-								page: newView.page,
-								search: newView.search,
+								...newView,
 							} )
 						}
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
