@@ -22,6 +22,7 @@ type Product = {
 	isFree: boolean;
 	slug: string;
 	title: string;
+	features: string[];
 };
 
 export function JetpackUpsellCard( {
@@ -43,6 +44,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'security',
 				title: translate( 'Security', { context: 'Jetpack product name' } ),
+				features: [],
 			},
 			{
 				description: translate(
@@ -53,6 +55,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'backup',
 				title: translate( 'Backup' ),
+				features: [],
 			},
 			{
 				description: translate(
@@ -63,6 +66,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'search',
 				title: translate( 'Search' ),
+				features: [ 'search' ],
 			},
 			{
 				description: translate(
@@ -73,6 +77,7 @@ export function JetpackUpsellCard( {
 				isFree: false,
 				slug: 'video',
 				title: translate( 'VideoPress' ),
+				features: [ 'videopress' ],
 			},
 			{
 				description: translate(
@@ -83,6 +88,7 @@ export function JetpackUpsellCard( {
 				isFree: true,
 				slug: 'boost',
 				title: translate( 'Boost' ),
+				features: [],
 			},
 			{
 				description: translate(
@@ -93,6 +99,7 @@ export function JetpackUpsellCard( {
 				isFree: true,
 				slug: 'social',
 				title: translate( 'Social' ),
+				features: [],
 			},
 			// TODO: Add Jetpack CRM upsell.
 		],
