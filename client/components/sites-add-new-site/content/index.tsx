@@ -6,21 +6,18 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 // TODO: This will need to be updated to use whatever image we decide on.
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
-import AddNewSiteMenuItem from 'calypso/components/add-new-site/menu-item';
-import AddNewSitePopoverColumn from 'calypso/components/add-new-site/popover-column';
 import { preventWidows } from 'calypso/lib/formatting';
 import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
+import { Column } from './layout/column';
+import { MenuItem } from './layout/menu-item';
 
-const AddNewSiteSiteListMenuItems = () => {
+export const Content = () => {
 	const translate = useTranslate();
-
-	const popoverOfferEnabled = true;
-	const popoverCardEnabled = true;
 
 	return (
 		<>
-			<AddNewSitePopoverColumn heading={ translate( 'Add a new site' ) }>
-				<AddNewSiteMenuItem
+			<Column heading={ translate( 'Add a new site' ) }>
+				<MenuItem
 					icon={ <WordPressLogo /> }
 					heading={ translate( 'WordPress.com' ) }
 					description={ preventWidows(
@@ -33,7 +30,7 @@ const AddNewSiteSiteListMenuItems = () => {
 						},
 					} }
 				/>
-				<AddNewSiteMenuItem
+				<MenuItem
 					icon={ <JetpackLogo /> }
 					heading={ translate( 'Via the Jetpack plugin' ) }
 					description={ preventWidows(
@@ -46,9 +43,9 @@ const AddNewSiteSiteListMenuItems = () => {
 						},
 					} }
 				/>
-			</AddNewSitePopoverColumn>
-			<AddNewSitePopoverColumn heading={ translate( 'Migrate & Import' ) }>
-				<AddNewSiteMenuItem
+			</Column>
+			<Column heading={ translate( 'Migrate & Import' ) }>
+				<MenuItem
 					icon={ <Icon icon={ reusableBlock } size={ 18 } /> }
 					heading="Migrate"
 					description={ preventWidows(
@@ -63,7 +60,7 @@ const AddNewSiteSiteListMenuItems = () => {
 						},
 					} }
 				/>
-				<AddNewSiteMenuItem
+				<MenuItem
 					icon={ <Icon icon={ download } size={ 18 } /> }
 					heading="Import"
 					description={ preventWidows(
@@ -78,40 +75,33 @@ const AddNewSiteSiteListMenuItems = () => {
 						},
 					} }
 				/>
-			</AddNewSitePopoverColumn>
-			{ popoverCardEnabled && (
-				<AddNewSitePopoverColumn>
-					<AddNewSiteMenuItem
-						isBanner
-						icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
-						heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
-						description={ preventWidows(
-							translate(
-								'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
-							)
-						) }
-						disabled={ ! popoverOfferEnabled }
-						buttonProps={ {
-							onClick: () => {
-								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_offer' );
-								window.location.href = 'https://wordpress.com/pricing/';
-							},
-						} }
-					>
-						<div>
-							<div
-								className={ clsx( 'add-new-site-popover__cta', {
-									disabled: ! popoverOfferEnabled,
-								} ) }
-							>
-								{ translate( 'Unlock Offer' ) }
-							</div>
+			</Column>
+			<Column>
+				<MenuItem
+					isBanner
+					icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
+					heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
+					description={ preventWidows(
+						translate(
+							'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+						)
+					) }
+					buttonProps={ {
+						onClick: () => {
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_offer' );
+							window.location.href = 'https://wordpress.com/pricing/';
+						},
+					} }
+				>
+					<div>
+						<div className={ clsx( 'sites-add-new-site-popover__cta' ) }>
+							{ translate( 'Unlock Offer' ) }
 						</div>
-					</AddNewSiteMenuItem>
-				</AddNewSitePopoverColumn>
-			) }
+					</div>
+				</MenuItem>
+			</Column>
 		</>
 	);
 };
 
-export default AddNewSiteSiteListMenuItems;
+export default Content;

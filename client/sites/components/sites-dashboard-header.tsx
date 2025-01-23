@@ -7,16 +7,13 @@ import styled from '@emotion/styled';
 import { download, Icon } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
-import AddNewSiteButton from 'calypso/components/add-new-site/button';
-import AddNewSiteContent from 'calypso/components/add-new-site/content';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { SitesAddNewSitePopover } from 'calypso/components/sites-add-new-site';
 import SplitButton from 'calypso/components/split-button';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { MEDIA_QUERIES, TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { useSitesDashboardImportSiteUrl } from '../hooks/use-sites-dashboard-import-site-url';
 import { LinkWithRedirect } from './link-with-redirect';
-import 'calypso/components/add-new-site/style.scss';
 import './sites-dashboard-header.scss';
 
 interface SitesDashboardHeaderProps {
@@ -106,8 +103,6 @@ const popoverHoverStyles = css`
 `;
 
 const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPreviewPaneOpen } ) => {
-	const [ isMenuVisible, setMenuVisible ] = useState( false );
-	const popoverMenuContext = useRef( null );
 	const translate = useTranslate();
 	const isDriveMigrationEnabled = config.isEnabled( 'sites/drive-migrations' );
 	const isMobile = useMobileBreakpoint();
@@ -119,34 +114,10 @@ const SitesDashboardHeader: React.FC< SitesDashboardHeaderProps > = ( { isPrevie
 		ref: 'topbar',
 	} );
 
-	const toggleMenu = () => {
-		setMenuVisible( ( isVisible ) => ! isVisible );
-	};
-
 	return (
 		<PageHeader className="sites-dashboard-header">
 			<HeaderControls>
-				{ isDriveMigrationEnabled && (
-					<>
-						<AddNewSiteButton
-							showMainButtonLabel={ ! isPreviewPaneOpen }
-							mainButtonLabelText={ translate( 'Add new site' ) }
-							isMenuVisible={ isMenuVisible }
-							toggleMenu={ () => {
-								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
-								toggleMenu();
-							} }
-							popoverMenuContext={ popoverMenuContext }
-						/>
-
-						<AddNewSiteContent
-							isMenuVisible={ isMenuVisible }
-							toggleMenu={ toggleMenu }
-							popoverMenuContext={ popoverMenuContext }
-							setMenuVisible={ setMenuVisible }
-						/>
-					</>
-				) }
+				{ isDriveMigrationEnabled && <SitesAddNewSitePopover showCompact={ isPreviewPaneOpen } /> }
 				{ ! isDriveMigrationEnabled && (
 					<AddNewSiteSplitButton
 						primary={ ! isPreviewPaneOpen }
