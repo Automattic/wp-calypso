@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -302,6 +303,9 @@ const onboarding: Flow = {
 					const destination = addQueryArgs( '/setup/site-setup', {
 						siteSlug: providedDependencies.siteSlug,
 						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+						...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
+							flags: 'onboarding/newsletter-goal',
+						} ),
 					} );
 
 					persistSignupDestination( destination );

@@ -1,3 +1,7 @@
+/*
+ * @jest-environment jsdom
+ */
+
 import { SiteGoal, SiteIntent } from '../constants';
 import { goalsToIntent } from '../utils';
 

@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isWithinBreakpoint, isMobile, isDesktop } from '@automattic/viewport';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -228,7 +229,9 @@ const ConnectedPreviewMain = ( props ) => {
 	);
 
 	useRequestSiteChecklistTaskUpdate( selectedSiteId, CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED );
-
+	updateLaunchpadSettings( selectedSiteId, {
+		checklist_statuses: { preview_site: true },
+	} );
 	return <PreviewMain { ...props } { ...stateToProps } { ...dispatchToProps } />;
 };
 
