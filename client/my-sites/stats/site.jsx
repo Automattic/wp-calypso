@@ -402,7 +402,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// Apply the stored shortcut ID if the date range is not set.
 	if ( ! context.query?.chartStart && ! context.query?.chartEnd && storedShortcut ) {
 		customChartRange.shortcutId = storedShortcut.id;
-		// TODO: Handle the redirection when the applied shortcut period differs from the current period.
 	}
 
 	// Calculate diff between requested start and end in `priod` units.
@@ -441,6 +440,45 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		customChartRange.chartEnd = appliedShortcut.endDate;
 		customChartRange.chartStart = appliedShortcut.startDate;
 	}
+
+	// Redirect with the shortcut period of appliedShortcut or storedShortcut.
+	useEffect(
+		() => {
+			if ( appliedShortcut?.period ) {
+				if ( appliedShortcut?.period !== period ) {
+					page.redirect(
+						appendQueryStringForRedirection(
+							`/stats/${ appliedShortcut?.period }/${ slug }`,
+							context.query
+						)
+					);
+					return;
+				}
+			} else if (
+				! context.query?.chartStart &&
+				! context.query?.chartEnd &&
+				storedShortcut?.period &&
+				storedShortcut?.period !== period
+			) {
+				page.redirect(
+					appendQueryStringForRedirection(
+						`/stats/${ storedShortcut?.period }/${ slug }`,
+						context.query
+					)
+				);
+				return;
+			}
+		},
+		/* eslint-disable-next-line react-hooks/exhaustive-deps */
+		[
+			period,
+			slug,
+			appliedShortcut?.period,
+			context.query?.chartStart,
+			context.query?.chartEnd,
+			storedShortcut?.period,
+		]
+	);
 
 	// Redirect to the corresponding period by gates and date range.
 	useEffect( () => {
