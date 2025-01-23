@@ -186,7 +186,3 @@ const PLAN_DATA: Record< string, PressablePlan > = {
 export default function getPressablePlan( slug: string ) {
 	return PLAN_DATA[ slug ];
 }
-
-export function getAllPressablePlans() {
-	return Object.keys( PLAN_DATA );
-}
