@@ -7,7 +7,7 @@ $break-large-stats-countries: 1280px;
 	@include segmented-controls;
 	.list-countryviews {
 		.stats-card--hero {
-			padding-bottom: 0;
+			padding: 0 24px;
 			width: 100%;
 
 			.stats-geochart {
@@ -45,7 +45,6 @@ $break-large-stats-countries: 1280px;
 	.list-countryviews {
 		.stats-card--hero {
 			flex: 2;
-			padding: 0 24px;
 			.stats-geochart {
 				margin: 0 auto;
 				overflow: hidden;
