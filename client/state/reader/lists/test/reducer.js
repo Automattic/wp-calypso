@@ -3,7 +3,7 @@ import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_UNFOLLOW_RECEIVE,
-	READER_LIST_REQUEST_SUCCESS,
+	READER_LIST_CREATE_SUCCESS,
 	READER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import { items, listItems, subscribedLists } from '../reducer';
@@ -144,7 +144,7 @@ describe( 'reducer', () => {
 			const initial = deepFreeze( [ 1 ] );
 			expect(
 				subscribedLists( initial, {
-					type: READER_LIST_REQUEST_SUCCESS,
+					type: READER_LIST_CREATE_SUCCESS,
 					data: {
 						list: { ID: 2 },
 					},
