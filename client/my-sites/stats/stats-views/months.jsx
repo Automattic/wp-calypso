@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Popover } from '@automattic/components';
-import { localize } from 'i18n-calypso';
+import { localize, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, createElement, PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 class Month extends PureComponent {
 	static propTypes = {
@@ -64,7 +63,7 @@ class Month extends PureComponent {
 }
 
 const StatsViewsMonths = ( props ) => {
-	const { translate, dataKey, data, numberFormat, moment, siteSlug, showYearTotal = false } = props;
+	const { translate, dataKey, data, moment, siteSlug, showYearTotal = false } = props;
 	const dataEntries = data ? Object.entries( data ) : [];
 	const isAverageChart = dataKey === 'average';
 	let earliestDate = moment();
@@ -132,7 +131,7 @@ const StatsViewsMonths = ( props ) => {
 				totals.months[ month ] += value;
 				totals.yearsCount[ year ] += 1;
 				totals.monthsCount[ month ] += 1;
-				displayValue = formatNumberMetric( value );
+				displayValue = numberFormat( value, { decimals: 1, notation: 'compact' } );
 			}
 
 			totalValue += value;

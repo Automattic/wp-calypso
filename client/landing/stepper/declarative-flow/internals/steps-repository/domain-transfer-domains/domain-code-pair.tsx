@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { GOOGLE_TRANSFER } from '@automattic/onboarding';
+import { GOOGLE_TRANSFER, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
 import { Button, Icon } from '@wordpress/components';
 import { check, closeSmall } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -108,7 +108,10 @@ export function DomainCodePair( {
 }: Props ) {
 	const { __ } = useI18n();
 
-	const validation = useValidationMessage( domain, auth, hasDuplicates );
+	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
+	const validation = useValidationMessage( domain, auth, hasDuplicates, {
+		vendor: isHundredYearDomainsTransferFlow ? '100-year-domains' : undefined,
+	} );
 	const isGoogleDomainsTransferFlow = GOOGLE_TRANSFER === variantSlug;
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 
@@ -195,9 +198,13 @@ export function DomainCodePair( {
 				} ) }
 				position="right"
 			>
-				{ __(
-					'Unique code proving ownership, needed for secure domain transfer between registrars.'
-				) }
+				{ isHundredYearDomainsTransferFlow
+					? __(
+							'Your secret key to unlock the domain transfer. Get yours from your current domain provider.'
+					  )
+					: __(
+							'Unique code proving ownership, needed for secure domain transfer between registrars.'
+					  ) }
 				<div>
 					<Button
 						href={ localizeUrl(

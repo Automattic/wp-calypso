@@ -116,6 +116,7 @@ describe( 'Logged In Landing Page', () => {
 			preferences: {
 				localValues: {
 					'sites-landing-page': { useSitesAsLandingPage: true, updatedAt: 1111 },
+					'reader-landing-page': { useReaderAsLandingPage: false, updatedAt: 1111 },
 				},
 			},
 			ui: {},
@@ -138,6 +139,41 @@ describe( 'Logged In Landing Page', () => {
 		page( '/' );
 
 		await waitFor( () => expect( page.current ).toBe( '/sites' ) );
+	} );
+
+	test( 'user who opts in goes to reader page', async () => {
+		const state = {
+			currentUser: {
+				id: 1,
+				capabilities: { 1: { edit_posts: true } },
+				user: { primary_blog: 1, site_count: 2 },
+			},
+			preferences: {
+				localValues: {
+					'sites-landing-page': { useSitesAsLandingPage: false, updatedAt: 1111 },
+					'reader-landing-page': { useReaderAsLandingPage: true, updatedAt: 1111 },
+				},
+			},
+			ui: {},
+			sites: {
+				items: {
+					1: {
+						ID: 1,
+						URL: 'https://test.wordpress.com',
+					},
+					2: {
+						ID: 2,
+						URL: 'https://test.jurassic.ninja',
+						jetpack: true,
+					},
+				},
+			},
+		};
+		const { page } = initRouter( { state } );
+
+		page( '/' );
+
+		await waitFor( () => expect( page.current ).toBe( '/read' ) );
 	} );
 
 	test( 'user with a selected site goes to My Home for Default Style interface', async () => {

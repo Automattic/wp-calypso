@@ -28,9 +28,9 @@ export function BillingHistoryContent( {
 	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
 
 	return (
-		<Card className="billing-history__receipts">
+		<Card id="billing-history" className="section-content" tagName="section">
 			{ useDataViewBillingHistoryList ? (
-				<BillingHistoryListDataView getReceiptUrlFor={ getReceiptUrlFor } />
+				<BillingHistoryListDataView siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 			) : (
 				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 			) }
@@ -61,7 +61,7 @@ function BillingHistory() {
 	const vatText = vatDetails.id ? editVatText : addVatText;
 
 	return (
-		<Main wideLayout className="billing-history">
+		<Main id="purchases" wideLayout>
 			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 			<NavigationHeader

@@ -31,6 +31,7 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
@@ -399,6 +400,17 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 
 	loadExperimentAssignment( aaTestName );
 	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
+
+	const overrideAssignment = getPreference(
+		context.store.getState(),
+		'remove_duplicate_views_experiment_assignment'
+	);
+
+	if ( 'control' === overrideAssignment ) {
+		next();
+		return;
+	}
+
 	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );

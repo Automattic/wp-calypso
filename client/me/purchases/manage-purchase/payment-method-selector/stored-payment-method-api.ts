@@ -74,6 +74,7 @@ export async function updateCreditCard( {
 	organization,
 	address,
 	countryCode,
+	setupKey,
 }: {
 	purchase: Purchase;
 	token: string;
@@ -86,6 +87,7 @@ export async function updateCreditCard( {
 	organization?: string;
 	address?: string;
 	countryCode: string;
+	setupKey?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const {
 		purchaseId,
@@ -99,6 +101,7 @@ export async function updateCreditCard( {
 		tax_city,
 		tax_organization,
 		tax_address,
+		setup_key,
 	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
@@ -111,6 +114,7 @@ export async function updateCreditCard( {
 		city,
 		organization,
 		address,
+		setupKey,
 	} );
 	const response = await wp.req.post(
 		{
@@ -128,6 +132,7 @@ export async function updateCreditCard( {
 			tax_city,
 			tax_organization,
 			tax_address,
+			setup_key,
 		}
 	);
 	if ( response.error ) {

@@ -57,7 +57,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 		);
 		const videoPressDescription = translate( '1TB of ad-free video hosting.' );
 		const boostDescription = translate(
-			'Speed up your site and improve SEO with automatic critical CSS generation.'
+			'Speed up your site, improve SEO, and track site performance over time.'
 		);
 		const searchDescription = translate( 'Powerful, instant site search.' );
 		const socialDescription = translate(
@@ -106,10 +106,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				calloutText: translate( '100k records & requests/mo' ),
 			} ),
 
-			...setProductDescription( JETPACK_SOCIAL_PRODUCTS, {
-				value: socialDescription,
-				calloutText: translate( 'Unlimited shares/mo' ),
-			} ),
+			...setProductDescription( JETPACK_SOCIAL_PRODUCTS, { value: socialDescription } ),
 
 			...setProductDescription( JETPACK_CRM_PRODUCTS, {
 				value: crmDescription,
