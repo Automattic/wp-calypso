@@ -2,7 +2,10 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+// TODO: This will need to be updated to use whatever image we decide on.
+import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import { preventWidows } from 'calypso/lib/formatting';
 import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { Column } from './layout/column';
@@ -10,6 +13,11 @@ import { MenuItem } from './layout/menu-item';
 
 export const Content = () => {
 	const translate = useTranslate();
+
+	//TODO: Verify what is it
+	const popoverOfferEnabled = true;
+	const popoverCardEnabled = true;
+
 	return (
 		<>
 			<Column heading={ translate( 'Add a new site' ) }>
@@ -72,6 +80,37 @@ export const Content = () => {
 					} }
 				/>
 			</Column>
+			{ popoverCardEnabled && (
+				<Column>
+					<MenuItem
+						isBanner
+						icon={ <img src={ devSiteBanner } alt="Get a Free Domain and Up to 55% off" /> }
+						heading={ translate( 'Get a Free Domain and Up to 55% off' ) }
+						description={ preventWidows(
+							translate(
+								'Save up to 55% on annual plans and get a free custom domain for a year. Your next site is just a step away.'
+							)
+						) }
+						disabled={ ! popoverOfferEnabled }
+						buttonProps={ {
+							onClick: () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_offer' );
+								window.location.href = 'https://wordpress.com/pricing/';
+							},
+						} }
+					>
+						<div>
+							<div
+								className={ clsx( 'sites-add-new-site-popover__cta', {
+									disabled: ! popoverOfferEnabled,
+								} ) }
+							>
+								{ translate( 'Unlock Offer' ) }
+							</div>
+						</div>
+					</MenuItem>
+				</Column>
+			) }
 		</>
 	);
 };
