@@ -59,10 +59,10 @@ $brand-text: "SF Pro Text", $sans;
 		--color-sidebar-gridicon-selected-fill: var(--color-sidebar-menu-selected-text);
 		--color-sidebar-tooltip-background: var(--color-sidebar-menu-hover-background);
 		--color-sidebar-tooltip-text: var(--color-sidebar-menu-hover-text);
-		--color-masterbar-unread-dot-background: #e65054;
-		--color-masterbar-background: var(--studio-gray-90);
-		--color-masterbar-text: var(--studio-gray-10);
-		--color-masterbar-icon: var(--studio-gray-10);
+		--color-masterbar-unread-dot-background: var(--studio-wordpress-blue-20);
+		--color-masterbar-background: #1e1e1e; // From "Modern" color scheme.
+		--color-masterbar-text: #fff; // From "Modern" color scheme.
+		--color-masterbar-icon: #fff; // From "Modern" color scheme.
 		--color-masterbar-submenu-text: var(--color-sidebar-text);
 		--color-masterbar-submenu-hover-text: var(--color-accent);
 		--color-global-masterbar-submenu-background: var(--studio-white);
