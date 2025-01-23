@@ -3,6 +3,18 @@
 
 $break-large-stats-countries: 1280px;
 
+.stats-summary-view {
+	.list-countryviews {
+		.stats-card--hero {
+			padding: 0 24px 32px;
+
+			.stats-card-header {
+				padding: 0 24px 12px 0;
+			}
+		}
+	}
+}
+
 .stats__module-list--traffic {
 	@include segmented-controls;
 	.list-countryviews {
