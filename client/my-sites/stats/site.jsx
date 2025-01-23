@@ -225,6 +225,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const hasSiteLoadedFeatures = useSelector(
 		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
 	);
+	// TODO: We may need a detailed hierarchy of the shortcut gates.
 	const shouldForceDefaultDateRange =
 		useSelector( ( state ) =>
 			shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
