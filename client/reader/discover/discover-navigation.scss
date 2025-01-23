@@ -1,7 +1,18 @@
-.is-section-reader .navigation-header.discover-stream-header {
-	margin: 0 auto;
-	max-width: 600px;
-	&.reader-dual-column {
-		max-width: 968px; // Max width of dual column reader stream.
+.is-section-reader {
+	.navigation-header.discover-stream-header {
+		margin: 0 auto;
+		padding: 0 0 24px 0;
+
+		@media only screen and ( max-width: 660px ) {
+			padding: 0 16px 24px;
+		}
+
+		&.reader-dual-column {
+			max-width: 968px; // Max width of dual column reader stream.
+		}
+	}
+	.discover-stream-navigation {
+		padding: 0;
+		margin-bottom: 0;
 	}
 }

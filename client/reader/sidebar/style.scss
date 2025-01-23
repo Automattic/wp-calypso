@@ -117,21 +117,6 @@ body.is-section-reader {
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 		}
 	}
-
-	.is-discover-stream {
-		header.navigation-header.discover-stream-header {
-			padding: 0;
-			@media only screen and (max-width: 600px) {
-				padding: 0 24px;
-			}
-		}
-		@media only screen and (max-width: 660px) {
-			.discover-stream-navigation {
-				margin-left: 0;
-				margin-right: 0;
-			}
-		}
-	}
 }
 
 .is-section-reader {
