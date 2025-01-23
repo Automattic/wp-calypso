@@ -10,6 +10,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import { requestSite, receiveSiteFrontPage } from 'calypso/state/sites/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestAdminMenu } from '../admin-menu/actions';
 import { normalizeSettings } from './utils';
 import 'calypso/state/site-settings/init';
@@ -46,10 +47,12 @@ export function updateSiteSettings( siteId, settings ) {
 /**
  * Formats subscription_options to match the expected server format
  * @param {Object} settings The settings object
+ * @param {number} siteId The site ID
+ * @param {Object} state The Redux state
  * @returns {Object} The formatted settings object
  */
-function formatSubscriptionOptions( settings ) {
-	if ( ! settings?.subscription_options ) {
+function formatSubscriptionOptions( settings, siteId, state ) {
+	if ( ! settings?.subscription_options || ! isJetpackSite( state, siteId ) ) {
 		return settings;
 	}
 
@@ -109,13 +112,13 @@ export function requestSiteSettings( siteId ) {
 }
 
 export function saveSiteSettings( siteId, settings = {} ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
 		} );
 
-		const formattedSettings = formatSubscriptionOptions( settings );
+		const formattedSettings = formatSubscriptionOptions( settings, siteId, getState() );
 
 		return wpcom.req
 			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, formattedSettings )
