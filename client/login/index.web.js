@@ -17,6 +17,7 @@ import {
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
+	redirectLostPassword,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -118,6 +119,7 @@ export default ( router ) => {
 		login,
 		setShouldServerSideRenderLogin,
 		ssrSetupLocaleLogin,
-		makeLoggedOutLayout
+		makeLoggedOutLayout,
+		redirectLostPassword
 	);
 };

@@ -5,7 +5,7 @@ import SurveyModal from 'calypso/components/survey-modal';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { isEligibleForProductSampling } from 'calypso/utils';
-import surveySitesDashboardImage from './assets/images/survey-sites-dashboard.svg';
+import SurveySitesDashboardImage from './assets/images/survey-sites-dashboard.png';
 
 const SitesDashboardSurvey = () => {
 	const isEnglishLocale = useIsEnglishLocale();
@@ -28,7 +28,7 @@ const SitesDashboardSurvey = () => {
 			eventName="calypso_survey_sites_dashboard"
 			title="Shape the Future of WordPress.com"
 			description="Got a minute? We’d love to get your feedback on some upcoming changes to the WordPress.com dashboard."
-			surveyImage={ surveySitesDashboardImage }
+			surveyImage={ SurveySitesDashboardImage }
 			surveyImageAlt="WordPress.com dashboard"
 			url="https://wordpressdotcom.crowdsignal.net/wordpress-com-dashboard-feedback"
 			dismissText="No thanks"

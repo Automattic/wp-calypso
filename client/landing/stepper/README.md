@@ -6,7 +6,7 @@ The stepper framework is a new framework for quickly spinning up sign-up flows. 
 
 ## Non-linearity
 
-It has been tricky for us to create flows with input-driven steps configuration. Stepper makes it easy by allowing flows to create their own two hooks `useSteps`, and `useStepNavigation`. These hooks have access to the state of the flow so they can make decisions based on that.
+It has been tricky for us to create flows with input-driven steps configuration. Stepper makes it easy by using `useStepNavigation`. This hook has access to the state of the flow so it makes navigation decisions based on it at every stage of the flow.
 
 ### Example flow
 
@@ -15,8 +15,8 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	useSteps(): Array< StepPath > {
-		return [ 'domain', 'design' ];
+	initialize() {
+		return [ STEPS.DOMAINS, STEPS.DESIGN ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const goBack = () => {
@@ -34,14 +34,13 @@ export const exampleFlow: Flow = {
 
 ## The API
 
-To create a flow, you only have to implement `useSteps` and `useStepNavigation`. `useSteps` just returns an array of step keys, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
+To create a flow, you only have to implement `initialize` and `useStepNavigation`. `initialize` can do any checks you need and it should finally return an array of step objects, `useStepNavigation` is the engine where you make navigation decisions. This hook returns an object of type [`NavigationControls`](./declarative-flow/internals/types.ts):
 
 There is also an optional `useSideEffect` hook. You can implement this hook to run any side-effects to the flow. You can prefetch information, send track events when something changes, etc...
 
 There is a required `isSignupFlow` flag that _MUST be `true` for signup flows_ (generally where a new site may be created), and should be `false` for other flows. The `isSignupFlow` flag controls whether we'll trigger a `calypso_signup_start` Tracks event when the flow starts. For signup flows, you can also supply additional event props to the `calypso_signup_start` event by implementing the optional `useTracksEventProps()` hook on the flow.
 
 ```tsx
-// prettier-ignore
 /**
  * This is the return type of useStepNavigation hook
  */
@@ -68,40 +67,17 @@ export type NavigationControls = {
 Since this is a hook, it can access any state from any store, so you can make dynamic navigation decisions based on the state. [Here](./declarative-flow/site-setup-flow.ts) is a developed example of this hook.
 
 ```ts
-import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
 
 export const exampleFlow: Flow = {
-	useSteps(): Array< StepPath > {
-		return [];
+	initialize() {
+		return [
+			STEPS.INTRO,
+			STEPS.DOMAINS
+		];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		return { goNext, goBack };
-	},
-};
-```
-
-### Assert Conditions
-
-Optionally, you could also define a `useAssertConditions` function in the flow. This function can be used to add some conditions to check, and maybe return an error if those are not met.
-
-```ts
-import type { StepPath } from './internals/steps-repository';
-import type { Flow } from './internals/types';
-
-export const exampleFlow: Flow = {
-	useSteps(): Array< StepPath > {
-		return [];
-	},
-	useStepNavigation( currentStep, navigate ) {
-		return { goNext, goBack };
-	},
-	useAssertConditions() {
-		const siteSlug = useSiteSlugParam();
-
-		if ( ! siteSlug ) {
-			throw new Error( 'site-setup did not provide the site slug it is configured to.' );
-		}
 	},
 };
 ```

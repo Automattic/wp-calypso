@@ -51,12 +51,14 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		hasWpcomManagedSslCert,
 	} = useDomainRow( domain );
 	const {
+		context,
 		canSelectAnyDomains,
 		domainsTableColumns,
 		isCompact,
 		currentlySelectedDomainName,
 		selectedFeature,
 		isHostingOverview,
+		hasConnectableSites,
 	} = useDomainsTable();
 
 	const renderSiteCell = () => {
@@ -65,7 +67,9 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				<DomainsTableSiteCell
 					site={ site }
 					siteSlug={ siteSlug }
+					domainName={ domain.domain }
 					userCanAddSiteToDomain={ userCanAddSiteToDomain }
+					hasConnectableSites={ hasConnectableSites }
 				/>
 			);
 		}
@@ -223,7 +227,11 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 				if ( column.name === 'email' ) {
 					return (
 						<td key={ domain.domain + column.name }>
-							<DomainsTableEmailIndicator domain={ domain } siteSlug={ siteSlug } />
+							<DomainsTableEmailIndicator
+								domain={ domain }
+								siteSlug={ siteSlug }
+								context={ context }
+							/>
 						</td>
 					);
 				}
@@ -259,6 +267,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
 									isSimpleSite={ ! site?.is_wpcom_atomic }
 									isHostingOverview={ isHostingOverview }
+									context={ context }
 								/>
 							) }
 						</td>

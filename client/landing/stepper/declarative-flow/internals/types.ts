@@ -85,7 +85,7 @@ export interface AsyncUserStep extends AsyncStepperStep {
 
 export type StepperStep = DeprecatedStepperStep | AsyncStepperStep | AsyncUserStep;
 
-export type Navigate< FlowSteps extends StepperStep[] > = (
+export type Navigate< FlowSteps extends readonly StepperStep[] > = (
 	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
 	extraData?: any,
 	/**
@@ -104,11 +104,11 @@ export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	navigate: Navigate< FlowSteps >
 ) => NavigationControls;
 
-export type UseAssertConditionsHook< FlowSteps extends StepperStep[] > = (
+export type UseAssertConditionsHook< FlowSteps extends readonly StepperStep[] > = (
 	navigate?: Navigate< FlowSteps >
 ) => AssertConditionResult;
 
-export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
+export type UseSideEffectHook< FlowSteps extends readonly StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
 	navigate: Navigate< FlowSteps >
 ) => void;
@@ -127,7 +127,10 @@ export type UseTracksEventPropsHook = () => {
 	>;
 };
 
-export type Flow = {
+/**
+ * @deprecated Use FlowV2 instead.
+ */
+export type FlowV1 = {
 	/**
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
@@ -155,13 +158,23 @@ export type Flow = {
 		customLoginPath?: string;
 		extraQueryParams?: Record< string, string | number >;
 	};
+	/**
+	 * @deprecated use `initialize` method instead.
+	 */
 	useSteps: UseStepsHook;
-	useStepNavigation: UseStepNavigationHook< ReturnType< Flow[ 'useSteps' ] > >;
-	useAssertConditions?: UseAssertConditionsHook< ReturnType< Flow[ 'useSteps' ] > >;
+	/**
+	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
+	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
+	 */
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	/**
+	 * @deprecated Use `initialize` instead. `initialize` will run before the flow is rendered and you can make any decisions there.
+	 */
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
+	useSideEffect?: UseSideEffectHook< ReturnType< FlowV1[ 'useSteps' ] > >;
 	useTracksEventProps?: UseTracksEventPropsHook;
 	/**
 	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
@@ -169,6 +182,76 @@ export type Flow = {
 	 */
 	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
 };
+
+export type FlowV2 = {
+	/**
+	 * If this flag is set to true, the flow will login the user without leaving Stepper.
+	 */
+	__experimentalUseBuiltinAuth?: boolean;
+
+	/**
+	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
+	 * Use `getSteps` instead.
+	 */
+	__flowSteps?: readonly StepperStep[];
+
+	/**
+	 * Use this method to retrieve the steps of the flow.
+	 */
+	getSteps?(): readonly StepperStep[];
+
+	name: string;
+	/**
+	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
+	 */
+	variantSlug?: string;
+	title?: string;
+	classnames?: string | [ string ];
+	/**
+	 * Required flag to indicate if the flow is a signup flow.
+	 */
+	isSignupFlow: boolean;
+	/**
+	 *  You can use this hook to configure the login url.
+	 * @returns An object describing the configuration.
+	 * For now only extraQueryParams is supported.
+	 */
+	useLoginParams?: () => {
+		/**
+		 * A custom login path to use instead of the default login path.
+		 */
+		customLoginPath?: string;
+		extraQueryParams?: Record< string, string | number >;
+	};
+	/**
+	 * Use this method to define the steps of the flow and do any actions that need to run before the flow starts.
+	 * This hook is called only once when the flow is mounted. It can be asynchronous if you would like to load an experiment or other data.
+	 *
+	 * Returning false will kill the app.
+	 */
+	initialize():
+		| false
+		| Promise< false >
+		| Promise< readonly StepperStep[] >
+		| readonly StepperStep[];
+	useStepNavigation: UseStepNavigationHook< StepperStep[] >;
+	/**
+	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
+	 */
+	useSideEffect?: UseSideEffectHook< StepperStep[] >;
+	useTracksEventProps?: UseTracksEventPropsHook;
+	/**
+	 * Temporary hook to allow gradual migration of flows to the globalised/default event tracking.
+	 * IMPORTANT: This hook will be removed in the future.
+	 */
+	use__Temporary__ShouldTrackEvent?: ( event: keyof NavigationControls ) => boolean;
+	/**
+	 * @deprecated Avoid this. Assert your conditions in `initialize` instead unless you're 100% sure you need this.
+	 */
+	useAssertConditions?: UseAssertConditionsHook< ReturnType< FlowV1[ 'useSteps' ] > >;
+};
+
+export type Flow = FlowV1 | FlowV2;
 
 export type StepProps = {
 	navigation: NavigationControls;

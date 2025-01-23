@@ -598,6 +598,10 @@
 		}
 	}
 
+	.email-plan-mailboxes-list__mailbox-list-item > .badge {
+		flex: none;
+	}
+
 	div.email-plan-mailboxes-list__mailbox-list-link span.disabled,
 	.section-header__actions button[disabled] {
 		color: var(--theme-highlight-color-50);

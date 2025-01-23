@@ -118,17 +118,25 @@ const ChatButton: FC< Props > = ( {
 
 	const handleClick = () => {
 		if ( canConnectToZendesk ) {
-			openZendeskWidget( {
-				message: initialMessage,
-				siteUrl,
-				siteId,
-				onError,
-				onSuccess: () => {
-					onClick?.();
-					resetStore();
-					setShowHelpCenter( false );
-				},
-			} );
+			if ( chatIntent === 'PRECANCELLATION' ) {
+				onClick?.();
+				setShowHelpCenter( true );
+				setNavigateToRoute(
+					`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteUrl }&siteId=${ siteId }`
+				);
+			} else {
+				openZendeskWidget( {
+					message: initialMessage,
+					siteUrl,
+					siteId,
+					onError,
+					onSuccess: () => {
+						onClick?.();
+						resetStore();
+						setShowHelpCenter( false );
+					},
+				} );
+			}
 		} else {
 			setNavigateToRoute( '/contact-form?mode=CHAT' );
 			setShowHelpCenter( true );

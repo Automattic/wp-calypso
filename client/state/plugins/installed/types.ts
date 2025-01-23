@@ -33,7 +33,6 @@ export type Plugin = {
 	wporg?: boolean;
 	status?: Array< number >;
 	allStatuses?: Array< CurrentSiteStatus >;
-	isMarketplaceProduct?: boolean;
 };
 
 export type PluginSite = {

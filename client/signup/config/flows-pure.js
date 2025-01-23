@@ -365,10 +365,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ 'reader-landing', userSocialStep ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the Reader.',
-			lastModified: '2023-10-11',
+			steps: [ userSocialStep ],
+			destination: '/read',
+			description:
+				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
+			lastModified: '2025-01-20',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

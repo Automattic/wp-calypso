@@ -50,6 +50,21 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/migration-error' ),
 	},
 
+	NEWSLETTER_SETUP: {
+		slug: 'newsletterSetup',
+		asyncComponent: () => import( './steps-repository/newsletter-setup' ),
+	},
+
+	NEWSLETTER_GOALS: {
+		slug: 'newsletterGoals',
+		asyncComponent: () => import( './steps-repository/newsletter-goals' ),
+	},
+
+	SUBSCRIBERS: {
+		slug: 'subscribers',
+		asyncComponent: () => import( './steps-repository/subscribers' ),
+	},
+
 	FREE_POST_SETUP: {
 		slug: 'freePostSetup',
 		asyncComponent: () => import( './steps-repository/free-post-setup' ),
@@ -122,6 +137,11 @@ export const STEPS = {
 	INTENT: {
 		slug: 'intent',
 		asyncComponent: () => import( './steps-repository/intent-step' ),
+	},
+
+	INTRO: {
+		slug: 'intro',
+		asyncComponent: () => import( './steps-repository/intro' ),
 	},
 
 	NEW_OR_EXISTING_SITE: {

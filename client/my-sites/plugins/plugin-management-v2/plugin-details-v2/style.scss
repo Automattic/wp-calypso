@@ -133,30 +133,51 @@
 .plugin-details-v2__title {
 	font-size: 0.875rem;
 	color: var( --color-text );
-	margin: 16px 0;
 }
 
 .plugin-details-v2__sites-list {
+	border: 1px solid var( --studio-gray-10 );
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+
+	&.separators-top-bottom {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+
 	.dataviews-view-table tr {
 		th:last-child {
 			text-align: right;
-			padding-right: 0;
-		}
-
-		td:last-child {
-			padding-right: 16px;
 		}
 
 		td:first-child .dataviews-view-table__cell-content-wrapper > span {
 			flex-grow: 1;
 
-			.plugin-row-formatter__overlay {
-				display: none;
-			}
 		}
 
 		td:last-child .dataviews-view-table__cell-content-wrapper {
 			justify-content: flex-end;
+		}
+	}
+
+	.plugin-row-formatter__overlay {
+		display: none;
+	}
+
+	.dataviews-view-list {
+		// Hiding this here because in this version the mediaField is not hiddable
+		// https://github.com/WordPress/gutenberg/tree/d59faffa3d270dbc7716f653b4cdab6020812658/packages/dataviews#properties-of-layout
+		// In future versions, a showMedia property can be used
+		.dataviews-view-list__media-wrapper {
+			background-color: transparent;
+			display: none;
+		}
+		.dataviews-view-list__field-wrapper {
+			width: 100%;
+			.dataviews-view-list__field:last-child {
+				margin-left: auto;
+				order: 0;
+			}
 		}
 	}
 }

@@ -1,12 +1,11 @@
 import { Badge, Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	useMarketplaceReviewsQuery,
 	useMarketplaceReviewsStatsQuery,
 } from 'calypso/data/marketplace/use-marketplace-reviews';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { preventWidows } from 'calypso/lib/formatting';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
@@ -133,7 +132,7 @@ const PluginDetailsHeader = ( {
 							{ translate( 'Active installations' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
-							{ formatNumberMetric( plugin.active_installs, 0 ) }
+							{ numberFormat( plugin.active_installs, { notation: 'compact' } ) }
 						</div>
 					</div>
 				) }

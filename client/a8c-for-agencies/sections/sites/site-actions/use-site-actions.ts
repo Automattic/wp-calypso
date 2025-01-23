@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { external, trash } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useContext, useMemo } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
@@ -14,7 +16,10 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import { JETPACK_ACTIVITY_ID, JETPACK_BACKUP_ID } from '../features/features';
 import SitesDashboardContext from '../sites-dashboard-context';
+import createDeleteSiteActionModal from './delete-site-action-modal';
 import getActionEventName from './get-action-event-name';
+import createRemoveSiteActionModal from './remove-site-action-modal';
+import type { SiteData } from '../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { SiteNode, AllowedActionTypes } from '../types';
 
 type Props = {
@@ -200,5 +205,266 @@ export default function useSiteActions( {
 		siteError,
 		siteValue,
 		translate,
+	] );
+}
+
+type SiteActions = {
+	isLoading: boolean;
+	isLargeScreen: boolean;
+	onRefetchSite?: () => Promise< unknown >;
+	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
+	setSelectedSiteFeature: ( siteFeature: string | undefined ) => void;
+};
+
+export function useSiteActionsDataViews( {
+	isLoading,
+	isLargeScreen,
+	onRefetchSite,
+	setDataViewsState,
+	setSelectedSiteFeature,
+}: SiteActions ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const hasRemoveManagedSitesCapability = useSelector( ( state: A4AStore ) =>
+		hasAgencyCapability( state, 'a4a_remove_managed_sites' )
+	);
+
+	return useMemo( () => {
+		const isUrlOnly = ( item: SiteData ) =>
+			item.site?.value?.sticker?.includes( 'jetpack-manage-url-only-site' );
+		const isAtomicSite = ( item: SiteData ) => item.site.value.is_atomic;
+		const isSimpleSite = ( item: SiteData ) => item.site.value.is_simple;
+		const isWPComSite = ( item: SiteData ) => isAtomicSite( item ) || isSimpleSite( item );
+		const isDevSite = ( item: SiteData ) => item.site.value.a4a_is_dev_site;
+		const getBlogId = ( item: SiteData ) => item.site.value.blog_id;
+		const hasBackup = ( item: SiteData ) => item.site.value.has_backup;
+		const getSiteSlug = ( item: SiteData ) => urlToSlug( item.site.value.url );
+		const getUrlWithScheme = ( item: SiteData ) => {
+			return isWPComSite( item )
+				? item.site.value.url_with_scheme.replace( 'wpcomstaging.com', 'wordpress.com' ) // Replace staging domain with wordpress.com if it's a simple site
+				: item.site.value.url_with_scheme;
+		};
+
+		// In the previous field-based Actions implementation (see useSiteActions above),
+		// some of the logic to enable action lived in the Actions field and some other in the isEnabled flag.
+		// This meant that some conditions in isEnabled were redundant (e.g.: "! item.site.error")
+		// or conflicting (checking for "! item.site.value.is_simple" in the field but checking
+		// for "item.site.value.is_simple" in the isEnabled flag).
+		//
+		// canHaveActions represents the logic common to all actions that previously lived in the field,
+		// and isEligible has been updated to remove redundant and conflicting checks,
+		// that's why it's not exactly the same as isEnable above.
+		const isNotProduction = config( 'env_id' ) !== 'a8c-for-agencies-production';
+		const canHaveActions = ( item: SiteData ) =>
+			! isLoading &&
+			( ! item.site.value.sticker?.includes( 'migration-in-process' ) || isNotProduction ) &&
+			! item.site.error &&
+			! item.site.value.is_simple;
+
+		const recordTracksEventRemoveSite = () =>
+			dispatch( recordTracksEvent( getActionEventName( 'remove_site', isLargeScreen ) ) );
+		const recordTracksEventDeleteSite = () =>
+			dispatch( recordTracksEvent( getActionEventName( 'delete_site', isLargeScreen ) ) );
+
+		return [
+			{
+				label: translate( 'Prepare for launch' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isDevSite( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					dispatch(
+						recordTracksEvent( getActionEventName( 'prepare_for_launch', isLargeScreen ) )
+					);
+				},
+			},
+			{
+				id: 'set_up_site',
+				label: translate( 'Set up site' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/overview/${ getBlogId( items[ 0 ] ) }` );
+					dispatch( recordTracksEvent( getActionEventName( 'set_up_site', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'change_domain',
+				label: translate( 'Change domain' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/domains/manage/${ getBlogId( items[ 0 ] ) }` );
+					dispatch( recordTracksEvent( getActionEventName( 'change_domain', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'hosting_configuration',
+				label: translate( 'Hosting configuration' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/hosting-config/${ getBlogId( items[ 0 ] ) }` );
+					dispatch(
+						recordTracksEvent( getActionEventName( 'hosting_configuration', isLargeScreen ) )
+					);
+				},
+			},
+			{
+				id: 'issue_license',
+				label: translate( 'Issue new license' ),
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback: () => {
+					page( A4A_MARKETPLACE_LINK );
+					dispatch( recordTracksEvent( getActionEventName( 'issue_license', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'view_activity_not_wpcom',
+				label: translate( 'View activity' ),
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && ! isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					const item = items[ 0 ];
+					setDataViewsState( ( prevState: DataViewsState ) => ( {
+						...prevState,
+						selectedItem: item.site?.value,
+						type: DATAVIEWS_LIST,
+					} ) );
+					setSelectedSiteFeature( JETPACK_ACTIVITY_ID );
+					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'view_activity_wpcom',
+				label: translate( 'View activity' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/activity-log/${ getBlogId( items[ 0 ] ) }` );
+					dispatch( recordTracksEvent( getActionEventName( 'view_activity', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'clone_site_wpcom',
+				label: translate( 'Copy this site' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return (
+						canHaveActions( item ) &&
+						isAtomicSite( item ) &&
+						hasBackup( item ) &&
+						! isUrlOnly( item )
+					);
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/backup/${ getSiteSlug( items[ 0 ] ) }/clone` );
+					dispatch( recordTracksEvent( getActionEventName( 'clone_site', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'clone_site_not_wpcom',
+				label: translate( 'Copy this site' ),
+				isEligible( item: SiteData ) {
+					return (
+						canHaveActions( item ) &&
+						! isAtomicSite( item ) &&
+						hasBackup( item ) &&
+						! isUrlOnly( item )
+					);
+				},
+				callback( items: SiteData[] ) {
+					setDataViewsState( ( prevState: DataViewsState ) => ( {
+						...prevState,
+						selectedItem: items[ 0 ].site.value,
+						type: DATAVIEWS_LIST,
+					} ) );
+					setSelectedSiteFeature( JETPACK_BACKUP_ID );
+					dispatch( recordTracksEvent( getActionEventName( 'clone_site', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'site_settings',
+				label: translate( 'Site settings' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && isAtomicSite( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `https://wordpress.com/settings/general/${ getBlogId( items[ 0 ] ) }` );
+					dispatch( recordTracksEvent( getActionEventName( 'site_settings', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'view_site',
+				label: translate( 'View site' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( getUrlWithScheme( items[ 0 ] ) );
+					dispatch( recordTracksEvent( getActionEventName( 'view_site', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'visit_wp_admin',
+				label: translate( 'Visit WP Admin' ),
+				icon: external,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && ! isUrlOnly( item );
+				},
+				callback( items: SiteData[] ) {
+					window.open( `${ getUrlWithScheme( items[ 0 ] ) }/wp-admin` );
+					dispatch( recordTracksEvent( getActionEventName( 'visit_wp_admin', isLargeScreen ) ) );
+				},
+			},
+			{
+				id: 'remove_site',
+				label: translate( 'Remove site' ),
+				icon: trash,
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && ! isDevSite( item ) && hasRemoveManagedSitesCapability;
+				},
+				RenderModal: createRemoveSiteActionModal( {
+					onRefetchSite,
+					recordTracksEventRemoveSite,
+				} ),
+				isDestructive: true,
+			},
+			{
+				id: 'delete_site',
+				label: translate( 'Delete site' ),
+				isEligible( item: SiteData ) {
+					return canHaveActions( item ) && false; // Feature is always disabled, see canDelete above.
+				},
+				RenderModal: createDeleteSiteActionModal( {
+					recordTracksEventDeleteSite,
+				} ),
+			},
+		];
+	}, [
+		translate,
+		onRefetchSite,
+		isLoading,
+		dispatch,
+		isLargeScreen,
+		setDataViewsState,
+		setSelectedSiteFeature,
+		hasRemoveManagedSitesCapability,
 	] );
 }

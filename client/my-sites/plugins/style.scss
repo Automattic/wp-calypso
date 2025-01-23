@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./grid-mixins";
 @import "./woocommerce-box";
 
 .is-section-plugins .main {
@@ -109,6 +108,10 @@ body.is-section-plugins {
 			h1 {
 				font-size: 1.25rem;
 			}
+		}
+
+		.plugins-update-manager-multisite-filters {
+			padding: 0;
 		}
 
 		.plugins-update-manager-multisite-filter {

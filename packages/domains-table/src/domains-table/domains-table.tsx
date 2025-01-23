@@ -72,8 +72,11 @@ interface BaseDomainsTableProps {
 	selectedDomainName?: string;
 	selectedFeature?: string;
 	isHostingOverview?: boolean;
+	hasConnectableSites?: boolean;
+	context?: DomainsTableContext;
 }
 
+export type DomainsTableContext = 'site' | 'domains' | string;
 export type DomainsTableProps =
 	| ( BaseDomainsTableProps & { isAllSitesView: true } )
 	| ( BaseDomainsTableProps & { isAllSitesView: false; siteSlug: string | null } );
@@ -130,6 +133,8 @@ type Value = {
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
 	isHostingOverview?: boolean;
+	hasConnectableSites: boolean;
+	context?: DomainsTableContext;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -155,6 +160,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		selectedDomainName,
 		selectedFeature,
 		isHostingOverview = false,
+		hasConnectableSites = false,
+		context,
 	} = props;
 
 	const [ { sortKey, sortDirection }, setSort ] = useState< {
@@ -458,6 +465,8 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		currentlySelectedDomainName: selectedDomainName,
 		selectedFeature,
 		isHostingOverview,
+		hasConnectableSites,
+		context,
 	};
 
 	return value;
