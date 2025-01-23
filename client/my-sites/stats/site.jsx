@@ -175,22 +175,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	// Find the applied shortcut with shortcut ID from the URL.
-	const { selectedShortcut: appliedShortcut, supportedShortcutList } = useShortcuts( {
-		chartStart: context.query?.chartStart,
-		chartEnd: context.query?.chartEnd,
-		shortcutId: context.query?.shortcut,
-	} );
-
-	const storedShortcut = useMemo( () => {
-		const storedShortcutId =
-			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
-			// Fallback for the compatibility.
-			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
-
-		return supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
-	}, [ siteId, supportedShortcutList ] );
-
 	const moduleStrings = statsStrings();
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -221,17 +205,41 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportUserFeedback,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
+	// Find the applied shortcut with shortcut ID from the URL.
+	const shortcuts = useShortcuts( {
+		chartStart: context.query?.chartStart,
+		chartEnd: context.query?.chartEnd,
+		shortcutId: context.query?.shortcut,
+	} );
+	const { supportedShortcutList } = shortcuts;
+	let storedShortcut = useMemo( () => {
+		const storedShortcutId =
+			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+			// Fallback for the compatibility.
+			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
+		return supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
+	}, [ siteId, supportedShortcutList ] );
+	let { selectedShortcut: appliedShortcut } = shortcuts;
+
 	const hasSiteLoadedFeatures = useSelector(
 		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
 	);
+	const shouldForceDefaultDateRange =
+		useSelector( ( state ) =>
+			shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
+		) && hasSiteLoadedFeatures;
 
-	const shouldForceDefaultDateRange = useSelector( ( state ) =>
-		shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
-	);
+	const shouldForceDefaultPeriod =
+		useSelector( ( state ) =>
+			shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK )
+		) && hasSiteLoadedFeatures;
 
-	const shouldForceDefaultPeriod = useSelector( ( state ) =>
-		shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK )
-	);
+	// Remove appliedShortcut and storedShortcut if the date range or chart perod is locked.
+	if ( shouldForceDefaultDateRange || shouldForceDefaultPeriod ) {
+		appliedShortcut = null;
+		storedShortcut = null;
+	}
 
 	const wpcomShowUpsell = useSelector(
 		( state ) =>
@@ -329,9 +337,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					const storedValue = storedShortcut[ inputKey ];
 					const isStoredValueValid = moment( storedValue ).isValid();
 
-					return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
-						? storedValue
-						: null;
+					return isStoredValueValid ? storedValue : null;
 				}
 			}
 
@@ -339,7 +345,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 			return isValid ? inputDate : null;
 		},
-		[ storedShortcut, hasSiteLoadedFeatures, shouldForceDefaultDateRange ]
+		[ storedShortcut ]
 	);
 
 	// Note: This is only used in the empty version of the module.
