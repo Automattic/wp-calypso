@@ -10,7 +10,7 @@ $break-large-stats-countries: 1280px;
 		.stats-card--hero {
 			padding-bottom: 0;
 			width: 100%;
-			flex: 1;
+
 			.stats-geochart {
 				margin-bottom: 32px;
 
@@ -18,10 +18,6 @@ $break-large-stats-countries: 1280px;
 					margin-bottom: 0;
 				}
 			}
-		}
-
-		.stats-card--header-and-body {
-			max-width: 380px;
 		}
 	}
 
@@ -32,7 +28,6 @@ $break-large-stats-countries: 1280px;
 	}
 
 	@media (min-width: $break-large-stats-countries) {
-
 		.stats__module-wrapper--countryviews .stats-module,
 		.list-countryviews .stats-card__content {
 			display: flex;
@@ -42,6 +37,7 @@ $break-large-stats-countries: 1280px;
 
 		.list-countryviews {
 			.stats-card--hero {
+				flex: 1;
 				.stats-geochart {
 					margin-bottom: 0;
 				}
@@ -53,6 +49,7 @@ $break-large-stats-countries: 1280px;
 
 			.stats-card--header-and-body {
 				flex: 1;
+				max-width: 380px;
 			}
 
 			.stats-card--footer {
