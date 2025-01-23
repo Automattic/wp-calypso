@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -38,10 +37,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 			/>
 		);
 
-		if (
-			isWooPasswordlessJPC &&
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-		) {
+		if ( isWooPasswordlessJPC ) {
 			const termsOfServiceLink = (
 				<a
 					href={ localizeUrl( 'https://wordpress.com/tos/' ) }

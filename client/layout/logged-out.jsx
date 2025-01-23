@@ -150,9 +150,7 @@ const LayoutLoggedOut = ( {
 		'is-blaze-pro': isBlazePro,
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
-		'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
-			'woocommerce/core-profiler-passwordless-auth'
-		),
+		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
 		'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
 	};
 
