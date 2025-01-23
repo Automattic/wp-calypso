@@ -56,7 +56,10 @@ const StatsCard = ( {
 		<div
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
-			<div className={ `${ BASE_CLASS_NAME }-header--main` }> { toggleControl } </div>
+			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
+				{ ! heroElement && titleNode }
+				{ toggleControl }
+			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
 					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
