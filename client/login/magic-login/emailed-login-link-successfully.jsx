@@ -8,11 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-<<<<<<< HEAD
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-=======
-import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
->>>>>>> ed129024881 (Refactor isWoo and isWooPasswordless check)
 import { login, lostPassword } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -38,11 +33,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 	onLostPasswordClick = ( event ) => {
 		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
 
-<<<<<<< HEAD
-		if ( this.props.isWoo ) {
-=======
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWCCOM ) {
->>>>>>> ed129024881 (Refactor isWoo and isWooPasswordless check)
+		if ( this.props.isWCCOM ) {
 			event.preventDefault();
 
 			page(

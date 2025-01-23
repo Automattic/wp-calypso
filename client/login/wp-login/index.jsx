@@ -42,7 +42,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
@@ -315,7 +315,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( this.props.isWoo || this.props.isBlazePro || this.props.isWooPasswordlessJPC ) {
+		if ( this.props.isWCCOM || this.props.isBlazePro || this.props.isWooJPC ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -327,7 +327,7 @@ export class Login extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
+								action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 								from: get( this.props.currentQuery, 'from' ),
 							} )
@@ -451,7 +451,7 @@ export class Login extends Component {
 			isWCCOM,
 			isBlazePro,
 			currentQuery,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			currentRoute,
 		} = this.props;
 
@@ -460,7 +460,7 @@ export class Login extends Component {
 		}
 
 		if (
-			( currentQuery.lostpassword_flow === 'true' && isWooPasswordlessJPC ) ||
+			( currentQuery.lostpassword_flow === 'true' && isWooJPC ) ||
 			// We don't want to show lost password option if the user is already on lost password's page
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {
@@ -492,7 +492,7 @@ export class Login extends Component {
 			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
 			! ( isWCCOM && ! isPartnerSignup ) &&
 			! isBlazePro &&
-			! isWooPasswordlessJPC;
+			! isWooJPC;
 
 		if ( shouldRenderFooter ) {
 			return (
@@ -653,7 +653,7 @@ export default connect(
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
 			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
-			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),

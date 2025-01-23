@@ -46,7 +46,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import { refreshColorScheme, getColorSchemeFromCurrentQuery } from './color-scheme';
@@ -76,7 +76,7 @@ const LayoutLoggedOut = ( {
 	showGdprBanner,
 	isPartnerSignup,
 	isPartnerSignupStart,
-	isWooPasswordlessJPC,
+	isWooJPC,
 	isWoo,
 	isBlazePro,
 	locale,
@@ -143,7 +143,7 @@ const LayoutLoggedOut = ( {
 		'is-gravatar': isGravatar,
 		'is-wp-job-manager': isWPJobManager,
 		'is-grav-powered-client': hasGravPoweredClientClass,
-		'is-woocommerce-core-profiler-flow': isWooPasswordlessJPC,
+		'is-woocommerce-core-profiler-flow': isWooJPC,
 		'is-magic-login': isMagicLogin,
 		'is-wpcom-magic-login': isWpcomMagicLogin,
 		'is-woo-passwordless': isWoo,
@@ -157,7 +157,7 @@ const LayoutLoggedOut = ( {
 	let masterbar = null;
 
 	useEffect( () => {
-		isWooPasswordlessJPC && refreshColorScheme( 'default', colorScheme );
+		isWooJPC && refreshColorScheme( 'default', colorScheme );
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
 	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
@@ -230,7 +230,7 @@ const LayoutLoggedOut = ( {
 				} ) }
 			/>
 		);
-	} else if ( isWooPasswordlessJPC ) {
+	} else if ( isWooJPC ) {
 		classes.woo = true;
 		classes[ 'has-no-masterbar' ] = false;
 		masterbar = (
@@ -364,7 +364,7 @@ export default withCurrentRoute(
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
 			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-			const isWooPasswordlessJPC = isWooPasswordlessJPCFlow( state );
+			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||
@@ -373,9 +373,7 @@ export default withCurrentRoute(
 				noMasterbarForRoute;
 			const twoFactorEnabled = isTwoFactorEnabled( state );
 
-			const colorScheme = isWooPasswordlessJPC
-				? getColorSchemeFromCurrentQuery( currentQuery )
-				: null;
+			const colorScheme = isWooJPC ? getColorSchemeFromCurrentQuery( currentQuery ) : null;
 
 			return {
 				isJetpackLogin,
@@ -396,7 +394,7 @@ export default withCurrentRoute(
 				useOAuth2Layout: showOAuth2Layout( state ),
 				isPartnerSignup,
 				isPartnerSignupStart,
-				isWooPasswordlessJPC,
+				isWooJPC,
 				isWoo: getIsWoo( state ),
 				isBlazePro: getIsBlazePro( state ),
 				twoFactorEnabled,

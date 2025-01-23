@@ -1,6 +1,6 @@
 import 'calypso/state/route/init';
 import isWCCOM from './get-is-wccom';
-import isWooPasswordlessJPCFlow from './is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from './is-woo-jpc-flow';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -8,9 +8,5 @@ import type { AppState } from 'calypso/types';
  *
  */
 export default function getIsWoo( state: AppState ): boolean {
-	if ( isWooPasswordlessJPCFlow( state ) || isWCCOM( state ) ) {
-		return true;
-	}
-
-	return false;
+	return isWooJPCFlow( state ) || isWCCOM( state );
 }
