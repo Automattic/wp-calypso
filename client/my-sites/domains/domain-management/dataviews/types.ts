@@ -62,6 +62,7 @@ interface BaseDomainsDataViewsProps {
 	fetchBulkActionStatus?: () => Promise< BulkDomainUpdateStatusQueryFnData >;
 	deleteBulkActionStatus?: () => Promise< void >;
 	currentUserCanBulkUpdateContactInfo?: boolean;
+	hasConnectableSites?: boolean;
 }
 
 /**
@@ -100,4 +101,5 @@ export interface Context {
 	userCanSetPrimaryDomains: BaseDomainsDataViewsProps[ 'userCanSetPrimaryDomains' ];
 	isDesktop: boolean;
 	selectedFeature?: string;
+	hasConnectableSites: boolean;
 }

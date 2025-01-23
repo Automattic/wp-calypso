@@ -24,6 +24,7 @@ export function useFields( { openDomainPane }: Props ) {
 		selectedFeature,
 		getSiteSlug,
 		getFullDomain,
+		hasConnectableSites,
 	} = useDomainsDataViewsContext();
 
 	const fields = useMemo< Field< PartialDomainData >[] >(
@@ -89,6 +90,8 @@ export function useFields( { openDomainPane }: Props ) {
 							site={ site }
 							userCanAddSiteToDomain={ userCanAddSiteToDomain }
 							siteSlug={ getSiteSlug( item ) }
+							domainName={ domain.domain }
+							hasConnectableSites={ hasConnectableSites }
 						/>
 					);
 				},
