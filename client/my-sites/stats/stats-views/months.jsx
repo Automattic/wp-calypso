@@ -131,7 +131,10 @@ const StatsViewsMonths = ( props ) => {
 				totals.months[ month ] += value;
 				totals.yearsCount[ year ] += 1;
 				totals.monthsCount[ month ] += 1;
-				displayValue = numberFormat( value, { decimals: 1, notation: 'compact' } );
+				displayValue = numberFormat( value, {
+					decimals: 1,
+					numberFormatOptions: { notation: 'compact' },
+				} );
 			}
 
 			totalValue += value;

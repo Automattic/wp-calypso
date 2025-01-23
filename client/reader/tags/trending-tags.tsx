@@ -28,7 +28,7 @@ const TagRow = ( props: TagRowProps ) => {
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
 				<span className="trending-tags__title">{ titlecase( props.title ) }</span>
 				<span className="trending-tags__count">
-					{ numberFormat( props.count, { notation: 'compact' } ) }
+					{ numberFormat( props.count, { numberFormatOptions: { notation: 'compact' } } ) }
 				</span>
 			</a>
 		</div>

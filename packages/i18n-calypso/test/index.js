@@ -289,12 +289,18 @@ describe( 'I18n', function () {
 					} );
 				} );
 				test( 'defaults to latin notation and localised unit', () => {
-					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 } ) ).toEqual( '1.2 ألف' );
+					expect(
+						numberFormat( 1234, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } )
+					).toEqual( '1.2 ألف' );
 				} );
 				test( 'non-latin/original notation and localised unit', () => {
-					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 }, false ) ).toEqual(
-						'١٫٢ ألف'
-					);
+					expect(
+						numberFormat( 1234, {
+							numberFormatOptions: { notation: 'compact' },
+							decimals: 1,
+							forceLatin: false,
+						} )
+					).toEqual( '١٫٢ ألف' );
 				} );
 			} );
 		} );
