@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "../variables";
+@import "../shared";
 
 $header-height: 300px;
 $header-height-mobile: 350px;

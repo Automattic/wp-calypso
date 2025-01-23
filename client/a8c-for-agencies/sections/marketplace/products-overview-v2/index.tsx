@@ -12,6 +12,8 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import GuidedTour from 'calypso/components/guided-tour';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -48,6 +50,7 @@ export function ProductsOverviewV2( {
 	searchQuery,
 }: Props ) {
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+	const [ referralToggleRef, setReferralToggleRef ] = useState< HTMLElement | null >( null );
 
 	const translate = useTranslate();
 
@@ -114,6 +117,8 @@ export function ProductsOverviewV2( {
 			onScroll={ onScroll }
 			wide
 		>
+			<GuidedTour defaultTourId="marketplaceWalkthrough" />
+
 			<LayoutTop>
 				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
@@ -130,9 +135,11 @@ export function ProductsOverviewV2( {
 						hideOnMobile
 					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-						<ReferralToggle />
+						<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+							<ReferralToggle />
+						</div>
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -142,6 +149,13 @@ export function ProductsOverviewV2( {
 							onCheckout={ () => {
 								page( A4A_MARKETPLACE_CHECKOUT_LINK );
 							} }
+						/>
+
+						<GuidedTourStep
+							className="a4a-marketplace__guided-tour-referral-toggle"
+							id="hosting-overview-v3-referral-toggle"
+							tourId="marketplaceWalkthrough"
+							context={ referralToggleRef }
 						/>
 					</Actions>
 				</LayoutHeader>
