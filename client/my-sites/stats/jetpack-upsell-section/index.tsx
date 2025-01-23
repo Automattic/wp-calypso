@@ -11,6 +11,7 @@ import { JetpackUpsellCard } from '@automattic/components';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
 import usePurchasedProducts from './use-purchased-products';
@@ -45,6 +46,25 @@ function bundledProductsFromPurchases( purchases: Purchase[] ) {
 	return [];
 }
 
+function useSiteFeatures( siteId: number | null ) {
+	// Hard-coded list of features that correspond to upsells.
+	// This should come from somewhere. Maybe from a query.
+	// Matches security, backup, search, video, boost, social.
+	const upsellFeatures = [
+		'scan', // Security plan
+		'backup', // Backup plan
+		'search',
+		'videopress',
+		'cloud-critical-css', // Boost plan
+		'social-enhanced-publishing', // Social plan
+	];
+	// Ideally we'd make a single call to get the full array of features but this will work for now.
+	const activeFeatures = useSelector( ( state ) =>
+		upsellFeatures.filter( ( feature ) => siteHasFeature( state, siteId, feature ) )
+	);
+	return activeFeatures;
+}
+
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -58,7 +78,7 @@ export default function JetpackUpsellSection() {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
 
-	const siteFeatures = [ 'videopress', 'search' ];
+	const siteFeatures = useSiteFeatures( siteId );
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
