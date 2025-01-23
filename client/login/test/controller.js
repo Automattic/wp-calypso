@@ -31,11 +31,6 @@ jest.mock( 'calypso/state/selectors/get-is-blaze-pro', () => ( {
 	default: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-is-woo-passwordless', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( {
 	__esModule: true,
 	default: jest.fn(),
