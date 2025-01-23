@@ -4,6 +4,27 @@ import wpcom from 'calypso/lib/wp';
 const useWPV2APIEndpoint = isA8CForAgencies();
 const wpV2APINamespace = 'wp/v2';
 
+// Create handlers for all plugin methods with wp/v2 namespace.
+const methods = [
+	'get',
+	'update',
+	'updateVersion',
+	'install',
+	'delete',
+	'enableAutoupdate',
+	'disableAutoupdate',
+];
+
+type PluginHandlers = {
+	[ key in ( typeof methods )[ number ] ]?: (
+		query: Record< string, unknown >,
+		...args: unknown[]
+	) => unknown;
+} & {
+	activate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
+	deactivate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
+};
+
 export const getPluginHandler = ( siteId: number, pluginId: number ) => {
 	const pluginHandler = wpcom.site( siteId ).plugin( pluginId );
 	if ( ! useWPV2APIEndpoint ) {
@@ -15,27 +36,6 @@ export const getPluginHandler = ( siteId: number, pluginId: number ) => {
 		pluginId
 	);
 	pluginHandler._slug = pluginId;
-
-	// Create handlers for all plugin methods with wp/v2 namespace.
-	const methods = [
-		'get',
-		'update',
-		'updateVersion',
-		'install',
-		'delete',
-		'enableAutoupdate',
-		'disableAutoupdate',
-	];
-
-	type PluginHandlers = {
-		[ key in ( typeof methods )[ number ] ]?: (
-			query: Record< string, unknown >,
-			...args: unknown[]
-		) => unknown;
-	} & {
-		activate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
-		deactivate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
-	};
 
 	const handlers: PluginHandlers = methods.reduce< PluginHandlers >( ( acc, method ) => {
 		acc[ method ] = ( query, ...args ) =>
