@@ -104,9 +104,9 @@ describe( 'get-estimated-commission', () => {
 			];
 
 			// Payout window is Jan 1 - Mar 31 for the mock date
-			// License issued on Mar 1, so 30 days * $100 daily price * 50% commission = 1500 cents
+			// License issued on Mar 1, so 31 days (including Mar 1) * $100 daily price * 50% commission = 1550 cents
 			// Convert to dollars by dividing by 100
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 15 );
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 15.5 );
 		} );
 
 		it( 'handles cancelled purchases', () => {
@@ -128,9 +128,9 @@ describe( 'get-estimated-commission', () => {
 				},
 			] as never;
 
-			// 9 days * $100 daily price * 50% commission = 450 cents
+			// 10 days * $100 daily price * 50% commission = 500 cents
 			// Convert to dollars by dividing by 100
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 4.5 );
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 5 );
 		} );
 
 		it( 'skips pending purchases', () => {
@@ -184,9 +184,9 @@ describe( 'get-estimated-commission', () => {
 				},
 			] as never;
 
-			// 30 days * $100 daily price * 50% commission * 2 purchases = 3000 cents
+			// 31 days * $100 daily price * 50% commission * 2 purchases = 3100 cents
 			// Convert to dollars by dividing by 100
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 30 );
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 31 );
 		} );
 
 		it( 'calculates commission for multiple referrals', () => {
@@ -223,9 +223,9 @@ describe( 'get-estimated-commission', () => {
 				},
 			] as never;
 
-			// 30 days * $100 daily price * 50% commission * 2 referrals = 3000 cents
+			// 31 days * $100 daily price * 50% commission * 2 referrals = 3100 cents
 			// Convert to dollars by dividing by 100
-			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 30 );
+			expect( getEstimatedCommission( referrals, [ mockProduct ], mockDate ) ).toBe( 31 );
 		} );
 
 		it( 'calculates commission with bundle pricing', () => {
@@ -252,9 +252,9 @@ describe( 'get-estimated-commission', () => {
 				},
 			] as never;
 
-			// 30 days * $90 daily price * 50% commission = 1350 cents
+			// 31 days * $90 daily price * 50% commission = 1395 cents
 			// Convert to dollars by dividing by 100
-			expect( getEstimatedCommission( referrals, [ productWithBundle ], mockDate ) ).toBe( 13.5 );
+			expect( getEstimatedCommission( referrals, [ productWithBundle ], mockDate ) ).toBe( 13.95 );
 		} );
 	} );
 } );
