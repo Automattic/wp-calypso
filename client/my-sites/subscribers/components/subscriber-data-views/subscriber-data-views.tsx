@@ -1,18 +1,21 @@
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, type View, type Action } from '@wordpress/dataviews';
+import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { useSubscriptionPlans } from 'calypso/my-sites/subscribers/hooks';
+import {
+	useSubscriptionPlans,
+	useFetchPaidSubscribersCount,
+} from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
 import './style.scss';
@@ -63,10 +66,13 @@ const SubscriberDataViews = ( {
 		handleSearch,
 		sortTerm,
 		sortOrder,
+		filterOption,
 		setSortTerm,
 		setSortOrder,
+		setFilterOption,
 	} = useSubscribersPage();
 
+	const { data: paidSubscribersCount } = useFetchPaidSubscribersCount( siteId );
 	const [ currentView, setCurrentView ] = useState< View >( {
 		type: 'table',
 		layout: {},
@@ -78,8 +84,11 @@ const SubscriberDataViews = ( {
 		},
 	} );
 
-	const isSimple = useSelector( isSimpleSite );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
+		isSimple: isSimpleSite( state ),
+		isAtomic: isAtomicSite( state, siteId ),
+	} ) );
+
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
@@ -104,6 +113,11 @@ const SubscriberDataViews = ( {
 	const getSubscriberId = useCallback(
 		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
 		[]
+	);
+
+	const hasPaidSubscribers = useMemo(
+		() => paidSubscribersCount && paidSubscribersCount > 0,
+		[ paidSubscribersCount ]
 	);
 
 	const fields = useMemo(
@@ -152,12 +166,27 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 			{
-				id: 'subscription_type',
+				id: 'plan',
 				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
+				getValue: ( { item }: { item: Subscriber } ) =>
+					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
+				// Conditional filtering and sorting only available if there are paid subscribers
+				...( hasPaidSubscribers
+					? {
+							elements: [
+								{ label: 'Paid', value: SubscribersFilterBy.Paid },
+								{ label: 'Free', value: SubscribersFilterBy.Free },
+							],
+							filterBy: {
+								operators: [ 'is' as Operator ],
+								isPrimary: true,
+							},
+							enableSorting: true,
+					  }
+					: {} ),
+				enableSorting: Boolean( hasPaidSubscribers ),
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				enableHiding: false,
-				enableSorting: false,
 			},
 			{
 				id: 'date_subscribed',
@@ -168,7 +197,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
+		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate, hasPaidSubscribers ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -241,6 +270,17 @@ const SubscriberDataViews = ( {
 					fields: newView.fields,
 				} ) );
 			}
+
+			// Handle filters
+			if ( newView.filters ) {
+				if ( newView.filters.length > 0 ) {
+					if ( newView.filters[ 0 ].value !== filterOption ) {
+						setFilterOption( newView.filters[ 0 ].value );
+					}
+				} else {
+					setFilterOption( SubscribersFilterBy.All );
+				}
+			}
 		},
 		[
 			page,
@@ -252,6 +292,8 @@ const SubscriberDataViews = ( {
 			setSortTerm,
 			setSortOrder,
 			currentView,
+			setFilterOption,
+			filterOption,
 		]
 	);
 
@@ -274,6 +316,11 @@ const SubscriberDataViews = ( {
 				field: sortTerm,
 				direction: sortOrder,
 			},
+			filters: [
+				...( filterOption !== SubscribersFilterBy.All
+					? [ { field: 'plan', operator: 'is', value: [ filterOption ] } ]
+					: [] ),
+			],
 		};
 
 		setCurrentView( ( oldCurrentView ) => {
@@ -297,18 +344,18 @@ const SubscriberDataViews = ( {
 			return {
 				...baseView,
 				type: 'table',
-				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+				fields: [ 'name', ...( ! isMobile ? [ 'plan', 'date_subscribed' ] : [] ) ],
 				layout: {
 					styles: {
 						media: { width: '60px' },
 						name: { width: '55%', minWidth: '195px' },
-						subscription_type: { width: '25%' },
+						plan: { width: '25%' },
 						date_subscribed: { width: '25%' },
 					},
 				},
 			} as View;
 		} );
-	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder ] );
+	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder, filterOption ] );
 
 	return (
 		<div

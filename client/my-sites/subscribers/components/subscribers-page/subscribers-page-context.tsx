@@ -80,16 +80,19 @@ export const SubscribersPageProvider = ( {
 	searchTermChanged,
 	sortTermChanged,
 }: SubscribersPageProviderProps ) => {
+	const { hasManySubscribers } = useManySubsSite( siteId );
 	const isDataView = isEnabled( 'subscribers-dataviews' );
 	const [ perPage, setPerPage ] = useState( DEFAULT_PER_PAGE );
 	const [ sortOrder, setSortOrder ] = useState< 'asc' | 'desc' >();
 	const [ dataViewSortTerm, setDataViewSortTerm ] = useState< SubscribersSortBy >(
 		SubscribersSortBy.DateSubscribed
 	);
+	const [ dataViewFilterOption, setDataViewFilterOption ] = useState< SubscribersFilterBy >(
+		hasManySubscribers ? SubscribersFilterBy.WPCOM : SubscribersFilterBy.All
+	);
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
-	const { hasManySubscribers } = useManySubsSite( siteId );
 
 	useEffect( () => {
 		const handleHashChange = () => {
@@ -122,7 +125,7 @@ export const SubscribersPageProvider = ( {
 		siteId,
 		sortTerm: isDataView ? dataViewSortTerm : sortTerm,
 		sortOrder,
-		filterOption: subscriberType,
+		filterOption: isDataView ? dataViewFilterOption : subscriberType,
 		timestamp,
 	} );
 	const pages = subscribersQueryResult.data?.pages || 0;
@@ -232,8 +235,8 @@ export const SubscribersPageProvider = ( {
 				setSortTerm: isDataView ? setDataViewSortTerm : sortTermChanged,
 				sortOrder,
 				setSortOrder,
-				filterOption,
-				setFilterOption: filterOptionChanged,
+				filterOption: isDataView ? dataViewFilterOption : subscriberType,
+				setFilterOption: isDataView ? setDataViewFilterOption : filterOptionChanged,
 				showAddSubscribersModal,
 				showMigrateSubscribersModal,
 				setShowAddSubscribersModal,
