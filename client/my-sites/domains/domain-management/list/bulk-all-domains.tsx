@@ -676,6 +676,7 @@ function DomainsDataViewsRenderer( {
 	selectedFeature,
 	domains,
 	isLoading,
+	hasConnectableSites,
 }: RendererProps ) {
 	return (
 		<DotcomDomainsDataViews
@@ -691,6 +692,7 @@ function DomainsDataViewsRenderer( {
 			selectedDomainName={ selectedDomainName }
 			sidebarMode={ sidebarMode }
 			selectedFeature={ selectedFeature }
+			hasConnectableSites={ hasConnectableSites }
 		/>
 	);
 }

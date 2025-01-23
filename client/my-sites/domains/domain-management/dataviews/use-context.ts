@@ -33,6 +33,7 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		userCanSetPrimaryDomains,
 		isLoadingDomains,
 		selectedFeature,
+		hasConnectableSites,
 	} = props;
 
 	const isDesktop = useBreakpoint( DESKTOP_BREAKPOINT );
@@ -202,6 +203,7 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		isLoadingDomains,
 		isDesktop,
 		selectedFeature,
+		hasConnectableSites: hasConnectableSites ?? false,
 	};
 
 	return context;
