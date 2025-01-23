@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import Main from 'calypso/components/main';
-import CrowdsignalPoll from '../components/crowdsignal-poll';
+import CrowdsignalPoll from '../crowdsignal-poll';
 import './style.scss';
 
 /*
