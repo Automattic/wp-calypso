@@ -36,8 +36,7 @@ const WooCoreProfilerMasterbar = ( { translate }: { translate: ( text: string ) 
 
 	if (
 		currentRoute === '/log-in/jetpack/lostpassword' ||
-		( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			currentRoute === '/log-in/jetpack/link' ) ||
+		currentRoute === '/log-in/jetpack/link' ||
 		currentQueryArguments?.lostpassword_flow
 	) {
 		shouldShowProgressBar = false;

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
@@ -63,10 +62,7 @@ const LostPasswordForm = ( {
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if (
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-			isWooPasswordlessJPC
-		) {
+		if ( isWooPasswordlessJPC ) {
 			const accountType = await getAuthAccountTypeRequest( email );
 			if ( accountType?.passwordless === true ) {
 				await dispatch(
