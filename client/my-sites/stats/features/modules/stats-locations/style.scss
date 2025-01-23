@@ -29,25 +29,6 @@ $break-large-stats-countries: 1280px;
 		position: relative;
 		z-index: 2;
 	}
-
-	.stats__module-wrapper--countryviews {
-		.module-content-text {
-			grid-column: map-start / list-end;
-			margin-bottom: 24px;
-		}
-	
-		.stats-geochart {
-			grid-area: map;
-		}
-	
-		.stats__list-wrapper {
-			grid-area: list;
-		}
-	
-		.module-content-list:last-child {
-			padding-bottom: 0;
-		}
-	}
 }
 
 @include break-wide {
