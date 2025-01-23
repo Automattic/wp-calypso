@@ -96,7 +96,6 @@
 		"plans/starter-plan": false,
 		"post-list/qr-code-link": false,
 		"press-this": true,
-		"promote-post/widget-i2": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
@@ -119,12 +118,10 @@
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
-		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
-		"videomaker-trial": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true
 	}
