@@ -11,10 +11,6 @@ import type { AppState } from 'calypso/types';
  *
  */
 export default function getIsWooPasswordless( state: AppState ): boolean {
-	if ( ! config.isEnabled( 'woo/passwordless' ) ) {
-		return false;
-	}
-
 	// Enable Woo Passwordless if user is from WooCommerce Core Profiler.
 	if (
 		isWooPasswordlessJPCFlow( state ) &&

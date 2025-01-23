@@ -77,10 +77,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 			loginPage = new LoginPage( page );
 			await loginPage.fillUsername( credentials.username );
 
-			const isWooPasswordless = await page.evaluate( `configData.features['woo/passwordless']` );
-			if ( isWooPasswordless ) {
-				await loginPage.clickSubmit();
-			}
+			await loginPage.clickSubmit();
 		} );
 
 		it( 'Enter password', async function () {
