@@ -1,4 +1,4 @@
-$background-color: #05374A;
+@import "../variables";
 
 .hosting-overview-v3.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__body {
@@ -20,7 +20,7 @@ $background-color: #05374A;
 
 	.hosting-dashboard-layout__top-wrapper {
 		max-height: auto;
-		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $background-color;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $header-background-color;
         border-block-end: none;
 		padding-block-end: 0;
 		position: sticky;
