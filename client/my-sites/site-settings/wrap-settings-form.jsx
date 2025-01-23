@@ -42,6 +42,19 @@ const FIELDS_TO_LAUNCHPAD_TASKS = {
 const debug = debugFactory( 'calypso:site-settings' );
 
 const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
+	const mergeSubscriptionOptions = ( baseOptions = {}, jetpackOptions = {} ) => {
+		if ( ! jetpackOptions ) {
+			return baseOptions;
+		}
+		return {
+			...baseOptions,
+			// Only include non-empty Jetpack values
+			...Object.fromEntries(
+				Object.entries( jetpackOptions ).filter( ( [ , value ] ) => value != null && value !== '' )
+			),
+		};
+	};
+
 	class WrappedSettingsForm extends Component {
 		state = {
 			uniqueEvents: {},
@@ -405,7 +418,14 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 			if ( isJetpack ) {
 				const jetpackSettings = getJetpackSettings( state, siteId );
-				settings = { ...settings, ...jetpackSettings };
+				settings = {
+					...settings,
+					...jetpackSettings,
+					subscription_options: mergeSubscriptionOptions(
+						settings?.subscription_options,
+						jetpackSettings?.subscription_options
+					),
+				};
 				settingsFields.jetpack = keys( jetpackSettings );
 				const fieldsToUpdate = /^error_/.test( fields.lang_id )
 					? omit( fields, 'lang_id' )
