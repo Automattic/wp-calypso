@@ -2315,7 +2315,7 @@ $breakpoint-mobile: 660px;
 	}
 
 	.auth-form__social-buttons-tos {
-		color: var(--studio-gray-50);
+		color: var(--studio-gray-50) !important;
 
 		a {
 			text-underline-offset: 2px;
