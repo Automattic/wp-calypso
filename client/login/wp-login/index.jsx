@@ -15,11 +15,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import {
-	getSignupUrl,
-	isReactLostPasswordScreenEnabled,
-	pathWithLeadingSlash,
-} from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -320,11 +316,10 @@ export class Login extends Component {
 		}
 
 		if (
-			isReactLostPasswordScreenEnabled() &&
-			( this.props.isWoo ||
-				this.props.isBlazePro ||
-				( this.props.isWooPasswordlessJPC &&
-					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
+			this.props.isWoo ||
+			this.props.isBlazePro ||
+			( this.props.isWooPasswordlessJPC &&
+				config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) )
 		) {
 			return (
 				<a
