@@ -1,5 +1,6 @@
 ## Next
 
+- Add missing dependency `@automattic/i18n-calypso`
 - Add FlowQuestion component
 
 ## 2.1.1
