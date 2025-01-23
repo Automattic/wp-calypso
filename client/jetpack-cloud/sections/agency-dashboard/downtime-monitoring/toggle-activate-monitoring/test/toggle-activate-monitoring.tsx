@@ -11,12 +11,6 @@ import configureStore from 'redux-mock-store';
 import { site } from '../../../sites-overview/test/test-utils/constants';
 import ToggleActivateMonitoring from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'jetpack/pro-dashboard-monitor-paid-tier';
-	return config;
-} );
-
 describe( 'ToggleActivateMonitoring', () => {
 	const defaultProps = {
 		site,

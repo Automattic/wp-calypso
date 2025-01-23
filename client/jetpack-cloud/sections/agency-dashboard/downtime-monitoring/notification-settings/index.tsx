@@ -102,8 +102,6 @@ export default function NotificationSettings( {
 		'jetpack/pro-dashboard-monitor-sms-notification'
 	);
 
-	const isPaidTierEnabled = isEnabled( 'jetpack/pro-dashboard-monitor-paid-tier' );
-
 	// Check if current site or all sites selected has a paid license.
 	const hasPaidLicenses = ! sites.find( ( site ) => ! site.has_paid_agency_monitor );
 
@@ -484,18 +482,16 @@ export default function NotificationSettings( {
 					restriction={ restriction }
 				/>
 
-				{ isPaidTierEnabled && (
-					<SMSNotification
-						recordEvent={ recordEvent }
-						enableSMSNotification={ enableSMSNotification }
-						setEnableSMSNotification={ setEnableSMSNotification }
-						toggleModal={ toggleAddSMSModal }
-						allPhoneItems={ allPhoneItems }
-						verifiedItem={ verifiedItem }
-						restriction={ restriction }
-						settings={ settings }
-					/>
-				) }
+				<SMSNotification
+					recordEvent={ recordEvent }
+					enableSMSNotification={ enableSMSNotification }
+					setEnableSMSNotification={ setEnableSMSNotification }
+					toggleModal={ toggleAddSMSModal }
+					allPhoneItems={ allPhoneItems }
+					verifiedItem={ verifiedItem }
+					restriction={ restriction }
+					settings={ settings }
+				/>
 
 				<EmailNotification
 					recordEvent={ recordEvent }

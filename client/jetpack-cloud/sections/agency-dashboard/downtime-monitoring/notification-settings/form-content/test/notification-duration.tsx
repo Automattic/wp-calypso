@@ -10,12 +10,6 @@ import configureStore from 'redux-mock-store';
 import DashboardDataContext from '../../../../sites-overview/dashboard-data-context';
 import NotificationDuration from '../notification-duration';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'jetpack/pro-dashboard-monitor-paid-tier';
-	return config;
-} );
-
 describe( 'NotificationDuration', () => {
 	const defaultProps = {
 		selectDuration: jest.fn(),

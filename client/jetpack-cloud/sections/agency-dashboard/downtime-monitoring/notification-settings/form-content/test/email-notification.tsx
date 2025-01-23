@@ -10,12 +10,6 @@ import configureStore from 'redux-mock-store';
 import EmailNotification from '../email-notification';
 import type { RestrictionType } from '../../../types';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'jetpack/pro-dashboard-monitor-paid-tier';
-	return config;
-} );
-
 describe( 'EmailNotification', () => {
 	const defaultProps = {
 		recordEvent: jest.fn(),
