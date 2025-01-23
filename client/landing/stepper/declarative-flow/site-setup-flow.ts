@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	Onboard,
 	updateLaunchpadSettings,
@@ -295,6 +296,10 @@ const siteSetupFlow: FlowV1 = {
 					}
 
 					if ( isLaunchpadIntent( intent ) ) {
+						if ( config.isEnabled( 'home/launchpad-first' ) ) {
+							return exitFlow( `/home/${ siteId ?? siteSlug }` );
+						}
+
 						initializeLaunchpadState( { siteId, siteSlug } );
 						const url = getPostFlowUrl( { flow: intent, siteId, siteSlug } );
 						return exitFlow( url );
