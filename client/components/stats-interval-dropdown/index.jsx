@@ -105,9 +105,9 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			return;
 		}
 
-		localStorage.setItem( `jetpack_stats_stored_period_${ siteId }`, interval );
-		// Remove legacy item key.
+		// Deprecate the stored period and removing legacy localStorage keys.
 		localStorage.removeItem( 'jetpack_stats_stored_period' );
+		localStorage.removeItem( `jetpack_stats_stored_period_${ siteId }` );
 
 		page( generateNewLink( interval ) );
 	}

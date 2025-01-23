@@ -503,28 +503,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
 	}, [ chartTab, period, activeTabState, context.query ] );
 
-	// Redirect to the stored period
-	useEffect( () => {
-		// Use the stored period if it's different from the current period.
-		const storedPeriod =
-			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
-			localStorage.getItem( 'jetpack_stats_stored_period' );
-		if (
-			hasSiteLoadedFeatures &&
-			! shouldForceDefaultPeriod &&
-			// Avoid the infinite redirect loop between single day period and hourly views.
-			period !== 'hour' &&
-			storedPeriod &&
-			storedPeriod !== period
-		) {
-			// TODO: Determine if we need to save the period as it might be a conflict with the drilling down.
-			page.redirect(
-				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
-			);
-			return;
-		}
-	}, [ hasSiteLoadedFeatures, shouldForceDefaultPeriod, slug ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
 	const query = chartRangeToQuery( customChartRange );
 
 	// For period option links
