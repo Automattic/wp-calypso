@@ -21,6 +21,10 @@ $break-large-stats-countries: 1280px;
 				padding: 0;
 				width: 100%;
 			}
+
+			.stats-card .stats-card-header {
+				padding: 0 24px 12px 0;
+			}
 		}
 	}
 
@@ -41,11 +45,11 @@ $break-large-stats-countries: 1280px;
 	.list-countryviews {
 		.stats-card--hero {
 			flex: 2;
+			padding: 0 24px;
 			.stats-geochart {
 				margin: 0 auto;
 				overflow: hidden;
 				width: 100%;
-
 				div > div {
 					display: block;
 					margin: 0 auto;
