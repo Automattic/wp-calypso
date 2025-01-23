@@ -1,6 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .hundred-year-plan,
+.hundred-year-domain-transfer,
 .hundred-year-domain {
 	height: 100%;
 	padding: 0;
@@ -9,8 +10,16 @@
 	}
 }
 
+/**
+ * A different selector (not `.step-container.${flowName}`) is needed for the 100-year domain transfer
+ * since it's just a variation of the `domain-transfer` flow, and variations aren't accounted for
+ * in the StepContainer component. Then, we need to use a parent selector (which at the time of writing,
+ * uses the name, variant and step of the flow) to target this flow within these styles.
+ */
 .step-container.hundred-year-plan.hundred-year-plan,
-.step-container.hundred-year-domain.hundred-year-domain {
+.step-container.hundred-year-domain.hundred-year-domain,
+.hundred-year-domain-transfer>.step-container.domain-transfer,
+{
 	max-width: none;
 	height: 100%;
 	padding: 0;
@@ -32,6 +41,24 @@
 		.is-price-loading {
 			@include onboarding-placeholder;
 			width: 100px;
+		}
+	}
+
+	&.step-container.domain-transfer {
+		margin-top: 0;
+		width: 100%;
+
+		.hundred-year-plan-step-wrapper__step-container {
+			max-width: $break-large;
+			box-sizing: border-box;
+			padding: 0 20px;
+		}
+
+		.hundred-year-plan-step-wrapper__info-column-container {
+			.is-price-loading {
+				@include onboarding-placeholder;
+				width: 100px;
+			}
 		}
 	}
 }

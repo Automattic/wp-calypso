@@ -1,6 +1,7 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import sha256 from 'hash.js/lib/hash/sha/256';
 import wpcomRequest from 'wpcom-proxy-request';
+import { DomainValidationOptions } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-domains/use-validation-message';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 
 const VERSION = 2;
@@ -39,16 +40,30 @@ type DomainLockResponse = {
 	cannot_transfer_due_to_unsupported_premium_tld?: boolean;
 };
 
-type DomainCodePair = { domain: string; auth: string };
+type DomainCodePair = {
+	domain: string;
+	auth: string;
+	options?: DomainValidationOptions;
+};
 
 export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) {
 	return useQuery( {
 		queryKey: [ 'domain-code-valid', VERSION, pair.domain, hashAuthCode( pair.auth ) ],
 		queryFn: async () => {
 			try {
+				const options = ! pair.options
+					? {}
+					: Object.entries( pair.options ).reduce(
+							( acc, [ key, value ] ) => {
+								acc[ key ] = String( value );
+								return acc;
+							},
+							{} as Record< string, string >
+					  );
 				const availability = await wpcomRequest< DomainLockResponse >( {
 					apiVersion: '1.3',
 					path: `/domains/${ encodeURIComponent( pair.domain ) }/is-available`,
+					query: new URLSearchParams( options ).toString(),
 				} );
 
 				// A `transferrability` property was added in D115244-code to check whether a mapped domain can be transferred

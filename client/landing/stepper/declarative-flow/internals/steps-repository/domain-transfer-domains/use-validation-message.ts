@@ -4,7 +4,16 @@ import { useDebounce } from 'use-debounce';
 import { useIsDomainCodeValid } from 'calypso/landing/stepper/hooks/use-is-domain-code-valid';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 
-export function useValidationMessage( domain: string, auth: string, hasDuplicates: boolean ) {
+export type DomainValidationOptions = {
+	vendor?: string;
+};
+
+export function useValidationMessage(
+	domain: string,
+	auth: string,
+	hasDuplicates: boolean,
+	options: DomainValidationOptions = {}
+) {
 	const { __ } = useI18n();
 
 	const [ domainDebounced ] = useDebounce( domain, 500 );
@@ -25,6 +34,7 @@ export function useValidationMessage( domain: string, auth: string, hasDuplicate
 		{
 			domain: domainDebounced,
 			auth: authDebounced,
+			options,
 		},
 		{
 			enabled: Boolean( passedLocalValidation ),
