@@ -206,7 +206,8 @@ export function isRequestingLists( state = false, action ) {
 }
 
 /**
- * Tracks if a list request has been made.
+ * This object tracks all list requests that have been made
+ * and whether those requests are in progress or not.
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
