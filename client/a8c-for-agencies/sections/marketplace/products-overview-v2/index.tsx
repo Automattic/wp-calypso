@@ -12,7 +12,6 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -128,6 +127,7 @@ export function ProductsOverviewV2( {
 								label: translate( 'Products' ),
 							},
 						] }
+						hideOnMobile
 					/>
 
 					<Actions>
@@ -161,22 +161,20 @@ export function ProductsOverviewV2( {
 				setSelectedBundleSize={ setSelectedBundleSize }
 			/>
 
-			<LayoutBody className="products-overview-v2__body">
-				<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
-					{
-						// we will remove this once we have the new product listing component
-						<ProductListing
-							selectedSite={ selectedSite }
-							suggestedProduct={ suggestedProduct }
-							productBrand={ productBrand }
-							productSearchQuery={ productSearchQuery }
-							isReferralMode={ isReferralMode }
-							selectedBundleSize={ selectedBundleSize }
-							selectedFilters={ selectedFilters }
-						/>
-					}
-				</ShoppingCartContext.Provider>
-			</LayoutBody>
+			<ShoppingCartContext.Provider value={ { setSelectedCartItems, selectedCartItems } }>
+				{
+					// we will remove this once we have the new product listing component
+					<ProductListing
+						selectedSite={ selectedSite }
+						suggestedProduct={ suggestedProduct }
+						productBrand={ productBrand }
+						productSearchQuery={ productSearchQuery }
+						isReferralMode={ isReferralMode }
+						selectedBundleSize={ selectedBundleSize }
+						selectedFilters={ selectedFilters }
+					/>
+				}
+			</ShoppingCartContext.Provider>
 		</Layout>
 	);
 }

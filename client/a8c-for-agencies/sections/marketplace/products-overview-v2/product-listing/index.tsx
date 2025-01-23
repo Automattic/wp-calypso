@@ -13,15 +13,17 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
-import ListingSection from '../../listing-section';
 import MultiProductCard from '../../products-overview/multi-product-card';
 import ProductCard from '../../products-overview/product-card';
 import EmptyResultMessage from '../../products-overview/product-listing/empty-result-message';
 import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
+import ProductListingSection from './section';
 import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+
+import './style.scss';
 
 interface ProductListingProps {
 	selectedSite?: SiteDetails | null;
@@ -267,7 +269,7 @@ export default function ProductListing( {
 	}
 
 	return (
-		<div className="product-listing">
+		<>
 			<QueryProductsList currency="USD" />
 
 			{ isEmptyList && (
@@ -277,7 +279,7 @@ export default function ProductListing( {
 			) }
 
 			{ wooExtensions.length > 0 && (
-				<ListingSection
+				<ProductListingSection
 					id="woocommerce-extensions"
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
@@ -286,11 +288,11 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( wooExtensions ) }
-				</ListingSection>
+				</ProductListingSection>
 			) }
 
 			{ jetpackPlans.length > 0 && (
-				<ListingSection
+				<ProductListingSection
 					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
@@ -299,11 +301,11 @@ export default function ProductListing( {
 					) } // FIXME: Add proper description for A4A
 				>
 					{ getProductCards( jetpackPlans ) }
-				</ListingSection>
+				</ProductListingSection>
 			) }
 
 			{ jetpackProducts.length > 0 && (
-				<ListingSection
+				<ProductListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Products' ) }
 					description={ translate(
@@ -311,11 +313,11 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( jetpackProducts ) }
-				</ListingSection>
+				</ProductListingSection>
 			) }
 
 			{ jetpackBackupAddons.length > 0 && (
-				<ListingSection
+				<ProductListingSection
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack VaultPress Backup Add-ons' ) }
 					description={ translate(
@@ -323,8 +325,8 @@ export default function ProductListing( {
 					) }
 				>
 					{ getProductCards( jetpackBackupAddons ) }
-				</ListingSection>
+				</ProductListingSection>
 			) }
-		</div>
+		</>
 	);
 }
