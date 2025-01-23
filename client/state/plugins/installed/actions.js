@@ -49,6 +49,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
+import { getPluginHandler, getSitePluginsHandler } from '../handler';
 
 import 'calypso/state/plugins/init';
 
@@ -68,17 +69,6 @@ const pluginHasTruthySiteProp = ( prop, plugin, siteId ) => {
 	return !! ( plugin.hasOwnProperty( prop )
 		? plugin[ prop ]
 		: siteId && plugin.sites?.[ siteId ]?.[ prop ] );
-};
-
-/**
- * Return a SitePlugin instance used to handle the plugin
- * @param {Object} siteId - site ID
- * @param {string} pluginId - plugin identifier
- * @returns {any} SitePlugin instance
- */
-const getPluginHandler = ( siteId, pluginId ) => {
-	const siteHandler = wpcom.site( siteId );
-	return siteHandler.plugin( pluginId );
 };
 
 /**
@@ -614,9 +604,7 @@ export function fetchSitePlugins( siteId ) {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 		};
 
-		return wpcom
-			.site( siteId )
-			.pluginsList()
+		return getSitePluginsHandler( siteId )
 			.then( receivePluginsDispatchSuccess )
 			.catch( receivePluginsDispatchFail );
 	};
