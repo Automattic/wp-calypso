@@ -1,9 +1,8 @@
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug, numberFormat } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
-import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import '../style.scss';
@@ -47,7 +46,7 @@ const FeedStreamSidebar = ( {
 					{ postCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ formatNumberCompact( postCount ) }
+								{ numberFormat( postCount, { notation: 'compact' } ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Post', 'Posts', { count: postCount } ) }

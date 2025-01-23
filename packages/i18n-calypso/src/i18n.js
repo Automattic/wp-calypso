@@ -171,20 +171,30 @@ I18N.prototype.emit = function ( ...args ) {
  * @param   {string | number}  number to format (required)
  * @param   {number | Object}  options  Number of decimal places or options object (optional)
  * @param   {boolean}          forceLatin Whether to use latin numbers by default (optional. default = true)
- * @returns {string | number}  Formatted number as string, or original number if formatting fails
+ * @returns {string | number}  Formatted number as string, or original number if formatting fails. Null otherwise.
  */
 I18N.prototype.numberFormat = function ( number, options = {}, forceLatin = true ) {
 	const decimals = typeof options === 'number' ? options : options.decimals || 0;
 	const browserSafeLocale = this.getBrowserSafeLocale();
+
+	/**
+	 * TS will flag this as an error, but best to check for undefined here for older usages
+	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
+	 */
+	if ( typeof number === 'undefined' || number === null ) {
+		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
+		return number;
+	}
 
 	try {
 		return Intl.NumberFormat( `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`, {
 			minimumFractionDigits: decimals, // default is 0
 			maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
 			// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
+			...( options?.notation && { notation: options.notation } ),
 		} ).format( number );
 	} catch ( error ) {
-		warn( 'Error formatting number with Intl.NumberFormat: ', number, error );
+		warn( 'numberFormat(): Error formatting number with Intl.NumberFormat: ', number, error );
 	}
 
 	return number;

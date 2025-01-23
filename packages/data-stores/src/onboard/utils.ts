@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SiteGoal, SiteIntent } from './constants';
 
 export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
@@ -26,6 +27,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 
 	if ( goals.includes( SiteGoal.Write ) ) {
 		return SiteIntent.Write;
+	}
+
+	// Newsletter flow
+	if ( config.isEnabled( 'onboarding/newsletter-goal' ) && goals.includes( SiteGoal.Newsletter ) ) {
+		return SiteIntent.NewsletterGoal;
 	}
 
 	return SiteIntent.Build;

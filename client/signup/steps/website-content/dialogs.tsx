@@ -124,7 +124,7 @@ export function ContentGuidelinesDialog( {
 								components: {
 									strong: <strong />,
 								},
-								args: [ numberFormat( CHARACTER_LIMIT, {} ) ],
+								args: [ numberFormat( CHARACTER_LIMIT ) ],
 							}
 						) }
 					</li>
