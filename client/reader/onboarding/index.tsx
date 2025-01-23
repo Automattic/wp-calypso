@@ -21,7 +21,7 @@ import './style.scss';
 
 const ReaderOnboarding = ( {
 	onRender,
-	forceShow = true,
+	forceShow = false,
 }: {
 	onRender?: ( shown: boolean ) => void;
 	forceShow?: boolean;
@@ -123,14 +123,6 @@ const ReaderOnboarding = ( {
 	const hasCompletedAccountProfile = useSelector( ( state ) => {
 		const userSettings = getUserSettings( state );
 		if ( ! userSettings?.has_gravatar ) {
-			return false;
-		}
-
-		if ( ! userSettings?.display_name ) {
-			return false;
-		}
-
-		if ( ! userSettings?.user_URL ) {
 			return false;
 		}
 
