@@ -9,6 +9,7 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
+	READER_LIST_REQUEST_FAILURE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
 	READER_LIST_CREATE_FAILURE,
@@ -78,6 +79,15 @@ export function requestList( listOwner, listSlug ) {
  */
 export function receiveReaderList( data ) {
 	return { type: READER_LIST_RECEIVE, data };
+}
+
+export function handleRequestListFailure( errorInfo ) {
+	return {
+		type: READER_LIST_REQUEST_FAILURE,
+		error: errorInfo.error,
+		owner: errorInfo.owner,
+		slug: errorInfo.slug,
+	};
 }
 
 export function receiveCreateReaderList( data ) {
