@@ -219,6 +219,7 @@ export async function assignNewCardProcessor(
 				city,
 				organization,
 				address,
+				setupKey,
 			} );
 
 			return makeSuccessResponse( result );
