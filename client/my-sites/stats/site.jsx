@@ -370,23 +370,28 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 	// Set up a custom range for the chart.
 	// Dependant on new date range picker controls.
-	let customChartRange = null;
+	const customChartRange = {};
 
 	// Sort out end date for chart.
-	const chartEnd = useMemo( () => {
+	let chartEnd = useMemo( () => {
 		return getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 	}, [ context.query?.chartEnd, getValidDateOrNullFromInput ] );
 
-	const chartStart = useMemo( () => {
+	let chartStart = useMemo( () => {
 		return getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
 	}, [ context.query?.chartStart, getValidDateOrNullFromInput ] );
 
+	// Respect the shortcut ID from the URL if it's valid.
+	if ( appliedShortcut ) {
+		customChartRange.shortcutId = appliedShortcut.id;
+		chartEnd = appliedShortcut.endDate;
+		chartStart = appliedShortcut.startDate;
+	}
+
 	if ( chartEnd ) {
-		customChartRange = { chartEnd };
+		customChartRange.chartEnd = chartEnd;
 	} else {
-		customChartRange = {
-			chartEnd: momentSiteZone.format( DATE_FORMAT ),
-		};
+		customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
 	}
 
 	const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
@@ -439,13 +444,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		customChartRange.chartStart = moment( customChartRange.chartEnd )
 			.subtract( customChartRange.daysInRange - 1, 'days' )
 			.format( DATE_FORMAT );
-	}
-
-	// Respect the shortcut ID from the URL if it's valid.
-	if ( appliedShortcut ) {
-		customChartRange.shortcutId = appliedShortcut.id;
-		customChartRange.chartEnd = appliedShortcut.endDate;
-		customChartRange.chartStart = appliedShortcut.startDate;
 	}
 
 	// Redirect with the shortcut period of appliedShortcut or storedShortcut.
