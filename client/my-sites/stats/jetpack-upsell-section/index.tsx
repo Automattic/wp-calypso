@@ -58,6 +58,33 @@ function useSiteFeatures( siteId: number | null ) {
 	return activeFeatures;
 }
 
+function getCheckoutConfig() {
+	return {
+		backup: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		boost: PRODUCT_JETPACK_BOOST,
+		search: PRODUCT_JETPACK_SEARCH,
+		security: PLAN_JETPACK_SECURITY_T1_YEARLY,
+		social: PRODUCT_JETPACK_SOCIAL_BASIC,
+		video: PRODUCT_JETPACK_VIDEOPRESS,
+	};
+}
+
+function getCheckoutUrls( siteSlug: string | null ) {
+	if ( ! siteSlug ) {
+		return {};
+	}
+	// TODO: Change URL to point at plugin installation within wp-admin.
+	// ie: /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce).
+	const checkoutConfig = getCheckoutConfig();
+	const checkoutURLs = Object.fromEntries(
+		Object.entries( checkoutConfig ).map( ( [ key, value ] ) => [
+			key,
+			`${ CHECKOUT_URL_PREFIX }${ buildCheckoutURL( siteSlug, value, QUERY_VALUES ) }`,
+		] )
+	);
+	return checkoutURLs;
+}
+
 // TODO: Remove local use-purchased-products.tsx file.
 
 export default function JetpackUpsellSection() {
@@ -70,28 +97,7 @@ export default function JetpackUpsellSection() {
 	}
 
 	// Build checkout URL prefixed with WordPress.com.
-	// TODO: Change URL to point at plugin installation within wp-admin.
-	//       (e.g., /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce).
-	const upgradeUrls: Record< string, string > = ! siteSlug
-		? {}
-		: {
-				backup:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BACKUP_T1_YEARLY, QUERY_VALUES ),
-				boost:
-					CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BOOST, QUERY_VALUES ),
-				search:
-					CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SEARCH, QUERY_VALUES ),
-				security:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PLAN_JETPACK_SECURITY_T1_YEARLY, QUERY_VALUES ),
-				social:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SOCIAL_BASIC, QUERY_VALUES ),
-				video:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_VIDEOPRESS, QUERY_VALUES ),
-		  };
+	const upgradeUrls = getCheckoutUrls( siteSlug );
 
 	return (
 		<div className="jetpack-upsell-section">
