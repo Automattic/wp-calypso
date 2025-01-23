@@ -17,6 +17,7 @@ import {
 } from 'calypso/state/reader/action-types';
 import {
 	handleCreateReaderListFailure,
+	handleRequestListFailure,
 	handleUpdateListDetailsError,
 	receiveFollowList,
 	receiveLists,
@@ -93,7 +94,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [ handleCreateReaderListFailure( error ) ],
+			onError: ( action, error ) => [ handleRequestListFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST_UNFOLLOW ]: [

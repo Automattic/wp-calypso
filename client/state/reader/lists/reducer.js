@@ -6,6 +6,7 @@ import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_REQUEST,
+	READER_LIST_REQUEST_FAILURE,
 	READER_LIST_RECEIVE,
 	READER_LIST_CREATE_SUCCESS,
 	READER_LIST_CREATE_FAILURE,
@@ -144,6 +145,8 @@ export const subscribedLists = withSchemaValidation(
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LIST_REQUEST:
+		case READER_LIST_RECEIVE:
+		case READER_LIST_REQUEST_FAILURE:
 		case READER_LIST_CREATE_SUCCESS:
 		case READER_LIST_CREATE_FAILURE:
 			return READER_LIST_REQUEST === action.type;
@@ -202,6 +205,29 @@ export function isRequestingLists( state = false, action ) {
 	return state;
 }
 
+/**
+ * This object tracks all list requests that have been made
+ * and whether those requests are in progress or not.
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
+ */
+export function listRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case READER_LIST_REQUEST:
+			return {
+				...state,
+				[ `${ action.listOwner }:${ action.listSlug }` ]: true,
+			};
+		case READER_LIST_RECEIVE:
+			return {
+				...state,
+				[ `${ action.data.list.owner }:${ action.data.list.slug }` ]: false,
+			};
+	}
+	return state;
+}
+
 export const userLists = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_LISTS_RECEIVE:
@@ -239,6 +265,7 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	isUpdatingList,
+	listRequests,
 	userLists,
 	isRequestingUserLists,
 } );
