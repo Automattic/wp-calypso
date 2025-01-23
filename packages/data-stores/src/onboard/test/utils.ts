@@ -10,7 +10,7 @@ jest.mock( '@automattic/calypso-config' );
 
 describe( 'Test onboard utils', () => {
 	beforeEach( () => {
-		config.isEnabled.mockReset();
+		( config.isEnabled as jest.Mock ).mockReset();
 	} );
 
 	it.each( [
@@ -65,7 +65,9 @@ describe( 'Test onboard utils', () => {
 	] )(
 		'Should map the $goals to $expectedIntent intent ($featureFlags)',
 		( { goals, expectedIntent, featureFlags = {} } ) => {
-			config.isEnabled.mockImplementation( ( flag ) => Boolean( featureFlags[ flag ] ) );
+			( config.isEnabled as jest.Mock ).mockImplementation( ( flag ) =>
+				Boolean( featureFlags[ flag ] )
+			);
 			expect( goalsToIntent( goals ) ).toBe( expectedIntent );
 		}
 	);
