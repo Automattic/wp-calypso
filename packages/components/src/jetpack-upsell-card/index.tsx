@@ -106,10 +106,20 @@ export function JetpackUpsellCard( {
 		[ translate ]
 	) as Product[];
 
-	const visibleProducts = PRODUCTS.filter(
+	let visibleProducts = PRODUCTS.filter(
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
 	const hasProductsToUpsell = visibleProducts.length > 0;
+	// eslint-disable-next-line no-console
+	// console.log( 'visibleProducts 1: ', visibleProducts );
+
+	// New product visibility testing based on siteFeatures.
+	const siteFeatures = [ 'videopress', 'search' ];
+	visibleProducts = PRODUCTS.filter( ( product ) =>
+		product.features.every( ( feature ) => ! siteFeatures.includes( feature ) )
+	);
+	// eslint-disable-next-line no-console
+	// console.log( 'visibleProducts 2: ', visibleProducts );
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
