@@ -1,7 +1,11 @@
+import { useGetMostRecentOpenConversation } from '@automattic/help-center/src/components/utils';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
+import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
 
 import './get-support.scss';
@@ -16,6 +20,7 @@ interface ButtonConfig {
 	text: string;
 	action: () => Promise< void >;
 	waitTimeText?: string;
+	hideButton?: boolean;
 }
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
@@ -52,7 +57,13 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
 		canConnectToZendesk: contextCanConnectToZendesk,
+		trackEvent,
 	} = useOdieAssistantContext();
+
+	const mostRecentOpenConversation = useGetMostRecentOpenConversation();
+	const supportInteractionId = mostRecentOpenConversation?.metadata?.supportInteractionId || null;
+	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
@@ -69,6 +80,19 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const getButtonConfig = (): ButtonConfig[] => {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
 			return [
+				{
+					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
+					action: async () => {
+						if ( supportInteraction ) {
+							trackEvent( 'chat_open_previous_conversation', {
+								user_id: chat?.wpcomUserId,
+								supportInteractionId: chat?.supportInteractionId,
+							} );
+							setCurrentSupportInteraction( supportInteraction );
+						}
+					},
+					hideButton: !! supportInteraction,
+				},
 				{
 					text: __( 'Chat with support', __i18n_text_domain__ ),
 					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
@@ -111,12 +135,15 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 	return (
 		<div className="odie__transfer-chat">
-			{ buttonConfig.map( ( button, index ) => (
-				<div className="odie__transfer-chat--button-container" key={ index }>
-					<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
-					<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
-				</div>
-			) ) }
+			{ buttonConfig.map(
+				( button, index ) =>
+					button.hideButton !== false && (
+						<div className="odie__transfer-chat--button-container" key={ index }>
+							<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
+							<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+						</div>
+					)
+			) }
 		</div>
 	);
 };
