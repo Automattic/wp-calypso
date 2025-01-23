@@ -361,33 +361,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		return url;
 	};
 
-	useEffect( () => {
-		const newActiveTab = getActiveTab( chartTab );
-		setActiveTabState( newActiveTab );
-		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
-	}, [ chartTab, period, activeTabState, context.query ] );
-
-	useEffect( () => {
-		// Use the stored period if it's different from the current period.
-		const storedPeriod =
-			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
-			localStorage.getItem( 'jetpack_stats_stored_period' );
-		if (
-			hasSiteLoadedFeatures &&
-			! shouldForceDefaultPeriod &&
-			// Avoid the infinite redirect loop between single day period and hourly views.
-			period !== 'hour' &&
-			storedPeriod &&
-			storedPeriod !== period
-		) {
-			// TODO: Determine if we need to save the period as it might be a conflict with the drilling down.
-			page.redirect(
-				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
-			);
-			return;
-		}
-	}, [ hasSiteLoadedFeatures, shouldForceDefaultPeriod, slug ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
 	// Set up a custom range for the chart.
 	// Dependant on new date range picker controls.
 	let customChartRange = null;
@@ -432,19 +405,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		// TODO: Handle the redirection when the applied shortcut period differs from the current period.
 	}
 
-	// Redirect to the daily views if the period dropdown is locked.
-	if ( shouldForceDefaultPeriod && period !== 'day' ) {
-		page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
-		return;
-	}
-
-	// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
-	// If it's single day period, redirect to hourly stats.
-	if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
-		page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
-		return;
-	}
-
 	// Calculate diff between requested start and end in `priod` units.
 	// Move end point (most recent) to the end of period to account for partial periods
 	// (e.g. requesting period between June 2020 and Feb 2021 would require 2 `yearly` units but would return 1 unit without the shift to the end of period)
@@ -481,6 +441,51 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		customChartRange.chartEnd = appliedShortcut.endDate;
 		customChartRange.chartStart = appliedShortcut.startDate;
 	}
+
+	// Redirect to the corresponding period by gates and date range.
+	useEffect( () => {
+		// Redirect to the daily views if the period dropdown is locked.
+		if ( shouldForceDefaultPeriod && period !== 'day' ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
+			return;
+		}
+
+		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
+		// If it's single day period, redirect to hourly stats.
+		if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
+			return;
+		}
+	}, [ shouldForceDefaultPeriod, period, daysInRange, slug, context.query ] );
+
+	// setActiveTabState and setActiveLegend
+	useEffect( () => {
+		const newActiveTab = getActiveTab( chartTab );
+		setActiveTabState( newActiveTab );
+		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
+	}, [ chartTab, period, activeTabState, context.query ] );
+
+	// Redirect to the stored period
+	useEffect( () => {
+		// Use the stored period if it's different from the current period.
+		const storedPeriod =
+			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
+			localStorage.getItem( 'jetpack_stats_stored_period' );
+		if (
+			hasSiteLoadedFeatures &&
+			! shouldForceDefaultPeriod &&
+			// Avoid the infinite redirect loop between single day period and hourly views.
+			period !== 'hour' &&
+			storedPeriod &&
+			storedPeriod !== period
+		) {
+			// TODO: Determine if we need to save the period as it might be a conflict with the drilling down.
+			page.redirect(
+				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
+			);
+			return;
+		}
+	}, [ hasSiteLoadedFeatures, shouldForceDefaultPeriod, slug ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const query = chartRangeToQuery( customChartRange );
 
