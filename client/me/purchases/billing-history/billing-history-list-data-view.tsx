@@ -19,10 +19,12 @@ const DEFAULT_LAYOUT = { table: {} };
 
 export interface BillingHistoryListProps {
 	getReceiptUrlFor: ( receiptId: string ) => string;
+	siteId: number | null;
 }
 
 export default function BillingHistoryListDataView( {
 	getReceiptUrlFor,
+	siteId,
 }: BillingHistoryListProps ) {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
@@ -34,7 +36,8 @@ export default function BillingHistoryListDataView( {
 		icon: <Gridicon icon={ action.iconName } />,
 	} ) );
 
-	const filteredTransactions = useTransactionsFiltering( transactions, viewState.view );
+	const filteredTransactions = useTransactionsFiltering( transactions, viewState.view, siteId );
+
 	const sortedTransactions = useTransactionsSorting( filteredTransactions, viewState.view );
 	const { paginatedItems, totalPages, totalItems } = usePagination(
 		sortedTransactions,

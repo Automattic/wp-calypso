@@ -44,14 +44,26 @@ function matchesFilter(
 	return true;
 }
 
+function matchesSiteId( transaction: BillingTransaction, siteId: number | null | undefined ) {
+	if ( ! siteId ) {
+		return true;
+	}
+	return transaction.items.some( ( item ) => String( item.site_id ) === String( siteId ) );
+}
+
 export function useTransactionsFiltering(
 	transactions: BillingTransaction[] | null,
-	view: ViewState
+	view: ViewState,
+	siteId: number | null
 ) {
 	const translate = useTranslate();
 
 	return useMemo( () => {
 		return ( transactions ?? [] ).filter( ( transaction ) => {
+			if ( ! matchesSiteId( transaction, siteId ) ) {
+				return false;
+			}
+
 			if ( view.search && ! matchesSearch( transaction, view.search, translate ) ) {
 				return false;
 			}
@@ -62,5 +74,5 @@ export function useTransactionsFiltering(
 
 			return view.filters.every( ( filter ) => matchesFilter( transaction, filter, translate ) );
 		} );
-	}, [ transactions, view.search, view.filters, translate ] );
+	}, [ transactions, view.search, view.filters, translate, siteId ] );
 }
