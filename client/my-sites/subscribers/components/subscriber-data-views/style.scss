@@ -152,6 +152,16 @@ body.is-section-subscribers.is-subscribers-dataviews {
                                 flex-flow: column;
                             }
                         }
+
+                        &__footer {
+                            .subscriber-details__delete-button {
+                                background: var(--color-error);
+                                color: var(--color-text-inverted);
+                                border: none;
+                                border-radius: 2px;
+                                box-shadow: none;
+                            }
+                        }
                     }
                 }
             }
