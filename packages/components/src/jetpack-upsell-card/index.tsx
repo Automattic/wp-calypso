@@ -32,8 +32,6 @@ export function JetpackUpsellCard( {
 	siteFeatures,
 	upgradeUrls = {},
 }: JetpackUpsellCardProps ) {
-	// TODO: Make card collapsible
-
 	const translate = useTranslate();
 	const PRODUCTS = useMemo(
 		() => [
@@ -123,16 +121,12 @@ export function JetpackUpsellCard( {
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
 	const hasProductsToUpsell = visibleProducts.length > 0;
-	// eslint-disable-next-line no-console
-	// console.log( 'visibleProducts 1: ', visibleProducts );
 
 	// New product visibility testing based on siteFeatures.
 	// If any of the product features are not in siteFeatures, it's a potential upsell.
 	visibleProducts = PRODUCTS.filter( ( product ) =>
 		product.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
 	);
-	// eslint-disable-next-line no-console
-	// console.log( 'visibleProducts 2: ', visibleProducts );
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
