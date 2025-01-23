@@ -68,13 +68,13 @@ class WordAdsChartTabs extends Component {
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Avg. CPM' ),
-					value: '$ ' + this.props.numberFormat( item.data.cpm, { decimals: 2 } ), // TODO clk numberFormat decimal points set to 2
+					value: '$ ' + this.props.numberFormat( item.data.cpm, { decimals: 2 } ),
 					className: 'is-cpm',
 					icon: <Icon className="gridicon" icon={ chartBar } />,
 				} );
 				tooltipData.push( {
 					label: this.props.translate( 'Revenue' ),
-					value: '$ ' + this.props.numberFormat( item.data.revenue, { decimals: 2 } ), // TODO clk numberFormat decimal points set to 2
+					value: '$ ' + this.props.numberFormat( item.data.revenue, { decimals: 2 } ),
 					className: 'is-revenue',
 					icon: <Icon className="gridicon" icon={ trendingUp } />,
 				} );

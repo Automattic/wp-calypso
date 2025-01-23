@@ -63,8 +63,6 @@ const WordAdsPayments = () => {
 		const rows: React.ReactNode[] = [];
 		const classes = clsx( 'payments_history' );
 
-		// TODO clk numberFormat decimal points set to 2
-
 		currentPayments.forEach( ( payment ) => {
 			rows.push(
 				<tr key={ type + '-' + payment.id }>
@@ -77,7 +75,9 @@ const WordAdsPayments = () => {
 							payment.paymentDate
 						) }
 					</td>
-					<td className="ads__payments-history-value">${ numberFormat( payment.amount, 2 ) }</td>
+					<td className="ads__payments-history-value">
+						${ numberFormat( payment.amount, { decimals: 2 } ) }
+					</td>
 					<td className="ads__payments-history-value">
 						<Badge
 							className="ads__payments-history-badge"

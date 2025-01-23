@@ -42,14 +42,12 @@ const SiteSubscriptionSubheader = ( {
 
 	const subheaderItems = [];
 
-	// TODO clk numberFormat no need for default 0 but confirm
-
 	if ( subscriberCount > 0 ) {
 		subheaderItems.push(
 			<div key={ `subscriber-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
-					args: [ numberFormat( subscriberCount, 0 ) ],
+					args: [ numberFormat( subscriberCount ) ],
 					comment: '%s is the number of subscribers. For example: "12,000,000"',
 				} ) }
 			</div>
