@@ -38,6 +38,11 @@ $brand-display: "SF Pro Display", sans-serif;
 		h1 {
 			font-size: 2rem !important;
 		}
+
+		.plugins-update-manager-multisite__header {
+			padding-inline: 0;
+			padding-top: 0;
+		}
 	}
 
 	.components-notice {
