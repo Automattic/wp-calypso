@@ -614,7 +614,7 @@ class Account extends Component {
 			} else if ( domainCount === 1 && firstDomain ) {
 				// User has one domain so WHOIS email needs to be checked and updated
 				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}As you also own a custom domain, please check whether your {{a}}WHOIS email{{/a}} needs to be updated.',
+					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own a custom domain, please consider updating its {{a}}contact email{{/a}} to match your new email address.',
 					{
 						args: {
 							email: newEmail || '',
@@ -629,7 +629,7 @@ class Account extends Component {
 									) }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'WHOIS email',
+											link_text: 'contact email',
 											domain: firstDomain.domain,
 										} );
 									} }
@@ -641,7 +641,7 @@ class Account extends Component {
 			} else {
 				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
+					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own multiple custom domains, please consider updating {{a}}contact email{{/a}} for these domains to match your new email address.',
 					{
 						args: {
 							email: newEmail || '',
@@ -653,7 +653,7 @@ class Account extends Component {
 									href={ domainManagementRoot() }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'WHOIS email',
+											link_text: 'contact email',
 											domain: null,
 										} );
 									} }
@@ -677,7 +677,7 @@ class Account extends Component {
 			} else if ( domainCount === 1 ) {
 				// User has one domain so WHOIS email needs to be checked and updated. Redirect user to a specific domain
 				successMessage = this.props.translate(
-					'We sent an email to %(email)s.{{br/}}Please check your inbox to verify your email. As you also own a custom domain, please check whether your {{a}}WHOIS email{{/a}} needs to be updated.',
+					'We sent an email to %(email)s.{{br/}}Since you own a custom domain, please consider updating its {{a}}contact email{{/a}} to match your new email address.',
 					{
 						args: {
 							email: newEmail || '',
@@ -692,7 +692,7 @@ class Account extends Component {
 									) }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'WHOIS email',
+											link_text: 'contact email',
 											domain: firstDomain.domain,
 										} );
 									} }
@@ -704,7 +704,7 @@ class Account extends Component {
 			} else {
 				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
 				successMessage = this.props.translate(
-					'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}As you also own multiple domains, please check whether your {{a}}WHOIS email{{/a}} needs to be updated for these domains.',
+					'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own multiple custom domains, please consider updating {{a}}contact email{{/a}} for these domains to match your new email address.',
 					{
 						args: {
 							email: newEmail || '',
@@ -716,7 +716,7 @@ class Account extends Component {
 									href={ domainManagementRoot() }
 									onClick={ () => {
 										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'WHOIS email',
+											link_text: 'contact email',
 											domain: null,
 										} );
 									} }
