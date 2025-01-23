@@ -30,7 +30,7 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 
 	// Newsletter flow
 	if ( goals.includes( SiteGoal.Newsletter ) ) {
-		return SiteIntent.NewsletterV2;
+		return SiteIntent.NewsletterGoal;
 	}
 
 	return SiteIntent.Build;
