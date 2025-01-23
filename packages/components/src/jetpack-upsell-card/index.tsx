@@ -127,8 +127,9 @@ export function JetpackUpsellCard( {
 	// console.log( 'visibleProducts 1: ', visibleProducts );
 
 	// New product visibility testing based on siteFeatures.
+	// If any of the product features are not in siteFeatures, it's a potential upsell.
 	visibleProducts = PRODUCTS.filter( ( product ) =>
-		product.features.every( ( feature ) => ! siteFeatures.includes( feature ) )
+		product.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
 	);
 	// eslint-disable-next-line no-console
 	// console.log( 'visibleProducts 2: ', visibleProducts );
