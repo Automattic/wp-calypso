@@ -188,7 +188,10 @@ export type FlowV2 = {
 	 * If this flag is set to true, the flow will login the user without leaving Stepper.
 	 */
 	__experimentalUseBuiltinAuth?: boolean;
-
+	/**
+	 * If this flag is set to true, the flow will use sessions to store the user's progress.
+	 */
+	__experimentalUseSessions?: boolean;
 	/**
 	 * The steps of the flow. **Please don't use this variable unless absolutely necessary**. It's meant to be used internally by the Stepper.
 	 * Use `getSteps` instead.
