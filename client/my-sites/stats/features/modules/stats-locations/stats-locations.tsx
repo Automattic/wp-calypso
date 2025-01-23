@@ -62,6 +62,10 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
+
+	// TODO: we should get it from a dropdown in the UI and manage it as a state.
+	const countryFilter = new URLSearchParams( window.location.search ).get( 'country' ) ?? null;
+
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
 			selectLabel: translate( 'Countries' ),
@@ -94,7 +98,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		data = [],
 		isLoading: isRequestingData,
 		isError,
-	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, {
+	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
 		enabled: ! shouldGate,
 	} );
 

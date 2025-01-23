@@ -146,14 +146,10 @@ export function CheckoutSummaryFeaturedList( {
 						? translate( 'WordPress.com Gift Subscription' )
 						: translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
-					<LoadingCheckoutSummaryFeaturesList />
-				) : (
-					<CheckoutSummaryFeaturesWrapper
-						siteId={ siteId }
-						nextDomainIsFree={ responseCart.next_domain_is_free }
-					/>
-				) }
+				<CheckoutSummaryFeaturesWrapper
+					siteId={ siteId }
+					nextDomainIsFree={ responseCart.next_domain_is_free }
+				/>
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangeSelection={ onChangeSelection } />

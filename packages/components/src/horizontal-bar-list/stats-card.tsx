@@ -56,7 +56,10 @@ const StatsCard = ( {
 		<div
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
-			<div className={ `${ BASE_CLASS_NAME }-header--main` }> { toggleControl } </div>
+			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
+				{ ! heroElement && titleNode }
+				{ toggleControl }
+			</div>
 			{ ! isEmpty && (
 				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
 					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
@@ -99,21 +102,21 @@ const StatsCard = ( {
 					>
 						{ isEmpty ? emptyMessage : children }
 					</div>
+					{ footerAction && (
+						<a
+							className={ `${ BASE_CLASS_NAME }--footer` }
+							href={ footerAction?.url }
+							aria-label={
+								translate( 'View all %(title)s', {
+									args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
+									comment: '"View all posts & pages", "View all referrers", etc.',
+								} ) as string
+							}
+						>
+							{ footerAction.label || translate( 'View all' ) }
+						</a>
+					) }
 				</div>
-				{ footerAction && (
-					<a
-						className={ `${ BASE_CLASS_NAME }--footer` }
-						href={ footerAction?.url }
-						aria-label={
-							translate( 'View all %(title)s', {
-								args: { title: title.toLocaleLowerCase?.() ?? title.toLowerCase() },
-								comment: '"View all posts & pages", "View all referrers", etc.',
-							} ) as string
-						}
-					>
-						{ footerAction.label || translate( 'View all' ) }
-					</a>
-				) }
 			</div>
 			{ overlay && <div className={ `${ BASE_CLASS_NAME }__overlay` }>{ overlay }</div> }
 		</div>

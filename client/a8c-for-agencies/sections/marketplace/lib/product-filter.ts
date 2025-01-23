@@ -8,6 +8,7 @@ import {
 	PRODUCT_CATEGORY_CONVERSION,
 	PRODUCT_CATEGORY_CUSTOMER_SERVICE,
 	PRODUCT_CATEGORY_GROWTH,
+	PRODUCT_CATEGORY_JETPACK,
 	PRODUCT_CATEGORY_MERCHANDISING,
 	PRODUCT_CATEGORY_PAYMENTS,
 	PRODUCT_CATEGORY_PERFORMANCE,
@@ -16,6 +17,7 @@ import {
 	PRODUCT_CATEGORY_SOCIAL,
 	PRODUCT_CATEGORY_STORE_CONTENT,
 	PRODUCT_CATEGORY_STORE_MANAGEMENT,
+	PRODUCT_CATEGORY_WOOCOMMERCE,
 	PRODUCT_FILTER_KEY_BRAND,
 	PRODUCT_FILTER_KEY_CATEGORIES,
 	PRODUCT_FILTER_KEY_PRICES,
@@ -270,6 +272,20 @@ function filterProductsAndPlansByCategory(
 	allProductsAndPlans: APIProductFamilyProduct[]
 ) {
 	switch ( category ) {
+		case PRODUCT_CATEGORY_JETPACK:
+			return (
+				allProductsAndPlans?.filter(
+					( { family_slug } ) =>
+						! isWooCommerceProduct( family_slug ) &&
+						! isWpcomHostingProduct( family_slug ) &&
+						! isPressableHostingProduct( family_slug )
+				) || []
+			);
+		case PRODUCT_CATEGORY_WOOCOMMERCE:
+			return (
+				allProductsAndPlans?.filter( ( { family_slug } ) => isWooCommerceProduct( family_slug ) ) ||
+				[]
+			);
 		case PRODUCT_CATEGORY_SECURITY:
 			return allProductsAndPlans.filter(
 				( { slug, family_slug } ) =>
