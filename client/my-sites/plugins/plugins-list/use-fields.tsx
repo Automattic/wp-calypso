@@ -106,9 +106,6 @@ export function useFields(
 								} }
 								className="plugin-name-button"
 							>
-								{ ! isListView && (
-									<PluginIcon className="plugin-icon" image={ item.icon } size={ 35 } />
-								) }
 								{ item.name }
 							</Button>
 							{ pluginActionStatus }

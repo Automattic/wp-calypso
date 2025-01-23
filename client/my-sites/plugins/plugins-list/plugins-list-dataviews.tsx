@@ -30,8 +30,6 @@ interface Props {
 
 const defaultLayouts = { table: {} };
 
-const pluginsFields = [ 'plugins', 'sites', 'update' ];
-
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
 		plugin: plugin.slug,
@@ -55,8 +53,6 @@ export default function PluginsListDataViews( {
 	).length;
 
 	const fields = useFields( bulkActionDialog, openPluginSitesPane, shouldUseListView );
-	const visibleFields = ( shouldUseListView: boolean ) =>
-		shouldUseListView ? [ 'icon', ...pluginsFields ] : pluginsFields;
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => {
@@ -64,11 +60,11 @@ export default function PluginsListDataViews( {
 			...initialDataViewsState,
 			perPage: 15,
 			search: initialSearch,
-			fields: visibleFields( shouldUseListView ),
+			fields: [ 'sites', 'update' ],
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			titleField: 'plugins',
+			mediaField: 'icon',
 			layout: {
-				primaryField: 'plugins',
-				mediaField: 'icon',
 				styles: {
 					plugins: {
 						width: '60%',
@@ -94,7 +90,6 @@ export default function PluginsListDataViews( {
 		// Sets the correct fields when route changes or viewport changes
 		setDataViewsState( {
 			...dataViewsState,
-			fields: visibleFields( shouldUseListView ),
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 		} );
 
@@ -103,7 +98,6 @@ export default function PluginsListDataViews( {
 			const shouldUseListView = pluginSlug !== undefined || ! matches;
 			setDataViewsState( {
 				...dataViewsState,
-				fields: visibleFields( shouldUseListView ),
 				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 			} );
 		} );
