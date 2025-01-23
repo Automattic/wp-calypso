@@ -135,14 +135,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const toggleControlComponent = (
 		<>
-			{ geoMode !== 'country' && (
-				<CountryFilter
-					countries={ countriesList }
-					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-					selectedCountry={ countryFilter }
-					onCountryChange={ onCountryChange }
-				/>
-			) }
 			<SimplifiedSegmentedControl
 				className="stats-module-locations__tabs"
 				options={ Object.entries( optionLabels ).map( ( entry ) => ( {
@@ -153,6 +145,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
+			{ geoMode !== 'country' && ! summaryUrl && (
+				<CountryFilter
+					countries={ countriesList }
+					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+					selectedCountry={ countryFilter }
+					onCountryChange={ onCountryChange }
+				/>
+			) }
 		</>
 	);
 
