@@ -15,9 +15,9 @@ import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import MultiProductCard from '../../products-overview/multi-product-card';
 import ProductCard from '../../products-overview/product-card';
-import EmptyResultMessage from '../../products-overview/product-listing/empty-result-message';
 import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
+import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
 import type { ShoppingCartItem } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -273,7 +273,7 @@ export default function ProductListing( {
 		<>
 			<QueryProductsList currency="USD" />
 
-			{ isEmptyList && <EmptyResultMessage /> }
+			{ isEmptyList && <ProductListingEmpty /> }
 
 			{ featuredProducts.length > 0 && (
 				<ProductListingSection id="featured-products" title={ translate( 'Featured products' ) }>
