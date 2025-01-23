@@ -8,6 +8,7 @@ import {
 	PRODUCT_JETPACK_VIDEOPRESS,
 } from '@automattic/calypso-products';
 import { JetpackUpsellCard } from '@automattic/components';
+import { useMemo } from 'react';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -92,12 +93,12 @@ export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteFeatures = useSiteFeatures( siteId );
 
+	// Build checkout URLs with siteSlug and prefixed with WordPress.com.
+	const upgradeUrls = useMemo( () => getCheckoutUrls( siteSlug ), [ siteSlug ] );
+
 	if ( ! isOdysseyStats ) {
 		return null;
 	}
-
-	// Build checkout URL prefixed with WordPress.com.
-	const upgradeUrls = getCheckoutUrls( siteSlug );
 
 	return (
 		<div className="jetpack-upsell-section">
