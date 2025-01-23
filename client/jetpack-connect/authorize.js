@@ -54,7 +54,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSite, isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import AuthFormHeader from './auth-form-header';
@@ -124,7 +124,7 @@ export class JetpackAuthorize extends Component {
 		isFetchingSites: PropTypes.bool,
 		isSiteBlocked: PropTypes.bool,
 		isRequestingSitePurchases: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
 		siteHasJetpackPaidProduct: PropTypes.bool,
 		retryAuth: PropTypes.func.isRequired,
@@ -455,9 +455,9 @@ export class JetpackAuthorize extends Component {
 		return 'woocommerce-onboarding' === from;
 	}
 
-	isWooPasswordlessJPC( props = this.props ) {
+	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooPasswordlessJPC;
+		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -508,7 +508,7 @@ export class JetpackAuthorize extends Component {
 				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
 				window.location.href = e.target.href;
 				break;
-			case this.isWooPasswordlessJPC():
+			case this.isWooJPC():
 				// Logout user before redirecting to login page.
 				try {
 					await this.props.logoutUser();
@@ -802,7 +802,7 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Return to your site' );
 		}
 
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			return translate( 'Connect to WordPress.com' );
 		}
 
@@ -871,7 +871,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			return (
 				<>
 					<strong>{ this.props.user.display_name }</strong>
@@ -1018,7 +1018,7 @@ export class JetpackAuthorize extends Component {
 
 	renderContent() {
 		const { translate, user, authQuery } = this.props;
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			return (
 				<Fragment>
 					<div className="jetpack-connect__logged-in-content">
@@ -1045,7 +1045,7 @@ export class JetpackAuthorize extends Component {
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
-								isWooPasswordlessJPC={ this.props.isWooPasswordlessJPC }
+								isWooJPC={ this.props.isWooJPC }
 							/>
 							{ this.renderStateAction() }
 						</div>
@@ -1083,7 +1083,7 @@ export class JetpackAuthorize extends Component {
 			isAuthorizing ||
 			authorizeSuccess ||
 			this.redirecting ||
-			this.isWooPasswordlessJPC()
+			this.isWooJPC()
 		) {
 			return null;
 		}
@@ -1172,7 +1172,7 @@ export class JetpackAuthorize extends Component {
 			this.retryingAuth ||
 			authorizeSuccess;
 
-		if ( this.isWooPasswordlessJPC() ) {
+		if ( this.isWooJPC() ) {
 			return (
 				<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
 					<Button
@@ -1219,7 +1219,7 @@ export class JetpackAuthorize extends Component {
 		const authSiteId = this.props.authQuery.clientId;
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 
-		if ( this.isWooPasswordlessJPC() && ( isAuthorizing || authorizeSuccess ) ) {
+		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
 			return (
 				// Wrap the loader in a modal to show it in full screen
 				<Modal
@@ -1239,7 +1239,7 @@ export class JetpackAuthorize extends Component {
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
-				isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
+				isWooJPC={ this.isWooJPC() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 				wooDnaConfig={ wooDna }
@@ -1262,7 +1262,7 @@ export class JetpackAuthorize extends Component {
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
 							isWooOnboarding={ this.isWooOnboarding() }
-							isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
+							isWooJPC={ this.isWooJPC() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
 							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 							wooDnaConfig={ wooDna }
@@ -1300,7 +1300,7 @@ const connectComponent = connect(
 			isRequestingSitePurchases: isFetchingSitePurchases( state ),
 			isSiteBlocked: isSiteBlockedSelector( state ),
 			isVip: isVipSite( state, authQuery.clientId ),
-			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+			isWooJPC: isWooJPCFlow( state ),
 			mobileAppRedirect,
 			partnerID: getPartnerIdFromQuery( state ),
 			partnerSlug: getPartnerSlugFromQuery( state ),

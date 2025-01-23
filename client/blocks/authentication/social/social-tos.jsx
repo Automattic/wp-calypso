@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 
 const toSLinks = {
 	components: {
@@ -30,7 +30,7 @@ function getToSComponent( content ) {
 }
 
 function SocialAuthToS( props ) {
-	if ( props.isWooPasswordlessJPC ) {
+	if ( props.isWooJPC ) {
 		const termsOfServiceLink = (
 			<a
 				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
@@ -106,6 +106,6 @@ function SocialAuthToS( props ) {
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
 	isWCCOM: getIsWCCOM( state ),
-	isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+	isWooJPC: isWooJPCFlow( state ),
 	isBlazePro: getIsBlazePro( state ),
 } ) )( localize( SocialAuthToS ) );

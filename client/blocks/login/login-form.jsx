@@ -72,7 +72,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
@@ -168,7 +168,7 @@ export class LoginForm extends Component {
 			currentRoute.includes( '/log-in/jetpack' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' ) &&
 			requestError.code === 'unknown_user' &&
-			! this.props.isWooPasswordlessJPC
+			! this.props.isWooJPC
 		) {
 			this.jetpackCreateAccountWithMagicLink();
 		}
@@ -414,7 +414,7 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooPasswordlessJPC, loginButtonText } = this.props;
+		const { translate, isWoo, isWooJPC, loginButtonText } = this.props;
 
 		if ( loginButtonText ) {
 			return loginButtonText;
@@ -424,7 +424,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWoo && ! isWooPasswordlessJPC ) {
+		if ( isWoo && ! isWooJPC ) {
 			return translate( 'Get started' );
 		}
 
@@ -616,7 +616,7 @@ export class LoginForm extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
+								action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 								from: get( this.props.currentQuery, 'from' ),
 							} )
@@ -815,7 +815,7 @@ export class LoginForm extends Component {
 			currentQuery,
 			showSocialLoginFormOnly,
 			isWoo,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			isBlazePro,
 			hideSignupLink,
 			isSignupExistingAccount,
@@ -830,7 +830,7 @@ export class LoginForm extends Component {
 		const isSubmitButtonDisabled = isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const isCoreProfilerLostPasswordFlow = isWooPasswordlessJPC && currentQuery.lostpassword_flow;
+		const isCoreProfilerLostPasswordFlow = isWooJPC && currentQuery.lostpassword_flow;
 		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
 			currentQuery,
 			oauth2Client
@@ -1161,7 +1161,7 @@ export class LoginForm extends Component {
 							shouldRenderToS={ false }
 							isWoo={ isWoo }
 							isSocialFirst={ isSocialFirst }
-							magicLoginLink={ ! isWooPasswordlessJPC ? this.getMagicLoginPageLink() : null }
+							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>
@@ -1195,7 +1195,7 @@ export default connect(
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),

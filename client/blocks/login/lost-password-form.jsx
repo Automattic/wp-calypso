@@ -13,7 +13,7 @@ const LostPasswordForm = ( {
 	oauth2ClientId,
 	locale,
 	from,
-	isWooPasswordlessJPC,
+	isWooJPC,
 } ) => {
 	const translate = useTranslate();
 	const [ email, setEmail ] = useState( '' );
@@ -62,7 +62,7 @@ const LostPasswordForm = ( {
 	const onSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			const accountType = await getAuthAccountTypeRequest( email );
 			if ( accountType?.passwordless === true ) {
 				await dispatch(
@@ -104,7 +104,7 @@ const LostPasswordForm = ( {
 					redirectTo: redirectToAfterLoginUrl,
 					emailAddress: email,
 					lostpasswordFlow: true,
-					action: isWooPasswordlessJPC ? 'jetpack' : null,
+					action: isWooJPC ? 'jetpack' : null,
 					from,
 				} )
 			);

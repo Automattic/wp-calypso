@@ -30,7 +30,7 @@ export default function StoreHeader() {
 					partnerSlug={ partnerSlug }
 					isWooOnboarding={ false }
 					isWooDna={ false }
-					isWooPasswordlessJPC={ false }
+					isWooJPC={ false }
 					darkColorScheme
 				/>
 			</div>
