@@ -520,6 +520,10 @@
 }
 
 button.site-settings__general-settings-set-guessed-timezone.button.is-borderless.is-compact {
+	padding: 0;
+	line-height: inherit;
+	font-size: inherit;
+
 	text-decoration: underline;
 	color: var(--color-link);
 	font-style: inherit;
