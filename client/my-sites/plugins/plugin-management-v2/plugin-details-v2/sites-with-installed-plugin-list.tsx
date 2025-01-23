@@ -170,10 +170,8 @@ export default function SitesWithInstalledPluginsList( { sites, plugin, isWpCom 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => ( {
 		...initialDataViewsState,
 		type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
-		fields: [ 'domain', 'activate', 'autoupdate', 'update', 'actions' ],
-		layout: {
-			primaryField: 'domain',
-		},
+		fields: [ 'activate', 'autoupdate', 'update', 'actions' ],
+		titleField: 'domain',
 	} ) );
 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
