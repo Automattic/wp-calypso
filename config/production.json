@@ -28,7 +28,7 @@
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": false,
-		"calypso/big-sky": false,
+		"calypso/big-sky": true,
 		"bilmur-script": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
