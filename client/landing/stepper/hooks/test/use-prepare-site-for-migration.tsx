@@ -26,10 +26,6 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 	status: 'completed',
 } );
 
-const errorCaptureMigrationKey = replyWithError( {
-	error: 'anyError',
-} );
-
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( 'calypso/lib/logstash' );
 
@@ -121,11 +117,23 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	it( 'returns error when is not possible to get the migration key', async () => {
 		const siteId = 123;
 
+		const errorResponse = {
+			status: 'error',
+			code: 400,
+			message: 'Failed to fetch migration key',
+			body: {
+				code: 'error',
+				error: 'anyError',
+			},
+		};
+
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
-			.reply( errorCaptureMigrationKey );
+			.query( { http_envelope: 1 } )
+			.times( 3 )
+			.reply( 400, errorResponse );
 
 		const { result } = render( { siteId: 123 } );
 
@@ -141,7 +149,7 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 					migrationKey: null,
 				} );
 			},
-			{ timeout: 3000 }
+			{ timeout: 4000 }
 		);
 	} );
 } );
