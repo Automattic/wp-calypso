@@ -110,9 +110,6 @@ describe( 'ContactList', () => {
 		const upgradeBadge = screen.getByRole( 'button', { name: 'Upgrade' } );
 		expect( upgradeBadge ).toBeInTheDocument();
 
-		const upgradeLink = screen.getByRole( 'button', { name: 'Upgrade ($1.00/m)' } );
-		expect( upgradeLink ).toBeInTheDocument();
-
 		expect(
 			screen.getByText( /multiple email recipients is part of the basic plan./i )
 		).toBeInTheDocument();

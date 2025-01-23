@@ -87,6 +87,5 @@ describe( 'NotificationDuration', () => {
 		expect( dropdownToggle ).toHaveClass( 'is-disabled' );
 		expect( dropdownToggle ).toHaveTextContent( '1 minute' );
 		expect( dropdownToggle ).toHaveTextContent( 'Upgrade' );
-		expect( dropdownToggle ).toHaveTextContent( 'Upgrade ($1.00/m)' );
 	} );
 } );

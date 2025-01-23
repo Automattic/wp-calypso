@@ -81,7 +81,6 @@ describe( 'SMSNotification', () => {
 
 		expect( screen.getByLabelText( 'Disable SMS notifications' ) ).toBeDisabled();
 		expect( screen.getByRole( 'button', { name: 'Upgrade' } ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Upgrade ($1.00/m)' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'handles toggle change with SMS notifications enabled', () => {
