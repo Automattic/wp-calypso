@@ -166,6 +166,7 @@ function showAppWindow() {
 	require( '../window-handlers/spellcheck' )( appWindow );
 	require( '../window-handlers/navigation' )( appWindow );
 	require( '../window-handlers/clipboard' )( appWindow );
+	require( '../window-handlers/unsaved-changes' )( appWindow );
 
 	platform.setMainWindow( appWindow );
 

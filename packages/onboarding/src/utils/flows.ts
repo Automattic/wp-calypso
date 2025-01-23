@@ -15,7 +15,6 @@ export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
-export const MIGRATION_FLOW = 'migration';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const MIGRATION_SIGNUP_FLOW = 'migration-signup';
 export const HOSTED_SITE_MIGRATION_FLOW = 'hosted-site-migration';
@@ -40,6 +39,7 @@ export const BLOG_FLOW = 'blog';
 export const REBLOGGING_FLOW = 'reblogging';
 export const DOMAIN_FOR_GRAVATAR_FLOW = 'domain-for-gravatar';
 export const ONBOARDING_FLOW = 'onboarding';
+export const EXAMPLE_FLOW = 'example';
 export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 
 export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {

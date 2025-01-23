@@ -64,6 +64,7 @@ export type TranslateResult = ExistingReactNode;
 
 export interface NumberFormatOptions {
 	decimals?: number;
+	notation: Intl.NumberFormatOptions[ 'notation' ];
 }
 
 export type TranslateHook = (
@@ -92,8 +93,8 @@ export interface I18N {
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
-	numberFormat( number: number, numberOfDecimalPlaces: number ): string;
-	numberFormat( number: number, options: NumberFormatOptions ): string;
+	numberFormat( number: number, numberOfDecimalPlaces?: number ): string | number;
+	numberFormat( number: number, options?: NumberFormatOptions ): string | number;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;

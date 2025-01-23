@@ -195,9 +195,7 @@ const SubscribersPage = ( {
 						// Your new dataviews component
 						<SubscriberDataViews
 							siteId={ selectedSite?.ID }
-							onClickView={ onClickView }
 							onGiftSubscription={ onGiftSubscription }
-							onClickUnsubscribe={ onClickUnsubscribe }
 							isUnverified={ isUnverified }
 							isStagingSite={ isStagingSite }
 						/>

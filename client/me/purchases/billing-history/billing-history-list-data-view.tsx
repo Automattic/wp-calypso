@@ -47,24 +47,20 @@ export default function BillingHistoryListDataView( {
 	const handleViewChange = ( view: View ) => viewState.updateView( view as ViewStateUpdate );
 
 	return (
-		<div className="billing-history">
-			<div className="dataviews-wrapper">
-				<DataViews
-					data={ paginatedItems }
-					paginationInfo={ {
-						totalItems,
-						totalPages,
-					} }
-					fields={ fields }
-					view={ viewState.view }
-					search
-					searchLabel={ translate( 'Search receipts' ) }
-					onChangeView={ handleViewChange }
-					defaultLayouts={ DEFAULT_LAYOUT }
-					actions={ actions }
-					isLoading={ isLoading }
-				/>
-			</div>
-		</div>
+		<DataViews
+			data={ paginatedItems }
+			paginationInfo={ {
+				totalItems,
+				totalPages,
+			} }
+			fields={ fields }
+			view={ viewState.view }
+			search
+			searchLabel={ translate( 'Search receipts' ) }
+			onChangeView={ handleViewChange }
+			defaultLayouts={ DEFAULT_LAYOUT }
+			actions={ actions }
+			isLoading={ isLoading }
+		/>
 	);
 }

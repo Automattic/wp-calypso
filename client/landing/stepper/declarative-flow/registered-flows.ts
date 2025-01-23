@@ -9,7 +9,6 @@ import {
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
 	REBLOGGING_FLOW,
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -18,6 +17,7 @@ import {
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
+	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -133,8 +133,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
-	[ MIGRATION_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
+	[ EXAMPLE_FLOW ]: () =>
+		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {

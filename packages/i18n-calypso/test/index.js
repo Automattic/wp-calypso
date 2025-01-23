@@ -202,7 +202,7 @@ describe( 'I18n', function () {
 	} );
 
 	describe( 'getBrowserSafeLocale()', function () {
-		it( 'should return locale without variant when localeVariant is set', function () {
+		it( 'should return locale without variant when localeVariant is set with underscore _', function () {
 			i18n.setLocale( {
 				'': {
 					localeVariant: 'de_AT',
@@ -212,7 +212,7 @@ describe( 'I18n', function () {
 			expect( i18n.getBrowserSafeLocale() ).toBe( 'de' );
 		} );
 
-		it( 'should return locale with region code when localeVariant is set', function () {
+		it( 'should return locale with region code when localeVariant is set with dash -', function () {
 			i18n.setLocale( {
 				'': {
 					localeVariant: 'en-US',
@@ -279,6 +279,27 @@ describe( 'I18n', function () {
 						decimals: 3,
 					} )
 				).toBe( '2.500,330' );
+			} );
+		} );
+
+		describe( 'compact notation', function () {
+			describe( 'ar', () => {
+				beforeEach( function () {
+					i18n.setLocale( {
+						'': {
+							localeVariant: undefined,
+							localeSlug: 'ar',
+						},
+					} );
+				} );
+				test( 'defaults to latin notation and localised unit', () => {
+					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 } ) ).toEqual( '1.2 ألف' );
+				} );
+				test( 'non-latin/original notation and localised unit', () => {
+					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 }, false ) ).toEqual(
+						'١٫٢ ألف'
+					);
+				} );
 			} );
 		} );
 	} );
