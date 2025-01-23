@@ -146,6 +146,9 @@ class Document extends Component {
 					) ) }
 					{ chunkCssLinks( entrypoint, isRTL ) }
 					{ chunkCssLinks( chunkFiles, isRTL ) }
+					{ chunkFiles.js.map( ( chunk ) => (
+						<link key={ chunk } rel="preload" as="script" href={ chunk } />
+					) ) }
 				</Head>
 				<body
 					className={ clsx( {
@@ -242,10 +245,6 @@ class Document extends Component {
 
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
-					) ) }
-
-					{ chunkFiles.js.map( ( chunk ) => (
-						<script key={ chunk } src={ chunk } />
 					) ) }
 					<script nonce={ inlineScriptNonce } type="text/javascript">
 						window.AppBoot();
