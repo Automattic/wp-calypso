@@ -77,6 +77,20 @@ const getDisplayableJetpackProducts = ( filteredProductsAndBundles: APIProductFa
 	} ) as APIProductFamilyProduct[];
 };
 
+const getDisplayableFeaturedProducts = (
+	filteredProductsAndBundles: APIProductFamilyProduct[]
+) => {
+	const featured_product_slugs = [
+		'woocommerce-advanced-notifications',
+		'jetpack-boost',
+		'woocommerce-bulk-stock-management',
+	]; // For now, we hardcode this until we understand how we want pick featured products.
+
+	return filteredProductsAndBundles.filter( ( product ) =>
+		featured_product_slugs.includes( product.slug )
+	);
+};
+
 const getDisplayableWoocommerceExtensions = (
 	filteredProductsAndBundles: APIProductFamilyProduct[]
 ) => {
@@ -143,6 +157,7 @@ export default function useProductAndPlans( {
 				PRODUCT_TYPE_JETPACK_BACKUP_ADDON,
 				filteredProductsAndBundles
 			),
+			featuredProducts: getDisplayableFeaturedProducts( filteredProductsAndBundles ),
 			wooExtensions: getDisplayableWoocommerceExtensions( filteredProductsAndBundles ),
 			pressablePlans: filterProductsAndPlansByType(
 				PRODUCT_TYPE_PRESSABLE_PLAN,

@@ -60,6 +60,7 @@ export default function ProductListing( {
 		jetpackBackupAddons,
 		jetpackProducts,
 		wooExtensions,
+		featuredProducts,
 		data,
 		suggestedProductSlugs,
 	} = useProductAndPlans( {
@@ -272,10 +273,12 @@ export default function ProductListing( {
 		<>
 			<QueryProductsList currency="USD" />
 
-			{ isEmptyList && (
-				<div className="product-listing">
-					<EmptyResultMessage />
-				</div>
+			{ isEmptyList && <EmptyResultMessage /> }
+
+			{ featuredProducts.length > 0 && (
+				<ProductListingSection id="featured-products" title={ translate( 'Featured products' ) }>
+					{ getProductCards( featuredProducts ) }
+				</ProductListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
@@ -284,7 +287,7 @@ export default function ProductListing( {
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
-						'You must have WooCommerce installed to utilize these paid extensions.'
+						"Explore the tools and integrations you need to grow your client's Woo store."
 					) }
 				>
 					{ getProductCards( wooExtensions ) }

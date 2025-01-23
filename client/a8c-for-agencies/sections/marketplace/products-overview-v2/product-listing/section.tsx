@@ -4,7 +4,7 @@ type Props = {
 	id?: string;
 	icon?: ReactNode;
 	title: string;
-	description: string;
+	description?: string;
 	children: ReactNode;
 	extraContent?: ReactNode;
 };
@@ -25,7 +25,9 @@ export default function ProductListingSection( {
 					<h2 className="product-listing-section__header-title">
 						<span>{ title }</span>
 					</h2>
-					<span className="product-listing-section__header-subtitle">{ description }</span>
+					{ description && (
+						<span className="product-listing-section__header-subtitle">{ description }</span>
+					) }
 				</div>
 			</div>
 
