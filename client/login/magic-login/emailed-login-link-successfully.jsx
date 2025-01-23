@@ -8,7 +8,11 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+<<<<<<< HEAD
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+=======
+import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
+>>>>>>> ed129024881 (Refactor isWoo and isWooPasswordless check)
 import { login, lostPassword } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -18,6 +22,7 @@ import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import { withEnhancers } from 'calypso/state/utils';
 import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
 class EmailedLoginLinkSuccessfully extends Component {
@@ -33,7 +38,11 @@ class EmailedLoginLinkSuccessfully extends Component {
 	onLostPasswordClick = ( event ) => {
 		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
 
+<<<<<<< HEAD
 		if ( this.props.isWoo ) {
+=======
+		if ( isReactLostPasswordScreenEnabled() && this.props.isWCCOM ) {
+>>>>>>> ed129024881 (Refactor isWoo and isWooPasswordless check)
 			event.preventDefault();
 
 			page(
@@ -101,7 +110,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 const mapState = ( state ) => ( {
 	locale: getCurrentLocaleSlug( state ),
-	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+	isWCCOM: getIsWCCOM( state ),
 	currentQuery: getCurrentQueryArguments( state ),
 	redirectTo: getRedirectToOriginal( state ),
 	oauth2Client: getCurrentOAuth2Client( state ),

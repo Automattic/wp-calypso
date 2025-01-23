@@ -3,7 +3,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 
 const toSLinks = {
@@ -71,7 +71,7 @@ function SocialAuthToS( props ) {
 		);
 	}
 
-	if ( props.isWooPasswordless ) {
+	if ( props.getIsWCCOM ) {
 		return getToSComponent(
 			props.translate(
 				'By continuing with any of the options above, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
@@ -105,7 +105,7 @@ function SocialAuthToS( props ) {
 
 export default connect( ( state ) => ( {
 	oauth2Client: getCurrentOAuth2Client( state ),
-	isWooPasswordless: getIsWooPasswordless( state ),
+	isWCCOM: getIsWCCOM( state ),
 	isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 	isBlazePro: getIsBlazePro( state ),
 } ) )( localize( SocialAuthToS ) );

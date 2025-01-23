@@ -42,11 +42,16 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+<<<<<<< HEAD
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
+=======
+import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
+import { isCrowdsignalOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
+>>>>>>> ed129024881 (Refactor isWoo and isWooPasswordless check)
 import { login, lostPassword } from 'calypso/lib/paths';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -60,7 +65,7 @@ import { createSocialUserFailed } from 'calypso/state/login/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
@@ -896,29 +901,7 @@ class SignupForm extends Component {
 
 	termsOfServiceLink = () => {
 		if ( this.props.isWoo ) {
-			if ( this.props.isWooPasswordless ) {
-				return null;
-			}
-
-			return (
-				<p className="signup-form__terms-of-service-link">
-					{ this.props.translate(
-						'By continuing, you agree to our {{tosLink}}Terms of Service{{/tosLink}}',
-						{
-							components: {
-								tosLink: (
-									<a
-										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-										onClick={ this.handleTosClick }
-										target="_blank"
-										rel="noopener noreferrer"
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-			);
+			return null;
 		}
 
 		const options = {
@@ -1205,7 +1188,6 @@ class SignupForm extends Component {
 					onChangeAccount={ this.handleOnChangeAccount }
 					redirectPath={ this.props.redirectToAfterLoginUrl }
 					isWoo={ this.props.isWoo }
-					isWooPasswordless={ this.props.isWooPasswordless }
 					isBlazePro={ this.props.isBlazePro }
 					notYouText={
 						this.props.notYouText ||
@@ -1311,8 +1293,7 @@ class SignupForm extends Component {
 			( ( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo );
 
 		if (
-			( this.props.isPasswordless &&
-				( 'wpcc' !== this.props.flowName || this.props.isWooPasswordless ) ) ||
+			( this.props.isPasswordless && ( 'wpcc' !== this.props.flowName || this.props.isWoo ) ) ||
 			isGravatar
 		) {
 			let formProps = {
@@ -1435,8 +1416,7 @@ export default connect(
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
-			isWooPasswordless: getIsWooPasswordless( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooPasswordlessJPC,
+			isWoo: getIsWoo( state ),
 			isWooPasswordlessJPC,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',

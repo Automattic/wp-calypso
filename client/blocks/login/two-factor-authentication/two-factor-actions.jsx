@@ -5,7 +5,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { FormDivider } from 'calypso/blocks/authentication';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { isWooOAuth2Client, isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
@@ -13,7 +13,8 @@ import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
+
 import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
@@ -134,7 +135,7 @@ export default connect(
 			isBackupCodeSupported: isTwoFactorAuthTypeSupported( state, 'backup' ),
 			isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 			isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooPasswordlessJPCFlow( state ),
+			isWoo: getIsWoo( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		};
 	},
