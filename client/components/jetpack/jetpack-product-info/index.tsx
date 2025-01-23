@@ -45,16 +45,17 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 
 	const translate = useTranslate();
 	const icon = getProductIcon( { productSlug } );
+	const isWooCommerce = isWooCommerceProduct( productSlug );
 	const iconStyles = clsx( {
 		'jetpack-product-info__product-icon': true,
-		'jetpack-product-info__product-icon-woocommerce': isWooCommerceProduct( productSlug ),
+		'jetpack-product-info__product-icon-woocommerce': isWooCommerce,
 		[ iconSlug ]: !! iconSlug,
 	} );
 
 	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
 
 	return (
-		<div className="jetpack-product-info">
+		<div className={ clsx( 'jetpack-product-info', { 'is-woocommerce-product': isWooCommerce } ) }>
 			<div className="jetpack-product-info__header">
 				<div className={ iconStyles }>
 					<img alt="" src={ icon } />

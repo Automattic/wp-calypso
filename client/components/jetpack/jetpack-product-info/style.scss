@@ -160,13 +160,21 @@
 	li.trigger-highlight {
 		animation: trigger-highlight 500ms ease-out;
 	}
+}
 
-	&:not(.jetpack-product-info__faq-list) li {
-		background: url(../../../assets/images/jetpack/jetpack-green-checkmark.svg) no-repeat 0 2px;
-		padding-left: 20px;
-		background-size: 14px;
-		background-position-y: 5px;
-	}
+.jetpack-product-info__regular-list-item {
+	display: grid;
+	grid-template-columns: 20px 1fr;
+	gap: 4px;
+}
+
+.jetpack-product-info__regular-list-item-icon {
+	fill: var(--studio-jetpack-green);
+	margin-block-start: 2px;
+}
+
+.jetpack-product-info.is-woocommerce-product .jetpack-product-info__regular-list-item-icon {
+	fill: var(--studio-woocommerce-purple);
 }
 
 @keyframes trigger-highlight {

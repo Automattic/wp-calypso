@@ -1975,45 +1975,278 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Multilingual support. AutomateWoo has support for the popular WPML plugin' ),
 		translate( 'AutomateWoo integrates with your favorite plugins and services' ),
 	];
-	const woocommerceAdvancedNotificationsBenefits: any = null;
-	const woocommerceAllProductsWooSubscriptionsBenefits: any = null;
-	const woocommerceAutomatewooBirthdaysBenefits: any = null;
-	const woocommerceAutomatewooReferAFriendBenefits: any = null;
-	const woocommerceBackInStockNotificationsBenefits: any = null;
-	const woocommerceBulkStockManagementBenefits: any = null;
-	const woocommerceCheckoutFieldEditorBenefits: any = null;
-	const woocommerceCompositeProductsBenefits: any = null;
-	const woocommerceConditionalShippingPaymentsBenefits: any = null;
-	const woocommerceEuVatNumberBenefits: any = null;
-	const woocommerceFlatRateBoxShippingBenefits: any = null;
-	const woocommerceGiftCardsBenefits: any = null;
-	const woocommerceGiftingWcSubscriptionsBenefits: any = null;
-	const woocommercePerProductShippingBenefits: any = null;
-	const woocommerceProductCsvImportSuiteBenefits: any = null;
-	const woocommerceProductRecommendationsBenefits: any = null;
-	const woocommerceProductVendorsBenefits: any = null;
-	const woocommerceReturnsWarrantyRequestsBenefits: any = null;
-	const woocommerceSubscriptionDownloadsBenefits: any = null;
-	const woocommerceShipmentTrackingBenefits: any = null;
-	const woocommerceShippingMultipleAddressesBenefits: any = null;
-	const woocommerceStorefrontExtensionsBundleBenefits: any = null;
-	const woocommerceTableRateShippingBenefits: any = null;
-	const woocommerceAdditionalImageVariationsBenefits: any = null;
-	const woocommerceBookingsAvailabilityBenefits: any = null;
-	const woocommerceBoxOfficeBenefits: any = null;
-	const woocommerceBrandsBenefits: any = null;
-	const woocommerceCouponCampaignsBenefits: any = null;
-	const woocommerceDepositsBenefits: any = null;
-	const woocommerceDistanceRateShippingBenefits: any = null;
-	const woocommerceOnePageCheckoutBenefits: any = null;
-	const woocommerceOrderBarcodesBenefits: any = null;
-	const woocommercePointsAndRewardsBenefits: any = null;
-	const woocommercePreOrdersBenefits: any = null;
-	const woocommercePurchaseOrderGatewayBenefits: any = null;
-	const woocommerceShippingBenefits: any = null;
-	const woocommerceAccommodationsBookingsBenefits: any = null;
-	const woocommerceTaxBenefits: any = null;
-	const woocommerceWoopaymentsBenefits: any = null;
+	const woocommerceAdvancedNotificationsBenefits = [
+		translate( 'Set up order and stock notifications for multiple recipients beyond admin' ),
+		translate( 'Notify staff, suppliers, or drop shippers of sales and inventory changes' ),
+		translate( 'Customize notification criteria and content' ),
+		translate( 'Choose between plain text or HTML email formats' ),
+		translate( 'Set up per-product notifications' ),
+		translate( 'Include or exclude prices and order totals in notifications' ),
+	];
+	const woocommerceAllProductsWooSubscriptionsBenefits = [
+		translate( 'Add subscription plans to existing Simple or Variable products' ),
+		translate( 'Sell any product one-time or on a subscription' ),
+		translate( 'Allow customers to add products to existing subscriptions' ),
+		translate( 'Create personalized subscription boxes with Product Bundles integration' ),
+		translate( 'Define global or custom subscription plans for individual products' ),
+		translate( 'Limit subscription options to specific product categories' ),
+	];
+	const woocommerceAutomatewooBirthdaysBenefits = [
+		translate( 'Send automated birthday emails and coupons to customers' ),
+		translate( 'Increase brand loyalty and boost sales with personalized birthday messages' ),
+		translate( 'Collect customer birthdays during checkout or on account pages' ),
+		translate( 'Configure workflows to run before, on, or after customer birthdays' ),
+		translate( 'Personalize email content with customer data and birthday-specific offers' ),
+		translate( 'Supports GDPR compliance for customer data' ),
+	];
+	const woocommerceAutomatewooReferAFriendBenefits = [
+		translate( 'Boost word-of-mouth sales with a customer referral program' ),
+		translate( 'Run coupon-based or link-based referral campaigns' ),
+		translate( 'Allow advocates to share referrals via email, Facebook, Twitter, and WhatsApp' ),
+		translate( 'Reward advocates with store credit for successful referrals' ),
+		translate( 'Include post-purchase share widgets on order confirmation pages and emails' ),
+		translate( 'Implement fraud prevention measures to protect the referral program' ),
+		translate( 'Provide detailed reporting on referral program performance' ),
+	];
+	const woocommerceBackInStockNotificationsBenefits = [
+		translate( 'Allow customers to subscribe for stock notifications' ),
+		translate( 'Automatically notify customers when products are back in stock' ),
+		translate( 'Works with Simple, Variable, Grouped, and Subscription products' ),
+		translate( 'Manage all notification sign-ups from a central admin area' ),
+		translate( 'Export subscriber data for use in email marketing platforms' ),
+		translate( 'Process notifications in batches using Action Scheduler for scalability' ),
+		translate( 'Set minimum quantity thresholds for sending restock notifications' ),
+	];
+	const woocommerceBulkStockManagementBenefits = [
+		translate( 'Manage product stock levels from a single interface' ),
+		translate( 'Filter products by type, stock management status, and stock status' ),
+		translate( 'Order products by name, ID, SKU, or stock quantity' ),
+		translate( 'Set stock quantities for multiple products at once' ),
+		translate( 'Apply bulk actions like setting stock status or allowing backorders' ),
+		translate( 'Generate printable stock reports for inventory management' ),
+	];
+	const woocommerceCheckoutFieldEditorBenefits = [
+		translate( 'Customize checkout fields' ),
+		translate( 'Add, edit, or remove fields on the checkout page' ),
+		translate( 'Rearrange the order of checkout fields' ),
+		translate( 'Set custom field validations' ),
+	];
+	const woocommerceCompositeProductsBenefits = [
+		translate( 'Create complex product kits or bundles' ),
+		translate( 'Allow customers to configure custom product combinations' ),
+		translate( 'Set component options and quantity limits' ),
+		translate( 'Apply conditional logic to component visibility' ),
+	];
+	const woocommerceConditionalShippingPaymentsBenefits = [
+		translate( 'Set rules for shipping/payment methods based on cart contents' ),
+		translate( 'Customize available options based on customer location or purchase' ),
+		translate( 'Create complex rules combining multiple conditions' ),
+		translate(
+			'Hide or show shipping/payment methods based on product categories, tags, or attributes'
+		),
+	];
+	const woocommerceEuVatNumberBenefits = [
+		translate( 'Collect and validate EU VAT numbers' ),
+		translate( 'Apply correct VAT rates for B2B transactions' ),
+		translate( 'Ensure compliance with EU tax regulations' ),
+		translate( 'Automatically validate VAT numbers in real-time' ),
+		translate( 'Generate VAT reports for easy tax filing' ),
+	];
+	const woocommerceFlatRateBoxShippingBenefits = [
+		translate( 'Offer flat rate shipping based on box sizes' ),
+		translate( 'Optimize shipping costs for differently sized products' ),
+		translate( 'Define multiple box sizes and their respective shipping rates' ),
+		translate( 'Automatically select the most cost-effective box for each order' ),
+	];
+	const woocommerceGiftCardsBenefits = [
+		translate( 'Sell and redeem gift cards' ),
+		translate( 'Offer store credit as a product' ),
+		translate( 'Allow customers to purchase and send digital gift cards' ),
+		translate( 'Set expiration dates and custom designs for gift cards' ),
+		translate( 'Track gift card usage and balances' ),
+	];
+	const woocommerceGiftingWcSubscriptionsBenefits = [
+		translate( 'Allow customers to gift subscriptions' ),
+		translate( 'Manage gifted subscriptions separately from personal ones' ),
+		translate( 'Set up gift subscription products' ),
+		translate( 'Allow gift recipients to manage their gifted subscriptions' ),
+	];
+	const woocommercePerProductShippingBenefits = [
+		translate( 'Set unique shipping costs for individual products' ),
+		translate( 'Customize shipping rates based on product characteristics' ),
+		translate( 'Define shipping costs at the product level' ),
+		translate( 'Override global shipping settings for specific products' ),
+	];
+	const woocommerceProductCsvImportSuiteBenefits = [
+		translate( 'Bulk import/export products via CSV' ),
+		translate( 'Easily manage large product catalogs' ),
+		translate( 'Map CSV columns to product fields' ),
+		translate( 'Schedule automated imports/exports' ),
+		translate( 'Handle complex product types including variable products' ),
+	];
+	const woocommerceProductRecommendationsBenefits = [
+		translate( 'Display personalized product recommendations' ),
+		translate( 'Increase average order value with targeted suggestions' ),
+		translate( 'Use AI-powered algorithms for smart recommendations' ),
+		translate( 'Place recommendation widgets on various store pages' ),
+	];
+	const woocommerceProductVendorsBenefits = [
+		translate( 'Create a multi-vendor marketplace' ),
+		translate( 'Allow multiple sellers on a single WooCommerce store' ),
+		translate( 'Manage vendor accounts and commissions' ),
+		translate( 'Set up individual vendor storefronts' ),
+		translate( 'Automate commission calculations and payouts' ),
+	];
+	const woocommerceReturnsWarrantyRequestsBenefits = [
+		translate( 'Streamline returns and warranty claim process' ),
+		translate( 'Manage customer service requests efficiently' ),
+		translate( 'Create custom return/warranty forms' ),
+		translate( 'Automate return approval processes' ),
+		translate( 'Generate return labels and track return shipments' ),
+	];
+	const woocommerceSubscriptionDownloadsBenefits = [
+		translate( 'Offer downloadable content on a subscription basis' ),
+		translate( 'Control access to files based on subscription status' ),
+		translate( 'Set download limits and expiration dates' ),
+		translate( 'Integrate with membership plugins for advanced access control' ),
+	];
+	const woocommerceShipmentTrackingBenefits = [
+		translate( 'Add shipment tracking information to orders' ),
+		translate( 'Keep customers informed about order status and delivery' ),
+		translate( 'Integrate with major shipping carriers' ),
+		translate( 'Automatically send tracking emails to customers' ),
+	];
+	const woocommerceShippingMultipleAddressesBenefits = [
+		translate( 'Allow customers to ship items to multiple addresses in one order' ),
+		translate( 'Set up different shipping methods for each address' ),
+		translate( 'Calculate shipping costs separately for each destination' ),
+	];
+	const woocommerceStorefrontExtensionsBundleBenefits = [
+		translate( 'Enhance Storefront theme functionality' ),
+		translate( 'Add various design and layout improvements' ),
+		translate( 'Includes multiple Storefront-specific plugins' ),
+		translate( 'Improve site performance with optimized extensions' ),
+	];
+	const woocommerceTableRateShippingBenefits = [
+		translate( 'Create complex shipping rules based on various factors' ),
+		translate( 'Offer flexible shipping rates tailored to specific needs' ),
+		translate( 'Set up shipping zones with custom rates' ),
+		translate( 'Use conditions like weight, price, item count, or shipping class' ),
+	];
+	const woocommerceAdditionalImageVariationsBenefits = [
+		translate( 'Add multiple images for product variations' ),
+		translate( 'Improve product presentation for variable products' ),
+		translate( 'Display variation-specific image galleries' ),
+		translate( 'Easily manage variation images from the product editor' ),
+	];
+	const woocommerceBookingsAvailabilityBenefits = [
+		translate( 'Display availability calendars for bookable products' ),
+		translate( 'Manage capacity and scheduling for services or rentals' ),
+		translate( 'Set up complex availability rules' ),
+		translate( 'Allow customers to check real-time availability' ),
+	];
+	const woocommerceBoxOfficeBenefits = [
+		translate( 'Sell tickets for events' ),
+		translate( 'Manage attendee information and check-ins' ),
+		translate( 'Create printable or digital tickets' ),
+		translate( 'Set up seating charts and ticket types' ),
+	];
+	const woocommerceBrandsBenefits = [
+		translate( 'Organize products by brand' ),
+		translate( 'Improve product filtering and navigation' ),
+		translate( 'Create brand pages with custom content' ),
+		translate( 'Display brand logos on product pages and in widgets' ),
+	];
+	const woocommerceCouponCampaignsBenefits = [
+		translate( 'Create and manage advanced coupon campaigns' ),
+		translate( 'Boost sales with targeted promotions' ),
+		translate( 'Set up time-limited or usage-limited coupons' ),
+		translate( 'Create bulk coupon codes for mass distribution' ),
+	];
+	const woocommerceDepositsBenefits = [
+		translate( 'Allow customers to pay deposits on orders' ),
+		translate( 'Manage partial payments and payment plans' ),
+		translate( 'Set up fixed or percentage-based deposits' ),
+		translate( 'Configure automatic billing for remaining balances' ),
+	];
+	const woocommerceDistanceRateShippingBenefits = [
+		translate( 'Calculate shipping rates based on distance' ),
+		translate( 'Offer location-based shipping costs' ),
+		translate( 'Integrate with mapping services for distance calculation' ),
+		translate( 'Set up distance-based pricing tiers' ),
+	];
+	const woocommerceOnePageCheckoutBenefits = [
+		translate( 'Streamline checkout process to a single page' ),
+		translate( 'Improve conversion rates with simplified purchasing' ),
+		translate( 'Customize checkout page layout' ),
+		translate( 'Add product selection directly to the checkout page' ),
+	];
+	const woocommerceOrderBarcodesBenefits = [
+		translate( 'Generate barcodes for orders' ),
+		translate( 'Simplify order processing and tracking' ),
+		translate( 'Print barcodes on packing slips or labels' ),
+		translate( 'Scan barcodes to quickly access order details' ),
+	];
+	const woocommercePointsAndRewardsBenefits = [
+		translate( 'Implement a customer loyalty program' ),
+		translate( 'Reward customers with points for purchases and actions' ),
+		translate( 'Set up point earning and redemption rules' ),
+		translate( 'Create tiered reward levels for VIP customers' ),
+	];
+	const woocommercePreOrdersBenefits = [
+		translate( 'Allow customers to pre-order upcoming products' ),
+		translate( 'Manage and fulfill pre-orders efficiently' ),
+		translate( 'Set release dates and charge options' ),
+		translate( 'Automatically update order status on release date' ),
+	];
+	const woocommercePurchaseOrderGatewayBenefits = [
+		translate( 'Accept purchase orders as a payment method' ),
+		translate( 'Cater to B2B customers with specific payment needs' ),
+		translate( 'Set up custom approval processes for purchase orders' ),
+		translate( 'Generate invoices for approved purchase orders' ),
+	];
+	const woocommerceShippingBenefits = [
+		translate( 'Print USPS and DHL labels' ),
+		translate( 'Streamline shipping process with carrier integration' ),
+		translate( 'Compare rates from multiple carriers' ),
+		translate( 'Automatically mark orders as completed upon shipping' ),
+	];
+	const woocommerceAccommodationsBookingsBenefits = [
+		translate( 'Manage bookings for accommodations' ),
+		translate( 'Handle reservations for hotels, rentals, etc' ),
+		translate( 'Set up room types and rates' ),
+		translate( 'Manage seasonal pricing and availability' ),
+	];
+	const woocommerceTaxBenefits = [
+		translate( 'Automate sales tax calculations' ),
+		translate( 'Ensure compliance with tax regulations' ),
+		translate( 'Integrate with major tax calculation services' ),
+		translate( 'Generate tax reports for easy filing' ),
+	];
+	const woocommerceWoopaymentsBenefits = [
+		translate( 'Accept payments directly on your site' ),
+		translate( 'Streamline payment processing and management' ),
+		translate( 'Support multiple payment methods' ),
+		translate( 'View detailed transaction reports in WooCommerce dashboard' ),
+	];
+	const woocommerceProductFiltersBenefits = [
+		translate( 'Create ajax product filters for quick and simple product search' ),
+		translate( 'Filter by categories, attributes, tags, taxonomies, price, and stock status' ),
+		translate( 'Use AJAX technology for fast filtering without page reloads' ),
+		translate(
+			'Offer multiple filter elements: price slider, checkbox list, radio list, dropdown, color list, box list, text list, and more'
+		),
+		translate( 'Provide widgets for "Products Filter" and "Notes for Product Filters"' ),
+		translate( 'Include shortcodes and integration with product shortcodes' ),
+		translate( 'Feature adaptive filter options and product counts' ),
+		translate( 'Display adaptive product thumbnails' ),
+		translate( 'Easy 5-minute setup for beginners and developers' ),
+		translate( 'Improve user experience by helping customers find products quickly' ),
+		translate( 'Increase sales by directing customers to desired products' ),
+		translate( 'Allow expansion of inventory without confusing customers' ),
+		translate( 'Potentially boost SEO when implemented correctly' ),
+	];
+
 	const monitorBenefits = [
 		translate(
 			'Rapid detection: With our 1-minute interval monitoring, we detect potential issues faster than ever before.'
@@ -2127,6 +2360,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_WOOCOMMERCE_ACCOMMODATIONS_BOOKINGS ]: woocommerceAccommodationsBookingsBenefits,
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxBenefits,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsBenefits,
+		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommerceProductFiltersBenefits,
 	};
 };
 
