@@ -54,13 +54,13 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-	const closeAndLeave = ( userHasClearedCart: boolean = false ) =>
+	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) =>
 		leaveCheckout( {
 			siteSlug,
 			forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
-			userHasClearedCart: userHasClearedCart,
+			userHasClearedCart: options?.userHasClearedCart ?? false,
 		} );
 
 	const clickClose = () => {
@@ -79,7 +79,9 @@ const CheckoutMasterbar = ( {
 	const modalSecondaryText = translate( 'Empty cart' );
 	const clearCartAndLeave = () => {
 		replaceProductsInCart( [] );
-		closeAndLeave( true );
+		closeAndLeave( {
+			userHasClearedCart: true,
+		} );
 	};
 
 	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
