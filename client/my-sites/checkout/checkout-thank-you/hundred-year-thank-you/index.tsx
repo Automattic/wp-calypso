@@ -192,7 +192,10 @@ export default function HundredYearThankYou( {
 
 	const isMobile = useMobileBreakpoint();
 	const isDomainDataLoaded = ! isLoadingDomains && targetDomain !== null;
-	const isPageLoading = isReceiptLoading || isLoadingDomains || ! isDomainDataLoaded;
+	const isPageLoading =
+		isReceiptLoading ||
+		isLoadingDomains ||
+		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
 	const hundredYearPlanCta =
 		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
 			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
