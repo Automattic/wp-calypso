@@ -51,12 +51,28 @@ function useSiteFeatures( siteId: number | null ) {
 	// This should come from somewhere. Maybe from a query.
 	// Matches security, backup, search, video, boost, social.
 	const upsellFeatures = [
-		'scan', // Security plan
-		'backup', // Backup plan
+		// Backup
+		'backups',
+		'restore',
+		// Boost
+		'cloud-critical-css',
+		'cornerstone-10-pages',
+		'image-cdn-liar',
+		'image-cdn-quality',
+		'image-size-analysis',
+		'performance-history',
+		// Security
+		'scan',
+		// Search
 		'search',
+		'instant-search',
+		// Social
+		'social-enhanced-publishing',
+		'social-image-generator',
+		'subscriber-unlimited-imports',
+		// Video
 		'videopress',
-		'cloud-critical-css', // Boost plan
-		'social-enhanced-publishing', // Social plan
+		'videopress-1tb-storage',
 	];
 	// Ideally we'd make a single call to get the full array of features but this will work for now.
 	const activeFeatures = useSelector( ( state ) =>
