@@ -119,27 +119,17 @@ const ReaderOnboarding = ( {
 		);
 	}, [] );
 
-	// Check if the user has completed the account profile
-	const hasCompletedAccountProfile = useSelector( ( state ) => {
-		const userSettings = getUserSettings( state );
-		if ( ! userSettings?.has_gravatar ) {
-			return false;
-		}
-
-		if ( ! userSettings?.description ) {
-			return false;
-		}
-
-		if ( ! userSettings?.first_name ) {
-			return false;
-		}
-
-		if ( ! userSettings?.last_name ) {
-			return false;
-		}
-
-		return true;
-	} );
+	const userSettings = useSelector( getUserSettings );
+	const hasCompletedAccountProfile = !! (
+		userSettings?.has_gravatar &&
+		userSettings?.description &&
+		userSettings?.first_name &&
+		userSettings?.last_name
+	);
+	let accountProfileTitle = translate( 'Add your avatar and fill out your profile' );
+	if ( ! hasCompletedAccountProfile && userSettings?.has_gravatar ) {
+		accountProfileTitle = translate( 'Fill out your profile' );
+	}
 
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );
@@ -167,7 +157,7 @@ const ReaderOnboarding = ( {
 		},
 		{
 			id: 'account-profile',
-			title: translate( 'Add your avatar and fill out your profile' ),
+			title: accountProfileTitle,
 			actionDispatch: redirectToAccountProfile,
 			completed: hasCompletedAccountProfile,
 			disabled: ! taskOneCompleted,
