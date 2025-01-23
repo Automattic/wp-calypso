@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "2.2.1",
+	"version": "2.2.0",
 	"description": "Automattic Components.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -33,7 +33,6 @@
 		"@automattic/color-studio": "^3.0.1",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/i18n-calypso": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/typography": "workspace:^",
