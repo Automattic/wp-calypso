@@ -428,3 +428,11 @@ export function renderJetpackSearch10kTierBreakdown(
 		}
 	);
 }
+
+export function hasValidPaymentDetails( transaction: BillingTransaction ): boolean {
+	return (
+		transaction.cc_num !== 'XXXX' ||
+		transaction.cc_name !== 'Not Stored' ||
+		transaction.cc_display_brand !== 'Not Stored'
+	);
+}

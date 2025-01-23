@@ -8,17 +8,19 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
-import BillingHistoryListDataView from 'calypso/me/purchases/billing-history/billing-history-list-data-view';
-import ModernReceipt from 'calypso/me/purchases/billing-history/modern-receipt';
-import BillingReceipt from 'calypso/me/purchases/billing-history/receipt';
 import { vatDetails as vatDetailsPath, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
+import BillingHistoryList from './billing-history-list';
+import BillingHistoryListDataView from './billing-history-list-data-view';
+import ModernReceipt from './modern-receipt';
+import BillingReceipt from './receipt';
 
 import './style.scss';
+
+const USE_DATA_VIEW = config.isEnabled( 'purchases/billing-history-data-view' );
 
 export function BillingHistoryContent( {
 	siteId = null,
@@ -27,11 +29,9 @@ export function BillingHistoryContent( {
 	siteId: number | null;
 	getReceiptUrlFor: ( receiptId: string | number ) => string;
 } ) {
-	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
-
 	return (
 		<Card id="billing-history" className="section-content" tagName="section">
-			{ useDataViewBillingHistoryList ? (
+			{ USE_DATA_VIEW ? (
 				<BillingHistoryListDataView siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 			) : (
 				<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
@@ -40,22 +40,30 @@ export function BillingHistoryContent( {
 	);
 }
 
-function BillingHistory() {
+function BillingHistoryReceipt( { transactionId }: { transactionId: number } ) {
+	return USE_DATA_VIEW ? (
+		<ModernReceipt transactionId={ transactionId } />
+	) : (
+		<BillingReceipt transactionId={ transactionId } />
+	);
+}
+
+export function Receipt( { transactionId }: { transactionId: number } ) {
+	return <BillingHistoryReceipt transactionId={ transactionId } />;
+}
+
+export default function BillingHistory() {
 	const translate = useTranslate();
 	const { vatDetails } = useVatDetails();
 	const { data: geoData } = useGeoLocationQuery();
 	const taxName = useTaxName( vatDetails.country ?? geoData?.country_short ?? 'GB' );
 
-	const genericTaxName =
-		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
-		translate( 'tax (VAT/GST/CT)' );
+	const genericTaxName = translate( 'tax (VAT/GST/CT)' );
 	const fallbackTaxName = genericTaxName;
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const editVatText = translate( 'Edit %s details', {
 		textOnly: true,
 		args: [ taxName ?? fallbackTaxName ],
 	} );
-	/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 	const addVatText = translate( 'Add %s details', {
 		textOnly: true,
 		args: [ taxName ?? fallbackTaxName ],
@@ -88,19 +96,3 @@ function BillingHistory() {
 		</Main>
 	);
 }
-
-function BillingHistoryReceipt( { transactionId }: { transactionId: number } ) {
-	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
-
-	return useDataViewBillingHistoryList ? (
-		<ModernReceipt transactionId={ transactionId } />
-	) : (
-		<BillingReceipt transactionId={ transactionId } />
-	);
-}
-
-export function Receipt( { transactionId }: { transactionId: number } ) {
-	return <BillingHistoryReceipt transactionId={ transactionId } />;
-}
-
-export default BillingHistory;
