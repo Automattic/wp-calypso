@@ -116,7 +116,6 @@ type NewsletterSettingsFormProps = {
 	handleSubmitForm: () => void;
 	isRequestingSettings: boolean;
 	isSavingSettings: boolean;
-	settings: { subscription_options?: SubscriptionOptions };
 	updateFields: ( fields: Fields ) => void;
 	errorNotice: ( text: string ) => void;
 };
@@ -127,7 +126,6 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	handleToggle,
 	isRequestingSettings,
 	isSavingSettings,
-	settings,
 	updateFields,
 	errorNotice,
 }: NewsletterSettingsFormProps ) => {
@@ -176,16 +174,11 @@ const NewsletterSettingsForm = wrapSettingsForm( getFormSettings )( ( {
 	} );
 
 	const disabled = isSubscriptionModuleInactive || isRequestingSettings || isSavingSettings;
-	const savedSubscriptionOptions = settings?.subscription_options;
 
-	// Update subscription_options form fields when savedSubscriptionOptions changes.
-	// This makes sure the form fields hold the current value after saving.
+	// Handle URL hash scrolling on mount
 	useEffect( () => {
-		updateFields( { subscription_options: savedSubscriptionOptions } );
-
-		// If the URL has a hash, scroll to it.
 		scrollToAnchor( { offset: 15 } );
-	}, [ savedSubscriptionOptions, updateFields ] );
+	}, [] );
 
 	const onSubmit = ( event?: React.FormEvent | React.MouseEvent ) => {
 		event?.preventDefault();
