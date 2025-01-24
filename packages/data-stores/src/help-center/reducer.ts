@@ -68,6 +68,17 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	return state;
 };
 
+const areSoundNotificationsEnabled: Reducer< boolean, HelpCenterAction > = (
+	state = true,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED':
+			return action.areSoundNotificationsEnabled;
+	}
+	return state;
+};
+
 const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
@@ -160,6 +171,7 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
+	areSoundNotificationsEnabled,
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
