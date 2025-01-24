@@ -27,7 +27,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
-	isReactLostPasswordScreenEnabled,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
@@ -37,7 +36,7 @@ import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -622,36 +621,23 @@ export class LoginForm extends Component {
 	}
 
 	renderLostPasswordLink() {
-		if ( isReactLostPasswordScreenEnabled() ) {
-			return (
-				<a
-					className="login__form-forgot-password"
-					href="/"
-					onClick={ ( event ) => {
-						event.preventDefault();
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-						page(
-							login( {
-								redirectTo: this.props.redirectTo,
-								locale: this.props.locale,
-								action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
-								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-								from: get( this.props.currentQuery, 'from' ),
-							} )
-						);
-					} }
-				>
-					{ this.props.translate( 'Forgot password?' ) }
-				</a>
-			);
-		}
-
 		return (
 			<a
 				className="login__form-forgot-password"
-				href={ lostPassword( this.props.locale ) }
-				onClick={ () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ) }
-				rel="external"
+				href="/"
+				onClick={ ( event ) => {
+					event.preventDefault();
+					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+					page(
+						login( {
+							redirectTo: this.props.redirectTo,
+							locale: this.props.locale,
+							action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
+							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							from: get( this.props.currentQuery, 'from' ),
+						} )
+					);
+				} }
 			>
 				{ this.props.translate( 'Forgot password?' ) }
 			</a>

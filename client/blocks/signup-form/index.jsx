@@ -42,7 +42,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
@@ -625,7 +624,7 @@ class SignupForm extends Component {
 												onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
 											/>
 										),
-										pwdResetLink: isReactLostPasswordScreenEnabled() ? (
+										pwdResetLink: (
 											<a
 												href={ lostPasswordLink }
 												onClick={ ( event ) => {
@@ -644,8 +643,6 @@ class SignupForm extends Component {
 													);
 												} }
 											/>
-										) : (
-											<a href={ lostPasswordLink } />
 										),
 									},
 								}
