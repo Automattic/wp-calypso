@@ -22,8 +22,13 @@ export const UserMessage = ( {
 	message: Message;
 	isMessageWithoutEscalationOption?: boolean;
 } ) => {
-	const { isUserEligibleForPaidSupport, trackEvent, chat, experimentVariationName } =
-		useOdieAssistantContext();
+	const {
+		isUserEligibleForPaidSupport,
+		hasUserEverEscalatedToHumanSupport,
+		trackEvent,
+		chat,
+		experimentVariationName,
+	} = useOdieAssistantContext();
 
 	const hasCannedResponse = message.context?.flags?.canned_response;
 	const isRequestingHumanSupport = message.context?.flags?.forward_to_human_support ?? false;
@@ -91,7 +96,9 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ ! showExtraContactOptions && <DirectEscalationLink messageId={ message.message_id } /> }
+			{ ! showExtraContactOptions && hasUserEverEscalatedToHumanSupport && (
+				<DirectEscalationLink messageId={ message.message_id } />
+			) }
 			{ ! isConnectedToZendesk && (
 				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 			) }

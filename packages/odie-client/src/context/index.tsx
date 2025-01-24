@@ -97,6 +97,13 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	const { mainChatState, setMainChatState } = useGetCombinedChat( canConnectToZendesk );
 
 	/**
+	 * Has the user ever escalated to get human support?
+	 */
+	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some(
+		( message ) => message.context?.flags?.forward_to_human_support
+	);
+
+	/**
 	 * Tracking event.
 	 * Handler to make sure all requests are the same.
 	 */
@@ -185,6 +192,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
+				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
 				selectedSiteId,
 				selectedSiteURL,

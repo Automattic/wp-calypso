@@ -11,6 +11,7 @@ export type OdieAssistantContextInterface = {
 	clearChat: () => void;
 	currentUser: CurrentUser;
 	experimentVariationName: string | undefined | null;
+	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	extraContactOptions?: ReactNode;
