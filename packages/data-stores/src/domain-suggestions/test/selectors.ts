@@ -1,6 +1,6 @@
 import { select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { register } from '..';
+import { store } from '..';
 import { DataStatus } from '../constants';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
@@ -8,8 +8,6 @@ jest.mock( 'wpcom-proxy-request', () => ( {
 	default: jest.fn(),
 	requestAllBlogsAccess: jest.fn( () => Promise.resolve() ),
 } ) );
-
-let store: ReturnType< typeof register >;
 
 const options = {
 	category_slug: undefined,
@@ -27,7 +25,10 @@ const apiResponse = [
 		match_reasons: [ 'tld-common', 'tld-exact' ],
 		product_id: 78,
 		product_slug: 'dotsite_domain',
-		cost: '$25.00',
+		cost: '$25',
+		raw_price: 25,
+		currency_code: 'USD',
+		unavailable: false,
 	},
 	{
 		domain_name: 'hot-test-site.com',
@@ -37,13 +38,12 @@ const apiResponse = [
 		match_reasons: [ 'tld-common' ],
 		product_id: 6,
 		product_slug: 'domain_reg',
-		cost: '$18.00',
+		cost: '$18',
+		raw_price: 18,
+		currency_code: 'USD',
+		unavailable: false,
 	},
 ];
-
-beforeAll( () => {
-	store = register();
-} );
 
 beforeEach( () => {
 	( wpcomRequest as jest.Mock ).mockReset();
@@ -55,7 +55,7 @@ describe( 'getDomainSuggestions', () => {
 
 		const query = 'test query one';
 		const listenForStateUpdate = () => {
-			return new Promise( ( resolve ) => {
+			return new Promise< void >( ( resolve ) => {
 				const unsubscribe = subscribe( () => {
 					unsubscribe();
 					resolve();
@@ -88,7 +88,7 @@ describe( 'getDomainSuggestions', () => {
 
 		expect(
 			select( 'core/data' ).isResolving( store, 'getDomainSuggestions', [ query, options ] )
-		).toStrictEqual( false );
+		).toEqual( false );
 	} );
 } );
 
@@ -102,7 +102,7 @@ describe( 'getDomainErrorMessage', () => {
 
 		const query = 'test query two';
 		const listenForStateUpdate = () => {
-			return new Promise( ( resolve ) => {
+			return new Promise< void >( ( resolve ) => {
 				const unsubscribe = subscribe( () => {
 					unsubscribe();
 					resolve();
