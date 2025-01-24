@@ -24,11 +24,7 @@ type Product = {
 	title: string;
 };
 
-export function JetpackUpsellCard( {
-	purchasedProducts,
-	siteSlug,
-	upgradeUrls = {},
-}: JetpackUpsellCardProps ) {
+function useAvailableUpsells() {
 	const translate = useTranslate();
 	const PRODUCTS = useMemo(
 		() => [
@@ -97,7 +93,18 @@ export function JetpackUpsellCard( {
 		[ translate ]
 	) as Product[];
 
-	const visibleProducts = PRODUCTS.filter(
+	return PRODUCTS;
+}
+
+export function JetpackUpsellCard( {
+	purchasedProducts,
+	siteSlug,
+	upgradeUrls = {},
+}: JetpackUpsellCardProps ) {
+	const translate = useTranslate();
+	const availableUpsells = useAvailableUpsells();
+
+	const visibleProducts = availableUpsells.filter(
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
 	const hasProductsToUpsell = visibleProducts.length > 0;
