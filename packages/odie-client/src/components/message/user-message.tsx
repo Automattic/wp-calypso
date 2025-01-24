@@ -47,6 +47,10 @@ export const UserMessage = ( {
 		showExtraContactOptions = ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
 	}
 
+	const showDirectEscalationLink = isExperimentGiveWapuuAChance
+		? hasUserEverEscalatedToHumanSupport
+		: ! ( hasFeedback && ! isPositiveFeedback ) || isRequestingHumanSupport;
+
 	const forwardMessage = isUserEligibleForPaidSupport
 		? ODIE_FORWARD_TO_ZENDESK_MESSAGE
 		: ODIE_FORWARD_TO_FORUMS_MESSAGE;
@@ -96,9 +100,7 @@ export const UserMessage = ( {
 					}
 				) }
 			</div>
-			{ ! showExtraContactOptions && hasUserEverEscalatedToHumanSupport && (
-				<DirectEscalationLink messageId={ message.message_id } />
-			) }
+			{ showDirectEscalationLink && <DirectEscalationLink messageId={ message.message_id } /> }
 			{ ! isConnectedToZendesk && (
 				<WasThisHelpfulButtons message={ message } isDisliked={ isDisliked } />
 			) }
