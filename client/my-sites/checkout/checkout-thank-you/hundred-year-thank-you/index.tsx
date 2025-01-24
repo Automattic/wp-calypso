@@ -217,29 +217,36 @@ export default function HundredYearThankYou( {
 	);
 	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
 
+	const messageTarget = targetDomain?.domain || siteSlug;
+	const domainSpecificDescription =
+		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+			? translate( 'Your 100-Year Domain %(messageTarget)s has been registered.', {
+					args: {
+						messageTarget,
+					},
+			  } )
+			: translate( 'Your 100-Year Domain %(messageTarget)s is being transferred.', {
+					args: {
+						messageTarget,
+					},
+			  } );
+	const hundredYearPlanDescription = translate(
+		'The %(planTitle)s for %(messageTarget)s is active.',
+		{
+			args: {
+				messageTarget,
+				planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+			},
+		}
+	);
+	const helpAndSupportDescription = translate(
+		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
+	);
+
 	const description =
 		productSlug === PLAN_100_YEARS
-			? translate(
-					'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: targetDomain?.domain || siteSlug,
-							planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-						},
-					}
-			  )
-			: translate(
-					'Your 100-Year Domain %(domain)s has been %(action)s. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: targetDomain?.domain || siteSlug,
-							action:
-								productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
-									? translate( 'registered' )
-									: translate( 'transferred' ),
-						},
-					}
-			  );
+			? `${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
+			: `${ domainSpecificDescription } ${ helpAndSupportDescription }`;
 
 	return (
 		<>
