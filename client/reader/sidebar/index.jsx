@@ -16,6 +16,7 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import CrowdsignalPoll from 'calypso/reader/components/crowdsignal-poll';
 import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
 import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
 import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
@@ -297,6 +298,7 @@ export class ReaderSidebar extends Component {
 			<GlobalSidebar { ...props }>
 				<ReaderSidebarNudges />
 				{ this.renderSidebarMenu() }
+				<CrowdsignalPoll />
 			</GlobalSidebar>
 		);
 	}
