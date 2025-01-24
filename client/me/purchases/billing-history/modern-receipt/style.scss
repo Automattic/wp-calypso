@@ -122,24 +122,19 @@
 			gap: 24px;
 		}
 
-		&__receipt-id-section {
+		&__details-section {
 			margin-bottom: 24px;
 			padding: 24px;
 			background: var(--color-neutral-0);
 			border-radius: 4px;
 		}
 
-		&__receipt-id-label {
-			font-size: var(--font-body-small);
-			font-weight: 500;
-			color: var(--color-text-subtle);
-			text-transform: uppercase;
-			margin-bottom: 8px;
-		}
-
 		&__receipt-id-value {
 			font-size: var(--font-title-small);
 			color: var(--color-text);
+			margin-bottom: 24px;
+			padding-bottom: 24px;
+			border-bottom: 1px solid var(--color-border-subtle);
 		}
 
 		&__payment-details {
@@ -148,29 +143,14 @@
 			border-bottom: 1px solid var(--color-border-subtle);
 		}
 
-		&__payment-details-label {
-			font-size: var(--font-body-small);
-			font-weight: 500;
-			color: var(--color-text-subtle);
-			text-transform: uppercase;
-			margin-bottom: 8px;
-		}
-
-		&__payment-details-content {
-			font-size: var(--font-body);
-			line-height: 1.5;
-		}
-
 		&__billing-details {
-			margin-bottom: 32px;
-		}
+			margin-bottom: 0;
 
-		&__billing-details-label {
-			font-size: var(--font-body-small);
-			font-weight: 500;
-			color: var(--color-text-subtle);
-			text-transform: uppercase;
-			margin-bottom: 8px;
+			&[data-is-empty="true"] + .receipt__payment-details {
+				border-bottom: none;
+				padding-bottom: 0;
+				margin-bottom: 0;
+			}
 		}
 
 		&__billing-details-input {
@@ -268,6 +248,14 @@
 			background-color: var(--color-neutral-10);
 			border-radius: 4px;
 		}
+
+		&__label {
+			font-size: var(--font-body-small);
+			font-weight: 500;
+			color: var(--color-text-subtle);
+			text-transform: uppercase;
+			margin-bottom: 8px;
+		}
 	}
 
 	@media print {
@@ -294,16 +282,19 @@
 			min-height: 0 !important;
 		}
 
+		.navigation-header,
+		.sidebar,
+		.masterbar,
+		.receipt__actions,
+		.receipt__page-header {
+			display: none !important;
+		}
+
 		.receipt {
 			display: block;
 			height: auto !important;
 			min-height: 0 !important;
 			page-break-after: avoid;
-
-			&__page-header,
-			&__actions {
-				display: none;
-			}
 
 			&__content {
 				padding: 0;
@@ -317,22 +308,25 @@
 				margin-bottom: 48px;
 			}
 
-			&__billing-details[data-is-empty="true"] {
-				display: none;
+			&__details-section {
+				background-color: var(--color-neutral-0) !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+				color-adjust: exact;
+			}
+
+			&__billing-details {
+				&[data-is-empty="true"] {
+					display: none;
+				}
 			}
 
 			&__billing-details-input {
+				background: transparent;
 				border: none;
 				padding: 0;
+				resize: none;
 			}
-		}
-
-		// Hide non-receipt elements
-		.navigation-header,
-		.sidebar,
-		.masterbar,
-		.receipt__actions {
-			display: none !important;
 		}
 	}
 } 

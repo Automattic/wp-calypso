@@ -33,23 +33,23 @@ export function ReceiptContent( { transaction }: ReceiptContentProps ) {
 			</div>
 
 			<div className="receipt__body">
-				<div className="receipt__receipt-id-section">
-					<div className="receipt__receipt-id-label">{ translate( 'RECEIPT ID' ) }</div>
+				<div className="receipt__details-section">
+					<div className="receipt__label">{ translate( 'Receipt id' ) }</div>
 					<div className="receipt__receipt-id-value">{ transaction.id }</div>
-				</div>
 
-				<PaymentDetails transaction={ transaction } />
+					<PaymentDetails transaction={ transaction } />
 
-				<div className="receipt__billing-details" data-is-empty={ isEmpty }>
-					<div className="receipt__billing-details-label">{ translate( 'BILLING DETAILS' ) }</div>
-					<textarea
-						className="receipt__billing-details-input"
-						placeholder={ translate(
-							'Use this field to add your billing information (e.g. business address) before printing.'
-						) }
-						value={ billingDetails }
-						onChange={ ( e ) => setBillingDetails( e.target.value ) }
-					/>
+					<div className="receipt__billing-details" data-is-empty={ isEmpty }>
+						<div className="receipt__label">{ translate( 'Billing details' ) }</div>
+						<textarea
+							className="receipt__billing-details-input"
+							placeholder={ translate(
+								'Use this field to add your billing information (e.g. business address) before printing.'
+							) }
+							value={ billingDetails }
+							onChange={ ( e ) => setBillingDetails( e.target.value ) }
+						/>
+					</div>
 				</div>
 
 				<table className="receipt__items">
