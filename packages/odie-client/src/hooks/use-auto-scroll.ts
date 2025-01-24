@@ -2,13 +2,17 @@ import { RefObject, useEffect, useRef } from 'react';
 import { useOdieAssistantContext } from '../context';
 
 export const useAutoScroll = ( messagesContainerRef: RefObject< HTMLDivElement > ) => {
-	const { chat } = useOdieAssistantContext();
+	const { chat, experimentVariationName } = useOdieAssistantContext();
 	const debounceTimeoutRef = useRef< number >( 500 );
 	const debounceTimeoutIdRef = useRef< number | null >( null );
 	const lastChatStatus = useRef< string | null >( null );
 	useEffect( () => {
 		const messageCount = chat.messages.length;
 		if ( messageCount < 1 || chat.status === 'loading' ) {
+			return;
+		}
+
+		if ( experimentVariationName === 'give_wapuu_a_chance' && chat.status === 'dislike' ) {
 			return;
 		}
 

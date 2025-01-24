@@ -45,7 +45,7 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, isChatLoaded } = useOdieAssistantContext();
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded } = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -104,6 +104,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
+	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
+
+	const availableStatusWithFeedback = removeDislikeStatus
+		? [ 'sending', 'transfer' ]
+		: [ 'sending', 'dislike', 'transfer' ];
+
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
@@ -134,8 +140,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && <DislikeThumb /> }
-						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
+						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
+						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
 								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
