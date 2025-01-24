@@ -110,7 +110,7 @@ function useAvailableUpsells() {
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
-	siteFeatures: string[] | null;
+	siteFeatures?: string[] | null;
 	upgradeUrls: Record< string, string >;
 };
 
