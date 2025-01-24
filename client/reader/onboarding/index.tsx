@@ -41,7 +41,7 @@ const ReaderOnboarding = ( {
 	const follows = useSelector( getReaderFollows );
 
 	const userSettings = useSelector( getUserSettings );
-	const hasCompletedAccountProfile = !! (
+	const taskThreeCompleted = !! (
 		userSettings?.has_gravatar &&
 		userSettings?.description &&
 		userSettings?.first_name &&
@@ -53,12 +53,7 @@ const ReaderOnboarding = ( {
 	const dispatch = useDispatch();
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if (
-		! hasCompletedOnboarding &&
-		taskOneCompleted &&
-		taskTwoCompleted &&
-		hasCompletedAccountProfile
-	) {
+	if ( ! hasCompletedOnboarding && taskOneCompleted && taskTwoCompleted && taskThreeCompleted ) {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 		hasCompletedOnboarding = true;
@@ -70,7 +65,6 @@ const ReaderOnboarding = ( {
 		( preferencesLoaded &&
 			! hasCompletedOnboarding &&
 			userRegistrationDate &&
-			! hasCompletedAccountProfile &&
 			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
 
 	// Modal state handlers with tracking.
@@ -172,7 +166,7 @@ const ReaderOnboarding = ( {
 				? translate( 'Fill out your profile' )
 				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: redirectToAccountProfile,
-			completed: hasCompletedAccountProfile,
+			completed: taskThreeCompleted,
 			disabled: ! taskOneCompleted || ! taskTwoCompleted,
 		},
 	];
