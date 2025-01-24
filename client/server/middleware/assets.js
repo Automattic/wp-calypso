@@ -34,24 +34,17 @@ export default () => {
 
 		req.getAssets = () => assets;
 
-		req.getFilesForEntrypoint = ( name ) => {
-			const entrypointAssets = assets.assets[ name ];
-			return groupAssetsByType( entrypointAssets );
-		};
-
-		req.getFilesForChunk = ( chunkName ) => {
-			const chunkAssets = assets.assets[ chunkName ];
-
-			if ( ! chunkAssets ) {
-				console.warn( 'cannot find the chunk ' + chunkName );
-				console.warn( 'available chunks:' );
-				Object.keys( assets.assets ).forEach( ( name ) => {
-					console.log( '    ' + name );
-				} );
+		req.getFilesForChunkGroup = ( name ) => {
+			const chunkGroupAssets = assets.assets[ name ];
+			if ( ! chunkGroupAssets ) {
+				console.warn( 'cannot find chunk group ' + chunkGroupAssets );
+				console.warn( 'available chunk groups:' );
+				for ( const availName of Object.keys( assets.assets ) ) {
+					console.log( '    ' + availName );
+				}
 				return EMPTY_ASSETS;
 			}
-
-			return groupAssetsByType( chunkAssets );
+			return groupAssetsByType( chunkGroupAssets );
 		};
 
 		req.getEmptyAssets = () => EMPTY_ASSETS;

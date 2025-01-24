@@ -163,8 +163,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const flags = ( request.query.flags || '' ).split( ',' );
 
-	performanceMark( request.context, 'getFilesForEntrypoint', true );
-	const entrypointFiles = request.getFilesForEntrypoint( entrypoint );
+	performanceMark( request.context, 'getFilesForChunkGroup', true );
+	const entrypointFiles = request.getFilesForChunkGroup( entrypoint );
 
 	performanceMark( request.context, 'getAssets', true );
 	const manifests = request.getAssets().manifests;
@@ -594,7 +594,7 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 	req.context.sectionName = section.name;
 
 	if ( ! entrypoint ) {
-		req.context.chunkFiles = req.getFilesForChunk( section.name );
+		req.context.chunkFiles = req.getFilesForChunkGroup( section.name );
 	} else {
 		req.context.chunkFiles = req.getEmptyAssets();
 	}
@@ -619,7 +619,7 @@ const render404 =
 	( entrypoint = 'entry-main' ) =>
 	( req, res ) => {
 		const ctx = {
-			entrypoint: req.getFilesForEntrypoint( entrypoint ),
+			entrypoint: req.getFilesForChunkGroup( entrypoint ),
 		};
 
 		res.status( 404 ).send( renderJsx( '404', ctx ) );
@@ -647,7 +647,7 @@ const renderServerError =
 		}
 
 		const ctx = {
-			entrypoint: req.getFilesForEntrypoint( entrypoint ),
+			entrypoint: req.getFilesForChunkGroup( entrypoint ),
 		};
 
 		res.status( err.status || 500 ).send( renderJsx( '500', ctx ) );
@@ -791,7 +791,7 @@ function wpcomPages( app ) {
 		const { from } = req.query;
 		const redirectLocation = from && validateRedirect( req, from ) ? from : '/';
 
-		req.context.entrypoint = req.getFilesForEntrypoint( 'entry-browsehappy' );
+		req.context.entrypoint = req.getFilesForChunkGroup( 'entry-browsehappy' );
 		req.context.from = redirectLocation;
 
 		res.send( renderJsx( 'browsehappy', req.context ) );
