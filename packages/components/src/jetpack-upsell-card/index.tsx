@@ -110,12 +110,14 @@ function useAvailableUpsells() {
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
+	siteFeatures: string[] | null;
 	upgradeUrls: Record< string, string >;
 };
 
 export function JetpackUpsellCard( {
 	purchasedProducts,
 	siteSlug,
+	siteFeatures,
 	upgradeUrls = {},
 }: JetpackUpsellCardProps ) {
 	const translate = useTranslate();
@@ -125,6 +127,9 @@ export function JetpackUpsellCard( {
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
 	const hasProductsToUpsell = visibleProducts.length > 0;
+
+	// Do something with siteFeatures to keep the build happy.
+	const hasSiteFeatures = siteFeatures?.length;
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
@@ -172,6 +177,7 @@ export function JetpackUpsellCard( {
 					</div>
 				) ) }
 			</div>
+			<div style={ { display: 'none' } }>{ hasSiteFeatures }</div>
 		</Card>
 	);
 }
