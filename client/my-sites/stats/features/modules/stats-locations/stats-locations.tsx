@@ -201,7 +201,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart data={ locationData } geoMode={ geoMode } skipQuery /> }
+						heroElement={
+							<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+						}
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={
