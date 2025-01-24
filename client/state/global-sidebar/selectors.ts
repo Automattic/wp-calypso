@@ -39,7 +39,7 @@ function shouldShowSitesDashboard( state: AppState ) {
 }
 
 export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
-	return !! siteId && isInRoute( state, SITE_DASHBOARD_ROUTES );
+	return !! siteId && isInRoute( state, [ '/setup', ...SITE_DASHBOARD_ROUTES ] );
 }
 
 export const getShouldShowGlobalSidebar = (
