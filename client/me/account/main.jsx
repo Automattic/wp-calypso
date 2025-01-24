@@ -32,10 +32,6 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import {
-	domainManagementEditContactInfo,
-	domainManagementRoot,
-} from 'calypso/my-sites/domains/paths';
 import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
@@ -57,6 +53,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
+import { getAccountSettingsSuccessNotice } from './success-notice';
 import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
@@ -578,155 +575,11 @@ class Account extends Component {
 
 		if ( this.state.redirect ) {
 			await clearStore();
-
-			// Sometimes changes in settings require a url refresh to update the UI.
-			// For example when the user changes the language.
 			window.location = this.state.redirect + '?updated=success';
-
 			return;
 		}
 
-		// Determine success message based on what has been updated.
-		const newEmail = response.new_user_email;
-		const moreThanEmailChanged = Object.keys( response )?.find(
-			( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
-		);
-
-		const { domainCount, firstDomain } = this.props.domainData;
-
-		// Default case.
-		let successMessage = this.props.translate( 'Settings saved successfully!' );
-
-		if ( newEmail && moreThanEmailChanged ) {
-			// Email and other settings changed. User does not have any domains so WHOIS email does not need to be checked and updated.
-			if ( domainCount === 0 ) {
-				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-						components: {
-							br: <br />,
-						},
-					}
-				);
-			} else if ( domainCount === 1 && firstDomain ) {
-				// User has one domain so WHOIS email needs to be checked and updated
-				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own a custom domain, please consider updating its {{a}}contact email{{/a}} to match your new email address.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-						components: {
-							br: <br />,
-							a: (
-								<a
-									href={ domainManagementEditContactInfo(
-										firstDomain.siteSlug,
-										firstDomain.domain
-									) }
-									onClick={ () => {
-										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'contact email',
-											domain: firstDomain.domain,
-										} );
-									} }
-								/>
-							),
-						},
-					}
-				);
-			} else {
-				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
-				successMessage = this.props.translate(
-					'Settings saved successfully!{{br/}}We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own multiple custom domains, please consider updating {{a}}contact email{{/a}} for these domains to match your new email address.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-						components: {
-							br: <br />,
-							a: (
-								<a
-									href={ domainManagementRoot() }
-									onClick={ () => {
-										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'contact email',
-											domain: null,
-										} );
-									} }
-								/>
-							),
-						},
-					}
-				);
-			}
-		} else if ( newEmail ) {
-			// Only email changed. The user does not have any domains so WHOIS email does not need to be checked and updated.
-			if ( domainCount === 0 ) {
-				successMessage = this.props.translate(
-					'We sent an email to %(email)s. Please check your inbox to verify your email.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-					}
-				);
-			} else if ( domainCount === 1 ) {
-				// User has one domain so WHOIS email needs to be checked and updated. Redirect user to a specific domain
-				successMessage = this.props.translate(
-					'We sent an email to %(email)s.{{br/}}Since you own a custom domain, please consider updating its {{a}}contact email{{/a}} to match your new email address.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-						components: {
-							br: <br />,
-							a: (
-								<a
-									href={ domainManagementEditContactInfo(
-										firstDomain.siteSlug,
-										firstDomain.domain
-									) }
-									onClick={ () => {
-										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'contact email',
-											domain: firstDomain.domain,
-										} );
-									} }
-								/>
-							),
-						},
-					}
-				);
-			} else {
-				// User has multiple domains so WHOIS email needs to be checked and updated. Redirect user to general domain management page
-				successMessage = this.props.translate(
-					'We sent an email to %(email)s. Please check your inbox to verify your email.{{br/}}Since you own multiple custom domains, please consider updating {{a}}contact email{{/a}} for these domains to match your new email address.',
-					{
-						args: {
-							email: newEmail || '',
-						},
-						components: {
-							br: <br />,
-							a: (
-								<a
-									href={ domainManagementRoot() }
-									onClick={ () => {
-										recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-											link_text: 'contact email',
-											domain: null,
-										} );
-									} }
-								/>
-							),
-						},
-					}
-				);
-			}
-		}
+		const successMessage = getAccountSettingsSuccessNotice( response, this.props.domainData );
 
 		this.setState(
 			{
