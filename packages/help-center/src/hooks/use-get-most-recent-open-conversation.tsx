@@ -39,10 +39,10 @@ export const useGetMostRecentOpenConversation = () => {
 			supportInteractions
 		);
 
-		const recentConversations = sortConversationByMostRecent( filteredConversations );
+		const sortedConversations = sortConversationByMostRecent( filteredConversations );
 
-		if ( recentConversations?.length > 0 ) {
-			supportInteractionId = recentConversations[ 0 ]?.metadata?.supportInteractionId;
+		if ( sortedConversations?.length > 0 ) {
+			supportInteractionId = sortedConversations[ 0 ]?.metadata?.supportInteractionId;
 			userHasRecentOpenConversation = true;
 		}
 	}
