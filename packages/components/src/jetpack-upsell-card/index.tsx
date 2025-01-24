@@ -29,8 +29,6 @@ export function JetpackUpsellCard( {
 	siteSlug,
 	upgradeUrls = {},
 }: JetpackUpsellCardProps ) {
-	// TODO: Make card collapsible
-
 	const translate = useTranslate();
 	const PRODUCTS = useMemo(
 		() => [
