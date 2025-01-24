@@ -213,7 +213,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 
 		let siteTitle = urlData?.meta.title || selectedSiteTitle;
-		if ( ! siteTitle.length ) {
+		if ( 0 === siteTitle?.length && domainItem?.domain_name ) {
 			siteTitle = domainItem.domain_name.split( '.' )[ 0 ];
 		}
 
