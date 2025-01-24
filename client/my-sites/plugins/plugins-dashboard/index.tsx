@@ -22,7 +22,7 @@ import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import UrlSearch from 'calypso/lib/url-search';
-import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { useSelector, useDispatch } from 'calypso/state';
 import {
 	activatePlugin,
@@ -259,14 +259,7 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		doActionOverSelected(
-			'updating',
-			( siteId: number, plugin: Plugin ) => {
-				handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
-				removePluginStatuses();
-			},
-			plugins
-		);
+		doActionOverSelected( 'updating', updatePluginAction, plugins );
 	};
 
 	const setAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
