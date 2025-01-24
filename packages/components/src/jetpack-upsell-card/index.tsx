@@ -31,6 +31,7 @@ function useAvailableUpsells() {
 				isFree: false,
 				slug: 'security',
 				title: translate( 'Security', { context: 'Jetpack product name' } ),
+				features: [ 'scan' ],
 			},
 			{
 				description: translate(
@@ -41,6 +42,7 @@ function useAvailableUpsells() {
 				isFree: false,
 				slug: 'backup',
 				title: translate( 'Backup' ),
+				features: [ 'backups', 'restore' ],
 			},
 			{
 				description: translate(
@@ -51,6 +53,7 @@ function useAvailableUpsells() {
 				isFree: false,
 				slug: 'search',
 				title: translate( 'Search' ),
+				features: [ 'search', 'instant-search' ],
 			},
 			{
 				description: translate(
@@ -61,6 +64,7 @@ function useAvailableUpsells() {
 				isFree: false,
 				slug: 'video',
 				title: translate( 'VideoPress' ),
+				features: [ 'videopress', 'videopress-1tb-storage' ],
 			},
 			{
 				description: translate(
@@ -71,6 +75,14 @@ function useAvailableUpsells() {
 				isFree: true,
 				slug: 'boost',
 				title: translate( 'Boost' ),
+				features: [
+					'cloud-critical-css',
+					'cornerstone-10-pages',
+					'image-cdn-liar',
+					'image-cdn-quality',
+					'image-size-analysis',
+					'performance-history',
+				],
 			},
 			{
 				description: translate(
@@ -81,6 +93,11 @@ function useAvailableUpsells() {
 				isFree: true,
 				slug: 'social',
 				title: translate( 'Social' ),
+				features: [
+					'social-enhanced-publishing',
+					'social-image-generator',
+					'subscriber-unlimited-imports',
+				],
 			},
 			// TODO: Add Jetpack CRM upsell.
 		],
