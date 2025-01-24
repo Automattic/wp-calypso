@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
@@ -17,6 +16,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import shouldShowLaunchpadFirst from 'calypso/state/selectors/should-show-launchpad-first';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -97,8 +97,13 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		return;
 	}
 
-	if ( config.isEnabled( 'home/launchpad-first' ) ) {
+	if ( shouldShowLaunchpadFirst( site?.options?.site_creation_flow ) ) {
 		window.location.replace( `/home/${ siteSlug }` );
+		return;
+	}
+
+	// Avoid screen flickering when redirecting to other paths
+	if ( ! site?.options ) {
 		return;
 	}
 
