@@ -9,12 +9,6 @@ import SocialIcon from '../assets/jetpack-product-icon-social.svg';
 import VideoPressIcon from '../assets/jetpack-product-icon-videopress.svg';
 import './style.scss';
 
-type JetpackUpsellCardProps = {
-	purchasedProducts: string[];
-	siteSlug?: string | null;
-	upgradeUrls: Record< string, string >;
-};
-
 type Product = {
 	description: string;
 	href: string;
@@ -95,6 +89,12 @@ function useAvailableUpsells() {
 
 	return PRODUCTS;
 }
+
+type JetpackUpsellCardProps = {
+	purchasedProducts: string[];
+	siteSlug?: string | null;
+	upgradeUrls: Record< string, string >;
+};
 
 export function JetpackUpsellCard( {
 	purchasedProducts,
