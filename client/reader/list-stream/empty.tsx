@@ -2,12 +2,8 @@ import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { useDispatch } from 'calypso/state';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 export default function ListEmptyContent(): JSX.Element {
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const queryParams = new URLSearchParams( location.search );
 	const lastPageLink = DOMPurify.sanitize( queryParams.get( 'last_page' ) ?? '' );
@@ -21,12 +17,6 @@ export default function ListEmptyContent(): JSX.Element {
 			history.replaceState( null, '', url );
 		}
 	}, [ lastPageLink ] );
-
-	function onClickActionBtn(): void {
-		recordAction( 'clicked_following_on_empty' );
-		recordGaEvent( 'Clicked Following on EmptyContent' );
-		dispatch( recordReaderTracksEvent( 'calypso_reader_following_on_empty_list_stream_clicked' ) );
-	}
 
 	function lastPageIsUserProfileLists(): boolean {
 		return /^\/read\/users\/[a-z0-9]+\/lists$/.test( lastPageLink );
@@ -43,11 +33,7 @@ export default function ListEmptyContent(): JSX.Element {
 	}
 
 	const action = (
-		<a
-			className="empty-content__action button is-primary"
-			onClick={ onClickActionBtn }
-			href={ getActionBtnLink() }
-		>
+		<a className="empty-content__action button is-primary" href={ getActionBtnLink() }>
 			{ getActionBtnText() }
 		</a>
 	);
