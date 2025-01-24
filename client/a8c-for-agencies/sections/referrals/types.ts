@@ -33,30 +33,3 @@ export interface ReferralAPIResponse {
 	products: ReferralPurchaseAPIResponse[];
 	status: string;
 }
-
-export interface ReferralInvoiceAPIResponse {
-	id: string;
-	metadata: {
-		invalid: string;
-		jetpack_partner_key_id: string;
-		jetpack_partner_type: string;
-		period_end: string;
-		period_start: string;
-		user_id: string;
-	};
-	status: string;
-	amount_due: number;
-	amount_paid: number;
-	amount_remaining: number;
-	products: {
-		wpcom_product_id: string;
-		product_family_slug: string;
-		amount: number;
-	}[];
-}
-
-export interface ReferralInvoice extends ReferralInvoiceAPIResponse {
-	clientId: number;
-	isPaid: boolean;
-	isDue: boolean;
-}

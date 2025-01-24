@@ -357,10 +357,12 @@ export function domainTransfer( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct {
 	return {
 		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
+		...( properties.volume ? { volume: properties.volume } : {} ),
 	};
 }
 

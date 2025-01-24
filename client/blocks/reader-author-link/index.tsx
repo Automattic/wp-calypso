@@ -22,6 +22,7 @@ export interface ReaderLinkAuthor {
 	ID?: number;
 	URL?: string;
 	name?: string;
+	login?: string;
 }
 
 /**
@@ -41,8 +42,8 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 	};
 
 	const authorLinkUrl =
-		isUserProfileEnabled() && author.ID
-			? getUserProfileUrl( author.ID )
+		isUserProfileEnabled() && author.login
+			? getUserProfileUrl( author.login )
 			: props.siteUrl ?? author.URL;
 
 	const authorName = author.name;
