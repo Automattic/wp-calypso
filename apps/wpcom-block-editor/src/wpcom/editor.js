@@ -6,10 +6,8 @@ import './features/fix-coblocks-fonts';
 import './features/reorder-block-categories';
 import './features/tracking';
 import './features/use-classic-block-guide';
-import {
-	RedirectOnboardingUserAfterPublishingPost,
-	RedirectToHomeLaunchpadAfterPublishingPost,
-} from './features/redirect-onboarding-user-after-publishing-post';
+import { OnboardingNextStepAfterPublishingPost } from './features/onboarding-next-step-after-publishing-post';
+import { RedirectOnboardingUserAfterPublishingPost } from './features/redirect-onboarding-user-after-publishing-post';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
 import './editor.scss';
@@ -27,8 +25,8 @@ registerPlugin( 'start-writing-flow', {
 	},
 } );
 
-registerPlugin( 'launchpad-my-home', {
+registerPlugin( 'onboarding-next-step-after-publishing-post', {
 	render() {
-		return <RedirectToHomeLaunchpadAfterPublishingPost />;
+		return <OnboardingNextStepAfterPublishingPost />;
 	},
 } );
