@@ -4,7 +4,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
-import { translate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -13,6 +13,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
+import { useTaskCompletedNotice } from 'calypso/launchpad/hooks/use-task-completed-notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
@@ -126,12 +127,20 @@ const SubscribersPage = ( {
 	sortTermChanged,
 	reloadData,
 }: SubscribersProps ) => {
+	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 
 	const [ giftUserId, setGiftUserId ] = useState( 0 );
 	const [ giftUsername, setGiftUsername ] = useState( '' );
 
 	const siteId = selectedSite?.ID || null;
+
+	useTaskCompletedNotice( {
+		enabled: isEnabled( 'onboarding/newsletter-goal' ),
+		taskSlug: 'start_building_your_audience',
+		noticeId: 'subscribers-page-visited',
+		noticeText: translate( 'Subscribers page visited' ),
+	} );
 
 	const pageArgs = {
 		currentPage: pageNumber,
