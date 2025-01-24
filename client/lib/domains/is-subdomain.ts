@@ -36,7 +36,7 @@ export function isSubdomain( domainName: string, tld?: string ): boolean {
 
 	// If domain doesn't have at least as many parts as the TLD, can't match it.
 	if ( domainParts.length < tldParts.length ) {
-		// Fallback to your original logic
+		// Fallback to list of SLDs logic
 		return getRootDomain( domainName ) !== domainName;
 	}
 
@@ -44,7 +44,7 @@ export function isSubdomain( domainName: string, tld?: string ): boolean {
 	const domainEnding = domainParts.slice( domainParts.length - tldParts.length );
 
 	if ( ! arraysMatch( domainEnding, tldParts ) ) {
-		// If it doesn't actually end with the TLD, fallback to original logic
+		// If it doesn't actually end with the TLD, fallback to list of SLDs logic
 		return getRootDomain( domainName ) !== domainName;
 	}
 
