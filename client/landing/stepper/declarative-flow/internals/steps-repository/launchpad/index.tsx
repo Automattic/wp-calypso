@@ -92,19 +92,19 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
-	if ( launchpadScreenOption === 'skipped' ) {
-		window.location.assign( `/home/${ siteSlug }` );
-		return;
-	}
-
-	if ( shouldShowLaunchpadFirst( site?.options?.site_creation_flow ) ) {
-		window.location.replace( `/home/${ siteSlug }` );
-		return;
-	}
-
 	// Avoid screen flickering when redirecting to other paths
 	if ( ! site?.options ) {
-		return;
+		return null;
+	}
+
+	if ( launchpadScreenOption === 'skipped' ) {
+		window.location.assign( `/home/${ siteSlug }` );
+		return null;
+	}
+
+	if ( shouldShowLaunchpadFirst( site ) ) {
+		window.location.replace( `/home/${ siteSlug }` );
+		return null;
 	}
 
 	return (

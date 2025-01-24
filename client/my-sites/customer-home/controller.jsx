@@ -29,10 +29,7 @@ export default async function renderHome( context, next ) {
 	}
 
 	context.primary = (
-		<CustomerHome
-			key={ site.ID }
-			showLaunchpadFirst={ shouldShowLaunchpadFirst( site?.options?.site_creation_flow ) }
-		/>
+		<CustomerHome key={ site.ID } showLaunchpadFirst={ shouldShowLaunchpadFirst( site ) } />
 	);
 
 	next();
@@ -82,7 +79,7 @@ export async function maybeRedirect( context, next ) {
 
 	const site = getSelectedSite( state );
 
-	if ( shouldShowLaunchpadFirst( site?.options?.site_creation_flow ) ) {
+	if ( shouldShowLaunchpadFirst( site ) ) {
 		return next();
 	}
 
