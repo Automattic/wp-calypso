@@ -233,7 +233,7 @@ export const userLists = ( state = {}, action ) => {
 		case READER_USER_LISTS_RECEIVE:
 			return {
 				...state,
-				[ action.userSlug ]: action.lists,
+				[ action.userLogin ]: action.lists,
 			};
 		default:
 			return state;
@@ -245,12 +245,12 @@ export const isRequestingUserLists = ( state = {}, action ) => {
 		case READER_USER_LISTS_REQUEST:
 			return {
 				...state,
-				[ action.userSlug ]: true,
+				[ action.userLogin ]: true,
 			};
 		case READER_USER_LISTS_RECEIVE:
 			return {
 				...state,
-				[ action.userSlug ]: false,
+				[ action.userLogin ]: false,
 			};
 		default:
 			return state;
