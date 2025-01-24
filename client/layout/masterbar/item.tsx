@@ -216,23 +216,14 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 			disabled: this.props.disabled,
 		};
 
-		const MenuItem = ( props: React.HTMLAttributes< HTMLElement > ) =>
-			this.props.url ? (
-				<a
-					href={ this.props.url }
-					ref={ this.props.innerRef as LegacyRef< HTMLAnchorElement > }
-					{ ...props }
-				/>
-			) : (
-				<button ref={ this.props.innerRef as LegacyRef< HTMLButtonElement > } { ...props } />
-			);
-
 		return (
 			<div
 				className={ clsx( 'masterbar__item-wrapper', this.props.wrapperClassName ) }
 				ref={ this.wrapperRef }
 			>
 				<MenuItem
+					url={ this.props.url }
+					innerRef={ this.props.innerRef }
 					{ ...attributes }
 					onKeyDown={ this.props.subItems && this.toggleMenuByKey }
 					onTouchEnd={ this.props.subItems && this.toggleMenuByTouch }
@@ -248,3 +239,16 @@ class MasterbarItem extends Component< MasterbarItemProps > {
 export default forwardRef< HTMLButtonElement | HTMLAnchorElement, MasterbarItemProps >(
 	( props, ref ) => <MasterbarItem innerRef={ ref } { ...props } />
 );
+
+type MenuItemProps< R > = {
+	url?: string;
+	innerRef?: R;
+} & React.HTMLAttributes< HTMLElement >;
+
+function MenuItem< R >( { url, innerRef, ...props }: MenuItemProps< R > ) {
+	return url ? (
+		<a href={ url } ref={ innerRef as LegacyRef< HTMLAnchorElement > } { ...props } />
+	) : (
+		<button ref={ innerRef as LegacyRef< HTMLButtonElement > } { ...props } />
+	);
+}
