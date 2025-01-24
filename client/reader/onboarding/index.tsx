@@ -45,9 +45,9 @@ const ReaderOnboarding = ( {
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
 
-	const taskOneCompleted = followedTags !== null && followedTags.length > 2;
-	const taskTwoCompleted = follows?.length > 2;
-	const taskThreeCompleted = !! (
+	const hasFollowedTags = followedTags !== null && followedTags.length > 2;
+	const hasFollowedSites = follows?.length > 2;
+	const hasCompletedProfile = !! (
 		userSettings?.has_gravatar &&
 		userSettings?.description &&
 		userSettings?.first_name &&
@@ -55,7 +55,7 @@ const ReaderOnboarding = ( {
 	);
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && taskOneCompleted && taskTwoCompleted && taskThreeCompleted ) {
+	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && hasCompletedProfile ) {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	}
@@ -153,15 +153,15 @@ const ReaderOnboarding = ( {
 			id: 'select-interests',
 			title: translate( 'Select some of your interests' ),
 			actionDispatch: openInterestsModal,
-			completed: taskOneCompleted,
+			completed: hasFollowedTags,
 			disabled: false,
 		},
 		{
 			id: 'discover-sites',
 			title: translate( "Discover and subscribe to sites you'll love" ),
 			actionDispatch: openDiscoverModal,
-			completed: taskTwoCompleted,
-			disabled: ! taskOneCompleted,
+			completed: hasFollowedSites,
+			disabled: ! hasFollowedSites && ! hasFollowedTags,
 		},
 		{
 			id: 'account-profile',
@@ -169,8 +169,8 @@ const ReaderOnboarding = ( {
 				? translate( 'Fill out your profile' )
 				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: redirectToAccountProfile,
-			completed: taskThreeCompleted,
-			disabled: ! taskOneCompleted || ! taskTwoCompleted,
+			completed: hasCompletedProfile,
+			disabled: ! hasCompletedProfile && ( ! hasFollowedTags || ! hasFollowedSites ),
 		},
 	];
 
