@@ -139,7 +139,7 @@ const SubscribersPage = ( {
 		enabled: isEnabled( 'onboarding/newsletter-goal' ),
 		taskSlug: 'start_building_your_audience',
 		noticeId: 'subscribers-page-visited',
-		noticeText: translate( 'Subscribers page visited' ),
+		noticeText: translate( 'Explored subscriber settings' ),
 	} );
 
 	const pageArgs = {
