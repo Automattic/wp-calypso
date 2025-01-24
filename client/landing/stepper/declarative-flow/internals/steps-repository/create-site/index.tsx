@@ -211,13 +211,19 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
+
+		let siteTitle = urlData?.meta.title || selectedSiteTitle;
+		if ( ! siteTitle.length ) {
+			siteTitle = domainItem.domain_name.split( '.' )[ 0 ];
+		}
+
 		const site = await createSiteWithCart(
 			flow,
 			true,
 			isPaidDomainItem,
 			theme,
 			siteVisibility,
-			urlData?.meta.title ?? selectedSiteTitle,
+			siteTitle,
 			// We removed the color option during newsletter onboarding.
 			// But backend still expects/needs a value, so supplying the default.
 			// Ideally should remove this and update code downstream to handle this.
