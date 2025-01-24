@@ -104,6 +104,7 @@ export function requestPostComments( {
 			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
+			author_wpcom_data: true, // For self hosted Jetpack sites include wpcom author data if available.
 		},
 	};
 }

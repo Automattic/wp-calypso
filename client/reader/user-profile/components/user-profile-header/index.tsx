@@ -16,8 +16,7 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
-	const userId = user.ID;
-	const userProfileUrl = getUserProfileUrl( Number( userId ) );
+	const userProfileUrl = getUserProfileUrl( user.user_login ?? '' );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
