@@ -3,7 +3,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
-import { CardHeader, Button, Flex } from '@wordpress/components';
+import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
@@ -96,11 +96,16 @@ const ChatEllipsisMenu = () => {
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
 				</button>
 				<button onClick={ toggleSoundNotifications }>
-					<Gridicon icon="speaker" />
 					<div>
-						{ areSoundNotificationsEnabled
-							? __( 'Sound off', __i18n_text_domain__ )
-							: __( 'Sound on', __i18n_text_domain__ ) }
+						<ToggleControl
+							className="conversation-menu__notification-toggle"
+							label={ __( 'Notification sound', __i18n_text_domain__ ) }
+							checked={ areSoundNotificationsEnabled }
+							onChange={ ( newValue ) => {
+								setAreSoundNotificationsEnabled( newValue );
+							} }
+							__nextHasNoMarginBottom
+						/>
 					</div>
 				</button>
 			</div>

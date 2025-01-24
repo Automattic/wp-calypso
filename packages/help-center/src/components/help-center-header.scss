@@ -100,6 +100,7 @@
 
 	svg {
 		fill: var(--studio-gray-70);
+		padding: 0 4px;
 	}
 
 	:hover, :focus {
@@ -109,6 +110,19 @@
 		svg {
 			fill: var(--studio-white);
 		}
+
+		.conversation-menu__notification-toggle {
+			.components-form-toggle {
+				&.is-checked {
+					.components-form-toggle__track {
+						background-color: var(--studio-white);
+					}
+				}
+				.components-form-toggle__thumb {
+					background-color: $help-center-blue;
+				}
+			}
+		}
 	}
 
 	button {
@@ -116,7 +130,7 @@
 		align-items: center;
 		width: 100%;
 		cursor: pointer;
-		gap: 4px;
+		gap: 8px;
 		color: var(--studio-gray-70);
 		border: none;
 		background: unset;
@@ -125,6 +139,15 @@
 		div {
 			margin-bottom: 2px;
 			font-size: 0.875rem;
+		}
+	}
+
+	.conversation-menu__notification-toggle {
+		.components-form-toggle.is-checked {
+			.components-form-toggle__track {
+				background-color: $help-center-blue;
+				border-color: $help-center-blue;
+			}
 		}
 	}
 }
