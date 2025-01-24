@@ -5,7 +5,7 @@ import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { translate, useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -135,8 +135,12 @@ const SubscribersPage = ( {
 
 	const siteId = selectedSite?.ID || null;
 
+	const initiallyLoadedWithTaskCompletionHash = useRef(
+		window.location.hash === '#building-your-audience-task'
+	);
+
 	useTaskCompletedNotice( {
-		enabled: isEnabled( 'onboarding/newsletter-goal' ),
+		enabled: initiallyLoadedWithTaskCompletionHash.current,
 		taskSlug: 'start_building_your_audience',
 		noticeId: 'subscribers-page-visited',
 		noticeText: translate( 'Explored subscriber settings' ),
