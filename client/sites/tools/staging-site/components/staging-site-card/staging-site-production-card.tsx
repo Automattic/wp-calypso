@@ -10,7 +10,7 @@ import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { getSiteSlug, getSiteUrl } from 'calypso/state/sites/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
@@ -50,6 +50,8 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	} = useProductionSiteDetail( siteId, {
 		enabled: ! disabled,
 	} );
+
+	const productionSiteSlug = useSelector( ( state ) => getSiteSlug( state, productionSite?.id ) );
 
 	useEffect( () => {
 		if ( loadingError ) {
@@ -111,7 +113,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => showSitesPage( `/overview/${ productionSite.id }` ) }
+						onClick={ () => showSitesPage( `/overview/${ productionSiteSlug }` ) }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
