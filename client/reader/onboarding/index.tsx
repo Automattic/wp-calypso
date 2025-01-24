@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { translate } from 'i18n-calypso';
@@ -109,7 +110,7 @@ const ReaderOnboarding = ( {
 
 	const redirectToAccountProfile = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
-		window.location.href = '/me';
+		page( '/me' );
 	};
 
 	// Track if user viewed Reader Onboarding.
