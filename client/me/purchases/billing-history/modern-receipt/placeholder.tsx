@@ -7,15 +7,12 @@ export function ReceiptPlaceholder() {
 
 	return (
 		<Main wideLayout className="receipt">
-			<Card className="receipt__content is-placeholder">
-				<div className="receipt__header">
-					<div
-						className="receipt__placeholder-title"
-						aria-label={ translate( 'Loading receipt' ) }
-					/>
+			<Card className="content is-placeholder">
+				<div className="header">
+					<div className="placeholder-title" aria-label={ translate( 'Loading receipt' ) } />
 				</div>
-				<div className="receipt__body">
-					<div className="receipt__placeholder-content" />
+				<div className="body">
+					<div className="placeholder-content" />
 				</div>
 			</Card>
 		</Main>

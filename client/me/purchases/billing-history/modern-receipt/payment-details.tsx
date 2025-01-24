@@ -14,11 +14,11 @@ export function PaymentDetails( { transaction }: PaymentDetailsProps ) {
 	}
 
 	return (
-		<div className="receipt__payment-details">
-			<div className="receipt__label">{ translate( 'Payment method' ) }</div>
-			<div className="receipt__payment-details-content">
+		<div className="payment-details">
+			<div className="label">{ translate( 'Payment method' ) }</div>
+			<div className="payment-details-content">
 				{ transaction.cc_display_brand !== 'Not Stored' && transaction.cc_num !== 'XXXX' && (
-					<div className="receipt__payment-brand">
+					<div className="payment-brand">
 						{ translate( '%(cardType)s ending in %(cardNum)s', {
 							args: {
 								cardType: transaction.cc_display_brand ?? transaction.cc_type,
@@ -28,7 +28,7 @@ export function PaymentDetails( { transaction }: PaymentDetailsProps ) {
 					</div>
 				) }
 				{ transaction.cc_name !== 'Not Stored' && (
-					<div className="receipt__payment-name">{ transaction.cc_name }</div>
+					<div className="payment-name">{ transaction.cc_name }</div>
 				) }
 			</div>
 		</div>

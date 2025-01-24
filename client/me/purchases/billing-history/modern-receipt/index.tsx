@@ -61,7 +61,7 @@ export default function ModernReceipt( { transactionId }: ReceiptProps ) {
 			{ isLoading && <ReceiptPlaceholder /> }
 
 			{ transactionError && (
-				<Card className="receipt__error">
+				<Card className="error">
 					<p>{ translate( "Sorry, we couldn't load this receipt. Please try again later." ) }</p>
 					<Button href={ billingHistory } variant="primary">
 						{ translate( 'Return to Billing History' ) }
@@ -71,17 +71,17 @@ export default function ModernReceipt( { transactionId }: ReceiptProps ) {
 
 			{ ! isLoading && ! transactionError && transaction && (
 				<>
-					<div className="receipt__page-header">
-						<div className="receipt__breadcrumbs">
-							<a href={ billingHistory } className="receipt__back-link">
+					<div className="page-header">
+						<div className="breadcrumbs">
+							<a href={ billingHistory } className="back-link">
 								{ translate( 'Receipts' ) }
 							</a>
 						</div>
-						<div className="receipt__title-bar">
-							<h1 className="receipt__title">
+						<div className="title-bar">
+							<h1 className="title">
 								{ translate( 'Receipt %(id)s', { args: { id: transactionId } } ) }
 							</h1>
-							<div className="receipt__actions">
+							<div className="actions">
 								<Button variant="primary" onClick={ handlePrint }>
 									{ translate( 'Print Receipt' ) }
 								</Button>

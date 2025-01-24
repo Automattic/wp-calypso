@@ -22,47 +22,45 @@ export function ReceiptLineItems( { transaction }: ReceiptLineItemsProps ) {
 	return (
 		<>
 			{ items.map( ( item ) => (
-				<tr key={ item.id } className="receipt__item">
-					<td className="receipt__item-details">
-						<div className="receipt__item-name">{ item.variation }</div>
-						<div className="receipt__item-type">({ item.type_localized })</div>
+				<tr key={ item.id } className="item">
+					<td className="item-details">
+						<div className="item-name">{ item.variation }</div>
+						<div className="item-type">({ item.type_localized })</div>
 						{ getTransactionTermLabel( item, translate ) && (
-							<div className="receipt__item-term">
-								{ getTransactionTermLabel( item, translate ) }
-							</div>
+							<div className="item-term">{ getTransactionTermLabel( item, translate ) }</div>
 						) }
-						{ item.domain && <div className="receipt__item-domain">{ item.domain }</div> }
+						{ item.domain && <div className="item-domain">{ item.domain }</div> }
 						{ item.licensed_quantity && (
-							<div className="receipt__item-quantity">
+							<div className="item-quantity">
 								{ renderTransactionQuantitySummary( item, translate ) }
 							</div>
 						) }
 						{ isTransactionJetpackSearch10kTier( item ) && (
-							<div className="receipt__item-tier">
+							<div className="item-tier">
 								{ renderJetpackSearch10kTierBreakdown( item, item.subtotal_integer, translate ) }
 							</div>
 						) }
 						{ item.volume && (
-							<div className="receipt__item-volume">
+							<div className="item-volume">
 								{ renderDomainTransactionVolumeSummary( item, translate ) }
 							</div>
 						) }
 					</td>
-					<td className="receipt__amount">
+					<td className="amount">
 						{ formatCurrency( item.amount_integer, item.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
 						} ) }
 						{ transaction.credit && (
-							<span className="receipt__refund-badge">{ translate( 'Refund' ) }</span>
+							<span className="credit-badge">{ translate( 'Refund' ) }</span>
 						) }
 					</td>
 				</tr>
 			) ) }
 			{ transactionIncludesTax( transaction ) && (
-				<tr className="receipt__tax">
+				<tr className="tax">
 					<td>{ translate( 'Tax' ) }</td>
-					<td className="receipt__amount">
+					<td className="amount">
 						{ formatCurrency( transaction.tax_integer, transaction.currency, {
 							isSmallestUnit: true,
 							stripZeros: true,
