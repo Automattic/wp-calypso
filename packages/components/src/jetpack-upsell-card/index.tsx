@@ -102,7 +102,6 @@ export function JetpackUpsellCard( {
 	const visibleProducts = PRODUCTS.filter(
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
-
 	const hasProductsToUpsell = visibleProducts.length > 0;
 
 	return ! hasProductsToUpsell ? null : (
