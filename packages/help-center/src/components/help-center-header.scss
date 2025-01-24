@@ -103,6 +103,18 @@
 		padding: 0 4px;
 	}
 
+	.conversation-menu__clear-conversation {
+		&:hover, &:focus {
+			background-color: $help-center-blue;
+			color: var(--studio-white);
+
+			svg {
+				fill: var(--studio-white);
+			}
+
+		}
+	}
+
 	button {
 		display: flex;
 		align-items: center;
@@ -121,11 +133,16 @@
 	}
 
 	.conversation-menu__notification-toggle {
+
 		.components-form-toggle.is-checked {
 			.components-form-toggle__track {
 				background-color: $help-center-blue;
 				border-color: $help-center-blue;
 			}
+		}
+
+		&:hover label {
+			cursor: initial;
 		}
 	}
 }

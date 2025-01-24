@@ -99,7 +99,7 @@ const ChatEllipsisMenu = () => {
 			trackEventProps={ { source: 'help_center' } }
 		>
 			<div className="conversation-menu__wrapper">
-				<button onClick={ clearChat }>
+				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
 					<Icon icon={ comment } />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
 				</button>
