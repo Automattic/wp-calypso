@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
@@ -93,6 +94,11 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	if ( launchpadScreenOption === 'skipped' ) {
 		window.location.assign( `/home/${ siteSlug }` );
+		return;
+	}
+
+	if ( config.isEnabled( 'home/launchpad-first' ) ) {
+		window.location.replace( `/home/${ siteSlug }` );
 		return;
 	}
 
