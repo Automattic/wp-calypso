@@ -80,6 +80,12 @@ export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 		isChatLoaded,
 	} ) as const;
 
+export const setAreSoundNotificationsEnabled = ( areSoundNotificationsEnabled: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED',
+		areSoundNotificationsEnabled,
+	} ) as const;
+
 export const setZendeskClientId = ( zendeskClientId: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ZENDESK_CLIENT_ID',
@@ -174,6 +180,7 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setIsChatLoaded
+			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText

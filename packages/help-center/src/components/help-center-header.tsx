@@ -1,12 +1,19 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
-import { CardHeader, Button, Flex } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
-import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
+import {
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	commentContent,
+	page,
+	Icon,
+	comment,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
@@ -66,11 +73,23 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
+	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+		};
+	}, [] );
+	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	};
+
+	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.stopPropagation();
+		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
 	return (
@@ -79,10 +98,23 @@ const ChatEllipsisMenu = () => {
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
 		>
-			<div className="clear-conversation__wrapper">
-				<button onClick={ clearChat }>
-					<Gridicon icon="comment" />
+			<div className="conversation-menu__wrapper">
+				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+					<Icon icon={ comment } />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+				</button>
+				<button onClick={ toggleSoundNotifications }>
+					<div>
+						<ToggleControl
+							className="conversation-menu__notification-toggle"
+							label={ __( 'Notification sound', __i18n_text_domain__ ) }
+							checked={ areSoundNotificationsEnabled }
+							onChange={ ( newValue ) => {
+								setAreSoundNotificationsEnabled( newValue );
+							} }
+							__nextHasNoMarginBottom
+						/>
+					</div>
 				</button>
 			</div>
 		</EllipsisMenu>

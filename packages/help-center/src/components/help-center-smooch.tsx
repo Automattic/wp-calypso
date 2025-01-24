@@ -36,9 +36,33 @@ const initSmooch = ( {
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
 		embedded: true,
+		soundNotificationEnabled: false,
 		externalId,
 		jwt,
 	} );
+};
+
+const playNotificationSound = () => {
+	// @ts-expect-error expected because of fallback webkitAudioContext
+	const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
+
+	const duration = 0.7;
+	const oscillator = audioContext.createOscillator();
+	const gainNode = audioContext.createGain();
+
+	// Configure oscillator
+	oscillator.type = 'sine';
+	oscillator.frequency.setValueAtTime( 660, audioContext.currentTime );
+
+	// Configure gain for a smoother fade-out
+	gainNode.gain.setValueAtTime( 0.3, audioContext.currentTime );
+	gainNode.gain.exponentialRampToValueAtTime( 0.001, audioContext.currentTime + duration );
+
+	// Connect & start
+	oscillator.connect( gainNode );
+	gainNode.connect( audioContext.destination );
+	oscillator.start();
+	oscillator.stop( audioContext.currentTime + duration );
 };
 
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
@@ -48,13 +72,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 		'messenger'
 	);
 	const smoochRef = useRef< HTMLDivElement >( null );
-	const { isHelpCenterShown, isChatLoaded } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
-			isChatLoaded: helpCenterSelect.getIsChatLoaded(),
-		};
-	}, [] );
+	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled } = useSelect(
+		( select ) => {
+			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+			return {
+				isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+				isChatLoaded: helpCenterSelect.getIsChatLoaded(),
+				areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+			};
+		},
+		[]
+	);
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
@@ -66,13 +94,17 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	const getUnreadListener = useCallback(
 		( message: ZendeskMessage, data: { conversation: { id: string } } ) => {
+			if ( areSoundNotificationsEnabled ) {
+				playNotificationSound();
+			}
+
 			if ( isHelpCenterShown ) {
 				return;
 			}
 
 			Smooch.getConversationById( data?.conversation?.id ).then( () => getUnreadNotifications() );
 		},
-		[ isHelpCenterShown ]
+		[ isHelpCenterShown, areSoundNotificationsEnabled ]
 	);
 
 	const clientIdListener = useCallback(
