@@ -47,11 +47,6 @@ const ReaderOnboarding = ( {
 		userSettings?.first_name &&
 		userSettings?.last_name
 	);
-	let accountProfileTitle = translate( 'Add your avatar and fill out your profile' );
-	if ( ! hasCompletedAccountProfile && userSettings?.has_gravatar ) {
-		accountProfileTitle = translate( 'Fill out your profile' );
-	}
-
 	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
 	const taskTwoCompleted = follows?.length > 2;
 
@@ -173,7 +168,9 @@ const ReaderOnboarding = ( {
 		},
 		{
 			id: 'account-profile',
-			title: accountProfileTitle,
+			title: userSettings?.has_gravatar
+				? translate( 'Fill out your profile' )
+				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: redirectToAccountProfile,
 			completed: hasCompletedAccountProfile,
 			disabled: ! taskTwoCompleted,
