@@ -6,7 +6,10 @@ import './features/fix-coblocks-fonts';
 import './features/reorder-block-categories';
 import './features/tracking';
 import './features/use-classic-block-guide';
-import { RedirectOnboardingUserAfterPublishingPost } from './features/redirect-onboarding-user-after-publishing-post';
+import {
+	RedirectOnboardingUserAfterPublishingPost,
+	RedirectToHomeLaunchpadAfterPublishingPost,
+} from './features/redirect-onboarding-user-after-publishing-post';
 import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-search-term';
 import './features/site-editor-env-consistency';
 import './editor.scss';
@@ -21,5 +24,11 @@ registerPlugin( 'track-inserter-menu-events', {
 registerPlugin( 'start-writing-flow', {
 	render() {
 		return <RedirectOnboardingUserAfterPublishingPost />;
+	},
+} );
+
+registerPlugin( 'launchpad-my-home', {
+	render() {
+		return <RedirectToHomeLaunchpadAfterPublishingPost />;
 	},
 } );
