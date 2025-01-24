@@ -38,8 +38,8 @@
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^5.8.0",
-		"@wordpress/react-i18n": "^4.8.0",
+		"@wordpress/i18n": "^5.16.0",
+		"@wordpress/react-i18n": "^4.16.0",
 		"debug": "^4.3.3",
 		"prop-types": "^15.7.2"
 	},
