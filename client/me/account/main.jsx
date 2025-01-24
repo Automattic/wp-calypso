@@ -559,7 +559,11 @@ class Account extends Component {
 
 		if ( this.state.redirect ) {
 			await clearStore();
+
+			// Sometimes changes in settings require a url refresh to update the UI.
+			// For example when the user changes the language.
 			window.location = this.state.redirect + '?updated=success';
+
 			return;
 		}
 
