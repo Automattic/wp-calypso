@@ -173,7 +173,7 @@ const ReaderOnboarding = ( {
 				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: redirectToAccountProfile,
 			completed: hasCompletedAccountProfile,
-			disabled: ! taskTwoCompleted,
+			disabled: ! taskOneCompleted || ! taskTwoCompleted,
 		},
 	];
 
