@@ -1,37 +1,22 @@
-import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 export default function ListEmptyContent(): JSX.Element {
 	const translate = useTranslate();
-	const [ lastPageLink, setLastPageLink ] = useState< string >( '' );
+	const previousRoute: string = useSelector( getPreviousRoute );
 
-	useEffect( (): void => {
-		const queryParams = new URLSearchParams( location.search );
-		const lastPageParam = DOMPurify.sanitize( queryParams.get( 'last_page' ) ?? '' );
-
-		setLastPageLink( lastPageParam );
-
-		// For clean URL remove last_page query param.
-		if ( lastPageParam ) {
-			const url = new URL( window.location.href );
-
-			url.searchParams.delete( 'last_page' );
-			history.replaceState( null, '', url );
-		}
-	}, [] );
-
-	function lastPageIsUserProfileLists(): boolean {
-		return /^\/read\/users\/[a-z0-9]+\/lists$/.test( lastPageLink );
+	function previousRouteIsUserProfileLists(): boolean {
+		return /^\/read\/users\/[a-z0-9]+\/lists$/.test( previousRoute );
 	}
 
 	function getActionBtnLink(): string {
-		return lastPageIsUserProfileLists() ? lastPageLink : '/read';
+		return previousRouteIsUserProfileLists() ? previousRoute : '/read';
 	}
 
 	function getActionBtnText(): string {
-		return lastPageIsUserProfileLists()
+		return previousRouteIsUserProfileLists()
 			? translate( 'Back to User Profile' )
 			: translate( 'Back to Following' );
 	}

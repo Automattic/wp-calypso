@@ -6,7 +6,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import { List } from 'calypso/reader/list-manage/types';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
-import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { requestUserLists } from 'calypso/state/reader/lists/actions';
 
 interface AppState {
@@ -28,7 +27,7 @@ interface UserListsProps {
 const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
-	const userLogin = user.user_login ?? '';
+	const userLogin = user.user_login;
 
 	useEffect( () => {
 		if ( ! hasRequested && requestUserLists && userLogin ) {
@@ -55,8 +54,6 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 		);
 	}
 
-	const userProfileListsUrl = `${ getUserProfileUrl( userLogin ) }/lists`;
-
 	return (
 		<div className="user-profile__lists">
 			<UserProfileHeader user={ user } />
@@ -64,7 +61,7 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 				{ lists.map( ( list: List ) => (
 					<a
 						className="user-profile__lists-body-link"
-						href={ `/read/list/${ list.owner }/${ list.slug }?last_page=${ userProfileListsUrl }` }
+						href={ `/read/list/${ list.owner }/${ list.slug }` }
 						key={ list.ID }
 					>
 						<div className="card reader-post-card is-compact is-clickable">
