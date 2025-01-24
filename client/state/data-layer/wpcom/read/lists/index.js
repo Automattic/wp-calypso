@@ -163,14 +163,14 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				http(
 					{
 						method: 'GET',
-						path: `/read/lists/${ action.userSlug }`,
+						path: `/read/lists/${ action.userLogin }`,
 						apiVersion: '1',
 					},
 					action
 				),
 			onSuccess: ( action, apiResponse ) => ( {
 				type: READER_USER_LISTS_RECEIVE,
-				userSlug: action.userSlug,
+				userLogin: action.userLogin,
 				lists: apiResponse?.lists,
 			} ),
 			onError: () => noop,
