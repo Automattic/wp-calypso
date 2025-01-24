@@ -33,28 +33,6 @@ export const remoteValuesSchema = {
 			minimum: 0,
 			maximum: 1,
 		},
-		colorScheme: {
-			type: 'string',
-			enum: [
-				'aquatic',
-				'blue',
-				'classic-blue',
-				'classic-bright',
-				'classic-dark',
-				'coffee',
-				'contrast',
-				'ectoplasm',
-				'light',
-				'midnight',
-				'modern',
-				'nightfall',
-				'ocean',
-				'powder-snow',
-				'sakura',
-				'sunrise',
-				'sunset',
-			],
-		},
 		'upwork-dismissible-banner': {
 			type: 'object',
 			'^[a-z-]+$': {

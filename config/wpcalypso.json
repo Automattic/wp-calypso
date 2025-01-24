@@ -44,7 +44,6 @@
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
-		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,

@@ -7,7 +7,6 @@ import { withCurrentRoute } from 'calypso/components/route';
 import LayoutLoader from 'calypso/layout/loader';
 import OfflineStatus from 'calypso/layout/offline-status';
 import { isOffline } from 'calypso/state/application/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 
 class Layout extends Component {
@@ -16,7 +15,6 @@ class Layout extends Component {
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
-		colorSchemePreference: PropTypes.string,
 		currentLayoutFocus: PropTypes.string,
 		isOffline: PropTypes.bool,
 	};
@@ -55,7 +53,6 @@ export default withCurrentRoute(
 	connect( ( state ) => {
 		return {
 			isOffline: isOffline( state ),
-			colorSchemePreference: getPreference( state, 'colorScheme' ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	} )( Layout )

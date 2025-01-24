@@ -31,10 +31,10 @@ describe( 'selectors', () => {
 						remoteValues: {},
 					},
 				},
-				'colorScheme'
+				'recentSites'
 			);
 
-			expect( preference ).toEqual( 'default' );
+			expect( preference ).toEqual( [] );
 		} );
 
 		test( 'should return the remote value if local does not contain key', () => {

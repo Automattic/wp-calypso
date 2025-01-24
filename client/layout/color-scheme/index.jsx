@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { getAdminColor } from 'calypso/state/admin-color/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function getColorScheme( { state, isGlobalSidebarVisible, sectionName } ) {
@@ -10,11 +9,10 @@ export function getColorScheme( { state, isGlobalSidebarVisible, sectionName } )
 	if ( sectionName === 'checkout' ) {
 		return null;
 	}
-	const calypsoColorScheme = getPreference( state, 'colorScheme' );
 	const siteId = getSelectedSiteId( state );
 	const siteColorScheme = getAdminColor( state, siteId );
 
-	return siteColorScheme ?? calypsoColorScheme;
+	return siteColorScheme ?? 'default';
 }
 
 export function getColorSchemeFromCurrentQuery( currentQuery, defaultColorScheme = 'default' ) {

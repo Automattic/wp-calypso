@@ -91,5 +91,3 @@ All of the above has been systematized with WordPress.com’s dashboard color sc
 New color schemes overwrite the theme properties defined by the [default theme](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/calypso-color-schemes/src/shared/color-schemes/_default.scss) called Classic Bright. Not every single property has to be redefined by a new scheme, but please remember to include the `-rgb` counterpart for each overwritten theme property.
 
 Each color scheme lives in a [separate file](https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-color-schemes/src/shared/color-schemes) and is [referenced](https://github.com/Automattic/wp-calypso/blob/HEAD/packages/calypso-color-schemes/src/calypso-color-schemes.scss) by the `calypso-color-schemes` entry file.
-
-When creating a [thumbnail](https://github.com/Automattic/wp-calypso/tree/HEAD/static/images/color-schemes) representing a scheme, please use the exact same color values for all corresponding elements.
