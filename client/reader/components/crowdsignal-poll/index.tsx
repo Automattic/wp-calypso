@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import ErrorBoundary from './error-boundary';
 import CrowdsignalPollComponent from './main';
@@ -13,6 +13,7 @@ const READER_CROWDSIGNAL_POLL_VIEWED_PREFERENCE = 'reader-crowdsignal-poll-viewe
 const CrowdsignalPoll = () => {
 	const dispatch = useDispatch();
 
+	const remotePrefsLoaded = useSelector( hasReceivedRemotePreferences );
 	const isAutomattician = useSelector( isA8cTeamMember );
 	const hasViewedPollPref = useSelector( ( state ): boolean | undefined | null =>
 		getPreference( state, READER_CROWDSIGNAL_POLL_VIEWED_PREFERENCE )
@@ -25,7 +26,7 @@ const CrowdsignalPoll = () => {
 		}
 	}, [ dispatch ] );
 
-	if ( hasViewedPoll.current || isAutomattician ) {
+	if ( ( remotePrefsLoaded && hasViewedPoll.current ) || isAutomattician ) {
 		return null;
 	}
 
