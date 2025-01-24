@@ -38,6 +38,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
+	hasUserEverEscalatedToHumanSupport: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
