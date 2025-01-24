@@ -9,17 +9,4 @@
 	&.is-indented {
 		margin-left: 24px;
 	}
-
-	button.is-borderless {
-		color: var(--color-primary);
-		font-size: inherit;
-		font-style: inherit;
-		font-weight: inherit;
-		line-height: inherit;
-		padding: 0;
-	}
-
-	button.is-borderless:hover {
-		color: var(--color-link-dark);
-	}
 }
