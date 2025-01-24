@@ -189,7 +189,10 @@ const getEmailForwardMenuItems = ( { mailbox, removeEmailForward, translate } ) 
 					mailbox: mailbox.mailbox,
 				} );
 
-				removeEmailForward( mailbox );
+				removeEmailForward( {
+					mailbox: mailbox.mailbox,
+					destination: getEmailForwardAddress( mailbox ),
+				} );
 			},
 			key: `remove_forward:${ mailbox.mailbox }`,
 			title: translate( 'Remove email forward', {

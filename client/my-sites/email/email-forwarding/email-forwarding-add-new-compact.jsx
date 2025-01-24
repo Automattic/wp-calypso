@@ -26,7 +26,9 @@ function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 	return (
 		<>
 			<FormFieldset key={ index }>
-				<FormLabel>{ translate( 'Will be forwarded to this email address' ) }</FormLabel>
+				{ index === 0 && (
+					<FormLabel>{ translate( 'Will be forwarded to these email addresses' ) }</FormLabel>
+				) }
 				<FormTextInput
 					disabled={ disabled }
 					onChange={ handleChange }

@@ -18,7 +18,7 @@ export default function EmailForwardHeader( { className, children, actionPath }:
 					<span className="section-header__label-text">{ translate( 'Email forwards' ) }</span>
 				</div>
 				<div className="section-header__label destination">
-					<span className="section-header__label-text">{ translate( 'Destination' ) }</span>
+					<span className="section-header__label-text">{ translate( 'Destination(s)' ) }</span>
 				</div>
 				<div className="section-header__actions">
 					{ actionPath && (

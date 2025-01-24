@@ -9,6 +9,12 @@ export type EmailAccountEmail = {
 	warnings: Warning[];
 };
 
+export type AlterDestinationParams = {
+	mailbox: string;
+	destination: string;
+	domain: string;
+};
+
 type EmailAccountDomain = {
 	domain: string;
 	is_primary: boolean;
@@ -45,4 +51,11 @@ export type Mailbox = {
 	mailbox: string;
 	warnings?: Warning[];
 	temporary?: boolean;
+	target: string;
+};
+
+export type MailboxesCluster = {
+	mailboxes: Mailbox[];
+	mailbox: string;
+	domain: string;
 };

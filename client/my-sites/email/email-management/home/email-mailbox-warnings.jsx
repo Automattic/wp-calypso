@@ -53,8 +53,7 @@ const EmailMailboxReverifyWarning = ( { mailbox, ctaProps } ) => {
 							mailbox: mailbox.mailbox,
 						}
 					);
-
-					resendVerificationEmail( mailbox, destination );
+					resendVerificationEmail( { mailbox: mailbox.mailbox, destination } );
 				} }
 				{ ...ctaProps }
 			/>

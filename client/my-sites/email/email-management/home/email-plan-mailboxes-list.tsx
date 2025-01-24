@@ -13,17 +13,18 @@ import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/emai
 import EmailForwardHeader from './email-plan-mailboxes/email-forward-header';
 import EmailForwardSecondaryDetails from './email-plan-mailboxes/email-forward-secondary-details';
 import EmailUpgradeNotice from './email-plan-mailboxes/email-upgrade-notice';
+import MailboxListCluster from './email-plan-mailboxes/list-cluster';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
 import MailboxLink from './email-plan-mailboxes/list-item-link';
-import type { EmailAccount, Mailbox } from 'calypso/data/emails/types';
+import type { EmailAccount, MailboxesCluster } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 type Props = {
 	context: 'domains' | 'email' | 'hosting-overview';
 	domain: ResponseDomain;
 	account: EmailAccount;
-	mailboxes: Mailbox[];
+	mailboxes: MailboxesCluster[];
 	actionPathProps?: {
 		disabled: boolean;
 		path: string;
@@ -35,7 +36,7 @@ function EmailPlanMailboxesList( {
 	context,
 	domain,
 	account,
-	mailboxes,
+	mailboxes: clusters,
 	actionPathProps,
 	purchaseNewEmailAccountPath,
 	isLoadingEmails,
@@ -44,7 +45,7 @@ function EmailPlanMailboxesList( {
 	const accountType = account?.account_type;
 
 	const isDesktopResolution = useDesktopBreakpoint();
-	const isNoMailboxes = ! mailboxes || mailboxes.length < 1;
+	const isNoMailboxes = ! clusters || clusters.length < 1;
 	const isAccountWarningPresent = !! account?.warnings.length;
 	const isGoogleConfiguring =
 		isRecentlyRegistered( domain.registrationDate, 45 ) &&
@@ -85,55 +86,69 @@ function EmailPlanMailboxesList( {
 		);
 	}
 
-	function MailboxItems() {
-		return mailboxes.map( ( mailbox ) => {
-			const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
-			const showErrorStyling = context === 'email' && mailboxHasWarnings;
-
+	function MailboxItems( { shouldCluster = false } ) {
+		return clusters.map( ( cluster ) => {
+			const mailboxHasWarnings = cluster.mailboxes.some( ( mailbox ) => mailbox?.warnings?.length );
 			return (
-				<>
-					<MailboxListItem key={ mailbox.mailbox } isError={ showErrorStyling }>
-						<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-							<MailboxLink
-								account={ account }
-								mailbox={ mailbox }
-								readonly={ isGoogleConfiguring }
-							/>
-							{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
-						</div>
-						{ ( context === 'domains' || context === 'hosting-overview' ) && (
-							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-								<EmailForwardSecondaryDetails
-									mailbox={ mailbox }
-									hideIcon={ isDesktopResolution }
-								/>
-								{ mailboxHasWarnings && (
-									<div className="email-mailbox-warnings">
-										<EmailMailboxWarnings
-											account={ account }
+				<MailboxListCluster
+					cluster={ cluster }
+					isError={ mailboxHasWarnings }
+					key={ cluster.mailbox }
+					shouldCluster={ shouldCluster }
+				>
+					{ cluster.mailboxes.map( ( mailbox ) => {
+						const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
+						const showErrorStyling = context === 'email' && mailboxHasWarnings;
+
+						return (
+							<MailboxListItem key={ mailbox.target } isError={ showErrorStyling }>
+								<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+									<MailboxLink
+										account={ account }
+										mailbox={ mailbox }
+										readonly={ isGoogleConfiguring }
+									/>
+									{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
+								</div>
+								{ ( context === 'domains' || context === 'hosting-overview' ) && (
+									<div className="email-plan-mailboxes-list__mailbox-list-item-main">
+										<EmailForwardSecondaryDetails
 											mailbox={ mailbox }
-											ctaProps={ { primary: true, borderless: true, compact: false } }
+											hideIcon={ isDesktopResolution }
 										/>
+										{ mailboxHasWarnings && (
+											<div className="email-mailbox-warnings">
+												<EmailMailboxWarnings
+													account={ account }
+													mailbox={ mailbox }
+													ctaProps={ { primary: true, borderless: true, compact: false } }
+												/>
+											</div>
+										) }
 									</div>
 								) }
-							</div>
-						) }
-						{ isEmailUserAdmin( mailbox ) && (
-							<Badge type="info">
-								{ translate( 'Admin', {
-									comment: 'Email user role displayed as a badge',
-								} ) }
-							</Badge>
-						) }
+								{ isEmailUserAdmin( mailbox ) && (
+									<Badge type="info">
+										{ translate( 'Admin', {
+											comment: 'Email user role displayed as a badge',
+										} ) }
+									</Badge>
+								) }
 
-						{ context === 'email' && (
-							<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-						) }
-						{ ! mailbox.temporary && ! isGoogleConfiguring && (
-							<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
-						) }
-					</MailboxListItem>
-				</>
+								{ context === 'email' && (
+									<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
+								) }
+								{ ! mailbox.temporary && ! isGoogleConfiguring && (
+									<EmailMailboxActionMenu
+										account={ account }
+										domain={ domain }
+										mailbox={ mailbox }
+									/>
+								) }
+							</MailboxListItem>
+						);
+					} ) }
+				</MailboxListCluster>
 			);
 		} );
 	}
@@ -182,10 +197,9 @@ function EmailPlanMailboxesList( {
 					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
 						<>
 							<EmailForwardHeader
-								className="email-plan-mailboxes-list__mailbox-list"
 								actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
 							>
-								<MailboxItems />
+								<MailboxItems shouldCluster />
 							</EmailForwardHeader>
 							{ ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) && (
 								<EmailUpgradeNotice path={ purchaseNewEmailAccountPath } />

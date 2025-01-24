@@ -91,10 +91,40 @@ function getEmailForwardLimit( data ) {
 	return data?.[ 0 ]?.maximum_mailboxes || 0;
 }
 
+/**
+ * Goes through the emails clustered them by mailbox.
+ * @param {Array} emails the emails to cluster
+ */
+function clusterForwardedEmails( emails = [] ) {
+	const sortedEmails = emails.sort( ( a, b ) => a.mailbox.localeCompare( b.mailbox ) );
+	const clusteredEmails = [];
+	let currentCluster = null;
+
+	sortedEmails.forEach( ( email ) => {
+		if ( currentCluster && currentCluster.mailbox === email.mailbox ) {
+			currentCluster.mailboxes.push( email );
+		} else {
+			if ( currentCluster ) {
+				clusteredEmails.push( currentCluster );
+			}
+			currentCluster = {
+				mailbox: email.mailbox,
+				domain: email.domain,
+				mailboxes: [ email ],
+			};
+		}
+	} );
+
+	if ( currentCluster ) {
+		clusteredEmails.push( currentCluster );
+	}
+
+	return clusteredEmails;
+}
+
 function getMailboxes( data ) {
 	const account = getAccount( data );
-
-	return account?.emails ?? [];
+	return clusterForwardedEmails( account?.emails );
 }
 
 function EmailPlan( {
