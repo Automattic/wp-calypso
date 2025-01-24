@@ -476,7 +476,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		},
 		/* eslint-disable-next-line react-hooks/exhaustive-deps */
 		[
-			period,
+			// Do not include the period from URL segments in the dependency array to prevent period selection invalidation.
 			slug,
 			appliedShortcut?.period,
 			context.query?.chartStart,
