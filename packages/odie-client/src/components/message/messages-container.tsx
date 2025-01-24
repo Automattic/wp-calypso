@@ -167,7 +167,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						<ViewMostRecentOpenConversationNotice />
+						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
 						{ chat.status === 'dislike' && <DislikeThumb /> }
 						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
