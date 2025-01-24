@@ -8,10 +8,7 @@ import {
 	render as clientRender,
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
-import {
-	getUserProfileBasePath,
-	isUserProfileEnabled,
-} from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
 import {
 	blogListing,
 	feedDiscovery,
@@ -101,28 +98,26 @@ export default async function (): Promise< void > {
 		);
 
 		// User profile
-		if ( isUserProfileEnabled() ) {
-			page(
-				getUserProfileBasePath(),
-				blogDiscoveryByFeedId,
-				redirectLoggedOutToSignup,
-				updateLastRoute,
-				sidebar,
-				userPosts,
-				makeLayout,
-				clientRender
-			);
-			page(
-				getUserProfileBasePath( 'lists' ),
-				blogDiscoveryByFeedId,
-				redirectLoggedOutToSignup,
-				updateLastRoute,
-				sidebar,
-				userLists,
-				makeLayout,
-				clientRender
-			);
-		}
+		page(
+			getUserProfileBasePath(),
+			blogDiscoveryByFeedId,
+			redirectLoggedOutToSignup,
+			updateLastRoute,
+			sidebar,
+			userPosts,
+			makeLayout,
+			clientRender
+		);
+		page(
+			getUserProfileBasePath( 'lists' ),
+			blogDiscoveryByFeedId,
+			redirectLoggedOutToSignup,
+			updateLastRoute,
+			sidebar,
+			userLists,
+			makeLayout,
+			clientRender
+		);
 
 		// Old full post view
 		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
