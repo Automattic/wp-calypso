@@ -6,8 +6,10 @@ import {
 	READER_LIST_DELETE,
 	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_RECEIVE,
+	READER_LIST_CREATE_SUCCESS,
+	READER_LIST_CREATE_FAILURE,
 	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
@@ -35,7 +37,8 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	switch ( action.type ) {
 		case READER_LISTS_RECEIVE:
 			return Object.assign( {}, state, keyBy( action.lists, 'ID' ) );
-		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_RECEIVE:
+		case READER_LIST_CREATE_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
 		case READER_LIST_DELETE:
@@ -123,7 +126,7 @@ export const subscribedLists = withSchemaValidation(
 				return filter( state, ( listId ) => {
 					return listId !== action.listId;
 				} );
-			case READER_LIST_REQUEST_SUCCESS:
+			case READER_LIST_CREATE_SUCCESS:
 				if ( ! state.includes( action.data.list.ID ) ) {
 					return [ ...state, action.data.list.ID ];
 				}
@@ -142,8 +145,10 @@ export const subscribedLists = withSchemaValidation(
 export function isRequestingList( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LIST_REQUEST:
-		case READER_LIST_REQUEST_SUCCESS:
+		case READER_LIST_RECEIVE:
 		case READER_LIST_REQUEST_FAILURE:
+		case READER_LIST_CREATE_SUCCESS:
+		case READER_LIST_CREATE_FAILURE:
 			return READER_LIST_REQUEST === action.type;
 	}
 
@@ -159,8 +164,8 @@ export function isRequestingList( state = false, action ) {
 export function isCreatingList( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LIST_CREATE:
-		case READER_LIST_REQUEST_SUCCESS:
-		case READER_LIST_REQUEST_FAILURE:
+		case READER_LIST_CREATE_SUCCESS:
+		case READER_LIST_CREATE_FAILURE:
 			return READER_LIST_CREATE === action.type;
 	}
 
@@ -200,12 +205,35 @@ export function isRequestingLists( state = false, action ) {
 	return state;
 }
 
+/**
+ * This object tracks all list requests that have been made
+ * and whether those requests are in progress or not.
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
+ */
+export function listRequests( state = {}, action ) {
+	switch ( action.type ) {
+		case READER_LIST_REQUEST:
+			return {
+				...state,
+				[ `${ action.listOwner }:${ action.listSlug }` ]: true,
+			};
+		case READER_LIST_RECEIVE:
+			return {
+				...state,
+				[ `${ action.data.list.owner }:${ action.data.list.slug }` ]: false,
+			};
+	}
+	return state;
+}
+
 export const userLists = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case READER_USER_LISTS_RECEIVE:
 			return {
 				...state,
-				[ action.userSlug ]: action.lists,
+				[ action.userLogin ]: action.lists,
 			};
 		default:
 			return state;
@@ -217,12 +245,12 @@ export const isRequestingUserLists = ( state = {}, action ) => {
 		case READER_USER_LISTS_REQUEST:
 			return {
 				...state,
-				[ action.userSlug ]: true,
+				[ action.userLogin ]: true,
 			};
 		case READER_USER_LISTS_RECEIVE:
 			return {
 				...state,
-				[ action.userSlug ]: false,
+				[ action.userLogin ]: false,
 			};
 		default:
 			return state;
@@ -237,6 +265,7 @@ export default combineReducers( {
 	isRequestingList,
 	isRequestingLists,
 	isUpdatingList,
+	listRequests,
 	userLists,
 	isRequestingUserLists,
 } );

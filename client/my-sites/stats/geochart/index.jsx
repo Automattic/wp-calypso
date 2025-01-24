@@ -31,6 +31,7 @@ class StatsGeochart extends Component {
 		skipQuery: PropTypes.bool,
 		isLoading: PropTypes.bool,
 		numberLabel: PropTypes.string,
+		customHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -105,7 +106,8 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, geoMode, translate, numberLabel } = this.props;
+		const { currentUserCountryCode, data, geoMode, translate, numberLabel, customHeight } =
+			this.props;
 		if ( ! data || ! data.length ) {
 			return;
 		}
@@ -150,6 +152,10 @@ class StatsGeochart extends Component {
 
 		if ( geoMode !== 'country' ) {
 			options.displayMode = 'markers';
+		}
+
+		if ( customHeight ) {
+			options.height = customHeight;
 		}
 
 		const regions = [ ...new Set( map( data, 'region' ) ) ];

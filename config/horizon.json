@@ -76,7 +76,6 @@
 		"livechat_solution": true,
 		"login/last-used-method": true,
 		"login/social-first": true,
-		"login/react-lost-password-screen": true,
 		"mailchimp": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": true,

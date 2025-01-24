@@ -9,19 +9,23 @@ import { mockTransactions } from '../test-fixtures/billing-transactions';
 describe( 'useTransactionsFiltering', () => {
 	test( 'returns all transactions when no filters are applied', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: '',
-				filters: [],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: '',
+					filters: [],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
+					},
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current ).toEqual( mockTransactions );
@@ -29,19 +33,23 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'filters transactions by search term matching service', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: 'Jetpack',
-				filters: [],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: 'Jetpack',
+					filters: [],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
+					},
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -50,25 +58,29 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'filters transactions by service type', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: '',
-				filters: [
-					{
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: '',
+					filters: [
+						{
+							field: 'service',
+							value: 'Store Services',
+							operator: 'is',
+						},
+					],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
 						field: 'service',
-						value: 'Store Services',
-						operator: 'is',
+						direction: 'asc',
 					},
-				],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -77,25 +89,29 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'filters transactions by purchase type', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: '',
-				filters: [
-					{
-						field: 'type',
-						value: 'renewal',
-						operator: 'is',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: '',
+					filters: [
+						{
+							field: 'type',
+							value: 'renewal',
+							operator: 'is',
+						},
+					],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
 					},
-				],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -104,25 +120,29 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'filters transactions by date', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: '',
-				filters: [
-					{
-						field: 'date',
-						value: '2023-02',
-						operator: 'is',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: '',
+					filters: [
+						{
+							field: 'date',
+							value: '2023-02',
+							operator: 'is',
+						},
+					],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
 					},
-				],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -131,35 +151,39 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'combines multiple filters', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: '',
-				filters: [
-					{
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: '',
+					filters: [
+						{
+							field: 'service',
+							value: 'WordPress.com',
+							operator: 'is',
+						},
+						{
+							field: 'type',
+							value: 'new purchase',
+							operator: 'is',
+						},
+						{
+							field: 'date',
+							value: '2023-01',
+							operator: 'is',
+						},
+					],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
 						field: 'service',
-						value: 'WordPress.com',
-						operator: 'is',
+						direction: 'asc',
 					},
-					{
-						field: 'type',
-						value: 'new purchase',
-						operator: 'is',
-					},
-					{
-						field: 'date',
-						value: '2023-01',
-						operator: 'is',
-					},
-				],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -170,19 +194,23 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'handles null transactions array', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( null, {
-				search: 'test',
-				filters: [],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+			useTransactionsFiltering(
+				null,
+				{
+					search: 'test',
+					filters: [],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
+					},
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current ).toEqual( [] );
@@ -190,19 +218,23 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'search is case insensitive', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: 'jetpack',
-				filters: [],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: 'jetpack',
+					filters: [],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
+					},
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
@@ -211,22 +243,74 @@ describe( 'useTransactionsFiltering', () => {
 
 	test( 'search matches partial strings', () => {
 		const { result } = renderHook( () =>
-			useTransactionsFiltering( mockTransactions, {
-				search: 'jet',
-				filters: [],
-				type: 'table',
-				page: 0,
-				perPage: 0,
-				sort: {
-					field: 'service',
-					direction: 'asc',
+			useTransactionsFiltering(
+				mockTransactions,
+				{
+					search: 'jet',
+					filters: [],
+					type: 'table',
+					page: 0,
+					perPage: 0,
+					sort: {
+						field: 'service',
+						direction: 'asc',
+					},
+					fields: [],
+					hiddenFields: [],
 				},
-				fields: [],
-				hiddenFields: [],
-			} )
+				null
+			)
 		);
 
 		expect( result.current.length ).toBe( 1 );
 		expect( result.current[ 0 ].service ).toBe( 'Jetpack' );
+	} );
+
+	describe( 'site filtering', () => {
+		test( 'filters transactions by siteId', () => {
+			const { result } = renderHook( () =>
+				useTransactionsFiltering(
+					mockTransactions,
+					{
+						search: '',
+						filters: [],
+						type: 'table',
+						page: 0,
+						perPage: 0,
+						sort: { field: 'service', direction: 'asc' },
+						fields: [],
+						hiddenFields: [],
+					},
+					123 // assuming this siteId exists in mockTransactions
+				)
+			);
+
+			result.current.forEach( ( transaction ) => {
+				expect( transaction.items.some( ( item ) => String( item.site_id ) === '123' ) ).toBe(
+					true
+				);
+			} );
+		} );
+
+		test( 'returns all transactions when siteId is null', () => {
+			const { result } = renderHook( () =>
+				useTransactionsFiltering(
+					mockTransactions,
+					{
+						search: '',
+						filters: [],
+						type: 'table',
+						page: 0,
+						perPage: 0,
+						sort: { field: 'service', direction: 'asc' },
+						fields: [],
+						hiddenFields: [],
+					},
+					null
+				)
+			);
+
+			expect( result.current ).toEqual( mockTransactions );
+		} );
 	} );
 } );

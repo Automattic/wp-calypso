@@ -18,6 +18,7 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import UrlSearch from 'calypso/lib/url-search';
@@ -106,6 +107,7 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
 	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
@@ -151,7 +153,7 @@ const PluginsDashboard = ( {
 	const sitesWithoutPluginAvailable = sitesToShow.filter(
 		( site ) =>
 			! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID ) &&
-			! ( isJetpackCloud() && hasMarketplaceProduct( productsList, pluginSlug ) )
+			! ( isJetpackCloudOrA8CForAgencies && hasMarketplaceProduct( productsList, pluginSlug ) )
 	);
 
 	const doActionOverSelected = (
@@ -335,7 +337,9 @@ const PluginsDashboard = ( {
 			wide
 			title={ dashboardTitle }
 			sidebarNavigation={
-				isJetpackCloud() && <SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+				isJetpackCloudOrA8CForAgencies && (
+					<SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+				)
 			}
 		>
 			<PageViewTracker
@@ -352,7 +356,7 @@ const PluginsDashboard = ( {
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }
-						{ ! pluginSlug && ! isJetpackCloud() && (
+						{ ! pluginSlug && ! isJetpackCloudOrA8CForAgencies && (
 							<Actions>
 								<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
 							</Actions>

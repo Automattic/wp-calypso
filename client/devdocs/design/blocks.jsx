@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import PlanPrice from '@automattic/components/src/plan-price/docs/example';
 import clsx from 'clsx';
@@ -11,7 +10,6 @@ import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/exa
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import CommentButtons from 'calypso/blocks/comment-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
@@ -92,9 +90,6 @@ export default class AppComponents extends Component {
 						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
 						</HeaderCake>
-						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
-							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
 					</Fragment>
 				) : (
 					<div>
@@ -112,9 +107,6 @@ export default class AppComponents extends Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
-					{ isEnabled( 'devdocs/color-scheme-picker' ) && (
-						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
 					<AnnouncementModalExample readmeFilePath="announcement-modal" />
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />

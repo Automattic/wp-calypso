@@ -11,6 +11,11 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Import;
 	}
 
+	// Newsletter flow
+	if ( config.isEnabled( 'onboarding/newsletter-goal' ) && goals.includes( SiteGoal.Newsletter ) ) {
+		return SiteIntent.NewsletterGoal;
+	}
+
 	// Prioritize Sell over Build and Write
 	if (
 		goals.some( ( goal ) =>
@@ -27,11 +32,6 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 
 	if ( goals.includes( SiteGoal.Write ) ) {
 		return SiteIntent.Write;
-	}
-
-	// Newsletter flow
-	if ( config.isEnabled( 'onboarding/newsletter-goal' ) && goals.includes( SiteGoal.Newsletter ) ) {
-		return SiteIntent.NewsletterGoal;
 	}
 
 	return SiteIntent.Build;
