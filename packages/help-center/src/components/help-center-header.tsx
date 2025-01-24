@@ -87,7 +87,8 @@ const ChatEllipsisMenu = () => {
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
 
-	const toggleSoundNotifications = () => {
+	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.stopPropagation();
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 

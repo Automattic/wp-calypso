@@ -103,28 +103,6 @@
 		padding: 0 4px;
 	}
 
-	:hover, :focus {
-		background-color: $help-center-blue;
-		color: var(--studio-white);
-
-		svg {
-			fill: var(--studio-white);
-		}
-
-		.conversation-menu__notification-toggle {
-			.components-form-toggle {
-				&.is-checked {
-					.components-form-toggle__track {
-						background-color: var(--studio-white);
-					}
-				}
-				.components-form-toggle__thumb {
-					background-color: $help-center-blue;
-				}
-			}
-		}
-	}
-
 	button {
 		display: flex;
 		align-items: center;
