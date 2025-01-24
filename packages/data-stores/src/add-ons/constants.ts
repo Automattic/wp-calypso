@@ -10,7 +10,6 @@ export const ADD_ON_200GB_STORAGE = '200gb-storage-add-on';
 export const ADD_ON_250GB_STORAGE = '250gb-storage-add-on';
 export const ADD_ON_300GB_STORAGE = '300gb-storage-add-on';
 export const ADD_ON_350GB_STORAGE = '350gb-storage-add-on';
-export const ADD_ON_400GB_STORAGE = '400gb-storage-add-on';
 
 export const ADD_ONS = < const >[
 	ADD_ON_JETPACK_AI_MONTHLY,
