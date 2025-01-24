@@ -35,7 +35,7 @@ function isInRoute( state: AppState, routes: string[] ) {
 }
 
 function shouldShowSitesDashboard( state: AppState ) {
-	return isInRoute( state, [ '/sites', '/p2s', ...SITE_DASHBOARD_ROUTES ] );
+	return isInRoute( state, [ '/sites', '/p2s', '/setup', ...SITE_DASHBOARD_ROUTES ] );
 }
 
 export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
