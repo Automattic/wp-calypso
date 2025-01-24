@@ -13,7 +13,7 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
-import { useTaskCompletedNotice } from 'calypso/launchpad/hooks/use-task-completed-notice';
+import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
 import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
@@ -139,7 +139,7 @@ const SubscribersPage = ( {
 		window.location.hash === '#building-your-audience-task'
 	);
 
-	useTaskCompletedNotice( {
+	useCompleteLaunchpadTaskWithNoticeOnLoad( {
 		enabled: initiallyLoadedWithTaskCompletionHash.current,
 		taskSlug: 'start_building_your_audience',
 		noticeId: 'subscribers-page-visited',
