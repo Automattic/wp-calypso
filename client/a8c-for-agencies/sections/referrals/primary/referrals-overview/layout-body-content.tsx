@@ -32,7 +32,7 @@ import ConsolidatedViews from '../../consolidated-view';
 import { getAccountStatus } from '../../lib/get-account-status';
 import tipaltiLogo from '../../lib/tipalti-logo';
 import ReferralList from '../../referrals-list';
-import type { Referral, ReferralInvoice } from '../../types';
+import type { Referral } from '../../types';
 
 interface Props {
 	isAutomatedReferral?: boolean;
@@ -41,8 +41,6 @@ interface Props {
 	isLoading: boolean;
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
-	referralInvoices: ReferralInvoice[];
-	isFetchingInvoices: boolean;
 	isArchiveView?: boolean;
 	onReferralRefetch?: () => void;
 }
@@ -54,7 +52,6 @@ export default function LayoutBodyContent( {
 	isLoading,
 	dataViewsState,
 	setDataViewsState,
-	referralInvoices,
 	isArchiveView,
 	onReferralRefetch,
 }: Props ) {
@@ -132,7 +129,6 @@ export default function LayoutBodyContent( {
 				) }
 				<ReferralList
 					referrals={ referrals }
-					referralInvoices={ referralInvoices }
 					dataViewsState={ dataViewsState }
 					setDataViewsState={ setDataViewsState }
 					isArchiveView={ isArchiveView }

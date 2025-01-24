@@ -8,6 +8,7 @@ import {
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
@@ -149,6 +150,10 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 		? {
 				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+				[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
+					import(
+						/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+					),
 		  }
 		: {};
 

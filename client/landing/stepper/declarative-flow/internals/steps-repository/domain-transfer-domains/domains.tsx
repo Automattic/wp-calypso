@@ -2,7 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { DomainTransferData, DomainTransferForm } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
-import { useDataLossWarning } from '@automattic/onboarding';
+import { HUNDRED_YEAR_DOMAIN_TRANSFER, useDataLossWarning } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
@@ -91,6 +91,8 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 		( { domain, auth } ) => domain.trim() || auth.trim()
 	);
 
+	const isHundredYearTransfer = variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER;
+
 	useDataLossWarning( hasAnyDomains && enabledDataLossWarning );
 
 	// create a string key representing the current state of the domains
@@ -110,7 +112,9 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 						auth_code: auth,
 						signup: false,
 						import_dns_records: true,
+						is_hundred_year_domain: isHundredYearTransfer,
 					},
+					volume: isHundredYearTransfer ? 100 : 1,
 				} )
 			);
 
@@ -258,7 +262,7 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 				/>
 			) ) }
 			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-				{ __( 'Add more' ) }
+				{ isHundredYearTransfer ? __( 'Add another domain' ) : __( 'Add more' ) }
 			</Button>
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
