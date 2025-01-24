@@ -250,6 +250,7 @@ const siteMigration: Flow = {
 						return exitFlow(
 							addQueryArgs(
 								{
+									siteId,
 									siteSlug,
 									from: fromQueryParam ?? '',
 									option: 'content',
@@ -260,10 +261,15 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{
+								siteId,
+								siteSlug,
+							},
+							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+						)
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -298,21 +304,21 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{ siteId, siteSlug, from: fromQueryParam },
+							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
+						)
+					);
 				}
 
+				//TODO: Check if we can remove this step once there is no reference to it in the codebase.
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate( addQueryArgs( { siteId, siteSlug }, STEPS.ERROR.slug ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -356,15 +362,19 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					// Take the user to the migration started step.
-					if ( providedDependencies?.destination === 'migration-started' ) {
-						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
+					return navigate(
+						addQueryArgs(
+							{
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+							},
+							STEPS.SITE_MIGRATION_STARTED.slug
+						)
+					);
 				}
 
+				//TODO: Remove this step, it is not used anywhere.
 				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
 					const { from } = providedDependencies as {
 						from: string;
@@ -470,7 +480,7 @@ const siteMigration: Flow = {
 							)
 						);
 					}
-
+					//TODO: Check if both conditions are needed.
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
@@ -532,8 +542,7 @@ const siteMigration: Flow = {
 					if ( action === 'authorization' ) {
 						const currentUrl = window.location.href;
 						const successUrl = encodeURIComponent( currentUrl );
-						window.location.href = authorizationUrl + `&success_url=${ successUrl }`;
-						return;
+						return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
 					}
 
 					if ( action === 'fallback-credentials' ) {
@@ -551,6 +560,7 @@ const siteMigration: Flow = {
 						);
 					}
 
+					//TODO: Add a skip flag to track the user is having trouble to share the credentials.
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },

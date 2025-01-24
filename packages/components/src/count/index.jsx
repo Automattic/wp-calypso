@@ -1,7 +1,6 @@
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import formatNumberCompact from './format-number-compact';
 
 import './style.scss';
 
@@ -10,14 +9,16 @@ export const Count = ( {
 	primary = false,
 	compact = false,
 	forwardRef,
-	numberFormat,
+	numberFormat: numberFormatFromProps,
 	translate,
 	locale,
 	...props
 } ) => {
+	const effectiveNumberFormat = numberFormatFromProps ?? numberFormat;
+
 	return (
 		<span ref={ forwardRef } className={ clsx( 'count', { 'is-primary': primary } ) } { ...props }>
-			{ compact ? formatNumberCompact( count ) || numberFormat( count ) : numberFormat( count ) }
+			{ compact ? numberFormat( count, { notation: 'compact' } ) : effectiveNumberFormat( count ) }
 		</span>
 	);
 };

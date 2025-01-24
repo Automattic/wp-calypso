@@ -48,8 +48,12 @@ export const getEstimatedCommission = (
 			if ( ! product ) {
 				continue;
 			}
+
 			// Day the license was issued
 			const issuedDate = new Date( purchase.license.issued_at );
+			// Set hours to 0 to compare from start of the day
+			issuedDate.setHours( 0, 0, 0, 0 );
+
 			// Day the license was revoked if present
 			const revokedAt = purchase.license.revoked_at
 				? new Date( purchase.license.revoked_at )
@@ -62,8 +66,11 @@ export const getEstimatedCommission = (
 				revokedAt ? revokedAt.getTime() : Infinity,
 				activityWindow.finish.getTime()
 			);
+
 			// Total days is the difference between finish and start dates in days
-			const totalDays = Math.floor( ( finish - start ) / ( 1000 * 60 * 60 * 24 ) );
+			// We add 1 to include end-to-end days
+			const totalDays = Math.floor( ( finish - start ) / ( 1000 * 60 * 60 * 24 ) ) + 1;
+
 			if ( totalDays < 1 ) {
 				continue;
 			}

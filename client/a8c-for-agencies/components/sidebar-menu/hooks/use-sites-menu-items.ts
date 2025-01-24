@@ -26,57 +26,35 @@ const useSitesMenuItems = ( path: string ) => {
 	const devSitesEnabled = config.isEnabled( 'a4a-dev-sites' );
 
 	return useMemo( () => {
-		const items = noActiveSite
-			? [
-					// We hide the rest of the options when we do not have sites yet.
-					createItem(
-						{
-							id: 'sites-all-menu-item',
-							icon: category,
-							path: A4A_SITES_LINK,
-							link: A4A_SITES_LINK,
-							title: translate( 'All' ),
-							trackEventProps: {
-								menu_item: 'Automattic for Agencies / Sites / All',
-							},
-						},
-						path
-					),
-			  ]
-			: [
-					{
-						icon: warning,
-						path: A4A_SITES_LINK,
-						link: A4A_SITES_LINK_NEEDS_ATTENTION,
-						title: translate( 'Needs attention' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Sites / Needs Attention',
-						},
-					},
-					{
-						icon: starEmpty,
-						path: A4A_SITES_LINK,
-						link: A4A_SITES_LINK_FAVORITE,
-						title: translate( 'Favorites' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Sites / Favorites',
-						},
-					},
-					{
-						id: 'sites-all-menu-item',
-						icon: category,
-						path: A4A_SITES_LINK,
-						link: A4A_SITES_LINK,
-						title: translate( 'All' ),
-						trackEventProps: {
-							menu_item: 'Automattic for Agencies / Sites / All',
-						},
-					},
-			  ].map( ( item ) => createItem( item, path ) );
+		const items = [
+			{
+				id: 'sites-all-menu-item',
+				icon: category,
+				path: A4A_SITES_LINK,
+				link: A4A_SITES_LINK,
+				title: translate( 'All' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Sites / All',
+				},
+			},
+		];
 
-		if ( shouldAddNeedsSetup ) {
-			const needsSetupItem = createItem(
-				{
+		// Only add additional menu items if we have an active site.
+		if ( ! noActiveSite ) {
+			items.push( {
+				id: 'sites-needs-attention-menu-item',
+				icon: warning,
+				path: A4A_SITES_LINK,
+				link: A4A_SITES_LINK_NEEDS_ATTENTION,
+				title: translate( 'Needs attention' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Sites / Needs Attention',
+				},
+			} );
+
+			if ( shouldAddNeedsSetup ) {
+				items.push( {
+					id: 'sites-needs-setup-menu-item',
 					icon: tool,
 					path: A4A_SITES_LINK,
 					link: A4A_SITES_LINK_NEEDS_SETUP,
@@ -84,15 +62,12 @@ const useSitesMenuItems = ( path: string ) => {
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Sites / Needs Setup',
 					},
-				},
-				path
-			);
-			items.splice( noActiveSite ? 0 : 1, 0, needsSetupItem );
-		}
+				} );
+			}
 
-		if ( devSitesEnabled ) {
-			const needsSetupItem = createItem(
-				{
+			if ( devSitesEnabled ) {
+				items.push( {
+					id: 'sites-development-menu-item',
 					icon: code,
 					path: A4A_SITES_LINK,
 					link: A4A_SITES_LINK_DEVELOPMENT,
@@ -100,13 +75,22 @@ const useSitesMenuItems = ( path: string ) => {
 					trackEventProps: {
 						menu_item: 'Automattic for Agencies / Sites / Development',
 					},
+				} );
+			}
+
+			items.push( {
+				id: 'sites-favorites-menu-item',
+				icon: starEmpty,
+				path: A4A_SITES_LINK,
+				link: A4A_SITES_LINK_FAVORITE,
+				title: translate( 'Favorites' ),
+				trackEventProps: {
+					menu_item: 'Automattic for Agencies / Sites / Favorites',
 				},
-				path
-			);
-			items.splice( 2, 0, needsSetupItem );
+			} );
 		}
 
-		return items;
-	}, [ noActiveSite, path, translate, shouldAddNeedsSetup ] );
+		return items.map( ( item ) => createItem( item, path ) );
+	}, [ noActiveSite, path, translate, shouldAddNeedsSetup, devSitesEnabled ] );
 };
 export default useSitesMenuItems;

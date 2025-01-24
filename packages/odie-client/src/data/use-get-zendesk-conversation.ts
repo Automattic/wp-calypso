@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import Smooch from 'smooch';
+import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
 import type { ZendeskMessage } from '../types';
@@ -22,33 +23,46 @@ const parseResponse = ( conversation: Conversation ) => {
  */
 export const useGetZendeskConversation = () => {
 	const getUnreadNotifications = useGetUnreadConversations();
+	const { trackEvent } = useOdieAssistantContext();
 
 	return useCallback(
 		( {
 			chatId,
 			conversationId,
 		}: {
-			chatId: number | string | null | undefined;
+			chatId?: number | string | null | undefined;
 			conversationId?: string | null | undefined;
 		} ) => {
-			if ( ! chatId ) {
+			if ( ! chatId && ! conversationId ) {
 				return null;
 			}
 
-			const conversation = Smooch.getConversations().find( ( conversation ) => {
+			const conversations = Smooch.getConversations();
+
+			const conversation = conversations.find( ( conversation ) => {
 				if ( conversationId ) {
 					return conversation.id === conversationId;
+				} else if ( chatId ) {
+					return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
 				}
 
-				return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
+				return false;
 			} );
 
 			if ( ! conversation ) {
+				// Conversation id was passed but the conversion was not found. Something went wrong.
+				if ( conversationId ) {
+					trackEvent( 'zendesk_conversation_not_found', {
+						conversationId,
+						chatId,
+						conversationsCount: conversations?.length ?? null,
+					} );
+				}
 				return null;
 			}
 
 			// We need to ensure that more than one message is loaded
-			return Smooch.getConversationById( conversation.id )
+			return Smooch.getConversationById( conversation.id || conversationId! )
 				.then( ( conversation ) => {
 					Smooch.markAllAsRead( conversation.id );
 					getUnreadNotifications();
@@ -56,6 +70,6 @@ export const useGetZendeskConversation = () => {
 				} )
 				.catch( () => parseResponse( conversation ) );
 		},
-		[ getUnreadNotifications ]
+		[ getUnreadNotifications, trackEvent ]
 	);
 };

@@ -30,13 +30,19 @@ const useLocationViewsQuery = < T = StatsLocationViewsData >(
 	siteId: number,
 	geoMode: 'country' | 'region' | 'city',
 	query: QueryStatsParams,
+	countryFilter: string | null,
 	options?: CustomQueryOptions< T, Error >
 ) => {
+	const finalQuery = {
+		...query,
+		...( geoMode !== 'country' && countryFilter ? { filter_by_country: countryFilter } : {} ),
+	};
+
 	return useQuery( {
 		...getDefaultQueryParams(),
 		...options,
-		queryKey: [ 'stats', 'location-views', siteId, geoMode, JSON.stringify( query ) ],
-		queryFn: () => queryStatsLocationViews( siteId, geoMode, processQueryParams( query ) ),
+		queryKey: [ 'stats', 'location-views', siteId, geoMode, JSON.stringify( finalQuery ) ],
+		queryFn: () => queryStatsLocationViews( siteId, geoMode, processQueryParams( finalQuery ) ),
 		select: ( data ) => {
 			const normalizedStats = normalizers.statsCountryViews(
 				data as StatsLocationViewsData,

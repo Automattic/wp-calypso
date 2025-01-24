@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ExternalLink } from '@wordpress/components';
+import { Button, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -19,6 +19,8 @@ type SubscriberDetailsProps = {
 	userId?: number;
 	newsletterCategoriesEnabled?: boolean;
 	newsletterCategories?: NewsletterCategory[];
+	onClose?: () => void;
+	onUnsubscribe?: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriberDetails = ( {
@@ -28,6 +30,8 @@ const SubscriberDetails = ( {
 	userId,
 	newsletterCategoriesEnabled,
 	newsletterCategories,
+	onClose,
+	onUnsubscribe,
 }: SubscriberDetailsProps ) => {
 	const translate = useTranslate();
 	const subscriptionPlans = useSubscriptionPlans( subscriber );
@@ -80,6 +84,15 @@ const SubscriberDetails = ( {
 					email={ email_address }
 					compact={ false }
 				/>
+				{ onClose && (
+					<Button
+						onClick={ onClose }
+						className="subscriber-details__close-button"
+						variant="secondary"
+					>
+						{ translate( 'Close' ) }
+					</Button>
+				) }
 			</div>
 			{ config.isEnabled( 'individual-subscriber-stats' ) && (
 				<SubscriberStats
@@ -159,6 +172,18 @@ const SubscriberDetails = ( {
 					) }
 				</div>
 			</div>
+			{ onUnsubscribe && (
+				<div className="subscriber-details__footer">
+					<Button
+						className="subscriber-details__delete-button"
+						onClick={ () => onUnsubscribe( subscriber ) }
+						variant="secondary"
+						isDestructive
+					>
+						{ translate( 'Delete subscriber' ) }
+					</Button>
+				</div>
+			) }
 		</div>
 	);
 };

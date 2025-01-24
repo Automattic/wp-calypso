@@ -52,7 +52,6 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/lasagna": "^0.6.1",
 		"@automattic/launchpad": "workspace:^",
-		"@automattic/launchpad-navigator": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
 		"@automattic/mini-cart": "workspace:^",

@@ -6,12 +6,12 @@ import { useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import FlowCard from '../components/flow-card';
 import { redirect } from '../import/util';
-import { useSubmitMigrationTicket } from '../importer-migrate-message/hooks/use-submit-migration-ticket';
 import type { Step } from '../../types';
 import './style.scss';
 
