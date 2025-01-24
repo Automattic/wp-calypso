@@ -96,12 +96,14 @@ export default function JetpackUpsellSection() {
 
 	// Build checkout URL prefixed with WordPress.com.
 	const upgradeUrls = getCheckoutUrls( siteSlug );
+	const siteFeatures = [ 'videopress', 'videopress-1tb-storage', 'search' ];
 
 	return (
 		<div className="jetpack-upsell-section">
 			<JetpackUpsellCard
 				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
+				siteFeatures={ siteFeatures }
 				upgradeUrls={ upgradeUrls }
 			/>
 		</div>

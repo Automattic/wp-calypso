@@ -12,6 +12,7 @@ import './style.scss';
 type JetpackUpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
+	siteFeatures: string[];
 	upgradeUrls: Record< string, string >;
 };
 
@@ -27,6 +28,7 @@ type Product = {
 export function JetpackUpsellCard( {
 	purchasedProducts,
 	siteSlug,
+	siteFeatures,
 	upgradeUrls = {},
 }: JetpackUpsellCardProps ) {
 	// TODO: Make card collapsible
@@ -102,7 +104,10 @@ export function JetpackUpsellCard( {
 	const visibleProducts = PRODUCTS.filter(
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
-	const hasProductsToUpsell = visibleProducts.length > 0;
+
+	// Do someething with siteFeatures for the sake of test builds.
+	const hasSiteFeatures = siteFeatures.length > 0;
+	const hasProductsToUpsell = visibleProducts.length > 0 && hasSiteFeatures;
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
