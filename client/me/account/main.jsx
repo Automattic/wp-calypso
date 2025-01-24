@@ -44,7 +44,7 @@ import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-c
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
-import { getFlatDomainsList } from 'calypso/state/sites/domains/selectors';
+import { getOwnedDomains } from 'calypso/state/sites/domains/selectors';
 import {
 	clearUnsavedUserSettings,
 	removeUnsavedUserSetting,
@@ -82,22 +82,6 @@ const INTERFACE_FIELDS = [
 	'enable_translator',
 	'calypso_preferences',
 ];
-
-const getOwnedDomainsData = ( state ) => {
-	const domains = getFlatDomainsList( state );
-	const ownedDomains = domains.filter( ( domain ) => domain.currentUserIsOwner === true ) || [];
-
-	return {
-		domainCount: ownedDomains.length,
-		firstDomain:
-			ownedDomains.length === 1
-				? {
-						domain: ownedDomains[ 0 ]?.domain,
-						siteSlug: ownedDomains[ 0 ]?.siteSlug,
-				  }
-				: null,
-	};
-};
 
 class Account extends Component {
 	constructor( props ) {
@@ -579,7 +563,7 @@ class Account extends Component {
 			return;
 		}
 
-		const successMessage = getAccountSettingsSuccessNotice( response, this.props.domainData );
+		const successMessage = getAccountSettingsSuccessNotice( response, this.props.ownedDomains );
 
 		this.setState(
 			{
@@ -976,7 +960,6 @@ export default compose(
 	protectForm,
 	connect(
 		( state ) => ( {
-			domainData: getOwnedDomainsData( state ),
 			canDisplayCommunityTranslator: canDisplayCommunityTranslator( state ),
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
@@ -986,6 +969,7 @@ export default compose(
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
+			ownedDomains: getOwnedDomains( state ),
 		} ),
 		{
 			bumpStat,

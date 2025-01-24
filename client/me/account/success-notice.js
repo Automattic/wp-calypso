@@ -5,13 +5,15 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export function getAccountSettingsSuccessNotice( response, domainData ) {
+export function getAccountSettingsSuccessNotice( response, ownedDomains ) {
 	const newEmail = response.new_user_email;
 	const moreThanEmailChanged = Object.keys( response )?.find(
 		( item ) => ! [ 'new_user_email', 'user_email', 'user_email_change_pending' ].includes( item )
 	);
 
-	const { domainCount, firstDomain } = domainData;
+	// Determine how many domains user has for the link to update the contact email for domain
+	const domainCount = ownedDomains.length;
+	const firstDomain = domainCount === 1 ? ownedDomains[ 0 ] : null;
 
 	// Default case
 	let successMessage = translate( 'Settings saved successfully!' );

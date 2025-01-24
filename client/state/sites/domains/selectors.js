@@ -87,3 +87,13 @@ export const isUpdatingDomainPrivacy = ( state, siteId, domain ) => {
 export const isUpdatingPrimaryDomain = ( state, siteId ) => {
 	return state?.sites?.domains?.updatingPrimaryDomain?.[ siteId ];
 };
+
+/**
+ * Returns a list of domains that are owned by the current user.
+ * @param {Object} state - global state tree
+ * @returns {Array} list of domains owned by the current user
+ */
+export const getOwnedDomains = ( state ) => {
+	const domains = getFlatDomainsList( state );
+	return domains.filter( ( domain ) => domain.currentUserIsOwner === true ) || [];
+};
