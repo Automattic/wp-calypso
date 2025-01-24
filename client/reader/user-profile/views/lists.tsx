@@ -28,7 +28,7 @@ interface UserListsProps {
 const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
-	const userLogin = user.user_login;
+	const userLogin = user.user_login ?? '';
 
 	useEffect( () => {
 		if ( ! hasRequested && requestUserLists && userLogin ) {
@@ -55,7 +55,7 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 		);
 	}
 
-	const userProfileListsUrl = `${ getUserProfileUrl( user.ID ) }/lists`;
+	const userProfileListsUrl = `${ getUserProfileUrl( userLogin ) }/lists`;
 
 	return (
 		<div className="user-profile__lists">

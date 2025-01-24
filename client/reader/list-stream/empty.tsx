@@ -1,22 +1,26 @@
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 
 export default function ListEmptyContent(): JSX.Element {
 	const translate = useTranslate();
-	const queryParams = new URLSearchParams( location.search );
-	const lastPageLink = DOMPurify.sanitize( queryParams.get( 'last_page' ) ?? '' );
+	const [ lastPageLink, setLastPageLink ] = useState< string >( '' );
 
 	useEffect( (): void => {
+		const queryParams = new URLSearchParams( location.search );
+		const lastPageParam = DOMPurify.sanitize( queryParams.get( 'last_page' ) ?? '' );
+
+		setLastPageLink( lastPageParam );
+
 		// For clean URL remove last_page query param.
-		if ( lastPageLink ) {
+		if ( lastPageParam ) {
 			const url = new URL( window.location.href );
 
 			url.searchParams.delete( 'last_page' );
 			history.replaceState( null, '', url );
 		}
-	}, [ lastPageLink ] );
+	}, [] );
 
 	function lastPageIsUserProfileLists(): boolean {
 		return /^\/read\/users\/[a-z0-9]+\/lists$/.test( lastPageLink );
