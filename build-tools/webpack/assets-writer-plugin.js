@@ -63,28 +63,13 @@ Object.assign( AssetsWriter.prototype, {
 				return path.join( stats.publicPath, f );
 			}
 
-			statsToOutput.entrypoints = _.mapValues( stats.entrypoints, ( entry ) => ( {
-				chunks: _.reject( entry.chunks, ( chunk ) => {
-					String( chunk ).startsWith( this.options.runtimeChunk );
-				} ),
-				assets: _.reject(
-					entry.assets,
-					( asset ) =>
-						asset.name.startsWith( this.options.manifestFile ) ||
-						asset.name.startsWith( this.options.runtimeFile )
-				).map( ( asset ) => fixupPath( asset.name ) ),
-			} ) );
-
-			statsToOutput.assetsByChunkName = _.mapValues( stats.assetsByChunkName, ( asset ) => {
-				const assets = Array.isArray( asset ) ? asset : [ asset ];
-				return assets.map( fixupPath );
-			} );
-
-			statsToOutput.chunks = stats.chunks.map( ( chunk ) =>
-				Object.assign( {}, chunk, {
-					chunks: stats.namedChunkGroups[ chunk.id ]?.chunks,
-					files: chunk.files.map( fixupPath ),
-				} )
+			statsToOutput.assets = _.mapValues( stats.namedChunkGroups, ( { assets } ) =>
+				_.reject(
+					assets,
+					( { name } ) =>
+						name.startsWith( this.options.manifestFile ) ||
+						name.startsWith( this.options.runtimeFile )
+				).map( ( { name } ) => fixupPath( name ) )
 			);
 
 			self.outputStream.end( JSON.stringify( statsToOutput, null, '\t' ), callback );
