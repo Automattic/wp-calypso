@@ -41,6 +41,7 @@ const initSmooch = ( {
 		jwt,
 	} );
 };
+
 const playNotificationSound = () => {
 	// @ts-expect-error expected because of fallback webkitAudioContext
 	const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
@@ -63,6 +64,7 @@ const playNotificationSound = () => {
 	oscillator.start();
 	oscillator.stop( audioContext.currentTime + duration );
 };
+
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
 	const { data: authData } = useAuthenticateZendeskMessaging(
