@@ -1,12 +1,19 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
-import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
+import {
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	commentContent,
+	page,
+	Icon,
+	comment,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
@@ -92,7 +99,7 @@ const ChatEllipsisMenu = () => {
 		>
 			<div className="conversation-menu__wrapper">
 				<button onClick={ clearChat }>
-					<Gridicon icon="comment" />
+					<Icon icon={ comment } />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
 				</button>
 				<button onClick={ toggleSoundNotifications }>
