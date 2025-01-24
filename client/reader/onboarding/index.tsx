@@ -27,45 +27,48 @@ const ReaderOnboarding = ( {
 	onRender?: ( shown: boolean ) => void;
 	forceShow?: boolean;
 } ) => {
+	const dispatch = useDispatch();
 	const [ isInterestsModalOpen, setIsInterestsModalOpen ] = useState( false );
 	const [ isDiscoverModalOpen, setIsDiscoverModalOpen ] = useState( false );
+
+	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
+	const userRegistrationDate: string | null = useSelector( getCurrentUserDate );
+
 	const followedTags = useSelector( getReaderFollowedTags );
-	let hasCompletedOnboarding = !! useSelector( ( state ) =>
+	const follows = useSelector( getReaderFollows );
+	const userSettings = useSelector( getUserSettings );
+
+	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_PREFERENCE_KEY )
 	);
-	const hasSeenOnboarding = useSelector( ( state ) =>
+	const hasSeenOnboarding: boolean | null = useSelector( ( state ) =>
 		getPreference( state, READER_ONBOARDING_SEEN_PREFERENCE_KEY )
 	);
-	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
-	const userRegistrationDate = useSelector( getCurrentUserDate );
-	const follows = useSelector( getReaderFollows );
 
-	const userSettings = useSelector( getUserSettings );
+	const taskOneCompleted = followedTags !== null && followedTags.length > 2;
+	const taskTwoCompleted = follows?.length > 2;
 	const taskThreeCompleted = !! (
 		userSettings?.has_gravatar &&
 		userSettings?.description &&
 		userSettings?.first_name &&
 		userSettings?.last_name
 	);
-	const taskOneCompleted = followedTags ? followedTags.length > 2 : false;
-	const taskTwoCompleted = follows?.length > 2;
-
-	const dispatch = useDispatch();
 
 	// If the user has completed the onboarding, save the preference and track the event.
 	if ( ! hasCompletedOnboarding && taskOneCompleted && taskTwoCompleted && taskThreeCompleted ) {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-		hasCompletedOnboarding = true;
 	}
 
 	const shouldShowOnboarding =
 		forceShow ||
 		isEnabled( 'reader/force-onboarding' ) ||
-		( preferencesLoaded &&
+		!! (
+			preferencesLoaded &&
 			! hasCompletedOnboarding &&
 			userRegistrationDate &&
-			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
+			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' )
+		);
 
 	// Modal state handlers with tracking.
 	const openInterestsModal = () => {
