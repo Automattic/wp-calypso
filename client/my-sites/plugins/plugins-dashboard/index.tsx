@@ -107,6 +107,7 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
 	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
 	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
 	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
@@ -152,10 +153,7 @@ const PluginsDashboard = ( {
 	const sitesWithoutPluginAvailable = sitesToShow.filter(
 		( site ) =>
 			! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID ) &&
-			! (
-				( isJetpackCloud() || isA8CForAgencies() ) &&
-				hasMarketplaceProduct( productsList, pluginSlug )
-			)
+			! ( isJetpackCloudOrA8CForAgencies && hasMarketplaceProduct( productsList, pluginSlug ) )
 	);
 
 	const doActionOverSelected = (
@@ -339,7 +337,7 @@ const PluginsDashboard = ( {
 			wide
 			title={ dashboardTitle }
 			sidebarNavigation={
-				( isJetpackCloud() || isA8CForAgencies() ) && (
+				isJetpackCloudOrA8CForAgencies && (
 					<SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
 				)
 			}
@@ -358,7 +356,7 @@ const PluginsDashboard = ( {
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }
-						{ ! pluginSlug && ! ( isJetpackCloud() || isA8CForAgencies() ) && (
+						{ ! pluginSlug && ! isJetpackCloudOrA8CForAgencies && (
 							<Actions>
 								<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
 							</Actions>
