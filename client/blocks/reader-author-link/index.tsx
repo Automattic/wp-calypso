@@ -23,6 +23,7 @@ export interface ReaderLinkAuthor {
 	URL?: string;
 	name?: string;
 	login?: string;
+	wpcom_login?: string;
 }
 
 /**
@@ -42,8 +43,8 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 	};
 
 	const authorLinkUrl =
-		isUserProfileEnabled() && author.login
-			? getUserProfileUrl( author.login )
+		isUserProfileEnabled() && author.wpcom_login
+			? getUserProfileUrl( author.wpcom_login )
 			: props.siteUrl ?? author.URL;
 
 	const authorName = author.name;
