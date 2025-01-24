@@ -1,4 +1,4 @@
-import { useGetMostRecentOpenConversation } from '@automattic/help-center/src/components/utils';
+import { useGetMostRecentOpenConversation } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -60,8 +60,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		trackEvent,
 	} = useOdieAssistantContext();
 
-	const mostRecentOpenConversation = useGetMostRecentOpenConversation();
-	const supportInteractionId = mostRecentOpenConversation?.metadata?.supportInteractionId || null;
+	const { userHasRecentOpenConversation, supportInteractionId } =
+		useGetMostRecentOpenConversation();
 	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
@@ -83,7 +83,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				{
 					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
 					action: async () => {
-						if ( supportInteraction ) {
+						if ( userHasRecentOpenConversation && supportInteraction ) {
 							trackEvent( 'chat_open_previous_conversation', {
 								user_id: chat?.wpcomUserId,
 								supportInteractionId: chat?.supportInteractionId,

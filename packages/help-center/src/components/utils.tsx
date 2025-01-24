@@ -1,9 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { HelpCenterSelect } from '@automattic/data-stores';
-import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
-import { useSelect } from '@wordpress/data';
 import Smooch from 'smooch';
-import { HELP_CENTER_STORE } from '../stores';
 import type { ContactOption } from '../types';
 import type { ZendeskConversation, SupportInteraction } from '@automattic/odie-client';
 
@@ -128,46 +124,16 @@ export const matchSupportInteractionId = (
 	}
 };
 
-export const useGetMostRecentOpenConversation = () => {
-	const { isChatLoaded } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			isChatLoaded: store.getIsChatLoaded(),
-		};
-	}, [] );
-
-	const { data: supportInteractionsResolved, isLoading: isLoadingResolvedInteractions } =
-		useGetSupportInteractions( 'zendesk', 100, 'resolved' );
-
-	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
-		useGetSupportInteractions( 'zendesk', 10, 'open' );
-
-	const isLoadingInteractions = isLoadingResolvedInteractions || isLoadingOpenInteractions;
-
-	if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
-		const allConversations = getZendeskConversations();
-		const supportInteractions = [
-			...( supportInteractionsResolved || [] ),
-			...( supportInteractionsOpen || [] ),
-		];
-
-		const filteredConversations = getConversationsFromSupportInteractions(
-			allConversations,
-			supportInteractions
-		);
-
-		const recentConversations = filteredConversations?.sort( ( conversationA, conversationB ) => {
-			const aCreatedAt = conversationA.metadata?.createdAt;
-			const bCreatedAt = conversationB.metadata?.createdAt;
-			if ( aCreatedAt && bCreatedAt ) {
-				return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
-			}
-			return 0;
-		} );
-
-		if ( recentConversations?.length > 0 ) {
-			return recentConversations[ 0 ];
-		}
+export const sortConversationByMostRecent = ( conversations: ZendeskConversation[] ) => {
+	if ( ! Array.isArray( conversations ) ) {
+		return conversations;
 	}
-	return null;
+	return conversations.sort( ( conversationA, conversationB ) => {
+		const aCreatedAt = conversationA.metadata?.createdAt;
+		const bCreatedAt = conversationB.metadata?.createdAt;
+		if ( aCreatedAt && bCreatedAt ) {
+			return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
+		}
+		return 0;
+	} );
 };

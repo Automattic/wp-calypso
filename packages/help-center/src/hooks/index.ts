@@ -9,3 +9,4 @@ export { useActionHooks } from './use-action-hooks';
 export { useOpenArticleInHelpCenter } from './use-open-article-in-help-center';
 export { usePostByUrl } from './use-post-by-url';
 export { useContentFilter } from './use-content-filter';
+export { useGetMostRecentOpenConversation } from './use-get-most-recent-open-conversation';
