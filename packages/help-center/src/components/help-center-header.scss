@@ -94,7 +94,7 @@
 	}
 }
 
-.clear-conversation__wrapper {
+.conversation-menu__wrapper {
 	padding: 4px 0;
     text-align: center;
 
@@ -114,14 +114,13 @@
 	button {
 		display: flex;
 		align-items: center;
-		justify-content: center;
 		width: 100%;
-		padding: 8px;
 		cursor: pointer;
 		gap: 4px;
 		color: var(--studio-gray-70);
 		border: none;
 		background: unset;
+		padding: 8px 8px 8px 14px;
 
 		div {
 			margin-bottom: 2px;

@@ -4,7 +4,7 @@ import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -66,11 +66,22 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
+	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+		};
+	}, [] );
+	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	};
+
+	const toggleSoundNotifications = () => {
+		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
 	return (
@@ -79,10 +90,18 @@ const ChatEllipsisMenu = () => {
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
 		>
-			<div className="clear-conversation__wrapper">
+			<div className="conversation-menu__wrapper">
 				<button onClick={ clearChat }>
 					<Gridicon icon="comment" />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+				</button>
+				<button onClick={ toggleSoundNotifications }>
+					<Gridicon icon="speaker" />
+					<div>
+						{ areSoundNotificationsEnabled
+							? __( 'Sound off', __i18n_text_domain__ )
+							: __( 'Sound on', __i18n_text_domain__ ) }
+					</div>
 				</button>
 			</div>
 		</EllipsisMenu>
