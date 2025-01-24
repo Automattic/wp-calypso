@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -9,6 +8,7 @@ import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { shouldShowLaunchpadFirst } from 'calypso/state/selectors/should-show-launchpad-first';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { canCurrentUserUseCustomerHome, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
@@ -18,13 +18,6 @@ import {
 } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
-
-const shouldShowLaunchpadFirst = ( site ) => {
-	const wasSiteCreatedOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
-	const isLaunchpadFirstEnabled = config.isEnabled( 'home/launchpad-first' );
-
-	return wasSiteCreatedOnboardingFlow && isLaunchpadFirstEnabled;
-};
 
 export default async function renderHome( context, next ) {
 	const state = await context.store.getState();

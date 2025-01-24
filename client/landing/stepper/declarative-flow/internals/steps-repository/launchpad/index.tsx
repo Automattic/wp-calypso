@@ -16,6 +16,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { useSelector, useDispatch } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
+import shouldShowLaunchpadFirst from 'calypso/state/selectors/should-show-launchpad-first';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
@@ -91,9 +92,19 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		}
 	}, [ verifiedParam, translate, dispatch ] );
 
+	// Avoid screen flickering when redirecting to other paths
+	if ( ! site?.options ) {
+		return null;
+	}
+
 	if ( launchpadScreenOption === 'skipped' ) {
 		window.location.assign( `/home/${ siteSlug }` );
-		return;
+		return null;
+	}
+
+	if ( shouldShowLaunchpadFirst( site ) ) {
+		window.location.replace( `/home/${ siteSlug }` );
+		return null;
 	}
 
 	return (
