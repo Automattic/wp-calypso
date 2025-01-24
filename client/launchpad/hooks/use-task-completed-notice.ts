@@ -8,7 +8,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface TaskCompleteNoticeOptions {
 	taskSlug: string;
-	enabled?: boolean;
+	enabled: boolean;
 	noticeId: string;
 	noticeText: string;
 	noticeDuration?: number;
@@ -19,7 +19,7 @@ export const useTaskCompletedNotice = ( {
 	noticeId,
 	noticeText,
 	noticeDuration,
-	enabled = false,
+	enabled,
 }: TaskCompleteNoticeOptions ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
