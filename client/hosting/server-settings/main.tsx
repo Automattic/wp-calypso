@@ -240,7 +240,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	);
 
 	const getPageTitle = () => {
-		return translate( 'Server Settings' );
+		return translate( 'Server settings' );
 	};
 
 	const getUpgradeBanner = () => {
@@ -280,13 +280,17 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 
 	const getContent = () => {
 		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
+		const isDuplicateViewsExperiment = true;
+		const Inner = isDuplicateViewsExperiment
+			? ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
+			: MasonryGrid;
 
 		return (
 			<>
 				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
 				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<WrapperComponent>
-					<MasonryGrid>
+					<Inner>
 						<AllCards
 							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
 							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
@@ -295,7 +299,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 							siteSlug={ siteSlug }
 							isJetpack={ isJetpack }
 						/>
-					</MasonryGrid>
+					</Inner>
 				</WrapperComponent>
 			</>
 		);

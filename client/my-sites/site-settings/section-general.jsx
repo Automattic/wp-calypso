@@ -12,6 +12,7 @@ import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import P2PreapprovedDomainsForm from './settings-p2/preapproved-domains';
 import { SOURCE_SETTINGS_GENERAL } from './site-tools/utils';
 
+const isDuplicateViewsExperiment = true;
 const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub, isWpcomStagingSite } ) => (
 	<div className="site-settings__main general-settings">
 		{ site && <GeneralForm site={ site } /> }
@@ -19,7 +20,7 @@ const SiteSettingsGeneral = ( { site, isWPForTeamsSite, isP2Hub, isWpcomStagingS
 		{ ! isWpcomStagingSite && ! isEnabled( 'untangling/hosting-menu' ) && (
 			<SiteTools headerTitle={ translate( 'Site tools' ) } source={ SOURCE_SETTINGS_GENERAL } />
 		) }
-		{ isEnabled( 'untangling/hosting-menu' ) && site && (
+		{ ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) && site && (
 			<Notice
 				showDismiss={ false }
 				status="is-info"

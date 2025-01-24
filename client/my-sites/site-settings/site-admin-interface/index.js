@@ -180,7 +180,8 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 									href={
 										adminInterface === 'wp-admin'
 											? `${ siteAdminUrl }options-general.php`
-											: `/settings/general/${ siteSlug }#admin-interface-style`
+											: // TODO:
+											  `/settings/general/${ siteSlug }#admin-interface-style`
 									}
 									rel="noreferrer"
 								/>

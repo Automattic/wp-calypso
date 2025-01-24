@@ -82,7 +82,7 @@ class Sitemaps extends Component {
 
 	renderNonPublicExplanation() {
 		const { siteSlug, translate } = this.props;
-
+		const isDuplicateViewsExperiment = true;
 		return (
 			<FormSettingExplanation>
 				{ translate(
@@ -93,7 +93,7 @@ class Sitemaps extends Component {
 							a: (
 								<a
 									href={
-										isEnabled( 'untangling/hosting-menu' )
+										isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment
 											? '/sites/settings/site/' + siteSlug
 											: '/settings/general/' + siteSlug
 									}

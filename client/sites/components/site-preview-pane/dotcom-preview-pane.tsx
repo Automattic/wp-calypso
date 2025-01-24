@@ -2,8 +2,9 @@ import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
@@ -80,6 +81,18 @@ const DotcomPreviewPane = ( {
 	const isSimpleSite = ! site.jetpack && ! site.is_wpcom_atomic;
 	const isPlanExpired = !! site.plan?.expired;
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
+
+	const [ isDuplicateViewsExperiment, setIsDuplicateViewsExperiment ] = useState( false );
+	useEffect( () => {
+		const experimentName = 'calypso_post_onboarding_holdout_160125';
+		( async () => {
+			const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
+			if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+				console.log( 'You are in the duplicate views experiment' );
+				setIsDuplicateViewsExperiment( true );
+			}
+		} )();
+	}, [] );
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -168,8 +181,8 @@ const DotcomPreviewPane = ( {
 				featureIds: [ TOOLS ],
 			},
 			{
-				label: __( 'Settings' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ),
+				label: __( 'Site Settings' ),
+				enabled: config.isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION,
@@ -178,13 +191,17 @@ const DotcomPreviewPane = ( {
 					SETTINGS_ADMINISTRATION_DELETE_SITE,
 					SETTINGS_CACHING,
 					SETTINGS_WEB_SERVER,
+					...[ isDuplicateViewsExperiment ? DOTCOM_HOSTING_CONFIG : null ],
 				],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
-				enabled: isActiveAtomicSite && ! config.isEnabled( 'untangling/hosting-menu' ),
+				enabled:
+					! isDuplicateViewsExperiment &&
+					isActiveAtomicSite &&
+					! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
 			},
 		];

@@ -391,6 +391,8 @@ export class SiteSettingsFormGeneral extends Component {
 			return null;
 		}
 
+		const isDuplicateViewsExperiment = true;
+
 		return (
 			<div className={ clsx( classes ) }>
 				{ site && <QuerySiteSettings siteId={ site.ID } /> }
@@ -418,7 +420,9 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-				{ ! isEnabled( 'untangling/hosting-menu' ) && <SiteSettingsForm { ...this.props } /> }
+				{ ! ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) && (
+					<SiteSettingsForm { ...this.props } />
+				) }
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);

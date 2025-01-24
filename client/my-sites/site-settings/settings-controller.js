@@ -47,6 +47,7 @@ export function siteSettings( context, next ) {
 	}
 
 	if ( isEnabled( 'untangling/hosting-menu' ) ) {
+		// TODO: Why only Classic Admin Interface?
 		if ( isAdminInterfaceWPAdmin( state, siteId ) ) {
 			return page.redirect( `/sites/settings/site/${ siteSlug }` );
 		}

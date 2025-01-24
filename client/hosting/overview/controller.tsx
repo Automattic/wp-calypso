@@ -4,7 +4,9 @@ import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
 import Hosting from 'calypso/hosting/server-settings/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { PanelWithSidebar } from 'calypso/sites/components/panel-sidebar';
 import HostingOverview from 'calypso/sites/overview/components/hosting-overview';
+import { SettingsSidebar } from 'calypso/sites/settings/controller';
 import { successNotice } from 'calypso/state/notices/actions';
 
 export function hostingOverview( context: PageJSContext, next: () => void ) {
@@ -32,7 +34,15 @@ export function hostingConfiguration( context: PageJSContext, next: () => void )
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	context.primary = (
+	const isDuplicateViewsExperiment = true;
+	context.primary = isDuplicateViewsExperiment ? (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<div className="hosting-configuration">
+				<Hosting />
+			</div>
+		</PanelWithSidebar>
+	) : (
 		<div className="hosting-configuration">
 			<Hosting />
 		</div>
@@ -41,7 +51,15 @@ export function hostingConfiguration( context: PageJSContext, next: () => void )
 }
 
 export function hostingActivate( context: PageJSContext, next: () => void ) {
-	context.primary = (
+	const isDuplicateViewsExperiment = true;
+	context.primary = isDuplicateViewsExperiment ? (
+		<PanelWithSidebar>
+			<SettingsSidebar />
+			<div className="hosting-configuration">
+				<HostingActivate />
+			</div>
+		</PanelWithSidebar>
+	) : (
 		<div className="hosting-configuration">
 			<HostingActivate />
 		</div>

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -21,17 +22,24 @@ export function SettingsSidebar() {
 
 	return (
 		<Sidebar>
-			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'Site' ) }</SidebarItem>
-			<SidebarItem
-				enabled={ shouldShowAdministration }
-				href={ `/sites/settings/administration/${ slug }` }
-			>
-				{ __( 'Administration' ) }
-			</SidebarItem>
-			<SidebarItem href={ `/sites/settings/caching/${ slug }` }>{ __( 'Caching' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/settings/web-server/${ slug }` }>
-				{ __( 'Web server' ) }
-			</SidebarItem>
+			<SidebarItem href={ `/sites/settings/site/${ slug }` }>{ __( 'General' ) }</SidebarItem>
+			<SidebarItem href={ `/hosting-config/${ slug }` }>{ __( 'Server' ) }</SidebarItem>
+			{ config.isEnabled( 'untangling/hosting-menu' ) && (
+				<>
+					<SidebarItem
+						enabled={ shouldShowAdministration }
+						href={ `/sites/settings/administration/${ slug }` }
+					>
+						{ __( 'Administration' ) }
+					</SidebarItem>
+					<SidebarItem href={ `/sites/settings/caching/${ slug }` }>
+						{ __( 'Caching' ) }
+					</SidebarItem>
+					<SidebarItem href={ `/sites/settings/web-server/${ slug }` }>
+						{ __( 'Web server' ) }
+					</SidebarItem>
+				</>
+			) }
 		</Sidebar>
 	);
 }
