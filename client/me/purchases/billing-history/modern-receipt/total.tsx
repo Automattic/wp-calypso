@@ -10,9 +10,9 @@ export function ReceiptTotal( { transaction }: ReceiptTotalProps ) {
 	const translate = useTranslate();
 
 	return (
-		<tr className="receipt__total">
+		<tr className="total">
 			<td>{ translate( 'Total' ) }</td>
-			<td className="receipt__amount">
+			<td className="amount">
 				{ formatCurrency( transaction.amount_integer, transaction.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,

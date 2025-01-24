@@ -131,24 +131,38 @@
 	.receipt-id-value {
 		font-size: var(--font-title-small);
 		color: var(--color-text);
-		margin-bottom: 24px;
-		padding-bottom: 24px;
-		border-bottom: 1px solid var(--color-border-subtle);
+		margin-bottom: 0;
 	}
 
 	.payment-details {
-		margin-bottom: 24px;
-		padding-bottom: 24px;
-		border-bottom: 1px solid var(--color-border-subtle);
+		position: relative;
+		margin: 0;
+		padding-top: 48px;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin-top: 24px;
+			border-top: 1px solid var(--color-border-subtle);
+		}
 	}
 
 	.billing-details {
-		margin-bottom: 0;
+		position: relative;
+		margin: 0;
+		padding-top: 48px;
 
-		&[data-is-empty="true"] + .payment-details {
-			border-bottom: none;
-			padding-bottom: 0;
-			margin-bottom: 0;
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			margin-top: 24px;
+			border-top: 1px solid var(--color-border-subtle);
 		}
 	}
 
@@ -156,6 +170,7 @@
 		width: 100%;
 		min-height: 80px;
 		padding: 16px;
+		margin-top: 16px;
 		border: 1px solid var(--color-border-subtle);
 		border-radius: 4px;
 		font-size: var(--font-body);
@@ -257,41 +272,10 @@
 	}
 
 	@media print {
-		@page {
-			margin: 0;
-			size: auto;
-		}
-		
-		html, body {
-			height: 100%;
-			margin: 0;
-			padding: 0;
-		}
-
-		body {
-			padding: 60px;
-		}
-
-		.layout,
-		.layout__content,
-		.layout__primary,
-		.main {
-			height: auto !important;
-			min-height: 0 !important;
-		}
-
-		.navigation-header,
-		.sidebar,
-		.masterbar,
 		.actions,
 		.page-header {
 			display: none !important;
 		}
-
-		display: block;
-		height: auto !important;
-		min-height: 0 !important;
-		page-break-after: avoid;
 
 		.content {
 			padding: 0;
