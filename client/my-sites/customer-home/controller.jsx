@@ -19,16 +19,26 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
+const shouldShowLaunchpadFirst = ( site ) => {
+	const wasSiteCreatedOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
+	const isLaunchpadFirstEnabled = config.isEnabled( 'home/launchpad-first' );
+
+	return wasSiteCreatedOnboardingFlow && isLaunchpadFirstEnabled;
+};
+
 export default async function renderHome( context, next ) {
 	const state = await context.store.getState();
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } />;
+	context.primary = (
+		<CustomerHome key={ site.ID } showLaunchpadFirst={ shouldShowLaunchpadFirst( site ) } />
+	);
+
 	next();
 }
 
@@ -74,12 +84,13 @@ export async function maybeRedirect( context, next ) {
 		}
 	}
 
-	if ( config.isEnabled( 'home/launchpad-first' ) ) {
+	const site = getSelectedSite( state );
+
+	if ( shouldShowLaunchpadFirst( site ) ) {
 		return next();
 	}
 
 	try {
-		const site = getSelectedSite( state );
 		const isSiteLaunched = site?.launch_status === 'launched' || false;
 
 		const {
