@@ -43,30 +43,38 @@ Object.assign( AssetsWriter.prototype, {
 				reasons: false,
 			} );
 
-			const statsToOutput = {};
-			statsToOutput.publicPath = stats.publicPath;
-			statsToOutput.manifests = {};
+			function fixupPath( f ) {
+				return path.join( stats.publicPath, f );
+			}
 
+			// Exclude hot update files (info.hotModuleReplacement) and source maps (info.development)
+			function isDevelopmentAsset( name ) {
+				const asset = stats.assets.find( ( a ) => a.name === name );
+				if ( ! asset ) {
+					return false;
+				}
+
+				return asset.info.hotModuleReplacement || asset.info.development;
+			}
+
+			const statsToOutput = {};
+
+			statsToOutput.manifests = {};
 			for ( const name in stats.assetsByChunkName ) {
 				// make the manifest inlineable
 				if ( String( name ).startsWith( this.options.runtimeChunk ) ) {
-					// Runtime chunk will have two files due ExtractManifestPlugin. Both need to be inlined.
-					// When we build with sourcemaps, we'll have another two extra files.
-					// Remove the sourcemap from the list and just take the js assets.
+					// Runtime chunk will have two files due to ExtractManifestPlugin. Both need to be inlined.
 					statsToOutput.manifests = stats.assetsByChunkName[ name ]
-						.filter( ( asset ) => ! asset.endsWith( '.map' ) )
+						.filter( ( asset ) => ! isDevelopmentAsset( asset ) ) // exclude hot updates and sourcemaps
 						.map( ( asset ) => compilation.assets[ asset ].source() );
 				}
-			}
-
-			function fixupPath( f ) {
-				return path.join( stats.publicPath, f );
 			}
 
 			statsToOutput.assets = _.mapValues( stats.namedChunkGroups, ( { assets } ) =>
 				_.reject(
 					assets,
 					( { name } ) =>
+						isDevelopmentAsset( name ) ||
 						name.startsWith( this.options.manifestFile ) ||
 						name.startsWith( this.options.runtimeFile )
 				).map( ( { name } ) => fixupPath( name ) )
