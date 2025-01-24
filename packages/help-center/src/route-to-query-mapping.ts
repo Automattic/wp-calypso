@@ -43,6 +43,7 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/wp-admin/options-general.php?page=debug-bar-extender': __( 'debug bar extender' ),
 		'/wp-admin/options-media.php': __( 'media settings' ),
 		'/wp-admin/post-new.php?post_type=jetpack-testimonial': __( 'new testimonial' ),
+		'/wp-admin/site-editor.php?p=%2Fpattern': __( 'patterns' ),
 	};
 
 	// Find exact URL matches
