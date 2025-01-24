@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
 type Props = {
-	id?: string;
 	icon?: ReactNode;
 	title: string;
 	description?: string;
@@ -10,7 +9,6 @@ type Props = {
 };
 
 export default function ProductListingSection( {
-	id,
 	icon,
 	title,
 	description,
@@ -18,13 +16,11 @@ export default function ProductListingSection( {
 	extraContent,
 }: Props ) {
 	return (
-		<div id={ id } className="product-listing-section">
+		<div className="product-listing-section">
 			<div className="product-listing-section__header-wrapper">
 				<div className="product-listing-section__header">
 					{ icon }
-					<h2 className="product-listing-section__header-title">
-						<span>{ title }</span>
-					</h2>
+					<h2 className="product-listing-section__header-title">{ title }</h2>
 					{ description && (
 						<span className="product-listing-section__header-subtitle">{ description }</span>
 					) }

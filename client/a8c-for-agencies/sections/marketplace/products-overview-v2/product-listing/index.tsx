@@ -276,14 +276,13 @@ export default function ProductListing( {
 			{ isEmptyList && <ProductListingEmpty /> }
 
 			{ featuredProducts.length > 0 && (
-				<ProductListingSection id="featured-products" title={ translate( 'Featured products' ) }>
+				<ProductListingSection title={ translate( 'Featured products' ) }>
 					{ getProductCards( featuredProducts ) }
 				</ProductListingSection>
 			) }
 
 			{ wooExtensions.length > 0 && (
 				<ProductListingSection
-					id="woocommerce-extensions"
 					icon={ <WooLogo width={ 45 } height={ 28 } /> }
 					title={ translate( 'WooCommerce Extensions' ) }
 					description={ translate(
@@ -296,7 +295,6 @@ export default function ProductListing( {
 
 			{ jetpackPlans.length > 0 && (
 				<ProductListingSection
-					id="jetpack-plans"
 					icon={ <JetpackLogo size={ 26 } /> }
 					title={ translate( 'Jetpack Plans' ) }
 					description={ translate(

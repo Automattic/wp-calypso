@@ -71,11 +71,13 @@
 }
 
 .product-listing-empty__message-heading {
-	font-size: 1rem;
-	font-weight: 600;
+	// TODO: Replace with Heading LG
+	font-size: rem(15px);
+	font-weight: 500;
 }
 
 .product-listing-empty__message-description {
-	font-size: rem(14px);
+	// TODO: Replace with Body MD
+	font-size: rem(13px);
 	color: var(--color-neutral-50);
 }
