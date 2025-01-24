@@ -1,7 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { filter } from 'lodash';
 import { stringify } from 'qs';
 import { addQueryArgs } from 'calypso/lib/url';
-import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
+import { isUnderEmailManagementAll, isUnderCheckoutRoute } from 'calypso/my-sites/email/paths';
 
 function resolveRootPath( relativeTo = null ) {
 	if ( relativeTo ) {
@@ -140,6 +141,10 @@ export function domainManagementEdit(
 	relativeTo = null,
 	expandSections = null
 ) {
+	if ( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) ) {
+		return `${ domainManagementAllRoot() }/overview/${ domainName }/${ siteName }`;
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'edit', relativeTo, expandSections );
 }
 

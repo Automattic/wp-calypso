@@ -33,7 +33,7 @@ export const useManageSupportInteraction = () => {
 				setCurrentSupportInteraction( newSupportInteraction );
 			}
 		},
-	} ).mutate;
+	} ).mutateAsync;
 
 	/**
 	 * Add an event to a support interaction.

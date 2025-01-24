@@ -12,14 +12,14 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import {
-	Flow,
 	ProvidedDependencies,
 	AssertConditionResult,
 	AssertConditionState,
+	FlowV1,
 } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const domainTransfer: Flow = {
+const domainTransfer: FlowV1 = {
 	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );

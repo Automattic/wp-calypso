@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { fetchLaunchpad } from '@automattic/data-stores';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
@@ -18,16 +19,26 @@ import {
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
+const shouldShowLaunchpadFirst = ( site ) => {
+	const wasSiteCreatedOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
+	const isLaunchpadFirstEnabled = config.isEnabled( 'home/launchpad-first' );
+
+	return wasSiteCreatedOnboardingFlow && isLaunchpadFirstEnabled;
+};
+
 export default async function renderHome( context, next ) {
 	const state = await context.store.getState();
-	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
 
 	// Scroll to the top
 	if ( typeof window !== 'undefined' ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome key={ siteId } />;
+	context.primary = (
+		<CustomerHome key={ site.ID } showLaunchpadFirst={ shouldShowLaunchpadFirst( site ) } />
+	);
+
 	next();
 }
 
@@ -49,19 +60,39 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const site = getSelectedSite( state );
-	const isSiteLaunched = site?.launch_status === 'launched' || false;
-	let fetchPromise;
 
 	if ( isSiteOnWooExpressEcommerceTrial( state, siteId ) ) {
 		// Pre-fetch plugins and modules to avoid flashing content prior deciding whether to redirect.
-		fetchPromise = Promise.allSettled( [
+		await Promise.allSettled( [
 			context.store.dispatch( fetchSitePlugins( siteId ) ),
 			context.store.dispatch( fetchModuleList( siteId ) ),
 		] );
+
+		// Ecommerce Plan's Home redirects to WooCommerce Home.
+		// Temporary redirection until we create a dedicated Home for Ecommerce.
+		// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
+		// So we need to trigger a fetch of site plugins
+		const siteUrl = getSiteUrl( state, siteId );
+		if ( siteUrl !== null ) {
+			const refetchedState = context.store.getState();
+			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
+			const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
+			if ( isSSOEnabled && installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+				return;
+			}
+		}
+	}
+
+	const site = getSelectedSite( state );
+
+	if ( shouldShowLaunchpadFirst( site ) ) {
+		return next();
 	}
 
 	try {
+		const isSiteLaunched = site?.launch_status === 'launched' || false;
+
 		const {
 			launchpad_screen: launchpadScreenOption,
 			site_intent: siteIntentOption,
@@ -92,24 +123,6 @@ export async function maybeRedirect( context, next ) {
 			}
 		}
 	} catch ( error ) {}
-
-	// Ecommerce Plan's Home redirects to WooCommerce Home.
-	// Temporary redirection until we create a dedicated Home for Ecommerce.
-	if ( fetchPromise?.then ) {
-		// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
-		// So we need to trigger a fetch of site plugins
-		fetchPromise.then( () => {
-			const siteUrl = getSiteUrl( state, siteId );
-			if ( siteUrl !== null ) {
-				const refetchedState = context.store.getState();
-				const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
-				const isSSOEnabled = !! isJetpackModuleActive( refetchedState, siteId, 'sso' );
-				if ( isSSOEnabled && installedWooCommercePlugin && installedWooCommercePlugin.active ) {
-					window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
-				}
-			}
-		} );
-	}
 
 	next();
 }

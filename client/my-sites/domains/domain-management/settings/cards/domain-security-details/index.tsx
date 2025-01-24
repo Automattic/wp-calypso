@@ -159,7 +159,7 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 								disabled={ isProvisioningCertificate }
 								onClick={ handleProvisionCertificate }
 							>
-								Provision certificate
+								{ translate( 'Provision certificate' ) }
 							</Button>
 						) }
 					<div className="domain-security-details__description-help-text">

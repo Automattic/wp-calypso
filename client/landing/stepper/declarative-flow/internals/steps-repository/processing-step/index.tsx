@@ -9,6 +9,7 @@ import {
 	isTransferringHostedSiteCreationFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
@@ -187,7 +188,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
-	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ) {
+	if (
+		[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ||
+		props.variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER
+	) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 

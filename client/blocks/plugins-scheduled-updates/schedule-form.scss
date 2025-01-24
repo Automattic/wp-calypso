@@ -168,6 +168,9 @@
 			border: solid 1px var(--wp-admin-theme-color) !important;
 			border-radius: 2px;
 
+			.components-radio-control__input[type="radio"] {
+				box-shadow: 0 0 0 var(--wp-admin-border-width-focus) #fff, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--wp-admin-theme-color);
+			}
 		}
 
 		&:not(.selected) {

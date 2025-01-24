@@ -16,12 +16,14 @@ import {
 	READER_USER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 import {
-	handleReaderListRequestFailure,
+	handleCreateReaderListFailure,
+	handleRequestListFailure,
 	handleUpdateListDetailsError,
 	receiveFollowList,
 	receiveLists,
-	receiveUnfollowList,
 	receiveReaderList,
+	receiveUnfollowList,
+	receiveCreateReaderList,
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
 
@@ -47,7 +49,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onSuccess: ( action, { list } ) => {
 				if ( list?.owner && list?.slug ) {
 					return [
-						receiveReaderList( { list } ),
+						receiveCreateReaderList( { list } ),
 						() => page( `/read/list/${ list.owner }/${ list.slug }/edit` ),
 						successNotice( translate( 'List created successfully.' ), {
 							duration: DEFAULT_NOTICE_DURATION,
@@ -58,7 +60,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			},
 			onError: ( action, error ) => [
 				errorNotice( translate( 'Unable to create new list.' ) ),
-				handleReaderListRequestFailure( error ),
+				handleCreateReaderListFailure( error ),
 			],
 		} ),
 	],
@@ -92,7 +94,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [ handleReaderListRequestFailure( error ) ],
+			onError: ( action, error ) => [ handleRequestListFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST_UNFOLLOW ]: [

@@ -7,23 +7,23 @@ import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { useSubscriptionPlans } from 'calypso/my-sites/subscribers/hooks';
+import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
+import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersSortBy } from '../../constants';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
+import { UnsubscribeModal } from '../unsubscribe-modal';
 import './style.scss';
 
 type SubscriberDataViewsProps = {
 	siteId: number | undefined;
-	onClickView: ( subscriber: Subscriber ) => void;
-	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
-	onGiftSubscription: ( subscriber: Subscriber ) => void;
 	isUnverified?: boolean;
 	isStagingSite?: boolean;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -42,13 +42,17 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 
 const SubscriberDataViews = ( {
 	siteId = undefined,
-	onClickUnsubscribe,
 	isUnverified = false,
 	isStagingSite = false,
+	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<660px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
+
 	const {
 		grandTotal,
 		page,
@@ -76,6 +80,22 @@ const SubscriberDataViews = ( {
 			field: sortTerm,
 			direction: 'desc',
 		},
+	} );
+
+	const pageArgs = {
+		currentPage: page,
+		filterOption: undefined,
+		searchTerm,
+		sortTerm,
+	};
+
+	const {
+		currentSubscriber,
+		onClickUnsubscribe: handleUnsubscribe,
+		onConfirmModal,
+		resetSubscriber,
+	} = useUnsubscribeModal( siteId ?? null, pageArgs, false, () => {
+		setSelectedSubscriber( null );
 	} );
 
 	const isSimple = useSelector( isSimpleSite );
@@ -177,7 +197,7 @@ const SubscriberDataViews = ( {
 			return [];
 		}
 
-		return [
+		const baseActions = [
 			{
 				id: 'view',
 				label: translate( 'View' ),
@@ -191,15 +211,33 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => onClickUnsubscribe( items[ 0 ] ),
+				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				isPrimary: false,
 			},
 		];
+
+		if ( couponsAndGiftsEnabled ) {
+			baseActions.push( {
+				id: 'gift',
+				label: translate( 'Gift a subscription' ),
+				callback: ( items: Subscriber[] ) => {
+					if ( items[ 0 ] && items[ 0 ].user_id ) {
+						onGiftSubscription( items[ 0 ] );
+					}
+				},
+				isPrimary: false,
+			} );
+		}
+
+		return baseActions;
 	}, [
 		selectedSubscriber,
 		translate,
 		handleSubscriberSelect,
 		getSubscriberId,
-		onClickUnsubscribe,
+		handleUnsubscribe,
+		onGiftSubscription,
+		couponsAndGiftsEnabled,
 	] );
 
 	const handleViewChange = useCallback(
@@ -349,9 +387,15 @@ const SubscriberDataViews = ( {
 						siteId={ siteId }
 						subscriptionId={ selectedSubscriber.subscription_id }
 						onClose={ () => setSelectedSubscriber( null ) }
+						onUnsubscribe={ handleUnsubscribe }
 					/>
 				</section>
 			) }
+			<UnsubscribeModal
+				subscriber={ currentSubscriber }
+				onCancel={ resetSubscriber }
+				onConfirm={ onConfirmModal }
+			/>
 		</div>
 	);
 };

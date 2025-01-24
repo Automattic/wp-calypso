@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar, SpinnerExample as Spinner } from '@automattic/components';
 import Badge from '@automattic/components/src/badge/docs/example';
@@ -23,7 +22,6 @@ import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
@@ -154,9 +152,6 @@ export default class DesignAssets extends Component {
 						<HeaderCake onClick={ this.backToComponents } backText="All Components">
 							{ slugToCamelCase( component ) }
 						</HeaderCake>
-						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
-							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
 					</Fragment>
 				) : (
 					<div>
@@ -172,9 +167,6 @@ export default class DesignAssets extends Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
-						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
 					<Animate readmeFilePath="animate" />

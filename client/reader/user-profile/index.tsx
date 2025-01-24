@@ -11,11 +11,10 @@ import { requestUser } from 'calypso/state/reader/users/actions';
 import './style.scss';
 
 interface UserProfileProps {
-	streamKey?: string;
-	userId: string;
+	userLogin: string;
 	user: UserData;
 	isLoading: boolean;
-	requestUser: ( userId: string ) => Promise< void >;
+	requestUser: ( userLogin: string ) => Promise< void >;
 }
 
 type UserProfileState = {
@@ -27,13 +26,13 @@ type UserProfileState = {
 	};
 };
 
-export function UserProfile( props: UserProfileProps ) {
-	const { userId, requestUser, user, streamKey, isLoading } = props;
+export function UserProfile( props: UserProfileProps ): JSX.Element | null {
+	const { userLogin, requestUser, user, isLoading } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
-		requestUser( userId );
-	}, [ userId, requestUser ] );
+		requestUser( userLogin );
+	}, [ userLogin, requestUser ] );
 
 	if ( isLoading ) {
 		return <></>;
@@ -53,13 +52,13 @@ export function UserProfile( props: UserProfileProps ) {
 	}
 
 	const currentPath = page.current;
-	const userProfileUrl = getUserProfileUrl( Number( userId ) );
+	const userProfileUrl = getUserProfileUrl( userLogin );
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
 		switch ( basePath ) {
 			case userProfileUrl:
-				return <UserPosts streamKey={ streamKey as string } user={ user } />;
+				return <UserPosts user={ user } />;
 			case `${ userProfileUrl }/lists`:
 				return <UserLists user={ user } />;
 			default:
@@ -78,8 +77,8 @@ export function UserProfile( props: UserProfileProps ) {
 
 export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
-		user: state.reader.users.items[ ownProps.userId ],
-		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
+		user: state.reader.users.items[ ownProps.userLogin ],
+		isLoading: state.reader.users.requesting[ ownProps.userLogin ] ?? false,
 	} ),
 	{ requestUser }
 )( UserProfile );

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { addLocaleToPath, isDefaultLocale } from '@automattic/i18n-utils';
-import cookie from 'cookie';
 import { getLocaleSlug } from 'i18n-calypso';
 import { get, includes, startsWith } from 'lodash';
 import {
@@ -16,10 +15,6 @@ import {
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-
-function getCookies() {
-	return typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
-}
 
 export function getSocialServiceFromClientId( clientId ) {
 	if ( ! clientId ) {
@@ -192,14 +187,6 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 
 	return signupUrl;
 }
-
-export const isReactLostPasswordScreenEnabled = () => {
-	const cookies = getCookies();
-	return (
-		config.isEnabled( 'login/react-lost-password-screen' ) ||
-		cookies.enable_react_password_screen === 'yes'
-	);
-};
 
 export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {

@@ -33,7 +33,7 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 /**
  * Split a path into an array.
  *
- * Example: Input of `calypso_preferences.colorScheme` results in `[ 'calypso_preferences', 'colorScheme' ]`
+ * Example: Input of `calypso_preferences.preferenceName` results in `[ 'calypso_preferences', 'preferenceName' ]`
  * @param {string|Array} path Path to be split into an array
  */
 function castPath( path ) {
@@ -43,11 +43,6 @@ function castPath( path ) {
 
 	return path.split( '.' );
 }
-
-/* FIXME: excluding these settings is a workaround which allows
-for those settings to be set if there's no default value; the API
-should provide a default value, which would make these lines obsolete */
-export const ALLOW_EMPTY_DEFAULTS = [ 'calypso_preferences.colorScheme' ];
 
 /**
  * Handles the storage and removal of changed setting that are pending
@@ -63,7 +58,7 @@ export default function setUserSetting( settingName, value ) {
 
 		const originalSetting = get( settings, settingPath );
 
-		if ( originalSetting === undefined && ! ALLOW_EMPTY_DEFAULTS.includes( settingName ) ) {
+		if ( originalSetting === undefined ) {
 			debug( settingName + ' does not exist in user-settings data module.' );
 			return;
 		}
