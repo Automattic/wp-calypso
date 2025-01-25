@@ -182,7 +182,7 @@ export default function useAddEmailForwardMutation(
 
 	return useMutation< any, unknown, AddMailboxFormData, Context >( {
 		mutationFn: ( { mailbox, destinations } ) =>
-			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/create-many`, {
+			wp.req.post( `/domains/${ encodeURIComponent( domainName ) }/email/new`, {
 				mailbox,
 				destinations,
 			} ),
