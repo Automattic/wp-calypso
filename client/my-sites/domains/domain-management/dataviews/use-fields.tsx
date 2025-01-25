@@ -55,6 +55,9 @@ export function useFields( { openDomainPane }: Props ) {
 					if ( ! domain ) {
 						return '';
 					}
+					if ( ! domain.owner ) {
+						return '';
+					}
 					// Removes the username that appears in parentheses after the owner's name.
 					// Uses $ and the negative lookahead assertion (?!.*\() to ensure we only match the very last parenthetical.
 					return domain.owner.replace( / \((?!.*\().+\)$/, '' );
@@ -145,6 +148,7 @@ export function useFields( { openDomainPane }: Props ) {
 			getSiteSlug,
 			selectedFeature,
 			isLoadingSites,
+			hasConnectableSites,
 		]
 	);
 
