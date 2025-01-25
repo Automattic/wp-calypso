@@ -26,7 +26,7 @@ import { domainManagementEditContactInfo } from '../../paths';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
-export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?: () => void ) {
+export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () => void ) {
 	const translate = useTranslate();
 	const {
 		getFullDomain,
@@ -41,32 +41,40 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 	} = useDomainsDataViewsContext();
 
 	const actions: Action< PartialDomainData >[] = [
-		{
-			id: 'manage-domain',
-			isPrimary: true,
-			icon: drawerLeft,
-			label: ( domains: Array< PartialDomainData > ) => {
-				const domain = domains.length > 0 && domains[ 0 ] && getFullDomain( domains[ 0 ] );
-				return domain && domain.type === domainTypes.TRANSFER
-					? translate( 'View transfer' )
-					: translate( 'View settings' );
-			},
-			callback: ( domains: Array< PartialDomainData > ) => {
-				const domain = domains.length > 0 && domains[ 0 ] && getFullDomain( domains[ 0 ] );
-				if ( ! domain ) {
-					return;
-				}
-				const url = domainManagementLink( domain, getSiteSlug( domains[ 0 ] ), isAllSitesView );
-				navigate( url );
-			},
-			isEligible( partialDomain: PartialDomainData ) {
-				const domain = getFullDomain( partialDomain );
-				if ( ! domain ) {
-					return false;
-				}
-				return domain.type !== domainTypes.WPCOM;
-			},
-		},
+		...( viewType !== 'list'
+			? [
+					{
+						id: 'manage-domain',
+						isPrimary: true,
+						icon: drawerLeft,
+						label: ( domains: Array< PartialDomainData > ) => {
+							const domain = domains.length > 0 && domains[ 0 ] && getFullDomain( domains[ 0 ] );
+							return domain && domain.type === domainTypes.TRANSFER
+								? translate( 'View transfer' )
+								: translate( 'View settings' );
+						},
+						callback: ( domains: Array< PartialDomainData > ) => {
+							const domain = domains.length > 0 && domains[ 0 ] && getFullDomain( domains[ 0 ] );
+							if ( ! domain ) {
+								return;
+							}
+							const url = domainManagementLink(
+								domain,
+								getSiteSlug( domains[ 0 ] ),
+								isAllSitesView
+							);
+							navigate( url );
+						},
+						isEligible( partialDomain: PartialDomainData ) {
+							const domain = getFullDomain( partialDomain );
+							if ( ! domain ) {
+								return false;
+							}
+							return domain.type !== domainTypes.WPCOM;
+						},
+					},
+			  ]
+			: [] ),
 		{
 			id: 'manage-dns-settings',
 			callback: ( domains: Array< PartialDomainData > ) => {
@@ -107,7 +115,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 				}
 			},
 			label: translate( 'Manage contact information' ),
-			supportsBulk: ! sidebarMode,
+			supportsBulk: true,
 			isEligible( partialDomain: PartialDomainData ) {
 				const domain = getFullDomain( partialDomain );
 				if ( ! domain ) {
@@ -243,7 +251,7 @@ export function useActions( { sidebarMode }: { sidebarMode?: boolean }, onClose?
 			id: 'manage-auto-renew',
 			icon: <Icon icon={ update } />,
 			label: translate( 'Manage auto-renew' ),
-			supportsBulk: ! sidebarMode,
+			supportsBulk: true,
 			isEligible( partialDomain: PartialDomainData ) {
 				const domain = getFullDomain( partialDomain );
 				if ( ! domain ) {
