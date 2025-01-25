@@ -16,7 +16,7 @@ import useQueryParams, {
 	DEFAULT_SORT_DIRECTION,
 	buildPathWithQueryParams,
 } from './use-query-params';
-import useView, { getFieldsByBreakpoint } from './use-view';
+import { initializeViewState, getFieldsByBreakpoint } from './view';
 
 type Props = {
 	domains: PartialDomainData[] | undefined;
@@ -37,7 +37,9 @@ export const DomainsDataViews = ( {
 	const { isDesktop } = useDomainsDataViewsContext();
 	const queryParams = useQueryParams();
 
-	const { view, setView } = useView( { sidebarMode, isDesktop, queryParams } );
+	const [ view, setView ] = useState( () =>
+		initializeViewState( isDesktop, queryParams, sidebarMode )
+	);
 	const fields = useFields( { openDomainPane } );
 	const actions = useActions( { sidebarMode } );
 	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
