@@ -87,6 +87,8 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		return fetchedSiteDomains;
 	}, [ allSiteDomains ] );
 
+	const isLoadingSiteDomains = allSiteDomains.some( ( { isLoading } ) => isLoading );
+
 	const getFullDomain = ( domain: PartialDomainData ) => {
 		const domains = siteDomains[ domain.blog_id ] ?? [];
 		return domains.find( ( d ) => d.name === domain.domain );
@@ -206,6 +208,7 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		selectedFeature,
 		hasConnectableSites: hasConnectableSites ?? false,
 		context: dataViewsUsage,
+		isLoadingAdditionalData: isLoadingSiteDomains || isLoadingSites,
 	};
 
 	return context;

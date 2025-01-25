@@ -105,4 +105,5 @@ export interface Context {
 	selectedFeature?: string;
 	hasConnectableSites: boolean;
 	context?: DomainsDataViewUsage;
+	isLoadingAdditionalData: boolean;
 }

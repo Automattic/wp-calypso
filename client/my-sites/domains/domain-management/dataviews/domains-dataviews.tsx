@@ -32,7 +32,7 @@ export const DomainsDataViews = ( {
 	selectedDomainName,
 }: Props ) => {
 	const translate = useTranslate();
-	const { isDesktop } = useDomainsDataViewsContext();
+	const { isDesktop, isLoadingAdditionalData } = useDomainsDataViewsContext();
 	const queryParams = useQueryParams();
 
 	const [ view, setView ] = useState( () =>
@@ -83,7 +83,7 @@ export const DomainsDataViews = ( {
 			{ ! sidebarMode && <BulkUpdateNotice /> }
 			<div className={ clsx( 'domains-dataviews', { 'domains-dataviews-list': sidebarMode } ) }>
 				<DataViews
-					data={ domainsToDisplay }
+					data={ isLoadingAdditionalData ? [] : domainsToDisplay }
 					fields={ fields }
 					onChangeView={ ( newView ) => setView( () => newView ) }
 					view={ view }
@@ -94,7 +94,7 @@ export const DomainsDataViews = ( {
 					getItemId={ getDomainId }
 					selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
 					onChangeSelection={ setSelectedIds }
-					isLoading={ isLoading }
+					isLoading={ isLoading || isLoadingAdditionalData }
 					defaultLayouts={ layout }
 				/>
 			</div>
