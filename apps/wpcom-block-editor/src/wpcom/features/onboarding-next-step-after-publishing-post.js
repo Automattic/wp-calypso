@@ -1,5 +1,6 @@
 import { dispatch, select, subscribe, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { Icon, pending } from '@wordpress/icons';
 import { getQueryArg } from '@wordpress/url';
 
 export function OnboardingNextStepAfterPublishingPost() {
@@ -56,6 +57,7 @@ export function OnboardingNextStepAfterPublishingPost() {
 									type: 'snackbar',
 									isDismissible: true,
 									explicitDismiss: true,
+									icon: <Icon icon={ pending } fill="white" size={ 24 } />,
 									id: 'NEXT_STEPS_NOTICE_ID',
 								}
 							);
