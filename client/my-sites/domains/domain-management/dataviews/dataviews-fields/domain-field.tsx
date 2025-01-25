@@ -14,15 +14,9 @@ interface Props {
 	domain: PartialDomainData;
 	isAllSitesView: boolean;
 	selectedFeature?: string;
-	openDomainPane?: ( domain: PartialDomainData ) => void;
 }
 
-const DomainField = ( {
-	domain: partialDomain,
-	isAllSitesView,
-	selectedFeature,
-	openDomainPane,
-}: Props ) => {
+const DomainField = ( { domain: partialDomain, isAllSitesView, selectedFeature }: Props ) => {
 	const { __ } = useI18n();
 	const queryParams = useQueryParams();
 
@@ -61,11 +55,7 @@ const DomainField = ( {
 			openInNewTab = true;
 		}
 
-		if ( openDomainPane ) {
-			openDomainPane( partialDomain );
-		} else {
-			navigate( domainManagementLink, openInNewTab );
-		}
+		navigate( domainManagementLink, openInNewTab );
 	};
 
 	return (
