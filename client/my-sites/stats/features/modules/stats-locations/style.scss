@@ -2,11 +2,46 @@
 @import "../../../modernized-mixins";
 
 $break-large-stats-countries: 1280px;
+$locations-horizontal-bar-width: 380px;
+
+.list-locations {
+	.stats-module-locations__country-filter {
+		width: fit-content;
+	}
+
+	.stats-card__content {
+		height: auto;
+	}
+
+	.stats-card--column-header {
+		display: flex;
+		justify-content: space-between;
+		padding: 12px 24px;
+	}
+	.stats-card--column-header__left {
+		display: flex;
+		width: calc(100% - 75px);
+		justify-content: space-between;
+	}
+	.stats-card--column-header__right {
+		width: 75px;
+		text-align: right;
+	}
+
+	.stats-module-locations__tabs {
+		width: calc( $locations-horizontal-bar-width - 24px - 24px);
+		max-width: 100%;
+
+		.segmented-control__item {
+			flex: 1 1 0;
+		}
+	}
+}
 
 .stats-summary-view {
-	.list-countryviews {
+	.list-locations {
 		.stats-card--hero {
-			padding: 0 24px 32px;
+			padding: 0 24px;
 
 			.stats-card-header {
 				padding: 0 24px 12px 0;
@@ -17,7 +52,11 @@ $break-large-stats-countries: 1280px;
 
 .stats__module-list--traffic {
 	@include segmented-controls;
-	.list-countryviews {
+	.list-locations {
+		.stats-card-header {
+			padding: 0 24px;
+		}
+
 		.stats-card--hero {
 			padding: 0 24px;
 			width: 100%;
@@ -33,10 +72,6 @@ $break-large-stats-countries: 1280px;
 				padding: 0;
 				width: 100%;
 			}
-
-			.stats-card-header {
-				padding: 0 24px 12px 0;
-			}
 		}
 	}
 
@@ -48,13 +83,13 @@ $break-large-stats-countries: 1280px;
 }
 
 @include break-wide {
-	.stats__module-list--traffic .list-countryviews .stats-card__content {
+	.stats__module-list--traffic .list-locations .stats-card__content {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 
-	.list-countryviews {
+	.list-locations {
 		.stats-card--hero {
 			flex: 2;
 			.stats-geochart {
@@ -70,19 +105,10 @@ $break-large-stats-countries: 1280px;
 
 		.stats-card--header-and-body {
 			flex: 0 0 380px;
-			min-width: 380px;
 		}
 
 		.stats-card--footer {
 			flex-basis: 100%;
-		}
-
-		.stats-module-locations__tabs {
-			width: 100%;
-
-			.segmented-control__item {
-				flex: 1 1 0;
-			}
 		}
 	}
 }

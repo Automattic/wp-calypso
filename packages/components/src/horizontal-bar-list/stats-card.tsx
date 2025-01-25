@@ -26,6 +26,7 @@ const StatsCard = ( {
 	overlay,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
+	const hasHeroElement = !! heroElement;
 
 	const titleNode = titleURL ? (
 		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }-header__title` }>
@@ -39,6 +40,25 @@ const StatsCard = ( {
 		>
 			<div>{ title }</div>
 			<div className={ `${ BASE_CLASS_NAME }-header__title-nodes` }>{ titleNodes }</div>
+		</div>
+	);
+
+	// Column header node for split header
+	const columnHeaderNode = (
+		<div className={ `${ BASE_CLASS_NAME }--column-header` }>
+			<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
+				{ splitHeader && mainItemLabel }
+				{ additionalHeaderColumns && (
+					<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
+						{ additionalHeaderColumns }
+					</div>
+				) }
+			</div>
+			{ ! isEmpty && (
+				<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
+					{ metricLabel ?? translate( 'Views' ) }
+				</div>
+			) }
 		</div>
 	);
 
@@ -57,49 +77,31 @@ const StatsCard = ( {
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-				{ ! heroElement && titleNode }
+				{ titleNode }
 				{ toggleControl }
 			</div>
-			{ ! isEmpty && (
-				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
-					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
-						{ splitHeader && mainItemLabel }
-						{ additionalHeaderColumns && (
-							<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
-								{ additionalHeaderColumns }
-							</div>
-						) }
-					</div>
-					{ ! isEmpty && (
-						<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
-							{ metricLabel ?? translate( 'Views' ) }
-						</div>
-					) }
-				</div>
-			) }
+			{ ! isEmpty && ! hasHeroElement ? columnHeaderNode : null }
 		</div>
 	);
 
+	const headerNode = splitHeader ? splitHeaderNode : simpleHeaderNode;
 	return (
 		<div
 			className={ clsx( className, BASE_CLASS_NAME, {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
+			{ hasHeroElement && splitHeaderNode }
 			<div className={ `${ BASE_CLASS_NAME }__content` }>
-				{ !! heroElement && (
-					<div className={ `${ BASE_CLASS_NAME }--hero` }>
-						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }
-						{ heroElement }
-					</div>
-				) }
+				{ hasHeroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
+					{ ! hasHeroElement ? headerNode : null }
 					<div
 						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
 						} ) }
 					>
+						{ hasHeroElement ? columnHeaderNode : null }
 						{ isEmpty ? emptyMessage : children }
 					</div>
 					{ footerAction && (
