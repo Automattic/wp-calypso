@@ -44,7 +44,6 @@ interface BaseDomainsDataViewsProps {
 	domains: PartialDomainData[] | undefined;
 	isLoading: boolean;
 	selectedItem: PartialDomainData | null | undefined;
-	openDomainPane?: ( domain: PartialDomainData ) => void;
 	isAllSitesView: boolean;
 	domainStatusPurchaseActions?: DomainStatusPurchaseActions;
 	onDomainAction?: OnDomainAction;

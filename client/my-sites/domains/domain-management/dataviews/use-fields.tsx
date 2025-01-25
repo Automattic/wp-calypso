@@ -10,11 +10,7 @@ import { DomainStatusField } from './dataviews-fields/domain-status-field';
 import { SslStatusField } from './dataviews-fields/ssl-status-field';
 import { useDomainsDataViewsContext } from './use-context';
 
-interface Props {
-	openDomainPane?: ( domain: PartialDomainData ) => void;
-}
-
-export function useFields( { openDomainPane }: Props ) {
+export function useFields() {
 	const translate = useTranslate();
 	const {
 		isAllSitesView,
@@ -41,7 +37,6 @@ export function useFields( { openDomainPane }: Props ) {
 						domain={ item }
 						isAllSitesView={ isAllSitesView }
 						selectedFeature={ selectedFeature }
-						openDomainPane={ openDomainPane }
 					/>
 				),
 			},
@@ -141,7 +136,6 @@ export function useFields( { openDomainPane }: Props ) {
 		[
 			domainsRequiringAttention,
 			isAllSitesView,
-			openDomainPane,
 			sites,
 			translate,
 			getFullDomain,

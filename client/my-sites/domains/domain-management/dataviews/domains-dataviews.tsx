@@ -23,7 +23,6 @@ type Props = {
 	isLoading: boolean;
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
-	openDomainPane?: ( domain: PartialDomainData ) => void;
 };
 
 export const DomainsDataViews = ( {
@@ -31,7 +30,6 @@ export const DomainsDataViews = ( {
 	isLoading,
 	sidebarMode,
 	selectedDomainName,
-	openDomainPane,
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop } = useDomainsDataViewsContext();
@@ -40,7 +38,7 @@ export const DomainsDataViews = ( {
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
 	);
-	const fields = useFields( { openDomainPane } );
+	const fields = useFields();
 	const actions = useActions( { sidebarMode } );
 	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( domains || [], view, fields );
