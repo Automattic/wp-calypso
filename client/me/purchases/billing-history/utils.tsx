@@ -8,7 +8,6 @@ import {
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
 import { useTaxName } from 'calypso/my-sites/checkout/src/hooks/use-country-list';
 import {
 	BillingTransaction,
@@ -119,12 +118,12 @@ export function TransactionAmount( {
 
 	if ( ! transactionIncludesTax( transaction ) ) {
 		return (
-			<>
+			<div className="billing-history__transaction-amount">
 				{ formatCurrency( transaction.amount_integer, transaction.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ) }
-			</>
+			</div>
 		);
 	}
 
@@ -151,15 +150,15 @@ export function TransactionAmount( {
 		  } );
 
 	return (
-		<Fragment>
+		<div className="billing-history__transaction-amount">
 			<div>
 				{ formatCurrency( transaction.amount_integer, transaction.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
 				} ) }
 			</div>
-			<div className="transaction-amount__tax-amount">{ includesTaxString }</div>
-		</Fragment>
+			<div className="billing-history__transaction-amount-tax-amount">{ includesTaxString }</div>
+		</div>
 	);
 }
 

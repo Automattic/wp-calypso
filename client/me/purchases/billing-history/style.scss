@@ -79,8 +79,16 @@
 	}
 }
 
-.transaction-amount__tax-amount {
-	color: var(--color-text-subtle);
+.billing-history__transaction-amount {
+	display: flex;
+	justify-content: space-between;
+	gap: 2px;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+
+.billing-history__transaction-amount-tax-amount {
+	color: var( --color-text-subtle );
 	font-size: $font-body-extra-small;
 	white-space: nowrap;
 }
