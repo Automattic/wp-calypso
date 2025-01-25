@@ -693,6 +693,7 @@ function DomainsDataViewsRenderer( {
 			sidebarMode={ sidebarMode }
 			selectedFeature={ selectedFeature }
 			hasConnectableSites={ hasConnectableSites }
+			context="domains"
 		/>
 	);
 }
