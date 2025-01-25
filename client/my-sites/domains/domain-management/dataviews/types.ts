@@ -36,6 +36,8 @@ interface DomainsDataViewsUpdatingDomain {
 	message?: string;
 }
 
+type DomainsDataViewUsage = 'domains' | 'site' | string;
+
 /**
  * Base props for the domains DataViews.
  */
@@ -62,6 +64,7 @@ interface BaseDomainsDataViewsProps {
 	deleteBulkActionStatus?: () => Promise< void >;
 	currentUserCanBulkUpdateContactInfo?: boolean;
 	hasConnectableSites?: boolean;
+	context?: DomainsDataViewUsage;
 }
 
 /**
@@ -101,4 +104,5 @@ export interface Context {
 	isDesktop: boolean;
 	selectedFeature?: string;
 	hasConnectableSites: boolean;
+	context?: DomainsDataViewUsage;
 }

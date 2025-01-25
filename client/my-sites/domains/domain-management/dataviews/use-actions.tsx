@@ -38,6 +38,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 		userCanSetPrimaryDomains = false,
 		onDomainAction,
 		handleUpdateContactInfo,
+		context,
 	} = useDomainsDataViewsContext();
 
 	const actions: Action< PartialDomainData >[] = [
@@ -81,7 +82,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 				const domain = domains.length > 0 && domains[ 0 ] && getFullDomain( domains[ 0 ] );
 				if ( domain ) {
 					onDomainAction?.( 'manage-dns-settings', domain );
-					const url = domainManagementDNS( getSiteSlug( domains[ 0 ] ), domain.domain );
+					const url = domainManagementDNS( getSiteSlug( domains[ 0 ] ), domain.domain, context );
 					navigate( url );
 				}
 			},
