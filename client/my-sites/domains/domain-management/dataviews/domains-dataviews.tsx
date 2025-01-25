@@ -39,7 +39,7 @@ export const DomainsDataViews = ( {
 		initializeViewState( isDesktop, queryParams, sidebarMode )
 	);
 	const fields = useFields();
-	const actions = useActions( { sidebarMode } );
+	const actions = useActions( view.type );
 	const { data: domainsToDisplay, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( domains || [], view, fields );
 	}, [ domains, view, fields ] );
