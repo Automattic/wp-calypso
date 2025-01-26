@@ -30,12 +30,6 @@ interface DateControlPickerProps {
 	) => void;
 }
 
-interface DateControlPickerShortcutsProps {
-	shortcutList: DateRangePickerShortcut[];
-	currentShortcut: string | undefined;
-	onClick: ( shortcut: DateRangePickerShortcut ) => void;
-}
-
 interface DateControlPickerDateProps {
 	startDate?: string;
 	endDate?: string;
@@ -46,9 +40,4 @@ interface DateControlPickerDateProps {
 	overlay?: JSX.Element;
 }
 
-export {
-	DateControlProps,
-	DateControlPickerProps,
-	DateControlPickerShortcutsProps,
-	DateControlPickerDateProps,
-};
+export { DateControlProps, DateControlPickerProps, DateControlPickerDateProps };

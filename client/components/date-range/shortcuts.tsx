@@ -18,15 +18,7 @@ export interface DateRangePickerShortcut {
 	isGated?: boolean;
 }
 
-const DateRangePickerShortcuts = ( {
-	selectedShortcutId,
-	onClick,
-	onShortcutClick, // Optional callback function for tracking shortcut clicks
-	locked = false,
-	startDate,
-	endDate,
-	shortcutList,
-}: {
+interface DateRangePickerShortcutsProps {
 	selectedShortcutId?: string;
 	onClick: (
 		newFromDate: moment.Moment,
@@ -38,7 +30,17 @@ const DateRangePickerShortcuts = ( {
 	startDate?: MomentOrNull;
 	endDate?: MomentOrNull;
 	shortcutList?: DateRangePickerShortcut[];
-} ) => {
+}
+
+const DateRangePickerShortcuts = ( {
+	selectedShortcutId,
+	onClick,
+	onShortcutClick, // Optional callback function for tracking shortcut clicks
+	locked = false,
+	startDate,
+	endDate,
+	shortcutList,
+}: DateRangePickerShortcutsProps ) => {
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
 	};
