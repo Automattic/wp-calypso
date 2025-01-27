@@ -88,11 +88,17 @@ export const SubscribersPageProvider = ( {
 		SubscribersSortBy.DateSubscribed
 	);
 	const [ dataViewFilterOption, setDataViewFilterOption ] = useState< SubscribersFilterBy >(
-		hasManySubscribers ? SubscribersFilterBy.WPCOM : SubscribersFilterBy.All
+		SubscribersFilterBy.All
 	);
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+
+	useEffect( () => {
+		if ( hasManySubscribers ) {
+			setDataViewFilterOption( SubscribersFilterBy.WPCOM );
+		}
+	}, [ hasManySubscribers ] );
 
 	useEffect( () => {
 		const handleHashChange = () => {
