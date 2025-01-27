@@ -55,6 +55,10 @@ body.is-section-subscribers.is-subscribers-dataviews,
                 cursor: pointer;
                 max-width: 100%;
                 border: none;
+
+                &.components-button.dataviews-all-actions-button {
+                    background: none;
+                }
             }
         
             .subscriber-data-views__square-avatar {
