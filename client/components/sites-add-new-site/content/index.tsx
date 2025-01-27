@@ -11,9 +11,50 @@ import { TRACK_SOURCE_NAME } from 'calypso/sites-dashboard/utils';
 import { Column } from './layout/column';
 import { MenuItem } from './layout/menu-item';
 
+const wordpressClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'wordpress',
+	} );
+	page( '/start?source=sites-dashboard&ref=new-site-popover' );
+};
+
+const jetpackClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'jetpack',
+	} );
+	page( `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` );
+};
+
+const migrateClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'migrate',
+	} );
+	page(
+		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=migrate'
+	);
+};
+
+const importClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'import',
+	} );
+	page(
+		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=import'
+	);
+};
+
+const offerClick = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
+		action: 'offer',
+	} );
+	window.location.assign( 'https://wordpress.com/pricing/' );
+};
+
 export const Content = () => {
 	const translate = useTranslate();
-
 	return (
 		<>
 			<Column heading={ translate( 'Add a new site' ) }>
@@ -24,10 +65,7 @@ export const Content = () => {
 						translate( 'Build and grow your site, all in one powerful platform.' )
 					) }
 					buttonProps={ {
-						onClick: () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_wordpress' );
-							page( '/start?source=sites-dashboard&ref=topbar' );
-						},
+						onClick: wordpressClick,
 					} }
 				/>
 				<MenuItem
@@ -37,10 +75,7 @@ export const Content = () => {
 						translate( 'Install the Jetpack plugin on an existing site' )
 					) }
 					buttonProps={ {
-						onClick: () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
-							page( `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` );
-						},
+						onClick: jetpackClick,
 					} }
 				/>
 			</Column>
@@ -52,12 +87,7 @@ export const Content = () => {
 						translate( 'Bring your theme, plugins, and content to WordPress.com.' )
 					) }
 					buttonProps={ {
-						onClick: () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_migrate' );
-							page(
-								'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=migrate'
-							);
-						},
+						onClick: migrateClick,
 					} }
 				/>
 				<MenuItem
@@ -67,12 +97,7 @@ export const Content = () => {
 						translate( 'Use a backup file to import your content into a new site.' )
 					) }
 					buttonProps={ {
-						onClick: () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
-							page(
-								'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=import'
-							);
-						},
+						onClick: importClick,
 					} }
 				/>
 			</Column>
@@ -87,10 +112,7 @@ export const Content = () => {
 						)
 					) }
 					buttonProps={ {
-						onClick: () => {
-							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_offer' );
-							window.location.href = 'https://wordpress.com/pricing/';
-						},
+						onClick: offerClick,
 					} }
 				>
 					<div>
