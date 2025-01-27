@@ -113,7 +113,7 @@ export function getLabel( product: ResponseCartProduct ): string {
 		return translate( '%(productName)s - %(quantity)s views per month', {
 			args: {
 				productName: product.product_name,
-				quantity: numberFormat( product.quantity, 0 ),
+				quantity: numberFormat( product.quantity, { decimals: 0 } ),
 			},
 			textOnly: true,
 		} );

@@ -160,7 +160,7 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Active installations' ) }
 					</div>
 					<div className="plugin-details-sidebar__active-installs-value value">
-						{ numberFormat( active_installs, { notation: 'compact' } ) }
+						{ numberFormat( active_installs, { numberFormatOptions: { notation: 'compact' } } ) }
 					</div>
 				</div>
 			) }

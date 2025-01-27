@@ -115,7 +115,7 @@ class WordAdsEarnings extends Component {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
 			earnings && earnings.total_amount_owed
-				? numberFormat( earnings.total_amount_owed, 2 )
+				? numberFormat( earnings.total_amount_owed, { decimals: 2 } )
 				: '0.00';
 		const notice = translate(
 			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
@@ -198,19 +198,25 @@ class WordAdsEarnings extends Component {
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( total, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( total, { decimals: 2 } ) }
+					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( paid, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( paid, { decimals: 2 } ) }
+					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( owed, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( owed, { decimals: 2 } ) }
+					</span>
 				</li>
 			</ul>
 		);
@@ -230,7 +236,7 @@ class WordAdsEarnings extends Component {
 					<tr key={ type + '-' + period }>
 						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
 						<td className="ads__earnings-history-value">
-							${ numberFormat( earnings[ period ].amount, 2 ) }
+							${ numberFormat( earnings[ period ].amount, { decimals: 2 } ) }
 						</td>
 						<td className="ads__earnings-history-value">
 							{ numberFormat( earnings[ period ].pageviews ) }

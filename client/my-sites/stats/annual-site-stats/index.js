@@ -81,8 +81,9 @@ class AnnualSiteStats extends Component {
 	formatTableValue( key, value ) {
 		const { numberFormat } = this.props;
 		const singleDecimal = [ 'avg_comments', 'avg_likes' ];
+
 		if ( includes( singleDecimal, key ) ) {
-			return numberFormat( value, 1 );
+			return numberFormat( value, { decimals: 1 } );
 		}
 		if ( 'year' === key ) {
 			return value;

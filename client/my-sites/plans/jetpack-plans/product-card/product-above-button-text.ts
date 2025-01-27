@@ -18,7 +18,7 @@ export default function productAboveButtonText(
 			'*estimated price based on %(records_and_or_requests)s records and/or monthly requests',
 			{
 				args: {
-					records_and_or_requests: numberFormat( siteProduct.tierUsage, 0 ),
+					records_and_or_requests: numberFormat( siteProduct.tierUsage ),
 				},
 				comment:
 					'records_and_or_requests = number of records (posts, pages, etc) in a site or monthly search requests (whichever is greater)',

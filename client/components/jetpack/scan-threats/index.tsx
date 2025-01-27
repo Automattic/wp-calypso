@@ -65,7 +65,7 @@ const getThreatCountMessage = (
 		lowThreatsSummary = String(
 			translate( '%(lowCount)s low risk item', '%(lowCount)s low risk items', {
 				args: {
-					lowCount: numberFormat( countLowSeverity, 0 ),
+					lowCount: numberFormat( countLowSeverity ),
 				},
 				comment: '$(lowCount)s is the number of low severity items found.',
 				count: countLowSeverity,
@@ -78,7 +78,7 @@ const getThreatCountMessage = (
 		highThreatsSummary = String(
 			translate( '%(threatCount)s threat', '%(threatCount)s threats', {
 				args: {
-					threatCount: numberFormat( countHighSeverity, 0 ),
+					threatCount: numberFormat( countHighSeverity ),
 				},
 				comment: '%(threatCount)s represents the number of higher severity threats found.',
 				count: countHighSeverity,

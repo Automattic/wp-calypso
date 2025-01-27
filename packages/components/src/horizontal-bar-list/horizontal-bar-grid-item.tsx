@@ -111,7 +111,8 @@ const HorizontalBarListItem = ( {
 		if ( formatValue ) {
 			return formatValue( value, data );
 		}
-		return usePlainCard ? value : numberFormat( value, 0 );
+
+		return usePlainCard ? value : numberFormat( value, { decimals: 0 } );
 	};
 
 	return (

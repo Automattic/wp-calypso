@@ -111,7 +111,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-	const numberOfPluginsThemes = numberFormat( 50000, 0 );
+	const numberOfPluginsThemes = numberFormat( 50000 );
 	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';

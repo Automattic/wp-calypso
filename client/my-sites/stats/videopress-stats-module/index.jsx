@@ -225,8 +225,8 @@ class VideoPressStatsModule extends Component {
 										role="button"
 									>
 										{ row.watch_time > 1
-											? numberFormat( row.watch_time, 1 )
-											: `< ${ numberFormat( 1, 1 ) }` }
+											? numberFormat( row.watch_time, { decimals: 1 } )
+											: `< ${ numberFormat( 1, { decimals: 1 } ) }` }
 									</span>
 								</div>
 								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">

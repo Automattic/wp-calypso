@@ -44,7 +44,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 								{ itemCount && itemCount !== 0 ? (
 									<span className="count">
 										{ isCountAmount ? '$' : null }
-										{ numberFormat( itemCount, isCountAmount ? 2 : 0 ) }
+										{ numberFormat( itemCount, { decimals: isCountAmount ? 2 : 0 } ) }
 									</span>
 								) : null }
 							</NavItem>

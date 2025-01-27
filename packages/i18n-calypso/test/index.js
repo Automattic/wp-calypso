@@ -258,17 +258,13 @@ describe( 'I18n', function () {
 
 		describe( 'with decimal', function () {
 			it( 'should default to locale decimal separator (, for German in test)', function () {
-				expect( numberFormat( 150, 2 ) ).toBe( '150,00' );
+				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
+			} );
+			it( 'should force the specified decimals to a not fractional number/integer', function () {
+				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
 			} );
 			it( 'should truncate to specified decimal', function () {
-				expect( numberFormat( 150.312, 2 ) ).toBe( '150,31' );
-			} );
-			it( 'should accept decimal as argument or object attribute', function () {
-				expect(
-					numberFormat( 150, {
-						decimals: 2,
-					} )
-				).toBe( '150,00' );
+				expect( numberFormat( 150.312, { decimals: 2 } ) ).toBe( '150,31' );
 			} );
 		} );
 
@@ -293,12 +289,18 @@ describe( 'I18n', function () {
 					} );
 				} );
 				test( 'defaults to latin notation and localised unit', () => {
-					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 } ) ).toEqual( '1.2 ألف' );
+					expect(
+						numberFormat( 1234, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } )
+					).toEqual( '1.2 ألف' );
 				} );
 				test( 'non-latin/original notation and localised unit', () => {
-					expect( numberFormat( 1234, { notation: 'compact', decimals: 1 }, false ) ).toEqual(
-						'١٫٢ ألف'
-					);
+					expect(
+						numberFormat( 1234, {
+							numberFormatOptions: { notation: 'compact' },
+							decimals: 1,
+							forceLatin: false,
+						} )
+					).toEqual( '١٫٢ ألف' );
 				} );
 			} );
 		} );
