@@ -110,7 +110,7 @@ const ReaderOnboarding = ( {
 
 	const redirectToAccountProfile = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
-		page( '/me' );
+		page( '/me?ref=reader-onboarding' );
 	};
 
 	// Track if user viewed Reader Onboarding.
