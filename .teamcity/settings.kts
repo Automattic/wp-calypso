@@ -78,10 +78,9 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_OCT_15_24" , "credentialsJSON:03a11b61-0f32-4b1b-8c82-3c02a902b022", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_OCT_17_24" , "credentialsJSON:cf4657a0-897a-4697-a036-630b9f6bbbbd", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_24_25" , "credentialsJSON:cb25e38d-c322-4b5a-83f9-4cf6741456d3", display = ParameterDisplay.HIDDEN)
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_OCT_17_24%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_24_25%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
