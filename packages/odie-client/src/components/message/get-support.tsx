@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
+import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
 import './get-support.scss';
-import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
 interface GetSupportProps {
 	onClickAdditionalEvent?: ( destination: string ) => void;
