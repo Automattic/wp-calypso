@@ -112,6 +112,10 @@
                 font-size: 0.875rem;
                 color: var(--color-text-subtle);
             }
+
+            &-wrapper {
+                gap: 4px;
+            }
         }
 
         .dataviews-view-table__cell-actions {
@@ -143,10 +147,6 @@
                 }
             }
         }
-    }
-
-    .dataviews-no-results, .dataviews-loading {
-        min-height: 500px;
     }
 
     .dataviews__view-actions {
