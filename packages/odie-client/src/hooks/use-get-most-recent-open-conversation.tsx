@@ -1,11 +1,12 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
+import { HelpCenterSelect, HelpCenter } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useSelect } from '@wordpress/data';
 import {
 	getZendeskConversations,
 	getConversationsFromSupportInteractions,
 } from '../components/utils';
-import { HELP_CENTER_STORE } from '../stores';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 export const useGetMostRecentOpenConversation = () => {
 	let userHasRecentOpenConversation = false;
