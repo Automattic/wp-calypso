@@ -53,7 +53,9 @@ export default function () {
 	// the paths and page view reporting consistent.
 	page( '/stats', '/stats/day' );
 
-	// Realtime stats?!
+	// Real-time stats?!
+	// ToDo: Clarify usage of real time.
+	// Not really used as one word generally.
 	statsPage( '/stats/realtime/:site', realtime );
 
 	// Stat Overview Page
