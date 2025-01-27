@@ -5,9 +5,17 @@ $break-large-stats-countries: 1280px;
 $locations-horizontal-bar-width: 380px;
 
 .stats-card.list-locations {
+	@include segmented-controls;
+
 	.stats-card-header {
-		.segmented-control {
+		.segmented-control.stats-module-locations__tabs {
 			flex: 1;
+			max-width: 100%;
+			width: calc( $locations-horizontal-bar-width - 24px - 24px);
+		}
+
+		.segmented-control.stats-module-locations__tabs .segmented-control__item {
+			flex: 1 1 0;
 		}
 
 		.stats-card-header__title {
@@ -16,6 +24,7 @@ $locations-horizontal-bar-width: 380px;
 	}
 
 	.stats-module-locations__country-filter {
+		margin: 12px 24px 0;
 		width: fit-content;
 	}
 
@@ -23,66 +32,52 @@ $locations-horizontal-bar-width: 380px;
 		height: auto;
 	}
 
+	.stats-card__content .stats-card--hero {
+		padding: 0;
+	}
+
 	.stats-card--column-header {
 		display: flex;
 		justify-content: space-between;
 		padding: 12px 24px;
 	}
+
 	.stats-card--column-header__left {
 		display: flex;
-		width: calc(100% - 75px);
 		justify-content: space-between;
+		width: calc(100% - 75px);
 	}
 	.stats-card--column-header__right {
 		width: 75px;
 		text-align: right;
 	}
+}
 
-	.stats-module-locations__tabs {
-		width: calc( $locations-horizontal-bar-width - 24px - 24px);
-		max-width: 100%;
-
-		.segmented-control__item {
-			flex: 1 1 0;
-		}
+.stats-summary-view .stats-card.list-locations {
+	.stats-card--hero .stats-card-header {
+		padding: 0 24px 12px 0;
 	}
 }
 
-.stats-summary-view {
-	.list-locations {
-		.stats-card--hero {
-			padding: 0 24px;
-
-			.stats-card-header {
-				padding: 0 24px 12px 0;
-			}
-		}
+.stats__module-list--traffic .stats-card.list-locations {
+	.stats-card-header {
+		padding: 0 24px;
 	}
-}
 
-.stats__module-list--traffic {
-	@include segmented-controls;
-	.list-locations {
-		.stats-card-header {
-			padding: 0 24px;
-		}
+	.stats-card--hero {
+		width: 100%;
+	}
 
-		.stats-card--hero {
-			padding: 0 24px;
-			width: 100%;
+	.stats-card--hero .stats-geochart {
+		height: auto;
+		margin-bottom: 0;
+	}
 
-			.stats-geochart {
-				height: auto;
-				margin-bottom: 0;
-			}
-
-			.stats-geochart.stats-module__placeholder {
-				margin: 0;
-				min-width: 100%;
-				padding: 0;
-				width: 100%;
-			}
-		}
+	.stats-card--hero .stats-geochart.stats-module__placeholder {
+		margin: 0;
+		min-width: 100%;
+		padding: 0;
+		width: 100%;
 	}
 
 	// Ensure the tabs are above the overlay
@@ -93,37 +88,38 @@ $locations-horizontal-bar-width: 380px;
 }
 
 @include break-large {
-	.stats-card.list-locations {
-		.stats-card-header {
-			.segmented-control {
-				flex: none;
-			}
+	.stats-card.list-locations .stats-card-header {
+		.segmented-control.stats-module-locations__tabs {
+			flex: none;
+		}
 
-			.stats-card-header__title {
-				display: flex;
-			}
+		.stats-card-header__title {
+			display: flex;
 		}
 	}
 }
 
 @include break-wide {
-	.stats__module-list--traffic .list-locations .stats-card__content {
+	.stats__module-list--traffic .stats-card.list-locations .stats-card__content {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 
-	.list-locations {
-		.stats-card--hero {
+	.stats-card.list-locations {
+		.stats-card__content .stats-card--hero {
 			flex: 2;
+			margin: 0 24px;
+
 			.stats-geochart {
 				margin: 0 auto;
 				overflow: hidden;
 				width: 100%;
-				div > div {
-					display: block;
-					margin: 0 auto;
-				}
+			}
+
+			.stats-geochart div > div {
+				display: block;
+				margin: 0 auto;
 			}
 		}
 
@@ -133,6 +129,10 @@ $locations-horizontal-bar-width: 380px;
 
 		.stats-card--footer {
 			flex-basis: 100%;
+		}
+
+		.stats-module-locations__country-filter {
+			margin: 12px 0 0;
 		}
 	}
 }
