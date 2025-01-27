@@ -60,30 +60,32 @@ const ViewMostRecentOpenConversationNotice = () => {
 	const { chat } = useOdieAssistantContext();
 
 	return (
-		<OdieNotice>
-			<div className="odie-notice__view-conversation">
-				<span>
-					{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
-				</span>
-				&nbsp;
-				<button
-					onClick={ () => {
-						if ( userHasRecentOpenConversation && supportInteraction ) {
-							trackEvent( 'chat_open_previous_conversation_notice', {
-								user_id: chat?.wpcomUserId,
-								support_interaction_id: chat?.supportInteractionId,
-							} );
-							setCurrentSupportInteraction( supportInteraction );
-							if ( ! location.pathname.includes( '/odie' ) ) {
-								navigate( '/odie' );
+		supportInteraction && (
+			<OdieNotice>
+				<div className="odie-notice__view-conversation">
+					<span>
+						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
+					</span>
+					&nbsp;
+					<button
+						onClick={ () => {
+							if ( userHasRecentOpenConversation && supportInteraction ) {
+								trackEvent( 'chat_open_previous_conversation_notice', {
+									user_id: chat?.wpcomUserId,
+									support_interaction_id: chat?.supportInteractionId,
+								} );
+								setCurrentSupportInteraction( supportInteraction );
+								if ( ! location.pathname.includes( '/odie' ) ) {
+									navigate( '/odie' );
+								}
 							}
-						}
-					} }
-				>
-					{ __( 'View conversation', __i18n_text_domain__ ) }
-				</button>
-			</div>
-		</OdieNotice>
+						} }
+					>
+						{ __( 'View conversation', __i18n_text_domain__ ) }
+					</button>
+				</div>
+			</OdieNotice>
+		)
 	);
 };
 
