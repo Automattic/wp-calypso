@@ -141,9 +141,9 @@ const useTransferTimeTracking = (
  *  Hook to manage the site to prepare a site for migration.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const usePrepareSiteForMigration = ( siteId?: number ) => {
+export const usePrepareSiteForMigration = ( siteId?: number, from?: string ) => {
 	const plugin = { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' };
-	const siteTransferState = useSiteTransfer( siteId );
+	const siteTransferState = useSiteTransfer( siteId, { from } );
 	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
 		enabled: Boolean( siteTransferState.completed ),
 	} );
