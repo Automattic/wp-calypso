@@ -10,12 +10,12 @@ type StatsModuleListingProps = {
 	siteId: number | null;
 };
 
-function StatsModuleListing( props: StatsModuleListingProps ) {
+function StatsModuleListing( { children, className, siteId }: StatsModuleListingProps ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, props.siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 
 	const fullClassName = clsx(
-		props.className ?? '',
+		className ?? '',
 		'stats__module--unified',
 		'stats__module-list',
 		'stats__flexible-grid-container',
@@ -25,11 +25,11 @@ function StatsModuleListing( props: StatsModuleListingProps ) {
 		}
 	);
 
-	if ( ! props.siteId ) {
+	if ( ! siteId ) {
 		return null;
 	}
 
-	return <div className={ fullClassName }>{ props.children }</div>;
+	return <div className={ fullClassName }>{ children }</div>;
 }
 
 export default StatsModuleListing;
