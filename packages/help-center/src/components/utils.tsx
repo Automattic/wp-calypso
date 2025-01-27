@@ -106,24 +106,6 @@ export const getConversationsFromSupportInteractions = (
 	);
 };
 
-export const matchSupportInteractionId = (
-	getConversations: () => ZendeskConversation[],
-	isChatLoaded: boolean,
-	currentSupportInteraction: SupportInteraction | undefined
-) => {
-	if ( currentSupportInteraction && isChatLoaded && getConversations ) {
-		const conversations = getConversations();
-		const getCurrentSupportInteractionId = currentSupportInteraction?.events.find(
-			( event ) => event.event_source === 'zendesk'
-		)?.event_external_id;
-		const foundMatch = conversations.find( ( conversation ) => {
-			return conversation.id === getCurrentSupportInteractionId;
-		} );
-
-		return foundMatch;
-	}
-};
-
 export const sortConversationByMostRecent = ( conversations: ZendeskConversation[] ) => {
 	if ( ! Array.isArray( conversations ) ) {
 		return conversations;
