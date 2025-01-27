@@ -91,17 +91,17 @@ const StatsCard = ( {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
-			{ hasHeroElement && splitHeaderNode }
+			{ hasHeroElement && splitHeader ? splitHeaderNode : null }
 			<div className={ `${ BASE_CLASS_NAME }__content` }>
 				{ hasHeroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-					{ ! hasHeroElement ? headerNode : null }
+					{ ! hasHeroElement || ( hasHeroElement && ! splitHeader ) ? headerNode : null }
 					<div
 						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
 						} ) }
 					>
-						{ hasHeroElement ? columnHeaderNode : null }
+						{ hasHeroElement && splitHeader ? columnHeaderNode : null }
 						{ isEmpty ? emptyMessage : children }
 					</div>
 					{ footerAction && (
