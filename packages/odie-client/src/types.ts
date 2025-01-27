@@ -10,6 +10,8 @@ export type OdieAssistantContextInterface = {
 	chat: Chat;
 	clearChat: () => void;
 	currentUser: CurrentUser;
+	experimentVariationName: string | undefined | null;
+	hasUserEverEscalatedToHumanSupport: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
 	extraContactOptions?: ReactNode;
@@ -18,6 +20,7 @@ export type OdieAssistantContextInterface = {
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	waitAnswerToFirstMessageFromHumanSupport: boolean;
+	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setMessageLikedStatus: ( message: Message, liked: boolean ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -156,7 +159,12 @@ export type Message = {
 
 export type ChatStatus = 'loading' | 'loaded' | 'sending' | 'dislike' | 'transfer' | 'closed';
 
-export type ReturnedChat = { chat_id: number; messages: Message[]; wpcom_user_id: number };
+export type ReturnedChat = {
+	chat_id: number;
+	messages: Message[];
+	wpcom_user_id: number;
+	experiment_name: string | undefined | null;
+};
 
 export type OdieChat = {
 	messages: Message[];

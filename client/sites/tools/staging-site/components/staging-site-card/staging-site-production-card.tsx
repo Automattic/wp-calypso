@@ -160,7 +160,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	return (
 		<CardContentWrapper
 			subtitle={ translate(
-				'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+				'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}',
 				{
 					components: {
 						a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,

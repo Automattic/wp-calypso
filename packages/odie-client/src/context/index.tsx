@@ -37,12 +37,15 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	canConnectToZendesk: false,
 	clearChat: noop,
 	currentUser: { display_name: 'Me' },
+	experimentVariationName: null,
+	hasUserEverEscalatedToHumanSupport: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
 	odieBroadcastClientId: '',
 	setChat: noop,
 	setChatStatus: noop,
+	setExperimentVariationName: noop,
 	setMessageLikedStatus: noop,
 	setWaitAnswerToFirstMessageFromHumanSupport: noop,
 	trackEvent: noop,
@@ -84,11 +87,22 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		};
 	}, [] );
 
+	const [ experimentVariationName, setExperimentVariationName ] = useState<
+		string | null | undefined
+	>( null );
+
 	/**
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState } = useGetCombinedChat( canConnectToZendesk );
+
+	/**
+	 * Has the user ever escalated to get human support?
+	 */
+	const hasUserEverEscalatedToHumanSupport = mainChatState?.messages.some(
+		( message ) => message.context?.flags?.forward_to_human_support
+	);
 
 	/**
 	 * Tracking event.
@@ -176,13 +190,16 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				extraContactOptions,
 				isChatLoaded,
 				isMinimized,
+				experimentVariationName,
 				isUserEligibleForPaidSupport,
 				canConnectToZendesk,
+				hasUserEverEscalatedToHumanSupport,
 				odieBroadcastClientId,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
 				setChatStatus,
+				setExperimentVariationName,
 				setMessageLikedStatus,
 				setWaitAnswerToFirstMessageFromHumanSupport,
 				trackEvent,

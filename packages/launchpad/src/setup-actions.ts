@@ -101,7 +101,7 @@ export const setUpActionsForTasks = ( {
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
 					task.calypso_path = config.isEnabled( 'settings/newsletter-settings-page' )
-						? `/settings/newsletter/${ siteSlug }`
+						? `/settings/newsletter/${ siteSlug }#messages`
 						: `/settings/reading/${ siteSlug }#newsletter-settings`;
 					break;
 

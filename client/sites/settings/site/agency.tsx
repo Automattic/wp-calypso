@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-fetch-agency-from-blog';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { isHostingMenuUntangled } from '../utils';
@@ -61,7 +62,7 @@ export function A4AFullyManagedSiteForm( {
 		return (
 			<>
 				{ isDevSite ? (
-					<p className="form-setting-explanation">
+					<FormSettingExplanation>
 						{ translate(
 							"Clients can't access the {{HcLink}}WordPress.com Help Center{{/HcLink}} or {{HfLink}}hosting features{{/HfLink}} on development sites. You may configure access after the site is launched.",
 							{
@@ -81,7 +82,7 @@ export function A4AFullyManagedSiteForm( {
 								),
 							},
 						} ) }
-					</p>
+					</FormSettingExplanation>
 				) : (
 					<ToggleControl
 						disabled={ disabled }
