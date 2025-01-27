@@ -7,11 +7,7 @@ import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import {
-	useSubscriptionPlans,
-	useFetchPaidSubscribersCount,
-	useUnsubscribeModal,
-} from 'calypso/my-sites/subscribers/hooks';
+import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
@@ -77,7 +73,6 @@ const SubscriberDataViews = ( {
 		setFilterOption,
 	} = useSubscribersPage();
 
-	const { data: paidSubscribersCount } = useFetchPaidSubscribersCount( siteId );
 	const [ currentView, setCurrentView ] = useState< View >( {
 		type: 'table',
 		layout: {},
@@ -136,11 +131,6 @@ const SubscriberDataViews = ( {
 		[]
 	);
 
-	const hasPaidSubscribers = useMemo(
-		() => paidSubscribersCount && paidSubscribersCount > 0,
-		[ paidSubscribersCount ]
-	);
-
 	const fields = useMemo(
 		() => [
 			{
@@ -191,22 +181,16 @@ const SubscriberDataViews = ( {
 				label: translate( 'Subscription type' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
-				// Conditional filtering and sorting only available if there are paid subscribers
-				...( hasPaidSubscribers
-					? {
-							elements: [
-								{ label: 'Paid', value: SubscribersFilterBy.Paid },
-								{ label: 'Free', value: SubscribersFilterBy.Free },
-							],
-							filterBy: {
-								operators: [ 'is' as Operator ],
-								isPrimary: true,
-							},
-							enableSorting: true,
-					  }
-					: {} ),
-				enableSorting: Boolean( hasPaidSubscribers ),
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
+				elements: [
+					{ label: 'Paid', value: SubscribersFilterBy.Paid },
+					{ label: 'Free', value: SubscribersFilterBy.Free },
+				],
+				filterBy: {
+					operators: [ 'is' as Operator ],
+					isPrimary: true,
+				},
+				enableSorting: true,
 				enableHiding: false,
 			},
 			{
@@ -218,7 +202,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate, hasPaidSubscribers ]
+		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
