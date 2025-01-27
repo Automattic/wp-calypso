@@ -21,7 +21,8 @@ body.is-section-subscribers.is-subscribers-dataviews,
 
             // This is a Jetpack Cloud breakpoint.
             @media( max-width: 660px ) {
-                padding-left: $padding-standard;
+                padding-left: 0;
+                padding-right: 0;
             }
         }
     }
