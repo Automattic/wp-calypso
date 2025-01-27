@@ -3,7 +3,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
@@ -12,6 +12,8 @@ import {
 	A4A_MARKETPLACE_CHECKOUT_LINK,
 	A4A_MARKETPLACE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import GuidedTour from 'calypso/components/guided-tour';
+import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import LayoutHeader, {
 	LayoutHeaderActions as Actions,
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -48,6 +50,7 @@ export function ProductsOverviewV2( {
 	searchQuery,
 }: Props ) {
 	const [ selectedSite, setSelectedSite ] = useState< SiteDetails | null | undefined >( null );
+	const [ referralToggleRef, setReferralToggleRef ] = useState< HTMLElement | null >( null );
 
 	const translate = useTranslate();
 
@@ -90,6 +93,20 @@ export function ProductsOverviewV2( {
 		setSelectedSize: setSelectedBundleSize,
 	} = useProductBundleSize();
 
+	const [ sidebarRef, setSidebarRef ] = useState< HTMLElement | null >( null );
+
+	/* Currently, there is no way for us to have a shared context between the Sidebar and Toggle component which both uses the same guided tour context.
+	 * And both components need to reside on the same Node Tree where the guided tour context is available. However, this is impossible with how we have
+	 * structured the page layout in Calypso.
+	 *
+	 * To solve this issue, we are querying the DOM to get the sidebar element for us to anchor our guided tour popover.
+	 */
+	useLayoutEffect( () => {
+		setTimeout( () => {
+			setSidebarRef( document.querySelector( '.sidebar-v2__navigator-sub-menu' ) as HTMLElement );
+		}, 300 );
+	}, [ sidebarRef ] );
+
 	const onCategorySelected = useCallback(
 		( category: string ) => {
 			setSelectedFilters( ( prevFilters ) => ( {
@@ -114,6 +131,8 @@ export function ProductsOverviewV2( {
 			onScroll={ onScroll }
 			wide
 		>
+			<GuidedTour defaultTourId="marketplaceWalkthrough" />
+
 			<LayoutTop>
 				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
@@ -130,9 +149,11 @@ export function ProductsOverviewV2( {
 						hideOnMobile
 					/>
 
-					<Actions>
+					<Actions className="a4a-marketplace__header-actions">
 						<MobileSidebarNavigation />
-						<ReferralToggle />
+						<div ref={ ( ref ) => setReferralToggleRef( ref as HTMLElement | null ) }>
+							<ReferralToggle />
+						</div>
 						<ShoppingCart
 							showCart={ showCart }
 							setShowCart={ setShowCart }
@@ -142,6 +163,20 @@ export function ProductsOverviewV2( {
 							onCheckout={ () => {
 								page( A4A_MARKETPLACE_CHECKOUT_LINK );
 							} }
+						/>
+
+						<GuidedTourStep
+							className="a4a-marketplace__guided-tour"
+							id="marketplace-walkthrough-navigation"
+							tourId="marketplaceWalkthrough"
+							context={ sidebarRef }
+						/>
+
+						<GuidedTourStep
+							className="a4a-marketplace__guided-tour"
+							id="marketplace-walkthrough-referral-toggle"
+							tourId="marketplaceWalkthrough"
+							context={ referralToggleRef }
 						/>
 					</Actions>
 				</LayoutHeader>
