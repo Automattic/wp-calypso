@@ -2,7 +2,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
@@ -53,6 +53,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
+	const location = useLocation();
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
@@ -65,6 +66,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const { data: supportInteraction } = useGetSupportInteractionById(
 		supportInteractionId?.toString() ?? null
 	);
+
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Early return if user is already talking to a human
@@ -91,6 +93,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 								support_interaction_id: chat?.supportInteractionId,
 							} );
 							setCurrentSupportInteraction( supportInteraction );
+							if ( ! location?.pathname?.includes( '/odie' ) ) {
+								navigate( '/odie' );
+							}
 						}
 					},
 					hideButton: !! supportInteraction,
