@@ -230,7 +230,7 @@ export type ZendeskContentType =
 
 type Metadata = {
 	odieChatId: number;
-	createdAt: string;
+	createdAt: number;
 	supportInteractionId: string;
 };
 
