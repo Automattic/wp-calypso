@@ -67,9 +67,14 @@ type Options = {
  *  Hook to manage the site to prepare a site for migration.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const usePrepareSiteForMigration = ( siteId?: number, options: Options = {} ) => {
+export const usePrepareSiteForMigration = (
+	siteId?: number,
+	from?: string,
+	options: Options = {}
+) => {
 	const siteTransferState = useSiteTransfer( siteId, {
 		retry: options.retry ?? 0,
+		from,
 	} );
 
 	const {

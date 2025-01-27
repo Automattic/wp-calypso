@@ -105,7 +105,11 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		completed: preparationCompleted,
 		error: preparationError,
 		migrationKey,
+<<<<<<< HEAD
 	} = usePrepareSiteForMigration( siteId, { retry: 10 } );
+=======
+	} = usePrepareSiteForMigration( siteId, fromUrl );
+>>>>>>> d49643294d4 (Pass fromUrl param through flow, pass to Atomic transfer API)
 
 	const migrationKeyStatus = detailedStatus.migrationKey;
 
