@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 
 export default function useMarketplaceWalkthroughTour() {
 	const translate = useTranslate();
@@ -14,8 +15,21 @@ export default function useMarketplaceWalkthroughTour() {
 			id: 'marketplace-walkthrough-referral-toggle',
 			popoverPosition: 'bottom',
 			title: translate( 'Earn money when you refer our hosting and products to clients' ),
-			description: translate(
-				'Assemble a cart, send a request for payment to your clients, and earn commissions.'
+			description: preventWidows(
+				translate(
+					'Assemble a cart, send a request for payment to your clients, and earn commissions. {{a}}Learn more ↗{{/a}}',
+					{
+						components: {
+							a: (
+								<a
+									href="https://agencieshelp.automattic.com/knowledge-base/referring-products-to-clients"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							),
+						},
+					}
+				)
 			),
 		},
 	];
