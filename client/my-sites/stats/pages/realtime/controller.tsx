@@ -6,11 +6,7 @@ setTimeout( () => import( 'calypso/my-sites/stats/pages/realtime' ), 3000 );
 
 function realtime( context: Context, next: () => void ) {
 	context.primary = (
-		<AsyncLoad
-			require="calypso/my-sites/stats/pages/realtime"
-			placeholder={ PageLoading }
-			query={ context.query }
-		/>
+		<AsyncLoad require="calypso/my-sites/stats/pages/realtime" placeholder={ PageLoading } />
 	);
 	next();
 }
