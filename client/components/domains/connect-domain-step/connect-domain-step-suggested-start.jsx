@@ -11,7 +11,6 @@ import {
 	stepsHeading,
 	stepSlug,
 } from 'calypso/components/domains/connect-domain-step/constants';
-import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -32,12 +31,12 @@ export default function ConnectDomainStepSuggestedStart( {
 	const { data } = domainSetupInfo;
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const firstStep = isSubdomain( domain, data?.tld )
+	const firstStep = data?.is_subdomain
 		? stepSlug.SUBDOMAIN_ADVANCED_START
 		: stepSlug.ADVANCED_START;
 	const switchToAdvancedSetup = () => setPage( firstStep );
 
-	const message = isSubdomain( domain, data?.tld )
+	const message = data?.is_subdomain
 		? __(
 				'The easiest way to connect your subdomain is by changing NS records. But if you are unable to do this, then switch to our <a>advanced setup</a>, using A & CNAME records.'
 		  )
