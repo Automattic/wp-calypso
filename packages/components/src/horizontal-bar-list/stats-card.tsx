@@ -1,32 +1,36 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import StatsHeroCard from './stats-hero-card';
 import type { StatsCardProps } from './types';
 
 import './stats-card.scss';
 
 const BASE_CLASS_NAME = 'stats-card';
 
-const StatsCard = ( {
-	children,
-	className,
-	title,
-	titleURL,
-	titleAriaLevel = 4,
-	titleNodes,
-	footerAction,
-	isEmpty,
-	emptyMessage,
-	heroElement,
-	splitHeader,
-	metricLabel,
-	mainItemLabel,
-	additionalHeaderColumns,
-	toggleControl,
-	headerClassName,
-	overlay,
-}: StatsCardProps ) => {
+const StatsCard = ( props: StatsCardProps ) => {
 	const translate = useTranslate();
-	const hasHeroElement = !! heroElement;
+	const { heroElement, splitHeader, toggleControl } = props;
+
+	if ( heroElement && splitHeader && toggleControl ) {
+		return <StatsHeroCard { ...props } />;
+	}
+
+	const {
+		children,
+		className,
+		title,
+		titleURL,
+		titleAriaLevel = 4,
+		titleNodes,
+		footerAction,
+		isEmpty,
+		emptyMessage,
+		metricLabel,
+		mainItemLabel,
+		additionalHeaderColumns,
+		headerClassName,
+		overlay,
+	} = props;
 
 	const titleNode = titleURL ? (
 		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }-header__title` }>
@@ -40,25 +44,6 @@ const StatsCard = ( {
 		>
 			<div>{ title }</div>
 			<div className={ `${ BASE_CLASS_NAME }-header__title-nodes` }>{ titleNodes }</div>
-		</div>
-	);
-
-	// Column header node for split header
-	const columnHeaderNode = (
-		<div className={ `${ BASE_CLASS_NAME }--column-header` }>
-			<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
-				{ splitHeader && mainItemLabel }
-				{ additionalHeaderColumns && (
-					<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
-						{ additionalHeaderColumns }
-					</div>
-				) }
-			</div>
-			{ ! isEmpty && (
-				<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
-					{ metricLabel ?? translate( 'Views' ) }
-				</div>
-			) }
 		</div>
 	);
 
@@ -77,31 +62,49 @@ const StatsCard = ( {
 			className={ `${ BASE_CLASS_NAME }-header ${ headerClassName } ${ BASE_CLASS_NAME }-header--split` }
 		>
 			<div className={ `${ BASE_CLASS_NAME }-header--main` }>
-				{ titleNode }
+				{ ! heroElement && titleNode }
 				{ toggleControl }
 			</div>
-			{ ! isEmpty && ! hasHeroElement ? columnHeaderNode : null }
+			{ ! isEmpty && (
+				<div className={ `${ BASE_CLASS_NAME }--column-header` }>
+					<div className={ `${ BASE_CLASS_NAME }--column-header__left` } key="left">
+						{ splitHeader && mainItemLabel }
+						{ additionalHeaderColumns && (
+							<div className={ `${ BASE_CLASS_NAME }-header__additional` }>
+								{ additionalHeaderColumns }
+							</div>
+						) }
+					</div>
+					{ ! isEmpty && (
+						<div className={ `${ BASE_CLASS_NAME }--column-header__right` } key="right">
+							{ metricLabel ?? translate( 'Views' ) }
+						</div>
+					) }
+				</div>
+			) }
 		</div>
 	);
 
-	const headerNode = splitHeader ? splitHeaderNode : simpleHeaderNode;
 	return (
 		<div
 			className={ clsx( className, BASE_CLASS_NAME, {
 				[ `${ BASE_CLASS_NAME }__hasoverlay` ]: !! overlay,
 			} ) }
 		>
-			{ hasHeroElement && splitHeader ? splitHeaderNode : null }
 			<div className={ `${ BASE_CLASS_NAME }__content` }>
-				{ hasHeroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
+				{ !! heroElement && (
+					<div className={ `${ BASE_CLASS_NAME }--hero` }>
+						{ splitHeader && <div className={ `${ BASE_CLASS_NAME }-header` }>{ titleNode }</div> }
+						{ heroElement }
+					</div>
+				) }
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
-					{ ! hasHeroElement || ( hasHeroElement && ! splitHeader ) ? headerNode : null }
+					{ splitHeader ? splitHeaderNode : simpleHeaderNode }
 					<div
 						className={ clsx( `${ BASE_CLASS_NAME }--body`, {
 							[ `${ BASE_CLASS_NAME }--body-empty` ]: isEmpty,
 						} ) }
 					>
-						{ hasHeroElement && splitHeader ? columnHeaderNode : null }
 						{ isEmpty ? emptyMessage : children }
 					</div>
 					{ footerAction && (
