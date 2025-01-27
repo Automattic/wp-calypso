@@ -167,7 +167,7 @@ class StatsNavigation extends Component {
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
-				return false; // config.isEnabled( 'stats/real-time-tab' );
+				return config.isEnabled( 'stats/real-time-tab' );
 
 			default:
 				return true;
