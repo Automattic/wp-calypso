@@ -4,7 +4,17 @@
 $break-large-stats-countries: 1280px;
 $locations-horizontal-bar-width: 380px;
 
-.list-locations {
+.stats-card.list-locations {
+	.stats-card-header {
+		.segmented-control {
+			flex: 1;
+		}
+
+		.stats-card-header__title {
+			display: none;
+		}
+	}
+
 	.stats-module-locations__country-filter {
 		width: fit-content;
 	}
@@ -79,6 +89,20 @@ $locations-horizontal-bar-width: 380px;
 	.stats-module-locations__tabs {
 		position: relative;
 		z-index: 2;
+	}
+}
+
+@include break-large {
+	.stats-card.list-locations {
+		.stats-card-header {
+			.segmented-control {
+				flex: none;
+			}
+
+			.stats-card-header__title {
+				display: flex;
+			}
+		}
 	}
 }
 
