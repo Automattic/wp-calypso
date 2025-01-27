@@ -148,13 +148,11 @@ export const userSettingsSaveSuccess =
 			return;
 		}
 
-		// TODO: Be more intelligent about what users settings are set
-		// TODO: Should this be moved to a bespoke userSettingsSaveSuccess handler?
 		const noticeOptions = {
 			id: 'save-user-settings',
 		};
 		if ( getCurrentQueryArguments( getState() ).ref === 'reader-onboarding' ) {
-			noticeOptions.button = 'Return to Reader';
+			noticeOptions.button = translate( 'Return to Reader' );
 			noticeOptions.onClick = () => {
 				page( '/read' );
 			};
