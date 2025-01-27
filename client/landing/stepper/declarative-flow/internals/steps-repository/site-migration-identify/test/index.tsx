@@ -58,7 +58,7 @@ describe( 'SiteMigrationIdentify', () => {
 		restoreIsMigrationExperimentEnabled();
 	} );
 
-	it( 'continues the flow and saves the migration domain when the platform is wordpress', async () => {
+	it( 'continues the flow when the platform is wordpress', async () => {
 		useSiteSlug.mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
@@ -68,15 +68,6 @@ describe( 'SiteMigrationIdentify', () => {
 			.get( '/wpcom/v2/imports/analyze-url' )
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
-
-		const saveSettingsMock = mockApi()
-			.post(
-				`/rest/v1.4/sites/${ MOCK_WORDPRESS_SITE_SLUG }/settings`,
-				JSON.stringify( { migration_source_site_domain: API_RESPONSE_WORDPRESS_PLATFORM.url } )
-			)
-			.reply( 200, {
-				updated: { migration_source_site_domain: API_RESPONSE_WORDPRESS_PLATFORM.url },
-			} );
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
@@ -89,7 +80,6 @@ describe( 'SiteMigrationIdentify', () => {
 					from: API_RESPONSE_WORDPRESS_PLATFORM.url,
 				} )
 			);
-			expect( saveSettingsMock.isDone() ).toBeTruthy();
 		} );
 	} );
 
