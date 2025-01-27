@@ -129,8 +129,8 @@ export const sortConversationByMostRecent = ( conversations: ZendeskConversation
 		return conversations;
 	}
 	return conversations.sort( ( conversationA, conversationB ) => {
-		const aCreatedAt = conversationA.metadata?.createdAt;
-		const bCreatedAt = conversationB.metadata?.createdAt;
+		const aCreatedAt = conversationA?.metadata?.createdAt;
+		const bCreatedAt = conversationB?.metadata?.createdAt;
 		if ( aCreatedAt && bCreatedAt ) {
 			return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
 		}
