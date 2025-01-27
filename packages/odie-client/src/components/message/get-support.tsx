@@ -140,7 +140,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					button.hideButton !== false && (
 						<div className="odie__transfer-chat--button-container" key={ index }>
 							<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
-							<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+							{ button.waitTimeText && (
+								<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+							) }
 						</div>
 					)
 			) }
