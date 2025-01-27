@@ -1,4 +1,3 @@
-import { useGetMostRecentOpenConversation } from '@automattic/help-center/src/hooks';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -7,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
+import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
 import './get-support.scss';
 
@@ -62,7 +62,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 
 	const { userHasRecentOpenConversation, supportInteractionId } =
 		useGetMostRecentOpenConversation();
-	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
+	const { data: supportInteraction } = useGetSupportInteractionById(
+		supportInteractionId?.toString() || null
+	);
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Early return if user is already talking to a human

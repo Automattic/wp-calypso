@@ -1,10 +1,7 @@
 import { HelpCenterSelect, HelpCenter } from '@automattic/data-stores';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
 import { useSelect } from '@wordpress/data';
-import {
-	getZendeskConversations,
-	getConversationsFromSupportInteractions,
-} from '../components/utils';
+import Smooch from 'smooch';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -27,22 +24,28 @@ export const useGetMostRecentOpenConversation = () => {
 
 	const isLoadingInteractions = isLoadingResolvedInteractions || isLoadingOpenInteractions;
 
-	if ( isChatLoaded && getZendeskConversations && ! isLoadingInteractions ) {
-		const allConversations = getZendeskConversations();
+	if ( isChatLoaded && ! isLoadingInteractions ) {
+		const allConversations = Smooch?.getConversations?.() ?? [];
 		const supportInteractions = [
 			...( supportInteractionsResolved || [] ),
 			...( supportInteractionsOpen || [] ),
 		];
 
-		const filteredConversations = getConversationsFromSupportInteractions(
-			allConversations,
-			supportInteractions
+		const filteredConversations = allConversations.filter( ( conversation ) =>
+			supportInteractions.some(
+				( interaction ) => interaction.uuid === conversation.metadata?.supportInteractionId
+			)
 		);
 
 		const sortedConversations = filteredConversations.sort( ( conversationA, conversationB ) => {
 			const aCreatedAt = conversationA?.metadata?.createdAt;
 			const bCreatedAt = conversationB?.metadata?.createdAt;
-			if ( aCreatedAt && bCreatedAt ) {
+			if (
+				aCreatedAt &&
+				bCreatedAt &&
+				typeof aCreatedAt === 'number' &&
+				typeof bCreatedAt === 'number'
+			) {
 				return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
 			}
 			return 0;
