@@ -60,7 +60,7 @@ export const JetpackItemVariantDropDownPrice: FunctionComponent< {
 	return (
 		<Variant>
 			<Label>
-				{ variant.variantLabel }
+				{ variant.variantLabel.noun }
 				{ isMobile && discountInteger > 0 && (
 					<JetpackDiscountDisplay
 						finalPriceInteger={ variant.priceInteger }
