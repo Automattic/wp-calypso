@@ -220,6 +220,7 @@
 .email-plan-mailboxes-list__mailbox-list {
 	margin-top: 15px;
 	border: 1px solid var(--color-border-subtle);
+	background-color: #fff;
 }
 
 .email-mailbox-action-menu__main {
@@ -452,6 +453,7 @@
  * Context: All Domain Management
  */
 .wpcom-site .hosting-dashboard-layout.sites-dashboard .hosting-dashboard-item-view__content .context-all-domain-management,
+.is-section-email,
 /* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
@@ -483,12 +485,7 @@
 	/* Mailboxes */
 	.email-plan-mailboxes-list {
 		&__mailbox-list {
-			margin-top: 0;
 			padding-bottom: 1.875rem;
-
-			@include break-medium {
-				border-radius: 4px;
-			}
 
 			.card {
 				box-shadow: none;
@@ -542,7 +539,7 @@
 		&__email-forward {
 			.section-header {
 				margin: 1.5rem 0;
-				border-radius: 4px;
+				border-radius: 0;
 			}
 
 			.section-header__actions {
