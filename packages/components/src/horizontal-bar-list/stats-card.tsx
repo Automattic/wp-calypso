@@ -11,6 +11,8 @@ const StatsCard = ( props: StatsCardProps ) => {
 	const translate = useTranslate();
 	const { heroElement, splitHeader, toggleControl } = props;
 
+	// Isolate the rendering logic for the Locations module into a new component.
+	// This ensures the existing StatsCard component remains unchanged, allowing us to safely iterate on it.
 	if ( heroElement && splitHeader && toggleControl ) {
 		return <StatsHeroCard { ...props } />;
 	}

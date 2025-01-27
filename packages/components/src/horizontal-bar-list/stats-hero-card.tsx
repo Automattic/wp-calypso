@@ -6,6 +6,7 @@ import './stats-card.scss';
 
 const BASE_CLASS_NAME = 'stats-card';
 
+// This component is mainly used for the Locations module, which uses heroElement, splitHeader and toggleControl
 const StatsHeroCard = ( {
 	children,
 	className,
