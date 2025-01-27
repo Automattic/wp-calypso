@@ -60,7 +60,7 @@
 }
 
 .product-category-menu-title {
-	@include a4a-font-heading-xl;
+	@include a4a-font-heading-lg;
 	color: var(--color-text-inverted);
 	z-index: 10;
 	position: relative;

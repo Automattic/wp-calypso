@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, chevronDown } from '@wordpress/icons';
+import { chevronDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -70,9 +70,12 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 					className="bundle-price-selector__menu-button"
 					variant="secondary"
 					onClick={ () => setIsMenuOpen( ! isMenuOpen ) }
+					icon={ chevronDown }
+					iconPosition="right"
 				>
-					{ value > 1 ? getLabel( value ) : translate( 'Explore bundle discounts to apply' ) }
-					<Icon icon={ chevronDown } />
+					<span>
+						{ value > 1 ? getLabel( value ) : translate( 'Explore bundle discounts to apply' ) }
+					</span>
 				</Button>
 			</div>
 

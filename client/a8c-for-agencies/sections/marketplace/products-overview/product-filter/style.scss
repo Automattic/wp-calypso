@@ -75,7 +75,7 @@
 .product-filter-select {
 	display: none;
 
-	@include break-wide {
+	@include break-huge {
 		display: block;
 	}
 }

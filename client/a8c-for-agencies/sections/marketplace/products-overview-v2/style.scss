@@ -6,6 +6,8 @@ $header-height: 300px;
 $header-height-mobile: 350px;
 $header-compact-height: 114px;
 $header-compact-height-mobile: 128px;
+$action-panel-height: 72px;
+$action-panel-height-mobile: 128px;
 
 .products-overview-v2.main.hosting-dashboard-layout {
 	.hosting-dashboard-layout__container {
@@ -69,7 +71,18 @@ $header-compact-height-mobile: 128px;
 		z-index: 2;
 
 		@include break-medium {
-			top: 114px;
+			top: $header-compact-height;
+		}
+	}
+
+	.product-listing-section__header-wrapper {
+		position: sticky;
+		padding-block: 16px;
+
+		top: calc( $header-compact-height-mobile + $action-panel-height-mobile );
+
+		@include break-medium {
+			top: calc( $header-compact-height + $action-panel-height );
 		}
 	}
 }
