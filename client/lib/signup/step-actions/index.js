@@ -3,7 +3,8 @@ import config from '@automattic/calypso-config';
 import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE, isDomainTransfer } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
-import { STORAGE_ADD_ON_DEFINITIONS, STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
+import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
+import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { isOnboardingGuidedFlow } from '@automattic/onboarding';
@@ -1248,9 +1249,10 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
 
 	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
+		const selectedAddOn = getAddOn( selectedStorage );
 		cartItem.push( {
 			product_slug: PRODUCT_1GB_SPACE,
-			quantity: STORAGE_ADD_ON_DEFINITIONS[ selectedStorage ].quantity,
+			quantity: selectedAddOn.quantity,
 			volume: 1,
 			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
 		} );
