@@ -105,17 +105,3 @@ export const getConversationsFromSupportInteractions = (
 		)
 	);
 };
-
-export const sortConversationByMostRecent = ( conversations: ZendeskConversation[] ) => {
-	if ( ! Array.isArray( conversations ) ) {
-		return conversations;
-	}
-	return conversations.sort( ( conversationA, conversationB ) => {
-		const aCreatedAt = conversationA?.metadata?.createdAt;
-		const bCreatedAt = conversationB?.metadata?.createdAt;
-		if ( aCreatedAt && bCreatedAt ) {
-			return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
-		}
-		return 0;
-	} );
-};
