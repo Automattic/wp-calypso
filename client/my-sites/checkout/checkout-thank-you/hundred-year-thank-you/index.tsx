@@ -220,14 +220,14 @@ export default function HundredYearThankYou( {
 	const messageTarget = targetDomain?.domain || siteSlug;
 	const domainSpecificDescription =
 		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
-			? translate( 'Your 100-Year Domain %(messageTarget)s has been registered.', {
+			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
 					args: {
-						messageTarget,
+						domain: targetDomain?.domain || siteSlug, // though targetDomain?.domain should be defined here, right?
 					},
 			  } )
-			: translate( 'Your 100-Year Domain %(messageTarget)s is being transferred.', {
+			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
 					args: {
-						messageTarget,
+						domain: targetDomain?.domain, || siteSlug,
 					},
 			  } );
 	const hundredYearPlanDescription = translate(
