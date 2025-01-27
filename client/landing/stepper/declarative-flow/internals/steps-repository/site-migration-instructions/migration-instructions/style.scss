@@ -10,6 +10,35 @@
 		flex-direction: row;
 		gap: 24px;
 	}
+
+	.circular__progress-bar-fill-circle {
+		stroke: var(--studio-wordpress-blue-50);
+	}
+
+	.external-link,
+	.checklist-item__task.completed .checklist-item__task-content:hover .checklist-item__text {
+		color: var(--studio-wordpress-blue-50);
+	}
+
+	.checklist-item__task.completed .checklist-item__task-content:hover .checklist-item__checkmark {
+		fill: var(--studio-wordpress-blue-50);
+	}
+
+	.checklist-item__checklist-expanded-action-button.components-button {
+		background-color: var(--studio-wordpress-blue-50);
+		border-color: var(--studio-wordpress-blue-50);
+
+		&:hover:not([disabled]) {
+			background-color: var(--studio-wordpress-blue-60);
+			border-color: var(--studio-wordpress-blue-60);
+		}
+	}
+}
+
+.site-migration-instructions-questions {
+	.external-link {
+		color: var(--studio-wordpress-blue-50);
+	}
 }
 
 .migration-instructions--with-preview {

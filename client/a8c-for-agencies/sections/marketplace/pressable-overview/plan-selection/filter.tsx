@@ -1,51 +1,85 @@
-import { Button } from '@wordpress/components';
-import { Icon, info } from '@wordpress/icons';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { RadioControl, TabPanel } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import { FILTER_TYPE_INSTALL, FILTER_TYPE_VISITS } from '../constants';
+import {
+	FILTER_TYPE_INSTALL,
+	FILTER_TYPE_VISITS,
+	PLAN_CATEGORY_STANDARD,
+	PLAN_CATEGORY_ENTERPRISE,
+	PLAN_CATEGORY_HIGH_RESOURCE,
+	FILTER_TYPE_STORAGE,
+} from '../constants';
 import getPressablePlan, { PressablePlan } from '../lib/get-pressable-plan';
 import getSliderOptions from '../lib/get-slider-options';
 import { FilterType } from '../types';
 
 type Props = {
+	// Plan details for the plan that's currently selected in the UI
 	selectedPlan: APIProductFamilyProduct | null;
+	// All available Pressable plans
 	plans: APIProductFamilyProduct[];
-	existingPlan?: APIProductFamilyProduct | null;
+	// The users existing Pressable plan if any
 	pressablePlan?: PressablePlan | null;
+	// Plan selection handler
 	onSelectPlan: ( plan: APIProductFamilyProduct | null ) => void;
+	// Whether the existing plan is still being loaded
 	isLoading?: boolean;
+	showHighResourceTab?: boolean;
 };
 
 export default function PlanSelectionFilter( {
 	selectedPlan,
 	plans,
 	onSelectPlan,
-	existingPlan,
 	pressablePlan,
 	isLoading,
+	showHighResourceTab = false,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
 	const [ filterType, setFilterType ] = useState< FilterType >( FILTER_TYPE_INSTALL );
+	const [ selectedTab, setSelectedTab ] = useState( PLAN_CATEGORY_STANDARD );
+	const [ disableStandardTab, setDisableStandardTab ] = useState( false );
 
-	const options = useMemo(
+	const isMobile = useMobileBreakpoint();
+
+	const standardOptions = useMemo(
+		() =>
+			getSliderOptions(
+				filterType,
+				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
+				PLAN_CATEGORY_STANDARD,
+				isMobile
+			),
+		[ filterType, isMobile, plans ]
+	);
+
+	const enterpriseOptions = useMemo(
 		() => [
 			...getSliderOptions(
 				filterType,
-				plans.map( ( plan ) => getPressablePlan( plan.slug ) )
+				plans.map( ( plan ) => getPressablePlan( plan.slug ) ),
+				PLAN_CATEGORY_ENTERPRISE,
+				isMobile
 			),
-			{
-				label: translate( 'More' ),
-				value: null,
-			},
+			...( showHighResourceTab
+				? []
+				: [
+						{
+							label: translate( 'More' ),
+							value: null,
+							category: null,
+						},
+				  ] ),
 		],
-		[ filterType, plans, translate ]
+		[ filterType, isMobile, plans, showHighResourceTab, translate ]
 	);
 
 	const onSelectOption = useCallback(
@@ -61,23 +95,19 @@ export default function PlanSelectionFilter( {
 		[ dispatch, onSelectPlan, plans ]
 	);
 
-	const selectedOption = options.findIndex(
-		( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null )
+	const selectedOptionIndex = (
+		PLAN_CATEGORY_STANDARD === selectedTab ? standardOptions : enterpriseOptions
+	).findIndex( ( { value } ) => value === ( selectedPlan ? selectedPlan.slug : null ) );
+
+	const onSelectFilterType = useCallback(
+		( value: FilterType ) => {
+			setFilterType( value );
+			dispatch(
+				recordTracksEvent( `calypso_a4a_marketplace_hosting_pressable_filter_by_${ value }_click` )
+			);
+		},
+		[ dispatch ]
 	);
-
-	const onSelectInstallFilterType = useCallback( () => {
-		setFilterType( FILTER_TYPE_INSTALL );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_filter_by_install_click' )
-		);
-	}, [ dispatch ] );
-
-	const onSelectVisitFilterType = useCallback( () => {
-		setFilterType( FILTER_TYPE_VISITS );
-		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_filter_by_visits_click' )
-		);
-	}, [ dispatch ] );
 
 	const additionalWrapperClass =
 		filterType === FILTER_TYPE_INSTALL
@@ -85,22 +115,57 @@ export default function PlanSelectionFilter( {
 			: 'a4a-pressable-filter-wrapper-visits';
 	const wrapperClass = clsx( additionalWrapperClass, 'pressable-overview-plan-selection__filter' );
 
-	const minimum = useMemo( () => {
-		if ( ! pressablePlan ) {
-			return 0;
-		}
-
-		const allAvailablePlans = plans
-			.map( ( plan ) => getPressablePlan( plan.slug ) )
-			.sort( ( a, b ) => a.install - b.install );
-
-		for ( let i = 0; i < allAvailablePlans.length; i++ ) {
-			if ( pressablePlan.install < allAvailablePlans[ i ].install ) {
-				return i;
+	const getSliderMinimum = useCallback(
+		( category: string, categoryOptions: Option[] ) => {
+			if ( ! pressablePlan ) {
+				return 0;
 			}
+
+			// Depending on the category of the existing plan, we might want to show other category slider at the most min or max
+			if (
+				PLAN_CATEGORY_STANDARD === category &&
+				PLAN_CATEGORY_STANDARD !== pressablePlan?.category
+			) {
+				return categoryOptions.length - 1;
+			} else if (
+				PLAN_CATEGORY_ENTERPRISE === category &&
+				PLAN_CATEGORY_ENTERPRISE !== pressablePlan?.category
+			) {
+				return 0;
+			}
+
+			for ( let i = 0; i < categoryOptions.length; i++ ) {
+				const plan = getPressablePlan( categoryOptions[ i ].value as string );
+				if ( pressablePlan?.install < plan?.install ) {
+					return i;
+				}
+			}
+			return categoryOptions.length;
+		},
+		[ pressablePlan ]
+	);
+
+	useEffect( () => {
+		if ( ! pressablePlan ) {
+			return;
 		}
-		return allAvailablePlans.length;
-	}, [ plans, pressablePlan ] );
+
+		setSelectedTab( pressablePlan.category ?? PLAN_CATEGORY_STANDARD );
+
+		// Disable the standard tab if the existing plan is the highest standard plan or higher
+		if (
+			pressablePlan.category !== PLAN_CATEGORY_STANDARD ||
+			pressablePlan.slug === standardOptions[ standardOptions.length - 1 ]?.value
+		) {
+			setDisableStandardTab( true );
+		}
+	}, [ pressablePlan, standardOptions ] );
+
+	useEffect( () => {
+		if ( selectedTab === PLAN_CATEGORY_HIGH_RESOURCE ) {
+			onSelectPlan( null );
+		}
+	}, [ onSelectPlan, selectedTab ] );
 
 	if ( isLoading ) {
 		return (
@@ -111,59 +176,87 @@ export default function PlanSelectionFilter( {
 		);
 	}
 
+	const FilterByPicker = () => (
+		<div className="pressable-overview-plan-selection__filter-type">
+			<p className="pressable-overview-plan-selection__filter-label">
+				{ translate( 'Display plans by total' ) }
+			</p>
+
+			<RadioControl
+				className="pressable-overview-plan-selection__filter-radio-control"
+				selected={ filterType }
+				options={ [
+					{ label: translate( 'WordPress installs' ), value: FILTER_TYPE_INSTALL },
+					{ label: translate( 'Traffic' ), value: FILTER_TYPE_VISITS },
+					{
+						label: isMobile ? translate( 'Storage (GB)' ) : translate( 'Storage' ),
+						value: FILTER_TYPE_STORAGE,
+					},
+				] }
+				onChange={ ( value ) => onSelectFilterType( value as FilterType ) }
+			/>
+		</div>
+	);
+
 	return (
 		<section className={ wrapperClass }>
-			{ !! existingPlan && (
-				<div className="pressable-overview-plan-selection__filter-owned-plan">
-					<div className="badge">
-						<Icon icon={ info } size={ 24 } />
-
-						<span>
-							{ translate( 'You own {{b}}%(planName)s plan{{/b}}', {
-								args: {
-									planName: existingPlan.name,
+			<TabPanel
+				key={ selectedTab } // Force re-render when selectedTab changes
+				className="pressable-overview-plan-selection__plan-category-tabpanel"
+				activeClass="pressable-overview-plan-selection__plan-category-tab-is-active"
+				onSelect={ setSelectedTab }
+				initialTabName={ selectedTab }
+				tabs={ [
+					{
+						name: PLAN_CATEGORY_STANDARD,
+						title: translate( 'Signature Plans' ),
+						disabled: disableStandardTab,
+					},
+					{
+						name: PLAN_CATEGORY_ENTERPRISE,
+						title: translate( 'Enterprise Plans' ),
+					},
+					...( showHighResourceTab
+						? [
+								{
+									name: PLAN_CATEGORY_HIGH_RESOURCE,
+									title: translate( 'High Resource Plans' ),
 								},
-								components: {
-									b: <strong />,
-								},
-								comment: '%(planName)s is the name of the Pressable plan the user owns.',
-							} ) }
-						</span>
-					</div>
-				</div>
-			) }
-
-			<div className="pressable-overview-plan-selection__filter-type">
-				<p className="pressable-overview-plan-selection__filter-label">
-					{ translate( 'Filter by:' ) }
-				</p>
-				<div className="pressable-overview-plan-selection__filter-buttons">
-					<Button
-						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-dark': filterType === FILTER_TYPE_INSTALL,
-						} ) }
-						onClick={ onSelectInstallFilterType }
-					>
-						{ translate( 'WordPress installs' ) }
-					</Button>
-
-					<Button
-						className={ clsx( 'pressable-overview-plan-selection__filter-button', {
-							'is-dark': filterType === FILTER_TYPE_VISITS,
-						} ) }
-						onClick={ onSelectVisitFilterType }
-					>
-						{ translate( 'Number of visits' ) }
-					</Button>
-				</div>
-			</div>
-
-			<A4ASlider
-				value={ selectedOption }
-				onChange={ onSelectOption }
-				options={ options }
-				minimum={ minimum }
-			/>
+						  ]
+						: [] ),
+				] }
+			>
+				{ ( tab ) => {
+					switch ( tab.name ) {
+						case PLAN_CATEGORY_STANDARD:
+							return (
+								<>
+									<FilterByPicker />
+									<A4ASlider
+										value={ PLAN_CATEGORY_STANDARD === selectedTab ? selectedOptionIndex : 0 }
+										onChange={ onSelectOption }
+										options={ standardOptions }
+										minimum={ getSliderMinimum( PLAN_CATEGORY_STANDARD, standardOptions ) }
+									/>
+								</>
+							);
+						case PLAN_CATEGORY_ENTERPRISE:
+							return (
+								<>
+									<FilterByPicker />
+									<A4ASlider
+										value={ PLAN_CATEGORY_ENTERPRISE === selectedTab ? selectedOptionIndex : 0 }
+										onChange={ onSelectOption }
+										options={ enterpriseOptions }
+										minimum={ getSliderMinimum( PLAN_CATEGORY_ENTERPRISE, enterpriseOptions ) }
+									/>
+								</>
+							);
+						default:
+							return null;
+					}
+				} }
+			</TabPanel>
 		</section>
 	);
 }

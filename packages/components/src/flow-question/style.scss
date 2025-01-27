@@ -1,0 +1,46 @@
+@import "@automattic/typography/styles/variables";
+
+button.flow-question {
+	margin: 0;
+	border-radius: 4px;
+	cursor: pointer;
+	text-align: left;
+
+	.components-card__body {
+		padding: 22px 22px 24px;
+	}
+
+	&:hover,
+	&:focus {
+		box-shadow: 0 0 0 1px var(--studio-wordpress-blue-50);
+
+		svg {
+			fill: var(--studio-wordpress-blue-50);
+		}
+
+		.flow-question__description,
+		.flow-question__heading {
+			color: var(--studio-wordpress-blue-50);
+		}
+	}
+
+	.flow-question__icon {
+		align-self: flex-start;
+		padding: 2px 1px 0 0;
+	}
+
+	.flow-question__heading {
+		font-weight: 500;
+		font-size: $font-body-large;
+		display: flex;
+		align-items: center;
+		margin-bottom: 5px;
+	}
+
+	.flow-question__description {
+		color: var(--studio-gray-60);
+		font-size: $font-body-small;
+		padding-right: 10px;
+		margin: 0;
+	}
+}

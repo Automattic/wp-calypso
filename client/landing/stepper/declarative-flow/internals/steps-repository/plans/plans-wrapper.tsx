@@ -6,7 +6,6 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
 	NEW_HOSTED_SITE_FLOW,
 	isNewHostedSiteCreationFlow,
 	isDomainUpsellFlow,
@@ -22,13 +21,13 @@ import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useLayoutEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
+import { getIntervalType } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import { getIntervalType } from 'calypso/signup/steps/plans/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -48,8 +47,6 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 			return 'plans-blog-onboarding';
 		case NEWSLETTER_FLOW:
 			return 'plans-newsletter';
-		case LINK_IN_BIO_FLOW:
-			return 'plans-link-in-bio';
 		case NEW_HOSTED_SITE_FLOW:
 			if ( isWordCampPromo ) {
 				return 'plans-new-hosted-site-business-only';
@@ -60,6 +57,9 @@ function getPlansIntent( flowName: string | null, isWordCampPromo?: boolean ): P
 	}
 }
 
+/**
+ * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
+ */
 const PlansWrapper: React.FC< Props > = ( props ) => {
 	const {
 		hideFreePlan: reduxHideFreePlan,
@@ -138,6 +138,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} else {
 			recordTracksEvent( 'calypso_signup_free_plan_select', {
 				from_section: 'default',
+				flow: flowName,
 			} );
 		}
 

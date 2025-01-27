@@ -506,6 +506,7 @@ function reject( xhr, err, headers ) {
 const wpcomAllowedOrigins = [
 	'https://wordpress.com',
 	'https://cloud.jetpack.com',
+	'https://jetpack.com',
 	'https://agencies.automattic.com',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
 	'http://widgets.wp.com',

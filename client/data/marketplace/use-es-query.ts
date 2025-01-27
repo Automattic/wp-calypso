@@ -142,6 +142,7 @@ export const getESPluginsInfiniteQueryParams = (
 			pageHandle: pageParam + '',
 			pageSize,
 			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
+			slugs: options.slugs,
 		} );
 	return { queryKey, queryFn, initialPageParam: 1 };
 };

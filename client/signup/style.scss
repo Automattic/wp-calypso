@@ -32,8 +32,7 @@ body.is-section-signup {
 		}
 	}
 
-	&.is-videopress-signup,
-	&.is-videopress-tv-signup {
+	&.is-videopress-signup {
 		background: var(--videopress-color-background-dark);
 		color: var(--videopress-color-text);
 
@@ -243,7 +242,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		color: var(--color-text-inverted);
 	}
 
-	a {
+	.signup:not(.is-wpcc):not(.is-crowdsignal) a {
 		color: var(--color-neutral-0);
 		text-decoration: underline;
 
@@ -259,7 +258,7 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 }
 
 .layout.is-wccom-oauth-flow {
-	@import "jetpack-connect/colors.scss";
+	@import "jetpack-connect/colors";
 	@include woocommerce-colors();
 	background-color: var(--color-woocommerce-onboarding-background);
 	height: 100%;
@@ -394,14 +393,14 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
  * Common styles for reskinSignupFlow a/b test
  */
 body.is-section-stepper,
-body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
+body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
 	$breakpoint-mobile: 660px;
 
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
+	--color-accent: var(--studio-wordpress-blue-50);
+	--color-accent-60: var(--studio-wordpress-blue-60);
 
 	.signup-header {
 		.wordpress-logo {
@@ -914,4 +913,10 @@ body.is-section-signup .is-gravatar {
 	:root {
 		--signup-form-column-max-width: 408px;
 	}
+}
+
+body.is-section-signup
+.signup:not(.is-wpcc2)
+.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
+	margin: 0 0 16px;
 }

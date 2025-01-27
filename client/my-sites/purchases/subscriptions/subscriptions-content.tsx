@@ -1,9 +1,11 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
@@ -107,6 +109,7 @@ function NoPurchasesMessage() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
+	const commonEventProps = { context: 'site' };
 
 	let url;
 	if ( ! isJetpackCloud() ) {
@@ -130,13 +133,22 @@ function NoPurchasesMessage() {
 		/>
 	) : (
 		<CompactCard className="subscriptions__list">
-			<EmptyContent
-				title={ translate( 'Looking to upgrade?' ) }
-				line={ translate( 'You have made no purchases for this site.' ) }
-				action={ translate( 'Upgrade now' ) }
-				actionURL={ url }
-				illustration={ noSitesIllustration }
-			/>
+			<>
+				<TrackComponentView
+					eventName="calypso_no_purchases_upgrade_nudge_impression"
+					eventProperties={ commonEventProps }
+				/>
+				<EmptyContent
+					title={ translate( 'Looking to upgrade?' ) }
+					line={ translate( 'You have made no purchases for this site.' ) }
+					action={ translate( 'Upgrade now' ) }
+					actionURL={ url }
+					illustration={ noSitesIllustration }
+					actionCallback={ () => {
+						recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+					} }
+				/>
+			</>
 		</CompactCard>
 	);
 }

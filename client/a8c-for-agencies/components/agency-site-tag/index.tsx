@@ -5,17 +5,20 @@ import './style.scss';
 interface Props {
 	tag: string;
 	onRemoveTag: ( tag: string ) => void;
+	isRemovable?: boolean;
 }
 
-export default function AgencySiteTag( { tag, onRemoveTag }: Props ) {
+export default function AgencySiteTag( { tag, onRemoveTag, isRemovable = true }: Props ) {
 	return (
 		<Badge className="agency-site-tag" type="info">
 			<span className="agency-site-tag__text">{ tag }</span>
-			<Icon
-				className="agency-site-tag__close"
-				onClick={ () => onRemoveTag( tag ) }
-				icon={ closeSmall }
-			/>
+			{ isRemovable && (
+				<Icon
+					className="agency-site-tag__close"
+					onClick={ () => onRemoveTag( tag ) }
+					icon={ closeSmall }
+				/>
+			) }
 		</Badge>
 	);
 }

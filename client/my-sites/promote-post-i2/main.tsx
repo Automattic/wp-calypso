@@ -5,7 +5,7 @@ import { InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -16,6 +16,7 @@ import {
 	BlazePagedItem,
 	Campaign,
 	CampaignQueryResult,
+	PromotePostWarning,
 } from 'calypso/data/promote-post/types';
 import useBillingSummaryQuery from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import useCampaignsQueryPaged from 'calypso/data/promote-post/use-promote-post-campaigns-query-paged';
@@ -24,7 +25,10 @@ import usePostsQueryPaged, {
 	usePostsQueryStats,
 } from 'calypso/data/promote-post/use-promote-post-posts-query-paged';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
-import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
+import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
+import PostsList, {
+	postsNotReadyErrorMessage,
+} from 'calypso/my-sites/promote-post-i2/components/posts-list';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
 import {
 	SORT_OPTIONS_DEFAULT,
@@ -35,6 +39,7 @@ import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import BlazePageViewTracker from './components/blaze-page-view-tracker';
 import BlazePluginBanner from './components/blaze-plugin-banner';
+import CampaignsTotalStats from './components/campaigns-total-stats';
 import CreditBalance from './components/credit-balance';
 import MainWrapper from './components/main-wrapper';
 import PostsListBanner from './components/posts-list-banner';
@@ -65,6 +70,11 @@ export type PagedBlazeContentData = {
 	has_more_pages: boolean;
 	total_items?: number;
 	items?: BlazePagedItem[];
+	warnings?: PromotePostWarning[];
+	campaigns_stats?: {
+		total_impressions: number;
+		total_clicks: number;
+	};
 };
 
 export type PagedBlazeSearchResponse = {
@@ -115,10 +125,19 @@ export default function PromotedPosts( { tab }: Props ) {
 	const { data, isLoading: isLoadingBillingSummary } = useBillingSummaryQuery();
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
-	const { has_more_pages: campaignsHasMorePages, items: pagedCampaigns } = getPagedBlazeSearchData(
-		'campaigns',
-		campaignsData
-	);
+	const shouldDisplayDebtAndPaymentLinks =
+		! isLoadingBillingSummary &&
+		data?.debt !== undefined &&
+		! data?.paymentsBlocked &&
+		data?.paymentLinks &&
+		data?.paymentLinks.length > 0 &&
+		parseFloat( data.debt ) > 0;
+
+	const {
+		has_more_pages: campaignsHasMorePages,
+		items: pagedCampaigns,
+		campaigns_stats: campaignsStats,
+	} = getPagedBlazeSearchData( 'campaigns', campaignsData );
 
 	const { total_items: totalCampaignsUnfiltered } = getPagedBlazeSearchData(
 		'campaigns',
@@ -145,10 +164,11 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const postsIsLoadingNewContent = postsIsLoading || postIsRefetching;
 
-	const { has_more_pages: postsHasMorePages, items: posts } = getPagedBlazeSearchData(
-		'posts',
-		postsData
-	);
+	const {
+		has_more_pages: postsHasMorePages,
+		items: posts,
+		warnings: postsWarnings,
+	} = getPagedBlazeSearchData( 'posts', postsData );
 
 	const tabs: TabOption[] = [
 		{
@@ -228,6 +248,33 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	};
 
+	const renderWarningNotices = ( warnings?: PromotePostWarning[] ) => {
+		const content = [];
+
+		for ( const item of warnings ?? [] ) {
+			switch ( item ) {
+				case 'sync_in_progress':
+					content.push(
+						<Notice
+							key={ item }
+							className="promote-post-notice"
+							status="is-info"
+							showDismiss={ false }
+						>
+							{ postsNotReadyErrorMessage }
+						</Notice>
+					);
+					break;
+			}
+		}
+
+		return content.length ? (
+			<div className="promote-post-i2__warnings-wrapper promote-post-i2__aux-wrapper">
+				{ content }
+			</div>
+		) : null;
+	};
+
 	return (
 		<MainWrapper>
 			<DocumentHead title={ translate( 'Advertising' ) } />
@@ -267,6 +314,11 @@ export default function PromotedPosts( { tab }: Props ) {
 				// TODO: Uncomment when DebtNotifier is implemented
 				/* <DebtNotifier /> */
 			 }
+			<CampaignsTotalStats
+				totalImpressions={ campaignsStats?.total_impressions }
+				totalClicks={ campaignsStats?.total_clicks }
+				outerContainerClass={ ! showBanner ? 'promote-post-i2__divider' : '' }
+			/>
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 
@@ -293,6 +345,30 @@ export default function PromotedPosts( { tab }: Props ) {
 						}
 					) }
 				</Notice>
+			) }
+
+			{ shouldDisplayDebtAndPaymentLinks && (
+				<>
+					<Notice
+						isReskinned
+						showDismiss={ false }
+						status="is-error"
+						icon="notice-outline"
+						className="promote-post-i2__payment-blocked-notice"
+					>
+						{ translate(
+							'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',
+							{
+								args: {
+									debtAmount: data.debt || '',
+									// this is just a fallback. debt should never be undefined
+									// it is checked in shouldDisplayDebtAndPaymentLinks
+								},
+							}
+						) }
+					</Notice>
+					<PaymentLinks payment_links={ data?.paymentLinks } />
+				</>
 			) }
 
 			{ /* Render campaigns tab */ }
@@ -329,6 +405,8 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ /* Render posts tab */ }
 			{ selectedTab !== 'campaigns' && selectedTab !== 'credits' && (
 				<>
+					{ renderWarningNotices( postsWarnings ) }
+
 					<BlazePageViewTracker
 						path={ getAdvertisingDashboardPath( '/posts/:site' ) }
 						title="Advertising > Ready to Promote"

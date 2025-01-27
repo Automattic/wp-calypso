@@ -3,7 +3,7 @@
 
 .jetpack-product-store__pricing-banner {
 	height: auto;
-	margin-bottom: 0;
+	margin-top: rem(64px);
 
 	@include break-large {
 		height: 32px;

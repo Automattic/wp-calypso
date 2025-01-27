@@ -67,7 +67,7 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Tags & Categories module has data',
 								}
@@ -96,7 +96,7 @@ const StatsTags: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Tags & Categories module is empty',
 								}

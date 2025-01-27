@@ -1,3 +1,7 @@
+## 1.1.3
+
+- Add "Remote Data Blocks" in the list of allowed sources.
+
 ## 1.1.2
 
 - Add additional 8 US states to the list of CCPA regions (DE, IN, IA, MT, NJ, OR, TN, TX).

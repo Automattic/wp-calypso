@@ -1,4 +1,4 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeErrorResponse,
@@ -52,7 +52,7 @@ export function useAssignNewCardProcessor( {
 
 				const stripeSetupIntentId = await fetchStripeSetupIntentId();
 
-				const tokenResponse = await createStripeSetupIntentAsync(
+				const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 					formFieldValues,
 					stripe,
 					cardElement,
@@ -75,7 +75,7 @@ export function useAssignNewCardProcessor( {
 	);
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 	}: {
@@ -88,7 +88,7 @@ async function createStripeSetupIntentAsync(
 	const paymentDetailsForStripe = {
 		name,
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardElement,
 		stripeSetupIntentId,

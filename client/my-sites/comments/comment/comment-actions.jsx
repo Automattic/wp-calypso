@@ -25,7 +25,7 @@ import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash', 'view' ],
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 };
@@ -161,8 +161,14 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { canModerateComment, commentIsApproved, commentIsLiked, toggleReply, translate } =
-			this.props;
+		const {
+			canModerateComment,
+			commentIsApproved,
+			commentIsLiked,
+			commentURL,
+			toggleReply,
+			translate,
+		} = this.props;
 
 		return (
 			<div className="comment__actions">
@@ -260,6 +266,20 @@ export class CommentActions extends Component {
 						<span>{ translate( 'Reply' ) }</span>
 					</Button>
 				) }
+
+				{ this.hasAction( 'view' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-view"
+						href={ commentURL }
+						target="_blank"
+						tabIndex="0"
+						disabled={ ! canModerateComment && ! commentIsApproved }
+					>
+						<Gridicon icon="external" />
+						<span>{ translate( 'View' ) }</span>
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -274,6 +294,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,
+		commentURL: get( comment, 'URL' ),
 		minimumComment: getMinimumComment( comment ),
 	};
 };

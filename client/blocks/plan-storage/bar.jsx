@@ -28,12 +28,10 @@ export class PlanStorageBar extends Component {
 			return null;
 		}
 
-		const percent = Math.min(
-			Math.round(
-				( ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 1000 ) / 10
-			),
-			100
-		);
+		let percent = ( mediaStorage.storageUsedBytes / mediaStorage.maxStorageBytes ) * 100;
+
+		// Round percentage to 2dp for values under 1%, and whole numbers otherwise.
+		percent = percent < 1 ? percent.toFixed( 2 ) : Math.round( percent );
 
 		const classes = clsx( className, 'plan-storage__bar', {
 			'is-alert': percent > ALERT_PERCENT,

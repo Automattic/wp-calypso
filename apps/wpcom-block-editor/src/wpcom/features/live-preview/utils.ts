@@ -1,32 +1,8 @@
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
 
 export const WOOCOMMERCE_THEME = 'woocommerce';
 export const PREMIUM_THEME = 'premium';
 export const PERSONAL_THEME = 'personal';
-
-/**
- * Get unlock API from Gutenberg.
- * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
- */
-export const getUnlock = () => {
-	/**
-	 * Sometimes Gutenberg doesn't allow you to re-register the module and throws an error.
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let unlock: ( object: any ) => any | undefined;
-	try {
-		unlock = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-			'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-			'@wordpress/edit-site'
-		).unlock;
-		return unlock;
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Error: Unable to get the unlock api. Reason: %s', error );
-		return undefined;
-	}
-};
 
 /**
  * Return true if the user is currently previewing a theme.

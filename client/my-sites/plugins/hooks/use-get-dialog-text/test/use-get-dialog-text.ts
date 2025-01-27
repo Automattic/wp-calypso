@@ -89,7 +89,7 @@ describe( 'useGetDialogText', () => {
 			const testPlugin = createFakePlugin( 'test1', 'Test Plugin', testSites );
 
 			const { heading } = getDialogText( action, [ testPlugin ], testSites );
-			expect( heading ).toEqual( `${ text } ${ testPlugin.name }` );
+			expect( heading ).toEqual( `${ text } plugin` );
 		}
 	);
 
@@ -105,7 +105,7 @@ describe( 'useGetDialogText', () => {
 			const testPlugin = createFakePlugin( 'test1', undefined, testSites );
 
 			const { heading } = getDialogText( action, [ testPlugin ], testSites );
-			expect( heading ).toEqual( `${ text } ${ testPlugin.slug }` );
+			expect( heading ).toEqual( `${ text } plugin` );
 		}
 	);
 

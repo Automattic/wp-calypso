@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import { useZendeskMessagingBindings, useLoadZendeskMessaging } from '@automattic/zendesk-client';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 /**
@@ -14,11 +14,12 @@ import {
 	useHelpCenterContext,
 	type HelpCenterRequiredInformation,
 } from '../contexts/HelpCenterContext';
-import { useChatStatus, useActionHooks } from '../hooks';
+import { useActionHooks } from '../hooks';
 import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
 import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
+import HelpCenterSmooch from './help-center-smooch';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
@@ -28,6 +29,7 @@ const HelpCenter: React.FC< Container > = ( {
 	currentRoute = window.location.pathname + window.location.search,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+
 	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -35,8 +37,13 @@ const HelpCenter: React.FC< Container > = ( {
 			isMinimized: helpCenterSelect.getIsMinimized(),
 		};
 	}, [] );
-
-	const { currentUser } = useHelpCenterContext();
+	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
+	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+		useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const hasOpenZendeskConversations =
+		! isLoadingOpenInteractions && supportInteractionsOpen
+			? supportInteractionsOpen?.length > 0
+			: false;
 
 	useEffect( () => {
 		if ( currentUser ) {
@@ -45,15 +52,6 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ currentUser ] );
 
 	useActionHooks();
-
-	const { hasActiveChats, isEligibleForChat } = useChatStatus();
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
-		'zendesk_support_chat_key',
-		( isHelpCenterShown && isEligibleForChat ) || hasActiveChats,
-		isEligibleForChat || hasActiveChats
-	);
-
-	useZendeskMessagingBindings( HELP_CENTER_STORE, hasActiveChats, isMessagingScriptLoaded );
 
 	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
@@ -73,12 +71,17 @@ const HelpCenter: React.FC< Container > = ( {
 	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer
-			handleClose={ handleClose }
-			hidden={ hidden }
-			currentRoute={ currentRoute }
-			openingCoordinates={ openingCoordinates }
-		/>,
+		<>
+			<HelpCenterContainer
+				handleClose={ handleClose }
+				hidden={ hidden }
+				currentRoute={ currentRoute }
+				openingCoordinates={ openingCoordinates }
+			/>
+			{ canConnectToZendesk && (
+				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
+			) }
+		</>,
 		portalParent
 	);
 };

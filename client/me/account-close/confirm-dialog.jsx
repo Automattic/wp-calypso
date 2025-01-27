@@ -121,7 +121,7 @@ class AccountCloseConfirmDialog extends Component {
 		const deleteButtons = [
 			<Button onClick={ this.handleCancel }>{ translate( 'Cancel' ) }</Button>,
 			<Button primary scary disabled={ isDeleteButtonDisabled } onClick={ this.handleConfirm }>
-				{ translate( 'Close your account' ) }
+				{ translate( 'Delete account' ) }
 			</Button>,
 		];
 
@@ -134,7 +134,7 @@ class AccountCloseConfirmDialog extends Component {
 				<h1 className="account-close__confirm-dialog-header">
 					{ this.state.displayAlternativeOptions
 						? translate( 'Are you sure?' )
-						: translate( 'Confirm account closure' ) }
+						: translate( 'Confirm account deletion' ) }
 				</h1>
 				{ ! this.state.displayAlternativeOptions && (
 					<>

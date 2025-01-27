@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import StatsModuleUTM from '../features/modules/stats-utm';
+import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DatePicker from '../stats-date-picker';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
@@ -32,11 +34,15 @@ class StatsPostSummary extends Component {
 		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
+		supportsUTMStats: PropTypes.bool,
 	};
+
+	static MAX_RECORDS_PER_DAY = 10;
 
 	state = {
 		selectedRecord: null,
 		period: 'day',
+		page: 1,
 	};
 
 	selectPeriod( period ) {
@@ -51,29 +57,76 @@ class StatsPostSummary extends Component {
 		this.setState( { selectedRecord: record } );
 	};
 
-	getChartData() {
+	onPeriodChange = ( { direction } ) => {
+		let chartData = this.getChartData();
+		if ( ! chartData.length ) {
+			return;
+		}
+
+		let selectedRecord = this.state.selectedRecord;
+		if ( ! selectedRecord ) {
+			selectedRecord = chartData[ chartData.length - 1 ];
+		}
+
+		const recordIndex = chartData.findIndex( ( item ) => item.period === selectedRecord.period );
+
+		if ( 'previous' === direction ) {
+			if ( recordIndex > 0 ) {
+				this.setState( { selectedRecord: chartData[ recordIndex - 1 ] } );
+			} else {
+				const nextPage = this.state.page + 1;
+				chartData = this.getChartData( nextPage );
+				if ( chartData ) {
+					this.setState( { selectedRecord: chartData[ chartData.length - 1 ] } );
+				}
+			}
+		} else if ( 'next' === direction ) {
+			if ( recordIndex < chartData.length - 1 ) {
+				this.setState( { selectedRecord: chartData[ recordIndex + 1 ] } );
+			} else {
+				const nextPage = this.state.page - 1;
+				chartData = this.getChartData( nextPage );
+				this.setState( { selectedRecord: chartData[ 0 ] } );
+			}
+		}
+	};
+
+	getChartData( newPage = 0 ) {
 		const { moment, stats } = this.props;
 		if ( ! stats ) {
 			return [];
 		}
 
+		let page = this.state.page;
+		if ( newPage ) {
+			page = newPage;
+			this.setState( { page: newPage } );
+		}
+
 		switch ( this.state.period ) {
-			case 'day':
+			case 'day': {
 				if ( ! stats.data ) {
 					return [];
 				}
 
-				return stats.data
-					.slice( Math.max( stats.data.length - 10, 0 ) )
-					.map( ( [ date, value ] ) => {
-						const momentDate = moment( date );
-						return {
-							period: momentDate.format( 'MMM D' ),
-							periodLabel: momentDate.format( 'LL' ),
-							startDate: date,
-							value,
-						};
-					} );
+				const dataStart = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * page,
+					0
+				);
+				const dataEnd = Math.max(
+					stats.data.length - StatsPostSummary.MAX_RECORDS_PER_DAY * ( page - 1 ),
+					0
+				);
+				return stats.data.slice( dataStart, dataEnd ).map( ( [ date, value ] ) => {
+					const momentDate = moment( date );
+					return {
+						period: momentDate.format( 'MMM D' ),
+						periodLabel: momentDate.format( 'LL' ),
+						startDate: date,
+						value,
+					};
+				} );
+			}
 			case 'year':
 				if ( ! stats.years ) {
 					return [];
@@ -122,8 +175,50 @@ class StatsPostSummary extends Component {
 		}
 	}
 
+	getQuery() {
+		let selectedRecord = this.state.selectedRecord;
+		const { period } = this.state;
+		const { moment } = this.props;
+		const query = {
+			period,
+			max: 0,
+		};
+
+		if ( ! selectedRecord ) {
+			const chartData = this.getChartData();
+
+			if ( chartData.length ) {
+				selectedRecord = chartData[ chartData.length - 1 ];
+			} else {
+				return query;
+			}
+		}
+
+		let date = selectedRecord.startDate;
+
+		switch ( period ) {
+			case 'week':
+				date = moment( date ).add( 6, 'days' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'month':
+				date = moment( date ).endOf( 'month' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'year':
+				date = moment( date ).endOf( 'year' ).format( 'YYYY/MM/DD' );
+				break;
+			case 'day':
+			default:
+				break;
+		}
+
+		return {
+			...query,
+			date,
+		};
+	}
+
 	render() {
-		const { isRequesting, postId, siteId, translate } = this.props;
+		const { isRequesting, postId, siteId, translate, stats } = this.props;
 		const periods = [
 			{ id: 'day', label: translate( 'Days' ) },
 			{ id: 'week', label: translate( 'Weeks' ) },
@@ -136,45 +231,82 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
+		let disablePreviousArrow = false;
+		let disableNextArrow = false;
+		const selectedRecordIndex = chartData.findIndex(
+			( item ) => item.period === selectedRecord.period
+		);
+		if ( 'day' === this.state.period && stats.data ) {
+			const maxPages = Math.ceil( stats.data.length / StatsPostSummary.MAX_RECORDS_PER_DAY );
+			disablePreviousArrow = this.state.page >= maxPages && selectedRecordIndex === 0;
+			disableNextArrow = 1 === this.state.page && selectedRecordIndex === chartData.length - 1;
+		} else {
+			disablePreviousArrow = selectedRecordIndex === 0;
+			disableNextArrow = selectedRecordIndex === chartData.length - 1;
+		}
+
 		const summaryWrapperClass = clsx( 'stats-post-summary', 'is-chart-tabs', {
 			'is-period-year': this.state.period === 'year',
 		} );
 
 		return (
-			<div className={ summaryWrapperClass }>
-				<QueryPostStats siteId={ siteId } postId={ postId } />
+			<>
+				<div className={ summaryWrapperClass }>
+					<QueryPostStats siteId={ siteId } postId={ postId } />
 
-				<StatsPeriodHeader>
-					<StatsPeriodNavigation showArrows={ false }>
-						<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
-					</StatsPeriodNavigation>
-					<SegmentedControl primary>
-						{ periods.map( ( { id, label } ) => (
-							<SegmentedControl.Item
-								key={ id }
-								onClick={ this.selectPeriod( id ) }
-								selected={ this.state.period === id }
-							>
-								{ label }
-							</SegmentedControl.Item>
-						) ) }
-					</SegmentedControl>
-				</StatsPeriodHeader>
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation
+							showArrows
+							onPeriodChange={ this.onPeriodChange }
+							disablePreviousArrow={ disablePreviousArrow }
+							disableNextArrow={ disableNextArrow }
+							date={ null }
+						>
+							<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+						</StatsPeriodNavigation>
+						<SegmentedControl primary>
+							{ periods.map( ( { id, label } ) => (
+								<SegmentedControl.Item
+									key={ id }
+									onClick={ this.selectPeriod( id ) }
+									selected={ this.state.period === id }
+								>
+									{ label }
+								</SegmentedControl.Item>
+							) ) }
+						</SegmentedControl>
+					</StatsPeriodHeader>
 
-				<SummaryChart
-					isLoading={ isRequesting && ! chartData.length }
-					data={ chartData }
-					activeKey="period"
-					dataKey="value"
-					labelKey="periodLabel"
-					chartType="views"
-					sectionClass="is-views"
-					selected={ selectedRecord }
-					onClick={ this.selectRecord }
-					tabLabel={ translate( 'Views' ) }
-					type="post"
-				/>
-			</div>
+					<SummaryChart
+						isLoading={ isRequesting && ! chartData.length }
+						data={ chartData }
+						activeKey="period"
+						dataKey="value"
+						labelKey="periodLabel"
+						chartType="views"
+						sectionClass="is-views"
+						selected={ selectedRecord }
+						onClick={ this.selectRecord }
+						tabLabel={ translate( 'Views' ) }
+						type="post"
+					/>
+				</div>
+
+				<StatsGlobalValuesContext.Consumer>
+					{ ( isInternal ) =>
+						( this.props.supportsUTMStats || isInternal ) && (
+							<div className="stats-module-utm__post-detail">
+								<StatsModuleUTM
+									siteId={ siteId }
+									postId={ postId }
+									period={ this.state.period }
+									query={ this.getQuery() }
+								/>
+							</div>
+						)
+					}
+				</StatsGlobalValuesContext.Consumer>
+			</>
 		);
 	}
 }

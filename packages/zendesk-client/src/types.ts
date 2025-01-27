@@ -11,11 +11,11 @@ export type APIFetchOptions = {
 };
 
 export type UserFields = {
-	messaging_ai_chat_id?: string;
+	messaging_ai_chat_id?: string | number;
 	messaging_initial_message?: string;
 	messaging_plan?: string;
 	messaging_source?: string;
-	messaging_url?: string;
+	messaging_url?: string | null;
 	/**
 	 * Site ID of the site the user is currently on.
 	 */

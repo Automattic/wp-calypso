@@ -43,7 +43,7 @@ export const UpgradeScreen: React.FC< {
 					{ reason === 'feature' ? upgradeMessageFeature : upgradeMessageRequests }
 				</span>
 				&nbsp;
-				<Button variant="link" href="https://jetpack.com/ai/" target="_blank">
+				<Button variant="link" href="https://jetpack.com/ai/">
 					{ __( 'Learn more', 'jetpack' ) }
 				</Button>
 			</div>
@@ -51,12 +51,7 @@ export const UpgradeScreen: React.FC< {
 				<Button variant="tertiary" onClick={ onCancel }>
 					{ __( 'Cancel', 'jetpack' ) }
 				</Button>
-				<Button
-					variant="primary"
-					href={ upgradeURL }
-					target="_blank"
-					onClick={ handleUpgradeClick }
-				>
+				<Button variant="primary" href={ upgradeURL } onClick={ handleUpgradeClick }>
 					{ __( 'Upgrade', 'jetpack' ) }
 				</Button>
 			</div>

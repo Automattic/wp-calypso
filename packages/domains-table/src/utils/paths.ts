@@ -1,13 +1,17 @@
+import config from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { stringify } from 'qs';
 import { ResponseDomain } from './types';
+import type { DomainsTableContext } from '../domains-table/domains-table';
 
 export const emailManagementAllSitesPrefix = '/email/all';
 
 export function domainManagementLink(
 	{ domain, type }: Pick< ResponseDomain, 'domain' | 'type' >,
 	siteSlug: string,
-	isAllSitesView: boolean
+	isAllSitesView: boolean,
+	feature?: string,
+	isHostingOverview?: boolean
 ) {
 	const viewSlug = domainManagementViewSlug( type );
 
@@ -18,6 +22,21 @@ export function domainManagementLink(
 		domain = encodeURIComponent( encodeURIComponent( domain ) );
 	}
 
+	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
+
+	if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
+		switch ( feature ) {
+			case 'email-management':
+				return `${ domainManagementAllRoot() }/email/${ domain }/${ siteSlug }`;
+
+			case 'domain-overview':
+			default:
+				return isAllSitesView
+					? `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`
+					: `/overview/site-domain/domain/${ domain }/${ siteSlug }`;
+		}
+	}
+
 	if ( isAllSitesView ) {
 		return `${ domainManagementAllRoot() }/${ domain }/${ viewSlug }/${ siteSlug }`;
 	}
@@ -26,7 +45,9 @@ export function domainManagementLink(
 }
 
 export function domainManagementTransferToOtherSiteLink( siteSlug: string, domainName: string ) {
-	return `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
+	return config.isEnabled( 'calypso/all-domain-management' )
+		? `${ domainManagementAllRoot() }/overview/${ domainName }/transfer/other-site/${ siteSlug }`
+		: `${ domainManagementAllRoot() }/${ domainName }/transfer/other-site/${ siteSlug }`;
 }
 
 function domainManagementViewSlug( type: ResponseDomain[ 'type' ] ) {
@@ -98,8 +119,18 @@ export function domainManagementAllRoot() {
 export function domainManagementEditContactInfo(
 	siteName: string,
 	domainName: string,
-	relativeTo: string | null = null
+	relativeTo: string | null = null,
+	context?: DomainsTableContext
 ) {
+	if ( config.isEnabled( 'calypso/all-domain-management' ) ) {
+		switch ( context ) {
+			case 'site':
+				return `/overview/site-domain/contact-info/edit/${ domainName }/${ siteName }`;
+			case 'domains':
+				return `${ domainManagementAllRoot() }/contact-info/edit/${ domainName }/${ siteName }`;
+		}
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'edit-contact-info', relativeTo );
 }
 
@@ -172,11 +203,28 @@ export function isUnderEmailManagementAll( path: string ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
 
-export function domainMagementDNS( siteName: string, domainName: string ) {
+export function domainManagementDNS(
+	siteName: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
+	if ( config.isEnabled( 'calypso/all-domain-management' ) ) {
+		switch ( context ) {
+			case 'site':
+				return `/overview/site-domain/domain/${ domainName }/dns/${ siteName }`;
+			case 'domains':
+				return `${ domainManagementAllRoot() }/overview/${ domainName }/dns/${ siteName }`;
+		}
+	}
+
 	return domainManagementEditBase( siteName, domainName, 'dns' );
 }
 
-export function emailManagementEdit( siteSlug: string, domainName: string ) {
+export function emailManagementEdit(
+	siteSlug: string,
+	domainName: string,
+	context?: DomainsTableContext
+) {
 	// Encodes only real domain names and not parameter placeholders
 	if ( domainName && ! String( domainName ).startsWith( ':' ) ) {
 		// Encodes domain names so addresses with slashes in the path (e.g. used in site redirects) don't break routing.
@@ -184,5 +232,12 @@ export function emailManagementEdit( siteSlug: string, domainName: string ) {
 		domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 	}
 
-	return '/email/' + domainName + '/manage/' + siteSlug;
+	switch ( context ) {
+		case 'site':
+			return `/overview/site-domain/email/${ domainName }/${ siteSlug }`;
+		case 'domains':
+			return `${ domainManagementAllRoot() }/email/${ domainName }/${ siteSlug }`;
+		default:
+			return '/email/' + domainName + '/manage/' + siteSlug;
+	}
 }

@@ -25,10 +25,12 @@ interface PlansGridContext {
 	enableStorageAsBadge?: boolean;
 	enableReducedFeatureGroupSpacing?: boolean;
 	enableLogosOnlyForEnterprisePlan?: boolean;
+	enableTermSavingsPriceDisplay?: boolean;
 	featureGroupMap: Partial< FeatureGroupMap >;
 	hideUnsupportedFeatures?: boolean;
 	hideFeatureGroupTitles?: boolean;
 	enterpriseFeaturesList?: string[];
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 const PlansGridContext = createContext< PlansGridContext >( {} as PlansGridContext );
@@ -48,10 +50,12 @@ const PlansGridContextProvider = ( {
 	enableStorageAsBadge,
 	enableReducedFeatureGroupSpacing,
 	enableLogosOnlyForEnterprisePlan,
+	enableTermSavingsPriceDisplay,
 	featureGroupMap,
 	hideUnsupportedFeatures,
 	hideFeatureGroupTitles,
 	enterpriseFeaturesList,
+	reflectStorageSelectionInPlanPrices,
 }: GridContextProps ) => {
 	const gridPlansIndex = gridPlans.reduce(
 		( acc, gridPlan ) => ( {
@@ -80,10 +84,12 @@ const PlansGridContextProvider = ( {
 				enableStorageAsBadge,
 				enableReducedFeatureGroupSpacing,
 				enableLogosOnlyForEnterprisePlan,
+				enableTermSavingsPriceDisplay,
 				featureGroupMap,
 				hideUnsupportedFeatures,
 				hideFeatureGroupTitles,
 				enterpriseFeaturesList,
+				reflectStorageSelectionInPlanPrices,
 			} }
 		>
 			{ children }

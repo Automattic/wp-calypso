@@ -1,6 +1,5 @@
 
 .manage-site-plugins-dialog__container {
-	padding-top: 0;
 	width: 900px;
 
 	@media screen and (max-width: 1040px) {
@@ -22,7 +21,12 @@
 	.plugin-details-v2__title {
 		color: var(--studio-gray-100);
 		font-size: $font-title-small;
-		padding: 16px 0;
+		padding: 16px 16px;
+	}
+	
+	.dataviews-wrapper {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 8px;
 	}
 }
 

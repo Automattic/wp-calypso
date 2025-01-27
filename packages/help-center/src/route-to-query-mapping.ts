@@ -8,7 +8,6 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/discover': __( 'discover blogs' ),
 		'/email/': __( 'manage emails' ),
 		'/hosting-config/': __( 'hosting configuration' ),
-		'/marketing/business-tools/': __( 'business tools' ),
 		'/marketing/sharing-buttons/': __( 'social share' ),
 		'/me/get-apps': __( 'wordpress apps' ),
 		'/me/notifications': __( 'notification settings' ),
@@ -44,6 +43,7 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/wp-admin/options-general.php?page=debug-bar-extender': __( 'debug bar extender' ),
 		'/wp-admin/options-media.php': __( 'media settings' ),
 		'/wp-admin/post-new.php?post_type=jetpack-testimonial': __( 'new testimonial' ),
+		'/wp-admin/site-editor.php?p=%2Fpattern': __( 'patterns' ),
 	};
 
 	// Find exact URL matches

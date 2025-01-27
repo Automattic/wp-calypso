@@ -1,4 +1,4 @@
-import { itemLinkMatches } from '../utils';
+import { isItemSelected, itemLinkMatches } from '../utils';
 
 describe( 'MySitesSidebar', () => {
 	describe( '#itemLinkMatches()', () => {
@@ -67,6 +67,73 @@ describe( 'MySitesSidebar', () => {
 			);
 
 			expect( isSelected ).toBe( true );
+		} );
+	} );
+
+	describe( '#isItemSelected()', () => {
+		const site = { ID: 1234 };
+
+		describe( 'Sites', () => {
+			const menuItem = { url: '/sites', slug: 'sites' };
+			const path = '/overview/test.wordpress.com';
+
+			test( 'should return false when `site` is not set', () => {
+				const isSelected = isItemSelected( menuItem, path, null );
+
+				expect( isSelected ).toBe( false );
+			} );
+
+			test( 'should not highlight Sites menu when viewing a domain', () => {
+				const isSelected = isItemSelected( menuItem, '/domains/manage', site );
+
+				expect( isSelected ).toBe( false );
+			} );
+
+			test( 'should not highlight Sites menu when the site is a P2', () => {
+				const isSelected = isItemSelected( menuItem, path, site, true );
+
+				expect( isSelected ).toBe( false );
+			} );
+
+			test( 'should highlight Sites menu when the site is not a P2', () => {
+				const isSelected = isItemSelected( menuItem, path, site, false );
+
+				expect( isSelected ).toBe( true );
+			} );
+		} );
+
+		describe( 'P2s', () => {
+			const menuItem = { url: '/p2s', slug: 'sites-p2' };
+			const path = '/hosting-features/test.wordpress.com/test.wordpress.com';
+
+			test( 'should not highlight P2s menu when viewing a domain', () => {
+				const isSelected = isItemSelected( menuItem, '/domains/manage', site );
+
+				expect( isSelected ).toBe( false );
+			} );
+
+			test( 'should not highlight P2s menu when the site is not a P2', () => {
+				const isSelected = isItemSelected( menuItem, path, site, false );
+
+				expect( isSelected ).toBe( false );
+			} );
+
+			test( 'should highlight P2s menu when the site is a P2', () => {
+				const isSelected = isItemSelected( menuItem, path, site, true );
+
+				expect( isSelected ).toBe( true );
+			} );
+		} );
+
+		describe( 'Domains', () => {
+			const menuItem = { url: '/domains/manage', slug: 'domains' };
+			const path = '/domains/manage/all/overview/test.wordpress.com/test.wordpress.com';
+
+			test( 'should highlight Domains menu when viewing a domain', () => {
+				const isSelected = isItemSelected( menuItem, path, site );
+
+				expect( isSelected ).toBe( true );
+			} );
 		} );
 	} );
 } );

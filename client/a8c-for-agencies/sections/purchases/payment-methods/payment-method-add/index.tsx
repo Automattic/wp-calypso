@@ -1,15 +1,10 @@
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderSubtitle as Subtitle,
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import LayoutStepper from 'calypso/a8c-for-agencies/components/layout/stepper';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_PAYMENT_METHODS_LINK,
@@ -17,6 +12,12 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import PaymentMethodStripeInfo from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-stripe-info';
 import { usePaymentMethodStepper } from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add-v2/hooks/use-payment-method-stepper';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/hosting-dashboard/header';
 import { isClientView } from '../lib/is-client-view';
 import PaymentMethodForm from './payment-method-form';
 
@@ -53,6 +54,7 @@ export default function PaymentMethodAdd( { withAssignLicense, isClientCheckout 
 			{ !! stepper && <LayoutStepper steps={ stepper.steps } current={ stepper.current } /> }
 
 			<LayoutTop>
+				<A4AAgencyApprovalNotice />
 				<LayoutHeader>
 					{ ! stepper && ! isClientCheckout && (
 						<Breadcrumb

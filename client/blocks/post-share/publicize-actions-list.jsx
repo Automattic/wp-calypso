@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
+import { Icon, linkOff } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -64,7 +65,11 @@ class PublicizeActionsList extends PureComponent {
 			<div className="post-share__footer-items" key={ index }>
 				<div className="post-share__footer-item">
 					<div className="post-share__handle">
-						<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
+						{ service ? (
+							<SocialLogo icon={ service === 'google_plus' ? 'google-plus' : service } />
+						) : (
+							<Icon icon={ linkOff } />
+						) }
 						<span className="post-share__handle-value">{ connectionName }</span>
 					</div>
 					<div className="post-share__timestamp">

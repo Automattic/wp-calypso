@@ -36,7 +36,7 @@ const PlanStorage = ( {
 	const canUpgradeStorageForPlan =
 		( current || availableForPurchase ) &&
 		showUpgradeableStorage &&
-		availableStorageAddOns &&
+		availableStorageAddOns.length &&
 		ELIGIBLE_PLANS_FOR_STORAGE_UPGRADE.includes( planSlug );
 
 	return (

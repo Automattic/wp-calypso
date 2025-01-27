@@ -1,5 +1,6 @@
 @import "@automattic/typography/styles/variables";
 @import "mixins";
+@import "variables";
 
 // Search results section
 .help-center-search-results {
@@ -38,6 +39,18 @@
 
 		@media screen and (min-width: 661px) {
 			font-size: $font-body;
+		}
+	}
+
+	// Homepage conversations section
+	.help-center-homepage-conversations {
+		.help-center-support-chat__conversation-container {
+			border-radius: 4px;
+			border: 1.5px solid #C3C4C7;
+
+			&:hover, &.is-unread-message {
+				border: 1.5px solid $help-center-blue !important;
+			}
 		}
 	}
 }

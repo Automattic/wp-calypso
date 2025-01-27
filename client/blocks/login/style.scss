@@ -292,15 +292,22 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.login__form-password.is-hidden {
-	// hide the password field in a way that still makes it "visible" for password managers.
-	// 1Password doesn't fill the field if it has display:none or visibility:hidden.
-	position: fixed;
-	bottom: 0;
-	height: 0;
-	width: 0;
-	overflow: hidden;
-	opacity: 0;
+.login__form-password {
+
+	&.is-hidden {
+		// hide the password field in a way that still makes it "visible" for password managers.
+		// 1Password doesn't fill the field if it has display:none or visibility:hidden.
+		position: fixed;
+		bottom: 0;
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		opacity: 0;
+	}
+
+	.form-input-validation {
+		padding-right: 0;
+	}
 }
 
 .login__jetpack-logo {

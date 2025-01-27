@@ -1,5 +1,5 @@
 import { FeatureList, PlanSlug, TERMS_LIST } from '@automattic/calypso-products';
-import { AddOnMeta, Plans } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { TranslateResult } from 'i18n-calypso';
 import { GridPlan, HiddenPlans, PlansIntent } from '../../types';
 import { UseFreeTrialPlanSlugs } from './use-grid-plans';
@@ -18,7 +18,6 @@ export interface UseGridPlansParams {
 	selectedPlan?: PlanSlug;
 	showLegacyStorageFeature?: boolean;
 	siteId?: number | null;
-	storageAddOns: ( AddOnMeta | null )[];
 	term?: ( typeof TERMS_LIST )[ number ]; // defaults to monthly
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
 	useFreeTrialPlanSlugs?: UseFreeTrialPlanSlugs;
@@ -26,6 +25,15 @@ export interface UseGridPlansParams {
 	 * Provide a map of plan slug keyed strings to display as the highlight label on top of each plan.
 	 */
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+	/**
+	 * Used to hide the "Your Plan" label for domain-only sites
+	 */
+	isDomainOnlySite?: boolean;
+	/**
+	 * Determine if storage add-on products should be combined with plan costs when
+	 * calculating prices.
+	 */
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export type UseGridPlansType = (

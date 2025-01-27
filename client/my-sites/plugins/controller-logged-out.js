@@ -12,6 +12,7 @@ import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getCategories } from './categories/use-categories';
+import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
@@ -181,6 +182,11 @@ export async function fetchPlugin( context, next ) {
 
 	if ( ! context.isServerSide ) {
 		return next();
+	}
+
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+	if ( UNLISTED_PLUGINS.includes( pluginSlug ) ) {
+		return next( 'route' );
 	}
 
 	const options = {

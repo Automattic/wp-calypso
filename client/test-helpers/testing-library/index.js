@@ -3,7 +3,7 @@ import { render as rtlRender, renderHook as rtlRenderHook } from '@testing-libra
 import { Fragment } from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import initialReducer from 'calypso/state/reducer';
 
 export const renderWithProvider = (

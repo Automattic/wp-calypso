@@ -3,10 +3,12 @@ import { UniversalNavbarFooter, UniversalNavbarHeader } from '@automattic/wpcom-
 import { translate } from 'i18n-calypso';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
+import { getLoginUrl } from 'calypso/landing/stepper/utils/path';
 import { WeeklyReportUnsubscribe } from 'calypso/performance-profiler/pages/weekly-report/unsubscribe';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { TabType } from './components/header';
-import { PerformanceProfilerDashboard } from './pages/dashboard';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { TabTypes } from './components/header';
+import { PerformanceProfilerDashboardWrapper } from './pages/dashboard';
 import { WeeklyReport } from './pages/weekly-report';
 
 import './style.scss';
@@ -30,18 +32,23 @@ export function PerformanceProfilerWrapper( {
 export function PerformanceProfilerDashboardContext( context: Context, next: () => void ): void {
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
-	const url = context.query?.url?.startsWith( 'http' )
+	if ( ! context.query?.url ) {
+		window.location.href = '/speed-test/';
+		return;
+	}
+
+	const url = context.query.url.startsWith( 'http' )
 		? context.query.url
-		: `https://${ context.query?.url ?? '' }`;
+		: `https://${ context.query.url }`;
 
 	context.primary = (
 		<PerformanceProfilerWrapper isLoggedIn={ isLoggedIn }>
-			<PerformanceProfilerDashboard
+			<PerformanceProfilerDashboardWrapper
 				url={ url }
 				tab={
-					[ TabType.mobile, TabType.desktop ].indexOf( context.query?.tab ) !== -1
+					[ TabTypes.mobile, TabTypes.desktop ].indexOf( context.query?.tab ) !== -1
 						? context.query?.tab
-						: TabType.mobile
+						: TabTypes.mobile
 				}
 				hash={ context.query?.hash ?? '' }
 				filter={ context.query?.filter }
@@ -56,7 +63,13 @@ export function WeeklyReportContext( context: Context, next: () => void ): void 
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	if ( ! isLoggedIn ) {
-		window.location.href = '/log-in?redirect_to=' + encodeURIComponent( context.path );
+		const logInUrl = getLoginUrl( {
+			variationName: 'performance-profiler-weekly-report-subscribe',
+			redirectTo: `${ window.location.protocol }//${ window.location.host }${ context.path }`,
+			locale: getCurrentLocaleSlug( context.store.getState() ),
+		} );
+
+		window.location.href = logInUrl;
 		return;
 	}
 

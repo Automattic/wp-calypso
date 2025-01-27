@@ -25,8 +25,8 @@
 	grid-gap: 24px;
 	margin: 0;
 
-	@media only screen and (min-width: 821px) {
-		grid-template-columns: 1fr 1fr;
+	@media only screen and (min-width: $break-xlarge) {
+		grid-template-columns: 1fr 1fr 1fr;
 		justify-items: space-between;
 		margin: 32px auto 0;
 		gap: 24px;

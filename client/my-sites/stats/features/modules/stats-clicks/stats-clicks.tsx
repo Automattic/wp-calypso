@@ -69,7 +69,13 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#clicks` ) }
+											/>
+										),
 									},
 									context: 'Stats: Link in a popover for the Clicks module when it has data',
 								}
@@ -101,7 +107,13 @@ const StatsClicks: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#clicks` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#clicks` ) }
+											/>
+										),
 									},
 									context: 'Stats: Info box label when the Clicks module is empty',
 								}

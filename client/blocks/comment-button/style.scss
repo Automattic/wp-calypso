@@ -2,6 +2,7 @@
 	align-items: center;
 	box-sizing: border-box;
 	color: var(--color-text-subtle);
+	fill: var(--color-text-subtle);
 	cursor: pointer;
 	display: flex;
 	height: 20px;
@@ -11,6 +12,7 @@
 	&:hover,
 	&:active {
 		color: var(--color-link);
+		fill: var(--color-link);
 	}
 
 	.comment-button__label-status {
@@ -18,26 +20,46 @@
 			display: none;
 		}
 	}
+
+	&.tooltip {
+		position: relative;
+		overflow: visible;
+	}
+
+	&.tooltip::after {
+		height: 20px;
+		line-height: 20px;
+		background: var(--color-sidebar-tooltip-background);
+		border-radius: 4px;
+		color: var(--color-sidebar-tooltip-text);
+		content: attr(data-tooltip);
+		display: none;
+		font-size: $font-body-extra-small;
+		padding: 3px 6px;
+		position: absolute;
+		white-space: nowrap;
+		top: -29px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 8;
+	}
+
+	&.tooltip:hover::after {
+		display: block;
+	}
 }
 
 .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
-
+	font-size: $font-body-small;
 	&:empty {
 		display: none;
 	}
 
 	.comment-button__label-count {
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 13px;
-		font-weight: 500;
+		font-size: $font-body-small;
 	}
 }
 
-.reader-full-post .reader-post-actions .comment-button__label {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 13px;
-	font-weight: 500;
+.reader-full-post .reader-post-actions .comment-button .comment-button__label {
+	font-size: $font-body-small;
 }

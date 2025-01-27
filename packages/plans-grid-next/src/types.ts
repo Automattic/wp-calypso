@@ -74,6 +74,7 @@ export type PlansIntent =
 	| 'plans-guided-segment-blogger'
 	| 'plans-guided-segment-nonprofit'
 	| 'plans-guided-segment-consumer-or-business'
+	| 'plans-site-selected-legacy'
 	| 'default';
 
 export interface PlanActionOverrides {
@@ -226,6 +227,19 @@ export type GridContextProps = {
 	 * Hide the titles for feature groups in the features grid
 	 */
 	hideFeatureGroupTitles?: boolean;
+
+	/**
+	 * Enable the display of the term savings in plan prices.
+	 * Prices will display crossed out with the savings from shorter term accentuated in a label.
+	 * This carries lower precedence than promo/coupon and introductory pricing, irrespective of whether set or not.
+	 */
+	enableTermSavingsPriceDisplay?: boolean;
+
+	/**
+	 * Determine if storage add-on products should be combined with plan costs when
+	 * calculating prices.
+	 */
+	reflectStorageSelectionInPlanPrices?: boolean;
 };
 
 export type ComparisonGridExternalProps = Omit<
@@ -263,7 +277,6 @@ export type PlanTypeSelectorProps = {
 	basePlansPath?: string | null;
 	intervalType: UrlFriendlyTermType;
 	customerType: string;
-	withDiscount?: string;
 	enableStickyBehavior?: boolean;
 	stickyPlanTypeSelectorOffset?: number;
 	onPlanIntervalUpdate: ( interval: SupportedUrlFriendlyTermType ) => void;

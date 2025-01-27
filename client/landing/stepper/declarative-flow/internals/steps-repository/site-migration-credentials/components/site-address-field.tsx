@@ -1,5 +1,6 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
-import { useHasEnTranslation, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Controller } from 'react-hook-form';
 import getValidationMessage from 'calypso/blocks/import/capture/url-validation-message-helper';
@@ -8,17 +9,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
 
-interface Props extends CredentialsFormFieldProps {
-	importSiteQueryParam?: string | undefined | null;
-}
-
-export const SiteAddressField: React.FC< Props > = ( {
-	control,
-	errors,
-	importSiteQueryParam,
-} ) => {
+export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { control, errors } ) => {
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 	const hasEnTranslation = useHasEnTranslation();
 
 	const validateSiteAddress = ( siteAddress: string ) => {
@@ -32,11 +24,13 @@ export const SiteAddressField: React.FC< Props > = ( {
 		? translate( 'Enter your WordPress site address' )
 		: translate( 'Enter your WordPress site address.' );
 
+	const labelText = isEnabled( 'automated-migration/application-password' )
+		? translate( 'Current WordPress site address' )
+		: translate( 'Current site address' );
+
 	return (
 		<div className="site-migration-credentials__form-field">
-			<FormLabel htmlFor="from_url">
-				{ isEnglishLocale ? translate( 'Current site address' ) : translate( 'Site address' ) }
-			</FormLabel>
+			<FormLabel htmlFor="from_url">{ labelText }</FormLabel>
 			<Controller
 				control={ control }
 				name="from_url"
@@ -49,10 +43,8 @@ export const SiteAddressField: React.FC< Props > = ( {
 						id="from_url"
 						isError={ !! errors?.from_url }
 						placeholder={ placeholder }
-						readOnly={ !! importSiteQueryParam }
-						disabled={ !! importSiteQueryParam }
 						type="text"
-						{ ...field }
+						{ ...{ ...field, ...{ value: field.value.replace( /\/$/, '' ) } } }
 					/>
 				) }
 			/>

@@ -1,10 +1,9 @@
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { Icon, info } from '@wordpress/icons';
 import { removeQueryArgs } from '@wordpress/url';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Accordion from 'calypso/components/domains/accordion';
@@ -15,6 +14,7 @@ import {
 } from 'calypso/components/domains/connect-domain-step/constants';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -44,6 +44,7 @@ import {
 	domainMappingSetup,
 	domainUseMyDomain,
 	isUnderDomainManagementAll,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -108,7 +109,19 @@ const Settings = ( {
 
 	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
+	const [ isExpanded, setIsExpanded ] = useState( false );
+
 	const renderHeader = () => {
+		if ( isUnderDomainManagementOverview( currentRoute ) ) {
+			return (
+				<NavigationHeader
+					className="domains-overview__navigation-header"
+					title={ translate( 'Overview' ) }
+					subtitle={ translate( 'Get a quick glance at your domain options and settings.' ) }
+				/>
+			);
+		}
+
 		const previousPath = domainManagementList(
 			selectedSite?.slug,
 			currentRoute,
@@ -215,10 +228,13 @@ const Settings = ( {
 			return null;
 		}
 		if ( domain.type === domainTypes.REGISTERED ) {
+			const subtitle = domain.isHundredYearDomain
+				? translate( 'Registration details', { textOnly: true } )
+				: translate( 'Registration and auto-renew', { textOnly: true } );
 			return (
 				<Accordion
 					title={ translate( 'Details', { textOnly: true } ) }
-					subtitle={ translate( 'Registration and auto-renew', { textOnly: true } ) }
+					subtitle={ subtitle }
 					key="main"
 					expanded={ ! selectedSite?.options?.is_domain_only && ! domain.isMoveToNewSitePending }
 					isDisabled={ domain.isMoveToNewSitePending }
@@ -464,20 +480,10 @@ const Settings = ( {
 			return null;
 		}
 
-		let translatedTitle;
-		if (
-			englishLocales.includes( getLocaleSlug() || '' ) ||
-			i18n.hasTranslation( 'Domain forwarding' )
-		) {
-			translatedTitle = translate( 'Domain forwarding', { textOnly: true } );
-		} else {
-			translatedTitle = translate( 'Domain Forwarding', { textOnly: true } );
-		}
-
 		return (
 			<Accordion
 				className="domain-forwarding-card__accordion"
-				title={ translatedTitle }
+				title={ translate( 'Domain forwarding', { textOnly: true } ) }
 				subtitle={ translate( 'Forward your domain to another' ) }
 				isDisabled={ domain.isMoveToNewSitePending }
 			>
@@ -501,7 +507,7 @@ const Settings = ( {
 		return renderSecurityAccordion();
 	};
 
-	const renderContactInformationSecion = () => {
+	const renderContactInformationSection = () => {
 		if ( ! domain ) {
 			return null;
 		}
@@ -536,7 +542,7 @@ const Settings = ( {
 			></ContactsPrivacyInfo>
 		);
 
-		const { privateDomain } = domain;
+		const { privateDomain, isHundredYearDomain } = domain;
 		const titleLabel = translate( 'Contact information', { textOnly: true } );
 		const privacyProtectionLabel = privateDomain
 			? translate( 'Privacy protection on', { textOnly: true } )
@@ -563,8 +569,15 @@ const Settings = ( {
 		return (
 			<Accordion
 				title={ titleLabel }
-				subtitle={ `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }` }
+				subtitle={
+					isHundredYearDomain
+						? 'WordPress.com'
+						: `${ contactInfoFullName }, ${ privacyProtectionLabel.toLowerCase() }`
+				}
 				isDisabled={ domain.isMoveToNewSitePending }
+				expanded={ isExpanded }
+				onOpen={ () => setIsExpanded( true ) }
+				onClose={ () => setIsExpanded( false ) }
 			>
 				{ getContactsPrivacyInfo() }
 			</Accordion>
@@ -581,7 +594,7 @@ const Settings = ( {
 		} );
 	};
 
-	const renderTranferInMappedDomainSection = () => {
+	const renderTransferInMappedDomainSection = () => {
 		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) ) {
 			return null;
 		}
@@ -738,13 +751,13 @@ const Settings = ( {
 				{ renderStatusSection() }
 				{ renderGravatarSection() }
 				{ renderDetailsSection() }
-				{ renderTranferInMappedDomainSection() }
+				{ renderTransferInMappedDomainSection() }
 				{ renderDiagnosticsSection() }
 				{ renderSetAsPrimaryDomainSection() }
 				{ renderNameServersSection() }
 				{ renderDnsRecords() }
 				{ renderForwardingSection() }
-				{ renderContactInformationSecion() }
+				{ renderContactInformationSection() }
 				{ renderContactVerificationSection() }
 				{ renderDnssecSection() }
 				{ renderDomainSecuritySection() }
@@ -762,8 +775,12 @@ const Settings = ( {
 				{ ! domain.isGravatarDomain && (
 					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
-				<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
-				<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				{ ! domain.isHundredYearDomain && (
+					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
+				{ ! domain.isHundredYearDomain && (
+					<DomainDeleteInfoCard selectedSite={ selectedSite } domain={ domain } />
+				) }
 				<DomainDisconnectCard selectedSite={ selectedSite } domain={ domain } />
 			</>
 		);

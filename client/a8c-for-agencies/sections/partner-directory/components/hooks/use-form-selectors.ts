@@ -28,19 +28,32 @@ export function useFormSelectors() {
 		headless_wordpress_and_woo: translate( 'Headless WordPress & Woo' ),
 	};
 
+	// Always sort the industries alphabetically
 	const availableIndustries: Record< string, string > = {
-		agricultural_services: translate( 'Agricultural services' ),
-		business_services: translate( 'Business services' ),
-		clothing_shops: translate( 'Clothing shops' ),
-		contracted_services: translate( 'Contracted services' ),
-		government_services: translate( 'Government services' ),
-		miscellaneous_shops: translate( 'Miscellaneous shops' ),
-		professional_services_and_membership_organisations: translate(
-			'Professional services and membership organisations'
-		),
-		retail_outlet_services: translate( 'Retail outlet services' ),
-		transportation_services: translate( 'Transportation services' ),
-		utility_services: translate( 'Utility services' ),
+		agriculture_and_farming: translate( 'Agriculture & Farming' ),
+		arts_and_culture: translate( 'Arts & Culture' ),
+		automotive_and_transportation: translate( 'Automotive & Transportation' ),
+		construction_and_engineering: translate( 'Construction & Engineering' ),
+		education_and_e_learning: translate( 'Education & E-Learning' ),
+		e_commerce_and_retail: translate( 'E-commerce & Retail' ),
+		energy_and_utilities: translate( 'Energy & Utilities' ),
+		entertainment_and_media: translate( 'Entertainment & Media' ),
+		environmental_and_sustainability: translate( 'Environmental & Sustainability' ),
+		events_and_conferences: translate( 'Events & Conferences' ),
+		fashion_and_beauty: translate( 'Fashion & Beauty' ),
+		finance_and_insurance: translate( 'Finance & Insurance' ),
+		food_and_beverage: translate( 'Food & Beverage' ),
+		government_and_public_services: translate( 'Government & Public Services' ),
+		healthcare_and_medical: translate( 'Healthcare & Medical' ),
+		legal_and_professional_services: translate( 'Legal & Professional Services' ),
+		logistics_and_supply_chain: translate( 'Logistics & Supply Chain' ),
+		manufacturing_and_industry: translate( 'Manufacturing & Industry' ),
+		marketing_and_advertising: translate( 'Marketing & Advertising' ),
+		nonprofits_and_ngos: translate( 'Nonprofits & NGOs' ),
+		real_estate_and_property: translate( 'Real Estate & Property' ),
+		sports_and_recreation: translate( 'Sports & Recreation' ),
+		technology_and_it_services: translate( 'Technology & IT Services' ),
+		travel_and_hospitality: translate( 'Travel & Hospitality' ),
 	};
 
 	const availableProducts: Record< string, string > = {
@@ -58,11 +71,25 @@ export function useFormSelectors() {
 		pressable: 'Pressable.com',
 	};
 
+	const oldIndustries: Record< string, string > = {
+		agricultural_services: 'agriculture_and_farming',
+		business_services: 'legal_and_professional_services',
+		clothing_shops: 'fashion_and_beauty',
+		contracted_services: 'legal_and_professional_services',
+		government_services: 'government_and_public_services',
+		miscellaneous_shops: 'e_commerce_and_retail',
+		professional_services_and_membership_organisations: 'legal_and_professional_services',
+		retail_outlet_services: 'e_commerce_and_retail',
+		transportation_services: 'automotive_and_transportation',
+		utility_services: 'energy_and_utilities',
+	};
+
 	return {
 		availableServices,
 		availableLanguages,
 		availableProducts,
 		availableDirectories,
 		availableIndustries,
+		oldIndustries,
 	};
 }

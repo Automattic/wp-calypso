@@ -1,0 +1,379 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+body.is-section-home.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
+
+.customer-home__heading {
+	display: block;
+
+	.formatted-header__subtitle {
+		display: none;
+	}
+
+	.customer-home__site-content {
+		display: flex;
+		padding: 0 16px 16px;
+		align-items: center;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 0 0 16px;
+		}
+	}
+
+	.site-icon {
+		margin-right: 10px;
+		border: 1px solid var(--studio-gray-5);
+		box-sizing: border-box;
+		border-radius: 4px;
+		max-width: 58px;
+		height: auto;
+		flex: 1 0 auto;
+	}
+
+	.customer-home__site-domain {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+
+		.customer-home__site-domain-text {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			width: calc(100vw - 132px);
+			max-width: fit-content;
+			font-size: $font-body-small;
+			line-height: 18px;
+		}
+	}
+
+	.components-external-link__icon {
+		margin: 1px 0 0 7px;
+	}
+
+	.customer-home__site-title {
+		font-family: $brand-serif;
+		font-style: normal;
+		font-weight: normal;
+		font-size: $font-title-small;
+		line-height: 27px;
+		letter-spacing: -0.32px;
+		color: var(--studio-black);
+		margin-bottom: 4px;
+	}
+
+	@include break-medium {
+		display: flex;
+		flex: 0 0 auto;
+
+		.customer-home__site-content {
+			display: none;
+		}
+
+		.formatted-header__subtitle {
+			display: block;
+		}
+	}
+
+}
+
+.customer-home__heading + .customer-home__layout {
+	margin-top: 24px;
+}
+
+.customer-home__layout {
+	@include grid-row( 4, 1 );
+	@include break-xlarge {
+		@include grid-column( 1, 12 );
+		@include display-grid;
+		@include grid-template-columns( 12, 24px, 1fr );
+		grid-gap: 32px;
+	}
+}
+
+.customer-home__layout-col-left {
+	@include break-xlarge {
+		@include grid-column( 1, 8 );
+	}
+
+	> :first-child {
+		border-top: 1px solid var(--color-border-subtle);
+
+		@include break-small {
+			border-top: none;
+		}
+	}
+}
+
+.customer-home__main .customer-home__layout-col-right {
+	@include break-xlarge {
+		@include grid-column( 9, 4 );
+	}
+
+	.customer-home__card {
+		@include break-xlarge {
+			padding: 16px 0;
+			margin: 0;
+			box-shadow: none;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.card.foldable-card {
+		.foldable-card__header {
+			padding: 0 0 8px;
+
+			.foldable-card__action {
+				top: -4px;
+				width: auto;
+				margin-right: 0;
+			}
+		}
+
+		.foldable-card__content {
+			padding-right: 0;
+
+			.quick-links__action-box {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+
+	.card.app-promo {
+		.app-promo__icon {
+			margin: 0 0 6px;
+		}
+
+		.card-heading {
+			text-align: left;
+		}
+
+		.app-promo__app-badges .get-apps__app-badge {
+			display: inline;
+		}
+
+		.get-apps__app-badge img {
+			margin: 0 0 0 -7px;
+		}
+
+		.app-promo__app-badges-text {
+			text-align: left;
+		}
+	}
+
+	.home-site-preview {
+		.home-site-preview__thumbnail-wrapper {
+			margin: 0 -24px;
+			border-bottom-left-radius: 0;
+			border-bottom-right-radius: 0;
+
+			@include break-xlarge {
+				margin: 0;
+				border-radius: 3px;
+			}
+		}
+	}
+}
+
+.customer-home__loading-placeholder {
+	@include placeholder();
+	@include grid-column( 1, 12 );
+}
+
+.customer-home__section-heading {
+	font-size: 1.25rem;
+	margin: 32px 0 16px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		padding: 0 16px;
+	}
+}
+
+.customer-home__main .customer-home__card {
+	padding: 32px 16px;
+	margin: 0;
+	border-bottom: 1px solid var(--color-border-subtle);
+	box-shadow: none;
+
+	@include break-small {
+		border-radius: 3px;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-bottom: none;
+		padding: 16px 24px;
+		margin-bottom: 16px;
+	}
+
+	&.is-compact {
+		margin: 0 0 1px;
+		padding: 16px 24px;
+	}
+
+	&.is-small-hero {
+		@include break-small {
+			padding: 24px;
+		}
+	}
+
+	&.is-large-hero {
+		@include break-small {
+			padding: 32px 24px;
+		}
+	}
+
+	&.is-full-width {
+		padding-top: 0;
+
+		@include break-xlarge {
+			box-shadow: none;
+		}
+	}
+
+	&.task {
+		.task__text,
+		.task__illustration {
+			padding: 0;
+		}
+
+		.task__text + .task__illustration {
+			padding-left: 48px;
+		}
+	}
+
+	.customer-home__card-subheader {
+		color: var(--color-text-subtle);
+		margin: 0 0 1rem;
+	}
+}
+
+.customer-home__main .card-heading {
+	margin-bottom: 8px;
+}
+
+.customer-home__main .card-heading,
+.customer-home__main .foldable-card__header {
+	margin-top: 0;
+	font-size: $font-body-large;
+	font-weight: 500;
+}
+
+.customer-home__main .blogging-prompt .blogging-prompt__card .blogging-prompt__prompt-text {
+	font-size: $font-body-large;
+}
+
+.customer-home__main .vertical-nav {
+	margin: -0.5rem 0;
+
+	.vertical-nav-item {
+		border-bottom: 1px solid var(--color-neutral-5);
+		box-shadow: none;
+		padding: 12px 0;
+
+		.gridicon {
+			right: 0;
+		}
+	}
+
+	a:last-child .vertical-nav-item {
+		border-bottom: none;
+	}
+}
+
+.primary__customer-home-location-content,
+.secondary__customer-home-location-content {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+
+	@include break-small {
+		margin-bottom: 16px;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px;
+	}
+
+	// We add margin here to the direct children and strip it away from the
+	// outer edges of child elements.
+	// This lets us align the edges of the pager controls with text & images
+	// from the cards while also giving the checklist the freedom to reach the
+	// edges of the space with it's inner list.
+	.card,
+	.task {
+		margin: 32px 16px;
+
+		@include break-small {
+			margin: 32px;
+		}
+	}
+
+	// Extend the checklist to the edge of the primary content area
+	.site-setup-list__nav {
+		margin: 0;
+	}
+
+	.dot-pager__controls {
+		// The bottom margin is handled by the card
+		margin: 32px 32px 0;
+	}
+
+	.task {
+		box-shadow: none;
+
+		.task__text,
+		.task__illustration {
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+
+		// Flush against the left and right
+		& > :first-child {
+			padding-left: 0;
+			margin-left: 0;
+		}
+
+		& > :last-child {
+			padding-right: 0;
+			margin-right: 0;
+		}
+
+		// 32px spacing for everything except the space before the CTA (48px)
+		.task__text {
+			gap: 16px;
+
+			& > * {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+
+			.task__actions {
+				// The extra space before the Call to Action
+				margin-top: 16px;
+			}
+		}
+	}
+
+	.card.site-setup-list {
+		// The checklist here goes flush against the top, bottom & right
+		margin: 0;
+		box-shadow: none;
+
+		.site-setup-list__task {
+			margin: 0;
+			padding: 24px 8px 24px 24px;
+
+			// When the list switches to a single-column
+			@include breakpoint-deprecated( "<960px" ) {
+				// Less space at the top because the nav-item contributes
+				padding: 16px 24px 24px;
+			}
+		}
+	}
+}
+
+.primary__is-urgent {
+	background: var(--color-neutral-80);
+	color: var(--color-neutral-0);
+}

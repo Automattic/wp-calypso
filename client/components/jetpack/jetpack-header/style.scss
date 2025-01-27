@@ -1,3 +1,7 @@
 .jetpack-header {
 	padding: 12px 0;
 }
+
+.stats .navigation-header:has(.jetpack-header) {
+	padding-bottom: 0;
+  }

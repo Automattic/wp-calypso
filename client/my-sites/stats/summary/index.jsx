@@ -1,11 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -22,6 +20,7 @@ import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsModuleLocations from '../features/modules/stats-locations';
 import StatsModuleUTM from '../features/modules/stats-utm';
 import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import DownloadCsv from '../stats-download-csv';
@@ -88,6 +87,18 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+
+		// Update query with date range if it provided.
+		// Note that we force the period to 'day' for custom date ranges as other periods do not make sense
+		// in the context of our updated Traffic page and do not match the results as shown there.
+		const dateRange = this.props.dateRange;
+		if ( dateRange ) {
+			query.start_date = dateRange.startDate.format( 'YYYY-MM-DD' );
+			query.date = dateRange.endDate.format( 'YYYY-MM-DD' );
+			query.summarize = 1;
+			query.period = 'day'; // Override for custom date ranges.
+		}
+
 		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
 		const listItemClassName = 'stats__summary--narrow-mobile';
@@ -139,28 +150,42 @@ class StatsSummary extends Component {
 				summaryView = (
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
-						<StatsModuleCountries
+						{ isEnabled( 'stats/locations' ) ? (
+							<StatsModuleLocations
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) : (
+							<StatsModuleCountries
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) }
+					</Fragment>
+				);
+				break;
+
+			case 'locations':
+				title = translate( 'Locations' );
+				path = 'locations';
+				statType = 'statsCountryViews';
+
+				summaryView = (
+					<Fragment key="countries-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleLocations
 							moduleStrings={ StatsStrings.countries }
 							period={ this.props.period }
 							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-						<div className="stats-module__footer-actions--summary-tall">
-							<UpsellNudge
-								title={ translate( 'Add Google Analytics' ) }
-								description={ translate(
-									'Upgrade to a %(premiumPlanName)s Plan for Google Analytics integration.',
-									{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
-								) }
-								event="googleAnalytics-stats-countries"
-								feature={ FEATURE_GOOGLE_ANALYTICS }
-								plan={ PLAN_PREMIUM }
-								tracksImpressionName="calypso_upgrade_nudge_impression"
-								tracksClickName="calypso_upgrade_nudge_cta_click"
-								showIcon
-							/>
-						</div>
 					</Fragment>
 				);
 				break;

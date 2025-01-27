@@ -403,19 +403,7 @@ body.is-section-signup .videopress-step-wrapper {
 	}
 }
 
-.is-videopress-tv-signup {
-	font-family: Inter, -apple-system, system-ui, blinkmacsystemfont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-
-	.videopress-step-wrapper__middle .videopress-step-wrapper__header-text {
-		font-family: inherit;
-		font-size: rem(38px); //typography-exception
-		font-weight: 700;
-		letter-spacing: -0.02em;
-	}
-}
-
-.is-videopress-signup,
-.is-videopress-tv-signup {
+.is-videopress-signup {
 	.progress-bar {
 		display: block;
 		border-radius: 0;

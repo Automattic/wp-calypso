@@ -11,22 +11,25 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
  */
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
-let isLoggedIn = false;
+/**
+ * Bump me when the API response structure goes through a breaking change.
+ */
+const VERSION = 'v2';
 
 export function useAuthenticateZendeskMessaging(
-	enabled = true,
+	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
-	const currentEnvironment = config( 'env_id' );
-	const isTestMode = currentEnvironment === 'development';
+	const currentEnvironment = config( 'env_id' ) as string;
+	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 	return useQuery( {
-		queryKey: [ 'getMessagingAuth', type, isTestMode ],
-		queryFn: () => {
+		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
+		queryFn: async () => {
 			const params = { type, test_mode: String( isTestMode ) };
 			const wpcomParams = new URLSearchParams( params );
 
-			return canAccessWpcomApis()
+			const auth = await ( canAccessWpcomApis()
 				? wpcomRequest< MessagingAuth >( {
 						path: '/help/authenticate/chat',
 						query: wpcomParams.toString(),
@@ -38,23 +41,23 @@ export function useAuthenticateZendeskMessaging(
 						path: addQueryArgs( '/help-center/authenticate/chat', params ),
 						method: 'POST',
 						global: true,
-				  } as APIFetchOptions );
+				  } as APIFetchOptions ) );
+
+			const jwt = auth?.user?.jwt;
+
+			return new Promise< { isLoggedIn: boolean; jwt: string; externalId: string | undefined } >(
+				( resolve, reject ) => {
+					if ( ! jwt ) {
+						reject();
+					}
+					window?.zE?.( 'messenger', 'loginUser', function ( callback ) {
+						callback( jwt );
+						resolve( { isLoggedIn: true, jwt, externalId: auth?.user.external_id } );
+					} );
+				}
+			);
 		},
 		staleTime: 7 * 24 * 60 * 60 * 1000, // 1 week (JWT is actually 2 weeks, but lets be on the safe side)
 		enabled,
-		select: ( messagingAuth ) => {
-			const jwt = messagingAuth?.user.jwt;
-			if ( ! isLoggedIn ) {
-				if ( typeof window.zE !== 'function' || ! jwt ) {
-					return;
-				}
-
-				window.zE( 'messenger', 'loginUser', function ( callback ) {
-					isLoggedIn = true;
-					callback( jwt );
-				} );
-			}
-			return { isLoggedIn, jwt, externalId: messagingAuth?.user.external_id };
-		},
 	} );
 }

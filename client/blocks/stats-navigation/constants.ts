@@ -1,4 +1,4 @@
-import { commentAuthorAvatar, video } from '@wordpress/icons';
+import { commentAuthorAvatar, search, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -13,7 +13,15 @@ const year = { value: 'year', label: translate( 'Years' ) };
 export const intervals = [ day, week, month, year ];
 export const emailIntervals = [ hour, day ];
 
-export const AVAILABLE_PAGE_MODULES = {
+export type ModuleToggleItem = {
+	key: string;
+	label: string;
+	icon: JSX.Element;
+	defaultValue: boolean;
+	disabled: boolean;
+};
+
+export const AVAILABLE_PAGE_MODULES: Record< string, ModuleToggleItem[] > = {
 	traffic: [
 		{
 			key: 'authors',
@@ -22,6 +30,16 @@ export const AVAILABLE_PAGE_MODULES = {
 			},
 			icon: commentAuthorAvatar,
 			defaultValue: true,
+			disabled: false,
+		},
+		{
+			key: 'search-terms',
+			get label() {
+				return translate( 'Search terms' );
+			},
+			icon: search,
+			defaultValue: false,
+			disabled: false,
 		},
 		{
 			key: 'videos',
@@ -30,6 +48,7 @@ export const AVAILABLE_PAGE_MODULES = {
 			},
 			icon: video,
 			defaultValue: true,
+			disabled: false,
 		},
 	],
 };

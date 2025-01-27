@@ -22,24 +22,18 @@ const debug = debugFactory( 'wpcom-checkout:ideal-payment-method' );
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type NounsInStore = 'customerName' | 'customerBank';
+type NounsInStore = 'customerName';
 type IdealStore = PaymentMethodStore< NounsInStore >;
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
 		return { type: 'CUSTOMER_NAME_SET', payload };
 	},
-	changeCustomerBank( payload ) {
-		return { type: 'CUSTOMER_BANK_SET', payload };
-	},
 };
 
 const selectors: StoreSelectorsWithState< NounsInStore > = {
 	getCustomerName( state ) {
 		return state.customerName || '';
-	},
-	getCustomerBank( state ) {
-		return state.customerBank || '';
 	},
 };
 
@@ -49,15 +43,12 @@ export function createIdealPaymentMethodStore(): IdealStore {
 		reducer(
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
-				customerBank: { value: '', isTouched: false },
 			},
 			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
 					return { ...state, customerName: { value: action.payload, isTouched: true } };
-				case 'CUSTOMER_BANK_SET':
-					return { ...state, customerBank: { value: action.payload, isTouched: true } };
 			}
 			return state;
 		},
@@ -88,25 +79,23 @@ export function createIdealMethod( {
 }
 
 function useCustomerData() {
-	const { customerName, customerBank } = useSelect( ( select ) => {
+	const { customerName } = useSelect( ( select ) => {
 		const store = select( 'ideal' ) as StoreSelectors< NounsInStore >;
 		return {
 			customerName: store.getCustomerName(),
-			customerBank: store.getCustomerBank(),
 		};
 	}, [] );
 
 	return {
 		customerName,
-		customerBank,
 	};
 }
 
 function IdealFields() {
 	const { __ } = useI18n();
 
-	const { customerName, customerBank } = useCustomerData();
-	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ideal' );
+	const { customerName } = useCustomerData();
+	const { changeCustomerName } = useDispatch( 'ideal' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -123,80 +112,9 @@ function IdealFields() {
 				errorMessage={ __( 'This field is required' ) }
 				disabled={ isDisabled }
 			/>
-			<BankSelector
-				id="ideal-bank-selector"
-				value={ customerBank?.value ?? '' }
-				onChange={ changeCustomerBank }
-				label={ __( 'Bank' ) }
-				isError={ customerBank?.isTouched && customerBank?.value.length === 0 }
-				errorMessage={ __( 'This field is required' ) }
-				disabled={ isDisabled }
-			/>
 		</IdealFormWrapper>
 	);
 }
-
-function BankSelector( {
-	id,
-	value,
-	onChange,
-	label,
-	isError,
-	errorMessage,
-	disabled,
-}: {
-	id: string;
-	value: string;
-	onChange: ( newId: string ) => void;
-	label: string;
-	isError: boolean;
-	errorMessage: string | null;
-	disabled?: boolean;
-} ) {
-	const { __ } = useI18n();
-	const bankOptions = getBankOptions( __ );
-	return (
-		<SelectWrapper>
-			<IdealBankLabel htmlFor={ id }>{ label }</IdealBankLabel>
-			<IdealSelect
-				id={ id }
-				value={ value }
-				onChange={ ( event ) => onChange( event.target.value ) }
-				disabled={ disabled }
-			>
-				{ bankOptions.map( ( bank ) => (
-					<BankOption key={ bank.value } value={ bank.value } label={ bank.label } />
-				) ) }
-			</IdealSelect>
-			<ErrorMessage isError={ isError } errorMessage={ errorMessage } />
-		</SelectWrapper>
-	);
-}
-
-function BankOption( { value, label }: { value: string; label: string } ) {
-	return <option value={ value }>{ label }</option>;
-}
-
-function ErrorMessage( {
-	isError,
-	errorMessage,
-}: {
-	isError: boolean;
-	errorMessage: string | null;
-} ) {
-	if ( isError ) {
-		return <Description isError={ isError }>{ errorMessage }</Description>;
-	}
-	return null;
-}
-
-const Description = styled.p< { isError: boolean } >`
-	margin: 8px 0 0;
-	color: ${ ( props ) =>
-		props.isError ? props.theme.colors.error : props.theme.colors.textColorLight };
-	font-style: italic;
-	font-size: 14px;
-`;
 
 const IdealFormWrapper = styled.div`
 	padding: 16px;
@@ -224,56 +142,6 @@ const IdealField = styled( Field )`
 		margin-top: 0;
 	}
 `;
-const IdealBankLabel = styled.label`
-	font-size: 14px;
-	font-weight: 600;
-`;
-const IdealSelect = styled.select`
-	background: var( --color-surface,  rgb(255, 255, 255))
-		url( 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiB2aWV3Qm94PSIwIDAgMjAgMjAiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPiAgICAgICAgPHRpdGxlPmFycm93LWRvd248L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggU2tldGNoLjwvZGVzYz4gICAgPGRlZnM+PC9kZWZzPiAgICA8ZyBpZD0iUGFnZS0xIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIiBza2V0Y2g6dHlwZT0iTVNQYWdlIj4gICAgICAgIDxnIGlkPSJhcnJvdy1kb3duIiBza2V0Y2g6dHlwZT0iTVNBcnRib2FyZEdyb3VwIiBmaWxsPSIjQzhEN0UxIj4gICAgICAgICAgICA8cGF0aCBkPSJNMTUuNSw2IEwxNyw3LjUgTDEwLjI1LDE0LjI1IEwzLjUsNy41IEw1LDYgTDEwLjI1LDExLjI1IEwxNS41LDYgWiIgaWQ9IkRvd24tQXJyb3ciIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==' )
-		no-repeat right 10px center;
-	border-color: var( --color-neutral-10, rgb(195, 196, 199) );
-	color: var( --color-neutral-70, rgb(60, 67, 74) );
-	cursor: pointer;
-	display: inline-block;
-	margin: 8px 0 1em;
-	overflow: hidden;
-	font-size: 1rem;
-    font-weight: 400;
-	line-height: 1.4em;
-	text-overflow: ellipsis;
-	box-sizing: border-box;
-	padding: 7px 32px 9px 14px; // Aligns the text to the 8px baseline grid and adds padding on right to allow for the arrow.
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-
-	// IE: Remove the default arrow
-	&::-ms-expand {
-		display: none;
-	}
-
-	// IE: Remove default background and color styles on focus
-	&::-ms-value {
-		background: none;
-		color: var( --color-neutral-70 );
-	}
-
-	// Firefox: Remove the focus outline, see http://stackoverflow.com/questions/3773430/remove-outline-from-select-box-in-ff/18853002#18853002
-	&:-moz-focusring {
-		color: transparent;
-		text-shadow: 0 0 0 var( --color-neutral-70 );
-	}
-}
-`;
-
-const SelectWrapper = styled.div`
-	margin-top: 16px;
-
-	select {
-		width: 100%;
-	}
-`;
 
 function IdealPayButton( {
 	disabled,
@@ -287,7 +155,7 @@ function IdealPayButton( {
 	submitButtonContent: ReactNode;
 } ) {
 	const { formStatus } = useFormStatus();
-	const { customerName, customerBank } = useCustomerData();
+	const { customerName } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -306,7 +174,6 @@ function IdealPayButton( {
 					debug( 'submitting ideal payment' );
 					onClick( {
 						name: customerName?.value,
-						idealBank: customerBank?.value,
 					} );
 				}
 			} }
@@ -320,29 +187,23 @@ function IdealPayButton( {
 }
 
 function IdealSummary() {
-	const { customerName, customerBank } = useCustomerData();
+	const { customerName } = useCustomerData();
 
 	return (
 		<SummaryDetails>
 			<SummaryLine>{ customerName?.value }</SummaryLine>
-			<SummaryLine>{ customerBank?.value }</SummaryLine>
 		</SummaryDetails>
 	);
 }
 
 function isFormValid( store: IdealStore ) {
 	const customerName = selectors.getCustomerName( store.getState() );
-	const customerBank = selectors.getCustomerBank( store.getState() );
 
 	if ( ! customerName?.value.length ) {
 		// Touch the field so it displays a validation error
 		store.dispatch( actions.changeCustomerName( '' ) );
 	}
-	if ( ! customerBank?.value.length ) {
-		// Touch the field so it displays a validation error
-		store.dispatch( actions.changeCustomerBank( '' ) );
-	}
-	if ( ! customerName?.value.length || ! customerBank?.value.length ) {
+	if ( ! customerName?.value.length ) {
 		return false;
 	}
 	return true;
@@ -382,21 +243,4 @@ function IdealLogoSvg( { className }: { className?: string } ) {
 			/>
 		</svg>
 	);
-}
-
-function getBankOptions( __: ReturnType< typeof useI18n >[ '__' ] ) {
-	// Source https://stripe.com/docs/sources/ideal
-	const banks = [
-		{ value: 'abn_amro', label: 'ABN AMRO' },
-		{ value: 'asn_bank', label: 'ASN Bank' },
-		{ value: 'bunq', label: 'Bunq' },
-		{ value: 'ing', label: 'ING' },
-		{ value: 'knab', label: 'Knab' },
-		{ value: 'rabobank', label: 'Rabobank' },
-		{ value: 'regiobank', label: 'RegioBank' },
-		{ value: 'sns_bank', label: 'SNS Bank' },
-		{ value: 'triodos_bank', label: 'Triodos Bank' },
-		{ value: 'van_lanschot', label: 'Van Lanschot' },
-	];
-	return [ { value: '', label: __( 'Please select your bank.' ) }, ...banks ];
 }

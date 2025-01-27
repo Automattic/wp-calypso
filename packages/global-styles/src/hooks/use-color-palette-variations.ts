@@ -7,18 +7,14 @@ type Options = {
 	enabled?: boolean;
 };
 
-const useColorPaletteVariations = (
-	siteId: number | string,
-	stylesheet: string,
-	{ enabled = true }: Options = {}
-) => {
+const useColorPaletteVariations = ( stylesheet: string, { enabled = true }: Options = {} ) => {
 	const { data } = useQuery< any, unknown, GlobalStylesObject[] >( {
-		queryKey: [ 'global-styles-color-palette', siteId, stylesheet ],
+		queryKey: [ 'global-styles-color-palette', stylesheet ],
 		queryFn: async () =>
 			wpcomRequest< GlobalStylesObject[] >( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/global-styles-variation/color-palettes`,
+				path: `/global-styles-variation/color-palettes`,
 				method: 'GET',
-				apiNamespace: 'wpcom/v2',
+				apiNamespace: 'wpcom/v3',
 				query: new URLSearchParams( {
 					stylesheet,
 					...( isEnabled( 'design-picker/use-assembler-styles' )
@@ -28,7 +24,7 @@ const useColorPaletteVariations = (
 			} ),
 		refetchOnMount: 'always',
 		staleTime: Infinity,
-		enabled: !! siteId && !! stylesheet && enabled,
+		enabled: !! stylesheet && enabled,
 	} );
 
 	return data;

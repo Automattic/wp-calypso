@@ -27,7 +27,6 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
 	pathWithLeadingSlash,
-	isReactLostPasswordScreenEnabled,
 	canDoMagicLogin,
 	getLoginLinkPageUrl,
 } from 'calypso/lib/login';
@@ -37,7 +36,7 @@ import {
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -73,10 +72,11 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import ErrorNotice from './error-notice';
 import SocialLoginForm from './social';
 import { isA4AReferralClient } from './utils/is-a4a-referral-for-client';
+
 import './login-form.scss';
 
 export class LoginForm extends Component {
@@ -132,8 +132,14 @@ export class LoginForm extends Component {
 
 		// eslint-disable-next-line react/no-did-mount-set-state
 		this.setState( { isFormDisabledWhileLoading: false }, () => {
-			! disableAutoFocus && this.usernameOrEmail && this.usernameOrEmail.focus();
+			! disableAutoFocus && defer( () => this.usernameOrEmail && this.usernameOrEmail.focus() );
 		} );
+		// Remove url param to keep the last used login consistent upon refresh
+		const url = new URL( window.location );
+		if ( this.props.currentQuery?.username_only ) {
+			url.searchParams.delete( 'username_only' );
+			window.history.replaceState( {}, document.title, url );
+		}
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -161,7 +167,8 @@ export class LoginForm extends Component {
 			currentRoute &&
 			currentRoute.includes( '/log-in/jetpack' ) &&
 			config.isEnabled( 'jetpack/magic-link-signup' ) &&
-			requestError.code === 'unknown_user'
+			requestError.code === 'unknown_user' &&
+			! this.props.isWooPasswordlessJPC
 		) {
 			this.jetpackCreateAccountWithMagicLink();
 		}
@@ -423,7 +430,7 @@ export class LoginForm extends Component {
 	};
 
 	getLoginButtonText = () => {
-		const { translate, isWoo, isWooCoreProfilerFlow, isWooPasswordless, loginButtonText } =
+		const { translate, isWoo, isWooPasswordlessJPC, isWooPasswordless, loginButtonText } =
 			this.props;
 
 		if ( loginButtonText ) {
@@ -434,7 +441,7 @@ export class LoginForm extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWoo && ! isWooCoreProfilerFlow ) {
+		if ( isWoo && ! isWooPasswordlessJPC ) {
 			return translate( 'Get started' );
 		}
 
@@ -586,7 +593,7 @@ export class LoginForm extends Component {
 			return this.props.translate( 'Your email or username' );
 		}
 
-		if ( this.props.isWooCoreProfilerFlow || this.props.isBlazePro ) {
+		if ( this.props.isWooPasswordlessJPC || this.props.isBlazePro ) {
 			return this.props.translate( 'Your email address' );
 		}
 
@@ -614,36 +621,23 @@ export class LoginForm extends Component {
 	}
 
 	renderLostPasswordLink() {
-		if ( isReactLostPasswordScreenEnabled() ) {
-			return (
-				<a
-					className="login__form-forgot-password"
-					href="/"
-					onClick={ ( event ) => {
-						event.preventDefault();
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-						page(
-							login( {
-								redirectTo: this.props.redirectTo,
-								locale: this.props.locale,
-								action: this.props.isWooCoreProfilerFlow ? 'jetpack/lostpassword' : 'lostpassword',
-								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-								from: get( this.props.currentQuery, 'from' ),
-							} )
-						);
-					} }
-				>
-					{ this.props.translate( 'Forgot password?' ) }
-				</a>
-			);
-		}
-
 		return (
 			<a
 				className="login__form-forgot-password"
-				href={ lostPassword( this.props.locale ) }
-				onClick={ () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ) }
-				rel="external"
+				href="/"
+				onClick={ ( event ) => {
+					event.preventDefault();
+					this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+					page(
+						login( {
+							redirectTo: this.props.redirectTo,
+							locale: this.props.locale,
+							action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
+							oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							from: get( this.props.currentQuery, 'from' ),
+						} )
+					);
+				} }
 			>
 				{ this.props.translate( 'Forgot password?' ) }
 			</a>
@@ -719,7 +713,7 @@ export class LoginForm extends Component {
 		}
 
 		return this.props.translate(
-			'It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?',
+			'{{errorWrapper}}It seems you entered an incorrect password. Want to get a {{magicLoginLink}}login link{{/magicLoginLink}} via email?{{/errorWrapper}}',
 			{
 				components: {
 					magicLoginLink: (
@@ -728,6 +722,7 @@ export class LoginForm extends Component {
 							onClick={ () => this.handleMagicLoginClick( 'login-form' ) }
 						/>
 					),
+					errorWrapper: <p className="login-form__validation-error-wrapper"></p>,
 				},
 			}
 		);
@@ -799,7 +794,7 @@ export class LoginForm extends Component {
 		} );
 
 	getLastUsedAuthenticationMethod() {
-		if ( typeof document !== 'undefined' ) {
+		if ( typeof document !== 'undefined' && this.props.currentQuery?.username_only !== 'true' ) {
 			const cookies = cookie.parse( document.cookie );
 			return cookies.last_used_authentication_method ?? '';
 		}
@@ -826,7 +821,7 @@ export class LoginForm extends Component {
 			isWoo,
 			isWooPasswordless,
 			isPartnerSignup,
-			isWooCoreProfilerFlow,
+			isWooPasswordlessJPC,
 			isBlazePro,
 			hideSignupLink,
 			isSignupExistingAccount,
@@ -844,7 +839,7 @@ export class LoginForm extends Component {
 			isWoo && ! isPartnerSignup && ! isWooPasswordless ? isFormFilled : isFormDisabled;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
-		const isCoreProfilerLostPasswordFlow = isWooCoreProfilerFlow && currentQuery.lostpassword_flow;
+		const isCoreProfilerLostPasswordFlow = isWooPasswordlessJPC && currentQuery.lostpassword_flow;
 		const isFromAutomatticForAgenciesReferralClient = isA4AReferralClient(
 			currentQuery,
 			oauth2Client
@@ -889,7 +884,10 @@ export class LoginForm extends Component {
 		);
 
 		const showLastUsedAuthenticationMethod =
-			lastUsedAuthenticationMethod && lastUsedAuthenticationMethod !== 'password' && isSocialFirst;
+			lastUsedAuthenticationMethod &&
+			lastUsedAuthenticationMethod !== 'password' &&
+			lastUsedAuthenticationMethod !== 'magic-login' &&
+			isSocialFirst;
 
 		if ( showSocialLoginFormOnly ) {
 			return config.isEnabled( 'signup/social' ) ? (
@@ -930,8 +928,14 @@ export class LoginForm extends Component {
 			isGravatarFlowWithEmail;
 
 		const shouldRenderForgotPasswordLink =
-			( ! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless ) ||
-			! isPasswordHidden;
+			! isPasswordHidden && isWoo && ! isPartnerSignup && ! isWooPasswordless;
+
+		const signUpUrlWithEmail = addQueryArgs(
+			{
+				user_email: this.state.usernameOrEmail,
+			},
+			signupUrl
+		);
 
 		return (
 			<form
@@ -1024,12 +1028,11 @@ export class LoginForm extends Component {
 													components: {
 														newAccountLink: (
 															<a
-																href={ addQueryArgs(
-																	{
-																		user_email: this.state.usernameOrEmail,
-																	},
-																	signupUrl
-																) }
+																onClick={ ( e ) => {
+																	e.preventDefault();
+																	window.location.href = signUpUrlWithEmail;
+																} }
+																href={ signUpUrlWithEmail }
 															/>
 														),
 													},
@@ -1174,7 +1177,7 @@ export class LoginForm extends Component {
 							shouldRenderToS={ isWoo && ! isPartnerSignup && ! isWooPasswordless }
 							isWoo={ isWoo && isWooPasswordless }
 							isSocialFirst={ isSocialFirst }
-							magicLoginLink={ this.getMagicLoginPageLink() }
+							magicLoginLink={ ! isWooPasswordlessJPC ? this.getMagicLoginPageLink() : null }
 							qrLoginLink={ this.getQrLoginLink() }
 						/>
 					</Fragment>
@@ -1207,11 +1210,10 @@ export default connect(
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isWooCoreProfilerFlow: isWooCommerceCoreProfilerFlow( state ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 			isWoo:
-				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) ||
-				isWooCommerceCoreProfilerFlow( state ),
+				isWooOAuth2Client( getCurrentOAuth2Client( state ) ) || isWooPasswordlessJPCFlow( state ),
 			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),

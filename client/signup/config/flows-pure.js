@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
-import { onEnterOnboarding } from '../flow-actions';
 
 const noop = () => {};
 
@@ -44,7 +43,6 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
-	getChecklistThemeDestination = noop,
 	getWithThemeDestination = noop,
 	getWithPluginDestination = noop,
 	getDestinationFromIntent = noop,
@@ -147,15 +145,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'with-theme-assembler',
-			steps: [ userSocialStep, 'domains-theme-preselected', 'plans' ],
-			destination: getChecklistThemeDestination,
-			description: 'Preselect a theme to activate/buy from an external source with the assembler.',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'with-plugin',
 			steps: [ userSocialStep, 'domains', 'plans-business-with-plugin' ],
 			destination: getWithPluginDestination,
@@ -175,7 +164,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
-			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: ONBOARDING_FLOW,
@@ -187,7 +175,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
-			onEnterFlow: onEnterOnboarding,
 		},
 		{
 			name: 'plans-first',
@@ -378,10 +365,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'reader',
-			steps: [ 'reader-landing', userSocialStep ],
-			destination: '/',
-			description: 'Signup for an account and migrate email subs to the Reader.',
-			lastModified: '2023-10-11',
+			steps: [ userSocialStep ],
+			destination: '/read',
+			description:
+				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
+			lastModified: '2025-01-20',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},
@@ -476,8 +464,8 @@ export function generateFlows( {
 			enableBranchSteps: true,
 			hideProgressIndicator: true,
 			enablePresales: false,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
+			providesDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
+			optionalDependenciesInQuery: [ 'coupon', 'back_to', 'newOrExistingSiteChoice' ],
 		},
 		{
 			name: 'do-it-for-me-store',
@@ -506,10 +494,10 @@ export function generateFlows( {
 			destination: getDIFMSignupDestination,
 			description: 'A flow for DIFM onboarding',
 			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug' ],
+			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
+			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2024-06-14',
 			enablePresales: false,
-			enableHotjar: true,
 		},
 
 		{
@@ -521,7 +509,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug' ],
 			lastModified: '2024-06-14',
 			hideProgressIndicator: true,
-			enableHotjar: true,
 		},
 		{
 			name: 'woocommerce-install',
@@ -619,23 +606,6 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'coupon' ],
 			hideProgressIndicator: true,
 			enableHotjar: true,
-		},
-		{
-			name: 'email-subscription',
-			steps: [ 'subscribe' ],
-			destination: ( dependencies ) => `${ dependencies.redirect }`,
-			description: 'Signup flow that subscripes user to guides appointments for email campaigns',
-			lastModified: '2024-06-17',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [
-				'user_email',
-				'redirect_to',
-				'mailing_list',
-				'from',
-				'first_name',
-			],
-			optionalDependenciesInQuery: [ 'last_name' ],
-			hideProgressIndicator: true,
 		},
 	];
 

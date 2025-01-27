@@ -69,7 +69,13 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#referrers` ) }
+											/>
+										),
 									},
 									context: 'Stats: Link in a popover for the Referrers when the module has data',
 								}
@@ -101,7 +107,13 @@ const StatsReferrers: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#referrers` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#referrers` ) }
+											/>
+										),
 									},
 									context: 'Stats: Info box label when the Referrers module is empty',
 								}

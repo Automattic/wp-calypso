@@ -2,7 +2,7 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { Modal } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import SitePreviewLink from 'calypso/components/site-preview-link';
+import SitePreviewLinks from 'calypso/components/site-preview-links';
 
 interface SitePreviewModalProps {
 	siteUrl: string;
@@ -38,7 +38,7 @@ const SitePreviewModal = ( { siteUrl, siteId, isVisible, closeModal }: SitePrevi
 			overlayClassName={ modalOverlayClassName }
 		>
 			<ModalContent>
-				<SitePreviewLink siteUrl={ siteUrl } siteId={ siteId } source="smp-modal" />
+				<SitePreviewLinks siteUrl={ siteUrl } siteId={ siteId } source="smp-modal" />
 			</ModalContent>
 		</Modal>
 	);

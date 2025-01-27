@@ -6,23 +6,15 @@
 	.components-modal__frame {
 		width: 560px;
 
-		.components-modal__header {
-			padding: 0 24px;
-		}
-
-		.components-modal__content {
-			padding: 0 24px 24px;
-		}
-
 		@media (max-width: $break-small) {
 			width: auto;
 		}
 	}
 
 	.add-subscriber__form--container {
-		.add-subscriber__form--disclaimer {
-			margin-top: 16px !important;
-			margin-bottom: 24px !important;
+		p.add-subscriber__form--disclaimer {
+			margin-top: 16px;
+			margin-bottom: 24px;
 		}
 
 		.components-base-control__help {
@@ -101,5 +93,43 @@
 		font-size: $font-body;
 		font-weight: 400;
 		line-height: rem(20px);
+	}
+
+	.subscriber-upload-form__dropzone {
+		cursor: pointer;
+		position: relative;
+		height: 190px;
+		margin-bottom: 1.5em;
+		background-color: var(--color-neutral-0);
+		border: 2px dashed var(--color-neutral-light);
+		transition: all 200ms ease-out, color 100ms ease-out;
+		fill: var(--color-neutral-20);
+		font-size: 1rem;
+		color: var(--color-neutral-70);
+		text-align: center;
+		p {
+			margin-bottom: 12px;
+		}
+		.components-form-file-upload {
+			position: absolute;
+			height: 100%;
+			top: 50%;
+			left: 0;
+			right: 0;
+			transform: translateY(-50%);
+			button {
+				height: 100%;
+				width: 100%;
+				border: 0;
+				justify-content: center;
+				border-radius: 0;
+			}
+			svg {
+				width: 48px;
+				height: 48px;
+				text-align: center;
+				fill: var(--studio-gray-20);
+			}
+		}
 	}
 }

@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
@@ -229,6 +231,7 @@ ul.module-tabs {
 }
 
 .is-chart-tabs {
+
 	.chart__bars {
 		justify-content: space-between;
 	}
@@ -237,6 +240,61 @@ ul.module-tabs {
 	}
 	.chart__bar {
 		max-width: 156px;
+	}
+
+	/* styles border around chart for new date filtering design */
+	&.is-date-filtering-enabled {
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+
+		/* styling for chart header with new date filtering design */
+		.stats-chart-tabs__header {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			padding: 24px;
+
+			@media (max-width: $break-medium) {
+				padding: 8px 24px;
+			}
+		}
+
+		.chart__legend{
+			margin: 0 0 0 auto;
+		}
+
+		.chart__y-axis-marker {
+			border-top-color: #DCDCDE;
+		}
+
+		.chart__y-axis {
+			padding-left: 8px;
+		}
+
+		.stats-interval-dropdown, .stats-interval-display {
+			margin-left: 48px;
+
+			& > .components-button {
+				width: auto;
+				padding: 0;
+				border: 0;
+				box-shadow: none;
+
+				& > svg {
+					margin-left: 8px;
+				}
+			}
+		}
+	}
+
+	/* styling for the chart header component */
+	.stats-chart-tabs__header {
+
+		.stats-chart-tabs__header-title {
+			font-size: $font-body-large;
+			font-weight: 500;
+		}
 	}
 
 }

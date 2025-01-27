@@ -1,6 +1,7 @@
-import config from '@automattic/calypso-config';
-import { isDefaultLocale } from '@automattic/i18n-utils';
+import { isDefaultLocale, isMagnificentLocale } from '@automattic/i18n-utils';
 import { ssrSetupLocale } from 'calypso/controller';
+import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 
 const VALID_QUERY_KEYS = [ 'client_id', 'signup_flow', 'redirect_to' ];
 
@@ -21,8 +22,7 @@ export function setShouldServerSideRenderLogin( context, next ) {
 	 * rather than redirecting non-Mag-16 locales to English, as is done for other sections.
 	 */
 	const isLocaleValidForSSR =
-		isDefaultLocale( context.lang ) ||
-		config( 'magnificent_non_en_locales' ).includes( context.lang );
+		isDefaultLocale( context.lang ) || isMagnificentLocale( context.lang );
 
 	context.serverSideRender =
 		// if there are any parameters, they must be ONLY the ones in the list of valid query keys
@@ -61,6 +61,30 @@ export function ssrSetupLocaleLogin( context, next ) {
 	if ( context.serverSideRender ) {
 		ssrSetupLocale( context, next );
 		return;
+	}
+
+	next();
+}
+
+export function setMetaTags( context, next ) {
+	const pathSegments = context.pathname.replace( /^[/]|[/]$/g, '' ).split( '/' );
+	const hasQueryString = Object.keys( context.query ).length > 0;
+	const hasMag16LocaleParam = isMagnificentLocale( context.params?.lang );
+
+	/**
+	 * Only the main `/log-in` and `/log-in/[mag-16-locale]` routes should be indexed.
+	 */
+	if ( hasQueryString || pathSegments.length > ( hasMag16LocaleParam ? 2 : 1 ) ) {
+		const meta = getDocumentHeadMeta( context.store.getState() )
+			// Remove existing robots meta tags to prevent duplication.
+			.filter( ( { name } ) => name !== 'robots' )
+			// Add the noindex meta tag.
+			.concat( {
+				name: 'robots',
+				content: 'noindex',
+			} );
+
+		context.store.dispatch( setDocumentHeadMeta( meta ) );
 	}
 
 	next();

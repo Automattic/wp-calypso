@@ -1,6 +1,5 @@
 import {
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
@@ -21,7 +20,6 @@ const useSteps = ( flowName: string ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:
 			steps = [
 				{ title: __( 'Great choices. Nearly there!' ) },

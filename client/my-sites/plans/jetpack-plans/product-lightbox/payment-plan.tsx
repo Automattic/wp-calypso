@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { isNumber } from 'lodash';
 import { useCallback } from 'react';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
+import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
@@ -32,9 +33,14 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
 
-	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
-		useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
-
+	const {
+		originalPrice,
+		discountedPrice,
+		discountedPriceDuration,
+		isFetching,
+		priceTierList,
+		saleCouponDiscount,
+	} = useItemPrice( siteId, product, product?.monthlyProductSlug || '' );
 	const currentTier =
 		quantity &&
 		priceTierList.find( ( tier ) => {
@@ -45,9 +51,24 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 			return quantity >= tier.minimum_units;
 		} );
 
-	const currentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
+	const getCurrentTierPrice = () => {
+		const originalCurrentTierPrice = currentTier && currentTier.minimum_price / 100 / 12;
+		let currentTierPrice = originalCurrentTierPrice;
+		if ( saleCouponDiscount && currentTierPrice ) {
+			currentTierPrice = currentTierPrice * ( 1 - saleCouponDiscount );
+		}
+
+		return {
+			originalCurrentTierPrice,
+			currentTierPrice,
+		};
+	};
+
+	const { originalCurrentTierPrice, currentTierPrice } = getCurrentTierPrice();
 	const currentPrice = isNumber( discountedPrice ) ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
+	const tooltipText = productTooltip( product, priceTierList, currencyCode ?? 'USD' );
 
 	const labelClass = clsx(
 		'product-lightbox__variants-grey-label',
@@ -123,12 +144,26 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 						{ isNumber( discountedPrice ) && (
 							<div className={ labelClass }>
 								<span className="product-lightbox__variants-plan-card-old-price">
-									<PlanPrice original rawPrice={ originalPrice } currencyCode={ currencyCode } />
+									<PlanPrice
+										original
+										rawPrice={ currentTier ? originalCurrentTierPrice : originalPrice }
+										currencyCode={ currencyCode }
+									/>
 								</span>
 								{ getDiscountedLabel() }
 							</div>
 						) }
 					</div>
+					{ tooltipText && (
+						<div
+							className={ clsx(
+								'product-lightbox__variants-plan-card',
+								! isActive && 'product-lightbox__variants-plan-card inactive'
+							) }
+						>
+							<div className="product-lightbox__variants-grey-label">{ tooltipText }</div>
+						</div>
+					) }
 				</>
 			) }
 		</div>

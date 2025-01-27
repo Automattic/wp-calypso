@@ -10,6 +10,20 @@ import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMeta', () => {
 	const queryClient = new QueryClient();
+	const commonStoreAttributes = {
+		sites: {
+			requestingAll: false,
+			domains: {
+				items: [],
+			},
+		},
+		currentUser: {
+			id: 1,
+			user: {
+				primary_blog: 'example',
+			},
+		},
+	};
 
 	it( 'does render "Free with Plan"', () => {
 		const store = createReduxStore(
@@ -22,15 +36,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -61,15 +67,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -100,15 +98,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -139,15 +129,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -178,15 +160,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -217,15 +191,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -256,15 +222,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -296,15 +254,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -336,15 +286,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);
@@ -378,15 +320,7 @@ describe( 'PurchaseMeta', () => {
 						},
 					],
 				},
-				sites: {
-					requestingAll: false,
-				},
-				currentUser: {
-					id: 1,
-					user: {
-						primary_blog: 'example',
-					},
-				},
+				...commonStoreAttributes,
 			},
 			( state ) => state
 		);

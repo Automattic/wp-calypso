@@ -16,7 +16,7 @@ import { useSelector } from 'calypso/state';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	errorNotice,
-	plainNotice,
+	infoNotice,
 	removeNotice,
 	successNotice,
 } from 'calypso/state/notices/actions';
@@ -53,9 +53,11 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 		onMutate: () => {
 			removeAllNotices();
 			dispatch(
-				plainNotice( translate( 'Changing admin interface style…' ), {
+				infoNotice( translate( 'Changing admin interface style…' ), {
 					id: changeLoadingNoticeId,
 					showDismiss: false,
+					isLoading: true,
+					icon: 'sync',
 				} )
 			);
 		},
@@ -160,7 +162,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 			>
 				<HostingCardDescription>
 					{ translate(
-						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}.',
+						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}',
 						{
 							components: {
 								supportLink: (

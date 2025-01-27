@@ -8,9 +8,14 @@ module.exports = {
 					return selector === '.search' ? prefixedSelector : selector;
 				}
 
-				// The search component has very generic class that causes many bugs.
+				// The card component has very generic class that causes many bugs.
 				if ( path.includes( 'card/style.scss' ) ) {
 					return selector === '.card' ? prefixedSelector : selector;
+				}
+
+				// The count component has very generic class that causes many bugs.
+				if ( path.includes( 'count/style.scss' ) ) {
+					return selector === '.count' ? prefixedSelector : selector;
 				}
 
 				return selector;

@@ -128,16 +128,6 @@ describe( 'actions', () => {
 					},
 				} );
 			} );
-
-			test( 'should dispatch plugin update request if any site plugins need updating', async () => {
-				await fetchAllPlugins()( spy, getState );
-				expect( spy ).toHaveBeenCalledWith( {
-					type: PLUGIN_UPDATE_REQUEST,
-					action: UPDATE_PLUGIN,
-					siteId: 2916284,
-					pluginId: 'jetpack/jetpack',
-				} );
-			} );
 		} );
 
 		describe( 'failure', () => {
@@ -225,16 +215,6 @@ describe( 'actions', () => {
 				error: expect.objectContaining( {
 					message: 'This endpoint is only available for Jetpack powered Sites',
 				} ),
-			} );
-		} );
-
-		test( 'should dispatch plugin update request if any site plugins need updating', async () => {
-			await fetchSitePlugins( 2916284 )( spy, getState );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: PLUGIN_UPDATE_REQUEST,
-				action: UPDATE_PLUGIN,
-				siteId: 2916284,
-				pluginId: 'jetpack/jetpack',
 			} );
 		} );
 	} );

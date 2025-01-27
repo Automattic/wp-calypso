@@ -2,4 +2,8 @@
 	--color-primary: #2271b1;
 	--color-accent: var(--color-primary);
 	--color-accent-60: #135e96;
+
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

@@ -6,7 +6,6 @@ import { Page } from 'playwright';
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
-type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
@@ -25,7 +24,7 @@ const selectors = {
 	goalButton: ( goal: string ) =>
 		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
 	selectedGoalButton: ( goal: string ) =>
-		`.select-card-checkbox__container.is-checked:has-text("${ goal }")`,
+		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
 
 	// Step containers
 	contentAgnosticContainer: '.step-container',
@@ -86,7 +85,7 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} goal The goal to select
 	 */
-	async selectGoal( goal: Goals ): Promise< void > {
+	async selectGoal( goal: string ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
@@ -168,6 +167,6 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
-		await this.page.getByRole( 'link', { name: themeName } ).click();
+		await this.page.getByRole( 'link', { name: themeName } ).first().click();
 	}
 }

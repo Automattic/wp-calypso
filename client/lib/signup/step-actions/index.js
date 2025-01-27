@@ -1,13 +1,6 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import {
-	WPCOM_DIFM_LITE,
-	planHasFeature,
-	FEATURE_UPLOAD_THEMES_PLUGINS,
-	PRODUCT_1GB_SPACE,
-	isEcommerce,
-	isDomainTransfer,
-} from '@automattic/calypso-products';
+import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE, isDomainTransfer } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
@@ -15,8 +8,8 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -42,6 +35,7 @@ import {
 	buildDIFMWebsiteContentRequestDTO,
 } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { requestProductsList } from 'calypso/state/products-list/actions';
 import {
 	getProductBySlug,
 	getProductsByBillingSlug,
@@ -57,6 +51,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -662,10 +657,28 @@ async function addExternalManagedThemeToCart(
 		} );
 }
 
+export function addWithPluginPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { plugin, billing_period: billingPeriod, siteSlug } = dependencies;
+	const { cartItems, lastKnownFlow } = stepProvidedItems;
+
+	reduxStore.dispatch( requestProductsList( { type: 'all' } ) ).then( () => {
+		const marketplacePlugin = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
+		const providedDependencies = { cartItems };
+
+		const newCartItems = [ ...( cartItems ? cartItems : [] ), marketplacePlugin ].filter(
+			( item ) => item
+		);
+
+		processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+			lastKnownFlow,
+		} );
+	} );
+}
+
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug, plugin, billing_period: billingPeriod } = dependencies;
+	const { emailItem, siteSlug } = dependencies;
 	const { cartItems, lastKnownFlow } = stepProvidedItems;
 	if ( isEmpty( cartItems ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
@@ -674,15 +687,8 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		return;
 	}
 
-	let pluginItem;
-	if ( plugin ) {
-		pluginItem = findMarketplacePlugin( reduxStore.getState(), plugin, billingPeriod );
-	}
-
 	const providedDependencies = { cartItems };
-	const newCartItems = [ ...( cartItems ? cartItems : [] ), emailItem, pluginItem ].filter(
-		( item ) => item
-	);
+	const newCartItems = [ ...( cartItems ? cartItems : [] ), emailItem ].filter( ( item ) => item );
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 		lastKnownFlow,
 	} );
@@ -927,6 +933,7 @@ export function createAccount(
 		const providedDependencies = {
 			username,
 			marketing_price_group,
+			is_new_account: newAccountCreated,
 			...bearerToken,
 		};
 
@@ -1320,65 +1327,4 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export const buildUpgradeFunction = ( planProps, cartItems ) => {
-	const {
-		additionalStepData,
-		flowName,
-		launchSite,
-		selectedSite,
-		stepName,
-		stepSectionName,
-		themeSlugWithRepo,
-		goToNextStep,
-		submitSignupStep,
-	} = planProps;
-	const planCartItem = getPlanCartItem( cartItems );
-
-	if ( planCartItem ) {
-		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
-			product_slug: planCartItem.product_slug,
-			from_section: stepSectionName ? stepSectionName : 'default',
-		} );
-
-		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
-		// set a flag on it. It will trigger Automated Transfer when the product is being
-		// activated at the end of the checkout process.
-		if (
-			flowName === 'ecommerce' &&
-			planHasFeature( planCartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
-		) {
-			planCartItem.extra = Object.assign( planCartItem.extra || {}, {
-				is_store_signup: true,
-			} );
-		}
-	} else {
-		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
-			from_section: stepSectionName ? stepSectionName : 'default',
-		} );
-	}
-
-	const step = {
-		stepName,
-		stepSectionName,
-		cartItems,
-		...additionalStepData,
-	};
-
-	if ( selectedSite && flowName === 'site-selected' && ! planCartItem ) {
-		submitSignupStep( step, { cartItems } );
-		goToNextStep();
-		return;
-	}
-
-	const signupVals = {
-		cartItems,
-		...( themeSlugWithRepo && { themeSlugWithRepo } ),
-		...( launchSite && { comingSoon: 0 } ),
-	};
-
-	if ( planCartItem && isEcommerce( planCartItem ) ) {
-		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
-	}
-	submitSignupStep( step, signupVals );
-	goToNextStep();
-};
+export { buildUpgradeFunction };

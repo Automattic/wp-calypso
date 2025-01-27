@@ -29,7 +29,7 @@ const EmailMailboxWarningAction = ( { buttonText, isExternal, ...otherProps } ) 
 	);
 };
 
-const EmailMailboxReverifyWarning = ( { mailbox } ) => {
+const EmailMailboxReverifyWarning = ( { mailbox, ctaProps } ) => {
 	const translate = useTranslate();
 
 	const { mutate: resendVerificationEmail } = useResendVerifyEmailForwardMutation( mailbox.domain );
@@ -56,12 +56,13 @@ const EmailMailboxReverifyWarning = ( { mailbox } ) => {
 
 					resendVerificationEmail( mailbox, destination );
 				} }
+				{ ...ctaProps }
 			/>
 		</>
 	);
 };
 
-const EmailMailboxWarnings = ( { account, mailbox } ) => {
+const EmailMailboxWarnings = ( { account, mailbox, ctaProps } ) => {
 	if ( ! mailbox?.warnings?.length ) {
 		return null;
 	}
@@ -73,7 +74,13 @@ const EmailMailboxWarnings = ( { account, mailbox } ) => {
 
 				if ( isEmailForwardAccount( account ) ) {
 					if ( warning.warning_slug === EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS ) {
-						return <EmailMailboxReverifyWarning key={ warningKey } mailbox={ mailbox } />;
+						return (
+							<EmailMailboxReverifyWarning
+								key={ warningKey }
+								mailbox={ mailbox }
+								ctaProps={ ctaProps }
+							/>
+						);
 					}
 				}
 
@@ -86,6 +93,7 @@ const EmailMailboxWarnings = ( { account, mailbox } ) => {
 EmailMailboxWarnings.propTypes = {
 	account: PropTypes.object.isRequired,
 	mailbox: PropTypes.object.isRequired,
+	ctaProps: PropTypes.object,
 };
 
 export default EmailMailboxWarnings;

@@ -9,6 +9,7 @@ interface PerformanceReportProps {
 	hash: string;
 	isLoading: boolean;
 	isError: boolean;
+	isRetesting: boolean;
 	onRetestClick(): void;
 	pageTitle: string;
 	filter?: string;
@@ -17,6 +18,7 @@ interface PerformanceReportProps {
 
 export const PerformanceReport = ( {
 	isLoading,
+	isRetesting,
 	isError,
 	onRetestClick,
 	performanceReport,
@@ -30,8 +32,13 @@ export const PerformanceReport = ( {
 		return <ReportError onRetestClick={ onRetestClick } />;
 	}
 
-	if ( isLoading ) {
-		return <PerformanceReportLoading isSavedReport={ !! hash } pageTitle={ pageTitle } />;
+	if ( isRetesting || isLoading ) {
+		return (
+			<PerformanceReportLoading
+				isSavedReport={ ! isRetesting && !! hash }
+				pageTitle={ pageTitle }
+			/>
+		);
 	}
 
 	if ( ! performanceReport ) {
@@ -43,9 +50,8 @@ export const PerformanceReport = ( {
 			performanceReport={ performanceReport }
 			url={ url }
 			hash={ hash }
-			showV2
+			overallScoreIsTab
 			filter={ filter }
-			displayThumbnail={ false }
 			displayNewsletterBanner={ false }
 			displayMigrationBanner={ false }
 			onRecommendationsFilterChange={ onFilterChange }

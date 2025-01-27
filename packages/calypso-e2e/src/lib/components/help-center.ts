@@ -1,3 +1,4 @@
+import { ZENDESK_STAGING_SUPPORT_CHAT_KEY } from '@automattic/zendesk-client/src/constants';
 import { Locator, Page } from 'playwright';
 
 export type ResultsCategory = 'Docs' | 'Links';
@@ -56,6 +57,7 @@ export class HelpCenterComponent {
 			await this.page.getByRole( 'button', { name: 'Help', exact: true } ).click();
 		}
 
+		await this.popup.locator( '.placeholder-lines__help-center' ).waitFor( { state: 'detached' } );
 		await this.popup.waitFor( { state: 'visible' } );
 	}
 
@@ -94,10 +96,25 @@ export class HelpCenterComponent {
 	}
 
 	/**
+	 * Maximizes the support popover.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async maximizePopover(): Promise< void > {
+		const maximizeButton = await this.popup.getByRole( 'button', {
+			name: 'Maximize Help Center',
+			exact: true,
+		} );
+
+		await maximizeButton.click();
+		await this.popup.locator( '.help-center__container-content' ).waitFor( { state: 'visible' } );
+	}
+
+	/**
 	 * Go back to the previous page.
 	 */
 	async goBack(): Promise< void > {
-		await this.popup.locator( 'button.back-button__help-center' ).click();
+		await this.popup.getByTestId( 'help-center-back-button' ).click();
 	}
 
 	/**
@@ -205,10 +222,39 @@ export class HelpCenterComponent {
 			route.continue( { url: url.toString() } );
 		} );
 
-		await this.page.evaluate( () => {
-			if ( typeof configData !== 'undefined' ) {
-				configData.zendesk_support_chat_key = '715f17a8-4a28-4a7f-8447-0ef8f06c70d7';
+		await this.page.evaluate(
+			( _constants ) => {
+				if ( typeof configData !== 'undefined' ) {
+					configData.zendesk_support_chat_key = _constants.ZENDESK_STAGING_SUPPORT_CHAT_KEY;
+				}
+			},
+			{
+				ZENDESK_STAGING_SUPPORT_CHAT_KEY,
 			}
+		);
+	}
+
+	/**
+	 * Set Odie to Test mode.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async setOdieTestMode(): Promise< void > {
+		// Rewrite the Odie POST request to make sure it's in test mode.
+		await this.page.route( '**/odie/chat/*', async ( route, request ) => {
+			const postBody = JSON.parse( request.postData() || '{}' );
+
+			// Add Test Mode to the request.
+			postBody.test = true;
+
+			// Continue with the modified post data
+			await route.continue( {
+				postData: JSON.stringify( postBody ),
+				headers: {
+					...request.headers(),
+					'Content-Type': 'application/json',
+				},
+			} );
 		} );
 	}
 

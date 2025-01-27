@@ -1,0 +1,129 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$highlight-color: #3858E9;
+
+.a4a-feedback__wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.a4a-feedback__content {
+	padding-block-start: 32px;
+	display: flex;
+	align-items: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	@include break-large {
+		width: 600px;
+		max-width: 90%;
+	}
+}
+
+.a4a-feedback__title {
+	@include a4a-font-heading-xl;
+}
+
+.a4a-feedback__description {
+	@include  a4a-font-body-lg;
+	color: var(--color-neutral-60);
+	padding-block: 4px 32px;
+}
+
+.a4a-feedback__questions {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 4px;
+	padding: 16px 24px;
+	flex: 1 1 auto;
+}
+
+.a4a-feedback__question-details {
+	@include a4a-font-heading-lg($font-weight: 500);
+}
+
+.a4a-feedback__experience-selector-label {
+	@include a4a-font-label-button;
+	padding-block-end: 8px;
+}
+
+.a4a-feedback__comments-label {
+	@include a4a-font-label-button;
+	padding-block-end: 8px;
+
+	span {
+		opacity: 0.8;
+	}
+}
+
+.a4a-feedback__comments {
+	min-height: 150px;
+	border: 1px solid var(--color-neutral-5);
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+	border-radius: 4px;
+
+	@include break-large {
+		width: 100%;
+	}
+}
+
+.a4a-feedback__cta {
+	display: flex;
+	gap: 16px;
+	flex-direction: row;
+	flex-wrap: wrap;
+
+	.a8c-blue-link  {
+		color: var(--color-primary-50);
+	}
+
+	.components-button {
+		flex: 1 1 auto;
+	}
+
+	@include break-large {
+		width: 100%;
+
+		.components-button {
+			flex: unset
+		}
+	}
+}
+
+.theme-a8c-for-agencies .a4a-feedback__experience-selector-buttons {
+	display: flex;
+	gap: 10px;
+
+	.components-button {
+		box-shadow: none;
+		height: 40px;
+		padding: 8px;
+
+		&.is-primary {
+			border: 2px solid $highlight-color;
+			background-color: unset;
+
+			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
+				border: 2px solid $highlight-color;
+			}
+		}
+		&.is-secondary {
+			border: 2px solid transparent;
+
+			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
+				border: 2px solid transparent;
+			}
+		}
+
+		&.is-primary, &.is-secondary {
+			&:focus:not(:disabled), &:hover:not(:disabled), &:focus-visible:not(:disabled) {
+				box-shadow: none;
+				background-color: unset;
+			}
+		}
+	}
+}

@@ -167,7 +167,8 @@ allowedTracksRailcarEventNames
 	.add( 'calypso_reader_permalink_click' )
 	.add( 'calypso_reader_recommended_post_clicked' )
 	.add( 'calypso_reader_recommended_site_clicked' )
-	.add( 'calypso_reader_recommended_post_dismissed' );
+	.add( 'calypso_reader_recommended_post_dismissed' )
+	.add( 'calypso_reader_article_engaged_time' );
 
 export function recordTracksRailcar( action, eventName, railcar, overrides = {} ) {
 	// flatten the railcar down into the event props

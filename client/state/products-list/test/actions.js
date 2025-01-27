@@ -11,6 +11,11 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy = jest.fn();
+		global.window = {
+			location: {
+				search: '',
+			},
+		};
 	} );
 
 	const businessPlan = {

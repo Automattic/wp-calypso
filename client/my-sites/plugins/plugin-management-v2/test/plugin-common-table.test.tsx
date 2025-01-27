@@ -41,6 +41,7 @@ const initialState = {
 			interval: 'yearly',
 		},
 	},
+	productsList: [],
 };
 
 const props = {

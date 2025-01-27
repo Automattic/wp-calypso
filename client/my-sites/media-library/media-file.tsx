@@ -2,6 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { mediaURLToProxyConfig } from 'calypso/lib/media/utils';
+import GoogleProxiedImage from 'calypso/my-sites/media-library/google-proxied-image';
+import getGooglePhotosPickerFeatureStatus from 'calypso/state/selectors/get-google-photos-picker-feature-status';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { IAppState } from 'calypso/state/types';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -28,6 +30,7 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 	siteId,
 	siteSlug,
 	useProxy = false,
+	useGoogleProxy = false,
 	placeholder = null,
 	maxSize,
 	component: Component = 'img',
@@ -47,6 +50,15 @@ const MediaFile: React.FC< MediaFileProps > = function MediaFile( {
 				{ ...rest }
 			/>
 		);
+	} else if ( useGoogleProxy ) {
+		return (
+			<GoogleProxiedImage
+				fileUrl={ src }
+				component={ Component }
+				placeholder={ placeholder }
+				{ ...rest }
+			/>
+		);
 	}
 
 	return <Component src={ src } { ...rest } />;
@@ -58,13 +70,17 @@ export default connect( ( state: IAppState, { src }: Pick< MediaFileProps, 'src'
 	const { filePath, query, isRelativeToSiteRoot } = mediaURLToProxyConfig( src, siteSlug );
 	const isJetpackNonAtomic =
 		siteId && isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } );
+	const photosPickerApiEnabled = getGooglePhotosPickerFeatureStatus( state );
 	const useProxy = ! isJetpackNonAtomic && !! filePath && isRelativeToSiteRoot;
+	const useGoogleProxy = photosPickerApiEnabled && src.includes( 'googleusercontent' );
 
 	return {
 		siteId,
 		query,
 		siteSlug,
 		useProxy,
+		useGoogleProxy,
+		src,
 		filePath,
 	};
 } )( MediaFile );

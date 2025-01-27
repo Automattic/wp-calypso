@@ -1,20 +1,45 @@
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, VisuallyHidden } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { link } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { trackStatsAnalyticsEvent } from '../utils';
-import StatsUtmBuilderForm from './stats-module-utm-builder-form';
+import StatsUtmBuilderForm, { type UtmBuilderProps } from './stats-module-utm-builder-form';
 
 interface Props {
 	modalClassName: string;
 	trigger?: React.ReactElement;
+	initialData?: UtmBuilderProps[ 'initialData' ];
 }
 
-const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
-	const [ isOpen, setOpen ] = useState( false );
-	const openModal = () => setOpen( true );
+const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger, initialData } ) => {
+	const [ isOpen, setOpen ] = useState< boolean | null >( null );
+	const scrollY = useRef( { y: 0, mobile: false } );
+
+	const openModal = () => {
+		const isMobile = document.body.scrollTop > 0;
+		scrollY.current.mobile = isMobile;
+		scrollY.current.y = isMobile ? document.body.scrollTop : window.scrollY;
+
+		setOpen( true );
+	};
+
+	// Prevent scroll to top when modal is opened
+	useEffect( () => {
+		// Do not scroll on initial render
+		if ( isOpen === null ) {
+			return;
+		}
+
+		if ( isOpen && ! scrollY.current.mobile ) {
+			document.body.scrollTo( 0, scrollY.current.y );
+		} else if ( ! isOpen ) {
+			const element = scrollY.current.mobile ? document.body : window;
+			element.scrollTo( 0, scrollY.current.y );
+		}
+	}, [ isOpen ] );
+
 	const closeModal = () => setOpen( false );
 	const translate = useTranslate();
 
@@ -46,20 +71,30 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 					title={ translate( 'URL Builder' ) }
 					onRequestClose={ closeModal }
 					overlayClassName="stats-utm-builder__overlay"
+					bodyOpenClassName="stats-utm-builder__body-modal-open"
 				>
 					<div className={ clsx( modalClassName, 'stats-utm-builder-modal' ) }>
 						<div className="stats-utm-builder__fields">
 							<div className="stats-utm-builder__description">
-								{ translate( 'Generate URLs to share and track UTM prameters.' ) }
+								{ translate( 'Generate URLs to share and track UTM parameters.' ) }
 							</div>
-							<StatsUtmBuilderForm />
+							<StatsUtmBuilderForm initialData={ initialData } />
 						</div>
 						<div className="stats-utm-builder__help">
 							<div className="stats-utm-builder__help-bg"></div>
 							<div className="stats-utm-builder__description">
 								{ translate( 'Parameter descriptions and examples.' ) }
 							</div>
-							<section>
+							<VisuallyHidden>
+								<section id="stats-utm-builder-help-section-url">
+									<div className="stats-utm-builder__label">{ translate( 'URL' ) }</div>
+									<div>{ translate( 'The full URL of the site or post you want to track.' ) }</div>
+									<div className="stats-utm-builder__help-section-parameter-example">
+										{ translate( 'Example: https://www.my-site.com/2024/11/18/my-post' ) }
+									</div>
+								</section>
+							</VisuallyHidden>
+							<section id="stats-utm-builder-help-section-campaign-source">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Source' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_source</div>
 								<div>
@@ -71,7 +106,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 									{ translate( 'Example: newsletter, X, Google' ) }
 								</div>
 							</section>
-							<section>
+							<section id="stats-utm-builder-help-section-campaign-medium">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Medium' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_medium</div>
 								<div>
@@ -83,7 +118,7 @@ const UTMBuilder: React.FC< Props > = ( { modalClassName, trigger } ) => {
 									{ translate( 'Example: cpc, banner, email' ) }
 								</div>
 							</section>
-							<section>
+							<section id="stats-utm-builder-help-section-campaign-name">
 								<div className="stats-utm-builder__label">{ translate( 'Campaign Name' ) }</div>
 								<div className="stats-utm-builder__help-section-parameter">utm_campaign</div>
 								<div>

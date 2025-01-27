@@ -7,9 +7,13 @@ export const A4A_ONBOARDING_TOURS_PREFERENCE_NAME: Record< string, string > = {
 	sitesWalkthrough: 'a4a-sites-tour',
 	exploreMarketplace: 'a4a-marketplace-tour',
 	boostAgencyVisibility: 'a4a-boost-agency-visibility-tour',
+	startReferrals: 'a4a-start-referrals',
+	inviteTeam: 'a4a-invite-team',
 };
 
 export const A4A_ONBOARDING_TOURS_EVENT_NAMES: Record< string, string > = {
 	startTour: 'calypso_a4a_start_tour',
 	endTour: 'calypso_a4a_end_tour',
 };
+
+export const A4A_ONBOARDING_TOURS_DISMISSED_PREFERENCE_NAME = 'a4a-onboarding-tour-dismissed';

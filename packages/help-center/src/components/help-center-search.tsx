@@ -1,6 +1,6 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { NewThirdPartyCookiesNotice } from '@automattic/odie-client';
 import { useDispatch } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -27,7 +27,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
-	const { sectionName, site } = useHelpCenterContext();
+	const { sectionName, site, canConnectToZendesk } = useHelpCenterContext();
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 	const { setSubject, setMessage } = useDispatch( HELP_CENTER_STORE );
@@ -46,7 +46,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 		[ setSubject, setMessage, onSearchChange ]
 	);
 
-	const launchpadEnabled = site?.options.launchpad_screen === 'full';
+	const launchpadEnabled = site?.options?.launchpad_screen === 'full';
 
 	// Search query can be a query param, if the user searches or clears the search field
 	// we need to keep the query param up-to-date with that
@@ -93,6 +93,7 @@ export const HelpCenterSearch = ( { onSearchChange, currentRoute }: HelpCenterSe
 
 	return (
 		<div className="inline-help__search">
+			{ ! canConnectToZendesk && <NewThirdPartyCookiesNotice /> }
 			{ launchpadEnabled && <HelpCenterLaunchpad /> }
 			<InlineHelpSearchCard
 				searchQuery={ searchQuery }

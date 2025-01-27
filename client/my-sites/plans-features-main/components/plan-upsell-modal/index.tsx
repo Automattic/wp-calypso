@@ -3,23 +3,27 @@ import { Dialog } from '@automattic/components';
 import { Global, css } from '@emotion/react';
 import { FreePlanFreeDomainDialog } from './free-plan-free-domain-dialog';
 import { FreePlanPaidDomainDialog } from './free-plan-paid-domain-dialog';
-import PaidPlanIsRequiredDialog from './paid-plan-is-required-dialog';
+import { PaidPlanIsRequiredDialog } from './paid-plan-is-required-dialog';
+import { PaidPlanPaidDomainDialog } from './paid-plan-paid-domain-dialog';
 import type { DataResponse } from '@automattic/plans-grid-next';
 
 export const PAID_PLAN_IS_REQUIRED_DIALOG = 'PAID_PLAN_IS_REQUIRED_DIALOG';
 export const FREE_PLAN_PAID_DOMAIN_DIALOG = 'FREE_PLAN_PAID_DOMAIN_DIALOG';
 export const FREE_PLAN_FREE_DOMAIN_DIALOG = 'FREE_PLAN_FREE_DOMAIN_DIALOG';
+export const PAID_PLAN_PAID_DOMAIN_DIALOG = 'PAID_PLAN_FREE_DOMAIN_DIALOG';
 export const MODAL_LOADER = 'MODAL_LOADER';
 
 export type ModalType =
 	| typeof FREE_PLAN_FREE_DOMAIN_DIALOG
 	| typeof FREE_PLAN_PAID_DOMAIN_DIALOG
+	| typeof PAID_PLAN_PAID_DOMAIN_DIALOG
 	| typeof PAID_PLAN_IS_REQUIRED_DIALOG
 	| typeof MODAL_LOADER;
 
 export type DomainPlanDialogProps = {
 	paidDomainName?: string;
 	generatedWPComSubdomain: DataResponse< { domain_name: string } >;
+	selectedThemeType?: string;
 	upsellPremiumPlan?: boolean;
 	onFreePlanSelected: ( isDomainRetained?: boolean ) => void;
 	onPlanSelected: ( planSlug: PlanSlug ) => void;
@@ -40,6 +44,8 @@ function getDisplayedModal( modalType: ModalType, dialogProps: DomainPlanDialogP
 			return <FreePlanPaidDomainDialog { ...dialogProps } />;
 		case FREE_PLAN_FREE_DOMAIN_DIALOG:
 			return <FreePlanFreeDomainDialog { ...dialogProps } />;
+		case PAID_PLAN_PAID_DOMAIN_DIALOG:
+			return <PaidPlanPaidDomainDialog { ...dialogProps } />;
 		case PAID_PLAN_IS_REQUIRED_DIALOG:
 			return <PaidPlanIsRequiredDialog { ...dialogProps } />;
 		default:
@@ -47,7 +53,7 @@ function getDisplayedModal( modalType: ModalType, dialogProps: DomainPlanDialogP
 	}
 }
 
-export default function ModalContainer( props: ModalContainerProps ) {
+export default function PlanUpsellModal( props: ModalContainerProps ) {
 	const { isModalOpen, modalType } = props;
 
 	if ( ! modalType ) {
@@ -59,6 +65,7 @@ export default function ModalContainer( props: ModalContainerProps ) {
 			case FREE_PLAN_PAID_DOMAIN_DIALOG:
 			case FREE_PLAN_FREE_DOMAIN_DIALOG:
 				return '605px';
+			case PAID_PLAN_PAID_DOMAIN_DIALOG:
 			case PAID_PLAN_IS_REQUIRED_DIALOG:
 			default:
 				return '639px';

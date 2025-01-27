@@ -83,12 +83,11 @@ class StatModuleFollowers extends Component {
 		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
 		// If the site is Atomic, Simple Classic or Jetpack self-hosted, it links to Jetpack Cloud.
 		// jetpack/manage-simple-sites is the feature flag for allowing Simple sites in Jetpack Cloud.
-		const jetpackCloudLink = `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`;
-		const wpcomLink = `https://wordpress.com/people/subscribers/${ summaryPageSlug }`;
-		const summaryPageLink =
-			isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface )
-				? jetpackCloudLink
-				: wpcomLink;
+		const useJetpackCloudLinks =
+			isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface );
+		const subscriberManagementUrl = useJetpackCloudLinks
+			? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
+			: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
 
 		// Combine data sets, sort by recency, and limit to 10.
 		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
@@ -121,7 +120,13 @@ class StatModuleFollowers extends Component {
 						{
 							comment: '{{link}} links to support documentation.',
 							components: {
-								link: <a href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) } />,
+								link: (
+									<a
+										target="_blank"
+										rel="noreferrer"
+										href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) }
+									/>
+								),
 							},
 							context: 'Stats: Info box label when the Subscribers module is empty',
 						}
@@ -129,22 +134,10 @@ class StatModuleFollowers extends Component {
 					mainItemLabel={ translate( 'Subscriber' ) }
 					metricLabel={ translate( 'Since' ) }
 					splitHeader
-					useShortNumber
-					showMore={
-						summaryPageLink
-							? {
-									url: summaryPageLink,
-									label:
-										data.length >= 10 // TODO: reduce to 5 items when surrounding cards get a summary page
-											? this.props.translate( 'View all', {
-													context: 'Stats: Button link to show more detailed stats information',
-											  } )
-											: this.props.translate( 'View details', {
-													context: 'Stats: Button label to see the detailed content of a panel',
-											  } ),
-							  }
-							: undefined
-					}
+					showMore={ {
+						url: subscriberManagementUrl,
+						label: this.props.translate( 'Manage subscribers' ),
+					} }
 					error={
 						noData &&
 						! hasError &&

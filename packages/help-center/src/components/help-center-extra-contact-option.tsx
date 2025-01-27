@@ -1,13 +1,12 @@
-/* eslint-disable no-restricted-imports */
 /**
  * External Dependencies
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, comment } from '@wordpress/icons';
 import { useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useContactFormTitle } from '../hooks';
 import { HelpCenterContactPage } from './help-center-contact-page';
 

@@ -1,5 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/styles/typography.scss";
+@import "@automattic/components/src/styles/typography";
 
 .stats-interval-dropdown,
 .stats-interval-dropdown__container {
@@ -63,4 +63,12 @@
 	&.is-selected {
 		background-color: var(--color-accent-5);
 	}
+}
+
+// Mimic the style of Button component.
+.stats-interval-display {
+	font-family: $font-sf-pro-text;
+	font-size: 13px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 36px;
 }

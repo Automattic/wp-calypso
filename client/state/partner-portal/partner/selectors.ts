@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import find from 'lodash/find';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type {
@@ -59,11 +58,7 @@ export function hasJetpackPartnerAccess( state: PartnerPortalStore ): boolean {
 
 export function isAgencyUser( state: PartnerPortalStore | IAppState ): boolean {
 	const currentUser = getCurrentUser( state );
-	return (
-		( currentUser?.jetpack_partner_types?.includes( 'agency' ) ||
-			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ) ??
-		false
-	);
+	return currentUser?.jetpack_partner_types?.includes( 'agency' ) ?? false;
 }
 
 export function isA4AUser( state: PartnerPortalStore | IAppState ): boolean {
@@ -72,7 +67,7 @@ export function isA4AUser( state: PartnerPortalStore | IAppState ): boolean {
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {
-	return config.isEnabled( 'jetpack/agency-dashboard' ) && isAgencyUser( state );
+	return isAgencyUser( state );
 }
 
 export function hasValidPaymentMethod( state: PartnerPortalStore ): boolean {

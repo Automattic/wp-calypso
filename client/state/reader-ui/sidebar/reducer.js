@@ -3,6 +3,7 @@ import {
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
+	READER_SIDEBAR_SELECT_RECENT_SITE,
 } from 'calypso/state/reader-ui/action-types';
 import { combineReducers, withPersistence } from 'calypso/state/utils';
 
@@ -44,9 +45,19 @@ export const openOrganizations = withPersistence( ( state = [], action ) => {
 	return state;
 } );
 
+export const selectedRecentSite = withPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case READER_SIDEBAR_SELECT_RECENT_SITE:
+			return action.feedId;
+	}
+
+	return state;
+} );
+
 export default combineReducers( {
 	isListsOpen,
 	isTagsOpen,
 	isFollowingOpen,
 	openOrganizations,
+	selectedRecentSite,
 } );

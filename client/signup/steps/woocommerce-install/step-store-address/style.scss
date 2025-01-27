@@ -5,6 +5,9 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 
 	.step-store-address__instructions-container {
 		.components-combobox-control__suggestions-container {
+			position: relative;
+			z-index: 1;
+			background-color: var(--color-surface);
 			// Remove `width: 100%;` https://github.com/WordPress/gutenberg/blob/0135921bcb72ceec629fa8f9e755891afab747b9/packages/components/src/combobox-control/style.scss#L32
 			width: unset;
 
@@ -12,7 +15,12 @@ body.is-section-signup .is-woocommerce-install .signup__step.is-store-address {
 			margin-bottom: unset;
 		}
 
+		.components-base-control {
+			max-height: 80px;
+		}
+
 		.components-form-token-field__suggestions-list {
+			background-color: var(--color-surface);
 			margin: 12px -16px -12px;
 			width: min-content;
 		}

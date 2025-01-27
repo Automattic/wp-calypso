@@ -72,6 +72,7 @@ class PluginAction extends Component {
 					id={ this.props.htmlFor }
 					label={ this.renderLabel() }
 					aria-label={ this.props.label }
+					__nextHasNoMarginBottom
 				/>
 				{ this.props.toggleExtraContent }
 			</>

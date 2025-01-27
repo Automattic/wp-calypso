@@ -2,31 +2,31 @@
  * @jest-environment jsdom
  */
 
+import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { SftpCard } from '..';
+import configureStore from 'redux-mock-store';
+import { SftpCard } from '../card';
 
 jest.mock( '@automattic/components/src/spinner', () => ( {
 	__esModule: true,
 	Spinner: () => <div data-testid="spinner" />,
 } ) );
 
-const translate = ( x ) => x;
-const requestSftpUsers = ( x ) => x;
-const removePasswordFromState = ( x ) => x;
-
-const store = createStore( ( state ) => state, {
+const INITIAL_STATE = {
 	ui: { selectedSiteId: 1 },
 	currentUser: { id: 1 },
-	sites: { items: {} },
-} );
-
-const props = {
-	translate,
-	requestSftpUsers,
-	removePasswordFromState,
+	sites: {},
 };
+
+const mockStore = configureStore();
+const defaultStore = mockStore( INITIAL_STATE );
+const storeWithUsername = mockStore( {
+	...INITIAL_STATE,
+	atomicHosting: {
+		1: { sftpUsers: [ { username: 'testuser' } ] },
+	},
+} );
 
 describe( 'SftpCard', () => {
 	beforeAll( () => {
@@ -46,35 +46,54 @@ describe( 'SftpCard', () => {
 		} );
 	} );
 
+	function renderWithProvider( props, store = defaultStore ) {
+		render(
+			<Provider store={ store }>
+				<SftpCard { ...props } />
+			</Provider>
+		);
+	}
+
 	describe( 'Sftp Questions', () => {
 		it( 'should display sftp questions if no sftp username', async () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username={ null } />
-				</Provider>
-			);
+			const store = mockStore( {
+				...INITIAL_STATE,
+				atomicHosting: {
+					1: { sftpUsers: [ { username: null } ] },
+				},
+			} );
+
+			renderWithProvider( {}, store );
 
 			expect( screen.getByText( 'What is SFTP?' ) ).toBeVisible();
 			expect( screen.getByText( 'What is SSH?' ) ).toBeVisible();
 		} );
 
 		it( 'should not display sftp questions if sftp username is set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" />
-				</Provider>
-			);
+			renderWithProvider( {}, storeWithUsername );
 
 			expect( screen.queryByText( 'What is SFTP?' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'What is SSH?' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should not display sftp questions if loading', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } />
-				</Provider>
-			);
+			const store = mockStore( {
+				...INITIAL_STATE,
+				sites: {
+					features: {
+						1: {
+							data: {
+								active: [ FEATURE_SFTP, FEATURE_SSH ],
+							},
+						},
+					},
+				},
+				atomicHosting: {
+					1: { isLoadingSftpUsers: true },
+				},
+			} );
+
+			renderWithProvider( {}, store );
 
 			expect( screen.queryByText( 'What is SFTP?' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'What is SSH?' ) ).not.toBeInTheDocument();
@@ -83,21 +102,13 @@ describe( 'SftpCard', () => {
 
 	describe( 'Loading', () => {
 		it( 'should display spinner if username not set and not disabled', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } />
-				</Provider>
-			);
+			renderWithProvider( {} );
 
-			expect( screen.getByTestId( 'spinner' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'spinner' ) ).toBeVisible();
 		} );
 
 		it( 'should not display spinner if disabled', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } disabled />
-				</Provider>
-			);
+			renderWithProvider( { disabled: true } );
 
 			expect( screen.queryByTestId( 'spinner' ) ).not.toBeInTheDocument();
 		} );
@@ -105,22 +116,15 @@ describe( 'SftpCard', () => {
 
 	describe( 'Create SFTP credentials', () => {
 		const btnName = 'Create credentials';
+
 		it( 'should display create SFTP credentials if username not set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username={ null } />
-				</Provider>
-			);
+			renderWithProvider( { disabled: true } );
 
 			expect( screen.getByRole( 'button', { name: btnName } ) ).toBeVisible();
 		} );
 
 		it( 'should not display create SFTP credentials if username set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" />
-				</Provider>
-			);
+			renderWithProvider( {}, storeWithUsername );
 
 			expect( screen.queryByRole( 'button', { name: btnName } ) ).not.toBeInTheDocument();
 		} );
@@ -128,11 +132,7 @@ describe( 'SftpCard', () => {
 
 	describe( 'User info fields', () => {
 		it( 'should display user info fields if username set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" />
-				</Provider>
-			);
+			renderWithProvider( {}, storeWithUsername );
 
 			expect( screen.getByLabelText( 'URL' ) ).toHaveValue( 'sftp.wp.com' );
 			expect( screen.getByLabelText( 'Port' ) ).toHaveValue( '22' );
@@ -140,11 +140,7 @@ describe( 'SftpCard', () => {
 		} );
 
 		it( 'should not display user info fields if username not set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } />
-				</Provider>
-			);
+			renderWithProvider();
 
 			expect( screen.queryByLabelText( 'URL' ) ).not.toBeInTheDocument();
 			expect( screen.queryByLabelText( 'Port' ) ).not.toBeInTheDocument();
@@ -154,31 +150,26 @@ describe( 'SftpCard', () => {
 
 	describe( 'Password', () => {
 		it( 'should display password field if password set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" password="secret" />
-				</Provider>
-			);
+			const store = mockStore( {
+				...INITIAL_STATE,
+				atomicHosting: {
+					1: { sftpUsers: [ { username: 'testuser', password: 'secret' } ] },
+				},
+			} );
+
+			renderWithProvider( {}, store );
 
 			expect( screen.getByLabelText( 'Password' ) ).toBeVisible();
 		} );
 
 		it( 'should not display password field if password not set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" />
-				</Provider>
-			);
+			renderWithProvider( {}, storeWithUsername );
 
 			expect( screen.queryByLabelText( 'Password' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should display password reset button if password not set', () => {
-			render(
-				<Provider store={ store }>
-					<SftpCard { ...props } username="testuser" />
-				</Provider>
-			);
+			renderWithProvider( {}, storeWithUsername );
 
 			expect( screen.getByRole( 'button', { name: 'Reset password' } ) ).toBeVisible();
 		} );

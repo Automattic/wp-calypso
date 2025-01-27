@@ -10,6 +10,8 @@ interface Props {
 
 export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationError } ) => {
 	const translate = useTranslate();
+	const migrationKeyLabel = 'Migration Key';
+	const migrateLabel = 'Start migration';
 
 	if ( '' === migrationKey ) {
 		return (
@@ -33,7 +35,7 @@ export const StepAddMigrationKey: FC< Props > = ( { migrationKey, preparationErr
 						components: {
 							strong: <strong />,
 						},
-						args: { migrationKeyLabel: 'Migrate Guru Migration Key', migrateLabel: 'Migrate' },
+						args: { migrationKeyLabel, migrateLabel },
 					}
 				) }
 			</p>

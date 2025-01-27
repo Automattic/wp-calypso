@@ -38,19 +38,16 @@ const useGlobalStylesUserConfig = (): [ boolean, GlobalStylesObject, SetConfig ]
 };
 
 const useGlobalStylesBaseConfig = (
-	siteId: number | string,
 	stylesheet: string
 ): [ boolean, GlobalStylesObject | undefined ] => {
-	const { data } = useGetGlobalStylesBaseConfig( siteId, stylesheet );
+	const { data } = useGetGlobalStylesBaseConfig( stylesheet );
 	return [ !! data, data ];
 };
 
-const useGlobalStylesContext = ( siteId: number | string, stylesheet: string ) => {
+const useGlobalStylesContext = ( stylesheet: string ) => {
 	const [ isUserConfigReady, userConfig, setUserConfig ] = useGlobalStylesUserConfig();
-	const [ isBaseConfigReady, baseConfig = DEFAULT_GLOBAL_STYLES ] = useGlobalStylesBaseConfig(
-		siteId,
-		stylesheet
-	);
+	const [ isBaseConfigReady, baseConfig = DEFAULT_GLOBAL_STYLES ] =
+		useGlobalStylesBaseConfig( stylesheet );
 	const mergedConfig = useMemo( () => {
 		if ( ! baseConfig || ! userConfig ) {
 			return DEFAULT_GLOBAL_STYLES;
@@ -83,8 +80,8 @@ interface Props {
 	placeholder: JSX.Element | null;
 }
 
-const GlobalStylesProvider = ( { siteId, stylesheet, children, placeholder = null }: Props ) => {
-	const context = useGlobalStylesContext( siteId, stylesheet );
+const GlobalStylesProvider = ( { stylesheet, children, placeholder = null }: Props ) => {
+	const context = useGlobalStylesContext( stylesheet );
 	const isBlocksRegistered = useRegisterCoreBlocks();
 
 	if ( ! context.isReady || ! isBlocksRegistered ) {

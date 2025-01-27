@@ -1,20 +1,18 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Tooltip } from '@automattic/components';
 import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
+import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import SimpleList from '../../common/simple-list';
-import { useGetProductPricingInfo } from '../../wpcom-overview/hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
-import getPressableShortName from '../lib/get-pressable-short-name';
 
 type Props = {
 	selectedPlan: APIProductFamilyProduct | null;
@@ -33,8 +31,6 @@ export default function PlanSelectionDetails( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const isNewHostingPage = isEnabled( 'a4a-hosting-page-redesign' );
 
 	const info = selectedPlan?.slug ? getPressablePlan( selectedPlan?.slug ) : null;
 
@@ -65,7 +61,7 @@ export default function PlanSelectionDetails( {
 
 	const PRESSABLE_CONTACT_LINK = 'https://pressable.com/request-demo';
 
-	if ( isLoading ) {
+	if ( ! isReferMode && isLoading ) {
 		return (
 			<section className="pressable-overview-plan-selection__details is-loader">
 				<div className="pressable-overview-plan-selection__details-card"></div>
@@ -81,19 +77,10 @@ export default function PlanSelectionDetails( {
 			<div className="pressable-overview-plan-selection__details-card">
 				<div className="pressable-overview-plan-selection__details-card-header">
 					<h3 className="pressable-overview-plan-selection__details-card-header-title plan-name">
-						{ isNewHostingPage
-							? translate( 'Pressable' )
-							: translate( '%(planName)s plan', {
-									args: {
-										planName: selectedPlan
-											? getPressableShortName( selectedPlan.name )
-											: customString,
-									},
-									comment: '%(planName)s is the name of the selected plan.',
-							  } ) }
+						{ selectedPlan ? selectedPlan.name : customString }
 					</h3>
 
-					{ selectedPlan && (
+					{ ! isReferMode && selectedPlan && (
 						<div className="pressable-overview-plan-selection__details-card-header-price">
 							<strong className="pressable-overview-plan-selection__details-card-header-price-value">
 								{ formatCurrency( discountedCost, selectedPlan.currency ) }
@@ -115,6 +102,13 @@ export default function PlanSelectionDetails( {
 							) }
 						</div>
 					) }
+					{ isReferMode && (
+						<div className="pressable-overview-plan-selection__details-card-header-price">
+							<strong className="pressable-overview-plan-selection__details-card-header-coming-soon">
+								{ translate( 'Coming soon' ) }
+							</strong>
+						</div>
+					) }
 				</div>
 
 				{ ! isRegularOwnership && ! isReferMode && (
@@ -134,27 +128,23 @@ export default function PlanSelectionDetails( {
 										}
 								  )
 								: translate( 'Custom WordPress installs' ),
-							translate( '{{b}}%(count)s{{/b}} visits per month', {
+							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
 									count: info ? formatNumber( info.visits ) : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',
 							} ),
-							translate( '{{b}}%(size)s{{/b}} storage per month', {
+							translate( '{{b}}%(size)s{{/b}} storage per month*', {
 								args: {
 									size: info ? `${ info.storage }GB` : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(size)s is the amount of storage in gigabytes.',
 							} ),
-							...( isNewHostingPage
-								? [
-										translate( '{{b}}Unmetered{{/b}} bandwidth', {
-											components: { b: <b /> },
-										} ),
-								  ]
-								: [] ),
+							translate( '{{b}}Unmetered{{/b}} bandwidth', {
+								components: { b: <b /> },
+							} ),
 						] }
 					/>
 				) }
@@ -168,7 +158,7 @@ export default function PlanSelectionDetails( {
 						</div>
 						<Button
 							className="pressable-overview-plan-selection__details-card-cta-button"
-							href={ CONTACT_URL_HASH_FRAGMENT }
+							href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 							primary
 						>
 							{ translate( 'Contact support' ) } <Icon icon={ external } size={ 16 } />
@@ -206,16 +196,7 @@ export default function PlanSelectionDetails( {
 										onClick={ onSelectPlan }
 										primary
 									>
-										{ isNewHostingPage
-											? translate( 'Select this plan' )
-											: translate( 'Select %(planName)s plan', {
-													args: {
-														planName: selectedPlan
-															? getPressableShortName( selectedPlan.name )
-															: customString,
-													},
-													comment: '%(planName)s is the name of the selected plan.',
-											  } ) }
+										{ translate( 'Select this plan' ) }
 									</Button>
 								) }
 
@@ -236,8 +217,7 @@ export default function PlanSelectionDetails( {
 							<Button
 								className="pressable-overview-plan-selection__details-card-cta-button"
 								onClick={ onContactUs }
-								href={ PRESSABLE_CONTACT_LINK }
-								target="_blank"
+								href={ CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT }
 								primary
 							>
 								{ translate( 'Contact us' ) } <Icon icon={ external } size={ 16 } />
@@ -247,50 +227,44 @@ export default function PlanSelectionDetails( {
 				) }
 			</div>
 
-			{ isNewHostingPage ? (
-				<div className="pressable-overview-plan-selection__details-card is-aside">
-					<h3 className="pressable-overview-plan-selection__details-card-header-title">
-						{ translate( 'Schedule a demo and personal consultation' ) }
-					</h3>
-					<div className="pressable-overview-plan-selection__details-card-header-subtitle">
-						{ translate(
-							'One of our friendly experts would be happy to give you a one-on-one tour of our platform and discuss:'
-						) }
-					</div>
-
-					<SimpleList
-						items={ [
-							translate( 'Our support, service, and pricing flexibility' ),
-							translate( 'The best hosting plan for your needs' ),
-							translate( 'How to launch and manage WordPress sites' ),
-							translate( 'The free perks that come with Pressable' ),
-						] }
-					/>
-					<Button
-						className="pressable-overview-plan-selection__details-card-cta-button"
-						onClick={ onScheduleDemo }
-						href={ PRESSABLE_CONTACT_LINK }
-						target="_blank"
-					>
-						{ translate( 'Schedule a Demo' ) } <Icon icon={ external } size={ 18 } />
-					</Button>
+			<div className="pressable-overview-plan-selection__details-card is-aside">
+				<h3 className="pressable-overview-plan-selection__details-card-header-title">
+					{ translate( 'Schedule a demo and personal consultation' ) }
+				</h3>
+				<div className="pressable-overview-plan-selection__details-card-header-subtitle">
+					{ translate(
+						'One of our friendly experts would be happy to give you a one-on-one tour of our platform and discuss:'
+					) }
 				</div>
-			) : (
-				<div className="pressable-overview-plan-selection__details-card is-aside">
-					<h3 className="pressable-overview-plan-selection__details-card-header-title">
-						{ translate( 'All plans include:' ) }
-					</h3>
 
-					<SimpleList
-						items={ [
-							translate( '24/7 WordPress hosting support' ),
-							translate( 'WP Cloud platform' ),
-							translate( 'Jetpack Security (optional)' ),
-							translate( 'Free site migrations' ),
-						] }
-					/>
-				</div>
-			) }
+				<SimpleList
+					items={ [
+						translate( 'Our support, service, and pricing flexibility' ),
+						translate( 'The best hosting plan for your needs' ),
+						translate( 'How to launch and manage WordPress sites' ),
+						translate( 'The free perks that come with Pressable' ),
+					] }
+				/>
+				<Button
+					className="pressable-overview-plan-selection__details-card-cta-button"
+					onClick={ onScheduleDemo }
+					href={ PRESSABLE_CONTACT_LINK }
+					target="_blank"
+				>
+					{ translate( 'Schedule a Demo' ) } <Icon icon={ external } size={ 18 } />
+				</Button>
+			</div>
+
+			<div className="pressable-overview-plan-selection__details-hint">
+				{ translate(
+					"*If you exceed your plan's storage or traffic limits, you will be charged {{b}}$0.50{{/b}} per GB and {{b}}$8{{/b}} per 10K visits per month.",
+					{
+						components: {
+							b: <b />,
+						},
+					}
+				) }
+			</div>
 		</section>
 	);
 }

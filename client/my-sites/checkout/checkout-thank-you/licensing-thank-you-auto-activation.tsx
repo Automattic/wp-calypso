@@ -28,6 +28,7 @@ interface Props {
 	source?: string;
 	jetpackTemporarySiteId?: number;
 	fromSiteSlug?: string;
+	redirectTo?: string;
 }
 
 type JetpackSite = {
@@ -55,6 +56,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	source = 'onboarding-calypso-ui',
 	jetpackTemporarySiteId = 0,
 	fromSiteSlug,
+	redirectTo,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -206,6 +208,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			const thankYouCompletedUrl = addQueryArgs(
 				{
 					destinationSiteId,
+					redirect_to: redirectTo,
 				},
 				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
 			);
@@ -219,6 +222,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
+		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,
 		translate,
@@ -279,10 +283,14 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<LicensingActivation
 				title={
-					<>
-						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</>
+					source === 'connect-after-checkout' ? (
+						<>{ translate( 'Activate your product:' ) }</>
+					) : (
+						<>
+							{ translate( 'Thank you for your purchase!' ) }{ ' ' }
+							{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+						</>
+					)
 				}
 				footerImage={ footerCardImg }
 				showProgressIndicator
@@ -315,31 +323,34 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					className="licensing-thank-you-auto-activation__select"
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
 				>
-					{ selectDropdownItems.map( ( option ) => (
-						<SelectDropdown.Item { ...option.props }>
-							<div
-								className={ clsx(
-									'licensing-thank-you-auto-activation__dropdown-item-flex-container',
-									{
-										'has-seperator': option.value === 'activate-license-manually',
-									}
-								) }
-							>
-								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-									{ option.value === 'activate-license-manually' ? (
-										<strong>{ option.label }</strong>
-									) : (
-										option.label
+					{ selectDropdownItems.map( ( option ) => {
+						const { key: itemKey, ...props } = option.props;
+						return (
+							<SelectDropdown.Item key={ itemKey } { ...props }>
+								<div
+									className={ clsx(
+										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+										{
+											'has-seperator': option.value === 'activate-license-manually',
+										}
 									) }
-								</span>
-								{ option.value !== 'activate-license-manually' && (
-									<span>
-										<Gridicon icon="link" size={ 18 } />
+								>
+									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
+										{ option.value === 'activate-license-manually' ? (
+											<strong>{ option.label }</strong>
+										) : (
+											option.label
+										) }
 									</span>
-								) }
-							</div>
-						</SelectDropdown.Item>
-					) ) }
+									{ option.value !== 'activate-license-manually' && (
+										<span>
+											<Gridicon icon="link" size={ 18 } />
+										</span>
+									) }
+								</div>
+							</SelectDropdown.Item>
+						);
+					} ) }
 				</SelectDropdown>
 				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
 				<Button

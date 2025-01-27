@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config, { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -39,11 +40,23 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 };
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
-
 const getInput = () => screen.getByLabelText( /Enter your site address/ );
+
+const isMigrationExperimentEnabled = isEnabled( 'migration-flow/experiment' );
+
+const restoreIsMigrationExperimentEnabled = () => {
+	if ( isMigrationExperimentEnabled ) {
+		config.enable( 'migration-flow/experiment' );
+	} else {
+		config.disable( 'migration-flow/experiment' );
+	}
+};
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
+	afterEach( () => {
+		restoreIsMigrationExperimentEnabled();
+	} );
 
 	it( 'continues the flow and saves the migration domain when the platform is wordpress', async () => {
 		useSiteSlug.mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
@@ -156,6 +169,8 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'shows why host with us points', async () => {
+		config.disable( 'migration-flow/experiment' );
+
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 

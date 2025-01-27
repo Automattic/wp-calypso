@@ -9,6 +9,7 @@ export type CampaignResponse = {
 		title: string;
 	};
 	display_delivery_estimate: string;
+	display_clicks_estimate: string;
 	campaign_id: number;
 	start_date: string;
 	created_at: string;
@@ -107,15 +108,14 @@ type FeeItem = {
 	total: string;
 };
 
-const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {
+export const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {} ) => {
 	return useQuery( {
 		queryKey: [ 'promote-post-campaigns', siteId, campaignId ],
 		queryFn: async () => {
-			const campaign = await requestDSPHandleErrors< CampaignResponse >(
+			return await requestDSPHandleErrors< CampaignResponse >(
 				siteId,
 				`/sites/${ siteId }/campaigns/${ campaignId }`
 			);
-			return campaign;
 		},
 		...queryOptions,
 		enabled: !! campaignId && !! siteId,
@@ -125,5 +125,3 @@ const useCampaignsQuery = ( siteId: number, campaignId: number, queryOptions = {
 		},
 	} );
 };
-
-export default useCampaignsQuery;

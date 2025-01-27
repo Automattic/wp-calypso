@@ -107,7 +107,7 @@ class SearchFollowButton extends Component {
 						args: followTitle,
 						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
 					} ) }
-					followingLabel={ translate( 'Subscribing to %s', {
+					followingLabel={ translate( 'Subscribed to %s', {
 						args: followTitle,
 						comment: '%s is the name of the site being subscribed to. For example: "Discover"',
 					} ) }

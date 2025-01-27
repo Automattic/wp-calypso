@@ -1,13 +1,15 @@
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
-import HostingSection, { HostingSectionProps } from '../hosting-section';
+import { TranslateResult } from 'i18n-calypso';
+import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 
 import './style.scss';
 
-type Props = Omit< HostingSectionProps, 'children' > & {
-	items: string[];
-	fiveRows?: boolean;
+type Props = Omit< PageSectionProps, 'children' > & {
+	items: TranslateResult[];
 	threeRows?: boolean;
+	fourRows?: boolean;
+	fiveRows?: boolean;
 };
 
 export default function HostingAdditionalFeaturesSection( {
@@ -17,11 +19,12 @@ export default function HostingAdditionalFeaturesSection( {
 	background,
 	description,
 	items,
-	fiveRows,
 	threeRows,
+	fourRows,
+	fiveRows,
 }: Props ) {
 	return (
-		<HostingSection
+		<PageSection
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
@@ -30,8 +33,9 @@ export default function HostingAdditionalFeaturesSection( {
 		>
 			<ul
 				className={ clsx( 'hosting-additional-features', {
-					'is-five-rows': fiveRows,
 					'is-three-rows': threeRows,
+					'is-four-rows': fourRows,
+					'is-five-rows': fiveRows,
 				} ) }
 			>
 				{ items.map( ( item, itemIndex ) => (
@@ -40,6 +44,6 @@ export default function HostingAdditionalFeaturesSection( {
 					</li>
 				) ) }
 			</ul>
-		</HostingSection>
+		</PageSection>
 	);
 }

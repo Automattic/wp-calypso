@@ -49,13 +49,18 @@
 }
 
 .plugin-row-formatter__toggle {
-	.plugin-autoupdate-toggle {
+	.components-flex.components-h-stack {
+		flex-direction: row-reverse;
 		.plugin-action__label {
-			@include break-xlarge() {
+			@include break-large() {
 				// We don't want to use display: none here, because it will hide the popover icon
 				// that might contain useful details about why the action is disabled.
 				font-size: 0;
 			}
+		}
+	}
+	.plugin-autoupdate-toggle {
+		.plugin-action__label {
 			.plugin-action__disabled-info {
 				color: var(--studio-gray-40);
 			}

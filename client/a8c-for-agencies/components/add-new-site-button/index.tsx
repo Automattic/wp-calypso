@@ -11,6 +11,7 @@ import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketp
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import { preventWidows } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import A4ALogo from '../a4a-logo';
@@ -130,23 +131,11 @@ export default function AddNewSiteButton( {
 					{ translate( 'Add existing sites' ).toUpperCase() }
 				</div>
 				{ menuItem( {
-					icon: <WordPressLogo />,
-					heading: translate( 'Via WordPress.com' ),
-					description: translate( 'Add sites bought on{{nbsp/}}WordPress.com', {
-						components: { nbsp: <>&nbsp;</> },
-						comment: 'nbsp is a non-breaking space character',
-					} ),
-					buttonProps: {
-						onClick: handleImportFromWPCOM,
-					},
-				} ) }
-				{ menuItem( {
 					icon: <A4ALogo />,
 					heading: translate( 'Via the Automattic plugin' ),
-					description: translate( 'Connect with the Automattic for Agencies{{nbsp/}}plugin', {
-						components: { nbsp: <>&nbsp;</> },
-						comment: 'nbsp is a non-breaking space character',
-					} ),
+					description: preventWidows(
+						translate( 'Connect with the Automattic for Agencies plugin' )
+					),
 					buttonProps: {
 						onClick: () => {
 							setShowA4AConnectionModal( true );
@@ -155,9 +144,19 @@ export default function AddNewSiteButton( {
 					},
 				} ) }
 				{ menuItem( {
+					icon: <WordPressLogo />,
+					heading: translate( 'Via WordPress.com' ),
+					description: preventWidows( translate( 'Add sites already connected to WordPress.com' ) ),
+					buttonProps: {
+						onClick: handleImportFromWPCOM,
+					},
+				} ) }
+				{ menuItem( {
 					icon: <JetpackLogo />,
 					heading: translate( 'Via Jetpack' ),
-					description: translate( 'Import one or more Jetpack connected sites' ),
+					description: preventWidows(
+						translate( 'Add a site by remotely installing the Jetpack plugin' )
+					),
 					buttonProps: {
 						onClick: () => {
 							setShowJetpackConnectionModal( true );

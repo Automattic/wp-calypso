@@ -70,7 +70,13 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: <a href={ localizeUrl( `${ supportUrl }#countries` ) } />,
+									link: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( `${ supportUrl }#countries` ) }
+										/>
+									),
 								},
 								context: 'Stats: Link in a popover for Countries module when the module has data',
 							} ) }
@@ -103,7 +109,13 @@ const StatsCountries: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( `${ supportUrl }#countries` ) } />,
+										link: (
+											<a
+												target="_blank"
+												rel="noreferrer"
+												href={ localizeUrl( `${ supportUrl }#countries` ) }
+											/>
+										),
 									},
 									context: 'Stats: Info box label when the Countries module is empty',
 								}

@@ -60,6 +60,7 @@ export default function SignupForm() {
 					name: payload.agencyName,
 					business_url: payload.agencyUrl,
 					managed_sites: payload.managedSites,
+					user_type: payload.userType,
 					services_offered: ( payload.servicesOffered || [] ).join( ',' ),
 					products_offered: ( payload.productsOffered || [] ).join( ',' ),
 					city: payload.city,
@@ -69,6 +70,7 @@ export default function SignupForm() {
 					postal_code: payload.postalCode,
 					state: payload.state,
 					referer: payload.referer,
+					phone_number: payload.phone?.phoneNumberFull ?? '',
 				} )
 			);
 		},

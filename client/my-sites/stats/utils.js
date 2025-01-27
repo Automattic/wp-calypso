@@ -47,3 +47,16 @@ export const trackStatsAnalyticsEvent = ( eventName, properties = {} ) => {
 	const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
 	recordTracksEvent( `${ event_from }_${ eventName }`, properties );
 };
+
+/**
+ * Prepare query string for redirection on both Calypso and Odyssey Stats
+ * Make sure to append the query if we are working inside wp-admin.
+ * @param {string} pathname base pathname
+ * @param {Object} query query object
+ * @returns pathname concatenated with query string
+ */
+export const appendQueryStringForRedirection = ( pathname, query = {} ) => {
+	const queryString = new URLSearchParams( query ).toString();
+
+	return `${ pathname }${ queryString ? '?' : '' }${ queryString }`;
+};

@@ -1,0 +1,246 @@
+@import "@automattic/typography/styles/variables";
+
+@mixin wide-screen() {
+	// nav unification (Tools/Hosting -> Marketing)
+	.sharing & {
+		@include breakpoint-deprecated( ">1040px" ) {
+			@content;
+		}
+	}
+
+	// site management panel tab
+	.panel-with-sidebar & {
+		@include breakpoint-deprecated( ">1400px" ) {
+			@content;
+		}
+	}
+}
+
+.is-section-marketing .layout__content {
+	background-color: #fff;
+}
+
+.search-component.marketing-tools__searchbox {
+	box-shadow: 0 0 0 1px var(--studio-gray-10);
+
+	.search-component__input[type="search"] {
+		padding-left: 16px;
+	}
+}
+.marketing-tools__toolbar-container {
+	display: flex;
+	align-items: center;
+	margin-top: 24px;
+	margin-bottom: 16px;
+	gap: 16px;
+}
+.marketing-tools__searchbox-container {
+	position: relative;
+	width: 250px;
+	height: 40px;
+	&.marketing-tools__searchbox-container--mobile {
+		width: 100%;
+		margin-left: 16px;
+	}
+}
+.panel-with-sidebar .marketing-tools__searchbox-container--mobile {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.responsive-toolbar-group.marketing-tools__search-categories-toolbar {
+	width: 280px;
+	padding: 0;
+	margin-right: 16px;
+}
+.marketing-tools__tooolbar-vertical-separator {
+	border: 0.5px solid var(--studio-gray-5);
+	height: 14px;
+}
+  
+.tools__wrapper {
+	align-self: stretch;
+}
+
+.tools__header-body {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	padding: 42px;
+	justify-content: space-between;
+	gap: 20px;
+	flex-wrap: wrap;
+	border-radius: 4px;
+	background-color: var(--color-neutral-0);
+	box-shadow: none;
+}
+
+.tools__header-info {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0;
+	flex: 1 1 360px;
+}
+
+.tools__header-title {
+	display: block;
+	color: var(--studio-gray-100);
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+}
+
+.tools__header-description {
+	margin-top: 16px;
+	font-size: $font-body-small;
+	font-weight: 400;
+	text-wrap: pretty;
+	max-width: 450px;
+}
+
+.tools__header-button-row {
+	align-content: center;
+	display: flex;
+	flex-direction: row;
+	margin-top: 32px;
+
+	@include breakpoint-deprecated( "<1040px" ) {
+	margin-bottom: 1rem;
+	}
+
+	.components-button {
+		&.tools__header-button-row-button.is-link {
+			font-size: $font-body-small;
+			font-weight: 500;
+			text-decoration: none;
+			color: var(--color-gray-80);
+
+			svg {
+				margin-left: 8px;
+			}
+		}
+	}
+}
+
+.tools__header-image-wrapper {
+	@include wide-screen {
+		display: flex;
+		margin-right: -20px; // This is to compensate the gap in .tools__header-body
+	}
+
+	.tools__header-image {
+		position: relative;
+		object-fit: contain;
+		max-width: 330px;
+	}
+}
+
+.tools__feature-list {
+	position: relative;
+	left: calc(-0.5rem);
+	display: flex;
+	flex-wrap: wrap;
+	// margins of the items will "hang off the side" invisibly
+	width: calc(100% + 1rem);
+}
+
+.tools__feature-list-item {
+	display: flex;
+	flex-direction: column;
+	margin: 0.5rem;
+	width: calc(100% - 1rem);
+	border-radius: 4px;
+	padding: 30px;
+
+	@include wide-screen {
+		width: calc(33.33% - 1rem);
+	}
+}
+
+.panel-with-sidebar  {
+	.tools__feature-list-item {
+		@include breakpoint-deprecated( ">1400px" ) {
+			width: calc(50% - 1rem);
+		}
+
+	}
+}
+
+
+.tools__feature-list-item-disclaimer {
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.tools__feature-list-item-body {
+	align-items: flex-start;
+	display: flex; // grow this, leave buttons on the bottom of the card
+	flex-direction: column;
+	flex: 1 0 auto;
+	margin-bottom: 1rem;
+}
+
+.tools__feature-list-item-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 16px;
+	> h1 {
+		font-size: $font-body;
+		font-weight: 500;
+		margin: 0;
+	}
+}
+
+.tools__feature-list-item-body-text {
+	width: 100%;
+
+	> p {
+		color: var(--color-text-subtle);
+		font-size: $font-body-small;
+		margin-bottom: 0;
+	}
+}
+
+.tools__feature-list-item-body-image {
+	margin-right: 1rem;
+	max-width: 32px;
+	max-height: 32px;
+
+	@include wide-screen {
+		display: flex;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		display: none;
+	}
+}
+
+.tools__feature-list-item-child-row {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	.components-button.is-link{
+		text-decoration: none;
+		font-weight: 500;
+	}
+
+	.purchase-detail__info {
+		margin-top: 1em;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		flex-direction: row;
+		justify-content: flex-start;
+
+		.button {
+			width: auto;
+		}
+	}
+
+	@include wide-screen {
+		.purchase-detail__button {
+			float: right;
+		}
+	}
+}

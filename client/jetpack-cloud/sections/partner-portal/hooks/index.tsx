@@ -149,6 +149,10 @@ export function useProductDescription( productSlug: string ): {
 					translate( 'Akismet Anti-spam*' )
 				);
 				break;
+			case 'jetpack-growth':
+				description = translate( 'Grow your audience effortlessly.' );
+				features.push( translate( 'Stats' ), translate( 'Social' ) );
+				break;
 			case 'jetpack-starter':
 				description = translate( 'Includes VaultPress Backup 1GB and Akismet Anti-spam.' );
 				features.push( translate( 'VaultPress Backup 1GB' ), translate( 'Akismet Anti-spam*' ) );
@@ -411,6 +415,11 @@ export function useProductDescription( productSlug: string ): {
 			case 'woocommerce-woopayments':
 				description = translate(
 					'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
+				);
+				break;
+			case 'woocommerce-product-filters':
+				description = translate(
+					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
 				);
 				break;
 			case 'jetpack-stats':

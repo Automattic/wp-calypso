@@ -16,7 +16,7 @@ import {
 	WPCOM_DIFM_LITE,
 	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import {
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
@@ -1365,33 +1365,6 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 		} );
 
-		it( 'Is not displayed if Professional Email is in the cart and email query parameter is present', () => {
-			const cart = {
-				...getMockCart(),
-				products: [
-					{
-						...getEmptyResponseCartProduct(),
-						product_slug: TITAN_MAIL_MONTHLY_SLUG,
-						extra: { email_users: [ { email: 'purchased_mailbox@foo.bar' } ] },
-					},
-				],
-			};
-
-			const url = getThankYouPageUrl( {
-				...defaultArgs,
-				cart,
-				domains,
-				receiptId: samplePurchaseId,
-				siteSlug: 'foo.bar',
-			} );
-
-			expect( url ).toBe(
-				`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
-					'purchased_mailbox@foo.bar'
-				) }`
-			);
-		} );
-
 		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
 			const cart = {
 				...getMockCart(),
@@ -1655,7 +1628,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
-			[ NEWSLETTER_FLOW, LINK_IN_BIO_FLOW, VIDEOPRESS_FLOW ].forEach( ( flowName ) => {
+			[ NEWSLETTER_FLOW ].forEach( ( flowName ) => {
 				const getUrlFromCookie = jest.fn( () => '/cookie' );
 
 				// set a tailored flow name
@@ -1805,7 +1778,47 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: 'invalid receipt ID' as any,
 			} );
 
-			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-auto-activate/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }`;
+
+			expect( url ).toBe(
+				addQueryArgs(
+					{
+						redirect_after_auth: redirectAfterAuth,
+						from: 'connect-after-checkout',
+					},
+					`${ adminUrl }admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true`
+				)
+			);
+		} );
+
+		it( "Connect-after-checkout flow redirects to the site's wp-admin `connect_url_redirect` url, along with a `redirect_to` query param when available", () => {
+			mockWindowLocation();
+			const adminUrl = 'https://my.site/wp-admin/';
+			const fromSiteSlug = 'my.site';
+			const productSlug = 'jetpack_backup_daily';
+
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: productSlug,
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				receiptId: 'invalid receipt ID' as any,
+				sitelessCheckoutType: 'jetpack',
+				connectAfterCheckout: true,
+				adminUrl: adminUrl,
+				fromSiteSlug: fromSiteSlug,
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+			} );
+
+			const redirectAfterAuth = `https://wordpress.com/checkout/jetpack/thank-you/licensing-pending-async-activation/${ productSlug }?fromSiteSlug=${ fromSiteSlug }&productSlug=${ productSlug }&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes`;
 
 			expect( url ).toBe(
 				addQueryArgs(
@@ -1857,6 +1870,29 @@ describe( 'getThankYouPageUrl', () => {
 			} );
 			expect( url ).toBe(
 				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&siteId=123456789'
+			);
+		} );
+
+		it( 'Siteless checkout redirects with `redirect_to` query param when available', () => {
+			const cart = {
+				...getMockCart(),
+				products: [
+					{
+						...getEmptyResponseCartProduct(),
+						product_slug: 'jetpack_backup_daily',
+					},
+				],
+			};
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				siteSlug: undefined,
+				cart,
+				sitelessCheckoutType: 'jetpack',
+				receiptId: 80023,
+				redirectTo: 'https://foo.bar/some-path?with-args=yes',
+			} );
+			expect( url ).toBe(
+				'/checkout/jetpack/thank-you/licensing-auto-activate/jetpack_backup_daily?receiptId=80023&redirect_to=https%3A%2F%2Ffoo.bar%2Fsome-path%3Fwith-args%3Dyes'
 			);
 		} );
 
@@ -1942,6 +1978,60 @@ describe( 'getThankYouPageUrl', () => {
 					},
 				} )
 			).toThrow();
+		} );
+	} );
+
+	describe( 'Congrats removals', () => {
+		it( 'redirects to /email/:domain/manage/:site when purchasing only Titan Mail', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: TITAN_MAIL_MONTHLY_SLUG,
+							meta: 'example.com', // meta holds the domain - not the same thing as siteSlug
+							extra: {
+								email_users: [ { email: 'test@example.com' } ],
+							},
+						},
+					],
+				},
+				siteSlug: 'foo.bar',
+			} );
+			expect( url ).toBe(
+				`/email/example.com/manage/foo.bar?new-email=${ encodeURIComponent( 'test@example.com' ) }`
+			);
+		} );
+
+		it( 'redirects to /checkout/thank-you when purchasing multiple products including titanmail', () => {
+			const url = getThankYouPageUrl( {
+				...defaultArgs,
+				cart: {
+					...getMockCart(),
+					products: [
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: 'personal-bundle',
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							product_slug: TITAN_MAIL_MONTHLY_SLUG,
+							extra: {
+								email_users: [ { email: 'test@example.com' } ],
+							},
+						},
+					],
+				},
+				siteSlug: 'foo.bar',
+				receiptId: samplePurchaseId,
+			} );
+			expect( url ).toBe(
+				`/checkout/thank-you/foo.bar/${ samplePurchaseId }?email=${ encodeURIComponent(
+					'test@example.com'
+				) }`
+			);
 		} );
 	} );
 } );

@@ -1,0 +1,295 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/dataviews/build-style/style.css';
+@import 'calypso/assets/stylesheets/shared/mixins/hide-content-accessibly';
+
+body.is-reader-full-post {
+	overflow: hidden;
+}
+
+.is-section-reader .recent-feed {
+	$recent-feed-spacing: 12px;
+	$feed-card-border-radius: 8px; /* stylelint-disable-line scales/radii */
+	$feed-content-height: calc(
+		100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+				--content-padding-bottom
+			)
+	);
+
+	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
+	overflow-y: hidden !important; // Keeps the scrolling container consistent between one and two column layouts.
+
+	@media ( min-width: $break-wide ) {
+		display: flex;
+		background: var( --studio-gray-0 );
+		gap: 12px;
+	}
+
+	%column-shared {
+		background: var( --color-surface );
+		border-radius: $feed-card-border-radius;
+		box-shadow: 0 0 17.4px 0 rgba( 0, 0, 0, 0.05 );
+	}
+
+	&__list-column {
+		$feed-list-header-height: 70px;
+		$feed-list-actions-height: 65px;
+		$feed-list-footer-height: 57px;
+		$feed-list-height: calc(
+			100vh - var( --masterbar-height ) - var( --content-padding-top ) - $feed-list-header-height -
+				$feed-list-actions-height - $feed-list-footer-height - var( --content-padding-bottom )
+		);
+
+		@extend %column-shared;
+		flex: 1;
+		overflow: hidden;
+		width: 100%;
+
+		&.has-overlay {
+			display: none;
+
+			@media ( min-width: $break-wide ) {
+				display: block;
+			}
+		}
+
+		@media ( min-width: $break-wide ) {
+			max-width: 320px;
+		}
+
+		&-header {
+			padding: 16px $recent-feed-spacing;
+			border-bottom: 1px solid var( --studio-gray-0 );
+
+			.navigation-header__main {
+				align-items: center;
+			}
+
+			header {
+				margin: 0;
+				padding: 0;
+
+				&::after {
+					display: none;
+				}
+			}
+		}
+
+		.dataviews-loading {
+			height: $feed-list-height;
+		}
+
+		.components-spinner {
+			height: 24px;
+			width: 24px;
+		}
+
+		.dataviews-view-list {
+			height: $feed-list-height;
+			overflow-y: auto;
+			@include custom-scrollbars-on-hover( transparent, $gray-600 );
+			scrollbar-gutter: auto;
+		}
+
+		.dataviews__view-actions {
+			box-sizing: border-box;
+			padding: 16px $recent-feed-spacing;
+		}
+
+		.dataviews-no-results {
+			padding: $recent-feed-spacing;
+		}
+
+		ul {
+			list-style: none;
+			margin: 0;
+
+			li {
+				border-top: 1px solid var( --studio-gray-0 );
+
+				&.is-selected + li {
+					border-top: 1px solid var( --studio-gray-0 );
+				}
+
+				&:hover {
+					cursor: pointer;
+					background-color: #f7faff;
+				}
+
+				&.is-selected {
+					border-top: 1px solid #3858e940;
+
+					.dataviews-view-list__item-wrapper {
+						background-color: #f7faff;
+					}
+				}
+
+				.components-flex {
+					align-items: center;
+					flex-grow: 1;
+				}
+
+				.dataviews-view-list__media-wrapper {
+					border-radius: 50%;
+					width: 24px;
+					height: 24px;
+					background-color: transparent;
+
+					&::after {
+						box-shadow: none;
+					}
+				}
+
+				.recent-post-field {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					text-align: left;
+					width: 100%;
+					min-height: fit-content;
+					gap: $recent-feed-spacing;
+
+					%text-shared {
+						white-space: nowrap;
+						text-overflow: ellipsis;
+						overflow: hidden;
+					}
+
+					&__title {
+						min-width: 0;
+					}
+
+					&__title-text {
+						font-weight: 700;
+						font-size: rem( 13px );
+						@extend %text-shared;
+					}
+
+					&__site-name {
+						font-weight: 400;
+						font-size: rem( 11px );
+						line-height: 1;
+						@extend %text-shared;
+					}
+
+					&__featured-image {
+						max-width: 38px;
+						align-self: flex-end;
+						flex-shrink: 0;
+					}
+				}
+			}
+
+			.dataviews-view-list__item {
+				padding: $recent-feed-spacing;
+			}
+		}
+	}
+
+	&__post-column {
+		@extend %column-shared;
+		display: none;
+		overflow-y: auto;
+		height: 100%;
+
+		&.overlay {
+			display: block;
+		}
+
+		&-engagement-bar {
+			position: fixed;
+			bottom: var( --content-padding-bottom );
+			height: 60px;
+			background: var( --color-surface );
+			border-radius: 0 0 $feed-card-border-radius $feed-card-border-radius;
+			box-shadow: 0 -2px 8px rgba( 0, 0, 0, 0.05 );
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: opacity 0.2s ease-in-out;
+			opacity: 1;
+
+			@media ( max-width: $break-medium ) {
+				bottom: 0;
+			}
+
+			@media ( min-width: $break-small ) and ( max-width: $break-medium ) {
+				margin-right: 24px;
+			}
+
+			@media ( min-width: $break-medium ) {
+				margin-right: 16px;
+			}
+
+			&.engagement-bar-is-hidden {
+				opacity: 0;
+				pointer-events: none;
+			}
+
+			.reader-post-actions {
+				margin: 0;
+				justify-content: space-evenly;
+
+				@media ( min-width: $break-medium ) {
+					justify-content: center;
+				}
+				span,
+				svg {
+					color: var( --color-text );
+					fill: currentColor;
+				}
+			}
+		}
+
+		.back-button {
+			@media ( min-width: $break-wide ) {
+				@include hide-content-accessibly();
+			}
+		}
+
+		@media ( min-width: $break-wide ) {
+			display: block;
+			position: relative;
+			flex: 3;
+		}
+	}
+
+	.recent-post-skeleton {
+		max-width: 720px;
+		padding: 32px 24px;
+		margin: 0 auto;
+
+		&__header {
+			display: flex;
+			gap: 2rem;
+			align-items: center;
+			margin-bottom: 2rem;
+		}
+
+		&__header-content {
+			flex-grow: 1;
+		}
+
+		&__title {
+			margin-bottom: 1rem;
+		}
+
+		&__header-meta {
+			display: flex;
+			gap: 1rem;
+		}
+
+		&__img {
+			margin-bottom: 2rem;
+		}
+
+		&__p {
+			display: flex;
+			gap: 1rem;
+			margin-bottom: 2rem;
+			flex-wrap: wrap;
+		}
+	}
+}

@@ -1,9 +1,11 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
 import { default as Toolbar } from 'calypso/components/activity-card/toolbar';
 import ExternalLink from 'calypso/components/external-link';
 import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
+import NextScheduledBackup from 'calypso/components/jetpack/daily-backup-status/status-card/parts/next-scheduled-backup';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
@@ -79,19 +81,9 @@ const BackupSuccessful = ( {
 				<div className="status-card__hide-mobile">
 					{ isToday ? translate( 'Latest backup' ) : translate( 'Latest backup on this day' ) }
 				</div>
-
-				{ ! isCloneFlow && (
-					<div className="status-card__toolbar">
-						<Toolbar
-							siteId={ siteId }
-							activity={ backup }
-							isContentExpanded={ showContent }
-							onToggleContent={ toggleShowContent }
-							availableActions={ availableActions }
-							onClickClone={ onClickClone }
-						/>
-					</div>
-				) }
+				{ isToday && config.isEnabled( 'jetpack/backup-schedule-setting' ) ? (
+					<NextScheduledBackup siteId={ siteId } />
+				) : null }
 			</div>
 			<div className="status-card__hide-desktop">
 				<div className="status-card__title">{ displayDate }</div>
@@ -134,13 +126,30 @@ const BackupSuccessful = ( {
 					</p>
 				</div>
 			) }
-			<ActionButtons
-				rewindId={ actionableRewindId }
-				isMultiSite={ isMultiSite }
-				hasWarnings={ hasWarnings }
-				availableActions={ availableActions }
-				onClickClone={ onClickClone }
-			/>
+
+			{ isCloneFlow && (
+				<ActionButtons
+					rewindId={ actionableRewindId }
+					isMultiSite={ isMultiSite }
+					hasWarnings={ hasWarnings }
+					availableActions={ availableActions }
+					onClickClone={ onClickClone }
+				/>
+			) }
+
+			{ ! isCloneFlow && (
+				<Toolbar
+					siteId={ siteId }
+					activity={ backup }
+					isContentExpanded={ showContent }
+					onToggleContent={ toggleShowContent }
+					availableActions={ availableActions }
+					onClickClone={ onClickClone }
+					hideExpandedContent
+					useSplitButton
+				/>
+			) }
+
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">

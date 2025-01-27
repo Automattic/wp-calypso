@@ -16,7 +16,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -24,6 +24,7 @@ import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { CHARACTER_LIMIT } from 'calypso/signup/steps/website-content/section-types/constants';
 import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
@@ -127,6 +128,7 @@ const FAQSection = styled.div`
 const FoldableFAQ = styled( FoldableFAQComponent )`
 	border: 1px solid #e9e9ea;
 	padding: 0;
+	border-radius: 4px;
 	margin-bottom: 24px;
 	.foldable-faq__question {
 		padding: 24px 16px 24px 24px;
@@ -143,12 +145,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&.is-expanded {
-		border: 2px solid var( --studio-blue-50 );
-		background: linear-gradient(
-			180deg,
-			rgba( 6, 117, 196, 0.2 ) -44.3%,
-			rgba( 255, 255, 255, 0 ) 100%
-		);
+		border: 2px solid var( --studio-wordpress-blue-50 );
 		.foldable-faq__answer {
 			margin: 0 16px 24px 0;
 			ul {
@@ -157,8 +154,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&:not( .is-expanded ) .foldable-faq__question:focus {
-		box-shadow: 0 0 0 var( --wp-admin-border-width-focus )
-			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+		box-shadow: 0 0 0 var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		outline: 3px solid transparent;
 	}
 	.foldable-faq__answer {
@@ -186,10 +182,12 @@ const CTASectionWrapper = styled.div`
 		}
 	}
 	.components-button.is-secondary {
-		box-shadow: inset 0 0 0 1px var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		border-radius: 4px;
+		box-shadow: inset 0 0 0 1px
+			var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		outline: 1px solid transparent;
 		white-space: nowrap;
-		color: var( --studio-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		color: var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
 		background: transparent;
 		border: none;
 		&:focus {
@@ -670,7 +668,93 @@ export default function DIFMLanding( {
 								) }
 							</p>
 						</FoldableFAQ>
-						<FoldableFAQ id="faq-9" question={ translate( 'Can I use my existing domain name?' ) }>
+						<FoldableFAQ id="faq-9" question={ translate( 'What are the content guidelines?' ) }>
+							<p>
+								{ translate(
+									'{{strong}}Fresh Content Only:{{/strong}} Please provide original content rather than requesting migrations or content from existing pages, external websites, or files.',
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Timely Submission:{{/strong}} Submit your content {{strong}}within %(refundPeriodDays)d days{{/strong}} of purchase to keep things on track. If we don't receive it in time, we'll use AI-generated text and stock images based on your search terms to bring your site to life.",
+									{
+										components: {
+											strong: <strong />,
+										},
+										args: {
+											refundPeriodDays: 14,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'{{strong}}Bite-sized Content:{{/strong}} Keep each page under %s characters. Longer content will be trimmed using AI to ensure everything looks great.',
+									{
+										components: {
+											strong: <strong />,
+										},
+										args: [ numberFormat( CHARACTER_LIMIT ) ],
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Design Approach:{{/strong}} We follow established design guidelines while customizing your site to reflect your brand. With your logo, colors, and style preferences, we'll create a professional site that captures your essence using our curated design elements.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Stay Connected:{{/strong}} After you submit your content, we'll review it. If everything meets our guidelines, we'll notify you when your site is ready for launch. If adjustments are needed, we'll reach out.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Perfect As-Is:{{/strong}} We aim to get it right the first time! While revisions aren't included, you can always make updates later using the WordPress editor.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Plugin Potential:{{/strong}} The initial setup doesn't include every feature, but it's a great starting point. Add options like appointments, courses, property listings, memberships, payments, animations, and more after we finish your site. Our Happiness Engineers can make recommendations based on your plan.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Custom Requests:{{/strong}} We focus on attractive and functional designs, but we can't accommodate very specific layout requests or exact matches to designs. For fully custom solutions or pixel-perfect recreations, we can connect you with an expert WordPress agency partner, with projects starting at $5,000.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-10" question={ translate( 'Can I use my existing domain name?' ) }>
 							<p>
 								{ translate(
 									'Yes, our support team will help you connect your existing domain name to your site after the build is complete.'
@@ -678,7 +762,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						{ ! isStoreFlow && (
-							<FoldableFAQ id="faq-10" question={ translate( 'Can I have a store set up?' ) }>
+							<FoldableFAQ id="faq-11" question={ translate( 'Can I have a store set up?' ) }>
 								<>
 									<p>
 										{ translate(

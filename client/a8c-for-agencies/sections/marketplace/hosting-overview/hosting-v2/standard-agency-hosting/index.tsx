@@ -1,12 +1,15 @@
 import { JetpackLogo } from '@automattic/components';
 import { blockMeta, code, desktop, globe, login, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import {
+	BackgroundType1,
+	BackgroundType2,
+} from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/standard-testimonial-2.png';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import HostingAdditionalFeaturesSection from '../../../common/hosting-additional-features-section';
 import HostingFeaturesSection from '../../../common/hosting-features-section';
-import { BackgroundType1, BackgroundType2 } from '../../../common/hosting-section/backgrounds';
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import CommonHostingBenefits from '../common-hosting-benefits';
 import WPCOMPlanSelector from './wpcom-plan-selector';

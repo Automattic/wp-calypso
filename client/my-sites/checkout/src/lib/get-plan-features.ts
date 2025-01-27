@@ -13,6 +13,7 @@ import {
 	applyTestFiltersToPlansList,
 	FEATURE_CUSTOM_DOMAIN,
 	getFeatureByKey,
+	getPlan,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -36,6 +37,11 @@ export default function getPlanFeatures(
 	const isMonthlyPlan = isMonthly( productSlug );
 
 	if ( showPricingGridFeatures ) {
+		const plan = getPlan( productSlug );
+		if ( ! plan ) {
+			return [];
+		}
+
 		const planObject = applyTestFiltersToPlansList( productSlug, undefined );
 
 		if ( ! planObject ) {

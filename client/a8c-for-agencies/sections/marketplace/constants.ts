@@ -18,6 +18,8 @@ export const PRODUCT_FILTER_KEY_CATEGORIES = 'categories';
 export const PRODUCT_FILTER_KEY_TYPES = 'types';
 export const PRODUCT_FILTER_KEY_PRICES = 'prices';
 
+export const PRODUCT_CATEGORY_JETPACK = 'jetpack';
+export const PRODUCT_CATEGORY_WOOCOMMERCE = 'woocommerce';
 export const PRODUCT_CATEGORY_SECURITY = 'security';
 export const PRODUCT_CATEGORY_PERFORMANCE = 'performance';
 export const PRODUCT_CATEGORY_SOCIAL = 'social';

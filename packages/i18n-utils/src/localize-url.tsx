@@ -4,6 +4,7 @@ import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
+	localesWithWpcomDeveloperSite,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
@@ -13,6 +14,7 @@ import {
 	magnificentNonEnLocales,
 	localesForPricePlans,
 	jetpackComLocales,
+	wpLoginLocales,
 	Locale,
 } from './locales';
 
@@ -128,12 +130,13 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
+	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
 	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'cloud.jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'developer.wordpress.com': prefixLocalizedUrlPath( localesWithWpcomDeveloperSite ),
 	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),

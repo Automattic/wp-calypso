@@ -20,10 +20,9 @@ function hasRoundIcon( service ) {
 }
 
 const PostShareConnection = ( { connection, isActive, onToggle } ) => {
-	const { external_display, external_profile_picture, keyring_connection_ID, service, status } =
-		connection;
+	const { external_display, external_profile_picture, ID, service, status } = connection;
 
-	const toggle = () => onToggle( keyring_connection_ID );
+	const toggle = () => onToggle( ID );
 
 	const classes = clsx( {
 		'post-share__service': true,
@@ -32,7 +31,7 @@ const PostShareConnection = ( { connection, isActive, onToggle } ) => {
 		'is-broken': status === 'broken',
 	} );
 
-	const id = `post-share__label-${ keyring_connection_ID }`;
+	const id = `post-share__label-${ ID }`;
 
 	const accountImageStyle = {};
 	if ( external_profile_picture ) {

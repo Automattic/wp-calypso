@@ -120,6 +120,7 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,
 				pooling: true,
+				retryCount: ( action.retryCount || 0 ) + 1,
 			} );
 		}, POOL_EVERY_MILLISECONDS );
 	}

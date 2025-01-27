@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
+import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -28,6 +29,7 @@ interface GetNewSiteParams {
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
 	username: string;
+	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
 }
@@ -108,6 +110,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 		siteVisibility,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} = params;
 
 	// We will use the default annotation instead of theme annotation as fallback,
@@ -131,6 +134,7 @@ export const getNewSiteParams = ( params: GetNewSiteParams ) => {
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 			...( themeSlugWithRepo && { theme: themeSlugWithRepo } ),
 			...( siteIntent && { site_intent: siteIntent } ),
+			...( partnerBundle && { site_partner_bundle: partnerBundle } ),
 		},
 		validate: false,
 	};
@@ -149,10 +153,12 @@ export const createSiteWithCart = async (
 	useThemeHeadstart: boolean,
 	username: string,
 	domainCartItems: MinimalRequestCartProduct[],
+	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
 	sourceSlug?: string,
-	siteIntent?: string
+	siteIntent?: string,
+	siteGoals?: SiteGoal[]
 ) => {
 	const siteUrl = storedSiteUrl || domainItem?.domain_name;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -169,6 +175,7 @@ export const createSiteWithCart = async (
 		username,
 		sourceSlug,
 		siteIntent,
+		partnerBundle,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -198,6 +205,7 @@ export const createSiteWithCart = async (
 				...( hasSegmentationSurvey && segmentationSurveyAnswersAnonId
 					? { segmentation_survey_answers_anon_id: segmentationSurveyAnswersAnonId }
 					: {} ),
+				...( siteGoals && { site_goals: siteGoals } ),
 			},
 		},
 	} );

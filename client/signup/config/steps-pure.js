@@ -22,6 +22,7 @@ const noop = () => {};
 export function generateSteps( {
 	addPlanToCart = noop,
 	addWithThemePlanToCart = noop,
+	addWithPluginPlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -107,7 +108,8 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
-				hideEcommercePlan: true,
+				intent: 'plans-site-selected-legacy',
+				deemphasizeFreePlan: true,
 			},
 		},
 
@@ -127,12 +129,14 @@ export function generateSteps( {
 				'marketing_price_group',
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -151,12 +155,14 @@ export function generateSteps( {
 				'marketing_price_group',
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
 			optionalDependencies: [
 				'redirect',
 				'allowUnauthenticated',
+				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
@@ -177,6 +183,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 				'oauth2_client_id',
 				'oauth2_redirect',
@@ -186,6 +193,7 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 				'oauth2_client_id',
 				'oauth2_redirect',
@@ -305,7 +313,7 @@ export function generateSteps( {
 
 		'plans-business-with-plugin': {
 			stepName: 'plans-business-with-plugin',
-			apiRequestFunction: addPlanToCart,
+			apiRequestFunction: addWithPluginPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug', 'plugin', 'billing_period' ],
 			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
@@ -392,11 +400,6 @@ export function generateSteps( {
 				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,
-		},
-		subscribe: {
-			stepName: 'subscribe',
-			providesDependencies: [ 'redirect', 'username', 'marketing_price_group', 'bearer_token' ],
-			optionalDependencies: [ 'username', 'marketing_price_group', 'bearer_token' ],
 		},
 		mailbox: {
 			stepName: 'mailbox',
@@ -517,9 +520,10 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 		},
 
 		'oauth2-name': {
@@ -533,9 +537,10 @@ export function generateSteps( {
 				'oauth2_redirect',
 				'marketing_price_group',
 				'allowUnauthenticated',
+				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect' ],
+			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -550,18 +555,16 @@ export function generateSteps( {
 			stepName: 'site-or-domain',
 			props: {
 				getHeaderText( domainCart ) {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Choose how to use your domains' )
-						? i18n.translate( 'Choose how to use your domain', 'Choose how to use your domains', {
-								count: domainCart.length,
-						  } )
-						: i18n.translate( 'Choose how to use your domain' );
+					return i18n.translate(
+						'Choose how to use your domain',
+						'Choose how to use your domains',
+						{
+							count: domainCart.length,
+						}
+					);
 				},
 				get subHeaderText() {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Don’t worry, you can easily change it later.' )
-						? i18n.translate( 'Don’t worry, you can easily change it later.' )
-						: i18n.translate( 'Don’t worry, you can easily add a site later' );
+					return i18n.translate( 'Don’t worry, you can easily change it later.' );
 				},
 			},
 			providesDependencies: [
@@ -637,11 +640,6 @@ export function generateSteps( {
 
 		'clone-cloning': {
 			stepName: 'clone-cloning',
-			providesDependencies: [],
-		},
-
-		'reader-landing': {
-			stepName: 'reader-landing',
 			providesDependencies: [],
 		},
 

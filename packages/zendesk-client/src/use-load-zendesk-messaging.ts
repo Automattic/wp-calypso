@@ -13,13 +13,14 @@ import type { ZendeskConfigName } from './types';
 
 export function useLoadZendeskMessaging(
 	keyConfigName: ZendeskConfigName,
-	enabled = true,
-	tryAuthenticating = true
+	enabled = false,
+	tryAuthenticating = false
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
 	const zendeskKey: string = config( keyConfigName );
 	const { data: authData } = useAuthenticateZendeskMessaging(
-		isMessagingScriptLoaded && tryAuthenticating
+		isMessagingScriptLoaded && tryAuthenticating,
+		'messenger'
 	);
 	useEffect( () => {
 		if ( ! enabled || isMessagingScriptLoaded ) {

@@ -1,8 +1,7 @@
-import { MIGRATION_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import { SITE_SETUP_FLOW } from '@automattic/onboarding';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getFinalImporterUrl } from '../../internals/steps-repository/import/helper';
-import { StepperStep } from '../../internals/types';
 
 const isWpAdminImporter = ( importerPath: string ) =>
 	importerPath.startsWith( 'http' ) || importerPath.startsWith( '/import' );
@@ -11,12 +10,17 @@ interface GoToImporterParams {
 	platform: ImporterPlatform;
 	siteId: string;
 	siteSlug: string;
-	backToStep?: StepperStep;
-	migrateEntireSiteStep?: StepperStep;
+	backToFlow?: string;
 	replaceHistory?: boolean;
+	from?: string | null;
+	ref?: string;
 }
 
-const getFlowPath = ( step: string ) => `/${ MIGRATION_FLOW }/${ step }`;
+/**
+ * @deprecated generate the full flow URL in your flow instead
+ * @see backToFlow property
+ */
+
 const goTo = ( path: string, replaceHistory: boolean ) => {
 	if ( replaceHistory ) {
 		return window.location.replace( path );
@@ -29,15 +33,12 @@ export const goToImporter = ( {
 	platform,
 	siteId,
 	siteSlug,
-	backToStep,
-	migrateEntireSiteStep,
 	replaceHistory = false,
+	backToFlow,
+	from,
+	ref,
 }: GoToImporterParams ) => {
-	const backToFlow = backToStep ? getFlowPath( backToStep?.slug ) : undefined;
-	const customizedActionGoToFlow = migrateEntireSiteStep
-		? getFlowPath( migrateEntireSiteStep?.slug )
-		: undefined;
-	const path = getFinalImporterUrl( siteSlug, '', platform, backToFlow, customizedActionGoToFlow );
+	const path = getFinalImporterUrl( siteSlug, from || '', platform, backToFlow );
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );
@@ -47,7 +48,7 @@ export const goToImporter = ( {
 		{
 			siteId,
 			siteSlug,
-			ref: MIGRATION_FLOW,
+			ref: ref,
 			...( platform === 'wordpress' ? { option: 'content' } : {} ),
 		},
 		`/setup/${ SITE_SETUP_FLOW }/${ path }`

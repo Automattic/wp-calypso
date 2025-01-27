@@ -55,13 +55,11 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 
 	const handleClose = useCallback(
 		( isDirectClose: boolean = false ) => {
-			setTimeout( () => {
-				onClose();
+			onClose();
 
-				if ( isDirectClose ) {
-					trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
-				}
-			}, 200 );
+			if ( isDirectClose ) {
+				trackStatsAnalyticsEvent( 'stats_feedback_action_directly_close_form_modal' );
+			}
 		},
 		[ onClose ]
 	);
@@ -128,13 +126,31 @@ const FeedbackModal: React.FC< ModalProps > = ( { siteId, onClose } ) => {
 			/>
 			<div className="stats-feedback-modal__wrapper">
 				<h1 className="stats-feedback-modal__title">
-					{ translate( 'Help us make Jetpack Stats better' ) }
+					{ translate( 'Help us make Jetpack better' ) }
 				</h1>
 
 				<div className="stats-feedback-modal__text">
-					{ translate(
-						'We value your opinion and would love to hear more about your experience. Please share any specific thoughts or suggestions you have to improve Jetpack Stats.'
-					) }
+					<p>
+						{ translate(
+							'We value your opinion and would love to hear more about your experience. Please share any specific thoughts or suggestions you have to improve Jetpack.'
+						) }
+					</p>
+					<p>
+						{ translate(
+							'Note: This form is for general feedback only. If you need a reply from our Happiness Engineers, please use our {{link}}contact form{{/link}} to get in touch.',
+							{
+								components: {
+									link: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href="https://jetpack.com/contact-support/"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
 				</div>
 				<TextareaControl
 					rows={ 5 }

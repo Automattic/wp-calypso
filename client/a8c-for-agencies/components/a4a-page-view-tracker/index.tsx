@@ -8,10 +8,13 @@ type Props = {
 };
 
 export default function A4APageViewTracker( { title, path, properties }: Props ) {
+	// Split the path into its components
+	const [ basePath ] = path.split( /[?]/ );
+
 	return (
 		<PageViewTracker
 			title={ title }
-			path={ path }
+			path={ basePath }
 			properties={ properties }
 			options={ { useA8CForAgenciesGoogleAnalytics: true } }
 		/>

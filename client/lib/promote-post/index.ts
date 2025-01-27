@@ -278,14 +278,33 @@ export function getRecordDSPEventHandler( dispatch: Dispatch, dspOriginProps?: D
 	};
 }
 
+type SupportedDSPMethods = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type SupportedDSPApiVersions = '1' | '1.1';
+
 export const requestDSP = async < T >(
 	siteId: number,
 	apiUri: string,
-	method = 'GET',
-	body: Record< string, any > | undefined = undefined
+	method: SupportedDSPMethods = 'GET',
+	body: Record< string, unknown > | undefined = undefined,
+	apiVersion: SupportedDSPApiVersions = '1'
 ): Promise< T > => {
-	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
-	const path = `${ URL_BASE }${ apiUri }`;
+	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v${ apiVersion }`;
+
+	let requestBody = body;
+	let path = `${ URL_BASE }${ apiUri }`;
+
+	// Merges the query params into the requestBody, and removes them from the path variable
+	// Query params in the path causes problems on Jetpack sites using plain permalinks
+	if ( path.indexOf( '?' ) > 0 ) {
+		const search = path.substring( path.indexOf( '?' ) );
+		path = path.substring( 0, path.indexOf( '?' ) );
+
+		const queryParams = Object.fromEntries( new URLSearchParams( search ) );
+		requestBody = {
+			...requestBody,
+			...queryParams,
+		};
+	}
 
 	const params = {
 		path,
@@ -293,44 +312,41 @@ export const requestDSP = async < T >(
 		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
 			? 'jetpack/v4/blaze-app'
 			: 'wpcom/v2',
-		body,
 	};
 
 	switch ( method ) {
 		case 'POST':
-			return await wpcom.req.post( params );
+			return await wpcom.req.post( params, requestBody );
 		case 'PUT':
-			return await wpcom.req.put( params );
+			return await wpcom.req.put( params, requestBody );
 		case 'DELETE':
-			return await wpcom.req.del( params );
+			return await wpcom.req.del( params, requestBody );
 		default:
-			return await wpcom.req.get( params );
+			return await wpcom.req.get( params, requestBody );
 	}
 };
 
-const handleDSPError = async < T >(
-	error: DSPError,
+export const requestDSPHandleErrors = async < T >(
 	siteId: number,
-	currentURL: string
+	apiUri: string,
+	method: SupportedDSPMethods = 'GET',
+	body: Record< string, unknown > | undefined = undefined,
+	apiVersion: SupportedDSPApiVersions = '1'
 ): Promise< T > => {
-	if ( error.errorCode === DSP_ERROR_NO_LOCAL_USER ) {
-		const createUserQuery = await requestDSP< NewDSPUserResult >(
-			siteId,
-			DSP_URL_CHECK_UPSERT_USER
-		);
-		if ( createUserQuery.new_dsp_user ) {
-			// then we should retry the original query
-			return await requestDSP< T >( siteId, currentURL );
-		}
-	}
-	throw error;
-};
-
-export const requestDSPHandleErrors = async < T >( siteId: number, url: string ): Promise< T > => {
 	try {
-		return await requestDSP( siteId, url );
-	} catch ( e ) {
-		return await handleDSPError( e as DSPError, siteId, url );
+		return await requestDSP( siteId, apiUri, method, body, apiVersion );
+	} catch ( error ) {
+		if ( ( error as DSPError ).errorCode === DSP_ERROR_NO_LOCAL_USER ) {
+			const createUserQuery = await requestDSP< NewDSPUserResult >(
+				siteId,
+				DSP_URL_CHECK_UPSERT_USER
+			);
+			if ( createUserQuery.new_dsp_user ) {
+				// then we should retry the original query
+				return await requestDSP( siteId, apiUri, method, body );
+			}
+		}
+		throw error;
 	}
 };
 
@@ -394,4 +410,32 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		default:
 			return PromoteWidgetStatus.FETCHING;
 	}
+};
+
+/**
+ * Hook to verify if Jetpack/Blaze Ads version is greater than or equals the provided versions.
+ * It will return true if any of the checks passes.
+ * @param siteId Site Id.
+ * @param minJetpackVersion Minimum Jetpack version to check.
+ * @param minBlazeAdsVersion Minimum Blaze Ads version to check.
+ */
+export const useJetpackBlazeVersionCheck = (
+	siteId: number,
+	minJetpackVersion: string,
+	minBlazeAdsVersion: string
+): boolean => {
+	const siteJetpackVersion =
+		useSelector( ( state ) => getSiteOption( state, siteId, 'jetpack_version' ) ) ?? 0;
+	const blazeAdsVersion =
+		useSelector( ( state ) => getSiteOption( state, siteId, 'blaze_ads_version' ) ) ?? 0;
+
+	// If we don't have a version (Jetpack or Blaze Ads), we must be in a simple site, and we use latest Jetpack version in there.
+	if ( ! siteJetpackVersion && ! blazeAdsVersion ) {
+		return true;
+	}
+
+	return Boolean(
+		( siteJetpackVersion && versionCompare( siteJetpackVersion, minJetpackVersion, '>=' ) ) ||
+			( blazeAdsVersion && versionCompare( siteJetpackVersion, minBlazeAdsVersion, '>=' ) )
+	);
 };

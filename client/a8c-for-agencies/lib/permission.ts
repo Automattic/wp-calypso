@@ -14,6 +14,7 @@ import {
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
 	A4A_SITES_CONNECT_URL_LINK,
+	A4A_PLUGINS_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_MARKETPLACE_HOSTING_LINK,
@@ -28,6 +29,7 @@ import {
 	A4A_REFERRALS_DASHBOARD,
 	A4A_REFERRALS_PAYMENT_SETTINGS,
 	A4A_REFERRALS_FAQ,
+	A4A_REFERRALS_ARCHIVED,
 	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_PURCHASES_LINK,
 	A4A_BILLING_LINK,
@@ -35,7 +37,13 @@ import {
 	A4A_PAYMENT_METHODS_LINK,
 	A4A_PAYMENT_METHODS_ADD_LINK,
 	A4A_MIGRATIONS_LINK,
+	A4A_MIGRATIONS_OVERVIEW_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+	A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
+	A4A_MIGRATIONS_COMMISSIONS_LINK,
+	A4A_MIGRATIONS_PAYMENT_SETTINGS,
 	A4A_TEAM_INVITE_LINK,
+	A4A_AGENCY_TIER_LINK,
 } from '../components/sidebar-menu/lib/constants';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -66,6 +74,7 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_REFERRALS_DASHBOARD ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_PAYMENT_SETTINGS ]: [ 'a4a_read_referrals' ],
 	[ A4A_REFERRALS_FAQ ]: [ 'a4a_read_referrals' ],
+	[ A4A_REFERRALS_ARCHIVED ]: [ 'a4a_read_referrals' ],
 	[ A4A_PARTNER_DIRECTORY_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_read_partner_directory' ],
 	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_read_partner_directory' ],
@@ -76,7 +85,14 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_PAYMENT_METHODS_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_PAYMENT_METHODS_ADD_LINK ]: [ 'a4a_jetpack_licensing' ],
 	[ A4A_MIGRATIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_OVERVIEW_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_COMMISSIONS_LINK ]: [ 'a4a_read_migrations' ],
+	[ A4A_MIGRATIONS_PAYMENT_SETTINGS ]: [ 'a4a_read_migrations' ],
 	[ A4A_TEAM_INVITE_LINK ]: [ 'a4a_edit_user_invites' ],
+	[ A4A_AGENCY_TIER_LINK ]: [ 'a4a_read_agency_tier' ],
+	[ A4A_PLUGINS_LINK ]: [ 'a4a_read_managed_sites' ],
 };
 
 const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
@@ -84,6 +100,7 @@ const MEMBER_ACCESSIBLE_DYNAMIC_PATHS: Record< string, string[] > = {
 	team: [ 'a4a_read_users' ],
 	marketplace: [ 'a4a_read_marketplace' ],
 	licenses: [ 'a4a_jetpack_licensing' ],
+	plugins: [ 'a4a_read_managed_sites' ],
 };
 
 const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
@@ -91,19 +108,12 @@ const DYNAMIC_PATH_PATTERNS: Record< string, RegExp > = {
 	marketplace: /^\/marketplace\/[^/]+\/[^/]+(\/.*)?$/,
 	licenses: /^\/purchases\/licenses(\/.*)?$/,
 	team: /^\/team(\/.*)?$/,
+	plugins: /^\/plugins(\/.*)?$/,
 };
 
 export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 	if ( ! agency ) {
 		return false;
-	}
-
-	// Admins can access all paths
-	const role = agency?.user?.role;
-	// For some cases, the role isn't set, so we default to 'a4a_administrator'
-	// FIXME: This should be removed after the role is set for all users
-	if ( ! role || role === 'a4a_administrator' ) {
-		return true;
 	}
 
 	// Everyone can access the landing page and the overview page
@@ -127,6 +137,45 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 					( capability: string ) => dynamicPermissions?.includes( capability )
 				);
 			}
+		}
+	}
+
+	return false;
+};
+
+const MEMBER_TIER_ACCESSIBLE_PATHS: Record< string, string[] > = {
+	[ A4A_PARTNER_DIRECTORY_DASHBOARD_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_DETAILS_LINK ]: [ 'a4a_feature_partner_directory' ],
+	[ A4A_PARTNER_DIRECTORY_AGENCY_EXPERTISE_LINK ]: [ 'a4a_feature_partner_directory' ],
+};
+
+export const isPathAllowedForTier = ( pathname: string, agency: Agency | null ) => {
+	if ( ! agency ) {
+		return false;
+	}
+
+	// featureConditions is used to check if the user has access to a specific feature
+	// Add the feature name and the condition to enable it according to MEMBER_TIER_ACCESSIBLE_PATHS
+	const featureConditions = {
+		a4a_feature_partner_directory: agency?.partner_directory.allowed,
+	};
+
+	const featuresSet = new Set( agency?.tier?.features || [] );
+
+	// Check if the user has extra capabilities
+	for ( const [ feature, condition ] of Object.entries( featureConditions ) ) {
+		if ( condition ) {
+			featuresSet.add( feature );
+		}
+	}
+
+	const features = Array.from( featuresSet );
+
+	// Check if the user has the required capability to access the current path
+	if ( features ) {
+		const permissions = MEMBER_TIER_ACCESSIBLE_PATHS?.[ pathname ];
+		if ( permissions ) {
+			return features.some( ( capability: string ) => permissions?.includes( capability ) );
 		}
 	}
 

@@ -67,16 +67,6 @@ declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUser: ( state: unknown ) => { display_name: string };
 }
 
-declare module 'calypso/components/ellipsis-menu' {
-	const EllipsisMenu: FC< {
-		popoverClassName?: string;
-		position?: string;
-		children: React.ReactNode;
-	} >;
-
-	export default EllipsisMenu;
-}
-
 declare module 'calypso/components/popover-menu/item' {
 	const PopoverMenuItem: FC< {
 		className?: string;
@@ -105,6 +95,30 @@ declare module 'calypso/components/gravatar' {
 	} >;
 
 	export default Gravatar;
+}
+
+declare module 'calypso/components/section-nav' {
+	const SectionNav: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNav;
+}
+
+declare module 'calypso/components/section-nav/tabs' {
+	const SectionNavTabs: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNavTabs;
+}
+
+declare module 'calypso/components/section-nav/item' {
+	const SectionNavItem: FC< {
+		selected: boolean;
+		onClick: () => void;
+		count?: number;
+		children: React.ReactNode;
+	} >;
+	export default SectionNavItem;
 }
 
 declare module 'calypso/components/textarea-autosize' {

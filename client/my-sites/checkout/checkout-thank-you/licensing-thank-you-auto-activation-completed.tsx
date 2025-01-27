@@ -11,16 +11,20 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { filterAllowedRedirect } from '../src/lib/pending-page';
 import useGetJetpackActivationConfirmationInfo from './use-get-jetpack-activation-confirmation-info';
 
 interface Props {
 	productSlug: string;
 	destinationSiteId: number;
+	redirectTo?: string;
 }
 
 const LicensingActivationThankYouCompleted: FC< Props > = ( {
 	productSlug = 'no_product',
 	destinationSiteId = 0,
+	redirectTo,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -50,6 +54,14 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 	const productConfirmationInfo = useGetJetpackActivationConfirmationInfo(
 		destinationSiteId,
 		productSlug
+	);
+
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, destinationSiteId ) );
+
+	const finalRedirect = filterAllowedRedirect(
+		redirectTo ?? '',
+		siteSlug ?? '',
+		productConfirmationInfo.buttonUrl
 	);
 
 	return (
@@ -99,7 +111,7 @@ const LicensingActivationThankYouCompleted: FC< Props > = ( {
 									} )
 								)
 							}
-							href={ productConfirmationInfo.buttonUrl }
+							href={ finalRedirect }
 						>
 							{ translate( 'Go to Dashboard' ) }
 						</Button>

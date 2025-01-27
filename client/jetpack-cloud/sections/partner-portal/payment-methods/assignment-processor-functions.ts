@@ -1,8 +1,9 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { saveCreditCard } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/stored-payment-method-api';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { createStripeSetupIntentForJetpackManage } from '../lib/create-stripe-setup-intent-for-jetpack-manage';
 import type { StripeConfiguration, StripeSetupIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardElement } from '@stripe/stripe-js';
@@ -13,7 +14,6 @@ interface Props {
 	translate: ReturnType< typeof useTranslate >;
 	stripe: Stripe | null;
 	stripeConfiguration: StripeConfiguration | null;
-	stripeSetupIntentId: string | undefined;
 	cardElement: StripeCardElement | undefined;
 	reduxDispatch: CalypsoDispatch;
 }
@@ -24,7 +24,6 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
-		stripeSetupIntentId,
 		cardElement,
 		reduxDispatch,
 	}: Props,
@@ -36,19 +35,21 @@ export async function assignNewCardProcessor(
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is missing your full name.' );
 		}
-		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
+		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! cardElement ) {
 			throw new Error( 'Cannot assign payment method if there is no card element' );
 		}
 
+		const stripeSetupIntentId = await createStripeSetupIntentForJetpackManage();
+
 		const { name } = submitData;
 
 		const formFieldValues = {
 			name,
 		};
-		const tokenResponse = await createStripeSetupIntentAsync(
+		const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 			formFieldValues,
 			stripe,
 			cardElement,
@@ -72,7 +73,7 @@ export async function assignNewCardProcessor(
 	}
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 	}: {
@@ -85,7 +86,7 @@ async function createStripeSetupIntentAsync(
 	const paymentDetailsForStripe = {
 		name,
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardElement,
 		stripeSetupIntentId,

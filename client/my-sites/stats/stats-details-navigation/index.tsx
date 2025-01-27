@@ -33,14 +33,17 @@ function StatsDetailsNavigation( { postId, period, statType, givenSiteId }: prop
 					? `email/${ item }/${ period }`
 					: `post`;
 				const attr = {
-					key: item,
 					path: `/stats/${ pathParam }/${ postId }/${ givenSiteId }`,
 					selected,
 				};
 				const label = tabs[ item as keyof typeof tabs ];
 
 				// uppercase first character of item
-				return <NavItem { ...attr }>{ label }</NavItem>;
+				return (
+					<NavItem key={ item } { ...attr }>
+						{ label }
+					</NavItem>
+				);
 			} );
 		},
 		[ tabs, selectedTab ]

@@ -21,7 +21,7 @@ export type PlanNoticeProps = {
 	showLegacyStorageFeature?: boolean;
 	mediaStorage?: SiteMediaStorage;
 	discountInformation?: {
-		withDiscount: string;
+		coupon: string;
 		discountEndDate: Date;
 	};
 };
@@ -60,7 +60,7 @@ function useResolveNoticeType(
 	);
 	const activeDiscount =
 		discountInformation &&
-		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
+		getDiscountByName( discountInformation.coupon, discountInformation.discountEndDate );
 	const planUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable( siteId, visiblePlans );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
@@ -98,7 +98,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
 	let activeDiscount =
 		discountInformation &&
-		getDiscountByName( discountInformation.withDiscount, discountInformation.discountEndDate );
+		getDiscountByName( discountInformation.coupon, discountInformation.discountEndDate );
 
 	switch ( noticeType ) {
 		case NO_NOTICE:

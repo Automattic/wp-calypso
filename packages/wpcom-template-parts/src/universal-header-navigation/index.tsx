@@ -20,7 +20,7 @@ const UniversalNavbarHeader = ( {
 }: HeaderProps ) => {
 	const locale = useLocale();
 	const localizeUrl = useLocalizeUrl();
-	const { __, hasTranslation } = useI18n();
+	const { __ } = useI18n();
 	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 	const isEnglishLocale = useIsEnglishLocale();
 
@@ -143,17 +143,6 @@ const UniversalNavbarHeader = ( {
 															titleValue=""
 															content={ __( 'Commerce', __i18n_text_domain__ ) }
 															urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
-															type="dropdown"
-															target="_self"
-														/>
-														<ClickableItem
-															titleValue=""
-															content={
-																locale === 'en' || hasTranslation?.( 'Course Maker' )
-																	? __( 'Course Maker', __i18n_text_domain__ )
-																	: __( 'Course', __i18n_text_domain__ )
-															}
-															urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -508,16 +497,6 @@ const UniversalNavbarHeader = ( {
 												titleValue=""
 												content={ __( 'Commerce', __i18n_text_domain__ ) }
 												urlValue={ localizeUrl( '//wordpress.com/ecommerce/' ) }
-												type="menu"
-											/>
-											<ClickableItem
-												titleValue=""
-												content={
-													locale === 'en' || hasTranslation?.( 'Course Maker' )
-														? __( 'Course Maker', __i18n_text_domain__ )
-														: __( 'Course', __i18n_text_domain__ )
-												}
-												urlValue={ localizeUrl( '//wordpress.com/create-a-course/' ) }
 												type="menu"
 											/>
 											<ClickableItem

@@ -23,7 +23,7 @@ const ReadymadeTemplatePreview: React.FC< RTPreviewProps > = ( {
 		);
 	}
 
-	return siteSlug ? <SitePreview siteSlug={ siteSlug } enableInteractions={ false } /> : null;
+	return siteSlug ? <SitePreview siteSlug={ siteSlug } /> : null;
 };
 
 export default ReadymadeTemplatePreview;

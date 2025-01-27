@@ -13,6 +13,7 @@ import {
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
+import getIntroOfferEligibility from 'calypso/state/selectors/get-intro-offer-eligibility';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import isRequestingIntroOffers from 'calypso/state/selectors/get-is-requesting-into-offers';
 import {
@@ -30,6 +31,7 @@ interface ItemPrices {
 	discountedPriceTotal?: number | null;
 	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
+	saleCouponDiscount?: number | null;
 }
 
 interface ItemRawPrices {
@@ -113,7 +115,12 @@ const useIntroductoryOfferPrices = (
 		}
 
 		const introOfferPrice = getIntroOfferPrice( state, product.product_id, siteId ?? 'none' );
-		return isNumber( introOfferPrice ) ? introOfferPrice : null;
+		const isEligibleForIntroPrice = getIntroOfferEligibility(
+			state,
+			product.product_id,
+			siteId ?? 'none'
+		);
+		return isNumber( introOfferPrice ) && isEligibleForIntroPrice ? introOfferPrice : null;
 	} );
 
 	return {
@@ -214,6 +221,7 @@ const useItemPrice = (
 		discountedPriceDuration,
 		discountedPriceTotal,
 		priceTierList,
+		saleCouponDiscount,
 	};
 };
 

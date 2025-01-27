@@ -7,6 +7,7 @@ import SocialLogo from 'calypso/components/social-logo';
 import './style.scss';
 
 const services = ( translate = ( string ) => string ) => ( {
+	bluesky: { icon: 'bluesky', label: translate( 'Bluesky' ) },
 	facebook: { icon: 'facebook', label: translate( 'Facebook' ) },
 	'instagram-business': { icon: 'instagram', label: translate( 'Instagram' ) },
 	google: { icon: 'google', label: translate( 'Google search' ) },

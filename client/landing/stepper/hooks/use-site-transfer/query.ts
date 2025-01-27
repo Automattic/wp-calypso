@@ -41,19 +41,31 @@ const isTransferring = ( status: TransferState ) => {
 	return ! endStates.includes( status );
 };
 
+const readyToTransferStates: TransferState[] = [ transferStates.NONE, transferStates.REVERTED ];
+
+const isReadyToTransfer = ( status: TransferState ) => {
+	return readyToTransferStates.includes( status );
+};
+
 export function getSiteTransferStatusQueryKey( siteId: number ) {
 	return [ 'sites', siteId, 'atomic', 'transfers', 'latest' ];
 }
 
 const shouldRefetch = ( status: TransferStates | undefined ) => {
-	if ( ! status || status === transferStates.NONE ) {
+	if ( ! status ) {
 		return false;
+	}
+
+	// This condition ensures that when the status is NONE,
+	// we expect it might change in another tab. This allows the UI to reflect any updates dynamically.
+	if ( transferStates.NONE === status ) {
+		return true;
 	}
 
 	return isTransferring( status );
 };
 
-type Options = Pick< UseQueryOptions, 'retry' >;
+type Options = Pick< UseQueryOptions, 'retry' | 'refetchIntervalInBackground' >;
 
 /**
  * Query hook to get the site transfer status, pooling the endpoint.
@@ -68,13 +80,16 @@ export const useSiteTransferStatusQuery = ( siteId: number | undefined, options?
 		select: ( data ) => {
 			return {
 				isTransferring: data?.status ? isTransferring( data.status as TransferStates ) : false,
-				isReadyToTransfer: data?.status === transferStates.NONE,
+				isReadyToTransfer: data?.status
+					? isReadyToTransfer( data.status as TransferStates )
+					: false,
 				completed: data?.status === transferStates.COMPLETED,
 				status: data.status,
 				error: null,
 			};
 		},
 		refetchOnWindowFocus: false,
+		refetchIntervalInBackground: !! options?.refetchIntervalInBackground,
 		refetchInterval: ( { state } ) =>
 			shouldRefetch( state.data?.status ) ? REFETCH_TIME : false,
 		enabled: !! siteId,

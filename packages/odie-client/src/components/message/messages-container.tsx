@@ -1,48 +1,155 @@
-import { forwardRef } from 'react';
+import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { getShortDateString } from '@automattic/i18n-utils';
+import { Spinner } from '@wordpress/components';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
+import {
+	useAutoScroll,
+	useCreateZendeskConversation,
+	useZendeskMessageListener,
+} from '../../hooks';
+import { getOdieInitialMessage } from '../../utils';
+import { DislikeFeedbackMessage } from './dislike-feedback-message';
+import { JumpToRecent } from './jump-to-recent';
+import { ThinkingPlaceholder } from './thinking-placeholder';
 import ChatMessage from '.';
-import type { CurrentUser } from '../../types/';
+import type { Chat, CurrentUser } from '../../types';
 
+const DislikeThumb = () => {
+	return (
+		<div className="chatbox-message__dislike-thumb">
+			<ThumbsDown />
+		</div>
+	);
+};
+
+const LoadingChatSpinner = () => {
+	return (
+		<div className="chatbox-loading-chat__spinner">
+			<Spinner />
+		</div>
+	);
+};
+
+const ChatDate = ( { chat }: { chat: Chat } ) => {
+	// chat.messages[ 1 ] contains the first user interaction, therefore the date, otherwise the current date.
+	const chatDate =
+		chat.messages.length > 1 ? chat.messages[ 1 ]?.created_at || Date.now() : Date.now();
+	const currentDate = getShortDateString( chatDate as number );
+	return <div className="odie-chat__date">{ currentDate }</div>;
+};
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
 
-export const MessagesContainer = forwardRef< HTMLDivElement, ChatMessagesProps >(
-	( { currentUser }, ref ) => {
-		const { chat } = useOdieAssistantContext();
+export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded } = useOdieAssistantContext();
+	const createZendeskConversation = useCreateZendeskConversation();
+	const resetSupportInteraction = useResetSupportInteraction();
+	const [ searchParams, setSearchParams ] = useSearchParams();
+	const isForwardingToZendesk =
+		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
+	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
+	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
+	const messagesContainerRef = useRef< HTMLDivElement >( null );
+	useZendeskMessageListener();
+	useAutoScroll( messagesContainerRef );
 
-		let lastUserMessageIndex = -1;
-		let lastFeedbackMessageIndex = -1;
-		let lastErrorMessageIndex = -1;
+	useEffect( () => {
+		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
+			return;
+		}
 
-		chat.messages.forEach( ( message, index ) => {
-			if ( message.role === 'user' ) {
-				lastUserMessageIndex = index;
-			}
-			if ( message.type === 'dislike-feedback' ) {
-				lastFeedbackMessageIndex = index;
-			}
-			if ( message.type === 'error' ) {
-				lastErrorMessageIndex = index;
-			}
-		} );
+		( chat?.status === 'loaded' || chat?.status === 'closed' ) && setChatMessagesLoaded( true );
+	}, [ chat, isForwardingToZendesk, hasForwardedToZendesk ] );
 
-		const lastMessageIndex = chat.messages.length - 1;
+	/**
+	 * Handle the case where we are forwarding to Zendesk.
+	 */
+	useEffect( () => {
+		if (
+			isForwardingToZendesk &&
+			! hasForwardedToZendesk &&
+			! chat.conversationId &&
+			createZendeskConversation &&
+			resetSupportInteraction &&
+			isChatLoaded
+		) {
+			searchParams.delete( 'provider' );
+			searchParams.set( 'direct-zd-chat', '1' );
+			setSearchParams( searchParams );
+			setHasForwardedToZendesk( true );
 
-		return (
-			<div className="chatbox-messages" ref={ ref }>
-				{ chat.messages.map( ( message, index ) => (
-					<ChatMessage
-						message={ message }
-						key={ index }
-						currentUser={ currentUser }
-						isLastUserMessage={ lastUserMessageIndex === index }
-						isLastFeedbackMessage={ lastFeedbackMessageIndex === index }
-						isLastErrorMessage={ lastErrorMessageIndex === index }
-						isLastMessage={ lastMessageIndex === index }
-					/>
-				) ) }
+			resetSupportInteraction().then( ( interaction ) => {
+				if ( isChatLoaded ) {
+					createZendeskConversation( true, interaction?.uuid ).then( () => {
+						setChatMessagesLoaded( true );
+					} );
+				}
+			} );
+		}
+	}, [
+		isForwardingToZendesk,
+		hasForwardedToZendesk,
+		isChatLoaded,
+		chat?.conversationId,
+		resetSupportInteraction,
+		createZendeskConversation,
+	] );
+
+	// Used to apply the correct styling on messages
+	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
+		return currentMessage === nextMessage;
+	};
+
+	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
+
+	const availableStatusWithFeedback = removeDislikeStatus
+		? [ 'sending', 'transfer' ]
+		: [ 'sending', 'dislike', 'transfer' ];
+
+	return (
+		<>
+			<div className="chatbox-messages" ref={ messagesContainerRef }>
+				<ChatDate chat={ chat } />
+				{ ! chatMessagesLoaded ? (
+					<LoadingChatSpinner />
+				) : (
+					<>
+						{ ( chat.odieId || chat.provider === 'odie' ) && (
+							<ChatMessage
+								message={ getOdieInitialMessage( botNameSlug ) }
+								key={ 0 }
+								currentUser={ currentUser }
+								isNextMessageFromSameSender={ false }
+								displayChatWithSupportLabel={ false }
+							/>
+						) }
+						{ chat.messages.map( ( message, index ) => (
+							<ChatMessage
+								message={ message }
+								key={ index }
+								currentUser={ currentUser }
+								isNextMessageFromSameSender={ isNextMessageFromSameSender(
+									message.role,
+									chat.messages[ index + 1 ]?.role
+								) }
+								displayChatWithSupportLabel={ message.context?.flags?.show_contact_support_msg }
+							/>
+						) ) }
+						<JumpToRecent containerReference={ messagesContainerRef } />
+						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
+						{ availableStatusWithFeedback.includes( chat.status ) && (
+							<div className="odie-chatbox__action-message">
+								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
+								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }
+							</div>
+						) }
+					</>
+				) }
 			</div>
-		);
-	}
-);
+		</>
+	);
+};

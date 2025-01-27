@@ -303,8 +303,8 @@ fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String
 			defaultE2eFailureConditions()
 			// These are long-running tests, and we have to scale back the parallelization too.
 			// Let's give them some more breathing room.
-			// This number is arbitrary, but tests in mid-2024 tend to run longer than 25 minutes.
-			executionTimeoutMin = 31
+			// This number is arbitrary, but tests in mid-2024 tend to run longer than 30 minutes.
+			executionTimeoutMin = 51
 		}
 	});
 }

@@ -15,7 +15,7 @@ import {
 import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
-	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
+	recordTracksEvent( 'calypso_jetpack_scan_unignorethreat_dialogopen', {
 		site_id: siteId,
 		threat_signature: threatSignature,
 	} );
@@ -40,12 +40,14 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 		},
 		[ dispatch, setSelectedThreat, siteId ]
 	);
+
 	const closeDialog = useCallback( () => {
 		setShowThreatDialog( false );
 	}, [ setShowThreatDialog ] );
-	const fixThreat = useCallback( () => {
+
+	const unignoreThreat = useCallback( () => {
 		closeDialog();
-		updateThreat( 'fix' );
+		updateThreat( 'unignore' );
 	}, [ closeDialog, updateThreat ] );
 
 	return (
@@ -55,7 +57,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					key={ threat.id }
 					isPlaceholder={ false }
 					threat={ threat }
-					onFixThreat={ openDialog }
+					onUnignoreThreat={ () => openDialog( threat ) }
 					isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 					contactSupportUrl={ contactSupportUrl( siteSlug ) }
 				/>
@@ -64,10 +66,10 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 				<ThreatDialog
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
-					onConfirmation={ fixThreat }
+					onConfirmation={ unignoreThreat }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action="fix"
+					action="unignore"
 				/>
 			) }
 		</>

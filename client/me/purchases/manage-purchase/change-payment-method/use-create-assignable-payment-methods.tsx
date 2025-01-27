@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import {
 	useCreateCreditCard,
 	useCreateExistingCards,
-	useCreatePayPal,
+	useCreatePayPalExpress,
 } from 'calypso/my-sites/checkout/src/hooks/use-create-payment-methods';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/src/lib/translate-payment-method-names';
@@ -62,7 +62,7 @@ export default function useCreateAssignablePaymentMethods(
 		hasExistingCardMethods,
 	} );
 
-	const payPalMethod = useCreatePayPal( {
+	const payPalExpressMethod = useCreatePayPalExpress( {
 		shouldShowTaxFields: true,
 		labelText:
 			currentPaymentMethodId === 'paypal-existing'
@@ -72,7 +72,7 @@ export default function useCreateAssignablePaymentMethods(
 
 	const paymentMethods = useMemo(
 		() =>
-			[ ...existingCardMethods, stripeMethod, payPalMethod ]
+			[ ...existingCardMethods, stripeMethod, payPalExpressMethod ]
 				.filter( isValueTruthy )
 				.filter( ( method ) => {
 					// If there's an error fetching allowed payment methods, just allow all of them.
@@ -85,7 +85,7 @@ export default function useCreateAssignablePaymentMethods(
 		[
 			stripeMethod,
 			existingCardMethods,
-			payPalMethod,
+			payPalExpressMethod,
 			allowedPaymentMethods,
 			allowedPaymentMethodsError,
 		]

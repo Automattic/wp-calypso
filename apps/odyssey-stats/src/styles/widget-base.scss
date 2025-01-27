@@ -1,12 +1,12 @@
 // Apply partial dependencies styles from Calypso (calypso/assets/stylesheets/style.scss) to Odyssey Stats Widgets.
 
 // External Dependencies
-@import "calypso/assets/stylesheets/vendor.scss";
+@import "calypso/assets/stylesheets/vendor";
 
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes-root";
 
-@import "./variables.scss";
+@import "./variables";
 
 @mixin stats-widget-single-column-view {
 

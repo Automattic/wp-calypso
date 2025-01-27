@@ -31,7 +31,7 @@ export default {
 						properties: {
 							site_ID: { type: 'string' },
 							site_URL: { type: 'string' },
-							site_name: { type: 'string' },
+							site_name: { type: [ 'string', 'boolean' ] },
 						},
 						required: [ 'site_ID', 'site_URL', 'site_name' ],
 						additionalProperties: false,

@@ -190,5 +190,5 @@ function ReaderListEdit( props ) {
 }
 
 export default function ReaderListManage( props ) {
-	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
+	return props.isCreateForm ? <ReaderListCreate /> : <ReaderListEdit { ...props } />;
 }

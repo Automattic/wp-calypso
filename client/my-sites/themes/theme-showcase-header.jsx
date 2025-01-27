@@ -7,7 +7,6 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import InstallThemeButton from './install-theme-button';
-import PatternAssemblerButton from './pattern-assembler-button';
 import useThemeShowcaseDescription from './use-theme-showcase-description';
 import useThemeShowcaseLoggedOutSeoContent from './use-theme-showcase-logged-out-seo-content';
 import useThemeShowcaseTitle from './use-theme-showcase-title';
@@ -19,8 +18,6 @@ export default function ThemeShowcaseHeader( {
 	vertical,
 	isCollectionView = false,
 	noIndex = false,
-	onPatternAssemblerButtonClick,
-	isSiteWooExpressOrEcomFreeTrial = false,
 	isSiteECommerceFreeTrial = false,
 } ) {
 	// eslint-disable-next-line no-shadow
@@ -82,25 +79,24 @@ export default function ThemeShowcaseHeader( {
 		<>
 			<DocumentHead title={ documentHeadTitle } meta={ metas } />
 			{ isLoggedIn ? (
-				<NavigationHeader
-					compactBreadcrumb={ false }
-					navigationItems={ [] }
-					mobileItem={ null }
-					title={ translate( 'Themes' ) }
-					subtitle={ translate(
-						'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-							},
-						}
-					) }
-				>
-					{ showInstallThemeButton && <InstallThemeButton /> }
-					{ isLoggedIn && ! isSiteWooExpressOrEcomFreeTrial && (
-						<PatternAssemblerButton isPrimary onClick={ onPatternAssemblerButtonClick } />
-					) }
-				</NavigationHeader>
+				<div className="themes__header-navigation-container">
+					<NavigationHeader
+						compactBreadcrumb={ false }
+						navigationItems={ [] }
+						mobileItem={ null }
+						title={ translate( 'Themes' ) }
+						subtitle={ translate(
+							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
+								},
+							}
+						) }
+					>
+						{ showInstallThemeButton && <InstallThemeButton /> }
+					</NavigationHeader>
+				</div>
 			) : (
 				<div className="themes__header-logged-out">
 					<div className="themes__page-heading">

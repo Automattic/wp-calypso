@@ -122,6 +122,11 @@ function Chart( {
 		}
 	}, [ maxBars, onChangeMaxBars ] );
 
+	useEffect( () => {
+		// Invalidate (hide) the tooltip if the underlying data changes.
+		setTooltip( { isTooltipVisible: false } );
+	}, [ data ] );
+
 	// Memoize data calculations to avoid performing them too often.
 	const { chartData, isEmptyChart, yMax } = useMemo( () => {
 		const nextData = ( () => {
@@ -149,10 +154,10 @@ function Chart( {
 		<div ref={ yAxisRef } className="chart__y-axis">
 			<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
 			<div className="chart__y-axis-label is-hundred">
-				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, { decimals: 2 } ) }
 			</div>
 			<div className="chart__y-axis-label is-fifty">
-				{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+				{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, { decimals: 2 } ) }
 			</div>
 			<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
 		</div>

@@ -2,15 +2,17 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, ReactNode, useEffect } from 'react';
+import { useMemo, useCallback, ReactNode, useEffect, useState } from 'react';
+import { A4AConfirmationDialog } from 'calypso/a8c-for-agencies/components/a4a-confirmation-dialog';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { Referral, ReferralInvoice } from '../types';
+import useHandleReferralArchive from '../hooks/use-handle-referral-archive';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
+import type { Referral } from '../types';
 import type { Field, Action } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -19,14 +21,16 @@ interface Props {
 	referrals: Referral[];
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
-	referralInvoices: ReferralInvoice[];
+	isArchiveView?: boolean;
+	onArchiveReferral?: ( referral: Referral ) => void;
 }
 
 export default function ReferralList( {
 	referrals,
 	dataViewsState,
 	setDataViewsState,
-	referralInvoices,
+	isArchiveView,
+	onArchiveReferral,
 }: Props ) {
 	const isDesktop = useDesktopBreakpoint();
 	const translate = useTranslate();
@@ -43,6 +47,10 @@ export default function ReferralList( {
 		},
 		[ dispatch, setDataViewsState ]
 	);
+
+	const [ referralForArchive, setReferralForArchive ] = useState< Referral | null >( null );
+
+	const handleArchiveReferral = useHandleReferralArchive();
 
 	const fields: Field< any >[] = useMemo(
 		() =>
@@ -71,6 +79,15 @@ export default function ReferralList( {
 							enableSorting: false,
 						},
 						{
+							id: 'completed-orders',
+							label: translate( 'Purchases' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
 							id: 'pending-orders',
 							label: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
@@ -79,45 +96,32 @@ export default function ReferralList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-						{
-							id: 'completed-orders',
-							label: translate( 'Completed Orders' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode =>
-								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
-							id: 'commissions',
-							label: translate( 'Commissions' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => {
-								const clientReferralInvoices = referralInvoices.filter(
-									( invoice ) => invoice.clientId === item.client.id
-								);
-								return (
-									<CommissionsColumn
-										referral={ item }
-										referralInvoices={ clientReferralInvoices }
-									/>
-								);
-							},
-							enableHiding: false,
-							enableSorting: false,
-						},
-						{
-							id: 'subscription-status',
-							label: translate( 'Subscription Status' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode => (
-								<SubscriptionStatus item={ item } />
-							),
-							enableHiding: false,
-							enableSorting: false,
-						},
+						...( ! isArchiveView
+							? [
+									{
+										id: 'estimated-commissions',
+										label: translate( 'Estimated Commissions' ).toUpperCase(),
+										getValue: () => '-',
+										render: ( { item }: { item: Referral } ): ReactNode => (
+											<CommissionsColumn referral={ item } />
+										),
+										enableHiding: false,
+										enableSorting: false,
+									},
+									{
+										id: 'subscription-status',
+										label: translate( 'Subscription Status' ).toUpperCase(),
+										getValue: () => '-',
+										render: ( { item }: { item: Referral } ): ReactNode => (
+											<SubscriptionStatus item={ item } />
+										),
+										enableHiding: false,
+										enableSorting: false,
+									},
+							  ]
+							: [] ),
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, referralInvoices, translate ]
+		[ dataViewsState.selectedItem, isDesktop, translate, isArchiveView ]
 	);
 
 	useEffect( () => {
@@ -177,15 +181,32 @@ export default function ReferralList( {
 						openSitePreviewPane( items[ 0 ] );
 					},
 				},
+				{
+					id: 'archive-referral',
+					label: translate( 'Archive' ),
+					isPrimary: false,
+					callback( items ) {
+						setReferralForArchive( items[ 0 ] );
+					},
+					isEligible( referral: Referral ) {
+						return ! isArchiveView && ! referral.referralStatuses.includes( 'active' );
+					},
+				},
 			];
 		}
 
 		return [];
-	}, [ openSitePreviewPane, translate, dataViewsState.type ] );
+	}, [ openSitePreviewPane, translate, dataViewsState.type, isArchiveView ] );
 
 	const { data: items, paginationInfo: pagination } = useMemo( () => {
-		return filterSortAndPaginate( referrals, dataViewsState, fields );
-	}, [ referrals, dataViewsState, fields ] );
+		const filteredReferrals = referrals.filter( ( referral ) => {
+			return isArchiveView
+				? referral.referralStatuses.includes( 'archived' )
+				: ! referral.referralStatuses.includes( 'archived' );
+		} );
+
+		return filterSortAndPaginate( filteredReferrals, dataViewsState, fields );
+	}, [ referrals, dataViewsState, fields, isArchiveView ] );
 
 	return (
 		<div className="redesigned-a8c-table full-width">
@@ -208,6 +229,28 @@ export default function ReferralList( {
 					defaultLayouts: { table: {} },
 				} }
 			/>
+
+			{ referralForArchive && (
+				<A4AConfirmationDialog
+					title={ translate( 'Are you sure you want to archive this referral?' ) }
+					onClose={ () => setReferralForArchive( null ) }
+					onConfirm={ () => {
+						handleArchiveReferral( referralForArchive, ( isSuccess ) => {
+							if ( isSuccess ) {
+								onArchiveReferral?.( referralForArchive );
+							}
+							setReferralForArchive( null );
+						} );
+					} }
+					closeLabel={ translate( 'Keep referral' ) }
+					ctaLabel={ translate( 'Archive' ) }
+					isDestructive
+				>
+					{ translate(
+						"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+					) }
+				</A4AConfirmationDialog>
+			) }
 		</div>
 	);
 }

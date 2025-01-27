@@ -2,26 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 
 
-.main.a4a-layout.sites-dashboard {
-	padding-block-start: 0;
-
-	.a4a-layout__header-actions {
-		white-space: nowrap;
-	}
-
-	.site-preview-pane .a4a-layout-column__container {
-		display: flex;
-	}
-
-	.a4a-layout-column {
-		.a4a-layout-column__container {
+.main.hosting-dashboard-layout.sites-dashboard {
+	.hosting-dashboard-layout-column {
+		.hosting-dashboard-layout-column__container {
 			display: flex;
 			flex-direction: column;
 			height: 100%;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			border-radius: 0;
 		}
 	}
 
@@ -37,13 +23,6 @@
 		/** Increase the click area */
 		padding: 10px;
 		margin: -10px 0;
-	}
-
-	.a4a-layout__top-wrapper:not(.preview-hidden) {
-		padding-block-start: 24px;
-		@include breakpoint-deprecated( "<660px" ) {
-			padding-block-start: 0;
-		}
 	}
 
 	.components-input-base {
@@ -96,12 +75,6 @@
 		}
 	}
 
-	@media (max-width: 660px) {
-		.a4a-layout__header-main {
-			display: none;
-		}
-	}
-
 	@media (max-width: $break-large) {
 		.section-nav__mobile-header {
 			padding: 13px;
@@ -138,15 +111,13 @@
 					flex-grow: 0;
 				}
 
-				.sites-overview__tabs,
-				.dataviews-filters__view-actions {
+				.sites-overview__tabs {
 					border-bottom: 1px solid var(--color-accent-5);
 				}
 
 				.sites-overview__content {
 					padding: 0;
 					margin: 0;
-					margin-top: 16px;
 				}
 			}
 		}
@@ -156,37 +127,12 @@
 			width: 80%;
 		}
 
-		.dataviews-view-table tr td:first-child:has(.sites-dataview__site-error) {
-			padding: 8px 0 8px 8px;
-		}
-
 		.components-button.is-compact.has-icon:not(.has-text).dataviews-filters-button {
 			min-width: 40px;
 		}
 
 		.components-button.is-compact.is-tertiary {
 			margin-right: 8px;
-		}
-
-		.dataviews-filters__view-actions {
-			padding-bottom: 8px;
-
-			& > :first-child {
-				margin-inline-start: 8px;
-			}
-
-			.components-input-control {
-				flex-grow: 1;
-			}
-
-			.components-flex.components-h-stack {
-				flex: 6;
-			}
-
-			.components-button.is-compact.has-icon {
-				flex: 1;
-				margin-left: -12px;
-			}
 		}
 
 		.sites-overview__stats-trend,
@@ -198,7 +144,7 @@
 			display: none;
 		}
 
-		.item-preview__content {
+		.hosting-dashboard-item-view__content {
 			padding: 10px 10px 88px; /* 88px matches the padding from PR #39201. */
 
 			.backup__page .main {
@@ -235,11 +181,12 @@
 			.sites-overview {
 				padding: 0;
 
-				.a4a-layout__viewport {
+				.hosting-dashboard-layout__viewport {
 					padding-inline: 16px;
 				}
 
-				.a4a-layout__header-title {
+				// FIXME: Remove this style, as the list view will likely be removed in the future.
+				.hosting-dashboard-layout__header-title {
 					font-size: rem(20px);
 					font-weight: 500;
 				}
@@ -261,28 +208,8 @@
 				display: none;
 			}
 
-			.sites-overview__tabs,
-			.dataviews-filters__view-actions {
-				border-bottom: 1px solid var(--color-accent-5);
-			}
-
-			.dataviews-filters__view-actions {
-				padding: 16px 0;
-				margin: 0;
-				display: flex;
-
-				.components-h-stack {
-					width: unset;
-				}
-
-				.components-h-stack,
-				.components-button {
-					flex-grow: 1;
-				}
-
-			}
-
 			.sites-overview__tabs {
+				border-bottom: 1px solid var(--color-accent-5);
 				padding: 0 24px;
 			}
 
@@ -307,16 +234,6 @@
 
 				li {
 					border-bottom: 1px solid var(--color-accent-5);
-				}
-
-				li:has(.sites-dataview__site-error-span) {
-					border-bottom: 0;
-				}
-
-				li:has(.sites-dataview__site-error) {
-					.dataviews-view-list__item {
-						padding: 0 24px;
-					}
 				}
 
 				.dataviews-view-list__fields {
@@ -345,12 +262,6 @@
 						.sites-dataviews__site {
 							width: 100%;
 							justify-content: flex-start;
-						}
-
-						.sites-dataview__site-error {
-							font-size: rem(13px);
-							border-radius: 4px;
-							padding: 4px 8px;
 						}
 					}
 				}
@@ -400,84 +311,14 @@
 		}
 	}
 
-	tr:has(.sites-dataview__site-error):hover {
-		background: unset;
-		background-color: unset;
-	}
-
-	td:has(.sites-dataview__site-error-span) {
-		border-bottom: 0;
-	}
-
-	td:has(.sites-dataview__site-error) {
-		padding: 0 0 16px 0;
-		height: 40px;
-	}
-
-	td:first-child:has(.sites-dataview__site-error) {
-		padding: 0 0 0 64px;
-
-		.sites-dataview__site-error {
-			padding: 5px 10px;
-			border-radius: 4px;
-		}
-	}
-
-	td:last-child:has(.sites-dataview__site-error) {
-		padding: 0 64px 16px 0;
-
-		.sites-dataview__site-error {
-			border-radius: 4px;
-		}
-	}
-
-	.dataviews-view-table__cell-content-wrapper:has(.sites-dataview__site-error) {
-		height: 100%;
-	}
-
-	.sites-dataview__site-error {
-		color: #691c1c;
-		background-color: #facfd2;
-		height: 100%;
-		display: flex;
-		align-items: center;
-		gap: 6px;
-	}
-
-	.sites-overview__content-wrapper {
-		max-width: none;
-	}
-
 	&.sites-dashboard__layout:not(.preview-hidden) {
-
-
-		.a4a-layout__top-wrapper {
+		.hosting-dashboard-layout__top-wrapper {
 			padding-block-start: 16px;
-
-			.a4a-layout__header {
-				padding: 0;
-			}
-		}
-
-		.dataviews-filters__view-actions {
-			.components-h-stack {
-				flex-grow: 0;
-				width: 80%;
-				gap: 6px;
-			}
-
-			.components-button {
-				flex-grow: 0;
-			}
 		}
 
 		.site-preview__open {
 			display: none;
 		}
-	}
-
-	&.sites-dashboard__layout:not(.preview-hidden) .a4a-layout__navigation-wrapper {
-		display: none;
 	}
 
 	&.sites-dashboard__layout {
@@ -527,16 +368,13 @@
 				align-items: stretch;
 				overflow: hidden;
 			}
-
-			.components-button:focus:not(:disabled) {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-			}
 		}
 
-		.a4a-layout__top-wrapper,
-		.a4a-layout__body {
+		.hosting-dashboard-layout__top-wrapper {
 			> * {
 				@include breakpoint-deprecated(">660px") {
+					// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
+					// Consider removing this max-width as the default across all layouts.
 					max-width: none;
 				}
 			}
@@ -544,10 +382,11 @@
 
 		.sites-overview {
 			height: 100%;
+
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			width: 400px;
 			flex: unset;
 			transition: all 0.2s;
-			background: var(--color-light-backdrop);
 
 			.sites-overview__content {
 				display: flex;
@@ -572,7 +411,7 @@
 			font-size: rem(24px);
 		}
 
-		.item-preview__pane {
+		.hosting-dashboard-item-view {
 			flex-grow: 1;
 			width: auto;
 			transition: flex-grow 0.2s;
@@ -587,12 +426,13 @@
 
 
 		&.preview-hidden {
+			// FIXME: This styles can be removed once the flyout panel is removed.
 			.sites-overview {
 				flex-grow: 1;
 				transition: flex-grow 0.2s;
 			}
 
-			.item-preview__pane {
+			.hosting-dashboard-item-view {
 				max-width: 0;
 				padding: 0;
 			}
@@ -600,20 +440,6 @@
 			@media only screen and (min-width: $break-large) {
 				.sites-overview {
 					padding: 0;
-
-					.sites-overview__content {
-						margin-top: 24px;
-					}
-
-					.dataviews-filters__view-actions {
-						& > :first-child {
-							margin-inline-start: 64px;
-						}
-
-						& > :last-child {
-							margin-inline-end: 64px;
-						}
-					}
 				}
 			}
 		}

@@ -4,18 +4,18 @@ import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useContext, useEffect, useRef, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import PendingPaymentNotification from 'calypso/a8c-for-agencies/components/pending-payment-notification';
+import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_MARKETPLACE_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -219,15 +219,11 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 			title={ title }
 			wide
 			withBorder={ ! isClient }
-			compact
 			sidebarNavigation={ ! isClient && <MobileSidebarNavigation /> }
 		>
 			{ isClient ? null : (
 				<LayoutTop>
-					{
-						// Show the pending payment notification only when the user is trying to make a purchase
-						! isAutomatedReferrals && <PendingPaymentNotification />
-					}
+					<A4AAgencyApprovalNotice />
 					<LayoutHeader>
 						<Breadcrumb
 							items={ [
@@ -256,6 +252,7 @@ function Checkout( { isClient, referralBlogId }: Props ) {
 									<ProductInfo
 										key={ `product-info-${ items.product_id }-${ items.quantity }` }
 										product={ items }
+										isAutomatedReferrals={ isAutomatedReferrals }
 									/>
 								) )
 							) }

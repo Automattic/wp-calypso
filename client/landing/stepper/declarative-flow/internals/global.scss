@@ -69,10 +69,12 @@ button {
 /**
  * Site Setup
  */
-.ai-assembler,
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.onboarding.goals,
+.onboarding.design-setup,
+.onboarding.difm-starting-point,
 .site-migration,
 .migration,
 .migration-signup,
@@ -85,7 +87,6 @@ button {
 .domains,
 .patterns,
 .link-in-bio-post-setup,
-.link-in-bio,
 .anchor-fm,
 .subscribers,
 .ecommerce,
@@ -95,7 +96,6 @@ button {
 .free-setup,
 .free-post-setup,
 .free,
-.with-theme-assembler,
 .assembler-first,
 .setup-blog,
 .celebration-step,
@@ -104,6 +104,7 @@ button {
 .update-design,
 .update-options,
 .hundred-year-plan,
+.hundred-year-domain,
 .link-in-bio-tld,
 .entrepreneur,
 .generate-content {
@@ -113,14 +114,23 @@ button {
 		padding: 60px 0 0;
 
 		// Launchpad has its own header
-		&.launchpad {
+		&.launchpad,
+		&.hundred-year-plan {
 			margin-top: -60px;
 		}
 
 		@include break-small {
 			&.courses,
 			&.site-picker,
-			&.new-or-existing-site {
+			&.new-or-existing-site,
+			&.domains:not(.copy-site):not(.onboarding) {
+				margin-top: -60px;
+			}
+		}
+
+		@include break-xlarge {
+			&.goals,
+			&.domains {
 				margin-top: -60px;
 			}
 		}
@@ -191,8 +201,8 @@ button {
 		&:disabled,
 		&.disabled {
 			color: #fff;
-			background-color: var(--studio-blue-20);
-			border-color: var(--studio-blue-20);
+			background-color: var(--studio-wordpress-blue-20);
+			border-color: var(--studio-wordpress-blue-20);
 		}
 	}
 
@@ -207,11 +217,11 @@ button {
 
 	// WordPress.org components no longer use blue-50 as the primary color.
 	// This changes the primary color to blue-50 to conform to the WordPress.com colors.
-	--color-accent: var(--studio-blue-50);
-	--color-accent-60: var(--studio-blue-60);
-	--wp-components-color-accent-darker-10: var(--studio-blue-60);
-	--wp-components-color-accent-darker-20: var(--studio-blue-70);
-	--wp-components-color-accent: var(--studio-blue-50);
+	--color-accent: var(--studio-wordpress-blue-50);
+	--color-accent-60: var(--studio-wordpress-blue-60);
+	--wp-components-color-accent-darker-10: var(--studio-wordpress-blue-60);
+	--wp-components-color-accent-darker-20: var(--studio-wordpress-blue-70);
+	--wp-components-color-accent: var(--studio-wordpress-blue-50);
 
 }
 
@@ -238,7 +248,6 @@ button {
  * Tailored flow stylings
  */
 .newsletter:not(.domains),
-.link-in-bio:not(.domains),
 .link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
@@ -285,7 +294,6 @@ button {
 
 .store-profiler__form,
 .newsletter,
-.link-in-bio,
 .link-in-bio-tld,
 .setup-form__form {
 	button {
@@ -311,29 +319,29 @@ button {
 					outline: none;
 
 					svg {
-						fill: var(--studio-blue-50);
+						fill: var(--studio-wordpress-blue-50);
 					}
 
 					span {
 						font-size: $font-body-extra-small;
 
 						&.add {
-							color: var(--studio-blue-50);
+							color: var(--studio-wordpress-blue-50);
 						}
 
 						&.replace {
-							color: var(--studio-blue-50);
+							color: var(--studio-wordpress-blue-50);
 						}
 					}
 				}
 				&:focus {
-					background-color: var(--studio-blue-50);
+					background-color: var(--studio-wordpress-blue-50);
 					box-shadow: none;
 					svg {
 						fill: #fff;
 					}
 					span {
-						color: var(--studio-blue-50);
+						color: var(--studio-wordpress-blue-50);
 					}
 				}
 			}

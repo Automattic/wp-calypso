@@ -24,13 +24,13 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useStatsPurchases from '../../hooks/use-stats-purchases';
+import StatsLoader from '../../stats-page-loader/stats-loader';
 import PageViewTracker from '../../stats-page-view-tracker';
 import { StatsPurchaseNoticePage } from '../../stats-purchase/stats-purchase-notice';
 import {
 	StatsSingleItemPagePurchase,
 	StatsSingleItemPersonalPurchasePage,
 } from '../../stats-purchase/stats-purchase-single-item';
-import StatsLoader from '../../stats-redirect/stats-loader';
 import './style.scss';
 
 const StatsPurchasePage = ( {

@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 import clsx from 'clsx';
 import React, { ReactNode } from 'react';
 import Breadcrumb, { Item as TBreadcrumbItem } from 'calypso/components/breadcrumb';
+import FormattedHeader from 'calypso/components/formatted-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
-import FormattedHeader from '../formatted-header';
 
 import './style.scss';
 
@@ -28,9 +28,11 @@ interface Props {
 	compactBreadcrumb?: boolean;
 	title?: string | ReactNode;
 	subtitle?: string | ReactNode;
+	alwaysShowTitle?: boolean;
 	screenReader?: string | ReactNode;
 	screenOptionsTab?: string;
 	style?: object;
+	loggedIn?: boolean;
 }
 
 const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
@@ -44,9 +46,14 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 		compactBreadcrumb,
 		title,
 		subtitle,
+		alwaysShowTitle = false,
 		screenReader,
 		screenOptionsTab,
+		loggedIn = true,
 	} = props;
+
+	const showTitle = alwaysShowTitle || ( navigationItems.length < 2 && loggedIn );
+
 	return (
 		<header
 			id={ id }
@@ -67,7 +74,7 @@ const NavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) 
 						compact={ compactBreadcrumb }
 						hideWhenOnlyOneLevel
 					/>
-					{ navigationItems.length < 2 && (
+					{ showTitle && (
 						<FormattedHeader
 							align="left"
 							headerText={ title }

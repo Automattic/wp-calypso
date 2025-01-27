@@ -4,6 +4,7 @@ import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 import { AppState } from 'calypso/types';
 import {
+	isWpcomTheme,
 	isWporgTheme,
 	isThemeActive,
 	isFullSiteEditingTheme,
@@ -142,7 +143,7 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 		 * Disable Live Preview for wporg themes,
 		 * since Simple sites do NOT have wporg themes installed.
 		 */
-		if ( isWporgTheme( state, themeId ) ) {
+		if ( ! isWpcomTheme( state, themeId ) && isWporgTheme( state, themeId ) ) {
 			return false;
 		}
 

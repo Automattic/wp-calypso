@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useLayoutEffect, useState } from 'react';
-import SocialLogo from 'social-logos';
+import { SocialLogo } from 'social-logos';
 import { AutomatticBrand, getAutomatticBrandingNoun } from '../utils';
 import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
@@ -24,23 +24,23 @@ const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = (
 };
 
 const allLanguageOptions: LanguageOptions = {
-	ar: 'العربية',
-	de: 'Deutsch',
-	el: 'Ελληνικά',
 	en: 'English',
+	de: 'Deutsch',
 	es: 'Español',
 	fr: 'Français',
-	he: 'עִבְרִית',
 	id: 'Bahasa Indonesia',
 	it: 'Italiano',
-	ja: '日本語',
-	ko: '한국어',
 	nl: 'Nederlands',
 	'pt-br': 'Português do Brasil',
 	ro: 'Română',
-	ru: 'Русский',
 	sv: 'Svenska',
 	tr: 'Türkçe',
+	ru: 'Русский',
+	el: 'Ελληνικά',
+	ar: 'العربية',
+	he: 'עִבְרִית',
+	ja: '日本語',
+	ko: '한국어',
 	'zh-cn': '简体中文',
 	'zh-tw': '繁體中文',
 } as const;

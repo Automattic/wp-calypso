@@ -9,9 +9,9 @@ import {
 	useSetEdgeCacheMutation,
 	purgeEdgeCache,
 } from 'calypso/data/hosting/use-cache';
-import { useOpenPhpMyAdmin } from 'calypso/hosting/server-settings/components/phpmyadmin-card';
 import { navigate } from 'calypso/lib/navigate';
 import wpcom from 'calypso/lib/wp';
+import { useOpenPhpMyAdmin } from 'calypso/sites/tools/database/form';
 import { useDispatch } from 'calypso/state';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import { createNotice, removeNotice } from 'calypso/state/notices/actions';

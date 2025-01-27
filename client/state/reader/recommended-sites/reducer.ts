@@ -1,4 +1,5 @@
 import { uniqueBy } from '@automattic/js-utils';
+import { RecommendedSite } from 'calypso/state/data-layer/wpcom/read/recommendations/sites';
 import {
 	READER_RECOMMENDED_SITE_DISMISSED,
 	READER_RECOMMENDED_SITE_FOLLOWED,
@@ -10,7 +11,6 @@ import {
 	followedRecommendedSite,
 	receiveRecommendedSites,
 } from './actions';
-import { RecommendedSite } from './types';
 
 /**
  * Tracks mappings between randomization seeds and site recs.
@@ -47,7 +47,7 @@ export const pagingOffset = keyedReducer< number >( 'seed', ( state = 0, action 
 	switch ( action.type ) {
 		case READER_RECOMMENDED_SITES_RECEIVE:
 			return Math.max(
-				( action as ReturnType< typeof receiveRecommendedSites > ).payload.offset,
+				( action as ReturnType< typeof receiveRecommendedSites > ).payload.offset ?? 0,
 				state
 			);
 	}

@@ -8,7 +8,7 @@ import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose, Store, Middleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk as thunkMiddleware } from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import { WithAddReducer } from 'calypso/state/add-reducer';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';

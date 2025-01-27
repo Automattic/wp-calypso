@@ -37,9 +37,10 @@ export class MarketingPage {
 	 * Navigates directly to the Marketing page for the site.
 	 *
 	 * @param {string} siteSlug Site slug.
+	 * @param {string} tabSlug tab slug.
 	 */
-	async visit( siteSlug: string ) {
-		await this.page.goto( getCalypsoURL( `marketing/tools/${ siteSlug }` ) );
+	async visitTab( siteSlug: string, tabSlug: string ) {
+		await this.page.goto( getCalypsoURL( `sites/marketing/${ tabSlug }/${ siteSlug }` ) );
 	}
 
 	/**
@@ -66,7 +67,7 @@ export class MarketingPage {
 	 *
 	 */
 	async saveSettings() {
-		await this.page.getByRole( 'button', { name: 'Save settings' } ).first().click();
+		await this.page.getByRole( 'button', { name: 'Save' } ).first().click();
 
 		await this.page.waitForResponse( /settings/ );
 	}
@@ -167,9 +168,8 @@ export class MarketingPage {
 	 * @param {string} param1.password Tumblr password.
 	 */
 	async setupTumblr( popup: Page, { username, password }: { username: string; password: string } ) {
-		// Wait for the page load to complete. Otherwise, a `Cannot POST /login` error
-		// is shown.
-		await popup.waitForLoadState( 'networkidle' );
+		// This selector allows us to proceed without waiting for `networkidle`.
+		await popup.waitForSelector( '[data-tumblr-ready="true"]' );
 
 		// Fill in the email and password.
 		await popup.getByRole( 'textbox', { name: 'email' } ).fill( username );

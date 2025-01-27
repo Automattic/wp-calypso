@@ -1,0 +1,30 @@
+ul.migrations-faqs {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.migrations-faqs__section {
+	padding: 0;
+
+
+	.foldable-faq__answer {
+		border-bottom: 1px solid var(--color-primary-5);
+	}
+
+	.foldable-faq__question-text {
+		@include a4a-font-heading-lg;
+	}
+
+	.gridicon {
+		fill: var(--color-primary-50);
+	}
+
+	a,
+	a:hover,
+	a:active,
+	a:visited {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+}

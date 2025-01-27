@@ -1,23 +1,23 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FormInputValidation } from '@automattic/components';
-import { HelpCenterSite } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { useSetOdieStorage } from '@automattic/odie-client';
-import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
-import { useDispatch } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
+import { HelpCenterSelect, HelpCenterSite } from '@automattic/data-stores';
+import {
+	useCanConnectToZendeskMessaging,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import useChatStatus from '../hooks/use-chat-status';
 import { HELP_CENTER_STORE } from '../stores';
+import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
 import { generateContactOnClickEvent } from './utils';
 
 import './help-center-contact-support-option.scss';
 
 interface HelpCenterContactSupportOptionProps {
 	productId: number | undefined;
-	wapuuChatId: string | undefined;
 	sectionName: string;
 	site: HelpCenterSite;
 	triggerSource?: string;
@@ -27,7 +27,6 @@ interface HelpCenterContactSupportOptionProps {
 
 const HelpCenterContactSupportOption = ( {
 	productId,
-	wapuuChatId,
 	sectionName,
 	site,
 	triggerSource,
@@ -35,10 +34,18 @@ const HelpCenterContactSupportOption = ( {
 	trackEventName,
 }: HelpCenterContactSupportOptionProps ) => {
 	const { __ } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 	const { hasActiveChats, isEligibleForChat } = useChatStatus();
 	const { resetStore, setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const setWapuuChatId = useSetOdieStorage( 'chat_id' );
+	const currentSupportInteraction = useSelect(
+		( select ) =>
+			( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getCurrentSupportInteraction(),
+		[]
+	);
+	const odieId =
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+			?.event_external_id ?? null;
+
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
 
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		sectionName,
@@ -47,14 +54,6 @@ const HelpCenterContactSupportOption = ( {
 	);
 
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
-
-	const supportHeaderText = useMemo( () => {
-		if ( isEnglishLocale || ! hasTranslation( 'Contact WordPress.com Support (English)' ) ) {
-			return __( 'Contact WordPress.com Support', __i18n_text_domain__ );
-		}
-
-		return __( 'Contact WordPress.com Support (English)', __i18n_text_domain__ );
-	}, [ __, isEnglishLocale ] );
 
 	const handleOnClick = () => {
 		generateContactOnClickEvent( 'chat', trackEventName );
@@ -74,7 +73,7 @@ const HelpCenterContactSupportOption = ( {
 			section: sectionName,
 		} );
 
-		const escapedWapuuChatId = encodeURIComponent( wapuuChatId || '' );
+		const escapedWapuuChatId = encodeURIComponent( odieId || '' );
 
 		const zendeskWidgetProps = {
 			aiChatId: escapedWapuuChatId,
@@ -82,9 +81,6 @@ const HelpCenterContactSupportOption = ( {
 			siteId: site?.ID,
 			onError: () => setHasSubmittingError( true ),
 			onSuccess: () => {
-				// Reset Odie chat after passing to support
-				setWapuuChatId( null );
-
 				resetStore();
 				setShowHelpCenter( false );
 			},
@@ -104,25 +100,33 @@ const HelpCenterContactSupportOption = ( {
 	};
 
 	return (
-		<div className="help-center-contact-support">
-			<button disabled={ isOpeningZendeskWidget } onClick={ handleOnClick }>
-				<div className="help-center-contact-support__box support" role="button" tabIndex={ 0 }>
-					<div className="help-center-contact-support__box-icon">
-						<Icon icon={ comment } />
+		<>
+			{ ! canConnectToZendesk && <ThirdPartyCookiesNotice /> }
+
+			<div className="help-center-contact-support">
+				<button
+					disabled={ ! canConnectToZendesk || isOpeningZendeskWidget }
+					onClick={ handleOnClick }
+				>
+					<div className="help-center-contact-support__box support" role="button" tabIndex={ 0 }>
+						<div className="help-center-contact-support__box-icon">
+							<Icon icon={ comment } />
+						</div>
+						<div>
+							<h2>{ __( 'Contact WordPress.com Support', __i18n_text_domain__ ) }</h2>
+							<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
+						</div>
 					</div>
-					<div>
-						<h2>{ supportHeaderText }</h2>
-						<p>{ __( 'Our Happiness team will get back to you soon', __i18n_text_domain__ ) }</p>
-					</div>
-				</div>
-			</button>
-			{ hasSubmittingError && (
-				<FormInputValidation
-					isError
-					text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-				/>
-			) }
-		</div>
+				</button>
+
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
+			</div>
+		</>
 	);
 };
 

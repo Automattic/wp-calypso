@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
@@ -9,7 +10,7 @@ import { subscribeIsWithinBreakpoint, isWithinBreakpoint } from '@automattic/vie
 import { Icon, upload } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { capitalize, find, flow, isEmpty } from 'lodash';
+import { filter as capitalize, flow, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -34,6 +35,7 @@ import {
 	isRequestingForSites,
 	isRequestingForAllSites,
 	requestPluginsError,
+	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -68,6 +70,12 @@ export class PluginsMain extends Component {
 		};
 	}
 
+	componentWillMount() {
+		if ( ! this.props.newBulkPluginManagement ) {
+			import( './style-compatibilty.scss' );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		const {
 			currentPlugins,
@@ -81,7 +89,7 @@ export class PluginsMain extends Component {
 
 		currentPlugins.map( ( plugin ) => {
 			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			if ( ! pluginData ) {
+			if ( ! pluginData && ! this.props.newBulkPluginManagement ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
 		} );
@@ -141,7 +149,7 @@ export class PluginsMain extends Component {
 				href: `/plugins/${ selectedSiteSlug || '' }`,
 			},
 			{
-				label: this.props.translate( 'Installed Plugins' ),
+				label: this.props.translate( 'Manage Plugins' ),
 				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
 			},
 		] );
@@ -156,6 +164,10 @@ export class PluginsMain extends Component {
 	}
 
 	getCurrentPlugins() {
+		if ( this.props.newBulkPluginManagement ) {
+			return this.addWporgDataToPlugins( this.props.currentPlugins );
+		}
+
 		const { currentPlugins, currentPluginsOnVisibleSites, search, selectedSiteSlug } = this.props;
 		let plugins = selectedSiteSlug ? currentPlugins : currentPluginsOnVisibleSites;
 
@@ -168,22 +180,6 @@ export class PluginsMain extends Component {
 		}
 
 		return this.addWporgDataToPlugins( plugins );
-	}
-
-	// plugins for Jetpack sites require additional data from the wporg-data store
-	addWporgDataToPlugins( plugins ) {
-		return plugins.map( ( plugin ) => {
-			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
-			return Object.assign( {}, plugin, pluginData );
-		} );
-	}
-
-	matchSearchTerms( search, plugin ) {
-		search = search.toLowerCase();
-		return [ 'name', 'description', 'author' ].some(
-			( attribute ) =>
-				plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
-		);
 	}
 
 	getFilters() {
@@ -218,6 +214,31 @@ export class PluginsMain extends Component {
 		];
 	}
 
+	getSelectedText() {
+		const found = find( this.getFilters(), ( filterItem ) => this.props.filter === filterItem.id );
+		if ( 'undefined' !== typeof found ) {
+			const count = this.getPluginCount( found.id );
+			return { title: found.title, count };
+		}
+		return '';
+	}
+
+	// plugins for Jetpack sites require additional data from the wporg-data store
+	addWporgDataToPlugins( plugins ) {
+		return plugins.map( ( plugin ) => {
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
+			return Object.assign( {}, plugin, pluginData );
+		} );
+	}
+
+	matchSearchTerms( search, plugin ) {
+		search = search.toLowerCase();
+		return [ 'name', 'description', 'author' ].some(
+			( attribute ) =>
+				plugin[ attribute ] && plugin[ attribute ].toLowerCase().indexOf( search ) !== -1
+		);
+	}
+
 	isFetchingPlugins() {
 		return this.props.requestingPluginsForSites;
 	}
@@ -234,15 +255,6 @@ export class PluginsMain extends Component {
 			return undefined;
 		}
 		return count;
-	}
-
-	getSelectedText() {
-		const found = find( this.getFilters(), ( filterItem ) => this.props.filter === filterItem.id );
-		if ( 'undefined' !== typeof found ) {
-			const count = this.getPluginCount( found.id );
-			return { title: found.title, count };
-		}
-		return '';
 	}
 
 	getEmptyContentUpdateData() {
@@ -355,9 +367,41 @@ export class PluginsMain extends Component {
 	}
 
 	renderPluginsContent() {
-		const { search, isJetpackCloud } = this.props;
+		if ( this.props.newBulkPluginManagement ) {
+			return (
+				<PluginsList
+					header={ this.props.translate( 'Manage Plugins' ) }
+					plugins={ this.getCurrentPlugins() }
+					isPlaceholder={ this.shouldShowPluginListPlaceholders() }
+					isLoading={ this.props.requestingPluginsForSites || this.props.isLoadingSites }
+					isJetpackCloud={ this.props.isJetpackCloud }
+					searchTerm={ this.props.search }
+					filter={ this.props.filter }
+					requestPluginsError={ this.props.requestPluginsError }
+					onSearch={ this.props.doSearch }
+				/>
+			);
+		}
 
 		const currentPlugins = this.getCurrentPlugins();
+
+		// Hide the search box only when the request to fetch plugins fail, and there are no sites.
+		const searchPlugins = ! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
+			<div className="plugins__search">
+				<Search
+					hideFocus
+					isOpen
+					onSearch={ this.props.doSearch }
+					initialValue={ this.props.search }
+					hideClose={ ! this.props.search }
+					analyticsGroup="Plugins"
+					placeholder={ this.props.translate( 'Search plugins' ) }
+				/>
+			</div>
+		);
+
+		const { search, isJetpackCloud } = this.props;
+
 		const showInstalledPluginList =
 			isJetpackCloud || ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
 
@@ -377,7 +421,7 @@ export class PluginsMain extends Component {
 
 		const installedPluginsList = showInstalledPluginList && (
 			<PluginsList
-				header={ this.props.translate( 'Installed Plugins' ) }
+				header={ this.props.translate( 'Manage Plugins' ) }
 				plugins={ currentPlugins }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 				isLoading={ this.props.requestingPluginsForSites }
@@ -388,7 +432,11 @@ export class PluginsMain extends Component {
 			/>
 		);
 
-		return <div>{ installedPluginsList }</div>;
+		return (
+			<div>
+				{ searchPlugins } { installedPluginsList }
+			</div>
+		);
 	}
 
 	handleAddPluginButtonClick = () => {
@@ -432,20 +480,33 @@ export class PluginsMain extends Component {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
-		const navItems = this.getFilters().map( ( filterItem ) => {
-			if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
-				return null;
-			}
+		let navItems = null;
+		let selectedTextContent = null;
+		const { title, count } = this.getSelectedText();
 
-			const attr = {
-				key: filterItem.id,
-				path: filterItem.path,
-				selected: filterItem.id === this.props.filter,
-				count: this.getPluginCount( filterItem.id ),
-			};
+		if ( ! this.props.newBulkPluginManagement ) {
+			navItems = this.getFilters().map( ( filterItem ) => {
+				if ( 'updates' === filterItem.id && ! this.getUpdatesTabVisibility() ) {
+					return null;
+				}
 
-			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
-		} );
+				const attr = {
+					key: filterItem.id,
+					path: filterItem.path,
+					selected: filterItem.id === this.props.filter,
+					count: this.getPluginCount( filterItem.id ),
+				};
+
+				return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
+			} );
+
+			selectedTextContent = (
+				<span>
+					{ title }
+					{ count ? <Count count={ count } compact /> : null }
+				</span>
+			);
+		}
 
 		const { isJetpackCloud, selectedSite } = this.props;
 
@@ -453,17 +514,8 @@ export class PluginsMain extends Component {
 		if ( isJetpackCloud ) {
 			pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
 		} else {
-			pageTitle = this.props.translate( 'Installed Plugins', { textOnly: true } );
+			pageTitle = this.props.translate( 'Manage Plugins', { textOnly: true } );
 		}
-
-		const { title, count } = this.getSelectedText();
-
-		const selectedTextContent = (
-			<span>
-				{ title }
-				{ count ? <Count count={ count } compact /> : null }
-			</span>
-		);
 
 		const currentPlugins = this.getCurrentPlugins();
 
@@ -477,7 +529,12 @@ export class PluginsMain extends Component {
 					<QueryJetpackSitesFeatures />
 				) }
 				{ this.renderPageViewTracking() }
-				<div className="plugin-management-wrapper">
+				<div
+					className={ clsx(
+						'plugin-management-wrapper',
+						this.props.newBulkPluginManagement && 'is-bulk-plugin-management'
+					) }
+				>
 					{ ! isJetpackCloud && (
 						<NavigationHeader
 							navigationItems={ [] }
@@ -496,7 +553,9 @@ export class PluginsMain extends Component {
 								<>
 									{ this.renderAddPluginButton() }
 									{ this.renderUploadPluginButton() }
-									<UpdatePlugins isWpCom plugins={ currentPlugins } />
+									{ ! this.props.newBulkPluginManagement && (
+										<UpdatePlugins isWpCom plugins={ currentPlugins } />
+									) }
 								</>
 							) }
 						</NavigationHeader>
@@ -528,46 +587,35 @@ export class PluginsMain extends Component {
 									</div>
 								</div>
 							) }
-							<div className="plugins__main plugins__main-updated">
-								<div className="plugins__main-header">
-									<SectionNav
-										applyUpdatedStyles
-										selectedText={ selectedTextContent }
-										className="plugins-section-nav"
-									>
-										<NavTabs selectedText={ title } selectedCount={ count }>
-											{ navItems }
-										</NavTabs>
-									</SectionNav>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div
-						className={ clsx( 'plugins__main-content', {
-							'plugins__main-content-jc': isJetpackCloud,
-						} ) }
-					>
-						<div className="plugins__content-wrapper">
-							{
-								// Hide the search box only when the request to fetch plugins fail, and there are no sites.
-								! ( this.props.requestPluginsError && ! currentPlugins?.length ) && (
-									<div className="plugins__search">
-										<Search
-											hideFocus
-											isOpen
-											onSearch={ this.props.doSearch }
-											initialValue={ this.props.search }
-											hideClose={ ! this.props.search }
-											analyticsGroup="Plugins"
-											placeholder={ this.props.translate( 'Search plugins' ) }
-										/>
+
+							{ ! config.isEnabled( 'bulk-plugin-management' ) && (
+								<div className="plugins__main plugins__main-updated">
+									<div className="plugins__main-header">
+										<SectionNav
+											applyUpdatedStyles
+											selectedText={ selectedTextContent }
+											className="plugins-section-nav"
+										>
+											<NavTabs selectedText={ title } selectedCount={ count }>
+												{ navItems }
+											</NavTabs>
+										</SectionNav>
 									</div>
-								)
-							}
-							{ this.renderPluginsContent() }
+								</div>
+							) }
 						</div>
 					</div>
+					{ this.props.newBulkPluginManagement ? (
+						this.renderPluginsContent()
+					) : (
+						<div
+							className={ clsx( 'plugins__main-content', {
+								'plugins__main-content-jc': isJetpackCloud,
+							} ) }
+						>
+							<div className="plugins__content-wrapper">{ this.renderPluginsContent() }</div>
+						</div>
+					) }
 				</div>
 			</>
 		);
@@ -582,10 +630,11 @@ export default flow(
 			const sites = getSelectedOrAllSitesWithPlugins( state );
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
-			const visibleSiteIds = siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [];
 			const siteIds = siteObjectsToSiteIds( sites ) ?? [];
-			const pluginsWithUpdates = getPlugins( state, siteIds, 'updates' );
+			const isLoadingSites = isRequestingSites( state );
 			const allPlugins = getPlugins( state, siteIds, 'all' );
+			const pluginsWithUpdatesAndStatuses = getPluginsWithUpdateStatuses( state, allPlugins );
+
 			const jetpackNonAtomic =
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId );
 			const hasManagePlugins =
@@ -597,12 +646,14 @@ export default flow(
 				jetpackNonAtomic;
 
 			const breadcrumbs = getBreadcrumbs( state );
+			const newBulkPluginManagement = config.isEnabled( 'bulk-plugin-management' );
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
 				sites,
 				selectedSite,
 				selectedSiteId,
+				isLoadingSites,
 				selectedSiteSlug: getSelectedSiteSlug( state ),
 				selectedSiteIsJetpack: selectedSite && isJetpackSite( state, selectedSiteId ),
 				siteIds,
@@ -610,10 +661,12 @@ export default flow(
 					selectedSite && canJetpackSiteUpdateFiles( state, selectedSiteId ),
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
-				currentPlugins: getPlugins( state, siteIds, filter ),
-				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
-				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
-				pluginsWithUpdates,
+				currentPlugins: newBulkPluginManagement
+					? pluginsWithUpdatesAndStatuses
+					: getPlugins( state, siteIds, filter ),
+				currentPluginsOnVisibleSites: newBulkPluginManagement
+					? []
+					: getPlugins( state, siteObjectsToSiteIds( getVisibleSites( sites ) ) ?? [], filter ),
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),
@@ -627,6 +680,10 @@ export default flow(
 				isJetpackCloud,
 				breadcrumbs,
 				requestPluginsError: requestPluginsError( state ),
+				newBulkPluginManagement,
+				pluginUpdateCount: newBulkPluginManagement
+					? 0
+					: getPlugins( state, siteIds, 'updates' )?.length,
 			};
 		},
 		{

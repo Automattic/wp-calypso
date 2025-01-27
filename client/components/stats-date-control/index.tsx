@@ -1,19 +1,82 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { Button } from '@wordpress/components';
-import { Icon, calendar } from '@wordpress/icons';
+import { translate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import qs from 'qs';
-import { RefObject } from 'react';
-import DateRange from 'calypso/components/date-range';
+import { findShortcutForRange } from 'calypso/components/date-range/use-shortcuts';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import DateControlPicker from './stats-date-control-picker';
-import { StatsDateControlProps, DateControlPickerShortcut } from './types';
-import './style.scss';
+import { useSelector } from 'calypso/state';
+import getSiteId from 'calypso/state/sites/selectors/get-site-id';
+import DateControl from '../date-control';
+import { DateRangePickerShortcut } from '../date-range/shortcuts';
 
-const COMPONENT_CLASS_NAME = 'stats-date-control';
-const isCalendarEnabled = config.isEnabled( 'stats/date-picker-calendar' );
+type DateRange = {
+	chartStart: string;
+	chartEnd: string;
+	daysInRange: number;
+	shortcutId?: string;
+};
+interface StatsDateControlProps {
+	slug: string;
+	queryParams: string;
+	period: 'day' | 'week' | 'month' | 'year';
+	dateRange: DateRange;
+	shortcutList: DateRangePickerShortcut[];
+	overlay?: JSX.Element;
+	onGatedHandler: (
+		events: { name: string; params?: object }[],
+		event_from: string,
+		stat_type: string
+	) => void;
+}
+
+// Define the event name keys for tracking events
+type EventNameKey =
+	| 'today'
+	| 'last_7_days'
+	| 'last_30_days'
+	| 'month_to_date'
+	| 'last_12_months'
+	| 'year_to_date'
+	| 'last_3_years'
+	| 'custom_date_range'
+	| 'apply_button'
+	| 'trigger_button';
+
+// Define the structure for tracking event names
+interface EventNames {
+	jetpack_odyssey: Record< EventNameKey, string >;
+	calypso: Record< EventNameKey, string >;
+}
+
+// Define the tracking event names object. Hardcoding event names ensures consistency, searchability, and prevents errors per Tracks naming conventions.
+const eventNames: EventNames = {
+	jetpack_odyssey: {
+		today: 'jetpack_odyssey_stats_date_picker_shortcut_today_clicked',
+		last_7_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_7_days_clicked',
+		last_30_days: 'jetpack_odyssey_stats_date_picker_shortcut_last_30_days_clicked',
+		month_to_date: 'jetpack_odyssey_stats_date_picker_shortcut_month_to_date_clicked',
+		last_12_months: 'jetpack_odyssey_stats_date_picker_shortcut_last_12_months_clicked',
+		year_to_date: 'jetpack_odyssey_stats_date_picker_shortcut_year_to_date_clicked',
+		last_3_years: 'jetpack_odyssey_stats_date_picker_shortcut_last_3_years_clicked',
+		custom_date_range: 'jetpack_odyssey_stats_date_picker_shortcut_custom_date_range_clicked',
+		apply_button: 'jetpack_odyssey_stats_date_picker_apply_button_clicked',
+		trigger_button: 'jetpack_odyssey_stats_date_picker_opened',
+	},
+	calypso: {
+		today: 'calypso_stats_date_picker_shortcut_today_clicked',
+		last_7_days: 'calypso_stats_date_picker_shortcut_last_7_days_clicked',
+		last_30_days: 'calypso_stats_date_picker_shortcut_last_30_days_clicked',
+		month_to_date: 'calypso_stats_date_picker_shortcut_month_to_date_clicked',
+		last_12_months: 'calypso_stats_date_picker_shortcut_last_12_months_clicked',
+		year_to_date: 'calypso_stats_date_picker_shortcut_year_to_date_clicked',
+		last_3_years: 'calypso_stats_date_picker_shortcut_last_3_years_clicked',
+		custom_date_range: 'calypso_stats_date_picker_shortcut_custom_date_range_clicked',
+		apply_button: 'calypso_stats_date_picker_apply_button_clicked',
+		trigger_button: 'calypso_stats_date_picker_opened',
+	},
+};
 
 const StatsDateControl = ( {
 	slug,
@@ -29,15 +92,50 @@ const StatsDateControl = ( {
 
 	const moment = useLocalizedMoment();
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const siteId = useSelector( ( state ) => getSiteId( state, slug ) );
+
+	/**
+	 * Remove start date from query params if it's out of range.
+	 * @param queryParamsObject
+	 * @param startDate
+	 * @param endDate
+	 */
+	const removeOutOfRangeStartDate = (
+		queryParamsObject: Record< string, any >,
+		startDate: string,
+		endDate: string
+	): void => {
+		const selectedStartDate = queryParamsObject.startDate as string | undefined;
+
+		if ( selectedStartDate && ( selectedStartDate < startDate || selectedStartDate > endDate ) ) {
+			// When there is no selected date, it takes today by default.
+			delete queryParamsObject.startDate;
+		}
+	};
 
 	// Shared link generation helper.
-	const generateNewLink = ( period: string, startDate: string, endDate: string ) => {
-		const newRangeQuery = qs.stringify(
-			Object.assign( {}, queryParams, { chartStart: startDate, chartEnd: endDate } ),
-			{
-				addQueryPrefix: true,
-			}
-		);
+	const generateNewLink = (
+		period: string,
+		startDate: string,
+		endDate: string,
+		shortcutId?: string
+	) => {
+		const queryParamsObject = qs.parse( queryParams );
+		removeOutOfRangeStartDate( queryParamsObject, startDate, endDate );
+		delete queryParamsObject.shortcut;
+
+		const dateRangeParams = Object.assign( {}, queryParamsObject, {
+			chartStart: startDate,
+			chartEnd: endDate,
+		} );
+
+		if ( shortcutId ) {
+			dateRangeParams.shortcut = shortcutId;
+		}
+
+		const newRangeQuery = qs.stringify( dateRangeParams, {
+			addQueryPrefix: true,
+		} );
 		const url = `/stats/${ period }/${ slug }`;
 		return `${ url }${ newRangeQuery }`;
 	};
@@ -60,113 +158,86 @@ const StatsDateControl = ( {
 	};
 
 	// Handler for Apply button.
-	const onApplyButtonHandler = ( startDate: string, endDate: string ) => {
+	const onApplyButtonHandler = (
+		startDate: string,
+		endDate: string,
+		selectedShortcutId?: string
+	) => {
 		// Determine period based on date range.
 		const rangeInDays = Math.abs( moment( endDate ).diff( moment( startDate ), 'days' ) );
-		const period = bestPeriodForDays( rangeInDays );
+		let period = bestPeriodForDays( rangeInDays );
 
 		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_stats_date_picker_apply_button_clicked` );
+		recordTracksEvent( eventNames[ event_from ][ 'apply_button' ] );
 
-		// Update chart via routing.
-		setTimeout( () => page( generateNewLink( period, startDate, endDate ) ), 250 );
-	};
-
-	// Handler for shortcut selection.
-	const onShortcutHandler = ( shortcut: DateControlPickerShortcut ) => {
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		// Generate new dates.
-		const anchor = moment().subtract( shortcut.offset, 'days' );
-		const endDate = anchor.format( 'YYYY-MM-DD' );
-		const startDate = anchor.subtract( shortcut.range, 'days' ).format( 'YYYY-MM-DD' );
-
-		recordTracksEvent( `${ event_from }_stats_date_picker_shortcut_${ shortcut.id }_clicked` );
-
-		// Update chart via routing.
-		setTimeout( () => page( generateNewLink( shortcut.period, startDate, endDate ) ), 250 );
-	};
-
-	const getShortcutForRange = () => {
-		// Search the shortcut array for something matching the current date range.
-		// Returns shortcut or null;
-		const today = moment().format( 'YYYY-MM-DD' );
-		const yesterday = moment().subtract( 1, 'days' ).format( 'YYYY-MM-DD' );
-		const shortcut = shortcutList.find( ( element ) => {
-			if (
-				yesterday === dateRange.chartEnd &&
-				dateRange.daysInRange === element.range + 1 &&
-				element.id === 'yesterday'
-			) {
-				return element;
-			}
-			if ( today === dateRange.chartEnd && dateRange.daysInRange === element.range + 1 ) {
-				return element;
-			}
-			return null;
+		const appliedShortcut = findShortcutForRange( shortcutList, {
+			chartStart: startDate,
+			chartEnd: endDate,
+			shortcutId: selectedShortcutId,
 		} );
-		return shortcut;
+
+		if ( appliedShortcut && appliedShortcut.id ) {
+			localStorage.setItem(
+				`jetpack_stats_stored_date_range_shortcut_id_${ siteId }`,
+				appliedShortcut.id
+			);
+			// Remove legacy item key.
+			localStorage.removeItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
+			// Apply the period from the found shortcut.
+			period = appliedShortcut.period;
+		}
+
+		// Update chart via routing.
+		setTimeout(
+			() => page( generateNewLink( period, startDate, endDate, selectedShortcutId ) ),
+			250
+		);
 	};
 
-	const getButtonLabel = () => {
-		// Test for a shortcut match.
-		const shortcut = getShortcutForRange();
-		if ( shortcut ) {
-			return shortcut.label;
+	// handler for shortcut clicks
+	const onShortcutClickHandler = (
+		shortcut: DateRangePickerShortcut,
+		closePopoverAndCommit: () => void
+	) => {
+		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+
+		if ( shortcut.isGated ) {
+			onGatedHandler &&
+				onGatedHandler(
+					[ { name: eventNames[ event_from ][ shortcut.id as EventNameKey ] } ],
+					event_from,
+					shortcut.statType ?? shortcut.id
+				);
+		} else {
+			recordTracksEvent( eventNames[ event_from ][ shortcut.id as EventNameKey ] );
+			if ( shortcut.id !== 'custom_date_range' ) {
+				// Prevent the unclickable shortcut from being applied.
+				closePopoverAndCommit();
+			}
 		}
-		// Generate a full date range for the label.
-		const startDate = moment( dateRange.chartStart ).format( 'LL' );
-		const endDate = moment( dateRange.chartEnd ).format( 'LL' );
-		return `${ startDate } - ${ endDate }`;
 	};
 
 	return (
-		<div className={ COMPONENT_CLASS_NAME }>
-			{ isCalendarEnabled ? (
-				<DateRange
-					selectedStartDate={ moment( dateRange.chartStart ) }
-					selectedEndDate={ moment( dateRange.chartEnd ) }
-					lastSelectableDate={ moment() }
-					firstSelectableDate={ moment( '2010-01-01' ) }
-					onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
-						startDate &&
-						endDate &&
-						onApplyButtonHandler( startDate.format( 'YYYY-MM-DD' ), endDate.format( 'YYYY-MM-DD' ) )
-					}
-					renderTrigger={ ( {
-						onTriggerClick,
-						buttonRef,
-					}: {
-						onTriggerClick: () => void;
-						buttonRef: RefObject< typeof Button >;
-					} ) => {
-						return (
-							<Button onClick={ onTriggerClick } ref={ buttonRef }>
-								{ getButtonLabel() }
-								<Icon className="gridicon" icon={ calendar } />
-							</Button>
-						);
-					} }
-					rootClass="stats-date-control-picker"
-					overlay={ overlay }
-					displayShortcuts
-					useArrowNavigation
-					customTitle="Date Range"
-					focusedMonth={ moment( dateRange.chartEnd ).toDate() }
-				/>
-			) : (
-				<DateControlPicker
-					buttonLabel={ getButtonLabel() }
-					dateRange={ dateRange }
-					shortcutList={ shortcutList }
-					selectedShortcut={ getShortcutForRange()?.id }
-					onShortcut={ onShortcutHandler }
-					onApply={ onApplyButtonHandler }
-					onGatedHandler={ onGatedHandler }
-					overlay={ overlay }
-				/>
-			) }
-		</div>
+		<DateControl
+			dateRange={ dateRange }
+			onApplyButtonClick={ ( startDate: Moment, endDate: Moment, selectedShortcutId?: string ) =>
+				onApplyButtonHandler(
+					startDate.format( 'YYYY-MM-DD' ),
+					endDate.format( 'YYYY-MM-DD' ),
+					selectedShortcutId
+				)
+			}
+			onShortcutClick={ onShortcutClickHandler }
+			onDateControlClick={ () => {
+				const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
+				recordTracksEvent( eventNames[ event_from ][ 'trigger_button' ] );
+			} }
+			tooltip={ translate( 'Filter all data by date' ) }
+			overlay={ overlay }
+			shortcutList={ shortcutList }
+		/>
 	);
 };
 
-export { StatsDateControl as default, StatsDateControl, COMPONENT_CLASS_NAME };
+export { StatsDateControl as default, StatsDateControl };

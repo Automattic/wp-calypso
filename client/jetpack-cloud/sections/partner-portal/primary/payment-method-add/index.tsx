@@ -1,11 +1,5 @@
 import page from '@automattic/calypso-router';
-import {
-	ReloadSetupIntentId,
-	StripeHookProvider,
-	StripeSetupIntentIdProvider,
-	useStripe,
-	useStripeSetupIntentId,
-} from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import { Card, Button } from '@automattic/components';
 import { CheckoutProvider, CheckoutFormSubmit } from '@automattic/composite-checkout';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
@@ -49,11 +43,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 	const reduxDispatch = useDispatch();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
-	const {
-		reload: reloadSetupIntentId,
-		setupIntentId: stripeSetupIntentId,
-		error: setupIntentError,
-	} = useStripeSetupIntentId();
 	const stripeMethod = useCreateStoredCreditCardMethod( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -135,10 +124,8 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 					{ id: 'payment-method-failure' }
 				)
 			);
-			// We need to regenerate the setup intent if the form was submitted.
-			reloadSetupIntentId();
 		},
-		[ reduxDispatch, translate, reloadSetupIntentId ]
+		[ reduxDispatch, translate ]
 	);
 
 	const showSuccessMessage = useCallback(
@@ -208,12 +195,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 		}
 	}, [ stripeLoadingError, reduxDispatch ] );
 
-	useEffect( () => {
-		if ( setupIntentError ) {
-			reduxDispatch( errorNotice( setupIntentError.message ) );
-		}
-	}, [ setupIntentError, reduxDispatch ] );
-
 	const elements = useElements();
 
 	const getPreviousPageLink = () => {
@@ -250,7 +231,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 						successCallback,
 						translate,
 						showSuccessMessage,
-						reloadSetupIntentId,
 					} );
 				} }
 				onPaymentError={ handleChangeError }
@@ -264,7 +244,6 @@ function PaymentMethodAdd( { selectedSite }: { selectedSite?: SiteDetails | null
 								translate,
 								stripe,
 								stripeConfiguration,
-								stripeSetupIntentId,
 								cardElement: elements?.getElement( CardElement ) ?? undefined,
 								reduxDispatch,
 							},
@@ -327,11 +306,7 @@ export default function PaymentMethodAddWrapper( {
 
 	return (
 		<StripeHookProvider locale={ locale } fetchStripeConfiguration={ getStripeConfiguration }>
-			<StripeSetupIntentIdProvider
-				fetchStripeSetupIntentId={ () => getStripeConfiguration( { needs_intent: true } ) }
-			>
-				<PaymentMethodAdd selectedSite={ selectedSite } />
-			</StripeSetupIntentIdProvider>
+			<PaymentMethodAdd selectedSite={ selectedSite } />
 		</StripeHookProvider>
 	);
 }
@@ -340,15 +315,11 @@ function onPaymentSelectComplete( {
 	successCallback,
 	translate,
 	showSuccessMessage,
-	reloadSetupIntentId,
 }: {
 	successCallback: () => void;
 	translate: ReturnType< typeof useTranslate >;
 	showSuccessMessage: ( message: string | TranslateResult ) => void;
-	reloadSetupIntentId: ReloadSetupIntentId;
 } ) {
 	showSuccessMessage( translate( 'Your payment method has been added successfully.' ) );
-	// We need to regenerate the setup intent if the form was submitted.
-	reloadSetupIntentId();
 	successCallback();
 }

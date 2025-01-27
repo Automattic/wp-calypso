@@ -20,4 +20,7 @@ export interface MinimumSite {
 	plan?: {
 		product_name_short: string;
 	};
+	site_migration?: {
+		migration_status?: string;
+	};
 }

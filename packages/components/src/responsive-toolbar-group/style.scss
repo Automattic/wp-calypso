@@ -34,10 +34,20 @@
 				background: var(--studio-gray-0);
 			}
 		}
+
+		.responsive-toolbar-group__button-item.is-pressed:hover {
+			color: var(--color-text-inverted);
+		}
 	}
 
 	.is-visible {
 		opacity: 1;
+	}
+
+	.is-multi {
+		.responsive-toolbar-group__menu-item:not(:first-child) {
+			margin-top: 8px;
+		}
 	}
 
 	.responsive-toolbar-group__full-list {
@@ -64,7 +74,7 @@
 }
 
 .responsive-toolbar-group__swipe {
-	width: 100%;
+	width: calc(100% + 20px);
 
 	.responsive-toolbar-group__swipe-list {
 		padding: 0 8px;

@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { cloneElement } from 'react';
+import { cloneElement, useCallback } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
 import { makeErrorResponse } from '../lib/payment-processors';
 import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
+import { useHandlePaymentProcessorResponse } from './use-process-payment';
 import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
@@ -62,6 +63,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
 } ) {
+	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
@@ -72,9 +74,11 @@ function CheckoutSubmitButtonForPaymentMethod( {
 		processorData: PaymentProcessorSubmitData
 	) => {
 		if ( ! isActive ) {
-			return Promise.resolve(
+			const rejection = Promise.resolve(
 				makeErrorResponse( __( 'This payment method is not currently available.' ) )
 			);
+			handlePaymentProcessorPromise( paymentMethod.id, rejection );
+			return rejection;
 		}
 
 		if ( validateForm ) {
@@ -95,6 +99,21 @@ function CheckoutSubmitButtonForPaymentMethod( {
 		return onClick( processorData );
 	};
 
+	// Add payment method to any errors that get logged.
+	const onLoadErrorWithPaymentMethodId = useCallback(
+		( error: Error ) => {
+			if ( ! onLoadError ) {
+				return;
+			}
+			const errorWithCause = new Error(
+				`Error while rendering submit button for payment method '${ paymentMethod.id }': ${ error.message } (${ error.name })`,
+				{ cause: error }
+			);
+			onLoadError( errorWithCause );
+		},
+		[ onLoadError, paymentMethod.id ]
+	);
+
 	const { submitButton } = paymentMethod;
 	if ( ! submitButton ) {
 		return null;
@@ -108,7 +127,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ __( 'There was a problem with the submit button.' ) }
-			onError={ onLoadError }
+			onError={ onLoadErrorWithPaymentMethodId }
 		>
 			<CheckoutSubmitButtonWrapper
 				className={ joinClasses( [

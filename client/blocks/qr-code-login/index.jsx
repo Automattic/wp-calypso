@@ -232,7 +232,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	];
 
 	const notice = translate(
-		"Login via the mobile app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
+		"Logging in via the Jetpack app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
 		{
 			components: {
 				strong: <strong />,

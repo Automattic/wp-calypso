@@ -6,8 +6,11 @@ import type { PlanIntroductoryOffer, PricedAPIPlan, PricedAPISitePlan } from '..
 const unpackIntroOffer = (
 	plan: PricedAPISitePlan | PricedAPIPlan
 ): PlanIntroductoryOffer | null => {
-	// these aren't grouped or separated. so no introductory offer if no cost or interval
-	if ( ! plan.introductory_offer_interval_unit && ! plan.introductory_offer_interval_count ) {
+	// these aren't grouped or separated. so no introductory offer if missing or malformed raw_price
+	if (
+		typeof plan.introductory_offer_raw_price_integer !== 'number' ||
+		! plan.introductory_offer_interval_count
+	) {
 		return null;
 	}
 
@@ -30,9 +33,25 @@ const unpackIntroOffer = (
 
 	return {
 		formattedPrice: plan.introductory_offer_formatted_price as string,
-		rawPrice: plan.introductory_offer_raw_price as number,
+		rawPrice: {
+			monthly:
+				/**
+				 * IMPORTANT:
+				 * we make the raw assumption that the interval unit is either "year" or "month"
+				 * to compute monthly/full price
+				 */
+				'year' === plan.introductory_offer_interval_unit
+					? parseFloat(
+							(
+								plan.introductory_offer_raw_price_integer /
+								( plan.introductory_offer_interval_count * 12 )
+							).toFixed( 2 )
+					  )
+					: plan.introductory_offer_raw_price_integer,
+			full: plan.introductory_offer_raw_price_integer,
+		},
 		intervalUnit: plan.introductory_offer_interval_unit as string,
-		intervalCount: plan.introductory_offer_interval_count as number,
+		intervalCount: plan.introductory_offer_interval_count,
 		isOfferComplete,
 	};
 };

@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	AI_ASSEMBLER_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -8,11 +7,9 @@ import {
 	TRANSFERRING_HOSTED_SITE_FLOW,
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
-	VIDEOPRESS_TV_FLOW,
-	VIDEOPRESS_TV_PURCHASE_FLOW,
 	GOOGLE_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -20,6 +17,8 @@ import {
 	HOSTED_SITE_MIGRATION_FLOW,
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -38,11 +37,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ IMPORT_FOCUSED_FLOW ]: () =>
 		import( /* webpackChunkName: "import-flow" */ '../declarative-flow/import-flow' ),
 
-	videopress: () =>
-		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
-
-	'link-in-bio': () =>
-		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
 
@@ -69,19 +63,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
 		),
 
-	free: () => import( /* webpackChunkName: "free-flow" */ '../declarative-flow/free' ),
-
-	'with-theme-assembler': () =>
-		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
-
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
-
-	[ AI_ASSEMBLER_FLOW ]: () =>
-		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
 
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
@@ -97,10 +83,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
-
-	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
-
-	blog: () => import( /* webpackChunkName: "blog" */ '../declarative-flow/blog' ),
 
 	[ START_WRITING_FLOW ]: () =>
 		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
@@ -152,24 +134,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
-	[ MIGRATION_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
+	[ EXAMPLE_FLOW ]: () =>
+		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
-
-const videoPressTvFlows: Record< string, () => Promise< { default: Flow } > > = config.isEnabled(
-	'videopress-tv'
-)
-	? {
-			[ VIDEOPRESS_TV_FLOW ]: () =>
-				import( /* webpackChunkName: "videopress-tv-flow" */ `../declarative-flow/videopress-tv` ),
-
-			[ VIDEOPRESS_TV_PURCHASE_FLOW ]: () =>
-				import(
-					/* webpackChunkName: "videopress-tv-flow" */
-					`../declarative-flow/videopress-tv-purchase`
-				),
-	  }
-	: {};
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
 	[ HOSTED_SITE_MIGRATION_FLOW ]: () =>
@@ -178,8 +145,20 @@ const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } 
 		),
 };
 
+const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > =
+	config.isEnabled( '100-year-domain' )
+		? {
+				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
+					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+				[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
+					import(
+						/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+					),
+		  }
+		: {};
+
 export default {
 	...availableFlows,
-	...videoPressTvFlows,
 	...hostedSiteMigrationFlow,
+	...hundredYearDomainFlow,
 };

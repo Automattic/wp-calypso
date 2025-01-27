@@ -3,41 +3,42 @@ import { useSelect } from '@wordpress/data';
 import { useCallback } from 'react';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN, recordSignupComplete } from 'calypso/lib/analytics/signup';
-import { useSelector } from 'calypso/state';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { getSignupIsNewUserAndClear } from 'calypso/signup/storageUtils';
 import { useSite } from './use-site';
 import type { UserSelect, OnboardSelect } from '@automattic/data-stores';
 
 export const useRecordSignupComplete = ( flow: string | null ) => {
 	const site = useSite();
 	const siteId = site?.ID || null;
-	const theme = site?.options?.theme_slug || '';
-	const { domainCartItem, planCartItem, siteCount, selectedDomain, isNewUser } = useSelect(
-		( select ) => {
-			return {
-				siteCount: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.site_count,
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-				selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
-				isNewUser: ( select( USER_STORE ) as UserSelect ).isNewUser(),
-			};
-		},
-		[]
-	);
 
-	const isNewishUser = useSelector( ( state ) =>
-		isUserRegistrationDaysWithinRange( state, null, 0, 7 )
-	);
+	const {
+		userId,
+		domainCartItem,
+		planCartItem,
+		selectedDomain,
+		signupDomainOrigin,
+		goals,
+		selectedDesign,
+	} = useSelect( ( select ) => {
+		return {
+			userId: ( select( USER_STORE ) as UserSelect ).getCurrentUser()?.ID,
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+			selectedDomain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+			goals: ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		};
+	}, [] );
+
+	const theme = site?.options?.theme_slug || selectedDesign?.slug || '';
+
+	// Avoid generating new reference on each call
+	const stringifiedGoals = goals.length && goals?.join( ',' );
 
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
-			const siteSlug = site?.slug ?? signupCompletionState?.siteSlug;
-
-			const isNew7DUserSite = !! (
-				isNewUser ||
-				( isNewishUser && siteSlug && siteCount && siteCount <= 1 )
-			);
-
+			const isNewUser = getSignupIsNewUserAndClear( userId ) ?? false;
 			// Domain product slugs can be a domain purchases like dotcom_domain or dotblog_domain or a mapping like domain_mapping
 			// When purchasing free subdomains the product_slugs is empty (since there is no actual produce being purchased)
 			// so we avoid capturing the product slug in these instances.
@@ -60,7 +61,6 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 					siteId: siteId ?? signupCompletionState?.siteId,
 					isNewUser,
 					hasCartItems,
-					isNew7DUserSite,
 					theme,
 					intent: flow,
 					startingPoint: flow,
@@ -71,11 +71,23 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 						hasPaidDomainItem && domainCartItem ? isDomainMapping( domainCartItem ) : undefined,
 					isTransfer:
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
-					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					framework: 'stepper',
+					goals: stringifiedGoals,
 				},
 				true
 			);
 		},
-		[ domainCartItem, flow, planCartItem, selectedDomain, siteCount, siteId, theme ]
+		[
+			domainCartItem,
+			flow,
+			planCartItem,
+			selectedDomain,
+			signupDomainOrigin,
+			siteId,
+			theme,
+			userId,
+			stringifiedGoals,
+		]
 	);
 };

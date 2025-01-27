@@ -1,20 +1,21 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode, useMemo } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutHeader, {
-	LayoutHeaderBreadcrumb as Breadcrumb,
-	LayoutHeaderTitle as Title,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import {
 	A4A_OVERVIEW_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { Item as BreadcrumbItem } from 'calypso/components/breadcrumb';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutHeader, {
+	LayoutHeaderBreadcrumb as Breadcrumb,
+	LayoutHeaderTitle as Title,
+} from 'calypso/layout/hosting-dashboard/header';
 import { useSelector } from 'calypso/state';
 import {
 	getActiveAgency,
@@ -103,7 +104,7 @@ export default function PartnerDirectory( { selectedSection }: Props ) {
 	}
 
 	// Check if the Partner Directory is allowed for the agency
-	if ( ! agency?.partner_directory_allowed ) {
+	if ( ! agency?.partner_directory.allowed && ! isEnabled( 'a8c-for-agencies-agency-tier' ) ) {
 		// Redirect user to the Overview page
 		page.redirect( A4A_OVERVIEW_LINK );
 		return;

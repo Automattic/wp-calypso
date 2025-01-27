@@ -52,7 +52,6 @@ export default function useMaxDiscountsForPlanTerms(
 		siteId,
 		coupon: undefined,
 		useCheckPlanAvailabilityForPurchase,
-		storageAddOns: null,
 	} );
 
 	const termWiseMaxDiscount: Record< UrlFriendlyTermType, number > = {} as Record<

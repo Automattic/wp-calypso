@@ -17,6 +17,7 @@ import {
 	emailSummary,
 	subscribers,
 	purchase,
+	redirectToDaySummary,
 } from './controller';
 
 import './style.scss';
@@ -28,6 +29,7 @@ const statsPage = ( url, controller ) => {
 
 export default function () {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+	const validTrafficPagePeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 	const validEmailPeriods = [ 'hour', 'day' ].join( '|' );
 
 	const validModules = [
@@ -35,6 +37,7 @@ export default function () {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
@@ -64,7 +67,7 @@ export default function () {
 	statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 
 	// Stat Site Pages
-	statsPage( `/stats/:period(${ validPeriods })/:site`, site );
+	statsPage( `/stats/:period(${ validTrafficPagePeriods })/:site`, site );
 
 	// Redirect this to default /stats/day/:module/:site view to
 	// keep the paths and page view reporting consistent.
@@ -72,6 +75,8 @@ export default function () {
 
 	// Stat Summary Pages
 	statsPage( `/stats/:period(${ validPeriods })/:module(${ validModules })/:site`, summary );
+	// No hourly stats for modules
+	statsPage( `/stats/hour/:module(${ validModules })/:site`, redirectToDaySummary );
 
 	// Stat Single Post Page
 	statsPage( '/stats/post/:post_id/:site', post );

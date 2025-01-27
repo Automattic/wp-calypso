@@ -106,9 +106,7 @@ export default function ContinueAsUser( {
 						busy={ validatingPath }
 						href={ validatedPath || '/' }
 					>
-						{ `${ translate( 'Continue as', {
-							context: 'Continue as an existing WordPress.com user',
-						} ) } ${ userName }` }
+						{ translate( 'Continue' ) }
 					</Button>
 				</div>
 			);

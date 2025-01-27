@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
 import 'calypso/state/preferences/init';
@@ -46,5 +47,6 @@ export const preferencesLastFetchedTimestamp = ( state ) => state.preferences.la
  * @returns {boolean}       Whether preferences have been received
  */
 export function hasReceivedRemotePreferences( state ) {
-	return !! state.preferences.remoteValues;
+	// All JITM are hidden if the value is false, so we test whether it's odyssey here.
+	return config.isEnabled( 'is_running_in_jetpack_site' ) || !! state.preferences.remoteValues;
 }

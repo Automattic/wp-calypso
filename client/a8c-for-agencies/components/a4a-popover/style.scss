@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .a4a-popover__content {
 	display: flex;
 	flex-direction: column;
@@ -18,5 +21,53 @@
 .a4a-popover {
 	.components-popover__content {
 		padding: 16px;
+	}
+}
+
+.theme-a8c-for-agencies  .components-button.a4a-popover__popover-button {
+	padding: 8px;
+	white-space: unset;
+	text-align: unset;
+	margin-block: 0;
+	width: 100%;
+	border-radius: 4px;
+	height: auto;
+	color: var(--color-text-black);
+
+	&:hover {
+		background-color: var(--color-neutral-0);
+	}
+
+	@include break-large {
+		display: flex;
+		gap: 8px;
+		align-items: unset;
+		justify-content: unset;
+	}
+
+	.a4a-popover__popover-button-icon {
+		display: none;
+
+		@include break-large {
+			display: block;
+		}
+
+		.sidebar__menu-icon {
+			width: 24px;
+			height: 24px;
+			max-width: fit-content;
+		}
+	}
+
+	.a4a-popover__popover-button-heading {
+		font-size: rem(14px);
+		font-weight: 600;
+	}
+
+	.a4a-popover__popover-button-description {
+		font-size: rem(12px);
+		line-height: 1.33;
+		color: var(--color-accent);
+		padding-top: 4px;
 	}
 }

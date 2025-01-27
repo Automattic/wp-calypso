@@ -17,6 +17,9 @@ import { countsSchema } from './schema';
  */
 const countsReducer = ( state = [], action ) => {
 	switch ( action.type ) {
+		case STATS_CHART_COUNTS_REQUEST: {
+			return [];
+		}
 		case STATS_CHART_COUNTS_RECEIVE: {
 			// Workaround to prevent new data from being appended to previous data when range period differs.
 			// See https://github.com/Automattic/wp-calypso/pull/41441#discussion_r415918092
@@ -56,7 +59,7 @@ const countsReducer = ( state = [], action ) => {
 
 export const counts = withSchemaValidation(
 	countsSchema,
-	keyedReducer( 'siteId', keyedReducer( 'period', withPersistence( countsReducer ) ) )
+	keyedReducer( 'siteId', keyedReducer( 'requestKey', withPersistence( countsReducer ) ) )
 );
 
 /**
@@ -84,6 +87,6 @@ const isLoadingReducer = ( state = {}, action ) => {
 	return state;
 };
 
-export const isLoading = keyedReducer( 'siteId', keyedReducer( 'period', isLoadingReducer ) );
+export const isLoading = keyedReducer( 'siteId', keyedReducer( 'requestKey', isLoadingReducer ) );
 
 export default combineReducers( { counts, isLoading } );

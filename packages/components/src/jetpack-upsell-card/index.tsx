@@ -24,7 +24,7 @@ type Product = {
 	title: string;
 };
 
-export default function JetpackUpsellCard( {
+export function JetpackUpsellCard( {
 	purchasedProducts,
 	siteSlug,
 	upgradeUrls = {},
@@ -153,3 +153,5 @@ export default function JetpackUpsellCard( {
 		</Card>
 	);
 }
+
+export default JetpackUpsellCard;

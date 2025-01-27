@@ -1,43 +1,48 @@
-/* eslint-disable no-restricted-imports */
 import { Spinner } from '@wordpress/components';
-import { useI18n } from '@wordpress/react-i18n';
-import React, {
-	useCallback,
-	useMemo,
-	useState,
-	KeyboardEvent,
-	FormEvent,
-	useRef,
-	useEffect,
-	RefObject,
-} from 'react';
-import TextareaAutosize from 'calypso/components/textarea-autosize';
-import ArrowUp from '../../assets/arrow-up.svg';
+import { useCallback, useRef, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
+import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
-import { useOdieSendMessage } from '../../query';
-import { Message } from '../../types/';
-import { JumpToRecent } from '../message/jump-to-recent';
+import { useSendChatMessage } from '../../hooks';
+import { Message } from '../../types';
+import { AttachmentButton } from './attachment-button';
+import { ResizableTextarea } from './resizable-textarea';
 
 import './style.scss';
 
-export const OdieSendMessageButton = ( {
-	containerReference,
-}: {
-	containerReference: RefObject< HTMLDivElement >;
-} ) => {
-	const { _x } = useI18n();
-	const [ messageString, setMessageString ] = useState< string >( '' );
+export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
-	const { initialUserMessage, chat, trackEvent, isLoading } = useOdieAssistantContext();
-	const { mutateAsync: sendOdieMessage } = useOdieSendMessage();
+	const inputRef = useRef< HTMLTextAreaElement >( null );
+	const attachmentButtonRef = useRef< HTMLElement >( null );
+	const { trackEvent, chat } = useOdieAssistantContext();
+	const sendMessage = useSendChatMessage();
+	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
+	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
+	const [ submitDisabled, setSubmitDisabled ] = useState( true );
 
-	useEffect( () => {
-		if ( initialUserMessage && ! chat.chat_id ) {
-			setMessageString( initialUserMessage );
+	const onKeyUp = useCallback( () => {
+		// Only triggered when the message is empty
+		// used to remove validation message.
+		setIsMessageSizeValid( true );
+	}, [] );
+
+	const sendMessageHandler = useCallback( async () => {
+		const message = inputRef.current?.value.trim();
+		const messageLength = message?.length || 0;
+		const isMessageLengthValid = messageLength <= 4096; // zendesk api validation
+
+		setIsMessageSizeValid( isMessageLengthValid );
+
+		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
+			return;
 		}
-	}, [ initialUserMessage, chat.chat_id ] );
+		const messageString = inputRef.current?.value;
+		// Immediately remove the message from the input field
+		if ( chat?.provider === 'odie' ) {
+			inputRef.current!.value = '';
+		}
 
-	const sendMessage = useCallback( async () => {
 		try {
 			trackEvent( 'chat_message_action_send' );
 
@@ -47,7 +52,13 @@ export const OdieSendMessageButton = ( {
 				type: 'message',
 			} as Message;
 
-			await sendOdieMessage( { message } );
+			setSubmitDisabled( true );
+
+			await sendMessage( message );
+			// Removes the message from the input field after it has been sent
+			if ( chat?.provider === 'zendesk' ) {
+				inputRef.current!.value = '';
+			}
 
 			trackEvent( 'chat_message_action_receive' );
 		} catch ( e ) {
@@ -55,98 +66,49 @@ export const OdieSendMessageButton = ( {
 			trackEvent( 'chat_message_error', {
 				error: error?.message,
 			} );
+		} finally {
+			setSubmitDisabled( false );
+			inputRef.current?.focus();
 		}
-	}, [ messageString, sendOdieMessage, trackEvent ] );
+	}, [ isChatBusy, chat?.provider, trackEvent, sendMessage ] );
 
-	const sendMessageIfNotEmpty = useCallback( async () => {
-		if ( messageString.trim() === '' ) {
-			return;
-		}
-		setMessageString( '' );
-		await sendMessage();
-	}, [ messageString, sendMessage ] );
-
-	const handleKeyPress = useCallback(
-		async ( event: KeyboardEvent< HTMLTextAreaElement > ) => {
-			if ( isLoading ) {
-				return;
-			}
-			if ( event.key === 'Enter' && ! event.shiftKey ) {
-				event.preventDefault();
-				await sendMessageIfNotEmpty();
-			}
-		},
-		[ isLoading, sendMessageIfNotEmpty ]
+	const inputContainerClasses = clsx(
+		'odie-chat-message-input-container',
+		attachmentButtonRef?.current && 'odie-chat-message-input-container__attachment-button-visible'
 	);
 
-	const handleSubmit = useCallback(
-		async ( event: FormEvent< HTMLFormElement > ) => {
-			event.preventDefault();
-			await sendMessageIfNotEmpty();
-		},
-		[ sendMessageIfNotEmpty ]
+	const buttonClasses = clsx(
+		'odie-send-message-inner-button',
+		'odie-send-message-inner-button__flag'
 	);
-
-	const userHasAskedToContactHE = useMemo(
-		() =>
-			chat.messages.some(
-				( message ) => message.context?.flags?.forward_to_human_support === true
-			),
-		[ chat.messages ]
-	);
-
-	const userHasNegativeFeedback = useMemo(
-		() => chat.messages.some( ( message ) => message.liked === false ),
-		[ chat.messages ]
-	);
-
-	const getPlaceholderText = useCallback( () => {
-		const placeholderText = _x(
-			'Please wait…',
-			'Placeholder text for the message input field (chat)',
-			__i18n_text_domain__
-		);
-
-		if ( ! isLoading ) {
-			if ( userHasAskedToContactHE || userHasNegativeFeedback ) {
-				return _x(
-					'Continue chatting with Wapuu',
-					'Placeholder text for the message input field (chat)',
-					__i18n_text_domain__
-				);
-			}
-			return _x(
-				'Ask your question',
-				'Placeholder text for the message input field (chat)',
-				__i18n_text_domain__
-			);
-		}
-
-		return placeholderText;
-	}, [ isLoading, userHasAskedToContactHE, userHasNegativeFeedback, _x ] );
 
 	return (
 		<>
-			<JumpToRecent containerReference={ containerReference } />
-			<div className="odie-chat-message-input-container" ref={ divContainerRef }>
-				<form onSubmit={ handleSubmit } className="odie-send-message-input-container">
-					<TextareaAutosize
-						placeholder={ getPlaceholderText() }
+			{ ! isMessageSizeValid && (
+				<div className="odie-chatbox-invalid__message">
+					{ __( 'Message exceeds 4096 characters limit.' ) }
+				</div>
+			) }
+			<div className={ inputContainerClasses } ref={ divContainerRef }>
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						sendMessageHandler();
+					} }
+					className="odie-send-message-input-container"
+				>
+					<ResizableTextarea
+						shouldDisableInputField={ isChatBusy }
+						sendMessageHandler={ sendMessageHandler }
 						className="odie-send-message-input"
-						rows={ 1 }
-						value={ messageString }
-						onChange={ ( event: React.ChangeEvent< HTMLTextAreaElement > ) =>
-							setMessageString( event.currentTarget.value )
-						}
-						onKeyPress={ handleKeyPress }
+						inputRef={ inputRef }
+						setSubmitDisabled={ setSubmitDisabled }
+						keyUpHandle={ onKeyUp }
 					/>
-					{ isLoading && <Spinner className="odie-send-message-input-spinner" /> }
-					<button
-						type="submit"
-						className="odie-send-message-inner-button"
-						disabled={ messageString.trim() === '' || isLoading }
-					>
-						<img src={ ArrowUp } alt={ _x( 'Arrow icon', 'html alt tag', __i18n_text_domain__ ) } />
+					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
+					<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
+					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
+						<SendMessageIcon />
 					</button>
 				</form>
 			</div>

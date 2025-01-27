@@ -4,6 +4,7 @@ import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import type {
 	AccountCreationAPIResponse,
 	CreateAccountParams,
@@ -117,20 +118,24 @@ export async function createAccount( {
 		} );
 	}
 
-	const isNewAccountCreated = 'created_account' in response && !! response?.created_account;
-
-	if ( 'error' in response ) {
-		return response;
-	} else if ( isNewAccountCreated ) {
-		const username = response?.signup_sandbox_username || response?.username;
-
-		recordNewAccountCreation( {
-			response,
-			flowName,
-			username,
-			signupType: service ? 'social' : 'default',
-		} );
+	// Handling special case where users log in via social using signup form.
+	if (
+		'error' in response ||
+		( service && response && 'created_account' in response && ! response?.created_account )
+	) {
+		return { ...response };
 	}
 
-	return { ...response, isNewAccountCreated };
+	const username = response?.signup_sandbox_username || response?.username;
+	const userId = response?.signup_sandbox_user_id || response?.user_id;
+	recordNewAccountCreation( {
+		response,
+		flowName,
+		username,
+		signupType: service ? 'social' : 'default',
+	} );
+
+	setSignupIsNewUser( userId );
+
+	return { ...response };
 }

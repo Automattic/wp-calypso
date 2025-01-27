@@ -12,8 +12,13 @@ import {
 import { recordStepNavigation } from '../../../analytics/record-step-navigation';
 import { useStepNavigationWithTracking } from '../index';
 
+const EMPTY_GOALS = [];
+
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
+	useSelect: jest.fn( () => ( {
+		intent: '',
+		goals: EMPTY_GOALS,
+	} ) ),
 } ) );
 jest.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: {},
@@ -22,27 +27,36 @@ jest.mock( '../../../analytics/record-step-navigation', () => ( {
 	recordStepNavigation: jest.fn(),
 } ) );
 
+const stepNavControls = {
+	submit: jest.fn(),
+	exitFlow: jest.fn(),
+	goBack: jest.fn(),
+	goNext: jest.fn(),
+	goToStep: jest.fn(),
+};
+
+const mockParams = {
+	flow: {
+		name: 'mock-flow',
+		isSignupFlow: false,
+		useSteps: () => [],
+		useStepNavigation: () => stepNavControls,
+	},
+	currentStepRoute: 'mock-step',
+	navigate: () => {},
+};
+
+const getDefaultProps = ( { flow, currentStepRoute } ) => ( {
+	intent: '',
+	goals: [],
+	flow: flow.name,
+	step: currentStepRoute,
+	variant: undefined,
+	providedDependencies: {},
+	additionalProps: {},
+} );
+
 describe( 'useStepNavigationWithTracking', () => {
-	const stepNavControls = {
-		submit: jest.fn(),
-		exitFlow: jest.fn(),
-		goBack: jest.fn(),
-		goNext: jest.fn(),
-		goToStep: jest.fn(),
-	};
-
-	const mockParams = {
-		flow: {
-			name: 'mock-flow',
-			isSignupFlow: false,
-			useSteps: () => [],
-			useStepNavigation: () => stepNavControls,
-		},
-		currentStepRoute: 'mock-step',
-		navigate: () => {},
-		steps: [],
-	};
-
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -57,6 +71,20 @@ describe( 'useStepNavigationWithTracking', () => {
 		expect( result.current ).toHaveProperty( 'goToStep' );
 	} );
 
+	it( 'ensures reference equality given same input', () => {
+		const { result, rerender } = renderHook(
+			( params ) => useStepNavigationWithTracking( params ),
+			{
+				initialProps: mockParams,
+			}
+		);
+
+		const previous = result.current;
+
+		rerender( mockParams );
+		expect( result.current ).toBe( previous );
+	} );
+
 	it( 'calls the wrapped submit control with correct parameters and records the respective event', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( mockParams ) );
 		const providedDependencies = { foo: 'foo' };
@@ -66,13 +94,9 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies, 'bar', 'baz' );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
+			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
-			intent: '',
-			flow: 'mock-flow',
-			step: 'mock-step',
-			variant: undefined,
 			providedDependencies,
-			additionalProps: undefined,
 		} );
 	} );
 
@@ -85,13 +109,8 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goBack ).toHaveBeenCalled();
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
+			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
-			intent: '',
-			flow: 'mock-flow',
-			step: 'mock-step',
-			variant: undefined,
-			providedDependencies: undefined,
-			additionalProps: undefined,
 		} );
 	} );
 
@@ -104,13 +123,8 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goNext ).toHaveBeenCalled();
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
+			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
-			intent: '',
-			flow: 'mock-flow',
-			step: 'mock-step',
-			variant: undefined,
-			providedDependencies: undefined,
-			additionalProps: undefined,
 		} );
 	} );
 
@@ -123,12 +137,8 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.exitFlow ).toHaveBeenCalledWith( 'to' );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
+			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
-			intent: '',
-			flow: 'mock-flow',
-			step: 'mock-step',
-			variant: undefined,
-			providedDependencies: undefined,
 			additionalProps: { to: 'to' },
 		} );
 	} );
@@ -142,12 +152,8 @@ describe( 'useStepNavigationWithTracking', () => {
 
 		expect( stepNavControls.goToStep ).toHaveBeenCalledWith( 'to' );
 		expect( recordStepNavigation ).toHaveBeenCalledWith( {
+			...getDefaultProps( mockParams ),
 			event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
-			intent: '',
-			flow: 'mock-flow',
-			step: 'mock-step',
-			variant: undefined,
-			providedDependencies: undefined,
 			additionalProps: { to: 'to' },
 		} );
 	} );

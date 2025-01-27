@@ -22,7 +22,7 @@ export function enrichPublicizeActionsWithConnections( state, postShareActions )
 				connectionName: connection?.external_display,
 				message,
 				result,
-				service: connection?.service ?? 'twitter',
+				service: connection?.service,
 				date: share_date,
 				status,
 				url,

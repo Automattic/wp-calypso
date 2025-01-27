@@ -17,7 +17,7 @@ function QrCodeLoginPage( { locale, redirectTo } ) {
 	return (
 		<Main className="qr-code-login-page">
 			<div className="qr-code-login-page__form">
-				<h1 className="qr-code-login-page__heading">{ translate( 'Login via the mobile app' ) }</h1>
+				<h1 className="qr-code-login-page__heading">{ translate( 'Log in via Jetpack app' ) }</h1>
 				<AsyncLoad
 					require="calypso/blocks/qr-code-login"
 					placeholder={ <QrCodeLoginPlaceholder /> }

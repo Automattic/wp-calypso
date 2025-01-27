@@ -52,7 +52,7 @@ export function TrendComparison( { count, previousCount }: TrendComparisonProps 
 	);
 }
 
-function TooltipContent( { count, previousCount }: CountComparisonCardProps ) {
+export function TooltipContent( { count, previousCount }: CountComparisonCardProps ) {
 	const difference = subtract( count, previousCount ) as number;
 	return (
 		<div className="highlight-card-tooltip-content">

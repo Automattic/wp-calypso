@@ -1,0 +1,34 @@
+{
+	"name": "@automattic/oauth-token",
+	"version": "1.0.0",
+	"description": "Wrapper for OAuth token storage so we can change the underlying storage location without changing access to the token.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
+	"types": "./types.d.ts",
+	"sideEffects": false,
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/oauth-token"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/oauth-token#readme",
+	"dependencies": {
+		"cookie": "^0.7.0",
+		"store": "^2.0.12"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^"
+	},
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "run -T transpile",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}

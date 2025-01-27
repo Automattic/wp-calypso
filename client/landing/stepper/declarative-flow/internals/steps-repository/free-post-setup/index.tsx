@@ -15,7 +15,7 @@ import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
 import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import type { Step } from '../../types';
-import '../free-setup/styles.scss';
+import './styles.scss';
 
 const FreePostSetup: Step = ( { navigation, flow } ) => {
 	const { goBack, submit } = navigation;

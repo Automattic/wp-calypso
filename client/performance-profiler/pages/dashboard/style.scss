@@ -28,9 +28,7 @@ $blueberry-color: #3858e9;
 		flex-wrap: wrap;
 		column-gap: 20px;
 		align-items: center;
-		@media (max-width: $break-mobile) {
-			justify-content: center;
-		}
+		justify-content: center;
 	}
 }
 

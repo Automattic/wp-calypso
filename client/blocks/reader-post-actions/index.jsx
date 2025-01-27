@@ -64,7 +64,10 @@ const ReaderPostActions = ( {
 						post={ post }
 						onClick={ onCommentClick }
 						tagName="button"
-						icon={ ReaderCommentIcon( { iconSize } ) }
+						icon={ ReaderCommentIcon( {
+							iconSize,
+							viewBox: '0 -1 20 20',
+						} ) }
 						defaultLabel={ translate( 'Comment' ) }
 					/>
 				</li>

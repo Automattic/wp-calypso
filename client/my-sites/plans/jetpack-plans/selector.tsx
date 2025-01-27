@@ -19,6 +19,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from './get-purchase-url-callback';
@@ -49,24 +50,34 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlugState = useSelector( getSelectedSiteSlug ) || '';
+	const { unlinked, purchasetoken, purchaseNonce, site, currency: currencyCodeQp } = urlQueryArgs;
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+	const [ hasRecordedPageView, setHasRecordedPageView ] = useState( false );
 	const viewTrackerPath = getViewTrackerPath( rootUrl, siteSlugProp );
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 	const legacyPlan = planRecommendation ? planRecommendation[ 0 ] : null;
-
 	const [ , experimentAssignment ] = useExperiment( 'calypso_jetpack_upsell_page_2022_06' );
 	const showUpsellPage = experimentAssignment?.variationName === 'treatment';
 
+	let currencyCode = useSelector( getCurrentUserCurrencyCode );
+	if ( currencyCodeQp ) {
+		currencyCode = currencyCodeQp;
+	}
+
 	useEffect( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
-				site: siteSlug,
-				path: viewTrackerPath,
-				root_path: rootUrl,
-			} )
-		);
-	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath ] );
+		if ( currencyCode && ! hasRecordedPageView ) {
+			setHasRecordedPageView( true );
+			dispatch(
+				recordTracksEvent( 'calypso_jetpack_pricing_page_visit', {
+					site: siteSlug,
+					path: viewTrackerPath,
+					root_path: rootUrl,
+					currency: currencyCode,
+				} )
+			);
+		}
+	}, [ dispatch, rootUrl, siteSlug, viewTrackerPath, currencyCode, hasRecordedPageView ] );
 
 	useEffect( () => {
 		if ( legacyPlan ) {
@@ -81,7 +92,6 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		}
 	}, [ legacyPlan, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
 
-	const { unlinked, purchasetoken, purchaseNonce, site, currency: currencyCode } = urlQueryArgs;
 	const canDoSiteOnlyCheckout = unlinked && !! site && !! ( purchasetoken || purchaseNonce );
 	useEffect( () => {
 		if ( canDoSiteOnlyCheckout ) {
@@ -90,10 +100,11 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					site: siteSlug,
 					path: viewTrackerPath,
 					root_path: rootUrl,
+					currency: currencyCode,
 				} )
 			);
 		}
-	}, [ canDoSiteOnlyCheckout, dispatch, rootUrl, siteSlug, viewTrackerPath ] );
+	}, [ canDoSiteOnlyCheckout, dispatch, rootUrl, siteSlug, viewTrackerPath, currencyCode ] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );

@@ -17,7 +17,10 @@ class SitePicker extends Component {
 	};
 
 	filterSites = ( site ) => {
-		return site.capabilities?.manage_options && ! site.jetpack && ! site.options?.is_domain_only;
+		const isWPCOMSimpleSite = ! site.jetpack && ! site.is_a4a_client;
+		const isWPCOMSite =
+			( isWPCOMSimpleSite || site.is_wpcom_atomic ) && ! site.is_wpcom_staging_site;
+		return site.capabilities?.manage_options && isWPCOMSite && ! site.options?.is_domain_only;
 	};
 
 	renderScreen() {

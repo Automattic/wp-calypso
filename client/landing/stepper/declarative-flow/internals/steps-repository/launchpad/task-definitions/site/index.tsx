@@ -10,7 +10,6 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -146,38 +145,7 @@ export const getBlogLaunchedTask: TaskAction = ( task, flow, context ): Task => 
 	};
 };
 
-export const getVideopressLaunchedTask: TaskAction = ( task, flow, context ): Task => {
-	const { site, submit, siteSlug } = context;
-
-	return {
-		...task,
-		isLaunchTask: true,
-		useCalypsoPath: false,
-		actionDispatch: () => {
-			if ( site?.ID ) {
-				const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE ) as OnboardActions;
-				const { launchSite } = dispatch( SITE_STORE ) as SiteActions;
-
-				setPendingAction( async () => {
-					setProgressTitle( __( 'Launching video site' ) );
-					await launchSite( site.ID );
-
-					// Waits for half a second so that the loading screen doesn't flash away too quickly
-					await new Promise( ( res ) => setTimeout( res, 500 ) );
-					window.location.replace(
-						addQueryArgs( `/home/${ siteSlug }`, {
-							forceLoadLaunchpadData: true,
-						} )
-					);
-				} );
-				submit?.();
-			}
-		},
-	};
-};
-
 export const actions = {
 	site_launched: getSiteLaunchedTask,
 	blog_launched: getBlogLaunchedTask,
-	videopress_launched: getVideopressLaunchedTask,
 };

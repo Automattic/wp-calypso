@@ -46,11 +46,14 @@ class StatsModule extends Component {
 		gateDownloads: PropTypes.bool,
 		hasNoBackground: PropTypes.bool,
 		skipQuery: PropTypes.bool,
+		valueField: PropTypes.string,
+		formatValue: PropTypes.func,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
 		query: {},
+		valueField: 'value',
 	};
 
 	state = {
@@ -79,22 +82,26 @@ class StatsModule extends Component {
 		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
 	}
 
-	getHref() {
-		const { summary, period, path, siteSlug } = this.props;
-
-		// Some modules do not have view all abilities
-		if ( ! summary && period && path && siteSlug ) {
-			return (
-				'/stats/' +
-				period.period +
-				'/' +
-				path +
-				'/' +
-				siteSlug +
-				'?startDate=' +
-				period.startOf.format( 'YYYY-MM-DD' )
-			);
+	getSummaryLink() {
+		const { summary, period, path, siteSlug, query } = this.props;
+		if ( summary ) {
+			return;
 		}
+
+		const paramsValid = period && path && siteSlug;
+		if ( ! paramsValid ) {
+			return undefined;
+		}
+
+		let url = `/stats/${ period.period }/${ path }/${ siteSlug }`;
+
+		if ( query?.start_date ) {
+			url += `?startDate=${ query.start_date }&endDate=${ query.date }`;
+		} else {
+			url += `?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+		}
+
+		return url;
 	}
 
 	isAllTimeList() {
@@ -119,7 +126,6 @@ class StatsModule extends Component {
 			summary,
 			siteId,
 			path,
-			data,
 			moduleStrings,
 			statType,
 			query,
@@ -135,7 +141,19 @@ class StatsModule extends Component {
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
+			valueField,
+			formatValue,
 		} = this.props;
+
+		let data = this.props.data;
+
+		// If valueField is specified and data exists, remap data to use that field as the value
+		if ( valueField && data ) {
+			data = data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -166,7 +184,7 @@ class StatsModule extends Component {
 					showMore={
 						displaySummaryLink && ! summary
 							? {
-									url: this.getHref(),
+									url: this.getSummaryLink(),
 									label:
 										data.length >= 10
 											? translate( 'View all', {
@@ -200,6 +218,7 @@ class StatsModule extends Component {
 							/>
 						)
 					}
+					formatValue={ formatValue }
 				/>
 				{ isAllTime && (
 					<div className={ footerClass }>

@@ -7,11 +7,8 @@ $search-categories-padding-top: 40px;
 	display: flex;
 	align-items: center;
 	gap: 12px;
+	padding-inline: 0;
 	padding-top: $search-categories-padding-top;
-
-	@media (max-width: 660px) {
-		padding: 0 16px;
-	}
 
 	.search-categories__searchbox {
 		max-width: 265px;

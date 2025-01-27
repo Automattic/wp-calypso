@@ -1,6 +1,7 @@
 import { Purchases } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { ResponseDomain } from '../domains/types';
 
 export type Purchase = Purchases.Purchase;
 export type PurchasePriceTier = Purchases.PurchasePriceTier;
@@ -57,5 +58,6 @@ export type RenderRenewsOrExpiresOn = ( args: {
 
 export type RenderRenewsOrExpiresOnLabel = ( args: {
 	purchase: Purchase;
+	domainDetails?: ResponseDomain | null;
 	translate: ReturnType< typeof useTranslate >;
 } ) => string | null;

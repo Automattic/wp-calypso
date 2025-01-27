@@ -1,0 +1,75 @@
+.agency-tier__card {
+	padding: 8px;
+	border-radius: 4px;
+
+	.foldable-card__header {
+		padding-inline: 12px;
+	}
+
+	.sidebar-v2__menu-item {
+		&:hover {
+			svg.sidebar-v2__external-icon {
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+}
+
+.agency-tier__bottom-content {
+	padding-inline: 12px;
+
+	.agency-tier__current-agency-tier-header {
+		margin-inline-start: 8px;
+		padding-block: 16px 12px;
+		display: flex;
+		gap: 16px;
+
+		.agency-tier__current-agency-tier-icon img {
+			transform: scale(1.5);
+		}
+
+		.agency-tier__current-agency-tier-title {
+			@include a4a-font-heading-lg;
+		}
+
+		&.is-default {
+			margin-inline-start: 14px;
+			padding-block: 36px;
+			gap: 24px;
+
+			.agency-tier__current-agency-tier-icon {
+				display: flex;
+				width: 80px;
+				margin-left: -8px;
+
+				img {
+					transform: scale(1.2);
+				}
+			}
+
+			.agency-tier__current-agency-tier-title {
+				@include a4a-font-body-lg;
+			}
+		}
+	}
+
+	.agency-tier__current-agency-tier-description {
+		@include a4a-font-body-md;
+		padding-block-end: 8px;
+	}
+}
+
+.foldable-nav.foldable-card.card .foldable-card__content .agency-tier__bottom-content a.components-button {
+	@include a4a-font-body-md;
+	padding: 0;
+	color: var(--color-gray-40);
+
+	svg {
+		margin-inline-end: 8px;
+	}
+
+	&:hover {
+		background: none;
+		box-shadow: none;
+	}
+}

@@ -36,6 +36,7 @@ const ignoreLangSlugs = [
 	'ia',
 	'ii',
 	'ilo',
+	'kal',
 	'ks',
 	'kv',
 	'mt',

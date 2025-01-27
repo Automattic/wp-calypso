@@ -22,15 +22,9 @@ export interface Task {
 	actionUrl?: string;
 }
 
-export interface ExpandableAction {
-	label: string;
-	onClick: () => void;
-}
-
 export interface Expandable {
 	isOpen: boolean;
 	content: JSX.Element;
-	action?: ExpandableAction;
 }
 
 export type LaunchpadChecklist = Task[];
@@ -67,7 +61,6 @@ export interface LaunchpadStatuses {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
 }
 
 export type EventHandlers = {

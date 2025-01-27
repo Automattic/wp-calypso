@@ -44,6 +44,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'jetpackAtomicPrivateUser',
 	'jetpackAtomicWpBetaUser',
 	'jetpackAtomicWpPreviousUser',
+	'automatticForAgenciesUser',
 ] as const;
 
 /**
@@ -98,6 +99,7 @@ export class SecretsManager {
 				'Failed to initialize the E2E secrets: Could not find and parse the secrets file.\n' +
 					'Have you decrypted the secrets file yet?\n' +
 					'Export the decryption key to E2E_SECRETS_KEY and run "yarn decrypt-secrets".\n' +
+					'Then, please build the package by running "yarn workspace @automattic/calypso-e2e build".\n' +
 					`Original error message: ${ error.message }`
 			);
 		}
@@ -258,6 +260,9 @@ export class SecretsManager {
 					...fakeFullAccount,
 				},
 				jetpackAtomicWpPreviousUser: {
+					...fakeFullAccount,
+				},
+				automatticForAgenciesUser: {
 					...fakeFullAccount,
 				},
 			},

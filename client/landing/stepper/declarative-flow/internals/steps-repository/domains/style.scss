@@ -1,10 +1,10 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@automattic/onboarding/styles/mixins";
-@import "../hundred-year-plan-step-wrapper/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@automattic/onboarding/styles/mixins';
+@import '../hundred-year-plan-step-wrapper/mixins';
 
 .domains {
 	.step-container {
-		max-width: 1280px;
+		max-width: 1040px;
 		padding: 0 20px;
 		margin: 0;
 
@@ -52,10 +52,10 @@
 			}
 
 			.domains__domain-side-content {
-				border-bottom: 1px solid var(--studio-gray-5);
+				border-bottom: 1px solid var( --studio-gray-5 );
 				margin: 0;
 				padding: 20px 0 20px 0;
-				&:not(.domains__free-domain) {
+				&:not( .domains__free-domain ) {
 					border-bottom: none;
 				}
 			}
@@ -108,8 +108,9 @@
 		}
 
 		.search-component {
-			border: 1px solid var(--color-border-subtle);
+			border: 1px solid var( --color-border-subtle );
 			border-radius: 4px;
+			overflow: hidden;
 		}
 
 		.search-component.is-open {
@@ -125,11 +126,11 @@
 
 		.search-component.is-open.has-focus {
 			border-color: #646970;
-			background: var(--color-surface);
+			background: var( --color-surface );
 			box-shadow: none;
 
 			.search-component__input {
-				background: var(--color-surface);
+				background: var( --color-surface );
 			}
 		}
 
@@ -139,14 +140,14 @@
 		}
 
 		.register-domain-step__search-card {
-			background: var(--color-surface);
+			background: var( --color-surface );
 			box-shadow: none;
 			display: flex;
 			padding: 0;
 		}
 
 		.search-component__icon-search {
-			fill: var(--studio-gray-20);
+			fill: var( --studio-gray-20 );
 			margin: 8px 6px 8px 8px;
 		}
 
@@ -161,26 +162,23 @@
 		}
 
 		.featured-domain-suggestions {
-			border-top: 1px solid var(--studio-gray-5);
+			border-top: 1px solid var( --studio-gray-5 );
 			@include break-mobile {
 				border-top: none;
 			}
 
 			.featured-domain-suggestion {
-				border-bottom: 1px solid var(--studio-gray-5);
+				border-bottom: 1px solid var( --studio-gray-5 );
 				box-shadow: none;
 				@include break-mobile {
 					border-bottom: none;
-					box-shadow: 0 0 0 1px var(--color-border-subtle);
+					box-shadow: 0 0 0 1px var( --color-border-subtle );
 				}
-				background: var(--color-surface);
+				background: var( --color-surface );
 				border-radius: 4px;
 				box-sizing: border-box;
 				margin-bottom: 12px;
 				padding: 16px 24px;
-				&:hover {
-					border: var(--studio-gray-50);
-				}
 			}
 
 			.domain-registration-suggestion__title-wrapper {
@@ -200,31 +198,22 @@
 			}
 		}
 
-		.domain-suggestion:not(.featured-domain-suggestion) {
+		.domain-suggestion:not( .featured-domain-suggestion ) {
 			box-shadow: unset;
 			background: none;
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var( --studio-gray-5 );
 			border-top: 1px solid #fff;
-			padding: 16px 20px;
 			margin-bottom: 0;
+			padding: 16px 0;
 
-			@include break-mobile {
-				padding: 16px 5px;
-			}
-
-			.domain-suggestion__content {
-				margin-right: 40px;
-			}
-
-			&:hover {
-				border-bottom: 1px solid var(--studio-gray-50);
-				border-top: 1px solid var(--studio-gray-50);
+			@include break-small {
+				padding: 16px 20px;
 			}
 		}
 
 		.domain-product-price__free-price {
 			font-weight: 500;
-			color: var(--studio-green-60);
+			color: var( --studio-green-60 );
 			font-size: 0.875rem;
 			letter-spacing: 0.2px;
 			line-height: 20px;
@@ -265,14 +254,11 @@
 
 /**
  * Layout for the following flows
- * - ai-assembler
  * - assembler-first
  * - domain-upsell
  */
-.ai-assembler.domains,
 .assembler-first.domains,
 .domain-upsell.domains {
-
 	$domain-stepper-component-width: 1040px;
 
 	padding: 60px 20px;
@@ -281,16 +267,15 @@
 	}
 
 	.step-container.domains {
-
 		max-width: $domain-stepper-component-width;
 		padding: 0;
 		margin: 0 auto;
-		@media (max-width: break-large) {
+		@media ( max-width: break-large ) {
 			margin: 0 40px;
 		}
 
 		.step-container__header .formatted-header__title {
-			@media (max-width: $break-large) {
+			@media ( max-width: $break-large ) {
 				font-size: 2.25rem;
 			}
 		}
@@ -337,7 +322,7 @@
 			padding: 40px 0;
 			margin: 0 0 0 80px;
 
-			@media (max-width: $domain-stepper-component-width) {
+			@media ( max-width: $domain-stepper-component-width ) {
 				margin: 0 20px 0 40px;
 			}
 		}
@@ -351,7 +336,7 @@
 			margin-bottom: 12px;
 			box-sizing: border-box;
 			border: 1px solid #e2e4e7;
-			background: var(--color-surface);
+			background: var( --color-surface );
 			padding: 16px 24px;
 			box-shadow: none;
 		}
@@ -365,24 +350,26 @@
 			flex-direction: column-reverse;
 			margin-bottom: initial;
 
-			@media (min-width: $break-wide) {
+			@media ( min-width: $break-wide ) {
 				flex-direction: row;
 			}
 		}
 
 		.step-container__header {
-			@media (max-width: $break-large) {
+			@media ( max-width: $break-large ) {
 				margin: 34px 20px 40px;
 			}
 		}
 
-		.featured-domain-suggestions .domain-registration-suggestion__title-wrapper .domain-registration-suggestion__badges {
+		.featured-domain-suggestions
+			.domain-registration-suggestion__title-wrapper
+			.domain-registration-suggestion__badges {
 			align-self: baseline;
 			margin-left: 0;
 			margin-bottom: 10px;
 			flex: 1;
 
-			@media (min-width: $break-wide) {
+			@media ( min-width: $break-wide ) {
 				margin-left: 12px;
 				margin-bottom: 0;
 			}
@@ -395,7 +382,6 @@
 			flex: 0 1 auto;
 			align-self: baseline;
 		}
-
 	}
 
 	.domains__step-content.domains__step-content-domain-step {
@@ -411,7 +397,7 @@
 		}
 
 		h1.formatted-header__title.wp-brand-font {
-			font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+			font-family: Recoleta, 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
 			font-weight: 400;
 			color: #101517;
 			letter-spacing: 0.2px;
@@ -419,7 +405,7 @@
 			margin-bottom: 0;
 			margin-top: 35px;
 
-			@media (min-width: $break-xlarge) {
+			@media ( min-width: $break-xlarge ) {
 				font-size: 2.75rem;
 			}
 		}
@@ -427,7 +413,6 @@
 		.use-my-domain .use-my-domain__domain-input .form-text-input {
 			padding: 13px 14px 9px 68px;
 		}
-
 	}
 
 	.register-domain-step.register-domain-step__signup {
@@ -437,7 +422,7 @@
 	.register-domain-step__search.register-domain-step__search-domain-step,
 	.domain-search-results,
 	.domain-search-results__domain-suggestions {
-		@media (max-width: $break-large) {
+		@media ( max-width: $break-large ) {
 			margin: 0 20px;
 		}
 	}
@@ -445,37 +430,62 @@
 	.reskin-side-explainer .reskin-side-explainer__cta .reskin-side-explainer__cta-text {
 		padding-left: 0;
 	}
+}
 
+.hundred-year-domain.step-route {
+	margin-top: -60px;
 }
 
 // Hundred year plan flow
-.hundred-year-plan.domains {
+.hundred-year-plan.domains,
+.hundred-year-domain.domains {
 	.step-container {
 		margin: 0;
 	}
 
 	.step-container__header {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: rem(32px);
-				@include break-small {
-					font-size: rem(44px);
-				}
-			}
-			@include break-small {
-				margin-top: 60px;
-				margin-bottom: 0;
-			}
-			margin: 32px 16px;
-		}
+		margin-bottom: 0;
 
 		@include break-small {
 			margin-bottom: 40px;
 		}
+
+		.formatted-header {
+			margin: 32px 16px;
+
+			@include break-small {
+				margin-top: 60px;
+				margin-bottom: 0;
+			}
+
+			.formatted-header__title {
+				font-size: rem( 32px );
+				@include break-small {
+					font-size: rem( 44px );
+				}
+			}
+
+			.formatted-header__subtitle {
+				margin-top: 0;
+			}
+		}
+	}
+
+	.register-domain-step__search-card {
+		background: none;
+	}
+
+	.search-component {
+		overflow: hidden;
+	}
+
+	.token-field__suggestion.is-selected {
+		background: var( --studio-gray-100 );
 	}
 
 	.domains__content {
 		width: 100%;
+
 		@include break-small {
 			max-width: 780px;
 		}
@@ -486,6 +496,7 @@
 				padding: 0 48px 0 32px;
 			}
 		}
+
 		// Hide domain prices
 		.domain-product-price {
 			display: none;
@@ -499,25 +510,29 @@
 			@include primary-button-black-theme;
 		}
 
+		.domain-search-results__domain-suggestions {
+			margin: 0;
+		}
+
 		// Reset styles for the featured domain suggestion
 		.domain-suggestion.card.featured-domain-suggestion {
 			box-shadow: none;
 			border-top: 1px solid transparent;
-			border-bottom: 1px solid var(--studio-gray-5);
+			border-bottom: 1px solid var( --studio-gray-5 );
 			border-radius: 0;
 			margin-bottom: 0;
-			padding: 16px 20px;
+			padding: 16px 0;
+			background: transparent;
+			border-left: 0 !important;
+			border-right: 0 !important;
+
 			@include break-mobile {
-				padding: 16px 5px;
+				padding: 16px 20px;
 			}
 
 			&:hover {
-				border-bottom: 1px solid var(--studio-gray-50);
-				border-top: 1px solid var(--studio-gray-50);
-			}
-
-			.domain-suggestion__content {
-				min-height: 54px;
+				border-bottom: 1px solid var( --studio-gray-50 );
+				border-top: 1px solid var( --studio-gray-50 );
 			}
 
 			.domain-registration-suggestion__title-wrapper {
@@ -540,9 +555,84 @@
 			}
 		}
 
+		.featured-domain-suggestion--is-placeholder {
+			background: transparent !important;
+			margin-bottom: 0 !important;
+			box-shadow: none;
+			min-height: unset;
+			border-bottom: 1px solid var( --studio-gray-5 ) !important;
+			border-radius: 0 !important;
+			padding: 20px !important;
+			align-items: unset !important;
+
+			.domain-suggestion__content {
+				display: none;
+			}
+
+			.domain-suggestion__action-container {
+				margin-bottom: 0;
+			}
+		}
+
+		.domain-registration-suggestion__title-info {
+			width: auto;
+			display: flex;
+			align-items: center;
+		}
+
+		.domain-suggestion__content {
+			min-height: unset;
+			gap: 0;
+		}
+
+		.domain-suggestion__action-container {
+			margin-top: 16px;
+
+			@include break-small {
+				margin-top: 0;
+			}
+		}
+
+		.domain-search-results__domain-available-notice {
+			background: transparent;
+			display: flex;
+			margin-left: 0;
+
+			.domain-search-results__domain-available-notice-icon {
+				margin-right: 4px;
+			}
+
+			/* hide transfer link */
+			a {
+				display: none;
+			}
+		}
+
 		// Hide the domain explanation image
-		.register-domain-step__domain-side-content-container-domain-explanation-image {
+		.register-domain-step__domain-side-content-container-domain-explanation-image,
+		.domains__domain-side-content-container {
 			display: none;
 		}
+	}
+}
+
+.hundred-year-domain.domains {
+	.domains__content {
+		.domain-product-price {
+			display: block;
+			margin-top: 0;
+
+			@include break-small {
+				align-items: flex-end;
+				align-self: center;
+				margin-right: 16px;
+			}
+		}
+	}
+}
+
+.copy-site.domains {
+	.step-wrapper.is-wide-layout {
+		max-width: 1040px;
 	}
 }

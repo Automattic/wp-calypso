@@ -3,8 +3,8 @@ import {
 	getPlanPersonalTitle,
 	getPlanPremiumTitle,
 } from '@automattic/calypso-products';
-import { useSelect } from '@wordpress/data';
-import { useEffect, useState, useMemo } from 'react';
+import { subscribe, useSelect } from '@wordpress/data';
+import { useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	currentlyPreviewingTheme,
@@ -12,7 +12,6 @@ import {
 	PREMIUM_THEME,
 	WOOCOMMERCE_THEME,
 } from '../utils';
-import useLocation from './use-location';
 import type { Theme } from 'calypso/types';
 
 /**
@@ -36,8 +35,21 @@ const getThemeType = ( theme?: Theme ) => {
 const getThemeFeature = ( theme?: Theme ) => theme?.theme_tier?.feature ?? undefined;
 
 export const usePreviewingThemeSlug = () => {
-	const location = useLocation();
-	const previewingThemeSlug = useMemo( () => currentlyPreviewingTheme(), [ location?.search ] );
+	const [ previewingThemeSlug, setPreviewingThemeSlug ] = useState< string | undefined >();
+	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
+
+	useEffect( () => {
+		if ( ! isSiteEditor ) {
+			return;
+		}
+
+		const unsubscribe = subscribe( () => {
+			setPreviewingThemeSlug( currentlyPreviewingTheme() );
+		} );
+
+		return () => unsubscribe();
+	}, [ isSiteEditor ] );
+
 	return previewingThemeSlug;
 };
 
@@ -45,6 +57,13 @@ export const usePreviewingTheme = () => {
 	const previewingThemeSlug = usePreviewingThemeSlug();
 	const { previewingThemeName } = useSelect(
 		( select ) => {
+			// Avoid calling getTheme with null - fetches all site /themes (10s~)
+			if ( ! previewingThemeSlug ) {
+				return {
+					previewingThemeSlug,
+					previewingThemeName: undefined,
+				};
+			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const previewingTheme = ( select( 'core' ) as any ).getTheme( previewingThemeSlug );
 

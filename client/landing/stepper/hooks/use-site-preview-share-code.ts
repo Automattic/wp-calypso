@@ -1,7 +1,7 @@
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useEffect } from 'react';
-import { useCreateSitePreviewLink } from 'calypso/components/site-preview-link/use-create-site-preview-link';
-import { useSitePreviewLinks } from 'calypso/components/site-preview-link/use-site-preview-links';
+import { useCreateSitePreviewLink } from 'calypso/components/site-preview-links/use-create-site-preview-link';
+import { useSitePreviewLinks } from 'calypso/components/site-preview-links/use-site-preview-links';
 import { useSite } from './use-site';
 
 export function useSitePreviewShareCode() {

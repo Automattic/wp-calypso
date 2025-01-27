@@ -64,9 +64,20 @@ export default function DomainAnalyzer( props: Props ) {
 							onKeyDown={ onInputEscape }
 							spellCheck="false"
 						/>
+						<div className="domain-analyzer--msg">
+							<p
+								className={ clsx( 'error', {
+									'vis-hidden': ! showError,
+								} ) }
+							>
+								<Icon icon={ info } size={ 20 } />{ ' ' }
+								{ isDomainValid === false && translate( 'Please enter a valid website address' ) }
+								{ domainFetchingError && domainFetchingError.message }
+							</p>
+						</div>
 					</div>
 					<div className="col-2">
-						<Button isBusy={ isBusy } type="submit" className="button-action">
+						<Button variant="primary" isBusy={ isBusy } type="submit" className="button-action">
 							{
 								// translators: "Still checking" stands for "Still checking the domain you entered in the form"
 								isBusyForWhile && domain && isDomainValid
@@ -75,17 +86,6 @@ export default function DomainAnalyzer( props: Props ) {
 							}
 						</Button>
 					</div>
-				</div>
-				<div className="domain-analyzer--msg">
-					<p
-						className={ clsx( 'error', {
-							'vis-hidden': ! showError,
-						} ) }
-					>
-						<Icon icon={ info } size={ 20 } />{ ' ' }
-						{ isDomainValid === false && translate( 'Please enter a valid website address' ) }
-						{ domainFetchingError && domainFetchingError.message }
-					</p>
 				</div>
 			</form>
 		</div>

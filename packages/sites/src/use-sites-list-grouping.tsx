@@ -60,6 +60,8 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 			private: 0,
 			redirect: 0,
 			deleted: 0,
+			'migration-pending': 0,
+			'migration-started': 0,
 		};
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
@@ -86,6 +88,8 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 				private: [],
 				redirect: [],
 				deleted: [],
+				'migration-pending': [],
+				'migration-started': [],
 			}
 		);
 

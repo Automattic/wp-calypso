@@ -22,7 +22,7 @@ async function queryOdysseyQuerySitePurchases(
 	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId ) {
-		return;
+		return [];
 	}
 
 	const apiPath = shouldUseStatsBuiltInPurchasesApi
@@ -70,7 +70,7 @@ async function queryOdysseyQuerySitePurchasesFromMyJetpack(
 	shouldUseStatsBuiltInPurchasesApi: boolean
 ) {
 	if ( ! siteId || shouldUseStatsBuiltInPurchasesApi ) {
-		return;
+		return [];
 	}
 	return wpcom.req
 		.get( {
@@ -91,7 +91,7 @@ const useOdysseyQuerySitePurchasesFromMyJetpack = (
 		queryKey: [
 			'odyssey-stats',
 			'site-purchases',
-			'my-jetapck',
+			'my-jetpack',
 			shouldUseStatsBuiltInPurchasesApi,
 			siteId,
 		],
@@ -164,7 +164,7 @@ export default function OdysseyQuerySitePurchases( { siteId }: { siteId: number 
 			reduxDispatch( {
 				type: PURCHASES_SITE_FETCH_COMPLETED,
 				siteId,
-				purchases,
+				purchases: purchases ?? [],
 			} );
 		}
 	}, [ purchases, isFetching, reduxDispatch, hasOtherErrors, siteId, purchasesFromMyJetpack ] );

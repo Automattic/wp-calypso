@@ -13,6 +13,7 @@ export default function usePluginVersionInfo(
 	currentVersionsRange: { min: string; max: string };
 	updatedVersions: string[];
 	hasUpdate: boolean;
+	updateableSites: number;
 } {
 	const allSites = useSelector( getSites );
 
@@ -28,6 +29,10 @@ export default function usePluginVersionInfo(
 
 	const siteIds = siteObjectsToSiteIds( sites );
 
+	const updateableSites = sites.filter(
+		( site ) => site.canUpdateFiles && site.version !== plugin.update?.new_version
+	).length;
+
 	const pluginsOnSites: any = useSelector( ( state ) =>
 		getPluginOnSites( state, siteIds, plugin?.slug )
 	);
@@ -37,10 +42,20 @@ export default function usePluginVersionInfo(
 		return pluginsOnSites?.sites[ siteId ];
 	};
 
-	const hasUpdate = sites.some( ( site ) => {
-		const sitePlugin = getSitePlugin( site );
-		return sitePlugin?.update?.new_version && site.canUpdateFiles;
-	} );
+	let hasUpdate = false;
+
+	if ( selectedSiteId ) {
+		const selectedSite = sites.find( ( site ) => site.ID === selectedSiteId );
+		if ( selectedSite ) {
+			const sitePlugin = getSitePlugin( selectedSite );
+			hasUpdate = sitePlugin?.update?.new_version && selectedSite.canUpdateFiles;
+		}
+	} else {
+		hasUpdate = sites.some( ( site ) => {
+			const sitePlugin = getSitePlugin( site );
+			return sitePlugin?.update?.new_version && site.canUpdateFiles;
+		} );
+	}
 
 	const updatedVersions = sites
 		.map( ( site ) => {
@@ -79,6 +94,7 @@ export default function usePluginVersionInfo(
 			},
 			updatedVersions,
 			hasUpdate,
+			updateableSites,
 		};
-	}, [ currentVersions, hasUpdate, updatedVersions ] );
+	}, [ currentVersions, hasUpdate, updateableSites, updatedVersions ] );
 }

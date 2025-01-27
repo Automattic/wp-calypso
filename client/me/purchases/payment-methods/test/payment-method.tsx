@@ -64,6 +64,40 @@ const payPalAgreement: StoredPaymentMethodPayPal = {
 	tax_location: null,
 };
 
+const mockPurchases = [
+	{
+		productName: 'WordPress.com Business Plan',
+		domain: 'associatedsubscription.wordpress.com',
+		meta: 'associatedsubscription.wordpress.com',
+		payment: { storedDetailsId: '1234' },
+		isAutoRenewEnabled: true,
+		renewDate: '2080-12-31',
+	},
+];
+
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
+	getUserPurchases: jest.fn( () => mockPurchases ),
+	getSitePurchases: jest.fn( () => mockPurchases ),
+	hasLoadedSitePurchasesFromServer: jest.fn( () => true ),
+	hasLoadedUserPurchasesFromServer: jest.fn( () => true ),
+} ) );
+
+function createMockReduxStoreForPurchase() {
+	return createReduxStore(
+		{
+			purchases: {
+				data: mockPurchases,
+				hasLoadedUserPurchasesFromServer: true,
+				hasLoadedSitePurchasesFromServer: true,
+			},
+			ui: { selectSiteId: '' },
+		},
+		( state ) => {
+			return state;
+		}
+	);
+}
+
 describe( 'PaymentMethod', () => {
 	const currentData = { cards: [] };
 	beforeEach( () => {
@@ -93,7 +127,7 @@ describe( 'PaymentMethod', () => {
 	} );
 
 	it( 'lists all payment methods', async () => {
-		const store = createReduxStore();
+		const store = createMockReduxStoreForPurchase();
 		const queryClient = new QueryClient();
 		render(
 			<ReduxProvider store={ store }>
@@ -106,9 +140,52 @@ describe( 'PaymentMethod', () => {
 		expect( await screen.findByText( payPalAgreement.name ) ).toBeInTheDocument();
 	} );
 
+	it( 'shows subscriptions associated with payment method', async () => {
+		const user = userEvent.setup();
+		const store = createMockReduxStoreForPurchase();
+		const queryClient = new QueryClient();
+		render(
+			<ReduxProvider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<PaymentMethodList addPaymentMethodUrl="" />
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+		await user.click(
+			await screen.findByLabelText( `Delete the "${ card.card_last_4 }" payment method` )
+		);
+
+		expect( await screen.findByText( 'Associated subscriptions' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'associatedsubscription.wordpress.com' ) ).toBeInTheDocument();
+	} );
+
+	it( 'does not show subscriptions unassociated with payment method', async () => {
+		const user = userEvent.setup();
+		const store = createMockReduxStoreForPurchase();
+		const queryClient = new QueryClient();
+
+		mockPurchases[ 0 ].payment.storedDetailsId = '5678';
+
+		render(
+			<ReduxProvider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<PaymentMethodList addPaymentMethodUrl="" />
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+		await user.click(
+			await screen.findByLabelText( `Delete the "${ card.card_last_4 }" payment method` )
+		);
+
+		expect( await screen.queryByText( 'Associated subscriptions' ) ).not.toBeInTheDocument();
+		expect(
+			await screen.queryByText( 'associatedsubscription.wordpress.com' )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'removes the card when deletion completes', async () => {
 		const user = userEvent.setup();
-		const store = createReduxStore();
+		const store = createMockReduxStoreForPurchase();
 		const queryClient = new QueryClient();
 		render(
 			<ReduxProvider store={ store }>
@@ -129,7 +206,7 @@ describe( 'PaymentMethod', () => {
 
 	it( 'removes the PayPal agreement when deletion completes', async () => {
 		const user = userEvent.setup();
-		const store = createReduxStore();
+		const store = createMockReduxStoreForPurchase();
 		const queryClient = new QueryClient();
 		render(
 			<ReduxProvider store={ store }>

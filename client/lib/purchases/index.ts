@@ -261,7 +261,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return i18n.translate( '%(productName)s (%(quantity)s requests per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
-				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+				quantity: numberFormat( purchase.purchaseRenewalQuantity ),
 			},
 		} );
 	}
@@ -274,7 +274,7 @@ export function getDisplayName( purchase: Purchase ): TranslateResult {
 		return i18n.translate( '%(productName)s (%(quantity)s views per month)', {
 			args: {
 				productName: jetpackProductsDisplayNames[ productSlug ],
-				quantity: numberFormat( purchase.purchaseRenewalQuantity, 0 ),
+				quantity: numberFormat( purchase.purchaseRenewalQuantity ),
 			},
 		} );
 	}
@@ -874,7 +874,7 @@ export function isAgencyPartnerType( partnerType: string ) {
 		return false;
 	}
 
-	return [ 'agency', 'agency_beta', 'a4a_agency' ].includes( partnerType );
+	return [ 'agency', 'a4a_agency' ].includes( partnerType );
 }
 
 export function purchaseType( purchase: Purchase ) {

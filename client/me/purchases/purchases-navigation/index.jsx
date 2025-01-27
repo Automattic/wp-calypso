@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -12,6 +13,7 @@ import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 export default function PurchasesNavigation( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const useDataViewBillingHistoryList = config.isEnabled( 'purchases/billing-history-data-view' );
 
 	return (
 		<SectionNav selectedText={ titles[ section ] }>
@@ -29,7 +31,7 @@ export default function PurchasesNavigation( { section } ) {
 				</NavItem>
 			</NavTabs>
 
-			{ section === 'billingHistory' && (
+			{ section === 'billingHistory' && ! useDataViewBillingHistoryList && (
 				<Search
 					pinned
 					fitsContainer

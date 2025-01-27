@@ -1016,12 +1016,16 @@ describe( 'main app', () => {
 				'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 			);
 		} );
-		it( 'redirects to public pricing page', async () => {
+		it( 'redirects to public pricing page with coupon and ref params', async () => {
 			app.withConfigEnabled( {
 				'jetpack-cloud/connect': false,
 			} );
-			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
+			const { response } = await app.run( {
+				request: { url: '/plans', query: { ref: 'test', coupon: 'test' } },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith(
+				'https://wordpress.com/pricing/?ref=test&coupon=test'
+			);
 		} );
 	} );
 

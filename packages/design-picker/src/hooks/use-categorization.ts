@@ -1,64 +1,26 @@
-import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useState } from 'react';
-import { SHOW_ALL_SLUG } from '../constants';
-import { Category, Design } from '../types';
-import { gatherCategories } from '../utils';
+import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useDesignPickerFilters } from './use-design-picker-filters';
+import type { Category } from '../types';
 
 export interface Categorization {
-	selection: string | null;
-	onSelect: ( selectedSlug: string | null ) => void;
 	categories: Category[];
+	selections: string[];
+	isSelectionsChanged: boolean;
+	onSelect: ( selectedSlug: string ) => void;
 }
 
 interface UseCategorizationOptions {
-	defaultSelection: string | null;
-	showAllFilter?: boolean;
+	defaultSelections: string[];
 	sort?: ( a: Category, b: Category ) => number;
+	handleSelect?: ( slug: string ) => void;
+	handleDeselect?: ( slug: string ) => void;
 }
 
 export function useCategorization(
-	designs: Design[],
-	{ defaultSelection, showAllFilter, sort }: UseCategorizationOptions
-): Categorization {
-	const { __ } = useI18n();
-
-	const categories = useMemo( () => {
-		const result = gatherCategories( designs );
-		if ( sort ) {
-			result.sort( sort );
-		}
-
-		if ( showAllFilter && designs.length ) {
-			result.unshift( {
-				name: __( 'Show All', __i18n_text_domain__ ),
-				slug: SHOW_ALL_SLUG,
-			} );
-		}
-
-		return result;
-	}, [ designs, showAllFilter, sort, __ ] );
-
-	const [ selection, onSelect ] = useState< string | null >(
-		chooseDefaultSelection( categories, defaultSelection )
-	);
-
-	useEffect( () => {
-		if ( shouldSetToDefaultSelection( categories, selection ) ) {
-			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
-		}
-	}, [ categories, defaultSelection, selection ] );
-
-	return {
-		categories,
-		selection,
-		onSelect,
-	};
-}
-
-export function useCategorizationFromApi(
 	categoryMap: Record< string, Category >,
-	{ defaultSelection, sort }: UseCategorizationOptions
+	{ defaultSelections, sort, handleSelect, handleDeselect }: UseCategorizationOptions
 ): Categorization {
+	const isInitRef = useRef( false );
 	const categories = useMemo( () => {
 		const categoryMapKeys = Object.keys( categoryMap ) || [];
 		const result = categoryMapKeys.map( ( slug ) => ( {
@@ -67,58 +29,64 @@ export function useCategorizationFromApi(
 		} ) );
 
 		return result.sort( sort );
-	}, [ categoryMap ] );
+	}, [ categoryMap, sort ] );
 
-	const [ selection, onSelect ] = useState< string | null >(
-		chooseDefaultSelection( categories, defaultSelection )
+	const { selectedCategories, setSelectedCategories } = useDesignPickerFilters();
+	const isSelectionsChanged = useMemo(
+		() =>
+			defaultSelections.length !== selectedCategories.length ||
+			! defaultSelections.every( ( selection ) => selectedCategories.includes( selection ) ),
+		[ defaultSelections, selectedCategories ]
+	);
+
+	const onSelect = useCallback(
+		( value: string ) => {
+			const index = selectedCategories.findIndex( ( selection ) => selection === value );
+			if ( index === -1 ) {
+				handleSelect?.( value );
+				return setSelectedCategories( [ ...selectedCategories, value ] );
+			}
+
+			handleDeselect?.( value );
+			return setSelectedCategories( [
+				...selectedCategories.slice( 0, index ),
+				...selectedCategories.slice( index + 1 ),
+			] );
+		},
+		[ selectedCategories, isSelectionsChanged, setSelectedCategories, handleSelect, handleDeselect ]
 	);
 
 	useEffect( () => {
-		if ( shouldSetToDefaultSelection( categories, selection ) ) {
-			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
+		if ( ! isInitRef.current && categories.length > 0 && selectedCategories.length === 0 ) {
+			setSelectedCategories( chooseDefaultSelections( categories, defaultSelections ) );
+			isInitRef.current = true;
 		}
-	}, [ categories, defaultSelection, selection ] );
+	}, [ isInitRef, categories ] );
 
 	return {
 		categories,
-		selection,
+		selections: selectedCategories,
+		isSelectionsChanged,
 		onSelect,
 	};
 }
 
 /**
- *	Check that the current selection still matches one of the category slugs,
- *	and if it doesn't reset the current selection to the default selection.
- *	@param categories the list of available categories
- *	@param currentSelection the slug of the current selected category
- *	@returns whether the current selection should be set to the default selection
- */
-function shouldSetToDefaultSelection(
-	categories: Category[],
-	currentSelection: string | null
-): boolean {
-	// For an empty list, `null` selection is the only correct one.
-	if ( categories.length === 0 && currentSelection === null ) {
-		return false;
-	}
-	return ! categories.some( ( { slug } ) => slug === currentSelection );
-}
-
-/**
  * Chooses which category is the one that should be used by default.
- * If `defaultSelection` is a valid category slug then it'll be used, otherwise it'll be whichever
+ * If `defaultSelections` is a valid category slug then it'll be used, otherwise it'll be whichever
  * category appears first in the list.
  * @param categories the categories from which the default will be selected
- * @param defaultSelection use this category as the default selection if possible
+ * @param defaultSelections use this category as the default selections if possible
  * @returns the default category or null if none is available
  */
-function chooseDefaultSelection(
-	categories: Category[],
-	defaultSelection: string | null
-): string | null {
-	if ( defaultSelection && categories.find( ( { slug } ) => slug === defaultSelection ) ) {
-		return defaultSelection;
+function chooseDefaultSelections( categories: Category[], defaultSelections: string[] ): string[] {
+	const categorySlugsSet = new Set( categories.map( ( { slug } ) => slug ) );
+	const availableDefaultSelections = defaultSelections.filter( ( selection ) =>
+		categorySlugsSet.has( selection )
+	);
+	if ( availableDefaultSelections.length > 0 ) {
+		return availableDefaultSelections;
 	}
 
-	return categories[ 0 ]?.slug ?? null;
+	return categories[ 0 ]?.slug ? [ categories[ 0 ]?.slug ] : [];
 }

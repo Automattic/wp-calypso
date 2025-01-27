@@ -3,6 +3,7 @@
 
 .plugins-browser-list {
 	padding-top: 40px;
+	padding-inline: 0;
 
 	.feature-example & {
 		margin: 0;
@@ -19,11 +20,6 @@
 			font-weight: 500;
 			color: var(--studio-gray-80);
 		}
-	}
-
-	@include breakpoint-deprecated("<660px") {
-		padding-left: 16px;
-		padding-right: 16px;
 	}
 
 	.spotlight {

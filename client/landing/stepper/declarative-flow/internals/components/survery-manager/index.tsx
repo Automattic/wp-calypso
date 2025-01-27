@@ -1,0 +1,40 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import {
+	SITE_MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+} from '@automattic/onboarding';
+import { Suspense } from 'react';
+import { useFlowNavigation } from '../../hooks/use-flow-navigation';
+import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
+import { Flow } from '../../types';
+import { DeferredRender } from '../deferred-render';
+
+const MIGRATION_SURVEY_FLOWS = [
+	SITE_MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+];
+
+const SurveyManager = ( { disabled, flow }: { disabled: boolean; flow: Flow } ) => {
+	const { params } = useFlowNavigation( flow );
+	const isEnLocale = useIsEnglishLocale();
+
+	if ( ! params.flow || disabled ) {
+		return null;
+	}
+
+	if ( MIGRATION_SURVEY_FLOWS.includes( params.flow ) && isEnLocale ) {
+		return (
+			<DeferredRender timeMs={ 2000 }>
+				<Suspense>
+					<AsyncMigrationSurvey />
+				</Suspense>
+			</DeferredRender>
+		);
+	}
+
+	return null;
+};
+
+export default SurveyManager;

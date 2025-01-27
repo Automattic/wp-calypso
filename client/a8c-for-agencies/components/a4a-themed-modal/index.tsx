@@ -12,6 +12,7 @@ type Props = {
 	onClose?: () => void;
 	modalImage?: string;
 	dismissable?: boolean;
+	modalVideo?: ReactNode;
 };
 
 export default function A4AThemedModal( {
@@ -20,6 +21,7 @@ export default function A4AThemedModal( {
 	onClose = () => {},
 	modalImage,
 	dismissable,
+	modalVideo,
 }: Props ) {
 	return (
 		<Modal
@@ -29,7 +31,10 @@ export default function A4AThemedModal( {
 		>
 			<div className="a4a-themed-modal__wrapper">
 				<div className="a4a-themed-modal__sidebar-image-container">
-					<img className="a4a-themed-modal__sidebar-image" src={ modalImage } alt="" />
+					{ modalImage && (
+						<img className="a4a-themed-modal__sidebar-image" src={ modalImage } alt="" />
+					) }
+					{ modalVideo }
 				</div>
 				<div className="a4a-themed-modal__content">
 					{ dismissable && (

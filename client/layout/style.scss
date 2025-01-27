@@ -211,7 +211,7 @@ body.is-mobile-app-view {
 
 	.site__title::after,
 	.site__domain::after {
-		@include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
+		@include long-content-fade( $color: var( --color-sidebar-background ) );
 	}
 
 	.site-selector {

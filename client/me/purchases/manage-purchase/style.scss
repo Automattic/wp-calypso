@@ -216,6 +216,12 @@
 	}
 }
 
+.manage-purchase__refund-text {
+	display: block;
+	font-size: $font-body-extra-small;
+	font-weight: 400;
+}
+
 .manage-purchase__settings-link {
 	display: block;
 	margin-top: 16px;
@@ -357,6 +363,10 @@
 	&.is-expiring .manage-purchase__detail-date-span {
 		color: var(--studio-red);
 	}
+}
+
+.manage-purchase__renewal-text {
+	display: inline-block;		
 }
 
 .manage-purchase__detail .user__name {

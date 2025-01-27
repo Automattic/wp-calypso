@@ -111,7 +111,7 @@ export default function BeforeSubmitCheckoutHeader() {
 	const subTotalLineItemWithoutCoupon: LineItemType = {
 		id: 'subtotal-without-coupon',
 		type: 'subtotal',
-		label: totalDiscount > 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
+		label: totalDiscount !== 0 ? translate( 'Subtotal before discounts' ) : translate( 'Subtotal' ),
 		formattedAmount: formatCurrency( subtotalBeforeDiscounts, responseCart.currency, {
 			isSmallestUnit: true,
 			stripZeros: true,
@@ -126,7 +126,7 @@ export default function BeforeSubmitCheckoutHeader() {
 			<WPOrderReviewSection>
 				<NonTotalPrices>
 					<NonProductLineItem subtotal lineItem={ subTotalLineItemWithoutCoupon } />
-					{ totalDiscount > 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
+					{ totalDiscount !== 0 && <NonProductLineItem subtotal lineItem={ discountLineItem } /> }
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<NonProductLineItem key={ taxLineItem.id } tax lineItem={ taxLineItem } />
 					) ) }

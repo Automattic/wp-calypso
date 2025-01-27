@@ -17,9 +17,10 @@ import {
 	magicLoginUse,
 	redirectJetpack,
 	redirectDefaultLocale,
+	redirectLostPassword,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
-import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin } from './ssr';
+import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -70,6 +71,7 @@ export default ( router ) => {
 			[ `/log-in/link/use/${ lang }`, `/log-in/jetpack/link/use/${ lang }` ],
 			redirectLoggedIn,
 			setLocaleMiddleware(),
+			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLoginUse,
 			makeLoggedOutLayout
@@ -78,6 +80,7 @@ export default ( router ) => {
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
 			setLocaleMiddleware(),
+			setMetaTags,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 			magicLogin,
 			makeLoggedOutLayout
@@ -88,6 +91,7 @@ export default ( router ) => {
 		[ `/log-in/qr/${ lang }` ],
 		redirectLoggedIn,
 		setLocaleMiddleware(),
+		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		qrCodeLogin,
 		makeLoggedOutLayout
@@ -110,10 +114,12 @@ export default ( router ) => {
 		redirectDefaultLocale,
 		setLocaleMiddleware(),
 		setHrefLangLinks,
+		setMetaTags,
 		setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
 		login,
 		setShouldServerSideRenderLogin,
 		ssrSetupLocaleLogin,
-		makeLoggedOutLayout
+		makeLoggedOutLayout,
+		redirectLostPassword
 	);
 };

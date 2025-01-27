@@ -1,15 +1,15 @@
-@import "@wordpress/base-styles/breakpoints.scss";
+@import "@wordpress/base-styles/breakpoints";
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 
 .developer-features-sub-title {
-	margin-bottom: 16px;
+	padding-bottom: 16px;
 	font-weight: 500;
 	color: $studio-gray-60;
 
 	@media (max-width: $break-large) {
-		margin: 0 32px 16px;
+		padding: 0 32px 16px;
 	}
 }
 
@@ -31,7 +31,6 @@
 
 		a {
 			font-size: rem(13px);
-			color: var(--color-accent);
 		}
 
 		.developer-features-list__item-title {

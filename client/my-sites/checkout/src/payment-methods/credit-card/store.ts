@@ -184,12 +184,15 @@ export function createCreditCardPaymentMethodStore( {
 				action: AnyAction
 			) {
 				return {
-					fields: fieldReducer( state.fields, action ),
-					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action ),
-					cardDataComplete: cardDataCompleteReducer( state.cardDataComplete, action ),
-					brand: brandReducer( state.brand, action ),
+					fields: fieldReducer( state.fields, action as CardStoreAction ),
+					cardDataErrors: cardDataErrorsReducer( state.cardDataErrors, action as CardStoreAction ),
+					cardDataComplete: cardDataCompleteReducer(
+						state.cardDataComplete,
+						action as CardStoreAction
+					),
+					brand: brandReducer( state.brand, action as CardStoreAction ),
 					useForAllSubscriptions: allowUseForAllSubscriptions
-						? allSubscriptionsReducer( state.useForAllSubscriptions, action )
+						? allSubscriptionsReducer( state.useForAllSubscriptions, action as CardStoreAction )
 						: false,
 				};
 			},

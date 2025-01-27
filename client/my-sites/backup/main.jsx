@@ -69,7 +69,9 @@ const BackupPage = ( { queryDate } ) => {
 	const supportLink = isAtomic ? (
 		<InlineSupportLink supportContext="backups" showIcon={ false } />
 	) : (
-		<ExternalLink href="https://jetpack.com/support/backup/">Learn more</ExternalLink>
+		<ExternalLink href="https://jetpack.com/support/backup/">
+			{ translate( 'Learn more' ) }
+		</ExternalLink>
 	);
 
 	return (

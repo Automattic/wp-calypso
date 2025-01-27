@@ -13,7 +13,9 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
+import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
+import { getSelectedSiteId } from './state/ui/selectors';
 
 /**
  * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
@@ -92,11 +94,17 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return '/sites';
 	}
 
+	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
+
+	if ( useReaderAsLandingPage ) {
+		return '/read';
+	}
+
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primarySiteId = getPrimarySiteId( getState() );
-	await dispatch( waitForSite( primarySiteId ) );
-	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+	const primaryOrSelectedSiteId = getSelectedSiteId( getState() ) || getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primaryOrSelectedSiteId ) );
+	const primarySiteSlug = getSiteSlug( getState(), primaryOrSelectedSiteId );
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
@@ -106,12 +114,15 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return '/sites';
 	}
 
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
+		getState(),
+		primaryOrSelectedSiteId
+	);
 
 	if ( isCustomerHomeEnabled ) {
-		if ( isAdminInterfaceWPAdmin( getState(), primarySiteId ) ) {
+		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
 			// This URL starts with 'https://' because it's the access to wp-admin.
-			return getSiteAdminUrl( getState(), primarySiteId );
+			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
 		}
 		return `/home/${ primarySiteSlug }`;
 	}

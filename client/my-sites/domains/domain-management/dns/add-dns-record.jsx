@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { DNS_RECORDS_ADD, DNS_RECORDS_EDITING_OR_DELETING } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -22,7 +23,6 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import DnsAddNew from './dns-add-new';
-
 import './add-dns-record.scss';
 
 class AddDnsRecord extends Component {
@@ -42,10 +42,20 @@ class AddDnsRecord extends Component {
 
 	renderHeader() {
 		const { translate, selectedSite, currentRoute, selectedDomainName } = this.props;
+		const {
+			showBreadcrumb = true,
+			titleOverride,
+			subtitleOverride,
+		} = this.props.context?.params || {};
+
 		const recordBeingEdited = this.getRecordBeingEdited();
 		const dnsSupportPageLink = (
 			<ExternalLink
-				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
+				href={
+					recordBeingEdited
+						? localizeUrl( DNS_RECORDS_EDITING_OR_DELETING )
+						: localizeUrl( DNS_RECORDS_ADD )
+				}
 				target="_blank"
 				icon={ false }
 			/>
@@ -93,7 +103,14 @@ class AddDnsRecord extends Component {
 			showBackArrow: true,
 		};
 
-		return <DomainHeader items={ items } mobileItem={ mobileItem } />;
+		return (
+			<DomainHeader
+				items={ showBreadcrumb ? items : [] }
+				mobileItem={ showBreadcrumb ? mobileItem : null }
+				titleOverride={ titleOverride }
+				subtitleOverride={ subtitleOverride }
+			/>
+		);
 	}
 
 	goBack = () => {
@@ -103,9 +120,15 @@ class AddDnsRecord extends Component {
 
 	renderMain() {
 		const { domains, dns, selectedDomainName, selectedSite, translate } = this.props;
+		const recordBeingEdited = this.getRecordBeingEdited();
+
 		const dnsSupportPageLink = (
 			<ExternalLink
-				href={ localizeUrl( 'https://wordpress.com/support/domains/custom-dns/' ) }
+				href={
+					recordBeingEdited
+						? localizeUrl( DNS_RECORDS_EDITING_OR_DELETING )
+						: localizeUrl( DNS_RECORDS_ADD )
+				}
 				target="_blank"
 				icon={ false }
 			/>
@@ -118,7 +141,6 @@ class AddDnsRecord extends Component {
 				},
 			}
 		);
-		const recordBeingEdited = this.getRecordBeingEdited();
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 
 		return (

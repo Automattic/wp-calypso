@@ -32,8 +32,8 @@ body.dns__body-white {
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		margin: 4px 16px;
-		@include break-mobile {
-			max-width: 677px;
+		@include break-small {
+			margin: 0;
 		}
 	}
 
@@ -243,6 +243,13 @@ button.dns__breadcrumb-button {
 		width: 40px;
 		display: flex;
 		justify-content: center;
+	}
+	.add-record__icon{
+		fill: var(--studio-gray-80);
+
+		@include break-large {
+			fill: var(--studio-white);
+		}
 	}
 }
 

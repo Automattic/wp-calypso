@@ -15,7 +15,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import {
 	getSiteSlug,
@@ -24,7 +23,7 @@ import {
 	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import './style.scss';
+import 'calypso/sites/marketing/style.scss';
 
 export const Sharing = ( {
 	contentComponent,
@@ -32,7 +31,6 @@ export const Sharing = ( {
 	showButtons,
 	showConnections,
 	showTraffic,
-	showBusinessTools,
 	siteId,
 	isJetpack,
 	isP2Hub,
@@ -55,16 +53,6 @@ export const Sharing = ( {
 		route: '/marketing/tools' + pathSuffix,
 		title: translate( 'Marketing Tools' ),
 	} );
-
-	// Include Business Tools link if a site is selected and the
-	// site is not VIP
-	if ( ! isVip && showBusinessTools ) {
-		filters.push( {
-			id: 'business-buttons',
-			route: '/marketing/business-tools' + pathSuffix,
-			title: translate( 'Business Tools' ),
-		} );
-	}
 
 	// Include Connections link if all sites are selected. Otherwise,
 	// verify that the required Jetpack module is active
@@ -146,6 +134,8 @@ export const Sharing = ( {
 	}
 
 	const selected = find( filters, { route: pathname } );
+	const isFirstFilterSelected = filters[ 0 ]?.route === pathname;
+
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -177,7 +167,7 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && (
+			{ isFirstFilterSelected && ! isVip && ! isJetpack && (
 				<UpsellNudge
 					event="sharing_no_ads"
 					plan={ PLAN_PERSONAL }
@@ -203,7 +193,6 @@ Sharing.propTypes = {
 	path: PropTypes.string,
 	showButtons: PropTypes.bool,
 	showConnections: PropTypes.bool,
-	showBusinessTools: PropTypes.bool,
 	siteId: PropTypes.number,
 	siteSlug: PropTypes.string,
 	translate: PropTypes.func,
@@ -212,7 +201,6 @@ Sharing.propTypes = {
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
-	const isAtomic = isSiteWpcomAtomic( state, siteId );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	return {
@@ -220,7 +208,6 @@ export default connect( ( state ) => {
 		showButtons: siteId && canManageOptions,
 		showConnections: !! siteId,
 		showTraffic: canManageOptions && !! siteId,
-		showBusinessTools: ( !! siteId && canManageOptions && ! isJetpack ) || isAtomic,
 		isVip: isVipSite( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),

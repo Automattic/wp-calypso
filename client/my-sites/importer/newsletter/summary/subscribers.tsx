@@ -1,70 +1,64 @@
-import { ProgressBar } from '@wordpress/components';
-import { Icon, people, atSymbol, payment } from '@wordpress/icons';
-import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import { createInterpolateElement } from '@wordpress/element';
+import { people } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
+import {
+	SubscribersStepContent,
+	StepStatus,
+} from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
+import SummaryStat from './SummaryStat';
 
 interface SubscriberSummaryProps {
 	stepContent: SubscribersStepContent;
-	status: string;
+	status: StepStatus;
 }
 
 export default function SubscriberSummary( { stepContent, status }: SubscriberSummaryProps ) {
-	const paidSubscribersCount = parseInt( stepContent?.meta?.paid_subscribers_count || '0' );
-	const hasPaidSubscribers = paidSubscribersCount > 0;
-
+	const { __ } = useI18n();
 	if ( status === 'skipped' ) {
 		return (
-			<div className="summary__content">
-				<p>
-					<Icon icon={ atSymbol } /> You <strong>skipped</strong> subscriber importing.
-				</p>
-			</div>
-		);
-	}
-
-	if ( status === 'importing' ) {
-		return (
-			<>
-				<div className="summary__content">
-					<p>
-						<Icon icon={ atSymbol } /> <strong>We're importing your subscribers.</strong>
-						<br />
-					</p>
-				</div>
-				<p>
-					This may take a few minutes. Feel free to leave this window – we'll let you know when it's
-					done.
-				</p>
-				<p>
-					<ProgressBar className="is-larger-progress-bar" />
-				</p>
-			</>
+			<p>
+				<SummaryStat
+					icon={ people }
+					label={ createInterpolateElement(
+						__( 'You <strong>skipped</strong> subscriber importing.' ),
+						{
+							strong: <strong />,
+						}
+					) }
+				/>
+			</p>
 		);
 	}
 
 	if ( status === 'done' ) {
-		const subscribedCount = parseInt( stepContent.meta?.subscribed_count || '0' );
-		const freeSubscribersCount = subscribedCount - paidSubscribersCount;
+		const subscribedCount = parseInt( stepContent.meta?.email_count || '0' );
+		const addedFree = parseInt( stepContent.meta?.subscribed_count || '0' );
+		const addedPaid = parseInt( stepContent.meta?.paid_subscribed_count || '0' );
+		const existingTotal =
+			parseInt( stepContent.meta?.already_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.paid_already_subscribed_count || '0' );
+		const failedTotal =
+			parseInt( stepContent.meta?.failed_subscribed_count || '0' ) +
+			parseInt( stepContent.meta?.paid_failed_subscribed_count || '0' );
 
 		return (
-			<>
-				<div className="summary__content">
-					<p>
-						<Icon icon={ atSymbol } /> We imported { subscribedCount } subscribers, where:
-					</p>
-				</div>
-				<div className="summary__content summary__content-indent">
-					<p>
-						<Icon icon={ people } />
-						<strong>{ freeSubscribersCount }</strong> free subscribers
-					</p>
-					{ hasPaidSubscribers && (
-						<p>
-							<Icon icon={ payment } />
-							<strong>{ paidSubscribersCount }</strong> paid subscribers
-						</p>
-					) }
-				</div>
-			</>
+			<div className="summary__content-stats">
+				{ subscribedCount > 0 && (
+					<SummaryStat
+						count={ subscribedCount }
+						icon={ people }
+						label={ __( 'Total Subscribers' ) }
+					/>
+				) }
+				{ addedFree > 0 && <SummaryStat count={ addedFree } label={ __( 'Free Subscribers' ) } /> }
+				{ addedPaid > 0 && <SummaryStat count={ addedPaid } label={ __( 'Paid Subscribers' ) } /> }
+				{ existingTotal > 0 && (
+					<SummaryStat count={ existingTotal } label={ __( 'Skipped (duplicate)' ) } />
+				) }
+				{ failedTotal > 0 && <SummaryStat count={ failedTotal } label={ __( 'Not imported' ) } /> }
+			</div>
 		);
 	}
+
+	return null;
 }

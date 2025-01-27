@@ -150,6 +150,7 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-navredesign-sidebar-submenu-hover-text: var(--theme-highlight-color);
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-accent);
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--theme-base-color);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

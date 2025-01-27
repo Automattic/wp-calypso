@@ -13,7 +13,7 @@ interface Props {
 	threat: Threat;
 	fixAllDialog?: boolean;
 	onCheckFix?: ( checked: boolean, threat: Threat ) => void;
-	action: 'fix' | 'ignore';
+	action: 'fix' | 'ignore' | 'unignore';
 }
 
 export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, action }: Props ) {
@@ -46,6 +46,7 @@ export default function ThreatFixHeader( { threat, fixAllDialog, onCheckFix, act
 					<Gridicon className="threat-fix-header__warning-icon" icon="info-outline" size={ 18 } />
 					{ action === 'fix' && threat.fixable && getThreatFix( threat.fixable ) }
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat.' ) }
+					{ action === 'unignore' && translate( 'Jetpack will unignore the threat.' ) }
 				</span>
 			</div>
 			<div className="threat-fix-header__autofix-checkbox">

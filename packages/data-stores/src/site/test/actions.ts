@@ -437,17 +437,47 @@ describe( 'Site Actions', () => {
 			recipe: mockedRecipe,
 		};
 		const mockedStyleVariation = {
+			title: 'Parrot',
+			slug: 'parrot',
+			settings: {
+				color: {
+					palette: {
+						theme: [
+							{
+								color: '#FF0000',
+								name: 'Red',
+								slug: 'red',
+							},
+						],
+					},
+				},
+			},
+			styles: {
+				spacing: {
+					blockGap: '0.5rem',
+				},
+			},
+		};
+		const mockedDefaultVariation = {
 			title: 'Default',
 			slug: 'default',
 			settings: {
 				color: {
 					palette: {
-						theme: [],
+						theme: [
+							{
+								color: '#880000',
+								name: 'Red',
+								slug: 'red',
+							},
+						],
 					},
 				},
 			},
 			styles: {
-				color: {},
+				spacing: {
+					blockGap: '1rem',
+				},
 			},
 		};
 
@@ -516,6 +546,36 @@ describe( 'Site Actions', () => {
 					id: mockedGlobalStylesId,
 					settings: mockedStyleVariation.settings,
 					styles: mockedStyleVariation.styles,
+				} )
+			);
+		} );
+
+		it( 'should call global styles API to reset styles when user selects default variation', () => {
+			const { setDesignOnSite } = createActions( mockedClientCredentials );
+			const generator = setDesignOnSite( siteSlug, mockedDesign, {
+				styleVariation: mockedDefaultVariation,
+			} );
+
+			// 1st iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
+			expect( generator.next().value ).toEqual(
+				createMockedThemeSwitchApiRequest( {
+					theme: 'zoologist',
+				} )
+			);
+
+			// 2nd iteration: WP_COM_REQUEST to /sites/${ siteSlug }/global-styles/${ globalStylesId } is fired
+			expect(
+				generator.next( {
+					stylesheet: mockedDesign.recipe.stylesheet,
+					global_styles_id: mockedGlobalStylesId,
+				} ).value
+			).toEqual(
+				createMockedSetGlobalStylesApiRequest( mockedGlobalStylesId, {
+					id: mockedGlobalStylesId,
+					// Resetting styles means these values are empty, regrdless of the base styles
+					// specified in the `mockedDefaultVariation` object.
+					settings: {},
+					styles: {},
 				} )
 			);
 		} );

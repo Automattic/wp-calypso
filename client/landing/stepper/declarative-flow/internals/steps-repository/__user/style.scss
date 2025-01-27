@@ -1,8 +1,6 @@
-@import "calypso/signup/style.scss";
-body.is-section-stepper .step-route {
-	--color-accent: #117ac9;
-	--color-accent-60: #0e64a5;
-}
+@import "calypso/signup/style";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .step-route.user {
 	display: flex;
@@ -10,7 +8,14 @@ body.is-section-stepper .step-route {
 	align-items: center;
 	justify-content: center;
 	min-height: calc(100vh - 96px);
-	margin: 48px 0 0;
+	margin: 20px 0;
+
+	.locale-suggestions {
+		margin: 0 auto;
+		@include break-medium {
+			width: 100%;
+		}
+	}
 
 	a.step-wrapper__navigation-link {
 		color: #1d2327;
@@ -30,10 +35,23 @@ body.is-section-stepper .step-route {
 		fill: var(--color-text);
 		transform-origin: 0 0;
 	}
-	.formatted-header__title {
-		line-height: 3.25;
-		font-size: 2rem;
+
+	.step-container__content {
+		.formatted-header {
+			margin: 24px 20px;
+			.formatted-header__title {
+				/* this is to match with start */
+				/* stylelint-disable-next-line scales/font-sizes */
+				font-size: 1.875rem;
+				line-height: 40px;
+				@include break-small {
+					font-size: 2rem;
+					line-height: 3.25;
+				}
+			}
+		}
 	}
+
 	.signup-form-social-first {
 		width: 327px;
 		margin: 0 auto;
@@ -77,6 +95,7 @@ body.is-section-stepper .step-route {
 
 	.signup-form-social-first-email {
 		.card {
+			background: transparent;
 			box-shadow: none;
 			padding-left: 0;
 			padding-right: 0;
@@ -134,11 +153,11 @@ body.is-section-stepper .step-route {
 			text-underline-offset: 5px;
 
 			&:hover {
-				color: var(--studio-blue-50, #0675c4);
+				color: var(--color-accent, #3858e9);
 			}
 
 			&:focus {
-				outline: 1px dashed var(--studio-blue-50, #0675c4);
+				outline: 1px dashed var(--color-accent, #3858e9);
 				outline-offset: 3px;
 				box-shadow: none;
 				border-radius: 0;

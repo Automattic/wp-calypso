@@ -45,7 +45,7 @@ export function getSiteSettingsSaveRequestStatus( state, siteId ) {
 /**
  * Returns the settings for the specified site ID
  * @param  {Object}  state  Global state tree
- * @param  {number}  siteId Site ID
+ * @param  {number | null}  siteId Site ID
  * @returns {SiteSettingsItem}        Site settings
  */
 export function getSiteSettings( state, siteId ) {

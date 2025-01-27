@@ -1,0 +1,399 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Add new Dotcom specific styles to this file.
+.wpcom-site .layout__primary .main {
+	padding-bottom: 0;
+}
+
+.wpcom-site .hosting-dashboard-layout-with-columns__container {
+	height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+
+	.hosting-dashboard-layout__top-wrapper {
+		> * {
+			// FIXME: Maybe this should be moved to layout/hosting-dashboard/style.scss once we have integrated DataViews without overrides across pages.
+			padding-inline: 48px;
+			// TODO: This is currently overridden as `none` in the Sites Dashboard for both Dotcom and A4A to align with Core's DataViews.
+			// Consider removing this max-width as the default across all layouts.
+			max-width: revert;
+		}
+	}
+
+	.hosting-dashboard-layout__header-actions {
+		// This is due to discrepancy in header actions between Dotcom and A4A.
+		// A4A hides displays a different header for mobile.
+		width: auto;
+	}
+}
+
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout .sites-overview {
+	.sites-banner-container {
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		margin: 24px auto 8px;
+		padding-inline: 48px;
+		width: 100%;
+	}
+
+	.sites-banner {
+		margin: 0;
+		width: 100%;
+
+		.banner__action {
+			a {
+				display: inline-flex;
+				white-space: nowrap;
+			}
+		}
+
+	}
+}
+
+.wpcom-site {
+	.layout__content {
+		min-height: 100vh;
+	}
+
+	.layout__secondary .global-sidebar {
+		border: none;
+	}
+
+	// Custom style for toggle and page number controls.
+	.hosting-dashboard-item-view__content {
+		.pagination__page-number.pagination__list-item.is-selected button,
+		.segmented-control__item.is-selected a:hover,
+		.segmented-control__item.is-selected a {
+			color: var(--studio-white);
+			background-color: var(--studio-gray-50);
+			border-color: var(--studio-gray-50);
+		}
+		.segmented-control__item.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-gray-50);
+		}
+	}
+}
+
+// Styles collapsed site list.
+.wpcom-site .is-global-sidebar-visible.is-group-sites-dashboard,
+.wpcom-site .is-global-sidebar-visible.is-group-sites {
+	.layout__content {
+		transition: padding-left 220ms ease-out;
+		min-height: 100vh;
+	}
+	.layout__secondary {
+		transition: transform 0.15s ease-in-out, width 220ms ease-out;
+
+		@media (max-width: $break-mobile) {
+			transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
+		}
+
+		.sidebar__header,
+		.sidebar__body,
+		.sidebar__footer {
+			transition: all 220ms ease-out;
+			> * {
+				transition: all 220ms ease-out;
+			}
+		}
+		.sidebar__header {
+			flex-direction: row !important;
+			transition: none;
+			.dotcom {
+				transition: width 220ms ease-out;
+				background-position: left;
+			}
+			.sidebar__menu-link {
+				transition: all 220ms ease-out;
+				min-width: 40px;
+				margin: 0 12px;
+			}
+		}
+		.sidebar__footer {
+			flex-wrap: wrap;
+			.sidebar__footer-profile img {
+				max-width: none;
+			}
+		}
+	}
+	&.is-global-sidebar-collapsed {
+		@media (min-width: 661px) {
+			.layout__secondary {
+				transition: all 220ms ease-out;
+
+				.global-sidebar {
+					.sidebar__header,
+					.sidebar__body,
+					.sidebar__footer {
+						transition: all 220ms ease-out;
+						> * {
+							transition: all 220ms ease-out;
+						}
+					}
+					.sidebar__header {
+						padding-inline: 19px;
+					}
+					.sidebar__body {
+						.sidebar__menu-link-text {
+							transition: all 100ms ease-out;
+							transition-delay: 120ms;
+							opacity: 0;
+							display: block !important;
+							width: 0;
+							white-space: nowrap;
+						}
+						.sidebar__menu-link {
+							width: fit-content;
+							min-width: calc(100% - 30px);
+
+							> :first-child {
+								transition: all 220ms ease-out;
+								margin-right: 0;
+							}
+						}
+					}
+					.sidebar__footer {
+						flex-direction: row !important;
+						padding: 16px;
+						align-items: center;
+						justify-content: center;
+					}
+				}
+			}
+		}
+	}
+
+	.sites-dashboard:not(.preview-hidden) {
+		.sites-manage-all-domains-button {
+			display: none;
+		}
+
+		.hosting-dashboard-layout__viewport {
+			width: 360px;
+			justify-content: space-between;
+		}
+
+		.hosting-dashboard-layout__viewport > div:first-child {
+			width: 100%;
+		}
+
+		.list-tile__leading {
+			margin-right: 12px;
+		}
+	}
+}
+
+// Styles for site preview pane.
+.wpcom-site .hosting-dashboard-layout.sites-dashboard .site-preview-pane {
+	.hosting-features__icon {
+		display: inline-block;
+		height: 18px;
+		vertical-align: top;
+		margin-left: 4px;
+	}
+
+	.section-nav-tabs__list {
+		box-sizing: border-box;
+		overflow-x: auto;
+
+		@media (max-width: $break-large) {
+			padding: 0 8px;
+		}
+	}
+
+	.hosting-dashboard-item-view__header {
+		.hosting-dashboard-item-view__header-title {
+			font-family: Recoleta, sans-serif;
+			font-weight: 400;
+			line-height: 1;
+			letter-spacing: normal;
+		}
+
+		.hosting-dashboard-item-view__header-content {
+			.hosting-dashboard-item-view__header-info {
+				flex-wrap: wrap;
+			}
+
+			@media (max-width: $break-large) {
+				padding: 0;
+			}
+		}
+
+		.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__header-title-summary .hosting-dashboard-item-view__header-summary {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			.hosting-dashboard-item-view__header-summary-link {
+				color: var(--studio-gray-70, #3c434a);
+				text-decoration: none;
+				&:hover {
+					color: var(--color-accent, #3858e9);
+				}
+			}
+		}
+
+		.hosting-dashboard-item-view__header-actions .button {
+			border-radius: 4px;
+		}
+
+		.hosting-dashboard-item-view__header-content .hosting-dashboard-item-view__close {
+			height: 16px;
+			padding-left: 0;
+			padding-right: 0;
+			color: var(--color-link);
+
+			@include break-medium {
+				height: 32px;
+			}
+		}
+	}
+	.hosting-dashboard-item-view__content {
+		padding: 32px 48px 48px;
+		font-size: rem(14px);
+		color: var(--studio-gray-100);
+
+		.navigation-header {
+			padding: 0;
+		}
+
+		> * {
+			margin-top: 0;
+			margin-left: 0;
+			margin-right: 0;
+			margin-bottom: auto;
+			padding-top: 0;
+			padding-left: 0;
+			padding-right: 0;
+			overflow-y: initial;
+			max-height: initial;
+			width: 100%;
+		}
+
+		@media (max-width: $break-large) {
+			padding-top: 24px;
+			padding-left: 24px;
+			padding-right: 24px;
+		}
+	}
+
+	.is-staging-site {
+		position: relative;
+
+		.item-preview__admin-button.is-primary {
+			background-color: var(--studio-yellow-20);
+			color: var(--studio-yellow-80);
+			border-color: var(--studio-yellow-20);
+		}
+	}
+
+	.is-staging-site::before {
+		content: "";
+		position: absolute;
+		z-index: 300;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 3px var(--studio-yellow-20);
+	}
+
+	.domains-table-header .list__header-column {
+		font-style: normal;
+		font-weight: 400;
+		font-size: rem(13px);
+		line-height: 20px;
+		color: var(--studio-gray-50);
+		text-transform: initial;
+	}
+}
+
+.wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
+	.hosting-dashboard-item-view__content {
+		> * {
+			max-width: 1400px;
+		}
+	}
+}
+
+// Use flexbox to structure of fly-out panel.
+.wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+	&.hosting-dashboard-layout,
+	.hosting-dashboard-layout-column,
+	.hosting-dashboard-layout-with-columns__container {
+		overflow: visible;
+		height: calc(100vh - 32px - var(--masterbar-height));
+	}
+
+	.hosting-dashboard-layout-column__container {
+		display: flex;
+		flex-direction: column;
+		height: calc(100vh - 32px - var(--masterbar-height));
+
+		.hosting-dashboard-layout__top-wrapper {
+			display: flex;
+			margin-bottom: 0;
+			padding: 0;
+
+			.hosting-dashboard-layout__viewport {
+				display: flex;
+				margin: 0;
+				padding: 16px 24px;
+			}
+
+			.hosting-dashboard-layout__header {
+				margin: 0;
+			}
+		}
+
+		.sites-banner-container {
+			display: none;
+		}
+	}
+
+	&.domains-overview {
+		.hosting-dashboard-item-view__navigation {
+			border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
+		}
+	}
+}
+
+// Override styles from my-sites/sidebar
+.wpcom-site div.is-group-sites.is-global-sidebar-visible,
+.wpcom-site div.is-group-sites-dashboard.is-global-sidebar-visible,
+.wpcom-site div.is-section-domains.is-global-sidebar-visible,
+.wpcom-site div.is-section-plugins.is-global-sidebar-visible {
+	&.focus-content .layout__content,
+	&.focus-sidebar .layout__content {
+		height: 100vh;
+		padding-top: calc(var(--masterbar-height) + var(--content-padding-top));
+		padding-bottom: var(--content-padding-bottom);
+
+		@include break-medium {
+			padding-left: calc(var(--sidebar-width-max));
+			padding-right: 16px;
+
+			// TODO: height should be the same across platforms after the redesign.
+			.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout {
+				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
+			}
+		}
+
+		// Prevent the content pushed out via translateX(100%) creating a scrollbar
+		&.focus-sidebar .layout__content .layout__primary {
+			overflow-x: hidden;
+		}
+	}
+}
+
+.is-mobile-app-view {
+	.wpcom-site .hosting-dashboard-layout.sites-dashboard .site-preview-pane {
+		.hosting-dashboard-item-view__header {
+			padding: 0;
+		}
+	}
+}

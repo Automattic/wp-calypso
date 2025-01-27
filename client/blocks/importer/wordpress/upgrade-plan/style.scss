@@ -153,7 +153,7 @@ $business-plan-color: #7f54b3;
 				font-size: 1.25rem;
 			}
 		}
-		.improt__upgrade-plan-price-discounted {
+		.import__upgrade-plan-price-discounted {
 			.plan-price__fraction {
 				line-height: 1;
 				font-size: 2.75rem;
@@ -248,6 +248,12 @@ $business-plan-color: #7f54b3;
 
 		ul {
 			margin: 0;
+
+			li {
+				&:first-child {
+					font-weight: bold;
+				}
+			}
 		}
 
 		.import__upgrade-plan-feature.logo {

@@ -7,6 +7,8 @@ export const siteLaunchStatuses = [
 	'coming-soon',
 	'redirect',
 	'deleted',
+	'migration-pending',
+	'migration-started',
 ] as const;
 
 export type SiteLaunchStatus = ( typeof siteLaunchStatuses )[ number ];
@@ -19,9 +21,20 @@ export interface SiteObjectWithStatus {
 	options?: {
 		is_redirect?: boolean;
 	};
+	site_migration?: {
+		migration_status?: string;
+	};
 }
 
 export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchStatus => {
+	if ( site.site_migration?.migration_status?.startsWith( 'migration-pending' ) ) {
+		return 'migration-pending';
+	}
+
+	if ( site.site_migration?.migration_status?.startsWith( 'migration-started' ) ) {
+		return 'migration-started';
+	}
+
 	if ( site.is_deleted ) {
 		return 'deleted';
 	}
@@ -51,6 +64,8 @@ export const useTranslatedSiteLaunchStatuses = (): { [ K in SiteLaunchStatus ]: 
 			public: _x( 'Public', 'site' ),
 			redirect: _x( 'Redirect', 'site' ),
 			deleted: _x( 'Deleted', 'site' ),
+			'migration-pending': _x( 'Migration pending', 'site' ),
+			'migration-started': _x( 'Migration started', 'site' ),
 		} ),
 		[ _x ]
 	);

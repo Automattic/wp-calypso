@@ -14,6 +14,7 @@ import {
 	TERM_OCTENNIALLY,
 	TERM_NOVENNIALLY,
 	TERM_DECENNIALLY,
+	TERM_CENTENNIALLY,
 } from '@automattic/calypso-products';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -144,6 +145,9 @@ function sortVariant( a: ResponseCartProductVariant, b: ResponseCartProductVaria
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {
 	switch ( term ) {
+		case TERM_CENTENNIALLY:
+			return String( translate( 'Hundred years' ) );
+
 		case TERM_DECENNIALLY:
 			return String( translate( 'Ten years' ) );
 

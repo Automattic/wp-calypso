@@ -67,8 +67,19 @@ export interface PlanProduct {
 }
 
 export interface PlanIntroductoryOffer {
+	/**
+	 * @deprecated use `formatCurrency` call instead on the respective price (monthly/full)
+	 */
 	formattedPrice: string;
-	rawPrice: number;
+	rawPrice: {
+		monthly: number;
+		full: number;
+	};
+	/**
+	 * IMPORTANT:
+	 * we make the raw assumption that the interval unit is either "year" or "month"
+	 * to compute monthly/full price
+	 */
 	intervalUnit: string;
 	intervalCount: number;
 	isOfferComplete: boolean;
@@ -109,6 +120,7 @@ export interface PlanPricing {
 }
 
 export interface SitePlanPricing extends Omit< PlanPricing, 'billPeriod' > {
+	hasSaleCoupon?: boolean;
 	costOverrides?: CostOverride[];
 }
 
@@ -173,8 +185,17 @@ export interface PlanNext {
 }
 
 export interface PricedAPIPlanIntroductoryOffer {
+	/**
+	 * @deprecated use `formatCurrency` call instead on the respective price (monthly/full)
+	 * - no need to pass this from the API at all
+	 */
 	introductory_offer_formatted_price?: string;
-	introductory_offer_raw_price?: number;
+	introductory_offer_raw_price_integer?: number;
+	/**
+	 * IMPORTANT:
+	 * we make the raw assumption that the interval unit is either "year" or "month"
+	 * to compute monthly/full price
+	 */
 	introductory_offer_interval_unit?: string;
 	introductory_offer_interval_count?: number;
 	introductory_offer_end_date?: string;
@@ -249,6 +270,7 @@ export interface PricedAPIPlan extends PricedAPIPlanPricing, PricedAPIPlanIntrod
 export interface PricedAPISitePlan
 	extends PricedAPISitePlanPricing,
 		PricedAPIPlanIntroductoryOffer {
+	has_sale_coupon?: boolean;
 	/* product_id: number; // not included in the plan's payload */
 	product_slug: StorePlanSlug;
 	current_plan?: boolean;

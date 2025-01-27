@@ -18,11 +18,12 @@ const useGridPlansForFeaturesGrid = ( {
 	selectedPlan,
 	showLegacyStorageFeature,
 	siteId,
-	storageAddOns,
 	term,
 	useCheckPlanAvailabilityForPurchase,
 	useFreeTrialPlanSlugs,
 	highlightLabelOverrides,
+	isDomainOnlySite,
+	reflectStorageSelectionInPlanPrices,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
 		allFeaturesList,
@@ -37,11 +38,12 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
-		storageAddOns,
 		term,
 		useCheckPlanAvailabilityForPurchase,
 		useFreeTrialPlanSlugs,
 		highlightLabelOverrides,
+		isDomainOnlySite,
+		reflectStorageSelectionInPlanPrices,
 	} );
 
 	const planFeaturesForFeaturesGrid = usePlanFeaturesForGridPlans( {

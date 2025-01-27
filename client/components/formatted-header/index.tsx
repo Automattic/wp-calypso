@@ -18,6 +18,7 @@ interface Props extends PropsWithChildren {
 	subHeaderAs?: ElementType;
 	subHeaderText?: ReactNode;
 	tooltipText?: ReactNode;
+	disablePreventWidows?: boolean;
 }
 
 const FormattedHeader: FC< Props > = ( {
@@ -35,6 +36,7 @@ const FormattedHeader: FC< Props > = ( {
 	subHeaderAs: SubHeaderAs = 'p',
 	subHeaderText,
 	tooltipText,
+	disablePreventWidows,
 } ) => {
 	const classes = clsx( 'formatted-header', className, {
 		'is-without-subhead': ! subHeaderText,
@@ -54,24 +56,27 @@ const FormattedHeader: FC< Props > = ( {
 		</InfoPopover>
 	);
 
+	const formattedHeaderText = disablePreventWidows ? headerText : preventWidows( headerText, 2 );
+	const formattedSubHeaderText = disablePreventWidows
+		? subHeaderText
+		: preventWidows( subHeaderText, 2 );
+
 	return (
 		<header id={ id } className={ classes }>
 			<div>
 				{ ! isSecondary && (
 					<h1 className={ headerClasses }>
-						{ preventWidows( headerText, 2 ) } { tooltip }
+						{ formattedHeaderText } { tooltip }
 					</h1>
 				) }
 				{ isSecondary && (
 					<h2 className={ headerClasses }>
-						{ preventWidows( headerText, 2 ) } { tooltip }
+						{ formattedHeaderText } { tooltip }
 					</h2>
 				) }
 				{ screenReader && <h2 className="screen-reader-text">{ screenReader }</h2> }
-				{ subHeaderText && (
-					<SubHeaderAs className={ subtitleClasses }>
-						{ preventWidows( subHeaderText, 2 ) }
-					</SubHeaderAs>
+				{ formattedSubHeaderText && (
+					<SubHeaderAs className={ subtitleClasses }>{ formattedSubHeaderText }</SubHeaderAs>
 				) }
 			</div>
 			{ children }

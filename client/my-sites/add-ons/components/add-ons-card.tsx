@@ -1,7 +1,11 @@
-import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
-import { Badge, Button, Gridicon, Spinner } from '@automattic/components';
+import { Badge, Gridicon, Spinner } from '@automattic/components';
+import {
+	useAddOnPurchaseStatus,
+	useStorageAddOnAvailability,
+	StorageAddOnAvailability,
+} from '@automattic/data-stores/src/add-ons';
 import styled from '@emotion/styled';
-import { Card, CardBody, CardFooter, CardHeader } from '@wordpress/components';
+import { Card, CardBody, CardFooter, CardHeader, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -16,16 +20,6 @@ export interface Props {
 	actionSecondary?: {
 		text: string;
 		handler: ( productSlug: string ) => void;
-	};
-	useAddOnAvailabilityStatus?: ( {
-		selectedSiteId,
-		addOnMeta,
-	}: {
-		selectedSiteId?: number | null | undefined;
-		addOnMeta: AddOnMeta;
-	} ) => {
-		available: boolean;
-		text?: string;
 	};
 	highlightFeatured: boolean;
 	addOnMeta: AddOnMeta;
@@ -43,8 +37,8 @@ const Container = styled.div`
 			width: 100%;
 			display: flex;
 			flex-direction: column;
-			padding: 18px 10px; // Card sections have 16x24 inner padding
 			box-sizing: border-box;
+			padding: 8px 0;
 		}
 	}
 
@@ -60,7 +54,7 @@ const Container = styled.div`
 		.add-ons-card__name-and-billing {
 			.add-ons-card__billing {
 				color: var( --studio-gray-60 );
-				font-weight: 500;
+				font-size: 0.75rem;
 			}
 
 			.add-ons-card__name-tag {
@@ -75,14 +69,28 @@ const Container = styled.div`
 
 				.add-ons-card__featured-badge {
 					border-radius: 4px;
+					font-size: 0.75rem;
+					font-weight: 500;
 				}
 			}
 		}
 	}
 
+	.add-ons-card__body {
+		font-size: 0.875rem;
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
 	.add-ons-card__footer {
 		display: flex;
 		margin-top: auto;
+
+		.add-ons-card__action-button {
+			font-weight: 600;
+			text-decoration: none;
+			padding: 0;
+		}
 
 		.add-ons-card__selected-tag {
 			display: flex;
@@ -96,16 +104,11 @@ const Container = styled.div`
 	}
 `;
 
-const AddOnCard = ( {
-	addOnMeta,
-	actionPrimary,
-	actionSecondary,
-	useAddOnAvailabilityStatus,
-	highlightFeatured,
-}: Props ) => {
+const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatured }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const availabilityStatus = useAddOnAvailabilityStatus?.( { selectedSiteId, addOnMeta } );
+	const purchaseStatus = useAddOnPurchaseStatus( { selectedSiteId, addOnMeta } );
+	const storageAvailability = useStorageAddOnAvailability( { selectedSiteId, addOnMeta } );
 
 	const onActionPrimary = () => {
 		actionPrimary?.handler( addOnMeta.productSlug, addOnMeta.quantity );
@@ -115,24 +118,21 @@ const AddOnCard = ( {
 	};
 
 	const shouldRenderLoadingState = addOnMeta.isLoading;
+	const shouldRenderPrimaryAction = purchaseStatus?.available && ! shouldRenderLoadingState;
+	const shouldRenderSecondaryAction = ! purchaseStatus?.available && ! shouldRenderLoadingState;
 
-	// if product is space upgrade choose the action based on the purchased status
-	const shouldRenderPrimaryAction =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? ! addOnMeta.purchased && ! shouldRenderLoadingState
-			: availabilityStatus?.available && ! shouldRenderLoadingState;
-
-	const shouldRenderSecondaryAction =
-		addOnMeta.productSlug === PRODUCT_1GB_SPACE
-			? addOnMeta.purchased && ! shouldRenderLoadingState
-			: ! availabilityStatus?.available && ! shouldRenderLoadingState;
+	// Return null if the add-on isn't already purchased and the amount of storage isn't available
+	// for purchase
+	if ( storageAvailability === StorageAddOnAvailability.Unavailable && purchaseStatus.available ) {
+		return null;
+	}
 
 	return (
 		<Container>
 			<Card className="add-ons-card">
 				<CardHeader isBorderless className="add-ons-card__header">
 					<div className="add-ons-card__icon">
-						<Icon icon={ addOnMeta.icon } size={ 44 } />
+						{ addOnMeta.icon && <Icon icon={ addOnMeta.icon } size={ 44 } /> }
 					</div>
 					<div className="add-ons-card__name-and-billing">
 						<div className="add-ons-card__name-tag">
@@ -154,18 +154,27 @@ const AddOnCard = ( {
 					{ shouldRenderSecondaryAction && (
 						<>
 							{ actionSecondary && (
-								<Button onClick={ onActionSecondary }>{ actionSecondary.text }</Button>
+								<Button onClick={ onActionSecondary } variant="secondary">
+									{ actionSecondary.text }
+								</Button>
 							) }
-							{ availabilityStatus?.text && (
+							{ purchaseStatus?.text && (
 								<div className="add-ons-card__selected-tag">
 									<Gridicon icon="checkmark" className="add-ons-card__checkmark" />
-									<span>{ availabilityStatus.text }</span>
+									<span>{ purchaseStatus.text }</span>
 								</div>
 							) }
 						</>
 					) }
 					{ shouldRenderPrimaryAction && actionPrimary && (
-						<Button onClick={ onActionPrimary } primary>
+						<Button
+							className="add-ons-card__action-button"
+							onClick={ onActionPrimary }
+							variant="link"
+							icon={ <Gridicon icon="chevron-right" /> }
+							iconPosition="right"
+							iconSize={ 16 }
+						>
 							{ actionPrimary.text }
 						</Button>
 					) }

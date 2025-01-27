@@ -1,9 +1,6 @@
 import {
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
-	VIDEOPRESS_FLOW,
-	FREE_FLOW,
 	WRITE_FLOW,
 	BUILD_FLOW,
 	START_WRITING_FLOW,
@@ -28,7 +25,6 @@ export function getLaunchpadTranslations(
 			translatedStrings.title = translate( "Your newsletter's ready!" );
 			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
 			break;
-		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.title = translate( "You're ready to link and launch" );
@@ -36,17 +32,6 @@ export function getLaunchpadTranslations(
 			translatedStrings.subtitle = translate(
 				"All that's left is to add some links and launch your site."
 			);
-			break;
-		case FREE_FLOW:
-			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( "Let's get ready to launch!" );
-			translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
-			translatedStrings.subtitle = translate( "Here's what to do next." );
-			break;
-		case VIDEOPRESS_FLOW:
-			translatedStrings.flowName = translate( 'Video' );
-			translatedStrings.title = translate( 'Your site is almost ready!' );
-			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
 			break;
 		case START_WRITING_FLOW:
 		case DESIGN_FIRST_FLOW:

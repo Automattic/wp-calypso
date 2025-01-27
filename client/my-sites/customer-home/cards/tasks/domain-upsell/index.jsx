@@ -6,13 +6,16 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
-import { useHasEnTranslation, useLocale } from '@automattic/i18n-utils';
+import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMemo } from '@wordpress/element';
+import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
+import backgroundDotsIllustration from 'calypso/assets/images/customer-home/illustration--background-dots.svg';
+import editorPreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-editor.svg';
+import sitePreviewIllustration from 'calypso/assets/images/customer-home/illustration--preview-site.png';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -144,8 +147,8 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			? translate( 'That perfect domain is waiting' )
 			: translate( 'Own a domain. Build a site.' );
 
-	const updatedCopy = translate(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is the perfect site address. It's available and easy to find and follow. And .com, .net, and .org domains start at just %(domainPrice)s—Get it now and claim a corner of the web.",
+	const cardSubtitleFreePlansCopy = translate(
+		'{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It’s available, easy to find, share, and follow. Get it now and claim a corner of the web.',
 		{
 			components: {
 				strong: <strong />,
@@ -156,25 +159,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			},
 		}
 	);
-
-	const oldCopy = translate(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
-		{
-			components: {
-				strong: <strong />,
-			},
-			args: {
-				domainSuggestion: domainSuggestionName,
-				domainPrice: domainProductCost,
-			},
-		}
-	);
-
-	const hasTranslationForNewCopy = useHasEnTranslation()(
-		"{{strong}}%(domainSuggestion)s{{/strong}} is the perfect site address. It's available and easy to find and follow. And .com, .net, and .org domains start at just %(domainPrice)s—Get it now and claim a corner of the web."
-	);
-
-	const cardSubtitleFreePlansCopy = hasTranslationForNewCopy ? updatedCopy : oldCopy;
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
@@ -202,9 +186,42 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ domainUpsellMobileIllustration }
+			illustration={ <UpsellIllustration domain={ domainSuggestionName } /> }
 			illustrationAlwaysShow
 			taskId={ TASK_DOMAIN_UPSELL }
 		/>
+	);
+}
+
+function UpsellIllustration( { domain } ) {
+	const domainParts = domain.split( '.' );
+
+	return (
+		<div className="task__domain-upsell-illustration">
+			<img
+				className="task__domain-upsell-illustration--background"
+				src={ backgroundDotsIllustration }
+				alt=""
+			/>
+			<img
+				className="task__domain-upsell-illustration--editor"
+				src={ editorPreviewIllustration }
+				alt=""
+			/>
+			<div className="task__domain-upsell-illustration--mask"></div>
+			<img
+				className="task__domain-upsell-illustration--site"
+				src={ sitePreviewIllustration }
+				alt=""
+			/>
+			<div className="task__domain-upsell-illustration--domain">
+				<Icon icon={ lock } size="16" />
+				<div>
+					{ domainParts.map( ( part, index ) => (
+						<span key={ index }>{ index === 0 ? part : `.${ part }` }</span>
+					) ) }
+				</div>
+			</div>
+		</div>
 	);
 }

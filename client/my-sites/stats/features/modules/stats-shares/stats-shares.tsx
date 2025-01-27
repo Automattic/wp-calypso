@@ -5,7 +5,6 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { useSharingButtonsQuery } from 'calypso/my-sites/marketing/buttons/use-sharing-buttons-query';
 import EmptyModuleCard from 'calypso/my-sites/stats/components/empty-module-card/empty-module-card';
 import {
 	StatsEmptyActionAI,
@@ -16,6 +15,7 @@ import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { useSharingButtonsQuery } from 'calypso/sites/marketing/sharing/use-sharing-buttons-query';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsForQuery,

@@ -2,25 +2,19 @@ import { Popover } from '@automattic/components';
 import { FormToggle } from '@wordpress/components';
 import { Icon, cog } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef, ReactElement, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
+import { ModuleToggleItem } from './constants';
 
 type PageModuleTogglerProps = {
-	availableModules: ModuleToggleItem[];
+	availableModuleToggles: ModuleToggleItem[];
 	pageModules: { [ name: string ]: boolean };
 	onToggleModule: ( module: string, isShow: boolean ) => void;
 	isTooltipShown: boolean;
 	onTooltipDismiss: () => void;
 };
 
-type ModuleToggleItem = {
-	label: string;
-	key: string;
-	icon: ReactElement;
-	defaultValue: boolean;
-};
-
 export default function PageModuleToggler( {
-	availableModules,
+	availableModuleToggles,
 	pageModules,
 	onToggleModule,
 	isTooltipShown,
@@ -79,14 +73,14 @@ export default function PageModuleToggler( {
 			>
 				<div>{ translate( 'Modules visibility' ) }</div>
 				<div className="page-modules-settings-toggle-wrapper">
-					{ availableModules.map( ( toggleItem: ModuleToggleItem ) => {
+					{ availableModuleToggles.map( ( toggleItem: ModuleToggleItem ) => {
 						return (
 							<div key={ toggleItem.key } className="page-modules-settings-toggle">
 								<Icon className="gridicon" icon={ toggleItem.icon } />
 								<span>{ toggleItem.label }</span>
 								<FormToggle
 									className="page-modules-settings-toggle-control"
-									checked={ pageModules[ toggleItem.key ] !== false }
+									checked={ pageModules[ toggleItem.key ] ?? toggleItem.defaultValue }
 									onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => {
 										onToggleModule( toggleItem.key, event.target.checked );
 									} }

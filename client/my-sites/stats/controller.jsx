@@ -5,6 +5,7 @@ import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -14,7 +15,8 @@ import PageLoading from './pages/shared/page-loading';
 import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
-import LoadStatsPage from './stats-redirect/load-stats-page';
+import StatsPageLoader from './stats-page-loader';
+import { appendQueryStringForRedirection } from './utils';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -22,6 +24,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	let numPeriodAgo;
 
 	switch ( period ) {
+		case 'hour':
+			numPeriodAgo = durationAgo.asHours();
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
 			break;
@@ -61,11 +65,6 @@ function getWordAdsFilters( siteId ) {
 			period: 'year',
 		},
 	];
-}
-
-function getMomentSiteZone( state, siteId ) {
-	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export function redirectToActivity( context ) {
@@ -108,6 +107,12 @@ export function overview( context, next ) {
 	const filters = function () {
 		return [
 			{
+				title: i18n.translate( 'Hours' ),
+				path: '/stats/hour',
+				id: 'stats-hour',
+				period: 'hour',
+			},
+			{
 				title: i18n.translate( 'Days' ),
 				path: '/stats/day',
 				id: 'stats-day',
@@ -141,14 +146,14 @@ export function overview( context, next ) {
 
 	context.primary =
 		siteId !== null ? (
-			<LoadStatsPage>
+			<StatsPageLoader>
 				<AsyncLoad
 					require="calypso/my-sites/stats/overview"
 					placeholder={ PageLoading }
 					period={ activeFilter.period }
 					path={ context.pathname }
 				/>
-			</LoadStatsPage>
+			</StatsPageLoader>
 		) : (
 			<AsyncLoad
 				require="calypso/my-sites/stats/overview"
@@ -185,6 +190,7 @@ export function site( context, next ) {
 	const momentSiteZone = getMomentSiteZone( state, siteId );
 	const isValidStartDate = queryOptions.startDate && moment( queryOptions.startDate ).isValid();
 
+	// startDate is the date the user clicked on the chart, which is basically the start of the period, i.e. Monday of weeks, 1st of months, or the selected date.
 	const date = isValidStartDate
 		? moment( queryOptions.startDate ).locale( 'en' )
 		: rangeOfPeriod( activeFilter.period, momentSiteZone.locale( 'en' ) ).startOf;
@@ -202,7 +208,7 @@ export function site( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<StatsSite
 				path={ context.pathname }
 				date={ date }
@@ -210,10 +216,19 @@ export function site( context, next ) {
 				context={ context }
 				period={ rangeOfPeriod( activeFilter.period, date ) }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
+}
+
+export function redirectToDaySummary( context ) {
+	const url = appendQueryStringForRedirection(
+		`/stats/day/${ context.params.module }/${ context.params.site }`,
+		context.query
+	);
+
+	page.redirect( url );
 }
 
 export function summary( context, next ) {
@@ -237,6 +252,7 @@ export function summary( context, next ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
@@ -274,6 +290,14 @@ export function summary( context, next ) {
 		: momentSiteZone.endOf( activeFilter.period ).locale( 'en' );
 	const period = rangeOfPeriod( activeFilter.period, date );
 
+	// Support for custom date ranges.
+	// Evaluate the endDate param if provided and create a date range object if valid.
+	// Valid means endDate is a valid date and is not before the startDate.
+	const isValidEndDate = queryOptions.endDate && moment( queryOptions.endDate ).isValid();
+	const endDate = isValidEndDate ? moment( queryOptions.endDate ).locale( 'en' ) : null;
+	const isValidRange = isValidEndDate && ! endDate.isBefore( date );
+	const dateRange = isValidRange ? { startDate: date, endDate: endDate } : null;
+
 	const extraProps =
 		context.params.module === 'videodetails' ? { postId: parseInt( queryOptions.post, 10 ) } : {};
 
@@ -286,18 +310,19 @@ export function summary( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/summary"
 				placeholder={ PageLoading }
 				path={ context.pathname }
 				statsQueryOptions={ statsQueryOptions }
 				date={ date }
+				dateRange={ dateRange }
 				context={ context }
 				period={ period }
 				{ ...extraProps }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
@@ -315,7 +340,7 @@ export function post( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/stats-post-detail"
 				placeholder={ PageLoading }
@@ -323,7 +348,7 @@ export function post( context, next ) {
 				postId={ postId }
 				context={ context }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();
@@ -353,7 +378,7 @@ export function follows( context, next ) {
 	}
 
 	context.primary = (
-		<LoadStatsPage>
+		<StatsPageLoader>
 			<AsyncLoad
 				require="calypso/my-sites/stats/comment-follows"
 				placeholder={ PageLoading }
@@ -364,7 +389,7 @@ export function follows( context, next ) {
 				domain={ siteDomain }
 				siteId={ siteId }
 			/>
-		</LoadStatsPage>
+		</StatsPageLoader>
 	);
 
 	next();

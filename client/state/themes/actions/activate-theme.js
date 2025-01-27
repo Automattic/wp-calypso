@@ -1,12 +1,14 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	productsReinstall,
 	productsReinstallNotStarted,
 } from 'calypso/state/marketplace/products-reinstall/actions';
 import { requestedReinstallProducts } from 'calypso/state/marketplace/products-reinstall/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
 import {
@@ -18,14 +20,17 @@ import { activateStyleVariation } from './activate-style-variation';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
- * @param {string}  themeId            Theme ID
- * @param {number}  siteId             Site ID
- * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased          Whether the theme has been purchased prior to activation
- * @returns {Function}                 Action thunk
+ * @param {string}  themeId   Theme ID
+ * @param {number}  siteId    Site ID
+ * @param {Object}  [options] The options
+ * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
+ * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
+ * @returns {Function}        Action thunk
  */
-export function activateTheme( themeId, siteId, source = 'unknown', purchased = false ) {
+export function activateTheme( themeId, siteId, options = {} ) {
 	return ( dispatch, getState ) => {
+		const { source = 'unknown', purchased = false, showSuccessNotice = false } = options || {};
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
 			themeOptions && themeOptions.themeId === themeId
@@ -44,7 +49,13 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
-					await dispatch( activateStyleVariation( themeId, siteId, themeOptions.styleVariation ) );
+					await dispatch(
+						activateStyleVariation(
+							themeId,
+							siteId,
+							styleVariationSlug !== 'default' ? themeOptions.styleVariation : {}
+						)
+					);
 				}
 
 				return theme;
@@ -55,6 +66,31 @@ export function activateTheme( themeId, siteId, source = 'unknown', purchased = 
 				dispatch(
 					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
 				);
+
+				if ( showSuccessNotice ) {
+					dispatch(
+						successNotice(
+							translate( 'The %(themeName)s theme is activated successfully!', {
+								args: { themeName: theme.name },
+							} ),
+							{
+								button: translate( 'View site' ),
+								href: getSiteUrl( getState(), siteId ),
+								duration: 20000,
+								showDismiss: false,
+								onClick: () => {
+									dispatch(
+										recordTracksEvent( 'calypso_theme_activated_notice_view_site', {
+											theme: themeId,
+											site: siteId,
+										} )
+									);
+								},
+							}
+						)
+					);
+				}
+
 				return themeStylesheet;
 			} )
 			.catch( ( error ) => {

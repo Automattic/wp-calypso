@@ -1,4 +1,4 @@
-import { SegmentedControl } from '@automattic/components';
+import { Reader } from '@automattic/data-stores';
 import { Button, ToggleControl } from '@wordpress/components';
 import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
@@ -8,6 +8,7 @@ import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormSelect from 'calypso/components/forms/form-select';
 import SVGIcon from 'calypso/components/svg-icon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -44,6 +45,24 @@ class ReaderSiteNotificationSettings extends Component {
 	iconRef = createRef();
 	spanRef = createRef();
 
+	getAvailableFrequencies = () => {
+		const { translate } = this.props;
+		return [
+			{
+				value: Reader.EmailDeliveryFrequency.Instantly,
+				label: translate( 'Instantly' ),
+			},
+			{
+				value: Reader.EmailDeliveryFrequency.Daily,
+				label: translate( 'Daily' ),
+			},
+			{
+				value: Reader.EmailDeliveryFrequency.Weekly,
+				label: translate( 'Weekly' ),
+			},
+		];
+	};
+
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
 	};
@@ -52,7 +71,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	setSelected = ( text ) => () => {
+	setSelected = ( text ) => {
 		const { siteId } = this.props;
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
@@ -108,12 +127,18 @@ class ReaderSiteNotificationSettings extends Component {
 	render() {
 		const {
 			translate,
+			emailDeliveryFrequency,
 			sendNewCommentsByEmail,
 			sendNewPostsByEmail,
 			sendNewPostsByNotification,
 			isEmailBlocked,
 			subscriptionId,
 		} = this.props;
+
+		const availableFrequencies = this.getAvailableFrequencies();
+		const selectedFrequency = availableFrequencies.find(
+			( option ) => option.value === emailDeliveryFrequency
+		);
 
 		if ( ! this.props.siteId ) {
 			return null;
@@ -198,27 +223,20 @@ class ReaderSiteNotificationSettings extends Component {
 					</div>
 
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
-						<SegmentedControl>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'instantly' }
-								onClick={ this.setSelected( 'instantly' ) }
+						<div className="reader-site-notification-settings__popout-select">
+							<FormSelect
+								value={ selectedFrequency?.value }
+								onChange={ ( event ) => this.setSelected( event.target.value ) }
 							>
-								{ translate( 'Instantly' ) }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'daily' }
-								onClick={ this.setSelected( 'daily' ) }
-							>
-								{ translate( 'Daily' ) }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'weekly' }
-								onClick={ this.setSelected( 'weekly' ) }
-							>
-								{ translate( 'Weekly' ) }
-							</SegmentedControl.Item>
-						</SegmentedControl>
+								{ availableFrequencies.map( ( option ) => (
+									<option key={ option.value } value={ option.value }>
+										{ option.label }
+									</option>
+								) ) }
+							</FormSelect>
+						</div>
 					) }
+
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
 							<ToggleControl

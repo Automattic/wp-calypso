@@ -78,7 +78,7 @@ export const inProgress = keyedReducer( 'siteId', ( state = {}, action ) => {
 			return true;
 		case AUTOMATED_TRANSFER_STATUS_SET: {
 			const { status } = action;
-			return status !== 'complete';
+			return status !== 'complete' && status !== 'reverted';
 		}
 	}
 

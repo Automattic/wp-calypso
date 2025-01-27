@@ -1,0 +1,34 @@
+.site-migration-other-platform {
+	padding-top: 52px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.site-migration-other-platform__scanning {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: calc( 100vh - 250px );
+	justify-content: center;
+	background-color: var( --color-surface );
+}
+
+.site-migration-other-platform .step-container__header {
+	max-width: 700px;
+	margin-top: 0;
+	padding-top: 0;
+}
+
+
+.site-migration-other-platform__platform {
+	font-weight: 600;
+	text-transform: capitalize;
+}
+
+.site-migration-other-platform__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 1em;
+	align-items: center;
+}

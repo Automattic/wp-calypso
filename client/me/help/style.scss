@@ -1,6 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "client/me/style.scss";
+@import "client/me/style";
 
 .help__heading {
 	display: flex;
@@ -56,6 +56,11 @@
 	color: var(--color-neutral-70);
 	font-size: $font-body;
 	font-weight: 600;
+
+	.help__support-link-title__external-icon {
+		vertical-align: text-bottom;
+		fill: currentColor;
+	}
 }
 
 .help__support-link-content {
@@ -108,12 +113,6 @@
 .help__support-links.is-placeholder {
 	@include placeholder();
 	height: 250px;
-	margin-bottom: 15px;
-}
-
-.help__help-teaser-button.is-placeholder {
-	@include placeholder();
-	height: 64px;
 	margin-bottom: 15px;
 }
 

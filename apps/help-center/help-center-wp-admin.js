@@ -11,9 +11,11 @@ import './help-center.scss';
 
 function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDataStoreDispatch( 'automattic/help-center' );
-	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
+	const { show, unreadCount } = useSelect( ( select ) => ( {
+		show: select( 'automattic/help-center' ).isHelpCenterShown(),
+		unreadCount: select( 'automattic/help-center' ).getUnreadCount(),
+	} ) );
 	const button = document.getElementById( 'wp-admin-bar-help-center' );
-
 	const masterbarNotificationsButton = document.getElementById( 'wp-admin-bar-notes' );
 
 	const closeHelpCenterWhenNotificationsPanelIsOpened = useCallback( () => {
@@ -50,6 +52,14 @@ function AdminHelpCenterContent() {
 		}
 	}, [ show, button ] );
 
+	useEffect( () => {
+		if ( unreadCount > 0 ) {
+			button.classList.add( 'has-unread' );
+		} else {
+			button.classList.remove( 'has-unread' );
+		}
+	}, [ unreadCount, button ] );
+
 	const closeCallback = useCallback( () => setShowHelpCenter( false ), [ setShowHelpCenter ] );
 
 	const handleToggleHelpCenter = () => {
@@ -80,4 +90,6 @@ function AdminHelpCenterContent() {
 }
 
 const target = document.getElementById( 'help-center-masterbar' );
-createRoot( target ).render( <AdminHelpCenterContent /> );
+if ( target ) {
+	createRoot( target ).render( <AdminHelpCenterContent /> );
+}

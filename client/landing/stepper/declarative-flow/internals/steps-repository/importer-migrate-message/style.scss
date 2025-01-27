@@ -2,9 +2,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
-.migration :not(:has(.list__wrapper)):not(.site-migration-instructions--launchpad),
-.site-migration :not(.site-migration-instructions--launchpad),
-.import-focused.migrate-message {
+.site-migration :not(.site-migration-instructions--launchpad, .is-wide-layout),
+.migrate-message {
 	.step-container__header {
 		margin: auto;
 		max-width: 720px;
@@ -50,9 +49,7 @@
 			}
 		}
 
-		svg {
-			fill: var(--studio-blue-50);
-		}
+
 	}
 
 	.wpcom__loading-ellipsis {
@@ -73,5 +70,14 @@
 				width: 50%;
 			}
 		}
+	}
+
+	.migration-message__cta-wrapper {
+		display: flex;
+		justify-content: center;
+	}
+
+	.migration-message__cta {
+		margin-top: 20px;
 	}
 }

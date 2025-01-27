@@ -22,8 +22,8 @@ function CommentButton( {
 
 	return (
 		<TagName
-			className="comment-button"
-			title={ translate( 'Comment' ) }
+			className="comment-button tooltip"
+			data-tooltip={ translate( 'Comment' ) }
 			onClick={ onClick }
 			href={ 'a' === TagName ? href : undefined }
 			target={ 'a' === TagName ? target : undefined }

@@ -4,7 +4,6 @@
 $stats-tab-outer-padding: 10px;
 
 .stats-tabs {
-	@include clear-fix;
 	background: var(--color-surface);
 	border-top: 1px solid var(--color-border-subtle);
 	list-style: none;
@@ -98,7 +97,6 @@ $stats-tab-outer-padding: 10px;
 
 			@include breakpoint-deprecated( ">480px" ) {
 				@include mobile-link-element;
-				@include clear-fix;
 				padding-bottom: $stats-tab-outer-padding;
 				-webkit-touch-callout: none;
 			}

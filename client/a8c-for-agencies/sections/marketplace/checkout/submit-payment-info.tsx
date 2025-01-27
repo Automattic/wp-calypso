@@ -67,9 +67,12 @@ export default function SubmitPaymentInfo( { disableButton }: { disableButton?: 
 		if ( status === 'success' ) {
 			dispatch( recordTracksEvent( 'calypso_a4a_client_checkout_submit_payment_info_success' ) );
 			dispatch(
-				successNotice( translate( 'Thank you for your purchase!' ), {
-					displayOnNextPage: true,
-				} )
+				successNotice(
+					translate( 'Thank you for your purchase! Your agency can now set up your product.' ),
+					{
+						displayOnNextPage: true,
+					}
+				)
 			);
 			page.redirect( A4A_CLIENT_SUBSCRIPTIONS_LINK );
 		}

@@ -132,7 +132,8 @@ export const getCampaignDurationFormatted = (
 	start_date?: string,
 	end_date?: string,
 	is_evergreen = false,
-	status: string = ''
+	status: string = '',
+	format: string = ''
 ) => {
 	if ( ! start_date || ! end_date ) {
 		return '-';
@@ -144,15 +145,16 @@ export const getCampaignDurationFormatted = (
 		return '-';
 	}
 
-	// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
-	const format = _x( 'MMM D', 'shorter date format' );
+	if ( ! format ) {
+		// translators: Moment.js date format, `MMM` refers to short month name (e.g. `Sep`), `D`` refers to day of month (e.g. `5`). Wrap text [] to be displayed as is, for example `D [de] MMM` will be formatted as `5 de sep.`.
+		format = _x( 'MMM D', 'shorter date format' );
+	}
 	const dateStartFormatted = moment.utc( start_date ).format( format );
 
-	// A campaign without an "end date", show start -> today (if not ended)
+	// A campaign without an "end date", show start -> until stopped (if not ended)
 	if ( is_evergreen ) {
-		const todayFormatted = moment.utc().format( format );
 		if ( status === 'active' ) {
-			return `${ dateStartFormatted } - ${ todayFormatted }`;
+			return `${ dateStartFormatted } - ${ __( 'Until stopped' ) }`;
 		}
 
 		if ( status === 'scheduled' || status === 'created' ) {
@@ -244,8 +246,48 @@ export const formatNumber = ( number: number, onlyPositives = false ): string =>
 	return number.toLocaleString();
 };
 
+export const formatLargeNumber = ( number: number ): string => {
+	if ( number >= 1000000 ) {
+		return (
+			( number / 1000000 )
+				.toFixed( 3 )
+				.replace( /\.?0+$/, '' )
+				.toLocaleString() + 'M'
+		);
+	} else if ( number >= 100000 ) {
+		return (
+			( number / 1000 )
+				.toFixed( 2 )
+				.replace( /\.?0+$/, '' )
+				.toLocaleString() + 'K'
+		);
+	}
+	return formatNumber( number );
+};
+
 export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
+		status
+	);
+};
+
+export const canPromoteAgainCampaign = ( status: string ) => {
+	if ( status === campaignStatus.REJECTED ) {
+		return false;
+	}
+
+	return [
+		campaignStatus.SCHEDULED,
+		campaignStatus.ACTIVE,
+		campaignStatus.FINISHED,
+		campaignStatus.CREATED,
+		campaignStatus.CANCELED,
+		campaignStatus.PROCESSING,
+	].includes( status );
+};
+
+export const canGetCampaignStats = ( status: string ) => {
+	return [ campaignStatus.ACTIVE, campaignStatus.FINISHED, campaignStatus.CANCELED ].includes(
 		status
 	);
 };
@@ -262,8 +304,17 @@ export const getPagedBlazeSearchData = (
 	pagedData?: InfiniteData< CampaignQueryResult | PostQueryResult >
 ): PagedBlazeContentData => {
 	const lastPage = pagedData?.pages?.[ pagedData?.pages?.length - 1 ];
+
+	const campaigns_stats =
+		lastPage && 'campaigns_stats' in lastPage
+			? lastPage.campaigns_stats
+			: {
+					total_impressions: 0,
+					total_clicks: 0,
+			  };
+
 	if ( lastPage ) {
-		const { has_more_pages, total_items } = lastPage;
+		const { has_more_pages, total_items, warnings } = lastPage;
 
 		let foundContent: BlazePagedItem[] = pagedData?.pages
 			?.map( ( item: BlazeDataPaged ) => item[ mode ] )
@@ -281,8 +332,10 @@ export const getPagedBlazeSearchData = (
 
 		return {
 			has_more_pages,
+			campaigns_stats,
 			total_items,
 			items: foundContent,
+			warnings,
 		};
 	}
 	return {
@@ -357,4 +410,13 @@ export const isRunningInWpAdmin = ( site: SiteDetails | null | undefined ): bool
 	const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isRunningInClassicSimple = site?.options?.is_wpcom_simple;
 	return isRunningInClassicSimple || isRunningInJetpack;
+};
+
+export const cvsStatsDownload = ( csvData: string, fileName: string = 'report.csv' ) => {
+	const blob = new Blob( [ csvData ], { type: 'text/csv;charset=utf-8;' } );
+	const link = document.createElement( 'a' );
+	link.href = URL.createObjectURL( blob );
+	link.download = fileName;
+	link.click();
+	URL.revokeObjectURL( link.href );
 };

@@ -11,7 +11,6 @@ import {
 	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isBlogOnboardingFlow,
-	isSenseiFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 
@@ -31,9 +30,7 @@ const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingSignupFeatures;
 };
 
-const senseiFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isSenseiFlow( flowName ) && plan.getSenseiFeatures?.( plan.term );
-};
+const senseiFeatures = ( plan: IncompleteWPcomPlan ) => plan.getSenseiFeatures?.( plan.term );
 
 const signupFlowDefaultFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
@@ -55,7 +52,7 @@ const getPlanFeatureAccessor = ( {
 		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
 		blogOnboardingFeatures( flowName, plan ),
-		senseiFeatures( flowName, plan ),
+		senseiFeatures( plan ),
 		signupFlowDefaultFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
@@ -78,9 +75,8 @@ const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWP
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
 };
 
-const senseiHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isSenseiFlow( flowName ) && plan.getSenseiHighlightedFeatures;
-};
+const senseiHighlightedFeatures = ( plan: IncompleteWPcomPlan ) =>
+	plan.getSenseiHighlightedFeatures;
 
 const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
@@ -88,7 +84,7 @@ const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 		linkInBioHighlightedFeatures( flowName, plan ),
 		hostingHighlightedFeatures( flowName, plan ),
 		blogOnboardingHighlightedFeatures( flowName, plan ),
-		senseiHighlightedFeatures( flowName, plan ),
+		senseiHighlightedFeatures( plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );

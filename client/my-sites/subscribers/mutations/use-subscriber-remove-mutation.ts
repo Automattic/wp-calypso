@@ -10,6 +10,11 @@ import useManySubsSite from '../hooks/use-many-subs-site';
 import { useRecordSubscriberRemoved } from '../tracks';
 import type { SubscriberEndpointResponse, Subscriber, SubscriberListArgs } from '../types';
 
+type ApiResponseError = {
+	error: string;
+	message: string;
+};
+
 const useSubscriberRemoveMutation = (
 	siteId: number | null,
 	args: SubscriberListArgs,
@@ -52,15 +57,37 @@ const useSubscriberRemoveMutation = (
 				await Promise.all( promises );
 			}
 
+			let wasRemoved = false;
+
+			// Remove the subscriber from the followers and email followers because they may be both of them.
 			if ( subscriber.user_id ) {
-				await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
-			} else {
-				await wpcom.req.post(
-					`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
-				);
+				try {
+					await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
+					wasRemoved = true;
+				} catch ( e ) {
+					// Only throw if subscription_id is empty.
+					if ( ( e as ApiResponseError )?.error === 'not_found' && ! subscriber.subscription_id ) {
+						throw new Error( ( e as ApiResponseError )?.message );
+					}
+				}
 			}
 
-			return true;
+			// Always try to remove as email follower if they have a subscription_id.
+			if ( subscriber.subscription_id ) {
+				try {
+					await wpcom.req.post(
+						`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
+					);
+					wasRemoved = true;
+				} catch ( e ) {
+					// Only throw if we haven't successfully removed them through any other method.
+					if ( ! wasRemoved ) {
+						throw new Error( ( e as ApiResponseError )?.message );
+					}
+				}
+			}
+
+			return wasRemoved;
 		},
 		onMutate: async ( subscriber ) => {
 			await queryClient.cancelQueries( { queryKey: subscribersCacheKey } );

@@ -27,17 +27,11 @@ export default function BundleDetails( { parentLicenseId }: Props ) {
 				<LicensePreview
 					isChildLicense
 					key={ item.licenseId }
-					licenseKey={ item.licenseKey }
-					product={ item.product }
-					blogId={ item.blogId }
-					siteUrl={ item.siteUrl }
-					hasDownloads={ item.hasDownloads }
-					issuedAt={ item.issuedAt }
-					attachedAt={ item.attachedAt }
-					revokedAt={ item.revokedAt }
+					license={ item }
 					licenseType={
 						item.ownerType === LicenseType.Standard ? LicenseType.Standard : LicenseType.Partner
 					}
+					productName={ item.product }
 				/>
 			) ) }
 

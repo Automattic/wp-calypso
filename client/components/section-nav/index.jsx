@@ -20,6 +20,7 @@ class SectionNav extends Component {
 		allowDropdown: PropTypes.bool,
 		variation: PropTypes.string,
 		children: PropTypes.node,
+		enforceTabsView: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -81,6 +82,7 @@ class SectionNav extends Component {
 			'section-nav-updated': this.props.applyUpdatedStyles,
 			'has-pinned-items': this.hasPinnedSearch || this.props.hasPinnedItems,
 			minimal: 'minimal' === this.props.variation,
+			'enforce-tabs-view': this.props.enforceTabsView,
 		} );
 
 		return (
@@ -115,6 +117,11 @@ class SectionNav extends Component {
 			// Propagate 'selectedCount' to NavItem component
 			if ( child.type === NavTabs && this.props.selectedCount ) {
 				extraProps.selectedCount = this.props.selectedCount;
+			}
+
+			// Propagate 'enforceTabsView' to NavItem component
+			if ( child.type === NavTabs && this.props.enforceTabsView ) {
+				extraProps.enforceTabsView = this.props.enforceTabsView;
 			}
 
 			if ( child.type === Search ) {

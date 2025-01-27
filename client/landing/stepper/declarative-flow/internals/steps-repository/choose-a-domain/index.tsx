@@ -22,18 +22,15 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useChangeSiteDomainIfNeeded from '../../../../hooks/use-change-site-domain-if-needed';
 import type { Step } from '../../types';
-import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
+import type { DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
-	const isVideoPressFlow = 'videopress' === flow;
-	const { siteTitle, domain, productsList } = useSelect(
+	const { productsList } = useSelect(
 		( select ) => ( {
-			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
-			domain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 			productsList: select( ProductsList.store ).getProductsList(),
 		} ),
 		[]
@@ -133,63 +130,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		);
 	};
 
-	const getVideoPressFlowStepContent = () => {
-		const domainSuggestion = domain ? domain.domain_name : siteTitle;
-
-		return (
-			<CalypsoShoppingCartProvider>
-				<RegisterDomainStep
-					vendor={ flow }
-					basePath=""
-					suggestion={ domainSuggestion }
-					domainsWithPlansOnly
-					isSignupStep
-					includeWordPressDotCom
-					includeDotBlogSubdomain={ false }
-					showAlreadyOwnADomain={ false }
-					onAddDomain={ onAddDomain }
-					onSkip={ onSkip }
-					products={ productsList }
-					useProvidedProductsList
-					isReskinned
-				/>
-				<div className="aside-sections">
-					<div className="aside-section">
-						<h2>{ __( 'Get a free one-year domain with any paid plan.' ) }</h2>
-						<span>
-							{ __( "You can claim your free custom domain later if you aren't ready yet." ) }
-						</span>
-						<button
-							className="button navigation-link step-container__navigation-link has-underline is-borderless"
-							onClick={ onSkip }
-						>
-							{ __( 'View plans' ) }
-						</button>
-					</div>
-					<span className="aside-spacer"></span>
-					<div className="aside-section">
-						<h2>{ __( 'Already own a domain?' ) }</h2>
-						<span>
-							{ __(
-								'A domain name is the site address people type in their browser to visit your site.'
-							) }
-						</span>
-						<button
-							className="button navigation-link step-container__navigation-link has-underline is-borderless"
-							onClick={ onSkip }
-						>
-							{ __( 'Use a domain I own' ) }
-						</button>
-					</div>
-				</div>
-			</CalypsoShoppingCartProvider>
-		);
-	};
-
 	const getStepContent = () => {
 		switch ( flow ) {
-			case 'videopress':
-				return getVideoPressFlowStepContent();
 			case START_WRITING_FLOW:
 			case DESIGN_FIRST_FLOW:
 				return getBlogOnboardingFlowStepContent();
@@ -199,27 +141,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getFormattedHeader = () => {
-		if ( isVideoPressFlow ) {
-			return (
-				<FormattedHeader
-					id="choose-a-domain-header"
-					headerText={ __( 'Choose a domain' ) }
-					subHeaderText={
-						<>
-							{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
-								{ __( 'Decide later.' ) }
-							</button>
-						</>
-					}
-					align="center"
-				/>
-			);
-		}
-
 		if ( isBlogOnboardingFlow( flow ) ) {
 			return (
 				<FormattedHeader
@@ -244,7 +165,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow }
+				shouldHideNavButtons={ false }
 				hideSkip={ isBlogOnboardingFlow( flow ) }
 				goBack={ goBack }
 				goNext={ goNext }

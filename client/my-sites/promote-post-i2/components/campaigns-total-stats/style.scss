@@ -1,0 +1,57 @@
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+@mixin blazepress-animated-skeleton {
+	background-color: hsl(200, 20%, 90%);
+	animation: skeleton-loading 1s linear infinite alternate;
+
+	@keyframes skeleton-loading {
+		0% {
+			background-color: #eceded;
+		}
+		100% {
+			background-color: #e6e7e7;
+		}
+	}
+}
+
+.campaigns-total-stats {
+	&__container {
+		display: flex;
+		gap: 50px;
+
+	}
+
+	&__label {
+		font-size: 0.875rem;
+		color: $studio-gray-100;
+		font-family: $font-sf-pro-text;
+		font-weight: 500;
+		margin-top: 34px;
+	}
+	&__item {
+		font-size: 1.75rem;
+		color: $studio-gray-100;
+		font-family: $font-recoleta;
+		font-weight: 400;
+		margin-top: 8px;
+		margin-bottom: 42px;
+	}
+
+	&__flexible-skeleton {
+		border-radius: 4px;
+		display: inline-block;
+		overflow: hidden;
+		position: relative;
+		max-width: 250px;
+		height: 16px;
+		width: 100%;
+
+		@include blazepress-animated-skeleton;
+	}
+
+
+}
+
+

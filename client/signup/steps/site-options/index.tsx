@@ -25,7 +25,7 @@ export default function SiteOptionsStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { stepName, signupDependencies, flowName, goToNextStep } = props;
-	const { siteTitle, tagline, siteId } = signupDependencies;
+	const { siteTitle, tagline, siteId, back_to: backUrl } = signupDependencies;
 
 	const siteDetails = useSelector( ( state ) => ( siteId ? getSite( state, siteId ) : null ) );
 
@@ -127,6 +127,8 @@ export default function SiteOptionsStep( props: Props ) {
 			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout
+			backUrl={ backUrl }
+			allowBackFirstStep={ !! backUrl }
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',

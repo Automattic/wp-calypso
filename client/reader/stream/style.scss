@@ -5,7 +5,7 @@
 // Overrides default 720px width
 .is-reader-page .following.main,
 .is-reader-page .tag-stream__main.main {
-	max-width: 600px;
+	max-width: 768px;
 
 	&.reader-two-column {
 		max-width: 968px;
@@ -55,8 +55,7 @@
 }
 
 .reader__content .reader-excerpt,
-.reader__content .reader-post-card__title,
-.reader__content .reader-combined-card__post-title {
+.reader__content .reader-post-card__title {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -604,7 +603,7 @@
 	align-items: flex-start;
 	display: flex;
 	flex-wrap: nowrap;
-	gap: 80px;
+	gap: 40px;
 	justify-content: flex-start;
 }
 
@@ -742,6 +741,7 @@
 			line-height: 20px;
 		}
 	}
+
 	.sidebar-streams__following-load-more {
 		color: var(--color-neutral-100);
 		font-size: $font-body-small;
@@ -857,6 +857,10 @@
 
 	.reader-feed-header__seen-button {
 		margin-bottom: 24px;
+	}
+
+	.reader-subscription-list-item .follow-button__label {
+		display: none;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {

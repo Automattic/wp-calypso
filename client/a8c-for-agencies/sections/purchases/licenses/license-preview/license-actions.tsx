@@ -7,6 +7,7 @@ import useLicenseActions from './use-license-actions';
 
 interface Props {
 	siteUrl: string | null;
+	isDevSite: boolean;
 	attachedAt: string | null;
 	revokedAt: string | null;
 	licenseType: LicenseType;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function LicenseActions( {
 	siteUrl,
+	isDevSite,
 	attachedAt,
 	revokedAt,
 	licenseType,
@@ -26,6 +28,7 @@ export default function LicenseActions( {
 
 	const licenseActions = useLicenseActions(
 		siteUrl,
+		isDevSite,
 		attachedAt,
 		revokedAt,
 		licenseType,

@@ -14,11 +14,9 @@ import {
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
-import { WpcomPlansUI } from '@automattic/data-stores';
-import { englishLocales } from '@automattic/i18n-utils';
+import { WpcomPlansUI, Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -39,16 +37,17 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
@@ -148,9 +147,10 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 	);
 }
 
-class Plans extends Component {
+class PlansComponent extends Component {
 	static propTypes = {
 		context: PropTypes.object.isRequired,
+		coupon: PropTypes.string,
 		redirectToAddDomainFlow: PropTypes.bool,
 		domainAndPlanPackage: PropTypes.bool,
 		intervalType: PropTypes.string,
@@ -246,10 +246,12 @@ class Plans extends Component {
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
 			return (
 				<P2PlansMain
+					// None of these props appear to be used by the P2PlansMain component.
+					// We should consider removing them.
 					selectedPlan={ this.props.selectedPlan }
 					redirectTo={ this.props.redirectTo }
 					site={ selectedSite }
-					withDiscount={ this.props.withDiscount }
+					coupon={ this.props.coupon }
 					discountEndDate={ this.props.discountEndDate }
 				/>
 			);
@@ -273,7 +275,7 @@ class Plans extends Component {
 				selectedFeature={ this.props.selectedFeature }
 				selectedPlan={ this.props.selectedPlan }
 				redirectTo={ this.props.redirectTo }
-				withDiscount={ this.props.withDiscount }
+				coupon={ this.props.coupon }
 				discountEndDate={ this.props.discountEndDate }
 				siteId={ selectedSite?.ID }
 				plansWithScroll={ false }
@@ -393,22 +395,13 @@ class Plans extends Component {
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
-
-		const hasEntrepreneurTrialSubHeaderTextTranslation = hasTranslation(
-			"Discover what's available in your %(planName)s plan."
-		);
-
-		const isEnglishLocale = englishLocales.includes( this.props.locale );
-
 		const entrepreneurTrialSubHeaderText =
-			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
-				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
-				  translate( "Discover what's available in your %(planName)s plan.", {
-						args: {
-							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-						},
-				  } )
-				: translate( "Discover what's available in your Entrepreneur plan." );
+			// translators: %(planName)s is a plan name. E.g. Commerce plan.
+			translate( "Discover what's available in your %(planName)s plan.", {
+				args: {
+					planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+				},
+			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 
@@ -447,7 +440,13 @@ class Plans extends Component {
 				<PageViewTracker path="/plans/:site" title="Plans" />
 				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
 				<QueryProducts />
-				<TrackComponentView eventName="calypso_plans_view" />
+				<TrackComponentView
+					eventName="calypso_plans_view"
+					eventProperties={ {
+						current_plan_slug: currentPlanSlug || null,
+						is_site_on_paid_plan: !! ( currentPlanSlug && ! isFreePlan ),
+					} }
+				/>
 				{ ( isDomainUpsell || domainFromHomeUpsellFlow ) && (
 					<DomainUpsellDialog domain={ selectedSite.slug } />
 				) }
@@ -505,9 +504,8 @@ class Plans extends Component {
 }
 
 const ConnectedPlans = connect(
-	( state ) => {
-		const selectedSiteId = getSelectedSiteId( state );
-		const currentPlan = getCurrentPlan( state, selectedSiteId );
+	( state, props ) => {
+		const { currentPlan, selectedSiteId } = props;
 		const currentPlanIntervalType = getIntervalTypeForTerm(
 			getPlan( currentPlan?.productSlug )?.term
 		);
@@ -515,7 +513,7 @@ const ConnectedPlans = connect(
 		return {
 			currentPlan,
 			currentPlanIntervalType,
-			purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
+			purchase: currentPlan ? getByPurchaseId( state, currentPlan.purchaseId ) : null,
 			selectedSite: getSelectedSite( state ),
 			canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 			isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
@@ -537,12 +535,29 @@ const ConnectedPlans = connect(
 	( dispatch ) => ( {
 		fetchSitePlans: ( siteId ) => dispatch( fetchSitePlans( siteId ) ),
 	} )
-)( withCartKey( withShoppingCart( localize( Plans ) ) ) );
+)( withCartKey( withShoppingCart( localize( PlansComponent ) ) ) );
 
 export default function PlansWrapper( props ) {
+	const { intervalType: intervalTypeFromProps } = props;
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
+	/**
+	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
+	 * we want to show plans of the same term as plan that is currently active
+	 * We want to show the highest term between the current plan and the longer plan term default experiment
+	 */
+	const intervalTypeForCurrentPlanTerm = useSelector( ( state ) =>
+		getIntervalTypeForTerm( getCurrentPlanTerm( state, selectedSiteId ) )
+	);
+
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlans { ...props } />
+			<ConnectedPlans
+				{ ...props }
+				currentPlan={ currentPlan }
+				selectedSiteId={ selectedSiteId }
+				intervalType={ intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 }

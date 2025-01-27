@@ -8,6 +8,7 @@ interface Props {
 	description: string;
 	imageSrc: string;
 	destination: string;
+	footer?: React.ReactNode;
 	onSelect: ( destination: string ) => void;
 }
 
@@ -17,6 +18,7 @@ const DesignChoice = ( {
 	description,
 	imageSrc,
 	destination,
+	footer,
 	onSelect,
 }: Props ) => (
 	<button
@@ -28,6 +30,7 @@ const DesignChoice = ( {
 		<div className="design-choice__description">{ preventWidows( description ) }</div>
 		<div className="design-choice__image-container">
 			<img src={ imageSrc } alt={ title } />
+			{ footer ? <div className="design-choice__footer">{ footer }</div> : null }
 		</div>
 	</button>
 );

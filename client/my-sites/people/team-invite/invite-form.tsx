@@ -158,6 +158,7 @@ function InviteForm( props: Props ) {
 	function getRoleLearnMoreLink() {
 		return (
 			<Button
+				className="team-invite-form-learn-more__link"
 				plain
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }

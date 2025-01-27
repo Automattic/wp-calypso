@@ -8,7 +8,6 @@ import { useState } from 'react';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -39,7 +38,7 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
-				{ preventWidows( translate( 'Best-in-class products for your WordPress site' ) ) }
+				{ translate( 'Security, performance, and marketing tools by the WordPress experts' ) }
 			</h2>
 		) }
 	</>

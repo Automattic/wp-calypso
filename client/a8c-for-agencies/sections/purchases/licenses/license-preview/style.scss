@@ -194,6 +194,13 @@ button.button.is-borderless.license-bundle-dropdown__button {
 	}
 }
 
+.license-preview__product-title {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
 .license-preview__client-email {
 	font-size: 0.75rem;
 	line-height: 1.3;

@@ -24,6 +24,7 @@ export interface Theme {
 	author: string;
 	author_uri: string;
 	cost: ThemeCost;
+	block_theme?: boolean;
 	date_launched: string;
 	date_updated: string;
 	demo_uri?: string;

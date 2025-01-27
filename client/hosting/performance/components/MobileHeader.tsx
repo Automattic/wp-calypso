@@ -1,15 +1,16 @@
 import { Gridicon, ScreenReaderText } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 
 type MobileHeaderProps = {
 	pageTitle: string;
 	pageSelector: JSX.Element;
+	subtitle?: ReactNode;
 };
 
-export const MobileHeader = ( { pageTitle, pageSelector }: MobileHeaderProps ) => {
+export const MobileHeader = ( { pageTitle, pageSelector, subtitle }: MobileHeaderProps ) => {
 	const [ isPageSelectorVisible, setIsPageSelectorVisible ] = useState( false );
 
 	const togglePageSelector = () => {
@@ -40,6 +41,15 @@ export const MobileHeader = ( { pageTitle, pageSelector }: MobileHeaderProps ) =
 					} }
 				>
 					{ pageSelector }
+					<div
+						css={ {
+							marginTop: '20px',
+							fontSize: '14px',
+							color: 'var(--color-neutral-50)',
+						} }
+					>
+						{ subtitle }
+					</div>
 				</div>
 			) }
 		</>

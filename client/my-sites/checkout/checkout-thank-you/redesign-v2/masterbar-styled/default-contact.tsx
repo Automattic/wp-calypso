@@ -26,6 +26,14 @@ const ContactContainer = styled.div`
 		text-decoration: underline;
 		line-height: 20px;
 		font-size: 14px;
+
+		span {
+			color: var( --studio-wordpress-blue );
+		}
+
+		&:hover {
+			text-decoration: none;
+		}
 	}
 	.gridicon {
 		display: block;

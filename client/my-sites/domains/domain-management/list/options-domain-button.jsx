@@ -20,10 +20,12 @@ class AddDomainButton extends Component {
 	static propTypes = {
 		selectedSiteSlug: PropTypes.string,
 		allDomainsList: PropTypes.bool,
+		sidebarMode: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		allDomainsList: false,
+		sidebarMode: false,
 	};
 
 	constructor( props ) {
@@ -87,8 +89,8 @@ class AddDomainButton extends Component {
 		return (
 			<SplitButton
 				className="options-domain-button"
-				primary
-				whiteSeparator
+				primary={ ! this.props.sidebarMode }
+				whiteSeparator={ ! this.props.sidebarMode }
 				label={ isBreakpointActive ? undefined : translate( 'Add new domain' ) }
 				toggleIcon={ isBreakpointActive ? 'plus' : undefined }
 				href={ this.getAddNewDomainUrl() }

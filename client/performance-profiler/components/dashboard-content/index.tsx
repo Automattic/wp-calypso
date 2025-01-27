@@ -4,13 +4,14 @@ import { PerformanceReport } from 'calypso/data/site-profiler/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { CoreWebVitalsDisplay } from 'calypso/performance-profiler/components/core-web-vitals-display';
 import { Disclaimer } from 'calypso/performance-profiler/components/disclaimer-section';
-import { TabType } from 'calypso/performance-profiler/components/header';
+import { TabType, TabTypes } from 'calypso/performance-profiler/components/header';
 import { InsightsSection } from 'calypso/performance-profiler/components/insights-section';
 import { MigrationBanner } from 'calypso/performance-profiler/components/migration-banner';
 import { NewsletterBanner } from 'calypso/performance-profiler/components/newsletter-banner';
 import { PerformanceScore } from 'calypso/performance-profiler/components/performance-score';
 import { ScreenshotThumbnail } from 'calypso/performance-profiler/components/screenshot-thumbnail';
 import { ScreenshotTimeline } from 'calypso/performance-profiler/components/screenshot-timeline';
+import { useReportCompletedEffect } from 'calypso/performance-profiler/hooks/use-report-track-events-effect';
 import './style.scss';
 
 type PerformanceProfilerDashboardContentProps = {
@@ -22,7 +23,7 @@ type PerformanceProfilerDashboardContentProps = {
 	displayNewsletterBanner?: boolean;
 	displayMigrationBanner?: boolean;
 	activeTab?: TabType;
-	showV2?: boolean;
+	overallScoreIsTab?: boolean;
 	onRecommendationsFilterChange?: ( filter: string ) => void;
 };
 
@@ -31,14 +32,14 @@ export const PerformanceProfilerDashboardContent = ( {
 	url,
 	hash,
 	filter,
-	displayThumbnail = true,
 	displayNewsletterBanner = true,
 	displayMigrationBanner = true,
-	activeTab = TabType.mobile,
-	showV2 = false,
+	activeTab = TabTypes.mobile,
+	overallScoreIsTab = false,
 	onRecommendationsFilterChange,
 }: PerformanceProfilerDashboardContentProps ) => {
 	const {
+		crux_score,
 		overall_score,
 		fcp,
 		lcp,
@@ -54,23 +55,23 @@ export const PerformanceProfilerDashboardContent = ( {
 	} = performanceReport;
 	const insightsRef = useRef< HTMLDivElement >( null );
 
+	useReportCompletedEffect( url, hash );
+
 	return (
 		<div className="performance-profiler-content">
 			<div className="l-block-wrapper container">
-				{ ! showV2 && (
+				{ ! overallScoreIsTab && (
 					<div className="top-section">
 						<PerformanceScore
-							value={ overall_score * 100 }
+							value={ crux_score ? crux_score * 100 : overall_score * 100 }
 							recommendationsQuantity={ Object.keys( audits ).length }
 							recommendationsRef={ insightsRef }
 						/>
-						{ displayThumbnail && (
-							<ScreenshotThumbnail
-								alt={ translate( 'Website thumbnail' ) }
-								src={ screenshots?.[ screenshots.length - 1 ].data }
-								activeTab={ activeTab }
-							/>
-						) }
+						<ScreenshotThumbnail
+							alt={ translate( 'Website thumbnail' ) }
+							src={ screenshots?.[ screenshots.length - 1 ].data }
+							activeTab={ activeTab }
+						/>
 					</div>
 				) }
 				<CoreWebVitalsDisplay
@@ -81,7 +82,7 @@ export const PerformanceProfilerDashboardContent = ( {
 					ttfb={ ttfb }
 					tbt={ tbt }
 					overall={ overall_score * 100 }
-					showV2={ showV2 }
+					overallScoreIsTab={ overallScoreIsTab }
 					history={ history }
 					audits={ audits }
 					recommendationsRef={ insightsRef }

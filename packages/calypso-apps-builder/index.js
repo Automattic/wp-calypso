@@ -103,6 +103,8 @@ async function runBuilder( args ) {
  * mode after a full sync. Is otherwise pending until the user kills the process.
  */
 function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
+	const remoteHost = process.env.WPCOM_SANDBOX || 'wpcom-sandbox';
+
 	return new Promise( ( resolve, reject ) => {
 		let rsync = null;
 		const debouncedSync = debouncer( () => {
@@ -114,7 +116,7 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 				rsync.kill( 'SIGINT' );
 			}
 			rsync = exec(
-				`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
+				`rsync -ahz --exclude=".*" ${ localPath } ${ remoteHost }:${ remotePath }`,
 				( err ) => {
 					rsync = null;
 					// err.signal is null on macOS, so use error code 20 in that case.

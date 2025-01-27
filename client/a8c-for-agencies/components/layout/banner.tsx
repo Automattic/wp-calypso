@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 
+import './style.scss';
+
 type Props = {
 	actions?: React.ReactNode[];
 	className?: string;
@@ -13,6 +15,7 @@ type Props = {
 	onClose?: () => void;
 	title?: string;
 	preferenceName?: string;
+	hideCloseButton?: boolean;
 };
 
 export default function LayoutBanner( {
@@ -23,6 +26,7 @@ export default function LayoutBanner( {
 	actions,
 	level = 'success',
 	preferenceName,
+	hideCloseButton = false,
 }: Props ) {
 	const dispatch = useDispatch();
 
@@ -45,7 +49,13 @@ export default function LayoutBanner( {
 
 	return (
 		<div className={ wrapperClass }>
-			<NoticeBanner level={ level } onClose={ handleClose } title={ title } actions={ actions }>
+			<NoticeBanner
+				level={ level }
+				onClose={ handleClose }
+				title={ title }
+				actions={ actions }
+				hideCloseButton={ hideCloseButton }
+			>
 				{ children }
 			</NoticeBanner>
 		</div>

@@ -51,7 +51,7 @@ export default function () {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
-		notFoundIfNotEnabled(),
+		notFoundIfNotEnabled( { allowOnAtomic: true } ),
 		makeLayout,
 		clientRender
 	);

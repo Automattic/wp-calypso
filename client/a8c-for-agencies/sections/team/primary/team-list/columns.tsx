@@ -184,6 +184,29 @@ export const ActionColumn = ( {
 						isEnabled: false, // FIXME: Implement this action
 					},
 					{
+						name: 'transfer-ownership',
+						label: translate( 'Transfer ownership' ),
+						isEnabled: member.status === 'active' && currentUser.email !== member.email,
+						confirmationDialog: {
+							title: translate( 'Transfer agency ownership' ),
+							children: translate(
+								'Are you sure you want to transfer ownership of %(agencyName)s to {{b}}%(memberName)s{{/b}}? {{br/}}This action cannot be undone and you will become a regular team member.',
+								{
+									args: {
+										agencyName: agency?.name ?? '',
+										memberName: member.displayName ?? member.email,
+									},
+									components: {
+										b: <b />,
+										br: <br />,
+									},
+									comment: '%(agencyName)s is the agency name, %(memberName)s is the member name',
+								}
+							),
+							ctaLabel: translate( 'Transfer ownership' ),
+						},
+					},
+					{
 						name: 'delete-user',
 						label: isSelfAction ? translate( 'Leave agency' ) : translate( 'Remove team member' ),
 						className: 'is-danger',
@@ -226,6 +249,7 @@ export const ActionColumn = ( {
 		canRemove,
 		isSelfAction,
 		agency?.name,
+		currentUser.email,
 	] );
 
 	const activeActions = actions.filter( ( { isEnabled } ) => isEnabled );

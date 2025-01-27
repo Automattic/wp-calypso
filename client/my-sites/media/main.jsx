@@ -15,6 +15,7 @@ import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
@@ -22,6 +23,7 @@ import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
 import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
@@ -57,6 +59,12 @@ class Media extends Component {
 		this.setState( {
 			containerWidth: this.containerRef.current.clientWidth,
 		} );
+
+		const params = new URLSearchParams( window.location.search );
+		const upgradeStatus = params.get( 'upgrade' );
+		if ( upgradeStatus ) {
+			this.showUpgradeStatusNotice( upgradeStatus );
+		}
 	}
 
 	onFilterChange = ( filter ) => {
@@ -97,6 +105,8 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
+
+		recordTracksEvent( 'calypso_media_editor_close' );
 		this.maybeRedirectToAll();
 	};
 
@@ -113,16 +123,23 @@ class Media extends Component {
 
 	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'image' } );
 	};
 
 	editVideo = () => {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'video' } );
+	};
+
+	onImageEditorReset = () => {
+		recordTracksEvent( 'calypso_media_image_editor_reset' );
 	};
 
 	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
-		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
+		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
+		recordTracksEvent( 'calypso_media_image_editor_cancel' );
 		resetAllImageEditorState();
 	};
 
@@ -146,7 +163,9 @@ class Media extends Component {
 
 		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
+
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_image_editor_done' );
 		this.maybeRedirectToAll();
 	};
 
@@ -179,10 +198,13 @@ class Media extends Component {
 
 	onVideoEditorCancel = () => {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
+		recordTracksEvent( 'calypso_media_video_editor_cancel' );
 	};
 
 	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_video_editor_update_poster_update' );
+
 		this.maybeRedirectToAll();
 	};
 
@@ -279,6 +301,7 @@ class Media extends Component {
 
 	deleteMediaByItemDetail = () => {
 		this.deleteMedia( () => this.closeDetailsModal() );
+		recordTracksEvent( 'calypso_media_editor_delete' );
 	};
 
 	confirmDeleteMedia = () => {
@@ -349,6 +372,20 @@ class Media extends Component {
 			this.state.editedVideoItem !== null ||
 			this.state.currentDetail !== null
 		);
+	};
+
+	showUpgradeStatusNotice = ( status ) => {
+		const { translate, filter, successNotice: showSuccessNotice } = this.props;
+		let message = '';
+		if ( filter === 'audio' ) {
+			message = translate( 'Audio upload has been enabled.' );
+		} else if ( filter === 'videos' ) {
+			message = translate( 'Video upload has been enabled.' );
+		}
+
+		if ( status === 'success' && message ) {
+			showSuccessNotice( message );
+		}
 	};
 
 	render() {
@@ -425,6 +462,7 @@ class Media extends Component {
 								siteId={ site && site.ID }
 								media={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
+								onReset={ this.onImageEditorReset }
 								onCancel={ this.onImageEditorCancel }
 							/>
 						) }
@@ -472,6 +510,9 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	};
 };
 
-export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
-	localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) )
-);
+export default connect( mapStateToProps, {
+	selectMediaItems,
+	changeMediaSource,
+	clearSite,
+	successNotice,
+} )( localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) ) );

@@ -1,5 +1,5 @@
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
-import { useFlowProgress, FREE_FLOW } from '@automattic/onboarding';
+import { useFlowProgress } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -39,7 +39,6 @@ const SignupHeader = ( {
 	const flowProgress = useFlowProgress(
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
-	const showProgressBar = progressBar.flowName !== FREE_FLOW;
 
 	const logoClasses = clsx( 'wordpress-logo', {
 		'is-large': shouldShowLoadingScreen && ! isReskinned,
@@ -48,16 +47,13 @@ const SignupHeader = ( {
 	return (
 		<>
 			<div className="signup-header" role="banner" aria-label="banner">
-				{ flowProgress &&
-					! shouldShowLoadingScreen &&
-					showProgressBar &&
-					flowProgress?.progress > 0 && (
-						<ProgressBar
-							className={ variationName ? variationName : progressBar.flowName }
-							value={ flowProgress.progress }
-							total={ flowProgress.count }
-						/>
-					) }
+				{ flowProgress && ! shouldShowLoadingScreen && flowProgress?.progress > 0 && (
+					<ProgressBar
+						className={ variationName ? variationName : progressBar.flowName }
+						value={ flowProgress.progress }
+						total={ flowProgress.count }
+					/>
+				) }
 				{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
 				{ showWooLogo && (
 					<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />

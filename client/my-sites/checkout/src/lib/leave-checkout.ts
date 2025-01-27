@@ -1,8 +1,4 @@
-import {
-	isTailoredSignupFlow,
-	MIGRATION_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-} from '@automattic/onboarding';
+import { isTailoredSignupFlow, HOSTED_SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -45,7 +41,7 @@ export const leaveCheckout = ( {
 	if (
 		siteSlug &&
 		sendMessageToOpener( siteSlug, 'checkoutCancelled' ) &&
-		! [ HOSTED_SITE_MIGRATION_FLOW, MIGRATION_FLOW ].includes( signupFlowName )
+		! [ HOSTED_SITE_MIGRATION_FLOW ].includes( signupFlowName )
 	) {
 		return;
 	}
@@ -102,7 +98,7 @@ export const leaveCheckout = ( {
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 			// Only allow redirecting to relative paths.
-			if ( cancelPath.match( /^\/(?!\/)/ ) ) {
+			if ( isRelativeUrl( cancelPath ) ) {
 				navigate( cancelPath );
 				return;
 			}
@@ -115,3 +111,11 @@ export const leaveCheckout = ( {
 
 	navigate( closeUrl );
 };
+
+export function isRelativeUrl( url: string ) {
+	try {
+		return new URL( url, window.location.href ).origin === window.location.origin;
+	} catch {
+		return false;
+	}
+}

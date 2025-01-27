@@ -1,11 +1,8 @@
-/* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { BackButtonHeader } from './back-button';
 
 import './help-center-third-party-cookies-notice.scss';
 
@@ -23,8 +20,6 @@ const ThirdPartyCookiesNotice: React.FC = () => {
 
 	return (
 		<div className="help-center-third-party-cookies-notice">
-			<BackButtonHeader />
-
 			<div className="help-center-third-party-cookies-notice__content">
 				<h1>{ __( 'Action needed', __i18n_text_domain__ ) }</h1>
 				<p>

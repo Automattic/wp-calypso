@@ -77,7 +77,7 @@ const sidebarDomain = buildDomainResponse( {
 	isWPCOMDomain: true,
 } );
 
-const upgradeDomainBadgeText = 'Customize';
+const upgradeDomainBadgeText = 'Pick a custom domain';
 const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }?domainAndPlanPackage=true`;
 
 const props = {
@@ -87,7 +87,7 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
-	flow: 'link-in-bio',
+	flow: 'link-in-bio-tld',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
@@ -126,7 +126,9 @@ function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified =
 
 		return (
 			<redux.Provider store={ reduxStore }>
-				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
+				<MemoryRouter
+					initialEntries={ [ `/setup/link-in-bio-tld/launchpad?siteSlug=${ siteSlug }` ] }
+				>
 					<Sidebar { ...props } />
 				</MemoryRouter>
 			</redux.Provider>

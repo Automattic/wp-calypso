@@ -65,7 +65,11 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		padding: 16px 0 0 0;
+		padding: 32px 0 0 0;
+
+		@include break-small {
+			padding: 16px 0 0 0;
+		}
 
 		.home-site-preview__site-info {
 			display: flex;
@@ -80,6 +84,17 @@
 				font-size: $font-body;
 				font-weight: 500;
 				line-height: 24px;
+			}
+
+			.home-site-preview__info-domain {
+				text-overflow: ellipsis;
+				overflow: hidden;
+				font-size: rem(14px);
+				color: var(--studio-gray-60);
+
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 		}
 	}

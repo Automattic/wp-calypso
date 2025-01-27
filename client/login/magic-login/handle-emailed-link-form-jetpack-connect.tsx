@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
@@ -22,6 +23,8 @@ import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-cu
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import isWooDnaFlow from 'calypso/state/selectors/is-woo-dna-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
@@ -41,9 +44,15 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
+	const isWooCoreFlow = useSelector( isWooPasswordlessJPCFlow );
+	const isWooDnaService = useSelector( isWooDnaFlow );
+	const isWooFlow = isWooCoreFlow || isWooDnaService;
 	const isFetching = useSelector( isFetchingMagicLoginAuth );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const isFromAutomatticForAgenciesPlugin =
+		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
+		'automattic-for-agencies-client';
 
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
@@ -94,7 +103,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	return (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
-			<JetpackLogo size={ 74 } full />
+			{ ! isWooFlow && ! isFromAutomatticForAgenciesPlugin && <JetpackLogo size={ 74 } full /> }
+			{ isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> }
 
 			<h2 className="magic-login__title empty-content__title">
 				{ translate( 'Email confirmed!' ) }

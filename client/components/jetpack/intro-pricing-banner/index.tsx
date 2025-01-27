@@ -1,9 +1,7 @@
-import { ExternalLinkWithTracking } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/sections/manage/pricing/constants';
 import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cloud-cart';
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -19,7 +17,6 @@ import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
 import guaranteeBadge from './14-day-badge.svg';
 import useBoundingClientRect from './hooks/use-bounding-client-rect';
 import { usePrevious } from './hooks/use-previous';
-import people from './people.svg';
 import rocket from './rocket.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
@@ -106,22 +103,6 @@ const IntroPricingBanner: React.FC = () => {
 								} )
 							) }
 						</span>
-					</div>
-					<div className="intro-pricing-banner__item is-agencies">
-						<img className="intro-pricing-banner__item-icon" src={ people } alt="" />
-						<ExternalLinkWithTracking
-							className="intro-pricing-banner__item-label is-link"
-							tracksEventName="calypso_jpcom_agencies_page_intro_banner_link_click"
-							// The JETPACK_COM_A4A_LANDING_PAGE is only available in English at this time, so we
-							// won't worry about localizing the link for now. Although we may want to localize it
-							// in the future when/if the page gets translated & posted to other languages/locales.
-							href={ JETPACK_COM_A4A_LANDING_PAGE }
-							icon
-							iconClassName="intro-pricing-banner__external-link-icon"
-							iconSize={ 15 }
-						>
-							{ preventWidows( translate( 'Jetpack for Agencies' ) ) }
-						</ExternalLinkWithTracking>
 					</div>
 					{ shouldShowCart && hasCrossed && (
 						<CloudCart cartStyle={ isSmallScreen ? {} : { left: clientRect.left } } />

@@ -10,8 +10,10 @@ export const ListHeader = ( { isFirst, title, viewSettings } ) => {
 	return (
 		<li className="wpnc__time-group-wrap">
 			<div className="wpnc__time-group-title">
-				<Gridicon icon="time" size={ 18 } />
-				{ title }
+				<span className="wpnc__time-title">
+					<Gridicon icon="time" size={ 18 } />
+					{ title }
+				</span>
 				{ isFirst && (
 					<>
 						<span

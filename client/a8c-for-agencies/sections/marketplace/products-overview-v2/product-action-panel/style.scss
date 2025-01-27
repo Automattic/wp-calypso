@@ -1,0 +1,69 @@
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.product-action-panel.hosting-dashboard-layout__body {
+	background: var( --color-surface );
+	padding-block: 16px;
+	margin-block-start: 16px;
+
+	.hosting-dashboard-layout__body-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		justify-content: center;
+
+		@include break-large {
+			flex-direction: row;
+			justify-content: space-between;
+		}
+	}
+}
+
+.products-overview-v2.main.hosting-dashboard-layout.is-compact .product-action-panel.hosting-dashboard-layout__body {
+	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .10);
+}
+
+.product-action-panel__filter {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+
+	.components-search-control {
+		flex-grow: 1;
+	}
+}
+
+.bundle-price-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: center;
+}
+
+.bundle-price-selector__label {
+	@include a4a-font-heading-sm;
+	text-transform: uppercase;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.bundle-price-selector__menu-button {
+	flex-grow: 1;
+
+	b {
+		margin-inline-start: 4px;
+	}
+}
+
+.bundle-price-selector__popover {
+	margin-inline-start: -135px;
+
+	.popover__menu-item.is-selected {
+		background: var( --color-neutral-5 );
+		color: var( --color-text );
+	}
+}

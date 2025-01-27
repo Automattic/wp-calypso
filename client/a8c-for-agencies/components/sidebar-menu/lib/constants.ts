@@ -1,3 +1,6 @@
+// IMPORTANT: We need to make sure that we update
+// the 'calypso/a8c-for-agencies/lib/permission.ts' file
+// to include the necessary permissions for the new routes.
 export const A4A_LANDING_LINK = '/landing';
 export const A4A_OVERVIEW_LINK = '/overview';
 export const A4A_SITES_LINK = '/sites';
@@ -23,6 +26,7 @@ export const A4A_REFERRALS_COMMISSIONS_LINK = '/referrals/commissions';
 export const A4A_REFERRALS_DASHBOARD = `${ A4A_REFERRALS_LINK }/dashboard`;
 export const A4A_REFERRALS_PAYMENT_SETTINGS = `${ A4A_REFERRALS_LINK }/payment-settings`;
 export const A4A_REFERRALS_FAQ = `${ A4A_REFERRALS_LINK }/faq`;
+export const A4A_REFERRALS_ARCHIVED = `${ A4A_REFERRALS_LINK }/archived`;
 export const A4A_LICENSES_LINK = `${ A4A_PURCHASES_LINK }/licenses`;
 export const A4A_UNASSIGNED_LICENSES_LINK = `${ A4A_LICENSES_LINK }/unassigned`;
 export const A4A_BILLING_LINK = `${ A4A_PURCHASES_LINK }/billing`;
@@ -33,6 +37,11 @@ export const A4A_MARKETPLACE_DOWNLOAD_PRODUCTS_LINK = `${ A4A_MARKETPLACE_LINK }
 export const A4A_SIGNUP_LINK = '/signup';
 export const A4A_SIGNUP_FINISH_LINK = '/signup/finish';
 export const A4A_MIGRATIONS_LINK = '/migrations';
+export const A4A_MIGRATIONS_OVERVIEW_LINK = `${ A4A_MIGRATIONS_LINK }/overview`;
+export const A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-pressable`;
+export const A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK = `${ A4A_MIGRATIONS_OVERVIEW_LINK }/migrate-to-wpcom`;
+export const A4A_MIGRATIONS_COMMISSIONS_LINK = `${ A4A_MIGRATIONS_LINK }/commissions`;
+export const A4A_MIGRATIONS_PAYMENT_SETTINGS = `${ A4A_MIGRATIONS_LINK }/payment-settings`;
 export const A4A_SETTINGS_LINK = '/settings';
 export const A4A_PARTNER_DIRECTORY_LINK = '/partner-directory';
 export const A4A_PARTNER_DIRECTORY_DASHBOARD_LINK = `${ A4A_PARTNER_DIRECTORY_LINK }/dashboard`;
@@ -40,11 +49,13 @@ export const A4A_TEAM_LINK = '/team';
 export const A4A_TEAM_INVITE_LINK = '/team/invite';
 export const A4A_TEAM_ACCEPT_INVITE_LINK = '/team/invite/accept';
 export const EXTERNAL_A4A_KNOWLEDGE_BASE = 'http://automattic.com/for-agencies/help';
+export const A4A_AGENCY_TIER_LINK = '/agency-tier';
 
 // Client
 export const A4A_CLIENT_LANDING_LINK = '/client/landing';
 export const A4A_CLIENT_SUBSCRIPTIONS_LINK = '/client/subscriptions';
 export const A4A_CLIENT_PAYMENT_METHODS_LINK = '/client/payment-methods';
+export const A4A_CLIENT_INVOICES_LINK = '/client/invoices';
 export const A4A_CLIENT_PAYMENT_METHODS_ADD_LINK = `${ A4A_CLIENT_PAYMENT_METHODS_LINK }/add`;
 export const A4A_CLIENT_CHECKOUT = '/client/checkout';
 export const EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE =

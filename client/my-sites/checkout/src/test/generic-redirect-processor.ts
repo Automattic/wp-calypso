@@ -40,7 +40,7 @@ describe( 'genericRedirectProcessor', () => {
 			country_code: 'US',
 			email: 'test@example.com',
 			name: 'test name',
-			payment_method: 'WPCOM_Billing_Stripe_Source_Bancontact',
+			payment_method: 'WPCOM_Billing_Stripe_Bancontact',
 			payment_partner: 'IE',
 			postal_code: '10001',
 			success_url:

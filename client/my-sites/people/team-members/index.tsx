@@ -55,7 +55,7 @@ function TeamMembers( props: Props ) {
 		( obj ) => obj.linked_user_ID === false
 	);
 
-	const membersTotal = nonPendingMembersSorted.length;
+	const membersTotal = data?.total;
 	const addTeamMemberLink = `/people/new/${ site?.slug }`;
 
 	function getPersonRef( user: Member ) {

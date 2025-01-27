@@ -10,13 +10,13 @@
 //
 // Usage:
 // @include long-content-fade();
-// @include long-content-fade( $color: var( --color-sidebar-background-rgb ) );
+// @include long-content-fade( $color: var( --color-sidebar-background ) );
 // ==========================================================================
 
 @mixin long-content-fade(
 	$direction: right,
 	$size: 20%,
-	$color: var( --color-surface-rgb ),
+	$color: var( --color-surface ),
 	$edge: 0,
 	$z-index: false
 ) {

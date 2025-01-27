@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import ExternalLink from 'calypso/components/external-link';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Main from 'calypso/components/main';
@@ -57,12 +56,8 @@ class Privacy extends Component {
 
 		const isSubmitButtonDisabled = ! hasUnsavedUserSettings || isUpdatingUserSettings;
 
-		const cookiePolicyLink = (
-			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } target="_blank" />
-		);
-		const privacyPolicyLink = (
-			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy/' ) } target="_blank" />
-		);
+		const cookiePolicyLink = <a href={ localizeUrl( 'https://automattic.com/cookies/' ) } />;
+		const privacyPolicyLink = <a href={ localizeUrl( 'https://automattic.com/privacy/' ) } />;
 
 		return (
 			<Main wideLayout className="privacy">

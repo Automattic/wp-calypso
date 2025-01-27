@@ -36,6 +36,7 @@ jest.mock( 'calypso/components/file-picker', () =>
 		</div>
 	) )
 );
+jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn( () => {} ) );
 
 const render = ( el, options ) => renderWithProvider( el, { ...options } );
 

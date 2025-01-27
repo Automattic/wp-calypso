@@ -6,6 +6,7 @@ export type PluginQueryOptions = {
 	locale: string;
 	tag?: string;
 	author?: string;
+	slugs?: string[];
 };
 
 export type Plugin = {
@@ -89,6 +90,7 @@ export type SearchParams = {
 	pageHandle: string | undefined;
 	pageSize: number;
 	locale: string;
+	slugs?: string[] | undefined;
 };
 
 export type ReinstallPluginsResponse = {

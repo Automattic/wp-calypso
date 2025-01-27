@@ -35,6 +35,8 @@ import {
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 	JETPACK_STARTER_UPGRADE_MAP,
 	is100Year,
+	isJetpackGrowthPlan,
+	JETPACK_GROWTH_UPGRADE_MAP,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -69,8 +71,9 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import reinstallPlugins from 'calypso/data/marketplace/reinstall-plugins-api';
+import HundredYearPlanLogo from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/hundred-year-plan-step-wrapper/hundred-year-plan-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { resolveDomainStatus } from 'calypso/lib/domains';
+import { getSelectedDomain, resolveDomainStatus } from 'calypso/lib/domains';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	getDomainRegistrationAgreementUrl,
@@ -116,6 +119,7 @@ import {
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -129,7 +133,11 @@ import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
-import { hasLoadedSiteDomains, getAllDomains } from 'calypso/state/sites/domains/selectors';
+import {
+	hasLoadedSiteDomains,
+	getAllDomains,
+	getDomainsBySiteId,
+} from 'calypso/state/sites/domains/selectors';
 import { getSite, getSiteSlug, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { CalypsoDispatch, IAppState } from 'calypso/state/types';
@@ -145,6 +153,7 @@ import {
 	isJetpackTemporarySitePurchase,
 	isAkismetTemporarySitePurchase,
 	isMarketplaceTemporarySitePurchase,
+	getCancelPurchaseSurveyCompletedPreferenceKey,
 } from '../utils';
 import PurchaseNotice from './notices';
 import PurchasePlanDetails from './plan-details';
@@ -185,6 +194,7 @@ export interface ManagePurchaseConnectedProps {
 	hasLoadedDomains?: boolean;
 	hasLoadedPurchasesFromServer: boolean;
 	hasLoadedSites: boolean;
+	hasCompletedCancelPurchaseSurvey: boolean | null;
 	hasNonPrimaryDomainsFlag?: boolean;
 	hasSetupAds?: boolean;
 	isAtomicSite?: boolean | null;
@@ -278,7 +288,9 @@ class ManagePurchase extends Component<
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
 		const isSitelessRenewal =
-			isAkismetTemporarySitePurchase( purchase ) || isMarketplaceTemporarySitePurchase( purchase );
+			purchase &&
+			( isAkismetTemporarySitePurchase( purchase ) ||
+				isMarketplaceTemporarySitePurchase( purchase ) );
 
 		if ( ! purchase ) {
 			return;
@@ -518,6 +530,14 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		if ( isJetpackGrowthPlan( purchase.productSlug ) ) {
+			const upgradePlan =
+				JETPACK_GROWTH_UPGRADE_MAP[
+					purchase.productSlug as keyof typeof JETPACK_GROWTH_UPGRADE_MAP
+				];
+			return `/checkout/${ siteSlug }/${ upgradePlan }`;
+		}
+
 		if ( isJetpackStarterPlan( purchase.productSlug ) ) {
 			const upgradePlan =
 				JETPACK_STARTER_UPGRADE_MAP[
@@ -603,6 +623,17 @@ class ManagePurchase extends Component<
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
 
+	getDomainDetailsFromPurchase = ( purchase: Purchase ): ResponseDomain | undefined => {
+		return this.props.domainsDetails?.[ purchase.siteId ]?.find(
+			( domain ) => domain.domain === purchase.meta
+		);
+	};
+
+	isHundredYearDomain = ( purchase: Purchase ): boolean | undefined => {
+		const domainDetails = this.getDomainDetailsFromPurchase( purchase );
+		return domainDetails?.isHundredYearDomain;
+	};
+
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 		if ( ! purchase ) {
@@ -618,6 +649,10 @@ class ManagePurchase extends Component<
 			! isAkismetTemporarySitePurchase( purchase ) &&
 			! isMarketplaceTemporarySitePurchase( purchase )
 		) {
+			return null;
+		}
+
+		if ( this.isHundredYearDomain( purchase ) ) {
 			return null;
 		}
 
@@ -638,11 +673,29 @@ class ManagePurchase extends Component<
 		return null;
 	}
 
+	renderRefundText() {
+		const { purchase, translate } = this.props;
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		// Hide if refund window has lapsed.
+		if ( ! hasAmountAvailableToRefund( purchase ) || ! purchase?.mostRecentRenewDate ) {
+			return;
+		}
+
+		return (
+			<span className="manage-purchase__refund-text">{ translate( 'Refund available' ) }</span>
+		);
+	}
+
 	renderRemovePurchaseNavItem() {
 		const {
 			hasLoadedSites,
 			hasNonPrimaryDomainsFlag,
 			hasCustomPrimaryDomain,
+			hasCompletedCancelPurchaseSurvey,
 			site,
 			purchase,
 			purchaseListUrl,
@@ -656,11 +709,16 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		const isPlanPurchase = isPlan( purchase );
 		let text = translate( 'Remove subscription' );
 
-		if ( isPlan( purchase ) ) {
+		if ( isPlanPurchase ) {
 			text = translate( 'Remove plan' );
 		} else if ( isDomainRegistration( purchase ) ) {
+			// 100-year domains cannot be removed by the user
+			if ( this.isHundredYearDomain( purchase ) ) {
+				return null;
+			}
 			text = translate( 'Remove domain' );
 		}
 
@@ -676,9 +734,11 @@ class ManagePurchase extends Component<
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl ?? purchasesRoot }
 				linkIcon="chevron-right"
+				skipRemovePlanSurvey={ isPlanPurchase && hasCompletedCancelPurchaseSurvey }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
+				{ this.renderRefundText() }
 			</RemovePurchase>
 		);
 	}
@@ -856,6 +916,11 @@ class ManagePurchase extends Component<
 			return null;
 		}
 
+		// If it's a 100-year domain, don't show the cancel button
+		if ( this.isHundredYearDomain( purchase ) ) {
+			return null;
+		}
+
 		const onClick = ( event: { preventDefault: () => void } ) => {
 			recordTracksEvent( 'calypso_purchases_manage_purchase_cancel_click', {
 				product_slug: purchase.productSlug,
@@ -878,6 +943,7 @@ class ManagePurchase extends Component<
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ getCancelPurchaseNavText( purchase, translate ) }
+				{ this.renderRefundText() }
 			</CompactCard>
 		);
 	}
@@ -892,6 +958,14 @@ class ManagePurchase extends Component<
 			return (
 				<div className="manage-purchase__plan-icon">
 					<ProductIcon slug={ purchase.productSlug as SupportedSlugs } />
+				</div>
+			);
+		}
+
+		if ( this.isHundredYearDomain( purchase ) ) {
+			return (
+				<div className="manage-purchase__plan-icon">
+					<HundredYearPlanLogo width={ 50 } />
 				</div>
 			);
 		}
@@ -950,6 +1024,12 @@ class ManagePurchase extends Component<
 		}
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
+			if ( this.isHundredYearDomain( purchase ) ) {
+				return translate(
+					'Your stories, achievements, and memories preserved for generations to come. One payment. One hundred years of legacy.'
+				);
+			}
+
 			return translate(
 				"When used with a paid plan, your custom domain can replace your site's free address, {{strong}}%(wpcom_url)s{{/strong}}, " +
 					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
@@ -968,9 +1048,7 @@ class ManagePurchase extends Component<
 		if ( isDomainTransfer( purchase ) ) {
 			const { currentRoute, site, translate, dispatch } = this.props;
 
-			const transferDomain = this.props.domainsDetails?.[ purchase.siteId ]?.find(
-				( domain ) => domain.domain === purchase.meta
-			);
+			const transferDomain = this.getDomainDetailsFromPurchase( purchase );
 
 			if ( transferDomain ) {
 				const { noticeText } = resolveDomainStatus( transferDomain, null, translate, dispatch, {
@@ -1066,6 +1144,7 @@ class ManagePurchase extends Component<
 		const domainTransferDuration = translate(
 			'Domain transfers can take anywhere from five to seven days to complete.'
 		);
+
 		return (
 			<div className="manage-purchase__content">
 				<span className="manage-purchase__description">
@@ -1211,6 +1290,7 @@ class ManagePurchase extends Component<
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
+		const isHundredYearDomain = this.isHundredYearDomain( purchase );
 
 		return (
 			<Fragment>
@@ -1221,7 +1301,11 @@ class ManagePurchase extends Component<
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
 						<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
-						<div className="manage-purchase__description">{ purchaseType( purchase ) }</div>
+						<div className="manage-purchase__description">
+							{ isHundredYearDomain
+								? translate( '100-Year Domain Registration' )
+								: purchaseType( purchase ) }
+						</div>
 						<div className="manage-purchase__price">
 							{ isPartnerPurchase( purchase ) ? (
 								<div className="manage-purchase__contact-partner">
@@ -1575,7 +1659,6 @@ const WrappedManagePurchase = (
 		planSlugs: [ relatedMonthlyPlanSlug as PlanSlug ],
 		siteId,
 		coupon: undefined,
-		storageAddOns: null,
 		useCheckPlanAvailabilityForPurchase,
 	} );
 
@@ -1609,6 +1692,10 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 	const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug ?? '' );
 	const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 	const currentRoute = getCurrentRoute( state );
+	const domains = purchase && getDomainsBySiteId( state, purchase.siteId );
+	const selectedDomainName = purchase && getName( purchase );
+	const selectedDomain =
+		domains && selectedDomainName && getSelectedDomain( { domains, selectedDomainName } );
 
 	return {
 		currentRoute,
@@ -1625,6 +1712,9 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		hasSetupAds: Boolean(
 			site?.options?.wordads || isRequestingWordAdsApprovalForSite( state, site )
 		),
+		hasCompletedCancelPurchaseSurvey: purchase
+			? getPreference( state, getCancelPurchaseSurveyCompletedPreferenceKey( purchase.id ) )
+			: false,
 		isAtomicSite: isSiteAtomic( state, siteId ),
 		isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		isProductOwner,
@@ -1637,6 +1727,7 @@ export default connect( ( state: IAppState, props: ManagePurchaseProps ) => {
 		purchases,
 		relatedMonthlyPlanSlug,
 		renewableSitePurchases,
+		selectedDomain,
 		selectedSiteId,
 		site,
 		siteId,

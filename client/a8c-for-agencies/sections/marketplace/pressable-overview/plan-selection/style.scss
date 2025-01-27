@@ -11,47 +11,59 @@
 }
 
 .pressable-overview-plan-selection__details {
-	margin-block-start: 32px;
-	margin-block-end: 64px;
-	display: flex;
-	flex-direction: column;
-	gap: 32px;
-
-	> * {
-		padding: 24px;
-		display: flex;
-		flex-direction: column;
-		gap: 32px;
-	}
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-auto-rows: auto;
+	margin-block: 56px 64px;
+	row-gap: 32px;
 
 	@include break-large {
-		flex-direction: row;
+		grid-template-columns: repeat(2, 1fr);
+		column-gap: 32px;
+		row-gap: 8px;
+
+		> * {
+			// Make items span full width if they're the only child
+			grid-column: auto / span 2;
+		}
+
+		// If there are 2 or more children, reset the grid span
+		> *:nth-child(1):nth-last-child(n+2),
+		> *:nth-child(2):nth-last-child(n+2) {
+			grid-column: auto / span 1;
+		}
+
 	}
+}
+
+.pressable-overview-plan-selection__details-hint {
+	@include a4a-font-body-md;
 }
 
 .pressable-overview-plan-selection__details-card {
 	border-radius: 4px;
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
 }
 
 .pressable-overview-plan-selection__details-card:not(.is-aside) {
-	flex-grow: 1;
 	background: var(--color-light-backdrop);
 }
 
 .pressable-overview-plan-selection__details-card.is-aside {
 	border: 1px solid var(--color-neutral-5);
-	flex-grow: 1;
-
-	@include break-large {
-		width: 300px;
-		flex-grow: 0;
-	}
 }
 
 .pressable-overview-plan-selection__details-card-header-title {
 	font-size: 1rem;
 	line-height: 1.4;
 	font-weight: 600;
+}
+
+.pressable-overview-plan-selection__details-card-header-coming-soon {
+	@include a4a-font-heading-md($font-weight: 400);
 }
 
 .pressable-overview-plan-selection__details-card-header-subtitle {
@@ -124,14 +136,37 @@
 	justify-content: center;
 
 	.pressable-overview-plan-selection__filter-label {
-		font-weight: 600;
-		font-size: 1rem;
+		@include a4a-font-heading-md($font-size: rem(14px));
 		margin: 0;
+
 	}
 
-	.pressable-overview-plan-selection__filter-buttons {
-		button:first-child {
-			margin-inline-end: 1rem;
+	.pressable-overview-plan-selection__filter-radio-control {
+		.components-base-control__label {
+			display: none;
+		}
+
+		.components-radio-control__label {
+			text-align: start;
+		}
+
+		.components-radio-control__group-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			padding: 16px;
+			// stylelint-disable-next-line scales/radii
+			border-radius: 8px;
+			background-color: var(--color-neutral-0);
+
+			@include break-large {
+				flex-direction: row;
+				gap: 24px;
+			}
+		}
+
+		.components-radio-control__input[type="radio"]:checked {
+			background-color: var(--color-primary-50);
 		}
 	}
 
@@ -179,6 +214,10 @@
 }
 
 .pressable-overview-plan-selection__filter {
+	.a4a-slider {
+		margin-block-start: 16px;
+	}
+
 	.a4a-slider__marker-label {
 		height: 0.95rem;
 	}
@@ -236,8 +275,15 @@
 		width: 1000px;
 	}
 
-	.pressable-overview-plan-selection__filter-owned-plan {
-		margin-block-start: 32px;
+	.pressable-overview-plan-selection__upgrade-title {
+		font-size: 2rem;
+		font-weight: bold;
+		text-align: center;
+		margin-block: 56px 32px;
+
+		&.narrow {
+			margin-block: 16px 32px;
+		}
 	}
 
 	.pressable-overview-plan-selection__details-card {
@@ -283,4 +329,37 @@
 
 .pressable-overview-plan-selection__tooltip {
 	max-width: 400px;
+}
+
+.pressable-overview-plan-selection__plan-category-tabpanel {
+	.components-tab-panel__tabs {
+		justify-content: center;
+		flex-wrap: wrap;
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		padding: 7px 0;
+		margin: 0 auto 32px;
+		max-width: 600px;
+
+		button {
+			flex: 1;
+			margin: 0 7px;
+
+			&:hover {
+				background-color: initial;
+				color: inherit;
+			}
+
+			&:disabled, &[aria-disabled="true"] {
+				color: var(--color-neutral-20);
+			}
+
+			&.pressable-overview-plan-selection__plan-category-tab-is-active {
+				background-color: var(--color-primary-50);
+				border-color: var(--color-primary-50);
+				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
+			}
+		}
+	}
 }

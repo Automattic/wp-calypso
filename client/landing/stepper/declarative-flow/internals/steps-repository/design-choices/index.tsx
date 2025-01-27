@@ -1,21 +1,18 @@
-import {
-	getAssemblerDesign,
-	themesIllustrationImage,
-	assemblerIllustrationV2Image,
-	hiBigSky,
-} from '@automattic/design-picker';
+import { getAssemblerDesign, themesIllustrationImage } from '@automattic/design-picker';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useIsSiteAssemblerEnabledExp } from 'calypso/data/site-assembler';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
+import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
-import BigSkyDisclaimerModal from '../../components/big-sky-disclaimer-modal';
+import hiBigSky from './big-sky-no-text-small.png';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -34,9 +31,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
-
-	const isSiteAssemblerEnabled = useIsSiteAssemblerEnabledExp( 'design-choices' );
-
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
@@ -56,11 +50,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'pattern-assembler' || destination === 'launch-big-sky' ) {
-			setSelectedDesign( getAssemblerDesign() );
-		}
-
 		if ( destination === 'launch-big-sky' ) {
+			setSelectedDesign( getAssemblerDesign() );
 			return;
 		}
 
@@ -85,29 +76,46 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								destination="designSetup"
 								onSelect={ handleSubmit }
 							/>
-							{ isSiteAssemblerEnabled && (
-								<DesignChoice
-									className="design-choices__design-your-own"
-									title={ translate( 'Design your own' ) }
-									description={ translate(
-										'Start from scratch, designing your site with patterns, pages, and styles.'
-									) }
-									imageSrc={ assemblerIllustrationV2Image }
-									destination="pattern-assembler"
-									onSelect={ handleSubmit }
-								/>
-							) }
 							{ ! isLoading && isEligible && (
-								<BigSkyDisclaimerModal flow={ flow } stepName={ stepName }>
-									<DesignChoice
-										className="design-choices__try-big-sky"
-										title={ translate( 'Try Big Sky' ) }
-										description={ translate( 'The AI website builder for WordPress.' ) }
-										imageSrc={ hiBigSky }
-										destination="launch-big-sky"
-										onSelect={ handleSubmit }
-									/>
-								</BigSkyDisclaimerModal>
+								<DesignChoice
+									className="design-choices__try-big-sky"
+									title={ translate( 'Design with AI' ) }
+									description={ translate(
+										'Use our AI website builder to easily and quickly build the site of your dreams.'
+									) }
+									imageSrc={ hiBigSky }
+									destination="launch-big-sky"
+									footer={ preventWidows(
+										translate(
+											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
+											{
+												components: {
+													a: (
+														<a
+															href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
+															target="_blank"
+															rel="noreferrer noopener"
+															onClick={ ( event ) => {
+																recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
+																event.stopPropagation();
+															} }
+														/>
+													),
+												},
+											}
+										)
+									) }
+									onSelect={ () => {
+										recordTracksEvent( 'calypso_big_sky_choose', {
+											flow,
+											step: stepName,
+										} );
+										const queryParams = new URLSearchParams( location.search ).toString();
+										navigate(
+											`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
+										);
+									} }
+								/>
 							) }
 						</div>
 					</>

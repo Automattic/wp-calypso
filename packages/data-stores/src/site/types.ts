@@ -134,6 +134,7 @@ export interface SiteDetails {
 	is_a4a_client?: boolean;
 	is_a4a_dev_site?: boolean;
 	jetpack: boolean;
+	jetpack_connection?: boolean;
 	lang?: string;
 	launch_status: string;
 	locale: string;
@@ -273,9 +274,11 @@ export interface SiteDetailsOptions {
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
+	site_partner_bundle?: string;
 	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
+	site_creation_flow?: string;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;
@@ -290,6 +293,7 @@ export interface SiteDetailsOptions {
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
+	migration_source_site_domain?: string;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
@@ -500,14 +504,14 @@ interface PaletteColor {
 	slug: string;
 	color: string;
 	name: string;
-	default: string;
+	default?: string;
 }
 
 export interface GlobalStyles {
 	slug?: string;
 	title?: string;
 	settings: {
-		color: {
+		color?: {
 			palette: {
 				default: PaletteColor[];
 				theme: PaletteColor[];
@@ -618,6 +622,7 @@ export interface SourceSiteMigrationBase {
 	// Migration meta
 	recent_migration?: boolean;
 	failed_backup_source?: boolean;
+	migration_status?: string;
 }
 
 export interface SourceSiteMigrationDetails extends SourceSiteMigrationBase {
@@ -672,6 +677,7 @@ export interface AssembleSiteOptions {
  * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
  */
 export interface RawSiteMediaStorage {
+	max_storage_bytes_from_add_ons: number;
 	max_storage_bytes: number;
 	storage_used_bytes: number;
 }
@@ -680,6 +686,7 @@ export interface RawSiteMediaStorage {
  * Site media storage transformed for frontend use
  */
 export interface SiteMediaStorage {
+	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
 }

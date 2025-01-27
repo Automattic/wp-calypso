@@ -16,6 +16,8 @@ import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { isE2ETest } from 'calypso/lib/e2e';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -29,10 +31,11 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
 
@@ -134,6 +137,11 @@ export const redirectInvalidLanguage = ( context, next ) => {
 
 export function redirectLoggedOut( context, next ) {
 	const state = context.store.getState();
+	// Allow logged-out users to access account deleted page for self-restore.
+	// This is an exception because /me should not allow enableLoggedOut.
+	if ( context.pathname === '/me/account/closed' ) {
+		return next();
+	}
 
 	if ( isUserLoggedIn( state ) ) {
 		next();
@@ -201,7 +209,9 @@ export function redirectLoggedOutToSignup( context, next ) {
  */
 export function redirectMyJetpack( context, next ) {
 	const state = context.store.getState();
-	const product = getProductSlugFromContext( context );
+	const productSlug = getProductSlugFromContext( context );
+	// Strip the slug's quantity suffix, for upgradable quantity based products.
+	const product = productSlug.replace( /:-q-\d+/, '' );
 	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
 
 	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isContextSourceMyJetpack( context ) ) {
@@ -286,8 +296,10 @@ export function redirectIfJetpackNonAtomic( context, next ) {
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 	const isJetpackNonAtomic = ! isAtomicSite && !! site?.jetpack;
+	const isDisconnectedJetpackAndNotAtomic =
+		! site?.is_wpcom_atomic && site?.jetpack_connection && ! site?.jetpack;
 
-	if ( isJetpackNonAtomic ) {
+	if ( isJetpackNonAtomic || isDisconnectedJetpackAndNotAtomic ) {
 		return redirectToDashboard( context );
 	}
 
@@ -379,5 +391,34 @@ export const setSelectedSiteIdByOrigin = ( context, next ) => {
  * This function is only used to provide API compatibility for the sections that use shared controllers.
  */
 export const ssrSetupLocale = ( _context, next ) => {
+	next();
+};
+
+export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
+	const experimentName = 'calypso_post_onboarding_holdout_160125';
+	const aaTestName = 'calypso_post_onboarding_aa_150125';
+
+	loadExperimentAssignment( aaTestName );
+	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
+
+	const overrideAssignment = getPreference(
+		context.store.getState(),
+		'remove_duplicate_views_experiment_assignment'
+	);
+
+	if ( 'control' === overrideAssignment ) {
+		next();
+		return;
+	}
+
+	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+		const state = context.store.getState();
+		const siteId = getSelectedSiteId( state );
+		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
+		if ( wpAdminUrl ) {
+			window.location = wpAdminUrl;
+			return;
+		}
+	}
 	next();
 };

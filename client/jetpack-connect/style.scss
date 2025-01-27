@@ -1220,7 +1220,11 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 
 		.jetpack-connect__tos-link {
-			margin: 24px auto 70px;
+			margin: 24px auto;
+			text-align: center;
+			a {
+				line-height: inherit;
+			}
 		}
 	}
 
@@ -1331,7 +1335,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__action-disclaimer {
 		padding: 0;
-		margin-top: 32px;
+		margin: 32px 0 0 0;
 
 		.button {
 			font-weight: 500;

@@ -123,6 +123,7 @@ export const createSiteDomainObject = ( domain: DomainData ) => {
 		isDnssecEnabled: Boolean( domain.is_dnssec_enabled ),
 		isDnssecSupported: Boolean( domain.is_dnssec_supported ),
 		isGravatarDomain: Boolean( domain.is_gravatar_domain ),
+		isHundredYearDomain: Boolean( domain.is_hundred_year_domain ),
 		isLocked: Boolean( domain.is_locked ),
 		isRenewable: Boolean( domain.is_renewable ),
 		isRedeemable: Boolean( domain.is_redeemable ),

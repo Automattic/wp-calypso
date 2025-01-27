@@ -11,3 +11,4 @@ export const EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS = 'unverified_forwards';
 export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION =
 	'other-user-owns-subscription';
 export const EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL = 'other-user-owns-email';
+export const EMAIL_WARNING_CODE_GRAVATAR_DOMAIN = 'domain-gravatar-domain';

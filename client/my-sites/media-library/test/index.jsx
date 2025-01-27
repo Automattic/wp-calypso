@@ -29,6 +29,10 @@ jest.mock( 'calypso/state/sharing/keyring/selectors', () => ( {
 	isKeyringConnectionsFetching: () => null,
 } ) );
 
+jest.mock( 'calypso/state/media/actions', () => ( {
+	requestPhotosPickerFeatureStatus: jest.fn().mockImplementation( () => () => ( {} ) ),
+} ) );
+
 describe( 'MediaLibrary', () => {
 	const props = {
 		site: { ID: 123 },

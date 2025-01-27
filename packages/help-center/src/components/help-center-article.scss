@@ -23,38 +23,20 @@
 		flex-direction: column;
 
 		.help-center-article-content__header {
-			h1.help-center-article-content__header-title {
-				margin: 0;
 
-				> a {
-					text-decoration: none;
-					clear: none;
-					color: var(--color-neutral-70);
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-					font-size: $font-title-medium;
-					font-weight: 600;
-					line-height: 32px;
-					margin: 56px 0 0;
-					max-width: 750px;
-				}
+			.help-center-article-content__header-link {
+				color: var(--color-neutral-70);
+			}
+
+			h1.help-center-article-content__header-title {
+				margin: 8px 0 0 0;
+				color: var(--color-neutral-70);
+				font-size: $font-title-medium;
+				font-weight: 600;
 			}
 		}
 
 		.help-center-article-content__main {
-			h2 {
-				font-size: $font-title-small;
-			}
-
-			h3,
-			h4 {
-				font-size: $font-body;
-			}
-
-			h5 {
-				font-size: $font-body-small;
-			}
-
 			h2,
 			h3,
 			h4,
@@ -116,12 +98,19 @@
 				color: var(--color-neutral-80);
 			}
 
-			ul {
+			ul, ol.wp-block-list {
 				font-size: $font-body-small;
 				color: var(--color-neutral-80);
-				list-style-type: circle;
-				list-style-position: inside;
+				list-style-position: outside;
 				margin: 0 0 1.5em 1.5em;
+
+				ul, li {
+					margin-bottom: 0;
+				}
+			}
+
+			ul {
+				list-style-type: circle;
 			}
 
 			span.noticon.noticon-star {
@@ -180,10 +169,50 @@
 			}
 
 			.callout .wp-block-column {
-				background-color: var(--color-neutral-0);
+
+				$callout-border: #dcdcde;
+				$callout-background: #fff;
+				$callout-large-font-size: 40px;
+
+				padding: .5em;
+				border-radius: 4px;
+				border: 1px solid $callout-border;
+				background: $callout-background;
 
 				.wp-block-quote {
 					margin: 0;
+					background: $callout-background;
+				}
+
+				.has-text-align-center {
+					text-align: center;
+				}
+
+				.has-large-font-size {
+					font-size: $callout-large-font-size;
+					line-height: 48px;
+				}
+
+				.is-vertically-aligned-center {
+					align-self: center;
+				}
+
+				.wp-block-jetpack-layout-grid {
+					display: grid;
+					grid-template-columns: repeat(4, 1fr);
+
+					&.wp-block-jetpack-layout-gutter__none {
+						grid-gap: 0;
+					}
+
+					&.column1-tablet-grid__row-1>.wp-block-jetpack-layout-grid-column:nth-child(1) {
+						grid-row-start: 1;
+					}
+
+					&.column2-desktop-grid__start-2>.wp-block-jetpack-layout-grid-column:nth-child(2) {
+						grid-column-start: 2;
+						grid-column-end: span 4;
+					}
 				}
 			}
 
@@ -215,16 +244,24 @@
 				margin: 0 0 16px;
 			}
 
+			h2 {
+				font-size: rem(20px);
+			}
+
 			h3 {
-				font-size: $font-title-small;
+				font-size: rem(15px);
 				font-weight: 600;
 				margin: 0 0 8px;
 			}
 
 			h4 {
-				font-size: $font-title-small;
+				font-size: rem(13px);
 				font-weight: 600;
 				margin: 0 0 8px;
+			}
+
+			h5 {
+				font-size: rem(11px);
 			}
 
 			p,
@@ -452,15 +489,83 @@
 				}
 			}
 
-			// Hide the tablist for the WP Support 3 tab component
-			// Context: https://github.com/Automattic/wp-calypso/issues/87340#issuecomment-1937424710
-			.wpsupport3-tab__tablist {
+			// Show the tab component for the WP Support 3 tab component
+			.wp-block-wpsupport3-tabs {
+
+				.aligncenter {
+					margin-left: auto;
+					margin-right: auto;
+				}
+
+				.wpsupport3-tab__tablist {
+					display: flex;
+					align-items: center;
+					gap: 24px;
+					white-space: nowrap;
+					overflow-x: auto;
+					border-bottom: 1px solid var( --wp--preset--color--border-light-gray, #eee );
+
+					.wpsupport3-tab__title {
+						padding: 8px 0;
+
+						color: var( --blue-blue-50, #0675c4 );
+						font-size: $font-body;
+						line-height: 24px;
+						border: none;
+						background: none;
+						border-bottom: 1px solid transparent;
+						transition: border-bottom 0.3s;
+
+						&:focus {
+							outline: none;
+						}
+
+						&:hover {
+							text-decoration: none;
+						}
+
+						&[aria-selected='true'] {
+							color: var( --gray-gray-100, #101517 );
+							border-bottom: 1px solid var( --gray-gray-100, #101517 );
+						}
+					}
+				}
+			}
+
+			.wp-block-wpsupport3-tab {
+				margin-top: 32px;
 				display: none;
+
+				&:not( [aria-hidden='true'] ) {
+					display: block;
+					animation: fadeIn 0.5s;
+				}
+
+				@keyframes fadeIn {
+					from {
+						opacity: 0;
+					}
+
+					to {
+						opacity: 1;
+					}
+				}
+			}
+
+			.wp-block-newspack-blocks-homepage-articles {
+				.entry-wrapper {
+					.entry-title {
+						a {
+							text-decoration: underline;
+						}
+					}
+				}
 			}
 		}
 	}
 
 	.help-center-article__error {
+		padding: 16px 30px 20px;
 		font-size: 0.875rem;
 		color: var(--color-neutral-80);
 	}

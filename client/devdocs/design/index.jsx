@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Gravatar, SpinnerExample as Spinner } from '@automattic/components';
 import Badge from '@automattic/components/src/badge/docs/example';
@@ -23,7 +22,6 @@ import Tooltip from '@automattic/components/src/tooltip/docs/example';
 import clsx from 'clsx';
 import { trim } from 'lodash';
 import { Component, Fragment } from 'react';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import JetpackReviewPromptExample from 'calypso/blocks/jetpack-review-prompt/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
@@ -34,6 +32,7 @@ import Breadcrumb from 'calypso/components/breadcrumb/docs/example';
 import BulkSelect from 'calypso/components/bulk-select/docs/example';
 import ButtonGroups from 'calypso/components/button-group/docs/example';
 import CardHeading from 'calypso/components/card-heading/docs/example';
+import CategoryPillNavigationExample from 'calypso/components/category-pill-navigation/docs/example';
 import Chart from 'calypso/components/chart/docs/example';
 import Checklist from 'calypso/components/checklist/docs/example';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input/docs/example';
@@ -153,9 +152,6 @@ export default class DesignAssets extends Component {
 						<HeaderCake onClick={ this.backToComponents } backText="All Components">
 							{ slugToCamelCase( component ) }
 						</HeaderCake>
-						{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
-							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
 					</Fragment>
 				) : (
 					<div>
@@ -171,9 +167,6 @@ export default class DesignAssets extends Component {
 				) }
 
 				<Collection component={ component } filter={ filter }>
-					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
-						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
 					<Animate readmeFilePath="animate" />
@@ -186,6 +179,7 @@ export default class DesignAssets extends Component {
 					<Buttons readmeFilePath="/packages/components/src/button" />
 					<CardHeading readmeFilePath="card-heading" />
 					<Cards readmeFilePath="/packages/components/src/card" />
+					<CategoryPillNavigationExample readmeFilePath="category-pill-navigation" />
 					<Chart readmeFilePath="chart" />
 					<Checklist readmeFilePath="checklist" />
 					<ClipboardButtonInput readmeFilePath="clipboard-button-input" />

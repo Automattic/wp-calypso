@@ -8,7 +8,7 @@ import {
 import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
@@ -25,12 +25,13 @@ import type {
 	CountryListItem,
 	PossiblyCompleteDomainContactDetails,
 	ContactDetailsType,
+	WPCOMPaymentMethod,
 } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/lib/explat' );
 ( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
-export const normalAllowedPaymentMethods = [
+export const normalAllowedPaymentMethods: WPCOMPaymentMethod[] = [
 	'WPCOM_Billing_PayPal_Express',
 	'WPCOM_Billing_Stripe_Payment_Method',
 ];
@@ -633,6 +634,33 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				product_name: 'Jetpack Complete',
 				product_slug: productSlug,
 				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_growth_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2021,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_growth_bi_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2023,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'bi-yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_growth_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2022,
+				product_name: 'Jetpack Growth',
+				product_slug: productSlug,
+				bill_period: 'yearly',
 				currency: 'USD',
 			};
 		case 'jetpack_scan_monthly':

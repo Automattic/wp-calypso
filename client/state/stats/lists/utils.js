@@ -168,7 +168,7 @@ export function getChartLabels( unit, date, localizedDate ) {
 		const isWeekend = 'day' === unit && ( 6 === dayOfWeek || 0 === dayOfWeek );
 		const labelName = `label${ unit.charAt( 0 ).toUpperCase() + unit.slice( 1 ) }`;
 		const formats = {
-			hour: translate( 'MMM D HH:mm', {
+			hour: translate( 'HH:mm', {
 				context: 'momentjs format string (hour)',
 				comment: 'This specifies an hour for the stats x-axis label.',
 			} ),
@@ -254,7 +254,8 @@ export function parseChartData( payload, nullAttributes = [] ) {
 		if ( dataRecord.period ) {
 			const date = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
 			const localeSlug = getLocaleSlug();
-			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD' ).locale( localeSlug );
+			// The period could be a full time format.
+			const localizedDate = moment( dataRecord.period, 'YYYY-MM-DD HH:mm:ss' ).locale( localeSlug );
 			Object.assign( dataRecord, getChartLabels( payload.unit, date, localizedDate ) );
 		}
 		return dataRecord;
@@ -415,6 +416,19 @@ export const normalizers = {
 
 		// filter out country views that have no legitimate country data associated with them
 		const countryData = filter( get( data, dataPath, [] ), ( viewData ) => {
+			// Ignore the unknown location of sources from the legacy stats geoviews table.
+			if ( [ 'A1', 'A2', 'ZZ' ].includes( viewData.country_code ) ) {
+				return false;
+			}
+
+			// TODO: Investigate ignored countries that have `false` as the country_full data.
+			if (
+				countryInfo[ viewData.country_code ] &&
+				! countryInfo[ viewData.country_code ].country_full
+			) {
+				return false;
+			}
+
 			return countryInfo[ viewData.country_code ];
 		} );
 
@@ -423,7 +437,7 @@ export const normalizers = {
 
 			// ’ in country names causes google's geo viz to break
 			return {
-				label: country.country_full.replace( /’/, "'" ),
+				label: viewData.location || country.country_full.replace( /’/, "'" ),
 				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
@@ -460,7 +474,11 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const videoPlaysData = get( data, [ 'days', startOf, 'plays' ], [] );
+		const videoPlaysData = get(
+			data,
+			query.summarize ? [ 'days', 'summary', 'plays' ] : [ 'days', startOf, 'plays' ],
+			[]
+		);
 
 		return videoPlaysData.map( ( item ) => {
 			const detailPage = site
@@ -632,7 +650,8 @@ export const normalizers = {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const authorsData = get( data, [ 'days', startOf, 'authors' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'authors' ] : [ 'days', startOf, 'authors' ];
+		const authorsData = get( data, dataPath, [] );
 
 		return authorsData.map( ( item ) => {
 			const record = {
@@ -923,7 +942,8 @@ export const normalizers = {
 		}
 
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const statsData = get( data, [ 'days', startOf, 'files' ], [] );
+		const dataPath = query.summarize ? [ 'summary', 'files' ] : [ 'days', startOf, 'files' ];
+		const statsData = get( data, dataPath, [] );
 
 		return statsData.map( ( item ) => {
 			return {
@@ -953,25 +973,45 @@ export const normalizers = {
 
 		const emailsData = get( data, [ 'posts' ], [] );
 
-		return emailsData.map( ( { id, href, date, title, type, opens, clicks } ) => {
-			const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
-			return {
+		return emailsData.map(
+			( {
 				id,
 				href,
 				date,
-				label: title,
+				title,
 				type,
-				value: clicks || '0',
-				opens: opens || '0',
-				clicks: clicks || '0',
-				page: detailPage,
-				actions: [
-					{
-						type: 'link',
-						data: href,
-					},
-				],
-			};
-		} );
+				opens,
+				clicks,
+				opens_rate,
+				clicks_rate,
+				unique_opens,
+				unique_clicks,
+				total_sends,
+			} ) => {
+				const detailPage = site ? `/stats/email/opens/day/${ id }/${ site.slug }` : null;
+				return {
+					id,
+					href,
+					date,
+					label: title,
+					type,
+					value: clicks_rate || '0',
+					opens: opens || '0',
+					clicks: clicks || '0',
+					opens_rate: opens_rate || '0',
+					clicks_rate: clicks_rate || '0',
+					unique_opens: unique_opens || '0',
+					unique_clicks: unique_clicks || '0',
+					total_sends: total_sends || '0',
+					page: detailPage,
+					actions: [
+						{
+							type: 'link',
+							data: href,
+						},
+					],
+				};
+			}
+		);
 	},
 };

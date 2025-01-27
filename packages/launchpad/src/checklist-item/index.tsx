@@ -1,7 +1,7 @@
 import { Badge, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { __, isRTL } from '@wordpress/i18n';
 import clsx from 'clsx';
-import { translate, useRtl } from 'i18n-calypso';
 import type { Task, Expandable } from '../types';
 import type { FC, Key } from 'react';
 
@@ -11,12 +11,18 @@ interface Props {
 	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;
+	isHighlighted?: boolean;
 	expandable?: Expandable;
 	onClick?: () => void;
 }
 
-const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClick } ) => {
-	const isRtl = useRtl();
+const ChecklistItem: FC< Props > = ( {
+	task,
+	isPrimaryAction,
+	isHighlighted,
+	expandable,
+	onClick,
+} ) => {
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
@@ -57,10 +63,12 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				enabled: ! disabled,
 				disabled: disabled,
 				expanded: expandable && expandable.isOpen,
+				highlighted: isHighlighted,
 			} ) }
 		>
 			{ isPrimaryAction ? (
 				<ButtonElement
+					variant="primary"
 					className={ clsx( 'checklist-item__checklist-primary-button', buttonClassName ) }
 					data-task={ id }
 					onClick={ onClickHandler }
@@ -79,7 +87,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 						// show checkmark for completed tasks regardless if they are disabled or kept active
 						<div className="checklist-item__checkmark-container">
 							<Gridicon
-								aria-label={ translate( 'Task complete' ) }
+								aria-label={ __( 'Task complete', 'launchpad' ) }
 								className="checklist-item__checkmark"
 								icon="checkmark"
 								size={ 18 }
@@ -95,9 +103,9 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 					) }
 					{ shouldDisplayChevron && (
 						<Gridicon
-							aria-label={ translate( 'Task enabled' ) }
+							aria-label={ __( 'Task enabled', 'launchpad' ) }
 							className="checklist-item__chevron"
-							icon={ `chevron-${ isRtl ? 'left' : 'right' }` }
+							icon={ `chevron-${ isRTL() ? 'left' : 'right' }` }
 							size={ 18 }
 						/>
 					) }
@@ -105,17 +113,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				</ButtonElement>
 			) }
 			{ expandable && expandable.isOpen && (
-				<div className="checklist-item__expanded-content">
-					{ expandable.content }
-					{ expandable.action && (
-						<Button
-							className="checklist-item__checklist-expanded-action-button"
-							onClick={ expandable.action.onClick }
-						>
-							{ expandable.action.label }
-						</Button>
-					) }
-				</div>
+				<div className="checklist-item__expanded-content">{ expandable.content }</div>
 			) }
 		</li>
 	);

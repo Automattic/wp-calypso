@@ -99,6 +99,7 @@ export type ResponseDomain = {
 	isDnssecEnabled: boolean;
 	isDnssecSupported: boolean;
 	isGravatarDomain: boolean;
+	isHundredYearDomain: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;

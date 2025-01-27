@@ -143,6 +143,7 @@
 	/* Sidebar Submenu - Nav Redesign */
 	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-selected-text);
 
-	/* Command Palette Items */
-	--wp-admin-theme-color: var(--studio-blue-70);
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

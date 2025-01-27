@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import { modeType, stepSlug } from 'calypso/components/domains/connect-domain-step/constants';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { isSubdomain } from 'calypso/lib/domains';
@@ -45,6 +46,8 @@ class DnsRecords extends Component {
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		nameservers: PropTypes.array || null,
+		titleOverride: PropTypes.string,
+		subtitleOverride: PropTypes.string,
 	};
 
 	hasDefaultCnameRecord = () => {
@@ -96,6 +99,11 @@ class DnsRecords extends Component {
 
 	renderHeader = () => {
 		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
+		const {
+			showBreadcrumb = true,
+			titleOverride,
+			subtitleOverride,
+		} = this.props.context?.params || {};
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 
 		const items = [
@@ -135,13 +143,13 @@ class DnsRecords extends Component {
 		);
 
 		const buttons = [
-			<DnsAddNewRecordButton
-				key="add-new-record-button"
+			<DnsImportBindFileButton
+				key="import-bind-file-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
-			<DnsImportBindFileButton
-				key="import-bind-file-button"
+			<DnsAddNewRecordButton
+				key="add-new-record-button"
 				site={ selectedSite?.slug }
 				domain={ selectedDomainName }
 			/>,
@@ -166,10 +174,12 @@ class DnsRecords extends Component {
 
 		return (
 			<DomainHeader
-				items={ items }
-				mobileItem={ mobileItem }
+				items={ showBreadcrumb ? items : [] }
+				mobileItem={ showBreadcrumb ? mobileItem : null }
 				buttons={ buttons }
 				mobileButtons={ mobileButtons }
+				titleOverride={ titleOverride }
+				subtitleOverride={ subtitleOverride }
 			/>
 		);
 	};
@@ -186,7 +196,77 @@ class DnsRecords extends Component {
 		} );
 	};
 
-	renderNotice = () => {
+	renderDefaultARecordsNotice = () => {
+		const { translate } = this.props;
+
+		if ( ! this.hasWpcomNameservers() ) {
+			return null;
+		}
+
+		if ( this.hasDefaultARecords() ) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-notice__message">
+					{ translate(
+						'Your domain is not using default A records. This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select "Restore default A records". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+						{
+							components: {
+								defaultRecordsLink: (
+									<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
+	renderDefaultCNameRecordNotice = () => {
+		const { translate } = this.props;
+
+		if ( ! this.hasWpcomNameservers() ) {
+			return null;
+		}
+
+		if ( this.hasDefaultCnameRecord() ) {
+			return null;
+		}
+
+		return (
+			<div className="dns-records-notice">
+				<Icon
+					icon={ info }
+					size={ 18 }
+					className="dns-records-notice__icon gridicon"
+					viewBox="2 2 20 20"
+				/>
+				<div className="dns-records-notice__message">
+					{ translate(
+						'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+						{
+							components: {
+								defaultRecordsLink: (
+									<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				</div>
+			</div>
+		);
+	};
+
+	renderExternalNameserversNotice = () => {
 		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers, domains } =
 			this.props;
 
@@ -256,6 +336,7 @@ class DnsRecords extends Component {
 
 	renderMain() {
 		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
+		const { showDetails = true } = this.props.context?.params || {};
 		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const headerText = translate( 'DNS Records' );
 
@@ -266,8 +347,10 @@ class DnsRecords extends Component {
 				{ this.renderHeader() }
 				{ selectedDomain?.canManageDnsRecords ? (
 					<>
-						<DnsDetails />
-						{ this.renderNotice() }
+						{ showDetails && <DnsDetails /> }
+						{ this.renderExternalNameserversNotice() }
+						{ this.renderDefaultARecordsNotice() }
+						{ this.renderDefaultCNameRecordNotice() }
 						<DnsRecordsList
 							dns={ dns }
 							selectedSite={ selectedSite }

@@ -9,11 +9,7 @@ export const isP2Flow = ( flowName: string ) => {
 };
 
 export const isVideoPressFlow = ( flowName: string ) => {
-	return flowName === 'videopress' || flowName === 'videopress-account';
-};
-
-export const isVideoPressTVFlow = ( flowName: string ) => {
-	return flowName === 'videopress-tv' || flowName === 'videopress-tv-purchase';
+	return flowName === 'videopress-account';
 };
 
 export const isWpccFlow = ( flowName: string ) => {

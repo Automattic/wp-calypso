@@ -1,3 +1,4 @@
+import { Context } from '@automattic/calypso-router';
 import { addQueryArgs } from 'calypso/lib/url';
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
@@ -49,4 +50,14 @@ export function isEligibleForProductSampling( userId: number, percentage: number
 	const userSegment = userId % 100;
 
 	return userSegment < percentage;
+}
+
+export function getRouteFromContext( context: Context ) {
+	let route = context.path;
+	for ( const [ key, value ] of Object.entries( context.params ) ) {
+		if ( key !== '0' ) {
+			route = route.replace( value, ':' + key );
+		}
+	}
+	return route;
 }

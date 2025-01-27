@@ -1,10 +1,10 @@
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { GitHubDeploymentCreation } from 'calypso/sites/tools/deployments/deployment-creation';
+import { GitHubDeploymentManagement } from 'calypso/sites/tools/deployments/deployment-management';
+import { DeploymentRunsLogs } from 'calypso/sites/tools/deployments/deployment-run-logs';
+import { GitHubDeployments } from 'calypso/sites/tools/deployments/deployments';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { GitHubDeploymentCreation } from './deployment-creation';
-import { GitHubDeploymentManagement } from './deployment-management';
-import { DeploymentRunsLogs } from './deployment-run-logs';
-import { GitHubDeployments } from './deployments';
-import { indexPage } from './routes';
+import { indexPage } from '../../sites/tools/deployments/routes';
 import type { Callback } from '@automattic/calypso-router';
 
 export const deploymentsList: Callback = ( context, next ) => {

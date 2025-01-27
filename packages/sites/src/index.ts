@@ -19,3 +19,4 @@ export {
 } from './site-excerpt-constants';
 export type { SiteExcerptData, SiteExcerptNetworkData } from './site-excerpt-types';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './site-status';
+export { canInstallPlugins } from './can-install-plugins';

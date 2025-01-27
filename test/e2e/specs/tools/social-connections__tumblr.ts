@@ -62,12 +62,8 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			marketingPage = new MarketingPage( page );
 		} );
 
-		it( 'Navigate to Tools > Marketing page', async function () {
-			await marketingPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-		} );
-
-		it( 'Click on Connections tab', async function () {
-			await marketingPage.clickTab( 'Connections' );
+		it( 'Navigate to Tools > Marketing > Connections page', async function () {
+			await marketingPage.visitTab( testAccount.getSiteURL( { protocol: false } ), 'connections' );
 		} );
 
 		it( 'Click on the "Connect" button for Tumblr', async function () {

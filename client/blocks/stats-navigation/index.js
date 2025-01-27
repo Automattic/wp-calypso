@@ -4,15 +4,19 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import version_compare from 'calypso/lib/version-compare';
+import { STATS_FEATURE_PAGE_TRAFFIC } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
@@ -25,6 +29,23 @@ import Intervals from './intervals';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
+
+// Helper to expose logic for default module listing.
+export function getAvailablePageModules( selectedItem, hasVideoPress ) {
+	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
+		// Set the default VideoPress visibility based on the hasVideoPress parameter.
+		// We update the disabled state as well but that value is currently ignored.
+		if ( toggleItem.key === 'videos' ) {
+			return {
+				...toggleItem,
+				disabled: ! hasVideoPress,
+				defaultValue: hasVideoPress,
+			};
+		}
+
+		return toggleItem;
+	} );
+}
 
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
@@ -56,6 +77,10 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isSubscriptionsModuleActive: PropTypes.bool,
+		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
+		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
 		slug: PropTypes.string,
@@ -63,6 +88,7 @@ class StatsNavigation extends Component {
 		adminUrl: PropTypes.string,
 		showLock: PropTypes.bool,
 		hideModuleSettings: PropTypes.bool,
+		delayTooltipPresentation: PropTypes.bool,
 	};
 
 	state = {
@@ -78,11 +104,20 @@ class StatsNavigation extends Component {
 				};
 			} )
 		),
+		availableModuleToggles: [],
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( prevState.pageModules !== nextProps.pageModuleToggles ) {
-			return { pageModules: nextProps.pageModuleToggles };
+		const availableModuleToggles = getAvailablePageModules(
+			nextProps.selectedItem,
+			nextProps.hasVideoPress
+		);
+
+		if (
+			prevState.pageModules !== nextProps.pageModuleToggles ||
+			prevState.availableModuleToggles !== nextProps.availableModuleToggles
+		) {
+			return { availableModuleToggles, pageModules: nextProps.pageModuleToggles };
 		}
 
 		return null;
@@ -149,9 +184,11 @@ class StatsNavigation extends Component {
 			statsAdminVersion,
 			showLock,
 			hideModuleSettings,
-			isNewSite,
+			delayTooltipPresentation,
+			gatedTrafficPage,
+			siteId,
 		} = this.props;
-		const { pageModules, isPageSettingsTooltipDismissed } = this.state;
+		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
@@ -165,10 +202,18 @@ class StatsNavigation extends Component {
 			! config.isEnabled( 'is_running_in_jetpack_site' ) ||
 			!! ( statsAdminVersion && version_compare( statsAdminVersion, '0.9.0-alpha', '>=' ) );
 
+		const shouldRenderModuleToggler =
+			! isLegacy &&
+			isModuleSettingsSupported &&
+			AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
+			! hideModuleSettings &&
+			! gatedTrafficPage;
+
 		// @TODO: Add loading status of modules settings to avoid toggling modules before they are loaded.
 
 		return (
 			<div className={ wrapperClass }>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
@@ -215,34 +260,43 @@ class StatsNavigation extends Component {
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 
-				{ ! isLegacy &&
-					isModuleSettingsSupported &&
-					AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] &&
-					! hideModuleSettings && (
-						<PageModuleToggler
-							availableModules={ AVAILABLE_PAGE_MODULES[ this.props.selectedItem ] }
-							pageModules={ pageModules }
-							onToggleModule={ this.onToggleModule }
-							isTooltipShown={
-								showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! isNewSite
-							}
-							onTooltipDismiss={ this.onTooltipDismiss }
-						/>
-					) }
+				{ shouldRenderModuleToggler && (
+					<PageModuleToggler
+						availableModuleToggles={ availableModuleToggles }
+						pageModules={ pageModules }
+						onToggleModule={ this.onToggleModule }
+						isTooltipShown={
+							showSettingsTooltip && ! isPageSettingsTooltipDismissed && ! delayTooltipPresentation
+						}
+						onTooltipDismiss={ this.onTooltipDismiss }
+					/>
+				) }
 			</div>
 		);
 	}
 }
 
+function shouldDelayTooltipPresentation( state, siteId ) {
+	// Check the 'created_at' time stamp.
+	// Can return null (Redux hydration?) which we'll treat as a delay.
+	const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
+	if ( siteCreatedTimeStamp === null ) {
+		return true;
+	}
+
+	// Check if the site is less than one week old.
+	const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
+	const siteIsLessThanOneWeekOld =
+		new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
+	if ( siteIsLessThanOneWeekOld ) {
+		return true;
+	}
+
+	return false;
+}
+
 export default connect(
 	( state, { siteId, selectedItem } ) => {
-		const siteCreatedTimeStamp = getSiteOption( state, siteId, 'created_at' );
-		const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
-		// Check if the site is created within a week.
-		const isNewSite =
-			siteCreatedTimeStamp &&
-			new Date( siteCreatedTimeStamp ) > new Date( Date.now() - WEEK_IN_MILLISECONDS );
-
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 				state,
@@ -252,11 +306,15 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
+			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			statsAdminVersion: getJetpackStatsAdminVersion( state, siteId ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
-			isNewSite,
+			delayTooltipPresentation: shouldDelayTooltipPresentation( state, siteId ),
+			gatedTrafficPage:
+				config.isEnabled( 'stats/paid-wpcom-v3' ) &&
+				shouldGateStats( state, siteId, STATS_FEATURE_PAGE_TRAFFIC ),
 		};
 	},
 	{ requestModuleToggles, updateModuleToggles }

@@ -90,7 +90,10 @@ export function StickyContainer( props: Props ) {
 				if ( entry.intersectionRatio === 0 ) {
 					// The element is out of view
 					setIsStuck( false );
-				} else if ( entry.intersectionRect.bottom === entry.rootBounds?.bottom ) {
+				} else if (
+					entry.rootBounds?.bottom !== undefined &&
+					entry.boundingClientRect.bottom >= entry.rootBounds?.bottom
+				) {
 					// The element is intersecting, but it is at the bottom of the screen
 					setIsStuck( false );
 				} else {

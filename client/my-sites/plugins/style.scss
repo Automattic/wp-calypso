@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./grid-mixins.scss";
-@import "./woocommerce-box.scss";
+@import "./woocommerce-box";
 
 .is-section-plugins .main {
 
@@ -67,12 +66,17 @@ body.is-section-plugins {
 		}
 	}
 
-	.is-logged-in main:not(.a4a-layout):not(.a4a-layout-column) {
+	.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column) {
 		&:not(.plugins-browser),
 		&.plugins-browser .plugins-browser__content-wrapper {
-			@include break-small {
-				padding-left: 2rem;
-				padding-right: 2rem;
+			padding-inline: 48px;
+
+			@media (max-width: $break-medium) {
+				padding-inline: 2rem;
+			}
+
+			@media (max-width: $break-small) {
+				padding-inline: 16px;
 			}
 		}
 
@@ -89,11 +93,11 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column {
+	.hosting-dashboard-layout-column {
 		overflow: auto;
 	}
 
-	.a4a-layout-column.scheduled-updates-list-compact {
+	.hosting-dashboard-layout-column.scheduled-updates-list-compact {
 		width: 400px;
 		flex: unset;
 		transition: all 0.2s;
@@ -104,6 +108,10 @@ body.is-section-plugins {
 			h1 {
 				font-size: 1.25rem;
 			}
+		}
+
+		.plugins-update-manager-multisite-filters {
+			padding: 0;
 		}
 
 		.plugins-update-manager-multisite-filter {
@@ -130,19 +138,10 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column.scheduled-updates-list {
+	.hosting-dashboard-layout-column.scheduled-updates-list {
 		.plugins-update-manager-multisite__header,
 		.plugins-update-manager-multisite-filter {
 			margin: 0;
-			padding: 1.5rem 4rem;
-
-			@include breakpoint-deprecated( "<960px" ) {
-				padding: 1rem;
-			}
-
-			@include breakpoint-deprecated( "<660px" ) {
-				padding: 1rem 0;
-			}
 		}
 
 		.plugins-update-manager-multisite__header {
@@ -168,8 +167,8 @@ body.is-section-plugins {
 		}
 	}
 
-	.a4a-layout-column.scheduled-updates-edit,
-	.a4a-layout-column.scheduled-updates-create {
+	.hosting-dashboard-layout-column.scheduled-updates-edit,
+	.hosting-dashboard-layout-column.scheduled-updates-create {
 		padding: 3rem;
 
 		@include breakpoint-deprecated( "<660px" ) {
@@ -514,17 +513,6 @@ body.is-section-plugins #primary {
 	}
 }
 
-body.is-section-plugins .plugin-management-wrapper {
-	@include break-small {
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-	@include break-medium {
-		padding-left: 2rem;
-		padding-right: 2rem;
-	}
-}
-
 .plugins__page-title {
 	color: var(--studio-gray-80);
 	font-weight: 400;
@@ -610,6 +598,16 @@ body.is-section-plugins .plugin-management-wrapper {
 	}
 }
 
+.plugin-management-wrapper.is-bulk-plugin-management {
+  .plugins__top-container-jc {
+      padding: 4px 0 0;
+
+      @include break-large() {
+          padding: 6px 0 0;
+      }
+  }
+}
+
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
@@ -617,25 +615,14 @@ body.is-section-plugins .plugin-management-wrapper {
 		padding: 0;
 	}
 }
+
 .plugins__main-content {
 	margin: 0;
-	padding: 0 16px;
+	padding: 0;
 	flex: 1 1 100%;
 	@media (min-width: $break-small) {
 		padding: 16px 0;
 		background: rgba(255, 255, 255, 0.5);
-		margin-bottom: -32px;
-	}
-}
-
-.plugins__main-content-jc {
-	// We need these negative margin values because we want to make the container full-width,
-	// but our element is inside a limited-width parent.
-	margin: 0 -32px;
-	padding: 0 48px;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px;
 		margin-bottom: -32px;
 	}
 }
@@ -650,31 +637,6 @@ body.is-section-plugins .plugin-management-wrapper {
 	.search.is-open {
 		box-shadow: none;
 		z-index: 0;
-	}
-}
-
-.plugins__confirmation-modal {
-	.plugins__confirmation-modal-heading {
-		font-size: 1rem;
-		font-weight: 600;
-	}
-
-	.plugins__confirmation-modal-desc {
-		display: block;
-		padding-top: 12px;
-		font-size: 1rem;
-		font-weight: 400;
-	}
-
-	.dialog__action-buttons {
-		padding: 24px;
-
-		button {
-			margin-inline-start: 16px;
-			padding: 7px;
-			font-size: 0.75rem;
-			line-height: 1;
-		}
 	}
 }
 

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import {
@@ -42,7 +41,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import {
 	JETPACK_CLOUD_ACTIVITY_LOG_LINK,
 	JETPACK_CLOUD_MONETIZE_LINK,
-	JETPACK_CLOUD_SCAN_HISTORY_LINK,
+	JETPACK_CLOUD_SCAN_LINK,
 	JETPACK_CLOUD_SEARCH_LINK,
 	JETPACK_CLOUD_SOCIAL_LINK,
 	JETPACK_CLOUD_SUBSCRIBERS_LINK,
@@ -81,8 +80,6 @@ const useMenuItems = ( {
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) ) &&
 		isSectionNameEnabled( 'site-purchases' );
 
-	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
-
 	return useMemo(
 		() =>
 			[
@@ -101,7 +98,7 @@ const useMenuItems = ( {
 					link: pluginsPath( siteSlug ),
 					title: translate( 'Plugins' ),
 					trackEventName: 'calypso_jetpack_sidebar_plugins_clicked',
-					enabled: isPluginManagementEnabled && isAgency,
+					enabled: isAgency,
 					isSelected: itemLinkMatches( path, pluginsPath( siteSlug ) ),
 				},
 				{
@@ -126,11 +123,11 @@ const useMenuItems = ( {
 				{
 					icon: shield,
 					path: '/',
-					link: `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }`,
+					link: `${ JETPACK_CLOUD_SCAN_LINK }/${ siteSlug }`,
 					title: translate( 'Scan' ),
-					trackEventName: 'calypso_jetpack_sidebar_scan_history_clicked',
+					trackEventName: 'calypso_jetpack_sidebar_scan_clicked',
 					enabled: isAdmin && showScanHistory && ! isWPForTeamsSite,
-					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_HISTORY_LINK }/${ siteSlug }` ),
+					isSelected: itemLinkMatches( path, `${ JETPACK_CLOUD_SCAN_LINK }/${ siteSlug }` ),
 				},
 				{
 					icon: search,
@@ -190,7 +187,7 @@ const useMenuItems = ( {
 		[
 			isAdmin,
 			isAgency,
-			isPluginManagementEnabled,
+			showScanHistory,
 			isWPCOM,
 			isWPForTeamsSite,
 			path,

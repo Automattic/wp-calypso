@@ -1,7 +1,4 @@
-@import "@automattic/typography/styles/variables";
 @import "@automattic/typography/styles/fonts";
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
 
 .dialog__content.themes__activation-modal {
 	position: relative;
@@ -12,19 +9,11 @@
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		line-height: 1.1;
-		width: 100%;
 		margin-bottom: 32px;
 	}
 }
 
-.themes__theme-preview-wrapper {
-	display: flex;
-	flex-direction: column;
-}
-
 .themes__activation-modal-close-icon {
-	cursor: pointer;
-	color: var(--color-text-subtle);
 	position: absolute;
 	top: 4px;
 	right: 12px;
@@ -35,17 +24,6 @@
 	text-wrap: pretty;
 }
 
-.activation-modal__checkbox {
-	margin-bottom: 16px;
-	.components-base-control__field {
-		display: flex;
-		align-items: center;
-	}
-	.components-checkbox-control__label {
-		font-size: $font-body;
-	}
-}
-
 .activation-modal__actions {
 	display: flex;
 	justify-content: flex-end;
@@ -54,22 +32,5 @@
 		padding: 9px 25px;
 		border-radius: 4px;
 		font-weight: 500;
-		&.is-primary:not(:disabled) {
-			background-color: var(--studio-blue-50);
-			border-color: var(--studio-blue-50);
-			&:hover {
-				background-color: var(--studio-blue-60);
-				border-color: var(--studio-blue-60);
-			}
-			&:focus {
-				box-shadow: 0 0 0 2px var(--color-primary-light);
-				outline: 0;
-			}
-		}
-		&.is-primary:disabled {
-			color: var(--studio-white);
-			background-color: var(--studio-gray-5);
-			border-color: var(--studio-gray-5);
-		}
 	}
 }

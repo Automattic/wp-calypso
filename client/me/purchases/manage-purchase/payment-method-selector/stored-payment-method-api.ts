@@ -16,6 +16,7 @@ export async function saveCreditCard( {
 	city,
 	organization,
 	address,
+	setupKey,
 }: {
 	token: string;
 	stripeConfiguration: StripeConfiguration;
@@ -27,6 +28,7 @@ export async function saveCreditCard( {
 	city?: string;
 	organization?: string;
 	address?: string;
+	setupKey?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const additionalData = getParamsForApi( {
 		cardToken: token,
@@ -39,6 +41,7 @@ export async function saveCreditCard( {
 		city,
 		organization,
 		address,
+		setupKey,
 	} );
 	const response = await wp.req.post(
 		{
@@ -71,6 +74,7 @@ export async function updateCreditCard( {
 	organization,
 	address,
 	countryCode,
+	setupKey,
 }: {
 	purchase: Purchase;
 	token: string;
@@ -83,6 +87,7 @@ export async function updateCreditCard( {
 	organization?: string;
 	address?: string;
 	countryCode: string;
+	setupKey?: string;
 } ): Promise< StoredCardEndpointResponse > {
 	const {
 		purchaseId,
@@ -96,6 +101,7 @@ export async function updateCreditCard( {
 		tax_city,
 		tax_organization,
 		tax_address,
+		setup_key,
 	} = getParamsForApi( {
 		cardToken: token,
 		stripeConfiguration,
@@ -108,6 +114,7 @@ export async function updateCreditCard( {
 		city,
 		organization,
 		address,
+		setupKey,
 	} );
 	const response = await wp.req.post(
 		{
@@ -125,6 +132,7 @@ export async function updateCreditCard( {
 			tax_city,
 			tax_organization,
 			tax_address,
+			setup_key,
 		}
 	);
 	if ( response.error ) {
@@ -147,6 +155,7 @@ function getParamsForApi( {
 	city,
 	organization,
 	address,
+	setupKey,
 }: {
 	cardToken: string;
 	stripeConfiguration: StripeConfiguration;
@@ -159,6 +168,7 @@ function getParamsForApi( {
 	city?: string;
 	organization?: string;
 	address?: string;
+	setupKey?: string;
 } ) {
 	return {
 		payment_partner: stripeConfiguration ? stripeConfiguration.processor_id : '',
@@ -173,5 +183,6 @@ function getParamsForApi( {
 		tax_city: city,
 		tax_organization: organization,
 		tax_address: address,
+		...( setupKey ? { setup_key: setupKey } : {} ),
 	};
 }

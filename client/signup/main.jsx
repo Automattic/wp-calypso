@@ -8,6 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { camelToSnakeCase } from '@automattic/js-utils';
+import * as oauthToken from '@automattic/oauth-token';
 import debugModule from 'debug';
 import {
 	clone,
@@ -39,7 +40,6 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import * as oauthToken from 'calypso/lib/oauth-token';
 import {
 	isWooOAuth2Client,
 	isGravatarOAuth2Client,
@@ -63,7 +63,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -83,6 +82,8 @@ import { addP2SignupClassName } from './controller';
 import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
+	setDomainsDependencies,
+	clearDomainsDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -268,7 +269,7 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
@@ -314,6 +315,13 @@ class Signup extends Component {
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
 			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
+		}
+
+		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
+
+		// Clear domains dependencies when the domains data is updated.
+		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
+			clearDomainsDependencies();
 		}
 	}
 
@@ -404,6 +412,24 @@ class Signup extends Component {
 			persistSignupDestination( destination );
 			setSignupCompleteSlug( dependencies.siteSlug );
 			setSignupCompleteFlowName( this.props.flowName );
+		}
+
+		// Persist current domains data in the onboarding flow.
+		if ( this.props.flowName === 'onboarding' ) {
+			const { domainItem, siteUrl, domainCart } = dependencies;
+			const { stepSectionName } = this.props;
+
+			setDomainsDependencies( {
+				step: {
+					stepName: 'domains',
+					domainItem,
+					siteUrl,
+					isPurchasingItem: true,
+					stepSectionName,
+					domainCart,
+				},
+				dependencies: { domainItem, siteUrl, domainCart },
+			} );
 		}
 
 		this.handleFlowComplete( dependencies, filteredDestination );
@@ -498,14 +524,10 @@ class Signup extends Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const { isNewishUser, existingSiteCount } = this.props;
+		const { existingSiteCount } = this.props;
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewUser = !! ( dependencies && dependencies.is_new_account );
 		const siteId = dependencies && dependencies.siteId;
-		const isNew7DUserSite = !! (
-			isNewUser ||
-			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
-		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
 		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
 		// updated to use cartItems
@@ -521,11 +543,9 @@ class Signup extends Component {
 			: cartItem?.product_slug;
 
 		const debugProps = {
-			isNewishUser,
 			existingSiteCount,
 			isNewUser,
 			hasCartItems,
-			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
 			theme: selectedDesign?.theme,
@@ -538,6 +558,12 @@ class Signup extends Component {
 		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
 		if ( ! dependencies.toStepper ) {
 			debug( 'Tracking signup completion.', debugProps );
+			const isMapping = domainItem && isDomainMapping( domainItem );
+			const isTransfer = domainItem && isDomainTransfer( domainItem );
+			const signupDomainOriginValue =
+				isTransfer || isMapping
+					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
+					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -549,15 +575,15 @@ class Signup extends Component {
 					undefined !== domainItem && domainItem.is_domain_registration
 						? domainItem.product_slug
 						: undefined,
-				isNew7DUserSite,
 				// Record the following values so that we can know the user completed which branch under the hero flow
 				theme: selectedDesign?.theme,
 				intent,
 				startingPoint,
 				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-				isMapping: domainItem && isDomainMapping( domainItem ),
-				isTransfer: domainItem && isDomainTransfer( domainItem ),
-				signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+				isMapping: isMapping,
+				isTransfer: isTransfer,
+				signupDomainOrigin: signupDomainOriginValue,
+				framework: 'start',
 			} );
 		}
 	};
@@ -973,7 +999,6 @@ export default connect(
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanName: getSitePlanName( state, siteId ),

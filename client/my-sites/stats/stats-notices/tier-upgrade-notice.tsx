@@ -4,7 +4,6 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
-import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { StatsNoticeProps } from './types';
 
 const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) => {
@@ -14,7 +13,7 @@ const getStatsPurchaseURL = ( siteId: number | null, isOdysseyStats: boolean ) =
 	return purchasePath;
 };
 
-const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
+const TierUpgradeNotice = ( { siteId, isOdysseyStats, isOverLimit }: StatsNoticeProps ) => {
 	const translate = useTranslate();
 	const [ noticeDismissed, setNoticeDismissed ] = useState( false );
 	const { mutateAsync: postponeNoticeAsync } = useNoticeVisibilityMutation(
@@ -38,14 +37,6 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 		page( getStatsPurchaseURL( siteId, isOdysseyStats ) );
 	};
 
-	// TODO: Consolidate the query here with the usage section on the Traffic page.
-	const { data } = usePlanUsageQuery( siteId );
-	const currentUsage = data?.current_usage.views_count || 0;
-	const tierLimit = data?.views_limit || null;
-
-	const showNotice = tierLimit ? currentUsage / tierLimit >= 0.9 : false;
-	const isOverLimit = tierLimit ? currentUsage / tierLimit >= 1 : false;
-
 	const bannerTitle = isOverLimit
 		? translate( 'You have reached your views limit' )
 		: translate( 'You are nearing your monthly limit' );
@@ -67,7 +58,7 @@ const TierUpgradeNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps ) => {
 				}
 		  );
 
-	if ( noticeDismissed || ! showNotice ) {
+	if ( noticeDismissed ) {
 		return null;
 	}
 

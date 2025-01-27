@@ -57,7 +57,7 @@ jest.mock( '@wordpress/data', () => {
 		createSelector: jest.fn(),
 		createRegistrySelector: jest.fn(),
 		registerStore: jest.fn(),
-		combineReducers: jest.fn(),
+		combineReducers: jest.fn( () => ( { sites: { launch: { inProgress: jest.fn() } } } ) ),
 		createReduxStore: jest.fn(),
 		register: jest.fn(),
 		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {
@@ -80,6 +80,10 @@ jest.mock( '@wordpress/data', () => {
 						getSelectedDomain: () => ( {
 							is_free: false,
 							product_slug: 'mydomain.com',
+						} ),
+						getSelectedDesign: () => ( {
+							slug: 'design-slug',
+							default: false,
 						} ),
 					};
 				}

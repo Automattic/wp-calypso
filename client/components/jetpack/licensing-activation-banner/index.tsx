@@ -16,7 +16,7 @@ function LicensingActivationBanner( { siteId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
-	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=jetpack#/license/activation';
+	const jetpackDashboardUrl = siteAdminUrl + 'admin.php?page=my-jetpack#/add-license';
 	const userLicensesCounts = useSelector( getUserLicensesCounts );
 	const hasDetachedLicenses = userLicensesCounts && userLicensesCounts[ 'detached' ] !== 0;
 

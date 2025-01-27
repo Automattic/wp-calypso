@@ -1,6 +1,10 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { createElement } from 'react';
+import SharingConnections from 'calypso/sites/marketing/connections/connections';
+import SharingButtons from 'calypso/sites/marketing/sharing/buttons';
+import MarketingTools from 'calypso/sites/marketing/tools';
+import Traffic from 'calypso/sites/marketing/traffic/traffic';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -10,12 +14,7 @@ import { setExpandedService } from 'calypso/state/sharing/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import MarketingBusinessTools from './business-tools';
-import SharingButtons from './buttons/buttons';
-import SharingConnections from './connections/connections';
 import Sharing from './main';
-import MarketingTools from './tools';
-import Traffic from './traffic/';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -54,7 +53,7 @@ export const redirectMarketingTools = ( context ) => {
 };
 
 export const redirectMarketingBusinessTools = ( context ) => {
-	page.redirect( '/marketing/business-tools/' + context.params.domain );
+	page.redirect( '/marketing/tools/' + context.params.domain );
 };
 
 export const redirectSharingButtons = ( context ) => {
@@ -93,12 +92,6 @@ export const connections = ( context, next ) => {
 
 export const marketingTools = ( context, next ) => {
 	context.contentComponent = createElement( MarketingTools );
-
-	next();
-};
-
-export const marketingBusinessTools = ( context, next ) => {
-	context.contentComponent = createElement( MarketingBusinessTools );
 
 	next();
 };

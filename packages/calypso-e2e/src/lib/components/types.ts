@@ -28,7 +28,7 @@ export interface ArticlePublishSchedule {
 	date: number;
 	hours: number;
 	minutes: number;
-	meridian: 'am' | 'pm';
+	meridian: 'AM' | 'PM';
 }
 
 /**

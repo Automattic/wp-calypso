@@ -27,7 +27,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 				icon: <WordPressLogo />,
 				url: 'https://wordpress.com/development-services/',
 				urlProfile: `https://wordpress.com/development-services/${ agencySlug }/${ agencyId }`,
-				isAvailable: false,
+				isAvailable: true,
 			};
 
 		case 'WooCommerce.com':
@@ -53,7 +53,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 				icon: <JetpackLogo />,
 				url: 'https://jetpack.com/development-services/',
 				urlProfile: `https://jetpack.com/development-services/${ agencySlug }/${ agencyId }`,
-				isAvailable: false,
+				isAvailable: true,
 			};
 		default:
 			return {

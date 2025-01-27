@@ -220,7 +220,7 @@ describe( 'useRowMetadata', () => {
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
 			isExternalLink: true,
-			link: `https://wordpress.com/scan/history/${ FAKE_SITE.url }`,
+			link: `https://wordpress.com/scan/${ FAKE_SITE.url }`,
 			isSupported: true,
 			row: rows.scan,
 			siteDown: false,
@@ -257,8 +257,8 @@ describe( 'useRowMetadata', () => {
 
 		const expected = {
 			eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
-			isExternalLink: true,
-			link: `${ FAKE_SITE.url_with_scheme }/wp-admin/plugins.php`,
+			isExternalLink: false,
+			link: `/plugins/updates/${ FAKE_SITE.url }`,
 			isSupported: true,
 			row: rows.plugin,
 			siteDown: false,

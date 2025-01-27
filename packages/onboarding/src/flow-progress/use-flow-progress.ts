@@ -1,12 +1,4 @@
-import {
-	ECOMMERCE_FLOW,
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	FREE_FLOW,
-	COPY_SITE_FLOW,
-	VIDEOPRESS_TV_FLOW,
-	VIDEOPRESS_TV_PURCHASE_FLOW,
-} from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
@@ -26,15 +18,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		subscribers: 4,
 		launchpad: 5,
 	},
-	[ LINK_IN_BIO_FLOW ]: {
-		intro: 0,
-		user: 0,
-		patterns: 1,
-		linkInBioSetup: 2,
-		domains: 3,
-		plans: 4,
-		launchpad: 5,
-	},
 	[ LINK_IN_BIO_TLD_FLOW ]: {
 		domains: 0,
 		user: 1,
@@ -42,35 +25,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		linkInBioSetup: 3,
 		plans: 4,
 		launchpad: 5,
-	},
-	[ FREE_FLOW ]: {
-		user: 0,
-		freeSetup: 0,
-		designSetup: 1,
-		launchpad: 2,
-	},
-	videopress: {
-		intro: 0,
-		videomakerSetup: 1,
-		user: 2,
-		options: 3,
-		chooseADomain: 4,
-		processing: 5,
-		launchpad: 6,
-	},
-	[ VIDEOPRESS_TV_FLOW ]: {
-		intro: 0,
-		processing: 1,
-	},
-	[ VIDEOPRESS_TV_PURCHASE_FLOW ]: {
-		processing: 0,
-	},
-	sensei: {
-		senseiSetup: 1,
-		senseiDomain: 2,
-		senseiPlan: 3,
-		senseiPurpose: 4,
-		senseiLaunch: 5,
 	},
 	[ ECOMMERCE_FLOW ]: {
 		intro: 0,

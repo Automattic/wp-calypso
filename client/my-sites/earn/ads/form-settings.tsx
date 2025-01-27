@@ -289,7 +289,7 @@ const AdsFormSettings = () => {
 				<FormLabel htmlFor="paypal">{ translate( 'PayPal E-mail Address' ) }</FormLabel>
 				<FormTextInput
 					name="paypal"
-					id="paypal"
+					id="paypal-earn-input"
 					value={ settings.paypal || '' }
 					onChange={ handleChange }
 					disabled={ isLoading }

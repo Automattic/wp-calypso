@@ -2,17 +2,20 @@ import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useState } from 'react';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import {
+	A4A_REFERRALS_LINK,
+	A4A_MIGRATIONS_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
+import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
 	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
-import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
-import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
-import StatusBadge from '../../common/step-section-item/status-badge';
+} from 'calypso/layout/hosting-dashboard/header';
 import useGetTipaltiIFrameURL from '../../hooks/use-get-tipalti-iframe-url';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';
@@ -21,8 +24,10 @@ import './style.scss';
 
 export default function ReferralsBankDetails( {
 	isAutomatedReferral = false,
+	isMigrations = false,
 }: {
 	isAutomatedReferral?: boolean;
+	isMigrations?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isDesktop = useDesktopBreakpoint();
@@ -33,9 +38,15 @@ export default function ReferralsBankDetails( {
 		? translate( 'Your referrals and commissions: Set up secure payments' )
 		: translate( 'Payment Settings' );
 
-	const title = isAutomatedReferral
+	let title = isAutomatedReferral
 		? automatedReferralTitle
 		: translate( 'Referrals: Add bank details' );
+
+	if ( isMigrations ) {
+		title = isDesktop
+			? translate( 'Migrations: Set up secure payments' )
+			: translate( 'Migrations: Payment Settings' );
+	}
 
 	const { data, isFetching } = useGetTipaltiIFrameURL();
 	const { data: tipaltiData } = useGetTipaltiPayee();
@@ -58,26 +69,33 @@ export default function ReferralsBankDetails( {
 		};
 	}, [] );
 
+	let mainPageBreadCrumb = {
+		label:
+			isAutomatedReferral && isDesktop
+				? translate( 'Your referrals and commissions' )
+				: translate( 'Referrals' ),
+		href: A4A_REFERRALS_LINK,
+	};
+
+	if ( isMigrations ) {
+		mainPageBreadCrumb = { label: translate( 'Migrations' ), href: A4A_MIGRATIONS_LINK };
+	}
+
 	return (
 		<Layout
 			className={ clsx( 'bank-details__layout', {
-				'bank-details__layout--automated': isAutomatedReferral,
+				'bank-details__layout--automated': isAutomatedReferral && ! isMigrations,
 			} ) }
 			title={ title }
 			wide
-			sidebarNavigation={ <MobileSidebarNavigation /> }
+			sidebarNavigation={ ! isMigrations ? <MobileSidebarNavigation /> : undefined }
 		>
 			<LayoutTop>
 				<LayoutHeader>
 					<Breadcrumb
+						hideOnMobile={ isMigrations }
 						items={ [
-							{
-								label:
-									isAutomatedReferral && isDesktop
-										? translate( 'Your referrals and commissions' )
-										: translate( 'Referrals' ),
-								href: A4A_REFERRALS_LINK,
-							},
+							mainPageBreadCrumb,
 							{
 								label: isAutomatedReferral
 									? translate( 'Set up secure payments' )
@@ -86,7 +104,8 @@ export default function ReferralsBankDetails( {
 						] }
 					/>
 					{ accountStatus && (
-						<Actions>
+						<Actions useColumnAlignment={ isMigrations }>
+							{ isMigrations && <MobileSidebarNavigation /> }
 							<div className="bank-details__status">
 								{ translate( 'Payment status: {{badge}}%(status)s{{/badge}}', {
 									args: {

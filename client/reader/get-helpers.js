@@ -1,7 +1,7 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
-import { decodeEntities } from 'calypso/lib/formatting';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
 
@@ -92,7 +92,7 @@ export const getSiteDescription = ( { site, feed } ) => {
 	if ( isSiteDescriptionBlocked( description ) ) {
 		return null;
 	}
-	return description;
+	return description ? stripHTML( description ) : description;
 };
 
 export const getSiteAuthorName = ( site ) => {

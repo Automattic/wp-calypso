@@ -68,7 +68,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context:
 										'Stats: Header popover with information when the Videos module has data.',
@@ -98,7 +98,7 @@ const StatsVideos: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Videos module is empty',
 								}

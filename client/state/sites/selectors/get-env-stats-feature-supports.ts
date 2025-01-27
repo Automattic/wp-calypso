@@ -45,10 +45,8 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 			'0.16.0-alpha',
 			isOdysseyStats
 		),
-		supportsUTMStats:
-			// UTM stats are only available for Jetpack sites for now.
-			isSiteJetpackNotAtomic,
-		supportsDevicesStats: isSiteJetpackNotAtomic,
+		supportsUTMStats: ! isOdysseyStats || !! statsAdminVersion,
+		supportsDevicesStats: ! isOdysseyStats || !! statsAdminVersion,
 		supportsOnDemandCommercialClassification: version_greater_than_or_equal(
 			statsAdminVersion,
 			'0.18.0-alpha',
@@ -66,6 +64,7 @@ function getEnvStatsFeatureSupportChecks( state: object, siteId: number | null )
 		),
 		isOldJetpack:
 			isSiteJetpackNotAtomic &&
+			!! statsAdminVersion &&
 			! version_greater_than_or_equal( statsAdminVersion, '0.19.0-alpha', isOdysseyStats ),
 	};
 }

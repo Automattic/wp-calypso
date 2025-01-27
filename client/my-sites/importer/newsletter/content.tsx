@@ -1,7 +1,9 @@
 import { Card } from '@automattic/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { external } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import exportSubstackDataImg from 'calypso/assets/images/importer/export-substack-content.png';
 import importerConfig from 'calypso/lib/importer/importer-config';
@@ -32,6 +34,7 @@ export default function Content( {
 	fromSite,
 	skipNextStep,
 }: ContentProps ) {
+	const { __ } = useI18n();
 	const siteTitle = selectedSite.title;
 	const siteId = selectedSite.ID;
 
@@ -80,15 +83,20 @@ export default function Content( {
 
 			{ showExportDataHint && (
 				<>
-					<h2>Step 1: Export your content from Substack</h2>
+					<h2>{ __( 'Step 1: Export your content from Substack' ) }</h2>
 					<p>
-						Generate a ZIP file of all your Substack posts. On Substack, go to Settings &gt;
-						Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the
-						next step.
+						{ createInterpolateElement(
+							__(
+								'Generate a ZIP file of all your Substack posts. On Substack, go to Settings > Exports, click <strong>New export</strong>, and upload the downloaded ZIP file in the next step.'
+							),
+							{
+								strong: <strong />,
+							}
+						) }
 					</p>
 					<img
 						src={ exportSubstackDataImg }
-						alt="Export Substack data"
+						alt={ __( 'Export Substack data' ) }
 						className="export-content"
 					/>
 					<Button
@@ -96,12 +104,13 @@ export default function Content( {
 						target="_blank"
 						rel="noreferrer noopener"
 						icon={ external }
+						iconPosition="right"
 						variant="primary"
 					>
-						Open Substack settings
+						{ __( 'Open Substack settings' ) }
 					</Button>
 					<hr />
-					<h2>Step 2: Import your content to WordPress.com</h2>
+					<h2>{ __( 'Step 2: Import your content to WordPress.com' ) }</h2>
 				</>
 			) }
 			{ importerStatus && (

@@ -170,6 +170,10 @@ $search-border-radius: 4px;
 			}
 			.keyed-suggestions__value-description {
 				height: auto;
+
+				&::before {
+					display: none;
+				}
 			}
 		}
 	}

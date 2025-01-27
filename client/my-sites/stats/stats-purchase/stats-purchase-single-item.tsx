@@ -5,9 +5,15 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { isJetpackSite, getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	isJetpackSite,
+	getSiteAdminUrl,
+	getSiteOption,
+	getIsSimpleSite,
+} from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { JETPACK_BLOG_ABOUT_COMMERCIAL_STATS_URL } from '../const';
 import useAvailableUpgradeTiers from '../hooks/use-available-upgrade-tiers';
@@ -146,6 +152,8 @@ const StatsCommercialPurchase = ( {
 	const tiers = useAvailableUpgradeTiers( siteId ) || [];
 	const haveTiers = tiers.length > 0;
 	const { isCommercialOwned, hasAnyStatsPlan } = useStatsPurchases( siteId );
+	const isSimpleSite = useSelector( ( state ) => getIsSimpleSite( state, siteId ) );
+	const { data: connectionStatus } = useJetpackConnectionStatus( siteId, !! isSimpleSite );
 
 	// The button of @automattic/components has built-in color scheme support for Calypso.
 	const ButtonComponent = isWPCOMSite ? CalypsoButton : Button;
@@ -153,6 +161,9 @@ const StatsCommercialPurchase = ( {
 	const [ purchaseTierQuantity, setPurchaseTierQuantity ] = useState( startingTierQuantity ?? 0 );
 
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+
+	const needsConnectionForUpgrade =
+		hasAnyStatsPlan && isOdysseyStats && ! connectionStatus?.isSiteFullyConnected;
 
 	const handleSliderChanged = useCallback( ( value: number ) => {
 		setPurchaseTierQuantity( value );
@@ -194,21 +205,32 @@ const StatsCommercialPurchase = ( {
 			) }
 			{ isCommercialOwned && <StatsUpgradeInstructions /> }
 			{ tierSelectionElements }
+			{ needsConnectionForUpgrade && (
+				<div className="stats-purchase-wizard__notice connection-notice">
+					{ translate( 'Please {{link}}connect your user account{{/link}} to upgrade Stats.', {
+						components: {
+							link: <a href={ `${ adminUrl }admin.php?page=my-jetpack#/connection` } />,
+						},
+					} ) }
+				</div>
+			) }
 			<div className="stats-purchase-wizard__actions">
 				<ButtonComponent
 					variant="primary"
 					primary={ isWPCOMSite ? true : undefined }
-					disabled={ ! haveTiers }
+					disabled={ ! haveTiers || needsConnectionForUpgrade }
 					onClick={ () =>
 						gotoCheckoutPage( {
 							from,
 							type: 'commercial',
 							siteSlug,
+							siteId,
 							adminUrl,
 							redirectUri,
 							price: undefined,
 							quantity: purchaseTierQuantity,
 							isUpgrade: hasAnyStatsPlan, // All cross grades are not possible for the site-only flow.
+							isSiteFullyConnected: !! connectionStatus?.isSiteFullyConnected,
 						} )
 					}
 				>

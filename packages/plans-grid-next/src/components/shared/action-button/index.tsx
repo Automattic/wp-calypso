@@ -115,7 +115,7 @@ const ActionButton = ( {
 
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOns?.some(
-		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
+		( storageAddOn ) => ! storageAddOn?.purchased
 	);
 
 	const storageAddOnCheckoutHref = storageAddOns?.find(

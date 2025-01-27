@@ -2,7 +2,12 @@ import { useState, useCallback } from 'react';
 import { FixableThreat, Threat } from 'calypso/components/jetpack/threat-item/types';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { fixAllThreats, fixThreat, ignoreThreat } from 'calypso/state/jetpack-scan/threats/actions';
+import {
+	fixAllThreats,
+	fixThreat,
+	ignoreThreat,
+	unignoreThreat,
+} from 'calypso/state/jetpack-scan/threats/actions';
 import getSiteScanUpdatingThreats from 'calypso/state/selectors/get-site-scan-updating-threats';
 
 export const useThreats = ( siteId: number ) => {
@@ -11,19 +16,32 @@ export const useThreats = ( siteId: number ) => {
 	const dispatch = useDispatch();
 
 	const updateThreat = useCallback(
-		( action: 'fix' | 'ignore' ) => {
+		( action: 'fix' | 'ignore' | 'unignore' ) => {
 			if ( typeof selectedThreat !== 'undefined' ) {
-				const eventName =
-					action === 'fix'
-						? 'calypso_jetpack_scan_threat_fix'
-						: 'calypso_jetpack_scan_threat_ignore';
+				let eventName;
+				let actionCreator;
+
+				switch ( action ) {
+					case 'fix':
+						eventName = 'calypso_jetpack_scan_threat_fix';
+						actionCreator = fixThreat;
+						break;
+					case 'ignore':
+						eventName = 'calypso_jetpack_scan_threat_ignore';
+						actionCreator = ignoreThreat;
+						break;
+					case 'unignore':
+						eventName = 'calypso_jetpack_scan_threat_unignore';
+						actionCreator = unignoreThreat;
+						break;
+				}
+
 				dispatch(
 					recordTracksEvent( eventName, {
 						site_id: siteId,
 						threat_signature: selectedThreat.signature,
 					} )
 				);
-				const actionCreator = action === 'fix' ? fixThreat : ignoreThreat;
 				dispatch( actionCreator( siteId, selectedThreat.id ) );
 			}
 		},

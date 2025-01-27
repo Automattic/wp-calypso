@@ -74,9 +74,7 @@ class MediaLibraryUploadButton extends Component {
 	};
 
 	render() {
-		const classes = clsx( 'media-library__upload-button', 'button', this.props.className, {
-			'is-primary': this.props.sectionName === 'media',
-		} );
+		const classes = clsx( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref={ this.formRef } className={ classes }>

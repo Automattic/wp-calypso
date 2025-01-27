@@ -8,6 +8,7 @@ import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
+import LicensingPendingAsyncActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-pending-async-activation';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
@@ -36,7 +37,7 @@ import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank
 import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
 import { FailedPurchasePage } from './checkout-thank-you/failed-purchase-page';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
-import HundredYearPlanThankYou from './checkout-thank-you/hundred-year-plan-thank-you';
+import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -200,12 +201,9 @@ export function checkout( context, next ) {
 			context.pathname.includes( '/checkout/no-site' ) &&
 			'no-user' === context.query.cart );
 
-	const searchParams = new URLSearchParams( window.location.search );
-	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
-
 	// Tracks if checkout page was unloaded before purchase completion,
 	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
-	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
+	if ( ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
@@ -449,6 +447,33 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
+export function licensingPendingAsyncActivation( context, next ) {
+	const { product: productSlug } = context.params;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
+
+	if ( ! fromSiteSlug ) {
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingPendingAsyncActivation
+				productSlug={ productSlug }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
+			/>
+		);
+	}
+
+	next();
+}
+
 export function licensingThankYouManualActivationInstructions( context, next ) {
 	const { product } = context.params;
 	const { receiptId } = context.query;
@@ -480,7 +505,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId, fromSiteSlug } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -498,6 +523,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
 				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
 			/>
 		);
 	}
@@ -506,12 +532,13 @@ export function licensingThankYouAutoActivation( context, next ) {
 }
 
 export function licensingThankYouAutoActivationCompleted( context, next ) {
-	const { destinationSiteId } = context.query;
+	const { destinationSiteId, redirect_to } = context.query;
 
 	context.primary = (
 		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
 			destinationSiteId={ destinationSiteId }
+			redirectTo={ redirect_to }
 		/>
 	);
 
@@ -520,10 +547,7 @@ export function licensingThankYouAutoActivationCompleted( context, next ) {
 
 export function hundredYearCheckoutThankYou( context, next ) {
 	context.primary = (
-		<HundredYearPlanThankYou
-			siteSlug={ context.params.site }
-			receiptId={ context.params.receiptId }
-		/>
+		<HundredYearThankYou siteSlug={ context.params.site } receiptId={ context.params.receiptId } />
 	);
 	next();
 }

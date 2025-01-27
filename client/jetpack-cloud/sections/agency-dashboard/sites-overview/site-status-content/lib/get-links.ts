@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import { urlToSlug } from 'calypso/lib/url/http-utils';
 import { AllowedTypes } from '../../types';
 
@@ -48,7 +48,7 @@ const getLinks = (
 		case 'scan': {
 			if ( status !== 'inactive' ) {
 				link = isAtomicSite
-					? `https://wordpress.com/scan/history/${ siteUrlWithMultiSiteSupport }`
+					? `https://wordpress.com/scan/${ siteUrlWithMultiSiteSupport }`
 					: `/scan/${ siteUrlWithMultiSiteSupport }`;
 				isExternalLink = isAtomicSite;
 			}
@@ -67,8 +67,7 @@ const getLinks = (
 		case 'plugin': {
 			link = `${ siteUrlWithScheme }/wp-admin/plugins.php`;
 			isExternalLink = true;
-			// FIXME: Remove this condition when we enable plugin management in production
-			if ( config.isEnabled( 'jetpack/plugin-management' ) && ! isAtomicSite ) {
+			if ( ! isAtomicSite ) {
 				link =
 					status === 'warning'
 						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`

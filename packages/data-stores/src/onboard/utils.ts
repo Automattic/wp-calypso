@@ -1,13 +1,5 @@
+import config from '@automattic/calypso-config';
 import { SiteGoal, SiteIntent } from './constants';
-
-const INTENT_DECIDING_GOALS = [ SiteGoal.Write, SiteGoal.Sell, SiteGoal.Promote ] as const;
-type IntentDecidingGoal = ( typeof INTENT_DECIDING_GOALS )[ number ];
-
-const GOAL_TO_INTENT_MAP: { [ key in IntentDecidingGoal ]: SiteIntent } = {
-	[ SiteGoal.Write ]: SiteIntent.Write,
-	[ SiteGoal.Sell ]: SiteIntent.Sell,
-	[ SiteGoal.Promote ]: SiteIntent.Build,
-};
 
 export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
@@ -19,8 +11,17 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Import;
 	}
 
+	// Newsletter flow
+	if ( config.isEnabled( 'onboarding/newsletter-goal' ) && goals.includes( SiteGoal.Newsletter ) ) {
+		return SiteIntent.NewsletterGoal;
+	}
+
 	// Prioritize Sell over Build and Write
-	if ( goals.includes( SiteGoal.Sell ) ) {
+	if (
+		goals.some( ( goal ) =>
+			[ SiteGoal.Sell, SiteGoal.SellDigital, SiteGoal.SellPhysical ].includes( goal )
+		)
+	) {
 		return SiteIntent.Sell;
 	}
 
@@ -29,12 +30,8 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 		return SiteIntent.Build;
 	}
 
-	const intentDecidingGoal = ( goals as IntentDecidingGoal[] ).find( ( goal ) =>
-		INTENT_DECIDING_GOALS.includes( goal )
-	);
-
-	if ( intentDecidingGoal ) {
-		return GOAL_TO_INTENT_MAP[ intentDecidingGoal ];
+	if ( goals.includes( SiteGoal.Write ) ) {
+		return SiteIntent.Write;
 	}
 
 	return SiteIntent.Build;

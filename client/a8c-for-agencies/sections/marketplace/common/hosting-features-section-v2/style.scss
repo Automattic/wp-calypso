@@ -1,0 +1,35 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.hosting-features-section-v2__cards {
+	display: grid;
+	gap: 16px;
+
+	@include break-large {
+		grid-template-columns: repeat(4, 350px);
+		gap: 32px;
+		overflow-x: auto;
+		margin-inline: -40px;
+		margin-block-end: -80px;
+		padding-inline: 40px;
+		padding-block-end: 80px;
+	}
+}
+
+.components-card.hosting-features-section-v2__card {
+	padding: 24px;
+	border: 1px solid var( --color-primary-5 );
+	box-shadow: none;
+	position: inherit;
+}
+
+.hosting-features-section-v2__card-header {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	margin-block-end: 14px;
+}
+
+.hosting-features-section-v2__card-title {
+	@include a4a-font-heading-lg;
+}

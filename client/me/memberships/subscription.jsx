@@ -171,7 +171,9 @@ function Subscription( { translate, subscription, moment, stoppingStatus, updati
 								</div>
 								{ ! isProduct && (
 									<div className="memberships__subscription-inner-detail">
-										Auto-renew is { subscription.renew_interval ? 'ON' : 'OFF' }
+										{ subscription.renew_interval
+											? translate( 'Auto-renew is ON' )
+											: translate( 'Auto-renew is OFF' ) }
 									</div>
 								) }
 							</li>

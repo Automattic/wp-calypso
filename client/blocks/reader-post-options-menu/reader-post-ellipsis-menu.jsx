@@ -307,18 +307,6 @@ class ReaderPostEllipsisMenu extends Component {
 					/>
 				) }
 
-				{ this.props.showFollow && (
-					<ReaderFollowButton
-						tagName={ PopoverMenuItem }
-						siteUrl={ post.feed_URL || post.site_URL }
-						followSource={ followSource }
-						iconSize={ 20 }
-						followLabel={ translate( 'Subscribe' ) }
-						followingLabel={ translate( 'Unsubscribe' ) }
-						onFollowToggle={ this.openSuggestedFollowsModal }
-					/>
-				) }
-
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					post.is_seen && (
@@ -350,6 +338,18 @@ class ReaderPostEllipsisMenu extends Component {
 					<PopoverMenuItem onClick={ this.editPost } icon="pencil">
 						{ translate( 'Edit post' ) }
 					</PopoverMenuItem>
+				) }
+
+				{ this.props.showFollow && (
+					<ReaderFollowButton
+						tagName={ PopoverMenuItem }
+						siteUrl={ post.feed_URL || post.site_URL }
+						followSource={ followSource }
+						iconSize={ 20 }
+						followLabel={ translate( 'Subscribe' ) }
+						followingLabel={ translate( 'Unsubscribe' ) }
+						onFollowToggle={ this.openSuggestedFollowsModal }
+					/>
 				) }
 
 				{ isTeamMember && site && <hr className="popover__menu-separator" /> }

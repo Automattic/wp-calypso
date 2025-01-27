@@ -47,7 +47,7 @@ import {
 	is100Year,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
-import { isDomainForGravatarFlow } from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -317,10 +317,12 @@ export function domainRegistration( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct & { is_domain_registration: boolean } {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		is_domain_registration: true,
+		...( properties.volume ? { volume: properties.volume } : {} ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
 	};
 }
@@ -355,10 +357,12 @@ export function domainTransfer( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct {
 	return {
 		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
+		...( properties.volume ? { volume: properties.volume } : {} ),
 	};
 }
 
@@ -847,6 +851,11 @@ export function getDomainPriceRule(
 	flowName: string,
 	domainAndPlanUpsellFlow: boolean
 ): string {
+	// We'll show a fixed, one time price in the 100-year domain flow
+	if ( isHundredYearDomainFlow( flowName ) ) {
+		return 'ONE_TIME_PRICE';
+	}
+
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}

@@ -22,9 +22,10 @@ function MyComponent() {
 
 The following props can be passed to the External Link component:
 
-| property | type    | required | comment                                                                        |
-| -------- | ------- | -------- | ------------------------------------------------------------------------------ |
-| `icon`   | Boolean | no       | Set to true if you want to render a nice external Gridicon at the end of link. |
+| property      | type    | required | comment                                                                        |
+| ------------- | ------- | -------- | ------------------------------------------------------------------------------ |
+| `icon`        | Boolean | no       | Set to true if you want to render a nice external Gridicon at the end of link. |
+| `localizeUrl` | Boolean | no       | Set to false if you want to render a link that is not localized.               |
 
 ### Other Props
 

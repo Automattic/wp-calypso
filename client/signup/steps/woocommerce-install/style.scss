@@ -109,6 +109,7 @@
 				.components-combobox-control__suggestions-container,
 				.components-select-control__input,
 				.components-text-control__input {
+					height: auto;
 					line-height: 18px;
 					padding: $grid-unit-15 $grid-unit-20;
 				}

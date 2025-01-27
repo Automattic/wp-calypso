@@ -42,6 +42,7 @@ import {
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
 	TYPE_STARTER,
+	TYPE_JETPACK_GROWTH,
 	WOO_EXPRESS_PLANS,
 } from './constants';
 import {
@@ -76,6 +77,10 @@ import type { TranslateResult } from 'i18n-calypso';
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
+}
+
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
+	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
 }
 
 export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
@@ -188,6 +193,10 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isCompletePlan( planKey ) ) {
 		return 'is-complete-plan';
+	}
+
+	if ( isJetpackGrowthPlan( planKey ) ) {
+		return 'is-jetpack-growth-plan';
 	}
 
 	if ( isFreeHostingTrial( planKey ) ) {
@@ -398,6 +407,10 @@ export function isStarterPlan( planSlug: string ): boolean {
 
 export function isJetpackStarterPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
+}
+
+export function isJetpackGrowthPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_GROWTH } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {

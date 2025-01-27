@@ -4,7 +4,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
-import { BackButton } from './back-button';
 import { SuccessIcon } from './success-icon';
 
 import './ticket-success-screen.scss';
@@ -25,7 +24,6 @@ export const SuccessScreen: React.FC = () => {
 
 	return (
 		<div>
-			<BackButton backToRoot />
 			<div className="ticket-success-screen__help-center">
 				<SuccessIcon />
 				<h1 className="ticket-success-screen__help-center-heading">

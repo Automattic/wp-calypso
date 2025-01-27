@@ -3,7 +3,6 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getJetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
@@ -29,9 +28,10 @@ const Header: React.FC< Props > = ( { title } ) => {
 			<div className={ clsx( 'header', { 'has-sale-banner': hasSaleBanner } ) }>
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows(
+					disablePreventWidows
+					headerText={
 						title ?? translate( 'Security, performance, and marketing tools made for WordPress' )
-					) }
+					}
 					align="center"
 				/>
 			</div>

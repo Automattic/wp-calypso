@@ -18,6 +18,7 @@ const incompatiblePlugins = new Set( [
 	'cf7-pipedrive-integration',
 	'database-browser',
 	'duplicator',
+	'duplicator-pro',
 	'extended-wp-reset',
 	'file-manager-advanced',
 	'file-manager',
@@ -47,6 +48,7 @@ const incompatiblePlugins = new Set( [
 	'wpmu-database-reset',
 	'wps-hide-login',
 	'z-inventory-manager',
+	'wp-downgrade',
 
 	// backup
 	'backup-wd',
@@ -160,7 +162,6 @@ const incompatiblePlugins = new Set( [
 	'wp-monero-miner-pro',
 	'wp-monero-miner-using-coin-hive',
 	'wp-optimize-by-xtraffic',
-	'wpcom-migration',
 	'wpematico',
 	'wpstagecoach',
 	'yuzo-related-post',

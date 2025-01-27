@@ -151,6 +151,7 @@ export type PerformanceMetricsHistory = {
 
 export type PerformanceReport = {
 	audits: Record< string, PerformanceMetricsItemQueryResponse >;
+	crux_score: number;
 	performance: number;
 	overall_score: number;
 	fullPageScreenshot: FullPageScreenshot;
@@ -192,6 +193,9 @@ export interface UrlPerformanceInsightsQueryResponse {
 		status: string;
 		mobile: PerformanceReport | string;
 		desktop: PerformanceReport | string;
+	};
+	wpscan: {
+		status: string;
 	};
 }
 

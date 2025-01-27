@@ -69,7 +69,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				date: date.getUTCDate(),
 				hours: 12,
 				minutes: 1,
-				meridian: 'am',
+				meridian: 'AM',
 			} );
 		} );
 
@@ -117,7 +117,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				month: date.getUTCMonth(),
 				hours: 12,
 				minutes: 59,
-				meridian: 'pm',
+				meridian: 'PM',
 			} );
 		} );
 

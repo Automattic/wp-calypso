@@ -66,7 +66,7 @@ export type CurrentSiteStatus = {
 // This type is used to account for that behavior.
 export type PluginComponentProps = Plugin & {
 	isSelectable?: boolean;
-	isSelected: boolean;
+	isSelected?: boolean;
 	isMarketplaceProduct?: boolean;
-	onClick: () => void;
+	onClick?: () => void;
 };

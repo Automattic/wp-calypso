@@ -1,6 +1,7 @@
 import { GridPlan } from '../../types';
 import PlanDivOrTdContainer from '../plan-div-td-container';
 import HeaderPrice from '../shared/header-price';
+import HeaderPriceContextProvider from '../shared/header-price/header-price-context';
 
 type PlanPricesProps = {
 	currentSitePlanSlug?: string | null;
@@ -11,22 +12,26 @@ type PlanPricesProps = {
 };
 
 const PlanPrices = ( { currentSitePlanSlug, options, renderedGridPlans }: PlanPricesProps ) => {
-	return renderedGridPlans.map( ( { planSlug } ) => {
-		return (
-			<PlanDivOrTdContainer
-				scope="col"
-				key={ planSlug }
-				className="plan-features-2023-grid__table-item plan-price"
-				isTableCell={ options?.isTableCell }
-			>
-				<HeaderPrice
-					planSlug={ planSlug }
-					currentSitePlanSlug={ currentSitePlanSlug }
-					visibleGridPlans={ renderedGridPlans }
-				/>
-			</PlanDivOrTdContainer>
-		);
-	} );
+	return (
+		<HeaderPriceContextProvider>
+			{ renderedGridPlans.map( ( { planSlug } ) => {
+				return (
+					<PlanDivOrTdContainer
+						scope="col"
+						key={ planSlug }
+						className="plan-features-2023-grid__table-item plan-price"
+						isTableCell={ options?.isTableCell }
+					>
+						<HeaderPrice
+							planSlug={ planSlug }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							visibleGridPlans={ renderedGridPlans }
+						/>
+					</PlanDivOrTdContainer>
+				);
+			} ) }
+		</HeaderPriceContextProvider>
+	);
 };
 
 export default PlanPrices;

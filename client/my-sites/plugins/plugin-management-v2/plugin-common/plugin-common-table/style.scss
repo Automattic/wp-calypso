@@ -8,6 +8,8 @@
 		display: table;
 	}
 	border: 1px solid var(--studio-gray-5);
+	border-left: none;
+	border-right: none;
 	border-collapse: collapse;
 	tr {
 		height: 1px;
@@ -87,10 +89,6 @@ td.plugin-common-table__actions {
 	@include break-huge() {
 		max-width: 150px;
 	}
-}
-
-.components-form-toggle.is-checked .components-form-toggle__track {
-	background-color: var(--studio-jetpack-green-50);
 }
 
 .plugin-common-table__plugin-icon {

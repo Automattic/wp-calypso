@@ -6,6 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryLocaleSuggestions from 'calypso/components/data/query-locale-suggestions';
 import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import LocaleSuggestionsListItem from './list-item';
@@ -54,6 +55,14 @@ export class LocaleSuggestions extends Component {
 
 	getPathWithLocale = ( locale ) => addLocaleToPath( this.props.path, locale );
 
+	recordLocaleSuggestionClick = ( locale ) => {
+		this.props.recordTracksEvent( 'calypso_locale_suggestion_click', {
+			sourceLocale: getLocaleSlug(),
+			targetLocale: locale?.locale,
+			path: this.props.path,
+		} );
+	};
+
 	render() {
 		if ( this.state.dismissed ) {
 			return null;
@@ -80,6 +89,7 @@ export class LocaleSuggestions extends Component {
 					locale={ locale }
 					onLocaleSuggestionClick={ this.dismiss }
 					path={ this.getPathWithLocale( locale.locale ) }
+					recordLocaleSuggestionClick={ this.recordLocaleSuggestionClick }
 				/>
 			);
 		} );
@@ -98,5 +108,5 @@ export default connect(
 	( state ) => ( {
 		localeSuggestions: getLocaleSuggestions( state ),
 	} ),
-	{ setLocale }
+	{ setLocale, recordTracksEvent }
 )( LocaleSuggestions );

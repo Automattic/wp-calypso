@@ -2,7 +2,9 @@ import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Metrics } from 'calypso/data/site-profiler/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Valuation } from 'calypso/performance-profiler/types/performance-metrics';
+import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
 
 import './style.scss';
 
@@ -39,6 +41,12 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 		good: translate( 'Excellent' ),
 	}[ status ];
 
+	const recordRecommendationsClickEvent = ( filter: string ) =>
+		recordTracksEvent( 'calypso_performance_profiler_recommendations_link_click', {
+			filter,
+			version: profilerVersion(),
+		} );
+
 	return (
 		<div className="status-section">
 			<div className={ clsx( 'status-badge', { [ status ]: true } ) }>{ statusText }</div>
@@ -51,10 +59,11 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 										/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 										<Button
 											variant="link"
-											style={ { textDecoration: 'none' } }
+											className="button"
 											role="button"
 											tabIndex={ 0 }
 											onClick={ () => {
+												recordRecommendationsClickEvent( 'all' );
 												onRecommendationsFilterChange?.( '' );
 												recommendationsRef?.current?.scrollIntoView( {
 													behavior: 'smooth',
@@ -76,10 +85,11 @@ export const StatusSection = ( props: StatusSectionProps ) => {
 											/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 											<Button
 												variant="link"
-												style={ { textDecoration: 'none' } }
+												className="button"
 												role="button"
 												tabIndex={ 0 }
 												onClick={ () => {
+													recordRecommendationsClickEvent( activeTab ?? '' );
 													onRecommendationsFilterChange?.( activeTab ?? '' );
 													recommendationsRef?.current?.scrollIntoView( {
 														behavior: 'smooth',

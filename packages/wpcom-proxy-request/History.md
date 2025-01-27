@@ -1,6 +1,10 @@
 # History
 
-## Next / TBD
+## 7.0.6 / 2024-10-16
+
+- Update dependencies
+- Linting cleanup
+- Add additional allowed origins
 
 ## 7.0.5 / 2023-10-18
 

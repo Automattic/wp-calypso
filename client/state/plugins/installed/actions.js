@@ -608,15 +608,6 @@ export function fetchSitePlugins( siteId ) {
 		const receivePluginsDispatchSuccess = ( data ) => {
 			dispatch( receiveSitePlugins( siteId, data.plugins ) );
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
-
-			data.plugins.map( ( plugin ) => {
-				if (
-					pluginHasTruthySiteProp( 'update', plugin, siteId ) &&
-					pluginHasTruthySiteProp( 'autoupdate', plugin, siteId )
-				) {
-					updatePlugin( siteId, plugin )( dispatch );
-				}
-			} );
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {
@@ -643,20 +634,6 @@ export function fetchAllPlugins() {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
 			dispatch( receiveAllSitesPlugins( sites ) );
-
-			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
-				// Cast the enumerable string-keyed property to a number.
-				siteId = Number( siteId );
-
-				plugins.forEach( ( plugin ) => {
-					if (
-						pluginHasTruthySiteProp( 'update', plugin, siteId ) &&
-						pluginHasTruthySiteProp( 'autoupdate', plugin, siteId )
-					) {
-						updatePlugin( siteId, plugin )( dispatch );
-					}
-				} );
-			} );
 		};
 
 		const receivePluginsDispatchFail = ( error ) => {

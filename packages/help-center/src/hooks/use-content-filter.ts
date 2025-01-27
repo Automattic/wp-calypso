@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from '@wordpress/element';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 
 const isThisASupportArticleLink = ( href: string ) =>
 	/wordpress\.com(\/\w\w)?(?=\/support\/)|support\.wordpress\.com/.test( href );
@@ -8,6 +9,7 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 	const navigate = useNavigate();
 	const [ searchParams ] = useSearchParams();
 	const link = searchParams.get( 'link' ) || '';
+	const { site } = useHelpCenterContext();
 
 	const filters = useMemo(
 		() => [
@@ -42,6 +44,18 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 				},
 			},
 
+			{
+				pattern: 'a[href*="wordpress.com/plans/"], a[href^="/"]',
+				action: ( element: HTMLAnchorElement ) => {
+					const href = element.getAttribute( 'href' ) as string;
+					const currentSiteDomain = site?.domain;
+
+					if ( currentSiteDomain ) {
+						element.setAttribute( 'href', new URL( `${ href + currentSiteDomain }` ).href );
+					}
+				},
+			},
+
 			/**
 			 * Fix table of content jump-to links.
 			 */
@@ -53,8 +67,8 @@ export const useContentFilter = ( node: HTMLDivElement | null ) => {
 					element.setAttribute( 'href', new URL( hash, link ).href );
 					element.onclick = ( event: Event ) => {
 						event.preventDefault();
-
-						const target = node?.querySelector( hash );
+						// We need to use CSS.escape since we can have non latin chars in the hash
+						const target = node?.querySelector( `#${ CSS.escape( hash.slice( 1 ) ) }` );
 						if ( target ) {
 							target.scrollIntoView();
 						}

@@ -33,6 +33,7 @@ export const itemsSchema = {
 					isDnssecEnabled: { type: 'boolean' },
 					isDnssecSupported: { type: 'boolean' },
 					isGravatarDomain: { type: 'boolean' },
+					isHundredYearDomain: { type: 'boolean' },
 					isPendingIcannVerification: { type: 'boolean' },
 					isPendingRenewal: { type: 'boolean' },
 					isPremium: { type: 'boolean' },

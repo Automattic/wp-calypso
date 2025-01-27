@@ -80,7 +80,7 @@ class ConfirmDisconnection extends Component {
 				/>
 
 				<DisconnectJetpack
-					disconnectHref={ disconnectHref ?? '/stats' }
+					disconnectHref={ disconnectHref ?? '/sites' }
 					isBroken={ false }
 					onDisconnectClick={ this.submitSurvey }
 					showTitle={ false }

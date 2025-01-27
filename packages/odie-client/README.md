@@ -38,38 +38,7 @@ const MyApp = () => (
 - `initialUserMessage?: string | null | undefined` - Set an initial message from the user.
 - `isMinimized?: boolean` - Tells if parent component app is minimized.
 - `extraContactOptions?: ReactNode` - Show extra options for exiting the chat.
-- `logger?: (message: string, properties: Record<string, unknown>) => void` - Log user events.
-- `loggerEventNamePrefix?: string` - Prefix for logged events.
 - `children?: ReactNode` - Child components within the provider.
-
-## Odie Storage
-
-Odie stores user's chat ID in Calypso's user preferences. So that the chat continuity works across Calypso, wp-admin, and wp-admin in Atomic sites.
-
-### Types
-
-```tsx
-type OdieStorageKey = 'chat_id' | 'last_chat_id';
-```
-
-### Methods
-
-```tsx
-import {
-	useGetOdieStorage,
-	useSetOdieStorage,
-} from '@automattic/odie-client';
-
-// Usage examples
-function Examples() {
-	const updateChatId = useSetOdieStorage( 'chat_id' )
-	updateChatId( 'new_chat_id' );
-
-	const chatId = useGetOdieStorage( 'chat_id' );
-}
-```
-
-_Note: Setting `chat_id` fetches a new chat from the server and also sets `last_chat_id`. Clearing `chat_id` does not clear `last_chat_id`._
 
 ## Context API
 
@@ -82,22 +51,11 @@ const defaultContextInterfaceValues = {
 	botNameSlug: 'wpcom-support-chat', // Identifier for the chat bot configuration.
 	chat: { context: { section_name: '', site_id: null }, messages: [] }, // Current chat state, including context and messages.
 	clearChat: noop, // Function to clear the current chat.
-	isLoadingChat: false, // Flag indicating if the chat is loading.
 	isLoading: false, // Flag for general loading state.
 	isMinimized: false, // Flag to check if the chat is minimized.
-	isNudging: false, // Flag to check if a nudge action is occurring.
-	isVisible: false, // Flag to check if the chat is visible.
-	lastNudge: null, // Information about the last nudge action.
-	sendNudge: noop, // Function to trigger a nudge action.
-	setChat: noop, // Function to set the current chat.
-	setIsLoadingChat: noop, // Function to set the chat loading state.
 	setMessageLikedStatus: noop, // Function to set the liked status of a message.
-	setContext: noop, // Function to set the chat context.
-	setIsNudging: noop, // Function to set the nudge state.
-	setIsVisible: noop, // Function to set the visibility of the chat.
 	setIsLoading: noop, // Function to set the general loading state.
 	trackEvent: noop, // Function to track events.
-	updateMessage: noop, // Function to update a message in the chat.
 };
 ```
 

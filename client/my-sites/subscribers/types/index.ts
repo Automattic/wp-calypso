@@ -19,6 +19,7 @@ export type SubscriptionPlan = {
 	renewal_period: string;
 	renewal_price: number;
 	renew_interval: string;
+	inactive_renew_interval: string;
 	start_date: string;
 	end_date: string;
 };

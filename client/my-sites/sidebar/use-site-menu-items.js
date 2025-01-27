@@ -37,12 +37,7 @@ const useSiteMenuItems = () => {
 	const isAllDomainsView = '/domains/manage' === currentRoute;
 	const { currentSection } = useCurrentRoute();
 	const shouldShowGlobalSidebar = useSelector( ( state ) => {
-		return getShouldShowGlobalSidebar(
-			state,
-			selectedSiteId,
-			currentSection?.group,
-			currentSection?.name
-		);
+		return getShouldShowGlobalSidebar( state, selectedSiteId, currentSection?.group );
 	} );
 	useEffect( () => {
 		if ( selectedSiteId && siteDomain ) {
@@ -71,7 +66,7 @@ const useSiteMenuItems = () => {
 
 	const shouldShowMailboxes = ! isP2;
 
-	const shouldShowAddOns = isEnabled( 'my-sites/add-ons' ) && ! isAtomic && ! isStagingSite;
+	const shouldShowAddOns = ! isAtomic && ! isStagingSite;
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 	const showP2s = useSelector( hasSiteWithP2 );

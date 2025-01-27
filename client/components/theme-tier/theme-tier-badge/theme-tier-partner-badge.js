@@ -5,6 +5,7 @@ import {
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
@@ -17,7 +18,6 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
-import ThemeTierBadgeTracker from './theme-tier-badge-tracker';
 import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
 export default function ThemeTierPartnerBadge() {
@@ -122,21 +122,39 @@ export default function ThemeTierPartnerBadge() {
 		</>
 	);
 
+	const partnerTooltipContent = (
+		<>
+			<div data-testid="upsell-message">
+				{ translate(
+					'{{a}}Partner themes{{/a}} are developed by third-party creators who have made their themes available to purchase and install directly through your WordPress.com dashboard.',
+					{
+						components: {
+							a: (
+								<a
+									href={ localizeUrl( 'https://wordpress.com/support/themes/partner-themes/' ) }
+									target="_blank"
+									rel="noreferrer"
+								></a>
+							),
+						},
+					}
+				) }
+			</div>
+		</>
+	);
+
 	return (
 		<>
 			{ showUpgradeBadge && ( ! isPartnerThemePurchased || ! isThemeAllowed ) && (
-				<>
-					<ThemeTierBadgeTracker />
-					<PremiumBadge
-						className="theme-tier-badge__content"
-						focusOnShow={ false }
-						isClickable
-						labelText={ labelText }
-						tooltipClassName="theme-tier-badge-tooltip"
-						tooltipContent={ tooltipContent }
-						tooltipPosition="top"
-					/>
-				</>
+				<PremiumBadge
+					className="theme-tier-badge__content"
+					focusOnShow={ false }
+					isClickable
+					labelText={ labelText }
+					tooltipClassName="theme-tier-badge-tooltip"
+					tooltipContent={ tooltipContent }
+					tooltipPosition="top"
+				/>
 			) }
 
 			<PremiumBadge
@@ -145,7 +163,9 @@ export default function ThemeTierPartnerBadge() {
 				isClickable={ false }
 				labelText={ translate( 'Partner' ) }
 				shouldHideIcon
-				shouldHideTooltip
+				tooltipClassName="theme-tier-badge-tooltip"
+				tooltipContent={ partnerTooltipContent }
+				tooltipPosition="top"
 			/>
 		</>
 	);

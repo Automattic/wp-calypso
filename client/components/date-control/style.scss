@@ -1,0 +1,26 @@
+@import "@automattic/components/src/styles/typography";
+
+.date-control {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.date-control-picker {
+	> .components-button {
+		align-items: center;
+		background: #fff;
+		border: 1px solid var(--gray-gray-10, #c3c4c7);
+		border-radius: 4px;
+		color: var(--studio-black);
+		display: flex;
+		font-family: $font-sf-pro-display;
+		font-size: 14px; // stylelint-disable-line declaration-property-unit-allowed-list
+		font-style: normal;
+		font-weight: 500;
+		gap: 8px;
+		justify-content: flex-end;
+		line-height: 20px;
+		padding: 6px 8px;
+	}
+}
+

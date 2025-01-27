@@ -8,8 +8,10 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import {
+	domainManagementAllEditContactInfo,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -127,9 +129,15 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 			isUpdatingPrivacy,
 			privacyAvailable,
 			privateDomain,
+			isHundredYearDomain,
 		} = props;
 
-		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
+		if (
+			! privacyAvailable ||
+			! contactInfoDisclosureAvailable ||
+			privateDomain ||
+			isHundredYearDomain
+		) {
 			return false;
 		}
 
@@ -176,7 +184,19 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent, currentRoute, readOnly } = props;
+	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
+		props;
+	const editContactInfoLink = isUnderDomainManagementOverview( currentRoute )
+		? domainManagementAllEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  )
+		: domainManagementEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  );
 
 	return (
 		<div>
@@ -185,20 +205,14 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 					{ props.registeredViaTrustee && renderTrusteeNotice() }
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
-						<Button
-							disabled={ disableEdit || readOnly || pendingContactUpdate }
-							href={
-								disableEdit || readOnly || pendingContactUpdate
-									? ''
-									: domainManagementEditContactInfo(
-											props.selectedSite.slug,
-											props.selectedDomainName,
-											currentRoute
-									  )
-							}
-						>
-							{ translate( 'Edit' ) }
-						</Button>
+						{ ! isHundredYearDomain && (
+							<Button
+								disabled={ disableEdit || readOnly || pendingContactUpdate }
+								href={ disableEdit || readOnly || pendingContactUpdate ? '' : editContactInfoLink }
+							>
+								{ translate( 'Edit' ) }
+							</Button>
+						) }
 
 						{ canManageConsent && (
 							<Button
@@ -227,11 +241,13 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						</p>
 					) }
 				</div>
-				<div className="contact-information__toggle-container">
-					{ getPrivacyProtection() }
-					{ getContactInfoDisclosed() }
-					{ getPrivacyProtectionRecommendationText() }
-				</div>
+				{ ! isHundredYearDomain && (
+					<div className="contact-information__toggle-container">
+						{ getPrivacyProtection() }
+						{ getContactInfoDisclosed() }
+						{ getPrivacyProtectionRecommendationText() }
+					</div>
+				) }
 			</Card>
 		</div>
 	);

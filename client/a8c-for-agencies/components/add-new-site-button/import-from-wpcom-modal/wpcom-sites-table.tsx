@@ -13,9 +13,9 @@ import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import A4ALogo from '../../a4a-logo';
+import A4ATablePlaceholder from '../../a4a-table-placeholder';
 import useManagedSitesMap from './hooks/use-managed-sites-map';
 import WPCOMSitesTableContent from './table-content';
-import WPCOMSitesTablePlaceholder from './table-placeholder';
 
 export type SiteItem = {
 	id: number;
@@ -197,7 +197,7 @@ export default function WPCOMSitesTable( {
 	return (
 		<div className="wpcom-sites-table redesigned-a8c-table">
 			{ isPending ? (
-				<WPCOMSitesTablePlaceholder />
+				<A4ATablePlaceholder />
 			) : (
 				// @ts-expect-error the error is because field.label types do not admit JSX.Elements.
 				// To remove when this is using dataviews@4.2.0

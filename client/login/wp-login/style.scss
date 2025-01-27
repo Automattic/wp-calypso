@@ -1,5 +1,5 @@
-@import "jetpack-connect/colors.scss";
-@import "calypso/components/text-control/style.scss";
+@import "jetpack-connect/colors";
+@import "calypso/components/text-control/style";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -150,7 +150,7 @@ $image-height: 47px;
 	white-space: nowrap;
 
 	&::after {
-		@include long-content-fade($color: var(--color-neutral-0-rgb));
+		@include long-content-fade( $color: var( --color-neutral-0 ) );
 	}
 }
 
@@ -327,11 +327,10 @@ $image-height: 47px;
 
 	.login .button.is-primary {
 		// Note: Matches primary button to `button.signup-form__submit`
-		background-color: #117ac9;
-		border-color: #0e64a5;
+		background-color: var(--studio-wordpress-blue, #3858e9);
 		color: var(--color-text-inverted);
 		box-shadow: none;
-		border: 0;
+		border: 0 var(--studio-wordpress-blue-60);
 		font-weight: 500;
 		letter-spacing: 0.32px;
 		line-height: 17px;
@@ -342,8 +341,8 @@ $image-height: 47px;
 
 		&:hover,
 		&:focus {
-			background-color: #0e64a5;
-			border-color: #0e64a5;
+			background-color: var(--studio-wordpress-blue-60);
+			border-color: var(--studio-wordpress-blue-60);
 			color: var(--color-text-inverted);
 		}
 
@@ -371,7 +370,7 @@ $image-height: 47px;
 			height: 44px;
 			border-radius: 4px;
 			border: 1px solid var(--studio-gray-10);
-			font-size: $font-body-small;
+			font-size: $font-body;
 
 			&[disabled],
 			&:disabled,
@@ -407,7 +406,7 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links > .button:first-of-type,
+	.wp-login__links > .button,
 	.wp-login__links:not(.has-2fa-links) > a:first-of-type {
 		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
 		background: transparent;

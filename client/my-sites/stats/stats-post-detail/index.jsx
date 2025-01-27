@@ -16,12 +16,11 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import StatsModuleUTM from '../features/modules/stats-utm';
-import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
@@ -69,6 +68,11 @@ class StatsPostDetail extends Component {
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
+
+		if ( ! title ) {
+			title = <em>{ this.props.translate( 'Untitled' ) }</em>;
+		}
+
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
@@ -107,33 +111,38 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
+	hasDontSendEmailPostToSubs( metadata ) {
+		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+	}
+
 	getPost() {
-		const { isPostHomepage, post, postFallback } = this.props;
+		const { isPostHomepage, post, postFallback, countLikes } = this.props;
 
 		const postBase = {
 			title: this.getTitle(),
 			type: isPostHomepage ? 'page' : 'post',
+			like_count: countLikes || 0,
 		};
 
 		// Check if post is valid.
-		if ( typeof post === 'object' && post?.title.length ) {
+		if ( typeof post === 'object' && post?.title?.length ) {
 			return {
 				...postBase,
 				date: post?.date,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: post?.post_thumbnail,
-				like_count: post?.like_count,
 				comment_count: post?.discussion?.comment_count,
 				type: post?.type,
 			};
 		}
 
 		// Check if postFallback is valid.
-		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
+		if ( typeof postFallback === 'object' && postFallback?.post_title?.length ) {
 			return {
 				...postBase,
 				date: postFallback?.post_date_gmt,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
 				post_thumbnail: null,
-				like_count: null,
 				comment_count: parseInt( postFallback?.comment_count, 10 ),
 				type: postFallback?.post_type,
 			};
@@ -211,24 +220,14 @@ class StatsPostDetail extends Component {
 
 					{ ! isLoading && countViews > 0 && (
 						<>
-							<PostSummary siteId={ siteId } postId={ postId } />
+							<PostSummary
+								siteId={ siteId }
+								postId={ postId }
+								supportsUTMStats={ supportsUTMStats }
+							/>
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
-
-					<StatsGlobalValuesContext.Consumer>
-						{ ( isInternal ) =>
-							( supportsUTMStats || isInternal ) && (
-								<div className="stats-module-utm__post-detail">
-									<StatsModuleUTM
-										siteId={ siteId }
-										postId={ postId }
-										query={ { num: -1, max: 0 } }
-									/>
-								</div>
-							)
-						}
-					</StatsGlobalValuesContext.Consumer>
 
 					<JetpackColophon />
 				</div>
@@ -252,11 +251,12 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
 	const isPostHomepage = postId === 0;
-
+	const countLikes = countPostLikes( state, siteId, postId ) || 0;
 	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
+		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isPostHomepage,

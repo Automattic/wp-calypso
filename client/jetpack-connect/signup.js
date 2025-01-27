@@ -43,6 +43,7 @@ import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
 } from 'calypso/state/notices/actions';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
 import MainWrapper from './main-wrapper';
@@ -65,6 +66,7 @@ export class JetpackSignup extends Component {
 		createAccount: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		isWooPasswordlessJPC: PropTypes.bool,
 	};
 
 	state = {
@@ -127,9 +129,9 @@ export class JetpackSignup extends Component {
 		return 'woocommerce-onboarding' === authQuery.from;
 	}
 
-	isWooCoreProfiler( props = this.props ) {
+	isWooPasswordlessJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from;
+		return 'woocommerce-core-profiler' === from || this.props.isWooPasswordlessJPC;
 	}
 
 	getWooDnaConfig() {
@@ -169,6 +171,9 @@ export class JetpackSignup extends Component {
 					extra: {
 						...userData.extra,
 						jpc: true,
+						source: this.props.isWooPasswordlessJPC
+							? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from
+							: '',
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
@@ -200,7 +205,7 @@ export class JetpackSignup extends Component {
 	 * @param {string} _.bearerToken Bearer token
 	 */
 	handleUserCreationSuccess = ( { username, bearerToken } ) => {
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			this.props.recordTracksEvent( 'calypso_jpc_wc_coreprofiler_create_account_success' );
 		}
 		this.setState( {
@@ -274,7 +279,7 @@ export class JetpackSignup extends Component {
 	renderFooterLink() {
 		const { authQuery } = this.props;
 
-		if ( this.isWooCoreProfiler() ) {
+		if ( this.isWooPasswordlessJPC() ) {
 			return null;
 		}
 
@@ -476,10 +481,10 @@ export class JetpackSignup extends Component {
 			return this.renderWooDna();
 		}
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
-		const isWooCoreProfiler = this.isWooCoreProfiler();
+		const isWooPasswordlessJPC = this.isWooPasswordlessJPC();
 
 		const isLogging = newUsername && bearerToken;
-		if ( isWooCoreProfiler && ( isCreatingAccount || isLogging ) ) {
+		if ( isWooPasswordlessJPC && ( isCreatingAccount || isLogging ) ) {
 			return (
 				// Wrap the loader in a modal to show it in full screen
 				<Modal
@@ -500,7 +505,7 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper
 				isWooOnboarding={ this.isWooOnboarding() }
-				isWooCoreProfiler={ this.isWooCoreProfiler() }
+				isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
@@ -508,22 +513,22 @@ export class JetpackSignup extends Component {
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
 						isWooOnboarding={ this.isWooOnboarding() }
-						isWooCoreProfiler={ this.isWooCoreProfiler() }
+						isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 						disableSiteCard={
-							isWooCoreProfiler && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
+							isWooPasswordlessJPC && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
 						}
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
 						isPasswordless={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
 						}
 						disableTosText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
 						}
 						labelText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler
+							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
 								? this.props.translate( 'Your Email' )
 								: null
 						}
@@ -537,7 +542,7 @@ export class JetpackSignup extends Component {
 							window.location.href
 						) }
 						submitButtonText={
-							isWooCoreProfiler
+							isWooPasswordlessJPC
 								? this.props.translate( 'Create an account' )
 								: this.props.translate( 'Create your account' )
 						}
@@ -548,10 +553,10 @@ export class JetpackSignup extends Component {
 
 					{ this.renderLoginUser() }
 				</div>
-				{ isWooCoreProfiler && this.props.authQuery.installedExtSuccess && (
+				{ isWooPasswordlessJPC && this.props.authQuery.installedExtSuccess && (
 					<WooInstallExtSuccessNotice />
 				) }
-				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooCoreProfiler && (
+				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC && (
 					<div className="jetpack-connect__jetpack-logo-wrapper">
 						<JetpackLogo monochrome size={ 18 } />{ ' ' }
 						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
@@ -568,6 +573,7 @@ const connectComponent = connect(
 		usernameOrEmail: getLastCheckedUsernameOrEmail( state ),
 		isFullLoginFormVisible: !! getAuthAccountType( state ),
 		redirectTo: getRedirectToOriginal( state ),
+		isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
 	} ),
 	{
 		createAccount: createAccountAction,

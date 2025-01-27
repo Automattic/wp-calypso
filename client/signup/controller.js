@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
 import { createElement } from 'react';
 import store from 'store';
@@ -7,22 +8,24 @@ import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getStepComponent } from './config/step-components';
-import { isReskinnedFlow } from './is-flow';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
+	getDomainsDependencies,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
@@ -37,7 +40,6 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-
 /**
  * Constants
  */
@@ -49,13 +51,21 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 let previousFlowName;
 
-const removeWhiteBackground = function () {
-	if ( ! document ) {
-		return;
-	}
+function setReferrerPolicy() {
+	try {
+		// Remove existing <meta> tags with name="referrer"
+		const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+		existingMetaTags.forEach( ( tag ) => tag.remove() );
 
-	document.body.classList.remove( 'is-white-signup' );
-};
+		// Create a new <meta> element
+		const metaReferrer = document.createElement( 'meta' );
+		metaReferrer.name = 'referrer';
+		metaReferrer.content = 'strict-origin-when-cross-origin';
+
+		// Append the new <meta> element to the <head> section
+		document.head.appendChild( metaReferrer );
+	} catch ( e ) {}
+}
 
 export const addVideoPressSignupClassName = () => {
 	if ( ! document ) {
@@ -63,14 +73,6 @@ export const addVideoPressSignupClassName = () => {
 	}
 
 	document.body.classList.add( 'is-videopress-signup' );
-};
-
-export const addVideoPressTvSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-tv-signup' );
 };
 
 export const addP2SignupClassName = () => {
@@ -91,38 +93,11 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
-		const isLoggedIn = isUserLoggedIn( context.store.getState() );
-		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( isReskinnedFlow( currentFlowName ) ) {
-			next();
-		} else if (
-			context.pathname.indexOf( 'domain' ) >= 0 ||
-			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
-			context.pathname.indexOf( 'wpcc' ) >= 0 ||
-			context.pathname.indexOf( 'launch-only' ) >= 0 ||
-			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'clone-site'
-		) {
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'p2' ) ) {
-			addP2SignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.query.flow === 'videopress-tv' ) {
-			addVideoPressTvSignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'videopress' ) ) {
+		if ( context.pathname.includes( 'videopress' ) ) {
 			addVideoPressSignupClassName();
-			removeWhiteBackground();
-			next();
-		} else {
-			next();
-			return;
 		}
+
+		next();
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
@@ -225,6 +200,31 @@ export default {
 
 		store.set( 'signup-locale', localeFromParams );
 
+		if ( isOnboardingFlow( flowName ) ) {
+			setReferrerPolicy();
+			let url =
+				getStepUrl(
+					flowName,
+					getStepName( context.params ),
+					getStepSectionName( context.params ),
+					localeFromParams ?? localeFromStore,
+					null,
+					'/setup'
+				) +
+				( context.querystring ? '?' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+
+			if ( document.referrer ) {
+				url = addQueryArgs( { start_ref: document.referrer }, url );
+			}
+
+			window.location.replace( url );
+			// skip the rest to avoid the `page.redirect` call below.
+			// Don't call next() here, we don't need the subsequent middlewares to run.
+			// next();
+			return;
+		}
+
 		// const isOnboardingFlow = flowName === 'onboarding';
 		// // See: 1113-gh-Automattic/experimentation-platform for details.
 		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
@@ -304,6 +304,21 @@ export default {
 			wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
+		// Hydrate the store with domains dependencies from session storage,
+		// only in the onboarding flow.
+		const domainsDependencies = getDomainsDependencies();
+		if (
+			domainsDependencies &&
+			isManageSiteFlow &&
+			flowName === 'onboarding' &&
+			stepName !== 'domains'
+		) {
+			const { step, dependencies } = JSON.parse( domainsDependencies );
+			if ( step && dependencies ) {
+				context.store.dispatch( submitSignupStep( step, dependencies ) );
+			}
+		}
 
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (

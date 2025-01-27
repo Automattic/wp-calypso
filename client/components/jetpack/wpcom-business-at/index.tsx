@@ -34,7 +34,6 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { requestSite } from 'calypso/state/sites/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -166,8 +165,6 @@ export default function WPCOMBusinessAT() {
 		}
 		// Transfer is completed, check if it's already a Jetpack site
 		if ( ! isJetpack ) {
-			// Need to refresh the site data.
-			dispatch( requestSite( siteId ) );
 			return;
 		}
 

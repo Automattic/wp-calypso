@@ -19,9 +19,15 @@
 		display: flex;
 		font-size: $font-body-extra-small;
 		line-height: 20px;
+		gap: 16px;
 
 		.jetpack-ai-logo-generator-icon {
 			margin-right: 4px;
+
+			// tricky SVG
+			path {
+				fill: currentColor
+			};
 		}
 	}
 }
@@ -60,12 +66,12 @@
 			color: var(--studio-gray-50, #646970);
 		}
 
-		&[placeholder]:empty::before {
-			content: attr(placeholder);
+		&[data-placeholder]:empty::before {
+			content: attr(data-placeholder);
 			color: var(--studio-gray-50, #646970);
 		}
 
-		&[placeholder]:empty:focus::before {
+		&[data-placeholder]:empty:focus::before {
 			content: "";
 		}
 	}

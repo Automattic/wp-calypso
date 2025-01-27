@@ -22,6 +22,8 @@ export interface StatsNoticeProps {
 	hasPWYWPlanOnly?: boolean;
 	showPaywallNotice?: boolean;
 	hasSignificantViews?: boolean;
+	isOverLimit?: boolean;
+	isNearLimit?: boolean;
 }
 
 export interface NoticeBodyProps {

@@ -1,11 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter, Subscriber as SubscriberDataStore } from '@automattic/data-stores';
-import { useIsEnglishLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
-import { useI18n } from '@wordpress/react-i18n';
-import { translate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { translate, useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -13,8 +13,10 @@ import QueryMembershipsSettings from 'calypso/components/data/query-memberships-
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import SubscriberValidationGate from 'calypso/components/subscribers-validation-gate';
+import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import GiftSubscriptionModal from 'calypso/my-sites/subscribers/components/gift-modal/gift-modal';
+import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/subscriber-data-views';
 import { SubscriberListContainer } from 'calypso/my-sites/subscribers/components/subscriber-list-container';
 import {
 	SubscribersPageProvider,
@@ -44,8 +46,6 @@ const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderPro
 	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowHelpCenter, setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const { hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
@@ -77,25 +77,14 @@ const SubscribersHeader = ( { selectedSiteId, disableCta }: SubscribersHeaderPro
 		},
 	};
 
-	const subtitle =
-		isEnglishLocale ||
-		hasTranslation(
-			'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.'
-		)
-			? translate(
-					'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-					subtitleOptions
-			  )
-			: translate(
-					'Add subscribers to your site and send them a free or paid {{link}}newsletter{{/link}}.',
-					subtitleOptions
-			  );
-
 	return (
 		<NavigationHeader
 			className="stats__section-header modernized-header"
 			title={ translate( 'Subscribers' ) }
-			subtitle={ subtitle }
+			subtitle={ translate(
+				'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+				subtitleOptions
+			) }
 			screenReader={ navItems.insights?.label }
 			navigationItems={ [] }
 		>
@@ -138,12 +127,24 @@ const SubscribersPage = ( {
 	sortTermChanged,
 	reloadData,
 }: SubscribersProps ) => {
+	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 
 	const [ giftUserId, setGiftUserId ] = useState( 0 );
 	const [ giftUsername, setGiftUsername ] = useState( '' );
 
 	const siteId = selectedSite?.ID || null;
+
+	const initiallyLoadedWithTaskCompletionHash = useRef(
+		window.location.hash === '#building-your-audience-task'
+	);
+
+	useCompleteLaunchpadTaskWithNoticeOnLoad( {
+		enabled: initiallyLoadedWithTaskCompletionHash.current,
+		taskSlug: 'start_building_your_audience',
+		noticeId: 'subscribers-page-visited',
+		noticeText: translate( 'Explored subscriber settings' ),
+	} );
 
 	const pageArgs = {
 		currentPage: pageNumber,
@@ -166,7 +167,7 @@ const SubscribersPage = ( {
 		if ( siteId ) {
 			getSubscribersImports( siteId );
 		}
-	}, [ siteId ] );
+	}, [ siteId, getSubscribersImports ] );
 
 	const { currentSubscriber, onClickUnsubscribe, onConfirmModal, resetSubscriber } =
 		useUnsubscribeModal( selectedSite?.ID ?? null, pageArgs );
@@ -196,17 +197,30 @@ const SubscribersPage = ( {
 			<Main wideLayout className="subscribers">
 				<DocumentHead title={ translate( 'Subscribers' ) } />
 
-				<SubscribersHeader
-					selectedSiteId={ selectedSite?.ID }
-					disableCta={ isUnverified || isStagingSite }
-				/>
-				<SubscriberValidationGate siteId={ siteId }>
-					<SubscriberListContainer
-						siteId={ siteId }
-						onClickView={ onClickView }
-						onGiftSubscription={ onGiftSubscription }
-						onClickUnsubscribe={ onClickUnsubscribe }
+				{ ! isEnabled( 'subscribers-dataviews' ) && (
+					<SubscribersHeader
+						selectedSiteId={ selectedSite?.ID }
+						disableCta={ isUnverified || isStagingSite }
 					/>
+				) }
+				<SubscriberValidationGate siteId={ siteId }>
+					{ isEnabled( 'subscribers-dataviews' ) ? (
+						// Your new dataviews component
+						<SubscriberDataViews
+							siteId={ selectedSite?.ID }
+							onGiftSubscription={ onGiftSubscription }
+							isUnverified={ isUnverified }
+							isStagingSite={ isStagingSite }
+						/>
+					) : (
+						// Existing subscriber list
+						<SubscriberListContainer
+							siteId={ siteId }
+							onClickView={ onClickView }
+							onGiftSubscription={ onGiftSubscription }
+							onClickUnsubscribe={ onClickUnsubscribe }
+						/>
+					) }
 
 					<UnsubscribeModal
 						subscriber={ currentSubscriber }

@@ -8,7 +8,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import * as wpcomProxyRequest from 'wpcom-proxy-request';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import {
@@ -182,7 +182,7 @@ describe( 'UnifiedDesignPickerStep', () => {
 			);
 
 			await waitFor( () => {
-				expect( screen.getByText( 'Pick a design' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Pick a theme' ) ).toBeInTheDocument();
 				expect( container.getElementsByClassName( 'unified-design-picker__designs' ) ).toHaveLength(
 					1
 				);

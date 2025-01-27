@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
-import { useLocale, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Spinner, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
@@ -55,8 +55,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	type = SUGGESTION_ITEM_TYPE_RADIO,
 	buttonRef,
 } ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 	const localizeUrl = useLocalizeUrl();
 
 	const isMobile = ! useViewportMatch( 'small', '>=' );
@@ -73,28 +72,10 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	const freeDomainLabelFree = __( 'Free', __i18n_text_domain__ );
 	const freeDomainLabel =
 		type === SUGGESTION_ITEM_TYPE_INDIVIDUAL ? freeDomainLabelDefault : freeDomainLabelFree;
-
-	const fallbackIncludedLabel = __( 'Included with annual plans', __i18n_text_domain__ );
-	const newIncludedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
-	const includedLabel =
-		locale === 'en' || hasTranslation?.( 'Included in annual plans' )
-			? newIncludedLabel
-			: fallbackIncludedLabel;
-
-	// translators: text in between the <strong></strong> marks is styled as bold text
-	const fallbackIncludedLabelFormatted = __(
-		'<strong>First year included</strong> in paid plans',
-		__i18n_text_domain__
-	);
-	// translators: text in between the <strong></strong> marks is styled as bold text
-	const newIncludedLabelFormatted = __(
-		'<strong>First year included</strong> in annual plans',
-		__i18n_text_domain__
-	);
+	const includedLabel = __( 'Included in annual plans', __i18n_text_domain__ );
 	const includedLabelFormatted =
-		locale === 'en' || hasTranslation?.( '<strong>First year included</strong> in annual plans' )
-			? newIncludedLabelFormatted
-			: fallbackIncludedLabelFormatted;
+		// translators: text in between the <strong></strong> marks is styled as bold text
+		__( '<strong>First year included</strong> in annual plans', __i18n_text_domain__ );
 	const paidIncludedDomainLabel = isMobile
 		? includedLabel
 		: createInterpolateElement( includedLabelFormatted, {

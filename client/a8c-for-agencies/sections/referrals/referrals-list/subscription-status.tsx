@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
-import StatusBadge from '../common/step-section-item/status-badge';
+import StatusBadge from 'calypso/a8c-for-agencies/components/step-section-item/status-badge';
 import type { Referral } from '../types';
 
 export default function SubscriptionStatus( { item }: { item: Referral } ): ReactNode {
@@ -10,7 +10,7 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 		item: Referral
 	): {
 		status: string | null;
-		type: 'warning' | 'success' | 'info' | null;
+		type: 'warning' | 'success' | 'info' | 'error' | null;
 		tooltip?: string | JSX.Element;
 	} => {
 		if ( ! item.purchaseStatuses.length ) {
@@ -44,7 +44,12 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 				{ pendingCount: 0, activeCount: 0, canceledCount: 0, overallStatus: '' }
 			);
 
-		const status = overallStatus || 'mixed';
+		let status = overallStatus || 'mixed';
+
+		// If the referral is archived, override the status.
+		if ( item.referralStatuses.includes( 'archived' ) ) {
+			status = 'archived';
+		}
 
 		switch ( status ) {
 			case 'active':
@@ -60,6 +65,11 @@ export default function SubscriptionStatus( { item }: { item: Referral } ): Reac
 			case 'canceled':
 				return {
 					status: translate( 'Canceled' ),
+					type: 'info',
+				};
+			case 'archived':
+				return {
+					status: translate( 'Archived' ),
 					type: 'info',
 				};
 			default:

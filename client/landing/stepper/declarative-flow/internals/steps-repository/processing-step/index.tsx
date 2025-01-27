@@ -7,12 +7,14 @@ import {
 	ECOMMERCE_FLOW,
 	isWooExpressFlow,
 	isTransferringHostedSiteCreationFlow,
+	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -45,7 +47,30 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
+	const [ hasEmptyActionRun, setHasEmptyActionRun ] = useState( false );
 	const [ destinationState, setDestinationState ] = useState( {} );
+
+	/**
+	 * There is a long-term bug here that the `submit` function will be called multiple times if we
+	 * call `resetOnboardStoreWithSkipFlags` after the submit function (e.g.: exitFlow) to reset states
+	 * that are listed as the dependencies of the `recordSignupComplete`, e.g.: goals, selectedDesign, etc.
+	 *
+	 * Here is a possible flow:
+	 * 1. The Design Picker step submits, sets a pending action, and goes to this step
+	 * 2. Run the pending action, and then submit first
+	 * 3. The `submit` may trigger the `exitFlow` function that is defined by each flow
+	 * 4. The `exitFlow` function may set another pending action, and call `resetOnboardStoreWithSkipFlags` function
+	 * 5. The effect to call the `submit` runs again since the `recordSignupComplete` function changes
+	 *
+	 * It's also a reason why we have a hacky to set a pending action to return a Promise that is never resolved.
+	 *
+	 * To resolve this issue, we define a flag to avoid calling the submit function multiple times.
+	 *
+	 * Another way is to remove the recordSignupComplete function from the dependencies of the effect that
+	 * is called when the hasActionSuccessfullyRun flag turns on. But it seems to be better to use an explicit
+	 * flag to avoid the issue and describe it here.
+	 */
+	const isSubmittedRef = useRef( false );
 
 	const recordSignupComplete = useRecordSignupComplete( flow );
 
@@ -94,15 +119,26 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
-				submit?.( {}, ProcessingResult.NO_ACTION );
+				setHasEmptyActionRun( true );
 			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
+	// As for hasActionSuccessfullyRun, in this case we submit the no action result.
+	useEffect( () => {
+		if ( hasEmptyActionRun && ! isSubmittedRef.current ) {
+			// Let's ensure the submit function is called only once,
+			// but only for the onboarding flow to mitigate risks.
+			isSubmittedRef.current = flow === 'site-setup' ? true : false;
+			submit?.( {}, ProcessingResult.NO_ACTION );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasEmptyActionRun ] );
+
 	// When the hasActionSuccessfullyRun flag turns on, run submit() and fire the sign-up completion event.
 	useEffect( () => {
-		if ( hasActionSuccessfullyRun ) {
+		if ( hasActionSuccessfullyRun && ! isSubmittedRef.current ) {
 			// We should only trigger signup completion for signup flows, so check if we have one.
 			if ( availableFlows[ flow ] ) {
 				availableFlows[ flow ]().then( ( flowExport ) => {
@@ -123,6 +159,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				is_in_hosting_flow: isAnyHostingFlow( flow ),
 				wccom_from: getWccomFrom( destinationState ),
 			} );
+
+			// Let's ensure the submit function is called only once,
+			// but only for the onboarding flow to mitigate risks.
+			isSubmittedRef.current = flow === 'site-setup' ? true : false;
 
 			// Default processing handler.
 			submit?.( destinationState, ProcessingResult.SUCCESS );
@@ -148,7 +188,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
-	if ( HUNDRED_YEAR_PLAN_FLOW === flowName ) {
+	if (
+		[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ||
+		props.variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER
+	) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 

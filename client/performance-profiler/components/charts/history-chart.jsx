@@ -21,8 +21,10 @@ const createScales = ( data, range, margin, width, height ) => {
 		.domain( d3Extent( data, ( item ) => new Date( item.date ) ) )
 		.range( [ margin.left + 20, width - margin.right - 20 ] );
 
+	const maxItemValue = d3Max( data, ( item ) => item.value );
+
 	const yScale = d3ScaleLinear()
-		.domain( [ 0, d3Max( data, ( item ) => item.value ) * 1.5 ] )
+		.domain( [ 0, maxItemValue === 0 ? 1 : maxItemValue * 1.5 ] )
 		.nice()
 		.range( [ height - margin.bottom, margin.top ] );
 
@@ -77,14 +79,18 @@ const drawGrid = ( svg, yScale, width, margin ) => {
 		.attr( 'y1', yScale )
 		.attr( 'y2', yScale )
 		.attr( 'stroke', '#F6F7F7' )
-		.attr( 'stroke-width', 2 );
+		.attr( 'stroke-width', 1 );
 };
 
 // Draw line with gradient
 const drawLine = ( svg, data, xScale, yScale ) => {
 	const lineGenerator = d3Line()
+		.defined( ( d ) => ! isNaN( d.value ) )
 		.x( ( item ) => xScale( new Date( item.date ) ) )
-		.y( ( item ) => yScale( item.value ) )
+		.y( ( item ) => {
+			const value = item.value;
+			return isNaN( value ) ? null : yScale( item.value );
+		} )
 		.curve( d3MonotoneXCurve );
 
 	svg

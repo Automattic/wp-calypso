@@ -19,6 +19,13 @@ import { useShouldGateStats } from '../../../hooks/use-should-gate-stats';
 import StatsModule from '../../../stats-module';
 import { StatsEmptyActionEmail } from '../shared';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
+import {
+	TooltipWrapper,
+	OpensTooltipContent,
+	ClicksTooltipContent,
+	hasUniqueMetrics,
+	EmailStatsItem,
+} from './tooltips';
 import type { StatsDefaultModuleProps, StatsStateProps } from '../types';
 
 const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
@@ -66,7 +73,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							{ translate( '{{link}}Latest emails sent{{/link}} and their performance.', {
 								comment: '{{link}} links to support documentation.',
 								components: {
-									link: <a href={ localizeUrl( supportUrl ) } />,
+									link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 								},
 								context: 'Stats: Header popower information when the Emails module has data.',
 							} ) }
@@ -74,15 +81,41 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 					}
 					additionalColumns={ {
 						header: <span>{ translate( 'Opens' ) }</span>,
-						body: ( item: { opens: number } ) => <span>{ item.opens }</span>,
+						body: ( item: EmailStatsItem ) => {
+							const opensUnique = parseInt( String( item.unique_opens ), 10 );
+							const opens = parseInt( String( item.opens ), 10 );
+							const hasUniques = hasUniqueMetrics( opensUnique, opens );
+							return (
+								<TooltipWrapper
+									value={ hasUniques ? `${ item.opens_rate }%` : '—' }
+									item={ item }
+									TooltipContent={ OpensTooltipContent }
+								/>
+							);
+						},
 					} }
 					moduleStrings={ moduleStrings }
 					period={ period }
 					query={ query }
 					statType={ statType }
-					mainItemLabel={ translate( 'Latest Emails' ) }
+					mainItemLabel={ translate( 'Latest emails' ) }
 					metricLabel={ translate( 'Clicks' ) }
-					showSummaryLink
+					valueField="clicks_rate"
+					formatValue={ ( value: number, item: EmailStatsItem ) => {
+						if ( ! item?.opens ) {
+							return value;
+						}
+						const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
+						const clicks = parseInt( String( item.clicks ), 10 );
+						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+						return (
+							<TooltipWrapper
+								value={ hasUniques ? `${ item.clicks_rate }%` : '—' }
+								item={ item }
+								TooltipContent={ ClicksTooltipContent }
+							/>
+						);
+					} }
 					className={ className }
 					hasNoBackground
 					skipQuery
@@ -101,7 +134,7 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 								{
 									comment: '{{link}} links to support documentation.',
 									components: {
-										link: <a href={ localizeUrl( supportUrl ) } />,
+										link: <a target="_blank" rel="noreferrer" href={ localizeUrl( supportUrl ) } />,
 									},
 									context: 'Stats: Info box label when the Emails module is empty',
 								}

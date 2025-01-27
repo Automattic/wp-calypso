@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
@@ -8,6 +8,7 @@ import {
 	hasUnusedMailboxWarning,
 	hasUnverifiedEmailForward,
 } from 'calypso/lib/emails';
+import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -133,6 +134,23 @@ export function resolveEmailPlanStatus(
 		} ),
 	};
 
+	const gravatarDomainStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Gravatar domain', {
+			comment: 'Current user is not allowed to purchase new email subscriptions',
+		} ),
+	};
+
+	// Some Gravatar domains already had email purchased for them before we disabled it.
+	// These domains have a specific warning message.
+	if (
+		! canCurrentUserAddEmail( domain ) &&
+		getCurrentUserCannotAddEmailReason( domain )?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN
+	) {
+		return gravatarDomainStatus;
+	}
+
 	if ( hasGSuiteWithUs( domain ) ) {
 		if ( ! canCurrentUserAddEmail( domain ) ) {
 			return cannotManageStatus;
@@ -183,7 +201,7 @@ export function resolveEmailPlanStatus(
 		}
 
 		// Check for unused mailboxes
-		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
+		if ( ! isLoadingEmails && emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
 			return errorStatus;
 		}
 

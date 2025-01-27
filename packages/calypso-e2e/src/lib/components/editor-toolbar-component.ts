@@ -95,9 +95,10 @@ export class EditorToolbarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( target: Locator ): Promise< boolean > {
+		const checked = await target.getAttribute( 'aria-checked' );
 		const pressed = await target.getAttribute( 'aria-pressed' );
 		const expanded = await target.getAttribute( 'aria-expanded' );
-		return pressed === 'true' || expanded === 'true';
+		return checked === 'true' || pressed === 'true' || expanded === 'true';
 	}
 
 	/* Block Inserter */
@@ -108,12 +109,17 @@ export class EditorToolbarComponent {
 	async openBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage(
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
 			'Toggle block inserter',
 			'Generic label for block inserter button'
 		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: translatedButtonName,
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
 			exact: true,
 		} );
 
@@ -130,12 +136,17 @@ export class EditorToolbarComponent {
 	async closeBlockInserter(): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		const translatedButtonName = await this.translateFromPage(
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
 			'Toggle block inserter',
 			'Generic label for block inserter button'
 		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
 		const blockInserterButton = editorParent.getByRole( 'button', {
-			name: translatedButtonName,
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
 			exact: true,
 		} );
 
@@ -312,11 +323,21 @@ export class EditorToolbarComponent {
 
 		// To support i18n tests.
 		const translatedTargetName = await this.translateFromPage( target );
-		const button = editorParent
+
+		let button = editorParent
 			.locator( '.editor-header__settings, .edit-post-header__settings' )
 			.getByLabel( translatedTargetName );
 
+		// For other pinned settings, we need to open the options menu
+		// because those are hidden on mobile/small screens
+		if ( target !== 'Settings' ) {
+			await this.openMoreOptionsMenu();
+
+			button = editorParent.getByRole( 'menuitemcheckbox', { name: translatedTargetName } );
+		}
+
 		if ( await this.targetIsOpen( button ) ) {
+			await this.closeMoreOptionsMenu();
 			return;
 		}
 
@@ -441,9 +462,30 @@ export class EditorToolbarComponent {
 	 * Opens the more options menu (three dots).
 	 */
 	async openMoreOptionsMenu(): Promise< void > {
-		// const label = await this.translateFromPage( moreOptionsLabel );
-		// const selector = selectors.moreOptionsButton( label );
+		const button = await this.getMoreOptionsButton();
 
+		if ( await this.targetIsOpen( button ) ) {
+			return;
+		}
+
+		await button.click();
+	}
+
+	/**
+	 * Closes the more options menu.
+	 */
+	async closeMoreOptionsMenu(): Promise< void > {
+		const button = await this.getMoreOptionsButton();
+
+		if ( await this.targetIsOpen( button ) ) {
+			await button.click();
+		}
+	}
+
+	/**
+	 * Returns the more options button instance.
+	 */
+	async getMoreOptionsButton() {
 		const editorParent = await this.editor.parent();
 
 		// To support i18n tests.
@@ -451,16 +493,10 @@ export class EditorToolbarComponent {
 		// Narrowing down to the "Editor top bar" is needed because it might conflict with
 		// the options button for the block toolbar, causing a strict-mode violation error
 		// due to duplicate elements on the page.
-		const button = editorParent.getByLabel( 'Editor top bar' ).getByRole( 'button', {
+		return editorParent.getByLabel( 'Editor top bar' ).getByRole( 'button', {
 			name: translatedTargetName,
 			exact: true,
 		} );
-
-		if ( await this.targetIsOpen( button ) ) {
-			return;
-		}
-
-		await button.click();
 	}
 
 	/** FSE unique buttons */

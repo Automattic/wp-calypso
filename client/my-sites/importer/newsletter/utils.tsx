@@ -1,4 +1,5 @@
 import { Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { ReactNode } from 'react';
@@ -8,8 +9,6 @@ import {
 	StepStatus,
 } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import { navigate } from 'calypso/lib/navigate';
-
-const noop = () => {};
 
 function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 	if ( stepStatus === 'done' ) {
@@ -21,31 +20,20 @@ function getStepProgressIndicator( stepStatus?: StepStatus ): ReactNode {
 	}
 }
 
-export function getSetpProgressSteps(
+export function getStepsProgress(
 	engine: string,
 	selectedSiteSlug: string,
 	fromSite: string,
 	paidNewsletterData?: PaidNewsletterData
 ) {
 	const summaryStatus = getImporterStatus(
-		paidNewsletterData?.steps.content.status,
+		paidNewsletterData?.steps?.content?.status,
 		paidNewsletterData?.steps.subscribers.status
 	);
+
 	const result: ClickHandler[] = [
 		{
-			message: 'Content',
-			onClick: () => {
-				navigate(
-					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
-						from: fromSite,
-					} )
-				);
-			},
-			show: 'onComplete',
-			indicator: getStepProgressIndicator( paidNewsletterData?.steps.content.status ),
-		},
-		{
-			message: 'Subscribers',
+			message: __( 'Subscribers' ),
 			onClick: () => {
 				navigate(
 					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/subscribers`, {
@@ -57,19 +45,50 @@ export function getSetpProgressSteps(
 			indicator: getStepProgressIndicator( paidNewsletterData?.steps.subscribers.status ),
 		},
 		{
-			message: 'Summary',
-			onClick: noop,
+			message: __( 'Summary' ),
+			onClick: () => {
+				navigate(
+					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/summary`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: summaryStatus === 'done' || summaryStatus === 'skipped' ? 'always' : 'onComplete',
 			indicator: getStepProgressIndicator( summaryStatus === 'done' ? 'done' : 'initial' ),
 		},
 	];
 
+	// Content step as first only when it's available (not available for Jetpack sites)
+	if ( paidNewsletterData?.steps?.content ) {
+		result.unshift( {
+			message: __( 'Content' ),
+			onClick: () => {
+				navigate(
+					addQueryArgs( `/import/newsletter/${ engine }/${ selectedSiteSlug }/content`, {
+						from: fromSite,
+					} )
+				);
+			},
+			show: 'onComplete',
+			indicator: getStepProgressIndicator( paidNewsletterData?.steps?.content?.status ),
+		} );
+	}
+
 	return result;
 }
 
+/*
+ * Gather entire engine's status by combining "content" and "subscribers" steps status
+ */
 export function getImporterStatus(
 	contentStepStatus?: StepStatus,
 	subscribersStepStatus?: StepStatus
 ): StepStatus {
+	// When content step is hidden for Jetpack sites, we can rely on subscriber status for entire engine's status
+	if ( ! contentStepStatus ) {
+		return subscribersStepStatus || 'initial';
+	}
+
 	if ( contentStepStatus === 'done' && subscribersStepStatus === 'done' ) {
 		return 'done';
 	}

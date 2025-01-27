@@ -1,0 +1,24 @@
+.cache-card {
+	.hosting-card__description {
+		margin: 0;
+	}
+}
+
+.cache-card__button-wrapper {
+	display: inline-block;
+}
+
+.cache-card__hr {
+	margin-top: 30px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.cache-card__edge-cache-toggle {
+	margin-bottom: 16px;
+}
+
+.cache-card__edge-cache-toggle label {
+	font-size: 0.875rem;
+	font-weight: 400;
+	line-height: 20px;
+}

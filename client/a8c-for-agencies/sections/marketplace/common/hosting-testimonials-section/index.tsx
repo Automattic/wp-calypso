@@ -1,9 +1,9 @@
 import React from 'react';
-import HostingSection, { HostingSectionProps } from '../hosting-section';
+import PageSection, { PageSectionProps } from 'calypso/a8c-for-agencies/components/page-section';
 
 import './style.scss';
 
-type Props = Omit< HostingSectionProps, 'children' > & {
+type Props = Omit< PageSectionProps, 'children' > & {
 	items: {
 		profile: {
 			avatar?: string;
@@ -27,7 +27,7 @@ export default function HostingTestimonialsSection( {
 	itemBackgroundColor,
 }: Props ) {
 	return (
-		<HostingSection
+		<PageSection
 			icon={ icon }
 			heading={ heading }
 			subheading={ subheading }
@@ -82,6 +82,6 @@ export default function HostingTestimonialsSection( {
 					</div>
 				) ) }
 			</div>
-		</HostingSection>
+		</PageSection>
 	);
 }

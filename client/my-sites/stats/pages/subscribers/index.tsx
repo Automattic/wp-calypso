@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
@@ -21,8 +20,29 @@ import StatsModulePlaceholder from '../../stats-module/placeholder';
 import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
-import SubscribersOverview from '../../stats-subscribers-overview';
 import type { Moment } from 'moment';
+
+function StatsSubscribersPageError() {
+	const translate = useTranslate();
+	const classes = clsx( 'stats-module__placeholder', 'is-void' );
+
+	return (
+		<div className={ classes }>
+			<p>
+				{ translate(
+					'An error occurred while loading your subscriber stats. If you continue to have issues loading this page, please get in touch via our {{link}}contact form{{/link}} for assistance.',
+					{
+						components: {
+							link: (
+								<a target="_blank" rel="noreferrer" href="https://jetpack.com/contact-support/" />
+							),
+						},
+					}
+				) }
+			</p>
+		</div>
+	);
+}
 
 interface StatsSubscribersPageProps {
 	period: {
@@ -47,7 +67,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const { supportsEmailStats, supportsSubscriberChart } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
@@ -66,7 +85,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	);
 
 	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
-	const { data: subscribersTotals, isLoading } = useSubscribersTotalsQueries( siteId );
+	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
 	const isSimple = useSelector( isSimpleSite );
 	const hasNoSubscriberOtherThanAdmin =
 		! subscribersTotals?.total ||
@@ -82,12 +101,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
-
-	// Check if the site has any paid subscription products added.
-	const products = useSelector( ( state ) => state.memberships?.productList?.items[ siteId ?? 0 ] );
-	// Odyssey Stats doesn't support the membership API endpoint yet.
-	// Products with an `undefined` value rather than an empty array means the API call has not been completed yet.
-	const hasAddedPaidSubscriptionProduct = ! isOdysseyStats && products && products.length > 0;
 
 	const summaryUrl = `/stats/${ period?.period }/emails/${ siteSlug }?startDate=${ period?.startOf?.format(
 		'YYYY-MM-DD'
@@ -107,7 +120,9 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ isLoading && <StatsModulePlaceholder className="is-subscriber-page" isLoading /> }
+				{ isError && <StatsSubscribersPageError /> }
 				{ ! isLoading &&
+					! isError &&
 					( showLaunchpad ? (
 						emptyComponent
 					) : (
@@ -120,7 +135,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 										slug={ siteSlug }
 										period={ period.period }
 									/>
-									{ hasAddedPaidSubscriptionProduct && <SubscribersOverview siteId={ siteId } /> }
 								</>
 							) }
 							<div className={ statsModuleListClass }>

@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { useRef, useState, FunctionComponent, PropsWithChildren } from 'react';
@@ -10,17 +11,22 @@ import './style.scss';
 type EllipsisMenuProps = {
 	position?: string;
 	popoverClassName?: string;
+	trackEventProps?: { source: string };
 } & PropsWithChildren;
 
 export const EllipsisMenu: FunctionComponent< EllipsisMenuProps > = ( {
 	position,
 	children,
 	popoverClassName,
+	trackEventProps,
 } ) => {
 	const [ isMenuVisible, setMenuVisible ] = useState( false );
 	const popoverContext = useRef< HTMLButtonElement >( null );
 
 	const handleClick = () => {
+		if ( ! isMenuVisible ) {
+			recordTracksEvent( 'calypso_help_open_ellipsis_menu', trackEventProps );
+		}
 		setMenuVisible( ! isMenuVisible );
 	};
 

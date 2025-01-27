@@ -232,7 +232,13 @@ const getStatsQueries = createSelector(
 
 const getStatsData = createSelector(
 	( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => {
-		const counts = getCountRecords( state, siteId, chartQuery.period );
+		const counts = getCountRecords(
+			state,
+			siteId,
+			chartQuery.date,
+			chartQuery.period,
+			chartQuery.quantity
+		);
 		const chartData = buildChartData(
 			[],
 			chartQuery.chartTab,
@@ -268,14 +274,16 @@ const getStatsData = createSelector(
 		};
 	},
 	( state, siteId, chartQuery, insightsQuery, topPostsQuery ) => [
-		getCountRecords( state, siteId, chartQuery.period ),
+		getCountRecords( state, siteId, chartQuery.date, chartQuery.period, chartQuery.quantity ),
 		insightsQuery,
 		topPostsQuery,
 	]
 );
 
 const isLoadingStats = ( state, siteId, chartQuery, insightsQuery, topPostsQuery ) =>
-	getLoadingTabs( state, siteId, chartQuery.period ).includes( chartQuery.chartTab ) ||
+	getLoadingTabs( state, siteId, chartQuery.date, chartQuery.period, chartQuery.quantity ).includes(
+		chartQuery.chartTab
+	) ||
 	isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', insightsQuery ) ||
 	isRequestingSiteStatsForQuery( state, siteId, 'statsTopPosts', topPostsQuery );
 

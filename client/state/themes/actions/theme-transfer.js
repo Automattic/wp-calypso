@@ -1,6 +1,7 @@
 import { delay } from 'lodash';
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	THEME_TRANSFER_INITIATE_FAILURE,
 	THEME_TRANSFER_INITIATE_PROGRESS,
@@ -99,7 +100,16 @@ export function initiateThemeTransfer( siteId, file, plugin, geoAffinity = '', c
 						themeInitiateSuccessAction
 					)
 				);
-				dispatch( pollThemeTransferStatus( siteId, transfer_id, 3000, 180000, !! file ) );
+
+				return dispatch( pollThemeTransferStatus( siteId, transfer_id, 3000, 180000, !! file ) );
+			} )
+			.then( () => {
+				// Get the latest site data after the atomic transfer. The request
+				// is intentionally delayed because the site endpoint can return
+				// stale data immediately after the transfer.
+				setTimeout( () => {
+					dispatch( requestSite( siteId ) );
+				}, 1000 );
 			} )
 			.catch( ( error ) => {
 				dispatch( transferInitiateFailure( siteId, error, plugin, context ) );

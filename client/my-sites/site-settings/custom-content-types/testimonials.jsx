@@ -68,7 +68,7 @@ function Testimonials( {
 				<FormSettingExplanation isIndented>
 					{ translate(
 						'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-							'you can display them using the shortcode [testimonials].',
+							'you can display them using the shortcode [testimonials]. If your theme does support testimonials, these will remain active regardless of toggle state.',
 						{
 							components: {
 								link: <InlineSupportLink supportContext="testimonials" />,

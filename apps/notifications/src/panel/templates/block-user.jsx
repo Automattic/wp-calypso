@@ -127,7 +127,7 @@ export class UserBlock extends Component {
 			const homeClassName =
 				timeIndicator !== '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
-				<p className={ homeClassName }>
+				<div className={ homeClassName }>
 					<span className="wpnc__user__ago">{ timeIndicator }</span>
 					<a
 						className="wpnc__user__site"
@@ -138,7 +138,7 @@ export class UserBlock extends Component {
 					>
 						{ home_title }
 					</a>
-				</p>
+				</div>
 			);
 		} else {
 			homeTemplate = (
@@ -168,11 +168,13 @@ export class UserBlock extends Component {
 					<a className="wpnc__user__site" href={ home_url } target="_blank" rel="noreferrer">
 						<img src={ grav.url } height={ grav.height } width={ grav.width } alt="Avatar" />
 					</a>
-					<span className="wpnc__user__username">
-						<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
-							{ this.props.block.text }
-						</a>
-					</span>
+					<div>
+						<span className="wpnc__user__username">
+							<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
+								{ this.props.block.text }
+							</a>
+						</span>
+					</div>
 					{ homeTemplate }
 					{ followLink }
 				</div>

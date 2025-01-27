@@ -4,7 +4,7 @@ import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import Plans from './plans';
+import Plans from './main';
 
 function showJetpackPlans( context ) {
 	const state = context.store.getState();
@@ -32,6 +32,14 @@ export function plans( context, next ) {
 		return productSelect( '/plans' )( context, next );
 	}
 
+	// Emails rely on the `discount` query param to auto-apply coupons
+	// from the Calypso admin plans page. The `/start` onboarding flow
+	// plans page, however, relies on the `coupon` query param for the
+	// same purpose. We handle both coupon and discount here for the time
+	// being to avoid confusion and to continue support for legacy
+	// coupons. We'll consolidate to just `coupon` in the future.
+	const coupon = context.query.coupon || context.query.discount;
+
 	context.primary = (
 		<Plans
 			context={ context }
@@ -39,7 +47,7 @@ export function plans( context, next ) {
 			customerType={ context.query.customerType }
 			selectedFeature={ context.query.feature }
 			selectedPlan={ context.query.plan }
-			withDiscount={ context.query.discount }
+			coupon={ coupon }
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
 			redirectToAddDomainFlow={

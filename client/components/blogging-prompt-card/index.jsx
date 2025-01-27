@@ -103,7 +103,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 		<div className="blogging-prompt">
 			<Card
 				className={ clsx( 'blogging-prompt__card', {
-					'customer-home__card': viewContext === 'home',
+					'customer-home__card is-small-hero': viewContext === 'home',
 				} ) }
 			>
 				<PromptsNavigation

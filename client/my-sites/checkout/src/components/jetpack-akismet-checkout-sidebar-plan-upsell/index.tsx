@@ -91,6 +91,9 @@ const useCalculatedDiscounts = () => {
 	const originalPrice = current.priceBeforeDiscounts * 2;
 	const introductoryOfferDiscount = biennial.priceBeforeDiscounts - biennial.priceInteger;
 	const multiYearDiscount = originalPrice - biennial.priceBeforeDiscounts;
+	const additionalDiscount = product.introductory_offer_terms?.enabled
+		? 0
+		: biennial.priceBeforeDiscounts - biennial.priceInteger; // additional discount for events like Black Friday
 
 	const priceBreakdown: PriceBreakdown[] = [];
 
@@ -128,6 +131,14 @@ const useCalculatedDiscounts = () => {
 		priceBreakdown.push( {
 			label: __( 'Multi-year discount' ),
 			priceInteger: multiYearDiscount,
+			isDiscount: true,
+		} );
+	}
+
+	if ( additionalDiscount > 0 ) {
+		priceBreakdown.push( {
+			label: __( 'Additional discount' ),
+			priceInteger: additionalDiscount,
 			isDiscount: true,
 		} );
 	}

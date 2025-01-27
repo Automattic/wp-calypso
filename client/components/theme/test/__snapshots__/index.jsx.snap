@@ -19,6 +19,7 @@ exports[`Theme rendering should match snapshot 1`] = `
         <img
           alt=""
           class="theme__img"
+          loading="lazy"
           src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
           srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
         />
@@ -35,7 +36,6 @@ exports[`Theme rendering should match snapshot 1`] = `
         </span>
       </h2>
       <components--theme-tier-badge
-        islockedstylevariation="false"
         themeid="twentyseventeen"
       />
     </div>

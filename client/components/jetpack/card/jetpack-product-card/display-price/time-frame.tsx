@@ -1,5 +1,5 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
-import i18n, { TranslateResult, getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -119,42 +119,18 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 
 	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 	if ( billingTerm === TERM_MONTHLY ) {
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed monthly' )
-		) {
-			text = translate(
-				'for the first month, then %(original_price)s /month, billed monthly',
-				'for the first %(months)d months, then %(original_price)s /month, billed monthly',
-				opts
-			);
-		} else {
-			text = translate(
-				'for the first month, billed monthly',
-				'for the first %(months)d months, billed monthly',
-				opts
-			);
-		}
+		text = translate(
+			'for the first month, then %(original_price)s /month, billed monthly',
+			'for the first %(months)d months, then %(original_price)s /month, billed monthly',
+			opts
+		);
 	} else {
 		// eslint-disable-next-line no-lonely-if
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed yearly' )
-		) {
-			text = translate(
-				'for the first month, then %(original_price)s /month, billed yearly',
-				'for the first %(months)d months, then %(original_price)s /month, billed yearly',
-				opts
-			);
-		} else {
-			text = translate(
-				'for the first month, billed yearly',
-				'for the first %(months)d months, billed yearly',
-				opts
-			);
-		}
+		text = translate(
+			'for the first month, then %(original_price)s /month, billed yearly',
+			'for the first %(months)d months, then %(original_price)s /month, billed yearly',
+			opts
+		);
 	}
 
 	if ( forScreenReader ) {

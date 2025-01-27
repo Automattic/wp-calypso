@@ -1,0 +1,62 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.interests-modal {
+	&__content {
+		padding: 24px;
+
+		@media ( max-width: $break-medium ) {
+			padding: 0;
+		}
+	}
+
+	&__title {
+		font-family: Recoleta, sans-serif;
+		font-size: 2.75rem;
+		font-weight: 400;
+		text-align: center;
+
+		@media ( max-width: $break-medium ) {
+			font-size: 1.5rem;
+		}
+	}
+
+	&__subtitle {
+		text-align: center;
+	}
+
+	&__category {
+		max-width: 1200px;
+		margin: 0 auto 32px auto;
+	}
+
+	&__section-header {
+		margin-bottom: 16px;
+	}
+
+	&__topics-list {
+		display: grid;
+		gap: 16px;
+		grid-template-columns: 1fr;
+
+		@include break-small {
+			grid-template-columns: repeat( 2, 1fr );
+		}
+
+		@include break-large {
+			grid-template-columns: repeat( 3, 1fr );
+		}
+	}
+
+	.components-modal__header {
+		.components-button {
+			&.is-link {
+				margin-right: auto;
+			}
+
+			&.is-primary {
+				margin-left: 16px;
+			}
+		}
+	}
+}

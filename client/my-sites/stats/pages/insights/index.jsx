@@ -1,32 +1,53 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { connect, useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
-import AllTimeViewsSection from 'calypso/my-sites/stats/features/modules/all-time-views-section';
+import { STATS_FEATURE_PAGE_INSIGHTS } from 'calypso/my-sites/stats/constants';
 import StatsModuleComments from 'calypso/my-sites/stats/features/modules/stats-comments';
 import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
+import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
+import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AllTimeHighlightsSection from '../../all-time-highlights-section';
-import AnnualHighlightsSection from '../../annual-highlights-section';
-import PostingActivity from '../../post-trends';
+import AllTimeHighlightsSection from '../../sections/all-time-highlights-section';
+import AllTimeViewsSection from '../../sections/all-time-views-section';
+import AnnualHighlightsSection from '../../sections/annual-highlights-section';
+import PostingActivity from '../../sections/posting-activity-section';
 import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import StatsUpsell from '../../stats-upsell/insights-upsell';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
+	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
+	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
+	const { isPending, data: usageInfo } = usePlanUsageQuery( siteId );
+	const reduxDispatch = useDispatch();
+
+	// Dispatch the plan usage data to the Redux store for monthly views check in shouldGateStats.
+	useEffect( () => {
+		if ( ! isPending ) {
+			reduxDispatch( {
+				type: STATS_PLAN_USAGE_RECEIVE,
+				siteId,
+				data: usageInfo,
+			} );
+		}
+	}, [ reduxDispatch, isPending, siteId, usageInfo ] );
+
+	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
+	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
 
 	const statsModuleListClass = clsx(
 		'stats__module-list--insights',
@@ -58,71 +79,75 @@ const StatsInsights = ( props ) => {
 					navigationItems={ [] }
 				></NavigationHeader>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
-				<AnnualHighlightsSection siteId={ siteId } />
-				<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
-				<PostingActivity siteId={ siteId } />
-				<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-				<div className={ statsModuleListClass }>
-					{ isEmptyStateV2 && (
-						<StatsModuleTags
-							moduleStrings={ moduleStrings.tags }
-							hideSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--half': isJetpack,
-									'stats__flexible-grid-item--full--large': isJetpack,
-								},
-								{
-									'stats__flexible-grid-item--full': ! isJetpack,
-								}
+				{ shouldRendeUpsell ? (
+					<div id="my-stats-content" className="stats-content">
+						<StatsUpsell siteId={ siteId } />
+					</div>
+				) : (
+					<>
+						<AnnualHighlightsSection siteId={ siteId } />
+						<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
+						<PostingActivity siteId={ siteId } />
+						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
+						<div className={ statsModuleListClass }>
+							{ isEmptyStateV2 && (
+								<StatsModuleTags
+									moduleStrings={ moduleStrings.tags }
+									hideSummaryLink
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': isJetpack,
+											'stats__flexible-grid-item--full--large': isJetpack,
+										},
+										{
+											'stats__flexible-grid-item--full': ! isJetpack,
+										}
+									) }
+								/>
 							) }
-						/>
-					) }
-					{ ! isEmptyStateV2 && (
-						<StatsModule
-							path="tags-categories"
-							moduleStrings={ moduleStrings.tags }
-							statType="statsTags"
-							hideSummaryLink
-							className={ clsx(
-								{
-									'stats__flexible-grid-item--half': isJetpack,
-									'stats__flexible-grid-item--full--large': isJetpack,
-								},
-								{
-									'stats__flexible-grid-item--full': ! isJetpack,
-								}
+							{ ! isEmptyStateV2 && (
+								<StatsModule
+									path="tags-categories"
+									moduleStrings={ moduleStrings.tags }
+									statType="statsTags"
+									hideSummaryLink
+									className={ clsx(
+										{
+											'stats__flexible-grid-item--half': isJetpack,
+											'stats__flexible-grid-item--full--large': isJetpack,
+										},
+										{
+											'stats__flexible-grid-item--full': ! isJetpack,
+										}
+									) }
+								/>
 							) }
-						/>
-					) }
 
-					<StatsModuleComments
-						className={ clsx(
-							'stats__flexible-grid-item--half',
-							'stats__flexible-grid-item--full--large'
-						) }
-					/>
+							<StatsModuleComments
+								className={ clsx(
+									'stats__flexible-grid-item--half',
+									'stats__flexible-grid-item--full--large'
+								) }
+							/>
 
-					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-					{ ! isJetpack && (
-						<StatShares
-							siteId={ siteId }
-							className={ clsx(
-								'stats__flexible-grid-item--half',
-								'stats__flexible-grid-item--full--large'
+							{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+							{ ! isJetpack && (
+								<StatShares
+									siteId={ siteId }
+									className={ clsx(
+										'stats__flexible-grid-item--half',
+										'stats__flexible-grid-item--full--large'
+									) }
+								/>
 							) }
-						/>
-					) }
-				</div>
-				<JetpackColophon />
+						</div>
+						<JetpackColophon />
+					</>
+				) }
 			</div>
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
-
-StatsInsights.propTypes = {
-	translate: PropTypes.func,
 };
 
 const connectComponent = connect( ( state ) => {
@@ -136,4 +161,4 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-export default flowRight( connectComponent, localize )( StatsInsights );
+export default connectComponent( StatsInsights );

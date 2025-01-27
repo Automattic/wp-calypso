@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
 import { useState, useEffect } from 'react';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import useStoreSandboxStatusQuery from 'calypso/data/store-sandbox/use-store-sandbox-status';
 import wp from 'calypso/lib/wp';
 
@@ -62,6 +62,7 @@ export function StoreSandboxHelper() {
 			<div className={ menuItemClasses.join( ' ' ) }>Store Sandbox</div>
 			<div className="store-sandbox-helper__popover">
 				<ToggleControl
+					__nextHasNoMarginBottom
 					label="Store Sandbox"
 					checked={ isStoreSandboxed || false }
 					disabled={ ! isEditable }
@@ -73,9 +74,8 @@ export function StoreSandboxHelper() {
 	);
 }
 export default ( element: HTMLElement ) =>
-	ReactDom.render(
+	createRoot( element ).render(
 		<QueryClientProvider client={ new QueryClient() }>
 			<StoreSandboxHelper />
-		</QueryClientProvider>,
-		element
+		</QueryClientProvider>
 	);

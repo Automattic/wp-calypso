@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { useContext } from 'react';
+import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
+import { useContext, createContext } from '@wordpress/element';
 import type { CurrentUser, HelpCenterSite } from '@automattic/data-stores';
 
 export type HelpCenterRequiredInformation = {
@@ -12,9 +12,10 @@ export type HelpCenterRequiredInformation = {
 	primarySiteId: number;
 	googleMailServiceFamily: string;
 	onboardingUrl: string;
+	canConnectToZendesk: boolean;
 };
 
-const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInformation >( {
+const HelpCenterRequiredContext = createContext< HelpCenterRequiredInformation >( {
 	locale: '',
 	sectionName: '',
 	currentUser: {
@@ -33,14 +34,19 @@ const HelpCenterRequiredContext = React.createContext< HelpCenterRequiredInforma
 	primarySiteId: 0,
 	googleMailServiceFamily: '',
 	onboardingUrl: '',
+	canConnectToZendesk: false,
 } );
 
 export const HelpCenterRequiredContextProvider: React.FC< {
 	children: JSX.Element;
 	value: HelpCenterRequiredInformation;
 } > = function ( { children, value } ) {
+	const { data: canConnectToZendesk, isLoading } = useCanConnectToZendeskMessaging();
+
 	return (
-		<HelpCenterRequiredContext.Provider value={ value }>
+		<HelpCenterRequiredContext.Provider
+			value={ { ...value, canConnectToZendesk: isLoading ? false : canConnectToZendesk ?? false } }
+		>
 			{ children }
 		</HelpCenterRequiredContext.Provider>
 	);

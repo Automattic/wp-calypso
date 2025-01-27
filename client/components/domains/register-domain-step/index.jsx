@@ -1,7 +1,11 @@
-import config from '@automattic/calypso-config';
 import { isBlogger, isFreeWordPressComDomain } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button, CompactCard, ResponsiveToolbarGroup } from '@automattic/components';
+import {
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	isHundredYearDomainFlow,
+} from '@automattic/onboarding';
 import Search from '@automattic/search';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { Icon } from '@wordpress/icons';
@@ -83,9 +87,6 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:domains:register-domain-step' );
 
-// TODO: Enable A/B test handling for M2.1 release
-const isPaginationEnabled = config.isEnabled( 'domains/kracken-ui/pagination' );
-
 const noop = () => {};
 const domains = wpcom.domains();
 
@@ -93,7 +94,7 @@ const domains = wpcom.domains();
 const PAGE_SIZE = 10;
 const EXACT_MATCH_PAGE_SIZE = 4;
 const MAX_PAGES = 3;
-const SUGGESTION_QUANTITY = isPaginationEnabled ? PAGE_SIZE * MAX_PAGES : PAGE_SIZE;
+const SUGGESTION_QUANTITY = PAGE_SIZE * MAX_PAGES;
 const MIN_QUERY_LENGTH = 2;
 
 // session storage key for query cache
@@ -150,6 +151,9 @@ class RegisterDomainStep extends Component {
 		 * It will be removed if there is still no need of it once the test concludes.
 		 */
 		hasPendingRequests: PropTypes.bool,
+
+		// Whether subdomains (.wordpress.com, .blog subdomains) should be queried - used for hiding free subdomains in specific cases
+		shouldQuerySubdomains: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -172,6 +176,7 @@ class RegisterDomainStep extends Component {
 		otherManagedSubdomains: null,
 		hasPendingRequests: false,
 		forceExactSuggestion: false,
+		shouldQuerySubdomains: true,
 	};
 
 	constructor( props ) {
@@ -220,6 +225,10 @@ class RegisterDomainStep extends Component {
 	}
 
 	isSubdomainResultsVisible() {
+		if ( ! this.props.shouldQuerySubdomains ) {
+			return false;
+		}
+
 		return (
 			this.props.includeWordPressDotCom ||
 			this.props.includeDotBlogSubdomain ||
@@ -268,8 +277,6 @@ class RegisterDomainStep extends Component {
 
 	getInitialFiltersState() {
 		return {
-			includeDashes: false,
-			maxCharacters: '',
 			exactSldMatchesOnly: false,
 			tlds: [],
 		};
@@ -341,7 +348,7 @@ class RegisterDomainStep extends Component {
 			this.save();
 		}
 		this._isMounted = true;
-		this.props.recordSearchFormView( this.props.analyticsSection );
+		this.props.recordSearchFormView( this.props.analyticsSection, this.props.flowName );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -413,14 +420,8 @@ class RegisterDomainStep extends Component {
 	getSuggestionsFromProps() {
 		const { pageNumber, pageSize } = this.state;
 		const searchResults = this.state.searchResults || [];
-		const isKrackenUi = isPaginationEnabled;
 
-		let suggestions;
-		if ( isKrackenUi ) {
-			suggestions = searchResults.slice( 0, pageNumber * pageSize );
-		} else {
-			suggestions = [ ...searchResults ];
-		}
+		const suggestions = searchResults.slice( 0, pageNumber * pageSize );
 
 		if ( this.isSubdomainResultsVisible() ) {
 			if ( this.state.loadingSubdomainResults && ! this.state.loadingResults ) {
@@ -532,20 +533,19 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSearchFilters() {
-		const isKrackenUi =
-			config.isEnabled( 'domains/kracken-ui/dashes-filter' ) ||
-			config.isEnabled( 'domains/kracken-ui/exact-match-filter' ) ||
-			config.isEnabled( 'domains/kracken-ui/max-characters-filter' );
 		const isRenderingInitialSuggestions =
 			! Array.isArray( this.state.searchResults ) &&
 			! this.state.loadingResults &&
 			! this.props.showExampleSuggestions;
-		const showFilters =
-			( isKrackenUi && ! isRenderingInitialSuggestions ) || this.props.isReskinned;
+		const showFilters = ! isRenderingInitialSuggestions || this.props.isReskinned;
 
 		const showTldFilter =
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
+
+		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) ) {
+			return null;
+		}
 
 		return (
 			showFilters && (
@@ -679,10 +679,6 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderPaginationControls() {
-		if ( ! isPaginationEnabled ) {
-			return null;
-		}
-
 		const { searchResults, pageNumber, pageSize, loadingResults: isLoading } = this.state;
 
 		if ( searchResults === null ) {
@@ -805,6 +801,7 @@ class RegisterDomainStep extends Component {
 						{
 							domainName,
 							blogId: get( this.props, 'selectedSite.ID', null ),
+							vendor: this.props.vendor,
 						},
 						( err, availabilityResult ) => {
 							if ( err ) {
@@ -849,7 +846,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	repeatSearch = ( stateOverride = {}, { shouldQuerySubdomains = true } = {} ) => {
+	repeatSearch = ( stateOverride = {} ) => {
 		this.save();
 
 		const { lastQuery } = this.state;
@@ -873,7 +870,7 @@ class RegisterDomainStep extends Component {
 		};
 		debug( 'Repeating a search with the following input for setState', nextState );
 		this.setState( nextState, () => {
-			loadingResults && this.onSearch( lastQuery, { shouldQuerySubdomains } );
+			loadingResults && this.onSearch( lastQuery );
 		} );
 	};
 
@@ -932,7 +929,12 @@ class RegisterDomainStep extends Component {
 	};
 
 	onFiltersReset = ( ...keysToReset ) => {
-		this.props.recordFiltersReset( this.state.filters, keysToReset, this.props.analyticsSection );
+		this.props.recordFiltersReset(
+			this.state.filters,
+			keysToReset,
+			this.props.analyticsSection,
+			this.props.flowName
+		);
 		const filters = {
 			...this.state.filters,
 			...( Array.isArray( keysToReset ) && keysToReset.length > 0
@@ -947,7 +949,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	onFiltersSubmit = () => {
-		this.props.recordFiltersSubmit( this.state.filters, this.props.analyticsSection );
+		this.props.recordFiltersSubmit(
+			this.state.filters,
+			this.props.analyticsSection,
+			this.props.flowName
+		);
 		this.repeatSearch( { pageNumber: 1 } );
 	};
 
@@ -1023,6 +1029,7 @@ class RegisterDomainStep extends Component {
 					domainName: domain,
 					blogId: get( this.props, 'selectedSite.ID', null ),
 					isCartPreCheck: true,
+					vendor: this.props.vendor,
 				},
 				( error, result ) => {
 					const status = get( result, 'status', error );
@@ -1061,17 +1068,48 @@ class RegisterDomainStep extends Component {
 		// Skips availability check for the Gravatar flow - so TLDs that are
 		// available but not eligible for Gravatar won't be displayed
 		if ( this.props.flowName === 'domain-for-gravatar' ) {
+			this.clearSuggestionErrorMessage();
+			const gravatarTlds = [
+				'link',
+				'bio',
+				'contact',
+				'cool',
+				'fyi',
+				'guru',
+				'info',
+				'life',
+				'live',
+				'ninja',
+				'place',
+				'pro',
+				'rocks',
+				'social',
+				'world',
+			];
 			// Also, we want to error messages for unavailable TLDs in Gravatar.
-			// Since only .link is enabled for now, we show the message for all other TLDs.
-			if ( getTld( domain ) !== 'link' ) {
+			// Since only a limited number of tlds is enabled for now, we show the message for all other TLDs.
+			if ( ! gravatarTlds.includes( getTld( domain ) ) ) {
 				this.showSuggestionErrorMessage( domain, 'gravatar_tld_restriction', {} );
 			}
 			return;
 		}
 
+		// Skip availability check for the 100-year domain flow if the domain is not com/net/org
+		if (
+			isHundredYearDomainFlow( this.props.flowName ) &&
+			! [ 'com', 'net', 'org', 'blog' ].includes( getTld( domain ) )
+		) {
+			this.showSuggestionErrorMessage( domain, 'hundred_year_domain_tld_restriction', {} );
+			return;
+		}
+
 		return new Promise( ( resolve ) => {
 			checkDomainAvailability(
-				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
+				{
+					domainName: domain,
+					blogId: get( this.props, 'selectedSite.ID', null ),
+					vendor: this.props.vendor,
+				},
 				( error, result ) => {
 					const timeDiff = Date.now() - timestamp;
 					const status = get( result, 'status', error );
@@ -1083,13 +1121,15 @@ class RegisterDomainStep extends Component {
 						AVAILABLE_PREMIUM,
 						MAPPED,
 						MAPPED_SAME_SITE_TRANSFERRABLE,
+						MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+						MAPPED_SAME_SITE_REGISTRABLE,
 						TRANSFERRABLE,
 						TRANSFERRABLE_PREMIUM,
 						UNKNOWN,
 						REGISTERED_OTHER_SITE_SAME_USER,
 					} = domainAvailability;
 
-					const availableDomainStatuses = [ AVAILABLE, UNKNOWN ];
+					const availableDomainStatuses = [ AVAILABLE, UNKNOWN, MAPPED_SAME_SITE_REGISTRABLE ];
 
 					if ( error ) {
 						resolve( null );
@@ -1118,8 +1158,26 @@ class RegisterDomainStep extends Component {
 					let availabilityStatus = status;
 
 					// Mapped status always overrides other statuses, unless the domain is owned by the current user.
-					if ( isDomainMapped && status !== REGISTERED_OTHER_SITE_SAME_USER ) {
+					if (
+						isDomainMapped &&
+						status !== REGISTERED_OTHER_SITE_SAME_USER &&
+						status !== MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE &&
+						status !== MAPPED_SAME_SITE_REGISTRABLE
+					) {
 						availabilityStatus = mappable;
+					}
+
+					if (
+						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) &&
+						isAvailablePremiumDomain
+					) {
+						this.removeUnavailablePremiumDomain( domain );
+						this.showSuggestionErrorMessage(
+							domain,
+							'hundred_year_domain_premium_name_restriction',
+							{}
+						);
+						resolve( null );
 					}
 
 					this.setState( {
@@ -1154,7 +1212,8 @@ class RegisterDomainStep extends Component {
 						domain,
 						status,
 						timeDiff,
-						this.props.analyticsSection
+						this.props.analyticsSection,
+						this.props.flowName
 					);
 
 					this.props.onDomainsAvailabilityChange( true );
@@ -1200,7 +1259,8 @@ class RegisterDomainStep extends Component {
 					analyticsResults,
 					timeDiff,
 					domainSuggestions.length,
-					this.props.analyticsSection
+					this.props.analyticsSection,
+					this.props.flowName
 				);
 
 				return domainSuggestions;
@@ -1225,7 +1285,8 @@ class RegisterDomainStep extends Component {
 					analyticsResults,
 					timeDiff,
 					-1,
-					this.props.analyticsSection
+					this.props.analyticsSection,
+					this.props.flowName
 				);
 				throw error;
 			} );
@@ -1329,7 +1390,8 @@ class RegisterDomainStep extends Component {
 			analyticsResults,
 			timeDiff,
 			subdomainSuggestions.length,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		// This part handles the other end of the condition handled by the line 282:
@@ -1367,7 +1429,8 @@ class RegisterDomainStep extends Component {
 			analyticsResults,
 			timeDiff,
 			-1,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		this.setState( {
@@ -1376,7 +1439,7 @@ class RegisterDomainStep extends Component {
 		} );
 	};
 
-	onSearch = async ( searchQuery, { shouldQuerySubdomains = true } = {} ) => {
+	onSearch = async ( searchQuery ) => {
 		debug( 'onSearch handler was triggered with query', searchQuery );
 
 		const domain = getDomainSuggestionSearch( searchQuery, MIN_QUERY_LENGTH );
@@ -1397,7 +1460,12 @@ class RegisterDomainStep extends Component {
 		}
 
 		enqueueSearchStatReport(
-			{ query: searchQuery, section: this.props.analyticsSection, vendor: this.props.vendor },
+			{
+				query: searchQuery,
+				section: this.props.analyticsSection,
+				vendor: this.props.vendor,
+				flowName: this.props.flowName,
+			},
 			this.props.recordSearchFormSubmit
 		);
 
@@ -1421,7 +1489,7 @@ class RegisterDomainStep extends Component {
 					.catch( () => [] ) // handle the error and return an empty list
 					.then( this.handleDomainSuggestions( domain ) );
 
-				if ( shouldQuerySubdomains && this.isSubdomainResultsVisible() ) {
+				if ( this.isSubdomainResultsVisible() ) {
 					this.getSubdomainSuggestions( domain, timestamp );
 				}
 			}
@@ -1438,7 +1506,8 @@ class RegisterDomainStep extends Component {
 		this.props.recordShowMoreResults(
 			this.state.lastQuery,
 			pageNumber,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		this.setState( { pageNumber, pageSize: PAGE_SIZE }, this.save );
@@ -1482,7 +1551,11 @@ class RegisterDomainStep extends Component {
 		const domain = get( suggestion, 'domain_name' );
 		const { premiumDomains } = this.state;
 		const { includeOwnedDomainInSuggestions } = this.props;
-		const { DOMAIN_AVAILABILITY_THROTTLED, REGISTERED_OTHER_SITE_SAME_USER } = domainAvailability;
+		const {
+			DOMAIN_AVAILABILITY_THROTTLED,
+			REGISTERED_OTHER_SITE_SAME_USER,
+			MAPPED_SAME_SITE_REGISTRABLE,
+		} = domainAvailability;
 
 		// disable adding a domain to the cart while the premium price is still fetching
 		if ( premiumDomains?.[ domain ]?.pending ) {
@@ -1503,6 +1576,7 @@ class RegisterDomainStep extends Component {
 				this.props.onAddDomain( suggestion, position, previousState );
 			}
 
+			this.setState( { pendingCheckSuggestion: suggestion } );
 			const promise = this.preCheckDomainAvailability( domain )
 				.catch( () => [] )
 				.then( ( { status, trademarkClaimsNoticeInfo } ) => {
@@ -1510,13 +1584,15 @@ class RegisterDomainStep extends Component {
 					this.props.recordDomainAddAvailabilityPreCheck(
 						domain,
 						status,
-						this.props.analyticsSection
+						this.props.analyticsSection,
+						this.props.flowName
 					);
 
 					const skipAvailabilityErrors =
 						! status ||
 						( status === REGISTERED_OTHER_SITE_SAME_USER && includeOwnedDomainInSuggestions ) ||
-						status === DOMAIN_AVAILABILITY_THROTTLED;
+						status === DOMAIN_AVAILABILITY_THROTTLED ||
+						status === MAPPED_SAME_SITE_REGISTRABLE;
 
 					if ( ! skipAvailabilityErrors ) {
 						this.setState( { unavailableDomains: [ ...this.state.unavailableDomains, domain ] } );
@@ -1702,7 +1778,7 @@ class RegisterDomainStep extends Component {
 	goToMapDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordMapDomainButtonClick( this.props.analyticsSection );
+		this.props.recordMapDomainButtonClick( this.props.analyticsSection, this.props.flowName );
 
 		page( this.getMapDomainUrl() );
 	};
@@ -1712,7 +1788,11 @@ class RegisterDomainStep extends Component {
 
 		const source = event.currentTarget.dataset.tracksButtonClickSource;
 
-		this.props.recordTransferDomainButtonClick( this.props.analyticsSection, source );
+		this.props.recordTransferDomainButtonClick(
+			this.props.analyticsSection,
+			source,
+			this.props.flowName
+		);
 
 		page( this.getTransferDomainUrl() );
 	};
@@ -1720,7 +1800,11 @@ class RegisterDomainStep extends Component {
 	goToUseYourDomainStep = ( event ) => {
 		event.preventDefault();
 
-		this.props.recordUseYourDomainButtonClick( this.props.analyticsSection );
+		this.props.recordUseYourDomainButtonClick(
+			this.props.analyticsSection,
+			null,
+			this.props.flowName
+		);
 
 		page( this.getUseYourDomainUrl() );
 	};
@@ -1754,6 +1838,19 @@ class RegisterDomainStep extends Component {
 			availabilityError: error,
 			availabilityErrorData: errorData,
 			availabilityErrorDomain: domain,
+		} );
+	}
+
+	clearSuggestionErrorMessage() {
+		this.setState( {
+			showSuggestionNotice: false,
+			suggestionError: null,
+			suggestionErrorData: null,
+			suggestionErrorDomain: null,
+			showAvailabilityNotice: false,
+			availabilityError: null,
+			availabilityErrorData: null,
+			availabilityErrorDomain: null,
 		} );
 	}
 

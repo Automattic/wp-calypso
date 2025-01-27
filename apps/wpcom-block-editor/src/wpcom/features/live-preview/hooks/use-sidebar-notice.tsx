@@ -1,13 +1,10 @@
 import { Notice } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
 import { render } from '@wordpress/element';
 import { useEffect, useRef, FC, ComponentProps } from 'react';
-import { getUnlock } from '../utils';
+import useCanvasMode from '../../../hooks/use-canvas-mode';
 
 const SAVE_HUB_SELECTOR = '.edit-site-save-hub';
 const SIDEBAR_NOTICE_SELECTOR = 'wpcom-live-preview-sidebar-notice';
-
-const unlock = getUnlock();
 
 const SidebarNotice: FC< {
 	noticeProps: ComponentProps< typeof Notice >;
@@ -27,11 +24,7 @@ export const useSidebarNotice = ( {
 	shouldShowNotice?: boolean;
 } ) => {
 	const isRendered = useRef( false );
-	const canvasMode = useSelect(
-		( select ) =>
-			unlock && select( 'core/edit-site' ) && unlock( select( 'core/edit-site' ) ).getCanvasMode(),
-		[]
-	);
+	const canvasMode = useCanvasMode();
 
 	useEffect( () => {
 		if ( ! shouldShowNotice ) {

@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useInterval } from 'calypso/lib/interval/use-interval';
 
 const LoadingProgressContainer = styled.div`
 	span {
@@ -89,7 +90,7 @@ const LoadingProgressContainer = styled.div`
 		}
 
 		&.incomplete {
-			color: var( --studio-gray-20 );
+			color: var( --studio-gray-50 );
 			::before {
 				border: 1px dashed var( --studio-gray-5 );
 			}
@@ -116,7 +117,7 @@ const useLoadingSteps = ( {
 		steps = [ translate( 'Getting your site pages' ) ];
 	} else {
 		steps = isSavedReport
-			? [ translate( 'Getting your report…' ) ]
+			? [ translate( 'Getting your report' ) ]
 			: [
 					pageTitle
 						? translate( 'Loading: %(pageTitle)s', { args: { pageTitle } } )
@@ -129,16 +130,13 @@ const useLoadingSteps = ( {
 			  ];
 	}
 
-	useEffect( () => {
-		const timeoutId = setTimeout( () => {
-			if ( step === steps.length - 1 ) {
-				return;
-			}
-			setStep( step + 1 );
-		}, 5000 );
-
-		return () => clearTimeout( timeoutId );
-	} );
+	useInterval(
+		() => {
+			setStep( ( step ) => step + 1 );
+		},
+		// 5 seconds between steps, except make sure we stop _before_ completing the last step
+		step < steps.length - 1 && 5000 // 5 seconds
+	);
 
 	const stepStatus = ( index: number, step: number ) => {
 		if ( step > index ) {

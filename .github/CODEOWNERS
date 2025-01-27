@@ -13,23 +13,23 @@
 /client/my-sites/comment* @Automattic/serenity
 
 # Email services
-/client/components/data/query-gsuite-users @Automattic/letero
-/client/components/domains/contact-details-form-fields/index.jsx @Automattic/letero
-/client/components/gsuite @Automattic/letero
-/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/letero
-/client/lib/domains/email-forwarding @Automattic/letero
-/client/lib/gsuite @Automattic/letero
-/client/lib/titan @Automattic/letero
-/client/me/purchases/remove-purchase/index.jsx @Automattic/letero
-/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/letero
-/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/letero
-/client/my-sites/checkout/checkout/index.jsx @Automattic/letero
-/client/my-sites/checkout/controller.jsx @Automattic/letero
-/client/my-sites/domains/components/domain-warnings @Automattic/letero
-/client/my-sites/domains/controller.jsx @Automattic/letero
-/client/my-sites/email @Automattic/letero
-/client/state/data-layer/wpcom/gsuite-users @Automattic/letero
-/client/state/gsuite-users @Automattic/letero
+/client/components/data/query-gsuite-users @Automattic/yolo
+/client/components/domains/contact-details-form-fields/index.jsx @Automattic/yolo
+/client/components/gsuite @Automattic/yolo
+/client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/yolo
+/client/lib/domains/email-forwarding @Automattic/yolo
+/client/lib/gsuite @Automattic/yolo
+/client/lib/titan @Automattic/yolo
+/client/me/purchases/remove-purchase/index.jsx @Automattic/yolo
+/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/yolo
+/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/yolo
+/client/my-sites/checkout/checkout/index.jsx @Automattic/yolo
+/client/my-sites/checkout/controller.jsx @Automattic/yolo
+/client/my-sites/domains/components/domain-warnings @Automattic/yolo
+/client/my-sites/domains/controller.jsx @Automattic/yolo
+/client/my-sites/email @Automattic/yolo
+/client/state/data-layer/wpcom/gsuite-users @Automattic/yolo
+/client/state/gsuite-users @Automattic/yolo
 
 # Payments
 /client/lib/checkout/ @Automattic/shilling
@@ -47,9 +47,9 @@
 /packages/wpcom-checkout/ @Automattic/shilling
 
 # Reader
-/client/reader @Automattic/reader
-/client/blocks/reader-* @Automattic/reader
-/client/state/reader @Automattic/reader
+/client/reader @Automattic/loop
+/client/blocks/reader-* @Automattic/loop
+/client/state/reader @Automattic/loop
 
 # Types, TypeScript, and type annotations
 /client/types.ts @Automattic/type-review
@@ -82,33 +82,16 @@
 /packages/languages @Automattic/i18n
 
 # Domains
-/client/components/data/domain-management @Automattic/nomado
-/client/components/data/query-countries/domains.jsx @Automattic/nomado
-/client/components/domains @Automattic/nomado
 /client/data/domains @Automattic/nomado
-/client/document/domains-landing.jsx @Automattic/nomado
-/client/landing/domains @Automattic/nomado
-/client/lib/domains @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domain-mapping-details.jsx @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domain-registration-details.jsx @Automattic/nomado
-/client/my-sites/checkout/checkout-thank-you/domains @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-contact-details.tsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-refund-policy.jsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-registration-agreement.jsx @Automattic/nomado
 /client/my-sites/checkout/composite-checkout/components/domain-registration-hsts.jsx @Automattic/nomado
-/client/my-sites/current-site/domain-warnings.jsx @Automattic/nomado
-/client/my-sites/domains @Automattic/nomado
-/client/signup/steps/domains @Automattic/nomado
-/client/signup/steps/site-or-domain/domain-image.jsx @Automattic/nomado
 /client/state/data-layer/wpcom/domains @Automattic/nomado
 /client/state/domains @Automattic/nomado
 /client/state/sites/domains @Automattic/nomado
 /packages/data-stores/src/domain-suggestions @Automattic/nomado
-/packages/domain-picker @Automattic/nomado
 /packages/wpcom.js/src/lib/domain.dns.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domain.email.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domain.js @Automattic/nomado
-/packages/wpcom.js/src/lib/domains.js @Automattic/nomado
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech-decepticons
@@ -117,30 +100,6 @@
 /packages/data-stores/plans @Automattic/martech-decepticons
 /packages/data-stores/add-ons @Automattic/martech-decepticons
 /packages/data-stores/wpcom-plans-ui @Automattic/martech-decepticons
-
-# Importing
-/client/my-sites/importer @Automattic/caribou
-/client/blocks/import @Automattic/caribou
-/client/blocks/import-light @Automattic/caribou
-/client/landing/stepper/declarative-flow/import-flow.ts @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-list @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-not @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-preview @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/import-ready-wpcom @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-blogger @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-medium @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-squarespace @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wix @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/importer-wordpress @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/migration-handler @Automattic/caribou
-/client/landing/stepper/declarative-flow/internals/steps-repository/site-picker @Automattic/caribou
-
-# Renovate config
-/renovate.json5 @noahtallen
-/.github/workflows/renovate.yml @noahtallen
 
 # Support
 /packages/help-center @Automattic/vertex

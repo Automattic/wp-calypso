@@ -27,6 +27,32 @@ export const useFormErrorMapping = (
 		[ translate ]
 	);
 
+	const getCredentialsErrorMessage = useCallback(
+		( errorCode: number | undefined ) => {
+			switch ( errorCode ) {
+				case 404:
+					return {
+						from_url: {
+							type: 'manual',
+							message: translate( 'Check your site address.' ),
+						},
+					};
+				default:
+					return {
+						username: {
+							type: 'manual',
+							message: translate( 'Check your username.' ),
+						},
+						password: {
+							type: 'manual',
+							message: translate( 'Check your password.' ),
+						},
+					};
+			}
+		},
+		[ translate ]
+	);
+
 	const getTranslatedMessage = useCallback(
 		( key: string ) => {
 			return (
@@ -52,6 +78,18 @@ export const useFormErrorMapping = (
 				};
 			}
 
+			if ( code === 'automated_migration_tools_login_and_get_cookies_test_failed' ) {
+				return {
+					root: {
+						type: 'special',
+						message: translate(
+							'We could not verify your credentials. Can you double check your account information and try again?'
+						),
+					},
+					...getCredentialsErrorMessage( data?.response_code ),
+				};
+			}
+
 			if ( code !== 'rest_invalid_param' || ! data?.params ) {
 				return { root: { type: 'manual', message } };
 			}
@@ -69,13 +107,18 @@ export const useFormErrorMapping = (
 				{} as Record< string, { type: string; message: string } >
 			);
 		},
-		[ getTranslatedMessage, translate ]
+		[ getTranslatedMessage, translate, getCredentialsErrorMessage ]
 	);
 
 	return useMemo( () => {
-		if ( error && variables ) {
-			return handleServerError( error, variables ) as FieldErrors< CredentialsFormData >;
+		const serverError = error && variables ? handleServerError( error, variables ) : undefined;
+
+		if ( serverError ) {
+			return {
+				...( serverError || {} ),
+			};
 		}
+
 		return undefined;
 	}, [ error, handleServerError, variables ] );
 };

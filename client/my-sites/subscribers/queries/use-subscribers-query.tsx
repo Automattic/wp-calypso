@@ -11,6 +11,7 @@ type SubscriberQueryParams = {
 	perPage?: number;
 	search?: string;
 	sortTerm?: SubscribersSortBy;
+	sortOrder?: 'asc' | 'desc';
 	filterOption?: SubscribersFilterBy;
 	timestamp: number;
 };
@@ -22,6 +23,7 @@ const useSubscribersQuery = ( {
 	search,
 	timestamp,
 	sortTerm = SubscribersSortBy.DateSubscribed,
+	sortOrder,
 	filterOption = SubscribersFilterBy.All,
 }: SubscriberQueryParams ) => {
 	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
@@ -36,7 +38,8 @@ const useSubscribersQuery = ( {
 			sortTerm,
 			filterOption,
 			hasManySubscribers,
-			timestamp
+			timestamp,
+			sortOrder
 		),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.
@@ -48,10 +51,17 @@ const useSubscribersQuery = ( {
 					? SubscribersFilterBy.WPCOM
 					: filterOption;
 
+			const params = new URLSearchParams( {
+				per_page: perPage.toString(),
+				page: page.toString(),
+				[ userTypeField ]: validatedFilterOption,
+				...( search && { search } ),
+				...( sortTerm && { sort: sortTerm } ),
+				...( sortOrder && { sort_order: sortOrder } ),
+			} );
+
 			return wpcom.req.get( {
-				path: `/sites/${ siteId }/${ pathRoute }?per_page=${ perPage }&page=${ page }${
-					search ? `&search=${ encodeURIComponent( search ) }` : ''
-				}${ sortTerm ? `&sort=${ sortTerm }` : '' }&${ userTypeField }=${ validatedFilterOption }`,
+				path: `/sites/${ siteId }/${ pathRoute }?${ params.toString() }`,
 				apiNamespace: 'wpcom/v2',
 			} );
 		},

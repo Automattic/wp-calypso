@@ -62,7 +62,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
-import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
+import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
 import { resetSignup } from 'calypso/state/signup/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import CrowdsignalSignupForm from './crowdsignal';
@@ -607,6 +607,8 @@ class SignupForm extends Component {
 			if ( error_code === 'taken' ) {
 				const fieldValue = formState.getFieldValue( this.state.form, fieldName );
 				const link = addQueryArgs( { email_address: fieldValue }, this.getLoginLink() );
+				const lostPasswordLink = lostPassword( this.props.locale );
+
 				return (
 					<span key={ error_code }>
 						<p>
@@ -622,7 +624,26 @@ class SignupForm extends Component {
 												onClick={ ( event ) => this.handleLoginClick( event, fieldValue ) }
 											/>
 										),
-										pwdResetLink: <a href={ lostPassword( this.props.locale ) } />,
+										pwdResetLink: (
+											<a
+												href={ lostPasswordLink }
+												onClick={ ( event ) => {
+													event.preventDefault();
+													recordTracksEvent( 'calypso_signup_reset_password_link_click' );
+													page(
+														login( {
+															redirectTo: this.props.redirectToAfterLoginUrl,
+															locale: this.props.locale,
+															action: this.props.isWooPasswordlessJPC
+																? 'jetpack/lostpassword'
+																: 'lostpassword',
+															oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+															from: this.props.from,
+														} )
+													);
+												} }
+											/>
+										),
 									},
 								}
 							) }
@@ -710,7 +731,7 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooCoreProfilerFlow )
+							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooPasswordlessJPC )
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -999,9 +1020,7 @@ class SignupForm extends Component {
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate>
-					{ this.props.disableEmailExplanation }
-				</FormSettingExplanation>
+				<FormSettingExplanation>{ this.props.disableEmailExplanation }</FormSettingExplanation>
 			);
 		}
 	}
@@ -1288,7 +1307,8 @@ class SignupForm extends Component {
 		const isGravatar = this.props.isGravatar;
 		const emailErrorMessage = this.getErrorMessagesWithLogin( 'email' );
 		const showSeparator =
-			( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo;
+			'wpcc' !== this.props.flowName &&
+			( ( ! config.isEnabled( 'desktop' ) && this.isHorizontal() ) || this.props.isWoo );
 
 		if (
 			( this.props.isPasswordless &&
@@ -1311,7 +1331,7 @@ class SignupForm extends Component {
 				case this.props.isWoo:
 					formProps = {
 						inputPlaceholder: null,
-						submitButtonLabel: this.props.translate( 'Continue with email' ),
+						submitButtonLabel: this.props.translate( 'Continue' ),
 						submitButtonLoadingLabel: <Spinner />,
 					};
 			}
@@ -1404,7 +1424,7 @@ class SignupForm extends Component {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooCoreProfilerFlow = isWooCommerceCoreProfilerFlow( state );
+		const isWooPasswordlessJPC = isWooPasswordlessJPCFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),
@@ -1416,8 +1436,8 @@ export default connect(
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
 			isWooPasswordless: getIsWooPasswordless( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ) || isWooCoreProfilerFlow,
-			isWooCoreProfilerFlow,
+			isWoo: isWooOAuth2Client( oauth2Client ) || isWooPasswordlessJPC,
+			isWooPasswordlessJPC,
 			isP2Flow:
 				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),

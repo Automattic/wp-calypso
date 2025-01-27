@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, ScreenReaderText, Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -8,8 +7,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import GooglePhotosIcon from './google-photos-icon';
 import OpenverseIcon from './openverse-icon';
 import PexelsIcon from './pexels-icon';
 
@@ -31,12 +32,18 @@ export class MediaLibraryDataSource extends Component {
 	storeButtonRef = ( ref ) => ( this.buttonRef = ref );
 
 	togglePopover = () => {
-		this.setState( { popover: ! this.state.popover } );
+		const nextValue = ! this.state.popover;
+		this.setState( { popover: nextValue } );
+		recordTracksEvent( 'calypso_media_data_source_toggle', { expanded: nextValue } );
 	};
 
 	changeSource = ( newSource ) => () => {
 		if ( newSource !== this.props.source ) {
 			this.props.onSourceChange( newSource );
+			recordTracksEvent( 'calypso_media_data_source_change', {
+				old_source: this.props.source,
+				new_source: newSource,
+			} );
 		}
 	};
 
@@ -50,21 +57,21 @@ export class MediaLibraryDataSource extends Component {
 				icon: <Gridicon icon="image" size={ 24 } />,
 			},
 		];
-		if ( config.isEnabled( 'external-media/google-photos' ) && includeExternalMedia ) {
+		if ( includeExternalMedia ) {
 			sources.push( {
 				value: 'google_photos',
 				label: translate( 'Google Photos' ),
-				icon: <Gridicon icon="image-multiple" size={ 24 } />,
+				icon: <GooglePhotosIcon className="gridicon" />,
 			} );
 		}
-		if ( config.isEnabled( 'external-media/free-photo-library' ) && includeExternalMedia ) {
+		if ( includeExternalMedia ) {
 			sources.push( {
 				value: 'pexels',
 				label: translate( 'Pexels free photos' ),
 				icon: <PexelsIcon className="gridicon" />, // eslint-disable-line wpcalypso/jsx-classname-namespace
 			} );
 		}
-		if ( config.isEnabled( 'external-media/openverse' ) && includeExternalMedia ) {
+		if ( includeExternalMedia ) {
 			sources.push( {
 				value: 'openverse',
 				label: translate( 'Openverse free photos' ),
@@ -98,7 +105,7 @@ export class MediaLibraryDataSource extends Component {
 			'is-open': this.state.popover,
 		} );
 
-		if ( ! config.isEnabled( 'external-media' ) && ! sources.length ) {
+		if ( ! sources.length ) {
 			return null;
 		}
 

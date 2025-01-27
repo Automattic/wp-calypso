@@ -1,17 +1,21 @@
 import page from '@automattic/calypso-router';
-import { Button, FormLabel } from '@automattic/components';
+import { Button, FormLabel, Tooltip } from '@automattic/components';
+import { Icon, warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
 import { A4A_REFERRALS_DASHBOARD } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import MissingPaymentSettingsNotice from '../../referrals/common/missing-payment-settings-notice';
 import useGetTipaltiPayee from '../../referrals/hooks/use-get-tipalti-payee';
 import withMarketplaceType, {
@@ -35,10 +39,18 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
+	const user = useSelector( getCurrentUser );
+
+	const isUserUnverified = ! user?.email_verified;
+
 	const [ email, setEmail ] = useState( '' );
 	const [ message, setMessage ] = useState( '' );
 	const [ validationError, setValidationError ] = useState< ValidationState >( {} );
 	const [ tipaltiActionRequiredVisible, setTipaltiActionRequiredVisible ] = useState( false );
+
+	const ctaButtonRef = useRef< HTMLButtonElement >( null );
+
+	const [ showVerifyAccountToolip, setShowVerifyAccountToolip ] = useState( false );
 
 	const { onClearCart } = useShoppingCart();
 
@@ -73,7 +85,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 	const { data: tipaltiData } = useGetTipaltiPayee();
 
 	useEffect( () => {
-		if ( ! tipaltiData.IsPayable ) {
+		if ( tipaltiData && ! tipaltiData.IsPayable ) {
 			setTipaltiActionRequiredVisible( true );
 		}
 	}, [ tipaltiData ] );
@@ -89,12 +101,38 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_a4a_marketplace_referral_checkout_request_payment_click' )
 		);
-		requestPayment( {
-			client_email: email,
-			client_message: message,
-			product_ids: productIds,
-			licenses: licenses,
-		} );
+		requestPayment(
+			{
+				client_email: email,
+				client_message: message,
+				product_ids: productIds,
+				licenses: licenses,
+			},
+			{
+				onError: ( error ) => {
+					dispatch(
+						errorNotice(
+							error.code === 'cannot_refer_to_client'
+								? translate(
+										'Referring products to your own company is not allowed and against our {{a}}terms of service{{/a}}.',
+										{
+											components: {
+												a: (
+													<a
+														href="https://automattic.com/for-agencies/program-incentives/"
+														target="_blank"
+														rel="noopener noreferrer"
+													/>
+												),
+											},
+										}
+								  )
+								: error.message
+						)
+					);
+				},
+			}
+		);
 	}, [
 		dispatch,
 		email,
@@ -106,17 +144,23 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 		translate,
 	] );
 
+	const { isFeedbackShown } = useShowFeedback( 'referral-complete' );
+
 	useEffect( () => {
 		if ( isSuccess && !! email ) {
 			sessionStorage.setItem( MARKETPLACE_TYPE_SESSION_STORAGE_KEY, MARKETPLACE_TYPE_REGULAR );
 			page.redirect(
-				addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
+				! isFeedbackShown
+					? addQueryArgs( A4A_REFERRALS_DASHBOARD, {
+							args: { email },
+					  } ) + '#feedback'
+					: addQueryArgs( A4A_REFERRALS_DASHBOARD, { [ REFERRAL_EMAIL_QUERY_PARAM_KEY ]: email } )
 			);
 			setEmail( '' );
 			setMessage( '' );
 			onClearCart();
 		}
-	}, [ email, isSuccess, onClearCart ] );
+	}, [ email, isSuccess, onClearCart, isFeedbackShown ] );
 
 	return (
 		<>
@@ -138,7 +182,7 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_email_click' ) )
 						}
-						disabled={ ! tipaltiData.IsPayable }
+						disabled={ ! tipaltiData?.IsPayable }
 					/>
 					<div
 						className={ clsx( 'checkout__client-referral-form-footer-error', {
@@ -160,27 +204,52 @@ function RequestClientPayment( { checkoutItems }: Props ) {
 						onClick={ () =>
 							dispatch( recordTracksEvent( 'calypso_a4a_client_referral_form_message_click' ) )
 						}
-						disabled={ ! tipaltiData.IsPayable }
+						disabled={ ! tipaltiData?.IsPayable }
 					/>
 				</FormFieldset>
 			</div>
 
 			<NoticeSummary type="request-client-payment" />
 
-			<div className="checkout__aside-actions">
+			<div
+				className="checkout__aside-actions"
+				role="button"
+				tabIndex={ 0 }
+				onMouseEnter={ () => setShowVerifyAccountToolip( true ) }
+				onMouseLeave={ () => setShowVerifyAccountToolip( false ) }
+				onTouchStart={ () => setShowVerifyAccountToolip( true ) }
+			>
 				<Button
+					ref={ ctaButtonRef }
 					primary
 					onClick={ handleRequestPayment }
-					disabled={ ! hasCompletedForm }
+					disabled={ ! hasCompletedForm || isUserUnverified }
 					busy={ isPending }
 				>
 					{ translate( 'Request payment from client' ) }
+					{ isUserUnverified && <Icon icon={ warning } /> }
 				</Button>
+
+				<Tooltip
+					className="checkout__verify-account-tooltip"
+					context={ ctaButtonRef.current }
+					isVisible={ showVerifyAccountToolip && isUserUnverified }
+					position="bottom"
+				>
+					{ translate(
+						"Please verify your {{a}}account's email{{/a}} in order to begin referring products to clients.",
+						{
+							components: {
+								a: <a href="https://wordpress.com/me" target="_blank" rel="noopener noreferrer" />,
+							},
+						}
+					) }
+				</Tooltip>
 			</div>
 
 			<div className="checkout__summary-notice-item">
 				{ translate(
-					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}12 hours{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
+					'{{b}}Important:{{/b}} Your referral order link is only valid for {{u}}7 days{{/u}}. Please notify your client to complete the payment within this timeframe to avoid expiration.',
 					{
 						components: {
 							b: <b />,

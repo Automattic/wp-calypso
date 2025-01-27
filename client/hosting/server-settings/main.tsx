@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
@@ -12,30 +13,33 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySites from 'calypso/components/data/query-sites';
 import FeatureExample from 'calypso/components/feature-example';
-import Main from 'calypso/components/main';
 import { MasonryGrid } from 'calypso/components/masonry-grid';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
+import { Panel } from 'calypso/components/panel';
 import { ScrollToAnchorOnMount } from 'calypso/components/scroll-to-anchor-on-mount';
-import CacheCard from 'calypso/hosting/server-settings/components/cache-card';
 import { HostingUpsellNudge } from 'calypso/hosting/server-settings/components/hosting-upsell-nudge';
-import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card';
+import PhpMyAdminCard from 'calypso/hosting/server-settings/components/phpmyadmin-card/card';
 import RestorePlanSoftwareCard from 'calypso/hosting/server-settings/components/restore-plan-software-card';
-import SFTPCard from 'calypso/hosting/server-settings/components/sftp-card';
-import WebServerSettingsCard from 'calypso/hosting/server-settings/components/web-server-settings-card';
+import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/card';
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
+import CacheCard from 'calypso/sites/settings/caching/form';
+import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
+import WebServerSettingsCard from 'calypso/sites/settings/web-server/server-configuration-form';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isUserEligibleForFreeHostingTrial } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
@@ -98,6 +102,7 @@ type AllCardsProps = {
 	isBusinessTrial?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
+	isJetpack: boolean | null;
 };
 
 const AllCards = ( {
@@ -105,11 +110,12 @@ const AllCards = ( {
 	isBasicHostingDisabled,
 	siteId,
 	siteSlug,
+	isJetpack,
 }: AllCardsProps ) => {
 	const allCards: CardEntry[] = [
 		{
 			feature: 'sftp',
-			content: <SFTPCard disabled={ isAdvancedHostingDisabled } />,
+			content: <SftpCard disabled={ isAdvancedHostingDisabled } />,
 			type: 'advanced',
 		},
 		{
@@ -137,11 +143,27 @@ const AllCards = ( {
 		} );
 	}
 
+	if ( config.isEnabled( 'hosting-server-settings-enhancements' ) ) {
+		allCards.push( {
+			feature: 'defensive-mode',
+			content: <DefensiveModeCard disabled={ isAdvancedHostingDisabled } />,
+			type: 'advanced',
+		} );
+	}
+
 	allCards.push( {
 		feature: 'web-server-settings',
 		content: <WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />,
 		type: 'advanced',
 	} );
+
+	if ( isJetpack && siteId ) {
+		allCards.push( {
+			feature: 'jetpack-monitor',
+			content: <JetpackMonitor />,
+			type: 'basic',
+		} );
+	}
 
 	const availableTypes: CardEntry[ 'type' ][] = [];
 
@@ -167,6 +189,10 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
 
 	const siteId = useSelector( getSelectedSiteId );
+
+	const requestingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, siteId )
+	);
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC )
 	);
@@ -267,6 +293,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
 							siteId={ siteId }
 							siteSlug={ siteSlug }
+							isJetpack={ isJetpack }
 						/>
 					</MasonryGrid>
 				</WrapperComponent>
@@ -275,22 +302,29 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	};
 
 	/* We want to show the upsell banner for the following cases:
-	 *  1. The site does not have the Atomic feature.
-	 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+	 * 1. The site is on an eCommerce trial.
+	 * 2. The site does not have the Atomic feature.
+	 * 3. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
 	 * Otherwise, we show the activation notice, which may be empty.
 	 */
 	const shouldShowUpgradeBanner =
-		! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite );
+		( ! isLoadingSftpData || isECommerceTrial ) &&
+		( ! hasAtomicFeature || ( ! hasTransfer && ! hasSftpFeature && ! isWpcomStagingSite ) );
 	const banner = shouldShowUpgradeBanner ? getUpgradeBanner() : getAtomicActivationNotice();
 
+	if ( requestingSiteFeatures ) {
+		return null;
+	}
+
 	return (
-		<Main wideLayout className="page-server-settings">
+		<Panel wide className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
 					timeout={ 250 }
 					container={
-						document.querySelector< HTMLElement >( '.item-preview__content' ) ?? undefined
+						document.querySelector< HTMLElement >( '.hosting-dashboard-item-view__content' ) ??
+						undefined
 					}
 				/>
 			) }
@@ -330,7 +364,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				/>
 			) }
 			<QueryReaderTeams />
-		</Main>
+		</Panel>
 	);
 };
 

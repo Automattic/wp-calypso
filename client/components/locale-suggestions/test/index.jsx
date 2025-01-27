@@ -6,7 +6,11 @@ import { render, screen } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
 import { LocaleSuggestions } from '../';
 
-jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
+jest.mock( 'i18n-calypso', () => ( {
+	getLocaleSlug: jest.fn( () => '' ),
+	localize: jest.fn( ( component ) => component ),
+	translate: jest.fn( ( text ) => text ),
+} ) );
 jest.mock( 'calypso/components/notice', () => ( { children } ) => <>{ children }</> );
 
 describe( 'LocaleSuggestions', () => {

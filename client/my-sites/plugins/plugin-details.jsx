@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -366,7 +367,11 @@ function PluginDetails( props ) {
 			/>
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
-			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
+			{ selectedOrAllSites && 1 === selectedOrAllSites.length ? (
+				<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
+			) : (
+				<QueryJetpackSitesFeatures />
+			) }
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<QueryUserPurchases />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />

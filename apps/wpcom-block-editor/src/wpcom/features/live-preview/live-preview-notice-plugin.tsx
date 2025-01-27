@@ -1,13 +1,13 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { FC, useEffect } from 'react';
+import { getUnlock } from '../../utils';
 import { NOTICE_ID } from './constants';
 import { useCanPreviewButNeedUpgrade } from './hooks/use-can-preview-but-need-upgrade';
 import { useHideTemplatePartHint } from './hooks/use-hide-template-part-hint';
 import { usePreviewingTheme } from './hooks/use-previewing-theme';
 import { LivePreviewUpgradeButton } from './upgrade-button';
 import { LivePreviewUpgradeNotice } from './upgrade-notice';
-import { getUnlock } from './utils';
 
 const unlock = getUnlock();
 
@@ -53,6 +53,7 @@ const LivePreviewNotice: FC< {
 };
 
 const LivePreviewNoticePlugin = () => {
+	const isReady = useSelect( ( select ) => select( 'core/editor' ).__unstableIsEditorReady() );
 	const siteEditorStore = useSelect( ( select ) => select( 'core/edit-site' ), [] );
 	const previewingTheme = usePreviewingTheme();
 	const { canPreviewButNeedUpgrade, upgradePlan } = useCanPreviewButNeedUpgrade( previewingTheme );
@@ -72,7 +73,7 @@ const LivePreviewNoticePlugin = () => {
 	if ( canPreviewButNeedUpgrade ) {
 		return (
 			<>
-				<LivePreviewUpgradeButton { ...{ previewingTheme, upgradePlan } } />
+				{ isReady && <LivePreviewUpgradeButton { ...{ previewingTheme, upgradePlan } } /> }
 				<LivePreviewUpgradeNotice { ...{ previewingTheme, dashboardLink } } />
 			</>
 		);

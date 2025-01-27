@@ -181,8 +181,7 @@ class DomainProductPrice extends Component {
 
 	renderFree() {
 		const { showStrikedOutPrice, translate } = this.props;
-
-		const className = clsx( 'domain-product-price', {
+		const className = clsx( 'domain-product-price domain-product-single-price', {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 
@@ -250,7 +249,7 @@ class DomainProductPrice extends Component {
 			return this.renderSalePrice();
 		}
 
-		const className = clsx( 'domain-product-price', {
+		const className = clsx( 'domain-product-price domain-product-single-price', {
 			'is-free-domain': showStrikedOutPrice,
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
@@ -269,6 +268,17 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	/**
+	 * Used to render the price of 100-year domains, which are a one time purchase
+	 */
+	renderOneTimePrice() {
+		return (
+			<div className="domain-product-price domain-product-single-price">
+				<span>{ this.props.price }</span>
+			</div>
+		);
+	}
+
 	render() {
 		if ( this.props.isLoading ) {
 			return (
@@ -279,6 +289,8 @@ class DomainProductPrice extends Component {
 		}
 
 		switch ( this.props.rule ) {
+			case 'ONE_TIME_PRICE':
+				return this.renderOneTimePrice();
 			case 'FREE_DOMAIN':
 				return this.renderFree();
 			case 'FREE_FOR_FIRST_YEAR':

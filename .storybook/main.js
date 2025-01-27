@@ -20,4 +20,4 @@ storybookConfig.previewHead = ( head ) => `
 	</script>
 `;
 
-module.exports = storybookConfig;
+module.exports = { ...storybookConfig };

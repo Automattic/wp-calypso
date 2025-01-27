@@ -10,13 +10,14 @@
 	}
 
 	.domain-suggestion__content-domain {
+		align-items: center;
 		justify-content: space-between;
 	}
 
 	&.is-clickable {
 		cursor: pointer;
 
-		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		/* NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo */
 		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
@@ -68,7 +69,7 @@
 
 	.is-section-stepper & {
 		@include breakpoint-deprecated(">480px") {
-			flex-direction: row;
+			flex-direction: column;
 			align-items: center;
 		}
 	}
@@ -106,6 +107,7 @@
 .domain-suggestion__content {
 	width: 100%;
 	min-height: 32px;
+	gap: 16px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
@@ -146,17 +148,9 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		.is-placeholder & {
-			margin-right: 50%;
 			min-height: 22px;
 		}
 
-		.is-placeholder:nth-of-type(2n + 1) & {
-			margin-right: 52%;
-		}
-
-		.is-placeholder:nth-of-type(1) & {
-			margin-right: 40%;
-		}
 	}
 
 	> h3 {
@@ -174,25 +168,25 @@
 	}
 }
 
+.domain-registration-suggestion__title-info {
+	@include breakpoint-deprecated( ">800px" ) {
+		max-width: 55%;
+	}
+}
+
 .domain-registration-suggestion__title-wrapper {
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
 	align-items: flex-start;
 
-	@include break-mobile {
-		flex-direction: row;
-	}
-
 	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( ">480px" ) {
-			max-width: 55%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
 		@include breakpoint-deprecated( ">800px" ) {
-			max-width: 55%;
 			min-width: 55%;
 			margin-right: 1em;
 		}
@@ -258,16 +252,16 @@
 	text-align: center;
 	padding: 0.25em 3em;
 	margin-top: 10px;
+	margin-left: 0;
 
 	&:focus {
 		box-shadow: none !important;
 		border-color: #c3c4c7 !important;
 	}
 
-	@include break-mobile {
+	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
-		margin-left: 28px;
 		margin-top: 0;
 	}
 
@@ -331,6 +325,10 @@
 	margin: 0 0 10px;
 	display: flex;
 	align-items: center;
+	&:not(.featured-domain-suggestion) {
+		width: 100%;
+	}
+
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
@@ -347,7 +345,7 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
-		margin-bottom: 10px;
+		margin-bottom: 4px;
 
 		.badge {
 			border-radius: 4px;
@@ -357,7 +355,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			margin-bottom: 0;
 			flex: 1;
 		}
 	}
@@ -369,12 +366,10 @@ body.is-section-signup.is-white-signup {
 	.domain-suggestion {
 		flex-direction: column;
 		box-shadow: none;
-
 		margin: 0;
 
 		@include break-small {
 			margin: 0 20px;
-			flex-direction: row;
 		}
 
 		@include break-large {
@@ -387,6 +382,7 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
+			gap: 1rem;
 		}
 
 		.domain-product-price__free-text {
@@ -433,13 +429,13 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-			white-space: nowrap;
+			white-space: normal;
 		}
 
 		&:not(.featured-domain-suggestion) {
 			background: none;
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
-			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
+			border-top: 1px solid #fff; /*This white border is to prevent jumpiness while showing borders on hover*/
 			padding: 16px 20px;
 
 			@include break-mobile {
@@ -460,7 +456,7 @@ body.is-section-signup.is-white-signup {
 				width: unset;
 
 				@include break-small {
-					max-width: 180px;
+					flex-grow: 1;
 				}
 			}
 
@@ -508,7 +504,6 @@ body.is-section-signup.is-white-signup {
 				height: auto;
 				line-height: 20px;
 				padding: 0.57em 1.17em;
-				font-weight: 500;
 				border-radius: 4px;
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
@@ -516,7 +511,7 @@ body.is-section-signup.is-white-signup {
 
 				@include break-mobile {
 					padding: 0.65em 2.8em;
-					width: auto;
+					width: 100%;
 				}
 
 				&:focus {
@@ -548,6 +543,7 @@ body.is-section-signup.is-white-signup {
 				}
 				.domain-suggestion__chevron {
 					fill: $cod-grey;
+					margin-right: 20px;
 					margin-left: 0;
 				}
 			}

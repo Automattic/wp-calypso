@@ -5,7 +5,6 @@ const selectors = {
 	mySiteButton: '[data-tip-target="my-sites"]',
 	mobileMenuButton: '[data-tip-target="mobile-menu"]',
 	editorBackButton: '[data-tip-target="back-home"]',
-	writeButton: '.masterbar__item-new',
 	notificationsButton: 'a[href="/notifications"]',
 	meButton: 'a[data-tip-target="me"]',
 };
@@ -22,15 +21,6 @@ export class NavbarComponent {
 	 */
 	constructor( page: Page ) {
 		this.page = page;
-	}
-
-	/**
-	 * Locates and clicks on the new post button on the nav bar.
-	 *
-	 * @returns {Promise<void>} No return value.
-	 */
-	async clickNewPost(): Promise< void > {
-		await this.page.click( selectors.writeButton );
 	}
 
 	/**
