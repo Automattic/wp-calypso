@@ -130,7 +130,7 @@ export const useCredentialsForm = (
 
 	const submitWithApplicationPassword = useCallback(
 		async ( siteId: number, from: string, siteInfoResult: UrlData ) => {
-			if ( isWPCOM( siteInfoResult ) ) {
+			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
 				if ( ! siteSlug ) {
 					return;
 				}
@@ -139,8 +139,6 @@ export const useCredentialsForm = (
 					blog_url: siteSlug,
 					from_url: from,
 				} );
-				onSubmit( siteInfoResult );
-			} else if ( isNotWordPress( siteInfoResult ) ) {
 				onSubmit( siteInfoResult );
 			} else {
 				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );

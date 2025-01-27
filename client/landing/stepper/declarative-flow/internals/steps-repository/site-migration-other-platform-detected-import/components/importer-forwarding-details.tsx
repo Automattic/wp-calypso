@@ -1,6 +1,9 @@
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect } from 'react';
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSiteNotWordPressMutation } from '../hooks/use-site-not-wordpress-mutation';
+
 interface Props {
 	onSubmit: () => void;
 	onHelp: () => void;
@@ -9,6 +12,14 @@ interface Props {
 
 export const ImportPlatformForwarder: FC< Props > = ( { onSubmit, onHelp, platformName } ) => {
 	const translate = useTranslate();
+	const siteSlug = useSiteSlugParam() ?? '';
+	const { mutateAsync: siteIsNotWordPress } = useSiteNotWordPressMutation( siteSlug );
+
+	useEffect( () => {
+		if ( siteSlug ) {
+			siteIsNotWordPress();
+		}
+	}, [ siteSlug, siteIsNotWordPress ] );
 
 	const handleImport = useCallback( () => onSubmit(), [ onSubmit ] );
 	const handleHelp = useCallback( () => onHelp(), [ onHelp ] );
