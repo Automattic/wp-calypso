@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -9,29 +8,11 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
-
-function StatsModuleListing( props ) {
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, props.siteId ) );
-
-	const fullClassName = clsx(
-		props.className ?? '',
-		'stats__module--unified',
-		'stats__module-list',
-		'stats__flexible-grid-container',
-		{
-			'is-odyssey-stats': isOdysseyStats,
-			'is-jetpack': isJetpack,
-		}
-	);
-
-	return <div className={ fullClassName }>{ props.children }</div>;
-}
+import StatsModuleListing from '../shared/stats-module-listing';
 
 function StatsRealtime( props ) {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
