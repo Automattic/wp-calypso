@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,8 +33,10 @@ function StatsModuleListing( props ) {
 	return <div className={ fullClassName }>{ props.children }</div>;
 }
 
-const StatsRealtime = ( props ) => {
-	const { query, siteId, siteSlug } = props;
+function StatsRealtime( props ) {
+	const { query } = props;
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 
@@ -78,17 +80,6 @@ const StatsRealtime = ( props ) => {
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isOdysseyStats,
-		isJetpack: isJetpackSite( state, siteId ),
-	};
-} );
-
-export default connectComponent( StatsRealtime );
+export default StatsRealtime;
