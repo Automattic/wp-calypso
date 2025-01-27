@@ -16,7 +16,7 @@ const wordpressClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'wordpress',
 	} );
-	page( '/start?source=sites-dashboard&ref=topbar' );
+	page( '/start?source=sites-dashboard&ref=new-site-popover' );
 };
 
 const jetpackClick = () => {
@@ -32,7 +32,7 @@ const migrateClick = () => {
 		action: 'migrate',
 	} );
 	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=migrate'
+		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=migrate'
 	);
 };
 
@@ -42,7 +42,7 @@ const importClick = () => {
 		action: 'import',
 	} );
 	page(
-		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=topbar&action=import'
+		'/setup/hosted-site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&action=import'
 	);
 };
 
