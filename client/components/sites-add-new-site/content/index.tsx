@@ -50,7 +50,7 @@ const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
 	} );
-	window.location.href = 'https://wordpress.com/pricing/';
+	window.location.assign( 'https://wordpress.com/pricing/' );
 };
 
 export const Content = () => {
