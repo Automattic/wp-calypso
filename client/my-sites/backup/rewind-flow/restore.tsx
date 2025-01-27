@@ -274,13 +274,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			) }
 			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
+			{ rewindConfig.sqls && (
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ translate(
+						'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+					) }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+			) }
 			<>
 				{ backupCurrentlyInProgress && (
 					<RewindFlowNotice
