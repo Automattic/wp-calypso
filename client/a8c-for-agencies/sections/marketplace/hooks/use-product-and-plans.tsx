@@ -80,14 +80,14 @@ const getDisplayableJetpackProducts = ( filteredProductsAndBundles: APIProductFa
 const getDisplayableFeaturedProducts = (
 	filteredProductsAndBundles: APIProductFamilyProduct[]
 ) => {
-	const featured_product_slugs = [
+	const featuredProductSlugs = [
 		'woocommerce-advanced-notifications',
 		'jetpack-boost',
 		'woocommerce-bulk-stock-management',
 	]; // For now, we hardcode this until we understand how we want pick featured products.
 
 	return filteredProductsAndBundles.filter( ( product ) =>
-		featured_product_slugs.includes( product.slug )
+		featuredProductSlugs.includes( product.slug )
 	);
 };
 
