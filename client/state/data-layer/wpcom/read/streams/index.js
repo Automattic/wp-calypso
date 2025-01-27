@@ -193,6 +193,14 @@ const streamApis = {
 	following: {
 		path: () => '/read/following',
 		dateProperty: 'date',
+		query: ( extras ) => {
+			const sixtyDaysAgo = new Date();
+			sixtyDaysAgo.setDate( sixtyDaysAgo.getDate() - 60 );
+			return getQueryString( {
+				...extras,
+				after: sixtyDaysAgo.toISOString().split( '.' )[ 0 ] + 'Z',
+			} );
+		},
 	},
 	recent: {
 		path: () => '/read/streams/following',
