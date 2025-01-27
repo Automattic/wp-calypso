@@ -88,7 +88,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 						if ( userHasRecentOpenConversation && supportInteraction ) {
 							trackEvent( 'chat_open_previous_conversation', {
 								user_id: chat?.wpcomUserId,
-								supportInteractionId: chat?.supportInteractionId,
+								support_interaction_id: chat?.supportInteractionId,
 							} );
 							setCurrentSupportInteraction( supportInteraction );
 						}
