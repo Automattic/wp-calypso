@@ -11,11 +11,20 @@ import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-w
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import formState from 'calypso/lib/form-state';
 
+const MAX_FORWARD_DESTINATIONS = 5;
+
+/**
+ * An input field that keeps repeating itself for MAX_FORWARD_DESTINATIONS times.
+ */
 function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 	const translate = useTranslate();
 	const value = values[ index ];
 	const isValid = emailValidator.validate( value );
 	const [ initialized, setInitialized ] = React.useState( false );
+	// In case of duplicates, only warn at the second duplicate.
+	const hasDuplicates = values.some( ( v, valueIndex ) => v === value && valueIndex < index );
+	// But highlight the duplicated field any way.
+	const shouldHighlightForDuplicates = values.filter( ( v ) => v === value ).length > 1;
 
 	function handleChange( event ) {
 		const newValues = [ ...values ];
@@ -32,15 +41,19 @@ function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 				<FormTextInput
 					disabled={ disabled }
 					onChange={ handleChange }
-					isError={ ! isValid && initialized }
+					isError={ ( ! isValid && initialized ) || shouldHighlightForDuplicates }
 					value={ value }
 					onBlur={ () => setInitialized( !! value ) }
+					placeholder={ translate( 'Target email address' ) }
 				/>
 				{ ! isValid && initialized && (
 					<FormInputValidation text={ translate( 'Invalid email address' ) } isError />
 				) }
+				{ isValid && hasDuplicates && (
+					<FormInputValidation text={ translate( 'This email is duplicated' ) } isError />
+				) }
 			</FormFieldset>
-			{ value?.trim() && index < 4 && (
+			{ value?.trim() && index < MAX_FORWARD_DESTINATIONS - 1 && (
 				<RecursiveInputField values={ values } onChange={ onChange } index={ index + 1 } />
 			) }
 		</>
@@ -60,6 +73,11 @@ class EmailForwardingAddNewCompact extends Component {
 	};
 
 	isMounted = false;
+
+	/**
+	 * @type {import('calypso/lib/form-state').Controller}
+	 */
+	formStateController;
 
 	constructor( props ) {
 		super( props );

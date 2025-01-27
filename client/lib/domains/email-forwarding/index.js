@@ -25,8 +25,16 @@ export function validateField( { name, value } ) {
 	switch ( name ) {
 		case 'mailbox':
 			return /^[a-z0-9._+-]{1,64}$/i.test( value ) && ! /(^\.)|(\.{2,})|(\.$)/.test( value );
-		case 'destinations':
-			return value.filter( ( v ) => v.trim() ).every( ( v ) => emailValidator.validate( v ) );
+		case 'destinations': {
+			const nonEmpty = value.filter( ( v ) => v.trim() );
+			// don't confuse this with `hasDuplicatedEmailForwards`. That one checks source duplicates. Here we check destinations.
+			const hasDuplicates = value.length !== new Set( value ).size;
+			return (
+				! hasDuplicates &&
+				nonEmpty.length &&
+				nonEmpty.every( ( v ) => emailValidator.validate( v ) )
+			);
+		}
 		default:
 			return true;
 	}
