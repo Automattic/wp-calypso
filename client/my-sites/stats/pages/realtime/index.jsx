@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,13 +15,12 @@ import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 
-const StatsRealtime = ( props ) => {
-	const { query, siteId, siteSlug, isOdysseyStats, isJetpack } = props;
-	const translate = useTranslate();
-	const moduleStrings = statsStrings();
+function StatsModuleListing( props ) {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, props.siteId ) );
 
-	const statsModuleListClass = clsx(
-		'stats__module-list--insights',
+	const fullClassName = clsx(
+		props.className ?? '',
 		'stats__module--unified',
 		'stats__module-list',
 		'stats__flexible-grid-container',
@@ -30,6 +29,14 @@ const StatsRealtime = ( props ) => {
 			'is-jetpack': isJetpack,
 		}
 	);
+
+	return <div className={ fullClassName }>{ props.children }</div>;
+}
+
+const StatsRealtime = ( props ) => {
+	const { query, siteId, siteSlug } = props;
+	const translate = useTranslate();
+	const moduleStrings = statsStrings();
 
 	const halfWidthModuleClasses = clsx(
 		'stats__flexible-grid-item--half',
@@ -57,7 +64,7 @@ const StatsRealtime = ( props ) => {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-				<div className={ statsModuleListClass }>
+				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
 						period={ props.period }
@@ -65,7 +72,7 @@ const StatsRealtime = ( props ) => {
 						summaryUrl="https://example.com/" // { getStatHref( 'posts', query ) }
 						className={ halfWidthModuleClasses }
 					/>
-				</div>
+				</StatsModuleListing>
 				<JetpackColophon />
 			</div>
 		</Main>
