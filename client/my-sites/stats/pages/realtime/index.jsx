@@ -14,7 +14,7 @@ import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsModuleListing from '../shared/stats-module-listing';
 
-function StatsRealtime( props ) {
+function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const translate = useTranslate();
@@ -27,8 +27,9 @@ function StatsRealtime( props ) {
 	);
 
 	// TODO: Determine how query will be set up.
-	// Need a query and a URL to use Top Posts.
-	// See example on Traffic page: getStatHref( 'posts', query )
+	// Need a period, a query, and a URL to use Top Posts.
+	// See getStatHref() example on Traffic page for URL.
+	const period = {};
 	const query = {};
 	const url = '#';
 
@@ -55,7 +56,7 @@ function StatsRealtime( props ) {
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
-						period={ props.period }
+						period={ period }
 						query={ query }
 						summaryUrl={ url }
 						className={ halfWidthModuleClasses }
