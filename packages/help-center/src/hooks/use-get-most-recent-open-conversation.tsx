@@ -4,7 +4,6 @@ import { useSelect } from '@wordpress/data';
 import {
 	getZendeskConversations,
 	getConversationsFromSupportInteractions,
-	sortConversationByMostRecent,
 } from '../components/utils';
 import { HELP_CENTER_STORE } from '../stores';
 
@@ -39,7 +38,14 @@ export const useGetMostRecentOpenConversation = () => {
 			supportInteractions
 		);
 
-		const sortedConversations = sortConversationByMostRecent( filteredConversations );
+		const sortedConversations = filteredConversations.sort( ( conversationA, conversationB ) => {
+			const aCreatedAt = conversationA?.metadata?.createdAt;
+			const bCreatedAt = conversationB?.metadata?.createdAt;
+			if ( aCreatedAt && bCreatedAt ) {
+				return new Date( bCreatedAt ).getTime() - new Date( aCreatedAt ).getTime();
+			}
+			return 0;
+		} );
 
 		if ( sortedConversations?.length > 0 ) {
 			supportInteractionId = sortedConversations[ 0 ]?.metadata?.supportInteractionId;
