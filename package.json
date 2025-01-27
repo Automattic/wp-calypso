@@ -158,7 +158,6 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/launchpad": "workspace:^",
-		"@automattic/odie-client": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
 		"@automattic/typography": "workspace:^",
