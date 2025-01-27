@@ -7,7 +7,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 type StatsModuleListingProps = {
 	children: React.ReactNode;
 	className: string | null;
-	siteId: number;
+	siteId: number | null;
 };
 
 function StatsModuleListing( props: StatsModuleListingProps ) {
@@ -24,6 +24,10 @@ function StatsModuleListing( props: StatsModuleListingProps ) {
 			'is-jetpack': isJetpack,
 		}
 	);
+
+	if ( ! props.siteId ) {
+		return null;
+	}
 
 	return <div className={ fullClassName }>{ props.children }</div>;
 }
