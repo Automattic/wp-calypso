@@ -85,6 +85,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 					action: async () => {
 						if ( userHasRecentOpenConversation && supportInteraction ) {
 							trackEvent( 'chat_open_previous_conversation', {
+								source: 'ai-chat',
 								user_id: chat?.wpcomUserId,
 								supportInteractionId: chat?.supportInteractionId,
 							} );
