@@ -227,7 +227,7 @@ export default function HundredYearThankYou( {
 			  } )
 			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
 					args: {
-						domain: targetDomain?.domain, || siteSlug,
+						domain: targetDomain?.domain || siteSlug,
 					},
 			  } );
 	const hundredYearPlanDescription = translate(
