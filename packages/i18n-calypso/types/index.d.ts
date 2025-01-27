@@ -63,21 +63,8 @@ export type TranslateOptionsPluralText = TranslateOptionsPlural & { textOnly: tr
 export type TranslateResult = ExistingReactNode;
 
 export interface NumberFormatOptions {
-	/**
-	 * Number of decimal places to use.
-	 * This is just convenience over setting `minimumFractionDigits`, `maximumFractionDigits` to the same value.
-	 * ( default = 0 )
-	 */
 	decimals?: number;
-	/**
-	 * Whether to use latin numbers by default ( default = true )
-	 */
-	forceLatin?: boolean;
-	/**
-	 * `Intl.NumberFormat` options to pass through.
-	 * `minimumFractionDigits` & `maximumFractionDigits` will override `decimals` if set.
-	 */
-	numberFormatOptions?: Intl.NumberFormatOptions;
+	notation: Intl.NumberFormatOptions[ 'notation' ];
 }
 
 export type TranslateHook = (
@@ -106,6 +93,7 @@ export interface I18N {
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
+	numberFormat( number: number, numberOfDecimalPlaces?: number ): string | number;
 	numberFormat( number: number, options?: NumberFormatOptions ): string | number;
 
 	setLocale( localeData: LocaleData ): void;

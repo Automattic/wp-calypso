@@ -132,9 +132,7 @@ const PluginDetailsHeader = ( {
 							{ translate( 'Active installations' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
-							{ numberFormat( plugin.active_installs, {
-								numberFormatOptions: { notation: 'compact' },
-							} ) }
+							{ numberFormat( plugin.active_installs, { notation: 'compact' } ) }
 						</div>
 					</div>
 				) }

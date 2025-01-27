@@ -46,7 +46,7 @@ const FeedStreamSidebar = ( {
 					{ postCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ numberFormat( postCount, { numberFormatOptions: { notation: 'compact' } } ) }
+								{ numberFormat( postCount, { notation: 'compact' } ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Post', 'Posts', { count: postCount } ) }

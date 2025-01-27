@@ -18,9 +18,7 @@ export const Count = ( {
 
 	return (
 		<span ref={ forwardRef } className={ clsx( 'count', { 'is-primary': primary } ) } { ...props }>
-			{ compact
-				? numberFormat( count, { numberFormatOptions: { notation: 'compact' } } )
-				: effectiveNumberFormat( count ) }
+			{ compact ? numberFormat( count, { notation: 'compact' } ) : effectiveNumberFormat( count ) }
 		</span>
 	);
 };

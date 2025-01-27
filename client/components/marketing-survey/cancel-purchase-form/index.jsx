@@ -317,7 +317,6 @@ class CancelPurchaseForm extends Component {
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
-		// TODO clk numberFormat pass through numberFormat if it stays
 		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
 			style: 'currency',
 			currency: currencyCode,
