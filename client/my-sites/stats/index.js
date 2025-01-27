@@ -18,6 +18,7 @@ import {
 	subscribers,
 	purchase,
 	redirectToDaySummary,
+	realtime,
 } from './controller';
 
 import './style.scss';
@@ -51,6 +52,9 @@ export default function () {
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/stats', '/stats/day' );
+
+	// Realtime stats?!
+	statsPage( '/stats/realtime/:site', realtime );
 
 	// Stat Overview Page
 	statsPage( `/stats/:period(${ validPeriods })`, overview );
