@@ -9,13 +9,14 @@ import { useEffect } from 'react';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { getRegisteredDomains } from 'calypso/lib/domains';
+import { getRegisteredDomains, getTransferredInDomains } from 'calypso/lib/domains';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
-import { getSiteId, getSiteOptions } from 'calypso/state/sites/selectors';
+import { getSiteId, getSiteOptions, isRequestingSite } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
@@ -38,6 +39,7 @@ const VideoContainer = styled.div< { isMobile: boolean } >`
 const hundredYearProducts = [
 	PLAN_100_YEARS,
 	domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION,
+	domainProductSlugs.TRANSFER_IN,
 ] as const;
 
 interface Props {
@@ -155,10 +157,21 @@ export default function HundredYearThankYou( {
 		siteId ? getDomainsBySiteId( state, siteId ) : []
 	);
 	const isLoadingDomains = useSelector( ( state ) =>
-		siteId ? isRequestingSiteDomains( state, siteId ) : false
+		siteId && productSlug !== PLAN_100_YEARS
+			? isRequestingSite( state, siteId ) || isRequestingSiteDomains( state, siteId )
+			: false
 	);
-	const registeredDomains = getRegisteredDomains( siteDomains );
-	const registeredDomain = registeredDomains.length ? registeredDomains[ 0 ] : null;
+	let targetDomain: ResponseDomain | null = null;
+	switch ( productSlug ) {
+		case domainProductSlugs.TRANSFER_IN:
+			targetDomain = getTransferredInDomains( siteDomains )[ 0 ] ?? null;
+			break;
+		case domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION:
+			targetDomain = getRegisteredDomains( siteDomains )[ 0 ] ?? null;
+			break;
+		default:
+			targetDomain = null;
+	}
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
@@ -169,13 +182,20 @@ export default function HundredYearThankYou( {
 
 	if (
 		! isReceiptLoading &&
-		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId )
+		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId ) &&
+		// For transfers, the current siteId might be different - purchase performed with no site (siteId = null)
+		// and blog created after the purchase (siteId != null).
+		productSlug !== domainProductSlugs.TRANSFER_IN
 	) {
 		page( '/' );
 	}
 
 	const isMobile = useMobileBreakpoint();
-	const isPageLoading = isReceiptLoading || isLoadingDomains;
+	const isDomainDataLoaded = ! isLoadingDomains && targetDomain !== null;
+	const isPageLoading =
+		isReceiptLoading ||
+		isLoadingDomains ||
+		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
 	const hundredYearPlanCta =
 		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
 			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
@@ -189,7 +209,7 @@ export default function HundredYearThankYou( {
 	const hundredYearDomainCta = (
 		<StyledLightButton
 			onClick={ () =>
-				page( ` /domains/manage/all/${ registeredDomain.name }/edit/${ registeredDomain.name }` )
+				page( ` /domains/manage/all/${ targetDomain?.name }/edit/${ targetDomain?.name }` )
 			}
 		>
 			{ translate( 'Manage your domain' ) }
@@ -197,29 +217,40 @@ export default function HundredYearThankYou( {
 	);
 	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
 
+	const messageTarget = targetDomain?.domain || siteSlug;
+	const domainSpecificDescription =
+		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
+			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
+					args: {
+						domain: targetDomain?.domain || siteSlug, // though targetDomain?.domain should be defined here, right?
+					},
+			  } )
+			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
+					args: {
+						domain: targetDomain?.domain || siteSlug,
+					},
+			  } );
+	const hundredYearPlanDescription = translate(
+		'The %(planTitle)s for %(messageTarget)s is active.',
+		{
+			args: {
+				messageTarget,
+				planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+			},
+		}
+	);
+	const helpAndSupportDescription = translate(
+		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
+	);
+
 	const description =
 		productSlug === PLAN_100_YEARS
-			? translate(
-					'The %(planTitle)s for %(domain)s is active. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: registeredDomain?.domain || siteSlug,
-							planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-						},
-					}
-			  )
-			: translate(
-					'Your 100-Year Domain %(domain)s has been registered. Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.',
-					{
-						args: {
-							domain: registeredDomain?.domain || siteSlug,
-						},
-					}
-			  );
+			? `${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
+			: `${ domainSpecificDescription } ${ helpAndSupportDescription }`;
 
 	return (
 		<>
-			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
+			{ siteId && ! siteDomains.length && <QuerySiteDomains siteId={ siteId } /> }
 			<Global
 				styles={ css`
 					body.is-section-checkout,

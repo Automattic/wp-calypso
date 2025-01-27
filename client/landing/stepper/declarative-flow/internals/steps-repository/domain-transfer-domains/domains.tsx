@@ -261,9 +261,11 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 					variantSlug={ variantSlug }
 				/>
 			) ) }
-			<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
-				{ isHundredYearTransfer ? __( 'Add another domain' ) : __( 'Add more' ) }
-			</Button>
+			{ ! isHundredYearTransfer && (
+				<Button className="bulk-domain-transfer__add-domain" icon={ plus } onClick={ addDomain }>
+					{ __( 'Add more' ) }
+				</Button>
+			) }
 			<div className="bulk-domain-transfer__cta-container">
 				<Button
 					disabled={ numberOfValidDomains === 0 || ! allGood }

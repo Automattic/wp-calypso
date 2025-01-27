@@ -13,6 +13,7 @@ export interface ReceiptPurchase {
 	registrarSupportUrl: string;
 	isEmailVerified: boolean;
 	isRootDomainWithUs: boolean;
+	isHundredYearDomain: boolean;
 	isRenewal: boolean;
 	willAutoRenew: boolean;
 	saasRedirectUrl: string;

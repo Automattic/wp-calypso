@@ -82,6 +82,7 @@ const standardAssembledReceipt: ReceiptData = {
 			isEmailVerified: true,
 			isRenewal: false,
 			isRootDomainWithUs: false,
+			isHundredYearDomain: false,
 			meta: 'example.com',
 			newQuantity: 1,
 			productId: '54321',

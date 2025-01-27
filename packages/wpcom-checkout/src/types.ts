@@ -102,6 +102,7 @@ export interface Purchase {
 	is_email_verified?: boolean;
 	is_renewal: boolean;
 	is_root_domain_with_us?: boolean;
+	is_hundred_year_domain?: boolean;
 	meta: string | null;
 	new_quantity?: number;
 	product_id: string | number;
