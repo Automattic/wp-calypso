@@ -158,7 +158,7 @@
 		"site-indicator": true,
 		"site-profiler/metrics": true,
 		"sites/dashboard-survey": true,
-		"sites/drive-migrations": false,
+		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
