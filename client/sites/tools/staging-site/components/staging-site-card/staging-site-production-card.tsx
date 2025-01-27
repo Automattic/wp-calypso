@@ -6,12 +6,12 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
+import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
@@ -112,15 +112,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => {
-							navigate(
-								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
-									productionSite.url
-								) }`,
-								false,
-								true
-							);
-						} }
+						onClick={ () => showSitesPage( `/overview/${ urlToSlug( productionSite.url ) }` ) }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
