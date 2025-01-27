@@ -11,13 +11,18 @@ body.is-section-subscribers.is-subscribers-dataviews,
     overflow: hidden;
     
     .layout:not(.has-no-sidebar),
-    .layout.focus-content.is-group-jetpack-cloud.is-section-jetpack-subscribers.has-no-masterbar {
+    .has-no-masterbar {
         .layout__content {
             background: var(--studio-gray-0);
             padding: calc(var(--masterbar-height) + #{$padding-standard})
                  $padding-standard
                  $padding-standard
                  calc(var(--sidebar-width-max) + #{$padding-standard});
+
+            // This is a Jetpack Cloud breakpoint.
+            @media( max-width: 660px ) {
+                padding-left: $padding-standard;
+            }
         }
     }
 
@@ -48,6 +53,7 @@ body.is-section-subscribers.is-subscribers-dataviews,
             button {
                 cursor: pointer;
                 max-width: 100%;
+                border: none;
             }
         
             .subscriber-data-views__square-avatar {
