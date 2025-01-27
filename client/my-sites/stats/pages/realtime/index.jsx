@@ -34,7 +34,6 @@ function StatsModuleListing( props ) {
 }
 
 function StatsRealtime( props ) {
-	const { query } = props;
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const translate = useTranslate();
@@ -45,6 +44,12 @@ function StatsRealtime( props ) {
 		'stats__flexible-grid-item--full--large',
 		'stats__flexible-grid-item--full--medium'
 	);
+
+	// TODO: Determine how query will be set up.
+	// Need a query and a URL to use Top Posts.
+	// See example on Traffic page: getStatHref( 'posts', query )
+	const query = {};
+	const url = '#';
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -71,7 +76,7 @@ function StatsRealtime( props ) {
 						moduleStrings={ moduleStrings.posts }
 						period={ props.period }
 						query={ query }
-						summaryUrl="https://example.com/" // { getStatHref( 'posts', query ) }
+						summaryUrl={ url }
 						className={ halfWidthModuleClasses }
 					/>
 				</StatsModuleListing>
