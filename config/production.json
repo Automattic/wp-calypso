@@ -94,7 +94,6 @@
 		"login/magic-login": true,
 		"login/social-first": true,
 		"mailchimp": true,
-		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": false,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,

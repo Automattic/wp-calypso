@@ -77,7 +77,6 @@
 		"login/last-used-method": true,
 		"login/social-first": true,
 		"mailchimp": false,
-		"marketplace-domain-bundle": false,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,

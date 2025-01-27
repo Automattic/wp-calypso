@@ -119,7 +119,6 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
-		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,
