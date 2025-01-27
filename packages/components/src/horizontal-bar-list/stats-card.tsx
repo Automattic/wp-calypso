@@ -1,31 +1,38 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import StatsHeroCard from './stats-hero-card';
 import type { StatsCardProps } from './types';
 
 import './stats-card.scss';
 
 const BASE_CLASS_NAME = 'stats-card';
 
-const StatsCard = ( {
-	children,
-	className,
-	title,
-	titleURL,
-	titleAriaLevel = 4,
-	titleNodes,
-	footerAction,
-	isEmpty,
-	emptyMessage,
-	heroElement,
-	splitHeader,
-	metricLabel,
-	mainItemLabel,
-	additionalHeaderColumns,
-	toggleControl,
-	headerClassName,
-	overlay,
-}: StatsCardProps ) => {
+const StatsCard = ( props: StatsCardProps ) => {
 	const translate = useTranslate();
+	const { heroElement, splitHeader, toggleControl } = props;
+
+	// Isolate the rendering logic for the Locations module into a new component.
+	// This ensures the existing StatsCard component remains unchanged, allowing us to safely iterate on it.
+	if ( heroElement && splitHeader && toggleControl ) {
+		return <StatsHeroCard { ...props } />;
+	}
+
+	const {
+		children,
+		className,
+		title,
+		titleURL,
+		titleAriaLevel = 4,
+		titleNodes,
+		footerAction,
+		isEmpty,
+		emptyMessage,
+		metricLabel,
+		mainItemLabel,
+		additionalHeaderColumns,
+		headerClassName,
+		overlay,
+	} = props;
 
 	const titleNode = titleURL ? (
 		<a href={ `${ titleURL }` } className={ `${ BASE_CLASS_NAME }-header__title` }>

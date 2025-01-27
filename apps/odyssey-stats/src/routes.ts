@@ -94,6 +94,7 @@ export default function ( pageBase = '/' ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',

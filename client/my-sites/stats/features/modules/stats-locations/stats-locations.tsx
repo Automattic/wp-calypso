@@ -145,14 +145,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
-			{ geoMode !== 'country' && ! summaryUrl && (
-				<CountryFilter
-					countries={ countriesList }
-					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-					selectedCountry={ countryFilter }
-					onCountryChange={ onCountryChange }
-				/>
-			) }
 		</>
 	);
 
@@ -225,14 +217,29 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								} ) }
 							</StatsInfoArea>
 						}
-						moduleType="countryviews"
+						moduleType="locations"
 						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
 						heroElement={
-							<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+							<>
+								<Geochart
+									data={ locationData }
+									geoMode={ geoMode }
+									skipQuery
+									customHeight={ 480 }
+								/>
+								{ geoMode !== 'country' && ! summaryUrl && (
+									<CountryFilter
+										countries={ countriesList }
+										defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+										selectedCountry={ countryFilter }
+										onCountryChange={ onCountryChange }
+									/>
+								) }
+							</>
 						}
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
