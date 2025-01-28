@@ -4,7 +4,8 @@
 $break-large-stats-countries: 1280px;
 $locations-horizontal-bar-width: 380px;
 
-.stats-card.list-locations {
+.stats-card.list-locations,
+.stats-card-skeleton.locations-skeleton {
 	@include segmented-controls;
 
 	.stats-card-header {
@@ -53,13 +54,23 @@ $locations-horizontal-bar-width: 380px;
 	}
 }
 
-.stats-summary-view .stats-card.list-locations {
-	.stats-card--hero .stats-card-header {
-		padding: 0 24px 12px 0;
+.stats-summary-view {
+	.stats-card.list-locations,
+	.stats-card-skeleton.locations-skeleton {
+		.stats-card--hero .stats-card-header {
+			padding: 0 24px 12px 0;
+		}
+	}
+
+	.stats-card-skeleton.locations-skeleton {
+		&.stats-card-skeleton--with-hero .stats-card__content {
+			flex-direction: column;
+		}
 	}
 }
 
-.stats__module-list--traffic .stats-card.list-locations {
+.stats__module-list--traffic .stats-card.list-locations,
+.stats__module-list--traffic .stats-card-skeleton.locations-skeleton {
 	.stats-card-header {
 		padding: 0 24px;
 	}
@@ -87,8 +98,21 @@ $locations-horizontal-bar-width: 380px;
 	}
 }
 
+.stats__module-list--traffic .stats-card-skeleton.locations-skeleton .stats-card--hero {
+	width: auto;
+}
+
+.stats-card-skeleton.locations-skeleton .stats-card--hero,
+.stats-card.list-locations .stats-card--hero {
+	.stats-card-skeleton__placeholder,
+	.stats-geochart.stats-module__placeholder {
+		height: 480px;
+	}
+}
+
 @include break-large {
-	.stats-card.list-locations .stats-card-header {
+	.stats-card.list-locations .stats-card-header,
+	.stats-card-skeleton.locations-skeleton .stats-card-header {
 		.segmented-control.stats-module-locations__tabs {
 			flex: none;
 		}
@@ -100,13 +124,15 @@ $locations-horizontal-bar-width: 380px;
 }
 
 @include break-wide {
-	.stats__module-list--traffic .stats-card.list-locations .stats-card__content {
+	.stats__module-list--traffic .stats-card.list-locations .stats-card__content,
+	.stats__module-list--traffic .stats-card-skeleton.locations-skeleton .stats-card__content {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
 	}
 
-	.stats-card.list-locations {
+	.stats-card.list-locations,
+	.stats-card-skeleton.locations-skeleton {
 		.stats-card__content .stats-card--hero {
 			flex: 2;
 			margin: 0 24px;

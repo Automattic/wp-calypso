@@ -12,10 +12,7 @@ import {
 import InterestsModal from 'calypso/reader/onboarding/interests-modal';
 import SubscribeModal from 'calypso/reader/onboarding/subscribe-modal';
 import { useDispatch, useSelector } from 'calypso/state';
-import {
-	getCurrentUserDate,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
+import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
@@ -40,7 +37,6 @@ const ReaderOnboarding = ( {
 	);
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
 	const userRegistrationDate = useSelector( getCurrentUserDate );
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const dispatch = useDispatch();
 
@@ -50,7 +46,6 @@ const ReaderOnboarding = ( {
 		( preferencesLoaded &&
 			! hasCompletedOnboarding &&
 			userRegistrationDate &&
-			isEmailVerified &&
 			new Date( userRegistrationDate ) >= new Date( '2024-10-01T00:00:00Z' ) );
 
 	// Modal state handlers with tracking.
@@ -103,6 +98,21 @@ const ReaderOnboarding = ( {
 			openInterestsModal();
 		}
 	}, [ shouldShowOnboarding, hasSeenOnboarding, dispatch ] );
+
+	// Reopen subscription onboarding page if prompted by query param.
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		const loadSubsStep = params.get( 'reloadSubscriptionOnboarding' );
+		if ( loadSubsStep ) {
+			openDiscoverModal();
+		}
+		params.delete( 'reloadSubscriptionOnboarding' );
+		window.history.replaceState(
+			{},
+			'',
+			`${ window.location.pathname }${ params.toString() ? '?' + params.toString() : '' }`
+		);
+	}, [] );
 
 	// Notify the parent component if onboarding will render.
 	onRender?.( shouldShowOnboarding );

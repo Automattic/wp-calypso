@@ -24,10 +24,6 @@ export class SocialConnectionsManager {
 				// The request that deals with connection test results on Simple sites
 				`wpcom/v2/(?<site_prefix>sites/${ this.siteId }/)?publicize/connections`
 			),
-			CONNECTION_TESTS__LEGACY: new RegExp(
-				// The request that deals with legacy connection test results on Simple sites
-				`wpcom/v2/publicize/connection-test-results`
-			),
 			GET_POST: new RegExp(
 				// The request that gets the post data in the editor
 				`wp/v2/sites/${ this.siteId }/posts/[0-9]+`
@@ -93,11 +89,6 @@ export class SocialConnectionsManager {
 	 * Check if the URL is a connection test URL for atomic sites
 	 */
 	isAtomicConnectionTestUrl( url: URL ) {
-		// TODO - Remove the legacy connection test check
-		if ( this.patterns.CONNECTION_TESTS__LEGACY.test( url.pathname ) ) {
-			return true;
-		}
-
 		const match = this.patterns.CONNECTION_TESTS.exec( url.pathname );
 
 		return Boolean(
