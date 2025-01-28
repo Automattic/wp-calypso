@@ -4,10 +4,9 @@
 	width: 100%;
 	box-sizing: border-box;
 
-	@import "@wordpress/components/build-style/style.css";
-	@import "@wordpress/edit-post/build-style/style.css";
-	@import "@wordpress/block-editor/build-style/style.css";
-	@import "@wordpress/block-editor/build-style/content.css";
+	@import "@wordpress/components/build-style/style";
+	@import "@wordpress/block-editor/build-style/style";
+	@import "@wordpress/block-editor/build-style/content";
 
 	.editor__header {
 		top: 0;
