@@ -278,6 +278,7 @@ export interface SiteDetailsOptions {
 	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
+	site_creation_flow?: string;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;

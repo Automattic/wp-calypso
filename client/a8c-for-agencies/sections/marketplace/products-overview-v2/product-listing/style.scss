@@ -1,0 +1,83 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.product-listing-section__content,
+.product-listing-section__header {
+	max-width: 1500px;
+	margin-inline: auto;
+	padding-inline: 16px;
+
+	@include break-medium {
+		padding-inline: 64px;
+	}
+}
+
+.product-listing-section__header-wrapper {
+	background-color: var( --color-surface );
+	padding-block: 32px;
+}
+
+.product-listing-section__header {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+
+	@include break-medium {
+		flex-wrap: wrap;
+	}
+}
+
+.product-listing-section__header-title {
+	@include a4a-font-heading-lg;
+}
+
+.product-listing-section__header-subtitle {
+	@include a4a-font-body-md;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.product-listing-section__content {
+	display: grid;
+	gap: 16px;
+	grid-template-columns: 1fr;
+	margin-block-end: 32px;
+
+	@include break-large {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	@include break-huge {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.product-listing-empty {
+	margin-inline: auto;
+	text-align: center;
+	padding: 32px;
+}
+
+.product-listing-empty__message {
+	text-align: center;
+	padding: 16px;
+	border-radius: 4px;
+	max-width: 800px;
+	margin: 64px auto 0;
+}
+
+.product-listing-empty__message-heading {
+	// TODO: Replace with Heading LG
+	font-size: rem(15px);
+	font-weight: 500;
+}
+
+.product-listing-empty__message-description {
+	// TODO: Replace with Body MD
+	font-size: rem(13px);
+	color: var(--color-neutral-50);
+}

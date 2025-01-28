@@ -293,9 +293,9 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 	listSlug,
 } );
 
-export function requestUserLists( userSlug ) {
+export function requestUserLists( userLogin ) {
 	return {
 		type: READER_USER_LISTS_REQUEST,
-		userSlug,
+		userLogin,
 	};
 }

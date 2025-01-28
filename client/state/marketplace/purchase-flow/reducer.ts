@@ -1,5 +1,4 @@
 import {
-	MARKETPLACE_PRIMARY_DOMAIN_SELECT,
 	MARKETPLACE_PLUGIN_INSTALLATION_STATE_CHANGE,
 	MARKETPLACE_QUEUE_PRODUCT_INSTALL,
 } from 'calypso/state/action-types';
@@ -19,11 +18,6 @@ const purchaseFlow = withSchemaValidation(
 	purchaseFlowSchema,
 	( state: IPurchaseFlowState = defaultState, action: AnyAction ): IPurchaseFlowState => {
 		switch ( action.type ) {
-			case MARKETPLACE_PRIMARY_DOMAIN_SELECT:
-				return {
-					...state,
-					primaryDomain: action.domainName,
-				};
 			case MARKETPLACE_QUEUE_PRODUCT_INSTALL:
 				return {
 					...state,

@@ -95,7 +95,6 @@
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech-decepticons
-/packages/plans-grid @Automattic/martech-decepticons
 /packages/plans-grid-next @Automattic/martech-decepticons
 /packages/data-stores/plans @Automattic/martech-decepticons
 /packages/data-stores/add-ons @Automattic/martech-decepticons

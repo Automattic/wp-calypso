@@ -2,7 +2,7 @@ import {
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
 } from 'calypso/state/action-types';
-import setUserSetting, { ALLOW_EMPTY_DEFAULTS } from '../set-user-setting';
+import setUserSetting from '../set-user-setting';
 
 describe( 'setUserSetting()', () => {
 	test( 'should store the new value to unsaved settings', () => {
@@ -52,27 +52,6 @@ describe( 'setUserSetting()', () => {
 		setUserSetting( 'baz', 'qix' )( dispatch, getState );
 
 		expect( dispatch ).toHaveBeenCalledTimes( 0 );
-	} );
-
-	test( 'should allow to set a setting which originally is `undefined` if defined in `ALLOW_EMPTY_VALUES`', () => {
-		/* @TODO: this started as a workaround; this test is obsolete in case
-		the workaround gets fixed at some point. See FIXME comment in
-		client/state/user-settings/thunks/set-user-setting.js */
-		const dispatch = jest.fn();
-		const getState = () => ( {
-			userSettings: {
-				settings: {},
-				unsavedSettings: {},
-			},
-		} );
-
-		setUserSetting( ALLOW_EMPTY_DEFAULTS[ 0 ], 'foo' )( dispatch, getState );
-
-		expect( dispatch ).toHaveBeenCalledWith( {
-			type: USER_SETTINGS_UNSAVED_SET,
-			settingName: [ 'calypso_preferences', 'colorScheme' ],
-			value: 'foo',
-		} );
 	} );
 
 	test( 'should not consider settings unchanged when set back to original values for `user_login`', () => {

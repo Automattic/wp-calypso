@@ -11,7 +11,6 @@ import { Flow } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
 const migrationFlows = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW, MIGRATION_SIGNUP_FLOW ];
-
 const availableCountries = [ 'US', 'IN' ];
 
 const isMigrationSurveyAvailable = ( {
