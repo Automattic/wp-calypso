@@ -3,7 +3,7 @@ import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, _n } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
@@ -48,8 +48,7 @@ const ChatDate = ( { chat }: { chat: Chat } ) => {
 };
 
 const ViewMostRecentOpenConversationNotice = () => {
-	const { userHasRecentOpenConversation, supportInteractionId } =
-		useGetMostRecentOpenConversation();
+	const { supportInteractionId, totalNumberOfConversations } = useGetMostRecentOpenConversation();
 	const { data: supportInteraction } = useGetSupportInteractionById(
 		supportInteractionId?.toString() ?? null
 	);
@@ -57,10 +56,10 @@ const ViewMostRecentOpenConversationNotice = () => {
 	const { trackEvent } = useOdieAssistantContext();
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { chat } = useOdieAssistantContext();
+	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
 
 	return (
-		supportInteraction && (
+		shouldDisplayNotice && (
 			<OdieNotice>
 				<div className="odie-notice__view-conversation">
 					<span>
@@ -69,19 +68,27 @@ const ViewMostRecentOpenConversationNotice = () => {
 					&nbsp;
 					<button
 						onClick={ () => {
-							if ( userHasRecentOpenConversation && supportInteraction ) {
-								trackEvent( 'chat_open_previous_conversation_notice', {
-									user_id: chat?.wpcomUserId,
-									support_interaction_id: chat?.supportInteractionId,
-								} );
+							const destination = supportInteraction ? 'support-interaction' : 'chat-history';
+
+							if ( supportInteraction ) {
 								setCurrentSupportInteraction( supportInteraction );
 								if ( ! location.pathname.includes( '/odie' ) ) {
 									navigate( '/odie' );
 								}
+							} else {
+								navigate( '/chat-history' );
 							}
+							trackEvent( 'chat_open_previous_conversation_notice', {
+								destination,
+							} );
 						} }
 					>
-						{ __( 'View conversation', __i18n_text_domain__ ) }
+						{ _n(
+							'View conversation',
+							'View conversations',
+							totalNumberOfConversations,
+							__i18n_text_domain__
+						) }
 					</button>
 				</div>
 			</OdieNotice>
