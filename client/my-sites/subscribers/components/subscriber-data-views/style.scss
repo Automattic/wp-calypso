@@ -99,8 +99,8 @@ body.is-section-subscribers.is-subscribers-dataviews,
                     overflow: hidden;
                     box-sizing: border-box;
 
-                    @media ( max-width: 430px ) {
-                        margin: 0;
+                    @media ( max-width: $break-small ) {
+                        margin: 0 auto;
                         padding: 16px;
                     }
                 }
