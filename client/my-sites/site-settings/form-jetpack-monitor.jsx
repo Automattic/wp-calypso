@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
-import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { HostingCard } from 'calypso/components/hosting-card';
 import SupportInfo from 'calypso/components/support-info';
 import withSiteMonitorSettings from 'calypso/data/site-monitor/with-site-monitor-settings';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
@@ -86,10 +86,11 @@ class SiteSettingsFormJetpackMonitor extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<PanelCard className="jetpack-monitor-settings">
+			<HostingCard
+				className="jetpack-monitor-settings"
+				title={ translate( 'Downtime monitoring' ) }
+			>
 				<QueryJetpackModules siteId={ siteId } />
-
-				<PanelCardHeading>{ translate( 'Downtime monitoring' ) }</PanelCardHeading>
 
 				<SupportInfo
 					text={ translate(
@@ -111,7 +112,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 					{ this.settingsMonitorEmailCheckbox() }
 					{ this.settingsMonitorWpNoteCheckbox() }
 				</div>
-			</PanelCard>
+			</HostingCard>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

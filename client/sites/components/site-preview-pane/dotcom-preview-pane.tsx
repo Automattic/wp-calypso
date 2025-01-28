@@ -88,7 +88,6 @@ const DotcomPreviewPane = ( {
 		( async () => {
 			const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
 			if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
-				console.log( 'You are in the duplicate views experiment' );
 				setIsDuplicateViewsExperiment( true );
 			}
 		} )();
@@ -181,7 +180,7 @@ const DotcomPreviewPane = ( {
 				featureIds: [ TOOLS ],
 			},
 			{
-				label: __( 'Site Settings' ),
+				label: __( 'Settings' ),
 				enabled: config.isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment,
 				featureIds: [
 					SETTINGS_SITE,
@@ -228,14 +227,15 @@ const DotcomPreviewPane = ( {
 			};
 		} );
 	}, [
+		isAtomicSite,
+		isPlanExpired,
 		__,
-		site,
 		hasEnTranslation,
+		isSimpleSite,
+		site,
+		isDuplicateViewsExperiment,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
-		isSimpleSite,
-		isPlanExpired,
-		isAtomicSite,
 	] );
 
 	const itemData: ItemData = {

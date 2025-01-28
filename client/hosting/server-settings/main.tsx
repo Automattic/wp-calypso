@@ -177,6 +177,52 @@ const AllCards = ( {
 	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
+const InnerDiv = ( { children }: { children: React.ReactNode } ) => <>{ children }</>;
+
+const Content = ( {
+	hasAtomicFeature,
+	hasSftpFeature,
+	hasTransfer,
+	isBusinessTrial,
+	isJetpack,
+	isSiteAtomic,
+	siteId,
+	siteSlug,
+}: {
+	hasAtomicFeature: boolean;
+	hasSftpFeature: boolean;
+	hasTransfer: boolean;
+	isBusinessTrial: boolean;
+	isJetpack: boolean | null;
+	isSiteAtomic: boolean;
+	siteId: number | null;
+	siteSlug: string | null;
+} ) => {
+	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
+
+	const isDuplicateViewsExperiment = true;
+	const Inner = isDuplicateViewsExperiment ? InnerDiv : MasonryGrid;
+
+	return (
+		<>
+			{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
+			{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<WrapperComponent>
+				<Inner>
+					<AllCards
+						isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+						isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+						isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						isJetpack={ isJetpack }
+					/>
+				</Inner>
+			</WrapperComponent>
+		</>
+	);
+};
+
 type ServerSettingsProps = {
 	fetchUpdatedData: () => void;
 };
@@ -236,7 +282,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				fetchUpdatedData();
 			}
 		},
-		[ hasTransfer ]
+		[ fetchUpdatedData, hasTransfer ]
 	);
 
 	const getPageTitle = () => {
@@ -276,33 +322,6 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				</Notice>
 			);
 		}
-	};
-
-	const getContent = () => {
-		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
-		const isDuplicateViewsExperiment = true;
-		const Inner = isDuplicateViewsExperiment
-			? ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
-			: MasonryGrid;
-
-		return (
-			<>
-				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
-				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
-				<WrapperComponent>
-					<Inner>
-						<AllCards
-							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
-							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							isJetpack={ isJetpack }
-						/>
-					</Inner>
-				</WrapperComponent>
-			</>
-		);
 	};
 
 	/* We want to show the upsell banner for the following cases:
@@ -356,7 +375,16 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					}
 				/>
 			) }
-			{ getContent() }
+			<Content
+				hasAtomicFeature={ hasAtomicFeature }
+				hasSftpFeature={ hasSftpFeature }
+				hasTransfer={ hasTransfer }
+				isBusinessTrial={ isBusinessTrial }
+				isJetpack={ isJetpack }
+				isSiteAtomic={ isSiteAtomic }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+			/>
 			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
 				<TrialAcknowledgeModal
 					setOpenModal={ ( isOpen ) => {

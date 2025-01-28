@@ -5,9 +5,10 @@ import { info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FormSelect from 'calypso/components/forms/form-select';
+import { HostingCard } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
+import { PanelCardDescription } from 'calypso/components/panel';
 import {
 	useEdgeCacheDefensiveModeMutation,
 	useEdgeCacheDefensiveModeQuery,
@@ -61,13 +62,12 @@ export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps 
 	const enabledUntil = moment.unix( defensiveModeData?.enabled_until ?? 0 ).local();
 
 	return (
-		<PanelCard>
-			<PanelCardHeading>
-				{ translate( 'Defensive mode', {
-					comment: 'Defensive mode is a feature to protect against DDoS attacks.',
-					textOnly: true,
-				} ) }
-			</PanelCardHeading>
+		<HostingCard
+			title={ translate( 'Defensive mode', {
+				comment: 'Defensive mode is a feature to protect against DDoS attacks.',
+				textOnly: true,
+			} ) }
+		>
 			<PanelCardDescription>
 				{ translate(
 					'Extra protection against spam bots and attacks. Visitors will see a quick loading page while we run additional security checks. {{a}}Learn more{{/a}}',
@@ -191,6 +191,6 @@ export default function DefensiveModeForm( { disabled }: DefensiveModeFormProps 
 					</Button>
 				</>
 			) }
-		</PanelCard>
+		</HostingCard>
 	);
 }
