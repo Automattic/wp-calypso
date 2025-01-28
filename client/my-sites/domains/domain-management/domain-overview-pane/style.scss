@@ -211,7 +211,12 @@
 	.hosting-dashboard-item-view__content div {
 		flex-grow: 1;
 
+		.domain-forwarding-card__fields:last-child {
+			margin-bottom: 0;
+		}
+
 		.domain-forwarding-card__accordion .link-button {
+			margin-top: 1.5rem;
 			color: var(--color-link);
 		}
 	}
