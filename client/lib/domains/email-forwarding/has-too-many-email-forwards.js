@@ -6,7 +6,9 @@ const MAX_FORWARD_DESTINATIONS = 5;
  */
 export function hasTooManyEmailForwardsForMailbox( newEmailForward, existingEmailForwards ) {
 	return (
-		existingEmailForwards?.filter( ( forward ) => forward.mailbox === newEmailForward ) >
-		MAX_FORWARD_DESTINATIONS
+		existingEmailForwards?.filter(
+			( forward ) =>
+				forward.mailbox.localeCompare( newEmailForward, undefined, { sensitivity: 'base' } ) === 0
+		).length >= MAX_FORWARD_DESTINATIONS
 	);
 }

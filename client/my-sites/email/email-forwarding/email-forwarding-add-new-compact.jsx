@@ -246,7 +246,7 @@ class EmailForwardingAddNewCompact extends Component {
 			}
 
 			if ( errorMessage.filter( ( t ) => t === 'Exhausted' ).length === 1 ) {
-				return translate( 'Each mailbox can redirect to up to five email addresses' );
+				return translate( 'This mailbox already redirects to five email addresses.' );
 			}
 		}
 
