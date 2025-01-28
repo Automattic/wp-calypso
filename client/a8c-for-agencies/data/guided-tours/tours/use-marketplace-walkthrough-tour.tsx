@@ -9,7 +9,7 @@ export default function useMarketplaceWalkthroughTour() {
 			id: 'marketplace-walkthrough-navigation',
 			popoverPosition: 'right',
 			title: translate( 'Browse hosting and products' ),
-			description: translate( 'Save on hosting and product bundles via Automattic from Agencies.' ),
+			description: translate( 'Save on hosting and product bundles via Automattic for Agencies.' ),
 		},
 		{
 			id: 'marketplace-walkthrough-referral-toggle',
