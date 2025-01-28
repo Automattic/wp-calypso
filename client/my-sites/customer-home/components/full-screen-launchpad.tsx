@@ -6,6 +6,8 @@ import { useSelector } from 'react-redux';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -16,6 +18,7 @@ import CelebrateLaunchModal from './celebrate-launch-modal';
 import './full-screen-launchpad.scss';
 
 export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
+	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
@@ -38,14 +41,16 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 		handleSiteLaunched( !! site?.is_wpcom_atomic );
 	};
 
-	const onSkipLaunchpad = () => {
-		skipLaunchpad( {
+	const onSkipLaunchpad = async () => {
+		onClose();
+
+		await skipLaunchpad( {
 			siteId,
 			siteSlug,
 			redirectToHome: false,
 		} );
 
-		onClose();
+		dispatch( requestSite( siteId ) );
 	};
 
 	if ( isDismissed ) {
