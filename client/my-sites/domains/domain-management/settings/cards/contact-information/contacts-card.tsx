@@ -1,9 +1,10 @@
 import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from '@automattic/urls';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
@@ -112,11 +113,19 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		const { privacyAvailable } = props;
 		return privacyAvailable ? (
 			<p className="contact-information__toggle-item">
-				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
-					components: {
-						a: <a href={ localizeUrl( PUBLIC_VS_PRIVATE ) } target="blank" />,
-					},
-				} ) }
+				{ translate(
+					'We recommend keeping privacy protection on. {{supportLink}}Learn more{{/supportLink}}',
+					{
+						components: {
+							supportLink: (
+								<InlineSupportLink
+									supportContext="public-vs-private-registration-and-gdpr"
+									showIcon={ false }
+								/>
+							),
+						},
+					}
+				) }
 			</p>
 		) : null;
 	};

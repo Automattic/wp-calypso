@@ -1,6 +1,6 @@
 import { Button, Card, Spinner } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
+import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
 import { ToggleControl } from '@wordpress/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -313,18 +314,20 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderTransferMessage = () => {
 		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
 		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
-			? DESIGNATED_AGENT
-			: TRANSFER_DOMAIN_REGISTRATION;
+			? 'domain-designated-agent'
+			: 'transfer-domain-registration';
 
 		if ( domain?.transferAwayEligibleAt ) {
 			return createInterpolateElement(
 				sprintf(
 					// translators: %s is a date string, e.g. April 1, 2020
-					__( 'You can unlock this domain after %s. <a>Why is my domain locked?</a>' ),
+					__(
+						'You can unlock this domain after %s. <supportLink>Why is my domain locked?</supportLink>'
+					),
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
+					supportLink: <InlineSupportLink supportContext={ supportLink } showIcon={ false } />,
 				}
 			);
 		}
