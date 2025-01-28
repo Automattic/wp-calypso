@@ -149,7 +149,7 @@ export default function useRemoveEmailForwardMutation(
 			return wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 					mailbox
-				) }/${ destination }/delete`
+				) }/${ encodeURIComponent( destination ) }/delete`
 			);
 		},
 		...mutationOptions,
