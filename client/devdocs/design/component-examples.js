@@ -80,5 +80,4 @@ export { default as UserItem } from 'calypso/components/user/docs/example';
 export { default as VerticalMenu } from 'calypso/components/vertical-menu/docs/example';
 export { default as VerticalNav } from 'calypso/components/vertical-nav/docs/example';
 export { default as Wizard } from 'calypso/components/wizard/docs/example';
-export { default as WizardProgressBar } from 'calypso/components/wizard-progress-bar/docs/example';
 export { default as WpcomColophon } from 'calypso/components/wpcom-colophon/docs/example';

@@ -113,7 +113,6 @@ import UserItem from 'calypso/components/user/docs/example';
 import VerticalMenu from 'calypso/components/vertical-menu/docs/example';
 import VerticalNav from 'calypso/components/vertical-nav/docs/example';
 import Wizard from 'calypso/components/wizard/docs/example';
-import WizardProgressBar from 'calypso/components/wizard-progress-bar/docs/example';
 import WpcomColophon from 'calypso/components/wpcom-colophon/docs/example';
 import Collection from 'calypso/devdocs/design/search-collection';
 import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
@@ -271,7 +270,6 @@ export default class DesignAssets extends Component {
 					<VerticalMenu readmeFilePath="vertical-menu" />
 					<VerticalNav readmeFilePath="vertical-nav" />
 					<Wizard readmeFilePath="wizard" />
-					<WizardProgressBar readmeFilePath="wizard-progress-bar" />
 					<WpcomColophon readmeFilePath="wpcom-colophon" />
 					<MasonryGridExample readmeFilePath="masonry-grid" />
 				</Collection>
