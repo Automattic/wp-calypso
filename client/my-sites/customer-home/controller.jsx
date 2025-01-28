@@ -28,7 +28,7 @@ export default async function renderHome( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <CustomerHome site={ site } />;
+	context.primary = <CustomerHome key={ site.ID } site={ site } />;
 
 	next();
 }
