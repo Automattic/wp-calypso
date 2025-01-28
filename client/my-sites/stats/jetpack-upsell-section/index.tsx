@@ -13,6 +13,7 @@ import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
+import UpsellCard from './upsell-card';
 import usePurchasedProducts from './use-purchased-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -94,6 +95,11 @@ export default function JetpackUpsellSection() {
 	return (
 		<div className="jetpack-upsell-section">
 			<JetpackUpsellCard
+				purchasedProducts={ finalProducts }
+				siteSlug={ siteSlug }
+				upgradeUrls={ upgradeUrls }
+			/>
+			<UpsellCard
 				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
 				upgradeUrls={ upgradeUrls }
