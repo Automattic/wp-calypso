@@ -1,7 +1,7 @@
 @import "@wordpress/base-styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 // The following changes should be merged in their respective files before nav unification goes to production
-@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
+@import url( //s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127 );
 @import "@automattic/typography/styles/variables";
 
 $brand-text: "SF Pro Text", $sans;

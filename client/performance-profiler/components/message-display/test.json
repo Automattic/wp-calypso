@@ -509,7 +509,7 @@
 								"children": {
 									"61119.509": {
 										"request": {
-											"url": "https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727",
+											"url": "https://s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127",
 											"startTime": 358903.512026,
 											"endTime": 358903.780287,
 											"responseReceivedTime": 358903.72527000005,
@@ -2083,7 +2083,7 @@
 						"entity": "WordPress"
 					},
 					{
-						"url": "https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727",
+						"url": "https://s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127",
 						"sessionTargetType": "page",
 						"protocol": "h2",
 						"rendererStartTime": 720.944000005722,
@@ -10411,7 +10411,7 @@
 						"wastedMs": 150
 					},
 					{
-						"url": "https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727",
+						"url": "https://s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127",
 						"totalBytes": 35528,
 						"wastedMs": 1185
 					},
@@ -10871,7 +10871,7 @@
 						"totalBytes": 41374
 					},
 					{
-						"url": "https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727",
+						"url": "https://s0.wp.com/wp-includes/css/dashicons.min.css?v=20250127",
 						"wastedBytes": 33936,
 						"wastedPercent": 99.34692743252162,
 						"totalBytes": 34159
