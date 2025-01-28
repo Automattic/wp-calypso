@@ -161,7 +161,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'Name' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
-							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
+					<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -348,7 +348,7 @@ const SubscriberDataViews = ( {
 					type: 'list',
 					fields: [],
 					titleField: 'name',
-						mediaField: 'media',
+					mediaField: 'media',
 				} as View;
 			}
 
