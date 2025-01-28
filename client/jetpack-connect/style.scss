@@ -88,14 +88,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		box-shadow: 0 0 0 2px var(--studio-jetpack-green-20);
 	}
 
-	.wpcom-colophon {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: $colophon-height;
-	}
-
 	.site-topic__content {
 		padding-bottom: 2px;
 
