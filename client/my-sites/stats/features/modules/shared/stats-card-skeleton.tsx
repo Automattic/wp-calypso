@@ -13,6 +13,11 @@ type StatsCardSkeletonProps = {
 	 */
 	type?: 1 | 2 | 3;
 	withHero?: boolean;
+	withSplitHeader?: boolean;
+	toggleControl?: React.ReactNode;
+	metricLabel?: string;
+	mainItemLabel?: string;
+	titleNodes?: React.ReactNode;
 };
 
 const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
@@ -21,6 +26,11 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 	title,
 	type = 1,
 	withHero,
+	withSplitHeader,
+	toggleControl,
+	metricLabel,
+	mainItemLabel,
+	titleNodes,
 } ) => {
 	// Horizontal Bar placeholders
 	const dataTypes = [
@@ -42,7 +52,8 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 			{ /* TODO: Empty title - use another LoadingPlaceholder */ }
 			<StatsCard
 				title={ title || '' }
-				metricLabel=""
+				metricLabel={ metricLabel }
+				mainItemLabel={ mainItemLabel }
 				heroElement={
 					withHero ? (
 						<LoadingPlaceholder
@@ -52,6 +63,9 @@ const StatsCardSkeleton: React.FC< StatsCardSkeletonProps > = ( {
 						/>
 					) : null
 				}
+				splitHeader={ withSplitHeader }
+				toggleControl={ toggleControl }
+				titleNodes={ titleNodes }
 			>
 				<ul>
 					{ data?.map( ( value, index ) => {

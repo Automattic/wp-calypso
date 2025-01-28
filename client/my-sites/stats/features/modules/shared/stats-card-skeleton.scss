@@ -13,12 +13,12 @@
 		border-radius: 4px;
 	}
 
-	ul {
+	.stats-card--body ul {
 		padding: 0 24px; // match horizontal bar spacing
 		margin: 0;
 	}
 
-	li {
+	.stats-card--body ul li {
 		list-style: none;
 
 		& + li {
