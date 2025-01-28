@@ -329,10 +329,11 @@
 		color: var(--color-text-subtle);
 		font-style: italic;
 	}
-	
+
 	.email-plan-mailboxes-list__mailbox-secondary-details {
 		display: flex;
 		gap: 10px;
+		flex-grow: unset;
 	}
 
 	>.badge {
@@ -591,10 +592,6 @@
 				}
 			}
 
-			.email-plan-mailboxes-list__mailbox-secondary-details svg {
-				width: 1rem;
-			}
-
 			.email-mailbox-warnings {
 
 				.email-mailbox-warnings__warning,
@@ -655,8 +652,6 @@
 				}
 
 				.email-plan-warnings__message {
-					flex-grow: 1;
-
 					span {
 						display: inline-block;
 						max-width: 700px;
