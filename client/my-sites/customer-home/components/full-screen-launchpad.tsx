@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -35,6 +36,16 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 
 	const onSiteLaunched = () => {
 		handleSiteLaunched( !! site?.is_wpcom_atomic );
+	};
+
+	const onSkipLaunchpad = () => {
+		skipLaunchpad( {
+			siteId,
+			siteSlug,
+			redirectToHome: false,
+		} );
+
+		onClose();
 	};
 
 	if ( isDismissed ) {
@@ -71,7 +82,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 					) }
 				</div>
 			</div>
-			<Button onClick={ onClose }>{ __( 'Skip onboarding setup' ) }</Button>
+			<Button onClick={ onSkipLaunchpad }>{ __( 'Skip onboarding setup' ) }</Button>
 		</div>
 	);
 };
