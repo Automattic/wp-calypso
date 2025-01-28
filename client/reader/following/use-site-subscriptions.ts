@@ -18,7 +18,8 @@ export function useSiteSubscriptions() {
 		refetch: refetchSiteSubscriptions,
 	} = SubscriptionManager.useSiteSubscriptionsQuery();
 
-	const isLoading = isLoadingCount || isLoadingSiteSubscriptions;
+	const isLoadingDependencies = subscriptionsCount === undefined || siteSubscriptions === undefined;
+	const isLoading = isLoadingCount || isLoadingSiteSubscriptions || isLoadingDependencies;
 	const blogCount = subscriptionsCount?.blogs ?? 0;
 
 	const hasNonSelfSubscriptions = useMemo( () => {
