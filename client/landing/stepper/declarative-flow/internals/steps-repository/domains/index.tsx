@@ -11,7 +11,6 @@ import {
 	isDomainUpsellFlow,
 	isSiteAssemblerFlow,
 	isHundredYearDomainFlow,
-	isHundredYearPlanFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -266,16 +265,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const onUseYourDomainClick = ( domain?: string ) => {
-		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
-			if ( domain ) {
-				const leaveFlowFunction = exitFlow ?? window.location.assign;
-				leaveFlowFunction( `/setup/hundred-year-domain-transfer?new=${ domain }` );
-			} else {
-				setShowUseYourDomain( true );
-			}
-		} else {
-			setShowUseYourDomain( true );
+		if ( domain && isHundredYearDomainFlow( flow ) ) {
+			const leaveFlowFunction = exitFlow ?? window.location.assign;
+			leaveFlowFunction( `/setup/hundred-year-domain-transfer?new=${ domain }` );
 		}
+
+		setShowUseYourDomain( true );
 	};
 
 	const renderContent = () => (
