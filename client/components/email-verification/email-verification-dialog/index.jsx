@@ -70,9 +70,18 @@ class VerifyEmailDialog extends Component {
 	};
 
 	getDialogButtons() {
+		const { closeButtonAction, closeLabel, translate } = this.props;
+
+		const onClickClose = () => {
+			if ( typeof closeButtonAction === 'function' ) {
+				closeButtonAction();
+			}
+			this.handleClose();
+		};
+
 		return [
-			<Button key="close" onClick={ this.handleClose }>
-				{ this.props.translate( 'Cancel' ) }
+			<Button key="close" onClick={ onClickClose }>
+				{ closeLabel || translate( 'Cancel' ) }
 			</Button>,
 			<Button
 				key="resend"

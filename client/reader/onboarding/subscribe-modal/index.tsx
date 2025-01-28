@@ -3,6 +3,7 @@ import { LoadingPlaceholder } from '@automattic/components';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { getLocaleSlug } from 'i18n-calypso';
 import React, { useMemo, useState, ComponentType, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
@@ -17,6 +18,7 @@ import {
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
@@ -26,6 +28,7 @@ import {
 	requestPaginatedStream,
 } from 'calypso/state/reader/streams/actions';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import SubscribeVerificationNudge from './verificationNudge';
 
 import './style.scss';
 
@@ -68,6 +71,8 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	const followedTagSlugs = useMemo( () => {
 		return ( followedTags || [] ).map( ( tag ) => tag.slug );
 	}, [ followedTags ] );
+
+	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
 	const [ currentPage, setCurrentPage ] = useState( 0 );
 	const [ selectedSite, setSelectedSite ] = useState< CardData | null >( null );
@@ -297,7 +302,7 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 			<Button onClick={ handleClose } variant="link">
 				{ __( 'Cancel' ) }
 			</Button>
-			<Button onClick={ handleContinue } variant="primary">
+			<Button onClick={ handleContinue } variant="primary" disabled={ promptVerification }>
 				{ __( 'Continue' ) }
 			</Button>
 		</>
@@ -312,7 +317,12 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 				headerActions={ headerActions }
 				isDismissible={ false }
 			>
-				<div className="subscribe-modal__content">
+				{ promptVerification && <SubscribeVerificationNudge /> }
+				<div
+					className={ clsx( 'subscribe-modal__content', {
+						'subscribe-modal__disabled-for-verification': promptVerification,
+					} ) }
+				>
 					<div className="subscribe-modal__site-list-column">
 						<h2 className="subscribe-modal__title">{ __( "Discover sites that you'll love" ) }</h2>
 						<p className="subscribe-modal__description">
