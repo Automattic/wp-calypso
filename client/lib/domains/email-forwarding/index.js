@@ -1,6 +1,6 @@
 import emailValidator from 'email-validator';
 import { mapValues } from 'lodash';
-import { hasDuplicatedEmailForwards } from 'calypso/lib/domains/email-forwarding/has-duplicated-email-forwards';
+import { hasTooManyEmailForwardsForMailbox } from 'calypso/lib/domains/email-forwarding/has-too-many-email-forwards';
 
 export function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -17,7 +17,7 @@ export function validateAllFields( fieldValues, existingEmailForwards = [] ) {
 			return [];
 		}
 
-		return hasDuplicatedEmailForwards( value, existingEmailForwards ) ? [ 'Duplicated' ] : [];
+		return hasTooManyEmailForwardsForMailbox( value, existingEmailForwards ) ? [ 'Exhausted' ] : [];
 	} );
 }
 
@@ -27,7 +27,6 @@ export function validateField( { name, value } ) {
 			return /^[a-z0-9._+-]{1,64}$/i.test( value ) && ! /(^\.)|(\.{2,})|(\.$)/.test( value );
 		case 'destinations': {
 			const nonEmpty = value.filter( ( v ) => v.trim() );
-			// don't confuse this with `hasDuplicatedEmailForwards`. That one checks source duplicates. Here we check destinations.
 			const hasDuplicates = value.length !== new Set( value ).size;
 			return (
 				! hasDuplicates &&

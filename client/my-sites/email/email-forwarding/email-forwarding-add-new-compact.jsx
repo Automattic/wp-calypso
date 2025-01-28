@@ -16,9 +16,21 @@ const MAX_FORWARD_DESTINATIONS = 5;
 /**
  * An input field that keeps repeating itself for MAX_FORWARD_DESTINATIONS times.
  */
-function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
+function RecursiveInputField( props ) {
+	const {
+		values,
+		onChange,
+		selectedDomainName,
+		index = 0,
+		disabled,
+		existingForwardsForMailbox,
+	} = props;
+
+	/** Count existing forwards before showing one more field */
+	const limit = MAX_FORWARD_DESTINATIONS - existingForwardsForMailbox - 1;
 	const translate = useTranslate();
 	const value = values[ index ];
+	const sameDomain = value?.endsWith( `@${ selectedDomainName }` );
 	const isValid = emailValidator.validate( value );
 	const [ initialized, setInitialized ] = React.useState( false );
 	// In case of duplicates, only warn at the second duplicate.
@@ -28,7 +40,7 @@ function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 
 	function handleChange( event ) {
 		const newValues = [ ...values ];
-		newValues[ index ] = event.target.value;
+		newValues[ index ] = event.target.value.toLowerCase().trim();
 		onChange( newValues );
 	}
 
@@ -41,7 +53,7 @@ function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 				<FormTextInput
 					disabled={ disabled }
 					onChange={ handleChange }
-					isError={ ( ! isValid && initialized ) || shouldHighlightForDuplicates }
+					isError={ ( ! isValid && initialized ) || shouldHighlightForDuplicates || sameDomain }
 					value={ value }
 					onBlur={ () => setInitialized( !! value ) }
 					placeholder={ translate( 'Target email address' ) }
@@ -49,13 +61,18 @@ function RecursiveInputField( { values, onChange, disabled, index = 0 } ) {
 				{ ! isValid && initialized && (
 					<FormInputValidation text={ translate( 'Invalid email address' ) } isError />
 				) }
+				{ sameDomain && (
+					// Not sure why, but this is a backend limitation
+					<FormInputValidation
+						text={ translate( "You can't forward to an address on the same source domain" ) }
+						isError
+					/>
+				) }
 				{ isValid && hasDuplicates && (
 					<FormInputValidation text={ translate( 'This email is duplicated' ) } isError />
 				) }
 			</FormFieldset>
-			{ value?.trim() && index < MAX_FORWARD_DESTINATIONS - 1 && (
-				<RecursiveInputField values={ values } onChange={ onChange } index={ index + 1 } />
-			) }
+			{ value?.trim() && index < limit && <RecursiveInputField { ...props } index={ index + 1 } /> }
 		</>
 	);
 }
@@ -146,10 +163,17 @@ class EmailForwardingAddNewCompact extends Component {
 	}
 
 	renderFormFields() {
-		const { translate, selectedDomainName, index, fields, showFormHeader } = this.props;
+		const { translate, selectedDomainName, index, fields, showFormHeader, emailForwards } =
+			this.props;
 		const isValidMailbox = this.isValid( 'mailbox' );
 		const { mailbox, destinations } = fields;
 		const mailboxError = this.getError( 'mailbox' );
+
+		// Compare while ignoring case, diacritics, etc..
+		const existingForwardsForMailbox = emailForwards?.filter(
+			( forward ) =>
+				forward.mailbox.localeCompare( mailbox, undefined, { sensitivity: 'base' } ) === 0
+		).length;
 
 		return (
 			<div className="email-forwarding__form-content">
@@ -172,6 +196,8 @@ class EmailForwardingAddNewCompact extends Component {
 					values={ destinations }
 					disabled={ this.props.disabled }
 					onChange={ this.onDestinationsChange }
+					selectedDomainName={ selectedDomainName }
+					existingForwardsForMailbox={ existingForwardsForMailbox }
 				/>
 			</div>
 		);
@@ -187,7 +213,7 @@ class EmailForwardingAddNewCompact extends Component {
 	}
 
 	onMailboxChange = ( event ) => {
-		const value = event.target.value.replace( /\s/g, '' ).replace( /@.*$/, '' );
+		const value = event.target.value.replace( /\s/g, '' ).replace( /@.*$/, '' ).toLowerCase();
 		this.props.onUpdateEmailForward( { index: 0, name: 'mailbox', value } );
 		this.formStateController.handleFieldChange( {
 			name: 'mailbox',
@@ -219,8 +245,8 @@ class EmailForwardingAddNewCompact extends Component {
 				return translate( 'Only numbers, letters, dashes, underscores, and periods are allowed.' );
 			}
 
-			if ( errorMessage.filter( ( t ) => t === 'Duplicated' ).length === 1 ) {
-				return translate( 'Please use unique mailboxes' );
+			if ( errorMessage.filter( ( t ) => t === 'Exhausted' ).length === 1 ) {
+				return translate( 'Each mailbox can redirect to up to five email addresses' );
 			}
 		}
 
