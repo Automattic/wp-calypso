@@ -80,7 +80,8 @@ const getGlobalStylesInfoForSite = (
 				Promise.resolve( {
 					shouldLimitGlobalStyles: true,
 					globalStylesInUse: false,
-					globalStylesInPersonalPlan: experimentAssignment.variationName !== 'control',
+					globalStylesInPersonalPlan:
+						( experimentAssignment?.variationName ?? 'control' ) !== 'control',
 				} )
 		);
 	}
