@@ -92,6 +92,19 @@ body.is-section-subscribers.is-subscribers-dataviews,
                     }
                 }
 
+                .subscriber-launchpad {
+                    width: 100%;
+                    max-width: 569px;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                    box-sizing: border-box;
+
+                    @media ( max-width: 430px ) {
+                        margin: 0;
+                        padding: 16px;
+                    }
+                }
+
                 &-item {
                     display: flex;
                     flex-direction: row;
