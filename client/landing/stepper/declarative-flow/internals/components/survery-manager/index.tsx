@@ -44,7 +44,7 @@ const surveyList = [
 	},
 ] as const;
 
-const SurveyManager = ( { disabled, flow }: { disabled: boolean; flow?: Flow } ) => {
+const SurveyManager = ( { disabled = false, flow }: { disabled?: boolean; flow?: Flow } ) => {
 	const isEnLocale = useIsEnglishLocale();
 	const { data } = useGeoLocationQuery();
 	const countryCode = data?.country_short;
