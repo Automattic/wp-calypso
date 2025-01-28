@@ -3,6 +3,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .processing-step {
+	--wp-components-color-foreground: #3858E9;
+
 	padding: 1em;
 	max-width: 540px;
 	text-align: center;
