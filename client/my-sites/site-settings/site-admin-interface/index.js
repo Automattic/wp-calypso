@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Card, FormLabel } from '@automattic/components';
+import { Button, Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
@@ -153,7 +153,16 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 		);
 	};
 
+	const isDuplicateViewsExperiment = true;
+
 	if ( isHosting ) {
+		let settingLink = `/settings/general/${ siteSlug }#admin-interface-style`;
+		if ( adminInterface === 'wp-admin' ) {
+			settingLink = `${ siteAdminUrl }options-general.php`;
+		} else if ( isDuplicateViewsExperiment ) {
+			settingLink = `/sites/settings/site/${ siteSlug }#admin-interface-style`;
+		}
+
 		return (
 			<HostingCard
 				className="admin-interface-style-card"
@@ -175,20 +184,29 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 				<p className="form-setting-explanation">
 					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
 						components: {
-							a: (
-								<a
-									href={
-										adminInterface === 'wp-admin'
-											? `${ siteAdminUrl }options-general.php`
-											: // TODO:
-											  `/settings/general/${ siteSlug }#admin-interface-style`
-									}
-									rel="noreferrer"
-								/>
-							),
+							a: <a href={ settingLink } rel="noreferrer" />,
 						},
 					} ) }
 				</p>
+			</HostingCard>
+		);
+	}
+
+	if ( isDuplicateViewsExperiment ) {
+		return (
+			<HostingCard
+				className="admin-interface-style-card"
+				headingId="admin-interface-style"
+				title={ translate( 'Admin interface style' ) }
+			>
+				{ renderForm() }
+				<Button
+					busy={ isUpdating }
+					disabled={ isUpdating }
+					onClick={ () => handleSubmitForm( selectedAdminInterface ) }
+				>
+					{ translate( 'Save' ) }
+				</Button>
 			</HostingCard>
 		);
 	}
