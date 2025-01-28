@@ -6,7 +6,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { usePrepareSiteForMigration } from '../use-prepare-site-for-migration';
-import { replyWithSuccess } from './helpers/nock';
+import { replyWithError, replyWithSuccess } from './helpers/nock';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
