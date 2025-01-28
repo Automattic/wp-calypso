@@ -10,6 +10,8 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	isSiteAssemblerFlow,
+	isHundredYearDomainFlow,
+	isHundredYearPlanFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -263,6 +265,18 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		submitWithDomain( suggestion );
 	};
 
+	const onUseYourDomainClick = ( domain?: string ) => {
+		if ( isHundredYearPlanFlow( flow ) || isHundredYearDomainFlow( flow ) ) {
+			if ( domain ) {
+				exitFlow?.( `/setup/hundred-year-domain-transfer?new=${ domain }` );
+			} else {
+				setShowUseYourDomain( true );
+			}
+		} else {
+			setShowUseYourDomain( true );
+		}
+	};
+
 	const renderContent = () => (
 		<DomainFormControl
 			analyticsSection={ getAnalyticsSection() }
@@ -271,7 +285,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			onAddMapping={ handleAddMapping }
 			onAddTransfer={ handleAddTransfer }
 			onSkip={ handleSkip }
-			onUseYourDomainClick={ () => setShowUseYourDomain( true ) }
+			onUseYourDomainClick={ onUseYourDomainClick }
 			showUseYourDomain={ showUseYourDomain }
 			isCartPendingUpdate={ isCartPendingUpdate }
 			isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
