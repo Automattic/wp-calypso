@@ -3,9 +3,9 @@
  */
 import { render, screen, act } from '@testing-library/react';
 import React from 'react';
-import CustomerHome from '../main';
+import CustomerHome from '../../../main';
 
-jest.mock( '../components/full-screen-launchpad', () => ( {
+jest.mock( '../../../components/full-screen-launchpad', () => ( {
 	FullScreenLaunchpad: ( { onClose }: { onClose: () => void } ) => (
 		<div data-testid="launchpad">
 			<button onClick={ onClose } data-testid="close-launchpad">
@@ -15,7 +15,7 @@ jest.mock( '../components/full-screen-launchpad', () => ( {
 	),
 } ) );
 
-jest.mock( '../components/home-content', () => () => (
+jest.mock( '../../../components/home-content', () => () => (
 	<div data-testid="home-content">Home Content</div>
 ) );
 
