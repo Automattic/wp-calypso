@@ -1,5 +1,4 @@
 import { Badge, MaterialIcon } from '@automattic/components';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
@@ -16,7 +15,6 @@ import EmailUpgradeNotice from './email-plan-mailboxes/email-upgrade-notice';
 import MailboxListCluster from './email-plan-mailboxes/list-cluster';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
-import MailboxLink from './email-plan-mailboxes/list-item-link';
 import type { EmailAccount, MailboxesCluster } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -44,7 +42,6 @@ function EmailPlanMailboxesList( {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
-	const isDesktopResolution = useDesktopBreakpoint();
 	const isNoMailboxes = ! clusters || clusters.length < 1;
 	const isAccountWarningPresent = !! account?.warnings.length;
 	const isGoogleConfiguring =
@@ -102,29 +99,8 @@ function EmailPlanMailboxesList( {
 						return (
 							<MailboxListItem key={ mailbox.target } isError={ showErrorStyling }>
 								<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-									<MailboxLink
-										account={ account }
-										mailbox={ mailbox }
-										readonly={ isGoogleConfiguring }
-									/>
+									<EmailForwardSecondaryDetails mailbox={ mailbox } />
 								</div>
-								{ context === 'hosting-overview' && (
-									<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-										<EmailForwardSecondaryDetails
-											mailbox={ mailbox }
-											hideIcon={ isDesktopResolution }
-										/>
-										{ mailboxHasWarnings && (
-											<div className="email-mailbox-warnings">
-												<EmailMailboxWarnings
-													account={ account }
-													mailbox={ mailbox }
-													ctaProps={ { primary: true, borderless: true, compact: false } }
-												/>
-											</div>
-										) }
-									</div>
-								) }
 								{ isEmailUserAdmin( mailbox ) && (
 									<Badge type="info">
 										{ translate( 'Admin', {
@@ -133,9 +109,7 @@ function EmailPlanMailboxesList( {
 									</Badge>
 								) }
 
-								{ context === 'email' && (
-									<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-								) }
+								<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
 								{ ! mailbox.temporary && ! isGoogleConfiguring && (
 									<EmailMailboxActionMenu
 										account={ account }

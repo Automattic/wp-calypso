@@ -329,22 +329,7 @@
 		color: var(--color-text-subtle);
 		font-style: italic;
 	}
-
-	.email-plan-mailboxes-list__mailbox-list-link {
-		display: inline-flex;
-		gap: 10px;
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-item-main svg {
-		fill: var(--studio-gray-40);
-		margin: 0;
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-item-main span {
-		vertical-align: middle;
-		word-break: break-all;
-	}
-
+	
 	.email-plan-mailboxes-list__mailbox-secondary-details {
 		display: flex;
 		gap: 10px;
@@ -362,7 +347,6 @@
 	}
 
 	.email-mailbox-warnings__warning {
-		border-top: 1px solid var(--color-neutral-5);
 		color: var(--color-error);
 		font-size: $font-body-small;
 		line-height: 24px;
@@ -526,10 +510,6 @@
 				}
 			}
 
-			&-item>div {
-				flex-grow: initial;
-			}
-
 			.email-mailbox-action-menu__main {
 				right: 0;
 				top: 18px;
@@ -601,14 +581,6 @@
 
 			.section-header__label {
 				font-weight: 500;
-
-				&.destination {
-					display: none;
-
-					@include break-xlarge {
-						display: block;
-					}
-				}
 			}
 
 			.email-plan-mailboxes-list__mailbox-list-item-main {
