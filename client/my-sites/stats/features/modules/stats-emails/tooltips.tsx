@@ -1,5 +1,5 @@
 import { Tooltip } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import React, { useRef, useState } from 'react';
 
 export interface EmailStatsItem {
@@ -49,28 +49,32 @@ export const hasUniqueMetrics = ( uniqueValue: number, totalValue: number ) => {
 
 export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const opensUnique = parseInt( String( item.unique_opens ), 10 );
-	const opens = parseInt( String( item.opens ), 10 );
-	const opensRate = parseFloat( String( item.opens_rate ) );
-	const totalSends = parseInt( String( item.total_sends ), 10 );
-	const hasUniques = hasUniqueMetrics( opensUnique, opens );
+	const hasUniques = hasUniqueMetrics(
+		parseInt( String( item.unique_opens ), 10 ),
+		parseInt( String( item.opens ), 10 )
+	);
 
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Recipients: %(sends)d', {
-					args: { sends: totalSends },
+				{ translate( 'Recipients: %(sends)s', {
+					args: { sends: numberFormat( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Total opens: %(opens)d', {
-					args: { opens },
+				{ translate( 'Total opens: %(opens)s', {
+					args: { opens: numberFormat( item.opens ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
-					? translate( 'Unique opens: %(uniqueOpens)d (%(openRate).2f%%)', {
-							args: { uniqueOpens: opensUnique, openRate: opensRate },
+					? translate( 'Unique opens: %(uniqueOpens)s (%(openRate)s%)', {
+							args: {
+								uniqueOpens: numberFormat( item.unique_opens ),
+								openRate: numberFormat( item.opens_rate, {
+									numberFormatOptions: { maximumFractionDigits: 2 },
+								} ),
+							},
 					  } )
 					: translate( 'Unique opens: —' ) }
 			</div>
@@ -80,28 +84,32 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 
 export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { item } ) => {
 	const translate = useTranslate();
-	const clicksUnique = parseInt( String( item.unique_clicks ), 10 );
-	const clicks = parseInt( String( item.clicks ), 10 );
-	const clicksRate = parseFloat( String( item.clicks_rate ) );
-	const totalSends = parseInt( String( item.total_sends ), 10 );
-	const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
+	const hasUniques = hasUniqueMetrics(
+		parseInt( String( item.unique_clicks ), 10 ),
+		parseInt( String( item.clicks ), 10 )
+	);
 
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Recipients: %(sends)d', {
-					args: { sends: totalSends },
+				{ translate( 'Recipients: %(sends)s', {
+					args: { sends: numberFormat( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Total clicks: %(clicks)d', {
-					args: { clicks },
+				{ translate( 'Total clicks: %(clicks)s', {
+					args: { clicks: numberFormat( item.clicks ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
-					? translate( 'Unique clicks: %(uniqueClicks)d (%(clickRate).2f%%)', {
-							args: { uniqueClicks: clicksUnique, clickRate: clicksRate },
+					? translate( 'Unique clicks: %(uniqueClicks)s (%(clickRate)s%)', {
+							args: {
+								uniqueClicks: numberFormat( item.unique_clicks ),
+								clickRate: numberFormat( item.clicks_rate, {
+									numberFormatOptions: { maximumFractionDigits: 2 },
+								} ),
+							},
 					  } )
 					: translate( 'Unique clicks: —' ) }
 			</div>
