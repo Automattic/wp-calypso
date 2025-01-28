@@ -36,12 +36,17 @@ function RecursiveInputField( props ) {
 	// In case of duplicates, only warn at the second duplicate.
 	const hasDuplicates = values.some( ( v, valueIndex ) => v === value && valueIndex < index );
 	// But highlight the duplicated field any way.
-	const shouldHighlightForDuplicates = values.filter( ( v ) => v === value ).length > 1;
+	const shouldHighlightForDuplicates = values.filter( ( v ) => v === value && v ).length > 1;
 
 	function handleChange( event ) {
 		const newValues = [ ...values ];
 		newValues[ index ] = event.target.value.toLowerCase().trim();
 		onChange( newValues );
+	}
+
+	// This mailbox is already forwarded to the maximum number of destinations.
+	if ( limit === -1 ) {
+		return null;
 	}
 
 	return (
@@ -72,7 +77,9 @@ function RecursiveInputField( props ) {
 					<FormInputValidation text={ translate( 'This email is duplicated' ) } isError />
 				) }
 			</FormFieldset>
-			{ value?.trim() && index < limit && <RecursiveInputField { ...props } index={ index + 1 } /> }
+			{ ( value?.trim() || values[ index + 1 ]?.trim() ) && index < limit && (
+				<RecursiveInputField { ...props } index={ index + 1 } />
+			) }
 		</>
 	);
 }
@@ -107,7 +114,14 @@ class EmailForwardingAddNewCompact extends Component {
 			initialFields: this.getInitialFields(),
 			onNewState: this.setFormState,
 			validatorFunction: ( fieldValues, onComplete ) => {
-				onComplete( null, validateAllFields( fieldValues, this.props.emailForwards ?? [] ) );
+				onComplete(
+					null,
+					validateAllFields(
+						fieldValues,
+						this.props.emailForwards ?? [],
+						this.props.selectedDomainName
+					)
+				);
 			},
 		} );
 	}

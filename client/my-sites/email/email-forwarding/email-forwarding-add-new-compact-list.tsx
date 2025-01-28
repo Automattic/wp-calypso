@@ -83,7 +83,11 @@ const EmailForwardingAddNewCompactList = ( {
 			newEmailForwards[ index ].mailbox = value;
 		}
 
-		const validEmailForward = validateAllFields( newEmailForwards[ index ], existingEmailForwards );
+		const validEmailForward = validateAllFields(
+			newEmailForwards[ index ],
+			existingEmailForwards,
+			selectedDomainName
+		);
 		newEmailForwards[ index ].isValid =
 			validEmailForward.mailbox.length === 0 && validEmailForward.destinations.length === 0;
 		setEmailForwards( newEmailForwards );
