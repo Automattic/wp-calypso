@@ -6,7 +6,7 @@ import { navigate } from 'calypso/lib/navigate';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteOption, getSiteUrl, isAdminInterfaceWPAdmin } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -46,11 +46,9 @@ export function siteSettings( context, next ) {
 		return;
 	}
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		// TODO: Why only Classic Admin Interface?
-		if ( isAdminInterfaceWPAdmin( state, siteId ) ) {
-			return page.redirect( `/sites/settings/site/${ siteSlug }` );
-		}
+	const isDuplicateViewsExperiment = true;
+	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
 	// analytics tracking
