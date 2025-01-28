@@ -117,6 +117,7 @@ const renderComponent = ( component, initialState = {} ) => {
 	const store = mockStore( {
 		purchases: {},
 		sites: {},
+		ui: { selectedSiteId: 'anySiteId' },
 		...initialState,
 	} );
 

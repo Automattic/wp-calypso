@@ -438,8 +438,10 @@ import {
 	FEATURE_THEMES_PREMIUM_AND_STORE,
 	FEATURE_UNLIMITED_ENTITIES,
 	JETPACK_TAG_FOR_BLOGGERS,
+	FEATURE_CONNECT_ANALYTICS,
+	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 } from './constants';
-import { FEATURE_CONNECT_ANALYTICS, FEATURE_JETPACK_SOCIAL_V1_MONTHLY } from './constants/features';
+import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -747,7 +749,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 			FEATURE_FREE_THEMES,
-			isEnabled( 'global-styles/on-personal-plan' ) ? FEATURE_STYLE_CUSTOMIZATION : null,
+			isGlobalStylesOnPersonalEnabled() ? FEATURE_STYLE_CUSTOMIZATION : null,
 			FEATURE_6GB_STORAGE,
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
@@ -761,7 +763,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FREE_THEMES,
 		];
 
-		return isEnabled( 'global-styles/on-personal-plan' )
+		return isGlobalStylesOnPersonalEnabled()
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
@@ -784,7 +786,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		];
 
-		return isEnabled( 'global-styles/on-personal-plan' )
+		return isGlobalStylesOnPersonalEnabled()
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
@@ -797,7 +799,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		];
 
-		return isEnabled( 'global-styles/on-personal-plan' )
+		return isGlobalStylesOnPersonalEnabled()
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
@@ -813,7 +815,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_PREMIUM_THEMES,
 		];
 
-		return isEnabled( 'global-styles/on-personal-plan' )
+		return isGlobalStylesOnPersonalEnabled()
 			? [ ...baseFeatures, FEATURE_STYLE_CUSTOMIZATION ]
 			: baseFeatures;
 	},
