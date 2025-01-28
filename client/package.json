@@ -58,7 +58,6 @@
 		"@automattic/notifications": "workspace:^",
 		"@automattic/oauth-token": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@automattic/plans-grid": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/react-virtualized": "^9.22.4",
 		"@automattic/request-external-access": "workspace:^",
