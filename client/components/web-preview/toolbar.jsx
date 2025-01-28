@@ -1,5 +1,5 @@
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
-import { BUNDLED_THEME } from '@automattic/design-picker';
+import { getThemeIdFromStylesheet } from '@automattic/data-stores';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,11 +9,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
-import { getCustomizerUrl, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getThemeType } from 'calypso/state/themes/selectors';
+import { getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -34,8 +34,6 @@ class PreviewToolbar extends Component {
 		showEdit: PropTypes.bool,
 		// Show edit the header link button
 		showEditHeaderLink: PropTypes.bool,
-		// The URL for the selected site's customizer
-		customizeUrl: PropTypes.string,
 		// The URL for the edit button
 		editUrl: PropTypes.string,
 		// The device to display, used for setting preview dimensions
@@ -53,7 +51,6 @@ class PreviewToolbar extends Component {
 		isUnlaunchedSite: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		launchSite: PropTypes.func,
-		previewSource: PropTypes.string,
 		themeId: PropTypes.string,
 	};
 
@@ -84,39 +81,13 @@ class PreviewToolbar extends Component {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		const { themeId, siteSlug, themeType, isAtomic } = this.props;
-		const baseEditorUrl = `https://${ siteSlug }/wp-admin/site-editor.php`;
-		const baseDashboardLink = `/theme/${ themeId }/${ siteSlug }`;
-
-		const getParams = () => {
-			if ( isAtomic ) {
-				return {
-					wp_theme_preview: themeId,
-					wpcom_dashboard_link: `${ baseDashboardLink }?tab_filter=all`,
-					p: '/',
-				};
-			}
-
-			const isBundledTheme = themeType === BUNDLED_THEME;
-			const themePrefix = isBundledTheme ? 'premium' : 'pub';
-			const themeFilter = isBundledTheme ? '?tab_filter=recommended&tier_filter=woocommerce' : '';
-
-			return {
-				wp_theme_preview: `${ themePrefix }/${ themeId }`,
-				wpcom_dashboard_link: `${ baseDashboardLink }${ themeFilter }`,
-				p: '/',
-			};
-		};
-
-		const params = new URLSearchParams( getParams() );
-		window.location.href = `${ baseEditorUrl }?${ params.toString() }`;
+		window.location.href = this.props.siteEditorUrl;
 	};
 
 	render() {
 		const {
 			canUserEditThemeOptions,
 			device: currentDevice,
-			customizeUrl,
 			editUrl,
 			externalUrl,
 			isModalWindow,
@@ -198,7 +169,6 @@ class PreviewToolbar extends Component {
 							borderless
 							aria-label={ translate( 'Try and customize' ) }
 							className="web-preview__edit-header-link"
-							href={ customizeUrl }
 							onClick={ this.handleEditorWebPreviewEditHeader }
 						>
 							{ translate( 'Try and customize' ) }
@@ -241,18 +211,22 @@ export default connect(
 		const isSingleSite = !! selectedSiteId || currentUser?.site_count === 1;
 		const siteId = selectedSiteId || ( isSingleSite && getPrimarySiteId( state ) ) || null;
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
-		const siteSlug = getSiteSlug( state, siteId );
-		const themeType = getThemeType( state, ownProps.themeId );
+		const theme = getTheme( state, 'wpcom', ownProps.themeId );
 		const isAtomic = isSiteAtomic( state, siteId );
+		const themePreviewId = isAtomic
+			? getThemeIdFromStylesheet( theme?.stylesheet )
+			: theme?.stylesheet;
+
+		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
+			wp_theme_preview: themePreviewId,
+			wpcom_dashboard_link: window.location.href,
+		} );
 
 		return {
 			canUserEditThemeOptions,
-			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 			selectedSiteId,
-			siteSlug,
-			themeType,
-			isAtomic,
+			siteEditorUrl,
 		};
 	},
 	{ recordTracksEvent, launchSite }
