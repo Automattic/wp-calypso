@@ -35,6 +35,7 @@ jest.mock( '../redesign-v2/pages/plan-only', () => () => (
 jest.mock( '../redesign-v2/pages/generic', () => () => (
 	<div data-testid="component--generic-thank-you" />
 ) );
+jest.mock( '@wordpress/api-fetch' );
 
 const translate = ( x ) => x;
 
