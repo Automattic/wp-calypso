@@ -115,7 +115,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -275,9 +275,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}
 
 	useEffect( () => {
-		if ( ! isFreeFlow( flow ) ) {
-			setProgress( 0.1 );
-		}
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
