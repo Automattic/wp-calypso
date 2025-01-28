@@ -1,0 +1,37 @@
+.odie-notice {
+	display: flex;
+	padding: 0 16px;
+	font-size: 0.75rem;
+	position: absolute;
+	bottom: 86px;
+
+	.odie-notice__container {
+		display: flex;
+		background-color: var( --studio-yellow-0 );
+		border-left: 4px solid var( --studio-yellow-20 );
+		padding: 8px 16px;
+		margin: 0;
+		gap: 40px;
+
+		p {
+			margin: 0;
+		}
+
+		button {
+			align-self: flex-start;
+			&:hover {
+				cursor: pointer;
+			}
+		}
+
+		.odie-notice__view-conversation {
+			button {
+				color: #3858e9;
+				font-size: 0.75rem;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}
