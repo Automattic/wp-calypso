@@ -81,16 +81,16 @@ export default function useAddEmailForwardMutation(
 			const newEmailForwards = orderBy(
 				[
 					...emailForwards,
-					{
+					...destinations.map( ( d ) => ( {
 						domain: domainName,
 						email_type: 'email_forward',
 						is_verified: false,
 						mailbox,
 						role: 'standard',
-						target: destinations,
+						target: d,
 						temporary: true,
 						warnings: [],
-					},
+					} ) ),
 				],
 				[ 'mailbox' ],
 				[ 'asc' ]
