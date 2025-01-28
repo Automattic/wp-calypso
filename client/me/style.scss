@@ -24,12 +24,12 @@ body.is-section-me {
 			padding-bottom: 0;
 		}
 
-		.layout__primary > .main {
+		.layout__primary {
 			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top));
 		}
 
 		@include break-small {
-			.layout__primary > .main {
+			.layout__primary {
 				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
 			}
 		}
