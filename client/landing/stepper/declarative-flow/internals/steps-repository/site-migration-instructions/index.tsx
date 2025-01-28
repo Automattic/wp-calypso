@@ -22,7 +22,7 @@ import type { Step } from '../../types';
 import './style.scss';
 
 interface PreparationEventsHookOptions {
-	migrationKeyStatus: 'idle' | 'pending' | 'success' | 'error';
+	migrationKeyStatus: string;
 	preparationCompleted: boolean;
 	preparationError: Error | null;
 	fromUrl: string;
