@@ -99,7 +99,6 @@ function EmailPlanMailboxesList( {
 					{ cluster.mailboxes.map( ( mailbox ) => {
 						const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
 						const showErrorStyling = context === 'email' && mailboxHasWarnings;
-
 						return (
 							<MailboxListItem key={ mailbox.target } isError={ showErrorStyling }>
 								<div className="email-plan-mailboxes-list__mailbox-list-item-main">
@@ -108,9 +107,8 @@ function EmailPlanMailboxesList( {
 										mailbox={ mailbox }
 										readonly={ isGoogleConfiguring }
 									/>
-									{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 								</div>
-								{ ( context === 'domains' || context === 'hosting-overview' ) && (
+								{ context === 'hosting-overview' && (
 									<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 										<EmailForwardSecondaryDetails
 											mailbox={ mailbox }
