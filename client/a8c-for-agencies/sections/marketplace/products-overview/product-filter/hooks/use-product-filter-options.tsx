@@ -54,7 +54,7 @@ export default function useProductFilterOptions() {
 						},
 						{
 							key: PRODUCT_CATEGORY_WOOCOMMERCE,
-							label: translate( 'Woocommerce' ) as string,
+							label: translate( 'WooCommerce' ) as string,
 							image: <WooCommerceWooLogo width={ 80 } height={ 80 } />,
 						},
 				  ]

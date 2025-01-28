@@ -13,13 +13,6 @@ const AddNewSiteContent = ( props: AddNewSiteContentProps ) => {
 			/>
 		);
 	}
-	return (
-		<AsyncLoad
-			{ ...props }
-			require="calypso/components/add-new-site/content/site-list"
-			placeholder={ null }
-		/>
-	);
 };
 
 export default AddNewSiteContent;

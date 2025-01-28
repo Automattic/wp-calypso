@@ -1,6 +1,5 @@
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import {
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
@@ -12,7 +11,6 @@ import { Flow } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
 const MIGRATION_SURVEY_FLOWS = [
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,

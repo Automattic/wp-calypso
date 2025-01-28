@@ -32,7 +32,7 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
@@ -209,16 +209,6 @@ class Account extends Component {
 			} );
 			this.saveInterfaceSettings( event );
 		}
-	};
-
-	updateColorScheme = ( colorScheme ) => {
-		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
-		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-			color_scheme: colorScheme,
-		} );
-		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
-		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
 	};
 
 	updateUserLoginConfirm = ( event ) => {
@@ -1004,7 +994,6 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 		} ),
 		{
-			bumpStat,
 			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,

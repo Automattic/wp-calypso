@@ -175,22 +175,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	);
 	const queryDate = date.format( DATE_FORMAT );
 
-	// Find the applied shortcut with shortcut ID from the URL.
-	const { selectedShortcut: appliedShortcut, supportedShortcutList } = useShortcuts( {
-		chartStart: context.query?.chartStart,
-		chartEnd: context.query?.chartEnd,
-		shortcutId: context.query?.shortcut,
-	} );
-
-	const storedShortcut = useMemo( () => {
-		const storedShortcutId =
-			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
-			// Fallback for the compatibility.
-			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
-
-		return supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
-	}, [ siteId, supportedShortcutList ] );
-
 	const moduleStrings = statsStrings();
 
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
@@ -221,17 +205,42 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportUserFeedback,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
 
+	// Find the applied shortcut with shortcut ID from the URL.
+	const shortcuts = useShortcuts( {
+		chartStart: context.query?.chartStart,
+		chartEnd: context.query?.chartEnd,
+		shortcutId: context.query?.shortcut,
+	} );
+	const { supportedShortcutList } = shortcuts;
+	let storedShortcut = useMemo( () => {
+		const storedShortcutId =
+			localStorage.getItem( `jetpack_stats_stored_date_range_shortcut_id_${ siteId }` ) ||
+			// Fallback for the compatibility.
+			localStorage.getItem( 'jetpack_stats_stored_date_range_shortcut_id' );
+
+		return supportedShortcutList.find( ( shortcut ) => shortcut.id === storedShortcutId ) || null;
+	}, [ siteId, supportedShortcutList ] );
+	let { selectedShortcut: appliedShortcut } = shortcuts;
+
 	const hasSiteLoadedFeatures = useSelector(
 		( state ) => isWPAdmin || hasLoadedSiteFeatures( state, siteId )
 	);
+	// TODO: We may need a detailed hierarchy of the shortcut gates.
+	const shouldForceDefaultDateRange =
+		useSelector( ( state ) =>
+			shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
+		) && hasSiteLoadedFeatures;
 
-	const shouldForceDefaultDateRange = useSelector( ( state ) =>
-		shouldGateStats( state, siteId, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS )
-	);
+	const shouldForceDefaultPeriod =
+		useSelector( ( state ) =>
+			shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK )
+		) && hasSiteLoadedFeatures;
 
-	const shouldForceDefaultPeriod = useSelector( ( state ) =>
-		shouldGateStats( state, siteId, STATS_FEATURE_INTERVAL_DROPDOWN_WEEK )
-	);
+	// Remove appliedShortcut and storedShortcut if the date range or chart perod is locked.
+	if ( shouldForceDefaultDateRange || shouldForceDefaultPeriod ) {
+		appliedShortcut = null;
+		storedShortcut = null;
+	}
 
 	const wpcomShowUpsell = useSelector(
 		( state ) =>
@@ -329,9 +338,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					const storedValue = storedShortcut[ inputKey ];
 					const isStoredValueValid = moment( storedValue ).isValid();
 
-					return hasSiteLoadedFeatures && ! shouldForceDefaultDateRange && isStoredValueValid
-						? storedValue
-						: null;
+					return isStoredValueValid ? storedValue : null;
 				}
 			}
 
@@ -339,7 +346,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 
 			return isValid ? inputDate : null;
 		},
-		[ storedShortcut, hasSiteLoadedFeatures, shouldForceDefaultDateRange ]
+		[ storedShortcut ]
 	);
 
 	// Note: This is only used in the empty version of the module.
@@ -361,52 +368,30 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		return url;
 	};
 
-	useEffect( () => {
-		const newActiveTab = getActiveTab( chartTab );
-		setActiveTabState( newActiveTab );
-		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
-	}, [ chartTab, period, activeTabState, context.query ] );
-
-	useEffect( () => {
-		// Use the stored period if it's different from the current period.
-		const storedPeriod =
-			localStorage.getItem( `jetpack_stats_stored_period_${ siteId }` ) ||
-			localStorage.getItem( 'jetpack_stats_stored_period' );
-		if (
-			hasSiteLoadedFeatures &&
-			! shouldForceDefaultPeriod &&
-			// Avoid the infinite redirect loop between single day period and hourly views.
-			period !== 'hour' &&
-			storedPeriod &&
-			storedPeriod !== period
-		) {
-			// TODO: Determine if we need to save the period as it might be a conflict with the drilling down.
-			page.redirect(
-				appendQueryStringForRedirection( `/stats/${ storedPeriod }/${ slug }`, context.query )
-			);
-			return;
-		}
-	}, [ hasSiteLoadedFeatures, shouldForceDefaultPeriod, slug ] ); // eslint-disable-line react-hooks/exhaustive-deps
-
 	// Set up a custom range for the chart.
 	// Dependant on new date range picker controls.
-	let customChartRange = null;
+	const customChartRange = {};
 
 	// Sort out end date for chart.
-	const chartEnd = useMemo( () => {
+	let chartEnd = useMemo( () => {
 		return getValidDateOrNullFromInput( context.query?.chartEnd, 'endDate' );
 	}, [ context.query?.chartEnd, getValidDateOrNullFromInput ] );
 
-	const chartStart = useMemo( () => {
+	let chartStart = useMemo( () => {
 		return getValidDateOrNullFromInput( context.query?.chartStart, 'startDate' );
 	}, [ context.query?.chartStart, getValidDateOrNullFromInput ] );
 
+	// Respect the shortcut ID from the URL if it's valid.
+	if ( appliedShortcut ) {
+		customChartRange.shortcutId = appliedShortcut.id;
+		chartEnd = appliedShortcut.endDate;
+		chartStart = appliedShortcut.startDate;
+	}
+
 	if ( chartEnd ) {
-		customChartRange = { chartEnd };
+		customChartRange.chartEnd = chartEnd;
 	} else {
-		customChartRange = {
-			chartEnd: momentSiteZone.format( DATE_FORMAT ),
-		};
+		customChartRange.chartEnd = momentSiteZone.format( DATE_FORMAT );
 	}
 
 	const isSameOrBefore = moment( chartStart ).isSameOrBefore( moment( chartEnd ) );
@@ -429,20 +414,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	// Apply the stored shortcut ID if the date range is not set.
 	if ( ! context.query?.chartStart && ! context.query?.chartEnd && storedShortcut ) {
 		customChartRange.shortcutId = storedShortcut.id;
-		// TODO: Handle the redirection when the applied shortcut period differs from the current period.
-	}
-
-	// Redirect to the daily views if the period dropdown is locked.
-	if ( shouldForceDefaultPeriod && period !== 'day' ) {
-		page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
-		return;
-	}
-
-	// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
-	// If it's single day period, redirect to hourly stats.
-	if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
-		page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
-		return;
 	}
 
 	// Calculate diff between requested start and end in `priod` units.
@@ -475,12 +446,67 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			.format( DATE_FORMAT );
 	}
 
-	// Respect the shortcut ID from the URL if it's valid.
-	if ( appliedShortcut ) {
-		customChartRange.shortcutId = appliedShortcut.id;
-		customChartRange.chartEnd = appliedShortcut.endDate;
-		customChartRange.chartStart = appliedShortcut.startDate;
-	}
+	// Redirect with the shortcut period of appliedShortcut or storedShortcut.
+	useEffect(
+		() => {
+			if ( appliedShortcut?.period ) {
+				if ( appliedShortcut?.period !== period ) {
+					page.redirect(
+						appendQueryStringForRedirection(
+							`/stats/${ appliedShortcut?.period }/${ slug }`,
+							context.query
+						)
+					);
+					return;
+				}
+			} else if (
+				! context.query?.chartStart &&
+				! context.query?.chartEnd &&
+				storedShortcut?.period &&
+				storedShortcut?.period !== period
+			) {
+				page.redirect(
+					appendQueryStringForRedirection(
+						`/stats/${ storedShortcut?.period }/${ slug }`,
+						context.query
+					)
+				);
+				return;
+			}
+		},
+		/* eslint-disable-next-line react-hooks/exhaustive-deps */
+		[
+			// Do not include the period from URL segments in the dependency array to prevent period selection invalidation.
+			slug,
+			appliedShortcut?.period,
+			context.query?.chartStart,
+			context.query?.chartEnd,
+			storedShortcut?.period,
+		]
+	);
+
+	// Redirect to the corresponding period by gates and date range.
+	useEffect( () => {
+		// Redirect to the daily views if the period dropdown is locked.
+		if ( shouldForceDefaultPeriod && period !== 'day' ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/day/${ slug }`, context.query ) );
+			return;
+		}
+
+		// TODO: all the date logic should be done in controllers, otherwise it affects the performance.
+		// If it's single day period, redirect to hourly stats.
+		if ( ! shouldForceDefaultPeriod && period === 'day' && daysInRange === 1 ) {
+			page.redirect( appendQueryStringForRedirection( `/stats/hour/${ slug }`, context.query ) );
+			return;
+		}
+	}, [ shouldForceDefaultPeriod, period, daysInRange, slug, context.query ] );
+
+	// setActiveTabState and setActiveLegend
+	useEffect( () => {
+		const newActiveTab = getActiveTab( chartTab );
+		setActiveTabState( newActiveTab );
+		setActiveLegend( period !== 'hour' ? newActiveTab.legendOptions || [] : [] );
+	}, [ chartTab, period, activeTabState, context.query ] );
 
 	const query = chartRangeToQuery( customChartRange );
 

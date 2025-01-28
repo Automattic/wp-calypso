@@ -53,17 +53,17 @@
 
 .bundle-price-selector__menu-button {
 	flex-grow: 1;
-
-	b {
-		margin-inline-start: 4px;
-	}
 }
 
 .bundle-price-selector__popover {
 	margin-inline-start: -135px;
 
-	.popover__menu-item.is-selected {
-		background: var( --color-neutral-5 );
-		color: var( --color-text );
+	.popover__menu .popover__menu-item {
+		display: block;
+
+		&.is-selected {
+			background: var( --color-neutral-5 );
+			color: var( --color-text );
+		}
 	}
 }

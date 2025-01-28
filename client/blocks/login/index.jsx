@@ -18,7 +18,7 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getPluginTitle, getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
+import { getPluginTitle, getSignupUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -898,7 +898,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
+		if ( action === 'lostpassword' ) {
 			return (
 				<Fragment>
 					<div className="login__lost-password-form-wrapper">
