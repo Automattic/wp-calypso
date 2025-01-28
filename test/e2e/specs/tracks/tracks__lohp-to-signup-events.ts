@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_link_click' );
 
 		// Click first signup link to go to signup page
-		await page.locator( 'a[href^="https://wordpress.com/start"]' ).first().click();
+		await page.locator( 'a[href^="https://wordpress.com/setup/onboarding"]' ).first().click();
 
 		// Expect the event to fire
 		expect( await didEventFirePromise ).toBe( true );
@@ -62,7 +62,7 @@ describe( DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' )
 		requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
 
 		// Click first signup link to go to signup page
-		await page.locator( 'a[href^="https://wordpress.com/start"]' ).first().click();
+		await page.locator( 'a[href^="https://wordpress.com/setup/onboarding"]' ).first().click();
 		requestUrl = await requestUrlPromise;
 
 		// Expect anon ids in wpcom and calypso page view events to match
