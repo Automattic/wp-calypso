@@ -71,7 +71,6 @@ export { default as FormTextInputWithAffixes } from 'calypso/components/forms/fo
 export { default as GlobalNotices } from 'calypso/components/global-notices';
 export { default as Gravatar } from 'calypso/components/gravatar';
 export { default as HeaderCake } from 'calypso/components/header-cake';
-export { default as HeaderButton } from 'calypso/components/header-button';
 export { default as ImagePreloader } from 'calypso/components/image-preloader';
 export { default as InfoPopover } from 'calypso/components/info-popover';
 export { default as InputChrono } from 'calypso/components/input-chrono';

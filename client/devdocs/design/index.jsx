@@ -57,7 +57,6 @@ import Ranges from 'calypso/components/forms/range/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
-import HeaderButton from 'calypso/components/header-button/docs/example';
 import HeaderCake from 'calypso/components/header-cake';
 import Headers from 'calypso/components/header-cake/docs/example';
 import ImagePreloader from 'calypso/components/image-preloader/docs/example';
@@ -207,7 +206,6 @@ export default class DesignAssets extends Component {
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
 					<Gridicon />
 					<HappinessEngineersTray readmeFilePath="happiness-engineers-tray" />
-					<HeaderButton readmeFilePath="header-button" />
 					<Headers readmeFilePath="header-cake" />
 					<ImagePreloader readmeFilePath="image-preloader" />
 					<InfoPopover readmeFilePath="info-popover" />

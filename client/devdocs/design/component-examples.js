@@ -30,7 +30,6 @@ export { default as FormattedDate } from 'calypso/components/formatted-date/docs
 export { default as FormattedHeader } from 'calypso/components/formatted-header/docs/example';
 export { default as FormFields } from 'calypso/components/forms/docs/example';
 export { default as GlobalNotices } from 'calypso/components/global-notices/docs/example';
-export { default as HeaderButton } from 'calypso/components/header-button/docs/example';
 export { default as Headers } from 'calypso/components/header-cake/docs/example';
 export { default as ImagePreloader } from 'calypso/components/image-preloader/docs/example';
 export { default as InfoPopover } from 'calypso/components/info-popover/docs/example';
