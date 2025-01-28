@@ -27,6 +27,7 @@ import {
 import Geochart from '../../../geochart';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
+import CountryFilter from './country-filter';
 
 import './style.scss';
 
@@ -63,8 +64,11 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
 
-	// TODO: we should get it from a dropdown in the UI and manage it as a state.
-	const countryFilter = new URLSearchParams( window.location.search ).get( 'country' ) ?? null;
+	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
+
+	const onCountryChange = ( value: string ) => {
+		setCountryFilter( value );
+	};
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
@@ -72,18 +76,21 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			headerLabel: translate( 'Top countries' ),
 			analyticsId: 'countries',
 			feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
+			countryFilterLabel: translate( 'All countries' ),
 		},
 		[ OPTION_KEYS.REGIONS ]: {
 			selectLabel: translate( 'Regions' ),
 			headerLabel: translate( 'Top regions' ),
 			analyticsId: 'regions',
 			feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
+			countryFilterLabel: translate( 'All regions' ),
 		},
 		[ OPTION_KEYS.CITIES ]: {
 			selectLabel: translate( 'Cities' ),
 			headerLabel: translate( 'Top cities' ),
 			analyticsId: 'cities',
 			feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
+			countryFilterLabel: translate( 'All cities' ),
 		},
 	};
 
@@ -94,6 +101,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const geoMode = GEO_MODES[ selectedOption ];
 	const title = optionLabels[ selectedOption ]?.selectLabel;
 
+	// Main location data query
 	const {
 		data = [],
 		isLoading: isRequestingData,
@@ -101,6 +109,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
 		enabled: ! shouldGate,
 	} );
+
+	// Only fetch separate countries list if we're not already in country tab
+	// This is to avoid fetching the same data twice.
+	const { data: countriesList = [] } = useLocationViewsQuery< StatsLocationViewsData >(
+		siteId,
+		'country',
+		query,
+		null,
+		{
+			enabled: ! shouldGate && geoMode !== 'country',
+		}
+	);
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
@@ -114,16 +134,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	};
 
 	const toggleControlComponent = (
-		<SimplifiedSegmentedControl
-			className="stats-module-locations__tabs"
-			options={ Object.entries( optionLabels ).map( ( entry ) => ( {
-				value: entry[ 0 ], // optionLabels key
-				label: entry[ 1 ].selectLabel, // optionLabels object value
-			} ) ) }
-			initialSelected={ selectedOption }
-			// @ts-expect-error TODO: missing TS type
-			onSelect={ changeViewButton }
-		/>
+		<>
+			<SimplifiedSegmentedControl
+				className="stats-module-locations__tabs"
+				options={ Object.entries( optionLabels ).map( ( entry ) => ( {
+					value: entry[ 0 ], // optionLabels key
+					label: entry[ 1 ].selectLabel, // optionLabels object value
+				} ) ) }
+				initialSelected={ selectedOption }
+				// @ts-expect-error TODO: missing TS type
+				onSelect={ changeViewButton }
+			/>
+		</>
 	);
 
 	const emptyMessage = (
@@ -148,6 +170,24 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const titleTooltip = (
+		<StatsInfoArea>
+			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ supportUrl }#countries` ) }
+						/>
+					),
+				},
+				context: 'Stats: Link in a popover for Countries module when the module has data',
+			} ) }
+		</StatsInfoArea>
+	);
+
 	const fakeData = [
 		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
 		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
@@ -170,7 +210,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
-				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
+				<StatsCardSkeleton
+					className="locations-skeleton"
+					isLoading={ isRequestingData }
+					title={ title }
+					type={ 3 }
+					withHero
+					withSplitHeader
+					toggleControl={ toggleControlComponent }
+					mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+					metricLabel={ translate( 'Views' ) }
+					titleNodes={ titleTooltip }
+				/>
 			) }
 			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
 				// show data or an overlay
@@ -178,30 +229,31 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
 						title={ title }
-						titleNodes={
-							<StatsInfoArea>
-								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#countries` ) }
-											/>
-										),
-									},
-									context: 'Stats: Link in a popover for Countries module when the module has data',
-								} ) }
-							</StatsInfoArea>
-						}
-						moduleType="countryviews"
+						titleNodes={ titleTooltip }
+						moduleType="locations"
 						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart data={ locationData } geoMode={ geoMode } skipQuery /> }
+						heroElement={
+							<>
+								<Geochart
+									data={ locationData }
+									geoMode={ geoMode }
+									skipQuery
+									customHeight={ 480 }
+								/>
+								{ geoMode !== 'country' && ! summaryUrl && (
+									<CountryFilter
+										countries={ countriesList }
+										defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+										selectedCountry={ countryFilter }
+										onCountryChange={ onCountryChange }
+									/>
+								) }
+							</>
+						}
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={

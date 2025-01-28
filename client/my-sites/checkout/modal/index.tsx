@@ -10,7 +10,7 @@ import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/st
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import { useSelector, useDispatch } from 'calypso/state';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route.js';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';

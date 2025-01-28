@@ -22,6 +22,7 @@ import {
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { mapStateToProps } from '../main';
 
+jest.mock( 'smooch', () => {} );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'calypso/components/main', () => 'Main' );

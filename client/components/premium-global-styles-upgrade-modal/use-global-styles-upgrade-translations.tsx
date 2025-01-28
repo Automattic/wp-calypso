@@ -1,8 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 
 interface Props {
 	numOfSelectedGlobalStyles?: number;
@@ -14,9 +14,7 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 	const plans = Plans.usePlans( { coupon: undefined } );
 
 	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
-		? PLAN_PERSONAL
-		: PLAN_PREMIUM;
+	const upgradeToPlan = useSiteGlobalStylesOnPersonal() ? PLAN_PERSONAL : PLAN_PREMIUM;
 
 	const planTitle = plans?.data?.[ upgradeToPlan ]?.productNameShort ?? '';
 
@@ -43,7 +41,7 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		featuresTitle: translate( 'Included with your %(planTitle)s plan', {
 			args: { planTitle },
 		} ),
-		features: isEnabled( 'global-styles/on-personal-plan' ) ? personalFeatures : premiumFeatures,
+		features: useSiteGlobalStylesOnPersonal() ? personalFeatures : premiumFeatures,
 		description: translate(
 			'You’ve selected a premium style that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
 			'You’ve selected premium styles that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',

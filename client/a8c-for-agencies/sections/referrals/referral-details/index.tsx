@@ -7,7 +7,7 @@ import ReferralCommissions from './commissions';
 import ArchivedStatus from './components/archived-status';
 import ReferralPurchasesMobile from './mobile/purchases-mobile';
 import ReferralPurchases from './purchases';
-import type { Referral, ReferralInvoice } from '../types';
+import type { Referral } from '../types';
 import type { ItemData } from 'calypso/layout/hosting-dashboard/item-view/types';
 
 import './style.scss';
@@ -16,7 +16,6 @@ interface Props {
 	referral: Referral;
 	closeSitePreviewPane: () => void;
 	isArchiveView: boolean;
-	referralInvoices: ReferralInvoice[];
 }
 
 const REFERRAL_PURCHASES_ID = 'referral-purchases';

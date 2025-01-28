@@ -8,8 +8,8 @@ import {
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -134,8 +134,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
-	[ MIGRATION_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
@@ -152,6 +150,10 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 		? {
 				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+				[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
+					import(
+						/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+					),
 		  }
 		: {};
 

@@ -253,7 +253,6 @@ export class FullPostView extends Component {
 			this.trackReadingTime();
 			this.trackScrollDepth();
 			this.trackExitBeforeCompletion();
-			this.resetScroll();
 		}
 	};
 

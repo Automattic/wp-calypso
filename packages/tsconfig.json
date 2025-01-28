@@ -45,7 +45,6 @@
 		{ "path": "./onboarding" },
 		{ "path": "./page-pattern-modal" },
 		{ "path": "./photon" },
-		{ "path": "./plans-grid" },
 		{ "path": "./plans-grid-next" },
 		{ "path": "./privacy-toolset" },
 		{ "path": "./request-external-access" },

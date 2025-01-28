@@ -63,7 +63,7 @@ export default function UplotChart( {
 					return '-';
 				}
 
-				return numberFormat( rawValue, 0 );
+				return numberFormat( rawValue, { decimals: 0 } );
 			},
 		};
 

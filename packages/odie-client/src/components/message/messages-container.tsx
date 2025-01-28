@@ -1,16 +1,22 @@
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
+import { useGetSupportInteractionById } from '../../data/use-get-support-interaction-by-id';
 import {
 	useAutoScroll,
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
 } from '../../hooks';
+import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 import { getOdieInitialMessage } from '../../utils';
+import OdieNotice from '../odie-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -40,12 +46,55 @@ const ChatDate = ( { chat }: { chat: Chat } ) => {
 	const currentDate = getShortDateString( chatDate as number );
 	return <div className="odie-chat__date">{ currentDate }</div>;
 };
+
+const ViewMostRecentOpenConversationNotice = () => {
+	const { userHasRecentOpenConversation, supportInteractionId } =
+		useGetMostRecentOpenConversation();
+	const { data: supportInteraction } = useGetSupportInteractionById(
+		supportInteractionId?.toString() ?? null
+	);
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { trackEvent } = useOdieAssistantContext();
+	const location = useLocation();
+	const navigate = useNavigate();
+	const { chat } = useOdieAssistantContext();
+
+	return (
+		supportInteraction && (
+			<OdieNotice>
+				<div className="odie-notice__view-conversation">
+					<span>
+						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
+					</span>
+					&nbsp;
+					<button
+						onClick={ () => {
+							if ( userHasRecentOpenConversation && supportInteraction ) {
+								trackEvent( 'chat_open_previous_conversation_notice', {
+									user_id: chat?.wpcomUserId,
+									support_interaction_id: chat?.supportInteractionId,
+								} );
+								setCurrentSupportInteraction( supportInteraction );
+								if ( ! location.pathname.includes( '/odie' ) ) {
+									navigate( '/odie' );
+								}
+							}
+						} }
+					>
+						{ __( 'View conversation', __i18n_text_domain__ ) }
+					</button>
+				</div>
+			</OdieNotice>
+		)
+	);
+};
+
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, isChatLoaded } = useOdieAssistantContext();
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded } = useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -104,6 +153,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		return currentMessage === nextMessage;
 	};
 
+	const removeDislikeStatus = experimentVariationName === 'give_wapuu_a_chance';
+
+	const availableStatusWithFeedback = removeDislikeStatus
+		? [ 'sending', 'transfer' ]
+		: [ 'sending', 'dislike', 'transfer' ];
+
 	return (
 		<>
 			<div className="chatbox-messages" ref={ messagesContainerRef }>
@@ -134,8 +189,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.status === 'dislike' && <DislikeThumb /> }
-						{ [ 'sending', 'dislike', 'transfer' ].includes( chat.status ) && (
+						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
+						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
+						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">
 								{ chat.status === 'sending' && <ThinkingPlaceholder /> }
 								{ chat.status === 'dislike' && <DislikeFeedbackMessage /> }

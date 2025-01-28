@@ -1,9 +1,8 @@
 import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { ReactNode, useRef, useLayoutEffect } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import { DataViews } from 'calypso/components/dataviews';
 import { ItemsDataViewsType } from './interfaces';
-import type { Field } from '@wordpress/dataviews';
 
 import './style.scss';
 
@@ -17,34 +16,6 @@ const getIdByPath = ( item: object, path: string ) => {
 		result = result[ field ];
 	}
 	return result;
-};
-
-/**
- * Create an item column for the DataViews component
- * @param id
- * @param label
- * @param displayField
- * @param getValue
- * @param isSortable
- * @param canHide
- */
-export const createItemColumn = (
-	id: string,
-	label: ReactNode,
-	displayField: () => ReactNode,
-	getValue: () => undefined,
-	isSortable: boolean = false,
-	canHide: boolean = false
-): Field< any > => {
-	return {
-		id,
-		enableSorting: isSortable,
-		enableHiding: canHide,
-		getValue,
-		// @ts-expect-error -- Need to fix the label type upstream in @wordpress/dataviews to support React elements.
-		label,
-		render: displayField,
-	};
 };
 
 export type ItemsDataViewsProps = {

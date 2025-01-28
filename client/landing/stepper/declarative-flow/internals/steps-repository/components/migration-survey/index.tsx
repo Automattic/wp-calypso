@@ -4,9 +4,24 @@ import surveyImage from 'calypso/assets/images/onboarding/migrations/survey/word
 import { Survey, SurveyProps, SurveyTriggerAccept, SurveyTriggerSkip } from '../survey';
 import './style.scss';
 
-type MigrationSurveyProps = Pick< SurveyProps, 'isOpen' >;
+const linkByCountry = {
+	IN: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-india-focused',
+	US: 'https://automattic.survey.fm/wp-com-migration-survey-wtp-us-focused',
+};
 
-const MigrationSurvey = ( { isOpen }: MigrationSurveyProps ) => {
+type Countries = keyof typeof linkByCountry;
+
+type MigrationSurveyProps = Pick< SurveyProps, 'isOpen' > & {
+	countryCode: string;
+};
+
+const getLink = ( country: Countries ) => {
+	return linkByCountry[ country ];
+};
+
+const MigrationSurvey = ( { isOpen, countryCode }: MigrationSurveyProps ) => {
+	const surveyLink = getLink( countryCode as Countries );
+
 	return (
 		<Survey
 			name="migration-survey"
@@ -33,11 +48,7 @@ const MigrationSurvey = ( { isOpen }: MigrationSurveyProps ) => {
 						</Button>
 					</SurveyTriggerSkip>
 					<SurveyTriggerAccept asChild>
-						<Button
-							variant="primary"
-							target="_blank"
-							href="https://automattic.survey.fm/wp-com-migration-survey"
-						>
+						<Button variant="primary" target="_blank" href={ surveyLink }>
 							{ translate( 'Take survey' ) }
 						</Button>
 					</SurveyTriggerAccept>

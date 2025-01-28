@@ -6,16 +6,15 @@ import Stream from 'calypso/reader/stream';
 import UserProfileHeader from 'calypso/reader/user-profile/components/user-profile-header';
 
 interface UserPostsProps {
-	streamKey: string;
 	user: UserData;
 }
 
-const UserPosts = ( { streamKey, user }: UserPostsProps ): JSX.Element => {
+const UserPosts = ( { user }: UserPostsProps ): JSX.Element => {
 	const translate = useTranslate();
 
 	return (
 		<Stream
-			streamKey={ streamKey }
+			streamKey={ `user:${ user.ID }` }
 			className="is-user-profile"
 			listName={ translate( 'User Posts' ) }
 			showFollowButton={ false }
