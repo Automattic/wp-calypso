@@ -11,6 +11,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -23,6 +24,7 @@ import {
 import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 import './style.scss';
+
 const changeLoadingNoticeId = 'admin-interface-change-loading';
 const successNoticeId = 'admin-interface-change-success';
 const failureNoticeId = 'admin-interface-change-failure';
@@ -153,13 +155,13 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 		);
 	};
 
-	const isDuplicateViewsExperiment = true;
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	if ( isHosting ) {
 		let settingLink = `/settings/general/${ siteSlug }#admin-interface-style`;
 		if ( adminInterface === 'wp-admin' ) {
 			settingLink = `${ siteAdminUrl }options-general.php`;
-		} else if ( isDuplicateViewsExperiment ) {
+		} else if ( isRemoveDuplicateViewsExperimentEnabled ) {
 			settingLink = `/sites/settings/site/${ siteSlug }#admin-interface-style`;
 		}
 
@@ -192,7 +194,7 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 		);
 	}
 
-	if ( isDuplicateViewsExperiment ) {
+	if ( isRemoveDuplicateViewsExperimentEnabled ) {
 		return (
 			<HostingCard
 				className="admin-interface-style-card"

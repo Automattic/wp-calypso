@@ -26,6 +26,7 @@ import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/c
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
@@ -200,8 +201,8 @@ const Content = ( {
 } ) => {
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
-	const isDuplicateViewsExperiment = true;
-	const Inner = isDuplicateViewsExperiment ? InnerDiv : MasonryGrid;
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
+	const Inner = isRemoveDuplicateViewsExperimentEnabled ? InnerDiv : MasonryGrid;
 
 	return (
 		<>

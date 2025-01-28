@@ -21,6 +21,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,
@@ -395,11 +396,11 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const experimentName = 'calypso_post_onboarding_holdout_160125';
 	const aaTestName = 'calypso_post_onboarding_aa_150125';
 
 	loadExperimentAssignment( aaTestName );
-	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
 
 	const overrideAssignment = getPreference(
 		context.store.getState(),
@@ -411,7 +412,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 		return;
 	}
 
-	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+	if ( isE2ETest() || isRemoveDuplicateViewsExperimentEnabled ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );

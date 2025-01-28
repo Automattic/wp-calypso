@@ -2,9 +2,9 @@ import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo, useEffect, useState } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
 import { areHostingFeaturesSupported } from 'calypso/sites/hosting-features/features';
 import { useStagingSite } from 'calypso/sites/tools/staging-site/hooks/use-staging-site';
@@ -82,16 +82,7 @@ const DotcomPreviewPane = ( {
 	const isPlanExpired = !! site.plan?.expired;
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 
-	const [ isDuplicateViewsExperiment, setIsDuplicateViewsExperiment ] = useState( false );
-	useEffect( () => {
-		const experimentName = 'calypso_post_onboarding_holdout_160125';
-		( async () => {
-			const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
-			if ( duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
-				setIsDuplicateViewsExperiment( true );
-			}
-		} )();
-	}, [] );
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const features: FeaturePreviewInterface[] = useMemo( () => {
 		const isActiveAtomicSite = isAtomicSite && ! isPlanExpired;
@@ -181,7 +172,7 @@ const DotcomPreviewPane = ( {
 			},
 			{
 				label: __( 'Settings' ),
-				enabled: config.isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment,
+				enabled: isRemoveDuplicateViewsExperimentEnabled,
 				featureIds: [
 					SETTINGS_SITE,
 					SETTINGS_ADMINISTRATION,
@@ -190,7 +181,7 @@ const DotcomPreviewPane = ( {
 					SETTINGS_ADMINISTRATION_DELETE_SITE,
 					SETTINGS_CACHING,
 					SETTINGS_WEB_SERVER,
-					...[ isDuplicateViewsExperiment ? DOTCOM_HOSTING_CONFIG : null ],
+					...[ isRemoveDuplicateViewsExperimentEnabled ? DOTCOM_HOSTING_CONFIG : null ],
 				],
 			},
 			{
@@ -198,7 +189,7 @@ const DotcomPreviewPane = ( {
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
 				enabled:
-					! isDuplicateViewsExperiment &&
+					! isRemoveDuplicateViewsExperimentEnabled &&
 					isActiveAtomicSite &&
 					! config.isEnabled( 'untangling/hosting-menu' ),
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
@@ -233,7 +224,7 @@ const DotcomPreviewPane = ( {
 		hasEnTranslation,
 		isSimpleSite,
 		site,
-		isDuplicateViewsExperiment,
+		isRemoveDuplicateViewsExperimentEnabled,
 		selectedSiteFeature,
 		selectedSiteFeaturePreview,
 	] );
