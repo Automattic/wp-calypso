@@ -29,6 +29,10 @@ const TRANSFER_COMPLETED = ( siteId: number ) => ( {
 jest.mock( 'calypso/lib/analytics/tracks' );
 jest.mock( 'calypso/lib/logstash' );
 
+const errorCaptureMigrationKey = replyWithError( {
+	error: 'anyError',
+} );
+
 describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => nock.cleanAll() );
@@ -117,23 +121,12 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 	it( 'returns error when is not possible to get the migration key', async () => {
 		const siteId = 123;
 
-		const errorResponse = {
-			status: 'error',
-			code: 400,
-			message: 'Failed to fetch migration key',
-			body: {
-				code: 'error',
-				error: 'anyError',
-			},
-		};
-
 		nock( 'https://public-api.wordpress.com:443' )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
 			.query( { http_envelope: 1 } )
-			.times( 3 )
-			.reply( 400, errorResponse );
+			.reply( errorCaptureMigrationKey );
 
 		const { result } = render( { siteId: 123 } );
 
@@ -149,7 +142,7 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 					migrationKey: null,
 				} );
 			},
-			{ timeout: 4000 }
+			{ timeout: 3000 }
 		);
 	} );
 } );
