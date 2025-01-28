@@ -45,7 +45,6 @@ export { default as EmptyContent } from 'calypso/components/empty-content';
 export { default as FAQ } from 'calypso/components/faq';
 export { default as FeatureGate } from 'calypso/components/feature-example';
 export { default as FilePickers } from 'calypso/components/file-picker';
-export { default as Focusable } from 'calypso/components/focusable';
 export { default as FormattedDate } from 'calypso/components/formatted-date';
 export { default as FormattedHeader } from 'calypso/components/formatted-header';
 export { default as FormButton } from 'calypso/components/forms/form-button';
