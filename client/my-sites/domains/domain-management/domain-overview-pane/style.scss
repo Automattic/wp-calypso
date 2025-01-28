@@ -210,6 +210,10 @@
 
 	.hosting-dashboard-item-view__content div {
 		flex-grow: 1;
+
+		.domain-forwarding-card__accordion .link-button {
+			color: var(--color-link);
+		}
 	}
 
 	.domain-settings-page {
