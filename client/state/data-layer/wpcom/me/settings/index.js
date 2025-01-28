@@ -151,7 +151,7 @@ export const userSettingsSaveSuccess =
 		const noticeOptions = {
 			id: 'save-user-settings',
 		};
-		if ( getCurrentQueryArguments( getState() ).ref === 'reader-onboarding' ) {
+		if ( getCurrentQueryArguments( getState() )?.ref === 'reader-onboarding' ) {
 			noticeOptions.button = translate( 'Return to Reader' );
 			noticeOptions.onClick = () => {
 				page( '/read' );
