@@ -64,7 +64,6 @@
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": false,

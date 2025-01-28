@@ -3,7 +3,6 @@ import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import {
-	renderDomainsPage,
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsInstallPage,
@@ -22,10 +21,6 @@ export default function () {
 			makeLayout,
 			clientRender
 		);
-	}
-
-	if ( config.isEnabled( 'marketplace-domain-bundle' ) ) {
-		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
 	}
 
 	page(

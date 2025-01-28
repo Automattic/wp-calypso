@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import * as React from 'react';
@@ -88,26 +87,6 @@ export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof B
 			{ children ||
 				/* translators: Button label for skipping a step in onboarding */
 				__( 'Skip for now', __i18n_text_domain__ ) }
-		</Button>
-	);
-};
-
-export const ArrowButton: React.FunctionComponent<
-	React.ComponentProps< typeof Button > & {
-		arrow: 'left' | 'right';
-	}
-> = ( { className, children, arrow = 'right', ...buttonProps } ) => {
-	return (
-		<Button
-			className={ clsx(
-				`action_buttons__button action-buttons__arrow action-buttons__arrow--${ arrow }`,
-				className
-			) }
-			{ ...buttonProps }
-		>
-			{ arrow === 'left' && <Icon icon={ chevronLeft } /> }
-			{ children }
-			{ arrow === 'right' && <Icon icon={ chevronRight } /> }
 		</Button>
 	);
 };
