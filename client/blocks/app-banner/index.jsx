@@ -148,7 +148,7 @@ export class AppBanner extends Component {
 				case NOTES:
 					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://reader&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
 					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
@@ -256,7 +256,7 @@ export function buildDeepLinkFragment( currentRoute, currentSection ) {
 				// The Reader is generally accessed at the root of WordPress.com ('/').
 				// In this case, we need to manually add the section name to the
 				// URL so that the iOS app knows which section to open.
-				return hasRoute ? currentRoute : '/read';
+				return hasRoute ? currentRoute : '/reader';
 			case STATS:
 				return hasRoute ? currentRoute : '/stats';
 			default:

@@ -111,7 +111,7 @@ export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaB
 		queryKey: [ 'related-meta-by-tag', tag_recs_per_card, site_recs_per_card, tag ],
 		queryFn: () =>
 			wp.req.get( {
-				path: `/read/tags/${ encodeURIComponent(
+				path: `/reader/tags/${ encodeURIComponent(
 					tag
 				) }/cards?tag_recs_per_card=${ tag_recs_per_card }&site_recs_per_card=${ site_recs_per_card }`,
 				apiNamespace: 'wpcom/v2',

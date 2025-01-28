@@ -41,26 +41,26 @@ function getLocation( path ) {
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
-	if ( path === '/read' ) {
+	if ( path === '/reader' ) {
 		return 'following';
 	}
-	if ( path.indexOf( '/read/a8c' ) === 0 ) {
+	if ( path.indexOf( '/reader/a8c' ) === 0 ) {
 		return 'following_a8c';
 	}
-	if ( path.indexOf( '/read/p2' ) === 0 ) {
+	if ( path.indexOf( '/reader/p2' ) === 0 ) {
 		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		const sort = searchParams.get( 'sort' );
 		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
-	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
+	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
 	}
-	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)$/i ) ) {
+	if ( path.match( /^\/reader\/(blogs|feeds)\/([0-9]+)$/i ) ) {
 		return 'blog_page';
 	}
-	if ( path.indexOf( '/read/list/' ) === 0 ) {
+	if ( path.indexOf( '/reader/list/' ) === 0 ) {
 		return 'list';
 	}
 	if ( path.indexOf( '/activities/likes' ) === 0 ) {
@@ -87,16 +87,16 @@ function getLocation( path ) {
 		}
 		return `discover_tag:${ selectedTab }`;
 	}
-	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
+	if ( path.indexOf( '/reader/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
 	}
-	if ( path.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) ) ) {
+	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
 		return 'search';
 	}
-	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {
+	if ( path.indexOf( '/reader/conversations/a8c' ) === 0 ) {
 		return 'conversations_a8c';
 	}
-	if ( path.indexOf( '/read/conversations' ) === 0 ) {
+	if ( path.indexOf( '/reader/conversations' ) === 0 ) {
 		return 'conversations';
 	}
 	if ( path.indexOf( '/home' ) === 0 ) {

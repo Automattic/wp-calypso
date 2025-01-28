@@ -488,7 +488,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/read"
+				url="/reader"
 				icon={
 					<svg
 						width="24"

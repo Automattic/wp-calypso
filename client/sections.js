@@ -381,10 +381,10 @@ const sections = [
 		enableLoggedOut: true,
 		group: 'me',
 	},
-	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
+	// this MUST be the first section for /reader paths so subsequent sections under /reader can override settings
 	{
 		name: 'reader',
-		paths: [ '/read' ],
+		paths: [ '/reader' ],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -393,10 +393,10 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [
-			'/read/feeds/[^\\/]+',
-			'/read/blogs/[^\\/]+',
-			'/read/a8c',
-			'/read/p2',
+			'/reader/feeds/[^\\/]+',
+			'/reader/blogs/[^\\/]+',
+			'/reader/a8c',
+			'/reader/p2',
 			'/recommendations',
 		],
 		module: 'calypso/reader',
@@ -406,7 +406,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
+		paths: [ '/reader/feeds/[^\\/]+/posts/[^\\/]+', '/reader/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'calypso/reader/full-post',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -453,7 +453,11 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/search', '/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read/search', '/recommendations' ],
+		paths: [
+			'/reader/search',
+			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader/search',
+			'/recommendations',
+		],
 		module: 'calypso/reader/search',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -461,20 +465,20 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/list' ],
+		paths: [ '/reader/list' ],
 		module: 'calypso/reader/list',
 		group: 'reader',
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/conversations' ],
+		paths: [ '/reader/conversations' ],
 		module: 'calypso/reader/conversations',
 		group: 'reader',
 		trackLoadPerformance: true,
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/notifications' ],
+		paths: [ '/reader/notifications' ],
 		module: 'calypso/reader/notifications',
 		group: 'reader',
 		trackLoadPerformance: true,
@@ -482,10 +486,10 @@ const sections = [
 	{
 		name: 'reader',
 		paths: [
-			'/read/subscriptions',
-			'/read/subscriptions/comments',
-			'/read/subscriptions/pending',
-			'^/read/subscriptions/(\\d+)(/)?$',
+			'/reader/subscriptions',
+			'/reader/subscriptions/comments',
+			'/reader/subscriptions/pending',
+			'^/reader/subscriptions/(\\d+)(/)?$',
 		],
 		module: 'calypso/reader/site-subscriptions-manager',
 		group: 'reader',

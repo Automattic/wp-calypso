@@ -18,7 +18,7 @@ class FeedEmptyContent extends PureComponent {
 			<a
 				className="empty-content__action button is-primary" // eslint-disable-line
 				onClick={ this.recordAction }
-				href="/read/search"
+				href="/reader/search"
 			>
 				{ translate( 'Find sites to follow' ) }
 			</a>

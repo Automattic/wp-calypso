@@ -5,8 +5,8 @@ The Reader module handles the view and routing logic for the _Reader_ section of
 These routes are served by the module:
 
 - /activities/likes
-- /read/\*
-- /recommendations (redirects to /read/search)
+- /reader/\*
+- /recommendations (redirects to /reader/search)
 - /tag/\*
 
 ## Block Rendering Development
@@ -35,11 +35,11 @@ There's two places where your block may render.
 1. Go to `https://wordpress.com/home/{your_url}`
 2. Click on "Reader"
 3. Check the two tabs -- "All" and the site that you followed -- to ensure that they have rendered
-   your block correctly. These are at located at the URLs `https://wordpress.com/read` and
-   `https://wordpress.com/read/feeds/{site_id}` respectively. Let's call these "Reader Previews". This
+   your block correctly. These are at located at the URLs `https://wordpress.com/reader` and
+   `https://wordpress.com/reader/feeds/{site_id}` respectively. Let's call these "Reader Previews". This
    is the first place your block may render.
 4. Click into the post and ensure that the block is rendered correctly. This is located at
-   `https://wordpress.com/read/feeds/{site_id}/posts/{post_id}`. Let's call these "Reader Posts". This
+   `https://wordpress.com/reader/feeds/{site_id}/posts/{post_id}`. Let's call these "Reader Posts". This
    is the second place your block may render.
 
 ### Data Flow
