@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
@@ -17,8 +18,12 @@ import type { Context as PageJSContext } from '@automattic/calypso-router';
 
 export function SettingsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
-
+	const isSimple = useSelector( isSimpleSite );
 	const shouldShowAdministration = useIsAdministrationSettingSupported();
+
+	if ( isSimple ) {
+		return null;
+	}
 
 	return (
 		<Sidebar>
