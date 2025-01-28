@@ -434,6 +434,16 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				item.path === '//'
 		);
 
+		let restoreWarning = translate(
+			'Important: This action will replace the selected content from the selected restore point.'
+		);
+
+		if ( hasSelectedTables ) {
+			restoreWarning = translate(
+				'Important: This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+			);
+		}
+
 		return (
 			<>
 				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
@@ -455,23 +465,11 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				{ renderSection( 'plugin' ) }
 				{ renderSection( 'table' ) }
 				{ renderSection( 'file' ) }
-				{ hasSelectedTables ? (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
-					/>
-				) : (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'Important: This action will replace the selected content from the selected restore point.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
-					/>
-				) }
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ restoreWarning }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
 				<>
 					{ backupCurrentlyInProgress && (
 						<RewindFlowNotice
