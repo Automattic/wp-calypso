@@ -72,8 +72,6 @@ const SurveyManager = ( { disabled, flow }: { disabled: boolean; flow?: Flow } )
 			</Suspense>
 		</DeferredRender>
 	);
-
-	return null;
 };
 
 export default SurveyManager;
