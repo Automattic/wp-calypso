@@ -100,10 +100,7 @@ let windowOpenSpy;
 beforeEach( () => {
 	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
 	config.isEnabled.mockImplementation( ( flag ) => {
-		const disabledFlags = [
-			'jetpack/magic-link-signup',
-			'woocommerce/core-profiler-passwordless-auth',
-		];
+		const disabledFlags = [ 'jetpack/magic-link-signup' ];
 		return ! disabledFlags.includes( flag );
 	} );
 } );

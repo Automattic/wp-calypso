@@ -208,10 +208,8 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
-		"woo/passwordless": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true,
 		"woocommerce/rebrand-2-0": true
 	}
 }

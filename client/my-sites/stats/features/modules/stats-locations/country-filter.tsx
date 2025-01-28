@@ -19,7 +19,14 @@ const CountryFilter: React.FC< {
 	];
 
 	return (
-		<SelectControl onChange={ onChange } options={ options } value={ selectedCountry ?? '' } />
+		<SelectControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			className="stats-module-locations__country-filter"
+			onChange={ onChange }
+			options={ options }
+			value={ selectedCountry ?? '' }
+		/>
 	);
 };
 

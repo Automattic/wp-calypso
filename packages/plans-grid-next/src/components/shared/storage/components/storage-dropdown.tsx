@@ -24,7 +24,7 @@ type StorageDropdownOptionProps = {
 	priceOnSeparateLine?: boolean;
 };
 
-const getSelecetedStorageAddOn = (
+const getSelectedStorageAddOn = (
 	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null,
 	storageOptionSlug: string
 ) => {
@@ -106,23 +106,41 @@ const StorageDropdown = ( {
 					siteId,
 				} );
 		}
-	}, [] );
+	}, [
+		defaultStorageOption,
+		planSlug,
+		selectedStorageOptionForPlan,
+		setSelectedStorageOptionForPlan,
+		siteId,
+	] );
 
-	const selectControlOptions = availableStorageAddOns?.map( ( addOn ) => {
-		const addOnStorage = addOn.quantity ?? 0;
-
-		return {
-			key: addOn.addOnSlug,
+	const defaultStorageItem = useMemo(
+		() => ( {
+			key: defaultStorageOption || '',
 			name: (
-				<StorageDropdownOption
-					price={ addOn?.prices?.formattedMonthlyPrice }
-					totalStorage={ planStorage + addOnStorage }
-				/>
+				<StorageDropdownOption price="" totalStorage={ planStorage } />
 			 ) as unknown as string,
-		};
-	} );
+		} ),
+		[ defaultStorageOption, planStorage ]
+	);
 
-	const selectedStorageAddOn = getSelecetedStorageAddOn(
+	const selectControlOptions = [ defaultStorageItem ].concat(
+		availableStorageAddOns?.map( ( addOn ) => {
+			const addOnStorage = addOn.quantity ?? 0;
+
+			return {
+				key: addOn.addOnSlug,
+				name: (
+					<StorageDropdownOption
+						price={ addOn?.prices?.formattedMonthlyPrice }
+						totalStorage={ planStorage + addOnStorage }
+					/>
+				 ) as unknown as string,
+			};
+		} )
+	);
+
+	const selectedStorageAddOn = getSelectedStorageAddOn(
 		storageAddOns,
 		selectedStorageOptionForPlan
 	);

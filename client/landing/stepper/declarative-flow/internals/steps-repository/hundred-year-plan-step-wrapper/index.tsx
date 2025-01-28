@@ -22,6 +22,7 @@ import HundredYearPlanLogo from './hundred-year-plan-logo';
 import InfoModal from './info-modal';
 
 import './style.scss';
+
 type Props = {
 	stepName: string;
 	flowName: string;
