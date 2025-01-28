@@ -60,7 +60,13 @@ export const useActionHooks = () => {
 				return queryParams.get( 'help-center' ) === 'happiness-engineer';
 			},
 			action() {
-				setNavigateToRoute( '/odie?provider=zendesk' );
+				const message = queryParams.get( 'user-message' ) ?? '';
+				const siteUrl = queryParams.get( 'site-url' ) ?? '';
+				const siteId = queryParams.get( 'site-id' ) ?? '';
+
+				setNavigateToRoute(
+					`/odie?provider=zendesk&userFieldMessage=${ message }&siteUrl=${ siteUrl }&siteId=${ siteId }`
+				);
 				setShowHelpCenter( true );
 			},
 		},
