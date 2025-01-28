@@ -66,6 +66,9 @@ const useSubscribersQuery = ( {
 			} );
 		},
 		enabled: !! siteId && shouldFetch,
+		refetchOnMount: false,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
 	} );
 
 	return { ...query, isLoading: query.isLoading || isLoading };
