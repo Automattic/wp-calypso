@@ -208,7 +208,6 @@
 		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true,
-		"woocommerce/rebrand-2-0": true
+		"yolo/command-palette": true
 	}
 }

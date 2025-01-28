@@ -180,8 +180,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true,
-		"woocommerce/rebrand-2-0": true
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
