@@ -16,7 +16,6 @@ import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
