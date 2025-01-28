@@ -88,7 +88,7 @@ function createSeries( series: Array< SeriesProp > ) {
 						return '-';
 					}
 
-					return numberFormat( rawValue, 0 );
+					return numberFormat( rawValue, { decimals: 0 } );
 				},
 			},
 		};

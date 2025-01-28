@@ -1,29 +1,29 @@
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { DataViews, type View, type Action } from '@wordpress/dataviews';
+import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
-import { useSubscriptionPlans } from 'calypso/my-sites/subscribers/hooks';
+import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
+import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
-import { SubscribersSortBy } from '../../constants';
+import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
+import { UnsubscribeModal } from '../unsubscribe-modal';
 import './style.scss';
 
 type SubscriberDataViewsProps = {
 	siteId: number | undefined;
-	onClickView: ( subscriber: Subscriber ) => void;
-	onClickUnsubscribe: ( subscriber: Subscriber ) => void;
-	onGiftSubscription: ( subscriber: Subscriber ) => void;
 	isUnverified?: boolean;
 	isStagingSite?: boolean;
+	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
 const SubscriptionTypeCell = ( { subscriber }: { subscriber: Subscriber } ) => {
@@ -42,13 +42,17 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 
 const SubscriberDataViews = ( {
 	siteId = undefined,
-	onClickUnsubscribe,
 	isUnverified = false,
 	isStagingSite = false,
+	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
 	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<660px' );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
+
 	const {
 		grandTotal,
 		page,
@@ -63,8 +67,10 @@ const SubscriberDataViews = ( {
 		handleSearch,
 		sortTerm,
 		sortOrder,
+		filterOption,
 		setSortTerm,
 		setSortOrder,
+		setFilterOption,
 	} = useSubscribersPage();
 
 	const [ currentView, setCurrentView ] = useState< View >( {
@@ -78,8 +84,27 @@ const SubscriberDataViews = ( {
 		},
 	} );
 
-	const isSimple = useSelector( isSimpleSite );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
+		isSimple: isSimpleSite( state ),
+		isAtomic: isAtomicSite( state, siteId ),
+	} ) );
+
+	const pageArgs = {
+		currentPage: page,
+		filterOption: undefined,
+		searchTerm,
+		sortTerm,
+	};
+
+	const {
+		currentSubscriber,
+		onClickUnsubscribe: handleUnsubscribe,
+		onConfirmModal,
+		resetSubscriber,
+	} = useUnsubscribeModal( siteId ?? null, pageArgs, false, () => {
+		setSelectedSubscriber( null );
+	} );
+
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
 	const shouldShowLaunchpad =
 		! isLoading && ! searchTerm && ( ! grandTotal || ( grandTotal === 1 && isOwnerSubscribed ) );
@@ -152,12 +177,21 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 			{
-				id: 'subscription_type',
+				id: 'plan',
 				label: translate( 'Subscription type' ),
-				getValue: ( { item }: { item: Subscriber } ) => ( item.plans?.length ? 'Paid' : 'Free' ),
+				getValue: ( { item }: { item: Subscriber } ) =>
+					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
+				elements: [
+					{ label: 'Paid', value: SubscribersFilterBy.Paid },
+					{ label: 'Free', value: SubscribersFilterBy.Free },
+				],
+				filterBy: {
+					operators: [ 'is' as Operator ],
+					isPrimary: true,
+				},
+				enableSorting: true,
 				enableHiding: false,
-				enableSorting: false,
 			},
 			{
 				id: 'date_subscribed',
@@ -177,7 +211,7 @@ const SubscriberDataViews = ( {
 			return [];
 		}
 
-		return [
+		const baseActions = [
 			{
 				id: 'view',
 				label: translate( 'View' ),
@@ -191,15 +225,33 @@ const SubscriberDataViews = ( {
 			{
 				id: 'remove',
 				label: translate( 'Remove' ),
-				callback: ( items: Subscriber[] ) => onClickUnsubscribe( items[ 0 ] ),
+				callback: ( items: Subscriber[] ) => handleUnsubscribe( items[ 0 ] ),
+				isPrimary: false,
 			},
 		];
+
+		if ( couponsAndGiftsEnabled ) {
+			baseActions.push( {
+				id: 'gift',
+				label: translate( 'Gift a subscription' ),
+				callback: ( items: Subscriber[] ) => {
+					if ( items[ 0 ] && items[ 0 ].user_id ) {
+						onGiftSubscription( items[ 0 ] );
+					}
+				},
+				isPrimary: false,
+			} );
+		}
+
+		return baseActions;
 	}, [
 		selectedSubscriber,
 		translate,
 		handleSubscriberSelect,
 		getSubscriberId,
-		onClickUnsubscribe,
+		handleUnsubscribe,
+		onGiftSubscription,
+		couponsAndGiftsEnabled,
 	] );
 
 	const handleViewChange = useCallback(
@@ -241,6 +293,17 @@ const SubscriberDataViews = ( {
 					fields: newView.fields,
 				} ) );
 			}
+
+			// Handle filters
+			if ( newView.filters ) {
+				if ( newView.filters.length > 0 ) {
+					if ( newView.filters[ 0 ].value !== filterOption ) {
+						setFilterOption( newView.filters[ 0 ].value );
+					}
+				} else {
+					setFilterOption( SubscribersFilterBy.All );
+				}
+			}
 		},
 		[
 			page,
@@ -252,6 +315,8 @@ const SubscriberDataViews = ( {
 			setSortTerm,
 			setSortOrder,
 			currentView,
+			setFilterOption,
+			filterOption,
 		]
 	);
 
@@ -274,6 +339,11 @@ const SubscriberDataViews = ( {
 				field: sortTerm,
 				direction: sortOrder,
 			},
+			filters: [
+				...( filterOption !== SubscribersFilterBy.All
+					? [ { field: 'plan', operator: 'is', value: [ filterOption ] } ]
+					: [] ),
+			],
 		};
 
 		setCurrentView( ( oldCurrentView ) => {
@@ -297,18 +367,18 @@ const SubscriberDataViews = ( {
 			return {
 				...baseView,
 				type: 'table',
-				fields: [ 'name', ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
+				fields: [ 'name', ...( ! isMobile ? [ 'plan', 'date_subscribed' ] : [] ) ],
 				layout: {
 					styles: {
 						media: { width: '60px' },
 						name: { width: '55%', minWidth: '195px' },
-						subscription_type: { width: '25%' },
+						plan: { width: '25%' },
 						date_subscribed: { width: '25%' },
 					},
 				},
 			} as View;
 		} );
-	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder ] );
+	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder, filterOption ] );
 
 	return (
 		<div
@@ -349,9 +419,15 @@ const SubscriberDataViews = ( {
 						siteId={ siteId }
 						subscriptionId={ selectedSubscriber.subscription_id }
 						onClose={ () => setSelectedSubscriber( null ) }
+						onUnsubscribe={ handleUnsubscribe }
 					/>
 				</section>
 			) }
+			<UnsubscribeModal
+				subscriber={ currentSubscriber }
+				onCancel={ resetSubscriber }
+				onConfirm={ onConfirmModal }
+			/>
 		</div>
 	);
 };

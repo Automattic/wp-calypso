@@ -8,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
-import { isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import {
@@ -34,7 +33,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 	onLostPasswordClick = ( event ) => {
 		recordTracksEvent( 'calypso_magic_login_lost_password_click' );
 
-		if ( isReactLostPasswordScreenEnabled() && this.props.isWoo ) {
+		if ( this.props.isWoo ) {
 			event.preventDefault();
 
 			page(

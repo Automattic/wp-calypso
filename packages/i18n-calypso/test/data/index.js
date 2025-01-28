@@ -71,8 +71,6 @@ const locale = {
 	'%d months': [ '%d Monaten' ],
 	'a year': [ 'ein Jahr' ],
 	'%d years': [ '%d Jahre' ],
-	number_format_thousands_sep: [ '.' ],
-	number_format_decimals: [ ',' ],
 };
 
 exports.locale = locale;

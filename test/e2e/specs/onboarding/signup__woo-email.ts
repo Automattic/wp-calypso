@@ -41,11 +41,7 @@ describe(
 
 			it( 'Create a new WordPress.com account', async function () {
 				const userSignupPage = new UserSignupPage( page );
-				newUserDetails = await userSignupPage.signupWoo(
-					testUser.email,
-					testUser.username,
-					testUser.password
-				);
+				newUserDetails = await userSignupPage.signupWoo( testUser.email );
 			} );
 
 			it( 'Get activation link', async function () {

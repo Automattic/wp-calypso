@@ -652,6 +652,11 @@ body.is-mobile-app-view {
 	}
 }
 
+.masterbar__item-launch-site {
+	cursor: pointer;
+	background-color: var(--wp-admin-theme-color);
+}
+
 .masterbar__item-logo {
 	flex: 0 0 auto;
 	padding: 0 0 0 8px;

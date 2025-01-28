@@ -26,6 +26,7 @@ export const useActionHooks = () => {
 				);
 			},
 		},
+
 		/**
 		 * Open Help Center.
 		 */
@@ -37,6 +38,7 @@ export const useActionHooks = () => {
 				setShowHelpCenter( true );
 			},
 		},
+
 		/**
 		 * Open to Wapuu chat.
 		 */
@@ -46,6 +48,19 @@ export const useActionHooks = () => {
 			},
 			action() {
 				setNavigateToRoute( '/odie' );
+				setShowHelpCenter( true );
+			},
+		},
+
+		/**
+		 * Open to Chat with Happiness Engineer.
+		 */
+		{
+			condition() {
+				return queryParams.get( 'help-center' ) === 'happiness-engineer';
+			},
+			action() {
+				setNavigateToRoute( '/odie?provider=zendesk' );
 				setShowHelpCenter( true );
 			},
 		},

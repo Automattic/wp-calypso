@@ -16,6 +16,8 @@ export const BackButton = () => {
 			navigate( '/' );
 		} else if ( searchParams.get( 'query' ) ) {
 			navigate( `/?query=${ searchParams.get( 'query' ) }` );
+		} else if ( searchParams.get( 'direct-zd-chat' ) ) {
+			navigate( '/' );
 		} else {
 			navigate( -1 );
 		}

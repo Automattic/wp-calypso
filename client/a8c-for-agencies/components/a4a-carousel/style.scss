@@ -44,5 +44,5 @@
 	gap: 16px;
 	width: max-content;
 	transform: translateX( 0 );
-	transition: transform 0.3s cubic-bezier(0.50, 0.0, 0.50, 1);
+	transition: transform .75s cubic-bezier(.5,0,.5,1);
 }

@@ -1,10 +1,12 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UrlData } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wp from 'calypso/lib/wp';
 import { CredentialsFormData, ApplicationPasswordsInfo, ApiError } from '../types';
@@ -72,6 +74,8 @@ export const useCredentialsForm = (
 	const [ siteInfo, setSiteInfo ] = useState< UrlData | undefined >( undefined );
 	const [ isBusy, setIsBusy ] = useState( false );
 	const siteId = parseInt( useSiteIdParam() ?? '' );
+	const locale = useLocale();
+	const { sendTicketAsync, isPending: isSendingTicket } = useSubmitMigrationTicket();
 
 	const {
 		mutateAsync: requestAutomatedMigration,
@@ -80,7 +84,7 @@ export const useCredentialsForm = (
 		reset,
 	} = useRequestAutomatedMigration( siteSlug );
 
-	const serverSideError = useFormErrorMapping( error, variables, siteInfo );
+	const serverSideError = useFormErrorMapping( error, variables );
 
 	const {
 		formState: { errors, isSubmitting },
@@ -99,8 +103,8 @@ export const useCredentialsForm = (
 	const accessMethod = watch( 'migrationType' );
 
 	useEffect( () => {
-		setIsBusy( isSubmitting );
-	}, [ isSubmitting ] );
+		setIsBusy( isSubmitting || isSendingTicket );
+	}, [ isSubmitting, isSendingTicket ] );
 
 	const isLoginFailed =
 		error?.code === 'automated_migration_tools_login_and_get_cookies_test_failed';
@@ -126,14 +130,24 @@ export const useCredentialsForm = (
 
 	const submitWithApplicationPassword = useCallback(
 		async ( siteId: number, from: string, siteInfoResult: UrlData ) => {
-			if ( isWPCOM( siteInfoResult ) || isNotWordPress( siteInfoResult ) ) {
+			if ( isWPCOM( siteInfoResult ) ) {
+				if ( ! siteSlug ) {
+					return;
+				}
+				await sendTicketAsync( {
+					locale,
+					blog_url: siteSlug,
+					from_url: from,
+				} );
+				onSubmit( siteInfoResult );
+			} else if ( isNotWordPress( siteInfoResult ) ) {
 				onSubmit( siteInfoResult );
 			} else {
 				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
 				onSubmit( siteInfoResult, applicationPasswordsInfoResult );
 			}
 		},
-		[ onSubmit ]
+		[ onSubmit, siteSlug, sendTicketAsync ]
 	);
 
 	const submitHandler = handleSubmit( async ( data: CredentialsFormData ) => {

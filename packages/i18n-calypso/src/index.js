@@ -17,6 +17,7 @@ export const setLocale = i18n.setLocale.bind( i18n );
 export const getLocale = i18n.getLocale.bind( i18n );
 export const getLocaleSlug = i18n.getLocaleSlug.bind( i18n );
 export const getLocaleVariant = i18n.getLocaleVariant.bind( i18n );
+export const getBrowserSafeLocale = i18n.getBrowserSafeLocale.bind( i18n );
 export const isRtl = i18n.isRtl.bind( i18n );
 export const addTranslations = i18n.addTranslations.bind( i18n );
 export const reRenderTranslations = i18n.reRenderTranslations.bind( i18n );

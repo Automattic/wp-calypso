@@ -1,5 +1,3 @@
-import { DomainSuggestions } from '@automattic/data-stores';
-
 export const DOMAIN_SUGGESTIONS_TO_SHOW = 5;
 export const DOMAIN_SUGGESTIONS_TO_SHOW_EXPANDED = 10;
 export const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
@@ -12,7 +10,5 @@ export const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
  * @see https://stackoverflow.com/a/44755058/1432801
  */
 export const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
-
-export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register();
 
 export const domainIsAvailableStatus = [ 'available', 'available_premium' ];

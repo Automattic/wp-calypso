@@ -1,3 +1,4 @@
+import { DomainSuggestions } from '@automattic/data-stores';
 import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -5,8 +6,6 @@ import { Icon, chevronDown } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import * as React from 'react';
-import { DOMAIN_SUGGESTIONS_STORE } from '../../constants';
-import type { DomainSuggestionsSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -25,7 +24,7 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 	};
 
 	const domainCategories = useSelect(
-		( select ) => ( select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect ).getCategories(),
+		( select ) => select( DomainSuggestions.store ).getCategories(),
 		[]
 	);
 
