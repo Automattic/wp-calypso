@@ -114,6 +114,7 @@
 		"signup/social": true,
 		"signup/social-first": true,
 		"site-indicator": true,
+		"sites/dashboard-survey": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
 		"stats/empty-module-traffic": true,
