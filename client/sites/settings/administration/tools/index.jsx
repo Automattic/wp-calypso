@@ -64,7 +64,7 @@ class SiteTools extends Component {
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
 		const startOverLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/reset-site`
+			? `/sites/settings/site/${ siteSlug }/reset-site`
 			: `/settings/start-over/${ siteSlug }?source=${ source }`;
 
 		const restorePlanSoftwareTitle = translate( 'Restore plugins and themes' );
@@ -73,11 +73,11 @@ class SiteTools extends Component {
 		);
 
 		const startSiteTransferLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/transfer-site`
+			? `/sites/settings/site/${ siteSlug }/transfer-site`
 			: `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
 
 		const deleteSiteLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/delete-site`
+			? `/sites/settings/site/${ siteSlug }/delete-site`
 			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
 
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;

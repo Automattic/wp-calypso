@@ -170,9 +170,7 @@ class DeleteSite extends Component {
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
-		const source = isHostingMenuUntangled()
-			? '/sites/settings/administration'
-			: getSettingsSource();
+		const source = isHostingMenuUntangled() ? '/sites/settings/site' : getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};

@@ -54,6 +54,6 @@ export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, ne
 
 function redirectToAdministration( siteSlug: string | null ) {
 	return isHostingMenuUntangled()
-		? page.redirect( '/sites/settings/administration/' + siteSlug )
+		? page.redirect( '/sites/settings/site/' + siteSlug )
 		: page.redirect( '/settings/general/' + siteSlug );
 }

@@ -58,7 +58,7 @@ export default function () {
 	const isDuplicateViewsExperiment = true;
 	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
 		page( '/settings/delete-site/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/delete-site` );
+			page.redirect( `/sites/settings/site/${ context.params.site }/delete-site` );
 		} );
 	} else {
 		page(
@@ -91,9 +91,9 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) || true ) {
+	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
 		page( '/settings/start-over/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/reset-site` );
+			page.redirect( `/sites/settings/site/${ context.params.site }/reset-site` );
 		} );
 	} else {
 		page(
@@ -118,9 +118,9 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) || true ) {
+	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
 		page( '/settings/start-site-transfer/:site', ( context ) => {
-			page.redirect( `/sites/settings/administration/${ context.params.site }/transfer-site` );
+			page.redirect( `/sites/settings/site/${ context.params.site }/transfer-site` );
 		} );
 	} else {
 		page(

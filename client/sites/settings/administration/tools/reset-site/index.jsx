@@ -49,7 +49,7 @@ function SiteResetCard( {
 	const isUntangled = isHostingMenuUntangled();
 
 	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
-	const source = isUntangled ? '/sites/settings/administration' : getSettingsSource();
+	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 
 	const checkStatus = async () => {
 		if ( status?.status !== 'completed' && isAtomic ) {

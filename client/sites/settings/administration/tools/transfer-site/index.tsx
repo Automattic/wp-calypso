@@ -83,9 +83,7 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			const source = isHostingMenuUntangled()
-				? '/sites/settings/administration'
-				: getSettingsSource();
+			const source = isHostingMenuUntangled() ? '/sites/settings/site' : getSettingsSource();
 			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};

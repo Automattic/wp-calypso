@@ -48,7 +48,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/reset-site',
+		'/sites/settings/site/:site/reset-site',
 		siteSelection,
 		redirectIfCantDeleteSite,
 		navigation,
@@ -58,7 +58,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/transfer-site',
+		'/sites/settings/site/:site/transfer-site',
 		siteSelection,
 		redirectIfCantStartSiteOwnerTransfer,
 		navigation,
@@ -68,7 +68,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/delete-site',
+		'/sites/settings/site/:site/delete-site',
 		siteSelection,
 		redirectIfCantDeleteSite,
 		navigation,
