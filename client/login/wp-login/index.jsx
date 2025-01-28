@@ -315,12 +315,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if (
-			this.props.isWoo ||
-			this.props.isBlazePro ||
-			( this.props.isWooPasswordlessJPC &&
-				config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) )
-		) {
+		if ( this.props.isWoo || this.props.isBlazePro || this.props.isWooPasswordlessJPC ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -465,9 +460,7 @@ export class Login extends Component {
 		}
 
 		if (
-			( currentQuery.lostpassword_flow === 'true' &&
-				isWooPasswordlessJPC &&
-				config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) ||
+			( currentQuery.lostpassword_flow === 'true' && isWooPasswordlessJPC ) ||
 			// We don't want to show lost password option if the user is already on lost password's page
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {

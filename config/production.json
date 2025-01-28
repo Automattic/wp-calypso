@@ -175,10 +175,8 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"woo/passwordless": true,
 		"wpcom-user-bootstrap": true,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true,
 		"woocommerce/rebrand-2-0": false
 	},
 	"siftscience_key": "a4f69f6759",

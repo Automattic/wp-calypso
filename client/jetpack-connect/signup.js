@@ -7,7 +7,7 @@
  */
 
 import { isEnabled } from '@automattic/calypso-config';
-import { Gridicon, JetpackLogo } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Button, Card, Modal } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -515,23 +515,13 @@ export class JetpackSignup extends Component {
 						isWooOnboarding={ this.isWooOnboarding() }
 						isWooPasswordlessJPC={ this.isWooPasswordlessJPC() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-						disableSiteCard={
-							isWooPasswordlessJPC && isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-						}
+						disableSiteCard={ isWooPasswordlessJPC }
 					/>
 					<SignupForm
 						disabled={ isCreatingAccount }
-						isPasswordless={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-						}
-						disableTosText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-						}
-						labelText={
-							isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC
-								? this.props.translate( 'Your Email' )
-								: null
-						}
+						isPasswordless={ isWooPasswordlessJPC }
+						disableTosText={ isWooPasswordlessJPC }
+						labelText={ isWooPasswordlessJPC ? this.props.translate( 'Your Email' ) : null }
 						email={ this.props.authQuery.userEmail }
 						footerLink={ this.renderFooterLink() }
 						handleSocialResponse={ this.handleSocialResponse }
@@ -555,12 +545,6 @@ export class JetpackSignup extends Component {
 				</div>
 				{ isWooPasswordlessJPC && this.props.authQuery.installedExtSuccess && (
 					<WooInstallExtSuccessNotice />
-				) }
-				{ ! isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) && isWooPasswordlessJPC && (
-					<div className="jetpack-connect__jetpack-logo-wrapper">
-						<JetpackLogo monochrome size={ 18 } />{ ' ' }
-						<span>{ this.props.translate( 'Jetpack powered' ) }</span>
-					</div>
 				) }
 			</MainWrapper>
 		);

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import { CompactCard } from '@automattic/components';
 import { Icon, globe } from '@wordpress/icons';
@@ -198,45 +197,28 @@ export class AuthFormHeader extends Component {
 					'Link displayed on the Jetpack Connect signup page for users to log in with a WordPress.com account',
 			};
 
-			if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
-				switch ( currentState ) {
-					case 'logged-out':
-						return translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. For more information, please {{doc}}review our documentation{{/doc}}.',
-							{
-								...translateParams,
-								components: {
-									...translateParams.components,
-									doc: reviewDocLink,
-								},
-							}
-						);
-					default:
-						return translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
-							{
-								args: { pluginName },
-								components: {
-									doc: reviewDocLink,
-								},
-							}
-						);
-				}
-			} else {
-				switch ( currentState ) {
-					case 'logged-out':
-						return translate(
-							"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account. {{br/}} Already have one? {{a}}Log in{{/a}}",
-							translateParams
-						);
-					default:
-						return translate(
-							"We'll make it quick – promise. In order to take advantage of the benefits offered by %(pluginName)s, you'll need to connect your store to your WordPress.com account.",
-							{
-								args: { pluginName },
-							}
-						);
-				}
+			switch ( currentState ) {
+				case 'logged-out':
+					return translate(
+						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+						{
+							...translateParams,
+							components: {
+								...translateParams.components,
+								doc: reviewDocLink,
+							},
+						}
+					);
+				default:
+					return translate(
+						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+						{
+							args: { pluginName },
+							components: {
+								doc: reviewDocLink,
+							},
+						}
+					);
 			}
 		}
 
