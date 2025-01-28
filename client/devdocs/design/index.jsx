@@ -55,7 +55,6 @@ import ClipboardButtons from 'calypso/components/forms/clipboard-button/docs/exa
 import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
 import FormFields from 'calypso/components/forms/docs/example';
 import Ranges from 'calypso/components/forms/range/docs/example';
-import Gauge from 'calypso/components/gauge/docs/example';
 import GlobalNotices from 'calypso/components/global-notices/docs/example';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar/docs/example';
 import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray/docs/example';
@@ -205,7 +204,6 @@ export default class DesignAssets extends Component {
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
-					<Gauge readmeFilePath="gauge" />
 					<GlobalNotices readmeFilePath="global-notices" />
 					<Gravatar readmeFilePath="gravatar" />
 					<GravatarCaterpillar readmeFilePath="gravatar-caterpillar" />
