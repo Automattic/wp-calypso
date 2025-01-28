@@ -7,7 +7,6 @@ import {
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_VIDEOPRESS,
 } from '@automattic/calypso-products';
-import { JetpackUpsellCard } from '@automattic/components';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -94,11 +93,6 @@ export default function JetpackUpsellSection() {
 
 	return (
 		<div className="jetpack-upsell-section">
-			<JetpackUpsellCard
-				purchasedProducts={ finalProducts }
-				siteSlug={ siteSlug }
-				upgradeUrls={ upgradeUrls }
-			/>
 			<UpsellCard
 				purchasedProducts={ finalProducts }
 				siteSlug={ siteSlug }
