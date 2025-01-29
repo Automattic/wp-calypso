@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
+import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
@@ -55,7 +56,7 @@ export function announceSuccess( { file } ) {
 			if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
 				noticeOptions.button = translate( 'Return to Reader' );
 				noticeOptions.onClick = () => {
-					recordTracksEvent( 'calypso_reader_profile_complete_return' );
+					recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_profile_return` );
 					page( '/read' );
 				};
 			}
