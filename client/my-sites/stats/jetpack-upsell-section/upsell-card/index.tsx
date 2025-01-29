@@ -7,14 +7,11 @@ import './style.scss';
 type UpsellCardProps = {
 	siteSlug?: string | null;
 	upsells: Product[];
-	upgradeUrls: Record< string, string >;
 };
 
-export function UpsellCard( { siteSlug, upsells, upgradeUrls = {} }: UpsellCardProps ) {
+export function UpsellCard( { siteSlug, upsells }: UpsellCardProps ) {
 	const translate = useTranslate();
 	const haveUpsells = upsells.length > 0;
-
-	// TODO: Verify upgradeUrls are present.
 
 	return ! haveUpsells ? null : (
 		<Card className="jetpack-upsell-card">
@@ -33,7 +30,7 @@ export function UpsellCard( { siteSlug, upsells, upgradeUrls = {} }: UpsellCardP
 			</h2>
 			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }
-				{ upsells.map( ( { title, description, href, iconUrl, slug } ) => (
+				{ upsells.map( ( { title, description, href, iconUrl, slug, checkoutUrl } ) => (
 					<div className="jetpack-upsell-card__product" key={ slug }>
 						<div className="jetpack-upsell-card__product-icon">
 							<img src={ iconUrl } alt={ title } width="24px" height="24px" />
@@ -49,7 +46,7 @@ export function UpsellCard( { siteSlug, upsells, upgradeUrls = {} }: UpsellCardP
 							<Gridicon icon="external" size={ 16 } />
 						</a>
 						<Button
-							href={ upgradeUrls[ slug ] }
+							href={ checkoutUrl! }
 							className="jetpack-upsell-card__product-button"
 							aria-label={
 								translate( 'Upgrade to Jetpack %(productName)s', {

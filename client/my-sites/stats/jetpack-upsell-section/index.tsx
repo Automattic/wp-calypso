@@ -1,12 +1,4 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_JETPACK_SECURITY_T1_YEARLY,
-	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-	PRODUCT_JETPACK_BOOST,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
-	PRODUCT_JETPACK_VIDEOPRESS,
-} from '@automattic/calypso-products';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -36,6 +28,8 @@ function useSiteFeatures( siteId: number | null ) {
 }
 
 function checkoutUrlForUpsell( siteSlug: string, upsell: Product ) {
+	// TODO: Change URL to point at plugin installation within wp-admin.
+	// ie: /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce
 	return CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, upsell.checkoutSlug, QUERY_VALUES );
 }
 
@@ -65,8 +59,7 @@ export default function JetpackUpsellSection() {
 	// New check for active site features.
 	const siteFeatures = useSiteFeatures( siteId );
 
-	// Exit early if we don't have and can't get the site purchase data.
-	// Also exit early if we're not in the Odyssey Stats environment.
+	// Early exit if we're not in the Odyssey Stats environment.
 	if ( ! isOdysseyStats ) {
 		return null;
 	}
@@ -75,33 +68,9 @@ export default function JetpackUpsellSection() {
 	// eslint-disable-next-line no-console
 	console.log( 'upsells: ', upsells );
 
-	// Build checkout URL prefixed with WordPress.com.
-	// TODO: Change URL to point at plugin installation within wp-admin.
-	//       (e.g., /wp-admin/update.php?action=install-plugin&plugin=plugin-name&_wpnonce=valid-nonce).
-	const upgradeUrls: Record< string, string > = ! siteSlug
-		? {}
-		: {
-				backup:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BACKUP_T1_YEARLY, QUERY_VALUES ),
-				boost:
-					CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_BOOST, QUERY_VALUES ),
-				search:
-					CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SEARCH, QUERY_VALUES ),
-				security:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PLAN_JETPACK_SECURITY_T1_YEARLY, QUERY_VALUES ),
-				social:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_SOCIAL_BASIC, QUERY_VALUES ),
-				video:
-					CHECKOUT_URL_PREFIX +
-					buildCheckoutURL( siteSlug, PRODUCT_JETPACK_VIDEOPRESS, QUERY_VALUES ),
-		  };
-
 	return (
 		<div className="jetpack-upsell-section">
-			<UpsellCard siteSlug={ siteSlug } upsells={ upsells } upgradeUrls={ upgradeUrls } />
+			<UpsellCard siteSlug={ siteSlug } upsells={ upsells } />
 		</div>
 	);
 }
