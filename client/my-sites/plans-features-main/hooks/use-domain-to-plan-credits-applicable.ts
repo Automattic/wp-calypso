@@ -1,6 +1,6 @@
 import { useDomainToPlanCredits } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits';
 import { useSelector } from 'calypso/state';
-import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
+import { hasPurchasedDomain } from 'calypso/state/purchases/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
 /**
