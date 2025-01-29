@@ -458,19 +458,19 @@ function installPluginHelper(
 			return getPluginHandler( siteId, pluginData.slug ).install();
 		};
 
-		const doActivate = function ( pluginData ) {
+		const doActivate = function () {
 			lastStep = 'doActivate';
-			return getPluginHandler( siteId, pluginData.id ).activate();
+			return getPluginHandler( siteId, pluginId ).activate();
 		};
 
-		const doUpdate = function ( pluginData ) {
+		const doUpdate = function () {
 			lastStep = 'doUpdate';
-			return getPluginHandler( siteId, pluginData.id ).updateVersion();
+			return getPluginHandler( siteId, pluginId ).updateVersion();
 		};
 
-		const doAutoupdates = function ( pluginData ) {
+		const doAutoupdates = function () {
 			lastStep = 'doAutoupdates';
-			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
+			return getPluginHandler( siteId, pluginId ).enableAutoupdate();
 		};
 
 		const recordInstallPluginEvent = ( type, error ) => {
@@ -481,8 +481,13 @@ function installPluginHelper(
 		};
 
 		const successCallback = ( data ) => {
-			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
-			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
+			const normalizedData = {
+				...data,
+				slug: data.slug ?? pluginId,
+			};
+
+			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data: normalizedData } );
+			dispatch( handleDispatchSuccessCallback( defaultAction, normalizedData ) );
 			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN' );
 			refreshNetworkSites( siteId );
 		};
