@@ -62,7 +62,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 	const navigate = useNavigate();
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
 
-	const handleOnClick = () => {
+	const handleNoticeOnClick = () => {
 		const destination = supportInteraction ? 'support-interaction' : 'chat-history';
 
 		if ( supportInteraction ) {
