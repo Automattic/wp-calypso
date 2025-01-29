@@ -63,8 +63,6 @@ const ViewMostRecentOpenConversationNotice = () => {
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
 
 	const handleNoticeOnClick = () => {
-		const destination = supportInteraction ? 'support-interaction' : 'chat-history';
-
 		if ( supportInteraction ) {
 			setCurrentSupportInteraction( supportInteraction );
 			if ( ! location.pathname.includes( '/odie' ) ) {
@@ -74,7 +72,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 			navigate( '/chat-history' );
 		}
 		trackEvent( 'chat_open_previous_conversation_notice', {
-			destination: supportInteraction ? 'support-interaction' : 'chat-history';,
+			destination: supportInteraction ? 'support-interaction' : 'chat-history',
 			total_number_of_conversations: totalNumberOfConversations,
 		} );
 	};
