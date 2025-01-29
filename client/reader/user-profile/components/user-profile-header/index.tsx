@@ -56,7 +56,7 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					) }
 				</div>
 			</header>
-			<SectionNav selectedText={ selectedTab }>
+			<SectionNav enforceTabsView selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
 						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>
