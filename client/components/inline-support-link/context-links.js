@@ -440,6 +440,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/register-domain/#public-versus-private-registration-and-gdpr',
 		post_id: 2784,
 	},
+	'https-ssl': {
+		link: 'https://wordpress.com/support/domains/https-ssl/',
+		post_id: 2110,
+	},
 };
 
 export default contextLinks;
