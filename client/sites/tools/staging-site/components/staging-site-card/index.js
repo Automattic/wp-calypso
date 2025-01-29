@@ -257,6 +257,7 @@ export const StagingSiteCard = ( {
 		setProgress( ( prevProgress ) => {
 			switch ( stagingSiteStatus ) {
 				case null:
+				case StagingSiteStatus.INITIATE_REVERTING:
 					return 0.1;
 				case transferStates.RELOCATING_REVERT:
 				case transferStates.ACTIVE:
