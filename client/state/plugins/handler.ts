@@ -5,15 +5,7 @@ const useWPV2APIEndpoint = isA8CForAgencies();
 const wpV2APINamespace = 'wp/v2';
 
 // Create handlers for all plugin methods with wp/v2 namespace.
-const methods = [
-	'get',
-	'update',
-	'updateVersion',
-	'install',
-	'delete',
-	'enableAutoupdate',
-	'disableAutoupdate',
-];
+const methods = [ 'get', 'update', 'updateVersion', 'enableAutoupdate', 'disableAutoupdate' ];
 
 type PluginHandlers = {
 	[ key in ( typeof methods )[ number ] ]?: (
@@ -21,6 +13,8 @@ type PluginHandlers = {
 		...args: unknown[]
 	) => unknown;
 } & {
+	install?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
+	delete?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 	activate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 	deactivate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 };
@@ -54,7 +48,26 @@ export const getPluginHandler = ( siteId: number, pluginId: number ) => {
 	handlers.deactivate = ( query, ...args ) =>
 		pluginHandler.update(
 			{ ...query, apiNamespace: wpV2APINamespace },
-			{ status: 'inactive' },
+			{
+				slug: pluginHandler._slug,
+				status: 'inactive',
+			},
+			...args
+		);
+
+	handlers.install = ( query, ...args ) =>
+		pluginHandler.wpcom.req.post(
+			`/sites/${ siteId }/plugins`,
+			{ ...query, apiNamespace: wpV2APINamespace },
+			{ slug: pluginHandler._slug },
+			...args
+		);
+
+	handlers.delete = ( query, ...args ) =>
+		pluginHandler.wpcom.req.post(
+			{ path: pluginHandler.pluginPath, method: 'delete' },
+			{ ...query, apiNamespace: wpV2APINamespace },
+			null,
 			...args
 		);
 

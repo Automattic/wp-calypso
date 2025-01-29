@@ -173,9 +173,16 @@ export function activatePlugin( siteId, plugin ) {
 		};
 
 		const successCallback = ( data ) => {
-			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
-			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
-			afterActivationCallback( undefined, data );
+			// Add shim for wp/v2 API response format
+			const normalizedData = {
+				...data,
+				id: data.plugin,
+				active: data.status === 'active' || data.active,
+			};
+
+			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data: normalizedData } );
+			dispatch( handleDispatchSuccessCallback( defaultAction, normalizedData ) );
+			afterActivationCallback( undefined, normalizedData );
 		};
 
 		const errorCallback = ( error ) => {
@@ -240,8 +247,19 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 
 		const successCallback = ( data ) => {
-			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
-			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
+			// Add shim for wp/v2 API response format
+			const normalizedData = {
+				...data,
+				id: data.plugin,
+				active: data.status === 'active' || data.active,
+			};
+
+			dispatch( {
+				...defaultAction,
+				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
+				data: normalizedData,
+			} );
+			dispatch( handleDispatchSuccessCallback( defaultAction, normalizedData ) );
 			afterDeactivationCallback( undefined );
 		};
 

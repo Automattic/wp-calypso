@@ -18,8 +18,9 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import hasPluginCapabilities from 'calypso/state/sites/selectors/has-plugin-capabilities';
+import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
-
 import './style.scss';
 
 class PluginRemoveButton extends Component {
@@ -88,7 +89,11 @@ class PluginRemoveButton extends Component {
 			);
 		}
 
-		if ( ! this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) {
+		const canRemovePlugin =
+			( this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) ||
+			( this.props.siteIsA4AClient && this.props.siteHasPluginCapabilities );
+
+		if ( ! canRemovePlugin ) {
 			const reasons = getSiteFileModDisableReason( this.props.site, 'modifyFiles' );
 			const html = [];
 
@@ -191,7 +196,12 @@ class PluginRemoveButton extends Component {
 	};
 
 	render() {
-		if ( ! this.props.site.jetpack ) {
+		const { siteIsA4AClient, siteHasPluginCapabilities } = this.props;
+
+		const canRemovePlugin =
+			this.props.site.jetpack || ( siteIsA4AClient && siteHasPluginCapabilities );
+
+		if ( ! canRemovePlugin ) {
 			return null;
 		}
 
@@ -211,6 +221,8 @@ class PluginRemoveButton extends Component {
 export default connect(
 	( state, { site, plugin } ) => ( {
 		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, REMOVE_PLUGIN ),
+		siteHasPluginCapabilities: hasPluginCapabilities( state, site.ID ),
+		siteIsA4AClient: isA4AClientSite( state, site.ID ),
 	} ),
 	{ removePlugin, removePluginStatuses }
 )( withShowPluginActionDialog( localize( PluginRemoveButton ) ) );

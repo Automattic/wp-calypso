@@ -29,6 +29,8 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import hasPluginCapabilities from 'calypso/state/sites/selectors/has-plugin-capabilities';
+import isA4AClientSite from 'calypso/state/sites/selectors/is-a4a-client-site';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
@@ -73,6 +75,8 @@ export class PluginInstallButton extends Component {
 			plugin,
 			canInstallPlugins,
 			siteIsWpcomAtomic,
+			siteIsA4AClient,
+			siteHasPluginCapabilities,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -81,7 +85,11 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		if ( canInstallPlugins && siteIsWpcomAtomic ) {
+		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
+		const isAtomicAndCanInstallPlugins = siteIsWpcomAtomic && canInstallPlugins;
+		const siteCanInstallPlugins = isAtomicAndCanInstallPlugins || isA4AWithPluginCapabilities;
+
+		if ( siteCanInstallPlugins ) {
 			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 			this.props.installPlugin( siteId, plugin );
 		} else {
@@ -235,8 +243,13 @@ export class PluginInstallButton extends Component {
 			isJetpackCloud,
 			canInstallPlugins,
 			siteIsWpcomAtomic,
+			siteHasPluginCapabilities,
+			siteIsA4AClient,
 		} = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
+		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
+		const isAtomicAndCanInstallPlugins = siteIsWpcomAtomic && canInstallPlugins;
+		const siteCanInstallPlugins = isAtomicAndCanInstallPlugins || isA4AWithPluginCapabilities;
 
 		if ( isEmbed ) {
 			return (
@@ -251,9 +264,7 @@ export class PluginInstallButton extends Component {
 									<Gridicon icon="plugins" size={ 18 } />
 								</>
 							) }
-							{ canInstallPlugins && siteIsWpcomAtomic
-								? translate( 'Install' )
-								: translate( 'Go to plugin page' ) }
+							{ siteCanInstallPlugins ? translate( 'Install' ) : translate( 'Go to plugin page' ) }
 						</Button>
 					) }
 				</span>
@@ -279,6 +290,8 @@ export class PluginInstallButton extends Component {
 			siteIsWpcomAtomic,
 			translate,
 			canInstallPurchasedPlugins,
+			siteHasPluginCapabilities,
+			siteIsA4AClient,
 		} = this.props;
 
 		if ( siteIsConnected === false ) {
@@ -317,7 +330,10 @@ export class PluginInstallButton extends Component {
 		}
 
 		const disabledInfo = this.getDisabledInfo();
-		if ( ! selectedSite.canUpdateFiles && disabledInfo ) {
+		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
+		const siteCanInstallPlugins = selectedSite.canUpdateFiles || isA4AWithPluginCapabilities;
+
+		if ( ! siteCanInstallPlugins && disabledInfo ) {
 			return disabledInfo ? (
 				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
 					{ disabledInfo }
@@ -378,6 +394,8 @@ export default connect(
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
 			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
+			siteHasPluginCapabilities: hasPluginCapabilities( state, siteId ),
+			siteIsA4AClient: isA4AClientSite( state, siteId ),
 			productsList: getProductsList( state ),
 		};
 	},

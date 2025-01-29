@@ -47,12 +47,13 @@ const getAffectedSites = ( plugins: Plugin[], sites: Site[] ) => {
 			.map( ( id ) => parseInt( id ) )
 	);
 
-	return (
-		sites
-			// We can't affect any sites that don't allow updating files
-			.filter( ( { canUpdateFiles } ) => canUpdateFiles )
-			.filter( ( s ) => pluginsInstalledOnSiteIds.has( s.ID ) )
-	);
+	return sites
+		.filter(
+			( s ) =>
+				s.canUpdateFiles ||
+				( s.is_a4a_client && s.capabilities?.activate_plugins && s.capabilities?.update_plugins )
+		)
+		.filter( ( s ) => pluginsInstalledOnSiteIds.has( s.ID ) );
 };
 
 const getTranslatableHeading = ( { headings }: ActionTexts, plugins: Plugin[] ) => {
