@@ -49,7 +49,7 @@ const ReaderOnboarding = ( {
 	);
 
 	const hasFollowedTags = followedTags !== null && followedTags.length > 2;
-	const hasFollowedSites = follows?.length > 2;
+	const hasFollowedSites = follows?.filter( ( follow ) => ! follow.is_owner )?.length > 2;
 
 	// If the user has completed the onboarding, save the preference and track the event.
 	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
