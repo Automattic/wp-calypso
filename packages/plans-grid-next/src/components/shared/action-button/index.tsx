@@ -63,7 +63,7 @@ const ActionButton = ( {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
+		[ planSlug, siteId ]
 	);
 	const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
 		return selectedStorageOptionForPlan && addOn

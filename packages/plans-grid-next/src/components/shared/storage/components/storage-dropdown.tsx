@@ -91,7 +91,7 @@ const StorageDropdown = ( {
 	} );
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
+		[ planSlug, siteId ]
 	);
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );

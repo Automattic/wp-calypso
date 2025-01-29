@@ -201,6 +201,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
 
+			if ( productCartItems?.length && slug ) {
+				await addProductsToCart( slug, flow, productCartItems );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: shouldGoToCheckout,
