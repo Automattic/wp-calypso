@@ -424,7 +424,10 @@ class MasterbarLoggedIn extends Component {
 		return (
 			<Item
 				className="masterbar__item-launch-site"
-				onClick={ () => this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId ) }
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_launch_site' );
+					this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+				} }
 			>
 				{ translate( 'Launch site' ) }
 			</Item>
