@@ -48,10 +48,14 @@ const ChatDate = ( { chat }: { chat: Chat } ) => {
 };
 
 const ViewMostRecentOpenConversationNotice = () => {
-	const { supportInteractionId, totalNumberOfConversations } = useGetMostRecentOpenConversation();
-	const { data: supportInteraction } = useGetSupportInteractionById(
-		supportInteractionId?.toString() ?? null
-	);
+	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
+		useGetMostRecentOpenConversation();
+
+	const fetchSupportInteraction =
+		mostRecentSupportInteractionId?.toString() && totalNumberOfConversations === 1
+			? mostRecentSupportInteractionId?.toString()
+			: null;
+	const { data: supportInteraction } = useGetSupportInteractionById( fetchSupportInteraction );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const { trackEvent } = useOdieAssistantContext();
 	const location = useLocation();

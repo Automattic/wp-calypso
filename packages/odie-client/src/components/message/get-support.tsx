@@ -61,9 +61,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		trackEvent,
 	} = useOdieAssistantContext();
 
-	const { supportInteractionId } = useGetMostRecentOpenConversation();
+	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
+
 	const { data: supportInteraction } = useGetSupportInteractionById(
-		supportInteractionId?.toString() ?? null
+		mostRecentSupportInteractionId?.toString() ?? null
 	);
 
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
