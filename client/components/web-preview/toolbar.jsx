@@ -60,11 +60,6 @@ class PreviewToolbar extends Component {
 		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_external_click' );
 	};
 
-	handleEditorWebPreviewLaunchSiteClick = () => {
-		this.props.recordTracksEvent( 'calypso_editor_preview_toolbar_launch_site__click' );
-		this.props.launchSite( this.props.selectedSiteId );
-	};
-
 	handleEditorWebPreviewClose = () => {
 		this.props.recordTracksEvent( 'calypso_editor_preview_close_click' );
 		this.props.onClose();
@@ -185,18 +180,9 @@ class PreviewToolbar extends Component {
 							>
 								{ translate( 'Visit site' ) }
 							</Button>
-							{ isUnlaunchedSite && (
-								<Button
-									primary
-									className="web-preview__launch-site"
-									onClick={ this.handleEditorWebPreviewLaunchSiteClick }
-								>
-									{ translate( 'Launch site' ) }
-								</Button>
-							) }
 						</>
 					) }
-					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
+					{ this.props.children }
 				</div>
 			</div>
 		);
