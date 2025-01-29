@@ -53,7 +53,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 
 	const fetchSupportInteraction =
 		mostRecentSupportInteractionId?.toString() && totalNumberOfConversations === 1
-			? mostRecentSupportInteractionId?.toString()
+			? mostRecentSupportInteractionId.toString()
 			: null;
 	const { data: supportInteraction } = useGetSupportInteractionById( fetchSupportInteraction );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
