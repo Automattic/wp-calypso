@@ -12,6 +12,7 @@ import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
+import { getAvailableUpsells } from './upsell-card/available-upsells';
 
 // TODO: Delete use-purchased-products.tsx
 // TODO: Check usage of hasBusinessPlan, hasCompletePlan, hasSecurityPlan or delete
@@ -27,11 +28,20 @@ const QUERY_VALUES = {
 };
 
 function useSiteFeatures( siteId: number | null ) {
-	const upsellFeatures = [ 'videopress' ];
+	const upsellFeatures = [ 'videopress', 'videopress-1tb-storage' ];
 	const activeFeatures = useSelector( ( state ) =>
 		upsellFeatures.filter( ( feature ) => siteHasFeature( state, siteId, feature ) )
 	);
 	return activeFeatures;
+}
+
+function getVisibleUpsells( siteFeatures: string[] ) {
+	// Filter available upsells against site features.
+	// If an upsell has even one feature that is not active on the site, present it to the user.
+	const upsells = getAvailableUpsells().filter( ( upsell ) =>
+		upsell.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
+	);
+	return upsells;
 }
 
 export default function JetpackUpsellSection() {
@@ -46,6 +56,10 @@ export default function JetpackUpsellSection() {
 	if ( ! isOdysseyStats ) {
 		return null;
 	}
+
+	const upsells = getVisibleUpsells( siteFeatures );
+	// eslint-disable-next-line no-console
+	console.log( 'upsells: ', upsells );
 
 	// Build checkout URL prefixed with WordPress.com.
 	// TODO: Change URL to point at plugin installation within wp-admin.
