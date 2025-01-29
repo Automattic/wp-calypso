@@ -25,7 +25,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../../utils';
+import { isSiteSettingsUntangled } from '../../../utils';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -170,7 +170,7 @@ class DeleteSite extends Component {
 
 	_goBack = () => {
 		const { siteSlug } = this.props;
-		const source = isHostingMenuUntangled() ? '/sites/settings/site' : getSettingsSource();
+		const source = isSiteSettingsUntangled() ? '/sites/settings/site' : getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};
@@ -212,7 +212,7 @@ class DeleteSite extends Component {
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
-		const isUntangled = isHostingMenuUntangled();
+		const isUntangled = isSiteSettingsUntangled();
 
 		return (
 			<Panel className="settings-administration__delete-site">

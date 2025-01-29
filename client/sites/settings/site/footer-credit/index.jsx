@@ -15,7 +15,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 
 import './style.scss';
 
@@ -81,7 +81,7 @@ export default function FooterCredit( { site, siteIsJetpack } ) {
 
 	return (
 		<>
-			{ ! isHostingMenuUntangled() ? (
+			{ ! isSiteSettingsUntangled() ? (
 				<div className="site-settings__footer-credit-container">
 					<SettingsSectionHeader
 						title={ translate( 'Footer credit' ) }

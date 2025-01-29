@@ -25,7 +25,7 @@ import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSite, getSiteDomain, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { DIFMUpsell } from '../../../components/difm-upsell-banner';
-import { isHostingMenuUntangled } from '../../../utils';
+import { isSiteSettingsUntangled } from '../../../utils';
 
 import './style.scss';
 
@@ -46,7 +46,7 @@ function SiteResetCard( {
 	const [ isDomainConfirmed, setDomainConfirmed ] = useState( false );
 	const [ resetComplete, setResetComplete ] = useState( false );
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = isSiteSettingsUntangled();
 
 	const title = isUntangled ? translate( 'Reset site' ) : translate( 'Site Reset' );
 	const source = isUntangled ? '/sites/settings/site' : getSettingsSource();

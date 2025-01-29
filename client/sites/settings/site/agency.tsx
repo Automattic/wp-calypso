@@ -6,7 +6,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { isHostingMenuUntangled } from '../utils';
+import { isSiteSettingsUntangled } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
 
 type Props = {
@@ -101,7 +101,7 @@ export function A4AFullyManagedSiteForm( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isSiteSettingsUntangled() ) {
 		return (
 			<div className="site-settings__a4a-fully-managed-container">
 				<SettingsSectionHeader

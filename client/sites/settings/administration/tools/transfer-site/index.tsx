@@ -6,7 +6,7 @@ import { useQueryUserPurchases } from 'calypso/components/data/query-user-purcha
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
-import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
+import { isSiteSettingsUntangled } from 'calypso/sites/settings/utils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -31,7 +31,7 @@ const SiteTransferComplete = () => {
 		return null;
 	}
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = isSiteSettingsUntangled();
 	const message = (
 		<p>
 			{ translate(
@@ -83,7 +83,7 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			const source = isHostingMenuUntangled() ? '/sites/settings/site' : getSettingsSource();
+			const source = isSiteSettingsUntangled() ? '/sites/settings/site' : getSettingsSource();
 			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};

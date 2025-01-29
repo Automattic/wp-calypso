@@ -2,12 +2,12 @@ import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
 import SiteToolsLink from 'calypso/my-sites/site-settings/site-tools/link';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 
 export default function AdministrationToolCard( props ) {
 	const { description, href, isWarning, onClick, title } = props;
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isSiteSettingsUntangled() ) {
 		return <SiteToolsLink { ...props } />;
 	}
 

@@ -9,7 +9,7 @@ import { PanelCardHeading } from 'calypso/components/panel';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
-import { isHostingMenuUntangled } from '../../../utils';
+import { isSiteSettingsUntangled } from '../../../utils';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from '@automattic/data-stores';
 
@@ -159,7 +159,7 @@ const SiteOwnerTransferEligibility = ( {
 		</form>
 	);
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = isSiteSettingsUntangled();
 
 	return (
 		<>

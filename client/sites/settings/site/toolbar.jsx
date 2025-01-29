@@ -14,7 +14,7 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../utils';
+import { isSiteSettingsUntangled } from '../utils';
 
 const Masterbar = ( {
 	isRequestingSettings,
@@ -61,7 +61,7 @@ const Masterbar = ( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isSiteSettingsUntangled() ) {
 		return (
 			<div>
 				<QueryJetpackConnection siteId={ selectedSiteId } />

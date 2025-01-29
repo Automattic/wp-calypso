@@ -13,7 +13,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 import SiteSettingPrivacyForm from './form';
 import type { AppState } from 'calypso/types';
 import './style.scss';
@@ -100,7 +100,7 @@ const PrivacyForm = ( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isSiteSettingsUntangled() ) {
 		return (
 			<>
 				{ renderSectionHeader() }

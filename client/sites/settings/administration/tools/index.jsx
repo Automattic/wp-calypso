@@ -20,7 +20,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
 
@@ -59,7 +59,7 @@ class SiteTools extends Component {
 			source,
 		} = this.props;
 
-		const isUntangled = isHostingMenuUntangled();
+		const isUntangled = isSiteSettingsUntangled();
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 

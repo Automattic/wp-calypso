@@ -28,7 +28,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
@@ -210,7 +210,7 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = isSiteSettingsUntangled();
 	return (
 		<>
 			{ renderConfirmationModal() }

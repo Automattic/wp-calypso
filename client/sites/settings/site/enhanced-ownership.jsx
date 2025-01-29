@@ -12,7 +12,7 @@ import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { isHostingMenuUntangled } from '../utils';
+import { isSiteSettingsUntangled } from '../utils';
 
 // Add settings for enhanced ownership: ability to enable locked mode and add the name of a person who will inherit the site.
 export default function EnhancedOwnershipForm( {
@@ -94,7 +94,7 @@ export default function EnhancedOwnershipForm( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isSiteSettingsUntangled() ) {
 		return (
 			<div className="site-settings__enhanced-ownership-container">
 				<SettingsSectionHeader

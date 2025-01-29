@@ -9,7 +9,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { isHostingMenuUntangled } from '../utils';
+import { isSiteSettingsUntangled } from '../utils';
 
 export default function SubscriptionGiftingForm( {
 	fields,
@@ -29,7 +29,7 @@ export default function SubscriptionGiftingForm( {
 		return;
 	}
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = isSiteSettingsUntangled();
 
 	const renderForm = () => {
 		return (
