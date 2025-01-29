@@ -58,6 +58,7 @@ export const defaultDomainSetupInfo = {
 	data: {
 		default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		is_subdomain: false,
 	},
 } as const;
 
