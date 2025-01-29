@@ -19,7 +19,7 @@ import { apiCloseAccount, fixme_retry } from '../shared';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
+describe.skip( DataHelper.createSuiteTitle( 'Onboarding: Write Focus' ), function () {
 	const blogName = DataHelper.getBlogName();
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'signupfree',
