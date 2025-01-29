@@ -2,11 +2,10 @@ import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { useTranslate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
-import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
@@ -14,6 +13,7 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import { useSubscribersQuery, useSubscriberCountQuery } from '../../queries';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
@@ -40,60 +40,70 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 	</div>
 );
 
+const defaultView: View = {
+	type: 'table',
+	layout: {
+		styles: {
+			media: { width: '60px' },
+			name: { width: '55%', minWidth: '195px' },
+			plan: { width: '25%' },
+			date_subscribed: { width: '25%' },
+		},
+	},
+	fields: [ 'name', 'plan', 'date_subscribed' ],
+};
+
+const getSubscriberId = ( subscriber: Subscriber ) => subscriber.subscription_id.toString();
+
 const SubscriberDataViews = ( {
 	siteId = undefined,
 	isUnverified = false,
 	isStagingSite = false,
 	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
-	const translate = useTranslate();
 	const isMobile = useBreakpoint( '<660px' );
+	const [ searchTerm, setSearchTerm ] = useState( '' );
+	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const couponsAndGiftsEnabled = useSelector( ( state ) =>
-		getCouponsAndGiftsEnabledForSiteId( state, siteId )
-	);
-
-	const {
-		grandTotal,
-		page,
-		pageChangeCallback,
-		searchTerm,
-		isLoading,
-		subscribers,
-		pages,
-		isOwnerSubscribed,
-		perPage,
-		setPerPage,
-		handleSearch,
-		sortTerm,
-		sortOrder,
-		filterOption,
-		setSortTerm,
-		setSortOrder,
-		setFilterOption,
-	} = useSubscribersPage();
-
-	const [ currentView, setCurrentView ] = useState< View >( {
-		type: 'table',
-		layout: {},
-		page,
-		perPage,
-		sort: {
-			field: sortTerm,
-			direction: 'desc',
-		},
-	} );
-
 	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
 		isSimple: isSimpleSite( state ),
 		isAtomic: isAtomicSite( state, siteId ),
 	} ) );
+	const couponsAndGiftsEnabled = useSelector( ( state ) =>
+		getCouponsAndGiftsEnabledForSiteId( state, siteId )
+	);
 
-	const pageArgs = {
-		currentPage: page,
-		filterOption: undefined,
-		searchTerm,
-		sortTerm,
+	const [ currentView, setCurrentView ] = useState< View >( {
+		...defaultView,
+		page: 1,
+		perPage: 10,
+		sort: {
+			field: SubscribersSortBy.DateSubscribed,
+			direction: 'desc',
+		},
+	} );
+
+	const { data: subscribersQueryResult, isLoading } = useSubscribersQuery( {
+		siteId: siteId ?? null,
+		page: currentView.page,
+		perPage: currentView.perPage,
+		search: searchTerm,
+		sortTerm: currentView.sort?.field as SubscribersSortBy,
+		sortOrder: currentView.sort?.direction as 'asc' | 'desc',
+		filterOption,
+		limitData: true,
+	} );
+
+	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
+	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
+	const {
+		subscribers,
+		is_owner_subscribed: isOwnerSubscribed,
+		pages,
+	} = subscribersQueryResult || {
+		subscribers: [],
+		is_owner_subscribed: false,
+		pages: 0,
 	};
 
 	const {
@@ -101,9 +111,19 @@ const SubscriberDataViews = ( {
 		onClickUnsubscribe: handleUnsubscribe,
 		onConfirmModal,
 		resetSubscriber,
-	} = useUnsubscribeModal( siteId ?? null, pageArgs, false, () => {
-		setSelectedSubscriber( null );
-	} );
+	} = useUnsubscribeModal(
+		siteId ?? null,
+		{
+			currentPage: currentView.page ?? 1,
+			filterOption,
+			searchTerm,
+			sortTerm: SubscribersSortBy.DateSubscribed,
+		},
+		false,
+		() => {
+			setSelectedSubscriber( null );
+		}
+	);
 
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
 	const shouldShowLaunchpad =
@@ -124,11 +144,6 @@ const SubscriberDataViews = ( {
 			}
 		},
 		[ subscribers ]
-	);
-
-	const getSubscriberId = useCallback(
-		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
-		[]
 	);
 
 	const fields = useMemo(
@@ -202,7 +217,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ getSubscriberId, handleSubscriberSelect, selectedSubscriber, translate ]
+		[ handleSubscriberSelect, selectedSubscriber ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -246,139 +261,59 @@ const SubscriberDataViews = ( {
 		return baseActions;
 	}, [
 		selectedSubscriber,
-		translate,
 		handleSubscriberSelect,
-		getSubscriberId,
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
 	] );
 
-	const handleViewChange = useCallback(
-		( newView: View ) => {
-			// Handle pagination
-			if ( typeof newView.page === 'number' && newView.page !== page ) {
-				pageChangeCallback( newView.page );
-			}
+	useEffect( () => {
+		// If we're on mobile, we only want to show the name field.
+		if ( isMobile ) {
+			setCurrentView( ( prevView ) => ( {
+				...prevView,
+				fields: [ 'name' ],
+			} ) );
+		} else if ( selectedSubscriber ) {
+			// If we're on subscribers page, we want to show the list view.
+			setCurrentView( ( prevView ) => ( {
+				...prevView,
+				type: 'list',
+				fields: [ 'media', 'name' ],
+				layout: {
+					primaryField: 'name',
+					mediaField: 'media',
+				},
+			} ) );
+		} else {
+			// Otherwise, we want to show the table view.
+			setCurrentView( ( prevView ) => ( {
+				...prevView,
+				...defaultView,
+			} ) );
+		}
+	}, [ isMobile, selectedSubscriber ] );
 
-			// Handle per page
-			if ( typeof newView.perPage === 'number' && newView.perPage !== perPage ) {
-				setPerPage( newView.perPage );
-				pageChangeCallback( 1 );
-			}
+	useEffect( () => {
+		// Handle search term from the view.
+		setSearchTerm( currentView.search ?? '' );
 
-			// Handle search
-			if ( typeof newView.search === 'string' && newView.search !== searchTerm ) {
-				handleSearch( newView.search );
-			}
+		// Handle filter option from the view.
+		setFilterOption(
+			( currentView.filters?.[ 0 ]?.value as SubscribersFilterBy ) ?? SubscribersFilterBy.All
+		);
+	}, [ currentView.search, currentView.filters ] );
 
-			// Handle sort field change
-			if (
-				newView.sort?.field &&
-				newView.sort.field !== currentView.sort?.field &&
-				Object.values( SubscribersSortBy ).includes( newView.sort.field as SubscribersSortBy )
-			) {
-				setSortTerm( newView.sort.field as SubscribersSortBy );
-			}
-
-			// Handle sort order change
-			if ( newView.sort?.direction && newView.sort.direction !== currentView.sort?.direction ) {
-				setSortOrder( newView.sort.direction );
-			}
-
-			// Handle field order change
-			if ( newView.fields && newView.fields !== currentView.fields ) {
-				setCurrentView( ( oldCurrentView ) => ( {
-					...oldCurrentView,
-					fields: newView.fields,
-				} ) );
-			}
-
-			// Handle filters
-			if ( newView.filters ) {
-				if ( newView.filters.length > 0 ) {
-					if ( newView.filters[ 0 ].value !== filterOption ) {
-						setFilterOption( newView.filters[ 0 ].value );
-					}
-				} else {
-					setFilterOption( SubscribersFilterBy.All );
-				}
-			}
-		},
-		[
-			page,
-			perPage,
-			searchTerm,
-			pageChangeCallback,
-			setPerPage,
-			handleSearch,
-			setSortTerm,
-			setSortOrder,
-			currentView,
-			setFilterOption,
-			filterOption,
-		]
-	);
-
+	// Memoize the data and pagination info.
 	const { data, paginationInfo } = useMemo( () => {
 		return {
 			data: subscribers,
 			paginationInfo: {
 				totalItems: grandTotal,
-				totalPages: pages ?? 0,
+				totalPages: pages,
 			},
 		};
 	}, [ subscribers, grandTotal, pages ] );
-
-	// Update the view when a subscriber is selected
-	useEffect( () => {
-		const commonViewProps = {
-			page,
-			perPage,
-			sort: {
-				field: sortTerm,
-				direction: sortOrder,
-			},
-			filters: [
-				...( filterOption !== SubscribersFilterBy.All
-					? [ { field: 'plan', operator: 'is', value: [ filterOption ] } ]
-					: [] ),
-			],
-		};
-
-		setCurrentView( ( oldCurrentView ) => {
-			const baseView = {
-				...oldCurrentView,
-				...commonViewProps,
-			};
-
-			if ( selectedSubscriber ) {
-				return {
-					...baseView,
-					type: 'list',
-					fields: [ 'media', 'name' ],
-					layout: {
-						primaryField: 'name',
-						mediaField: 'media',
-					},
-				} as View;
-			}
-
-			return {
-				...baseView,
-				type: 'table',
-				fields: [ 'name', ...( ! isMobile ? [ 'plan', 'date_subscribed' ] : [] ) ],
-				layout: {
-					styles: {
-						media: { width: '60px' },
-						name: { width: '55%', minWidth: '195px' },
-						plan: { width: '25%' },
-						date_subscribed: { width: '25%' },
-					},
-				},
-			} as View;
-		} );
-	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder, filterOption ] );
 
 	return (
 		<div
@@ -397,7 +332,7 @@ const SubscriberDataViews = ( {
 						data={ data }
 						fields={ fields }
 						view={ currentView }
-						onChangeView={ handleViewChange }
+						onChangeView={ setCurrentView }
 						selection={
 							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
 						}

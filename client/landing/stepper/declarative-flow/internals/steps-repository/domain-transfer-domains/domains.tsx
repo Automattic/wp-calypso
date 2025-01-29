@@ -227,6 +227,17 @@ const Domains: React.FC< Props > = ( { onSubmit, variantSlug } ) => {
 			} );
 
 			newDomainsState[ uuid() ] = { ...domainTransferObj };
+
+			// Only keep the latest entry - 100-year domain flows are only
+			// allowed to have one domain at a time, so always keep the latest
+			// one and remove the rest.
+			if ( isHundredYearTransfer ) {
+				Object.entries( newDomainsState ).forEach( ( [ key, domainObject ] ) => {
+					if ( domainObject.domain !== newDomainTransferQueryArg ) {
+						delete newDomainsState[ key ];
+					}
+				} );
+			}
 		}
 
 		if ( ! duplicateDomain ) {

@@ -1,7 +1,8 @@
 @import "@wordpress/base-styles/colors";
 @import "colors";
 
-$colophon-height: 50px; // wpcomColophon element at the bottom
+// TODO: Audit and remove since there is no footer colophon anymore.
+$colophon-height: 50px;
 
 .jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
 .layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
@@ -86,14 +87,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	input[type="radio"]:focus {
 		box-shadow: 0 0 0 2px var(--studio-jetpack-green-20);
-	}
-
-	.wpcom-colophon {
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		height: $colophon-height;
 	}
 
 	.site-topic__content {
