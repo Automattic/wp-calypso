@@ -25,6 +25,10 @@ type Product = {
 	title: string;
 };
 
+function getVisibleUpsells( products, siteFeatures ) {
+	return products.slice( 0, -1 );
+}
+
 export function UpsellCard( {
 	purchasedProducts,
 	siteSlug,
@@ -109,6 +113,9 @@ export function UpsellCard( {
 	// TODO: Filter upsells based on active site features.
 	// eslint-disable-next-line no-console
 	console.log( 'siteFeatures: ', siteFeatures );
+	const visibleUpsells = getVisibleUpsells( PRODUCTS, siteFeatures );
+	// eslint-disable-next-line no-console
+	console.log( 'visibleUpsells: ', visibleUpsells );
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
