@@ -17,7 +17,9 @@ function dispatchNotice( dispatch: Store[ 'dispatch' ] ) {
 			id: 'reader-profile-complete',
 			button: translate( 'Return to Reader' ),
 			onClick: () => {
-				recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_profile_return` );
+				recordTracksEvent(
+					`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile_return`
+				);
 				page( '/read' );
 			},
 		} )
