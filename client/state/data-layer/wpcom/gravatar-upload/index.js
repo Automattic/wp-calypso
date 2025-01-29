@@ -55,6 +55,7 @@ export function announceSuccess( { file } ) {
 			if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
 				noticeOptions.button = translate( 'Return to Reader' );
 				noticeOptions.onClick = () => {
+					recordTracksEvent( 'calypso_reader_profile_complete_return' );
 					page( '/read' );
 				};
 			}

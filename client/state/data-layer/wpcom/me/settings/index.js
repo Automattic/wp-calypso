@@ -1,6 +1,7 @@
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -154,6 +155,7 @@ export const userSettingsSaveSuccess =
 		if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
 			noticeOptions.button = translate( 'Return to Reader' );
 			noticeOptions.onClick = () => {
+				recordTracksEvent( 'calypso_reader_profile_complete_return' );
 				page( '/read' );
 			};
 		}
