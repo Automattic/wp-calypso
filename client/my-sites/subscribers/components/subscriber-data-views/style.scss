@@ -159,10 +159,7 @@ body.is-section-subscribers.is-subscribers-dataviews,
                     /* stylelint-disable-next-line scales/radii */
                     border-radius: 8px;
                     padding: 24px;
-
-                    @media ( max-width: $break-wide ) {
-                        overflow: auto;
-                    }
+                    overflow: auto;
 
                     .subscriber-details {
                         &__header {
