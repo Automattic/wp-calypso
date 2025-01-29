@@ -144,11 +144,12 @@ describe( 'wpcom-api', () => {
 		describe( '#userSettingsSaveSuccess', () => {
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', async () => {
 				const dispatch = jest.fn();
+				const getState = () => ( {} );
 				const action = { type: 'DUMMY' };
 
 				await userSettingsSaveSuccess( action, {
 					language: 'qix',
-				} )( dispatch );
+				} )( dispatch, getState );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 4 );
 				expect( dispatch ).toHaveBeenCalledWith(
@@ -166,12 +167,13 @@ describe( 'wpcom-api', () => {
 
 			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', async () => {
 				const dispatch = jest.fn();
+				const getState = () => ( {} );
 				const data = {
 					language: 'qix',
 				};
 				const action = { type: 'DUMMY', settingsOverride: data };
 
-				await userSettingsSaveSuccess( action, data )( dispatch );
+				await userSettingsSaveSuccess( action, data )( dispatch, getState );
 
 				expect( dispatch ).toHaveBeenCalledTimes( 4 );
 				expect( dispatch ).toHaveBeenCalledWith(
@@ -189,13 +191,14 @@ describe( 'wpcom-api', () => {
 
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
 				const dispatch = jest.fn();
+				const getState = () => ( {} );
 				const action = { type: 'DUMMY' };
 
 				userSettingsSaveSuccess( action, {
 					display_name: 'baz &amp; qix',
 					description: 'foo &amp; bar',
 					user_URL: 'http://example.com?a=b&amp;c=d',
-				} )( dispatch );
+				} )( dispatch, getState );
 
 				expect( dispatch ).toHaveBeenCalledWith(
 					saveUserSettingsSuccess( {
