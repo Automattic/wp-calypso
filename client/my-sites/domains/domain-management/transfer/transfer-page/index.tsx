@@ -1,8 +1,7 @@
 import { Button, Card, Spinner } from '@automattic/components';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import { TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -446,10 +445,15 @@ const TransferPage = ( props: TransferPageProps ) => {
 							<br />
 							{ createInterpolateElement(
 								__(
-									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
+									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <supportLink>this important information</supportLink> before starting a transfer.'
 								),
 								{
-									a: createElement( 'a', { href: localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) } ),
+									supportLink: (
+										<InlineSupportLink
+											supportContext="transfer-domain-to-another-registrar"
+											showIcon={ false }
+										/>
+									),
 								}
 							) }
 						</p>

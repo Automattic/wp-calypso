@@ -444,6 +444,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/https-ssl/',
 		post_id: 2110,
 	},
+	'transfer-domain-to-another-registrar': {
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/',
+		post_id: 41298,
+	},
 };
 
 export default contextLinks;
