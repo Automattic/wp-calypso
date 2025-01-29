@@ -1,8 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -30,7 +30,7 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	next();
 }
 
-export function siteSettings( context, next ) {
+export async function siteSettings( context, next ) {
 	let analyticsPageTitle = 'Site Settings';
 	const basePath = sectionify( context.path );
 	const section = sectionify( context.path ).split( '/' )[ 2 ];
@@ -46,8 +46,9 @@ export function siteSettings( context, next ) {
 		return;
 	}
 
-	const isDuplicateViewsExperiment = true;
-	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+	if ( isRemoveDuplicateViewsExperimentEnabled ) {
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 

@@ -423,3 +423,33 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 	}
 	next();
 };
+
+/**
+ * Redirects to the general settings page when Remove Duplicate Views experiment is enabled.
+ * Example: /settings/start-site-transfer/:site -> /sites/settings/site/${ context.params.site }/transfer-site
+ * @param {*} context
+ * @param {*} next
+ * @returns
+ */
+export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+
+	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+		const slug = context.path.split( '/' )[ 2 ];
+		if ( ! slug ) {
+			return next();
+		}
+		const URL_MAP = {
+			'delete-site': 'delete-site',
+			'start-over': 'reset-site',
+			'start-site-transfer': 'transfer-site',
+		};
+		if ( ! URL_MAP[ slug ] ) {
+			return next();
+		}
+		return page.redirect( `/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }` );
+	}
+
+	next();
+};

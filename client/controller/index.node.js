@@ -95,3 +95,5 @@ export const notFound = () => null;
 export const setSelectedSiteIdByOrigin = () => {};
 // eslint-disable-next-line no-unused-vars
 export const redirectIfDuplicatedView = ( wpAdminPath ) => () => {};
+
+export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = () => {};

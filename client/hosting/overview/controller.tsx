@@ -4,6 +4,7 @@ import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
 import Hosting from 'calypso/hosting/server-settings/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { PanelWithSidebar } from 'calypso/sites/components/panel-sidebar';
 import HostingOverview from 'calypso/sites/overview/components/hosting-overview';
 import { SettingsSidebar } from 'calypso/sites/settings/controller';
@@ -19,7 +20,7 @@ export function hostingOverview( context: PageJSContext, next: () => void ) {
 	next();
 }
 
-export function hostingConfiguration( context: PageJSContext, next: () => void ) {
+export async function hostingConfiguration( context: PageJSContext, next: () => void ) {
 	// Update the url and show the notice after a redirect
 	if ( context.query && context.query.hosting_features === 'activated' ) {
 		context.store.dispatch(
@@ -34,8 +35,9 @@ export function hostingConfiguration( context: PageJSContext, next: () => void )
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	const isDuplicateViewsExperiment = true;
-	context.primary = isDuplicateViewsExperiment ? (
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+	context.primary = isRemoveDuplicateViewsExperimentEnabled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<div className="hosting-configuration">
@@ -50,9 +52,10 @@ export function hostingConfiguration( context: PageJSContext, next: () => void )
 	next();
 }
 
-export function hostingActivate( context: PageJSContext, next: () => void ) {
-	const isDuplicateViewsExperiment = true;
-	context.primary = isDuplicateViewsExperiment ? (
+export async function hostingActivate( context: PageJSContext, next: () => void ) {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+	context.primary = isRemoveDuplicateViewsExperimentEnabled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<div className="hosting-configuration">

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -22,6 +21,7 @@ import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
+import { redirectToolsIfRemoveDuplicateViewsExperimentEnabled } from '../../controller/index.web';
 
 export default function () {
 	page( '/settings', '/settings/general' );
@@ -55,23 +55,17 @@ export default function () {
 		return page.redirect( redirectPath );
 	} );
 
-	const isDuplicateViewsExperiment = true;
-	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
-		page( '/settings/delete-site/:site', ( context ) => {
-			page.redirect( `/sites/settings/site/${ context.params.site }/delete-site` );
-		} );
-	} else {
-		page(
-			'/settings/delete-site/:site_id',
-			siteSelection,
-			redirectIfCantDeleteSite,
-			navigation,
-			setScroll,
-			deleteSite,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/delete-site/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantDeleteSite,
+		navigation,
+		setScroll,
+		deleteSite,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		`/settings/disconnect-site/:site_id`,
@@ -91,22 +85,17 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
-		page( '/settings/start-over/:site', ( context ) => {
-			page.redirect( `/sites/settings/site/${ context.params.site }/reset-site` );
-		} );
-	} else {
-		page(
-			'/settings/start-over/:site_id',
-			siteSelection,
-			redirectIfCantDeleteSite,
-			navigation,
-			setScroll,
-			startOver,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/start-over/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantDeleteSite,
+		navigation,
+		setScroll,
+		startOver,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/manage-connection/:site_id',
@@ -118,22 +107,17 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'untangling/hosting-menu' ) || isDuplicateViewsExperiment ) {
-		page( '/settings/start-site-transfer/:site', ( context ) => {
-			page.redirect( `/sites/settings/site/${ context.params.site }/transfer-site` );
-		} );
-	} else {
-		page(
-			'/settings/start-site-transfer/:site_id',
-			siteSelection,
-			redirectIfCantStartSiteOwnerTransfer,
-			navigation,
-			setScroll,
-			startSiteOwnerTransfer,
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/settings/start-site-transfer/:site_id',
+		siteSelection,
+		redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+		redirectIfCantStartSiteOwnerTransfer,
+		navigation,
+		setScroll,
+		startSiteOwnerTransfer,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/settings/site-transferred/:site_id',
