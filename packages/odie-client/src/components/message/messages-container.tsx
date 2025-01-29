@@ -62,6 +62,23 @@ const ViewMostRecentOpenConversationNotice = () => {
 	const navigate = useNavigate();
 	const shouldDisplayNotice = supportInteraction || totalNumberOfConversations > 1;
 
+	const handleOnClick = () => {
+		const destination = supportInteraction ? 'support-interaction' : 'chat-history';
+
+		if ( supportInteraction ) {
+			setCurrentSupportInteraction( supportInteraction );
+			if ( ! location.pathname.includes( '/odie' ) ) {
+				navigate( '/odie' );
+			}
+		} else {
+			navigate( '/chat-history' );
+		}
+		trackEvent( 'chat_open_previous_conversation_notice', {
+			destination,
+			total_number_of_conversations: totalNumberOfConversations,
+		} );
+	};
+
 	return (
 		shouldDisplayNotice && (
 			<OdieNotice>
@@ -70,23 +87,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
 					</span>
 					&nbsp;
-					<button
-						onClick={ () => {
-							const destination = supportInteraction ? 'support-interaction' : 'chat-history';
-
-							if ( supportInteraction ) {
-								setCurrentSupportInteraction( supportInteraction );
-								if ( ! location.pathname.includes( '/odie' ) ) {
-									navigate( '/odie' );
-								}
-							} else {
-								navigate( '/chat-history' );
-							}
-							trackEvent( 'chat_open_previous_conversation_notice', {
-								destination,
-							} );
-						} }
-					>
+					<button onClick={ handleOnClick }>
 						{ _n(
 							'View conversation',
 							'View conversations',
