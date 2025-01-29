@@ -4,9 +4,7 @@ import { AppState } from 'calypso/types';
 
 export default ( state: AppState ): boolean => {
 	const hasCompletedProfile = hasCompletedReaderProfile( state );
-	const fromReaderOnboarding =
-		state?.route?.path.previous.startsWith( '/read' ) &&
-		getCurrentQueryArguments( state )?.ref === 'reader-onboarding';
+	const fromReaderOnboarding = getCurrentQueryArguments( state )?.ref === 'reader-onboarding';
 
 	return hasCompletedProfile && fromReaderOnboarding;
 };
