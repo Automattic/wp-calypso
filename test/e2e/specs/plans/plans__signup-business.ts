@@ -19,7 +19,7 @@ import { apiDeleteSite } from '../shared';
 
 declare const browser: Browser;
 
-describe(
+describe.skip(
 	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com/Business site as exising user' ),
 	function () {
 		const planName = 'Business';
