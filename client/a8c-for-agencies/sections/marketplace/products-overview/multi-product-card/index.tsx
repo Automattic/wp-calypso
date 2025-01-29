@@ -151,11 +151,20 @@ export default function MultiProductCard( props: Props ) {
 	}, [ selectedOption ] );
 
 	const ctaLabel = useMemo( () => {
+		const selectedQuantity = quantity ?? 1;
+
 		if ( asReferral ) {
 			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
 		}
+
+		if ( selectedQuantity > 1 ) {
+			return isSelected
+				? translate( 'Added %(quantity)s to cart', { args: { quantity: selectedQuantity } } )
+				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		}
+
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, translate ] );
+	}, [ asReferral, isSelected, quantity, translate ] );
 
 	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
 

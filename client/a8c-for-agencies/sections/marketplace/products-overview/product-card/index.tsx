@@ -118,18 +118,36 @@ export default function ProductCard( props: Props ) {
 	}, [ resetParams ] );
 
 	const ctaLabel = useMemo( () => {
+		const selectedQuantity = quantity ?? 1;
+
 		if ( asReferral ) {
 			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
 		}
+
+		if ( selectedQuantity > 1 ) {
+			return isSelected
+				? translate( 'Added %(quantity)s to cart', { args: { quantity: selectedQuantity } } )
+				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		}
+
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, translate ] );
+	}, [ asReferral, isSelected, quantity, translate ] );
 
 	const ctaLightboxLabel = useMemo( () => {
+		const selectedQuantity = quantity ?? 1;
+
 		if ( asReferral ) {
 			return isSelected ? translate( 'Remove from referral' ) : translate( 'Add to referral' );
 		}
+
+		if ( selectedQuantity > 1 ) {
+			return isSelected
+				? translate( 'Remove %(quantity)s from cart', { args: { quantity: selectedQuantity } } )
+				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		}
+
 		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, translate ] );
+	}, [ asReferral, isSelected, quantity, translate ] );
 
 	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
 
@@ -192,7 +210,7 @@ export default function ProductCard( props: Props ) {
 				<LicenseLightbox
 					product={ product }
 					quantity={ quantity }
-					ctaLabel={ ctaLightboxLabel }
+					ctaLabel={ ctaLightboxLabel as string }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }
 					onActivate={ onSelectProduct }
