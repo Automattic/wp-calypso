@@ -7,6 +7,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryDomainDns from 'calypso/components/data/query-domain-dns';
 import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
@@ -122,22 +123,17 @@ class AddDnsRecord extends Component {
 		const { domains, dns, selectedDomainName, selectedSite, translate } = this.props;
 		const recordBeingEdited = this.getRecordBeingEdited();
 
-		const dnsSupportPageLink = (
-			<ExternalLink
-				href={
-					recordBeingEdited
-						? localizeUrl( DNS_RECORDS_EDITING_OR_DELETING )
-						: localizeUrl( DNS_RECORDS_ADD )
-				}
-				target="_blank"
-				icon={ false }
-			/>
-		);
+		const dnsSupportPageLink = recordBeingEdited
+			? 'edit-or-delete-dns-record'
+			: 'add-a-new-dns-record';
+
 		const explanationText = translate(
 			'Custom DNS records allow you to connect your domain to third-party services that are not hosted on WordPress.com, such as an email provider. {{supportLink}}Learn more{{/supportLink}}.',
 			{
 				components: {
-					supportLink: dnsSupportPageLink,
+					supportLink: (
+						<InlineSupportLink supportContext={ dnsSupportPageLink } showIcon={ false } />
+					),
 				},
 			}
 		);

@@ -400,6 +400,50 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/check-your-sites-performance/',
 		post_id: 386816,
 	},
+	'manage-your-dns-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/',
+		post_id: 6595,
+	},
+	'dns-default-mx-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-mx-records',
+		post_id: 386585,
+	},
+	'dns-default-a-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-a-records',
+		post_id: 386585,
+	},
+	'dns-default-cname-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-cname-record',
+		post_id: 386585,
+	},
+	'add-a-new-dns-record': {
+		link: 'https://wordpress.com/support/domains/custom-dns/add-a-new-dns-record/',
+		post_id: 386583,
+	},
+	'edit-or-delete-dns-record': {
+		link: 'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/',
+		post_id: 386584,
+	},
+	'domain-designated-agent': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#designated-agent',
+		post_id: 3441,
+	},
+	'transfer-domain-registration': {
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
+		post_id: 41298,
+	},
+	'public-vs-private-registration-and-gdpr': {
+		link: 'https://wordpress.com/support/domains/register-domain/#public-versus-private-registration-and-gdpr',
+		post_id: 2784,
+	},
+	'https-ssl': {
+		link: 'https://wordpress.com/support/domains/https-ssl/',
+		post_id: 2110,
+	},
+	'transfer-domain-to-another-registrar': {
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/',
+		post_id: 41298,
+	},
 };
 
 export default contextLinks;

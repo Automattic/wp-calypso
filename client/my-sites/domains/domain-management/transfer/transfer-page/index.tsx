@@ -1,8 +1,7 @@
 import { Button, Card, Spinner } from '@automattic/components';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import { DESIGNATED_AGENT, TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
-import { createElement, createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,6 +11,7 @@ import { connect } from 'react-redux';
 import ActionCard from 'calypso/components/action-card';
 import CardHeading from 'calypso/components/card-heading';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import Main from 'calypso/components/main';
@@ -313,8 +313,8 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const renderTransferMessage = () => {
 		const registrationDatePlus60Days = moment.utc( domain?.registrationDate ).add( 60, 'days' );
 		const supportLink = moment.utc().isAfter( registrationDatePlus60Days )
-			? DESIGNATED_AGENT
-			: TRANSFER_DOMAIN_REGISTRATION;
+			? 'domain-designated-agent'
+			: 'transfer-domain-registration';
 
 		if ( domain?.transferAwayEligibleAt ) {
 			return createInterpolateElement(
@@ -324,7 +324,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					a: createElement( 'a', { href: localizeUrl( supportLink ) } ),
+					a: <InlineSupportLink supportContext={ supportLink } showIcon={ false } />,
 				}
 			);
 		}
@@ -446,7 +446,12 @@ const TransferPage = ( props: TransferPageProps ) => {
 									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
 								),
 								{
-									a: createElement( 'a', { href: localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) } ),
+									a: (
+										<InlineSupportLink
+											supportContext="transfer-domain-to-another-registrar"
+											showIcon={ false }
+										/>
+									),
 								}
 							) }
 						</p>
