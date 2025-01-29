@@ -433,7 +433,7 @@ const contextLinks = {
 		post_id: 3441,
 	},
 	'transfer-domain-registration': {
-		link: 'https://wordpress.com/support/transfer-domain-registration/',
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
 		post_id: 41298,
 	},
 	'public-vs-private-registration-and-gdpr': {
