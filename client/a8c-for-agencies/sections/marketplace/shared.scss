@@ -1,0 +1,18 @@
+
+.popover.a4a-marketplace__guided-tour {
+	margin-block-start: 32px;
+	max-width: 300px;
+
+	.popover__arrow {
+		display: block;
+	}
+
+	.guided-tour__popover-heading {
+		text-wrap: wrap;
+		text-align: left;
+	}
+
+	.guided-tour__popover-description {
+		max-width: 300px;
+	}
+}

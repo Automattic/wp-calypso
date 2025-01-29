@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, CardHeader, CardBody, Flex, FlexItem } from '@wordpress/components';
 import { ReactNode } from 'react';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import AnglePickerControlExample from './angle-picker-control';
 import AnimateExample from './animate';
 import BaseControlExample from './base-control';
@@ -59,9 +57,6 @@ const WordPressComponentsGallery = () => (
 		<h1 className="wordpress-components-gallery__heading">
 			The kitchen sink of WordPress components from the <code>@wordpress/components</code> package.
 		</h1>
-		{ isEnabled( 'devdocs/color-scheme-picker' ) && (
-			<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-		) }
 		<Flex justify="flex-start" gap={ 4 } style={ { flexWrap: 'wrap' } }>
 			<ExampleComponent name="Angle Picker Control">
 				<AnglePickerControlExample />

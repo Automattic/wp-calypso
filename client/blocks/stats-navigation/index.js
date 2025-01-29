@@ -161,9 +161,13 @@ class StatsNavigation extends Component {
 				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
 
 			case 'subscribers':
+				return 'undefined' === typeof siteId ? false : true;
+
+			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+				return config.isEnabled( 'stats/real-time-tab' );
 
 			default:
 				return true;

@@ -81,27 +81,6 @@ button.action_buttons__button.components-button {
 		}
 	}
 
-	&.action-buttons__arrow {
-		justify-content: flex-start;
-
-		text-decoration: underline;
-		font-weight: 600;
-		color: var(--mainColor);
-
-		// @TODO: We have to revisit the ArrowButton's padding when we pick up #48568 (https://github.com/Automattic/wp-calypso/issues/48568)
-		padding: 0;
-		margin-right: 0;
-
-		@include break-medium {
-			justify-content: flex-end;
-		}
-
-		svg {
-			// The viewbox has a 5px margin and we have to crop it to align it with the ArrowButton's copy properly.
-			margin: 0 -5px -4px;
-		}
-	}
-
 	@include break-small {
 		min-width: 160px;
 	}

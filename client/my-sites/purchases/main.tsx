@@ -32,6 +32,8 @@ import {
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
+import './styles.scss';
+
 function useLogPurchasesError( message: string ) {
 	return useCallback(
 		( error: Error ) => {

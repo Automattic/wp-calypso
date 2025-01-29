@@ -14,7 +14,7 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	FlowV1,
 	ProvidedDependencies,
 	StepperStep,
 } from './internals/types';
@@ -36,7 +36,7 @@ const getNextStep = ( currentStep: string, steps: StepperStep[] ): string | unde
 
 const SiteIntent = Onboard.SiteIntent;
 
-const pluginBundleFlow: Flow = {
+const pluginBundleFlow: FlowV1 = {
 	name: 'plugin-bundle',
 	isSignupFlow: false,
 

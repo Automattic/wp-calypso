@@ -30,7 +30,6 @@ import LayoutHeader, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferralInvoices from '../../hooks/use-fetch-referral-invoices';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';
@@ -87,9 +86,6 @@ export default function ReferralsOverview( {
 		isFetching: isFetchingReferrals,
 		refetch: refetchReferrals,
 	} = useFetchReferrals( isAutomatedReferral );
-
-	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
-		useFetchReferralInvoices( isAutomatedReferral );
 
 	const hasReferrals = !! referrals?.length;
 
@@ -189,8 +185,6 @@ export default function ReferralsOverview( {
 							isLoading={ isLoading }
 							dataViewsState={ dataViewsState }
 							setDataViewsState={ setDataViewsState }
-							referralInvoices={ referralInvoices ?? [] }
-							isFetchingInvoices={ isFetchingReferralInvoices }
 							isArchiveView={ isArchiveView }
 							onReferralRefetch={ refetchReferrals }
 						/>
@@ -203,7 +197,6 @@ export default function ReferralsOverview( {
 				<LayoutColumn wide>
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
-						referralInvoices={ referralInvoices ?? [] }
 						isArchiveView={ isArchiveView }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {
