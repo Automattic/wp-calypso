@@ -13,7 +13,7 @@ type SubscriberQueryParams = {
 	sortTerm?: SubscribersSortBy;
 	sortOrder?: 'asc' | 'desc';
 	filterOption?: SubscribersFilterBy;
-	timestamp: number;
+	timestamp?: number;
 };
 
 const useSubscribersQuery = ( {
@@ -66,9 +66,6 @@ const useSubscribersQuery = ( {
 			} );
 		},
 		enabled: !! siteId && shouldFetch,
-		refetchOnMount: false,
-		refetchOnWindowFocus: false,
-		refetchOnReconnect: false,
 	} );
 
 	return { ...query, isLoading: query.isLoading || isLoading };

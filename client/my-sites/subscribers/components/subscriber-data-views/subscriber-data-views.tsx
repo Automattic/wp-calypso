@@ -91,7 +91,6 @@ const SubscriberDataViews = ( {
 		sortTerm: currentView.sort?.field as SubscribersSortBy,
 		sortOrder: currentView.sort?.direction as 'asc' | 'desc',
 		filterOption,
-		timestamp: 56756782546781,
 	} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
