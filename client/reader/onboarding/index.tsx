@@ -104,7 +104,7 @@ const ReaderOnboarding = ( {
 		task?.actionDispatch?.();
 	};
 
-	const redirectToAccountProfile = () => {
+	const navToAccountProfile = () => {
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_account_profile` );
 		page( '/me?ref=reader-onboarding' );
 	};
@@ -165,7 +165,7 @@ const ReaderOnboarding = ( {
 			title: userSettings?.has_gravatar
 				? translate( 'Fill out your profile' )
 				: translate( 'Add your avatar and fill out your profile' ),
-			actionDispatch: redirectToAccountProfile,
+			actionDispatch: navToAccountProfile,
 			completed: profileCompleted,
 			disabled: ! profileCompleted && ( ! hasFollowedTags || ! hasFollowedSites ),
 		},
