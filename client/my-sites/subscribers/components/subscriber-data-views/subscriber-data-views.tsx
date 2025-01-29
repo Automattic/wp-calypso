@@ -91,6 +91,7 @@ const SubscriberDataViews = ( {
 		sortTerm: currentView.sort?.field as SubscribersSortBy,
 		sortOrder: currentView.sort?.direction as 'asc' | 'desc',
 		filterOption,
+		limitData: true,
 	} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
