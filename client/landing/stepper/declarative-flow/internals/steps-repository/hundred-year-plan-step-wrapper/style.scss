@@ -18,11 +18,11 @@
  */
 .step-container.hundred-year-plan.hundred-year-plan,
 .step-container.hundred-year-domain.hundred-year-domain,
-.hundred-year-domain-transfer>.step-container.domain-transfer,
-{
+.hundred-year-domain-transfer>.step-container.domain-transfer {
 	max-width: none;
 	height: 100%;
 	padding: 0;
+	
 	.step-container__content {
 		min-height: 100%;
 	}

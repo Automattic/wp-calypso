@@ -13,11 +13,15 @@
 
 	&.hundred-year-domain-transfer {
 
-		&.step-route {
+		&.step-route.domains.domain-transfer {
 			gap: 0;
 			width: 100%;
 			margin: 0;
 			max-width: none;
+
+			@include break-small {
+				margin-top: 0;
+			}
 
 			&.processing {
 				padding: 0;
@@ -40,6 +44,19 @@
 			.bulk-domain-transfer__cta {
 				height: 48px;
 				width: 240px;
+
+				&.components-button.is-primary[disabled]{
+					background: var(--studio-gray-30);
+				}
+
+				&.components-button.is-primary{
+					background: var(--studio-gray-100);
+
+					&:hover {
+						background: var(--studio-gray-70);
+					}
+				}
+				
 
 				@media (max-width: $break-medium) {
 					width: 100%;
