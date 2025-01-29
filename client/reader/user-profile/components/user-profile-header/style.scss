@@ -111,8 +111,10 @@
 		}
 
 		.section-nav-tab__text {
-			font-weight: 500;
-			color: var( --studio-black );
+			@include break-mobile {
+				font-weight: 500;
+				color: var( --studio-black );
+			}
 		}
 	}
 }
