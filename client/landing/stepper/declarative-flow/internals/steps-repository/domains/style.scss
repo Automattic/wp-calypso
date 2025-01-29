@@ -536,11 +536,6 @@
 				padding: 16px 20px;
 			}
 
-			&:hover {
-				border-bottom: 1px solid var( --studio-gray-50 );
-				border-top: 1px solid var( --studio-gray-50 );
-			}
-
 			.domain-registration-suggestion__title-wrapper {
 				gap: 4px;
 				@include break-mobile {
