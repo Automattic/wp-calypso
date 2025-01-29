@@ -106,7 +106,7 @@ function getAvailableUpsells() {
 	] as Product[];
 }
 
-function getVisibleUpsells( siteFeatures ) {
+function getVisibleUpsells( siteFeatures: string[] ) {
 	// Filter available upsells against site features.
 	// If an upsell has even one feature that is not active on the site, present it to the user.
 	const upsells = getAvailableUpsells().filter( ( upsell ) =>
