@@ -15,9 +15,9 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           # Message to be added to stale issues.
-          stale-issue-message: 'This issue is stale because 540 days have passed with no activity. A member of the Dotcom Product Ambassadors Guild will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
+          stale-issue-message: 'This issue is stale because 360 days have passed with no activity. A member of the Dotcom Product Ambassadors Guild will review and if required close this issue within 7 days. If you disagree and would like this issue to remain open, please provide additional context, updated reproduction steps and/or screenshots.'
           # Days before issue is considered stale.
-          days-before-issue-stale: 540
+          days-before-issue-stale: 360
           # Override stale setting for PRs.
           days-before-pr-stale: -1
           # Exempted issue labels.
