@@ -425,61 +425,79 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const renderConfirm = () => (
-		<>
-			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
-			<div className="rewind-flow__header">
-				<Icon icon={ backup } size={ 48 } />
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore your files' ) }</h3>
-			<p className="rewind-flow__info">
-				{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
-					args: {
-						backupDisplayDate,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</p>
-			{ renderSection( 'theme' ) }
-			{ renderSection( 'plugin' ) }
-			{ renderSection( 'table' ) }
-			{ renderSection( 'file' ) }
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
+	const renderConfirm = () => {
+		const hasSelectedTables = browserSelectedList.some(
+			( item ) =>
+				item.type === 'table' ||
+				// Also check if root path or /sql is selected as this includes all tables
+				item.path === '/sql' ||
+				item.path === '//'
+		);
+
+		let restoreWarning = translate(
+			'Important: This action will replace the selected content from the selected restore point.'
+		);
+
+		if ( hasSelectedTables ) {
+			restoreWarning = translate(
+				'Important: This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+			);
+		}
+
+		return (
 			<>
-				{ backupCurrentlyInProgress && (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'A backup is currently in progress; restoring now will stop the backup.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
-					/>
-				) }
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
+				<div className="rewind-flow__header">
+					<Icon icon={ backup } size={ 48 } />
+				</div>
+				<h3 className="rewind-flow__title">{ translate( 'Restore your files' ) }</h3>
+				<p className="rewind-flow__info">
+					{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
+						args: {
+							backupDisplayDate,
+						},
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</p>
+				{ renderSection( 'theme' ) }
+				{ renderSection( 'plugin' ) }
+				{ renderSection( 'table' ) }
+				{ renderSection( 'file' ) }
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ restoreWarning }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+				<>
+					{ backupCurrentlyInProgress && (
+						<RewindFlowNotice
+							gridicon="notice"
+							title={ translate(
+								'A backup is currently in progress; restoring now will stop the backup.'
+							) }
+							type={ RewindFlowNoticeLevel.WARNING }
+						/>
+					) }
+				</>
+				<div className="rewind-flow__btn-group">
+					<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button
+						className="rewind-flow__primary-button"
+						primary
+						onClick={ onConfirm }
+						disabled={ disableRestore }
+					>
+						{ translate( 'Restore now' ) }
+					</Button>
+				</div>
+				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>
-			<div className="rewind-flow__btn-group">
-				<Button className="rewind-flow__back-button" href={ goBackUrl } onClick={ onCancel }>
-					{ translate( 'Cancel' ) }
-				</Button>
-				<Button
-					className="rewind-flow__primary-button"
-					primary
-					onClick={ onConfirm }
-					disabled={ disableRestore }
-				>
-					{ translate( 'Restore now' ) }
-				</Button>
-			</div>
-			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
-		</>
-	);
+		);
+	};
 
 	const renderInProgress = () => (
 		<>
