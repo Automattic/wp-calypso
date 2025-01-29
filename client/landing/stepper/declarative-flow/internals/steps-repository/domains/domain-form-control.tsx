@@ -37,7 +37,7 @@ interface DomainFormControlProps {
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
-	onUseYourDomainClick: () => void;
+	onUseYourDomainClick: ( domain?: string ) => void;
 	showUseYourDomain: boolean;
 	isCartPendingUpdate: boolean;
 	isCartPendingUpdateDomain: DomainSuggestion | undefined;

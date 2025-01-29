@@ -634,6 +634,12 @@
 				margin-right: 16px;
 			}
 		}
+
+		.domain-search-results__domain-available-notice {
+			a {
+				display: unset;
+			}
+		}
 	}
 }
 
