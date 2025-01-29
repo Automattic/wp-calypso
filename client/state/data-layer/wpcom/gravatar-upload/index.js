@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
@@ -15,7 +16,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { checkForCompletedProfileAndNotify } from 'calypso/state/reader/actions';
+import hasCompletedReaderProfileFromOnboarding from 'calypso/state/selectors/has-completed-reader-profile-from-onboarding';
 
 export function uploadGravatar( action ) {
 	const { email, file } = action;
@@ -35,7 +36,7 @@ export function uploadGravatar( action ) {
 }
 
 export function announceSuccess( { file } ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		const fileReader = new FileReader();
 		fileReader.addEventListener( 'load', () => {
 			dispatch( {
@@ -47,15 +48,22 @@ export function announceSuccess( { file } ) {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 				} )
 			);
+
+			const noticeOptions = {
+				id: 'gravatar-upload',
+			};
+			if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
+				noticeOptions.button = translate( 'Return to Reader' );
+				noticeOptions.onClick = () => {
+					page( '/read' );
+				};
+			}
 			dispatch(
 				successNotice(
 					translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
-					{
-						id: 'gravatar-upload',
-					}
+					noticeOptions
 				)
 			);
-			dispatch( checkForCompletedProfileAndNotify() );
 		} );
 		fileReader.readAsDataURL( file );
 	};

@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
@@ -7,8 +8,8 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { checkForCompletedProfileAndNotify } from 'calypso/state/reader/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import hasCompletedReaderProfileFromOnboarding from 'calypso/state/selectors/has-completed-reader-profile-from-onboarding';
 import {
 	clearUnsavedUserSettings,
 	fetchUserSettingsFailure,
@@ -123,7 +124,7 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  */
 export const userSettingsSaveSuccess =
 	( { settingsOverride }, data ) =>
-	async ( dispatch ) => {
+	async ( dispatch, getState ) => {
 		dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 		dispatch(
 			clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null )
@@ -147,13 +148,16 @@ export const userSettingsSaveSuccess =
 			return;
 		}
 
-		dispatch(
-			successNotice( translate( 'Settings saved successfully!' ), {
-				id: 'save-user-settings',
-			} )
-		);
-
-		dispatch( checkForCompletedProfileAndNotify() );
+		const noticeOptions = {
+			id: 'save-user-settings',
+		};
+		if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
+			noticeOptions.button = translate( 'Return to Reader' );
+			noticeOptions.onClick = () => {
+				page( '/read' );
+			};
+		}
+		dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeOptions ) );
 	};
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {

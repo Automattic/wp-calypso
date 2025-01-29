@@ -20,6 +20,7 @@ import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import './style.scss';
+import hasCompletedReaderProfile from 'calypso/state/selectors/has-completed-reader-profile';
 
 const ReaderOnboarding = ( {
 	onRender,
@@ -37,6 +38,7 @@ const ReaderOnboarding = ( {
 
 	const followedTags = useSelector( getReaderFollowedTags );
 	const follows = useSelector( getReaderFollows );
+	const profileCompleted = useSelector( hasCompletedReaderProfile );
 	const userSettings = useSelector( getUserSettings );
 
 	const hasCompletedOnboarding: boolean | null = useSelector( ( state ) =>
@@ -48,15 +50,9 @@ const ReaderOnboarding = ( {
 
 	const hasFollowedTags = followedTags !== null && followedTags.length > 2;
 	const hasFollowedSites = follows?.length > 2;
-	const hasCompletedProfile = !! (
-		userSettings?.has_gravatar &&
-		userSettings?.description &&
-		userSettings?.first_name &&
-		userSettings?.last_name
-	);
 
 	// If the user has completed the onboarding, save the preference and track the event.
-	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && hasCompletedProfile ) {
+	if ( ! hasCompletedOnboarding && hasFollowedTags && hasFollowedSites && profileCompleted ) {
 		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
 	}
@@ -170,8 +166,8 @@ const ReaderOnboarding = ( {
 				? translate( 'Fill out your profile' )
 				: translate( 'Add your avatar and fill out your profile' ),
 			actionDispatch: redirectToAccountProfile,
-			completed: hasCompletedProfile,
-			disabled: ! hasCompletedProfile && ( ! hasFollowedTags || ! hasFollowedSites ),
+			completed: profileCompleted,
+			disabled: ! profileCompleted && ( ! hasFollowedTags || ! hasFollowedSites ),
 		},
 	];
 
