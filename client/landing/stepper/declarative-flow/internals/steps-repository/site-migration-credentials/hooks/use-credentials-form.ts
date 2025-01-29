@@ -141,6 +141,15 @@ export const useCredentialsForm = (
 				} );
 				onSubmit( siteInfoResult );
 			} else if ( isNotWordPress( siteInfoResult ) ) {
+				if ( ! siteSlug ) {
+					return;
+				}
+				await sendTicketAsync( {
+					locale,
+					blog_url: siteSlug,
+					from_url: from,
+					context: 'site_is_not_wordpress',
+				} );
 				onSubmit( siteInfoResult );
 			} else {
 				const applicationPasswordsInfoResult = await getApplicationPasswordsInfo( siteId, from );
