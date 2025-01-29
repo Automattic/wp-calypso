@@ -443,10 +443,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 							<br />
 							{ createInterpolateElement(
 								__(
-									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <supportLink>this important information</supportLink> before starting a transfer.'
+									'However, transferring a domain to another provider can take five to seven days during which no changes to the domain can be made. Read <a>this important information</a> before starting a transfer.'
 								),
 								{
-									supportLink: (
+									a: (
 										<InlineSupportLink
 											supportContext="transfer-domain-to-another-registrar"
 											showIcon={ false }

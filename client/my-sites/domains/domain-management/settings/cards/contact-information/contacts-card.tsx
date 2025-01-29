@@ -113,19 +113,16 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		const { privacyAvailable } = props;
 		return privacyAvailable ? (
 			<p className="contact-information__toggle-item">
-				{ translate(
-					'We recommend keeping privacy protection on. {{supportLink}}Learn more{{/supportLink}}',
-					{
-						components: {
-							supportLink: (
-								<InlineSupportLink
-									supportContext="public-vs-private-registration-and-gdpr"
-									showIcon={ false }
-								/>
-							),
-						},
-					}
-				) }
+				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
+					components: {
+						a: (
+							<InlineSupportLink
+								supportContext="public-vs-private-registration-and-gdpr"
+								showIcon={ false }
+							/>
+						),
+					},
+				} ) }
 			</p>
 		) : null;
 	};
