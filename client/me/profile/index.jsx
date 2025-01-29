@@ -40,6 +40,8 @@ class Profile extends Component {
 	};
 
 	render() {
+		const profileUrl = `https://wordpress.com/read/users/${ this.props.user.username }`;
+
 		return (
 			<Main wideLayout className="profile">
 				<PageViewTracker path="/me" title="Me > My Profile" />
@@ -125,6 +127,23 @@ class Profile extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
+							<div className="form-label">{ this.props.translate( 'Public profile' ) }</div>
+							<FormSettingExplanation>
+								<span>
+									{ this.props.translate(
+										'A list of your public posts and public lists can be found at {{a}}{{url/}}{{/a}}',
+										{
+											components: {
+												a: <a href={ profileUrl }></a>,
+												url: <>{ profileUrl }</>,
+											},
+										}
+									) }
+								</span>
+							</FormSettingExplanation>
+						</FormFieldset>
+
+						<FormFieldset>
 							<FormLabel htmlFor="description">{ this.props.translate( 'About me' ) }</FormLabel>
 							<FormTextarea
 								disabled={ this.props.getDisabledState() }
@@ -180,6 +199,7 @@ export default compose(
 	connect(
 		( state ) => ( {
 			isFetchingUserSettings: isFetchingUserSettings( state ),
+			user: state.currentUser?.user,
 		} ),
 		{ recordGoogleEvent }
 	),
