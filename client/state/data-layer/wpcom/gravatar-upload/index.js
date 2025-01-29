@@ -47,7 +47,6 @@ export function announceSuccess( { file } ) {
 					type: GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 				} )
 			);
-
 			dispatch(
 				successNotice(
 					translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
