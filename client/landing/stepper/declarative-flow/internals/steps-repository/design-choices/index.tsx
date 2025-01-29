@@ -1,14 +1,13 @@
-import { getAssemblerDesign, themesIllustrationImage } from '@automattic/design-picker';
+import { themesIllustrationImage } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
@@ -31,7 +30,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		if ( ! isLoading && isEligible ) {
@@ -49,11 +47,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			intent,
 			destination: kebabCase( destination ),
 		} );
-
-		if ( destination === 'launch-big-sky' ) {
-			setSelectedDesign( getAssemblerDesign() );
-			return;
-		}
 
 		submit?.( { destination } );
 	};
@@ -105,15 +98,12 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 											}
 										)
 									) }
-									onSelect={ () => {
+									onSelect={ ( destination ) => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,
 											step: stepName,
 										} );
-										const queryParams = new URLSearchParams( location.search ).toString();
-										navigate(
-											`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
-										);
+										handleSubmit( destination );
 									} }
 								/>
 							) }
