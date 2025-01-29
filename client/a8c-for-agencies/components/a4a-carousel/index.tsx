@@ -5,6 +5,9 @@ import { useCallback, useRef, useState } from 'react';
 
 import './style.scss';
 
+// Minimum swipe distance in pixels to trigger navigation
+const MIN_SWIPE_DISTANCE = 50;
+
 type Props = {
 	className?: string;
 	children: React.ReactNode;
@@ -12,6 +15,8 @@ type Props = {
 
 export default function A4ACarousel( { children, className }: Props ) {
 	const [ offsetX, setOffsetX ] = useState( 0 );
+	const [ touchStart, setTouchStart ] = useState< number | null >( null );
+	const [ touchEnd, setTouchEnd ] = useState< number | null >( null );
 
 	const contentRef = useRef< HTMLDivElement >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -31,9 +36,41 @@ export default function A4ACarousel( { children, className }: Props ) {
 		setOffsetX( Math.max( offsetX - offsetStep, -maxOffset ) );
 	}, [ offsetX, offsetStep, maxOffset ] );
 
+	const onTouchStart = ( e: React.TouchEvent ) => {
+		setTouchEnd( null );
+		setTouchStart( e.targetTouches[ 0 ].clientX );
+	};
+
+	const onTouchMove = ( e: React.TouchEvent ) => {
+		setTouchEnd( e.targetTouches[ 0 ].clientX );
+	};
+
+	const onTouchEnd = () => {
+		if ( ! touchStart || ! touchEnd ) {
+			return;
+		}
+
+		const distance = touchStart - touchEnd;
+		const isLeftSwipe = distance > MIN_SWIPE_DISTANCE;
+		const isRightSwipe = distance < -MIN_SWIPE_DISTANCE;
+
+		if ( isLeftSwipe ) {
+			moveRight();
+		}
+		if ( isRightSwipe ) {
+			moveLeft();
+		}
+	};
+
 	return (
 		<div className={ clsx( `a4a-carousel-wrapper`, className ) }>
-			<div className="a4a-carousel" ref={ containerRef }>
+			<div
+				className="a4a-carousel"
+				ref={ containerRef }
+				onTouchStart={ onTouchStart }
+				onTouchMove={ onTouchMove }
+				onTouchEnd={ onTouchEnd }
+			>
 				<div className="a4a-carousel__navigation">
 					<Button
 						className="a4a-carousel__navigation-button"
