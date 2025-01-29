@@ -1,6 +1,7 @@
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .product-action-panel.hosting-dashboard-layout__body {
 	background: var( --color-surface );
@@ -42,7 +43,9 @@
 }
 
 .bundle-price-selector__label {
-	@include a4a-font-heading-sm;
+	@include heading-small;
+
+	color: var( --color-neutral-90 );
 	text-transform: uppercase;
 	display: none;
 
