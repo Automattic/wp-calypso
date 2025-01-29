@@ -1,3 +1,4 @@
+import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,8 +19,8 @@ import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-t
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { ViewTable } from '@wordpress/dataviews/types';
 import type { Moment } from 'moment';
-
 import './style.scss';
 
 export type LogType = 'php' | 'web';
@@ -249,5 +250,92 @@ export const SiteLogs = ( {
 				) }
 			</div>
 		</div>
+	);
+};
+
+const EMPTY_ARRAY: Array< any > = [];
+const useDataLogs = ( { view, logType }: { view: ViewTable; logType: LogType } ) => {
+	const siteId = useSelector( getSelectedSiteId );
+	const moment = useLocalizedMoment();
+	const getLatestDateRange = useCallback( () => {
+		const startTime = moment().subtract( 7, 'd' );
+		const endTime = moment();
+		return { startTime, endTime };
+	}, [ moment ] );
+	const [ dateRange ] = useState( () => {
+		const latest = getLatestDateRange();
+		const dateRangeQuery = getDateRangeQueryParam( moment );
+		return {
+			startTime: dateRangeQuery.startTime || latest.startTime,
+			endTime: dateRangeQuery.endTime || latest.endTime,
+		};
+	} );
+	const [ severity ] = useState( () => {
+		return getFilterQueryParam( 'severity' ) || '';
+	} );
+	const [ requestType ] = useState( () => {
+		return getFilterQueryParam( 'request_type' ) || '';
+	} );
+
+	const [ requestStatus ] = useState( () => {
+		return getFilterQueryParam( 'request_status' ) || '';
+	} );
+
+	const { data, isFetching } = useSiteLogsQuery( siteId, {
+		logType,
+		start: dateRange.startTime.unix(),
+		end: dateRange.endTime.unix(),
+		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+		sortOrder: 'desc',
+		pageSize: view.perPage,
+		pageIndex: view.page,
+	} );
+
+	return {
+		data: data?.logs ? data.logs : EMPTY_ARRAY,
+		paginationInfo: {
+			totalItems: 0, // TODO
+			totalPages: 1, // TODO
+		},
+		isLoading: isFetching,
+	};
+};
+
+export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
+	// TODO:
+	// - header with title + date filters + log type.
+	// - address the "show more" interaction
+
+	const view = {
+		type: 'table' as const,
+		perPage: 10,
+		page: 1,
+		fields: [ 'severity', 'timestamp', 'message' ],
+	};
+
+	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType } );
+
+	const fields = [
+		{ id: 'severity' },
+		{ id: 'timestamp' },
+		{ id: 'message' },
+		{ id: 'kind' },
+		{ id: 'name' },
+		{ id: 'file' },
+		{ id: 'line' },
+	];
+
+	const onChangeView = () => {};
+
+	return (
+		<DataViews
+			isLoading={ isLoading }
+			data={ data }
+			paginationInfo={ paginationInfo }
+			fields={ fields }
+			view={ view }
+			onChangeView={ onChangeView }
+			defaultLayouts={ { table: {} } }
+		/>
 	);
 };
