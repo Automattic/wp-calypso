@@ -1,6 +1,4 @@
-import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
@@ -17,7 +15,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import hasCompletedReaderProfileFromOnboarding from 'calypso/state/selectors/has-completed-reader-profile-from-onboarding';
+import { dispatchProfileCompleteNotice } from 'calypso/state/reader/onboarding/handlers';
 
 export function uploadGravatar( action ) {
 	const { email, file } = action;
@@ -37,7 +35,7 @@ export function uploadGravatar( action ) {
 }
 
 export function announceSuccess( { file } ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		const fileReader = new FileReader();
 		fileReader.addEventListener( 'load', () => {
 			dispatch( {
@@ -50,20 +48,12 @@ export function announceSuccess( { file } ) {
 				} )
 			);
 
-			const noticeOptions = {
-				id: 'gravatar-upload',
-			};
-			if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
-				noticeOptions.button = translate( 'Return to Reader' );
-				noticeOptions.onClick = () => {
-					recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_profile_return` );
-					page( '/read' );
-				};
-			}
 			dispatch(
 				successNotice(
 					translate( 'You successfully uploaded a new profile photo — looking sharp!' ),
-					noticeOptions
+					{
+						id: 'gravatar-upload',
+					}
 				)
 			);
 		} );
@@ -97,4 +87,5 @@ registerHandlers( 'state/data-layer/wpcom/gravatar-upload/index.js', {
 			onError: announceFailure,
 		} ),
 	],
+	[ GRAVATAR_UPLOAD_REQUEST_SUCCESS ]: [ dispatchProfileCompleteNotice ],
 } );

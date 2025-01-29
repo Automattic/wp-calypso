@@ -1,5 +1,5 @@
+import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import hasCompletedReaderProfile from 'calypso/state/selectors/has-completed-reader-profile';
 import { AppState } from 'calypso/types';
 
 export default ( state: AppState ): boolean => {

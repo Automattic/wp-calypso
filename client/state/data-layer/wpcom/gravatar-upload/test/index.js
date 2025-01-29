@@ -55,9 +55,8 @@ describe( '#announceSuccess()', () => {
 			email: 'email',
 		};
 		const dispatch = jest.fn();
-		const getState = () => ( {} );
 
-		announceSuccess( action, noop, { success: true } )( dispatch, getState );
+		announceSuccess( action, noop, { success: true } )( dispatch );
 		expect( dispatch ).toHaveBeenCalledWith(
 			expect.objectContaining( { type: GRAVATAR_UPLOAD_REQUEST_SUCCESS } )
 		);
@@ -70,9 +69,8 @@ describe( '#announceSuccess()', () => {
 			email: 'email',
 		};
 		const dispatch = jest.fn();
-		const getState = () => ( {} );
 
-		announceSuccess( action, noop, { success: true } )( dispatch, getState );
+		announceSuccess( action, noop, { success: true } )( dispatch );
 		expect( dispatch ).toHaveBeenCalledWith( {
 			type: GRAVATAR_UPLOAD_RECEIVE,
 			src: 'tempImageSrc',

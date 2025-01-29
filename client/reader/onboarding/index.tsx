@@ -17,10 +17,10 @@ import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import hasCompletedReaderProfile from 'calypso/state/reader/onboarding/selectors/has-completed-reader-profile';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import './style.scss';
-import hasCompletedReaderProfile from 'calypso/state/selectors/has-completed-reader-profile';
 
 const ReaderOnboarding = ( {
 	onRender,

@@ -1,17 +1,18 @@
-import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
+import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_SAVE,
+	USER_SETTINGS_SAVE_SUCCESS,
+} from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { dispatchProfileCompleteNotice } from 'calypso/state/reader/onboarding/handlers';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
-import hasCompletedReaderProfileFromOnboarding from 'calypso/state/selectors/has-completed-reader-profile-from-onboarding';
 import {
 	clearUnsavedUserSettings,
 	fetchUserSettingsFailure,
@@ -126,7 +127,7 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
  */
 export const userSettingsSaveSuccess =
 	( { settingsOverride }, data ) =>
-	async ( dispatch, getState ) => {
+	async ( dispatch ) => {
 		dispatch( saveUserSettingsSuccess( fromApi( data ) ) );
 		dispatch(
 			clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null )
@@ -150,17 +151,11 @@ export const userSettingsSaveSuccess =
 			return;
 		}
 
-		const noticeOptions = {
-			id: 'save-user-settings',
-		};
-		if ( hasCompletedReaderProfileFromOnboarding( getState() ) ) {
-			noticeOptions.button = translate( 'Return to Reader' );
-			noticeOptions.onClick = () => {
-				recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }complete_profile_return` );
-				page( '/read' );
-			};
-		}
-		dispatch( successNotice( translate( 'Settings saved successfully!' ), noticeOptions ) );
+		dispatch(
+			successNotice( translate( 'Settings saved successfully!' ), {
+				id: 'save-user-settings',
+			} )
+		);
 	};
 
 registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
@@ -180,4 +175,5 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 			fromApi,
 		} ),
 	],
+	[ USER_SETTINGS_SAVE_SUCCESS ]: [ dispatchProfileCompleteNotice ],
 } );
