@@ -44,6 +44,7 @@
 
 				.block-editor-block-contextual-toolbar.components-accessible-toolbar {
 					border-bottom: none;
+					box-shadow: none;
 				}
 
 				.block-editor-block-toolbar {
@@ -119,6 +120,7 @@
 
 	iframe[name="editor-canvas"] {
 		background-color: inherit;
+		border: none;
 	}
 }
 
