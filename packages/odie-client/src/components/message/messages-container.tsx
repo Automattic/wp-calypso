@@ -74,7 +74,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 			navigate( '/chat-history' );
 		}
 		trackEvent( 'chat_open_previous_conversation_notice', {
-			destination,
+			destination: supportInteraction ? 'support-interaction' : 'chat-history';,
 			total_number_of_conversations: totalNumberOfConversations,
 		} );
 	};
