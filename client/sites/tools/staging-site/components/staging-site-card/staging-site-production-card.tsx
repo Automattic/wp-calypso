@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { setStagingSiteStatus } from 'calypso/state/staging-site/actions';
 import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
@@ -46,7 +48,6 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const [ syncError, setSyncError ] = useState< string | null >( null );
-	const [ deleteError, setDeleteError ] = useState< string | null >( null );
 	const stagingSiteUrl = useSelector( ( state ) => getSiteUrl( state, siteId ) );
 
 	const {
@@ -120,11 +121,20 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					code: error.code,
 				} )
 			);
-			setDeleteError( error.code );
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why deleting the staging site failed.
+					sprintf( __( 'Could not delete staging site: %(reason)s' ), { reason: error.message } ),
+					{
+						id: 'staging-site-delete-failure',
+					}
+				)
+			);
 		},
 	} );
 
 	const handleDeleteClick = () => {
+		removeNotice( 'staging-site-delete-failure' );
 		dispatch(
 			setStagingSiteStatus( productionSite?.id as number, StagingSiteStatus.INITIATE_REVERTING )
 		);
@@ -189,13 +199,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	};
 
 	let cardContent;
-	if ( deleteError ) {
-		cardContent = (
-			<Notice status="is-error" showDismiss={ false }>
-				{ translate( 'Failed to delete staging site. Please try again.' ) }
-			</Notice>
-		);
-	} else if ( ! isLoading && productionSite ) {
+	if ( ! isLoading && productionSite ) {
 		cardContent = getManageStagingSiteContent( productionSite );
 	} else if ( isLoading ) {
 		cardContent = <LoadingPlaceholder />;
