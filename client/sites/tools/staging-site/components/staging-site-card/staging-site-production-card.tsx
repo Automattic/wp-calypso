@@ -28,9 +28,13 @@ import { LoadingPlaceholder } from './loading-placeholder';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
-	'@media ( max-width: 768px )': {
+	gap: '1em',
+
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
 		flexDirection: 'column',
-		alignItems: 'stretch',
+		'.button': { flexGrow: 1 },
+		alignSelf: 'stretch',
 	},
 } );
 
