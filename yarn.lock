@@ -1689,34 +1689,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/plans-grid@workspace:^, @automattic/plans-grid@workspace:packages/plans-grid":
-  version: 0.0.0-use.local
-  resolution: "@automattic/plans-grid@workspace:packages/plans-grid"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@wordpress/base-styles": "npm:^5.8.0"
-    "@wordpress/components": "npm:^28.8.0"
-    "@wordpress/compose": "npm:^7.8.0"
-    "@wordpress/icons": "npm:^10.8.0"
-    "@wordpress/react-i18n": "npm:^4.8.0"
-    clsx: "npm:^2.1.1"
-    prop-types: "npm:^15.7.2"
-    tslib: "npm:^2.3.0"
-    typescript: "npm:^5.3.3"
-  peerDependencies:
-    "@wordpress/data": ^10.8.0
-    "@wordpress/element": ^6.8.0
-    "@wordpress/i18n": ^5.8.0
-    react: ^18.3.1
-    react-dom: ^18.3.1
-    redux: ^5.0.1
-  languageName: unknown
-  linkType: soft
-
 "@automattic/popup-monitor@workspace:^, @automattic/popup-monitor@workspace:packages/popup-monitor":
   version: 0.0.0-use.local
   resolution: "@automattic/popup-monitor@workspace:packages/popup-monitor"
@@ -13094,7 +13066,6 @@ __metadata:
     "@automattic/notifications": "workspace:^"
     "@automattic/oauth-token": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@automattic/plans-grid": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
     "@automattic/react-virtualized": "npm:^9.22.4"
     "@automattic/request-external-access": "workspace:^"

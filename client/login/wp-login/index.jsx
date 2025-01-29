@@ -15,11 +15,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
-import {
-	getSignupUrl,
-	isReactLostPasswordScreenEnabled,
-	pathWithLeadingSlash,
-} from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
@@ -319,13 +315,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if (
-			isReactLostPasswordScreenEnabled() &&
-			( this.props.isWoo ||
-				this.props.isBlazePro ||
-				( this.props.isWooPasswordlessJPC &&
-					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) )
-		) {
+		if ( this.props.isWoo || this.props.isBlazePro || this.props.isWooPasswordlessJPC ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -470,9 +460,7 @@ export class Login extends Component {
 		}
 
 		if (
-			( currentQuery.lostpassword_flow === 'true' &&
-				isWooPasswordlessJPC &&
-				config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) ||
+			( currentQuery.lostpassword_flow === 'true' && isWooPasswordlessJPC ) ||
 			// We don't want to show lost password option if the user is already on lost password's page
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {

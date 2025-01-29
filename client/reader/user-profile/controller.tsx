@@ -6,7 +6,7 @@ import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile
 
 interface UserPostsContext extends Context {
 	params: {
-		user_id: string;
+		user_login: string;
 	};
 	primary: ReactElement;
 }
@@ -15,20 +15,18 @@ const analyticsPageTitle = 'Reader';
 
 export function userPosts( ctx: Context, next: () => void ): void {
 	const context = ctx as UserPostsContext;
-	const userId = context.params.user_id;
+	const userLogin = context.params.user_login;
 	const basePath = getUserProfileBasePath();
-	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId + ' > Posts';
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userLogin + ' > Posts';
 	const mcKey = 'user_posts';
-	const streamKey = 'user:' + userId;
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
-			key={ 'user-posts-' + userId }
-			streamKey={ streamKey }
-			userId={ userId }
+			key={ 'user-posts-' + userLogin }
+			userLogin={ userLogin }
 			trackScrollPage={ trackScrollPage.bind(
 				null,
 				basePath,
@@ -36,16 +34,16 @@ export function userPosts( ctx: Context, next: () => void ): void {
 				analyticsPageTitle,
 				mcKey
 			) }
-			placeholder={ null }
 		/>
 	);
 	next();
 }
 
-export function userLists( context: Context, next: () => void ): void {
-	const userId = context.params.user_id;
+export function userLists( ctx: Context, next: () => void ): void {
+	const context = ctx as UserPostsContext;
+	const userLogin = context.params.user_login;
 	const basePath = getUserProfileBasePath( 'lists' );
-	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userId + ' > Lists';
+	const fullAnalyticsPageTitle = analyticsPageTitle + ' > User > ' + userLogin + ' > Lists';
 	const mcKey = 'user_lists';
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -53,8 +51,8 @@ export function userLists( context: Context, next: () => void ): void {
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
-			key={ 'user-lists-' + userId }
-			userId={ userId }
+			key={ 'user-lists-' + userLogin }
+			userLogin={ userLogin }
 		/>
 	);
 

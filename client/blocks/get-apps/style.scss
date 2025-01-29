@@ -104,6 +104,11 @@ main.get-apps {
 		display: flex;
 		flex-direction: row;
 		gap: 16px;
+
+		> a {
+			display: inline-flex;
+			gap: 2px;
+		}
 	}
 
 	.get-apps__desktop-button {

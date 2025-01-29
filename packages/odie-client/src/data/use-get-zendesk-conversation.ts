@@ -30,10 +30,10 @@ export const useGetZendeskConversation = () => {
 			chatId,
 			conversationId,
 		}: {
-			chatId: number | string | null | undefined;
+			chatId?: number | string | null | undefined;
 			conversationId?: string | null | undefined;
 		} ) => {
-			if ( ! chatId ) {
+			if ( ! chatId && ! conversationId ) {
 				return null;
 			}
 
@@ -42,9 +42,11 @@ export const useGetZendeskConversation = () => {
 			const conversation = conversations.find( ( conversation ) => {
 				if ( conversationId ) {
 					return conversation.id === conversationId;
+				} else if ( chatId ) {
+					return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
 				}
 
-				return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
+				return false;
 			} );
 
 			if ( ! conversation ) {
@@ -60,7 +62,7 @@ export const useGetZendeskConversation = () => {
 			}
 
 			// We need to ensure that more than one message is loaded
-			return Smooch.getConversationById( conversation.id )
+			return Smooch.getConversationById( conversation.id || conversationId! )
 				.then( ( conversation ) => {
 					Smooch.markAllAsRead( conversation.id );
 					getUnreadNotifications();

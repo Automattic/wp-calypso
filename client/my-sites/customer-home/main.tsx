@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -7,10 +6,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { FullScreenLaunchpad } from './components/full-screen-launchpad';
 import HomeContent from './components/home-content';
 
-export default function CustomerHome() {
-	const [ isShowingLaunchpad, setIsShowingLaunchpad ] = useState(
-		config.isEnabled( 'home/launchpad-first' )
-	);
+export default function CustomerHome( { showLaunchpadFirst = false } ) {
+	const [ isShowingLaunchpad, setIsShowingLaunchpad ] = useState( showLaunchpadFirst );
 
 	const translate = useTranslate();
 

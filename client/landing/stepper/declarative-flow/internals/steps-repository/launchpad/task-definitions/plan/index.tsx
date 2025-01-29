@@ -1,9 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	FEATURE_STYLE_CUSTOMIZATION,
-	isFreePlanProduct,
-	PLAN_PERSONAL,
-} from '@automattic/calypso-products';
+import { FEATURE_STYLE_CUSTOMIZATION, isFreePlanProduct } from '@automattic/calypso-products';
 import { updateLaunchpadSettings } from '@automattic/data-stores/src/queries/use-launchpad';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Task } from '@automattic/launchpad';
@@ -54,13 +49,6 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 	const { siteSlug, displayGlobalStylesWarning, globalStylesMinimumPlan, hasSkippedCheckout } =
 		context;
 
-	// @TODO Cleanup once the test phase is over.
-	const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' )
-		? PLAN_PERSONAL
-		: globalStylesMinimumPlan;
-
-	const shouldDisplayWarning = displayGlobalStylesWarning;
-
 	return {
 		...task,
 		actionDispatch: () => {
@@ -71,8 +59,8 @@ export const getPlanSelectedTask: TaskAction = ( task, flow, context ): Task => 
 			}
 		},
 		calypso_path: addQueryArgs( `/plans/${ siteSlug }`, {
-			...( shouldDisplayWarning && {
-				plan: upgradeToPlan,
+			...( displayGlobalStylesWarning && {
+				plan: globalStylesMinimumPlan,
 				feature: FEATURE_STYLE_CUSTOMIZATION,
 			} ),
 		} ),

@@ -41,6 +41,11 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		}
 	}
 
+	&__disabled-for-verification {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
 	&__site-list-column {
 		flex: 1;
 		padding: 20px 20px 0;

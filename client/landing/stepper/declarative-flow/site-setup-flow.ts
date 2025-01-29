@@ -3,7 +3,6 @@ import {
 	updateLaunchpadSettings,
 	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
-import { MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -30,7 +29,7 @@ import { ProcessingResult } from './internals/steps-repository/processing-step/c
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	Flow,
+	FlowV1,
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
@@ -52,7 +51,7 @@ function useGoalsAtFrontExperimentQueryParam() {
 	return Boolean( useSelector( getInitialQueryArguments )?.[ 'goals-at-front-experiment' ] );
 }
 
-const siteSetupFlow: Flow = {
+const siteSetupFlow: FlowV1 = {
 	name: 'site-setup',
 	isSignupFlow: false,
 
@@ -308,8 +307,7 @@ const siteSetupFlow: Flow = {
 					const intent = params[ 0 ];
 					switch ( intent ) {
 						case 'firstPost': {
-							const exitUrl = addQueryArgs( { new_prompt: true }, `/post/${ siteSlug }` );
-							return exitFlow( exitUrl );
+							return exitFlow( `/post/${ siteSlug }` );
 						}
 						case 'courses': {
 							return navigate( 'courses' );
@@ -518,9 +516,6 @@ const siteSetupFlow: Flow = {
 				case 'importerMedium':
 				case 'importerSquarespace':
 					if ( backToFlow ) {
-						if ( urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
-							return goToFlow( backToFlow );
-						}
 						return navigate( addQueryArgs( { origin, siteSlug, backToFlow }, 'importList' ) );
 					}
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
@@ -552,10 +547,6 @@ const siteSetupFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					if ( backToFlow && urlQueryParams.get( 'ref' ) === MIGRATION_FLOW ) {
-						return goToFlow( backToFlow );
-					}
-
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
 				case 'options':

@@ -1,17 +1,22 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
-import { CardHeader, Button, Flex } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
-import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
+import {
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	commentContent,
+	page,
+	Icon,
+	comment,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -68,16 +73,23 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
+	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+		};
+	}, [] );
+	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
-		startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: uuidv4(),
-		} );
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	};
+
+	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.stopPropagation();
+		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
 	return (
@@ -86,10 +98,23 @@ const ChatEllipsisMenu = () => {
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
 		>
-			<div className="clear-conversation__wrapper">
-				<button onClick={ clearChat }>
-					<Gridicon icon="comment" />
+			<div className="conversation-menu__wrapper">
+				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+					<Icon icon={ comment } />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+				</button>
+				<button onClick={ toggleSoundNotifications }>
+					<div>
+						<ToggleControl
+							className="conversation-menu__notification-toggle"
+							label={ __( 'Notification sound', __i18n_text_domain__ ) }
+							checked={ areSoundNotificationsEnabled }
+							onChange={ ( newValue ) => {
+								setAreSoundNotificationsEnabled( newValue );
+							} }
+							__nextHasNoMarginBottom
+						/>
+					</div>
 				</button>
 			</div>
 		</EllipsisMenu>

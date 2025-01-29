@@ -1,11 +1,9 @@
-.billing-history {
-    .navigation-header::after {
-        display: none;
-    }
+#billing-history {
 
     .dataviews-wrapper {
         width: 100%;
         margin-bottom: 1rem;
+        padding: 0 1rem;
 
         .dataviews-view-table {
             width: 100%;
@@ -199,21 +197,5 @@
     &__transaction-links {
         display: flex;
         gap: 1em;
-    }
-}
-
-@media screen and (min-width: 782px) {
-    body.is-section-me .navigation-header::after {
-        display: none;
-    }
-}
-
-body.is-section-me div.layout.is-global-sidebar-visible .layout__primary .billing-history.main > * {
-    max-width: 100%;
-}
-
-@media screen and (min-width: 782px) {
-    body.is-section-me .navigation-header::after {
-       display: none !important;
     }
 }

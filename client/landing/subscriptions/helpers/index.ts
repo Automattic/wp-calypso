@@ -1,4 +1,3 @@
-import { getQueryArgs } from '@wordpress/url';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import type { Option } from 'calypso/landing/subscriptions/components/sort-controls';
 
@@ -9,11 +8,6 @@ export const getOptionLabel = < T >( options: Option< T >[], value: T ) => {
 	}
 
 	return foundOption;
-};
-
-export const getUrlQuerySearchTerm = () => {
-	const { s: urlQuerySearchTerm } = getQueryArgs( window.location.href );
-	return urlQuerySearchTerm as string;
 };
 
 export const isValidUrl = ( url: string ) => {

@@ -6,7 +6,13 @@ import { useSelector } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
 
-const EmailVerificationBanner: React.FC = () => {
+import './style.scss';
+
+const EmailVerificationBanner: React.FC< {
+	customDescription?: string | React.ReactNode;
+	dialogCloseLabel?: string | React.ReactNode;
+	dialogCloseAction?: () => void;
+} > = ( { customDescription, dialogCloseLabel, dialogCloseAction = () => {} } ) => {
 	const isVerified = useSelector( isCurrentUserEmailVerified );
 	const isEmailChangePending = useSelector( isPendingEmailChange );
 	const translate = useTranslate();
@@ -18,13 +24,25 @@ const EmailVerificationBanner: React.FC = () => {
 
 	return (
 		<>
-			{ isDialogOpen && <EmailVerificationDialog onClose={ () => setIsDialogOpen( false ) } /> }
+			{ isDialogOpen && (
+				<EmailVerificationDialog
+					onClose={ () => setIsDialogOpen( false ) }
+					closeLabel={ dialogCloseLabel }
+					// We only want this triggered from the close button, but not from clicking
+					// outside to close the modal (so not adding to onClose prop).
+					closeButtonAction={ dialogCloseAction }
+				/>
+			) }
 			<Banner
 				className="email-verification-banner"
 				title={ translate( 'Please, verify your email address.' ) }
-				description={ translate(
-					'Verifying your email helps you secure your WordPress.com account and enables key features.'
-				) }
+				description={
+					customDescription
+						? customDescription
+						: translate(
+								'Verifying your email helps you secure your WordPress.com account and enables key features.'
+						  )
+				}
 				callToAction={ translate( 'Verify email' ) }
 				onClick={ () => {
 					setIsDialogOpen( true );

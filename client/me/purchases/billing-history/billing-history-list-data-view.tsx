@@ -19,10 +19,12 @@ const DEFAULT_LAYOUT = { table: {} };
 
 export interface BillingHistoryListProps {
 	getReceiptUrlFor: ( receiptId: string ) => string;
+	siteId: number | null;
 }
 
 export default function BillingHistoryListDataView( {
 	getReceiptUrlFor,
+	siteId,
 }: BillingHistoryListProps ) {
 	const transactions = useSelector( getPastBillingTransactions );
 	const isLoading = useSelector( isRequestingBillingTransactions );
@@ -34,7 +36,8 @@ export default function BillingHistoryListDataView( {
 		icon: <Gridicon icon={ action.iconName } />,
 	} ) );
 
-	const filteredTransactions = useTransactionsFiltering( transactions, viewState.view );
+	const filteredTransactions = useTransactionsFiltering( transactions, viewState.view, siteId );
+
 	const sortedTransactions = useTransactionsSorting( filteredTransactions, viewState.view );
 	const { paginatedItems, totalPages, totalItems } = usePagination(
 		sortedTransactions,
@@ -47,24 +50,20 @@ export default function BillingHistoryListDataView( {
 	const handleViewChange = ( view: View ) => viewState.updateView( view as ViewStateUpdate );
 
 	return (
-		<div className="billing-history">
-			<div className="dataviews-wrapper">
-				<DataViews
-					data={ paginatedItems }
-					paginationInfo={ {
-						totalItems,
-						totalPages,
-					} }
-					fields={ fields }
-					view={ viewState.view }
-					search
-					searchLabel={ translate( 'Search receipts' ) }
-					onChangeView={ handleViewChange }
-					defaultLayouts={ DEFAULT_LAYOUT }
-					actions={ actions }
-					isLoading={ isLoading }
-				/>
-			</div>
-		</div>
+		<DataViews
+			data={ paginatedItems }
+			paginationInfo={ {
+				totalItems,
+				totalPages,
+			} }
+			fields={ fields }
+			view={ viewState.view }
+			search
+			searchLabel={ translate( 'Search receipts' ) }
+			onChangeView={ handleViewChange }
+			defaultLayouts={ DEFAULT_LAYOUT }
+			actions={ actions }
+			isLoading={ isLoading }
+		/>
 	);
 }

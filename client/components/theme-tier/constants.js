@@ -15,6 +15,7 @@ const getIncludedWithLabel = ( planSlug ) => {
 
 export const THEME_TIER_PREMIUM = 'premium';
 export const THEME_TIER_PARTNER = 'partner';
+export const THEME_TIER_FREE = 'free';
 
 /**
  * @typedef {Object} THEME_TIERS

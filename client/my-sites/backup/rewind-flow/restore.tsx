@@ -240,78 +240,90 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	}, [ dispatch, hasCredentials ] );
 
-	const renderConfirm = () => (
-		<>
-			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
-			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-				<div className="rewind-flow__learn-about">
-					<ExternalLink
-						href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
-						onClick={ onLearnAboutClick }
-					>
-						{ translate( 'Learn about restores' ) }
-					</ExternalLink>
-				</div>
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
-			<p className="rewind-flow__info">
-				{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
-					args: {
-						backupDisplayDate,
-					},
-					components: {
-						strong: <strong />,
-					},
-				} ) }
-			</p>
-			{ showRealTimeMessage && (
-				<BackupRealtimeMessage
-					baseBackupDate={ baseBackupDate }
-					eventsCount={ backup.rewindStepCount }
-					selectedBackupDate={ selectedDate }
-				/>
-			) }
-			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
-			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
-			<RewindFlowNotice
-				gridicon="notice"
-				title={ translate(
-					'Important: this action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
-				) }
-				type={ RewindFlowNoticeLevel.WARNING }
-			/>
+	const renderConfirm = () => {
+		let restoreWarning = translate(
+			'Important: This action will replace the selected content from the selected restore point.'
+		);
+
+		if ( rewindConfig.sqls ) {
+			restoreWarning = translate(
+				'Important: This action will replace all settings, posts, pages and other site content with the information from the selected restore point.'
+			);
+		}
+
+		return (
 			<>
-				{ backupCurrentlyInProgress && (
-					<RewindFlowNotice
-						gridicon="notice"
-						title={ translate(
-							'A backup is currently in progress; restoring now will stop the backup.'
-						) }
-						type={ RewindFlowNoticeLevel.WARNING }
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
+				<div className="rewind-flow__header">
+					<Gridicon icon="history" size={ 48 } />
+					<div className="rewind-flow__learn-about">
+						<ExternalLink
+							href="https://jetpack.com/support/backup/restoring-with-jetpack-backup/"
+							onClick={ onLearnAboutClick }
+						>
+							{ translate( 'Learn about restores' ) }
+						</ExternalLink>
+					</div>
+				</div>
+				<h3 className="rewind-flow__title">{ translate( 'Restore your site' ) }</h3>
+				<p className="rewind-flow__info">
+					{ translate( 'Selected restore point: {{strong}}%(backupDisplayDate)s{{/strong}}', {
+						args: {
+							backupDisplayDate,
+						},
+						components: {
+							strong: <strong />,
+						},
+					} ) }
+				</p>
+				{ showRealTimeMessage && (
+					<BackupRealtimeMessage
+						baseBackupDate={ baseBackupDate }
+						eventsCount={ backup.rewindStepCount }
+						selectedBackupDate={ selectedDate }
 					/>
 				) }
+				<h4 className="rewind-flow__cta">
+					{ translate( 'Choose the items you wish to restore:' ) }
+				</h4>
+				<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
+				<RewindFlowNotice
+					gridicon="notice"
+					title={ restoreWarning }
+					type={ RewindFlowNoticeLevel.WARNING }
+				/>
+				<>
+					{ backupCurrentlyInProgress && (
+						<RewindFlowNotice
+							gridicon="notice"
+							title={ translate(
+								'A backup is currently in progress; restoring now will stop the backup.'
+							) }
+							type={ RewindFlowNoticeLevel.WARNING }
+						/>
+					) }
+				</>
+				<div className="rewind-flow__btn-group">
+					<Button
+						className="rewind-flow__back-button"
+						href={ backupMainPath( siteSlug ) }
+						onClick={ onGoBack }
+					>
+						{ translate( 'Go back' ) }
+					</Button>
+					<Button
+						className="rewind-flow__primary-button"
+						primary
+						onClick={ onConfirm }
+						disabled={ disableRestore }
+					>
+						{ translate( 'Restore now' ) }
+					</Button>
+				</div>
+				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>
-			<div className="rewind-flow__btn-group">
-				<Button
-					className="rewind-flow__back-button"
-					href={ backupMainPath( siteSlug ) }
-					onClick={ onGoBack }
-				>
-					{ translate( 'Go back' ) }
-				</Button>
-				<Button
-					className="rewind-flow__primary-button"
-					primary
-					onClick={ onConfirm }
-					disabled={ disableRestore }
-				>
-					{ translate( 'Restore now' ) }
-				</Button>
-			</div>
-			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
-		</>
-	);
+		);
+	};
 
 	const renderInProgress = () => (
 		<>
