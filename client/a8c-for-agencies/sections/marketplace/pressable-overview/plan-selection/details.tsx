@@ -115,11 +115,11 @@ export default function PlanSelectionDetails( {
 						items={ [
 							info?.install
 								? translate(
-										'{{b}}%(count)s{{/b}} WordPress install',
-										'{{b}}%(count)s{{/b}} WordPress installs',
+										'{{b}}%(installsCount)s{{/b}} WordPress install',
+										'{{b}}%(installsCount)s{{/b}} WordPress installs',
 										{
 											args: {
-												count: numberFormat( info.install ),
+												installsCount: numberFormat( info.install ),
 											},
 											count: info.install,
 											components: { b: <b /> },
