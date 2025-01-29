@@ -137,7 +137,7 @@
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
 		"reader/recent-feed-overhaul": true,
-		"reader/user-profile": false,
+		"reader/user-profile": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

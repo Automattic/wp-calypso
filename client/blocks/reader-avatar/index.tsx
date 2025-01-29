@@ -19,6 +19,7 @@ export type ReaderAvatarAuthor = {
 	display_name?: string;
 	name?: string;
 	login?: string;
+	wpcom_login?: string;
 };
 
 type ReaderAvatarProps = {
@@ -122,7 +123,7 @@ export default function ReaderAvatar( {
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
 	const avatarUrl =
-		isUserProfileEnabled() && author?.login ? getUserProfileUrl( author.login ) : null;
+		isUserProfileEnabled() && author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);
