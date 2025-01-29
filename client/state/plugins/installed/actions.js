@@ -555,20 +555,20 @@ export function removePlugin( siteId, plugin ) {
 
 		const doDeactivate = function ( pluginData ) {
 			if ( pluginData.active ) {
-				return getPluginHandler( siteId, pluginData.id ).deactivate();
+				return getPluginHandler( siteId, pluginId ).deactivate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
 		const doDisableAutoupdate = function ( pluginData ) {
 			if ( pluginData.autoupdate ) {
-				return getPluginHandler( siteId, pluginData.id ).disableAutoupdate();
+				return getPluginHandler( siteId, pluginId ).disableAutoupdate();
 			}
 			return Promise.resolve( pluginData );
 		};
 
-		const doRemove = function ( pluginData ) {
-			return getPluginHandler( siteId, pluginData.id ).delete();
+		const doRemove = function () {
+			return getPluginHandler( siteId, pluginId ).delete();
 		};
 
 		const successCallback = () => {
