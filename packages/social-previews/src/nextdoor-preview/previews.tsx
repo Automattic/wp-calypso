@@ -1,4 +1,3 @@
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
 import { NextdoorLinkPreview } from './link-preview';
@@ -40,10 +39,6 @@ export const NextdoorPreviews: React.FC< NextdoorPreviewsProps > = ( {
 							'This is what it will look like when someone shares the link to your WordPress post on Nextdoor.',
 							'social-previews'
 						) }
-						&nbsp;
-						<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-							{ __( 'Learn more about links', 'social-previews' ) }
-						</ExternalLink>
 					</p>
 					<NextdoorLinkPreview { ...props } name="" profileImage="" />
 				</section>
