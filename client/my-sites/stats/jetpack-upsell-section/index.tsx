@@ -10,6 +10,7 @@ import {
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { hasBusinessPlan, hasCompletePlan, hasSecurityPlan } from '../hooks/use-stats-purchases';
 import UpsellCard from './upsell-card';
@@ -45,6 +46,14 @@ function bundledProductsFromPurchases( purchases: Purchase[] ) {
 	return [];
 }
 
+function useSiteFeatures( siteId: number | null ) {
+	const upsellFeatures = [ 'videopress' ];
+	const activeFeatures = useSelector( ( state ) =>
+		upsellFeatures.filter( ( feature ) => siteHasFeature( state, siteId, feature ) )
+	);
+	return activeFeatures;
+}
+
 export default function JetpackUpsellSection() {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -59,7 +68,7 @@ export default function JetpackUpsellSection() {
 	const shouldHideUpsells = shouldHideUpsellSection( sitePurchases );
 
 	// New check for active site features.
-	const siteFeatures = [ 'videopress' ];
+	const siteFeatures = useSiteFeatures( siteId );
 
 	// Exit early if we don't have and can't get the site purchase data.
 	// Also exit early if we're not in the Odyssey Stats environment.
