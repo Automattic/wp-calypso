@@ -20,6 +20,7 @@ const QUERY_VALUES = {
 };
 
 function useSiteFeatures( siteId: number | null ) {
+	// TODO: Add full list of upsell features to check.
 	const upsellFeatures = [ 'videopress', 'videopress-1tb-storage' ];
 	const activeFeatures = useSelector( ( state ) =>
 		upsellFeatures.filter( ( feature ) => siteHasFeature( state, siteId, feature ) )
@@ -64,9 +65,9 @@ export default function JetpackUpsellSection() {
 		return null;
 	}
 
+	// TODO: Memoize derived data setup.
+	// Initial tests show the component rendering multiple times per page load.
 	const upsells = getVisibleUpsells( siteSlug, siteFeatures );
-	// eslint-disable-next-line no-console
-	console.log( 'upsells: ', upsells );
 
 	return (
 		<div className="jetpack-upsell-section">
