@@ -12,7 +12,7 @@ import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
-import { getAvailableUpsells } from './upsell-card/available-upsells';
+import { getAvailableUpsells, Product } from './upsell-card/available-upsells';
 
 // TODO: Delete use-purchased-products.tsx
 // TODO: Check usage of hasBusinessPlan, hasCompletePlan, hasSecurityPlan or delete
@@ -35,18 +35,32 @@ function useSiteFeatures( siteId: number | null ) {
 	return activeFeatures;
 }
 
-function getVisibleUpsells( siteFeatures: string[] ) {
+function checkoutUrlForUpsell( siteSlug: string, upsell: Product ) {
+	return CHECKOUT_URL_PREFIX + buildCheckoutURL( siteSlug, upsell.checkoutSlug, QUERY_VALUES );
+}
+
+function getVisibleUpsells( siteSlug: string | null, siteFeatures: string[] ): Product[] {
+	if ( ! siteSlug ) {
+		return [];
+	}
+
 	// Filter available upsells against site features.
 	// If an upsell has even one feature that is not active on the site, present it to the user.
-	const upsells = getAvailableUpsells().filter( ( upsell ) =>
+	const filteredUpsells = getAvailableUpsells().filter( ( upsell ) =>
 		upsell.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
 	);
-	return upsells;
+
+	// Add the checkout URL to the results.
+	const finalUpsells = filteredUpsells.map( ( upsell ) => {
+		return { ...upsell, checkoutUrl: checkoutUrlForUpsell( siteSlug, upsell ) };
+	} );
+
+	return finalUpsells;
 }
 
 export default function JetpackUpsellSection() {
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	// New check for active site features.
 	const siteFeatures = useSiteFeatures( siteId );
@@ -57,7 +71,7 @@ export default function JetpackUpsellSection() {
 		return null;
 	}
 
-	const upsells = getVisibleUpsells( siteFeatures );
+	const upsells = getVisibleUpsells( siteSlug, siteFeatures );
 	// eslint-disable-next-line no-console
 	console.log( 'upsells: ', upsells );
 

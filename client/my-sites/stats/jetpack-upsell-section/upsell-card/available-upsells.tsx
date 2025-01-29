@@ -23,6 +23,7 @@ export type Product = {
 	title: string;
 	features: string[];
 	checkoutSlug: string;
+	checkoutUrl: string | null;
 };
 
 export function getAvailableUpsells() {
