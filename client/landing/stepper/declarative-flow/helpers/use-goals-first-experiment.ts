@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
@@ -14,8 +15,12 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
 
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: flow === ONBOARDING_FLOW,
+		isEligible: flow === ONBOARDING_FLOW && ! isEnabled( 'onboarding/force-goals-first' ),
 	} );
+
+	if ( isEnabled( 'onboarding/force-goals-first' ) ) {
+		return [ false, true ];
+	}
 
 	/**
 	 * If the user is not eligible, we'll treat them as if they were in the

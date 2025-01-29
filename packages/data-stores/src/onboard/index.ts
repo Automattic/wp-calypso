@@ -64,6 +64,7 @@ export function register(): typeof STORE_KEY {
 			'domainCartItem',
 			'planCartItem',
 			'productCartItems',
+			'createWithBigSky',
 		],
 	} );
 	isRegistered = true;

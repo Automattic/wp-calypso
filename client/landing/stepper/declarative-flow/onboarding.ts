@@ -23,6 +23,7 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
+import { useIsBigSkyEligible } from '../hooks/use-is-site-big-sky-eligible';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -114,7 +115,12 @@ const onboarding: Flow = {
 
 		if ( isGoalsAtFrontExperiment ) {
 			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT );
+			steps.unshift(
+				STEPS.GOALS,
+				STEPS.DESIGN_CHOICES,
+				STEPS.DESIGN_SETUP,
+				STEPS.DIFM_STARTING_POINT
+			);
 		}
 
 		return steps;
@@ -130,15 +136,17 @@ const onboarding: Flow = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
+			setCreateWithBigSky,
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, isUserLoggedIn } = useSelect(
+		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
 			( select ) => ( {
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+				createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
 			} ),
 			[]
 		);
@@ -149,6 +157,25 @@ const onboarding: Flow = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
+
+		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
+			if ( createWithBigSky ) {
+				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
+					siteSlug: providedDependencies.siteSlug,
+				} );
+			}
+
+			return addQueryArgs( '/setup/site-setup', {
+				siteSlug: providedDependencies.siteSlug,
+				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
+					flags: 'onboarding/newsletter-goal',
+				} ),
+			} );
+		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
@@ -179,6 +206,9 @@ const onboarding: Flow = {
 							return navigate( 'difmStartingPoint' );
 
 						default: {
+							if ( isDesignChoicesStepEnabled ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'designSetup' );
 						}
 					}
@@ -186,6 +216,15 @@ const onboarding: Flow = {
 
 				case 'designSetup': {
 					return navigate( 'domains' );
+				}
+
+				case 'design-choices': {
+					if ( providedDependencies.destination === 'launch-big-sky' ) {
+						setCreateWithBigSky( true );
+						return navigate( 'domains' );
+					}
+					setCreateWithBigSky( false );
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -300,13 +339,7 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = addQueryArgs( '/setup/site-setup', {
-						siteSlug: providedDependencies.siteSlug,
-						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-						...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
-							flags: 'onboarding/newsletter-goal',
-						} ),
-					} );
+					const destination = getPostCheckoutDestination( providedDependencies );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -365,10 +398,15 @@ const onboarding: Flow = {
 						return navigate( 'designSetup' );
 					}
 				case 'designSetup':
+					if ( isDesignChoicesStepEnabled ) {
+						return navigate( 'design-choices' );
+					}
 					if ( isGoalsAtFrontExperiment ) {
 						return navigate( 'goals' );
 					}
 				case 'difmStartingPoint':
+					return navigate( 'goals' );
+				case 'design-choices':
 					return navigate( 'goals' );
 				default:
 					return;

@@ -10,6 +10,7 @@ import { isTargetSitePlanCompatible } from 'calypso/blocks/importer/util';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ImporterMainPlatform } from 'calypso/lib/importer/types';
+import { navigate as calypsoLibNavigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -349,6 +350,14 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				case 'design-choices': {
+					if ( providedDependencies.destination === 'launch-big-sky' ) {
+						const queryParams = new URLSearchParams( location.search ).toString();
+						calypsoLibNavigate(
+							`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
+						);
+						return;
+					}
+
 					return navigate( providedDependencies.destination as string );
 				}
 
