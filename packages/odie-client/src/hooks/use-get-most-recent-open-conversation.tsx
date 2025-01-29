@@ -6,8 +6,8 @@ import Smooch from 'smooch';
 const HELP_CENTER_STORE = HelpCenter.register();
 
 export const useGetMostRecentOpenConversation = () => {
-	let userHasRecentOpenConversation = false;
-	let supportInteractionId = null;
+	let mostRecentSupportInteractionId = null;
+	let totalNumberOfConversations = 0;
 
 	const { isChatLoaded } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
@@ -52,9 +52,9 @@ export const useGetMostRecentOpenConversation = () => {
 		} );
 
 		if ( sortedConversations?.length > 0 ) {
-			supportInteractionId = sortedConversations[ 0 ]?.metadata?.supportInteractionId;
-			userHasRecentOpenConversation = true;
+			mostRecentSupportInteractionId = sortedConversations[ 0 ]?.metadata?.supportInteractionId;
+			totalNumberOfConversations = sortedConversations.length;
 		}
 	}
-	return { userHasRecentOpenConversation, supportInteractionId };
+	return { mostRecentSupportInteractionId, totalNumberOfConversations };
 };
