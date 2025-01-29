@@ -9,7 +9,6 @@ import VideoPressIcon from './icons/jetpack-product-icon-videopress.svg';
 import './style.scss';
 
 type UpsellCardProps = {
-	purchasedProducts?: string[];
 	siteSlug?: string | null;
 	siteFeatures: string[];
 	upgradeUrls: Record< string, string >;
@@ -93,17 +92,8 @@ function getVisibleUpsells( siteFeatures ) {
 	return getAvailableUpsells().slice( 0, -1 );
 }
 
-export function UpsellCard( {
-	purchasedProducts,
-	siteSlug,
-	siteFeatures,
-	upgradeUrls = {},
-}: UpsellCardProps ) {
+export function UpsellCard( { siteSlug, siteFeatures, upgradeUrls = {} }: UpsellCardProps ) {
 	// TODO: Make card collapsible
-
-	// TODO: Remove purchasedProducts property and update caller
-	// eslint-disable-next-line no-console
-	console.log( 'purchasedProducts: ', purchasedProducts );
 
 	const translate = useTranslate();
 
