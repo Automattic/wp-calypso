@@ -87,7 +87,7 @@ const ViewMostRecentOpenConversationNotice = () => {
 						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
 					</span>
 					&nbsp;
-					<button onClick={ handleOnClick }>
+					<button onClick={ handleNoticeOnClick }>
 						{ _n(
 							'View conversation',
 							'View conversations',
