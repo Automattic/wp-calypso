@@ -471,6 +471,10 @@
 		}
 	}
 
+	.hundred-year-plan-step-wrapper__step-container {
+		width: 100%;
+	}
+
 	.register-domain-step__search-card {
 		background: none;
 	}
@@ -488,12 +492,14 @@
 
 		@include break-small {
 			max-width: 780px;
+			margin: 0 auto;
 		}
 
 		.domains__step-content {
 			padding: 0 16px;
+
 			@include break-small {
-				padding: 0 48px 0 32px;
+				padding: 0 32px;	
 			}
 		}
 
