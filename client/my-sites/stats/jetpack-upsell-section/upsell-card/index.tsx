@@ -1,6 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { translate, useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
 import BoostIcon from './icons/jetpack-product-icon-boost.svg';
@@ -103,77 +102,6 @@ export function UpsellCard( {
 	// TODO: Make card collapsible
 
 	const translate = useTranslate();
-	const PRODUCTS = useMemo(
-		() => [
-			{
-				description: translate(
-					'Protect your site from hackers and spam with automated backups, malware scanning, and spam filtering.'
-				),
-				href: 'https://jetpack.com/features/security/',
-				iconUrl: SecurityIcon,
-				isFree: false,
-				slug: 'security',
-				title: translate( 'Security', { context: 'Jetpack product name' } ),
-			},
-			{
-				description: translate(
-					'Save every single change and get back online quickly with one-click restores.'
-				),
-				href: 'https://jetpack.com/upgrade/backup/',
-				iconUrl: BackupIcon,
-				isFree: false,
-				slug: 'backup',
-				title: translate( 'Backup' ),
-			},
-			{
-				description: translate(
-					"Help your site visitors instantly find what they're looking for so they read and buy more."
-				),
-				href: 'https://jetpack.com/upgrade/search/',
-				iconUrl: SearchIcon,
-				isFree: false,
-				slug: 'search',
-				title: translate( 'Search' ),
-			},
-			{
-				description: translate(
-					'Engage your visitors with high-quality, ad-free videos build specifically for WordPress.'
-				),
-				href: 'https://jetpack.com/videopress/',
-				iconUrl: VideoPressIcon,
-				isFree: false,
-				slug: 'video',
-				title: translate( 'VideoPress' ),
-			},
-			{
-				description: translate(
-					"Improve your site's performance and SEO in a few clicks with the free Jetpack Boost plugin."
-				),
-				href: 'https://jetpack.com/boost/',
-				iconUrl: BoostIcon,
-				isFree: true,
-				slug: 'boost',
-				title: translate( 'Boost' ),
-			},
-			{
-				description: translate(
-					'Save time by auto-posting your content to social networks like Facebook, LinkedIn, and more.'
-				),
-				href: 'https://jetpack.com/social/',
-				iconUrl: SocialIcon,
-				isFree: true,
-				slug: 'social',
-				title: translate( 'Social' ),
-			},
-			// TODO: Add Jetpack CRM upsell.
-		],
-		[ translate ]
-	) as Product[];
-
-	const visibleProducts = PRODUCTS.filter(
-		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
-	);
-	const hasProductsToUpsell = visibleProducts.length > 0;
 
 	// TODO: Filter upsells based on active site features.
 	// eslint-disable-next-line no-console
@@ -182,7 +110,11 @@ export function UpsellCard( {
 	// eslint-disable-next-line no-console
 	console.log( 'visibleUpsells: ', visibleUpsells );
 
-	return ! hasProductsToUpsell ? null : (
+	const haveUpsells = visibleUpsells.length > 0;
+
+	// TODO: Verify upgradeUrls are present.
+
+	return ! haveUpsells ? null : (
 		<Card className="jetpack-upsell-card">
 			<h2 className="jetpack-upsell-card__title">
 				<span className="jetpack-upsell-card__title--long">
@@ -199,7 +131,7 @@ export function UpsellCard( {
 			</h2>
 			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }
-				{ visibleProducts.map( ( { title, description, href, iconUrl, slug } ) => (
+				{ visibleUpsells.map( ( { title, description, href, iconUrl, slug } ) => (
 					<div className="jetpack-upsell-card__product" key={ slug }>
 						<div className="jetpack-upsell-card__product-icon">
 							<img src={ iconUrl } alt={ title } width="24px" height="24px" />
