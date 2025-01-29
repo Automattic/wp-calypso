@@ -320,13 +320,11 @@ const TransferPage = ( props: TransferPageProps ) => {
 			return createInterpolateElement(
 				sprintf(
 					// translators: %s is a date string, e.g. April 1, 2020
-					__(
-						'You can unlock this domain after %s. <supportLink>Why is my domain locked?</supportLink>'
-					),
+					__( 'You can unlock this domain after %s. <a>Why is my domain locked?</a>' ),
 					moment( domain.transferAwayEligibleAt ).format( 'LL' )
 				),
 				{
-					supportLink: <InlineSupportLink supportContext={ supportLink } showIcon={ false } />,
+					a: <InlineSupportLink supportContext={ supportLink } showIcon={ false } />,
 				}
 			);
 		}

@@ -165,10 +165,10 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 						) }
 					<div className="domain-security-details__description-help-text">
 						{ translate(
-							'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{supportLink}}Learn more{{/supportLink}}',
+							'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',
 							{
 								components: {
-									supportLink: <InlineSupportLink supportContext="https-ssl" showIcon={ false } />,
+									a: <InlineSupportLink supportContext="https-ssl" showIcon={ false } />,
 								},
 							}
 						) }
