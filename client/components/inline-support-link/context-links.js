@@ -416,10 +416,6 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-cname-record',
 		post_id: 386585,
 	},
-	'edit-or-delete-dns-records': {
-		link: 'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/',
-		post_id: 386584,
-	},
 	'add-a-new-dns-record': {
 		link: 'https://wordpress.com/support/domains/custom-dns/add-a-new-dns-record/',
 		post_id: 386583,
