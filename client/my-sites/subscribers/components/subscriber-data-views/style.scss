@@ -161,10 +161,6 @@ body.is-section-subscribers.is-subscribers-dataviews,
                     padding: 24px;
                     overflow: auto;
 
-                    @media ( max-width: $break-wide ) {
-                        overflow: auto;
-                    }
-
                     .subscriber-details {
                         &__header {
                             display: flex;
