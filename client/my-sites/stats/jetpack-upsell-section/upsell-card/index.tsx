@@ -12,6 +12,7 @@ import './style.scss';
 type UpsellCardProps = {
 	purchasedProducts: string[];
 	siteSlug?: string | null;
+	siteFeatures: string[];
 	upgradeUrls: Record< string, string >;
 };
 
@@ -24,7 +25,12 @@ type Product = {
 	title: string;
 };
 
-export function UpsellCard( { purchasedProducts, siteSlug, upgradeUrls = {} }: UpsellCardProps ) {
+export function UpsellCard( {
+	purchasedProducts,
+	siteSlug,
+	siteFeatures,
+	upgradeUrls = {},
+}: UpsellCardProps ) {
 	// TODO: Make card collapsible
 
 	const translate = useTranslate();
@@ -99,6 +105,10 @@ export function UpsellCard( { purchasedProducts, siteSlug, upgradeUrls = {} }: U
 		( { slug } ) => ! purchasedProducts?.includes( slug ) && slug in upgradeUrls
 	);
 	const hasProductsToUpsell = visibleProducts.length > 0;
+
+	// TODO: Filter upsells based on active site features.
+	// eslint-disable-next-line no-console
+	console.log( 'siteFeatures: ', siteFeatures );
 
 	return ! hasProductsToUpsell ? null : (
 		<Card className="jetpack-upsell-card">
