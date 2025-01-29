@@ -107,7 +107,12 @@ function getAvailableUpsells() {
 }
 
 function getVisibleUpsells( siteFeatures ) {
-	return getAvailableUpsells().slice( 0, -1 );
+	// Filter available upsells against site features.
+	// If an upsell has even one feature that is not active on the site, present it to the user.
+	const upsells = getAvailableUpsells().filter( ( upsell ) =>
+		upsell.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
+	);
+	return upsells;
 }
 
 export function UpsellCard( { siteSlug, siteFeatures, upgradeUrls = {} }: UpsellCardProps ) {
