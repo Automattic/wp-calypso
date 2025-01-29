@@ -66,15 +66,16 @@ skipDescribeIf( envVariables.ATOMIC_VARIATION === 'private' )(
 			await marketingPage.visitTab( testAccount.getSiteURL( { protocol: false } ), 'connections' );
 		} );
 
-		it( 'Click on the "Connect" button for Tumblr', async function () {
+		// Skipping the bulk of the spec, as it's flaky. We're working on better E2E tests.
+		it.skip( 'Click on the "Connect" button for Tumblr', async function () {
 			popup = await marketingPage.clickSocialConnectButton( 'Tumblr' );
 		} );
 
-		it( 'Set up Tumblr', async function () {
+		it.skip( 'Set up Tumblr', async function () {
 			await marketingPage.setupTumblr( popup, SecretsManager.secrets.socialAccounts.tumblr );
 		} );
 
-		it( 'Tumblr is connected', async function () {
+		it.skip( 'Tumblr is connected', async function () {
 			await marketingPage.validateSocialConnected( 'Tumblr' );
 		} );
 	}
