@@ -1,10 +1,15 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic/shopping-cart';
+import {
+	useShoppingCart,
+	convertTaxLocationToLocationUpdate,
+	ResponseCart,
+} from '@automattic/shopping-cart';
 import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useCartKey from '../../use-cart-key';
+
 const CheckboxWrapper = styled.div`
 	margin-top: 16px;
 
@@ -17,6 +22,30 @@ const CheckboxWrapper = styled.div`
 		color: ${ ( props ) => props.theme.colors.primary };
 	}
 `;
+
+export const BusinessUseLabelByState = ( {
+	responseCart,
+	classNames,
+}: {
+	responseCart: ResponseCart;
+	classNames?: string;
+} ): JSX.Element | null => {
+	const translate = useTranslate();
+	let label: string | undefined;
+
+	const zipCode = parseInt( responseCart.tax.location.postal_code ?? '0', 10 );
+
+	if ( zipCode >= 43000 && zipCode <= 45999 ) {
+		// Ohio; OH
+		label = translate( 'OH business use' );
+	} else if ( ( zipCode >= 6000 && zipCode <= 6389 ) || ( zipCode >= 6391 && zipCode <= 6999 ) ) {
+		// Connecticut; CT
+		label = translate( 'CT business use' );
+	}
+
+	return label ? <span className={ classNames }>({ label })</span> : null;
+};
+
 export function IsForBusinessCheckbox() {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();

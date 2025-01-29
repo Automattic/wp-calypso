@@ -53,6 +53,7 @@ import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import { CheckIcon } from './check-icon';
 import { ProductsAndCostOverridesList } from './cost-overrides-list';
+import { BusinessUseLabelByState } from './is-for-business-checkbox';
 import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
@@ -199,7 +200,15 @@ function CheckoutSummaryPriceList() {
 					</CheckoutSummaryLineItem>
 					{ taxLineItems.map( ( taxLineItem ) => (
 						<CheckoutSummaryLineItem key={ 'checkout-summary-line-item-' + taxLineItem.id }>
-							<span>{ taxLineItem.label }</span>
+							<span>
+								{ taxLineItem.label }
+								{ responseCart.tax.location.is_for_business && (
+									<BusinessUseLabelByState
+										responseCart={ responseCart }
+										classNames="checkout-summary-line-item__tax-reason"
+									/>
+								) }
+							</span>
 							<span>{ taxLineItem.formattedAmount }</span>
 						</CheckoutSummaryLineItem>
 					) ) }
@@ -971,6 +980,10 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 
 	.is-loading & {
 		animation: ${ pulse } 1.5s ease-in-out infinite;
+	}
+
+	.checkout-summary-line-item__tax-reason {
+		margin-inline-start: 0.25rem;
 	}
 `;
 
