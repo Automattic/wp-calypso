@@ -52,8 +52,9 @@ export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, ne
 	next();
 }
 
-function redirectToAdministration( siteSlug: string | null ) {
-	return isSiteSettingsUntangled()
+async function redirectToAdministration( siteSlug: string | null ) {
+	const isUntangled = await isSiteSettingsUntangled();
+	return isUntangled
 		? page.redirect( '/sites/settings/site/' + siteSlug )
 		: page.redirect( '/settings/general/' + siteSlug );
 }

@@ -33,10 +33,22 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
+	state = {
+		isUntangled: false,
+	};
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
 		}
+	}
+
+	componentDidMount() {
+		isSiteSettingsUntangled().then( ( isUntangled ) => {
+			if ( this.state.isUntangled !== isUntangled ) {
+				this.setState( { isUntangled } );
+			}
+		} );
 	}
 
 	render() {
@@ -59,7 +71,7 @@ class SiteTools extends Component {
 			source,
 		} = this.props;
 
-		const isUntangled = isSiteSettingsUntangled();
+		const { isUntangled } = this.state;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 

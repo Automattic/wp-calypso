@@ -119,9 +119,9 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 					components: {
 						a: isRemoveDuplicateViewsExperimentEnabled ? (
 							<a href={ '/sites/settings/site/' + siteSlug + '#site-privacy-settings' } />
-							) : (
-								<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />
-							),
+						) : (
+							<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />
+						),
 					},
 				}
 		  );
