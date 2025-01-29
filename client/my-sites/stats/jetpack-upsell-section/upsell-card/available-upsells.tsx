@@ -1,3 +1,11 @@
+import {
+	PLAN_JETPACK_SECURITY_T1_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_VIDEOPRESS,
+} from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
@@ -14,6 +22,7 @@ export type Product = {
 	slug: string;
 	title: string;
 	features: string[];
+	checkoutSlug: string;
 };
 
 export function getAvailableUpsells() {
@@ -28,6 +37,7 @@ export function getAvailableUpsells() {
 			slug: 'security',
 			title: translate( 'Security', { context: 'Jetpack product name' } ),
 			features: [ 'scan' ],
+			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		},
 		{
 			description: translate(
@@ -39,6 +49,7 @@ export function getAvailableUpsells() {
 			slug: 'backup',
 			title: translate( 'Backup' ),
 			features: [ 'backups', 'restore' ],
+			checkoutSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		},
 		{
 			description: translate(
@@ -50,6 +61,7 @@ export function getAvailableUpsells() {
 			slug: 'search',
 			title: translate( 'Search' ),
 			features: [ 'search', 'instant-search' ],
+			checkoutSlug: PRODUCT_JETPACK_SEARCH,
 		},
 		{
 			description: translate(
@@ -61,6 +73,7 @@ export function getAvailableUpsells() {
 			slug: 'video',
 			title: translate( 'VideoPress' ),
 			features: [ 'videopress', 'videopress-1tb-storage' ],
+			checkoutSlug: PRODUCT_JETPACK_VIDEOPRESS,
 		},
 		{
 			description: translate(
@@ -79,6 +92,7 @@ export function getAvailableUpsells() {
 				'image-size-analysis',
 				'performance-history',
 			],
+			checkoutSlug: PRODUCT_JETPACK_BOOST,
 		},
 		{
 			description: translate(
@@ -94,6 +108,7 @@ export function getAvailableUpsells() {
 				'social-image-generator',
 				'subscriber-unlimited-imports',
 			],
+			checkoutSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
 		},
 	] as Product[];
 }
