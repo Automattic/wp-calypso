@@ -57,20 +57,20 @@ export const OpensTooltipContent: React.FC< { item: EmailStatsItem } > = ( { ite
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Recipients: %(sendsCount)s', {
-					args: { sendsCount: numberFormat( item.total_sends ) },
+				{ translate( 'Recipients: %(sendsCountFormatted)s', {
+					args: { sendsCountFormatted: numberFormat( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Total opens: %(opensCount)s', {
-					args: { opensCount: numberFormat( item.opens ) },
+				{ translate( 'Total opens: %(opensCountFormatted)s', {
+					args: { opensCountFormatted: numberFormat( item.opens ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
-					? translate( 'Unique opens: %(uniqueOpensCount)s (%(opensRate)s%)', {
+					? translate( 'Unique opens: %(uniqueOpensCountFormatted)s (%(opensRate)s%)', {
 							args: {
-								uniqueOpensCount: numberFormat( item.unique_opens ),
+								uniqueOpensCountFormatted: numberFormat( item.unique_opens ),
 								opensRate: numberFormat( item.opens_rate, {
 									numberFormatOptions: { maximumFractionDigits: 2 },
 								} ),
@@ -92,20 +92,20 @@ export const ClicksTooltipContent: React.FC< { item: EmailStatsItem } > = ( { it
 	return (
 		<div className="stats-email__tooltip">
 			<div>
-				{ translate( 'Recipients: %(sendsCount)s', {
-					args: { sendsCount: numberFormat( item.total_sends ) },
+				{ translate( 'Recipients: %(sendsCountFormatted)s', {
+					args: { sendsCountFormatted: numberFormat( item.total_sends ) },
 				} ) }
 			</div>
 			<div>
-				{ translate( 'Total clicks: %(clicksCount)s', {
-					args: { clicksCount: numberFormat( item.clicks ) },
+				{ translate( 'Total clicks: %(clicksCountFormatted)s', {
+					args: { clicksCountFormatted: numberFormat( item.clicks ) },
 				} ) }
 			</div>
 			<div>
 				{ hasUniques
-					? translate( 'Unique clicks: %(uniqueClicksCount)s (%(clicksRate)s%)', {
+					? translate( 'Unique clicks: %(uniqueClicksCountFormatted)s (%(clicksRate)s%)', {
 							args: {
-								uniqueClicksCount: numberFormat( item.unique_clicks ),
+								uniqueClicksCountFormatted: numberFormat( item.unique_clicks ),
 								clicksRate: numberFormat( item.clicks_rate, {
 									numberFormatOptions: { maximumFractionDigits: 2 },
 								} ),
