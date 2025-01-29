@@ -15,9 +15,10 @@ import { useMarketingMessage } from 'calypso/components/marketing-message/use-ma
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import { useDomainToPlanCredits } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId, hasPurchasedDomain } from 'calypso/state/purchases/selectors';
 import {
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
@@ -31,6 +32,7 @@ jest.mock( '@automattic/calypso-products', () => ( {
 } ) );
 jest.mock( 'calypso/state/purchases/selectors', () => ( {
 	getByPurchaseId: jest.fn(),
+	hasPurchasedDomain: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isCurrentUserCurrentPlanOwner: jest.fn(),
@@ -56,6 +58,9 @@ jest.mock(
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
 	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits', () => ( {
+	useDomainToPlanCredits: jest.fn(),
+} ) );
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
@@ -74,10 +79,14 @@ const mIsRequestingSitePlans = isRequestingSitePlans as jest.MockedFunction<
 const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
 	typeof usePlanUpgradeCreditsApplicable
 >;
+const mUseDomainToPlanCredits = useDomainToPlanCredits as jest.MockedFunction<
+	typeof useDomainToPlanCredits
+>;
 const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFunction<
 	typeof getCurrentUserCurrencyCode
 >;
 const mGetByPurchaseId = getByPurchaseId as jest.MockedFunction< typeof getByPurchaseId >;
+const mHasPurchasedDomain = hasPurchasedDomain as jest.MockedFunction< typeof hasPurchasedDomain >;
 const mIsProPlan = isProPlan as jest.MockedFunction< typeof isProPlan >;
 
 const plansList: PlanSlug[] = [
@@ -105,7 +114,9 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsRequestingSitePlans.mockImplementation( () => true );
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
+		mUseDomainToPlanCredits.mockImplementation( () => 100 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
+		mHasPurchasedDomain.mockImplementation( () => false );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
@@ -161,6 +172,25 @@ describe( '<PlanNotice /> Tests', () => {
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
 			'You have $100.00 in upgrade credits(opens in a new tab) available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!'
+		);
+	} );
+
+	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where: a domain has been purchased, has no other active discounts, has free plan', () => {
+		mHasPurchasedDomain.mockImplementation( () => true );
+		mIsCurrentPlanPaid.mockImplementation( () => false );
+		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
+		mUseDomainToPlanCredits.mockImplementation( () => 1000 );
+
+		renderWithProvider(
+			<PlanNotice
+				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
+				visiblePlans={ plansList }
+				isInSignup={ false }
+				siteId={ 32234 }
+			/>
+		);
+		expect( screen.getByRole( 'status' ).textContent ).toBe(
+			'You have $10.00 in upgrade credits(opens in a new tab) available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!'
 		);
 	} );
 
