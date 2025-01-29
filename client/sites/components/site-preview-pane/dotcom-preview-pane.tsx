@@ -198,7 +198,7 @@ const DotcomPreviewPane = ( {
 
 		return siteFeatures.map( ( { label, enabled, featureIds } ) => {
 			const selected = enabled && featureIds.includes( selectedSiteFeature );
-			const defaultFeatureId = featureIds[ 0 ];
+			const defaultFeatureId = featureIds[ 0 ] as string;
 			return {
 				id: defaultFeatureId,
 				tab: {
