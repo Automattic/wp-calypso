@@ -87,7 +87,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ) => {
 					) }
 				</div>
 			</div>
-			<Button onClick={ onSkipLaunchpad }>{ __( 'Skip onboarding setup' ) }</Button>
+			<Button onClick={ onSkipLaunchpad }>{ __( 'Skip to dashboard' ) }</Button>
 		</div>
 	);
 };
