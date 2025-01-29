@@ -8,6 +8,7 @@ import {
 } from 'calypso/my-sites/site-settings/date-time-format/utils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { BylinePreview } from './BylinePreview';
 
@@ -36,8 +37,12 @@ export const BylineSettings = ( {
 	const site = useSelector( getSelectedSite );
 	const user = useSelector( getCurrentUser );
 	const siteSlug = site?.slug || '';
+	const timezone = useSelector( ( state ) =>
+		site?.ID ? getSiteTimezoneValue( state, Number( site.ID ) ) : null
+	);
 
-	const localizedDate = getLocalizedDate( dateFormat );
+	const localizedDate = getLocalizedDate( timezone || 'UTC' );
+	const formattedDate = phpToMomentDatetimeFormat( localizedDate, dateFormat );
 
 	return (
 		<>
@@ -51,7 +56,7 @@ export const BylineSettings = ( {
 				isGravatarEnabled={ !! showAvatarValue }
 				isAuthorEnabled={ !! showAuthorValue }
 				isPostDateEnabled={ !! showDateValue }
-				dateExample={ phpToMomentDatetimeFormat( localizedDate, dateFormat ) }
+				dateExample={ formattedDate }
 				user={ user }
 			/>
 			<ToggleControl

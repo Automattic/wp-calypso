@@ -17,7 +17,14 @@ import {
 } from '../actions';
 
 const getState = () => ( {
-	sites: { items: { 2916284: { options: {} } } },
+	sites: {
+		items: {
+			2916284: {
+				options: {},
+				jetpack: true,
+			},
+		},
+	},
 	siteSettings: { items: { 2916284: {} } },
 } );
 
@@ -117,10 +124,15 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'saveSiteSettings()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
+		let savedSettings = null;
+
+		useNock( ( mockNock ) => {
+			mockNock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.4/sites/2916284/settings' )
+				.post( '/rest/v1.4/sites/2916284/settings', ( body ) => {
+					savedSettings = body;
+					return true;
+				} )
 				.reply( 200, {
 					updated: { real_update: 'ribs' },
 				} )
@@ -131,8 +143,12 @@ describe( 'actions', () => {
 				} );
 		} );
 
+		beforeEach( () => {
+			savedSettings = null;
+		} );
+
 		test( 'should dispatch fetch action when thunk triggered', () => {
-			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy );
+			saveSiteSettings( 2916284, { settingKey: 'chicken' } )( spy, getState );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_SETTINGS_SAVE,
@@ -141,7 +157,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch update action when request completes', () => {
-			return saveSiteSettings( 2916284 )( spy ).then( () => {
+			return saveSiteSettings( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith(
 					updateSiteSettings( 2916284, {
 						real_update: 'ribs',
@@ -151,7 +167,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch save success action when request completes', () => {
-			return saveSiteSettings( 2916284 )( spy ).then( () => {
+			return saveSiteSettings( 2916284 )( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_SAVE_SUCCESS,
 					siteId: 2916284,
@@ -160,12 +176,57 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			return saveSiteSettings( 2916285 )( spy ).then( () => {
+			return saveSiteSettings( 2916285 )( spy, getState ).then( () => {
 				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_SETTINGS_SAVE_FAILURE,
 					siteId: 2916285,
 					error: expect.objectContaining( { message: 'User cannot access this private blog.' } ),
 				} );
+			} );
+		} );
+
+		test( 'should format subscription options for Jetpack sites', () => {
+			const settings = {
+				subscription_options: {
+					invitation: 'test-invitation',
+					comment_follow: 'test-comment-follow',
+					welcome: 'test-welcome',
+					other: 'test-other',
+				},
+			};
+			return saveSiteSettings( 2916284, settings )( spy, getState ).then( () => {
+				const formattedOptions = savedSettings.subscription_options;
+				expect( Array.isArray( formattedOptions ) ).toBe( true );
+				expect( formattedOptions ).toEqual(
+					expect.arrayContaining( [ 'test-invitation', 'test-comment-follow', 'test-welcome' ] )
+				);
+				expect( formattedOptions.length ).toBe( 3 );
+				expect( formattedOptions ).not.toContain( 'test-other' );
+			} );
+		} );
+
+		test( 'should not format subscription options for non-Jetpack sites', () => {
+			const nonJetpackState = () => ( {
+				sites: {
+					items: {
+						2916284: {
+							options: {},
+							jetpack: false,
+						},
+					},
+				},
+				siteSettings: { items: { 2916284: {} } },
+			} );
+
+			const settings = {
+				subscription_options: {
+					invitation: 'test-invitation',
+					comment_follow: 'test-comment-follow',
+					welcome: 'test-welcome',
+				},
+			};
+			return saveSiteSettings( 2916284, settings )( spy, nonJetpackState ).then( () => {
+				expect( savedSettings.subscription_options ).toEqual( settings.subscription_options );
 			} );
 		} );
 	} );
