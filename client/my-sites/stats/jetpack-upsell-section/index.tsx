@@ -87,7 +87,7 @@ export default function JetpackUpsellSection() {
 
 	return (
 		<div className="jetpack-upsell-section">
-			<UpsellCard siteSlug={ siteSlug } upgradeUrls={ upgradeUrls } siteFeatures={ siteFeatures } />
+			<UpsellCard siteSlug={ siteSlug } upsells={ upsells } upgradeUrls={ upgradeUrls } />
 		</div>
 	);
 }

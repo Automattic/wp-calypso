@@ -1,37 +1,18 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { getAvailableUpsells } from './available-upsells';
+import { Product } from './available-upsells';
 
 import './style.scss';
 
 type UpsellCardProps = {
 	siteSlug?: string | null;
-	siteFeatures: string[];
+	upsells: Product[];
 	upgradeUrls: Record< string, string >;
 };
 
-function getVisibleUpsells( siteFeatures: string[] ) {
-	// Filter available upsells against site features.
-	// If an upsell has even one feature that is not active on the site, present it to the user.
-	const upsells = getAvailableUpsells().filter( ( upsell ) =>
-		upsell.features.some( ( feature ) => ! siteFeatures.includes( feature ) )
-	);
-	return upsells;
-}
-
-export function UpsellCard( { siteSlug, siteFeatures, upgradeUrls = {} }: UpsellCardProps ) {
-	// TODO: Make card collapsible
-
+export function UpsellCard( { siteSlug, upsells, upgradeUrls = {} }: UpsellCardProps ) {
 	const translate = useTranslate();
-
-	// TODO: Filter upsells based on active site features.
-	// eslint-disable-next-line no-console
-	console.log( 'siteFeatures: ', siteFeatures );
-	const visibleUpsells = getVisibleUpsells( siteFeatures );
-	// eslint-disable-next-line no-console
-	console.log( 'visibleUpsells: ', visibleUpsells );
-
-	const haveUpsells = visibleUpsells.length > 0;
+	const haveUpsells = upsells.length > 0;
 
 	// TODO: Verify upgradeUrls are present.
 
@@ -52,7 +33,7 @@ export function UpsellCard( { siteSlug, siteFeatures, upgradeUrls = {} }: Upsell
 			</h2>
 			<div className="jetpack-upsell-card__content">
 				{ /* Only upsell products that the customer does not own. */ }
-				{ visibleUpsells.map( ( { title, description, href, iconUrl, slug } ) => (
+				{ upsells.map( ( { title, description, href, iconUrl, slug } ) => (
 					<div className="jetpack-upsell-card__product" key={ slug }>
 						<div className="jetpack-upsell-card__product-icon">
 							<img src={ iconUrl } alt={ title } width="24px" height="24px" />
