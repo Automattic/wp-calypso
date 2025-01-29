@@ -136,15 +136,17 @@ const onboarding: Flow = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
+			setCreateWithBigSky,
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, isUserLoggedIn } = useSelect(
+		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
 			( select ) => ( {
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+				createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
 			} ),
 			[]
 		);
@@ -158,6 +160,22 @@ const onboarding: Flow = {
 
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
+
+		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
+			if ( createWithBigSky ) {
+				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
+					siteSlug: providedDependencies.siteSlug,
+				} );
+			}
+
+			return addQueryArgs( '/setup/site-setup', {
+				siteSlug: providedDependencies.siteSlug,
+				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
+					flags: 'onboarding/newsletter-goal',
+				} ),
+			} );
+		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
@@ -201,6 +219,11 @@ const onboarding: Flow = {
 				}
 
 				case 'design-choices': {
+					if ( providedDependencies.destination === 'launch-big-sky' ) {
+						setCreateWithBigSky( true );
+						return navigate( 'domains' );
+					}
+					setCreateWithBigSky( false );
 					return navigate( providedDependencies.destination as string );
 				}
 
@@ -316,13 +339,7 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = addQueryArgs( '/setup/site-setup', {
-						siteSlug: providedDependencies.siteSlug,
-						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-						...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
-							flags: 'onboarding/newsletter-goal',
-						} ),
-					} );
+					const destination = getPostCheckoutDestination( providedDependencies );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
