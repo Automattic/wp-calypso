@@ -87,7 +87,7 @@ function getAvailableUpsells() {
 			slug: 'social',
 			title: translate( 'Social' ),
 		},
-	];
+	] as Product[];
 }
 
 function getVisibleUpsells( siteFeatures ) {
