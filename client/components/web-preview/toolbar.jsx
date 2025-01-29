@@ -9,7 +9,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -49,7 +48,6 @@ class PreviewToolbar extends Component {
 		canUserEditThemeOptions: PropTypes.bool,
 		isUnlaunchedSite: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
-		launchSite: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -204,5 +202,5 @@ export default connect(
 			selectedSiteId,
 		};
 	},
-	{ recordTracksEvent, launchSite }
+	{ recordTracksEvent }
 )( localize( PreviewToolbar ) );
