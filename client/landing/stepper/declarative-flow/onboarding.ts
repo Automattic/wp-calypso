@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -407,3 +408,22 @@ const onboarding: Flow = {
 };
 
 export default onboarding;
+
+// Temporarily adding strings to get translation process started.
+// Exporting them in the hopes that they make it into the final build without being tree shaken/minified.
+export const __copyToTranslate = [
+	__( 'Choose a domain' ),
+	__( 'Enter some descriptive keywords to get started.' ),
+	__( 'There’s a plan for you' ),
+	__( 'Build your site quickly and easily with our AI Website Builder.' ),
+	__( 'Unlimited edits with our AI Website Builder' ),
+	__( 'Unlimited AI Website Builder edits' ),
+	__( 'How would you like to start?' ),
+	__( 'Select an option to begin. You can always change your mind later.' ),
+	__( 'Start with a theme' ),
+	__( 'Create with AI' ),
+	__( 'Choose a professionally designed theme and make it yours.' ),
+	__( 'Use our AI Website Builder to quickly and easily create the site of your dreams.' ),
+	__( 'Create account' ),
+	__( 'Great choice! Pick an option to start building your site with our AI Website Builder.' ),
+];
