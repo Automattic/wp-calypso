@@ -23,6 +23,7 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
+import { useIsBigSkyEligible } from '../hooks/use-is-site-big-sky-eligible';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -114,7 +115,12 @@ const onboarding: Flow = {
 
 		if ( isGoalsAtFrontExperiment ) {
 			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT );
+			steps.unshift(
+				STEPS.GOALS,
+				STEPS.DESIGN_CHOICES,
+				STEPS.DESIGN_SETUP,
+				STEPS.DIFM_STARTING_POINT
+			);
 		}
 
 		return steps;
@@ -150,6 +156,9 @@ const onboarding: Flow = {
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
 
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
+
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -179,6 +188,9 @@ const onboarding: Flow = {
 							return navigate( 'difmStartingPoint' );
 
 						default: {
+							if ( isDesignChoicesStepEnabled ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'designSetup' );
 						}
 					}
@@ -186,6 +198,10 @@ const onboarding: Flow = {
 
 				case 'designSetup': {
 					return navigate( 'domains' );
+				}
+
+				case 'design-choices': {
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -365,10 +381,15 @@ const onboarding: Flow = {
 						return navigate( 'designSetup' );
 					}
 				case 'designSetup':
+					if ( isDesignChoicesStepEnabled ) {
+						return navigate( 'design-choices' );
+					}
 					if ( isGoalsAtFrontExperiment ) {
 						return navigate( 'goals' );
 					}
 				case 'difmStartingPoint':
+					return navigate( 'goals' );
+				case 'design-choices':
 					return navigate( 'goals' );
 				default:
 					return;
