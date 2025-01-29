@@ -15,7 +15,7 @@ These routes are served by the module:
 
 #### Follow a site
 
-1. Go to `https://wordpress.com/following/manage`
+1. Go to `https://wordpress.com/reader/subscriptions`
 2. In the "Search or enter URL to follow..." input box, enter the website where you'll be publishing
    a block
 3. When your site appears in the search results, click the "Follow" button

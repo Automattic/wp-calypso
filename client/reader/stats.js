@@ -66,15 +66,6 @@ function getLocation( path ) {
 	if ( path.indexOf( '/activities/likes' ) === 0 ) {
 		return 'postlike';
 	}
-	if ( path.indexOf( '/recommendations/mine' ) === 0 ) {
-		return 'recommended_foryou';
-	}
-	if ( path.indexOf( '/following/edit' ) === 0 ) {
-		return 'following_edit';
-	}
-	if ( path.indexOf( '/following/manage' ) === 0 ) {
-		return 'following_manage';
-	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
 		const selectedTab = searchParams.get( 'selectedTab' );
 
@@ -86,9 +77,6 @@ function getLocation( path ) {
 			return 'discover_firstposts';
 		}
 		return `discover_tag:${ selectedTab }`;
-	}
-	if ( path.indexOf( '/reader/recommendations/posts' ) === 0 ) {
-		return 'recommended_posts';
 	}
 	if ( path.match( new RegExp( `^(/${ localeRegexString })?/reader/search` ) ) ) {
 		return 'search';

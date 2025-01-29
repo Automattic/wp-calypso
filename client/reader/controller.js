@@ -35,6 +35,27 @@ function renderFeedError( context, next ) {
 	next();
 }
 
+export function legacyRedirects( context, next ) {
+	const legacyPathRegexes = {
+		feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
+		feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
+		blogStream: /^\/read\/blog\/id\/([0-9]+)$/i,
+		blogFullPost: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
+	};
+
+	if ( context.path.match( legacyPathRegexes.feedStream ) ) {
+		page.redirect( `/reader/feeds/${ context.params.feed_id }` );
+	} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
+		page.redirect( `/reader/feeds/${ context.params.feed_id }/posts/${ context.params.post_id }` );
+	} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
+		page.redirect( `/reader/blogs/${ context.params.blog_id }` );
+	} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
+		page.redirect( `/reader/blogs/${ context.params.blog_id }/posts/${ context.params.post_id }` );
+	}
+
+	next();
+}
+
 export function updateLastRoute( context, next ) {
 	if ( lastRoute ) {
 		context.lastRoute = lastRoute;

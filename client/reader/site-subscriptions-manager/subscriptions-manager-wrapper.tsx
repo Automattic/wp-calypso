@@ -105,7 +105,7 @@ const SubscriptionsManagerWrapper = ( {
 						<NavItem
 							count={ counts?.blogs }
 							selected={ selectedTab === 'sites' }
-							path="er/subscriptions"
+							path="/reader/subscriptions"
 						>
 							{ translate( 'Sites' ) }
 						</NavItem>

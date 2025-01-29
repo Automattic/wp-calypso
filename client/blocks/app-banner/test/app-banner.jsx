@@ -86,8 +86,9 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'passes through a non-root Reader path', () => {
-		const path = '/reader/feeds/12345/posts/6789';
-		expect( buildDeepLinkFragment( path, READER ) ).toBe( encodeURIComponent( path ) );
+		expect( buildDeepLinkFragment( '/reader/feeds/12345/posts/6789', READER ) ).toBe(
+			encodeURIComponent( '/read/feeds/12345/posts/6789' )
+		);
 	} );
 
 	test( 'passes through a Stats path', () => {

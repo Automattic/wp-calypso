@@ -15,6 +15,7 @@ import {
 	feedListing,
 	following,
 	incompleteUrlRedirects,
+	legacyRedirects,
 	readA8C,
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
@@ -69,6 +70,8 @@ export default async function (): Promise< void > {
 		page( '/read/feed', '/reader' );
 
 		// Feed stream
+		page( '/read/blog/feed/:feed_id', legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page( '/reader/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/feeds/:feed_id',
@@ -115,6 +118,10 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
+		// Old full post view
+		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
+		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 	}
 
 	// Automattic Employee Posts

@@ -392,13 +392,7 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [
-			'/reader/feeds/[^\\/]+',
-			'/reader/blogs/[^\\/]+',
-			'/reader/a8c',
-			'/reader/p2',
-			'/recommendations',
-		],
+		paths: [ '/reader/feeds/[^\\/]+', '/reader/blogs/[^\\/]+', '/reader/a8c', '/reader/p2' ],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
