@@ -61,10 +61,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		trackEvent,
 	} = useOdieAssistantContext();
 
-	const { userHasRecentOpenConversation, supportInteractionId } =
-		useGetMostRecentOpenConversation();
+	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
+
 	const { data: supportInteraction } = useGetSupportInteractionById(
-		supportInteractionId?.toString() ?? null
+		mostRecentSupportInteractionId?.toString() ?? null
 	);
 
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
@@ -87,11 +87,8 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 				{
 					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
 					action: async () => {
-						if ( userHasRecentOpenConversation && supportInteraction ) {
-							trackEvent( 'chat_open_previous_conversation', {
-								user_id: chat?.wpcomUserId,
-								support_interaction_id: chat?.supportInteractionId,
-							} );
+						if ( supportInteraction ) {
+							trackEvent( 'chat_open_previous_conversation' );
 							setCurrentSupportInteraction( supportInteraction );
 							if ( ! location?.pathname?.includes( '/odie' ) ) {
 								navigate( '/odie' );
