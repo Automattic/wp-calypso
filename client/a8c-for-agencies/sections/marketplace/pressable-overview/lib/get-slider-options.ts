@@ -19,7 +19,9 @@ export default function getSliderOptions(
 			if ( type === FILTER_TYPE_INSTALL ) {
 				label = `${ plan.install }`;
 			} else if ( type === FILTER_TYPE_VISITS ) {
-				label = `${ numberFormat( plan.visits ) }`;
+				label = `${ numberFormat( plan.visits, {
+					numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+				} ) }`;
 			} else if ( type === FILTER_TYPE_STORAGE ) {
 				label = `${ plan.storage }${ compact ? '' : 'GB' }`;
 			}

@@ -218,7 +218,9 @@ export default function PressablePlanSection( {
 							),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
-									count: numberFormat( selectedPlanInfo?.visits ?? 0 ),
+									count: numberFormat( selectedPlanInfo?.visits ?? 0, {
+										numberFormatOptions: { notation: 'compact' },
+									} ),
 								},
 								components: {
 									b: <b />,

@@ -129,7 +129,11 @@ export default function PlanSelectionDetails( {
 								: translate( 'Custom WordPress installs' ),
 							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
-									count: info ? numberFormat( info.visits ) : customString,
+									count: info
+										? numberFormat( info.visits, {
+												numberFormatOptions: { notation: 'compact' },
+										  } )
+										: customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',
