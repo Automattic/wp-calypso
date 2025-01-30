@@ -91,8 +91,6 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	/**
-	/**
-	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
 	 * This doesn't give `setStepState` a chance to update and the data is not passed to `submit`.
 	 */
