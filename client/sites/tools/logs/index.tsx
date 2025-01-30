@@ -1,9 +1,12 @@
 import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { translate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
@@ -19,7 +22,7 @@ import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-t
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ViewTable } from '@wordpress/dataviews/types';
+import type { ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -328,14 +331,31 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const onChangeView = () => {};
 
 	return (
-		<DataViews
-			isLoading={ isLoading }
-			data={ data }
-			paginationInfo={ paginationInfo }
-			fields={ fields }
-			view={ view }
-			onChangeView={ onChangeView }
-			defaultLayouts={ { table: {} } }
-		/>
+		<>
+			<div className="site-logs-header">
+				<NavigationHeader
+					title={ translate( 'Logs' ) }
+					subtitle={ translate(
+						'View and download various server logs. {{link}}Learn more{{/link}}',
+						{
+							components: {
+								link: (
+									<InlineSupportLink supportContext="site-monitoring-logs" showIcon={ false } />
+								),
+							},
+						}
+					) }
+				/>
+			</div>
+			<DataViews
+				isLoading={ isLoading }
+				data={ data }
+				paginationInfo={ paginationInfo }
+				fields={ fields }
+				view={ view }
+				onChangeView={ onChangeView }
+				defaultLayouts={ { table: {} } }
+			/>
+		</>
 	);
 };
