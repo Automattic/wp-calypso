@@ -67,7 +67,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ 10 }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
@@ -81,7 +81,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ [ 10 ] }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
@@ -95,7 +95,7 @@ describe( 'PlanPrice', () => {
 		render(
 			<PlanPrice
 				rawPrice={ [ 5, 10 ] }
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 			/>
 		);
 		expect( document.body ).toHaveTextContent( '$5-10' );
@@ -108,7 +108,7 @@ describe( 'PlanPrice', () => {
 	it( 'ignores currencyCode when productDisplayPrice is set', () => {
 		render(
 			<PlanPrice
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
+				productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00'
 				currencyCode="IDR"
 			/>
 		);
@@ -174,10 +174,7 @@ describe( 'PlanPrice', () => {
 
 	it( 'renders a price without sale text when productDisplayPrice is set', () => {
 		render(
-			<PlanPrice
-				productDisplayPrice={ '<abbr title="United States Dollars">$</abbr>96.00' }
-				isOnSale
-			/>
+			<PlanPrice productDisplayPrice='<abbr title="United States Dollars">$</abbr>96.00' isOnSale />
 		);
 		expect( document.body ).toHaveTextContent( '$96.00' );
 		expect( screen.queryByText( 'Sale' ) ).not.toBeInTheDocument();

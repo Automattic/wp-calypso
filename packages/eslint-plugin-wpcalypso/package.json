@@ -25,10 +25,10 @@
 	},
 	"peerDependencies": {
 		"@babel/core": ">=7.26.0",
-		"eslint": ">=8.57.0",
+		"eslint": ">=8.57.1",
 		"eslint-plugin-inclusive-language": "^2.2.1",
 		"eslint-plugin-jsdoc": "^46.10.1",
-		"eslint-plugin-react": "^7.34.3",
+		"eslint-plugin-react": "^7.37.4",
 		"eslint-plugin-react-hooks": "^4.3.0"
 	},
 	"peerDependenciesMeta": {
@@ -44,6 +44,6 @@
 		"@babel/core": "^7.26.0",
 		"@babel/eslint-parser": "^7.25.9",
 		"@babel/parser": "^7.26.3",
-		"eslint": "^8.57.0"
+		"eslint": "^8.57.1"
 	}
 }

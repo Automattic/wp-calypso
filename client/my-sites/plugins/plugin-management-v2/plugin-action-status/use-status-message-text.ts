@@ -2,8 +2,8 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { PLUGIN_INSTALLATION_ERROR as ERROR } from 'calypso/state/plugins/installed/status/constants';
 import MessagesByAction from './messages/by-action';
-import type { PluginActionStatusForMessages } from './messages/types';
 import type { PluginActionTypes } from '../types';
+import type { PluginActionStatusForMessages } from './messages/types';
 
 type UseStatusMessageTextOptions = {
 	action: PluginActionTypes;
