@@ -9,6 +9,7 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
 import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -192,6 +193,18 @@ export const Analyzer: FC< Props > = ( {
 
 export type SiteMigrationIdentifyAction = 'continue' | 'skip_platform_identification';
 
+const saveSiteSettings = async ( siteSlug: string, settings: Record< string, unknown > ) => {
+	return wpcom.req.post(
+		`/sites/${ siteSlug }/settings`,
+		{
+			apiVersion: '1.4',
+		},
+		{
+			...settings,
+		}
+	);
+};
+
 const SiteMigrationIdentify: Step = function ( { navigation, variantSlug, flow } ) {
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
@@ -199,6 +212,12 @@ const SiteMigrationIdentify: Step = function ( { navigation, variantSlug, flow }
 
 	const handleSubmit = useCallback(
 		async ( action: SiteMigrationIdentifyAction, data?: { platform: string; from: string } ) => {
+			// If we have a site and URL, and we're coming from a WordPress site,
+			// record the migration source domain.
+			if ( siteSlug && 'wordpress' === data?.platform && data?.from ) {
+				await saveSiteSettings( siteSlug, { migration_source_site_domain: data.from } );
+			}
+
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
 			// Because mShots API can often take a long time to generate screenshots.

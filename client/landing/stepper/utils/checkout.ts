@@ -11,7 +11,6 @@ interface GoToCheckoutProps {
 	stepName: string;
 	siteSlug: string;
 	destination: string;
-	from?: string;
 	plan?: string;
 	cancelDestination?: string;
 	extraProducts?: string[];
