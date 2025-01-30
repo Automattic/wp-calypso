@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Dialog, Gridicon, Button, ScreenReaderText } from '@automattic/components';
+import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,16 +10,17 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
 	acceptActivationModal,
-	dismissActivationModal,
 	activate as activateTheme,
+	dismissActivationModal,
 } from 'calypso/state/themes/actions';
+import { isThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
+	getActiveTheme,
 	getCanonicalTheme,
+	getThemeIdToActivate,
 	isActivatingTheme,
 	isThemeActive,
 	shouldShowActivationModal,
-	getThemeIdToActivate,
-	getActiveTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -41,19 +43,38 @@ export class ActivationModal extends Component {
 		newThemeId: PropTypes.string,
 	};
 
+	constructor( props ) {
+		super( props );
+		const { isCurrentThemeAllowedOnSite } = props;
+
+		this.state = {
+			checkboxChecked: isCurrentThemeAllowedOnSite,
+		};
+	}
+
+	onCheckboxChange = ( isChecked ) => {
+		this.setState( { checkboxChecked: isChecked } );
+	};
+
 	closeModalHandler =
 		( action = 'dismiss' ) =>
 		() => {
-			const { newThemeId, siteId, source } = this.props;
+			const { newThemeId, siteId, source, isCurrentThemeAllowedOnSite } = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptActivationModal( newThemeId );
+				const eventName = ! isCurrentThemeAllowedOnSite
+					? 'calypso_theme_switch_plan_warning_accepted'
+					: 'calypso_theme_autoloading_homepage_modal_activate_click';
 
-				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_activate_click', {
+				recordTracksEvent( eventName, {
 					theme: newThemeId,
 				} );
 				return this.props.activateTheme( newThemeId, siteId, { source } );
 			} else if ( 'dismiss' === action ) {
-				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
+				const eventName = ! isCurrentThemeAllowedOnSite
+					? 'calypso_theme_switch_plan_warning_declined'
+					: 'calypso_theme_autoloading_homepage_modal_dismiss';
+				recordTracksEvent( eventName, {
 					action: 'escape',
 					theme: newThemeId,
 				} );
@@ -62,7 +83,14 @@ export class ActivationModal extends Component {
 		};
 
 	render() {
-		const { newTheme, activeTheme, isActivating, isCurrentTheme, isVisible = false } = this.props;
+		const {
+			isCurrentThemeAllowedOnSite,
+			newTheme,
+			activeTheme,
+			isActivating,
+			isCurrentTheme,
+			isVisible = false,
+		} = this.props;
 
 		// Nothing to do when it's the current theme.
 		if ( isCurrentTheme ) {
@@ -78,6 +106,10 @@ export class ActivationModal extends Component {
 			return null;
 		}
 
+		const eventName = ! isCurrentThemeAllowedOnSite
+			? 'calypso_theme_switch_plan_warning_modal_view'
+			: 'calypso_theme_autoloading_homepage_modal_view';
+
 		return (
 			<Dialog
 				className="themes__activation-modal"
@@ -85,8 +117,8 @@ export class ActivationModal extends Component {
 				onClose={ this.closeModalHandler( 'dismiss' ) }
 			>
 				<TrackComponentView
-					eventName="calypso_theme_autoloading_homepage_modal_view"
-					eventProperties={ { theme: newTheme.id } }
+					eventName={ eventName }
+					eventProperties={ { theme: newTheme.id, activeTheme: activeTheme.id } }
 				/>
 				<Button
 					className="themes__activation-modal-close-icon"
@@ -126,8 +158,22 @@ export class ActivationModal extends Component {
 							}
 						) }
 					</p>
+					{ ! isCurrentThemeAllowedOnSite && (
+						<div className="activation-modal__lower-tier-warning">
+							<CheckboxControl
+								onChange={ this.onCheckboxChange }
+								label={ translate(
+									'By activating this theme, I understand my current theme isn’t included in my plan. If I switch, I won’t be able to activate it again unless I upgrade.'
+								) }
+							/>
+						</div>
+					) }
 					<div className="activation-modal__actions">
-						<Button primary onClick={ this.closeModalHandler( 'activeTheme' ) }>
+						<Button
+							primary
+							disabled={ ! this.state.checkboxChecked }
+							onClick={ this.closeModalHandler( 'activeTheme' ) }
+						>
 							{ translate( 'Activate %(themeName)s', {
 								args: { themeName: newTheme.name },
 							} ) }
@@ -144,6 +190,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const newThemeId = getThemeIdToActivate( state );
 		const activeThemeId = getActiveTheme( state, siteId );
+		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( activeThemeId, siteId, state );
 
 		return {
 			siteId,
@@ -154,6 +201,7 @@ export default connect(
 			isActivating: !! isActivatingTheme( state, siteId ),
 			isCurrentTheme: isThemeActive( state, newThemeId, siteId ),
 			isVisible: shouldShowActivationModal( state, newThemeId ),
+			isCurrentThemeAllowedOnSite,
 		};
 	},
 	{
