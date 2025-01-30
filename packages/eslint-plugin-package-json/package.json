@@ -28,6 +28,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"eslint": ">=9.18.0"
+		"eslint": ">=8.57.1"
 	}
 }
