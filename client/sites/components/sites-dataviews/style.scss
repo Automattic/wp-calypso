@@ -14,7 +14,8 @@
 		overflow: hidden;
 		cursor: pointer;
 
-		&:not(:disabled) {
+		&:not(:disabled),
+		&:not([aria-disabled="true"]) {
 			&:hover,
 			&:focus {
 				.sites-dataviews__site-title {
@@ -26,7 +27,8 @@
 			}
 		}
 
-		&:disabled {
+		&:disabled,
+		&[aria-disabled="true"] {
 			cursor: default;
 			.sites-dataviews__site-title {
 				color: var(--color-neutral-30);
