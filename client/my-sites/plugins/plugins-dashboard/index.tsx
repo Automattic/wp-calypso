@@ -44,7 +44,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { PluginActionName, PluginActions, Site } from '../hooks/types';
+import { PluginActionName, PluginActions } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
 import PluginAvailableOnSitesList from '../plugin-management-v2/plugin-details-v2/plugin-available-on-sites-list';
 import SitesWithInstalledPluginsList from '../plugin-management-v2/plugin-details-v2/sites-with-installed-plugin-list';
@@ -68,7 +68,7 @@ interface PluginsDashboardProps {
 	showPluginActionDialog: (
 		actionName: PluginActionName,
 		selectedPlugins: Plugin[],
-		sites: Site[],
+		sites: SiteDetails[],
 		selectedActionCallback: ( accepted: boolean ) => void
 	) => void;
 	fullPlugin: object;
@@ -308,7 +308,7 @@ const PluginsDashboard = ( {
 		showPluginActionDialog(
 			actionName as PluginActionName,
 			pluginsToProcess,
-			sites as Site[],
+			sites as SiteDetails[],
 			selectedActionCallback( pluginsToProcess )
 		);
 	};

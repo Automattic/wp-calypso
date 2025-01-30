@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import acceptDialog from 'calypso/lib/accept';
 import { PluginActions } from './types';
 import useGetDialogText from './use-get-dialog-text';
-import type { Site, Plugin } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { TranslateResult } from 'i18n-calypso';
 
 type DialogMessageProps = {
@@ -15,7 +16,7 @@ const useShowPluginActionDialog = () => {
 	const getDialogText = useGetDialogText();
 
 	return useCallback(
-		( action: string, plugins: Plugin[], sites: Site[], callback: DialogCallback ) => {
+		( action: string, plugins: Plugin[], sites: SiteDetails[], callback: DialogCallback ) => {
 			const { heading, message, cta } = getDialogText( action, plugins, sites );
 
 			const dialogOptions = {

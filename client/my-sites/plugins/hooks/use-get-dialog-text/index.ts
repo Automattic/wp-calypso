@@ -1,8 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { Site, Plugin } from '../types';
 import { getActionTexts } from './actions';
-import { ActionTexts } from './types';
+import type { ActionTexts } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 /****************************
  * NOTE BEFORE READING:
@@ -35,7 +36,7 @@ import { ActionTexts } from './types';
  * will be affected.
  ****************************/
 
-const getAffectedSites = ( plugins: Plugin[], sites: Site[] ) => {
+const getAffectedSites = ( plugins: Plugin[], sites: SiteDetails[] ) => {
 	// NOTE: We expect the `sites` parameter not to have any duplicate IDs;
 	// if duplicate IDs are present, the returned list of sites will include all
 	// duplicates.
@@ -65,7 +66,11 @@ const getTranslatableHeading = ( { headings }: ActionTexts, plugins: Plugin[] ) 
 	return headings.manyPlugins( plugins );
 };
 
-const getTranslatableMessage = ( { messages }: ActionTexts, plugins: Plugin[], sites: Site[] ) => {
+const getTranslatableMessage = (
+	{ messages }: ActionTexts,
+	plugins: Plugin[],
+	sites: SiteDetails[]
+) => {
 	if ( plugins.length > 1 && sites.length > 1 ) {
 		return messages.manyPluginsManySites( plugins, sites );
 	}
@@ -85,7 +90,7 @@ const useGetDialogText = () => {
 	const translate = useTranslate();
 
 	return useCallback(
-		( action: string, plugins: Plugin[], sites: Site[] ) => {
+		( action: string, plugins: Plugin[], sites: SiteDetails[] ) => {
 			const actionTexts = getActionTexts( action );
 			const affectedSites = getAffectedSites( plugins, sites );
 

@@ -11,20 +11,3 @@ export const PluginActions = {
 } as const;
 
 export type PluginActionName = ( typeof PluginActions )[ keyof typeof PluginActions ];
-
-export type Site = {
-	ID: number;
-	title: string;
-	canUpdateFiles?: boolean;
-	is_a4a_client?: boolean;
-	capabilities?: {
-		activate_plugins: boolean;
-		update_plugins: boolean;
-	};
-};
-
-export type Plugin = {
-	slug: string;
-	sites: Record< string, unknown >;
-	name?: string;
-};
