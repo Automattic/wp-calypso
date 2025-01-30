@@ -123,25 +123,28 @@ const PlansPageSubheader = ( {
 
 	return (
 		<>
-			{ deemphasizeFreePlan && offeringFreePlan ? (
+			{ createWithBigSky && (
 				<Subheader>
-					{ createWithBigSky
-						? translate(
-								`Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.`,
-								{
-									components: {
-										link: <Button onClick={ onFreePlanCTAClick } borderless />,
-									},
-								}
-						  )
-						: translate(
-								`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-								{
-									components: {
-										link: <Button onClick={ onFreePlanCTAClick } borderless />,
-									},
-								}
-						  ) }
+					{ translate(
+						`Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ onFreePlanCTAClick } borderless />,
+							},
+						}
+					) }
+				</Subheader>
+			) }
+			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
+				<Subheader>
+					{ translate(
+						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ onFreePlanCTAClick } borderless />,
+							},
+						}
+					) }
 				</Subheader>
 			) : (
 				showPlanBenefits && <PlanBenefitHeader />
