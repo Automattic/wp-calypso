@@ -291,7 +291,7 @@ const useDataLogs = ( {
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
 		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
-		sortOrder: 'desc',
+		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
 		pageIndex: view.page,
 	} );
@@ -309,25 +309,25 @@ const useDataLogs = ( {
 const useFields = ( { logType }: { logType: LogType } ) => {
 	if ( logType === 'php' ) {
 		return [
-			{ id: 'severity' },
+			{ id: 'severity', enableSorting: false },
 			{ id: 'timestamp' },
-			{ id: 'message' },
-			{ id: 'kind' },
-			{ id: 'name' },
-			{ id: 'file' },
-			{ id: 'line' },
+			{ id: 'message', enableSorting: false },
+			{ id: 'kind', enableSorting: false },
+			{ id: 'name', enableSorting: false },
+			{ id: 'file', enableSorting: false },
+			{ id: 'line', enableSorting: false },
 		];
 	}
 
 	return [
-		{ id: 'request_type' },
+		{ id: 'request_type', enableSorting: false },
 		{ id: 'timestamp' },
-		{ id: 'status' },
-		{ id: 'request_url' },
-		{ id: 'body_bytes_sent' },
-		{ id: 'cached' },
-		{ id: 'http_host' },
-		{ id: 'http_referer' },
+		{ id: 'status', enableSorting: false },
+		{ id: 'request_url', enableSorting: false },
+		{ id: 'body_bytes_sent', enableSorting: false },
+		{ id: 'cached', enableSorting: false },
+		{ id: 'http_host', enableSorting: false },
+		{ id: 'http_referer', enableSorting: false },
 	];
 };
 
@@ -340,11 +340,13 @@ const getVisibleFieldsForLogType = ( logType: LogType ) => {
 
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
-	// - Empty states: "no entries in this time range" instead of DataViews's default.
-	// - DataViews: filter, sort, pagination.
-	// - DataViews: max width for long cells.
-	// - DataViews: address the "show more" interaction.
-	// - DataViews: spacing left/right.
+	// - DataViews:
+	//   - filters
+	//   - search
+	//   - pagination
+	//   - max width for long cells
+	//   - spacing left/right
+	// - Address the "show more" interaction.
 
 	const { __ } = useI18n(); // Can we use translate instead?
 
@@ -390,6 +392,10 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 			type: 'table' as const,
 			perPage: 10, // TODO
 			page: 1, // TODO
+			sort: {
+				field: 'timestamp', // Endpoint doesn't support any other ordering
+				direction: 'desc',
+			},
 			fields: getVisibleFieldsForLogType( logType ),
 		};
 	} );
