@@ -47,7 +47,7 @@ export class SubscribersPage {
 		await this.anchor
 			.getByRole( 'row' )
 			.filter( { hasText: identifier } )
-			.getByRole( 'button', { name: 'Open subscriber menu' } )
+			.getByRole( 'button', { name: 'Actions' } )
 			.click();
 
 		// Click on the remove menu item.
