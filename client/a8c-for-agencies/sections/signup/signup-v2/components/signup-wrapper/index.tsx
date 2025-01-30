@@ -2,7 +2,7 @@ import A4ALogo, {
 	LOGO_COLOR_SECONDARY_ALT,
 	LOGO_COLOR_SECONDARY,
 } from 'calypso/a8c-for-agencies/components/a4a-logo';
-import { useColorScheme } from 'calypso/a8c-for-agencies/hooks/use-color-scheme';
+import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import SignupSidebarImage from './sidebar-image';
 import SignupTestimonial from './testimonial';
 import './style.scss';
@@ -12,7 +12,7 @@ type Props = {
 };
 
 const SignupWrapper = ( { children }: Props ) => {
-	const isDarkMode = useColorScheme();
+	const isDarkMode = useIsDarkMode();
 
 	return (
 		<div className="signup-wrapper">
