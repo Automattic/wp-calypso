@@ -145,6 +145,19 @@ body.is-section-subscribers.is-subscribers-dataviews,
         
                     .navigation-header {
                         padding: $padding-standard 24px;
+
+                        .add-subscribers-button {
+                            min-height: 37px;
+                            
+                            .add-subscribers-button-text {
+                                display: none;
+                            }
+
+                            .gridicon {
+                                display: inline-block;
+                                margin-right: 0;
+                            }
+                        }
                     }
 
                     @media ( max-width: $break-wide ) {
