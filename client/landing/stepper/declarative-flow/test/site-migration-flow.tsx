@@ -525,7 +525,6 @@ describe( 'Site Migration Flow', () => {
 					destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_INSTRUCTIONS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,
 					extraQueryParams: { hosting_intent: HOSTING_INTENT_MIGRATE },
 					flowName: 'site-migration',
-					from: 'https://site-to-be-migrated.com',
 					siteSlug: 'example.wordpress.com',
 					stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 					cancelDestination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com`,

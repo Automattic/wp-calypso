@@ -266,7 +266,6 @@ const siteMigration: Flow = {
 							{
 								siteId,
 								siteSlug,
-								from: fromQueryParam,
 							},
 							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 						)
@@ -348,7 +347,6 @@ const siteMigration: Flow = {
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
-							from: fromQueryParam ?? undefined,
 							plan: providedDependencies.plan as string,
 							cancelDestination: `/setup/${ flowPath }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
