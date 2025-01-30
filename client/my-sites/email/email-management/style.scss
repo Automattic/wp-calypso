@@ -217,12 +217,6 @@
 	}
 }
 
-.email-plan-mailboxes-list__mailbox-list {
-	margin-top: 15px;
-	border: 1px solid var(--color-border-subtle);
-	background-color: #fff;
-}
-
 .email-mailbox-action-menu__main {
 	position: absolute;
 	right: 16px;
@@ -432,13 +426,18 @@
 		&__mailbox-list {
 			padding-bottom: 1.875rem;
 
+			@include break-medium {
+				border: solid 1px var(--color-border-subtle);
+				border-radius: 4px;
+			}
+
 			.card {
 				box-shadow: none;
 				background: none;
 			}
 
 			.card.section-header {
-				margin: 0 16px;
+				margin: 0 1.5rem;
 				padding: 1.75rem 0 1.25em 0;
 				align-items: center;
 			}
@@ -475,107 +474,6 @@
 			.email-mailbox-action-menu__main {
 				right: 0;
 				top: 18px;
-			}
-		}
-
-		&__email-forward {
-			.section-header {
-				margin: 1.5rem 0;
-				border-radius: 0;
-			}
-
-			.section-header__actions {
-				flex: none;
-
-				.components-button {
-					font-size: 0.875rem;
-				}
-
-				.components-button.is-link {
-					text-decoration: none;
-				}
-			}
-
-			.email-plan-mailboxes-list__mailbox-list-item {
-				box-shadow: none;
-			}
-
-			border: none;
-
-			.section-header__label,
-			.email-plan-mailboxes-list__mailbox-list-item-main {
-				flex: 1 1 0;
-			}
-
-			.foldable-card__main {
-				padding-left: 0.65rem;
-			}
-
-			.section-header__actions,
-			.email-mailbox-action-menu__main {
-				min-width: 80px;
-				flex: 0 0 auto;
-			}
-
-			.email-mailbox-action-menu__main {
-				text-align: end;
-
-				@include break-xlarge {
-					position: static;
-				}
-			}
-
-			.email-plan-mailboxes-list__mailbox-list-item.is-compact {
-				border-top: none;
-				margin: 0 1.5rem;
-				padding-bottom: 0.65rem;
-				padding-top: 0.65rem;
-				border: none;
-				border-bottom: solid 1px var(--color-border-subtle);
-
-				&:last-child {
-					border-bottom: none;
-					padding-bottom: 0.65rem;
-					padding-top: 0.65rem;
-				}
-
-			}
-
-			.section-header__label {
-				font-weight: 500;
-			}
-
-			.email-plan-mailboxes-list__mailbox-list-item-main {
-				font-size: 0.875rem;
-
-				span {
-					align-self: center;
-				}
-			}
-
-			.email-mailbox-warnings {
-				.email-mailbox-warnings__warning,
-				.email-mailbox-warnings__action {
-					display: inline-block;
-					border: none;
-					padding: 0;
-					margin: 0;
-				}
-
-				.email-mailbox-warnings__action {
-					button {
-						padding: 0;
-					}
-				}
-
-				.email-mailbox-warnings__warning {
-					margin-left: 0;
-					margin-right: 0.75rem;
-
-					svg {
-						fill: var(--color-error);
-					}
-				}
 			}
 		}
 

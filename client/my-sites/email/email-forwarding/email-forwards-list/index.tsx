@@ -35,7 +35,7 @@ export function EmailForwardsList( {
 				<thead className="email-forward-list__row">
 					<tr>
 						<th>{ translate( 'Mailbox' ) }</th>
-						<th>{ translate( 'Details' ) }</th>
+						<th>{ translate( 'To' ) }</th>
 						<th>{ translate( 'Status' ) }</th>
 						<th>
 							<div className="email-forward-list__actions">{ translate( 'Actions' ) }</div>
@@ -52,7 +52,7 @@ export function EmailForwardsList( {
 								lastMailbox = mailbox.mailbox;
 							}
 							return (
-								<tr key={ mailbox.mailbox } className="email-forward-list__row">
+								<tr key={ mailbox.mailbox + mailbox.target } className="email-forward-list__row">
 									<td>
 										{ shouldRenderFrom ? (
 											<MailboxLink account={ account } mailbox={ mailbox } />
