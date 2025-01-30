@@ -299,8 +299,11 @@ const useDataLogs = ( {
 	return {
 		data: data?.logs ? data.logs : EMPTY_ARRAY,
 		paginationInfo: {
-			totalItems: 0, // TODO
-			totalPages: 1, // TODO
+			totalItems: data?.total_results,
+			totalPages:
+				!! data?.total_results && !! view.perPage
+					? Math.ceil( data.total_results / view.perPage )
+					: 0,
 		},
 		isLoading: isFetching,
 	};
@@ -343,9 +346,10 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// - DataViews:
 	//   - filters
 	//   - search
-	//   - pagination
 	//   - max width for long cells
 	//   - spacing left/right
+	// - Fields:
+	//   - timestamp for web logs
 	// - Address the "show more" interaction.
 
 	const { __ } = useI18n(); // Can we use translate instead?
@@ -390,8 +394,8 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const [ view, setView ] = useState( () => {
 		return {
 			type: 'table' as const,
-			perPage: 10, // TODO
-			page: 1, // TODO
+			page: 1,
+			perPage: 50,
 			sort: {
 				field: 'timestamp', // Endpoint doesn't support any other ordering
 				direction: 'desc',
