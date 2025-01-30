@@ -346,6 +346,8 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// - DataViews: address the "show more" interaction.
 	// - DataViews: spacing left/right.
 
+	const { __ } = useI18n(); // Can we use translate instead?
+
 	const moment = useLocalizedMoment();
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
@@ -480,9 +482,11 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					</label>
 				</div>
 			</div>
-			{ isLoading ? (
-				<Skeleton className="site-logs-table-webserver__skeleton" />
-			) : (
+			{ isLoading && <Skeleton className="site-logs-table-webserver__skeleton" /> }
+			{ ! isLoading && data && data.length === 0 && (
+				<>{ __( 'No log entries within this time range.' ) }</>
+			) }
+			{ ! isLoading && data && data.length > 0 && (
 				<DataViews
 					data={ data }
 					paginationInfo={ paginationInfo }
