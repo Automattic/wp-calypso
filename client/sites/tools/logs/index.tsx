@@ -27,7 +27,8 @@ import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-t
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { ViewTable } from '@wordpress/dataviews';
+import { Skeleton } from './components/site-logs-table/skeleton';
+import type { View } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -262,7 +263,7 @@ export const SiteLogs = ( {
 };
 
 const EMPTY_ARRAY: Array< any > = [];
-const useDataLogs = ( { view, logType }: { view: ViewTable; logType: LogType } ) => {
+const useDataLogs = ( { view, logType }: { view: View; logType: LogType } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const moment = useLocalizedMoment();
 	const getLatestDateRange = useCallback( () => {
@@ -413,15 +414,18 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					</ToggleGroupControl>
 				</div>
 			</div>
-			<DataViews
-				isLoading={ isLoading }
-				data={ data }
-				paginationInfo={ paginationInfo }
-				fields={ fields }
-				view={ view }
-				onChangeView={ onChangeView }
-				defaultLayouts={ { table: {} } }
-			/>
+			{ isLoading ? (
+				<Skeleton className="site-logs-table-webserver__skeleton" />
+			) : (
+				<DataViews
+					data={ data }
+					paginationInfo={ paginationInfo }
+					fields={ fields }
+					view={ view }
+					onChangeView={ onChangeView }
+					defaultLayouts={ { table: {} } }
+				/>
+			) }
 		</>
 	);
 };
