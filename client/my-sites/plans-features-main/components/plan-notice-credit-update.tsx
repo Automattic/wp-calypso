@@ -42,7 +42,6 @@ const PlanNoticeCreditUpgrade = ( { className, onDismissClick, siteId, visiblePl
 					onDismissClick={ onDismissClick }
 					icon="info-outline"
 					status="is-success"
-					isReskinned
 				>
 					{ translate(
 						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current plan. This credit will be applied to the pricing below at checkout if you upgrade today!',

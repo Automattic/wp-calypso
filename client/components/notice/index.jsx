@@ -36,7 +36,6 @@ export class Notice extends Component {
 		onDismissClick: noop,
 		status: null,
 		text: null,
-		isReskinned: false,
 	};
 
 	static propTypes = {
@@ -57,7 +56,6 @@ export class Notice extends Component {
 		] ),
 		text: PropTypes.node,
 		translate: PropTypes.func.isRequired,
-		isReskinned: PropTypes.bool,
 	};
 
 	dismissTimeout = null;
@@ -119,13 +117,11 @@ export class Notice extends Component {
 			status,
 			text,
 			translate,
-			isReskinned,
 		} = this.props;
-		const classes = clsx( 'notice', status, className, {
+		const classes = clsx( 'notice is-reskinned', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
-			'is-reskinned': isReskinned,
 		} );
 
 		let iconNeedsDrop = false;
