@@ -16,7 +16,6 @@ type Props = {
 export default function A4ACarousel( { children, className }: Props ) {
 	const [ offsetX, setOffsetX ] = useState( 0 );
 	const [ touchStart, setTouchStart ] = useState< number | null >( null );
-	const [ touchEnd, setTouchEnd ] = useState< number | null >( null );
 
 	const contentRef = useRef< HTMLDivElement >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -37,29 +36,28 @@ export default function A4ACarousel( { children, className }: Props ) {
 	}, [ offsetX, offsetStep, maxOffset ] );
 
 	const onTouchStart = ( e: React.TouchEvent ) => {
-		setTouchEnd( null );
 		setTouchStart( e.targetTouches[ 0 ].clientX );
 	};
 
 	const onTouchMove = ( e: React.TouchEvent ) => {
-		setTouchEnd( e.targetTouches[ 0 ].clientX );
-	};
-
-	const onTouchEnd = () => {
-		if ( ! touchStart || ! touchEnd ) {
+		if ( ! touchStart ) {
 			return;
 		}
 
-		const distance = touchStart - touchEnd;
-		const isLeftSwipe = distance > MIN_SWIPE_DISTANCE;
-		const isRightSwipe = distance < -MIN_SWIPE_DISTANCE;
+		const currentTouch = e.targetTouches[ 0 ].clientX;
+		const distance = touchStart - currentTouch;
 
-		if ( isLeftSwipe ) {
+		if ( distance > MIN_SWIPE_DISTANCE ) {
 			moveRight();
-		}
-		if ( isRightSwipe ) {
+			setTouchStart( currentTouch );
+		} else if ( distance < -MIN_SWIPE_DISTANCE ) {
 			moveLeft();
+			setTouchStart( currentTouch );
 		}
+	};
+
+	const onTouchEnd = () => {
+		setTouchStart( null );
 	};
 
 	return (
