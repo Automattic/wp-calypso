@@ -15,10 +15,10 @@ import { useMarketingMessage } from 'calypso/components/marketing-message/use-ma
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { useDomainToPlanCredits } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits';
+import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getByPurchaseId, hasPurchasedDomain } from 'calypso/state/purchases/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import {
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
@@ -55,11 +55,14 @@ jest.mock(
 		usePlanUpgradeCreditsApplicable: jest.fn(),
 	} )
 );
+jest.mock(
+	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
+	() => ( {
+		useDomainToPlanCreditsApplicable: jest.fn(),
+	} )
+);
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
 	useMaxPlanUpgradeCredits: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits', () => ( {
-	useDomainToPlanCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
@@ -79,14 +82,13 @@ const mIsRequestingSitePlans = isRequestingSitePlans as jest.MockedFunction<
 const mUsePlanUpgradeCreditsApplicable = usePlanUpgradeCreditsApplicable as jest.MockedFunction<
 	typeof usePlanUpgradeCreditsApplicable
 >;
-const mUseDomainToPlanCredits = useDomainToPlanCredits as jest.MockedFunction<
-	typeof useDomainToPlanCredits
+const mUseDomainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable as jest.MockedFunction<
+	typeof useDomainToPlanCreditsApplicable
 >;
 const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFunction<
 	typeof getCurrentUserCurrencyCode
 >;
 const mGetByPurchaseId = getByPurchaseId as jest.MockedFunction< typeof getByPurchaseId >;
-const mHasPurchasedDomain = hasPurchasedDomain as jest.MockedFunction< typeof hasPurchasedDomain >;
 const mIsProPlan = isProPlan as jest.MockedFunction< typeof isProPlan >;
 
 const plansList: PlanSlug[] = [
@@ -114,9 +116,8 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsRequestingSitePlans.mockImplementation( () => true );
 		mGetCurrentUserCurrencyCode.mockImplementation( () => 'USD' );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => 100 );
-		mUseDomainToPlanCredits.mockImplementation( () => 100 );
+		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 100 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
-		mHasPurchasedDomain.mockImplementation( () => false );
 		mIsProPlan.mockImplementation( () => false );
 	} );
 
@@ -176,10 +177,8 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where: a domain has been purchased, has no other active discounts, has free plan', () => {
-		mHasPurchasedDomain.mockImplementation( () => true );
-		mIsCurrentPlanPaid.mockImplementation( () => false );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
-		mUseDomainToPlanCredits.mockImplementation( () => 1000 );
+		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 1000 );
 
 		renderWithProvider(
 			<PlanNotice
@@ -199,6 +198,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => false );
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
+		mUseDomainToPlanCreditsApplicable.mockImplementation( () => null );
 		mUseMarketingMessage.mockImplementation( () => [
 			false,
 			[ { id: '12121', text: 'An important marketing message' } ],

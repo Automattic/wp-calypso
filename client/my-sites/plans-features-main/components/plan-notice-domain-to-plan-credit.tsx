@@ -24,7 +24,7 @@ const PlanNoticeDomainToPlanCredit = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId );
+	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
 	// TODO: Add the correct URL
 	const upgradeCreditDocsUrl = localizeUrl( 'https://wordpress.com/support/' );
 
