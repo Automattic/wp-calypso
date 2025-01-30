@@ -80,6 +80,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const onSiteClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
 
+		// Ignore if not left or middle click
+		if ( event.button > 1 ) {
+			return;
+		}
+
 		let openInNewTab = false;
 		if ( event.ctrlKey || event.metaKey ) {
 			openInNewTab = true;
