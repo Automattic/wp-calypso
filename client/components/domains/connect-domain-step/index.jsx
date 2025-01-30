@@ -11,7 +11,6 @@ import DomainTransferRecommendation from 'calypso/components/domains/domain-tran
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
 import FormattedHeader from 'calypso/components/formatted-header';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import { isSubdomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {
@@ -47,13 +46,7 @@ function ConnectDomainStep( {
 	currentRoute,
 } ) {
 	const { __ } = useI18n();
-	const stepsDefinition = isSubdomain( domain )
-		? connectASubdomainStepsDefinition
-		: connectADomainStepsDefinition;
-	const firstStep = isSubdomain( domain )
-		? stepSlug.SUBDOMAIN_SUGGESTED_START
-		: stepSlug.SUGGESTED_START;
-	const [ pageSlug, setPageSlug ] = useState( firstStep );
+
 	const [ verificationStatus, setVerificationStatus ] = useState( {} );
 	const [ verificationInProgress, setVerificationInProgress ] = useState( false );
 	const [ domainSetupInfo, setDomainSetupInfo ] = useState( defaultDomainSetupInfo );
@@ -61,7 +54,18 @@ function ConnectDomainStep( {
 	const [ loadingDomainSetupInfo, setLoadingDomainSetupInfo ] = useState( false );
 
 	const baseClassName = 'connect-domain-step';
-	if ( stepsDefinition[ pageSlug ] === undefined ) {
+
+	// Get the steps definition based on domain type once API data is loaded
+	const stepsDefinition = domainSetupInfo?.data?.is_subdomain
+		? connectASubdomainStepsDefinition
+		: connectADomainStepsDefinition;
+
+	// Get the first step based on domain type once API data is loaded
+	const firstStep = domainSetupInfo?.data?.is_subdomain
+		? stepSlug.SUBDOMAIN_SUGGESTED_START
+		: stepSlug.SUGGESTED_START;
+	const [ pageSlug, setPageSlug ] = useState( firstStep );
+	if ( pageSlug && stepsDefinition[ pageSlug ] === undefined ) {
 		// eslint-disable-next-line no-console
 		console.error(
 			'Tried to set invalid pageSlug in ConnectDomainStep',
@@ -70,12 +74,14 @@ function ConnectDomainStep( {
 			domain
 		);
 	}
-	const currentStep = stepsDefinition[ pageSlug ] || stepsDefinition[ firstStep ];
-	const isStepStart = stepType.START === currentStep.step;
+
+	const currentStep =
+		( pageSlug && stepsDefinition[ pageSlug ] ) || ( firstStep && stepsDefinition[ firstStep ] );
+	const isStepStart = currentStep && stepType.START === currentStep.step;
 	const mode = currentStep.mode;
 	const step = currentStep.step;
 	const prevPageSlug = currentStep.prev;
-	const isTwoColumnLayout = ! currentStep.singleColumnLayout;
+	const isTwoColumnLayout = currentStep ? ! currentStep.singleColumnLayout : true;
 
 	const statusRef = useRef( {} );
 
@@ -97,13 +103,13 @@ function ConnectDomainStep( {
 	);
 
 	const resolveMappingSetupStep = useCallback(
-		( connectionMode, supportsDomainConnect, domainName ) => {
+		( connectionMode, supportsDomainConnect, domainName, isSubdomain ) => {
 			if ( initialStep ) {
 				return initialStep;
 			}
 			// If connectionMode is present we'll send you to the last step of the relevant flow
 			if ( connectionMode ) {
-				if ( isSubdomain( domainName ) ) {
+				if ( isSubdomain ) {
 					return connectionMode === modeType.ADVANCED
 						? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
 						: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
@@ -126,15 +132,20 @@ function ConnectDomainStep( {
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
+			if ( ! domainSetupInfo?.data ) {
+				return;
+			}
+
 			setVerificationStatus( {} );
 			setVerificationInProgress( true );
 
+			const isSubdomain = domainSetupInfo.data.is_subdomain;
 			let connectedSlug =
 				modeType.SUGGESTED === mode ? stepSlug.SUGGESTED_CONNECTED : stepSlug.ADVANCED_CONNECTED;
 			let verifyingSlug =
 				modeType.SUGGESTED === mode ? stepSlug.SUGGESTED_VERIFYING : stepSlug.ADVANCED_VERIFYING;
 
-			if ( isSubdomain( domain ) ) {
+			if ( isSubdomain ) {
 				connectedSlug =
 					modeType.SUGGESTED === mode
 						? stepSlug.SUBDOMAIN_SUGGESTED_CONNECTED
@@ -166,7 +177,7 @@ function ConnectDomainStep( {
 				} )
 				.finally( () => setVerificationInProgress( false ) );
 		},
-		[ domain, mode ]
+		[ domain, mode, domainSetupInfo ]
 	);
 
 	useEffect( () => {
@@ -188,7 +199,8 @@ function ConnectDomainStep( {
 				const resolvedPageSlug = resolveMappingSetupStep(
 					data?.connection_mode,
 					!! data?.domain_connect_apply_wpcom_hosting,
-					domain
+					domain,
+					data?.is_subdomain
 				);
 				setPageSlug( resolvedPageSlug );
 				recordMappingSetupTracksEvent(
@@ -365,7 +377,7 @@ function ConnectDomainStep( {
 						supportsDomainConnect={ !! domainSetupInfo?.data?.domain_connect_apply_wpcom_hosting }
 						currentMode={ mode }
 						currentStep={ step }
-						isSubdomain={ isSubdomain( domain ) }
+						isSubdomain={ !! domainSetupInfo?.data?.is_subdomain }
 						setPage={ setPageSlug }
 					/>
 				</>
