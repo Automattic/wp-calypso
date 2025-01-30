@@ -71,7 +71,7 @@ interface SourceInputProps {
 }
 
 function SourceInput( props: SourceInputProps ) {
-	const { suffix } = props;
+	const { onChange, suffix } = props;
 	const translate = useTranslate();
 
 	return (
@@ -82,6 +82,7 @@ function SourceInput( props: SourceInputProps ) {
 				name="mailbox"
 				maxLength={ 64 }
 				{ ...props }
+				onChange={ ( value ) => onChange( value.replace( /@.*/gi, '' ) ) }
 			/>
 		</div>
 	);
