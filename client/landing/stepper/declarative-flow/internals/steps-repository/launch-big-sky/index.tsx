@@ -74,6 +74,7 @@ const LaunchBigSky: Step = function () {
 					body: {
 						title: 'Home',
 						status: 'publish',
+						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 					},
 				} )
 			);
