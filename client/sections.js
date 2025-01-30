@@ -884,7 +884,7 @@ const sections = [
 	},
 	{
 		name: 'a8c-for-agencies-signup',
-		paths: [ '/signup', '/signup/finish', '/signup/oauth/token' ],
+		paths: [ '/signup', '/signup/finish', '/signup/oauth/token', '/signup/wc-asia' ],
 		module: 'calypso/a8c-for-agencies/sections/signup',
 		group: 'a8c-for-agencies',
 		enableLoggedOut: true,
