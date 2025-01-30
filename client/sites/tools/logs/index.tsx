@@ -357,12 +357,12 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	} );
 	const fields = useFields( { logType } );
 	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType } );
-	const onChangeView = ( newView: View ) => {
-		setView( ( view ) => ( {
-			...view,
+	const onChangeView = ( newView: View ) =>
+		setView( ( oldView ) => ( {
+			...oldView,
 			...newView,
+			type: 'table' as const,
 		} ) );
-	};
 	useEffect( () => {
 		setView( ( view ) => ( {
 			...view,
