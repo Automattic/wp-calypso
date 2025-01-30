@@ -28,6 +28,7 @@ const A4ALogo = ( {
 	const primaryColor = colors?.primary || LOGO_COLOR_PRIMARY;
 	const secondaryColor = colors?.secondary || LOGO_COLOR_SECONDARY;
 
+	// This has Automattic Logo and text "Automattic"
 	if ( full ) {
 		// Full "Automattic" logo
 		return (
@@ -43,6 +44,7 @@ const A4ALogo = ( {
 			</svg>
 		);
 	}
+	// This has Automattic Logo and text "Automattic for Agencies"
 	if ( fullA4AV2 ) {
 		return (
 			<svg className={ classes } height={ size } viewBox="0 0 178 29">
