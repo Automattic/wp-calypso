@@ -68,14 +68,18 @@ const ListTileTitle = styled.div`
  * or client-side router navigation via the `onNavigate` prop.
  */
 const Link = ( {
+	disabled,
 	href,
 	onNavigate,
 	...props
 }: {
+	/** Accessibly disable the link. Use sparingly. */
+	disabled?: boolean;
+	/** Called when the user wants to navigate to the link. */
 	onNavigate?: ( shouldOpenNewTab: boolean, event: React.MouseEvent ) => void;
-} & Omit< React.ComponentProps< 'a' >, 'onClick' | 'onAuxClick' > ) => {
+} & Omit< React.ComponentProps< 'a' >, 'aria-disabled' | 'role' | 'onClick' | 'onAuxClick' > ) => {
 	const handleClick = ( event: React.MouseEvent ) => {
-		if ( ! onNavigate ) {
+		if ( ! onNavigate || disabled ) {
 			return;
 		}
 
@@ -89,7 +93,16 @@ const Link = ( {
 		const openInNewTab = event.ctrlKey || event.metaKey || event.button === /* middle click */ 1;
 		onNavigate( openInNewTab, event );
 	};
-	return <a href={ href } { ...props } onClick={ handleClick } onAuxClick={ handleClick } />;
+	return (
+		<a
+			href={ disabled ? undefined : href }
+			{ ...props }
+			aria-disabled={ disabled ? true : undefined }
+			role={ disabled ? 'link' : undefined }
+			onClick={ handleClick }
+			onAuxClick={ handleClick }
+		/>
+	);
 };
 
 const SiteField = ( { site, sitePreviewPane }: Props ) => {
@@ -132,10 +145,9 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 		// TODO: Consolidate behavior with `SiteIcon` link
 		<Link
 			className="sites-dataviews__site"
-			aria-disabled={ site.is_deleted }
-			role={ site.is_deleted ? 'link' : undefined }
-			href={ site.is_deleted ? undefined : href }
-			onNavigate={ site.is_deleted ? undefined : onSiteClick }
+			disabled={ site.is_deleted }
+			href={ href }
+			onNavigate={ onSiteClick }
 		>
 			<SiteListTile
 				contentClassName={ clsx(
