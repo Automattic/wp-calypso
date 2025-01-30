@@ -1,6 +1,7 @@
 import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
@@ -89,6 +90,20 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 	const { __ } = useI18n();
 	useSaveQueryParams();
+
+	const translate = useTranslate();
+	const __copyToTranslate = [
+		// new design selection strings
+		__( 'Start with a theme' ),
+		__( 'Choose a professionally designed theme and make it yours.' ),
+		translate( 'Create with AI {{small}}(BETA){{/small}}', {
+			components: { small: <small></small> },
+		} ),
+		__( 'Use our AI Website Builder to quickly and easily create the site of your dreams.' ),
+
+		// new free plan modal
+		__( 'Our AI Website Builder is only available with a paid plan' ),
+	];
 
 	const { site, siteSlugOrId } = useSiteData();
 
