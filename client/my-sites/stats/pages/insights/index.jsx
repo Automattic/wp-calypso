@@ -26,9 +26,10 @@ import StatsModule from '../../stats-module';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
+import StatsModuleListing from '../shared/stats-module-listing';
 
 const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, isOdysseyStats, isJetpack } = props;
+	const { siteId, siteSlug, isJetpack } = props;
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
@@ -48,17 +49,6 @@ const StatsInsights = ( props ) => {
 
 	const shouldGateInsights = useShouldGateStats( STATS_FEATURE_PAGE_INSIGHTS );
 	const shouldRendeUpsell = config.isEnabled( 'stats/paid-wpcom-v3' ) && shouldGateInsights;
-
-	const statsModuleListClass = clsx(
-		'stats__module-list--insights',
-		'stats__module--unified',
-		'stats__module-list',
-		'stats__flexible-grid-container',
-		{
-			'is-odyssey-stats': isOdysseyStats,
-			'is-jetpack': isJetpack,
-		}
-	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -89,7 +79,7 @@ const StatsInsights = ( props ) => {
 						<AllTimeHighlightsSection siteId={ siteId } siteSlug={ siteSlug } />
 						<PostingActivity siteId={ siteId } />
 						<AllTimeViewsSection siteId={ siteId } slug={ siteSlug } />
-						<div className={ statsModuleListClass }>
+						<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 							{ isEmptyStateV2 && (
 								<StatsModuleTags
 									moduleStrings={ moduleStrings.tags }
@@ -140,7 +130,7 @@ const StatsInsights = ( props ) => {
 									) }
 								/>
 							) }
-						</div>
+						</StatsModuleListing>
 						<JetpackColophon />
 					</>
 				) }
@@ -152,11 +142,9 @@ const StatsInsights = ( props ) => {
 
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	return {
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isOdysseyStats,
 		isJetpack: isJetpackSite( state, siteId ),
 	};
 } );

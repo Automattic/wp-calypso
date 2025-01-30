@@ -69,6 +69,7 @@ import StatsFeedbackPresentor from './feedback';
 import { shouldGateStats } from './hooks/use-should-gate-stats';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
+import StatsModuleListing from './pages/shared/stats-module-listing';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
@@ -525,13 +526,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		'is-period-year': period === 'year',
 	} );
 
-	const moduleListClasses = clsx(
-		'is-events',
-		'stats__module-list',
-		'stats__module-list--traffic',
-		'stats__module--unified',
-		'stats__flexible-grid-container'
-	);
+	const moduleListClassNames = clsx( 'is-events', 'stats__module-list--traffic' );
 
 	const halfWidthModuleClasses = clsx(
 		'stats__flexible-grid-item--half',
@@ -624,7 +619,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 					<>
 						{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
-						<div className={ moduleListClasses }>
+						<StatsModuleListing className={ moduleListClassNames } siteId={ siteId }>
 							<StatsModuleTopPosts
 								moduleStrings={ moduleStrings.posts }
 								period={ props.period }
@@ -759,7 +754,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									}
 								/>
 							) }
-						</div>
+						</StatsModuleListing>
 					</>
 				) }
 
