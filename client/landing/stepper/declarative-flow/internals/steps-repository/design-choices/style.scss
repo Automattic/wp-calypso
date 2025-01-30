@@ -2,6 +2,12 @@
 	.step-container__header {
 		margin-top: 96px;
 		margin-bottom: 50px;
+
+		.formatted-header {
+			.formatted-header__subtitle {
+				text-align: center;
+			}
+		}
 	}
 }
 

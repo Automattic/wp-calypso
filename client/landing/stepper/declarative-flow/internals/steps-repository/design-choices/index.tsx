@@ -28,7 +28,12 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
-	const headerText = translate( 'Bring your vision to life' );
+	const headerText = isGoalsFirstVariation
+		? translate( 'How would you like to start?' )
+		: translate( 'Bring your vision to life' );
+	const subHeaderText = isGoalsFirstVariation
+		? translate( 'Select an option to begin. You can always change your mind later.' )
+		: undefined;
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
@@ -80,7 +85,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 				flowName={ flow }
 				stepName={ stepName }
 				isHorizontalLayout={ false }
-				formattedHeader={ <FormattedHeader headerText={ headerText } /> }
+				formattedHeader={
+					<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				}
 				stepContent={
 					<>
 						<div className="design-choices__body">
