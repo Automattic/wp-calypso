@@ -5,7 +5,7 @@ const useWPV2APIEndpoint = isA8CForAgencies();
 const wpV2APINamespace = 'wp/v2';
 
 // Create handlers for all plugin methods with wp/v2 namespace.
-const methods = [ 'get', 'update', 'updateVersion', 'enableAutoupdate', 'disableAutoupdate' ];
+const methods = [ 'updateVersion', 'enableAutoupdate', 'disableAutoupdate' ];
 
 type PluginHandlers = {
 	[ key in ( typeof methods )[ number ] ]?: (
@@ -13,13 +13,19 @@ type PluginHandlers = {
 		...args: unknown[]
 	) => unknown;
 } & {
+	get?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
+	update?: (
+		query: Record< string, unknown >,
+		body: Record< string, unknown >,
+		...args: unknown[]
+	) => unknown;
 	install?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 	delete?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 	activate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 	deactivate?: ( query: Record< string, unknown >, ...args: unknown[] ) => unknown;
 };
 
-export const getPluginHandler = ( siteId: number, pluginId: number ) => {
+export const getPluginHandler = ( siteId: number, pluginId: string ) => {
 	const pluginHandler = wpcom.site( siteId ).plugin( pluginId );
 	if ( ! useWPV2APIEndpoint ) {
 		return pluginHandler;
@@ -38,30 +44,50 @@ export const getPluginHandler = ( siteId: number, pluginId: number ) => {
 	}, {} );
 
 	// Custom methods for wp/v2 requiring different payloads.
-	handlers.activate = ( query, ...args ) =>
-		pluginHandler.update(
+	handlers.get = ( query, ...args ) =>
+		pluginHandler.get( { ...query, apiNamespace: wpV2APINamespace }, ...args );
+
+	handlers.update = ( query, body, ...args ) =>
+		pluginHandler.wpcom.req.post(
+			pluginHandler.pluginPath,
 			{ ...query, apiNamespace: wpV2APINamespace },
-			{ status: 'active' },
+			body,
+			...args
+		);
+
+	handlers.activate = ( query, ...args ) =>
+		handlers.update?.(
+			query,
+			{
+				status: 'active',
+			},
 			...args
 		);
 
 	handlers.deactivate = ( query, ...args ) =>
-		pluginHandler.update(
-			{ ...query, apiNamespace: wpV2APINamespace },
+		handlers.update?.(
+			query,
 			{
-				slug: pluginHandler._slug,
 				status: 'inactive',
 			},
 			...args
 		);
 
-	handlers.install = ( query, ...args ) =>
-		pluginHandler.wpcom.req.post(
+	handlers.install = ( query, ...args ) => {
+		// The pluginId can be a plugin's basename (e.g., woocommerce/woocommerce).
+		// WordPress core expects the plugin's WordPress.org slug for installations.
+		let pluginSlug = pluginId;
+		if ( pluginId.includes( '/' ) ) {
+			pluginSlug = pluginId.split( '/' )[ 0 ];
+		}
+
+		return pluginHandler.wpcom.req.post(
 			`/sites/${ siteId }/plugins`,
 			{ ...query, apiNamespace: wpV2APINamespace },
-			{ slug: pluginHandler._slug },
+			{ slug: pluginSlug },
 			...args
 		);
+	};
 
 	handlers.delete = ( query, ...args ) =>
 		pluginHandler.wpcom.req.post(
