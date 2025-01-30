@@ -47,8 +47,8 @@ export async function lazyLoadDependencies(): Promise< void > {
 }
 
 export default async function (): Promise< void > {
-	setupReadRoutes();
 	await lazyLoadDependencies();
+	setupReadRoutes();
 
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
@@ -62,13 +62,18 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		// Old and incomplete paths that should be redirected to /
-		page( '/reader/following', '/reader' );
-		page( '/reader/blogs', '/reader' );
-		page( '/reader/feeds', '/reader' );
-		page( '/reader/blog', '/reader' );
-		page( '/reader/post', '/reader' );
-		page( '/reader/feed', '/reader' );
+		// Incomplete paths that should be redirected to `/reader`
+		page(
+			[
+				'/reader/following',
+				'/reader/blogs',
+				'/reader/feeds',
+				'/reader/blog',
+				'/reader/post',
+				'/reader/feed',
+			],
+			() => page.redirect( '/reader' )
+		);
 
 		// Feed stream
 		page( '/reader/feeds/:feed_id/posts', incompleteUrlRedirects );
