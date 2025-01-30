@@ -1,5 +1,8 @@
-import { StepContainer } from '@automattic/onboarding';
+import configApi from '@automattic/calypso-config';
+import { OnboardSelect } from '@automattic/data-stores';
+import { isOnboardingFlow, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
+import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -9,6 +12,7 @@ import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
@@ -37,6 +41,7 @@ const UserStepComponent: Step = function UserStep( {
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
+	const creatingWithBigSky = ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -59,6 +64,20 @@ const UserStepComponent: Step = function UserStep( {
 		redirectTo,
 		locale,
 	} );
+
+	const getSubHeaderText = () => {
+		if (
+			configApi.isEnabled( 'onboarding/big-sky-before-plans' ) &&
+			isOnboardingFlow( flow ) &&
+			creatingWithBigSky
+		) {
+			return translate(
+				'Great choice! Pick an option to start building your site with our AI Website Builder.'
+			);
+		}
+
+		return null;
+	};
 
 	const shouldRenderLocaleSuggestions = ! isLoggedIn; // For logged-in users, we respect the user language settings
 
@@ -86,6 +105,7 @@ const UserStepComponent: Step = function UserStep( {
 						<FormattedHeader
 							align="center"
 							headerText={ translate( 'Create your account' ) }
+							subHeaderText={ getSubHeaderText() }
 							brandFont
 						/>
 						<SignupFormSocialFirst
