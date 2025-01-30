@@ -14,7 +14,6 @@
 		overflow: hidden;
 		cursor: pointer;
 
-		&:not(:disabled),
 		&:not([aria-disabled="true"]) {
 			&:hover,
 			&:focus {
@@ -27,7 +26,6 @@
 			}
 		}
 
-		&:disabled,
 		&[aria-disabled="true"] {
 			cursor: default;
 			.sites-dataviews__site-title {
