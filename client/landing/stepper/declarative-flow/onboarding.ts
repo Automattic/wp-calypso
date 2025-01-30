@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
-import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -162,7 +163,11 @@ const onboarding: Flow = {
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
 		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
-			if ( createWithBigSky ) {
+			if (
+				createWithBigSky &&
+				config.isEnabled( 'onboarding/big-sky-before-plans' ) &&
+				isGoalsAtFrontExperiment
+			) {
 				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
 					siteSlug: providedDependencies.siteSlug,
 				} );
@@ -441,6 +446,21 @@ const onboarding: Flow = {
 				clearSignupCompleteSlug();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
+		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
+		const preloadPersonalProduct =
+			! isGoalsFirstExperimentLoading &&
+			isGoalsFirstExperiment &&
+			config.isEnabled( 'onboarding/big-sky-before-plans' );
+
+		useSelect(
+			( select ) =>
+				preloadPersonalProduct
+					? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
+					: undefined,
+			[ preloadPersonalProduct ]
+		);
 	},
 };
 

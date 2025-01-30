@@ -44,6 +44,7 @@ export interface RawAPIProduct {
 	available: boolean;
 	combined_cost_display: string;
 	cost: number;
+	cost_per_month_display?: string;
 	cost_smallest_unit: number;
 	currency_code: string;
 	description: string;
