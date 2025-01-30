@@ -78,6 +78,11 @@ const SiteField = ( { site, openSitePreviewPane }: Props ) => {
 	const isAdmin = useSelector( ( state ) => canCurrentUser( state, site.ID, 'manage_options' ) );
 
 	const onSiteClick = ( event: React.MouseEvent ) => {
+		// Bubble right click
+		if ( event.button === 2 ) {
+			return;
+		}
+
 		event.preventDefault();
 
 		let openInNewTab = false;
