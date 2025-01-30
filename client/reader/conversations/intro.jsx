@@ -3,7 +3,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -84,7 +83,6 @@ class ConversationsIntro extends Component {
 								  ) }
 						</span>
 					</div>
-					<img className="conversations__intro-character" src={ charactersImage } alt="" />
 
 					<button
 						className="conversations__intro-close"

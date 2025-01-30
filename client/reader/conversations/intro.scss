@@ -18,20 +18,6 @@
 		flex-direction: row;
 	}
 
-	.conversations__intro-character {
-		height: 140px;
-		margin-right: -8px; // prevent right crop of illustration
-
-		// Hides the character when main content column gets too narrow
-		@media (min-width: 661px) and (max-width: 840px) {
-			display: none;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
-		}
-	}
-
 	.conversations__intro-copy {
 		display: flex;
 		flex: 1 1 auto;
