@@ -113,7 +113,11 @@ const PlansPageSubheader = ( {
 	onFreePlanCTAClick: () => void;
 } ) => {
 	const translate = useTranslate();
-	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
+	const [ isLoading, isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
+
+	if ( isLoading ) {
+		return null;
+	}
 
 	return (
 		<>
