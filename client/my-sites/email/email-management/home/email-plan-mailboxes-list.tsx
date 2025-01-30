@@ -130,6 +130,7 @@ function EmailPlanMailboxesList( {
 	switch ( context ) {
 		case 'domains':
 		case 'hosting-overview':
+		case 'email':
 			return (
 				<>
 					{ ( isGoogleConfiguring || isAccountWarningPresent ) && (

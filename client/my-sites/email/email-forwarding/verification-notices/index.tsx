@@ -15,7 +15,7 @@ export function VerificatonPendingNotice( { warnings }: { warnings: Mailbox[ 'wa
 		return null;
 	}
 	return (
-		<div className="email-forwarm-verification-pending-notice">
+		<div className="email-forward-verification-pending-notice">
 			<Icon icon={ info } />
 			{ translate( 'Pending verification' ) }
 		</div>
