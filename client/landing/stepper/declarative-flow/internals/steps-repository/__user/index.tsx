@@ -1,6 +1,6 @@
 import configApi from '@automattic/calypso-config';
 import { OnboardSelect } from '@automattic/data-stores';
-import { StepContainer } from '@automattic/onboarding';
+import { isOnboardingFlow, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { select } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -41,7 +41,7 @@ const UserStepComponent: Step = function UserStep( {
 
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
-	const createdWithBigSky = ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky();
+	const creatingWithBigSky = ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky();
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -66,7 +66,11 @@ const UserStepComponent: Step = function UserStep( {
 	} );
 
 	const getSubHeaderText = () => {
-		if ( configApi.isEnabled( 'onboarding/big-sky-before-plans' ) && createdWithBigSky ) {
+		if (
+			configApi.isEnabled( 'onboarding/big-sky-before-plans' ) &&
+			isOnboardingFlow( flow ) &&
+			creatingWithBigSky
+		) {
 			return translate(
 				'Great choice! Pick an option to start building your site with our AI Website Builder.'
 			);
