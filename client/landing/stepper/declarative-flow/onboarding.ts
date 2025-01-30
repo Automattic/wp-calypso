@@ -3,6 +3,7 @@ import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -468,3 +469,7 @@ const onboarding: Flow = {
 };
 
 export default onboarding;
+
+export const __copyToTranslate2 = [
+	__( 'Our AI Website Builder is only available with a paid plan' ),
+];
