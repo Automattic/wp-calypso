@@ -458,13 +458,9 @@ const onboarding: Flow = {
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 
 		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
-		const [ isBigSkyExperimentLoading, isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
-		const preloadPersonalProduct =
-			! isGoalsFirstExperimentLoading &&
-			! isBigSkyExperimentLoading &&
-			isGoalsFirstExperiment &&
-			isBigSkyBeforePlansExperiment;
+		// Preload even before we know whether use is in the big-sky-before-plans experiment. By the time we know it will be too late.
+		const preloadPersonalProduct = ! isGoalsFirstExperimentLoading && isGoalsFirstExperiment;
 
 		useSelect(
 			( select ) =>
