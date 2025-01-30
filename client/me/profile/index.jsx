@@ -134,7 +134,7 @@ class Profile extends Component {
 							<FormSettingExplanation>
 								<span>
 									{ this.props.translate(
-										'A list of your public posts and public lists can be found at {{a}}{{url/}}{{/a}}',
+										'You can find your public profile at {{a}}{{url/}}{{/a}}',
 										{
 											components: {
 												a: <a href={ relativeProfileUrl }></a>,
