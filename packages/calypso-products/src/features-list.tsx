@@ -2633,12 +2633,7 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Unlimited AI Website Builder edits{{/strong}}', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
 		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 
