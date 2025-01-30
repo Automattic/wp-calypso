@@ -1,4 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
@@ -15,19 +17,30 @@ import kebabCase from '../../../../utils/kebabCase';
 import hiBigSky from './big-sky-no-text-small.png';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 /**
  * The design choices step
  */
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
+	const isGoalsFirstVariation =
+		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
+
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
 	const headerText = translate( 'Bring your vision to life' );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
+	);
+
+	const personalProduct = useSelect(
+		( select ) =>
+			// Ensure we only trigger network request when it's needed
+			isGoalsFirstVariation
+				? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
+				: undefined,
+		[ isGoalsFirstVariation ]
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
@@ -53,13 +66,10 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	};
 
 	const bigSkyBadgeLabel =
-		! isLoading &&
-		isEligible &&
-		isOnboardingFlow( flow ) &&
-		isEnabled( 'onboarding/big-sky-before-plans' )
+		! isLoading && isEligible && personalProduct?.cost_per_month_display && isGoalsFirstVariation
 			? translate( 'Starting at %(price)s/month', {
-					args: { price: '$4' },
-					comment: 'Translators: "price" is a per month price and will include a currency symbol',
+					args: { price: personalProduct.cost_per_month_display },
+					comment: 'Translators: "price" is a per month price and includes a currency symbol',
 			  } )
 			: undefined;
 
