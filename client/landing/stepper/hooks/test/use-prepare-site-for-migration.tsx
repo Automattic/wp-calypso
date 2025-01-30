@@ -125,7 +125,6 @@ describe( 'usePrepareSiteForMigrationWithMigrateGuru', () => {
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
 			.reply( 200, TRANSFER_COMPLETED( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic-migration-status/wpcom-migration-key` )
-			.query( { http_envelope: 1 } )
 			.reply( errorCaptureMigrationKey );
 
 		const { result } = render( { siteId: 123 } );

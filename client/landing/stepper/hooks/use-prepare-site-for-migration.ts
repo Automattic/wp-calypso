@@ -1,30 +1,10 @@
 import config from '@automattic/calypso-config';
-import { FetchStatus } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteMigrationKey } from './use-site-migration-key';
 import { useSiteTransfer } from './use-site-transfer';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
-
-const getMigrationKeyStatus = (
-	migrationKey: string | null | undefined,
-	status: FetchStatus,
-	error: Error | null
-): Status => {
-	if ( migrationKey ) {
-		return 'success';
-	}
-	if ( status === 'fetching' ) {
-		return 'pending';
-	}
-
-	if ( error ) {
-		return 'error';
-	}
-
-	return status as Status;
-};
 
 const safeLogToLogstash = ( message: string, properties: Record< string, unknown > ) => {
 	try {
@@ -79,20 +59,26 @@ const useLogMigration = (
 	}, [ completed, siteId ] );
 };
 
+type Options = {
+	retry?: number;
+};
+
 /**
  *  Hook to manage the site to prepare a site for migration.
  *  This hook manages the site transfer, plugin installation and migration key fetching.
  */
-export const usePrepareSiteForMigration = ( siteId?: number ) => {
-	const siteTransferState = useSiteTransfer( siteId );
+export const usePrepareSiteForMigration = ( siteId?: number, options: Options = {} ) => {
+	const siteTransferState = useSiteTransfer( siteId, {
+		retry: options.retry ?? 0,
+	} );
 
 	const {
 		data: { migrationKey } = {},
 		error: migrationKeyError,
-		fetchStatus: migrationKeyFetchStatus,
+		status: migrationKeyStatus,
 	} = useSiteMigrationKey( siteId, {
 		enabled: Boolean( siteTransferState.completed ),
-		retry: 3,
+		retry: options.retry ?? 0,
 	} );
 
 	const completed = siteTransferState.completed;
@@ -101,9 +87,7 @@ export const usePrepareSiteForMigration = ( siteId?: number ) => {
 
 	const detailedStatus = {
 		siteTransfer: siteTransferState.status,
-		migrationKey: ! siteTransferState.completed
-			? 'idle'
-			: getMigrationKeyStatus( migrationKey, migrationKeyFetchStatus, migrationKeyError ),
+		migrationKey: ! siteTransferState.completed ? 'idle' : migrationKeyStatus,
 	};
 
 	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
