@@ -1,13 +1,16 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import {
 	A4A_LICENSES_LINK,
 	A4A_SITES_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
+import useFetchSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-site-plugins';
+import useInstallSitePlugins from 'calypso/a8c-for-agencies/data/sites/use-install-site-plugins';
 import {
 	getProductSlugFromLicenseKey,
 	isWooCommerceProduct,
@@ -29,6 +32,28 @@ export default function DownloadProductsForm() {
 
 	const site = sites.find( ( site ) => site?.ID === parseInt( attachedSiteId, 10 ) );
 	const siteDomain = site ? site.domain : null;
+
+	const { data: sitePlugins } = useFetchSitePlugins( {
+		siteId: site?.ID,
+	} );
+	const { mutate: installSitePlugins } = useInstallSitePlugins();
+
+	const shouldInstallWoo = useMemo( () => {
+		if ( ! isEnabled( 'a4a-post-purchase-woo-download' ) ) {
+			return false;
+		}
+		return (
+			sitePlugins?.data?.filter( ( plugin ) => plugin.plugin === 'woocommerce/woocommerce' )
+				.length === 0
+		);
+	}, [ sitePlugins ] );
+
+	const onInstallWoo = useCallback( () => {
+		installSitePlugins( {
+			siteId: site?.ID,
+			slug: 'woocommerce',
+		} );
+	}, [ installSitePlugins, site ] );
 
 	const wooKeys =
 		licenseKeys && licenseKeys.split( ',' ).filter( ( key ) => isWooCommerceProduct( key ) );
@@ -105,6 +130,25 @@ export default function DownloadProductsForm() {
 					</Button>
 				</div>
 			</div>
+			{ shouldInstallWoo && (
+				<div>
+					<p className="download-products-form__install-woodescription">
+						{ siteDomain &&
+							translate(
+								'This extension requires WooCommerce plugin installed on {{strong}}%(siteUrl)s{{/strong}}, do you want to install it?',
+								{
+									components: { strong: <strong /> },
+									args: { siteUrl: siteDomain || '' },
+								}
+							) }
+					</p>
+					<div className="download-products-form__install-woo-controls">
+						<Button primary className="download-products-form__navigate" onClick={ onInstallWoo }>
+							{ translate( 'Install WooCommerce' ) }
+						</Button>
+					</div>
+				</div>
+			) }
 			<div className="download-products-form__bottom">
 				{ !! jetpackProducts.length && (
 					<div className="download-products-form__action-items">

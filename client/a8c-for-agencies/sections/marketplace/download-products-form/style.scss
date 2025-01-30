@@ -108,3 +108,21 @@ p.download-products-form__description {
 		margin-inline-end: 1rem;
 	}
 }
+
+.download-products-form__install-woodescription {
+	flex: 1;
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--color-text-gray);
+}
+
+div:has(> .download-products-form__install-woodescription) {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 1rem 0;
+
+	.download-products-form__install-woo-controls {
+		flex-shrink: 0;
+	}
+}
