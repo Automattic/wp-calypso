@@ -126,6 +126,36 @@ function getTranslation( i18n, options ) {
 	return null;
 }
 
+const stringifyCache = new Map();
+function getFormatter__stringifyCache( locale, options ) {
+	const key = JSON.stringify( [ locale, options ] );
+
+	if ( ! stringifyCache.has( key ) ) {
+		stringifyCache.set( key, new Intl.NumberFormat( locale, options ) );
+	}
+
+	return stringifyCache.get( key );
+}
+
+const customCache = new Map();
+function getFormatter__customCache( locale, options ) {
+	if ( ! customCache.has( locale ) ) {
+		customCache.set( locale, new Map() );
+	}
+
+	const localeCache = customCache.get( locale );
+	const optionsKey = Object.entries( options )
+		.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+		.map( ( [ key, value ] ) => `${ key }:${ value }` )
+		.join( '|' );
+
+	if ( ! localeCache.has( optionsKey ) ) {
+		localeCache.set( optionsKey, new Intl.NumberFormat( locale, options ) );
+	}
+
+	return localeCache.get( optionsKey );
+}
+
 function I18N() {
 	if ( ! ( this instanceof I18N ) ) {
 		return new I18N();
@@ -172,7 +202,7 @@ I18N.prototype.emit = function ( ...args ) {
  */
 I18N.prototype.numberFormat = function (
 	number,
-	{ decimals = 0, forceLatin = true, numberFormatOptions = {} } = {}
+	{ decimals = 0, forceLatin = true, numberFormatOptions = {}, caching = 'optimal' } = {}
 ) {
 	const browserSafeLocale = this.getBrowserSafeLocale();
 
@@ -186,12 +216,21 @@ I18N.prototype.numberFormat = function (
 	}
 
 	try {
-		return Intl.NumberFormat( `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`, {
+		const locale = `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`;
+		const options = {
 			minimumFractionDigits: decimals, // default is 0
 			maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
 			// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
 			...numberFormatOptions,
-		} ).format( number );
+		};
+
+		if ( caching === 'custom' ) {
+			return getFormatter__customCache( locale, options ).format( number );
+		} else if ( caching === 'stringify' ) {
+			return getFormatter__stringifyCache( locale, options ).format( number );
+		}
+
+		return Intl.NumberFormat( locale, options ).format( number );
 	} catch ( error ) {
 		warn( 'numberFormat(): Error formatting number with Intl.NumberFormat: ', number, error );
 	}

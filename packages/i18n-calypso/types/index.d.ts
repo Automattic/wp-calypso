@@ -78,6 +78,10 @@ export interface NumberFormatOptions {
 	 * `minimumFractionDigits` & `maximumFractionDigits` will override `decimals` if set.
 	 */
 	numberFormatOptions?: Intl.NumberFormatOptions;
+	/**
+	 * Temporary
+	 */
+	caching?: 'custom' | 'stringify' | 'none';
 }
 
 export type TranslateHook = (
