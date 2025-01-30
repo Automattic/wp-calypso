@@ -1,9 +1,12 @@
 import { FormTokenField, TextControl, Button, Notice } from '@wordpress/components';
+import { sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { isValidMailbox } from './utils';
 import type { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
+import type { Mailbox } from 'calypso/data/emails/types';
 import './styles.scss';
 
 const MAX_FORWARD_DESTINATIONS = 5;
@@ -13,14 +16,17 @@ interface DestinationsInputProps {
 	onChange: ( values: string[] ) => void;
 	selectedDomainName: string;
 	disabled: boolean;
-	existingForwardsForMailbox: number;
+	existingForwardsForMailbox: Mailbox[];
+	mailbox: string;
 }
 
 function DestinationsInput( props: DestinationsInputProps ) {
-	const { values, onChange, selectedDomainName, disabled, existingForwardsForMailbox } = props;
+	const { values, onChange, selectedDomainName, disabled, existingForwardsForMailbox, mailbox } =
+		props;
 	/** Count existing forwards before showing one more field */
-	const limit = MAX_FORWARD_DESTINATIONS - existingForwardsForMailbox;
+	const limit = MAX_FORWARD_DESTINATIONS - existingForwardsForMailbox.length;
 	const translate = useTranslate();
+	const [ offendingAddress, setOffendingAddress ] = React.useState< string | null >( null );
 
 	if ( limit === 0 ) {
 		return (
@@ -49,9 +55,13 @@ function DestinationsInput( props: DestinationsInputProps ) {
 				onChange={ handleChange }
 				value={ values.slice( 0, limit ) }
 				maxLength={ limit }
-				__experimentalValidateInput={ ( v: string ) =>
-					emailValidator.validate( v ) && ! v.endsWith( `@${ selectedDomainName }` )
-				}
+				onInputChange={ () => setOffendingAddress( null ) }
+				__experimentalValidateInput={ ( v: string ) => {
+					const valid = emailValidator.validate( v ) && ! v.endsWith( `@${ selectedDomainName }` );
+					const duplicate = existingForwardsForMailbox.find( ( e ) => e.target === v );
+					setOffendingAddress( duplicate ? v : null );
+					return valid && ! duplicate;
+				} }
 				placeholder={ translate(
 					'These are the target email addresses where your emails will be forwarded.'
 				) }
@@ -59,6 +69,16 @@ function DestinationsInput( props: DestinationsInputProps ) {
 			{ values.map( ( value ) => (
 				<input key={ value } type="hidden" name="destinations" value={ value } />
 			) ) }
+			{ offendingAddress && (
+				<Notice status="error" isDismissible={ false }>
+					{ sprintf(
+						/* translators: %s: email address %s: email address */
+						translate( 'There is already a forward from (%1$s) to (%2$s).' ),
+						`${ mailbox }@${ selectedDomainName }`,
+						offendingAddress
+					) }
+				</Notice>
+			) }
 		</>
 	);
 }
@@ -91,7 +111,10 @@ function SourceInput( props: SourceInputProps ) {
 				{ ...rest }
 			/>
 			{ /* Blink the suffix when the user enters @ */ }
-			<p key={ highlightSuffix } className="email-forwarding__mailbox-suffix">
+			<p
+				key={ highlightSuffix }
+				className={ clsx( 'email-forwarding__mailbox-suffix', { animate: highlightSuffix } ) }
+			>
 				{ suffix }
 			</p>
 		</div>
@@ -100,7 +123,7 @@ function SourceInput( props: SourceInputProps ) {
 
 interface NewForwardFormProps {
 	selectedDomainName: string;
-	existingEmailForwards: { mailbox: string }[];
+	existingEmailForwards: Mailbox[];
 	disabled: boolean;
 }
 
@@ -116,7 +139,7 @@ export function NewForwardForm( {
 	const existingForwardsForMailbox = existingEmailForwards?.filter(
 		( forward ) =>
 			forward.mailbox.localeCompare( mailbox, undefined, { sensitivity: 'base' } ) === 0
-	).length;
+	);
 
 	return (
 		<div className="email-forwarding__form-content">
@@ -132,6 +155,7 @@ export function NewForwardForm( {
 				existingForwardsForMailbox={ existingForwardsForMailbox }
 				values={ destinations }
 				onChange={ setDestinations }
+				mailbox={ mailbox }
 			/>
 			<div>
 				<Button

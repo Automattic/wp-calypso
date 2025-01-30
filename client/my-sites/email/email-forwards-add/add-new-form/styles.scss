@@ -41,22 +41,26 @@
 		color: var(--studio-gray-50);
 		font-size: $font-body-small;
 		z-index: 1;
-		animation: blink 3s forwards;
 
-		@keyframes blink {
-			5% {
-				opacity: 0;
-			}
+		&.animate {
+			animation: blink 3s forwards;
 
-			10% {
-				opacity: 1;
-			}
-			15% {
-				opacity: 0;
-			}
+			@keyframes blink {
+				5% {
+					opacity: 0;
+				}
 
-			20% {
-				opacity: 1;
+				10% {
+					opacity: 1;
+				}
+
+				15% {
+					opacity: 0;
+				}
+
+				20% {
+					opacity: 1;
+				}
 			}
 		}
 	}
