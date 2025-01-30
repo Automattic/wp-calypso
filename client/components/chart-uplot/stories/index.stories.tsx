@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import UplotChart from '../';
 import UplotBarChart from '../bar';
 
-export default { title: 'packages/components/Chart (uPlot)' };
+export default { title: 'client/components/Chart (uPlot)' };
 
 // Line chart
 
