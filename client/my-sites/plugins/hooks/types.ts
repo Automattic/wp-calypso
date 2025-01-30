@@ -16,6 +16,11 @@ export type Site = {
 	ID: number;
 	title: string;
 	canUpdateFiles?: boolean;
+	is_a4a_client?: boolean;
+	capabilities?: {
+		activate_plugins: boolean;
+		update_plugins: boolean;
+	};
 };
 
 export type Plugin = {

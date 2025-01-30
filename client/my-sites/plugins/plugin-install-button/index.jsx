@@ -66,6 +66,14 @@ const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 };
 
 export class PluginInstallButton extends Component {
+	siteCanInstallPlugins = () => {
+		const { siteIsWpcomAtomic, canInstallPlugins, siteIsA4AClient, siteHasPluginCapabilities } =
+			this.props;
+		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
+		const isAtomicAndCanInstallPlugins = siteIsWpcomAtomic && canInstallPlugins;
+		return isAtomicAndCanInstallPlugins || isA4AWithPluginCapabilities;
+	};
+
 	installAction = () => {
 		const {
 			isEmbed,
@@ -73,10 +81,6 @@ export class PluginInstallButton extends Component {
 			selectedSite,
 			isInstalling,
 			plugin,
-			canInstallPlugins,
-			siteIsWpcomAtomic,
-			siteIsA4AClient,
-			siteHasPluginCapabilities,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -85,11 +89,7 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
-		const isAtomicAndCanInstallPlugins = siteIsWpcomAtomic && canInstallPlugins;
-		const siteCanInstallPlugins = isAtomicAndCanInstallPlugins || isA4AWithPluginCapabilities;
-
-		if ( siteCanInstallPlugins ) {
+		if ( this.siteCanInstallPlugins() ) {
 			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 			this.props.installPlugin( siteId, plugin );
 		} else {
@@ -235,21 +235,8 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const {
-			translate,
-			isInstalling,
-			isEmbed,
-			disabled,
-			isJetpackCloud,
-			canInstallPlugins,
-			siteIsWpcomAtomic,
-			siteHasPluginCapabilities,
-			siteIsA4AClient,
-		} = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
-		const isA4AWithPluginCapabilities = siteIsA4AClient && siteHasPluginCapabilities;
-		const isAtomicAndCanInstallPlugins = siteIsWpcomAtomic && canInstallPlugins;
-		const siteCanInstallPlugins = isAtomicAndCanInstallPlugins || isA4AWithPluginCapabilities;
 
 		if ( isEmbed ) {
 			return (
@@ -264,7 +251,9 @@ export class PluginInstallButton extends Component {
 									<Gridicon icon="plugins" size={ 18 } />
 								</>
 							) }
-							{ siteCanInstallPlugins ? translate( 'Install' ) : translate( 'Go to plugin page' ) }
+							{ this.siteCanInstallPlugins()
+								? translate( 'Install' )
+								: translate( 'Go to plugin page' ) }
 						</Button>
 					) }
 				</span>
