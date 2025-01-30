@@ -40,7 +40,10 @@ class Profile extends Component {
 	};
 
 	render() {
-		const profileUrl = `https://wordpress.com/read/users/${ this.props.user.username }`;
+		// We want to use a relative URL so we can test effectively in each
+		// environement, but show the absolute URL in the UI for end users.
+		const relativeProfileUrl = `/read/users/${ this.props.user.username }`;
+		const absoluteProfileUrl = `https://wordpress.com${ relativeProfileUrl }`;
 
 		return (
 			<Main wideLayout className="profile">
@@ -134,8 +137,8 @@ class Profile extends Component {
 										'A list of your public posts and public lists can be found at {{a}}{{url/}}{{/a}}',
 										{
 											components: {
-												a: <a href={ profileUrl }></a>,
-												url: <>{ profileUrl }</>,
+												a: <a href={ relativeProfileUrl }></a>,
+												url: <>{ absoluteProfileUrl }</>,
 											},
 										}
 									) }
