@@ -1,3 +1,7 @@
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -10,6 +14,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
 import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
+import { navigate } from 'calypso/lib/navigate';
 import {
 	getDateRangeQueryParam,
 	updateDateRangeQueryParam,
@@ -304,31 +309,65 @@ const useDataLogs = ( { view, logType }: { view: ViewTable; logType: LogType } )
 	};
 };
 
+const useFields = ( { logType }: { logType: LogType } ) => {
+	if ( logType === 'php' ) {
+		return [
+			{ id: 'severity' },
+			{ id: 'timestamp' },
+			{ id: 'message' },
+			{ id: 'kind' },
+			{ id: 'name' },
+			{ id: 'file' },
+			{ id: 'line' },
+		];
+	}
+
+	return [
+		{ id: 'request_type' },
+		{ id: 'timestamp' },
+		{ id: 'status' },
+		{ id: 'request_url' },
+		{ id: 'body_bytes_sent' },
+		{ id: 'cached' },
+		{ id: 'http_host' },
+		{ id: 'http_referer' },
+	];
+};
+
+const getVisibleFieldsForLogType = ( logType: LogType ) => {
+	if ( logType === 'php' ) {
+		return [ 'severity', 'timestamp', 'message' ];
+	}
+	return [ 'request_type', 'timestamp', 'status', 'request_url' ];
+};
+
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - header with title + date filters + log type.
 	// - address the "show more" interaction
 
-	const view = {
-		type: 'table' as const,
-		perPage: 10,
-		page: 1,
-		fields: [ 'severity', 'timestamp', 'message' ],
-	};
-
+	const [ view, setView ] = useState( () => {
+		return {
+			type: 'table' as const,
+			perPage: 10, // TODO
+			page: 1, // TODO
+			fields: getVisibleFieldsForLogType( logType ),
+		};
+	} );
+	const fields = useFields( { logType } );
 	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType } );
-
-	const fields = [
-		{ id: 'severity' },
-		{ id: 'timestamp' },
-		{ id: 'message' },
-		{ id: 'kind' },
-		{ id: 'name' },
-		{ id: 'file' },
-		{ id: 'line' },
-	];
-
-	const onChangeView = () => {};
+	const onChangeView = ( newView: View ) => {
+		setView( ( view ) => ( {
+			...view,
+			...newView,
+		} ) );
+	};
+	useEffect( () => {
+		setView( ( view ) => ( {
+			...view,
+			fields: getVisibleFieldsForLogType( logType ),
+		} ) );
+	}, [ logType ] );
 
 	return (
 		<>
@@ -346,6 +385,33 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 						}
 					) }
 				/>
+				<div className="site-logs-toolbar">
+					<ToggleGroupControl
+						className="site-logs-toolbar__toggle"
+						hideLabelFromVision
+						label=""
+						onChange={ ( value ) => {
+							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+						} }
+						value={ logType }
+						__nextHasNoMarginBottom
+					>
+						<ToggleGroupControlOption
+							className="site-logs-toolbar__toggle-option"
+							label={ translate( 'PHP error', {
+								textOnly: true,
+							} ) }
+							value="php"
+						/>
+						<ToggleGroupControlOption
+							className="site-logs-toolbar__toggle-option"
+							label={ translate( 'Web server', {
+								textOnly: true,
+							} ) }
+							value="web"
+						/>
+					</ToggleGroupControl>
+				</div>
 			</div>
 			<DataViews
 				isLoading={ isLoading }
