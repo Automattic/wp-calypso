@@ -1,7 +1,10 @@
 import { LoadingPlaceholder } from '@automattic/components';
+import { OnboardSelect } from '@automattic/data-stores';
 import { PlanButton } from '@automattic/plans-grid-next';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	ButtonContainer,
@@ -21,6 +24,12 @@ export function PaidPlanPaidDomainDialog( {
 	onFreePlanSelected,
 	onPlanSelected,
 }: DomainPlanDialogProps ) {
+	const { setCreateWithBigSky } = useDispatch( ONBOARD_STORE );
+	const createWithBigSky = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
+		const { getCreateWithBigSky } = select( ONBOARD_STORE );
+		return getCreateWithBigSky();
+	}, [] );
+
 	const translate = useTranslate();
 	const [ isBusy, setIsBusy ] = useState( false );
 
@@ -33,6 +42,10 @@ export function PaidPlanPaidDomainDialog( {
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		onFreePlanSelected();
+
+		if ( createWithBigSky ) {
+			setCreateWithBigSky( false );
+		}
 	}
 
 	const upsellDescription = translate(
@@ -42,7 +55,9 @@ export function PaidPlanPaidDomainDialog( {
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
-				{ translate( 'A paid plan is required for your domain.' ) }
+				{ createWithBigSky
+					? translate( 'Our AI Website Builder is only available with a paid plan' )
+					: translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
 			<ButtonContainer>
