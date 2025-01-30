@@ -90,7 +90,7 @@ class PluginRemoveButton extends Component {
 		}
 
 		const canRemovePlugin =
-			( this.props.site.canUpdateFiles && this.props.site.options.file_mod_disabled ) ||
+			( this.props.site.canUpdateFiles && ! this.props.site.options.file_mod_disabled ) ||
 			( this.props.siteIsA4AClient && this.props.siteHasPluginCapabilities );
 
 		if ( ! canRemovePlugin ) {
