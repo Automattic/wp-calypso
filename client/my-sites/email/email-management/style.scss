@@ -346,46 +346,6 @@
 			margin-left: 10px;
 		}
 	}
-
-	.email-mailbox-warnings__warning {
-		color: var(--color-error);
-		font-size: $font-body-small;
-		line-height: 24px;
-		margin-top: 18px;
-		padding-top: 18px;
-
-		@include break-xlarge {
-			border-top: none;
-			margin-left: 16px;
-			margin-right: 16px;
-			margin-top: 0;
-			padding-top: 0;
-		}
-
-		>svg {
-			margin-right: 6px;
-			vertical-align: middle;
-		}
-
-		>span {
-			vertical-align: middle;
-		}
-	}
-
-	.email-mailbox-warnings__action {
-		margin-top: 12px;
-
-		@include break-xlarge {
-			flex: 0.75;
-			margin-top: 0;
-			margin-left: auto;
-			text-align: right;
-		}
-
-		>.button>.gridicons-external {
-			margin-left: 6px;
-		}
-	}
 }
 
 .email-plan-warnings__container {
@@ -480,6 +440,7 @@
 			.card.section-header {
 				margin: 0 16px;
 				padding: 1.75rem 0 1.25em 0;
+				align-items: center;
 			}
 
 			.section-header__label-text {
@@ -593,7 +554,6 @@
 			}
 
 			.email-mailbox-warnings {
-
 				.email-mailbox-warnings__warning,
 				.email-mailbox-warnings__action {
 					display: inline-block;

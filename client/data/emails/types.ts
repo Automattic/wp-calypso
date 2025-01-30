@@ -53,9 +53,3 @@ export type Mailbox = {
 	temporary?: boolean;
 	target: string;
 };
-
-export type MailboxesCluster = {
-	mailboxes: Mailbox[];
-	mailbox: string;
-	domain: string;
-};

@@ -1,0 +1,10 @@
+.email-forwarm-verification-pending-notice {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--studio-orange-50);
+
+    svg {
+        fill: var(--studio-orange-50);
+    }
+}

@@ -1,0 +1,42 @@
+.email-forwards-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+
+    h2 {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+}
+
+.email-forward-list {
+    box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+    td,
+    th {
+        padding: 16px;
+        font-weight: normal;
+        font-size: $font-body-small;
+        vertical-align: middle;
+    }
+
+    thead th {
+        border-bottom: 1px solid var(--color-border-subtle);
+    }
+}
+
+.email-plan-mailboxes-list__forward-item-actions {
+    display: flex;
+    flex: 1
+}
+
+.email-forward-list__row {
+    padding: 1rem;
+}
+
+div.email-forward-list__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+}
