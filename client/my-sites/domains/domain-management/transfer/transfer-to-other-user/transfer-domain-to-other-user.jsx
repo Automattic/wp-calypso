@@ -17,6 +17,7 @@ import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import wpcom from 'calypso/lib/wp';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import AftermarketAuctionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
+import HundredYearDomainNotTransferrableNotice from 'calypso/my-sites/domains/domain-management/components/domain/hundred-year-domain-not-transferrable-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -259,6 +260,10 @@ class TransferDomainToOtherUser extends Component {
 
 		if ( ! currentUserCanManage ) {
 			return <NonOwnerCard domains={ domains } selectedDomainName={ selectedDomainName } />;
+		}
+
+		if ( selectedDomain?.isHundredYearDomain ) {
+			return <HundredYearDomainNotTransferrableNotice />;
 		}
 
 		if ( aftermarketAuction ) {
