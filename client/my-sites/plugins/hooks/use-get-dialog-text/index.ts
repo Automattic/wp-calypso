@@ -49,12 +49,12 @@ const getAffectedSites = ( plugins: Plugin[], sites: SiteDetails[] ) => {
 	);
 
 	return sites.filter(
-		( s ) =>
-			( s.canUpdateFiles ||
-				( s.is_a4a_client &&
-					s.capabilities?.activate_plugins &&
-					s.capabilities?.update_plugins ) ) &&
-			pluginsInstalledOnSiteIds.has( s.ID )
+		( site ) =>
+			( site.canUpdateFiles ||
+				( site.is_a4a_client &&
+					site.capabilities?.activate_plugins &&
+					site.capabilities?.update_plugins ) ) &&
+			pluginsInstalledOnSiteIds.has( site.ID )
 	);
 };
 
