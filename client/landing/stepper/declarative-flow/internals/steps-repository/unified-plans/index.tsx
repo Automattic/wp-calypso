@@ -13,7 +13,10 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { getHidePlanPropsBasedOnThemeType } from 'calypso/my-sites/plans-features-main/components/utils/utils';
+import {
+	getHidePlanPropsBasedOnCreateWithBigSky,
+	getHidePlanPropsBasedOnThemeType,
+} from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { getSignupCompleteSiteID, getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { useSelector, useDispatch as useReduxDispatch } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -31,15 +34,21 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const siteSlug = useSiteSlug();
 
-	const { siteTitle, domainItem, domainItems, selectedDesign } = useSelect(
+	const { siteTitle, domainItem, domainItems, selectedDesign, createWithBigSky } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
-			const { getSelectedSiteTitle, getDomainCartItem, getDomainCartItems, getSelectedDesign } =
-				select( ONBOARD_STORE );
+			const {
+				getSelectedSiteTitle,
+				getDomainCartItem,
+				getDomainCartItems,
+				getSelectedDesign,
+				getCreateWithBigSky,
+			} = select( ONBOARD_STORE );
 			return {
 				siteTitle: getSelectedSiteTitle(),
 				domainItem: getDomainCartItem(),
 				domainItems: getDomainCartItems(),
 				selectedDesign: getSelectedDesign(),
+				createWithBigSky: getCreateWithBigSky(),
 			};
 		},
 		[]
@@ -76,7 +85,10 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 	const [ planInterval, setPlanInterval ] = useState< string | undefined >( undefined );
-	const hidePlanProps = getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
+	const hidePlanProps =
+		createWithBigSky && isGoalFirstExperiment
+			? getHidePlanPropsBasedOnCreateWithBigSky()
+			: getHidePlanPropsBasedOnThemeType( selectedThemeType || '' );
 
 	/**
 	 * The plans step has a quirk where it calls `submitSignupStep` then synchronously calls `goToNextStep` after it.
