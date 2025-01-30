@@ -12,7 +12,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
+import { HostingCardDescription } from 'calypso/components/hosting-card';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
 import { useSelector } from 'calypso/state';
@@ -419,16 +420,14 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	};
 
 	return (
-		<HostingCard
-			headingId="web-server-settings"
-			title={
-				isUntangled ? translate( 'Server configuration' ) : translate( 'Web server settings' )
-			}
-		>
+		<PanelCard>
 			<QuerySiteGeoAffinity siteId={ siteId } />
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
+			<PanelCardHeading id="web-server-settings">
+				{ isUntangled ? translate( 'Server configuration' ) : translate( 'Web server settings' ) }
+			</PanelCardHeading>
 			<HostingCardDescription hide={ isUntangled }>
 				{ translate(
 					'For sites with specialized needs, fine-tune how the web server runs your website.'
@@ -439,6 +438,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			{ ! isLoading && getGeoAffinityContent() }
 			{ ! isLoading && getStaticFile404Content() }
 			{ isLoading && getPlaceholderContent() }
-		</HostingCard>
+		</PanelCard>
 	);
 }
