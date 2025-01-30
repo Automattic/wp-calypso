@@ -313,12 +313,19 @@ export function redirectIfJetpackNonAtomic( context, next ) {
  * @param   {Function} next    Calls next middleware
  * @returns {void}
  */
-export function redirectToHostingPromoIfNotAtomic( context, next ) {
+export async function redirectToHostingPromoIfNotAtomic( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
+		// Keep the user within the Settings tab
+		const isRemoveDuplicateViewsExperimentEnabled =
+			await getIsRemoveDuplicateViewsExperimentEnabled();
+		if ( isRemoveDuplicateViewsExperimentEnabled ) {
+			return page.redirect( '/sites/settings/site/' + context.params.site_id );
+		}
+
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
