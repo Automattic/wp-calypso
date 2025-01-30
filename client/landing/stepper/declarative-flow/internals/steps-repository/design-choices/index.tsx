@@ -67,7 +67,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const bigSkyBadgeLabel =
 		! isLoading && isEligible && personalProduct?.cost_per_month_display && isGoalsFirstVariation
-			? translate( 'Starting at %(price)s/month', {
+			? translate( 'Starting at %(price)s a month', {
 					args: { price: personalProduct.cost_per_month_display },
 					comment: 'Translators: "price" is a per month price and includes a currency symbol',
 			  } )
