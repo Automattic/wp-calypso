@@ -2,6 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useBigSkyBeforePlans } from 'calypso/landing/stepper/declarative-flow/helpers/use-bigsky-before-plans-experiment';
 
 const Subheader = styled.p`
 	margin: -32px 0 40px 0;
@@ -112,19 +113,22 @@ const PlansPageSubheader = ( {
 	onFreePlanCTAClick: () => void;
 } ) => {
 	const translate = useTranslate();
+	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 
 	return (
 		<>
 			{ deemphasizeFreePlan && offeringFreePlan ? (
 				<Subheader>
-					{ translate(
-						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
-						{
-							components: {
-								link: <Button onClick={ onFreePlanCTAClick } borderless />,
-							},
-						}
-					) }
+					{ isBigSkyBeforePlansExperiment
+						? translate( `Unlock a powerful bundle of features.` )
+						: translate(
+								`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+								{
+									components: {
+										link: <Button onClick={ onFreePlanCTAClick } borderless />,
+									},
+								}
+						  ) }
 				</Subheader>
 			) : (
 				showPlanBenefits && <PlanBenefitHeader />
