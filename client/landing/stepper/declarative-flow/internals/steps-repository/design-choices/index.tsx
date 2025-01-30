@@ -1,6 +1,7 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { themesIllustrationImage } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -51,6 +52,17 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		submit?.( { destination } );
 	};
 
+	const bigSkyBadgeLabel =
+		! isLoading &&
+		isEligible &&
+		isOnboardingFlow( flow ) &&
+		isEnabled( 'onboarding/big-sky-before-plans' )
+			? translate( 'Starting at %(price)s/month', {
+					args: { price: '$4' },
+					comment: 'Translators: "price" is a per month price and will include a currency symbol',
+			  } )
+			: undefined;
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
@@ -78,6 +90,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
+									badgeLabel={ bigSkyBadgeLabel }
 									footer={ preventWidows(
 										translate(
 											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
