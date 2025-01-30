@@ -31,7 +31,6 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
-import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
 import CacheCard from 'calypso/sites/settings/caching/form';
 import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
 import WebServerSettingsCard from 'calypso/sites/settings/web-server/server-configuration-form';
@@ -110,7 +109,6 @@ const AllCards = ( {
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
 	siteId,
-	siteSlug,
 	isJetpack,
 }: AllCardsProps ) => {
 	const allCards: CardEntry[] = [
@@ -135,14 +133,6 @@ const AllCards = ( {
 			type: 'basic',
 		},
 	];
-
-	if ( siteId ) {
-		allCards.push( {
-			feature: 'wp-admin',
-			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
-			type: 'basic',
-		} );
-	}
 
 	if ( config.isEnabled( 'hosting-server-settings-enhancements' ) ) {
 		allCards.push( {

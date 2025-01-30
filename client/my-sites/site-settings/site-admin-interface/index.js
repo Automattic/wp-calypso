@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-gridicon-size */
-import { Button, Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { useTranslate, localize } from 'i18n-calypso';
@@ -8,10 +8,8 @@ import { useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -21,7 +19,7 @@ import {
 	removeNotice,
 	successNotice,
 } from 'calypso/state/notices/actions';
-import { getSiteOption, getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { useSiteInterfaceMutation } from './use-select-interface-mutation';
 import './style.scss';
 
@@ -36,7 +34,7 @@ const FormRadioStyled = styled( FormRadio )( {
 	},
 } );
 
-const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
+const SiteAdminInterface = ( { siteId, isHosting = false } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const dispatch = useDispatch();
@@ -49,7 +47,6 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 	const adminInterface = useSelector(
 		( state ) => getSiteOption( state, siteId, 'wpcom_admin_interface' ) || 'calypso'
 	);
-	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 	const { setSiteInterface, isLoading: isUpdating } = useSiteInterfaceMutation( siteId, {
 		onMutate: () => {
@@ -154,64 +151,6 @@ const SiteAdminInterface = ( { siteId, siteSlug, isHosting = false } ) => {
 			</>
 		);
 	};
-
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
-
-	if ( isHosting ) {
-		let settingLink = `/settings/general/${ siteSlug }#admin-interface-style`;
-		if ( adminInterface === 'wp-admin' ) {
-			settingLink = `${ siteAdminUrl }options-general.php`;
-		} else if ( isRemoveDuplicateViewsExperimentEnabled ) {
-			settingLink = `/sites/settings/site/${ siteSlug }#admin-interface-style`;
-		}
-
-		return (
-			<HostingCard
-				className="admin-interface-style-card"
-				headingId="admin-interface-style"
-				title={ translate( 'Admin interface style' ) }
-			>
-				<HostingCardDescription>
-					{ translate(
-						'Set the admin interface style for all users. {{supportLink}}Learn more{{/supportLink}}',
-						{
-							components: {
-								supportLink: (
-									<InlineSupportLink supportContext="admin-interface-style" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				</HostingCardDescription>
-				<p className="form-setting-explanation">
-					{ translate( 'This setting has now moved to {{a}}Settings → General{{/a}}.', {
-						components: {
-							a: <a href={ settingLink } rel="noreferrer" />,
-						},
-					} ) }
-				</p>
-			</HostingCard>
-		);
-	}
-
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
-		return (
-			<HostingCard
-				className="admin-interface-style-card"
-				headingId="admin-interface-style"
-				title={ translate( 'Admin interface style' ) }
-			>
-				{ renderForm() }
-				<Button
-					busy={ isUpdating }
-					disabled={ isUpdating }
-					onClick={ () => handleSubmitForm( selectedAdminInterface ) }
-				>
-					{ translate( 'Save' ) }
-				</Button>
-			</HostingCard>
-		);
-	}
 
 	return (
 		<>

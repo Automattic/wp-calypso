@@ -1,7 +1,4 @@
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { DIFMUpsell } from '../components/difm-upsell-banner';
 import { A4AFullyManagedSiteForm } from './agency';
 import EnhancedOwnershipForm from './enhanced-ownership';
@@ -29,8 +26,6 @@ export default function SiteSettingsForm( {
 	eventTracker,
 	uniqueEventTracker,
 } ) {
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-
 	if ( ! site ) {
 		return null;
 	}
@@ -101,8 +96,6 @@ export default function SiteSettingsForm( {
 				isRequestingSettings={ isRequestingSettings }
 				isSavingSettings={ isSavingSettings }
 			/>
-
-			<SiteAdminInterface siteId={ site.ID } siteSlug={ siteSlug } />
 		</>
 	);
 }
