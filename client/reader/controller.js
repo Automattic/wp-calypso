@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
@@ -394,185 +395,198 @@ export function redirectLoggedOutToDiscover( context, next ) {
  * For backward compatibility redirect all `/read` URLs to `/reader`.
  */
 export function setupReadRoutes() {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
 	const readUrlsList = [
 		{
-			url: '/read',
+			path: '/read',
 			getRedirect: () => '/reader',
 		},
 		{
-			url: '/read/a8c',
+			path: '/read/a8c',
 			getRedirect: () => '/reader/a8c',
 		},
 		{
-			url: '/read/blog',
+			path: '/read/blog',
 			getRedirect: () => '/reader',
 		},
 		// Feed Stream.
 		{
-			url: '/read/blog/feed/:feed_id',
+			path: '/read/blog/feed/:feed_id',
 			regex: /^\/read\/blog\/feed\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
 		},
 		// Old Blog View.
 		{
-			url: '/read/blog/id/:blog_id',
+			path: '/read/blog/id/:blog_id',
 			regex: /^\/read\/blog\/id\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
 		},
 		{
-			url: '/read/blogs',
+			path: '/read/blogs',
 			getRedirect: () => '/reader',
 		},
 		{
-			url: '/read/blogs/:blog_id',
+			path: '/read/blogs/:blog_id',
 			regex: /^\/read\/blogs\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
 		},
 		{
-			url: '/read/blogs/:blog_id/posts/:post_id',
+			path: '/read/blogs/:blog_id/posts/:post_id',
 			regex: /^\/read\/blogs\/([0-9]+)\/posts\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
 		},
 		{
-			url: '/read/conversations',
+			path: '/read/conversations',
 			getRedirect: () => '/reader/conversations',
 		},
 		{
-			url: '/read/conversations/a8c',
+			path: '/read/conversations/a8c',
 			getRedirect: () => '/reader/conversations/a8c',
 		},
 		{
-			url: '/read/feed',
+			path: '/read/feed',
 			getRedirect: () => '/reader',
 		},
 		{
-			url: '/read/feeds',
+			path: '/read/feeds',
 			getRedirect: () => '/reader',
 		},
 		{
-			url: '/read/feeds/:feed_id',
+			path: '/read/feeds/:feed_id',
 			regex: /^\/read\/feeds\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
 		},
 		{
-			url: '/read/feeds/:feed_id/posts',
+			path: '/read/feeds/:feed_id/posts',
 			regex: /^\/read\/feeds\/([0-9]+)\/posts$/i,
 			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
 		},
 		{
-			url: '/read/feeds/:feed_id/posts/:feed_item_id',
+			path: '/read/feeds/:feed_id/posts/:feed_item_id',
 			regex: /^\/read\/feeds\/([0-9]+)\/posts\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.feed_item_id }`,
 		},
 		{
-			url: '/read/following',
+			path: '/read/following',
 			getRedirect: () => '/reader',
 		},
 		{
-			url: '/read/list/new',
+			path: '/read/list/new',
 			getRedirect: () => '/reader/list/new',
 		},
 		{
-			url: '/read/list/:owner/:slug',
+			path: '/read/list/:owner/:slug',
 			regex: /^\/read\/list\/([^/]+)\/([^/]+)$/i,
 			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }`,
 		},
 		{
-			url: '/read/list/:owner/:slug/edit',
+			path: '/read/list/:owner/:slug/edit',
 			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit$/i,
 			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit`,
 		},
 		{
-			url: '/read/list/:owner/:slug/edit/items',
+			path: '/read/list/:owner/:slug/edit/items',
 			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit\/items$/i,
 			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit/items`,
 		},
 		{
-			url: '/read/list/:owner/:slug/export',
+			path: '/read/list/:owner/:slug/export',
 			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/export$/i,
 			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/export`,
 		},
 		{
-			url: '/read/list/:owner/:slug/delete',
+			path: '/read/list/:owner/:slug/delete',
 			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/delete$/i,
 			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/delete`,
 		},
 		{
-			url: '/read/notifications',
+			path: '/read/notifications',
 			getRedirect: () => '/reader/notifications',
 		},
 		{
-			url: '/read/p2',
+			path: '/read/p2',
 			getRedirect: () => '/reader/p2',
 		},
 		{
-			url: '/read/post',
+			path: '/read/post',
 			getRedirect: () => '/reader',
 		},
 		// Old Full Post View.
 		{
-			url: '/read/post/feed/:feed_id/:post_id',
+			path: '/read/post/feed/:feed_id/:post_id',
 			regex: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.post_id }`,
 		},
 		// Old Full Post View.
 		{
-			url: '/read/post/id/:blog_id/:post_id',
+			path: '/read/post/id/:blog_id/:post_id',
 			regex: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
 		},
 		{
-			url: '/read/search',
+			path: '/read/search',
 			getRedirect: () => '/reader/search',
 		},
 		{
-			url: '/read/site/subscription/:blog_id',
+			path: `/${ anyLangParam }/read/search`,
+			// regex: /^\/:[^/]+\/read\/search$/i,
+			getRedirect: () => `/reader/search`,
+		},
+		{
+			path: `/${ langParam }/read/search`,
+			// regex: /^\/:[^/]+\/read\/search$/i,
+			getRedirect: () => `/reader/search`,
+		},
+		{
+			path: '/read/site/subscription/:blog_id',
 			regex: /^\/read\/site\/subscription\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/site/subscription/${ params.blog_id }`,
 		},
 		{
-			url: '/read/subscriptions',
+			path: '/read/subscriptions',
 			getRedirect: () => '/reader/subscriptions',
 		},
 		{
-			url: '/read/subscriptions/:subscription_id',
+			path: '/read/subscriptions/:subscription_id',
 			regex: /^\/read\/subscriptions\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/subscriptions/${ params.subscription_id }`,
 		},
 		{
-			url: '/read/subscriptions/comments',
+			path: '/read/subscriptions/comments',
 			getRedirect: () => '/reader/subscriptions/comments',
 		},
 		{
-			url: '/read/subscriptions/pending',
+			path: '/read/subscriptions/pending',
 			getRedirect: () => '/reader/subscriptions/pending',
 		},
 		{
-			url: '/read/tag/:tag_name',
+			path: '/read/tag/:tag_name',
 			regex: /^\/read\/tag\/([^/]+)$/i,
 			getRedirect: ( params ) => `/tag/${ params.tag_name }`,
 		},
 		{
-			url: '/read/users/:user_id',
+			path: '/read/users/:user_id',
 			regex: /^\/read\/users\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/users/${ params.user_id }`,
 		},
 		{
-			url: '/read/users/:user_id/lists',
+			path: '/read/users/:user_id/lists',
 			regex: /^\/read\/users\/([0-9]+)\/lists$/i,
 			getRedirect: ( params ) => `/reader/users/${ params.user_id }/lists`,
 		},
 	];
 
-	readUrlsList.forEach( ( { url, regex, getRedirect } ) => {
+	readUrlsList.forEach( ( { path, regex, getRedirect } ) => {
 		// If no regex is provided, just redirect to the new URL.
 		if ( ! regex ) {
-			page( url, getRedirect() );
+			page( path, getRedirect() );
 			return;
 		}
 
 		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
-		page( url, ( context, next ) => {
+		page( path, ( context, next ) => {
 			if ( context.path.match( regex ) ) {
 				page.redirect( getRedirect( context.params ) );
 			}

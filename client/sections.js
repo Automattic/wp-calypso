@@ -384,7 +384,12 @@ const sections = [
 	// this MUST be the first section for /reader paths so subsequent sections under /reader can override settings
 	{
 		name: 'reader',
-		paths: [ '/reader', '/read(/?.*)' ],
+		paths: [
+			'/reader',
+			// Legacy paths that we need to support for backwards compatibility.
+			'/read(/?.*)',
+			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read/search',
+		],
 		module: 'calypso/reader',
 		group: 'reader',
 		enableLoggedOut: true,
