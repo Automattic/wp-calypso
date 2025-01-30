@@ -106,7 +106,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		completed: preparationCompleted,
 		error: preparationError,
 		migrationKey,
-	} = usePrepareSiteForMigration( siteId );
+	} = usePrepareSiteForMigration( siteId, fromUrl );
 
 	const migrationKeyStatus = detailedStatus.migrationKey;
 

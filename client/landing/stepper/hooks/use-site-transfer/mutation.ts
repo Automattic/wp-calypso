@@ -9,17 +9,21 @@ interface InitiateAtomicTransferResponse {
 	atomic_transfer_id: string;
 }
 
-const startTransfer = ( siteId: number ): Promise< InitiateAtomicTransferResponse > =>
+const startTransfer = (
+	siteId: number,
+	from?: string
+): Promise< InitiateAtomicTransferResponse > =>
 	wpcom.req.post( {
 		path: `/sites/${ siteId }/atomic/transfers`,
 		apiNamespace: 'wpcom/v2',
 		body: {
 			context: 'unknown',
 			transfer_intent: 'migrate',
+			migration_source_site_domain: from,
 		},
 	} );
 
-type Options = Pick< UseMutationOptions, 'retry' >;
+type Options = Pick< UseMutationOptions, 'retry' > & { from?: string };
 /**
  *  Mutation hook to initiate a site transfer
  */
@@ -27,7 +31,9 @@ export const useSiteTransferMutation = ( siteId?: number, options?: Options ) =>
 	const query = useQueryClient();
 
 	const mutation = () =>
-		siteId ? startTransfer( siteId ) : Promise.reject( new Error( 'siteId is required' ) );
+		siteId
+			? startTransfer( siteId, options?.from )
+			: Promise.reject( new Error( 'siteId is required' ) );
 
 	const refreshSiteStatus = ( data: InitiateAtomicTransferResponse ) => {
 		query.setQueryData( getSiteTransferStatusQueryKey( siteId! ), data );
