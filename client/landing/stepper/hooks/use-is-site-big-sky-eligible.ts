@@ -33,9 +33,13 @@ export function useIsBigSkyEligible() {
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 
+	if ( config.isEnabled( 'onboarding/big-sky-before-plans' ) ) {
+		const eligibilityResult = featureFlagEnabled && isEligibleGoals && onSupportedDevice;
+		return { isLoading: false, isEligible: eligibilityResult };
+	}
+
 	const eligibilityResult =
-		( featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice ) ||
-		false;
+		featureFlagEnabled && isOwner && isEligiblePlan && isEligibleGoals && onSupportedDevice;
 
 	return { isLoading: false, isEligible: eligibilityResult };
 }

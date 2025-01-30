@@ -1,4 +1,3 @@
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
 import { SocialPreviewsBaseProps } from '../types';
@@ -47,10 +46,6 @@ export const FacebookPreviews: React.FC< FacebookPreviewsProps > = ( {
 							'This is what it will look like when someone shares the link to your WordPress post on Facebook.',
 							'social-previews'
 						) }
-						&nbsp;
-						<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-							{ __( 'Learn more about links', 'social-previews' ) }
-						</ExternalLink>
 					</p>
 					{ hasCustomImage ? (
 						<LinkPreviewDetails { ...props } />

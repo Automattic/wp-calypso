@@ -242,7 +242,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const renderConfirm = () => {
 		let restoreWarning = translate(
-			'Important: This action will replace the selected content from the selected restore point.'
+			'Important: This action will replace the selected content with the content from the selected restore point.'
 		);
 
 		if ( rewindConfig.sqls ) {
