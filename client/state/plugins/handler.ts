@@ -30,26 +30,29 @@ export const getPluginHandler = ( siteId: number, pluginId: string ) => {
 	if ( ! useWPV2APIEndpoint ) {
 		return pluginHandler;
 	}
-	// For wp/v2 we need to override the encoded pluginId otherwise the plugin will not be found.
-	pluginHandler.pluginPath = pluginHandler.pluginPath.replace(
-		encodeURIComponent( pluginId ),
-		pluginId
-	);
-	pluginHandler._slug = pluginId;
 
-	const handlers: PluginHandlers = methods.reduce< PluginHandlers >( ( acc, method ) => {
-		acc[ method ] = ( query, ...args ) =>
-			pluginHandler[ method ]( { ...query, apiNamespace: wpV2APINamespace }, ...args );
-		return acc;
-	}, {} );
+	const handlers: PluginHandlers = methods.reduce< PluginHandlers >(
+		( acc, method ) => ( {
+			...acc,
+			[ method ]: ( query, ...args ) => pluginHandler[ method ]( { ...query }, ...args ),
+		} ),
+		{}
+	);
+
+	// For wp/v2 we need to override the encoded pluginId otherwise the plugin will not be found.
+	const pluginPath = pluginHandler.pluginPath.replace( encodeURIComponent( pluginId ), pluginId );
 
 	// Custom methods for wp/v2 requiring different payloads.
 	handlers.get = ( query, ...args ) =>
-		pluginHandler.get( { ...query, apiNamespace: wpV2APINamespace }, ...args );
+		pluginHandler.wpcom.req.get(
+			pluginPath,
+			{ ...query, apiNamespace: wpV2APINamespace },
+			...args
+		);
 
 	handlers.update = ( query, body, ...args ) =>
 		pluginHandler.wpcom.req.post(
-			pluginHandler.pluginPath,
+			pluginPath,
 			{ ...query, apiNamespace: wpV2APINamespace },
 			body,
 			...args
@@ -91,7 +94,7 @@ export const getPluginHandler = ( siteId: number, pluginId: string ) => {
 
 	handlers.delete = ( query, ...args ) =>
 		pluginHandler.wpcom.req.post(
-			{ path: pluginHandler.pluginPath, method: 'delete' },
+			{ path: pluginPath, method: 'delete' },
 			{ ...query, apiNamespace: wpV2APINamespace },
 			null,
 			...args
