@@ -8,7 +8,8 @@ import { hasTitanMailWithUs } from 'calypso/lib/titan';
 
 const EmailTypeIcon = ( { translate, domain } ) => {
 	if ( hasTitanMailWithUs( domain ) ) {
-		return <Gridicon icon="my-sites" size={ 36 } />;
+		// The my-sites SVG has a bit of extra padding on the left, so we need to adjust the position
+		return <Gridicon style={ { marginLeft: -3 } } icon="my-sites" size={ 36 } />;
 	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
