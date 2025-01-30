@@ -483,7 +483,7 @@ function installPluginHelper(
 		const successCallback = ( data ) => {
 			const normalizedData = {
 				...data,
-				slug: data.slug ?? pluginId,
+				slug: data.slug ?? plugin.slug,
 			};
 
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data: normalizedData } );
