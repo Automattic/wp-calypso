@@ -71,19 +71,29 @@ interface SourceInputProps {
 }
 
 function SourceInput( props: SourceInputProps ) {
-	const { onChange, suffix } = props;
+	const { onChange, suffix, ...rest } = props;
 	const translate = useTranslate();
+	const [ highlightSuffix, setHighlightSuffix ] = React.useState( 0 );
 
 	return (
-		<div style={ { '--suffix': `"${ suffix }"` } as React.CSSProperties }>
+		<div className="email-forwarding__mailbox-input-wrapper">
 			<TextControl
 				label={ translate( 'Forward from' ) }
 				className="email-forwarding__mailbox-input"
 				name="mailbox"
 				maxLength={ 64 }
-				{ ...props }
 				onChange={ ( value ) => onChange( value.replace( /@.*/gi, '' ) ) }
+				onKeyUp={ ( event ) => {
+					if ( event.key === '@' ) {
+						setHighlightSuffix( ( s ) => s + 1 );
+					}
+				} }
+				{ ...rest }
 			/>
+			{ /* Blink the suffix when the user enters @ */ }
+			<p key={ highlightSuffix } className="email-forwarding__mailbox-suffix">
+				{ suffix }
+			</p>
 		</div>
 	);
 }
