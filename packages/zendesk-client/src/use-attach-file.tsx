@@ -56,7 +56,7 @@ export const useAttachFileToConversation = () => {
 					'x-smooch-clientid': clientId,
 					'x-smooch-sdk': 'web/zendesk/0.1',
 				},
-			} ).then( ( response ) => response.json() );
+			} );
 		},
 	} );
 };
