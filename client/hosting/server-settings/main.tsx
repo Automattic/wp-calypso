@@ -175,6 +175,7 @@ const Content = ( {
 	hasSftpFeature,
 	hasTransfer,
 	isBusinessTrial,
+	isRemoveDuplicateViewsExperimentEnabled,
 	isJetpack,
 	isSiteAtomic,
 	siteId,
@@ -184,6 +185,7 @@ const Content = ( {
 	hasSftpFeature: boolean;
 	hasTransfer: boolean;
 	isBusinessTrial: boolean;
+	isRemoveDuplicateViewsExperimentEnabled: boolean;
 	isJetpack: boolean | null;
 	isSiteAtomic: boolean;
 	siteId: number | null;
@@ -191,7 +193,6 @@ const Content = ( {
 } ) => {
 	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
 
-	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 	const Inner = isRemoveDuplicateViewsExperimentEnabled ? InnerDiv : MasonryGrid;
 
 	return (
@@ -221,6 +222,8 @@ type ServerSettingsProps = {
 const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const clickActivate = () =>
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
@@ -331,7 +334,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	}
 
 	return (
-		<Panel wide className="page-server-settings">
+		<Panel wide={ ! isRemoveDuplicateViewsExperimentEnabled } className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -371,6 +374,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				hasSftpFeature={ hasSftpFeature }
 				hasTransfer={ hasTransfer }
 				isBusinessTrial={ isBusinessTrial }
+				isRemoveDuplicateViewsExperimentEnabled={ isRemoveDuplicateViewsExperimentEnabled }
 				isJetpack={ isJetpack }
 				isSiteAtomic={ isSiteAtomic }
 				siteId={ siteId }
