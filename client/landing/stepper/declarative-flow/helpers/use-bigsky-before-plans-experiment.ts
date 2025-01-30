@@ -4,8 +4,7 @@ import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { getFlowFromURL } from '../../utils/get-flow-from-url';
 
-// TODO: change the experiment name accordingly
-export const EXPERIMENT_NAME = 'calypso_woo_express_plans_grid_2023';
+export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_bigsky_202501_v1';
 
 /**
  * Check whether the user should have the "Big Sky before plans" onboarding experience.
