@@ -59,7 +59,7 @@ export class ActivationModal extends Component {
 	closeModalHandler =
 		( action = 'dismiss' ) =>
 		() => {
-			const { newThemeId, siteId, source, isCurrentThemeAllowedOnSite } = this.props;
+			const { newThemeId, activeTheme, siteId, source, isCurrentThemeAllowedOnSite } = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptActivationModal( newThemeId );
 				const eventName = ! isCurrentThemeAllowedOnSite
@@ -68,15 +68,18 @@ export class ActivationModal extends Component {
 
 				recordTracksEvent( eventName, {
 					theme: newThemeId,
+					activeTheme: activeTheme.id,
 				} );
 				return this.props.activateTheme( newThemeId, siteId, { source } );
 			} else if ( 'dismiss' === action ) {
 				const eventName = ! isCurrentThemeAllowedOnSite
 					? 'calypso_theme_switch_plan_warning_declined'
 					: 'calypso_theme_autoloading_homepage_modal_dismiss';
+
 				recordTracksEvent( eventName, {
 					action: 'escape',
 					theme: newThemeId,
+					activeTheme: activeTheme.id,
 				} );
 				return this.props.dismissActivationModal();
 			}
