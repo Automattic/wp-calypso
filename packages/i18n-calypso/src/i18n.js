@@ -202,7 +202,7 @@ I18N.prototype.emit = function ( ...args ) {
  */
 I18N.prototype.numberFormat = function (
 	number,
-	{ decimals = 0, forceLatin = true, numberFormatOptions = {}, caching = 'optimal' } = {}
+	{ decimals = 0, forceLatin = true, numberFormatOptions = {}, caching = 'none' } = {}
 ) {
 	const browserSafeLocale = this.getBrowserSafeLocale();
 
