@@ -1,12 +1,17 @@
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
+import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_SAVE,
+	USER_SETTINGS_SAVE_SUCCESS,
+} from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { dispatchProfileCompleteNotice } from 'calypso/state/reader/onboarding/handlers';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import {
 	clearUnsavedUserSettings,
@@ -170,4 +175,5 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 			fromApi,
 		} ),
 	],
+	[ USER_SETTINGS_SAVE_SUCCESS ]: [ dispatchProfileCompleteNotice ],
 } );

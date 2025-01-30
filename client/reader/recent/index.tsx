@@ -273,8 +273,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<EmptyContent
 						title={ translate( 'Nothing Posted Yet' ) }
 						line={ translate( 'This feed is currently empty.' ) }
-						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-						illustrationWidth={ 400 }
+						illustration=""
 					/>
 				) }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (

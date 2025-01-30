@@ -1,10 +1,11 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { CONTACT, HTTPS_SSL } from '@automattic/urls';
+import { CONTACT } from '@automattic/urls';
 import { Icon, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, useEffect, useState } from 'react';
 import Accordion from 'calypso/components/domains/accordion';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import useSslDetailsQuery from 'calypso/data/domains/ssl/use-ssl-details-query';
 import useProvisionCertificateMutation from 'calypso/data/domains/ssl/use-ssl-provision-certificate-mutation';
 import { useDispatch } from 'calypso/state';
@@ -165,7 +166,11 @@ const DomainSecurityDetails = ( { domain, isDisabled }: SecurityCardProps ) => {
 					<div className="domain-security-details__description-help-text">
 						{ translate(
 							'We give you strong HTTPS encryption with your domain for free. This provides a trust indicator for your visitors and keeps their connection to your site secure. {{a}}Learn more{{/a}}',
-							{ components: { a: <a href={ localizeUrl( HTTPS_SSL ) } /> } }
+							{
+								components: {
+									a: <InlineSupportLink supportContext="https-ssl" showIcon={ false } />,
+								},
+							}
 						) }
 					</div>
 				</div>

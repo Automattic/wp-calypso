@@ -95,7 +95,7 @@ const usePricingMetaForGridPlans = ( {
 	} );
 	const selectedStorageOptions = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptions( siteId ),
-		[]
+		[ siteId ]
 	);
 
 	const planAvailabilityForPurchase = useCheckPlanAvailabilityForPurchase( {

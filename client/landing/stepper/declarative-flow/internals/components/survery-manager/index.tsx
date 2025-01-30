@@ -5,36 +5,73 @@ import {
 	MIGRATION_SIGNUP_FLOW,
 } from '@automattic/onboarding';
 import { Suspense } from 'react';
-import { useFlowNavigation } from '../../hooks/use-flow-navigation';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import AsyncMigrationSurvey from '../../steps-repository/components/migration-survey/async';
 import { Flow } from '../../types';
 import { DeferredRender } from '../deferred-render';
 
-const MIGRATION_SURVEY_FLOWS = [
-	SITE_MIGRATION_FLOW,
-	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_SIGNUP_FLOW,
-];
+const migrationFlows = [ SITE_MIGRATION_FLOW, HOSTED_SITE_MIGRATION_FLOW, MIGRATION_SIGNUP_FLOW ];
+const availableCountries = [ 'US', 'IN' ];
 
-const SurveyManager = ( { disabled, flow }: { disabled: boolean; flow: Flow } ) => {
-	const { params } = useFlowNavigation( flow );
+const isMigrationSurveyAvailable = ( {
+	country,
+	flow,
+	isEnglish,
+}: {
+	country?: string;
+	flow?: string;
+	isEnglish?: boolean;
+} ) => {
+	if ( ! country || ! flow || ! isEnglish ) {
+		return false;
+	}
+
+	if ( ! migrationFlows.includes( flow ) ) {
+		return false;
+	}
+
+	if ( ! availableCountries.includes( country ) ) {
+		return false;
+	}
+
+	return true;
+};
+
+const surveyList = [
+	{
+		Component: AsyncMigrationSurvey,
+		isAvailable: isMigrationSurveyAvailable,
+	},
+] as const;
+
+const SurveyManager = ( { disabled = false, flow }: { disabled?: boolean; flow?: Flow } ) => {
 	const isEnLocale = useIsEnglishLocale();
+	const { data } = useGeoLocationQuery();
+	const countryCode = data?.country_short;
 
-	if ( ! params.flow || disabled ) {
+	if ( ! flow || disabled || ! countryCode ) {
 		return null;
 	}
 
-	if ( MIGRATION_SURVEY_FLOWS.includes( params.flow ) && isEnLocale ) {
-		return (
-			<DeferredRender timeMs={ 2000 }>
-				<Suspense>
-					<AsyncMigrationSurvey />
-				</Suspense>
-			</DeferredRender>
-		);
+	const survey = surveyList.find( ( { isAvailable } ) =>
+		isAvailable( {
+			flow: flow?.variantSlug || flow?.name,
+			country: countryCode,
+			isEnglish: isEnLocale,
+		} )
+	);
+
+	if ( ! survey ) {
+		return null;
 	}
 
-	return null;
+	return (
+		<DeferredRender timeMs={ 2000 }>
+			<Suspense>
+				<survey.Component countryCode={ countryCode } />
+			</Suspense>
+		</DeferredRender>
+	);
 };
 
 export default SurveyManager;

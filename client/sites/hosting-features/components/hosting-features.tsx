@@ -115,6 +115,13 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 			),
 			supportContext: 'hosting-configuration',
 		},
+		{
+			title: translate( 'SFTP & SSH Access' ),
+			text: translate(
+				'Securely access and edit your site via SFTP, or use SSH for file management and WP-CLI commands.'
+			),
+			supportContext: 'hosting-sftp',
+		},
 	];
 
 	const canSiteGoAtomic = ! isSiteAtomic && hasSftpFeature;
