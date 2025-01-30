@@ -48,15 +48,21 @@ export function PaidPlanPaidDomainDialog( {
 		}
 	}
 
-	const upsellDescription = translate(
-		"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
-	);
+	const upsellDescription = createWithBigSky
+		? ''
+		: translate(
+				"Custom domains are only available with a paid plan. Choose annual billing and receive the domain's first year free."
+		  );
+
+	const bigSkyHeader = paidDomainName
+		? translate( 'Domains and our AI Website Builder are only available with a paid plan' )
+		: translate( 'Our AI Website Builder is only available with a paid plan' );
 
 	return (
 		<DialogContainer>
 			<Heading id="plan-upsell-modal-title" shrinkMobileFont>
 				{ createWithBigSky
-					? translate( 'Our AI Website Builder is only available with a paid plan' )
+					? bigSkyHeader
 					: translate( 'A paid plan is required for your domain.' ) }
 			</Heading>
 			<SubHeading id="plan-upsell-modal-description">{ upsellDescription }</SubHeading>
