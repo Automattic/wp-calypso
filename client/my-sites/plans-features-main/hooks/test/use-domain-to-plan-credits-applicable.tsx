@@ -2,14 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { useDomainToPlanCredits } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits';
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
+import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits', () => ( {
-	useDomainToPlanCredits: jest.fn(),
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/purchases/selectors/has-purchased-domain', () => ( {
@@ -20,8 +20,8 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isCurrentPlanPaid: jest.fn(),
 } ) );
 
-const mockUseDomainToPlanCredits = useDomainToPlanCredits as jest.MockedFunction<
-	typeof useDomainToPlanCredits
+const mockUseMaxPlanUpgradeCredits = useMaxPlanUpgradeCredits as jest.MockedFunction<
+	typeof useMaxPlanUpgradeCredits
 >;
 const mockHasPurchasedDomain = hasPurchasedDomain as jest.MockedFunction<
 	typeof hasPurchasedDomain
@@ -33,26 +33,20 @@ describe( 'usePlanUpgradeCreditsApplicable', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 
-		mockUseDomainToPlanCredits.mockImplementation( () => 100 );
+		mockUseMaxPlanUpgradeCredits.mockImplementation( () => 1000 );
 		mockHasPurchasedDomain.mockImplementation( () => true );
 		mockIsCurrentPlanPaid.mockImplementation( () => false );
 	} );
 
 	test( 'Returns credit when site has a domain, is on a free plan, and has credits', () => {
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
-		expect( result.current ).toEqual( 100 );
+		expect( result.current ).toEqual( 1000 );
 	} );
 
 	test( 'Returns credit when credit value is 0', () => {
-		mockUseDomainToPlanCredits.mockImplementation( () => 0 );
+		mockUseMaxPlanUpgradeCredits.mockImplementation( () => 0 );
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
 		expect( result.current ).toEqual( 0 );
-	} );
-
-	test( 'Returns null when credit value is null', () => {
-		mockUseDomainToPlanCredits.mockImplementation( () => null );
-		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
-		expect( result.current ).toEqual( null );
 	} );
 
 	test( 'Returns null when site has no domain', () => {
