@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import NavigationHeader from 'calypso/components/navigation-header';
-import Notice from 'calypso/components/notice';
 import { Panel } from 'calypso/components/panel';
 import { SOURCE_SETTINGS_ADMINISTRATION } from 'calypso/my-sites/site-settings/site-tools/utils';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
@@ -49,15 +48,11 @@ export function SiteSettings( props: any ) {
 				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
 			<SiteSettingsForm { ...props } { ...additionalProps } />
-			{ ! isWpcomStagingSite ? (
+			{ ! isWpcomStagingSite && (
 				<>
 					<QuerySitePurchases siteId={ siteId } />
 					<AdministrationTools source={ SOURCE_SETTINGS_ADMINISTRATION } />
 				</>
-			) : (
-				<Notice showDismiss={ false } status="is-warning">
-					{ translate( 'This setting is not supported for staging sites.' ) }
-				</Notice>
 			) }
 		</Panel>
 	);
