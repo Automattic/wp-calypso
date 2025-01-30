@@ -1,4 +1,5 @@
 import { isWooExpressFlow } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
@@ -103,6 +104,14 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 
 		// new free plan modal
 		__( 'Our AI Website Builder is only available with a paid plan' ),
+		translate(
+			`Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.`,
+			{
+				components: {
+					link: <Button />,
+				},
+			}
+		),
 	];
 
 	const { site, siteSlugOrId } = useSiteData();
