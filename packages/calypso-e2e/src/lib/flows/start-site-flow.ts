@@ -5,7 +5,13 @@ import { Page } from 'playwright';
  *
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
-export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
+export type StepName =
+	| 'goals'
+	| 'vertical'
+	| 'intent'
+	| 'designSetup'
+	| 'options'
+	| 'designChoices';
 type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
@@ -26,6 +32,9 @@ const selectors = {
 	selectedGoalButton: ( goal: string ) =>
 		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
 
+	// Design choices
+	designChoiceButton: ( choice: string ) => `button.design-choice:has-text("${ choice }")`,
+
 	// Step containers
 	contentAgnosticContainer: '.step-container',
 	themePickerContainer: '.design-picker',
@@ -33,6 +42,7 @@ const selectors = {
 	verticalsStepContainer: '.site-vertical',
 	intentStepContainer: '.intent-step',
 	optionsStepContainer: '.is-step-write',
+	designChoicesStepContainer: '.design-choices',
 };
 
 /**
@@ -77,6 +87,9 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.optionsStepContainer ).count() ) > 0 ) {
 			return 'options';
 		}
+		if ( ( await this.page.locator( selectors.designChoicesStepContainer ).count() ) > 0 ) {
+			return 'designChoices';
+		}
 		throw new Error( `Unknown or invalid step` );
 	}
 
@@ -88,6 +101,18 @@ export class StartSiteFlow {
 	async selectGoal( goal: string ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
+	}
+
+	/**
+	 * Select a design choice by text.
+	 *
+	 * @param {string} choice The button text
+	 */
+	async clickDesignChoice( choice: 'theme' | 'ai' ): Promise< void > {
+		// It's best to select the element using accessible text
+		const choiceLabel = choice === 'theme' ? 'Choose a theme' : 'Design with AI';
+
+		await this.page.click( selectors.designChoiceButton( choiceLabel ) );
 	}
 
 	/**
