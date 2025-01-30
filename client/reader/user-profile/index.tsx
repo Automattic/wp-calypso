@@ -41,7 +41,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 	if ( ! user ) {
 		return (
 			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
+				illustration=""
 				title={ translate( 'Uh oh. User not found.' ) }
 				line={ translate( 'Sorry, the user you were looking for could not be found.' ) }
 				action={ translate( 'Return to Reader' ) }

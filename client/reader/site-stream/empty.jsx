@@ -26,8 +26,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			title={ translate( 'No posts' ) }
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
-			illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-			illustrationWidth={ 500 }
+			illustration=""
 		/>
 	);
 };

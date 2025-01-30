@@ -45,8 +45,7 @@ class SearchEmptyContent extends Component {
 				title={ this.props.translate( 'No results' ) }
 				line={ <p> { message } </p> }
 				action={ action }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

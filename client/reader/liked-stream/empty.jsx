@@ -34,8 +34,7 @@ class TagEmptyContent extends Component {
 				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
