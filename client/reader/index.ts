@@ -15,7 +15,6 @@ import {
 	feedListing,
 	following,
 	incompleteUrlRedirects,
-	legacyRedirects,
 	readA8C,
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
@@ -26,6 +25,7 @@ import {
 	siteSubscription,
 	commentSubscriptionsManager,
 	pendingSubscriptionsManager,
+	setupReadRoutes,
 } from './controller';
 import { userPosts, userLists } from './user-profile/controller';
 
@@ -47,6 +47,7 @@ export async function lazyLoadDependencies(): Promise< void > {
 }
 
 export default async function (): Promise< void > {
+	setupReadRoutes();
 	await lazyLoadDependencies();
 
 	if ( config.isEnabled( 'reader' ) ) {
@@ -62,16 +63,14 @@ export default async function (): Promise< void > {
 		);
 
 		// Old and incomplete paths that should be redirected to /
-		page( '/read/following', '/reader' );
-		page( '/read/blogs', '/reader' );
-		page( '/read/feeds', '/reader' );
-		page( '/read/blog', '/reader' );
-		page( '/read/post', '/reader' );
-		page( '/read/feed', '/reader' );
+		page( '/reader/following', '/reader' );
+		page( '/reader/blogs', '/reader' );
+		page( '/reader/feeds', '/reader' );
+		page( '/reader/blog', '/reader' );
+		page( '/reader/post', '/reader' );
+		page( '/reader/feed', '/reader' );
 
 		// Feed stream
-		page( '/read/blog/feed/:feed_id', legacyRedirects );
-		page( '/read/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page( '/reader/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/feeds/:feed_id',
@@ -118,10 +117,6 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
-
-		// Old full post view
-		page( '/read/post/feed/:feed_id/:post_id', legacyRedirects );
-		page( '/read/post/id/:blog_id/:post_id', legacyRedirects );
 	}
 
 	// Automattic Employee Posts

@@ -35,27 +35,6 @@ function renderFeedError( context, next ) {
 	next();
 }
 
-export function legacyRedirects( context, next ) {
-	const legacyPathRegexes = {
-		feedStream: /^\/read\/blog\/feed\/([0-9]+)$/i,
-		feedFullPost: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
-		blogStream: /^\/read\/blog\/id\/([0-9]+)$/i,
-		blogFullPost: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
-	};
-
-	if ( context.path.match( legacyPathRegexes.feedStream ) ) {
-		page.redirect( `/reader/feeds/${ context.params.feed_id }` );
-	} else if ( context.path.match( legacyPathRegexes.feedFullPost ) ) {
-		page.redirect( `/reader/feeds/${ context.params.feed_id }/posts/${ context.params.post_id }` );
-	} else if ( context.path.match( legacyPathRegexes.blogStream ) ) {
-		page.redirect( `/reader/blogs/${ context.params.blog_id }` );
-	} else if ( context.path.match( legacyPathRegexes.blogFullPost ) ) {
-		page.redirect( `/reader/blogs/${ context.params.blog_id }/posts/${ context.params.post_id }` );
-	}
-
-	next();
-}
-
 export function updateLastRoute( context, next ) {
 	if ( lastRoute ) {
 		context.lastRoute = lastRoute;
@@ -409,4 +388,196 @@ export function redirectLoggedOutToDiscover( context, next ) {
 		return;
 	}
 	return page.redirect( '/discover' );
+}
+
+/**
+ * For backward compatibility redirect all `/read` URLs to `/reader`.
+ */
+export function setupReadRoutes() {
+	const readUrlsList = [
+		{
+			url: '/read',
+			getRedirect: () => '/reader',
+		},
+		{
+			url: '/read/a8c',
+			getRedirect: () => '/reader/a8c',
+		},
+		{
+			url: '/read/blog',
+			getRedirect: () => '/reader',
+		},
+		// Feed Stream.
+		{
+			url: '/read/blog/feed/:feed_id',
+			regex: /^\/read\/blog\/feed\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		// Old Blog View.
+		{
+			url: '/read/blog/id/:blog_id',
+			regex: /^\/read\/blog\/id\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
+			url: '/read/blogs',
+			getRedirect: () => '/reader',
+		},
+		{
+			url: '/read/blogs/:blog_id',
+			regex: /^\/read\/blogs\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
+			url: '/read/blogs/:blog_id/posts/:post_id',
+			regex: /^\/read\/blogs\/([0-9]+)\/posts\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
+		},
+		{
+			url: '/read/conversations',
+			getRedirect: () => '/reader/conversations',
+		},
+		{
+			url: '/read/conversations/a8c',
+			getRedirect: () => '/reader/conversations/a8c',
+		},
+		{
+			url: '/read/feed',
+			getRedirect: () => '/reader',
+		},
+		{
+			url: '/read/feeds',
+			getRedirect: () => '/reader',
+		},
+		{
+			url: '/read/feeds/:feed_id',
+			regex: /^\/read\/feeds\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		{
+			url: '/read/feeds/:feed_id/posts',
+			regex: /^\/read\/feeds\/([0-9]+)\/posts$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }`,
+		},
+		{
+			url: '/read/feeds/:feed_id/posts/:feed_item_id',
+			regex: /^\/read\/feeds\/([0-9]+)\/posts\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.feed_item_id }`,
+		},
+		{
+			url: '/read/following',
+			getRedirect: () => '/reader',
+		},
+		{
+			url: '/read/list/new',
+			getRedirect: () => '/reader/list/new',
+		},
+		{
+			url: '/read/list/:owner/:slug',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }`,
+		},
+		{
+			url: '/read/list/:owner/:slug/edit',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit`,
+		},
+		{
+			url: '/read/list/:owner/:slug/edit/items',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/edit\/items$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/edit/items`,
+		},
+		{
+			url: '/read/list/:owner/:slug/export',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/export$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/export`,
+		},
+		{
+			url: '/read/list/:owner/:slug/delete',
+			regex: /^\/read\/list\/([^/]+)\/([^/]+)\/delete$/i,
+			getRedirect: ( params ) => `/reader/list/${ params.owner }/${ params.slug }/delete`,
+		},
+		{
+			url: '/read/notifications',
+			getRedirect: () => '/reader/notifications',
+		},
+		{
+			url: '/read/p2',
+			getRedirect: () => '/reader/p2',
+		},
+		{
+			url: '/read/post',
+			getRedirect: () => '/reader',
+		},
+		// Old Full Post View.
+		{
+			url: '/read/post/feed/:feed_id/:post_id',
+			regex: /^\/read\/post\/feed\/([0-9]+)\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/feeds/${ params.feed_id }/posts/${ params.post_id }`,
+		},
+		// Old Full Post View.
+		{
+			url: '/read/post/id/:blog_id/:post_id',
+			regex: /^\/read\/post\/id\/([0-9]+)\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
+		},
+		{
+			url: '/read/search',
+			getRedirect: () => '/reader/search',
+		},
+		{
+			url: '/read/site/subscription/:blog_id',
+			regex: /^\/read\/site\/subscription\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/site/subscription/${ params.blog_id }`,
+		},
+		{
+			url: '/read/subscriptions',
+			getRedirect: () => '/reader/subscriptions',
+		},
+		{
+			url: '/read/subscriptions/:subscription_id',
+			regex: /^\/read\/subscriptions\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/subscriptions/${ params.subscription_id }`,
+		},
+		{
+			url: '/read/subscriptions/comments',
+			getRedirect: () => '/reader/subscriptions/comments',
+		},
+		{
+			url: '/read/subscriptions/pending',
+			getRedirect: () => '/reader/subscriptions/pending',
+		},
+		{
+			url: '/read/tag/:tag_name',
+			regex: /^\/read\/tag\/([^/]+)$/i,
+			getRedirect: ( params ) => `/tag/${ params.tag_name }`,
+		},
+		{
+			url: '/read/users/:user_id',
+			regex: /^\/read\/users\/([0-9]+)$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_id }`,
+		},
+		{
+			url: '/read/users/:user_id/lists',
+			regex: /^\/read\/users\/([0-9]+)\/lists$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_id }/lists`,
+		},
+	];
+
+	readUrlsList.forEach( ( { url, regex, getRedirect } ) => {
+		// If no regex is provided, just redirect to the new URL.
+		if ( ! regex ) {
+			page( url, getRedirect() );
+			return;
+		}
+
+		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
+		page( url, ( context, next ) => {
+			if ( context.path.match( regex ) ) {
+				page.redirect( getRedirect( context.params ) );
+			}
+
+			next();
+		} );
+	} );
 }
