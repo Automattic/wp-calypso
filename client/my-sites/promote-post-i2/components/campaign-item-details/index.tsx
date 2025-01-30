@@ -744,7 +744,6 @@ export default function CampaignItemDetails( props: Props ) {
 			<Main wideLayout className="campaign-item-details">
 				{ status === 'rejected' && (
 					<Notice
-						isReskinned
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
@@ -777,7 +776,6 @@ export default function CampaignItemDetails( props: Props ) {
 				{ status === 'suspended' && payment_links && payment_links.length > 0 && (
 					<>
 						<Notice
-							isReskinned
 							showDismiss={ false }
 							status="is-error"
 							icon="notice-outline"
