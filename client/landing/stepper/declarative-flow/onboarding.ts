@@ -163,7 +163,11 @@ const onboarding: Flow = {
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
 		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
-			if ( createWithBigSky ) {
+			if (
+				createWithBigSky &&
+				config.isEnabled( 'onboarding/big-sky-before-plans' ) &&
+				isGoalsAtFrontExperiment
+			) {
 				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
 					siteSlug: providedDependencies.siteSlug,
 				} );
