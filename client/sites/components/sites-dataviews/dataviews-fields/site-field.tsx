@@ -139,14 +139,13 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
-	const href = shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl;
 
 	return (
 		// TODO: Consolidate behavior with `SiteIcon` link
 		<Link
 			className="sites-dataviews__site"
 			disabled={ site.is_deleted }
-			href={ href }
+			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
 			onNavigate={ onSiteClick }
 		>
 			<SiteListTile
