@@ -63,6 +63,35 @@ const ListTileTitle = styled.div`
 	align-items: center;
 `;
 
+/**
+ * Renders an anchor element that can trigger analytics calls
+ * or client-side router navigation via the `onNavigate` prop.
+ */
+const Link = ( {
+	href,
+	onNavigate,
+	...props
+}: {
+	onNavigate?: ( shouldOpenNewTab: boolean, event: React.MouseEvent ) => void;
+} & Omit< React.ComponentProps< 'a' >, 'onClick' | 'onAuxClick' > ) => {
+	const handleClick = ( event: React.MouseEvent ) => {
+		if ( ! onNavigate ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Ignore if not left or middle click
+		if ( event.button > 1 ) {
+			return;
+		}
+
+		const openInNewTab = event.ctrlKey || event.metaKey || event.button === /* middle click */ 1;
+		onNavigate( openInNewTab, event );
+	};
+	return <a href={ href } { ...props } onClick={ handleClick } onAuxClick={ handleClick } />;
+};
+
 const SiteField = ( { site, sitePreviewPane }: Props ) => {
 	const { __ } = useI18n();
 
@@ -87,43 +116,26 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 		! isNotAtomicJetpack( site ) &&
 		! isDisconnectedJetpackAndNotAtomic( site );
 
-	const onSiteClick = ( event: React.MouseEvent ) => {
-		// TODO: Link click handling boilerplate should be extracted to be reused
-		event.preventDefault();
-
-		// Ignore if not left or middle click
-		if ( event.button > 1 ) {
-			return;
-		}
-
-		let openInNewTab = false;
-		if ( event.ctrlKey || event.metaKey ) {
-			openInNewTab = true;
-		}
-		// Support middle click to open in new tab
-		if ( event.button === 1 ) {
-			openInNewTab = true;
-		}
-
+	const onSiteClick = ( shouldOpenNewTab: boolean ) => {
 		if ( shouldOpenSitePreviewPane ) {
-			sitePreviewPane.open( site, 'site_field', openInNewTab );
+			sitePreviewPane.open( site, 'site_field', shouldOpenNewTab );
 		} else {
-			navigate( adminUrl, openInNewTab );
+			navigate( adminUrl, shouldOpenNewTab );
 		}
 	};
 
 	const isMigrationPending = getMigrationStatus( site ) === 'pending';
 	const siteTitle = isMigrationPending ? translate( 'Incoming Migration' ) : site.title;
-
-	const MaybeLink = site.is_deleted ? 'div' : 'a';
+	const href = shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl;
 
 	return (
 		// TODO: Consolidate behavior with `SiteIcon` link
-		<MaybeLink
+		<Link
 			className="sites-dataviews__site"
-			href={ shouldOpenSitePreviewPane ? sitePreviewPane.getUrl( site ) : adminUrl }
-			onClick={ onSiteClick }
-			onAuxClick={ onSiteClick }
+			aria-disabled={ site.is_deleted }
+			role={ site.is_deleted ? 'link' : undefined }
+			href={ site.is_deleted ? undefined : href }
+			onNavigate={ site.is_deleted ? undefined : onSiteClick }
 		>
 			<SiteListTile
 				contentClassName={ clsx(
@@ -153,7 +165,7 @@ const SiteField = ( { site, sitePreviewPane }: Props ) => {
 					</div>
 				}
 			/>
-		</MaybeLink>
+		</Link>
 	);
 };
 
