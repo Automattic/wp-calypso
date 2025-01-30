@@ -395,6 +395,9 @@ const onboarding: Flow = {
 					return navigate( 'domains' );
 				case 'domains':
 					if ( isGoalsAtFrontExperiment ) {
+						if ( config.isEnabled( 'onboarding/big-sky-before-plans' ) && createWithBigSky ) {
+							return navigate( 'design-choices' );
+						}
 						return navigate( 'designSetup' );
 					}
 				case 'designSetup':
