@@ -28,6 +28,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
+import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
+import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
 import type { View } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
@@ -263,22 +265,16 @@ export const SiteLogs = ( {
 };
 
 const EMPTY_ARRAY: Array< any > = [];
-const useDataLogs = ( { view, logType }: { view: View; logType: LogType } ) => {
+const useDataLogs = ( {
+	view,
+	logType,
+	dateRange,
+}: {
+	view: View;
+	logType: LogType;
+	dateRange: { startTime: Moment; endTime: Moment };
+} ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const moment = useLocalizedMoment();
-	const getLatestDateRange = useCallback( () => {
-		const startTime = moment().subtract( 7, 'd' );
-		const endTime = moment();
-		return { startTime, endTime };
-	}, [ moment ] );
-	const [ dateRange ] = useState( () => {
-		const latest = getLatestDateRange();
-		const dateRangeQuery = getDateRangeQueryParam( moment );
-		return {
-			startTime: dateRangeQuery.startTime || latest.startTime,
-			endTime: dateRangeQuery.endTime || latest.endTime,
-		};
-	} );
 	const [ severity ] = useState( () => {
 		return getFilterQueryParam( 'severity' ) || '';
 	} );
@@ -344,8 +340,48 @@ const getVisibleFieldsForLogType = ( logType: LogType ) => {
 
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
-	// - header with title + date filters + log type.
-	// - address the "show more" interaction
+	// - Empty states: "no entries in this time range" instead of DataViews's default.
+	// - DataViews: filter, sort, pagination.
+	// - DataViews: max width for long cells.
+	// - DataViews: address the "show more" interaction.
+	// - DataViews: spacing left/right.
+
+	const moment = useLocalizedMoment();
+	const getLatestDateRange = useCallback( () => {
+		const startTime = moment().subtract( 7, 'd' );
+		const endTime = moment();
+		return { startTime, endTime };
+	}, [ moment ] );
+
+	const [ dateRange, setDateRange ] = useState( () => {
+		const latest = getLatestDateRange();
+		const dateRangeQuery = getDateRangeQueryParam( moment );
+		return {
+			startTime: dateRangeQuery.startTime || latest.startTime,
+			endTime: dateRangeQuery.endTime || latest.endTime,
+		};
+	} );
+	const handleTimeRangeChange = ( newStart: Moment | null, newEnd: Moment | null ) => {
+		if (
+			( ! newStart && ! newEnd ) ||
+			( dateRange.startTime.isSame( newStart ) && dateRange.endTime.isSame( newEnd ) )
+		) {
+			return;
+		}
+
+		// setIsMobileOpen( false ); // TODO
+		let startTime = newStart || dateRange.startTime;
+		let endTime = newEnd || dateRange.endTime;
+		if ( ! startTime.isValid() || ! endTime.isValid() ) {
+			const latest = getLatestDateRange();
+			startTime = latest.startTime;
+			endTime = latest.endTime;
+		}
+
+		setDateRange( { startTime, endTime } );
+		// setAutoRefresh( false ); // TODO
+		updateDateRangeQueryParam( { startTime, endTime } );
+	};
 
 	const [ view, setView ] = useState( () => {
 		return {
@@ -356,7 +392,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 		};
 	} );
 	const fields = useFields( { logType } );
-	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType } );
+	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType, dateRange } );
 	const onChangeView = ( newView: View ) =>
 		setView( ( oldView ) => ( {
 			...oldView,
@@ -369,6 +405,8 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 			fields: getVisibleFieldsForLogType( logType ),
 		} ) );
 	}, [ logType ] );
+
+	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	return (
 		<>
@@ -387,31 +425,59 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					) }
 				/>
 				<div className="site-logs-toolbar">
-					<ToggleGroupControl
-						className="site-logs-toolbar__toggle"
-						hideLabelFromVision
-						label=""
-						onChange={ ( value ) => {
-							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
-						} }
-						value={ logType }
-						__nextHasNoMarginBottom
-					>
-						<ToggleGroupControlOption
-							className="site-logs-toolbar__toggle-option"
-							label={ translate( 'PHP error', {
-								textOnly: true,
-							} ) }
-							value="php"
+					<label className="site-logs-toolbar__label">
+						<span>{ translate( 'From' ) }</span>
+						<DateTimePicker
+							className="site-logs-toolbar__datepicker"
+							id="from"
+							value={ dateRange.startTime }
+							onChange={ ( value ) => handleTimeRangeChange( value, null ) }
+							gmtOffset={ siteGmtOffset }
+							min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
+							max={ dateRange.endTime }
 						/>
-						<ToggleGroupControlOption
-							className="site-logs-toolbar__toggle-option"
-							label={ translate( 'Web server', {
-								textOnly: true,
-							} ) }
-							value="web"
+					</label>
+
+					<label className="site-logs-toolbar__label">
+						<span>{ translate( 'To' ) }</span>
+						<DateTimePicker
+							className="site-logs-toolbar__datepicker"
+							id="to"
+							value={ dateRange.endTime }
+							onChange={ ( value ) => handleTimeRangeChange( null, value ) }
+							gmtOffset={ siteGmtOffset }
+							max={ moment() }
+							min={ dateRange.startTime }
 						/>
-					</ToggleGroupControl>
+					</label>
+					<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">
+						<span>{ translate( 'Log type' ) }</span>
+						<ToggleGroupControl
+							className="site-logs-toolbar__toggle"
+							hideLabelFromVision
+							label=""
+							onChange={ ( value ) => {
+								navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+							} }
+							value={ logType }
+							__nextHasNoMarginBottom
+						>
+							<ToggleGroupControlOption
+								className="site-logs-toolbar__toggle-option"
+								label={ translate( 'PHP error', {
+									textOnly: true,
+								} ) }
+								value="php"
+							/>
+							<ToggleGroupControlOption
+								className="site-logs-toolbar__toggle-option"
+								label={ translate( 'Web server', {
+									textOnly: true,
+								} ) }
+								value="web"
+							/>
+						</ToggleGroupControl>
+					</label>
 				</div>
 			</div>
 			{ isLoading ? (
