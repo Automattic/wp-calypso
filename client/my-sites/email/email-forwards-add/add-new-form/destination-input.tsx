@@ -11,7 +11,7 @@ const MAX_FORWARD_DESTINATIONS = 5;
 export function DestinationsInput( props: DestinationsInputProps ) {
 	const { values, onChange, selectedDomainName, disabled, existingForwardsForMailbox, mailbox } =
 		props;
-	/** Count existing forwards before showing one more field */
+	/** Consider existing forwards in the limit. */
 	const limit = MAX_FORWARD_DESTINATIONS - existingForwardsForMailbox.length;
 	const translate = useTranslate();
 	const [ error, setError ] = React.useState< ValidationError | null >( null );
