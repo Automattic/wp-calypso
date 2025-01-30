@@ -3,6 +3,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { getFlowFromURL } from '../../utils/get-flow-from-url';
+import { useGoalsFirstExperiment } from './use-goals-first-experiment';
 
 export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_bigsky_202501_v1';
 
@@ -13,9 +14,14 @@ export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_bigsky_202
  */
 export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
+	const [ isLoadingGoalsFirst, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
-		isEligible: flow === ONBOARDING_FLOW && ! isEnabled( 'onboarding/force-big-sky-before-plan' ),
+		isEligible:
+			! isLoadingGoalsFirst &&
+			isGoalsFirstExperiment &&
+			flow === ONBOARDING_FLOW &&
+			! isEnabled( 'onboarding/force-big-sky-before-plan' ),
 	} );
 
 	if ( isEnabled( 'onboarding/force-big-sky-before-plan' ) ) {
