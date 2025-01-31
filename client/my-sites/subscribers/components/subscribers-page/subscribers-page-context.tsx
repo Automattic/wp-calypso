@@ -50,7 +50,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
-	addSubscribersCallback: ( importError?: null | ImportSubscribersError ) => void;
+	addSubscribersCallback: ( importError?: null | unknown ) => void;
 	migrateSubscribersCallback: ( sourceSiteId: number, targetSiteId: number ) => void;
 	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
@@ -162,7 +162,7 @@ export const SubscribersPageProvider = ( {
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 	};
 
-	const addSubscribersCallback = ( importError: { message?: unknown } | null = null ) => {
+	const addSubscribersCallback = ( importError?: ImportSubscribersError ) => {
 		setShowAddSubscribersModal( false );
 		completeImportSubscribersTask();
 
