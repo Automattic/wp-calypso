@@ -34,6 +34,9 @@ import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
 import './styles.scss';
 
 const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError = false ) => {
+	if ( ! agency ) {
+		return undefined;
+	}
 	const agencyName = agency.name;
 	const existingWPCOMLicenseCount = agency.existing_wpcom_license_count || 0;
 	const price = formatCurrency( agency.prices?.actual_price, agency.prices?.currency );
@@ -164,9 +167,7 @@ const LaunchSite = () => {
 		window.location.href = `https://agencies.automattic.com/marketplace/checkout?referral_blog_id=${ siteId }`;
 	};
 
-	const agencyBillingMessage = ! agency
-		? undefined
-		: createAgencyBillingMessage( agency, agencyLoading, agencyError );
+	const agencyBillingMessage = createAgencyBillingMessage( agency, agencyLoading, agencyError );
 
 	const renderConfirmationModal = () => {
 		return (
