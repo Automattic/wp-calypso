@@ -6,6 +6,7 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
@@ -80,6 +81,7 @@ export default function CheckoutMainWrapper( {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	useGoalsFirstExperiment();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );

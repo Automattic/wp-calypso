@@ -441,8 +441,10 @@ import {
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_JETPACK_SOCIAL_V1_MONTHLY,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 } from './constants';
 import { isGlobalStylesOnPersonalEnabled } from './is-global-styles-on-personal-enabled';
+import { isGoalsFirst } from './is-goals-first';
 import {
 	getPlanBusinessTitle,
 	getPlanEcommerceTitle,
@@ -793,7 +795,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	},
 	get2023PricingGridSignupWpcomFeatures: () => {
 		const baseFeatures = [
-			FEATURE_BIG_SKY_WEBSITE_BUILDER,
+			...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -860,7 +862,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getCheckoutFeatures: () => {
 		const baseFeatures = [
-			FEATURE_BIG_SKY_WEBSITE_BUILDER,
+			...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
 			FEATURE_FAST_DNS,
@@ -1366,7 +1368,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
 		return [
-			FEATURE_BIG_SKY_WEBSITE_BUILDER,
+			...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1387,7 +1389,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	getCheckoutFeatures: () => [
-		FEATURE_BIG_SKY_WEBSITE_BUILDER,
+		...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_FAST_SUPPORT_FROM_EXPERTS,
 		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
@@ -1537,7 +1539,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	get2023PricingGridSignupWpcomFeatures: () => {
 		return [
-			FEATURE_BIG_SKY_WEBSITE_BUILDER,
+			...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER ] : [] ),
 			FEATURE_UNLIMITED_ENTITIES,
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_AD_FREE_EXPERIENCE,
@@ -1581,7 +1583,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		];
 	},
 	getCheckoutFeatures: () => [
-		FEATURE_BIG_SKY_WEBSITE_BUILDER,
+		...( isGoalsFirst() ? [ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ] : [] ),
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_PLUGINS_THEMES,
 		FEATURE_BANDWIDTH,
