@@ -179,7 +179,10 @@ export class ActivationModal extends Component {
 							<CheckboxControl
 								onChange={ this.onCheckboxChange }
 								label={ translate(
-									'By activating this theme, I understand my current theme isn’t included in my plan. If I switch, I won’t be able to activate it again unless I upgrade.'
+									'I understand I will not be able to switch back to %(themeName)s without upgrading my plan.',
+									{
+										args: { themeName: activeTheme.name },
+									}
 								) }
 							/>
 						</div>
