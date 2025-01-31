@@ -209,7 +209,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const newThemeId = getThemeIdToActivate( state );
 		const activeThemeId = getActiveTheme( state, siteId );
-		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( state, activeThemeId, siteId );
+		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( state, siteId, activeThemeId );
 
 		return {
 			siteId,
