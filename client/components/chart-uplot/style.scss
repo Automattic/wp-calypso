@@ -1,6 +1,6 @@
 @import "uplot/dist/uPlot.min.css";
 
-.uplot:not(.calypso-uplot-bar-chart) {
+.uplot {
 	.u-legend {
 		color: var(--studio-gray-100);
 
@@ -31,10 +31,4 @@
 
 .calypso-uplot-chart-container {
 	position: relative;
-
-	.components-spinner {
-		position: absolute;
-		top: calc(50% - 8px - 60px);
-		left: calc(50% - 8px);
-	}
 }
