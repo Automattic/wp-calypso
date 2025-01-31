@@ -27,6 +27,12 @@ $locations-horizontal-bar-width: 380px;
 	.stats-module-locations__country-filter {
 		margin: 12px 24px 0;
 		width: fit-content;
+		display: flex;
+	}
+
+	.stats-module-locations__country-filter--tooltip {
+		margin-left: 12px;
+		margin-top: 8px;
 	}
 
 	.stats-card__content {

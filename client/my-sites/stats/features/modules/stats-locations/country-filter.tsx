@@ -5,7 +5,8 @@ const CountryFilter: React.FC< {
 	defaultLabel: string;
 	selectedCountry: string | null;
 	onCountryChange: ( value: string ) => void;
-} > = ( { countries, defaultLabel, selectedCountry, onCountryChange } ) => {
+	tooltip?: React.ReactNode;
+} > = ( { countries, defaultLabel, selectedCountry, onCountryChange, tooltip } ) => {
 	const onChange = ( value: string ) => {
 		onCountryChange( value );
 	};
@@ -19,14 +20,16 @@ const CountryFilter: React.FC< {
 	];
 
 	return (
-		<SelectControl
-			__next40pxDefaultSize
-			__nextHasNoMarginBottom
-			className="stats-module-locations__country-filter"
-			onChange={ onChange }
-			options={ options }
-			value={ selectedCountry ?? '' }
-		/>
+		<div className="stats-module-locations__country-filter">
+			<SelectControl
+				__next40pxDefaultSize
+				__nextHasNoMarginBottom
+				onChange={ onChange }
+				options={ options }
+				value={ selectedCountry ?? '' }
+			/>
+			<div className="stats-module-locations__country-filter--tooltip"> { tooltip } </div>
+		</div>
 	);
 };
 
