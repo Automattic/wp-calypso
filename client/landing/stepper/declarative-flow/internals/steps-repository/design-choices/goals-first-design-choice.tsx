@@ -5,7 +5,8 @@ import './goals-first-design-choice.scss';
 
 interface Props {
 	className?: string;
-	title: string;
+	title: string | number | React.ReactElement;
+	ariaLabel?: string;
 	description: string;
 	bgImageSrc?: string;
 	fgImageSrc?: string;
@@ -17,44 +18,49 @@ interface Props {
 const GoalsFirstDesignChoice = ( {
 	className,
 	title,
+	ariaLabel: _ariaLabel,
 	description,
 	bgImageSrc,
 	fgImageSrc,
 	destination,
 	onSelect,
 	badgeLabel,
-}: Props ) => (
-	<button
-		className={ clsx( 'goals-first-design-choice', className ) }
-		aria-label={ title }
-		onClick={ () => onSelect( destination ) }
-	>
-		<div className="goals-first-design-choice__content">
-			<div className="goals-first-design-choice__background">
-				{ badgeLabel && (
-					<Badge type="info-blue" className="goals-first-design-choice__price-badge">
-						{ badgeLabel }
-					</Badge>
-				) }
-				<div className="goals-first-design-choice__background-item">
-					{ bgImageSrc && <img src={ bgImageSrc } alt={ title } /> }
-					{ fgImageSrc && (
-						<img
-							className="goals-first-design-choice__foreground-image"
-							src={ fgImageSrc }
-							alt={ title }
-						/>
+}: Props ) => {
+	const ariaLabel = ! _ariaLabel && typeof title === 'string' ? title : _ariaLabel;
+
+	return (
+		<button
+			className={ clsx( 'goals-first-design-choice', className ) }
+			aria-label={ ariaLabel }
+			onClick={ () => onSelect( destination ) }
+		>
+			<div className="goals-first-design-choice__content">
+				<div className="goals-first-design-choice__background">
+					{ badgeLabel && (
+						<Badge type="info-blue" className="goals-first-design-choice__price-badge">
+							{ badgeLabel }
+						</Badge>
 					) }
+					<div className="goals-first-design-choice__background-item">
+						{ bgImageSrc && <img src={ bgImageSrc } alt={ ariaLabel } /> }
+						{ fgImageSrc && (
+							<img
+								className="goals-first-design-choice__foreground-image"
+								src={ fgImageSrc }
+								alt={ ariaLabel }
+							/>
+						) }
+					</div>
+				</div>
+				<div className="goals-first-design-choice__foreground">
+					<div className="goals-first-design-choice__title">{ title }</div>
+					<div className="goals-first-design-choice__description">
+						{ preventWidows( description ) }
+					</div>
 				</div>
 			</div>
-			<div className="goals-first-design-choice__foreground">
-				<div className="goals-first-design-choice__title">{ title }</div>
-				<div className="goals-first-design-choice__description">
-					{ preventWidows( description ) }
-				</div>
-			</div>
-		</div>
-	</button>
-);
+		</button>
+	);
+};
 
 export default GoalsFirstDesignChoice;

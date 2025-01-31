@@ -46,6 +46,13 @@
 		font-weight: 500;
 		line-height: 24px;
 		text-align: left;
+
+		.design-choices__beta-label {
+          font-size: $font-body-extra-small;
+          font-weight: 600;
+          line-height: 14px;
+          text-align: left;
+		}
 	}
 
 	.goals-first-design-choice__description {
