@@ -1,10 +1,12 @@
 import { Badge } from '@automattic/components';
 import {
+	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
+import { download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
@@ -26,6 +28,7 @@ import {
 import { SiteLogsHeader } from 'calypso/sites/tools/logs/components/site-logs-header';
 import { SiteLogsTable } from 'calypso/sites/tools/logs/components/site-logs-table';
 import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-toolbar';
+import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
@@ -551,6 +554,21 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
+	const { downloadLogs } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const onDownloadLogs = useCallback( () => {
+		downloadLogs( {
+			logType,
+			startDateTime: dateRange.startTime,
+			endDateTime: dateRange.endTime,
+			filter: buildFilterParam(
+				logType,
+				getFilterValueFromView( view, 'severity' ),
+				getFilterValueFromView( view, 'request_type' ),
+				getFilterValueFromView( view, 'request_status' )
+			),
+		} );
+	}, [ downloadLogs, logType, dateRange, view ] );
+
 	return (
 		<>
 			<div className="site-logs-header">
@@ -636,6 +654,14 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					onChangeView={ onChangeView }
 					search={ false }
 					defaultLayouts={ { table: {} } }
+					header={
+						<Button
+							size="compact"
+							icon={ download }
+							label="Download logs"
+							onClick={ onDownloadLogs }
+						/>
+					}
 				/>
 			) }
 		</>
