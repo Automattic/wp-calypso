@@ -22,7 +22,10 @@ export const isSupportSession = () => {
 		return (
 			'isSupportSession' in window ||
 			// A bit hacky but much easier than passing down data from PHP in Jetpack
-			!! document.querySelector( '#wp-admin-bar-support-session-details' )
+			// Simple
+			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
+			// Atomic
+			document.body.classList.contains( 'support-session' )
 		);
 	}
 	return false;
@@ -30,6 +33,7 @@ export const isSupportSession = () => {
 
 export function register(): typeof STORE_KEY {
 	const enabledPesistedOpenState = ! isE2ETest() && ! isSupportSession();
+
 	registerPlugins();
 
 	if ( ! isRegistered ) {
