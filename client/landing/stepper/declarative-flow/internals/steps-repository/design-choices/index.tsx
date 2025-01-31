@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
@@ -32,6 +32,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
 
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { submit, goBack } = navigation;
 	const headerText = isGoalsFirstVariation
 		? translate( 'How would you like to start?' )
@@ -73,6 +74,28 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		} );
 
 		submit?.( { destination } );
+	};
+
+	const getCreateWithAILabel = () => {
+		if ( hasEnTranslation( 'Create with AI {{small}}(BETA){{/small}}' ) ) {
+			return translate( 'Create with AI {{small}}(BETA){{/small}}', {
+				components: {
+					small: <span className="design-choices__beta-label" />,
+				},
+			} );
+		}
+
+		if ( hasEnTranslation( 'Create with AI' ) ) {
+			return translate( '%s {{small}}(BETA){{/small}}', {
+				args: [ translate( 'Create with AI' ) ],
+				components: {
+					small: <span className="design-choices__beta-label" />,
+				},
+				comment: 'Do not translate',
+			} );
+		}
+
+		return translate( 'Create with AI (BETA)' );
 	};
 
 	const bigSkyBadgeLabel =
@@ -160,7 +183,8 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 							) }
 							{ ! isLoading && isEligible && isGoalsFirstVariation && (
 								<GoalsFirstDesignChoice
-									title={ translate( 'Create with AI (BETA)' ) }
+									title={ getCreateWithAILabel() }
+									ariaLabel={ translate( 'Create with AI (BETA)' ) }
 									description={ translate(
 										'Use our AI website builder to easily and quickly build the site of your dreams.'
 									) }
