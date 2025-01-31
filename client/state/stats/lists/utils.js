@@ -441,7 +441,7 @@ export const normalizers = {
 				countryCode: viewData.country_code,
 				value: viewData.views,
 				region: country.map_region,
-				coordinates: viewData.coordinates ?? null,
+				...( viewData.coordinates && { coordinates: viewData.coordinates } ),
 			};
 		} );
 	},
