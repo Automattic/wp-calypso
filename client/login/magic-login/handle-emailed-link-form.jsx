@@ -15,6 +15,7 @@ import {
 	isGravPoweredOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isA4AOAuth2Client,
+	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -37,7 +38,6 @@ import {
 } from 'calypso/state/login/selectors';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
@@ -323,7 +323,7 @@ const mapState = ( state ) => {
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
-		isWCCOM: getIsWCCOM( state ),
+		isWCCOM: isWooOAuth2Client( oauth2Client ),
 		isA4A: isA4AOAuth2Client( oauth2Client ),
 		wccomFrom: getWccomFrom( state ),
 		oauth2Client,
