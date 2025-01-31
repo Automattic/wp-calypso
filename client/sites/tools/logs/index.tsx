@@ -299,7 +299,7 @@ const useDataLogs = ( {
 	return {
 		data: data?.logs ? data.logs : EMPTY_ARRAY,
 		paginationInfo: {
-			totalItems: data?.total_results,
+			totalItems: data?.total_results || 0,
 			totalPages:
 				!! data?.total_results && !! view.perPage
 					? Math.ceil( data.total_results / view.perPage )
