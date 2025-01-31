@@ -275,9 +275,9 @@ const useDataLogs = ( {
 	dateRange: { startTime: Moment; endTime: Moment };
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const [ severity ] = useState( () => {
-		return getFilterQueryParam( 'severity' ) || '';
-	} );
+	const severity =
+		view.filters?.filter( ( filter ) => filter.field === 'severity' )[ 0 ]?.value || '';
+
 	const [ requestType ] = useState( () => {
 		return getFilterQueryParam( 'request_type' ) || '';
 	} );
@@ -312,7 +312,21 @@ const useDataLogs = ( {
 const useFields = ( { logType }: { logType: LogType } ) => {
 	if ( logType === 'php' ) {
 		return [
-			{ id: 'severity', label: 'Severity', enableSorting: false },
+			{
+				id: 'severity',
+				label: 'Severity',
+				elements: [
+					{ value: '', label: translate( 'All' ) },
+					{ value: 'User', label: translate( 'User' ) },
+					{ value: 'Warning', label: translate( 'Warning' ) },
+					{ value: 'Deprecated', label: translate( 'Deprecated' ) },
+					{ value: 'Fatal error', label: translate( 'Fatal error' ) },
+				],
+				filterBy: {
+					operators: [ 'is' ],
+				},
+				enableSorting: false,
+			},
 			{ id: 'timestamp', label: 'Timestamp' },
 			{ id: 'message', label: 'Message', enableSorting: false },
 			{ id: 'kind', label: 'Kind', enableSorting: false },
@@ -322,7 +336,6 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		];
 	}
 
-	// TODO: translate
 	return [
 		{ id: 'request_type', label: 'Request type', enableSorting: false },
 		{ id: 'date', label: 'Date' },
@@ -349,14 +362,21 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
 	//   - filters
-	//   - search
-	//   - max width for long cells
-	//   - spacing left/right
+	//   - translate field labels
+	//   - styling issues
+	//     - max width for long cells
+	//     - spacing left/right
 	// - Fields:
-	//   - timestamp for web logs
+	//   - date format
+	//   - request type: add colorful badge
+	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
+	// - Review existing code: track events, etc.
+	// - Endpoint
+	//   - Can filter by multiple values (e.g.: "severity is any: user, deprecated"
+	//   - What can have more filters? kind (core, plugins), name (WP version, plugin name).
 
-	const { __ } = useI18n(); // Can we use translate instead?
+	const { __ } = useI18n(); // TODO: Can we use translate instead?
 
 	const moment = useLocalizedMoment();
 	const getLatestDateRange = useCallback( () => {
