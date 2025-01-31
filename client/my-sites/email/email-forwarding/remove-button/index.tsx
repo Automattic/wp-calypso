@@ -1,5 +1,5 @@
+import { ConfirmationDialog } from '@automattic/components';
 import {
-	__experimentalConfirmDialog as ConfirmationDialog,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
