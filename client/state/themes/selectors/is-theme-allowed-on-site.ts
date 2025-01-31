@@ -1,5 +1,5 @@
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeTierForTheme } from 'calypso/state/themes/selectors/get-theme-tier-for-theme';
+import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
 import { IAppState } from 'calypso/state/types';
 
 export function isThemeAllowedOnSite( state: IAppState, siteId: number | null, themeId: string ) {
