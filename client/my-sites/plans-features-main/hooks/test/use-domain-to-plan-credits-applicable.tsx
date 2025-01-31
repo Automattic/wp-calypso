@@ -29,7 +29,7 @@ const mockHasPurchasedDomain = hasPurchasedDomain as jest.MockedFunction<
 const mockIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCurrentPlanPaid >;
 const siteId = 1;
 
-describe( 'usePlanUpgradeCreditsApplicable', () => {
+describe( 'useDomainToPlanCreditsApplicable', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 

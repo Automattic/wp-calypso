@@ -25,8 +25,9 @@ const PlanNoticeDomainToPlanCredit = ( {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
-	// TODO: Add the correct URL
-	const upgradeCreditDocsUrl = localizeUrl( 'https://wordpress.com/support/' );
+	const upgradeCreditDocsUrl = localizeUrl(
+		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
+	);
 
 	const showNotice =
 		visiblePlans &&

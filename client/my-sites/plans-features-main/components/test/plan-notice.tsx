@@ -176,7 +176,7 @@ describe( '<PlanNotice /> Tests', () => {
 		);
 	} );
 
-	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where: a domain has been purchased, has no other active discounts, has free plan', () => {
+	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where a domain has been purchased without a paid plan', () => {
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
 		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 1000 );
 

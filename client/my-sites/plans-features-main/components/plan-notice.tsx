@@ -31,22 +31,22 @@ const NO_NOTICE = 'no-notice';
 const USER_CANNOT_PURCHASE_NOTICE = 'user-cannot-purchase-notice';
 const ACTIVE_DISCOUNT_NOTICE = 'active-discount-notice';
 const PLAN_UPGRADE_CREDIT_NOTICE = 'plan-upgrade-credit-notice';
-const DOMAIN_TO_PLAN_CREDIT_NOTICE = 'domain-to-plan-credit-notice';
 const MARKETING_NOTICE = 'marketing-notice';
 const PLAN_RETIREMENT_NOTICE = 'plan-retirement-notice';
 const CURRENT_PLAN_IN_APP_PURCHASE_NOTICE = 'current-plan-in-app-purchase-notice';
 const PLAN_LEGACY_STORAGE_NOTICE = 'plan-legacy-storage-notice';
+const DOMAIN_TO_PLAN_CREDIT_NOTICE = 'domain-to-plan-credit-notice';
 
 export type PlanNoticeTypes =
 	| typeof NO_NOTICE
 	| typeof USER_CANNOT_PURCHASE_NOTICE
 	| typeof ACTIVE_DISCOUNT_NOTICE
 	| typeof PLAN_UPGRADE_CREDIT_NOTICE
-	| typeof DOMAIN_TO_PLAN_CREDIT_NOTICE
 	| typeof MARKETING_NOTICE
 	| typeof PLAN_RETIREMENT_NOTICE
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE
-	| typeof PLAN_LEGACY_STORAGE_NOTICE;
+	| typeof PLAN_LEGACY_STORAGE_NOTICE
+	| typeof DOMAIN_TO_PLAN_CREDIT_NOTICE;
 
 function useResolveNoticeType(
 	{
@@ -177,15 +177,6 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					visiblePlans={ visiblePlans }
 				/>
 			);
-		case DOMAIN_TO_PLAN_CREDIT_NOTICE:
-			return (
-				<PlanNoticeDomainToPlanCredit
-					className="plan-features-main__notice"
-					onDismissClick={ handleDismissNotice }
-					siteId={ siteId }
-					visiblePlans={ visiblePlans }
-				/>
-			);
 		case PLAN_RETIREMENT_NOTICE:
 			return (
 				<Notice
@@ -213,7 +204,15 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					) }
 				></Notice>
 			);
-
+		case DOMAIN_TO_PLAN_CREDIT_NOTICE:
+			return (
+				<PlanNoticeDomainToPlanCredit
+					className="plan-features-main__notice"
+					onDismissClick={ handleDismissNotice }
+					siteId={ siteId }
+					visiblePlans={ visiblePlans }
+				/>
+			);
 		case MARKETING_NOTICE:
 		default:
 			return <MarketingMessage siteId={ siteId } />;
