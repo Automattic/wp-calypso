@@ -359,6 +359,10 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				{ value: 'DELETE', label: translate( 'DELETE' ) },
 			],
 			filterBy: { operators: [ 'is' ] },
+			render: ( { item } ) => {
+				const requestType = item.request_type;
+				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
+			},
 			enableSorting: false,
 		},
 		{
