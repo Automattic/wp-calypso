@@ -139,8 +139,74 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowNavigation( false );
 	};
 
+	getPreviousDateRange = () => {
+		const { dateRange, moment } = this.props;
+
+		if ( dateRange?.shortcutId === 'year_to_date' ) {
+			const previousYearMoment = moment( dateRange.chartStart ).subtract( 1, 'year' );
+			const chartStart = previousYearMoment.startOf( 'year' ).format( 'YYYY-MM-DD' );
+			const chartEnd = previousYearMoment.endOf( 'year' ).format( 'YYYY-MM-DD' );
+			return { chartStart, chartEnd };
+		}
+
+		if ( dateRange?.shortcutId === 'month_to_date' ) {
+			const previousMonthMoment = moment( dateRange.chartStart ).subtract( 1, 'months' );
+			const chartStart = previousMonthMoment.startOf( 'month' ).format( 'YYYY-MM-DD' );
+			const chartEnd = previousMonthMoment.endOf( 'month' ).format( 'YYYY-MM-DD' );
+			return { chartStart, chartEnd };
+		}
+
+		// Handle natural months.
+		// Use the anchor date to prevent spanning months.
+		const anchorMoment = moment( dateRange.chartStart );
+		const isStart = dateRange.chartStart === anchorMoment.startOf( 'month' ).format( 'YYYY-MM-DD' );
+		const isEnd = dateRange.chartEnd === anchorMoment.endOf( 'month' ).format( 'YYYY-MM-DD' );
+		if ( isStart && isEnd ) {
+			const previousMonthMoment = moment( dateRange.chartStart ).subtract( 1, 'months' );
+			const chartStart = previousMonthMoment.startOf( 'month' ).format( 'YYYY-MM-DD' );
+			const chartEnd = previousMonthMoment.endOf( 'month' ).format( 'YYYY-MM-DD' );
+			return { chartStart, chartEnd };
+		}
+
+		// Default is to use the daysInRange value.
+		const chartStart = moment( dateRange.chartStart )
+			.subtract( dateRange.daysInRange, 'days' )
+			.format( 'YYYY-MM-DD' );
+		const chartEnd = moment( dateRange.chartEnd )
+			.subtract( dateRange.daysInRange, 'days' )
+			.format( 'YYYY-MM-DD' );
+		return { chartStart, chartEnd };
+	};
+
+	getNextDateRange = () => {
+		const { dateRange, moment } = this.props;
+		// TODO: Bounds check the range?
+		// Currently the chartEnd can be in the future.
+
+		// Handle natural months.
+		// Use the anchor date to prevent spanning months.
+		const anchorMoment = moment( dateRange.chartStart );
+		const isStart = dateRange.chartStart === anchorMoment.startOf( 'month' ).format( 'YYYY-MM-DD' );
+		const isEnd = dateRange.chartEnd === anchorMoment.endOf( 'month' ).format( 'YYYY-MM-DD' );
+		if ( isStart && isEnd ) {
+			const nextMonthMoment = moment( dateRange.chartStart ).add( 1, 'months' );
+			const chartStart = nextMonthMoment.startOf( 'month' ).format( 'YYYY-MM-DD' );
+			const chartEnd = nextMonthMoment.endOf( 'month' ).format( 'YYYY-MM-DD' );
+			return { chartStart, chartEnd };
+		}
+
+		// Default is to use the daysInRange value.
+		const chartStart = moment( dateRange.chartStart )
+			.add( dateRange.daysInRange, 'days' )
+			.format( 'YYYY-MM-DD' );
+		const chartEnd = moment( dateRange.chartEnd )
+			.add( dateRange.daysInRange, 'days' )
+			.format( 'YYYY-MM-DD' );
+		return { chartStart, chartEnd };
+	};
+
 	handleArrowNavigation = ( previousOrNext = false ) => {
-		const { moment, period, slug, dateRange } = this.props;
+		const { period, slug, dateRange } = this.props;
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const event_from = isWPAdmin ? 'jetpack_odyssey' : 'calypso';
@@ -149,22 +215,9 @@ class StatsPeriodNavigation extends PureComponent {
 			direction: previousOrNext ? 'previous' : 'next',
 		} );
 
-		const navigationStart = moment( dateRange.chartStart );
-		const navigationEnd = moment( dateRange.chartEnd );
-
-		if ( previousOrNext ) {
-			// Navigate to the previous date range.
-			navigationStart.subtract( dateRange.daysInRange, 'days' );
-			navigationEnd.subtract( dateRange.daysInRange, 'days' );
-		} else {
-			// Navigate to the next date range.
-			navigationStart.add( dateRange.daysInRange, 'days' );
-			navigationEnd.add( dateRange.daysInRange, 'days' );
-		}
-
-		const chartStart = navigationStart.format( 'YYYY-MM-DD' );
-		const chartEnd = navigationEnd.format( 'YYYY-MM-DD' );
-
+		const { chartStart, chartEnd } = previousOrNext
+			? this.getPreviousDateRange()
+			: this.getNextDateRange();
 		const path = `/stats/${ period }/${ slug }`;
 		const url = getPathWithUpdatedQueryString( { chartStart, chartEnd }, path );
 
