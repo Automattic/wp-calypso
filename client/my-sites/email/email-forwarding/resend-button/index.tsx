@@ -26,6 +26,10 @@ export function ResendButton( { mailbox }: { mailbox: Mailbox } ) {
 		[ resendVerificationEmail ]
 	);
 
+	if ( ! mailbox.warnings?.length ) {
+		return null;
+	}
+
 	return (
 		<PopoverMenuItem
 			onClick={ () => resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ) }
