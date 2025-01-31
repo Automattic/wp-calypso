@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
+import { redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
@@ -48,8 +49,10 @@ export async function siteSettings( context, next ) {
 
 	const isRemoveDuplicateViewsExperimentEnabled =
 		await getIsRemoveDuplicateViewsExperimentEnabled();
+
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
+
 	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
@@ -60,7 +63,7 @@ export async function siteSettings( context, next ) {
 	}
 	recordPageView( basePath + '/:site', analyticsPageTitle );
 
-	next();
+	redirectIfDuplicatedView( 'options-general.php' )( context, next );
 }
 
 export function setScroll( context, next ) {
