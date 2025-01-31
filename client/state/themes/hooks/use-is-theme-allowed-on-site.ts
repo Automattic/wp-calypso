@@ -1,10 +1,8 @@
 import { useSelector } from 'calypso/state';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getThemeTierForTheme } from 'calypso/state/themes/selectors';
-import { IAppState } from 'calypso/state/types';
+import { isThemeAllowedOnSite } from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 
 export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string ) {
-	return useSelector( ( state ) => isThemeAllowedOnSite( siteId, themeId, state ) );
+	return useSelector( ( state ) => isThemeAllowedOnSite( state, siteId, themeId ) );
 
 	/* @SEE https://github.com/Automattic/dotcom-forge/issues/8028
 	const retainedBenefits = useTierRetainedBenefitsQuery( siteId, themeId );
@@ -34,13 +32,4 @@ export function useIsThemeAllowedOnSite( siteId: number | null, themeId: string 
 
 	return hasFeature;
 	 */
-}
-
-export function isThemeAllowedOnSite( siteId: number | null, themeId: string, state: IAppState ) {
-	const themeTier = getThemeTierForTheme( state, themeId );
-	const features = themeTier?.featureList ?? [ themeTier?.feature ];
-
-	return features.some(
-		( feature: string | null | undefined ) => ! feature || siteHasFeature( state, siteId, feature )
-	);
 }

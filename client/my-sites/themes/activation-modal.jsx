@@ -14,7 +14,6 @@ import {
 	activate as activateTheme,
 	dismissActivationModal,
 } from 'calypso/state/themes/actions';
-import { isThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -23,6 +22,7 @@ import {
 	isThemeActive,
 	shouldShowActivationModal,
 } from 'calypso/state/themes/selectors';
+import { isThemeAllowedOnSite } from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './activation-modal.scss';
@@ -209,7 +209,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const newThemeId = getThemeIdToActivate( state );
 		const activeThemeId = getActiveTheme( state, siteId );
-		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( activeThemeId, siteId, state );
+		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( state, activeThemeId, siteId );
 
 		return {
 			siteId,
