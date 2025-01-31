@@ -312,25 +312,27 @@ const useDataLogs = ( {
 const useFields = ( { logType }: { logType: LogType } ) => {
 	if ( logType === 'php' ) {
 		return [
-			{ id: 'severity', enableSorting: false },
-			{ id: 'timestamp' },
-			{ id: 'message', enableSorting: false },
-			{ id: 'kind', enableSorting: false },
-			{ id: 'name', enableSorting: false },
-			{ id: 'file', enableSorting: false },
-			{ id: 'line', enableSorting: false },
+			{ id: 'severity', label: 'Severity', enableSorting: false },
+			{ id: 'timestamp', label: 'Timestamp' },
+			{ id: 'message', label: 'Message', enableSorting: false },
+			{ id: 'kind', label: 'Kind', enableSorting: false },
+			{ id: 'name', label: 'Name', enableSorting: false },
+			{ id: 'file', label: 'File', enableSorting: false },
+			{ id: 'line', label: 'Line', enableSorting: false },
 		];
 	}
 
+	// TODO: translate
 	return [
-		{ id: 'request_type', enableSorting: false },
-		{ id: 'timestamp' },
-		{ id: 'status', enableSorting: false },
-		{ id: 'request_url', enableSorting: false },
-		{ id: 'body_bytes_sent', enableSorting: false },
-		{ id: 'cached', enableSorting: false },
-		{ id: 'http_host', enableSorting: false },
-		{ id: 'http_referer', enableSorting: false },
+		{ id: 'request_type', label: 'Request type', enableSorting: false },
+		{ id: 'date', label: 'Date' },
+		{ id: 'status', label: 'Status', enableSorting: false },
+		{ id: 'request_url', label: 'Request URL', enableSorting: false },
+		{ id: 'timestamp', label: 'Timestamp', enableSorting: false },
+		{ id: 'body_bytes_sent', label: 'Body bytes sent', enableSorting: false },
+		{ id: 'cached', label: 'Cached', enableSorting: false },
+		{ id: 'http_host', label: 'HTTP Host', enableSorting: false },
+		{ id: 'http_referer', label: 'Referrer', enableSorting: false },
 	];
 };
 
@@ -338,8 +340,10 @@ const getVisibleFieldsForLogType = ( logType: LogType ) => {
 	if ( logType === 'php' ) {
 		return [ 'severity', 'timestamp', 'message' ];
 	}
-	return [ 'request_type', 'timestamp', 'status', 'request_url' ];
+	return [ 'request_type', 'date', 'status', 'request_url' ];
 };
+
+const getSortFieldForLogType = ( logType: LogType ) => ( logType === 'php' ? 'timestamp' : 'date' );
 
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
@@ -397,7 +401,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 			page: 1,
 			perPage: 50,
 			sort: {
-				field: 'timestamp', // Endpoint doesn't support any other ordering
+				field: getSortFieldForLogType( logType ),
 				direction: 'desc',
 			},
 			fields: getVisibleFieldsForLogType( logType ),
@@ -414,6 +418,9 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	useEffect( () => {
 		setView( ( view ) => ( {
 			...view,
+			sort: {
+				field: getSortFieldForLogType( logType ),
+			},
 			fields: getVisibleFieldsForLogType( logType ),
 		} ) );
 	}, [ logType ] );
