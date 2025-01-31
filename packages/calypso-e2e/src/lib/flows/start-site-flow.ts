@@ -32,9 +32,6 @@ const selectors = {
 	selectedGoalButton: ( goal: string ) =>
 		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
 
-	// Design choices
-	designChoiceButton: ( choice: string ) => `button.design-choice:has-text("${ choice }")`,
-
 	// Step containers
 	contentAgnosticContainer: '.step-container',
 	themePickerContainer: '.design-picker',
@@ -110,9 +107,9 @@ export class StartSiteFlow {
 	 */
 	async clickDesignChoice( choice: 'theme' | 'ai' ): Promise< void > {
 		// It's best to select the element using accessible text
-		const choiceLabel = choice === 'theme' ? 'Choose a theme' : 'Design with AI';
+		const choiceLabel = choice === 'theme' ? 'Start with a theme' : 'Create with AI (BETA)';
 
-		await this.page.click( selectors.designChoiceButton( choiceLabel ) );
+		await this.page.getByRole( 'button', { name: choiceLabel } ).click();
 	}
 
 	/**
