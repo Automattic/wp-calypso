@@ -53,6 +53,7 @@ function StatsRealtime() {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
+
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }

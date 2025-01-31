@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
 	getSiteStatsQueryDate,
 	isRequestingSiteStatsForQuery,
@@ -60,12 +61,32 @@ class StatsDatePicker extends Component {
 		}
 	}
 
-	dateForCustomRange( startDate, endDate ) {
-		const { moment } = this.props;
+	dateForCustomRange( startDate, endDate, selectedShortcut = null ) {
+		const { moment, momentSiteZone } = this.props;
 
 		// Generate a full date range for the label.
 		const localizedStartDate = moment( startDate );
 		const localizedEndDate = moment( endDate );
+
+		// If it's a partial month but ends today.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'month' ) &&
+			( ! selectedShortcut || selectedShortcut.id === 'month_to_date' )
+		) {
+			return localizedStartDate.format( 'MMMM YYYY' );
+		}
+
+		// If it's a partial year but ends today.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'year' ) &&
+			( ! selectedShortcut || selectedShortcut.id === 'year_to_date' )
+		) {
+			return localizedStartDate.format( 'YYYY' );
+		}
 
 		// If it's the same day, show single date.
 		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
@@ -102,7 +123,10 @@ class StatsDatePicker extends Component {
 	}
 
 	dateForDisplay( selectedShortcut = null ) {
-		if ( selectedShortcut?.label && selectedShortcut?.id !== 'custom_date_range' ) {
+		if (
+			selectedShortcut?.label &&
+			! [ 'custom_date_range', 'month_to_date', 'year_to_date' ].includes( selectedShortcut?.id )
+		) {
 			return selectedShortcut.label;
 		}
 
@@ -111,7 +135,7 @@ class StatsDatePicker extends Component {
 
 		// Respect the dateRange if provided.
 		if ( dateRange?.chartStart && dateRange?.chartEnd ) {
-			return this.dateForCustomRange( dateRange.chartStart, dateRange.chartEnd );
+			return this.dateForCustomRange( dateRange.chartStart, dateRange.chartEnd, selectedShortcut );
 		}
 
 		// Ensure we have a moment instance here to work with.
@@ -258,6 +282,7 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 			? isRequestingSiteStatsForQuery( state, siteId, statsType, query )
 			: false,
 		reduxState: state,
+		momentSiteZone: getMomentSiteZone( state, siteId ),
 	};
 } );
 
