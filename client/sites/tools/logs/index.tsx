@@ -7,6 +7,7 @@ import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
+import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -27,6 +28,7 @@ import { SiteLogsTable } from 'calypso/sites/tools/logs/components/site-logs-tab
 import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-toolbar';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
@@ -308,9 +310,18 @@ const useDataLogs = ( {
 
 const useFields = ( { logType }: { logType: LogType } ) => {
 	const { __ } = useI18n();
+	const locale = useSelector( getCurrentUserLocale );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 	const siteGsmOffsetDisplay =
 		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
+
+	const getFormattedDate = ( value: string ) => {
+		const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
+		const formattedDate = moment( value )
+			.utcOffset( siteGmtOffset * 60 )
+			.format( dateFormat );
+		return <span>{ formattedDate }</span>;
+	};
 
 	if ( logType === 'php' ) {
 		return [
@@ -337,6 +348,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				id: 'timestamp',
 				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+				render: ( { item } ) => getFormattedDate( item.timestamp ),
 			},
 			{ id: 'message', label: __( 'Message' ), enableSorting: false },
 			{ id: 'kind', label: __( 'Kind' ), enableSorting: false },
@@ -415,7 +427,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	//     - max width for long cells
 	//     - spacing left/right
 	// - Fields:
-	//   - date format
+	//   - add types
 	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
