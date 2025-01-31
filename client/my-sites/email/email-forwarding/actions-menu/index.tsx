@@ -50,21 +50,29 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 			</ConfirmationDialog>
 			<DropdownMenu
 				icon={ moreHorizontalMobile }
-				label="Select a direction"
+				label={ translate( 'More options' ) }
 				controls={
-					[
-						{
-							title: 'Resend',
-							icon: rotateLeft,
-							onClick: () =>
-								resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ),
-						},
-						{
-							title: 'Remove',
-							icon: trash,
-							onClick: () => setIsOpen( true ),
-						},
-					] as const
+					mailbox.warnings?.length
+						? [
+								{
+									title: 'Resend',
+									icon: rotateLeft,
+									onClick: () =>
+										resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ),
+								},
+								{
+									title: 'Remove',
+									icon: trash,
+									onClick: () => setIsOpen( true ),
+								},
+						  ]
+						: [
+								{
+									title: 'Remove',
+									icon: trash,
+									onClick: () => setIsOpen( true ),
+								},
+						  ]
 				}
 			/>
 		</>
