@@ -161,41 +161,53 @@ export const SubscribersPageProvider = ( {
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 	};
 
-	const addSubscribersCallback = () => {
+	const addSubscribersCallback = ( importError: { message?: unknown } | null = null ) => {
 		setShowAddSubscribersModal( false );
 		completeImportSubscribersTask();
 
-		if ( completedJob ) {
-			const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
-				completedJob;
-			dispatch(
-				successNotice(
-					translate(
-						'Import completed. %(added)d subscribed, %(skipped)d already subscribed, and %(failed)d failed out of %(total)d %(totalLabel)s.',
+		if ( ! importError ) {
+			if ( completedJob ) {
+				const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
+					completedJob;
+				dispatch(
+					successNotice(
+						translate(
+							'Import completed. %(added)d subscribed, %(skipped)d already subscribed, and %(failed)d failed out of %(total)d %(totalLabel)s.',
+							{
+								args: {
+									added: subscribed_count,
+									skipped: already_subscribed_count,
+									failed: failed_subscribed_count,
+									total: email_count,
+									totalLabel: translate( 'subscriber', 'subscribers', {
+										count: email_count,
+									} ),
+								},
+							}
+						)
+					)
+				);
+			} else {
+				dispatch(
+					successNotice(
+						translate(
+							"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+						),
 						{
-							args: {
-								added: subscribed_count,
-								skipped: already_subscribed_count,
-								failed: failed_subscribed_count,
-								total: email_count,
-								totalLabel: translate( 'subscriber', 'subscribers', {
-									count: email_count,
-								} ),
-							},
+							duration: 5000,
 						}
 					)
-				)
-			);
+				);
+			}
 		} else {
+			const errorMessage =
+				importError.message && typeof importError.message === 'string'
+					? importError.message
+					: translate( 'An unknown error has occurred. Please try again in a second.' );
 			dispatch(
-				successNotice(
-					translate(
-						"Your subscriber list is being processed. We'll send you an email when it's finished importing."
-					),
-					{
-						duration: 5000,
-					}
-				)
+				errorNotice( errorMessage, {
+					duration: 5000,
+				} )
 			);
 		}
 	};
