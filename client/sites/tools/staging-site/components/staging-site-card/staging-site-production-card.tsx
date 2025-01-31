@@ -104,8 +104,11 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	} );
 
 	const handleDeleteClick = () => {
+		if ( ! productionSite?.url ) {
+			return;
+		}
 		sessionStorage.setItem( 'deleteStagingSite', 'true' );
-		navigate( `/staging-site/${ urlToSlug( productionSite?.url || '' ) }` );
+		navigate( `/staging-site/${ urlToSlug( productionSite.url ) }` );
 	};
 
 	const DeleteStagingSiteButton = () => (
