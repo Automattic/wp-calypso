@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { ImportSubscribersError } from '@automattic/data-stores/src/subscriber/types';
 import { useActiveJobRecognition } from '@automattic/subscriber';
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
@@ -49,7 +50,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
-	addSubscribersCallback: () => void;
+	addSubscribersCallback: ( importError?: null | ImportSubscribersError ) => void;
 	migrateSubscribersCallback: ( sourceSiteId: number, targetSiteId: number ) => void;
 	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
