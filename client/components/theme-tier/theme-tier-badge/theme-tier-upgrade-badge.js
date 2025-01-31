@@ -3,43 +3,29 @@ import { PremiumBadge } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors';
 import { THEME_TIERS } from '../constants';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 
-export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice, hideBackgroundOnUpgrade } ) {
-	const translate = useTranslate();
-	const { themeId } = useThemeTierBadgeContext();
-	const themeTier = useThemeTierForTheme( themeId );
+const MAX_LABEL_LENGTH = 45;
 
-	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
-	const mappedPlan = getPlan( tierMinimumUpsellPlan );
-	const subscriptionPrices = useSelector( ( state ) =>
-		getMarketplaceThemeSubscriptionPrices( state, themeId )
-	);
-
-	// Using API plans because the updated getTitle() method doesn't take the experiment assignment into account.
-	const plans = Plans.usePlans( { coupon: undefined } );
-	const planName = plans?.data?.[ mappedPlan.getStoreSlug() ]?.productNameShort;
-
-	const getLabel = () => {
+const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, translate ) => {
+	return useMemo( () => {
 		if ( showPartnerPrice && subscriptionPrices.month ) {
 			const fullLabel = translate( 'Available on %(planName)s plus %(price)s/month', {
 				args: {
-					planName: planName,
+					planName,
 					price: subscriptionPrices.month,
 				},
 			} );
 
-			// Use shorter version if full label is too long
-			const MAX_LABEL_LENGTH = 45;
 			return fullLabel.length > MAX_LABEL_LENGTH
-				? /* translators: This is a shorter version of the text "Available on %(planName)s plus %(price)s/month". */
-				  translate( '%(planName)s + %(price)s/mo', {
+				? translate( '%(planName)s + %(price)s/mo', {
 						args: {
-							planName: planName,
+							planName,
 							price: subscriptionPrices.month,
 						},
 				  } )
@@ -47,11 +33,27 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice, hideBackg
 		}
 
 		return translate( 'Available on %(planName)s', {
-			args: {
-				planName: planName,
-			},
+			args: { planName },
 		} );
-	};
+	}, [ translate, showPartnerPrice, subscriptionPrices.month, planName ] );
+};
+
+export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice, hideBackgroundOnUpgrade } ) {
+	const translate = useTranslate();
+	const { themeId } = useThemeTierBadgeContext();
+	const themeTier = useThemeTierForTheme( themeId );
+
+	const subscriptionPrices = useSelector(
+		( state ) => getMarketplaceThemeSubscriptionPrices( state, themeId ),
+		( prev, next ) => prev.month === next.month && prev.year === next.year
+	);
+
+	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
+	const mappedPlan = useMemo( () => getPlan( tierMinimumUpsellPlan ), [ tierMinimumUpsellPlan ] );
+	const plans = Plans.usePlans( { coupon: undefined } );
+	const planName = plans?.data?.[ mappedPlan.getStoreSlug() ]?.productNameShort;
+
+	const labelText = useUpgradeLabel( showPartnerPrice, planName, subscriptionPrices, translate );
 
 	return (
 		<PremiumBadge
@@ -59,7 +61,7 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice, hideBackg
 				'theme-tier-badge__without-background': hideBackgroundOnUpgrade,
 			} ) }
 			focusOnShow={ false }
-			labelText={ getLabel() }
+			labelText={ labelText }
 			tooltipClassName="theme-tier-badge-tooltip"
 			tooltipPosition="top"
 			shouldHideTooltip
