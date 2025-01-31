@@ -328,6 +328,7 @@ import {
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2633,6 +2634,16 @@ const FEATURES_LIST: FeatureList = {
 
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER ]: {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Unlimited AI Website Builder edits{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+	},
+	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
+		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
 		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
