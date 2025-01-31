@@ -393,11 +393,20 @@ export const StagingSiteCard = ( {
 		addStagingSite();
 	}, [ dispatch, siteId, addStagingSite ] );
 
-	const onDeleteClick = useCallback( () => {
+	const initiateDelete = useCallback( () => {
 		dispatch( setStagingSiteStatus( siteId, StagingSiteStatus.INITIATE_REVERTING ) );
 		setProgress( 0.1 );
 		deleteStagingSite();
 	}, [ dispatch, siteId, deleteStagingSite ] );
+
+	const shouldDelete = !! sessionStorage.getItem( 'deleteStagingSite' );
+
+	useEffect( () => {
+		if ( shouldDelete && siteId && stagingSites?.length && ! isLoadingStagingSites ) {
+			sessionStorage.removeItem( 'deleteStagingSite' );
+			initiateDelete();
+		}
+	}, [ initiateDelete, shouldDelete, siteId, stagingSites, isLoadingStagingSites ] );
 
 	const { pushToStaging } = usePushToStagingMutation( siteId, stagingSite?.id, {
 		onSuccess: () => {
@@ -487,7 +496,7 @@ export const StagingSiteCard = ( {
 			<ManageStagingSiteCardContent
 				stagingSite={ stagingSite }
 				siteId={ siteId }
-				onDeleteClick={ onDeleteClick }
+				onDeleteClick={ initiateDelete }
 				onPushClick={ pushToStaging }
 				onPullClick={ pullFromStaging }
 				isButtonDisabled={ disabled || isSyncInProgress }

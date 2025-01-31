@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
@@ -18,13 +18,18 @@ import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-product
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { SiteSyncCard } from './card-content/staging-sync-card';
+import { ConfirmationModal } from './confirmation-modal';
 import { LoadingPlaceholder } from './loading-placeholder';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
-	'@media ( max-width: 768px )': {
+	gap: '1em',
+
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
 		flexDirection: 'column',
-		alignItems: 'stretch',
+		'.button': { flexGrow: 1 },
+		alignSelf: 'stretch',
 	},
 } );
 
@@ -98,6 +103,31 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		},
 	} );
 
+	const handleDeleteClick = () => {
+		if ( ! productionSite?.url ) {
+			return;
+		}
+		sessionStorage.setItem( 'deleteStagingSite', 'true' );
+		showSitesPage( `/staging-site/${ urlToSlug( productionSite.url ) }` );
+	};
+
+	const DeleteStagingSiteButton = () => (
+		<ConfirmationModal
+			disabled={ disabled || isSyncInProgress }
+			onConfirm={ handleDeleteClick }
+			isScary
+			modalTitle={ translate( 'Confirm staging site deletion' ) }
+			modalMessage={ translate(
+				'Are you sure you want to delete the staging site? This action cannot be undone.'
+			) }
+			confirmLabel={ translate( 'Delete staging site' ) }
+			cancelLabel={ translate( 'Cancel' ) }
+		>
+			<Gridicon icon="trash" />
+			<span>{ translate( 'Delete staging site' ) }</span>
+		</ConfirmationModal>
+	);
+
 	const getLoadingErrorContent = ( message: string ) => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
@@ -117,6 +147,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
+					<DeleteStagingSiteButton />
 				</ActionButtons>
 				<SyncActionsContainer>
 					<SiteSyncCard
