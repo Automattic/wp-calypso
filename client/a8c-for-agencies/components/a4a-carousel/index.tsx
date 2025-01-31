@@ -44,10 +44,20 @@ export default function A4ACarousel( { children, className }: Props ) {
 		const currentTouch = e.targetTouches[ 0 ].clientX;
 		const distance = touchStart - currentTouch;
 
-		// Calculate new offset based on touch movement
-		const newOffset = Math.max( Math.min( offsetX - distance, 0 ), -maxOffset );
+		// If distance is greater than threshold, snap to next/previous
+		const snapThreshold = containerWidth * 0.2; // 20% of container width
+		if ( Math.abs( distance ) > snapThreshold ) {
+			const newOffset =
+				distance > 0
+					? Math.max( offsetX - offsetStep, -maxOffset )
+					: Math.min( offsetX + offsetStep, 0 );
+			setOffsetX( newOffset );
+		} else {
+			// Otherwise do smooth tracking
+			const newOffset = Math.max( Math.min( offsetX - distance, 0 ), -maxOffset );
+			setOffsetX( newOffset );
+		}
 
-		setOffsetX( newOffset );
 		setTouchStart( currentTouch );
 	};
 
