@@ -33,13 +33,14 @@ export function ConfirmationDialog( {
 		}
 	}, [ isOpen, dialogRef ] );
 	return (
-		<dialog ref={ dialogRef } className="automattic-components-dialog">
+		<dialog ref={ dialogRef } className="automattic-components-dialog" open>
 			<div>{ children }</div>
 			<div className="automattic-components-dialog__actions">
 				<Button variant="link" onClick={ onCancel }>
 					{ cancelButtonText }
 				</Button>
-				<Button variant="primary" onClick={ onConfirm }>
+				{ /* eslint-disable-next-line jsx-a11y/no-autofocus */ }
+				<Button variant="primary" onClick={ onConfirm } autoFocus={ isOpen }>
 					{ confirmButtonText }
 				</Button>
 			</div>
