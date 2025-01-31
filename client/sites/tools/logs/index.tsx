@@ -1,3 +1,4 @@
+import { Badge } from '@automattic/components';
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
@@ -325,6 +326,10 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				],
 				filterBy: {
 					operators: [ 'is' ],
+				},
+				render: ( { item } ) => {
+					const severity = item.severity;
+					return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
 				},
 				enableSorting: false,
 			},
