@@ -43,6 +43,7 @@ export interface BillingTransaction {
 	pay_part: string;
 	pay_ref: string;
 	service: string;
+	service_slug: string;
 
 	/**
 	 * @deprecated use subtotal_integer
