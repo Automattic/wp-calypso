@@ -50,7 +50,7 @@ type SubscribersPageContextProps = {
 	showAddSubscribersModal: boolean;
 	showMigrateSubscribersModal: boolean;
 	setShowAddSubscribersModal: ( show: boolean ) => void;
-	addSubscribersCallback: ( importError?: null | unknown ) => void;
+	addSubscribersCallback: ( importError?: ImportSubscribersError ) => void;
 	migrateSubscribersCallback: ( sourceSiteId: number, targetSiteId: number ) => void;
 	closeAllModals: typeof closeAllModals;
 	siteId: number | null;
