@@ -9,6 +9,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import StatsLineChart from '../../components/line-chart';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
@@ -53,7 +54,7 @@ function StatsRealtime() {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-
+				<StatsLineChart />
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
