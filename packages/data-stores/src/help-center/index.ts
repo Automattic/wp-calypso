@@ -17,7 +17,23 @@ const E2E_USER_AGENT = 'wp-e2e-tests';
 export const isE2ETest = () =>
 	typeof window !== 'undefined' && window.navigator.userAgent.includes( E2E_USER_AGENT );
 
+export const isSupportSession = () => {
+	if ( typeof window !== 'undefined' ) {
+		return (
+			'isSupportSession' in window ||
+			// A bit hacky but much easier than passing down data from PHP in Jetpack
+			// Simple
+			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
+			// Atomic
+			document.body.classList.contains( 'support-session' )
+		);
+	}
+	return false;
+};
+
 export function register(): typeof STORE_KEY {
+	const enabledPesistedOpenState = ! isE2ETest() && ! isSupportSession();
+
 	registerPlugins();
 
 	if ( ! isRegistered ) {
@@ -28,7 +44,7 @@ export function register(): typeof STORE_KEY {
 			selectors,
 			persist: [ 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
-			resolvers: isE2ETest() ? undefined : { isHelpCenterShown },
+			resolvers: enabledPesistedOpenState ? { isHelpCenterShown } : undefined,
 		} );
 		isRegistered = true;
 	}
