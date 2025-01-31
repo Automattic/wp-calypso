@@ -1,0 +1,29 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.subscriber-totals {
+	padding: 16px 48px;
+	margin-bottom: 8px;
+	
+	&.is-loading {
+		min-height: 24px;
+	}
+
+	&__counts {
+		font-size: 14px;
+		color: var(--studio-gray-60);
+	}
+
+	&__filtered-count {
+		font-weight: 600;
+		margin-right: 4px;
+	}
+
+	&__total {
+		color: var(--studio-gray-40);
+	}
+
+	&__total-count {
+		font-weight: 600;
+	}
+} 
