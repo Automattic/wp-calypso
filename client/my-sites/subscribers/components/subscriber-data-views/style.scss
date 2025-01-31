@@ -211,7 +211,8 @@ body.is-section-subscribers.is-subscribers-dataviews,
                 }
         
                 .subscriber-profile__user-details {
-                    .subscriber-profile__name {
+                    .subscriber-profile__name,
+                    .subscriber-profile__email {
                         text-align: left;
                     }
                 }
