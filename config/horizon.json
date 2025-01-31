@@ -32,7 +32,7 @@
 		"devdocs": false,
 		"cookie-banner": true,
 		"google-my-business": false,
-		"global-styles/on-personal-plan": false,
+		"global-styles/on-personal-plan": true,
 		"help": true,
 		"home/launchpad-first": false,
 		"home/layout-dev": true,
