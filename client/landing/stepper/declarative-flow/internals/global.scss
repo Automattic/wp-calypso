@@ -108,7 +108,8 @@ button {
 .hundred-year-domain,
 .link-in-bio-tld,
 .entrepreneur,
-.generate-content {
+.generate-content,
+.processing {
 	box-sizing: border-box;
 
 	&.step-route {
@@ -224,6 +225,10 @@ button {
 	--wp-components-color-accent-darker-20: var(--studio-wordpress-blue-70);
 	--wp-components-color-accent: var(--studio-wordpress-blue-50);
 
+}
+
+.step-route.onboarding {
+	margin: 0 auto;
 }
 
 .import-focused .step-container.site-picker,

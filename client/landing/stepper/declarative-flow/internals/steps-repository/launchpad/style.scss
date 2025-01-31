@@ -300,6 +300,7 @@
 
 // Launchpad - Processing Screens
 .processing {
+	.stepper-loader__progress-bar,
 	.processing-step__progress-bar {
 		background-color: #fff;
 	}
@@ -340,7 +341,10 @@
 	.progress-bar {
 		display: none;
 	}
+}
 
+.stepper-loader {
+	h1.stepper-loader__title,
 	h1.processing-step__progress-step {
 		font-size: $font-title-medium;
 

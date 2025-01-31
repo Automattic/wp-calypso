@@ -18,6 +18,7 @@
 			}
 		}
 
+		.stepper-loader__progress-bar,
 		.processing-step__progress-bar {
 			background-color: var(--studio-white);
 		}
@@ -47,6 +48,7 @@
 			}
 		}
 
+		h1.stepper-loader__title,
 		h1.processing-step__progress-step {
 			font-size: $font-title-medium;
 

@@ -8,7 +8,6 @@
 	padding: 1em;
 	max-width: 540px;
 	text-align: center;
-	margin: 16vh auto 0;
 
 	&__progress-step {
 		@include onboarding-font-recoleta;
@@ -20,6 +19,7 @@
 		margin: 0;
 	}
 
+	.stepper-loader__progress-bar,
 	.processing-step__progress-bar {
 		margin: 46px auto 0 auto;
 	}
@@ -49,16 +49,17 @@
 
 // Processing Copy Site Styles
 .copy-site.processing-copy {
-	.processing-step {
+	.processing-step, .stepper-loader {
 		margin: 5vh auto 0;
 		max-width: 660px;
 	}
 
-	.processing-step__progress-step {
+	.processing-step__progress-step, .stepper-loader__title {
 		font-size: 3rem;
 		margin-bottom: 24px;
 	}
 
+	.stepper-loader__progress-bar,
 	.processing-step__progress-bar {
 		max-width: 540px;
 		margin: 0 auto;
