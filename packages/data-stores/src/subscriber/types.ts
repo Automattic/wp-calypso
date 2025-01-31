@@ -22,6 +22,23 @@ export type ImportJob = {
 	email_count?: number;
 	scheduled_at?: string;
 	subscribed_count?: number;
+	already_subscribed_count?: number;
+	failed_subscribed_count?: number;
+	paid_subscribed_count?: number;
+	paid_already_subscribed_count?: number;
+	paid_failed_subscribed_count?: number;
+};
+
+export type CompletedImportJob = {
+	id: number;
+	status: 'imported';
+	email_count: number;
+	subscribed_count: number;
+	already_subscribed_count: number;
+	failed_subscribed_count: number;
+	paid_subscribed_count: number;
+	paid_already_subscribed_count: number;
+	paid_failed_subscribed_count: number;
 };
 
 export type GenericError = {
