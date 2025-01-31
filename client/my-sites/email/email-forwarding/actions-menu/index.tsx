@@ -1,4 +1,3 @@
-import './style.scss';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import { RemoveButton } from '../remove-button';
 import { ResendButton } from '../resend-button';
