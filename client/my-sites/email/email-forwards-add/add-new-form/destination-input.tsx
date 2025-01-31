@@ -52,11 +52,11 @@ export function DestinationsInput( props: DestinationsInputProps ) {
 						existingForwardsForMailbox,
 						translate
 					);
-					if ( error ) {
+					if ( typeof error === 'object' ) {
 						setError( error );
 						return false;
 					}
-					return true;
+					return error;
 				} }
 				placeholder={ translate(
 					'These are the target email addresses where your emails will be forwarded.'

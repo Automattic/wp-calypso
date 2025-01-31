@@ -33,7 +33,7 @@ export function isValidDestination(
 	mailbox: string,
 	existingForwardsForMailbox: EmailAccountEmail[],
 	translate: ( key: string ) => string
-): ValidationError | null {
+): ValidationError | boolean {
 	const valid = emailValidator.validate( value );
 	const duplicate = existingForwardsForMailbox.find( ( e ) => e.target === value );
 	const sameDomain = value.endsWith( `@${ selectedDomainName }` );
@@ -56,5 +56,5 @@ export function isValidDestination(
 			};
 		}
 	}
-	return null;
+	return valid;
 }
