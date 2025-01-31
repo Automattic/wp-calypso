@@ -5,7 +5,7 @@ import './goals-first-design-choice.scss';
 
 interface Props {
 	className?: string;
-	title: string | React.ReactElement;
+	title: string | number | React.ReactElement;
 	ariaLabel?: string;
 	description: string;
 	bgImageSrc?: string;
