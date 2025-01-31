@@ -2,11 +2,16 @@ import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 
 export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	const state = context.store.getState();
@@ -32,12 +37,19 @@ export async function siteSettings( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
 	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
 
 	// if site loaded, but user cannot manage site, redirect
 	if ( site && ! canManageOptions ) {
 		page.redirect( '/stats' );
 		return;
+	}
+
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
 	// analytics tracking
