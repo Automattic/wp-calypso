@@ -8,8 +8,8 @@ import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar
 import { A4A_REFERRALS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import StepSection from 'calypso/a8c-for-agencies/components/step-section';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
+import WooCommerceLogo from 'calypso/assets/images/woocommerce/logo.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -88,7 +88,7 @@ export default function CommissionOverview( {
 							header={
 								<>
 									<div className="a4a-overview-hosting__logo-container">
-										<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+										<img width="45px" src={ WooCommerceLogo } alt="WooCommerce" />
 									</div>
 									<div>{ translate( 'WooPayments revenue share' ) }</div>
 								</>
@@ -134,7 +134,7 @@ export default function CommissionOverview( {
 								<>
 									<div className="a4a-overview-hosting__logo-container">
 										<JetpackLogo className="jetpack-logo" size={ 24 } />
-										<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+										<img width="45px" src={ WooCommerceLogo } alt="WooCommerce" />
 									</div>
 
 									<div>

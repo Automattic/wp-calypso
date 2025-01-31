@@ -45,6 +45,8 @@ import JetpackProductIconStats from 'calypso/assets/images/jetpack/jetpack-produ
 import JetpackProductIconVideopressLight from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress-light.svg';
 import JetpackProductIconVideopress from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
 import WooCommerceProductIcon from 'calypso/assets/images/jetpack/woo-icon.svg';
+import WooCommerceLogo from 'calypso/assets/images/woocommerce/product-icon.svg';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { productIconProps } from '../types';
 
 const setProductsIcon = ( slugs: ReadonlyArray< string >, resource: IconResource ) =>
@@ -124,10 +126,18 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 		regular: JetpackProductIconCreator,
 		light: '',
 	} ),
-	...setProductsIcon( WOOCOMMERCE_PRODUCTS, {
-		regular: WooCommerceProductIcon,
-		light: WooCommerceProductIcon,
-	} ),
+	...setProductsIcon(
+		WOOCOMMERCE_PRODUCTS,
+		isA8CForAgencies()
+			? {
+					regular: WooCommerceLogo,
+					light: WooCommerceLogo,
+			  }
+			: {
+					regular: WooCommerceProductIcon,
+					light: WooCommerceProductIcon,
+			  }
+	),
 };
 
 const getProductIcon = ( { productSlug, light }: productIconProps ): string => {
