@@ -31,6 +31,10 @@
 	flex-direction: row;
 	justify-content: center;
 	gap: 43px;
+
+	&.is-goals-first {
+		gap: 16px;
+	}
 }
 
 .design-choices__footer {

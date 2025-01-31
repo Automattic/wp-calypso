@@ -1,0 +1,79 @@
+@import '@automattic/typography/styles/fonts';
+
+.goals-first-design-choice {
+	position: relative;
+	width: 380px;
+	padding: 24px;
+	border-radius: 4px;
+	outline: var( --studio-gray-5 ) solid 1px;
+	transition: outline ease-in 0.15s;
+	height: 100%;
+	cursor: pointer;
+
+	.goals-first-design-choice__background {
+		position: relative;
+		margin-bottom: 16px;
+		background-color: var( --studio-gray-5 );
+	}
+
+	.goals-first-design-choice__background-item {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 4 / 3;
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			display: block;
+			object-fit: cover;
+		}
+
+		.goals-first-design-choice__foreground-image {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			transition: transform 0.15s ease-in-out;
+		}
+	}
+
+	.goals-first-design-choice__title {
+		margin-bottom: 4px;
+		color: var( --studio-gray-90 );
+		font-size: $font-body;
+		font-weight: 500;
+		line-height: 24px;
+		text-align: left;
+	}
+
+	.goals-first-design-choice__description {
+		color: var( --studio-gray-50 );
+		font-size: $font-body-small;
+		font-weight: 400;
+		line-height: 20px;
+		text-align: start;
+	}
+
+	.badge--info-blue {
+		background-color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+		color: var( --wp-components-color-accent-inverted, #fff );
+	}
+
+	.goals-first-design-choice__price-badge {
+		position: absolute;
+		top: -0.5em;
+		right: -0.5em;
+		z-index: 2;
+	}
+
+	&:hover,
+	&:focus-visible {
+		outline: #3858e9 solid 2px;
+
+		.goals-first-design-choice__foreground-image {
+			transform: scale( 1.05 );
+		}
+	}
+}
