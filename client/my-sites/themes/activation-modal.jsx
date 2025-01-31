@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlan } from '@automattic/calypso-products';
 import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -7,6 +8,7 @@ import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import {
@@ -18,6 +20,7 @@ import {
 	getActiveTheme,
 	getCanonicalTheme,
 	getThemeIdToActivate,
+	getThemeTierForTheme,
 	isActivatingTheme,
 	isThemeActive,
 	isThemeAllowedOnSite,
@@ -92,6 +95,7 @@ export class ActivationModal extends Component {
 	render() {
 		const {
 			isCurrentThemeAllowedOnSite,
+			activeThemeRequiredPlan,
 			newTheme,
 			activeTheme,
 			isActivating,
@@ -175,17 +179,25 @@ export class ActivationModal extends Component {
 					</h1>
 					<p className="activation-modal__description">{ message }</p>
 					{ ! isCurrentThemeAllowedOnSite && (
-						<div className="activation-modal__lower-tier-warning">
-							<CheckboxControl
-								onChange={ this.onCheckboxChange }
-								label={ translate(
-									'I understand I will not be able to switch back to %(themeName)s without upgrading my plan.',
+						<CheckboxControl
+							className="activation-modal__lower-tier-warning"
+							onChange={ this.onCheckboxChange }
+							label={ translate(
+								'I understand I will not be able to switch back to %(themeName)s without upgrading my plan.',
+								{
+									args: { themeName: activeTheme.name },
+								}
+							) }
+							help={
+								activeThemeRequiredPlan &&
+								translate(
+									"%(themeName)s is no longer included in your plan, so you won't be able to activate it again unless you upgrade to the %(plan)s plan.",
 									{
-										args: { themeName: activeTheme.name },
+										args: { plan: activeThemeRequiredPlan.getTitle(), themeName: activeTheme.name },
 									}
-								) }
-							/>
-						</div>
+								)
+							}
+						/>
 					) }
 					<div className="activation-modal__actions">
 						<Button
@@ -210,6 +222,10 @@ export default connect(
 		const newThemeId = getThemeIdToActivate( state );
 		const activeThemeId = getActiveTheme( state, siteId );
 		const isCurrentThemeAllowedOnSite = isThemeAllowedOnSite( state, siteId, activeThemeId );
+		const activeThemeTier = getThemeTierForTheme( state, activeThemeId );
+		const activeThemeMinimumUpsellPlan = THEME_TIERS[ activeThemeTier?.slug ]?.minimumUpsellPlan;
+		const activeThemeRequiredPlan =
+			activeThemeMinimumUpsellPlan && getPlan( activeThemeMinimumUpsellPlan );
 
 		return {
 			siteId,
@@ -221,6 +237,7 @@ export default connect(
 			isCurrentTheme: isThemeActive( state, newThemeId, siteId ),
 			isVisible: shouldShowActivationModal( state, newThemeId ),
 			isCurrentThemeAllowedOnSite,
+			activeThemeRequiredPlan,
 		};
 	},
 	{
