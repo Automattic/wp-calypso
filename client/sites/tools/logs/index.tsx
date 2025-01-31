@@ -310,7 +310,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		return [
 			{
 				id: 'severity',
-				label: 'Severity',
+				label: translate( 'Severity' ),
 				elements: [
 					{ value: '', label: translate( 'All' ) },
 					{ value: 'User', label: translate( 'User' ) },
@@ -323,19 +323,19 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				},
 				enableSorting: false,
 			},
-			{ id: 'timestamp', label: 'Timestamp' },
-			{ id: 'message', label: 'Message', enableSorting: false },
-			{ id: 'kind', label: 'Kind', enableSorting: false },
-			{ id: 'name', label: 'Name', enableSorting: false },
-			{ id: 'file', label: 'File', enableSorting: false },
-			{ id: 'line', label: 'Line', enableSorting: false },
+			{ id: 'timestamp', label: translate( 'Timestamp' ) },
+			{ id: 'message', label: translate( 'Message' ), enableSorting: false },
+			{ id: 'kind', label: translate( 'Kind' ), enableSorting: false },
+			{ id: 'name', label: translate( 'Name' ), enableSorting: false },
+			{ id: 'file', label: translate( 'File' ), enableSorting: false },
+			{ id: 'line', label: translate( 'Line' ), enableSorting: false },
 		];
 	}
 
 	return [
 		{
 			id: 'request_type',
-			label: 'Request type',
+			label: translate( 'Request type' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
 				{ value: 'GET', label: translate( 'GET' ) },
@@ -350,7 +350,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		{ id: 'date', label: 'Date' },
 		{
 			id: 'status',
-			label: 'Status',
+			label: translate( 'Status' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
 				{ value: '200', label: '200' },
@@ -368,12 +368,12 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			},
 			enableSorting: false,
 		},
-		{ id: 'request_url', label: 'Request URL', enableSorting: false },
-		{ id: 'timestamp', label: 'Timestamp', enableSorting: false },
-		{ id: 'body_bytes_sent', label: 'Body bytes sent', enableSorting: false },
-		{ id: 'cached', label: 'Cached', enableSorting: false },
-		{ id: 'http_host', label: 'HTTP Host', enableSorting: false },
-		{ id: 'http_referer', label: 'Referrer', enableSorting: false },
+		{ id: 'request_url', label: translate( 'Request URL' ), enableSorting: false },
+		{ id: 'timestamp', label: translate( 'Timestamp' ), enableSorting: false },
+		{ id: 'body_bytes_sent', label: translate( 'Body bytes sent' ), enableSorting: false },
+		{ id: 'cached', label: translate( 'Cached' ), enableSorting: false },
+		{ id: 'http_host', label: translate( 'HTTP Host' ), enableSorting: false },
+		{ id: 'http_referer', label: translate( 'Referrer' ), enableSorting: false },
 	];
 };
 
@@ -389,8 +389,6 @@ const getSortFieldForLogType = ( logType: LogType ) => ( logType === 'php' ? 'ti
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
-	//   - filters
-	//   - translate field labels
 	//   - styling issues
 	//     - max width for long cells
 	//     - spacing left/right
