@@ -186,7 +186,11 @@ body.is-sidebar-collapsed .site-logs-table__expanded-content {
 
 // Flexible columns
 td.request_url span,
-td.message span {
+td.message span,
+.site-logs-table__request-url,
+.site-logs-table__http-referer,
+.site-logs-table__message,
+.site-logs-table__file {
 	white-space: nowrap;
 	display: block;
 	text-overflow: ellipsis;

@@ -350,10 +350,24 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
 				render: ( { item } ) => getFormattedDate( item.timestamp ),
 			},
-			{ id: 'message', label: __( 'Message' ), enableSorting: false },
+			{
+				id: 'message',
+				label: __( 'Message' ),
+				render: ( { item } ) => {
+					return <span className="site-logs-table__message">{ item.message }</span>;
+				},
+				enableSorting: false,
+			},
 			{ id: 'kind', label: __( 'Kind' ), enableSorting: false },
 			{ id: 'name', label: __( 'Name' ), enableSorting: false },
-			{ id: 'file', label: __( 'File' ), enableSorting: false },
+			{
+				id: 'file',
+				label: __( 'File' ),
+				render: ( { item } ) => {
+					return <span className="site-logs-table__file">{ item.file }</span>;
+				},
+				enableSorting: false,
+			},
 			{ id: 'line', label: __( 'Line' ), enableSorting: false },
 		];
 	}
@@ -402,12 +416,26 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			},
 			enableSorting: false,
 		},
-		{ id: 'request_url', label: __( 'Request URL' ), enableSorting: false },
+		{
+			id: 'request_url',
+			label: __( 'Request URL' ),
+			render: ( { item } ) => {
+				return <span className="site-logs-table__request-url">{ item.request_url }</span>;
+			},
+			enableSorting: false,
+		},
 		{ id: 'timestamp', label: __( 'Timestamp' ), enableSorting: false },
 		{ id: 'body_bytes_sent', label: __( 'Body bytes sent' ), enableSorting: false },
 		{ id: 'cached', label: __( 'Cached' ), enableSorting: false },
 		{ id: 'http_host', label: __( 'HTTP Host' ), enableSorting: false },
-		{ id: 'http_referer', label: __( 'Referrer' ), enableSorting: false },
+		{
+			id: 'http_referer',
+			label: __( 'Referrer' ),
+			render: ( { item } ) => {
+				return <span className="site-logs-table__http-referer">{ item.request_url }</span>;
+			},
+			enableSorting: false,
+		},
 	];
 };
 
@@ -423,9 +451,7 @@ const getSortFieldForLogType = ( logType: LogType ) => ( logType === 'php' ? 'ti
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
-	//   - styling issues
-	//     - max width for long cells
-	//     - spacing left/right
+	//   - styling issues: spacing left/right
 	// - Fields:
 	//   - add types
 	// - Empty state after filtering should display DataViews (not the empty state)
@@ -487,6 +513,22 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 				direction: 'desc',
 			},
 			fields: getVisibleFieldsForLogType( logType ),
+			layout: {
+				styles: {
+					request_url: {
+						maxWidth: '300px',
+					},
+					http_referer: {
+						maxWidth: '300px',
+					},
+					message: {
+						maxWidth: '300px',
+					},
+					file: {
+						maxWidth: '300px',
+					},
+				},
+			},
 		};
 	} );
 	const fields = useFields( { logType } );
