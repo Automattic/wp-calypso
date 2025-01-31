@@ -47,7 +47,7 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 				<h3 className="a4a-migration-offer-v3__title">
 					<span>
 						{ translate(
-							'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000!',
+							'{{b}}Limited time offer:{{/b}} Migrate your sites to Pressable or WordPress.com and earn up to $10,000!*',
 							{
 								components: {
 									b: <b />,
@@ -66,7 +66,7 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 						<SimpleList
 							items={ [
 								translate(
-									"{{b}}WP Engine customers:{{/b}} You will receive $100 per site, up to $10,000. You will also get credited for the remaining time on your WP Engine contract, so you won't have to pay twice.",
+									'{{b}}All migrations:{{/b}} Your first month of hosting will be free when you migrate twenty or more sites to us from any host.',
 									{
 										components: {
 											b: <b />,
@@ -74,7 +74,15 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 									}
 								),
 								translate(
-									'{{b}}For any other host:{{/b}} You will receive $100 per site migrated up to a maximum of $3,000.',
+									"{{b}}WP Engine customers:{{/b}} You will receive $100 per successful site migration up to $10,000. If you have an existing contract, we'll host your site(s) for free until your existing WP Engine contract ends.",
+									{
+										components: {
+											b: <b />,
+										},
+									}
+								),
+								translate(
+									'{{b}}For any other host:{{/b}} You will receive $100 per successful site migration, up to $3,000.',
 									{
 										components: {
 											b: <b />,
@@ -104,9 +112,9 @@ const MigrationOfferV3 = ( { isExpanded, onToggleView }: Props ) => {
 							</Button>
 
 							<span className="a4a-migration-offer-v3__body-actions-footnote">
-								{ translate( '* offer valid until %(endDate)s', {
+								{ translate( '*Offer valid until %(endDate)s', {
 									args: {
-										endDate: new Date( '2025-01-31T00:00:00' ).toLocaleDateString(
+										endDate: new Date( '2025-07-31T00:00:00' ).toLocaleDateString(
 											translate.localeSlug,
 											{
 												year: 'numeric',
