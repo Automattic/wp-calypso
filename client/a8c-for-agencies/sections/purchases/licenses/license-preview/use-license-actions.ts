@@ -18,7 +18,8 @@ export default function useLicenseActions(
 	attachedAt: string | null,
 	revokedAt: string | null,
 	licenseType: LicenseType,
-	isChildLicense?: boolean
+	isChildLicense?: boolean,
+	isClientLicense?: boolean
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -87,7 +88,7 @@ export default function useLicenseActions(
 				href: `/marketplace/hosting/wpcom`,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
 				isExternalLink: false,
-				isEnabled: true,
+				isEnabled: ! isClientLicense,
 			},
 			{
 				name: translate( 'Revoke' ),
@@ -109,6 +110,7 @@ export default function useLicenseActions(
 		canRevoke,
 		dispatch,
 		isChildLicense,
+		isClientLicense,
 		isDevSite,
 		licenseType,
 		revokedAt,
