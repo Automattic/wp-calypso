@@ -21,7 +21,7 @@ import {
 import customDesignIcon from './icons/custom-design';
 import spaceUpgradeIcon from './icons/space-upgrade';
 import unlimitedThemesIcon from './icons/unlimited-themes';
-import type { AddOnMeta } from './types';
+import type { AddOnMeta, AddOnSlug } from './types';
 
 export const getAddOnsList = (): AddOnMeta[] => {
 	const defaultAddOns: AddOnMeta[] = [
@@ -109,4 +109,8 @@ export const getAddOnsList = (): AddOnMeta[] => {
 	}
 
 	return defaultAddOns;
+};
+
+export const getAddOn = ( addOnSlug: AddOnSlug ): AddOnMeta | undefined => {
+	return getAddOnsList().find( ( addOn ) => addOn.addOnSlug === addOnSlug );
 };
