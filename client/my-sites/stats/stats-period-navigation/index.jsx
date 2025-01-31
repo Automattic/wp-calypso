@@ -320,7 +320,8 @@ class StatsPeriodNavigation extends PureComponent {
 			momentSiteZone,
 			'day'
 		);
-		const showArrowsForDateRange = showArrows && dateRange?.daysInRange <= 31;
+		// Make sure we only show arrows for date ranges that are less than 3 years for performance reasons.
+		const showArrowsForDateRange = showArrows && dateRange?.daysInRange <= 365 * 3;
 
 		return (
 			<div
