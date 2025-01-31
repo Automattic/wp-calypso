@@ -88,6 +88,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"network-connection": true,
+		"newsletter-categories-section": false,
 		"p2-enabled": false,
 		"plans/hosting-trial": true,
 		"plans/migration-trial": true,
