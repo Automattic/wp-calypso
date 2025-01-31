@@ -14,7 +14,6 @@ import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
 import {
 	isGravPoweredOAuth2Client,
 	isWPJobManagerOAuth2Client,
-	isWooOAuth2Client,
 	isA4AOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -38,13 +37,13 @@ import {
 } from 'calypso/state/login/selectors';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
-
 class HandleEmailedLinkForm extends Component {
 	static propTypes = {
 		// Passed props
@@ -178,7 +177,7 @@ class HandleEmailedLinkForm extends Component {
 			token,
 			activate,
 			wccomFrom,
-			isWoo,
+			isWCCOM,
 			isA4A,
 		} = this.props;
 		const isWooDna = wooDnaConfig( initialQuery ).isWooDnaFlow();
@@ -206,8 +205,8 @@ class HandleEmailedLinkForm extends Component {
 			buttonLabel = translate( 'Connect' );
 		} else if ( wccomFrom === 'nux' ) {
 			buttonLabel = translate( 'Continue to Woo Express' );
-		} else if ( isWoo ) {
-			buttonLabel = translate( 'Continue to Woo.com' );
+		} else if ( isWCCOM ) {
+			buttonLabel = translate( 'Continue to WooCommerce.com' );
 		} else if ( isA4A ) {
 			buttonLabel = translate( 'Continue to Automattic for Agencies' );
 		} else {
@@ -263,7 +262,7 @@ class HandleEmailedLinkForm extends Component {
 		}
 
 		const illustration =
-			isWoo || isWooDna ? '/calypso/images/illustrations/illustration-woo-magic-link.svg' : '';
+			isWCCOM || isWooDna ? '/calypso/images/illustrations/illustration-woo-magic-link.svg' : '';
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
@@ -324,7 +323,7 @@ const mapState = ( state ) => {
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
 		initialQuery: getInitialQueryArguments( state ),
-		isWoo: isWooOAuth2Client( oauth2Client ),
+		isWCCOM: getIsWCCOM( state ),
 		isA4A: isA4AOAuth2Client( oauth2Client ),
 		wccomFrom: getWccomFrom( state ),
 		oauth2Client,

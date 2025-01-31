@@ -1,4 +1,3 @@
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
 import { TwitterLinkPreview } from './link-preview';
@@ -53,10 +52,6 @@ export const TwitterPreviews: React.FC< TwitterPreviewsProps > = ( {
 							'This is what it will look like when someone shares the link to your WordPress post on X.',
 							'social-previews'
 						) }
-						&nbsp;
-						<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-							{ __( 'Learn more about links', 'social-previews' ) }
-						</ExternalLink>
 					</p>
 					<TwitterLinkPreview { ...tweets[ 0 ] } name="" profileImage="" screenName="" />
 				</section>

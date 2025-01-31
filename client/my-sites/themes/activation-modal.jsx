@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Dialog, Gridicon, ScreenReaderText } from '@automattic/components';
+import { Onboard } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { CheckboxControl } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -26,9 +27,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './activation-modal.scss';
 
+const SiteIntent = Onboard.SiteIntent;
+
 export class ActivationModal extends Component {
 	static propTypes = {
 		source: PropTypes.oneOf( [ 'details', 'list', 'upload' ] ).isRequired,
+		siteIntent: PropTypes.string,
 		newTheme: PropTypes.shape( {
 			id: PropTypes.string,
 			name: PropTypes.string,
@@ -92,6 +96,7 @@ export class ActivationModal extends Component {
 			activeTheme,
 			isActivating,
 			isCurrentTheme,
+			siteIntent,
 			isVisible = false,
 		} = this.props;
 
@@ -112,6 +117,37 @@ export class ActivationModal extends Component {
 		const eventName = ! isCurrentThemeAllowedOnSite
 			? 'calypso_theme_switch_plan_warning_modal_view'
 			: 'calypso_theme_autoloading_homepage_modal_view';
+
+		const isAIAssembler = siteIntent === SiteIntent.AIAssembler && activeTheme.id === 'assembler';
+		const translationArgs = {
+			args: {
+				activeThemeName: activeTheme.name,
+				newThemeName: newTheme.name,
+			},
+			components: {
+				a: (
+					<a
+						href={ localizeUrl(
+							'https://wordpress.com/support/themes/changing-themes/#what-happens-to-your-old-content'
+						) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				br: <br />,
+				strong: <strong />,
+			},
+		};
+
+		const message = isAIAssembler
+			? translate(
+					'{{strong}}%(newThemeName)s{{/strong}} is currently not compatible with our AI Website Builder. Changing to this theme means you can no longer use our AI Website Builder on this site.{{br}}{{/br}}{{br}}{{/br}}Additionally, your homepage will be replaced but your content will remain accessible. {{a}}Learn more{{/a}}.',
+					translationArgs
+			  )
+			: translate(
+					'You’re about to change your active theme from {{strong}}%(activeThemeName)s{{/strong}} to {{strong}}%(newThemeName)s{{/strong}}.{{br}}{{/br}}{{br}}{{/br}}This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
+					translationArgs
+			  );
 
 		return (
 			<Dialog
@@ -137,30 +173,7 @@ export class ActivationModal extends Component {
 							args: { themeName: newTheme.name },
 						} ) }
 					</h1>
-					<p className="activation-modal__description">
-						{ translate(
-							'You’re about to change your active theme from {{strong}}%(activeThemeName)s{{/strong}} to {{strong}}%(newThemeName)s{{/strong}}.{{br}}{{/br}}{{br}}{{/br}}This will replace your homepage, but your content will remain accessible. {{a}}Learn more{{/a}}.',
-							{
-								args: {
-									activeThemeName: activeTheme.name,
-									newThemeName: newTheme.name,
-								},
-								components: {
-									a: (
-										<a
-											href={ localizeUrl(
-												'https://wordpress.com/support/themes/changing-themes/#what-happens-to-your-old-content'
-											) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									br: <br />,
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
+					<p className="activation-modal__description">{ message }</p>
 					{ ! isCurrentThemeAllowedOnSite && (
 						<div className="activation-modal__lower-tier-warning">
 							<CheckboxControl

@@ -1,37 +1,60 @@
-import { getAssemblerDesign, themesIllustrationImage } from '@automattic/design-picker';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { OnboardSelect, ProductsList } from '@automattic/data-stores';
+import { themesIllustrationImage } from '@automattic/design-picker';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import { navigate } from 'calypso/lib/navigate';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import bigSkyBg from './big-sky-bg.png';
+import bigSkyFg from './big-sky-fg.png';
 import hiBigSky from './big-sky-no-text-small.png';
 import DesignChoice from './design-choice';
+import GoalsFirstDesignChoice from './goals-first-design-choice';
+import themeChoiceFg from './theme-choice-fg.png';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 /**
  * The design choices step
  */
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
+	const isGoalsFirstVariation =
+		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
+
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const { submit, goBack } = navigation;
-	const headerText = translate( 'Bring your vision to life' );
+	const headerText = isGoalsFirstVariation
+		? translate( 'How would you like to start?' )
+		: translate( 'Bring your vision to life' );
+	const subHeaderText = isGoalsFirstVariation
+		? translate( 'Select an option to begin. You can always change your mind later.' )
+		: undefined;
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
 
+	const personalProduct = useSelect(
+		( select ) =>
+			// Ensure we only trigger network request when it's needed
+			isGoalsFirstVariation
+				? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
+				: undefined,
+		[ isGoalsFirstVariation ]
+	);
+
 	const { isEligible, isLoading } = useIsBigSkyEligible();
-	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		if ( ! isLoading && isEligible ) {
@@ -50,13 +73,38 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 			destination: kebabCase( destination ),
 		} );
 
-		if ( destination === 'launch-big-sky' ) {
-			setSelectedDesign( getAssemblerDesign() );
-			return;
-		}
-
 		submit?.( { destination } );
 	};
+
+	const getCreateWithAILabel = () => {
+		if ( hasEnTranslation( 'Create with AI {{small}}(BETA){{/small}}' ) ) {
+			return translate( 'Create with AI {{small}}(BETA){{/small}}', {
+				components: {
+					small: <span className="design-choices__beta-label" />,
+				},
+			} );
+		}
+
+		if ( hasEnTranslation( 'Create with AI' ) ) {
+			return translate( '%s {{small}}(BETA){{/small}}', {
+				args: [ translate( 'Create with AI' ) ],
+				components: {
+					small: <span className="design-choices__beta-label" />,
+				},
+				comment: 'Do not translate',
+			} );
+		}
+
+		return translate( 'Create with AI (BETA)' );
+	};
+
+	const bigSkyBadgeLabel =
+		! isLoading && isEligible && personalProduct?.cost_per_month_display && isGoalsFirstVariation
+			? translate( 'Starting at %(price)s a month', {
+					args: { price: personalProduct.cost_per_month_display },
+					comment: 'Translators: "price" is a per month price and includes a currency symbol',
+			  } )
+			: undefined;
 
 	return (
 		<>
@@ -65,18 +113,36 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 				flowName={ flow }
 				stepName={ stepName }
 				isHorizontalLayout={ false }
-				formattedHeader={ <FormattedHeader headerText={ headerText } /> }
+				formattedHeader={
+					<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				}
 				stepContent={
 					<>
-						<div className="design-choices__body">
-							<DesignChoice
-								title={ translate( 'Choose a theme' ) }
-								description={ translate( 'Choose one of our professionally designed themes.' ) }
-								imageSrc={ themesIllustrationImage }
-								destination="designSetup"
-								onSelect={ handleSubmit }
-							/>
-							{ ! isLoading && isEligible && (
+						<div
+							className={ clsx( 'design-choices__body', {
+								'is-goals-first': isGoalsFirstVariation,
+							} ) }
+						>
+							{ ! isGoalsFirstVariation ? (
+								<DesignChoice
+									title={ translate( 'Choose a theme' ) }
+									description={ translate( 'Choose one of our professionally designed themes.' ) }
+									imageSrc={ themesIllustrationImage }
+									destination="designSetup"
+									onSelect={ handleSubmit }
+								/>
+							) : (
+								<GoalsFirstDesignChoice
+									title={ translate( 'Start with a theme' ) }
+									description={ translate(
+										'Choose a professionally designed theme and make it yours.'
+									) }
+									fgImageSrc={ themeChoiceFg }
+									destination="designSetup"
+									onSelect={ handleSubmit }
+								/>
+							) }
+							{ ! isLoading && isEligible && ! isGoalsFirstVariation && (
 								<DesignChoice
 									className="design-choices__try-big-sky"
 									title={ translate( 'Design with AI' ) }
@@ -85,6 +151,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
+									badgeLabel={ bigSkyBadgeLabel }
 									footer={ preventWidows(
 										translate(
 											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
@@ -105,15 +172,28 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 											}
 										)
 									) }
-									onSelect={ () => {
+									onSelect={ ( destination ) => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
 											flow,
 											step: stepName,
 										} );
-										const queryParams = new URLSearchParams( location.search ).toString();
-										navigate(
-											`/setup/site-setup/launch-big-sky${ queryParams ? `?${ queryParams }` : '' }`
-										);
+										handleSubmit( destination );
+									} }
+								/>
+							) }
+							{ ! isLoading && isEligible && isGoalsFirstVariation && (
+								<GoalsFirstDesignChoice
+									title={ getCreateWithAILabel() }
+									ariaLabel={ translate( 'Create with AI (BETA)' ) }
+									description={ translate(
+										'Use our AI website builder to easily and quickly build the site of your dreams.'
+									) }
+									badgeLabel={ bigSkyBadgeLabel }
+									bgImageSrc={ bigSkyBg }
+									fgImageSrc={ bigSkyFg }
+									destination="launch-big-sky"
+									onSelect={ ( destination ) => {
+										handleSubmit( destination );
 									} }
 								/>
 							) }

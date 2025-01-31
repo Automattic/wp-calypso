@@ -11,15 +11,11 @@ import { AnyAction } from 'redux';
 import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import {
-	READER_ONBOARDING_PREFERENCE_KEY,
-	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
-} from 'calypso/reader/onboarding/constants';
+import { READER_ONBOARDING_TRACKS_EVENT_PREFIX } from 'calypso/reader/onboarding/constants';
 import { curatedBlogs } from 'calypso/reader/onboarding/curated-blogs';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
-import { savePreference } from 'calypso/state/preferences/actions';
 import { requestFollows } from 'calypso/state/reader/follows/actions';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
@@ -277,9 +273,6 @@ const SubscribeModal: React.FC< SubscribeModalProps > = ( { isOpen, onClose } ) 
 	}, [ dispatch, onClose ] );
 
 	const handleContinue = useCallback( () => {
-		dispatch( savePreference( READER_ONBOARDING_PREFERENCE_KEY, true ) );
-		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed` );
-
 		// Invalidate the subscriptions count query to refresh the Recent stream.
 		queryClient.invalidateQueries( {
 			queryKey: [ 'read', 'subscriptions-count' ],

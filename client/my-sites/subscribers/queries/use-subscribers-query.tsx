@@ -13,7 +13,8 @@ type SubscriberQueryParams = {
 	sortTerm?: SubscribersSortBy;
 	sortOrder?: 'asc' | 'desc';
 	filterOption?: SubscribersFilterBy;
-	timestamp: number;
+	timestamp?: number;
+	limitData?: boolean;
 };
 
 const useSubscribersQuery = ( {
@@ -25,9 +26,11 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	sortOrder,
 	filterOption = SubscribersFilterBy.All,
+	limitData = false,
 }: SubscriberQueryParams ) => {
 	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
 	const shouldFetch = ! isLoading;
+	const limitDataReturned = ! limitData && shouldFetch && hasManySubscribers;
 
 	const query = useQuery< SubscriberEndpointResponse >( {
 		queryKey: getSubscribersCacheKey(
@@ -37,17 +40,17 @@ const useSubscribersQuery = ( {
 			search,
 			sortTerm,
 			filterOption,
-			hasManySubscribers,
+			limitDataReturned,
 			timestamp,
 			sortOrder
 		),
 		queryFn: () => {
 			// This is a temporary solution until we have a better way to handle this.
-			const pathRoute = hasManySubscribers ? 'subscribers_by_user_type' : 'subscribers';
-			const userTypeField = hasManySubscribers ? 'user_type' : 'filter';
+			const pathRoute = limitDataReturned ? 'subscribers_by_user_type' : 'subscribers';
+			const userTypeField = limitDataReturned ? 'user_type' : 'filter';
 
 			const validatedFilterOption =
-				hasManySubscribers && filterOption === SubscribersFilterBy.All
+				limitDataReturned && filterOption === SubscribersFilterBy.All
 					? SubscribersFilterBy.WPCOM
 					: filterOption;
 

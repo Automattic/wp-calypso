@@ -83,3 +83,4 @@ export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
 export const getProfilerData = ( state: State ) => state.profilerData;
 export const getPaidSubscribers = ( state: State ) => state.paidSubscribers;
 export const getPartnerBundle = ( state: State ) => state.partnerBundle;
+export const getCreateWithBigSky = ( state: State ) => state.createWithBigSky;
