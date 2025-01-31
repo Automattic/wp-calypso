@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { info } from '@wordpress/icons';
+import { check, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS } from 'calypso/lib/emails/email-provider-constants';
 import { Mailbox } from '../../../../data/emails/types';
@@ -12,10 +12,15 @@ export function VerificatonPendingNotice( { warnings }: { warnings: Mailbox[ 'wa
 	);
 
 	if ( ! hasWarning ) {
-		return null;
+		return (
+			<div className="email-forward-verification-status active">
+				<Icon icon={ check } />
+				{ translate( 'Active' ) }
+			</div>
+		);
 	}
 	return (
-		<div className="email-forward-verification-pending-notice">
+		<div className="email-forward-verification-status verification-pending">
 			<Icon icon={ info } />
 			{ translate( 'Pending verification' ) }
 		</div>

@@ -1,10 +1,19 @@
-.email-forward-verification-pending-notice {
+.email-forward-verification-status {
     display: flex;
     align-items: center;
     gap: 5px;
-    color: var(--studio-orange-50);
 
-    svg {
-        fill: var(--studio-orange-50);
+    &.active {
+        svg {
+            fill: var(--studio-green-50);
+        }
+    }
+
+    &.verification-pending {
+        color: var(--studio-orange-50);
+
+        svg {
+            fill: var(--studio-orange-50);
+        }
     }
 }
