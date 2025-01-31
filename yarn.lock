@@ -13245,7 +13245,6 @@ __metadata:
     qrcode.react: "npm:^3.1.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
-    react-click-outside: "npm:^3.0.1"
     react-day-picker: "npm:^7.4.10"
     react-dom: "npm:^18.3.1"
     react-element-to-jsx-string: "npm:^15.0.0"
@@ -20021,13 +20020,6 @@ __metadata:
     minimalistic-assert: "npm:^1.0.0"
     minimalistic-crypto-utils: "npm:^1.0.1"
   checksum: f3d9ba31b40257a573f162176ac5930109816036c59a09f901eb2ffd7e5e705c6832bedfff507957125f2086a0ab8f853c0df225642a88bf1fcaea945f20600d
-  languageName: node
-  linkType: hard
-
-"hoist-non-react-statics@npm:^2.1.1":
-  version: 2.5.5
-  resolution: "hoist-non-react-statics@npm:2.5.5"
-  checksum: 79c204446a61ad490cc9342b2deeedea5a17f03a5fc091f367b6c08f29387c8d5578634ebfb8733043422a5e1182b372893d63f8737ac4b75da3a2ec4a316162
   languageName: node
   linkType: hard
 
@@ -28206,15 +28198,6 @@ __metadata:
     react: ^0.14.0 || ^15.0.0 || ^16.0.0
     react-dom: ^0.14.0 || ^15.0.0 || ^16.0.0
   checksum: 3b791f2455808682241c9fc00cccce31804cb696c489a4800cd124fce8be6b624a4c21836e06568b6d7d45b6a8e4945460249c77235990ce015f9899cda10a7f
-  languageName: node
-  linkType: hard
-
-"react-click-outside@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "react-click-outside@npm:3.0.1"
-  dependencies:
-    hoist-non-react-statics: "npm:^2.1.1"
-  checksum: fd7c5c9984bcd1eb6214b5e180aa38dda1dce2cb5286a8ee57b84be2e4821a51eb791c275ebef345c23a010d3f026617c345fbb520bfb3babbc55fdbd08f244d
   languageName: node
   linkType: hard
 
