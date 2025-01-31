@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
+import { useActiveJobRecognition } from '@automattic/subscriber';
 import { useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
@@ -100,6 +101,8 @@ export const SubscribersPageProvider = ( {
 		}
 	}, [ hasManySubscribers ] );
 
+	const { completedJob } = useActiveJobRecognition( siteId ?? 0 );
+
 	useEffect( () => {
 		const handleHashChange = () => {
 			// Open "add subscribers" via URL hash
@@ -162,16 +165,39 @@ export const SubscribersPageProvider = ( {
 		setShowAddSubscribersModal( false );
 		completeImportSubscribersTask();
 
-		dispatch(
-			successNotice(
-				translate(
-					"Your subscriber list is being processed. We'll send you an email when it's finished importing."
-				),
-				{
-					duration: 5000,
-				}
-			)
-		);
+		if ( completedJob ) {
+			const { email_count, subscribed_count, already_subscribed_count, failed_subscribed_count } =
+				completedJob;
+			dispatch(
+				successNotice(
+					translate(
+						'Import completed. %(added)d subscribed, %(skipped)d already subscribed, and %(failed)d failed out of %(total)d %(totalLabel)s.',
+						{
+							args: {
+								added: subscribed_count,
+								skipped: already_subscribed_count,
+								failed: failed_subscribed_count,
+								total: email_count,
+								totalLabel: translate( 'subscriber', 'subscribers', {
+									count: email_count,
+								} ),
+							},
+						}
+					)
+				)
+			);
+		} else {
+			dispatch(
+				successNotice(
+					translate(
+						"Your subscriber list is being processed. We'll send you an email when it's finished importing."
+					),
+					{
+						duration: 5000,
+					}
+				)
+			);
+		}
 	};
 
 	const migrateSubscribersCallback = async ( sourceSiteId: number, targetSiteId: number ) => {

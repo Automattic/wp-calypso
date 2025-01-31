@@ -20,7 +20,6 @@ import {
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
 	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -34,15 +33,15 @@ import {
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getRedirectToOriginal } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
@@ -58,7 +57,6 @@ export class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isFromMigrationPlugin: PropTypes.bool,
 		isWhiteLogin: PropTypes.bool.isRequired,
-		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -315,7 +313,7 @@ export class Login extends Component {
 			return null;
 		}
 
-		if ( this.props.isWoo || this.props.isBlazePro || this.props.isWooPasswordlessJPC ) {
+		if ( this.props.isWCCOM || this.props.isBlazePro || this.props.isWooJPC ) {
 			return (
 				<a
 					className="login__lost-password-link"
@@ -327,7 +325,7 @@ export class Login extends Component {
 							login( {
 								redirectTo: this.props.redirectTo,
 								locale: this.props.locale,
-								action: this.props.isWooPasswordlessJPC ? 'jetpack/lostpassword' : 'lostpassword',
+								action: this.props.isWooJPC ? 'jetpack/lostpassword' : 'lostpassword',
 								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
 								from: get( this.props.currentQuery, 'from' ),
 							} )
@@ -446,12 +444,11 @@ export class Login extends Component {
 			locale,
 			isLoginView,
 			signupUrl,
-			isWooPasswordless,
-			isPartnerSignup,
 			isWoo,
+			isWCCOM,
 			isBlazePro,
 			currentQuery,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			currentRoute,
 		} = this.props;
 
@@ -460,14 +457,14 @@ export class Login extends Component {
 		}
 
 		if (
-			( currentQuery.lostpassword_flow === 'true' && isWooPasswordlessJPC ) ||
+			( currentQuery.lostpassword_flow === 'true' && isWooJPC ) ||
 			// We don't want to show lost password option if the user is already on lost password's page
 			( isSocialFirst && currentRoute === '/log-in/lostpassword' )
 		) {
 			return null;
 		}
 
-		if ( ( isWooPasswordless || isBlazePro ) && isLoginView ) {
+		if ( ( isWoo || isBlazePro ) && isLoginView ) {
 			return (
 				<>
 					<LoginFooter lostPasswordLink={ this.getLostPasswordLink() } shouldRenderTos />
@@ -487,12 +484,7 @@ export class Login extends Component {
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
 		const shouldRenderFooter =
-			! socialConnect &&
-			! isJetpackMagicLinkSignUpFlow &&
-			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWoo && ! isPartnerSignup ) &&
-			! isBlazePro &&
-			! isWooPasswordlessJPC;
+			! socialConnect && ! isJetpackMagicLinkSignUpFlow && ! isWCCOM && ! isBlazePro && ! isWooJPC;
 
 		if ( shouldRenderFooter ) {
 			return (
@@ -651,11 +643,10 @@ export default connect(
 				! currentRoute.includes( '/start' ),
 			emailQueryParam:
 				currentQuery.email_address || getInitialQueryArguments( state ).email_address,
-			isPartnerSignup: isPartnerSignupQuery( currentQuery ),
 			isFromMigrationPlugin: startsWith( get( currentQuery, 'from' ), 'wpcom-migration' ),
-			isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
-			isWoo: isWooOAuth2Client( oauth2Client ),
-			isWooPasswordless: getIsWooPasswordless( state ),
+			isWooJPC: isWooJPCFlow( state ),
+			isWCCOM: getIsWCCOM( state ),
+			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
 			currentRoute,
 			currentQuery,
