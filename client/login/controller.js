@@ -8,7 +8,7 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -322,9 +322,7 @@ export function redirectLostPassword( context, next ) {
 	const oauth2Client = getCurrentOAuth2Client( state );
 
 	const shouldRedirectToLostPassword = () =>
-		! getIsBlazePro( state ) &&
-		! isWooOAuth2Client( oauth2Client ) &&
-		! isWooPasswordlessJPCFlow( state );
+		! getIsBlazePro( state ) && ! isWooOAuth2Client( oauth2Client ) && ! isWooJPCFlow( state );
 
 	if ( shouldRedirectToLostPassword() ) {
 		return context.redirect( 301, '/wp-login.php?action=lostpassword' );

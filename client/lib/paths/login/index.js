@@ -36,7 +36,6 @@ export function login( {
 	allowSiteConnection = undefined,
 	signupUrl = undefined,
 	useQRCode = undefined,
-	isPartnerSignup = undefined,
 	action = undefined,
 	lostpasswordFlow = undefined,
 	usernameOnly = undefined,
@@ -100,10 +99,6 @@ export function login( {
 
 	if ( allowSiteConnection ) {
 		url = addQueryArgs( { allow_site_connection: '1' }, url );
-	}
-
-	if ( isPartnerSignup ) {
-		url = addQueryArgs( { is_partner_signup: true }, url );
 	}
 
 	if ( lostpasswordFlow ) {

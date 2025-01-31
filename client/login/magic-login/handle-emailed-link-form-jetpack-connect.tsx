@@ -24,7 +24,7 @@ import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-log
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isWooDnaFlow from 'calypso/state/selectors/is-woo-dna-flow';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
@@ -44,7 +44,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
-	const isWooCoreFlow = useSelector( isWooPasswordlessJPCFlow );
+	const isWooCoreFlow = useSelector( isWooJPCFlow );
 	const isWooDnaService = useSelector( isWooDnaFlow );
 	const isWooFlow = isWooCoreFlow || isWooDnaService;
 	const isFetching = useSelector( isFetchingMagicLoginAuth );

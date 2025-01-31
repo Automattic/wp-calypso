@@ -20,7 +20,7 @@ export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
 		isWooOnboarding: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
@@ -58,7 +58,7 @@ export class AuthFormHeader extends Component {
 			translate,
 			partnerSlug,
 			isWooOnboarding,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			wooDnaConfig,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
@@ -105,7 +105,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate( 'Create an account' );
@@ -151,7 +151,7 @@ export class AuthFormHeader extends Component {
 		const {
 			translate,
 			isWooOnboarding,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			wooDnaConfig,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
@@ -169,7 +169,7 @@ export class AuthFormHeader extends Component {
 			}
 		}
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );
 			const reviewDocLink = (
 				<a
@@ -273,11 +273,11 @@ export class AuthFormHeader extends Component {
 	}
 
 	getSiteCard() {
-		const { isWpcomMigration, isWooPasswordlessJPC } = this.props;
+		const { isWpcomMigration, isWooJPC } = this.props;
 		const { jpVersion } = this.props.authQuery;
 		if (
 			// Always show the site card for Woo Core Profiler
-			! isWooPasswordlessJPC &&
+			! isWooJPC &&
 			! versionCompare( jpVersion, '4.0.3', '>' )
 		) {
 			return null;
@@ -305,7 +305,7 @@ export class AuthFormHeader extends Component {
 
 		return (
 			<CompactCard className="jetpack-connect__site">
-				<Site site={ site } defaultIcon={ isWooPasswordlessJPC ? <Icon icon={ globe } /> : null } />
+				<Site site={ site } defaultIcon={ isWooJPC ? <Icon icon={ globe } /> : null } />
 			</CompactCard>
 		);
 	}

@@ -24,7 +24,6 @@ import {
 	isGravatarOAuth2Client,
 	isWPJobManagerOAuth2Client,
 	isGravPoweredOAuth2Client,
-	isWooOAuth2Client,
 	isStudioAppOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
@@ -60,6 +59,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
@@ -67,7 +67,7 @@ import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
 import RequestLoginEmailForm from './request-login-email-form';
@@ -107,7 +107,7 @@ class MagicLogin extends Component {
 
 		// From `localize`
 		translate: PropTypes.func.isRequired,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 	};
 
 	state = {
@@ -239,11 +239,11 @@ class MagicLogin extends Component {
 	};
 
 	renderLinks() {
-		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWoo, query } = this.props;
+		const { isJetpackLogin, locale, showCheckYourEmail, translate, isWCCOM, query } = this.props;
 
 		const isA4A = query?.redirect_to?.includes( 'agencies.automattic.com/client' ) ?? false;
 
-		if ( isWoo ) {
+		if ( isWCCOM ) {
 			return null;
 		}
 
@@ -313,7 +313,7 @@ class MagicLogin extends Component {
 	}
 
 	renderGutenboardingLogo() {
-		if ( this.props.isWoo ) {
+		if ( this.props.isWCCOM ) {
 			return null;
 		}
 
@@ -1214,11 +1214,11 @@ class MagicLogin extends Component {
 			query,
 			translate,
 			showCheckYourEmail: showEmailLinkVerification,
-			isWooPasswordlessJPC,
+			isWooJPC,
 		} = this.props;
 		const { showSecondaryEmailOptions, showEmailCodeVerification, usernameOrEmail } = this.state;
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			return (
 				<Main className="magic-login magic-login__request-link is-white-login">
 					{ this.renderLocaleSuggestions() }
@@ -1326,7 +1326,7 @@ const mapState = ( state ) => ( {
 		getCurrentQueryArguments( state ).email_address ||
 		getInitialQueryArguments( state ).email_address,
 	localeSuggestions: getLocaleSuggestions( state ),
-	isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
+	isWCCOM: getIsWCCOM( state ),
 	isValidatingCode: isFetchingMagicLoginAuth( state ),
 	isCodeValidated: getMagicLoginRequestedAuthSuccessfully( state ),
 	codeValidationError: getMagicLoginRequestAuthError( state ),
@@ -1336,7 +1336,7 @@ const mapState = ( state ) => ( {
 	isFromAutomatticForAgenciesPlugin:
 		'automattic-for-agencies-client' ===
 		new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-	isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+	isWooJPC: isWooJPCFlow( state ),
 } );
 
 const mapDispatch = {
