@@ -39,6 +39,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
+		appliedShortcut: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -50,6 +51,7 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
+		appliedShortcut: null,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -139,6 +141,58 @@ class StatsPeriodNavigation extends PureComponent {
 		this.handleArrowNavigation( false );
 	};
 
+	// TODO: refactor to extract logic with `dateForCustomRange` from `client/my-sites/stats/stats-date-picker/index.jsx`.
+	getFullPeriod = () => {
+		const { moment, dateRange, appliedShortcut, momentSiteZone } = this.props;
+		const localizedStartDate = moment( dateRange.chartStart );
+		const localizedEndDate = moment( dateRange.chartEnd );
+
+		// If it's a partial month but ends today.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'month' ) &&
+			( ! appliedShortcut || appliedShortcut.id === 'month_to_date' )
+		) {
+			return 'month';
+		}
+
+		// If it's a partial year but ends today.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
+			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'year' ) &&
+			( ! appliedShortcut || appliedShortcut.id === 'year_to_date' )
+		) {
+			return 'year';
+		}
+
+		// If it's the same day, show single date.
+		if ( localizedStartDate.isSame( localizedEndDate, 'day' ) ) {
+			return 'day';
+		}
+
+		// If it's a full month.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
+			localizedEndDate.isSame( localizedEndDate.clone().endOf( 'month' ), 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'month' )
+		) {
+			return 'month';
+		}
+
+		// If it's a full year.
+		if (
+			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
+			localizedEndDate.isSame( localizedEndDate.clone().endOf( 'year' ), 'day' ) &&
+			localizedStartDate.isSame( localizedEndDate, 'year' )
+		) {
+			return 'year';
+		}
+
+		return null;
+	};
+
 	handleArrowNavigation = ( previousOrNext = false ) => {
 		const { moment, period, slug, dateRange } = this.props;
 
@@ -152,14 +206,34 @@ class StatsPeriodNavigation extends PureComponent {
 		const navigationStart = moment( dateRange.chartStart );
 		const navigationEnd = moment( dateRange.chartEnd );
 
-		if ( previousOrNext ) {
-			// Navigate to the previous date range.
-			navigationStart.subtract( dateRange.daysInRange, 'days' );
-			navigationEnd.subtract( dateRange.daysInRange, 'days' );
+		// If it's a full month then we need to navigate to the previous/next month.
+		// If it's a full year then we need to navigate to the previous/next year.
+
+		const fullPeriod = this.getFullPeriod();
+		if ( ! fullPeriod ) {
+			// Usual flow - only based on the days in range.
+			if ( previousOrNext ) {
+				// Navigate to the previous date range.
+				navigationStart.subtract( dateRange.daysInRange, 'days' );
+				navigationEnd.subtract( dateRange.daysInRange, 'days' );
+			} else {
+				// Navigate to the next date range.
+				navigationStart.add( dateRange.daysInRange, 'days' );
+				navigationEnd.add( dateRange.daysInRange, 'days' );
+			}
 		} else {
-			// Navigate to the next date range.
-			navigationStart.add( dateRange.daysInRange, 'days' );
-			navigationEnd.add( dateRange.daysInRange, 'days' );
+			// Navigate range by full periods.
+			if ( previousOrNext ) {
+				// Navigate to the previous period.
+				navigationStart.subtract( 1, fullPeriod );
+				navigationEnd.subtract( 1, fullPeriod );
+			} else {
+				// Navigate to the next period.
+				navigationStart.add( 1, fullPeriod );
+				navigationEnd.add( 1, fullPeriod );
+			}
+			navigationStart.startOf( fullPeriod );
+			navigationEnd.endOf( fullPeriod );
 		}
 
 		const chartStart = navigationStart.format( 'YYYY-MM-DD' );
