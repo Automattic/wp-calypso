@@ -282,15 +282,13 @@ const useDataLogs = ( {
 		return getFilterQueryParam( 'request_type' ) || '';
 	} );
 
-	const [ requestStatus ] = useState( () => {
-		return getFilterQueryParam( 'request_status' ) || '';
-	} );
+	const status = view.filters?.filter( ( filter ) => filter.field === 'status' )[ 0 ]?.value || '';
 
 	const { data, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+		filter: buildFilterParam( logType, severity, requestType, status ),
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
 		pageIndex: view.page,
@@ -339,7 +337,26 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 	return [
 		{ id: 'request_type', label: 'Request type', enableSorting: false },
 		{ id: 'date', label: 'Date' },
-		{ id: 'status', label: 'Status', enableSorting: false },
+		{
+			id: 'status',
+			label: 'Status',
+			elements: [
+				{ value: '', label: translate( 'All' ) },
+				{ value: '200', label: '200' },
+				{ value: '301', label: '301' },
+				{ value: '302', label: '302' },
+				{ value: '400', label: '400' },
+				{ value: '401', label: '401' },
+				{ value: '403', label: '403' },
+				{ value: '404', label: '404' },
+				{ value: '429', label: '429' },
+				{ value: '500', label: '500' },
+			],
+			filterBy: {
+				operators: [ 'is' ],
+			},
+			enableSorting: false,
+		},
 		{ id: 'request_url', label: 'Request URL', enableSorting: false },
 		{ id: 'timestamp', label: 'Timestamp', enableSorting: false },
 		{ id: 'body_bytes_sent', label: 'Body bytes sent', enableSorting: false },
