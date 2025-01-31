@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -82,22 +83,24 @@ const NewsletterCategoriesSection = ( {
 				</FormSettingExplanation>
 			</Card>
 
-			<Card
-				className={ clsx(
-					'newsletter-categories-settings__hide-modal-toggle',
-					'site-settings__card',
-					{
-						hidden: ! newsletterCategoriesEnabled,
-					}
-				) }
-				aria-hidden={ ! newsletterCategoriesEnabled }
-			>
-				<NewsletterCategoriesHideModalToggle
-					disabled={ disabled }
-					handleToggle={ handleToggle }
-					value={ newsletterCategoriesModalHiddenEnabled }
-				/>
-			</Card>
+			{ config.isEnabled( 'newsletter-categories-section' ) && (
+				<Card
+					className={ clsx(
+						'newsletter-categories-settings__hide-modal-toggle',
+						'site-settings__card',
+						{
+							hidden: ! newsletterCategoriesEnabled,
+						}
+					) }
+					aria-hidden={ ! newsletterCategoriesEnabled }
+				>
+					<NewsletterCategoriesHideModalToggle
+						disabled={ disabled }
+						handleToggle={ handleToggle }
+						value={ newsletterCategoriesModalHiddenEnabled }
+					/>
+				</Card>
+			) }
 		</>
 	);
 };
