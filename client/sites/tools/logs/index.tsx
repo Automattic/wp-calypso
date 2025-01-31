@@ -503,6 +503,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					fields={ fields }
 					view={ view }
 					onChangeView={ onChangeView }
+					search={ false }
 					defaultLayouts={ { table: {} } }
 				/>
 			) }
