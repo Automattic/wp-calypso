@@ -416,7 +416,6 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	//     - spacing left/right
 	// - Fields:
 	//   - date format
-	//   - request type: add colorful badge
 	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
