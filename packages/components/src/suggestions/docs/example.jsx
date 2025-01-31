@@ -1,10 +1,9 @@
-import { useCallback, useMemo, useState } from 'react';
-import FormTextInput from 'calypso/components/forms/form-text-input';
+import { TextControl } from '@wordpress/components';
+import { useMemo, useState } from 'react';
 import Suggestions from '..';
 
 export default function SuggestionsExample() {
 	const [ query, setQuery ] = useState( '' );
-	const updateInput = useCallback( ( e ) => setQuery( e.target.value ), [ setQuery ] );
 
 	const suggestions = useMemo( () => {
 		if ( ! query ) {
@@ -18,14 +17,16 @@ export default function SuggestionsExample() {
 	return (
 		<div className="docs__suggestions-container">
 			<div>
-				<FormTextInput
+				<TextControl
 					value={ query }
-					onChange={ updateInput }
+					onChange={ setQuery }
 					autoComplete="off"
 					autoCorrect="off"
 					autoCapitalize="off"
 					spellCheck={ false }
 					placeholder="Type Foo, Bar or Baz…"
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 				/>
 				<p>
 					<span role="img" aria-label="Warning">
