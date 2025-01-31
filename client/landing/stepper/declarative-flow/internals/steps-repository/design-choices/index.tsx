@@ -1,6 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -14,19 +17,35 @@ import kebabCase from '../../../../utils/kebabCase';
 import hiBigSky from './big-sky-no-text-small.png';
 import DesignChoice from './design-choice';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 /**
  * The design choices step
  */
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
+	const isGoalsFirstVariation =
+		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
+
 	const translate = useTranslate();
 	const { submit, goBack } = navigation;
-	const headerText = translate( 'Bring your vision to life' );
+	const headerText = isGoalsFirstVariation
+		? translate( 'How would you like to start?' )
+		: translate( 'Bring your vision to life' );
+	const subHeaderText = isGoalsFirstVariation
+		? translate( 'Select an option to begin. You can always change your mind later.' )
+		: undefined;
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
+	);
+
+	const personalProduct = useSelect(
+		( select ) =>
+			// Ensure we only trigger network request when it's needed
+			isGoalsFirstVariation
+				? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
+				: undefined,
+		[ isGoalsFirstVariation ]
 	);
 
 	const { isEligible, isLoading } = useIsBigSkyEligible();
@@ -51,6 +70,14 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		submit?.( { destination } );
 	};
 
+	const bigSkyBadgeLabel =
+		! isLoading && isEligible && personalProduct?.cost_per_month_display && isGoalsFirstVariation
+			? translate( 'Starting at %(price)s a month', {
+					args: { price: personalProduct.cost_per_month_display },
+					comment: 'Translators: "price" is a per month price and includes a currency symbol',
+			  } )
+			: undefined;
+
 	return (
 		<>
 			<DocumentHead title={ headerText } />
@@ -58,7 +85,9 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 				flowName={ flow }
 				stepName={ stepName }
 				isHorizontalLayout={ false }
-				formattedHeader={ <FormattedHeader headerText={ headerText } /> }
+				formattedHeader={
+					<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
+				}
 				stepContent={
 					<>
 						<div className="design-choices__body">
@@ -78,6 +107,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
+									badgeLabel={ bigSkyBadgeLabel }
 									footer={ preventWidows(
 										translate(
 											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
