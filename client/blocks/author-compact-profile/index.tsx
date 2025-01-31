@@ -91,7 +91,12 @@ export default function AuthorCompactProfile( props: AuthorCompactProfileProps )
 						{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 							count: followCount,
 							args: {
-								followCount: numberFormat( followCount ),
+								followCount: numberFormat( followCount, {
+									numberFormatOptions: {
+										notation: 'compact',
+										maximumFractionDigits: 1,
+									},
+								} ),
 							},
 						} ) }
 					</div>

@@ -67,7 +67,11 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 				>
 					{ trendIcon }
 					<div className="sites-overview__stats">
-						<span className="shortened-number">{ numberFormat( totalViews ) }</span>
+						<span className="shortened-number">
+							{ numberFormat( totalViews, {
+								numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+							} ) }
+						</span>
 					</div>
 				</button>
 			);

@@ -96,7 +96,9 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 									count: followCount,
 									args: {
-										followCount: numberFormat( followCount ),
+										followCount: numberFormat( followCount, {
+											numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+										} ),
 									},
 								} ) }
 							</span>
