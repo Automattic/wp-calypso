@@ -11,29 +11,35 @@
 }
 
 .email-forward-list {
-    box-shadow: 0 0 0 1px var(--color-border-subtle);
+    border: 1px solid #E0E0E0;
     background: var(--color-surface);
 
     td,
     th {
-        padding: 16px;
+        padding: 8px 16px;
         font-weight: normal;
         font-size: $font-body-small;
         vertical-align: middle;
     }
 
     thead th {
-        border-bottom: 1px solid var(--color-border-subtle);
+        padding: 16px;
+    }
+
+
+    tbody>tr:first-child>td {
+        border-top: 1px solid #E0E0E0;
+        padding-top: 16px;
+    }
+
+    tbody>tr:last-child>td {
+        padding-bottom: 16px;
     }
 }
 
 .email-plan-mailboxes-list__forward-item-actions {
     display: flex;
     flex: 1
-}
-
-.email-forward-list__row {
-    padding: 1rem;
 }
 
 div.email-forward-list__actions {

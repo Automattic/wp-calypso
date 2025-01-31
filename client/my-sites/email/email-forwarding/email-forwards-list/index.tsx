@@ -3,11 +3,23 @@ import { useTranslate } from 'i18n-calypso';
 import { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 import EmailForwardSecondaryDetails from '../../email-management/home/email-plan-mailboxes/email-forward-secondary-details';
 import MailboxLink from '../../email-management/home/email-plan-mailboxes/list-item-link';
-import { RemoveButton } from '../remove-button';
-import { ResendButton } from '../resend-button';
+import { ActionsMenu } from '../actions-menu';
 import { VerificatonPendingNotice } from '../verification-notices';
-
 import './style.scss';
+
+function groupByMailbox( mailboxes: Mailbox[] ) {
+	return Object.entries(
+		mailboxes.reduce(
+			( groups, mailbox ) => {
+				const mailboxGroup = groups[ mailbox.mailbox ] || [];
+				mailboxGroup.push( mailbox );
+				groups[ mailbox.mailbox ] = mailboxGroup;
+				return groups;
+			},
+			{} as Record< string, Mailbox[] >
+		)
+	);
+}
 
 export function EmailForwardsList( {
 	mailboxes,
@@ -19,7 +31,7 @@ export function EmailForwardsList( {
 	actionPath: string | undefined;
 } ) {
 	const translate = useTranslate();
-	let lastMailbox: string = '';
+	const normalizedMailboxes = groupByMailbox( mailboxes );
 
 	return (
 		<>
@@ -42,21 +54,13 @@ export function EmailForwardsList( {
 						</th>
 					</tr>
 				</thead>
-				<tbody>
-					{ mailboxes
-						?.sort( ( a, b ) => a.mailbox.localeCompare( b.mailbox ) )
-						.map( ( mailbox ) => {
-							// Don't repeat the source for easier readibility.
-							const shouldRenderFrom = lastMailbox !== mailbox.mailbox;
-							if ( shouldRenderFrom ) {
-								lastMailbox = mailbox.mailbox;
-							}
-							return (
-								<tr key={ mailbox.mailbox + mailbox.target } className="email-forward-list__row">
+				{ normalizedMailboxes.map( ( [ from, mailboxes ] ) => {
+					return (
+						<tbody key={ from }>
+							{ mailboxes.map( ( mailbox, index ) => (
+								<tr key={ mailbox.mailbox + mailbox.target }>
 									<td>
-										{ shouldRenderFrom ? (
-											<MailboxLink account={ account } mailbox={ mailbox } />
-										) : null }
+										{ index === 0 ? <MailboxLink account={ account } mailbox={ mailbox } /> : null }
 									</td>
 									<td>
 										<EmailForwardSecondaryDetails mailbox={ mailbox } />
@@ -66,14 +70,14 @@ export function EmailForwardsList( {
 									</td>
 									<td>
 										<div className="email-forward-list__actions">
-											<ResendButton mailbox={ mailbox } />
-											<RemoveButton mailbox={ mailbox } />
+											<ActionsMenu mailbox={ mailbox } />
 										</div>
 									</td>
 								</tr>
-							);
-						} ) }
-				</tbody>
+							) ) }
+						</tbody>
+					);
+				} ) }
 			</table>
 		</>
 	);

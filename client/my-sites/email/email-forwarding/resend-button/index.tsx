@@ -1,11 +1,10 @@
-import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useResendVerifyEmailForwardMutation from 'calypso/data/emails/use-resend-verify-email-forward-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
 import { Mailbox } from '../../../../data/emails/types';
-import './style.scss';
 
 export function ResendButton( { mailbox }: { mailbox: Mailbox } ) {
 	const { mutate: resendVerificationEmail } = useResendVerifyEmailForwardMutation( mailbox.domain );
@@ -28,12 +27,10 @@ export function ResendButton( { mailbox }: { mailbox: Mailbox } ) {
 	);
 
 	return (
-		<Button
-			variant="link"
-			className="email-forward-resend-button"
+		<PopoverMenuItem
 			onClick={ () => resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ) }
 		>
 			{ translate( 'Resend' ) }
-		</Button>
+		</PopoverMenuItem>
 	);
 }

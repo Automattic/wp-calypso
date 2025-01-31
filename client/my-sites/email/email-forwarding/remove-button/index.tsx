@@ -1,5 +1,4 @@
 import {
-	Button,
 	__experimentalConfirmDialog as ConfirmationDialog,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
@@ -7,11 +6,11 @@ import {
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import useRemoveEmailForwardMutation from 'calypso/data/emails/use-remove-email-forward-mutation';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
 import { Mailbox } from '../../../../data/emails/types';
-import './style.scss';
 
 export function RemoveButton( { mailbox }: { mailbox: Mailbox } ) {
 	const { mutate: removeEmailForward } = useRemoveEmailForwardMutation( mailbox.domain );
@@ -66,13 +65,9 @@ export function RemoveButton( { mailbox }: { mailbox: Mailbox } ) {
 				</VStack>
 			</ConfirmationDialog>
 
-			<Button
-				variant="link"
-				className="email-forward-remove-button"
-				onClick={ () => setIsOpen( true ) }
-			>
+			<PopoverMenuItem onClick={ () => setIsOpen( true ) }>
 				{ translate( 'Remove' ) }
-			</Button>
+			</PopoverMenuItem>
 		</>
 	);
 }
