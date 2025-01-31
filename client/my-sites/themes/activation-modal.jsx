@@ -20,9 +20,9 @@ import {
 	getThemeIdToActivate,
 	isActivatingTheme,
 	isThemeActive,
+	isThemeAllowedOnSite,
 	shouldShowActivationModal,
 } from 'calypso/state/themes/selectors';
-import { isThemeAllowedOnSite } from 'calypso/state/themes/selectors/is-theme-allowed-on-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './activation-modal.scss';
