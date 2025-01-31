@@ -37,39 +37,45 @@ const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError 
 	if ( ! agency ) {
 		return undefined;
 	}
+
+	const agencyPriceInfoIsDefined =
+		Number.isFinite( agency.prices?.actual_price ) && typeof agency.prices?.currency === 'string';
+
+	if ( agencyLoading || agencyError || ! agencyPriceInfoIsDefined ) {
+		return translate( "After launch, we'll bill your agency in the next billing cycle." );
+	}
+
 	const agencyName = agency.name;
 	const existingWPCOMLicenseCount = agency.existing_wpcom_license_count || 0;
-	const price = formatCurrency( agency.prices?.actual_price, agency.prices?.currency );
+	const price = formatCurrency( agency.prices.actual_price, agency.prices.currency );
 
-	return agencyLoading || agencyError
-		? translate( "After launch, we'll bill your agency in the next billing cycle." )
-		: translate(
-				"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
-				"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
-				{
-					count: existingWPCOMLicenseCount + 1,
-					args: {
-						agencyName,
-						licenseCount: existingWPCOMLicenseCount + 1,
-						price,
-					},
-					components: {
-						strong: <strong />,
-						a: (
-							<a
-								className="site-settings__general-settings-launch-site-agency-learn-more"
-								href={ localizeUrl(
-									'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
-								) }
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-					comment:
-						'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
-				}
-		  );
+	return translate(
+		"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting license, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+		"After launch, we'll bill {{strong}}%(agencyName)s{{/strong}} in the next billing cycle. With %(licenseCount)s production hosting licenses, you will be charged %(price)s / license / month. {{a}}Learn more.{{/a}}",
+		{
+			count: existingWPCOMLicenseCount + 1,
+			args: {
+				agencyName,
+				licenseCount: existingWPCOMLicenseCount + 1,
+				price,
+			},
+			components: {
+				strong: <strong />,
+				a: (
+					<a
+						className="site-settings__general-settings-launch-site-agency-learn-more"
+						href={ localizeUrl(
+							'https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/'
+						) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+			comment:
+				'agencyName: name of the agency that will be billed for the site; licenseCount: number of licenses the agency will be billed for; price: price per license',
+		}
+	);
 };
 
 const LaunchSite = () => {
