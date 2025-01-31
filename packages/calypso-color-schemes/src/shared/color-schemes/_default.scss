@@ -1,3 +1,8 @@
+/**
+ * Default color scheme for the WP.com Host interface.
+ * Note, this is different from the default wp-admin color scheme, which is either "Default" (_fresh.scss) or "Modern" (_modern.scss).
+ */
+
 :root {
 	/* Theme Properties */
 	--color-primary: var(--studio-blue-50);
@@ -363,6 +368,6 @@
 	--color-navredesign-sidebar-submenu-hover-text: #72aee6; /* Direct from wp-admin */
 
 	/* Gutenberg components */
-	--wp-admin-theme-color: var(--color-accent);
-	--wp-admin-theme-color-darker-20: var(--color-accent-60);
+	// We intentionally do not style --wp-admin-theme-color and --wp-admin-theme-color-darker-20 at the :root scope
+	// to avoid conflicts with the default wp-admin color scheme.
 }
