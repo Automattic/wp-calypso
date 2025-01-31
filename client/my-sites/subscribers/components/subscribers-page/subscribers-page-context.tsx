@@ -202,7 +202,7 @@ export const SubscribersPageProvider = ( {
 			}
 		} else {
 			const errorMessage =
-				importError.message && typeof importError.message === 'string'
+				'message' in importError && typeof importError.message === 'string'
 					? importError.message
 					: translate( 'An unknown error has occurred. Please try again in a second.' );
 			dispatch(
