@@ -40,7 +40,7 @@ import type {
 	ResponseCartProduct,
 	RemoveCouponFromCart,
 } from '@automattic/shopping-cart';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
 	box-sizing: border-box;
@@ -308,26 +308,52 @@ function LineItemWrapper( {
 		isDeletable = false;
 	}
 
-	const isOpen = product.uuid === variantOpenId;
-	const dropdownRef = useRef< HTMLDivElement >( null );
+	const isVariantDropdownOpen = product.uuid === variantOpenId;
+	const isAkQuantityDropdownOpen = product.uuid === akQuantityOpenId;
+	const variantDropdownRef = useRef< HTMLDivElement >( null );
+	const akQuantityDropdownRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
-		const handleClickOutside = ( event: MouseEvent ) => {
-			if ( dropdownRef.current && ! dropdownRef.current.contains( event.target as Node ) ) {
-				toggleVariantSelector( null );
-			}
-		};
+		const handleClickOutside =
+			( ref: RefObject< HTMLDivElement >, toggle: ( key: string | null ) => void ) =>
+			( event: MouseEvent ): void => {
+				if ( ref.current && ! ref.current.contains( event.target as Node ) ) {
+					toggle( null );
+				}
+			};
 
-		if ( isOpen ) {
-			document.addEventListener( 'mousedown', handleClickOutside );
+		const handleClickOutsideVariantDropdown = handleClickOutside(
+			variantDropdownRef,
+			toggleVariantSelector
+		);
+
+		const handleClickOutsideAkQuantityDropdown = handleClickOutside(
+			akQuantityDropdownRef,
+			toggleAkQuantityDropdown
+		);
+
+		if ( isVariantDropdownOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutsideVariantDropdown as EventListener );
 		} else {
-			document.removeEventListener( 'mousedown', handleClickOutside );
+			document.removeEventListener( 'mousedown', handleClickOutsideVariantDropdown );
+		}
+
+		if ( isAkQuantityDropdownOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
+		} else {
+			document.removeEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
 		}
 
 		return () => {
-			document.removeEventListener( 'mousedown', handleClickOutside );
+			document.removeEventListener( 'mousedown', handleClickOutsideVariantDropdown );
+			document.removeEventListener( 'mousedown', handleClickOutsideAkQuantityDropdown );
 		};
-	}, [ isOpen, toggleVariantSelector ] );
+	}, [
+		isVariantDropdownOpen,
+		toggleVariantSelector,
+		isAkQuantityDropdownOpen,
+		toggleAkQuantityDropdown,
+	] );
 
 	const shouldShowVariantSelector = ( () => {
 		if ( ! onChangeSelection ) {
@@ -398,27 +424,31 @@ function LineItemWrapper( {
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>
-				<DropdownWrapper ref={ dropdownRef }>
+				<DropdownWrapper>
 					{ finalShouldShowVariantSelector && (
-						<ItemVariationPicker
-							id={ product.uuid }
-							selectedItem={ product }
-							onChangeItemVariant={ onChangeSelection }
-							isDisabled={ isDisabled }
-							variants={ variants }
-							toggle={ toggleVariantSelector }
-							isOpen={ isOpen }
-						/>
+						<div ref={ variantDropdownRef }>
+							<ItemVariationPicker
+								id={ product.uuid }
+								selectedItem={ product }
+								onChangeItemVariant={ onChangeSelection }
+								isDisabled={ isDisabled }
+								variants={ variants }
+								toggle={ toggleVariantSelector }
+								isOpen={ isVariantDropdownOpen }
+							/>
+						</div>
 					) }
 					{ ! isRenewal && isAkPro500Cart && (
-						<AkismetProQuantityDropDown
-							id={ product.uuid }
-							responseCart={ responseCart }
-							setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
-							onChangeAkProQuantity={ onChangeAkProQuantity }
-							toggle={ toggleAkQuantityDropdown }
-							isOpen={ akQuantityOpenId === product.uuid }
-						/>
+						<div ref={ akQuantityDropdownRef }>
+							<AkismetProQuantityDropDown
+								id={ product.uuid }
+								responseCart={ responseCart }
+								setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+								onChangeAkProQuantity={ onChangeAkProQuantity }
+								toggle={ toggleAkQuantityDropdown }
+								isOpen={ isAkQuantityDropdownOpen }
+							/>
+						</div>
 					) }
 				</DropdownWrapper>
 			</LineItem>
