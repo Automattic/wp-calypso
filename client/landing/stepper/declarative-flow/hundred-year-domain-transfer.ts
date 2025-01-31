@@ -53,13 +53,13 @@ const hundredYearDomainTransfer: Flow = {
 					await new Promise( ( resolve ) => setTimeout( resolve, 2000 ) );
 
 					const checkoutBackURL = new URL(
-						'/setup/hundred-year-domain-transfer',
+						'/setup/hundred-year-domain-transfer/domains',
 						window.location.href
 					);
 
 					// use replace instead of assign to remove the processing URL from history
 					return window.location.replace(
-						`/checkout/no-site?signup=0&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
+						`/checkout/no-site?signup=1&isDomainOnly=1&checkoutBackUrl=${ encodeURIComponent(
 							checkoutBackURL.href
 						) }`
 					);

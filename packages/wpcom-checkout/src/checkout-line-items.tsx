@@ -761,7 +761,10 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 	const isDomainMapping = productSlug === 'domain_map';
 	const isDomainTransfer = productSlug === 'domain_transfer';
 
-	if ( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) {
+	if (
+		( ( isDomainRegistration || isDomainMapping ) && product.months_per_bill_period === 12 ) ||
+		( isDomainTransfer && product.volume === 100 )
+	) {
 		const premiumLabel = product.extra?.premium ? translate( 'Premium' ) : '';
 		return (
 			<>

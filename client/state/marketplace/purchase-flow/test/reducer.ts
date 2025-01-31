@@ -1,7 +1,4 @@
-import {
-	pluginInstallationStateChange,
-	setPrimaryDomainCandidate,
-} from 'calypso/state/marketplace/purchase-flow/actions';
+import { pluginInstallationStateChange } from 'calypso/state/marketplace/purchase-flow/actions';
 import {
 	default as purchaseFlowReducer,
 	defaultState as defaultMarketPlaceState,
@@ -17,19 +14,6 @@ describe( 'Purchase Flow states test suite', () => {
 			type: 'SOME_RANDOM_ACTION',
 		} );
 		expect( receivedState ).toEqual( defaultMarketPlaceState );
-	} );
-
-	test( 'should set the primary domain for the purchase flow', () => {
-		const domainName = 'awesome.com';
-		const action = setPrimaryDomainCandidate( domainName );
-
-		const receivedState = purchaseFlowReducer( defaultMarketPlaceState, action );
-		const expectedState = {
-			...defaultMarketPlaceState,
-			primaryDomain: domainName,
-		};
-
-		expect( receivedState ).toEqual( expectedState );
 	} );
 
 	test( 'Plugin installation status changes should update the state and reason as indicated', () => {

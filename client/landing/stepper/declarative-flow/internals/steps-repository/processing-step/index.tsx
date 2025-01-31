@@ -12,12 +12,12 @@ import {
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 } from '@automattic/onboarding';
+import { ProgressBar } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -197,6 +197,24 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const subtitle = getSubtitle();
 
+	const renderProgressComponent = () => {
+		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
+			return (
+				<LoadingBar
+					progress={ progress }
+					className="processing-step__content woocommerce-install__content"
+				/>
+			);
+		}
+
+		return (
+			<ProgressBar
+				value={ progress >= 0 ? progress * 100 : undefined }
+				className="processing-step__progress-bar"
+			/>
+		);
+	};
+
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
@@ -208,16 +226,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					<>
 						<div className="processing-step">
 							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-							{ progress >= 0 ||
-							isWooExpressFlow( flow ) ||
-							isTransferringHostedSiteCreationFlow( flow ) ? (
-								<LoadingBar
-									progress={ progress }
-									className="processing-step__content woocommerce-install__content"
-								/>
-							) : (
-								<LoadingEllipsis />
-							) }
+							{ renderProgressComponent() }
 							{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
 						</div>
 					</>

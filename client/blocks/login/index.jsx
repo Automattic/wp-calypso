@@ -626,9 +626,8 @@ class Login extends Component {
 
 			switch ( true ) {
 				case isLostPasswordFlow:
-					headerText = config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ? (
-						<h3>{ translate( "You've got mail" ) }</h3>
-					) : null;
+					headerText = <h3>{ translate( "You've got mail" ) }</h3>;
+
 					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
@@ -637,41 +636,24 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
-					headerText = (
-						<h3>
-							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-								? translate( 'Log in to your account' )
-								: translate( 'One last step' ) }
-						</h3>
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
+					subtitle = translate(
+						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+						{
+							components: {
+								signupLink,
+								br: <br />,
+								doc: (
+									<a
+										href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+							args: { pluginName },
+						}
 					);
-					if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
-						subtitle = translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
-							{
-								components: {
-									signupLink,
-									br: <br />,
-									doc: (
-										<a
-											href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-											target="_blank"
-											rel="noreferrer"
-										/>
-									),
-								},
-								args: { pluginName },
-							}
-						);
-					} else {
-						subtitle = translate(
-							"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-							{
-								components: {
-									signupLink,
-								},
-							}
-						);
-					}
 			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
@@ -1077,9 +1059,7 @@ class Login extends Component {
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 				loginButtonText={
-					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-					isWooPasswordlessJPC &&
-					this.props.initialQuery?.lostpassword_flow === 'true'
+					isWooPasswordlessJPC && this.props.initialQuery?.lostpassword_flow === 'true'
 						? translate( 'Log in' )
 						: null
 				}

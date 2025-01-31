@@ -145,14 +145,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
-			{ geoMode !== 'country' && ! summaryUrl && (
-				<CountryFilter
-					countries={ countriesList }
-					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-					selectedCountry={ countryFilter }
-					onCountryChange={ onCountryChange }
-				/>
-			) }
 		</>
 	);
 
@@ -178,6 +170,24 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const titleTooltip = (
+		<StatsInfoArea>
+			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ supportUrl }#countries` ) }
+						/>
+					),
+				},
+				context: 'Stats: Link in a popover for Countries module when the module has data',
+			} ) }
+		</StatsInfoArea>
+	);
+
 	const fakeData = [
 		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
 		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
@@ -200,7 +210,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
-				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
+				<StatsCardSkeleton
+					className="locations-skeleton"
+					isLoading={ isRequestingData }
+					title={ title }
+					type={ 3 }
+					withHero
+					withSplitHeader
+					toggleControl={ toggleControlComponent }
+					mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+					metricLabel={ translate( 'Views' ) }
+					titleNodes={ titleTooltip }
+				/>
 			) }
 			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
 				// show data or an overlay
@@ -208,31 +229,30 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
 						title={ title }
-						titleNodes={
-							<StatsInfoArea>
-								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#countries` ) }
-											/>
-										),
-									},
-									context: 'Stats: Link in a popover for Countries module when the module has data',
-								} ) }
-							</StatsInfoArea>
-						}
-						moduleType="countryviews"
+						titleNodes={ titleTooltip }
+						moduleType="locations"
 						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
 						heroElement={
-							<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+							<>
+								<Geochart
+									data={ locationData }
+									geoMode={ geoMode }
+									skipQuery
+									customHeight={ 480 }
+								/>
+								{ geoMode !== 'country' && ! summaryUrl && (
+									<CountryFilter
+										countries={ countriesList }
+										defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+										selectedCountry={ countryFilter }
+										onCountryChange={ onCountryChange }
+									/>
+								) }
+							</>
 						}
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }

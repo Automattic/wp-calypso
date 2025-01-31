@@ -119,7 +119,6 @@
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
-		"marketplace-domain-bundle": true,
 		"marketplace-fetch-all-dynamic-products": true,
 		"marketplace-personal-premium": false,
 		"marketplace-reviews-notification": false,
@@ -145,6 +144,8 @@
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/user-on-stepper-hosting": true,
+		"onboarding/big-sky-before-plans": true,
+		"onboarding/force-goals-first": true,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,
@@ -194,7 +195,9 @@
 		"stats/locations": true,
 		"stats/paid-wpcom-v2": true,
 		"stats/paid-wpcom-v3": true,
+		"stats/real-time-tab": true,
 		"subscriber-importer": true,
+		"subscribers-dataviews": true,
 		"themes/block-theme-previews-premium-and-woo": true,
 		"themes/discovery": true,
 		"themes/premium": true,
@@ -208,10 +211,8 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
-		"woo/passwordless": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true,
-		"woocommerce/core-profiler-passwordless-auth": true,
 		"woocommerce/rebrand-2-0": true
 	}
 }
