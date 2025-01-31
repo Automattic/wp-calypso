@@ -44,5 +44,9 @@
 	gap: 16px;
 	width: max-content;
 	transform: translateX( 0 );
+	transition: transform .2s ease-out;
+}
+
+.a4a-carousel:not(.is-touch-active) .a4a-carousel__content {
 	transition: transform .75s cubic-bezier(.5,0,.5,1);
 }

@@ -12,6 +12,7 @@ type Props = {
 
 export default function A4ACarousel( { children, className }: Props ) {
 	const [ offsetX, setOffsetX ] = useState( 0 );
+	const [ touchStart, setTouchStart ] = useState< number | null >( null );
 
 	const contentRef = useRef< HTMLDivElement >( null );
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -31,9 +32,48 @@ export default function A4ACarousel( { children, className }: Props ) {
 		setOffsetX( Math.max( offsetX - offsetStep, -maxOffset ) );
 	}, [ offsetX, offsetStep, maxOffset ] );
 
+	const onTouchStart = ( e: React.TouchEvent ) => {
+		setTouchStart( e.targetTouches[ 0 ].clientX );
+	};
+
+	const onTouchMove = ( e: React.TouchEvent ) => {
+		if ( ! touchStart ) {
+			return;
+		}
+
+		const currentTouch = e.targetTouches[ 0 ].clientX;
+		const distance = touchStart - currentTouch;
+
+		// If distance is greater than threshold, snap to next/previous
+		const snapThreshold = containerWidth * 0.2; // 20% of container width
+		if ( Math.abs( distance ) > snapThreshold ) {
+			const newOffset =
+				distance > 0
+					? Math.max( offsetX - offsetStep, -maxOffset )
+					: Math.min( offsetX + offsetStep, 0 );
+			setOffsetX( newOffset );
+		} else {
+			// Otherwise do smooth tracking
+			const newOffset = Math.max( Math.min( offsetX - distance, 0 ), -maxOffset );
+			setOffsetX( newOffset );
+		}
+
+		setTouchStart( currentTouch );
+	};
+
+	const onTouchEnd = () => {
+		setTouchStart( null );
+	};
+
 	return (
 		<div className={ clsx( `a4a-carousel-wrapper`, className ) }>
-			<div className="a4a-carousel" ref={ containerRef }>
+			<div
+				className={ clsx( 'a4a-carousel', { 'is-touch-active': !! touchStart } ) }
+				ref={ containerRef }
+				onTouchStart={ onTouchStart }
+				onTouchMove={ onTouchMove }
+				onTouchEnd={ onTouchEnd }
+			>
 				<div className="a4a-carousel__navigation">
 					<Button
 						className="a4a-carousel__navigation-button"
