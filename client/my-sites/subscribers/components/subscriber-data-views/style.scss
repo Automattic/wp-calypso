@@ -84,12 +84,6 @@ body.is-section-subscribers.is-subscribers-dataviews,
                     @media ( max-width: 430px ) {
                         padding: $padding-standard 24px;
                     }
-
-                    @media ( min-width: $break-small ) {
-                        .gridicon {
-                            display: none;
-                        }
-                    }
                 }
 
                 .subscriber-launchpad {
