@@ -19,7 +19,7 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
 import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
@@ -308,6 +308,27 @@ function LineItemWrapper( {
 		isDeletable = false;
 	}
 
+	const isOpen = product.uuid === variantOpenId;
+	const dropdownRef = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		const handleClickOutside = ( event: MouseEvent ) => {
+			if ( dropdownRef.current && ! dropdownRef.current.contains( event.target as Node ) ) {
+				toggleVariantSelector( null );
+			}
+		};
+
+		if ( isOpen ) {
+			document.addEventListener( 'mousedown', handleClickOutside );
+		} else {
+			document.removeEventListener( 'mousedown', handleClickOutside );
+		}
+
+		return () => {
+			document.removeEventListener( 'mousedown', handleClickOutside );
+		};
+	}, [ isOpen, toggleVariantSelector ] );
+
 	const shouldShowVariantSelector = ( () => {
 		if ( ! onChangeSelection ) {
 			return false;
@@ -377,7 +398,7 @@ function LineItemWrapper( {
 				isAkPro500Cart={ isAkPro500Cart }
 				shouldShowBillingInterval={ ! finalShouldShowVariantSelector }
 			>
-				<DropdownWrapper>
+				<DropdownWrapper ref={ dropdownRef }>
 					{ finalShouldShowVariantSelector && (
 						<ItemVariationPicker
 							id={ product.uuid }
@@ -386,7 +407,7 @@ function LineItemWrapper( {
 							isDisabled={ isDisabled }
 							variants={ variants }
 							toggle={ toggleVariantSelector }
-							isOpen={ variantOpenId === product.uuid }
+							isOpen={ isOpen }
 						/>
 					) }
 					{ ! isRenewal && isAkPro500Cart && (
