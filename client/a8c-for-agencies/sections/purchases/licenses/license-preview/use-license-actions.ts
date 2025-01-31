@@ -83,6 +83,13 @@ export default function useLicenseActions(
 				isEnabled: licenseState === LicenseState.Attached,
 			},
 			{
+				name: translate( 'Upgrade' ),
+				href: `/marketplace/hosting/wpcom`,
+				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
+				isExternalLink: false,
+				isEnabled: true,
+			},
+			{
 				name: translate( 'Revoke' ),
 				href: `https://wordpress.com/purchases/subscriptions/${ siteSlug }`,
 				isExternalLink: true,

@@ -2,7 +2,10 @@ import { Button } from '@automattic/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
-import { isPressableHostingProduct } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
+import {
+	isPressableHostingProduct,
+	isWPCOMHostingProduct,
+} from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
 import {
 	LicenseRole,
 	LicenseState,
@@ -25,6 +28,7 @@ interface Props {
 	licenseType: LicenseType;
 	hasDownloads: boolean;
 	isChildLicense?: boolean;
+	isClientLicense?: boolean;
 }
 
 export default function LicenseDetailsActions( {
@@ -35,6 +39,7 @@ export default function LicenseDetailsActions( {
 	licenseType,
 	hasDownloads,
 	isChildLicense,
+	isClientLicense,
 }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -45,6 +50,7 @@ export default function LicenseDetailsActions( {
 
 	const [ revokeDialog, setRevokeDialog ] = useState( false );
 	const isPressableLicense = isPressableHostingProduct( licenseKey );
+	const isWPCOMHostingLicense = isWPCOMHostingProduct( licenseKey );
 	const pressableManageUrl = 'https://my.pressable.com/agency/auth';
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
@@ -112,6 +118,19 @@ export default function LicenseDetailsActions( {
 					{ translate( 'Manage in Pressable' ) } <Icon icon={ external } size={ 18 } />
 				</Button>
 			) }
+
+			{ ( isPressableLicense || isWPCOMHostingLicense ) &&
+				licenseState !== LicenseState.Revoked &&
+				! isClientLicense && (
+					<Button
+						compact
+						href={
+							isPressableLicense ? '/marketplace/hosting/pressable' : '/marketplace/hosting/wpcom'
+						}
+					>
+						{ translate( 'Upgrade' ) }
+					</Button>
+				) }
 
 			{ canRevoke &&
 				( isChildLicense
