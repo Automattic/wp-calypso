@@ -1,7 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
+import { OnboardSelect } from '@automattic/data-stores';
 import styled from '@emotion/styled';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 
 const Subheader = styled.p`
 	margin: -32px 0 40px 0;
@@ -113,9 +116,26 @@ const PlansPageSubheader = ( {
 } ) => {
 	const translate = useTranslate();
 
+	const createWithBigSky = useSelect( ( select: ( key: string ) => OnboardSelect ) => {
+		const { getCreateWithBigSky } = select( ONBOARD_STORE );
+		return getCreateWithBigSky();
+	}, [] );
+
 	return (
 		<>
-			{ deemphasizeFreePlan && offeringFreePlan ? (
+			{ createWithBigSky && (
+				<Subheader>
+					{ translate(
+						`Build your site quickly with our AI Website Builder or {{link}}start with a free plan{{/link}}.`,
+						{
+							components: {
+								link: <Button onClick={ onFreePlanCTAClick } borderless />,
+							},
+						}
+					) }
+				</Subheader>
+			) }
+			{ ! createWithBigSky && deemphasizeFreePlan && offeringFreePlan ? (
 				<Subheader>
 					{ translate(
 						`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
