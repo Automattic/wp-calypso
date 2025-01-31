@@ -264,6 +264,9 @@ export const SiteLogs = ( {
 	);
 };
 
+const getFilterValueFromView = ( view: View, fieldName: string ) =>
+	view.filters?.filter( ( filter ) => filter.field === fieldName )[ 0 ]?.value || '';
+
 const EMPTY_ARRAY: Array< any > = [];
 const useDataLogs = ( {
 	view,
@@ -275,14 +278,9 @@ const useDataLogs = ( {
 	dateRange: { startTime: Moment; endTime: Moment };
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const severity =
-		view.filters?.filter( ( filter ) => filter.field === 'severity' )[ 0 ]?.value || '';
-
-	const [ requestType ] = useState( () => {
-		return getFilterQueryParam( 'request_type' ) || '';
-	} );
-
-	const status = view.filters?.filter( ( filter ) => filter.field === 'status' )[ 0 ]?.value || '';
+	const severity = getFilterValueFromView( view, 'severity' );
+	const status = getFilterValueFromView( view, 'status' );
+	const requestType = getFilterValueFromView( view, 'request_type' );
 
 	const { data, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
@@ -335,7 +333,20 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 	}
 
 	return [
-		{ id: 'request_type', label: 'Request type', enableSorting: false },
+		{
+			id: 'request_type',
+			label: 'Request type',
+			elements: [
+				{ value: '', label: translate( 'All' ) },
+				{ value: 'GET', label: translate( 'GET' ) },
+				{ value: 'HEAD', label: translate( 'HEAD' ) },
+				{ value: 'POST', label: translate( 'POST' ) },
+				{ value: 'PUT', label: translate( 'PUT' ) },
+				{ value: 'DELETE', label: translate( 'DELETE' ) },
+			],
+			filterBy: { operators: [ 'is' ] },
+			enableSorting: false,
+		},
 		{ id: 'date', label: 'Date' },
 		{
 			id: 'status',
