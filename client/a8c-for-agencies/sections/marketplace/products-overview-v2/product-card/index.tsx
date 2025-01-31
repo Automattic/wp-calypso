@@ -5,66 +5,50 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import {
 	useProductDescription,
 	useURLQueryParams,
 } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
-import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
-import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
+import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
+import ProductPriceWithDiscount from './product-price-with-discount-info';
 
-import '../product-card/style.scss';
+import './style.scss';
 
 interface Props {
 	asReferral?: boolean;
-	products: APIProductFamilyProduct[];
+	product: APIProductFamilyProduct;
 	isSelected: boolean;
 	isDisabled?: boolean;
-	onSelectProduct: (
-		value: APIProductFamilyProduct,
-		replace?: APIProductFamilyProduct
-	) => void | null;
-	onVariantChange?: ( value: APIProductFamilyProduct ) => void;
+	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
 	suggestedProduct?: string | null;
 	hideDiscount?: boolean;
 	quantity?: number;
-	selectedOption: APIProductFamilyProduct;
 }
 
-export default function MultiProductCard( props: Props ) {
+export default function ProductCard( props: Props ) {
 	const {
 		asReferral,
-		products,
+		product,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
-		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
-		selectedOption,
 	} = props;
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-
-	const [ product, setProduct ] = useState( products[ 0 ] );
-	const { description: productDescription } = useProductDescription( product.slug );
 
 	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-	const [ showLightbox, setShowLightbox ] = useState(
-		getParamValue( LICENSE_INFO_MODAL_ID ) === product.slug
-	);
+	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
+	const productTitle = getProductShortTitle( product );
 
-	const variantOptions = products.map( ( option ) => ( {
-		id: option.slug,
-		answerText: getProductVariantShortTitle( option.name ),
-	} ) );
+	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -72,10 +56,9 @@ export default function MultiProductCard( props: Props ) {
 		}
 
 		onSelectProduct?.( product );
-	}, [ isDisabled, onSelectProduct, product ] );
+	}, [ onSelectProduct, product ] );
 
 	const onKeyDown = useCallback(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		( e: any ) => {
 			// Enter
 			if ( 13 === e.keyCode ) {
@@ -94,9 +77,19 @@ export default function MultiProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-		// Do not add onSelect to the dependency array as it will cause an infinite loop
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ product.slug, suggestedProduct ] );
+	}, [] );
+
+	const truncateDescription = ( description: any ) => {
+		if ( description.length <= 84 ) {
+			return description;
+		}
+
+		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+
+		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
+	};
+
+	const { description: productDescription } = useProductDescription( product.slug );
 
 	const onShowLightbox = useCallback(
 		( e: React.MouseEvent< HTMLElement > ) => {
@@ -124,70 +117,59 @@ export default function MultiProductCard( props: Props ) {
 		setShowLightbox( false );
 	}, [ resetParams ] );
 
-	const onChangeOption = useCallback(
-		( selectedProductSlug: string ) => {
-			if ( isDisabled ) {
-				return;
-			}
-
-			const selectedProduct =
-				products.find( ( { slug } ) => slug === selectedProductSlug ) ?? products[ 0 ];
-
-			if ( isSelected ) {
-				// If the current card is selected, we need to update selected licenses.
-				onSelectProduct?.( selectedProduct, product );
-			}
-
-			setProduct( selectedProduct );
-			onVariantChange?.( selectedProduct );
-		},
-		[ isDisabled, isSelected, onSelectProduct, onVariantChange, product, products ]
-	);
-
-	useEffect( () => {
-		if ( selectedOption ) {
-			setProduct( selectedOption );
-		}
-	}, [ selectedOption ] );
-
 	const ctaLabel = useMemo( () => {
+		const selectedQuantity = quantity ?? 1;
+
 		if ( asReferral ) {
 			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
 		}
+
+		if ( selectedQuantity > 1 ) {
+			return isSelected
+				? translate( 'Added %(quantity)s to cart', { args: { quantity: selectedQuantity } } )
+				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		}
+
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, translate ] );
+	}, [ asReferral, isSelected, quantity, translate ] );
+
+	const ctaLightboxLabel = useMemo( () => {
+		const selectedQuantity = quantity ?? 1;
+
+		if ( asReferral ) {
+			return isSelected ? translate( 'Remove from referral' ) : translate( 'Add to referral' );
+		}
+
+		if ( selectedQuantity > 1 ) {
+			return isSelected
+				? translate( 'Remove %(quantity)s from cart', { args: { quantity: selectedQuantity } } )
+				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
+		}
+
+		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
+	}, [ asReferral, isSelected, quantity, translate ] );
 
 	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
 
 	return (
 		<>
 			<div
-				className={ clsx( 'product-card', 'product-card--with-variant', {
+				onClick={ onSelect }
+				onKeyDown={ onKeyDown }
+				role="button"
+				tabIndex={ 0 }
+				aria-disabled={ isDisabled }
+				className={ clsx( {
+					'product-card': true,
 					selected: isSelected,
 					disabled: isDisabled,
 				} ) }
-				onKeyDown={ onKeyDown }
-				onClick={ onSelect }
-				role="button"
-				aria-disabled={ isDisabled }
-				tabIndex={ 0 }
 			>
 				<div className="product-card__inner">
 					<div className="product-card__details">
 						<div className="product-card__main">
 							<div className="product-card__heading">
-								<h3 className="product-card__title">{ getProductShortTitle( product, true ) }</h3>
-
-								{ ! isRedesign && (
-									<MultipleChoiceQuestion
-										name={ `${ product.family_slug }-variant-options` }
-										question={ translate( 'Select variant:' ) }
-										answers={ variantOptions }
-										selectedAnswerId={ product.slug }
-										onAnswerChange={ onChangeOption }
-										shouldShuffleAnswers={ false }
-									/>
-								) }
+								<h3 className="product-card__title">{ productTitle }</h3>
 
 								<div className="product-card__pricing is-compact">
 									<ProductPriceWithDiscount
@@ -198,18 +180,9 @@ export default function MultiProductCard( props: Props ) {
 									/>
 								</div>
 
-								{ isRedesign && (
-									<MultipleChoiceQuestion
-										name={ `${ product.family_slug }-variant-options` }
-										question={ translate( 'Select variant:' ) }
-										answers={ variantOptions }
-										selectedAnswerId={ product.slug }
-										onAnswerChange={ onChangeOption }
-										shouldShuffleAnswers={ false }
-									/>
-								) }
-
-								<div className="product-card__description">{ productDescription }</div>
+								<div className="product-card__description">
+									{ truncateDescription( productDescription ) }
+								</div>
 							</div>
 						</div>
 					</div>
@@ -225,7 +198,7 @@ export default function MultiProductCard( props: Props ) {
 						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
 							<LicenseLightboxLink
 								customText={ translate( 'View details' ) }
-								productName={ getProductShortTitle( product ) }
+								productName={ productTitle }
 								onClick={ onShowLightbox }
 								showIcon={ ! isRedesign }
 							/>
@@ -237,7 +210,7 @@ export default function MultiProductCard( props: Props ) {
 				<LicenseLightbox
 					product={ product }
 					quantity={ quantity }
-					ctaLabel={ isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' ) }
+					ctaLabel={ ctaLightboxLabel as string }
 					isCTAPrimary={ ! isSelected }
 					isDisabled={ isDisabled }
 					onActivate={ onSelectProduct }
@@ -248,6 +221,6 @@ export default function MultiProductCard( props: Props ) {
 	);
 }
 
-MultiProductCard.defaultProps = {
+ProductCard.defaultProps = {
 	onSelectProduct: null,
 };

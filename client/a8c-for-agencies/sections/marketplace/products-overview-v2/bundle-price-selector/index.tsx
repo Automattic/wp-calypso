@@ -6,6 +6,8 @@ import { useCallback, useRef, useState } from 'react';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 
+import './style.scss';
+
 type Props = {
 	options: number[];
 	value: number;

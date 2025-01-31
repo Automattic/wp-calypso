@@ -1,0 +1,37 @@
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.bundle-price-selector {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	align-items: center;
+}
+
+.bundle-price-selector__label {
+	@include a4a-font-heading-sm;
+	text-transform: uppercase;
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}
+
+.bundle-price-selector__menu-button {
+	flex-grow: 1;
+}
+
+.bundle-price-selector__popover {
+	margin-inline-start: -135px;
+
+	.popover__menu .popover__menu-item {
+		display: block;
+
+		&.is-selected {
+			background: var( --color-neutral-5 );
+			color: var( --color-text );
+		}
+	}
+}

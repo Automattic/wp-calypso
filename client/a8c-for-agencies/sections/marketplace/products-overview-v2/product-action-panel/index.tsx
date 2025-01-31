@@ -6,7 +6,7 @@ import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SelectedFilters } from '../../lib/product-filter';
 import ProductTypeFilter from '../../products-overview/product-filter';
-import { BundlePriceSelector } from './bundle-price-selector';
+import { BundlePriceSelector } from '../bundle-price-selector';
 
 import './style.scss';
 
