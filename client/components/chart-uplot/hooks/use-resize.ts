@@ -1,4 +1,4 @@
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import { useEffect } from 'react';
 
 const THROTTLE_DURATION = 400; // in ms

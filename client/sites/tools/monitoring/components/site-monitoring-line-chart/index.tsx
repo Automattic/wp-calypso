@@ -1,10 +1,10 @@
-import useResize from '@automattic/components/src/chart-uplot/hooks/use-resize';
 import { Spinner } from '@wordpress/components';
 import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
+import useResize from 'calypso/components/chart-uplot/hooks/use-resize';
 import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import { TimeRange } from '../site-monitoring';
 import { TIME_RANGE_OPTIONS } from '../time-range-picker';

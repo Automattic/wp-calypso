@@ -10,10 +10,6 @@ import getPeriodDateFormat from './lib/get-period-date-format';
 
 import './style.scss';
 
-// NOTE: Do not include this component in the package entry bundle.
-//       Doing so will cause tests of the consumer package to break due to uPlot's reliance on matchMedia.
-//       https://jestjs.io/docs/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom.
-
 const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,
