@@ -306,11 +306,16 @@ const useDataLogs = ( {
 };
 
 const useFields = ( { logType }: { logType: LogType } ) => {
+	const { __ } = useI18n();
+	const siteGmtOffset = useCurrentSiteGmtOffset();
+	const siteGsmOffsetDisplay =
+		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
+
 	if ( logType === 'php' ) {
 		return [
 			{
 				id: 'severity',
-				label: translate( 'Severity' ),
+				label: __( 'Severity' ),
 				elements: [
 					{ value: '', label: translate( 'All' ) },
 					{ value: 'User', label: translate( 'User' ) },
@@ -323,19 +328,23 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				},
 				enableSorting: false,
 			},
-			{ id: 'timestamp', label: translate( 'Timestamp' ) },
-			{ id: 'message', label: translate( 'Message' ), enableSorting: false },
-			{ id: 'kind', label: translate( 'Kind' ), enableSorting: false },
-			{ id: 'name', label: translate( 'Name' ), enableSorting: false },
-			{ id: 'file', label: translate( 'File' ), enableSorting: false },
-			{ id: 'line', label: translate( 'Line' ), enableSorting: false },
+			{
+				id: 'timestamp',
+				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+			},
+			{ id: 'message', label: __( 'Message' ), enableSorting: false },
+			{ id: 'kind', label: __( 'Kind' ), enableSorting: false },
+			{ id: 'name', label: __( 'Name' ), enableSorting: false },
+			{ id: 'file', label: __( 'File' ), enableSorting: false },
+			{ id: 'line', label: __( 'Line' ), enableSorting: false },
 		];
 	}
 
 	return [
 		{
 			id: 'request_type',
-			label: translate( 'Request type' ),
+			label: __( 'Request type' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
 				{ value: 'GET', label: translate( 'GET' ) },
@@ -347,10 +356,14 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			filterBy: { operators: [ 'is' ] },
 			enableSorting: false,
 		},
-		{ id: 'date', label: 'Date' },
+		{
+			id: 'date',
+			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+		},
 		{
 			id: 'status',
-			label: translate( 'Status' ),
+			label: __( 'Status' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
 				{ value: '200', label: '200' },
@@ -368,12 +381,12 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			},
 			enableSorting: false,
 		},
-		{ id: 'request_url', label: translate( 'Request URL' ), enableSorting: false },
-		{ id: 'timestamp', label: translate( 'Timestamp' ), enableSorting: false },
-		{ id: 'body_bytes_sent', label: translate( 'Body bytes sent' ), enableSorting: false },
-		{ id: 'cached', label: translate( 'Cached' ), enableSorting: false },
-		{ id: 'http_host', label: translate( 'HTTP Host' ), enableSorting: false },
-		{ id: 'http_referer', label: translate( 'Referrer' ), enableSorting: false },
+		{ id: 'request_url', label: __( 'Request URL' ), enableSorting: false },
+		{ id: 'timestamp', label: __( 'Timestamp' ), enableSorting: false },
+		{ id: 'body_bytes_sent', label: __( 'Body bytes sent' ), enableSorting: false },
+		{ id: 'cached', label: __( 'Cached' ), enableSorting: false },
+		{ id: 'http_host', label: __( 'HTTP Host' ), enableSorting: false },
+		{ id: 'http_referer', label: __( 'Referrer' ), enableSorting: false },
 	];
 };
 
@@ -401,8 +414,11 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// - Endpoint
 	//   - Can filter by multiple values (e.g.: "severity is any: user, deprecated"
 	//   - What can have more filters? kind (core, plugins), name (WP version, plugin name).
+	// - Translations: translate vs __.
+	//   - __ for field elements https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-table/index.tsx#L54
+	//   - translate for field labels https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-toolbar/index.tsx#L82
 
-	const { __ } = useI18n(); // TODO: Can we use translate instead?
+	const { __ } = useI18n();
 
 	const moment = useLocalizedMoment();
 	const getLatestDateRange = useCallback( () => {
