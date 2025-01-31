@@ -48,7 +48,9 @@ export async function siteSettings( context, next ) {
 
 	const isRemoveDuplicateViewsExperimentEnabled =
 		await getIsRemoveDuplicateViewsExperimentEnabled();
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+	const hasClassicAdminInterfaceStyle =
+		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
+	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
