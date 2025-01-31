@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
-import { useStillNeedHelpURL } from '@automattic/help-center/src/hooks';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, Modal } from '@wordpress/components';
@@ -138,11 +137,10 @@ const ConfirmationModal = ( {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HelpCenter.register() );
-	const { url } = useStillNeedHelpURL();
 
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
-		setNavigateToRoute( url );
+		setNavigateToRoute( '/odie?provider=zendesk' );
 		setShowHelpCenter( true );
 		closeModal();
 	};
