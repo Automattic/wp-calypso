@@ -193,6 +193,21 @@ const streamApis = {
 	following: {
 		path: () => '/read/following',
 		dateProperty: 'date',
+		query: ( extras ) => {
+			// Filter out undefined values from extras
+			const filteredExtras = Object.fromEntries(
+				Object.entries( extras ).filter( ( [ , value ] ) => value !== undefined )
+			);
+
+			// If no after param is provided, default to 60 days ago
+			if ( ! filteredExtras.after && ! filteredExtras.pageHandle?.after ) {
+				const sixtyDaysAgo = new Date();
+				sixtyDaysAgo.setDate( sixtyDaysAgo.getDate() - 60 );
+				filteredExtras.after = sixtyDaysAgo.toISOString().split( '.' )[ 0 ] + 'Z';
+			}
+
+			return getQueryString( filteredExtras );
+		},
 	},
 	recent: {
 		path: () => '/read/streams/following',

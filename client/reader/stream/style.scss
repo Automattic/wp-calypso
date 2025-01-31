@@ -48,6 +48,16 @@
 
 .following {
 
+	.stream__caught-up {
+		text-align: center;
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+
+		p {
+			margin: 0 0 0.5em;
+		}
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		-webkit-perspective: none;
 		perspective: none;
@@ -1025,4 +1035,3 @@
 		}
 	}
 }
-
