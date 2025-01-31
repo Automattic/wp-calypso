@@ -1,0 +1,139 @@
+.signup-multi-step-form__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	overflow-y: auto;
+	flex: 1;
+
+	// Customize scrollbar
+	&::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: var(--studio-gray-0);
+		border-radius: 4px;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		background: var(--studio-gray-20);
+		border-radius: 4px;
+
+		&:hover {
+			background: var(--studio-gray-30);
+		}
+	}
+}
+
+.signup-contact-form {
+    &.a4a-form {
+        gap: 1rem;
+    }
+    & .a4a-form__heading {
+        text-align: left;
+        margin-bottom: 0;
+
+        & .a4a-form__heading-description {
+            margin: 0;
+        }
+    }
+}
+
+.contact-form__phone-input {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    .form-phone-input__country {   
+        flex: 1;
+    }
+
+    .form-phone-input__phone-number {   
+        flex: 1;
+    }
+}
+
+.signup-contact-form__tos {
+    p {
+        font-size: 0.875rem;
+    }
+}
+
+.signup-multi-step-form__name-fields {
+    display: flex;
+    flex-direction: row;
+	gap: 24px;
+
+    div {
+        flex-grow: 1;
+    }
+}
+
+.signup-multi-step-form__terms {
+	text-align: center;
+	font-size: 0.875rem;
+	color: var(--studio-gray-40);
+	margin-top: 16px;
+
+	a {
+		color: var(--studio-wordpress-blue);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+// Form field styles
+.a4a-form__section-field {
+	margin-bottom: 0;
+	padding: 2px;
+
+	&-label {
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: var(--studio-gray-80);
+		margin-bottom: 8px;
+	}
+
+	&-required {
+		color: var(--studio-red-50);
+		margin-left: 4px;
+	}
+
+	&-optional {
+		color: var(--studio-gray-20);
+		font-weight: normal;
+		margin-left: 4px;
+	}
+}
+
+.form-text-input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--studio-gray-10);
+	border-radius: 4px;
+	font-size: 1rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+	&:focus {
+		border-color: var(--studio-wordpress-blue);
+		box-shadow: 0 0 0 2px var(--studio-wordpress-blue-20);
+		outline: none;
+	}
+
+	&.is-error {
+		border-color: var(--studio-red-50);
+	}
+}
+
+.a4a-form__error {
+	color: var(--studio-red-50);
+	font-size: 0.75rem;
+	margin-top: 4px;
+
+	&.hidden {
+		display: none;
+	}
+}

@@ -1,0 +1,40 @@
+.signup-multi-step-form {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+
+	.step-progress {
+		flex-shrink: 0;
+	}
+
+	.a4a-form {
+		flex: 1;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		padding: 48px 24px;
+		max-width: 600px;
+		margin: 0 auto;
+		width: 100%;
+	}
+
+	.a4a-form__heading {
+		text-align: center;
+		margin-bottom: 40px;
+		flex-shrink: 0;
+
+		&-title {
+			font-size: 2rem;
+			font-weight: 600;
+			margin-bottom: 16px;
+			color: var(--studio-gray-100);
+		}
+
+		&-description {
+			font-size: 1rem;
+			color: var(--studio-gray-60);
+			max-width: 460px;
+			margin: 0 auto;
+		}
+	}
+}
