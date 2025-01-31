@@ -123,6 +123,7 @@
 		"subscribers-dataviews": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
+		"upgrades/storage-add-on-v2": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wpcom-user-bootstrap": false,
