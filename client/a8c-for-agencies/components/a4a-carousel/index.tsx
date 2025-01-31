@@ -5,9 +5,6 @@ import { useCallback, useRef, useState } from 'react';
 
 import './style.scss';
 
-// Minimum swipe distance in pixels to trigger navigation
-const MIN_SWIPE_DISTANCE = 50;
-
 type Props = {
 	className?: string;
 	children: React.ReactNode;
@@ -47,13 +44,11 @@ export default function A4ACarousel( { children, className }: Props ) {
 		const currentTouch = e.targetTouches[ 0 ].clientX;
 		const distance = touchStart - currentTouch;
 
-		if ( distance > MIN_SWIPE_DISTANCE ) {
-			moveRight();
-			setTouchStart( currentTouch );
-		} else if ( distance < -MIN_SWIPE_DISTANCE ) {
-			moveLeft();
-			setTouchStart( currentTouch );
-		}
+		// Calculate new offset based on touch movement
+		const newOffset = Math.max( Math.min( offsetX - distance, 0 ), -maxOffset );
+
+		setOffsetX( newOffset );
+		setTouchStart( currentTouch );
 	};
 
 	const onTouchEnd = () => {
@@ -63,7 +58,7 @@ export default function A4ACarousel( { children, className }: Props ) {
 	return (
 		<div className={ clsx( `a4a-carousel-wrapper`, className ) }>
 			<div
-				className="a4a-carousel"
+				className={ clsx( 'a4a-carousel', { 'is-touch-active': !! touchStart } ) }
 				ref={ containerRef }
 				onTouchStart={ onTouchStart }
 				onTouchMove={ onTouchMove }
