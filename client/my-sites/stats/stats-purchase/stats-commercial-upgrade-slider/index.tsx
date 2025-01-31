@@ -44,12 +44,14 @@ function getStepsForTiers( tiers: StatsPlanTierUI[], currencyCode: string ) {
 		return {
 			lhValue:
 				typeof tier.views === 'number'
-					? numberFormat( tier.views, {
-							numberFormatOptions: {
-								notation: 'compact',
-								maximumFractionDigits: 1,
-							},
-					  } )
+					? String(
+							numberFormat( tier.views, {
+								numberFormatOptions: {
+									notation: 'compact',
+									maximumFractionDigits: 1,
+								},
+							} )
+					  )
 					: '-',
 			rhValue: price,
 			originalPrice: tier.price,
