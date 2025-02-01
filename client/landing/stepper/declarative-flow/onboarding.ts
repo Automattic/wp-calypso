@@ -353,12 +353,19 @@ const onboarding: Flow = {
 					if ( providedDependencies.goToCheckout ) {
 						const siteSlug = providedDependencies.siteSlug as string;
 
+						const checkoutBackUrl =
+							createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
+								? '/setup/onboarding/plans'
+								: destination;
+
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: pathToUrl(
+									addQueryArgs( checkoutBackUrl, { skippedCheckout: 1 } )
+								),
 								coupon,
 							} )
 						);
