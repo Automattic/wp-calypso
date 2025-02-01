@@ -14,15 +14,11 @@
 		flex-direction: column;
 		padding: 48px 24px;
 		max-width: 600px;
-		margin: 0 auto;
 		width: 100%;
+		gap: 16px;
 	}
 
 	.a4a-form__heading {
-		text-align: center;
-		margin-bottom: 40px;
-		flex-shrink: 0;
-
 		&-title {
 			font-size: 2rem;
 			font-weight: 600;
@@ -32,9 +28,9 @@
 
 		&-description {
 			font-size: 1rem;
+			font-weight: 400;
 			color: var(--studio-gray-60);
 			max-width: 460px;
-			margin: 0 auto;
 		}
 	}
 }

@@ -40,7 +40,7 @@
     height: auto;
 
     circle {
-      stroke: var(--color-neutral-0);
+      fill: var(--color-neutral-0);
     }
   }
 
@@ -126,8 +126,8 @@
     }
 
     &__sidebar-image {
-      circle {
-        stroke: #022836;
+      rect {
+        fill: #022836;
       }
     }
 

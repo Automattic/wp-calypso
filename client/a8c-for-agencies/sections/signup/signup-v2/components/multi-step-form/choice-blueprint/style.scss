@@ -1,0 +1,22 @@
+.choice-blueprint-form {
+    h1 {
+        text-wrap: pretty;
+    }
+}
+
+.choice-blueprint__text {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--studio-gray-60);
+    max-width: 460px;
+}
+
+.choice-blueprint__buttons {
+    display: flex;
+    gap: 24px;
+
+    .components-button {
+        width: 180px;
+        justify-content: center;
+    }
+}

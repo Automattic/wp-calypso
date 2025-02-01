@@ -5,38 +5,6 @@
 	overflow-y: auto;
 	flex: 1;
 
-	// Customize scrollbar
-	&::-webkit-scrollbar {
-		width: 8px;
-	}
-
-	&::-webkit-scrollbar-track {
-		background: var(--studio-gray-0);
-		border-radius: 4px;
-	}
-
-	&::-webkit-scrollbar-thumb {
-		background: var(--studio-gray-20);
-		border-radius: 4px;
-
-		&:hover {
-			background: var(--studio-gray-30);
-		}
-	}
-}
-
-.signup-contact-form {
-    &.a4a-form {
-        gap: 1rem;
-    }
-    & .a4a-form__heading {
-        text-align: left;
-        margin-bottom: 0;
-
-        & .a4a-form__heading-description {
-            margin: 0;
-        }
-    }
 }
 
 .contact-form__phone-input {
@@ -92,7 +60,7 @@
 
 	&-label {
 		font-size: 0.875rem;
-		font-weight: 500;
+		font-weight: 600;
 		color: var(--studio-gray-80);
 		margin-bottom: 8px;
 	}
