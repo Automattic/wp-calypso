@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Spinner } from '@wordpress/components';
+import { Spinner, TextControl } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -37,7 +37,6 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Notice from 'calypso/components/notice';
-import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
@@ -809,9 +808,13 @@ class SignupForm extends Component {
 	};
 
 	renderWooCommerce() {
+		// As we migrate more inputs to @wordpress/components' <TextControl />,
+		// we should extend this classname and realted styles for better coherency.
+		const inputClassName = 'signup-form__woo-input';
 		return (
 			<div>
 				<TextControl
+					className={ inputClassName }
 					label={ this.props.translate( 'Your email address' ) }
 					disabled={
 						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
@@ -827,6 +830,8 @@ class SignupForm extends Component {
 							value,
 						} );
 					} }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
 				/>
 				{ this.emailDisableExplanation() }
 
@@ -837,6 +842,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<TextControl
+							className={ inputClassName }
 							label={ this.props.translate( 'Choose a username' ) }
 							disabled={ this.state.submitting || this.props.disabled }
 							id="username"
@@ -849,6 +855,8 @@ class SignupForm extends Component {
 									value,
 								} );
 							} }
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
 						/>
 
 						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
@@ -858,6 +866,7 @@ class SignupForm extends Component {
 				) }
 
 				<TextControl
+					className={ inputClassName }
 					label={ this.props.translate( 'Choose a password' ) }
 					disabled={ this.state.submitting || this.props.disabled }
 					id="password"
@@ -871,6 +880,8 @@ class SignupForm extends Component {
 							value,
 						} );
 					} }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
 				/>
 
 				{ this.passwordValidationExplanation() }
