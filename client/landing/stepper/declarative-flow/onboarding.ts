@@ -162,24 +162,33 @@ const onboarding: Flow = {
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
-		const getPostCheckoutDestination = ( providedDependencies: ProvidedDependencies ) => {
+		/**
+		 * Returns [destination, backDestination] for the post-checkout destination.
+		 */
+		const getPostCheckoutDestination = (
+			providedDependencies: ProvidedDependencies
+		): [ string, string ] => {
 			if (
 				createWithBigSky &&
 				config.isEnabled( 'onboarding/big-sky-before-plans' ) &&
 				isGoalsAtFrontExperiment
 			) {
-				return addQueryArgs( '/setup/site-setup/launch-big-sky', {
+				const destination = addQueryArgs( '/setup/site-setup/launch-big-sky', {
 					siteSlug: providedDependencies.siteSlug,
 				} );
+
+				return [ destination, addQueryArgs( '/setup/onboarding/plans', { skippedCheckout: 1 } ) ];
 			}
 
-			return addQueryArgs( '/setup/site-setup', {
+			const destination = addQueryArgs( '/setup/site-setup', {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
 					flags: 'onboarding/newsletter-goal',
 				} ),
 			} );
+
+			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
 		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
@@ -344,7 +353,8 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = getPostCheckoutDestination( providedDependencies );
+					const [ destination, backDestination ] =
+						getPostCheckoutDestination( providedDependencies );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -358,7 +368,7 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: pathToUrl( backDestination ),
 								coupon,
 							} )
 						);
