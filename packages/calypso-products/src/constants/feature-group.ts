@@ -40,3 +40,4 @@ export const FEATURE_GROUP_INSTALL_PLUGINS = 'feature-group-install-plugins';
 export const FEATURE_GROUP_PERFORMANCE = 'feature-group-performance';
 export const FEATURE_GROUP_THEMES = 'feature-group-themes';
 export const FEATURE_GROUP_WOO = 'feature-group-woo';
+export const FEATURE_GROUP_BIG_SKY = 'feature-group-big-sky';

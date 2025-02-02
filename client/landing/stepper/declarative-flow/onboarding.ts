@@ -35,6 +35,12 @@ import { recordStepNavigation } from './internals/analytics/record-step-navigati
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
 
+declare global {
+	interface Window {
+		__a8cBigSkyOnboarding?: boolean;
+	}
+}
+
 const SiteIntent = Onboard.SiteIntent;
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
@@ -230,11 +236,20 @@ const onboarding: Flow = {
 				}
 
 				case 'design-choices': {
+					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
+					// selection was. Accessing the data store is tricky from there.
+					// See is-big-sky-onboarding.ts
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						setCreateWithBigSky( true );
+						if ( typeof window !== 'undefined' ) {
+							window.__a8cBigSkyOnboarding = true;
+						}
 						return navigate( 'domains' );
 					}
 					setCreateWithBigSky( false );
+					if ( typeof window !== 'undefined' ) {
+						window.__a8cBigSkyOnboarding = false;
+					}
 					return navigate( providedDependencies.destination as string );
 				}
 
@@ -367,6 +382,9 @@ const onboarding: Flow = {
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ),
 								coupon,
+								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
+									? { [ 'big-sky-checkout' ]: 1 }
+									: {} ),
 							} )
 						);
 					} else {
@@ -454,6 +472,10 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+
+				if ( typeof window !== 'undefined' ) {
+					delete window.__a8cBigSkyOnboarding;
+				}
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
 

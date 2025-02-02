@@ -135,6 +135,8 @@ import {
 	FEATURE_CONNECT_ANALYTICS,
 	FEATURE_GROUP_DEV_TOOLS,
 	FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+	FEATURE_BIG_SKY_WEBSITE_BUILDER,
+	FEATURE_GROUP_BIG_SKY,
 } from './constants';
 import { FeatureGroupMap } from './types';
 
@@ -374,11 +376,17 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 			WPCOM_FEATURES_PREMIUM_THEMES_LIMITED,
 		],
 	},
+	[ FEATURE_GROUP_BIG_SKY ]: {
+		slug: FEATURE_GROUP_BIG_SKY,
+		getTitle: () => null,
+		getFeatures: () => [ FEATURE_BIG_SKY_WEBSITE_BUILDER ],
+	},
 	[ FEATURE_GROUP_ENTITIES ]: {
 		slug: FEATURE_GROUP_ENTITIES,
 		getTitle: () => null,
 		getFeatures: () => [ FEATURE_UNLIMITED_ENTITIES ],
 	},
+
 	[ FEATURE_GROUP_ADS ]: {
 		slug: FEATURE_GROUP_ADS,
 		getTitle: () => null,
@@ -424,6 +432,7 @@ export function resolveFeatureGroupsForFeaturesGrid( {
 	if ( showSimplifiedFeatures ) {
 		return {
 			[ FEATURE_GROUP_STORAGE ]: featureGroups[ FEATURE_GROUP_STORAGE ],
+			[ FEATURE_GROUP_BIG_SKY ]: featureGroups[ FEATURE_GROUP_BIG_SKY ],
 			[ FEATURE_GROUP_ENTITIES ]: featureGroups[ FEATURE_GROUP_ENTITIES ],
 			[ FEATURE_GROUP_DOMAIN ]: featureGroups[ FEATURE_GROUP_DOMAIN ],
 			[ FEATURE_GROUP_ADS ]: featureGroups[ FEATURE_GROUP_ADS ],
