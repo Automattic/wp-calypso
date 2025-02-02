@@ -39,7 +39,6 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: PropTypes.bool,
 		endDate: PropTypes.bool,
 		isWithNewDateControl: PropTypes.bool,
-		appliedShortcut: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -51,7 +50,6 @@ class StatsPeriodNavigation extends PureComponent {
 		startDate: false,
 		endDate: false,
 		isWithNewDateControl: false,
-		appliedShortcut: null,
 	};
 
 	handleArrowEvent = ( arrow, href ) => {
@@ -143,7 +141,7 @@ class StatsPeriodNavigation extends PureComponent {
 
 	// TODO: refactor to extract logic with `dateForCustomRange` from `client/my-sites/stats/stats-date-picker/index.jsx`.
 	getFullPeriod = () => {
-		const { moment, dateRange, appliedShortcut, momentSiteZone } = this.props;
+		const { moment, dateRange, momentSiteZone } = this.props;
 		const localizedStartDate = moment( dateRange.chartStart );
 		const localizedEndDate = moment( dateRange.chartEnd );
 
@@ -152,7 +150,7 @@ class StatsPeriodNavigation extends PureComponent {
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'month' ), 'day' ) &&
 			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'month' ) &&
-			( ! appliedShortcut || appliedShortcut.id === 'month_to_date' )
+			( ! dateRange.shortcutId || dateRange.shortcutId === 'month_to_date' )
 		) {
 			return 'month';
 		}
@@ -162,7 +160,7 @@ class StatsPeriodNavigation extends PureComponent {
 			localizedStartDate.isSame( localizedStartDate.clone().startOf( 'year' ), 'day' ) &&
 			localizedEndDate.isSame( momentSiteZone, 'day' ) &&
 			localizedStartDate.isSame( localizedEndDate, 'year' ) &&
-			( ! appliedShortcut || appliedShortcut.id === 'year_to_date' )
+			( ! dateRange.shortcutId || dateRange.shortcutId === 'year_to_date' )
 		) {
 			return 'year';
 		}

@@ -581,7 +581,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 						showArrows={ ! wpcomShowUpsell }
 						slug={ slug }
 						dateRange={ customChartRange }
-						appliedShortcut={ appliedShortcut }
 					>
 						{ ' ' }
 						<DatePicker
