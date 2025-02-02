@@ -11,7 +11,7 @@ const originalLocation = window.location;
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn() },
+			value: { assign: jest.fn(), pathname: '' },
 		} );
 	} );
 

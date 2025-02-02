@@ -1,4 +1,3 @@
-import configApi from '@automattic/calypso-config';
 import { OnboardSelect } from '@automattic/data-stores';
 import { isOnboardingFlow, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
@@ -22,6 +21,7 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import { Step } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
 import { useSocialService } from './use-social-service';
@@ -38,7 +38,7 @@ const UserStepComponent: Step = function UserStep( {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const dispatch = useDispatch();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
-
+	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans(); // If the experiment hasn't loaded yet, then it must mean we're ineligible anyway
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
 	const creatingWithBigSky = ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky();
@@ -66,11 +66,7 @@ const UserStepComponent: Step = function UserStep( {
 	} );
 
 	const getSubHeaderText = () => {
-		if (
-			configApi.isEnabled( 'onboarding/big-sky-before-plans' ) &&
-			isOnboardingFlow( flow ) &&
-			creatingWithBigSky
-		) {
+		if ( isBigSkyBeforePlansExperiment && isOnboardingFlow( flow ) && creatingWithBigSky ) {
 			return translate(
 				'Great choice! Pick an option to start building your site with our AI Website Builder.'
 			);

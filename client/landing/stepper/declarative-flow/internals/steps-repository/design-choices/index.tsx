@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
@@ -15,6 +14,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import bigSkyBg from './big-sky-bg.png';
 import bigSkyFg from './big-sky-fg.png';
 import hiBigSky from './big-sky-no-text-small.png';
@@ -28,8 +28,8 @@ import './style.scss';
  * The design choices step
  */
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
-	const isGoalsFirstVariation =
-		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
+	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans(); // If the experiment hasn't loaded yet, then it must mean we're ineligible anyway
+	const isGoalsFirstVariation = isOnboardingFlow( flow ) && isBigSkyBeforePlansExperiment;
 
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();

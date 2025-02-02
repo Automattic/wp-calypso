@@ -29,6 +29,7 @@ import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useBigSkyBeforePlans } from './helpers/use-bigsky-before-plans-experiment';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
@@ -158,7 +159,7 @@ const onboarding: Flow = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
-
+		const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
@@ -168,11 +169,7 @@ const onboarding: Flow = {
 		const getPostCheckoutDestination = (
 			providedDependencies: ProvidedDependencies
 		): [ string, string ] => {
-			if (
-				createWithBigSky &&
-				config.isEnabled( 'onboarding/big-sky-before-plans' ) &&
-				isGoalsAtFrontExperiment
-			) {
+			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs( '/setup/site-setup/launch-big-sky', {
 					siteSlug: providedDependencies.siteSlug,
 				} );
@@ -410,7 +407,7 @@ const onboarding: Flow = {
 					return navigate( 'domains' );
 				case 'domains':
 					if ( isGoalsAtFrontExperiment ) {
-						if ( config.isEnabled( 'onboarding/big-sky-before-plans' ) && createWithBigSky ) {
+						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
 							return navigate( 'design-choices' );
 						}
 						return navigate( 'designSetup' );
@@ -462,10 +459,8 @@ const onboarding: Flow = {
 
 		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
-		const preloadPersonalProduct =
-			! isGoalsFirstExperimentLoading &&
-			isGoalsFirstExperiment &&
-			config.isEnabled( 'onboarding/big-sky-before-plans' );
+		// Preload even before we know whether use is in the big-sky-before-plans experiment. By the time we know it will be too late.
+		const preloadPersonalProduct = ! isGoalsFirstExperimentLoading && isGoalsFirstExperiment;
 
 		useSelect(
 			( select ) =>
