@@ -192,7 +192,7 @@ class StatsPeriodNavigation extends PureComponent {
 	};
 
 	handleArrowNavigation = ( previousOrNext = false ) => {
-		const { moment, period, slug, dateRange } = this.props;
+		const { moment, momentSiteZone, period, slug, dateRange } = this.props;
 
 		const isWPAdmin = config.isEnabled( 'is_odyssey' );
 		const event_from = isWPAdmin ? 'jetpack_odyssey' : 'calypso';
@@ -202,7 +202,7 @@ class StatsPeriodNavigation extends PureComponent {
 		} );
 
 		const navigationStart = moment( dateRange.chartStart );
-		const navigationEnd = moment( dateRange.chartEnd );
+		let navigationEnd = moment( dateRange.chartEnd );
 
 		// If it's a full month then we need to navigate to the previous/next month.
 		// If it's a full year then we need to navigate to the previous/next year.
@@ -232,6 +232,9 @@ class StatsPeriodNavigation extends PureComponent {
 			}
 			navigationStart.startOf( fullPeriod );
 			navigationEnd.endOf( fullPeriod );
+			if ( navigationEnd.isAfter( momentSiteZone, 'day' ) ) {
+				navigationEnd = momentSiteZone;
+			}
 		}
 
 		const chartStart = navigationStart.format( 'YYYY-MM-DD' );
