@@ -146,7 +146,7 @@
 		"onboarding/trail-map-feature-grid": false,
 		"onboarding/user-on-stepper-hosting": true,
 		"onboarding/big-sky-before-plans": true,
-		"onboarding/force-goals-first": true,
+		"onboarding/force-goals-first": false,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"page/export": true,
