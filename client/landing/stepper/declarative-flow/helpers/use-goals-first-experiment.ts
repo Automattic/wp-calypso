@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { setPlansListExperiment } from '@automattic/calypso-products';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
@@ -31,8 +30,6 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	 * is not eligible, and we're using this hook within steps that are used by other flows.
 	 */
 	const variationName = experimentAssignment?.variationName ?? 'control';
-
-	setPlansListExperiment( EXPERIMENT_NAME, variationName );
 
 	// There's a separate cohort for holdout reasons. But in terms of the "goals-first" experience,
 	// both treatment cohorts see it.

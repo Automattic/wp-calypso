@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { setPlansListExperiment } from '@automattic/calypso-products';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
@@ -25,6 +26,7 @@ export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 	} );
 
 	if ( isEnabled( 'onboarding/force-big-sky-before-plan' ) ) {
+		setPlansListExperiment( EXPERIMENT_NAME, 'treatment' );
 		return [ false, true ];
 	}
 
@@ -33,6 +35,8 @@ export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 	 * is not eligible, and we're using this hook within steps that are used by other flows.
 	 */
 	const variationName = experimentAssignment?.variationName ?? 'control';
+
+	setPlansListExperiment( EXPERIMENT_NAME, variationName );
 
 	return [ isLoading, variationName === 'treatment' ];
 }
