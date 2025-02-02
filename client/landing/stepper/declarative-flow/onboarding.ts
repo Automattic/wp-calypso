@@ -35,6 +35,12 @@ import { recordStepNavigation } from './internals/analytics/record-step-navigati
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
 
+declare global {
+	interface Window {
+		__a8cBigSkyOnboarding?: boolean;
+	}
+}
+
 const SiteIntent = Onboard.SiteIntent;
 
 const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => {
