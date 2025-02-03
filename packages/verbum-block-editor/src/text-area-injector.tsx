@@ -16,7 +16,8 @@ export const attachGutenberg = (
 	textarea: HTMLTextAreaElement,
 	setComment: ( newValue: string ) => void,
 	isRTL = false,
-	requestParamsGenerator: ( embedURL: string ) => EmbedRequestParams
+	requestParamsGenerator: ( embedURL: string ) => EmbedRequestParams,
+	isDarkMode = false
 ) => {
 	const editor = document.createElement( 'div' );
 	editor.className = 'verbum-editor-wrapper';
@@ -34,6 +35,7 @@ export const attachGutenberg = (
 			initialContent={ textarea.value }
 			isRTL={ isRTL }
 			onChange={ ( content ) => setComment( content ) }
+			isDarkMode={ isDarkMode }
 		/>
 	);
 };
