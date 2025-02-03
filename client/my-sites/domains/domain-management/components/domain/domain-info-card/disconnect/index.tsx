@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Dialog } from '@automattic/components';
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
@@ -5,8 +6,11 @@ import { useState } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
-import { useDispatch } from 'calypso/state';
+import { domainManagementList, isUnderDomainSiteContext } from 'calypso/my-sites/domains/paths';
+import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { markAsPendingMove } from 'calypso/state/sites/domains/actions';
 import DomainInfoCard from '..';
 import type { DisconnectDomainResult } from './types';
@@ -18,6 +22,7 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 	const [ isDisconnecting, setDisconnecting ] = useState( false );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const currentRoute = useSelector( getCurrentRoute );
 
 	if (
 		! domain ||
@@ -62,13 +67,28 @@ const DisconnectDomainCard = ( { domain, selectedSite }: DomainInfoCardProps ) =
 				return;
 			}
 
+			dispatch(
+				successNotice(
+					translate( 'The domain will be detached from this site in a few minutes.' ),
+					{
+						duration: 10000,
+						isPersistent: true,
+					}
+				)
+			);
+
+			await new Promise( ( resolve ) => setTimeout( resolve, 7000 ) );
+
 			dispatch( markAsPendingMove( selectedSite.ID, domain.name ) );
 
-			dispatch(
-				successNotice( translate( 'The domain will be detached from this site in a few minutes.' ) )
-			);
 			setDisconnecting( false );
 			setDialogVisible( false );
+
+			if ( isUnderDomainSiteContext( currentRoute ) ) {
+				showSitesPage( '/sites' );
+			} else {
+				page( domainManagementList( selectedSite.slug, currentRoute ) );
+			}
 		} catch ( e: any ) {
 			showErrorNotice( e?.message );
 		}
