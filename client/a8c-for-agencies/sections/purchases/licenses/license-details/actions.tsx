@@ -3,6 +3,10 @@ import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import {
+	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
+	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+} from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import {
 	isPressableHostingProduct,
 	isWPCOMHostingProduct,
 } from 'calypso/a8c-for-agencies/sections/marketplace/lib/hosting';
@@ -125,7 +129,9 @@ export default function LicenseDetailsActions( {
 					<Button
 						compact
 						href={
-							isPressableLicense ? '/marketplace/hosting/pressable' : '/marketplace/hosting/wpcom'
+							isPressableLicense
+								? A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK
+								: A4A_MARKETPLACE_HOSTING_WPCOM_LINK
 						}
 					>
 						{ translate( 'Upgrade' ) }

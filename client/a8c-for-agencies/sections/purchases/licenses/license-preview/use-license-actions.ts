@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import {
 	LicenseState,
@@ -85,7 +86,7 @@ export default function useLicenseActions(
 			},
 			{
 				name: translate( 'Upgrade' ),
-				href: `/marketplace/hosting/wpcom`,
+				href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
 				isExternalLink: false,
 				isEnabled: ! isClientLicense,
