@@ -104,7 +104,7 @@ export function useValidationMessage(
 			loading: false,
 			message: __( "Sorry, we don't support some higher tier premium domain transfers." ),
 		};
-	} else if ( validationResult?.auth_code_valid === false ) {
+	} else if ( hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
 		// in which case, the `useIsDomainCodeValid` hook returns `false`.
 		return {
@@ -125,6 +125,16 @@ export function useValidationMessage(
 			currencyCode: validationResult?.currency_code,
 			refetch,
 			errorStatus: validationResult?.status,
+		};
+	} else if ( ! hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
+		// We don't want to return a message here - an attempt was performed
+		// with an empty auth code, which is not an error.
+		return {
+			valid: false,
+			loading: false,
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	}
 
