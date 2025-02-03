@@ -5,6 +5,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import PlanItem from './plan-item';
 import { RowWithBorder } from '.';
@@ -29,21 +30,31 @@ export default function SuggestedPlanSection( {
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description: translate( 'Domain credit, some premium themes' ),
+			description: useHasEnTranslation()( 'Free one-year domain and some premium themes' )
+				? translate( 'Free one-year domain and some premium themes' )
+				: translate( 'Domain credit, some premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{
 			planSlug: PLAN_PREMIUM,
-			description: translate( 'Domain credit, all premium themes' ),
+			description: useHasEnTranslation()( 'Free one-year domain and all premium themes' )
+				? translate( 'Free one-year domain and all premium themes' )
+				: translate( 'Domain credit, all premium themes' ),
 			disabled: hidePremiumPlan,
 		},
 		{
 			planSlug: PLAN_BUSINESS,
-			description: translate( 'Domain credit, plugins, all premium themes' ),
+			description: useHasEnTranslation()( 'Free one-year domain, plugins, and all premium themes' )
+				? translate( 'Free one-year domain, plugins, and all premium themes' )
+				: translate( 'Domain credit, plugins, all premium themes' ),
 		},
 		{
 			planSlug: PLAN_ECOMMERCE,
-			description: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+			description: useHasEnTranslation()(
+				'Free one-year domain, plugins, all premium and store themes, WooCommerce'
+			)
+				? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
+				: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
 		},
 	];
 
