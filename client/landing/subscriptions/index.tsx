@@ -47,11 +47,7 @@ const setupReduxStore = ( user: CurrentUser ) => {
 	return reduxStore;
 };
 
-declare const window: Window & {
-	AppBoot?: () => void;
-};
-
-window.AppBoot = async () => {
+async function main() {
 	const user = ( await initializeCurrentUser() ) as unknown as CurrentUser;
 	const { queryClient } = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
@@ -86,4 +82,6 @@ window.AppBoot = async () => {
 		</CalypsoI18nProvider>,
 		document.getElementById( 'wpcom' )
 	);
-};
+}
+
+main();

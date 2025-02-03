@@ -10,4 +10,3 @@ Output is built on the server side by the following `modules` (corresponding to 
   - render content by passing that to `404.jsx`, `500.jsx`, `browsehappy.jsx`, `support-user.jsx`, `index.jsx` or `desktop.jsx` template files, respectively.
 - `index.jsx`
   - builds an HTML skeleton, including `<script>` tags to load relevant JavaScript files (minified unless in debug mode or in the `development` environment) that contain client-side (React) rendering code
-  - lastly, it runs `window.AppBoot()`, which is defined in `client/boot`.
