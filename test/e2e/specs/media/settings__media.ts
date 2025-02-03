@@ -11,7 +11,6 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	WpAdminMediaSettingsPage,
-	WritingSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipItIf } from '../../jest-helpers';
