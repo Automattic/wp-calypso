@@ -130,6 +130,7 @@ export default function LicenseDetails( {
 				licenseType={ licenseType }
 				hasDownloads={ hasDownloads }
 				isChildLicense={ isChildLicense }
+				isClientLicense={ !! ( isAutomatedReferralsEnabled && referral ) }
 			/>
 		</Card>
 	);

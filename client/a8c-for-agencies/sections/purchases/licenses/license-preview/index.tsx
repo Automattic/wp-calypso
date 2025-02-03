@@ -378,6 +378,7 @@ export default function LicensePreview( {
 							revokedAt={ revokedAt }
 							licenseType={ licenseType }
 							isChildLicense={ isChildLicense }
+							isClientLicense={ !! isClientLicense }
 						/>
 					) : (
 						/*
