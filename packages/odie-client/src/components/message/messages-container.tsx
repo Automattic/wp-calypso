@@ -1,7 +1,6 @@
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
@@ -116,7 +115,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<>
-			<div className={ clsx( 'chatbox-messages' ) } ref={ messagesContainerRef }>
+			<div className="chatbox-messages" ref={ messagesContainerRef }>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
