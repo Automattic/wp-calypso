@@ -4,7 +4,7 @@ import { EmailAccount, Mailbox } from 'calypso/data/emails/types';
 import EmailForwardSecondaryDetails from '../../email-management/home/email-plan-mailboxes/email-forward-secondary-details';
 import MailboxLink from '../../email-management/home/email-plan-mailboxes/list-item-link';
 import { ActionsMenu } from '../actions-menu';
-import { VerificatonPendingNotice } from '../verification-notices';
+import { VerificationPendingNotice } from '../verification-notices';
 import './style.scss';
 
 function groupByMailbox( mailboxes: Mailbox[] ) {
@@ -66,7 +66,7 @@ export function EmailForwardsList( {
 										<EmailForwardSecondaryDetails mailbox={ mailbox } />
 									</td>
 									<td>
-										<VerificatonPendingNotice warnings={ mailbox.warnings } />
+										<VerificationPendingNotice warnings={ mailbox.warnings } />
 									</td>
 									<td>
 										<div className="email-forward-list__actions">

@@ -5,7 +5,7 @@ import { EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS } from 'calypso/lib/emails/email
 import { Mailbox } from '../../../../data/emails/types';
 import './style.scss';
 
-export function VerificatonPendingNotice( { warnings }: { warnings: Mailbox[ 'warnings' ] } ) {
+export function VerificationPendingNotice( { warnings }: { warnings: Mailbox[ 'warnings' ] } ) {
 	const translate = useTranslate();
 	const hasWarning = warnings?.some(
 		( warning ) => warning.warning_slug === EMAIL_WARNING_SLUG_UNVERIFIED_FORWARDS

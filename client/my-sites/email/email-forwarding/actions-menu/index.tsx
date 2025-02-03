@@ -43,7 +43,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 					</Heading>
 					<Text>
 						{ translate(
-							"This will remove it from our records and if it's not used in another forward, it will require reverficiaton if added again."
+							"This will remove it from our records and if it's not used in another forward, it will require reverification if added again."
 						) }
 					</Text>
 				</VStack>
