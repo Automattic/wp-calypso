@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
@@ -25,14 +24,10 @@ const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 			slug: DEFAULT_TAB,
 			title: translate( 'Recommended' ),
 		},
-		...( config.isEnabled( 'reader/first-posts-stream' )
-			? [
-					{
-						slug: FIRST_POSTS_TAB,
-						title: translate( 'First posts' ),
-					},
-			  ]
-			: [] ),
+		{
+			slug: FIRST_POSTS_TAB,
+			title: translate( 'First posts' ),
+		},
 		{
 			slug: LATEST_TAB,
 			title: translate( 'Latest' ),
