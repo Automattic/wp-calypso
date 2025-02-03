@@ -16,6 +16,8 @@ import statsStrings from '../../stats-strings';
 import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
 
+import './style.scss';
+
 function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );

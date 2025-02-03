@@ -1,0 +1,14 @@
+.stats-line-chart {
+	position: relative;
+	height: 228px;
+	margin-bottom: 32px;
+
+	.stats__empty-state {
+		min-width: 320px;
+		position: absolute;
+		// eslint-disable-next-line
+		top: calc(50% - 110px);
+		// eslint-disable-next-line
+		left: calc(50% - 160px);
+	}
+}
