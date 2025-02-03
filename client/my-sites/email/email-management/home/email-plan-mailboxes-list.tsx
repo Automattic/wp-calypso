@@ -157,7 +157,6 @@ function EmailPlanMailboxesList( {
 						<>
 							<EmailForwardsList
 								actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
-								account={ account }
 								mailboxes={ mailboxes }
 							/>
 							{ ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) && (

@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.email-management-main {
+	margin: 50px;
+}
+
 .email-management {
 	.empty-content__illustration {
 		width: 250px;

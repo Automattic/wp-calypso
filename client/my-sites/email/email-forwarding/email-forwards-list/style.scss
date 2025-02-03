@@ -1,18 +1,35 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .email-forwards-list__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 24px 0;
 
+    margin: 0 10px;
+
+    @include break-large {
+        margin: none;
+    }
+
     h2 {
         font-size: 1rem;
         font-weight: 500;
     }
+
+
 }
 
 .email-forward-list {
     border: 1px solid #E0E0E0;
     background: var(--color-surface);
+    margin: 0 10px;
+    width: calc(100% - 20px);
+
+    @include break-large {
+        margin: none;
+    }
 
     td,
     th {

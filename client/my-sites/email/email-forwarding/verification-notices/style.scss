@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .email-forward-verification-status {
     display: flex;
     align-items: center;
@@ -7,13 +10,30 @@
         svg {
             fill: var(--studio-green-50);
         }
+
+        // The active status is unnecessary on mobiles
+        display: none;
+
+        @include break-large {
+            display: inline-block;
+        }
     }
 
     &.verification-pending {
         color: var(--studio-orange-50);
+        margin-left: 20px;
 
         svg {
             fill: var(--studio-orange-50);
+            display: none;
+        }
+
+        @include break-large {
+            margin-left: 0;
+
+            svg {
+                display: inline-block;
+            }
         }
     }
 }

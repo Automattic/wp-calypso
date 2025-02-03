@@ -1,8 +1,9 @@
 import { Button } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
-import { EmailAccount, Mailbox } from 'calypso/data/emails/types';
-import EmailForwardSecondaryDetails from '../../email-management/home/email-plan-mailboxes/email-forward-secondary-details';
-import MailboxLink from '../../email-management/home/email-plan-mailboxes/list-item-link';
+import { Mailbox } from 'calypso/data/emails/types';
+import { getEmailAddress } from 'calypso/lib/emails';
+import EmailForwardTarget from '../../email-management/home/email-plan-mailboxes/email-forward-target';
 import { ActionsMenu } from '../actions-menu';
 import { VerificationPendingNotice } from '../verification-notices';
 import './style.scss';
@@ -21,13 +22,116 @@ function groupByMailbox( mailboxes: Mailbox[] ) {
 	);
 }
 
+/**
+ * Truncates helloIndifferentWorld to hello...rld.
+ * @param str the long string
+ */
+function smartTruncate( str: string ) {
+	if ( str.length <= 32 ) {
+		return str;
+	}
+	const start = str.slice( 0, 10 );
+	const end = str.slice( -5 );
+	return `${ start }…${ end }`;
+}
+
+function smartTruncateEmail( str: string ) {
+	const [ localPart, domain ] = str.split( '@' );
+	return `${ smartTruncate( localPart ) }@${ smartTruncate( domain ) }`;
+}
+
+function THead() {
+	const translate = useTranslate();
+	const isMobile = useMediaQuery( '(max-width: 960px)' );
+
+	if ( isMobile ) {
+		return (
+			<thead className="email-forward-list__row">
+				<tr>
+					<th>{ translate( 'Mailbox' ) }</th>
+					<th>
+						<div className="email-forward-list__actions">{ translate( 'Actions' ) }</div>
+					</th>
+				</tr>
+			</thead>
+		);
+	}
+	return (
+		<thead className="email-forward-list__row">
+			<tr>
+				<th>{ translate( 'Mailbox' ) }</th>
+				<th>{ translate( 'To' ) }</th>
+				<th>{ translate( 'Status' ) }</th>
+				<th>
+					<div className="email-forward-list__actions">{ translate( 'Actions' ) }</div>
+				</th>
+			</tr>
+		</thead>
+	);
+}
+
+function TBody( { mailbox, targets }: { mailbox: string; targets: Mailbox[] } ) {
+	const isMobile = useMediaQuery( '(max-width: 960px)' );
+	const fromAddress = getEmailAddress( targets[ 0 ] );
+
+	if ( isMobile ) {
+		return (
+			<tbody>
+				<tr key={ mailbox }>
+					<td colSpan={ 2 }>
+						<strong title={ fromAddress }>{ smartTruncateEmail( fromAddress ) }</strong>
+					</td>
+				</tr>
+				{ targets.map( ( mailbox ) => (
+					<tr key={ mailbox.target }>
+						<td>
+							<EmailForwardTarget
+								showIcon
+								title={ mailbox.target }
+								target={ smartTruncateEmail( mailbox.target ) }
+							/>
+							<VerificationPendingNotice mailbox={ mailbox } />
+						</td>
+						<td>
+							<div className="email-forward-list__actions">
+								<ActionsMenu mailbox={ mailbox } />
+							</div>
+						</td>
+					</tr>
+				) ) }
+			</tbody>
+		);
+	}
+	return (
+		<tbody>
+			{ targets.map( ( mailbox, index ) => (
+				<tr key={ mailbox.mailbox + mailbox.target }>
+					<td title={ fromAddress }>{ index === 0 ? smartTruncateEmail( fromAddress ) : null }</td>
+					<td>
+						<EmailForwardTarget
+							title={ mailbox.target }
+							target={ smartTruncateEmail( mailbox.target ) }
+						/>
+					</td>
+					<td>
+						<VerificationPendingNotice mailbox={ mailbox } />
+					</td>
+					<td>
+						<div className="email-forward-list__actions">
+							<ActionsMenu mailbox={ mailbox } />
+						</div>
+					</td>
+				</tr>
+			) ) }
+		</tbody>
+	);
+}
+
 export function EmailForwardsList( {
 	mailboxes,
-	account,
 	actionPath,
 }: {
 	mailboxes: Mailbox[];
-	account: EmailAccount;
 	actionPath: string | undefined;
 } ) {
 	const translate = useTranslate();
@@ -44,39 +148,9 @@ export function EmailForwardsList( {
 				) }
 			</div>
 			<table className="email-forward-list">
-				<thead className="email-forward-list__row">
-					<tr>
-						<th>{ translate( 'Mailbox' ) }</th>
-						<th>{ translate( 'To' ) }</th>
-						<th>{ translate( 'Status' ) }</th>
-						<th>
-							<div className="email-forward-list__actions">{ translate( 'Actions' ) }</div>
-						</th>
-					</tr>
-				</thead>
-				{ normalizedMailboxes.map( ( [ from, mailboxes ] ) => {
-					return (
-						<tbody key={ from }>
-							{ mailboxes.map( ( mailbox, index ) => (
-								<tr key={ mailbox.mailbox + mailbox.target }>
-									<td>
-										{ index === 0 ? <MailboxLink account={ account } mailbox={ mailbox } /> : null }
-									</td>
-									<td>
-										<EmailForwardSecondaryDetails mailbox={ mailbox } />
-									</td>
-									<td>
-										<VerificationPendingNotice mailbox={ mailbox } />
-									</td>
-									<td>
-										<div className="email-forward-list__actions">
-											<ActionsMenu mailbox={ mailbox } />
-										</div>
-									</td>
-								</tr>
-							) ) }
-						</tbody>
-					);
+				<THead />
+				{ normalizedMailboxes.map( ( [ from, targets ] ) => {
+					return <TBody key={ from } mailbox={ from } targets={ targets } />;
 				} ) }
 			</table>
 		</>
