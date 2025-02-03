@@ -66,7 +66,7 @@ export function EmailForwardsList( {
 										<EmailForwardSecondaryDetails mailbox={ mailbox } />
 									</td>
 									<td>
-										<VerificationPendingNotice warnings={ mailbox.warnings } />
+										<VerificationPendingNotice mailbox={ mailbox } />
 									</td>
 									<td>
 										<div className="email-forward-list__actions">
