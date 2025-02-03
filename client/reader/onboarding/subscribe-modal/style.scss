@@ -41,11 +41,6 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		}
 	}
 
-	&__disabled-for-verification {
-		opacity: 0.5;
-		pointer-events: none;
-	}
-
 	&__site-list-column {
 		flex: 1;
 		padding: 20px 20px 0;
@@ -152,6 +147,22 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			&.is-primary {
 				margin-left: 16px;
 			}
+		}
+	}
+
+	&.is-disabled {
+		.subscribe-modal__container {
+			height: calc( 100vh - 188px ); // Modal margin + modal padding + modal heading
+			overflow: hidden;
+			padding: 1px;
+		}
+		.subscribe-modal__content {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+		.subscribe-modal__preview-stream-container,
+		.subscribe-modal__site-list-column {
+			overflow-y: hidden;
 		}
 	}
 }

@@ -170,6 +170,27 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const divisionsTooltip = (
+		<StatsInfoArea>
+			{ translate(
+				'Countries and their subdivisions are based on {{link}}ISO 3166{{/link}} standards.',
+				{
+					comment: '{{link}} links to ISO standards.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href="https://www.iso.org/maintenance_agencies.html#72482"
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Regions/Cities module when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	const titleTooltip = (
 		<StatsInfoArea>
 			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
@@ -200,9 +221,25 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
 		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
 	];
+
 	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
 	const locationData = shouldGate ? fakeData : data;
+
+	const heroElement = (
+		<>
+			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+			{ geoMode !== 'country' && ! summaryUrl && (
+				<CountryFilter
+					countries={ countriesList }
+					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+					selectedCountry={ countryFilter }
+					onCountryChange={ onCountryChange }
+					tooltip={ divisionsTooltip }
+				/>
+			) }
+		</>
+	);
 
 	return (
 		<>
@@ -236,24 +273,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={
-							<>
-								<Geochart
-									data={ locationData }
-									geoMode={ geoMode }
-									skipQuery
-									customHeight={ 480 }
-								/>
-								{ geoMode !== 'country' && ! summaryUrl && (
-									<CountryFilter
-										countries={ countriesList }
-										defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-										selectedCountry={ countryFilter }
-										onCountryChange={ onCountryChange }
-									/>
-								) }
-							</>
-						}
+						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={
