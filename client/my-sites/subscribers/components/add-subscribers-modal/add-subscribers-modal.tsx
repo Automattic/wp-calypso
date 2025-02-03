@@ -3,12 +3,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { SiteDetails, updateLaunchpadSettings } from '@automattic/data-stores';
+import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
-import { useQueryClient } from '@tanstack/react-query';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -22,7 +21,6 @@ import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import './style.scss';
 
@@ -42,8 +40,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 	// There is also a separate `importers/substack` flag but that refers to a separate Substack content importer.
 	// This flag refers to Substack free/paid subscriber + content importer.
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
-	const queryClient = useQueryClient();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	useEffect( () => {
 		const handleHashChange = () => {
@@ -63,20 +59,6 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 			window.removeEventListener( 'hashchange', handleHashChange );
 		};
 	}, [] );
-
-	useEffect( () => {
-		// Mark first subscribers task (blogger flow nudge) complete when modal is opened.
-		// This should be separated from other tasks that require actually adding the subscribers to mark completion.
-		if ( showAddSubscribersModal && selectedSiteSlug ) {
-			const updateFirstSubscribersTask = async () => {
-				await updateLaunchpadSettings( selectedSiteSlug, {
-					checklist_statuses: { add_first_subscribers: true },
-				} );
-				queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
-			};
-			updateFirstSubscribersTask();
-		}
-	}, [ selectedSiteSlug, showAddSubscribersModal, queryClient ] );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
 		args: [ site.title ],
