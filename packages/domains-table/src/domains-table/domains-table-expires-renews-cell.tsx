@@ -23,7 +23,7 @@ function getNotice( {
 } ): string {
 	if ( isHundredYearDomain ) {
 		return sprintf(
-			/* translators: %s - The date on which a domain has expired */
+			/* translators: %s - The date until which a domain was paid for */
 			__( 'Paid until %s' ),
 			expiryDate
 		);
