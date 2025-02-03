@@ -76,7 +76,7 @@ export function useValidationMessage(
 		return {
 			valid: false,
 			loading: true,
-			message: __( 'Checking domain lock status.' ),
+			message: __( 'Checking domain status.' ),
 		};
 	}
 
