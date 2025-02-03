@@ -1,7 +1,7 @@
 import { doesStringResembleDomain } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDebounce } from 'use-debounce';
-import { useGetDomainPriceOverride } from 'calypso/landing/stepper/hooks/use-get-hundred-year-domain-price';
+import { useGetDomainPriceOverride } from 'calypso/landing/stepper/hooks/use-get-domain-price-override';
 
 type Vendor = '100-year-domains';
 export type DomainPriceOverrideOptions = {
