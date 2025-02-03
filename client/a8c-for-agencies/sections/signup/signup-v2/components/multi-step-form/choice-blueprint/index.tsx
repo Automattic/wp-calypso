@@ -16,7 +16,7 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 			className="choice-blueprint-form"
 			title={ translate( 'Grow your business with a free personalized blueprint' ) }
 			description={ translate(
-				'By answering a few simple questions, we’ll provide tips on maximizing your agency’s impact.'
+				`By answering a few simple questions, we'll provide tips on maximizing your agency's impact.`
 			) }
 		>
 			<p className="choice-blueprint__text">{ translate( 'Ready?' ) }</p>

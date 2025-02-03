@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+
 import './style.scss';
 
 type Step = {

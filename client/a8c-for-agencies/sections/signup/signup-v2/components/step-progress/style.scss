@@ -2,7 +2,7 @@
 	width: 100%;
 	background: var(--studio-white);
 
-	&__steps {
+	.step-progress__steps {
 		max-width: 600px;
 		margin: 0 auto;
 		width: 100%;
@@ -11,59 +11,59 @@
 		gap: 16px;
 	}
 
-	&__steps-container {
+	.step-progress__steps-container {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
 		gap: 8px;
 		width: 100%;
 	}
 
-	&__step {
+	.step-progress__step {
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+	}
 
-		&.is-active {
-			.step-progress__step-indicator {
-				background-color: var(--color-primary-50);
-			}
-
-			.step-progress__step-label {
-				color: var(--studio-gray-80);
-				font-weight: 600;
-			}
+	.step-progress__step.is-active {
+		.step-progress__step-indicator {
+			background-color: var(--color-primary-50);
 		}
 
-		&.is-complete {
-			.step-progress__step-indicator {
-				background-color: var(--color-primary-50);
-			}
-
-			.step-progress__step-label {
-				color: var(--studio-gray-80);
-				font-weight: 600;
-			}
-		}
-
-		&:not(.is-active):not(.is-complete) {
-			.step-progress__step-indicator {
-				background-color: var(--studio-gray-5);
-			}
-
-			.step-progress__step-label {
-				color: var(--studio-gray-40);
-			}
+		.step-progress__step-label {
+			color: var(--color-neutral-80);
+			font-weight: 600;
 		}
 	}
 
-	&__step-indicator {
+	.step-progress__step.is-complete {
+		.step-progress__step-indicator {
+			background-color: var(--color-primary-50);
+		}
+
+		.step-progress__step-label {
+			color: var(--color-neutral-80);
+			font-weight: 600;
+		}
+	}
+
+	.step-progress__step:not(.is-active):not(.is-complete) {
+		.step-progress__step-indicator {
+			background-color: var(--color-neutral-5);
+		}
+
+		.step-progress__step-label {
+			color: var(--color-neutral-40);
+		}
+	}
+
+	.step-progress__step-indicator {
 		height: 8px;
 		width: 100%;
 		border-radius: 4px;
 		transition: background-color 0.2s ease;
 	}
 
-	&__step-label {
+	.step-progress__step-label {
 		font-size: 0.875rem;
 		font-weight: 500;
 		transition: color 0.2s ease;

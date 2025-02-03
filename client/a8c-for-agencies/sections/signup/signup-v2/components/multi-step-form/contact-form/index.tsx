@@ -62,7 +62,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	return (
 		<Form
 			className="signup-contact-form"
-			title={ translate( 'Sign up and unlock the blueprint to grow your agency’s business' ) }
+			title={ translate( `Sign up and unlock the blueprint to grow your agency's business` ) }
 			description={ translate(
 				'Join 5000+ agencies and grow your business with Automattic for Agencies.'
 			) }
