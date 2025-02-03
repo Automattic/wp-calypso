@@ -185,9 +185,17 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								<GoalsFirstDesignChoice
 									title={ getCreateWithAILabel() }
 									ariaLabel={ translate( 'Create with AI (BETA)' ) }
-									description={ translate(
-										'Use our AI website builder to easily and quickly build the site of your dreams.'
-									) }
+									description={
+										hasEnTranslation(
+											'Use our AI Website Builder to quickly and easily create the site of your dreams.'
+										)
+											? translate(
+													'Use our AI Website Builder to quickly and easily create the site of your dreams.'
+											  )
+											: translate(
+													'Use our AI website builder to easily and quickly build the site of your dreams.'
+											  )
+									}
 									badgeLabel={ bigSkyBadgeLabel }
 									bgImageSrc={ bigSkyBg }
 									fgImageSrc={ bigSkyFg }
