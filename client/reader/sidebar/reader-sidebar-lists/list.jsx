@@ -25,7 +25,7 @@ export default class ReaderSidebarListsList extends Component {
 						currentListSlug={ currentListSlug }
 					/>
 				) ) }
-				<ListItemCreateLink key="create-item-link" path={ path } />
+				<ListItemCreateLink path={ path } />
 			</ul>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
