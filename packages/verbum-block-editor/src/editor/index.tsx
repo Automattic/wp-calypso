@@ -19,6 +19,7 @@ import { safeParse } from '../utils';
 import { editorSettings } from './editor-settings';
 import { EditorProps, StateWithUndoManager } from './editor-types';
 import type { MouseEvent, KeyboardEvent, FC } from 'react';
+import darkModeCss from '!!css-loader!sass-loader!./inline-iframe-style-dark-mode.scss';
 import css from '!!css-loader!sass-loader!./inline-iframe-style.scss';
 import './editor-style.scss';
 
@@ -29,7 +30,12 @@ const iframedCSS = css.reduce( ( css: string, [ , item ]: [ string, string ] ) =
 /**
  * Editor component
  */
-export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRTL } ) => {
+export const Editor: FC< EditorProps > = ( {
+	initialContent = '',
+	onChange,
+	isRTL,
+	isDarkMode,
+} ) => {
 	// We keep the content in state so we can access the blocks in the editor.
 	const {
 		value: editorContent,
@@ -124,7 +130,10 @@ export const Editor: FC< EditorProps > = ( { initialContent = '', onChange, isRT
 						{ /* @ts-expect-error - Slot type missing */ }
 						<Popover.Slot />
 						<BlockTools>
-							<BlockCanvas styles={ [ { css: iframedCSS } ] } height={ contentHeight }>
+							<BlockCanvas
+								styles={ [ { css: isDarkMode ? iframedCSS + darkModeCss : iframedCSS } ] }
+								height={ contentHeight }
+							>
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 								<div
 									className="editor__block-canvas-container wp-embed-responsive"

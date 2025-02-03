@@ -34,7 +34,12 @@ const CommentBlockEditor = ( {
 
 	return (
 		<div className="verbum-editor-wrapper">
-			<Editor initialContent={ commentContent } onChange={ onChange } isRTL={ isRTL } />
+			<Editor
+				initialContent={ commentContent }
+				onChange={ onChange }
+				isRTL={ isRTL }
+				isDarkMode={ false }
+			/>
 		</div>
 	);
 };
