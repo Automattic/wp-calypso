@@ -150,9 +150,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	return (
 		<>
 			<div
-				className={ clsx( 'chatbox-messages', {
-					'is-notice-visible': isNoticeVisible,
-				} ) }
+				className={ clsx( 'chatbox-messages' ) }
 				ref={ messagesContainerRef }
 			>
 				<ChatDate chat={ chat } />
