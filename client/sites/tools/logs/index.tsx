@@ -36,7 +36,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
-import type { View } from '@wordpress/dataviews';
+import type { Field, View, Operator, ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -339,7 +339,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 					{ value: 'Fatal error', label: translate( 'Fatal error' ) },
 				],
 				filterBy: {
-					operators: [ 'is' ],
+					operators: [ 'is' as Operator ],
 				},
 				render: ( { item } ) => {
 					const severity = item.severity;
@@ -372,7 +372,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				enableSorting: false,
 			},
 			{ id: 'line', label: __( 'Line' ), enableSorting: false },
-		];
+		] as Field< any >[];
 	}
 
 	return [
@@ -387,7 +387,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				{ value: 'PUT', label: translate( 'PUT' ) },
 				{ value: 'DELETE', label: translate( 'DELETE' ) },
 			],
-			filterBy: { operators: [ 'is' ] },
+			filterBy: { operators: [ 'is' as Operator ] },
 			render: ( { item } ) => {
 				const requestType = item.request_type;
 				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
@@ -415,7 +415,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				{ value: '500', label: '500' },
 			],
 			filterBy: {
-				operators: [ 'is' ],
+				operators: [ 'is' as Operator ],
 			},
 			enableSorting: false,
 		},
@@ -439,7 +439,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			},
 			enableSorting: false,
 		},
-	];
+	] as Field< any >[];
 };
 
 const getVisibleFieldsForLogType = ( logType: LogType ) => {
@@ -506,7 +506,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
-	const [ view, setView ] = useState( () => {
+	const [ view, setView ] = useState< View >( () => {
 		return {
 			type: 'table' as const,
 			page: 1,
@@ -537,16 +537,21 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const fields = useFields( { logType } );
 	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType, dateRange } );
 	const onChangeView = ( newView: View ) =>
-		setView( ( oldView ) => ( {
-			...oldView,
-			...newView,
-			type: 'table' as const,
-		} ) );
+		setView(
+			( oldView: View ) =>
+				( {
+					...oldView,
+					...newView,
+					type: 'table' as const,
+					layout: ( oldView as ViewTable )?.layout,
+				} ) as ViewTable
+		);
 	useEffect( () => {
-		setView( ( view ) => ( {
+		setView( ( view: View ) => ( {
 			...view,
 			sort: {
 				field: getSortFieldForLogType( logType ),
+				direction: view?.sort?.direction || 'desc',
 			},
 			fields: getVisibleFieldsForLogType( logType ),
 		} ) );
