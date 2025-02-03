@@ -10,7 +10,7 @@
     margin: 0 10px;
 
     @include break-large {
-        margin: none;
+        margin: 0;
     }
 
     h2 {
@@ -28,7 +28,8 @@
     width: calc(100% - 20px);
 
     @include break-large {
-        margin: none;
+        margin: 0;
+        width: 100%;
     }
 
     td,
