@@ -64,9 +64,8 @@ export default function SuggestedPlanSection( {
 				.filter( ( plan ) => ! plan.disabled )
 				.slice( 0, 2 )
 				.map( ( { planSlug, description } ) => (
-					<RowWithBorder>
+					<RowWithBorder key={ planSlug }>
 						<PlanItem
-							key={ planSlug }
 							planSlug={ planSlug as PlanSlug }
 							description={ description }
 							isBusy={ isBusy }
