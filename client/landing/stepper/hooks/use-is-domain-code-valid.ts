@@ -19,7 +19,7 @@ type DomainCodeResponse = {
 	success: boolean;
 };
 
-type DomainLockResponse = {
+export type DomainLockResponse = {
 	transfer_restriction_status?: string;
 	transfer_eligible_date?: any;
 	term_maximum_in_years?: number;
