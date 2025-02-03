@@ -207,8 +207,7 @@ const SubscriberDataViews = ( {
 			{
 				id: 'is_email_subscriber',
 				label: translate( 'Email subscriber' ),
-				getValue: ( { item }: { item: Subscriber } ) =>
-					item.is_email_subscriber ? 'email' : 'reader',
+				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
 				render: ( { item }: { item: Subscriber } ) => (
 					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
 				),
