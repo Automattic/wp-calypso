@@ -267,7 +267,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const onUseYourDomainClick = ( domain?: string ) => {
 		if ( domain && isHundredYearDomainFlow( flow ) ) {
 			const leaveFlowFunction = exitFlow ?? window.location.assign;
-			leaveFlowFunction( `/setup/hundred-year-domain-transfer?new=${ domain }` );
+			leaveFlowFunction( `/setup/hundred-year-domain-transfer/domains?new=${ domain }` );
 			return;
 		}
 
