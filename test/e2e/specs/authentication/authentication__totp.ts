@@ -62,8 +62,6 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 	describe( 'WooCommerce', function () {
 		beforeAll( async () => {
 			page = await browser.newPage();
-			// Wait 30s to avoid OTP code reuse error.
-			await page.waitForTimeout( 30000 );
 		} );
 
 		it( 'Navigate to Login page', async function () {
@@ -71,6 +69,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 			await loginPage.visit( {
 				path: SecretsManager.secrets.wooLoginPath,
 			} );
+			// Wait 30s to avoid OTP code reuse error.
+			await page.waitForTimeout( 30000 );
 		} );
 
 		it( 'Enter username', async function () {
