@@ -11,17 +11,20 @@
             fill: var(--studio-green-50);
         }
 
-        // The active status is unnecessary on mobiles
-        display: none;
+        // hide text on mobile.
+        span {
+            display: none;
+        }
 
         @include break-large {
-            display: inline-block;
+            span {
+                display: inline-block;
+            }
         }
     }
 
     &.verification-pending {
         color: var(--studio-orange-50);
-        margin-left: 20px;
 
         svg {
             fill: var(--studio-orange-50);
@@ -29,10 +32,8 @@
         }
 
         @include break-large {
-            margin-left: 0;
-
             svg {
-                display: inline-block;
+                display: flex;
             }
         }
     }

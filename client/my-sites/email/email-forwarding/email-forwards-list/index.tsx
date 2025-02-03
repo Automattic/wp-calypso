@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
+import InfoPopover from 'calypso/components/info-popover';
 import { Mailbox } from 'calypso/data/emails/types';
 import { getEmailAddress } from 'calypso/lib/emails';
 import EmailForwardTarget from '../../email-management/home/email-plan-mailboxes/email-forward-target';
@@ -49,6 +50,7 @@ function THead() {
 			<thead className="email-forward-list__row">
 				<tr>
 					<th>{ translate( 'Mailbox' ) }</th>
+					<th>{ translate( 'Status' ) }</th>
 					<th>
 						<div className="email-forward-list__actions">{ translate( 'Actions' ) }</div>
 					</th>
@@ -78,7 +80,7 @@ function TBody( { mailbox, targets }: { mailbox: string; targets: Mailbox[] } ) 
 		return (
 			<tbody>
 				<tr key={ mailbox }>
-					<td colSpan={ 2 }>
+					<td colSpan={ 3 }>
 						<strong title={ fromAddress }>{ smartTruncateEmail( fromAddress ) }</strong>
 					</td>
 				</tr>
@@ -90,7 +92,15 @@ function TBody( { mailbox, targets }: { mailbox: string; targets: Mailbox[] } ) 
 								title={ mailbox.target }
 								target={ smartTruncateEmail( mailbox.target ) }
 							/>
-							<VerificationPendingNotice mailbox={ mailbox } />
+						</td>
+						<td>
+							{ mailbox.warnings?.length ? (
+								<InfoPopover>
+									<VerificationPendingNotice mailbox={ mailbox } />
+								</InfoPopover>
+							) : (
+								<VerificationPendingNotice mailbox={ mailbox } />
+							) }
 						</td>
 						<td>
 							<div className="email-forward-list__actions">

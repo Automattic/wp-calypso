@@ -52,6 +52,12 @@
     tbody>tr:last-child>td {
         padding-bottom: 16px;
     }
+
+    .info-popover {
+        svg.gridicon.gridicons-info-outline {
+            color: var(--studio-orange-50);
+        }
+    }
 }
 
 div.email-forward-list__actions {

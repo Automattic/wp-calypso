@@ -15,7 +15,7 @@ export function VerificationPendingNotice( { mailbox }: { mailbox: Mailbox } ) {
 		return (
 			<div className="email-forward-verification-status active">
 				<Icon icon={ check } />
-				{ translate( 'Active' ) }
+				<span>{ translate( 'Active' ) }</span>
 			</div>
 		);
 	}
