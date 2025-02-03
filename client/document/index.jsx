@@ -246,9 +246,6 @@ class Document extends Component {
 					{ entrypoint.js.map( ( asset ) => (
 						<script key={ asset } src={ asset } />
 					) ) }
-					<script nonce={ inlineScriptNonce } type="text/javascript">
-						window.AppBoot();
-					</script>
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {

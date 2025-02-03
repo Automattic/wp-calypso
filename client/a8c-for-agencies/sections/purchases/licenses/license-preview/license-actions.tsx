@@ -12,6 +12,7 @@ interface Props {
 	revokedAt: string | null;
 	licenseType: LicenseType;
 	isChildLicense?: boolean;
+	isClientLicense?: boolean;
 }
 
 export default function LicenseActions( {
@@ -21,6 +22,7 @@ export default function LicenseActions( {
 	revokedAt,
 	licenseType,
 	isChildLicense,
+	isClientLicense,
 }: Props ) {
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );
 
@@ -32,7 +34,8 @@ export default function LicenseActions( {
 		attachedAt,
 		revokedAt,
 		licenseType,
-		isChildLicense
+		isChildLicense,
+		isClientLicense
 	);
 
 	const handleActionClick = ( action: LicenseAction ) => {
