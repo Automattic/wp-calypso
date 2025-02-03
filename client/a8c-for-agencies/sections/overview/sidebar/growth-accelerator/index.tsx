@@ -70,6 +70,7 @@ export default function OverviewSidebarGrowthAccelerator() {
 					className="overview__growth-accelerator-footer-schedule-call"
 					variant="primary"
 					disabled={ isFetchingScheduleCallLink }
+					isBusy={ isFetchingScheduleCallLink }
 					onClick={ onRequestCallClick }
 				>
 					{ translate( 'Schedule a call' ) }
