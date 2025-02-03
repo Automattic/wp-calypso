@@ -5,7 +5,7 @@ import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import './style.scss';
+import { preventWidows } from 'calypso/lib/formatting';
 
 type Props = {
 	onContinue: () => void;
@@ -35,7 +35,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 	return (
 		<Form
 			className="blueprint-form"
-			title={ translate( "Let's build your blurprint" ) }
+			title={ preventWidows( translate( "Let's build your blurprint" ) ) }
 			description={ translate(
 				"We'll send you a custom blueprint to grow your business based on your answers below."
 			) }

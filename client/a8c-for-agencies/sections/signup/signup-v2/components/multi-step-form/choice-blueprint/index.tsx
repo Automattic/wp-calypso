@@ -1,6 +1,8 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
+import { preventWidows } from 'calypso/lib/formatting';
+
 import './style.scss';
 
 type Props = {
@@ -14,7 +16,9 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 	return (
 		<Form
 			className="choice-blueprint-form"
-			title={ translate( 'Grow your business with a free personalized blueprint' ) }
+			title={ preventWidows(
+				translate( 'Grow your business with a free personalized blueprint' )
+			) }
 			description={ translate(
 				`By answering a few simple questions, we'll provide tips on maximizing your agency's impact.`
 			) }
