@@ -20,6 +20,7 @@ export function useValidationMessage(
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
+	const hasAnyAuthCode = auth.trim().length > 0;
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 5;
 
 	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
@@ -58,7 +59,7 @@ export function useValidationMessage(
 		};
 	}
 
-	if ( ! hasGoodAuthCode ) {
+	if ( hasAnyAuthCode && ! hasGoodAuthCode ) {
 		return {
 			valid: false,
 			loading: false,
