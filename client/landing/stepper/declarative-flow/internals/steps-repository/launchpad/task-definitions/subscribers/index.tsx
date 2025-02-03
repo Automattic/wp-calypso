@@ -1,5 +1,6 @@
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { isNewsletterFlow } from '@automattic/onboarding';
+import { type TaskAction } from '../../types';
 
 const getSubscribersTask: TaskAction = ( task, flow, context ) => {
 	const { goToStep, isEmailVerified } = context;
