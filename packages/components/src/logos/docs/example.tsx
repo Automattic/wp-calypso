@@ -29,13 +29,7 @@ export default function ProductLogoExample() {
 				<VIPLogo />
 			</div>
 			<div className="logo-container">
-				<CloudLogo />
-			</div>
-			<div className="logo-container">
 				<WooLogo />
-			</div>
-			<div className="logo-container">
-				<VIPLogo />
 			</div>
 		</div>
 	);
