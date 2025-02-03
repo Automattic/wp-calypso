@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import { getFlowFromURL } from '../../utils/get-flow-from-url';
 
-export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_flow_holdout_20241220';
+export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_flow_holdout_v2_20250131';
 
 /**
  * Check whether the user should have the "goals first" onboarding experience.
@@ -31,5 +31,11 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	 */
 	const variationName = experimentAssignment?.variationName ?? 'control';
 
-	return [ isLoading, variationName === 'treatment' ];
+	// There's a separate cohort for holdout reasons. But in terms of the "goals-first" experience,
+	// both treatment cohorts see it.
+	const isGoalsAtFrontExperiment = [ 'treatment_cumulative', 'treatment_frozen' ].includes(
+		variationName
+	);
+
+	return [ isLoading, isGoalsAtFrontExperiment ];
 }

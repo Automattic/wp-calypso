@@ -11,7 +11,6 @@ function TwoFactorContent( {
 	twoFactorAuthType,
 	twoFactorNotificationSent,
 	rebootAfterLogin,
-	isWoo,
 	isGravPoweredClient,
 	translate,
 } ) {
@@ -21,7 +20,6 @@ function TwoFactorContent( {
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
-					isWoo={ isWoo }
 				/>
 			</div>
 		);

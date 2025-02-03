@@ -8,8 +8,8 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
-import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
+import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
@@ -269,13 +269,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && (
-					<EmptyContent
-						title={ translate( 'Nothing Posted Yet' ) }
-						line={ translate( 'This feed is currently empty.' ) }
-						illustration=""
-					/>
-				) }
+				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad

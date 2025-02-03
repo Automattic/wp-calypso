@@ -37,7 +37,6 @@ export default function ContinueAsUser( {
 	onChangeAccount,
 	redirectPath,
 	isWoo,
-	isWooPasswordless,
 	isBlazePro,
 	notYouText,
 } ) {
@@ -84,34 +83,6 @@ export default function ContinueAsUser( {
 	);
 
 	if ( isWoo ) {
-		if ( isWooPasswordless ) {
-			return (
-				<div className="continue-as-user">
-					<div className="continue-as-user__user-info">
-						{ gravatarLink }
-						<div className="continue-as-user__not-you">
-							<button
-								type="button"
-								id="loginAsAnotherUser"
-								className="continue-as-user__change-user-link"
-								onClick={ onChangeAccount }
-							>
-								{ translate( 'Sign in as a different user' ) }
-							</button>
-						</div>
-					</div>
-					<Button
-						primary
-						className="continue-as-user__continue-button"
-						busy={ validatingPath }
-						href={ validatedPath || '/' }
-					>
-						{ translate( 'Continue' ) }
-					</Button>
-				</div>
-			);
-		}
-
 		return (
 			<div className="continue-as-user">
 				<div className="continue-as-user__user-info">
@@ -123,15 +94,18 @@ export default function ContinueAsUser( {
 							className="continue-as-user__change-user-link"
 							onClick={ onChangeAccount }
 						>
-							{ translate( 'Log in with a different WordPress.com account' ) }
+							{ translate( 'Sign in as a different user' ) }
 						</button>
 					</div>
-					<Button primary busy={ validatingPath } href={ validatedPath || '/' }>
-						{ `${ translate( 'Continue as', {
-							context: 'Continue as an existing WordPress.com user',
-						} ) } ${ userName }` }
-					</Button>
 				</div>
+				<Button
+					primary
+					className="continue-as-user__continue-button"
+					busy={ validatingPath }
+					href={ validatedPath || '/' }
+				>
+					{ translate( 'Continue' ) }
+				</Button>
 			</div>
 		);
 	}
