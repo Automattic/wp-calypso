@@ -1,4 +1,25 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .is-section-reader {
+
+	.user-profile {
+
+		.back-button {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: unset;
+			padding-top: 3px;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				padding-left: 5px;
+			}
+		}
+
+		&__content-wrapper {
+			position: relative;
+		}
+	}
 
 	.user-profile__404.empty-content {
 		max-width: initial;
@@ -7,6 +28,8 @@
 	}
 
 	div.user-profile__content {
+		padding-top: 24px;
+
 		main.main.is-user-profile {
 			padding: 0;
 			border-block-end: none;
