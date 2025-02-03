@@ -38,7 +38,7 @@ $blueberry-blue: #3858e9;
 	overscroll-behavior: contain;
 	padding-top: 16px;
 
-	&.is-notice-visible {
+	&:has(.odie-notice) {
 		margin-bottom: 135px;
 	}
 
