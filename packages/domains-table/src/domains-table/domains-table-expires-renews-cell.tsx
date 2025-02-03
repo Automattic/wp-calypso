@@ -14,11 +14,21 @@ function getNotice( {
 	expiryDate,
 	isAutoRenewing,
 	isExpired,
+	isHundredYearDomain,
 }: {
 	isAutoRenewing: boolean;
 	isExpired: boolean;
 	expiryDate: string;
+	isHundredYearDomain: boolean;
 } ): string {
+	if ( isHundredYearDomain ) {
+		return sprintf(
+			/* translators: %s - The date until which a domain was paid for */
+			__( 'Paid until %s' ),
+			expiryDate
+		);
+	}
+
 	if ( isExpired ) {
 		return sprintf(
 			/* translators: %s - The date on which a domain has expired */
@@ -64,15 +74,20 @@ export const DomainsTableExpiresRenewsOnCell = ( {
 		domain.expiry && moment( domain.expiry ).utc().isBefore( moment().utc() )
 	);
 
+	const isHundredYearDomain = Boolean( domain.is_hundred_year_domain );
+
 	return (
 		<Element data-testid="expires-renews-on" className="domains-table-row__renews-on-cell">
 			{ expiryDate ? (
 				<>
 					{ ! isCompact && (
-						<Gridicon icon={ isExpired ? 'notice-outline' : 'reblog' } size={ 18 } />
+						<Gridicon
+							icon={ isExpired || isHundredYearDomain ? 'notice-outline' : 'reblog' }
+							size={ 18 }
+						/>
 					) }
 
-					{ getNotice( { expiryDate, isAutoRenewing, isExpired } ) }
+					{ getNotice( { expiryDate, isAutoRenewing, isExpired, isHundredYearDomain } ) }
 				</>
 			) : (
 				'-'
