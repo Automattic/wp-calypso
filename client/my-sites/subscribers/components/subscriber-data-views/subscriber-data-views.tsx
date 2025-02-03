@@ -2,7 +2,6 @@ import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
-import { Icon, check, close } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -211,13 +210,7 @@ const SubscriberDataViews = ( {
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.is_email_subscriber ? 'email' : 'reader',
 				render: ( { item }: { item: Subscriber } ) => (
-					<div>
-						{ item.is_email_subscriber ? (
-							<Icon icon={ check } size={ 28 } />
-						) : (
-							<Icon icon={ close } size={ 24 } />
-						) }
-					</div>
+					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
 				),
 				elements: [
 					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
