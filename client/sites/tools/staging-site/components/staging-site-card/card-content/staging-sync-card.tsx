@@ -361,6 +361,56 @@ const SyncCardContainer = ( {
 	const isJetpackConnectionError = useIsJetpackConnectionSyncError( error );
 	const isFailedSyncError = useIsFailedSyncError( error );
 
+	const getConnectionErrorText = (
+		siteToSync: 'production' | 'staging',
+		siteUrls: { production: string | null; staging: string | null }
+	): React.ReactNode => {
+		if ( siteToSync === 'production' ) {
+			return translate( 'We couldn’t connect to the production site: {{br/}} %(siteUrl)s', {
+				args: {
+					siteUrl: siteUrls.production ? urlToSlug( siteUrls.production ) : '',
+				},
+				components: {
+					br: <br />,
+				},
+			} );
+		}
+		return translate( 'We couldn’t connect to the staging site: {{br/}} %(siteUrl)s', {
+			args: {
+				siteUrl: siteUrls.staging ? urlToSlug( siteUrls.staging ) : '',
+			},
+			components: {
+				br: <br />,
+			},
+		} );
+	};
+
+	const getSyncErrorText = (
+		error: string | null | undefined,
+		siteToSync: 'production' | 'staging'
+	): string => {
+		if ( error === 'studio_import_in_progress' ) {
+			return siteToSync === 'production'
+				? translate(
+						'We couldn’t synchronize the production environment. Studio push operation is currently in progress.'
+				  )
+				: translate(
+						'We couldn’t synchronize the staging environment. Studio push operation is currently in progress.'
+				  );
+		}
+		return siteToSync === 'production'
+			? translate( 'We couldn’t synchronize the production environment.' )
+			: translate( 'We couldn’t synchronize the staging environment.' );
+	};
+
+	const getFailedSyncErrorText = ( siteToSync: 'production' | 'staging' ) => {
+		return siteToSync === 'production'
+			? translate(
+					'We couldn’t synchronize changes to the production site. Please contact support.'
+			  )
+			: translate( 'We couldn’t synchronize changes to the staging site. Please contact support.' );
+	};
+
 	return (
 		<StagingSyncCardBody>
 			<SyncContainerTitle>{ translate( 'Database and file synchronization' ) }</SyncContainerTitle>
@@ -381,20 +431,7 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate(
-								'We couldn’t connect to the %(siteType)s site: {{br/}} %(siteUrl)s',
-								{
-									args: {
-										siteType: siteToSync,
-										siteUrl: siteUrls[ siteToSync ]
-											? urlToSlug( siteUrls[ siteToSync ] as string )
-											: '',
-									},
-									components: {
-										br: <br />,
-									},
-								}
-							) }
+							text={ getConnectionErrorText( siteToSync, siteUrls ) }
 						>
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
@@ -404,14 +441,7 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={ translate(
-								'We couldn’t synchronize changes to the %(siteType)s site. Please contact support.',
-								{
-									args: {
-										siteType: siteToSync,
-									},
-								}
-							) }
+							text={ getFailedSyncErrorText( siteToSync ) }
 						>
 							<NoticeAction href="/help">{ translate( 'Contact support' ) }</NoticeAction>
 						</Notice>
@@ -421,18 +451,7 @@ const SyncCardContainer = ( {
 							status="is-error"
 							icon="mention"
 							showDismiss={ false }
-							text={
-								error === 'studio_import_in_progress'
-									? translate(
-											'We couldn’t synchronize the %s environment. Studio push operation is currently in progress.',
-											{
-												args: [ siteToSync ],
-											}
-									  )
-									: translate( 'We couldn’t synchronize the %s environment.', {
-											args: [ siteToSync ],
-									  } )
-							}
+							text={ getSyncErrorText( error, siteToSync ) }
 						>
 							<NoticeAction onClick={ () => onRetry?.() }>
 								{ translate( 'Try Again' ) }
