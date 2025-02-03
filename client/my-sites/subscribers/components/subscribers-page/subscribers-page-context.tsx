@@ -205,11 +205,7 @@ export const SubscribersPageProvider = ( {
 				'message' in importError && typeof importError.message === 'string'
 					? importError.message
 					: translate( 'An unknown error has occurred. Please try again in a second.' );
-			dispatch(
-				errorNotice( errorMessage, {
-					duration: 5000,
-				} )
-			);
+			dispatch( errorNotice( errorMessage ) );
 		}
 	};
 
