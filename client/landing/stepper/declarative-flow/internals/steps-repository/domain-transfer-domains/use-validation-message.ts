@@ -23,7 +23,8 @@ export function useValidationMessage(
 	const hasAnyAuthCode = auth.trim().length > 0;
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 5;
 
-	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
+	const passedLocalValidation =
+		hasGoodDomain && ( ! hasAnyAuthCode || hasGoodAuthCode ) && ! hasDuplicates;
 
 	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
 
@@ -64,6 +65,9 @@ export function useValidationMessage(
 			valid: false,
 			loading: false,
 			message: __( 'Please enter a valid authentication code.' ),
+			rawPrice: validationResult?.raw_price,
+			saleCost: validationResult?.sale_cost,
+			currencyCode: validationResult?.currency_code,
 		};
 	}
 
