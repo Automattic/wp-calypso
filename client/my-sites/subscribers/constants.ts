@@ -2,7 +2,7 @@ export enum SubscribersSortBy {
 	Name = 'name',
 	DateSubscribed = 'date_subscribed',
 	Plan = 'plan',
-	Via = 'is_email_subscriber',
+	EmailSubscriber = 'is_email_subscriber',
 }
 
 export enum SubscribersFilterBy {

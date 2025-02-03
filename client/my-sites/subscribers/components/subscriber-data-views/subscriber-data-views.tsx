@@ -220,9 +220,9 @@ const SubscriberDataViews = ( {
 					</div>
 				),
 				elements: [
-					{ label: translate( 'Email' ), value: SubscribersFilterBy.EmailSubscriber },
+					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'Reader' ),
+						label: translate( 'Not subscribed' ),
 						value: SubscribersFilterBy.ReaderSubscriber,
 					},
 				],
