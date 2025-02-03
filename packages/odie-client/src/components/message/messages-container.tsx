@@ -57,7 +57,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
-	const viewConversationNoticeRef = useRef< HTMLDivElement >( null );
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
@@ -145,9 +144,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
-						{ chat.provider === 'odie' && (
-							<ViewMostRecentOpenConversationNotice ref={ viewConversationNoticeRef } />
-						) }
+						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
 						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
 						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">

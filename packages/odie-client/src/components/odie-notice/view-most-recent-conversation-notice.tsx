@@ -1,14 +1,13 @@
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __, _n } from '@wordpress/i18n';
-import { forwardRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
 import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 import { OdieNotice } from '.';
 
-export const ViewMostRecentOpenConversationNotice = forwardRef< HTMLDivElement >( ( _, ref ) => {
+export const ViewMostRecentOpenConversationNotice = () => {
 	const { mostRecentSupportInteractionId, totalNumberOfConversations } =
 		useGetMostRecentOpenConversation();
 
@@ -41,7 +40,7 @@ export const ViewMostRecentOpenConversationNotice = forwardRef< HTMLDivElement >
 	return (
 		shouldDisplayNotice && (
 			<OdieNotice>
-				<div className="odie-notice__view-conversation" ref={ ref }>
+				<div className="odie-notice__view-conversation">
 					<span>
 						{ __( 'You have another open conversation already started.', __i18n_text_domain__ ) }
 					</span>
@@ -58,4 +57,4 @@ export const ViewMostRecentOpenConversationNotice = forwardRef< HTMLDivElement >
 			</OdieNotice>
 		)
 	);
-} );
+};
