@@ -3,7 +3,7 @@ import { StatsCard } from '@automattic/components';
 import { mail } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
@@ -87,7 +87,15 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 							const hasUniques = hasUniqueMetrics( opensUnique, opens );
 							return (
 								<TooltipWrapper
-									value={ hasUniques ? `${ item.opens_rate }%` : '—' }
+									value={
+										hasUniques
+											? `${ numberFormat( item.opens_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
 									item={ item }
 									TooltipContent={ OpensTooltipContent }
 								/>
@@ -110,7 +118,15 @@ const StatsEmails: React.FC< StatsDefaultModuleProps > = ( {
 						const hasUniques = hasUniqueMetrics( clicksUnique, clicks );
 						return (
 							<TooltipWrapper
-								value={ hasUniques ? `${ item.clicks_rate }%` : '—' }
+								value={
+									hasUniques
+										? `${ numberFormat( item.clicks_rate, {
+												numberFormatOptions: {
+													maximumFractionDigits: 2,
+												},
+										  } ) }%`
+										: '—'
+								}
 								item={ item }
 								TooltipContent={ ClicksTooltipContent }
 							/>
