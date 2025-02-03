@@ -311,6 +311,29 @@ const useDataLogs = ( {
 	};
 };
 
+interface PHPLog {
+	atomic_site_id: number;
+	file: string;
+	kind: string;
+	line: number;
+	message: string;
+	name: string;
+	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
+	timestamp: string;
+}
+
+interface ServerError {
+	body_bytes_sent: number;
+	cached: string;
+	date: string;
+	http_host: string;
+	http_referer: string;
+	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
+	request_url: string;
+	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
+	timestamp: number;
+}
+
 const useFields = ( { logType }: { logType: LogType } ) => {
 	const { __ } = useI18n();
 	const locale = useSelector( getCurrentUserLocale );
@@ -330,6 +353,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		return [
 			{
 				id: 'severity',
+				type: 'text',
 				label: __( 'Severity' ),
 				elements: [
 					{ value: '', label: translate( 'All' ) },
@@ -349,35 +373,39 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			},
 			{
 				id: 'timestamp',
+				type: 'date',
 				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
 				render: ( { item } ) => getFormattedDate( item.timestamp ),
 			},
 			{
 				id: 'message',
+				type: 'text',
 				label: __( 'Message' ),
 				render: ( { item } ) => {
 					return <span className="site-logs-table__message">{ item.message }</span>;
 				},
 				enableSorting: false,
 			},
-			{ id: 'kind', label: __( 'Kind' ), enableSorting: false },
-			{ id: 'name', label: __( 'Name' ), enableSorting: false },
+			{ id: 'kind', type: 'text', label: __( 'Kind' ), enableSorting: false },
+			{ id: 'name', type: 'text', label: __( 'Name' ), enableSorting: false },
 			{
 				id: 'file',
+				type: 'text',
 				label: __( 'File' ),
 				render: ( { item } ) => {
 					return <span className="site-logs-table__file">{ item.file }</span>;
 				},
 				enableSorting: false,
 			},
-			{ id: 'line', label: __( 'Line' ), enableSorting: false },
-		] as Field< any >[];
+			{ id: 'line', type: 'integer', label: __( 'Line' ), enableSorting: false },
+		] as Field< PHPLog >[];
 	}
 
 	return [
 		{
 			id: 'request_type',
+			type: 'text',
 			label: __( 'Request type' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
@@ -396,11 +424,13 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		},
 		{
 			id: 'date',
+			type: 'datetime',
 			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
 		},
 		{
 			id: 'status',
+			type: 'text',
 			label: __( 'Status' ),
 			elements: [
 				{ value: '', label: translate( 'All' ) },
@@ -421,25 +451,32 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 		},
 		{
 			id: 'request_url',
+			type: 'text',
 			label: __( 'Request URL' ),
 			render: ( { item } ) => {
 				return <span className="site-logs-table__request-url">{ item.request_url }</span>;
 			},
 			enableSorting: false,
 		},
-		{ id: 'timestamp', label: __( 'Timestamp' ), enableSorting: false },
-		{ id: 'body_bytes_sent', label: __( 'Body bytes sent' ), enableSorting: false },
-		{ id: 'cached', label: __( 'Cached' ), enableSorting: false },
-		{ id: 'http_host', label: __( 'HTTP Host' ), enableSorting: false },
+		{ id: 'timestamp', type: 'integer', label: __( 'Timestamp' ), enableSorting: false },
+		{
+			id: 'body_bytes_sent',
+			type: 'integer',
+			label: __( 'Body bytes sent' ),
+			enableSorting: false,
+		},
+		{ id: 'cached', type: 'text', label: __( 'Cached' ), enableSorting: false },
+		{ id: 'http_host', type: 'text', label: __( 'HTTP Host' ), enableSorting: false },
 		{
 			id: 'http_referer',
+			type: 'text',
 			label: __( 'Referrer' ),
 			render: ( { item } ) => {
 				return <span className="site-logs-table__http-referer">{ item.request_url }</span>;
 			},
 			enableSorting: false,
 		},
-	] as Field< any >[];
+	] as Field< ServerError >[];
 };
 
 const getVisibleFieldsForLogType = ( logType: LogType ) => {
@@ -455,8 +492,6 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
 	//   - styling issues: spacing left/right
-	// - Fields:
-	//   - add types
 	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
