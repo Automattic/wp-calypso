@@ -108,7 +108,7 @@
 	.domains-table__row {
 		&:has(a.domains-table__domain-name) {
 			&:hover td {
-				background-color: #f7faff;
+				background-color: var(--color-print);
 			}
 		}
 	}
