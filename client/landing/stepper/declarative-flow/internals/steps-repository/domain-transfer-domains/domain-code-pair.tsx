@@ -12,11 +12,11 @@ import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInput from 'calypso/components/forms/form-text-input';
 import InfoPopover from 'calypso/components/info-popover';
-import { usePriceOverride } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/domain-transfer-domains/use-price-override';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import GoogleDomainsModal from '../../components/google-domains-transfer-instructions';
+import { usePriceOverride } from './use-price-override';
 import { useValidationMessage } from './use-validation-message';
 
 type Props = {
