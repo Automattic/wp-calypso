@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import asyncHandler from 'express-async-handler';
-import { defaults, groupBy, flatten } from 'lodash';
+import { defaults, groupBy } from 'lodash';
 
 const ASSETS_PATH = path.resolve( __dirname, '../../../build' );
 const ASSETS_FILE = path.join( ASSETS_PATH, `assets.json` );
@@ -17,11 +17,6 @@ const getAssetType = ( asset ) => {
 
 	return 'js';
 };
-
-const getChunkByName = ( assets, chunkName ) =>
-	assets.chunks.find( ( chunk ) => chunk.names.some( ( name ) => name === chunkName ) );
-
-const getChunkById = ( assets, chunkId ) => assets.chunks.find( ( chunk ) => chunk.id === chunkId );
 
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
@@ -39,30 +34,17 @@ export default () => {
 
 		req.getAssets = () => assets;
 
-		req.getFilesForEntrypoint = ( name ) => {
-			const entrypointAssets = assets.entrypoints[ name ].assets.filter(
-				( asset ) => ! asset.startsWith( 'manifest' )
-			);
-			return groupAssetsByType( entrypointAssets );
-		};
-
-		req.getFilesForChunk = ( chunkName ) => {
-			const chunk = getChunkByName( assets, chunkName );
-
-			if ( ! chunk ) {
-				console.warn( 'cannot find the chunk ' + chunkName );
-				console.warn( 'available chunks:' );
-				assets.chunks.forEach( ( c ) => {
-					console.log( '    ' + c.id + ': ' + c.names.join( ',' ) );
-				} );
+		req.getFilesForChunkGroup = ( name ) => {
+			const chunkGroupAssets = assets.assets[ name ];
+			if ( ! chunkGroupAssets ) {
+				console.warn( 'cannot find chunk group ' + chunkGroupAssets );
+				console.warn( 'available chunk groups:' );
+				for ( const availName of Object.keys( assets.assets ) ) {
+					console.log( '    ' + availName );
+				}
 				return EMPTY_ASSETS;
 			}
-
-			const allTheFiles = chunk.files.concat(
-				flatten( chunk.siblings.map( ( sibling ) => getChunkById( assets, sibling ).files ) )
-			);
-
-			return groupAssetsByType( allTheFiles );
+			return groupAssetsByType( chunkGroupAssets );
 		};
 
 		req.getEmptyAssets = () => EMPTY_ASSETS;

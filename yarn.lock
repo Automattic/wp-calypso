@@ -35082,7 +35082,6 @@ __metadata:
     gettext-parser: "npm:^4.0.3"
     glob: "npm:^7.1.6"
     globby: "npm:^10.0.2"
-    gzip-size: "npm:^6.0.0"
     http-proxy-middleware: "npm:^3.0.0"
     husky: "npm:^7.0.4"
     i18n-calypso: "workspace:^"
