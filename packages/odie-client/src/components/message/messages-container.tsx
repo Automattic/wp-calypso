@@ -59,8 +59,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const viewConversationNoticeRef = useRef< HTMLDivElement >( null );
 
-	const [ isNoticeVisible, setIsNoticeVisible ] = useState( false );
-
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 
@@ -106,36 +104,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		createZendeskConversation,
 	] );
 
-	// Detect odie notice visibility
-	useEffect( () => {
-		const observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
-				if ( mutation.type === 'childList' ) {
-					const noticeElement = document.querySelector( '.odie-notice' );
-					if ( noticeElement ) {
-						const isVisible =
-							noticeElement.getBoundingClientRect().top < window.innerHeight &&
-							noticeElement.getBoundingClientRect().bottom >= 0;
-						setIsNoticeVisible( isVisible );
-					} else {
-						setIsNoticeVisible( false );
-					}
-				}
-			} );
-		} );
-
-		const targetNode = document.querySelector( '.chatbox-messages' );
-		if ( targetNode ) {
-			observer.observe( targetNode, { childList: true, subtree: true } );
-		}
-
-		return () => {
-			if ( targetNode ) {
-				observer.disconnect();
-			}
-		};
-	}, [] );
-
 	// Used to apply the correct styling on messages
 	const isNextMessageFromSameSender = ( currentMessage: string, nextMessage: string ) => {
 		return currentMessage === nextMessage;
@@ -149,10 +117,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<>
-			<div
-				className={ clsx( 'chatbox-messages' ) }
-				ref={ messagesContainerRef }
-			>
+			<div className={ clsx( 'chatbox-messages' ) } ref={ messagesContainerRef }>
 				<ChatDate chat={ chat } />
 				{ ! chatMessagesLoaded ? (
 					<LoadingChatSpinner />
