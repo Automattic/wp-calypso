@@ -203,7 +203,6 @@ const SubscriberDataViews = ( {
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],
-					isPrimary: true,
 				},
 				enableSorting: true,
 				enableHiding: false,

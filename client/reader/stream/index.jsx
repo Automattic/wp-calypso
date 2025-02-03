@@ -735,7 +735,25 @@ class ReaderStream extends Component {
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
-				{ showingStream && items.length && ! isRequesting ? <ListEnd /> : null }
+				{ showingStream && items.length && ! isRequesting && (
+					<>
+						<ListEnd />
+						{ streamKey.startsWith( 'following' ) && (
+							<div className="stream__caught-up">
+								<p>{ translate( "You've seen all new posts from the past 60 days." ) }</p>
+								<p>
+									{ this.props.selectedFeedId
+										? translate( "Visit {{link}}this site's feed{{/link}} to view older posts.", {
+												components: {
+													link: <a href={ `/read/feeds/${ this.props.selectedFeedId }` } />,
+												},
+										  } )
+										: translate( 'Visit the individual site to view older posts.' ) }
+								</p>
+							</div>
+						) }
+					</>
+				) }
 			</TopLevel>
 		);
 	}

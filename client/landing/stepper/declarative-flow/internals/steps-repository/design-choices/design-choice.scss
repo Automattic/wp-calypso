@@ -30,6 +30,7 @@
 
 	.design-choice__image-container {
 		display: flex;
+		position: relative; // Allows the price badge to be positioned absolutely
 		width: 308px;
 		min-height: 226px;
 		transition: transform ease-in 0.15s;
@@ -42,5 +43,16 @@
 		.design-choice__image-container {
 			transform: scale(1.05);
 		}
+	}
+
+	.badge--info-blue {
+		background-color: var(--wp-components-color-accent, var(--wp-admin-theme-color));
+		color: var(--wp-components-color-accent-inverted, #fff);
+	}
+
+	.design-choice__price-badge {
+		position: absolute;
+		top: -0.5em;
+		right: -0.5em;
 	}
 }

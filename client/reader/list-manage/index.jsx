@@ -125,7 +125,7 @@ function ReaderListEdit( props ) {
 		return (
 			<EmptyContent
 				title={ preventWidows( translate( "You don't have permission to manage this list." ) ) }
-				illustration="/calypso/images/illustrations/error.svg"
+				illustration=""
 			/>
 		);
 	}

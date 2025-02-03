@@ -24,7 +24,7 @@ describe(
 		const emailClient = new EmailClient();
 
 		let page: Page;
-		let newUserDetails: NewUserResponse;
+		let newUserDetails: NewUserResponse | undefined;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -60,6 +60,11 @@ describe(
 		} );
 
 		afterAll( async function () {
+			if ( ! newUserDetails ) {
+				// Test fails before signup is complete so we don't need to close account.
+				return;
+			}
+
 			const restAPIClient = new RestAPIClient(
 				{
 					username: testUser.username,
