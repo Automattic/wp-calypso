@@ -7,6 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import PlanItem from './plan-item';
 import { RowWithBorder } from '.';
 
@@ -28,34 +29,43 @@ export default function SuggestedPlanSection( {
 }: Props ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
+	const [ , , variationName ] = useGoalsFirstExperiment();
+	const shouldUseNewTranslation = variationName === 'treatment_cumulative';
+
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description: hasEnTranslation( 'Free one-year domain and some premium themes' )
-				? translate( 'Free one-year domain and some premium themes' )
-				: translate( 'Domain credit, some premium themes' ),
+			description:
+				hasEnTranslation( 'Free one-year domain and some premium themes' ) &&
+				shouldUseNewTranslation
+					? translate( 'Free one-year domain and some premium themes' )
+					: translate( 'Domain credit, some premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{
 			planSlug: PLAN_PREMIUM,
-			description: hasEnTranslation( 'Free one-year domain and all premium themes' )
-				? translate( 'Free one-year domain and all premium themes' )
-				: translate( 'Domain credit, all premium themes' ),
+			description:
+				hasEnTranslation( 'Free one-year domain and all premium themes' ) && shouldUseNewTranslation
+					? translate( 'Free one-year domain and all premium themes' )
+					: translate( 'Domain credit, all premium themes' ),
 			disabled: hidePremiumPlan,
 		},
 		{
 			planSlug: PLAN_BUSINESS,
-			description: hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' )
-				? translate( 'Free one-year domain, plugins, and all premium themes' )
-				: translate( 'Domain credit, plugins, all premium themes' ),
+			description:
+				hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' ) &&
+				shouldUseNewTranslation
+					? translate( 'Free one-year domain, plugins, and all premium themes' )
+					: translate( 'Domain credit, plugins, all premium themes' ),
 		},
 		{
 			planSlug: PLAN_ECOMMERCE,
-			description: hasEnTranslation(
-				'Free one-year domain, plugins, all premium and store themes, WooCommerce'
-			)
-				? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
-				: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+			description:
+				hasEnTranslation(
+					'Free one-year domain, plugins, all premium and store themes, WooCommerce'
+				) && shouldUseNewTranslation
+					? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
+					: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
 		},
 	];
 
