@@ -46,7 +46,7 @@ const defaultView: View = {
 	mediaField: 'media',
 	showTitle: true,
 	showMedia: true,
-	fields: [ 'plan', 'date_subscribed' ],
+	fields: [ 'plan', 'is_email_subscriber', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
