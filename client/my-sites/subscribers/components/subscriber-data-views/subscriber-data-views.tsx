@@ -42,6 +42,11 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 
 const defaultView: View = {
 	type: 'table',
+	titleField: 'name',
+	mediaField: 'media',
+	showTitle: true,
+	showMedia: true,
+	fields: [ 'plan', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
@@ -50,10 +55,7 @@ const defaultView: View = {
 			date_subscribed: { width: '25%' },
 		},
 	},
-	fields: [ 'name', 'plan', 'date_subscribed' ],
 };
-
-const getSubscriberId = ( subscriber: Subscriber ) => subscriber.subscription_id.toString();
 
 const SubscriberDataViews = ( {
 	siteId = undefined,
@@ -65,43 +67,6 @@ const SubscriberDataViews = ( {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const couponsAndGiftsEnabled = useSelector( ( state ) =>
-		getCouponsAndGiftsEnabledForSiteId( state, siteId )
-	);
-
-	const {
-		grandTotal,
-		page,
-		pageChangeCallback,
-		searchTerm,
-		isLoading,
-		subscribers,
-		pages,
-		isOwnerSubscribed,
-		perPage,
-		setPerPage,
-		handleSearch,
-		sortTerm,
-		sortOrder,
-		filterOption,
-		setSortTerm,
-		setSortOrder,
-		setFilterOption,
-	} = useSubscribersPage();
-
-	const [ currentView, setCurrentView ] = useState< View >( {
-		type: 'table',
-		layout: {},
-		page,
-		perPage,
-		titleField: 'name',
-		mediaField: 'media',
-		sort: {
-			field: sortTerm,
-			direction: 'desc',
-		},
-	} );
-
 	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
 		isSimple: isSimpleSite( state ),
 		isAtomic: isAtomicSite( state, siteId ),
@@ -199,6 +164,7 @@ const SubscriberDataViews = ( {
 		() => [
 			{
 				id: 'media',
+				label: translate( 'Media' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.avatar,
 				render: ( { item }: { item: Subscriber } ) => (
 					<Gravatar
@@ -246,7 +212,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ translate ]
+		[]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -294,6 +260,7 @@ const SubscriberDataViews = ( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
+		getSubscriberId,
 	] );
 
 	useEffect( () => {
@@ -301,24 +268,24 @@ const SubscriberDataViews = ( {
 		if ( isMobile ) {
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
-				fields: [ 'name' ],
+				showMedia: false,
+				fields: [],
 			} ) );
 		} else if ( selectedSubscriber ) {
-			// If we're on subscribers page, we want to show the list view.
+			// If we're on subscribers page, we want to show the list view (name & media).
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				type: 'list',
-				fields: [ 'media', 'name' ],
-				layout: {
-					primaryField: 'name',
-					mediaField: 'media',
-				},
+				showTitle: true,
+				showMedia: true,
+				fields: [],
 			} ) );
 		} else {
 			// Otherwise, we want to show the table view.
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				...defaultView,
+				layout: defaultView.layout,
 			} ) );
 		}
 	}, [ isMobile, selectedSubscriber ] );
@@ -343,54 +310,6 @@ const SubscriberDataViews = ( {
 			},
 		};
 	}, [ subscribers, grandTotal, pages ] );
-
-	// Update the view when a subscriber is selected
-	useEffect( () => {
-		const commonViewProps = {
-			page,
-			perPage,
-			sort: {
-				field: sortTerm,
-				direction: sortOrder,
-			},
-			filters: [
-				...( filterOption !== SubscribersFilterBy.All
-					? [ { field: 'plan', operator: 'is', value: [ filterOption ] } ]
-					: [] ),
-			],
-		};
-
-		setCurrentView( ( oldCurrentView ) => {
-			const baseView = {
-				...oldCurrentView,
-				...commonViewProps,
-			};
-
-			if ( selectedSubscriber ) {
-				return {
-					...baseView,
-					type: 'list',
-					fields: [],
-					titleField: 'name',
-					mediaField: 'media',
-				} as View;
-			}
-
-			return {
-				...baseView,
-				type: 'table',
-				fields: [ ...( ! isMobile ? [ 'subscription_type', 'date_subscribed' ] : [] ) ],
-				layout: {
-					styles: {
-						media: { width: '60px' },
-						name: { width: '55%', minWidth: '195px' },
-						plan: { width: '25%' },
-						date_subscribed: { width: '25%' },
-					},
-				},
-			} as View;
-		} );
-	}, [ isMobile, selectedSubscriber, page, perPage, sortTerm, sortOrder, filterOption ] );
 
 	return (
 		<div
