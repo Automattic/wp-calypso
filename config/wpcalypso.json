@@ -159,6 +159,7 @@
 		"sites/dashboard-survey": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": true,
+		"stats/chart-library": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/locations": true,

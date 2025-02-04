@@ -157,6 +157,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/chart-library": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/paid-wpcom-v2": true,
