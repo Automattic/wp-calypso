@@ -1,19 +1,17 @@
 import { LineChart, ThemeProvider } from '@automattic/charts';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useEffect, useState } from 'react';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsEmptyState from '../../stats-empty-state';
-import { useTranslate } from 'i18n-calypso';
 
-let index = 0;
-const baseDate = new Date();
 const fixtureData = [
 	{
 		label: 'Views',
 		options: {
 			stroke: '#069e08',
 		},
-		data: [],
+		data: [] as Array< { date: Date; value: number } >,
 	},
 ];
 
@@ -49,8 +47,7 @@ function StatsLineChart( {
 				fixtureData[ 0 ].data.pop();
 			}
 
-			const date = new Date( baseDate );
-			date.setMinutes( date.getMinutes() + ++index * 0.5 );
+			const date = new Date();
 			fixtureData[ 0 ].data.unshift( { date, value: Math.round( Math.random() * 60 ) } );
 			setData( [ ...fixtureData ] );
 		}, 60 * 1000 );
@@ -62,7 +59,7 @@ function StatsLineChart( {
 			{ data?.[ 0 ]?.data?.length === 0 && (
 				<EmptyState
 					headingText={ translate( 'Real-time views' ) }
-					infoText={ translate( 'Collecting data... auto-refreshing in a minute...' ) }
+					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
 				/>
 			) }
 			<ThemeProvider
@@ -87,7 +84,7 @@ function StatsLineChart( {
 					withGradientFill
 					height={ height }
 					/** naturalCurve sometime goes off the grid :( */
-					margin={ { top: 30 } }
+					margin={ { left: 15, top: 30 } }
 					options={ { axis: { x: { tickFormat: formatTime }, y: { orientation: 'right' } } } }
 				/>
 			</ThemeProvider>

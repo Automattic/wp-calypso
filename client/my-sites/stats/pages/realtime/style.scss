@@ -1,14 +1,18 @@
 .stats-line-chart {
 	position: relative;
-	height: 228px;
-	margin-bottom: 32px;
+	margin: 32px 0;
+
+	.line-chart {
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+	}
 
 	.stats__empty-state {
-		min-width: 320px;
+		max-width: 75%;
 		position: absolute;
-		// eslint-disable-next-line
-		top: calc(50% - 110px);
-		// eslint-disable-next-line
-		left: calc(50% - 160px);
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, 0);
 	}
 }

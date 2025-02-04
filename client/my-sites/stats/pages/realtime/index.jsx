@@ -59,6 +59,7 @@ function StatsRealtime() {
 				<AnnualHighlightsSection siteId={ siteId } />
 				<AsyncLoad
 					require="calypso/my-sites/stats/components/line-chart"
+					height={ 425 }
 					placeholder={ PageLoading }
 				/>
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
