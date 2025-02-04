@@ -1837,6 +1837,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/base-styles": "npm:^5.17.0"
     "@wordpress/commands": "npm:^1.17.0"
@@ -1850,7 +1851,12 @@ __metadata:
     "@wordpress/url": "npm:^4.17.0"
     clsx: "npm:^2.1.1"
     photon: "workspace:^"
+    postcss: "npm:^8.4.5"
     typescript: "npm:^5.3.3"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    react: ^18.3.1
+    react-dom: ^18.3.1
   languageName: unknown
   linkType: soft
 
