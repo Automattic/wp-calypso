@@ -28,6 +28,7 @@ import Geochart from '../../../geochart';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
 import CountryFilter from './country-filter';
+import sampleLocations from './sample-locations';
 
 import './style.scss';
 
@@ -209,22 +210,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		</StatsInfoArea>
 	);
 
-	const fakeData = [
-		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
-		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
-		{ label: 'United Kingdom', countryCode: 'GB', value: 1200, region: '154' },
-		{ label: 'Canada', countryCode: 'CA', value: 1000, region: '021' },
-		{ label: 'Germany', countryCode: 'DE', value: 900, region: '155' },
-		{ label: 'Indonesia', countryCode: 'ID', value: 800, region: '035' },
-		{ label: 'Japan', countryCode: 'JP', value: 700, region: '030' },
-		{ label: 'France', countryCode: 'FR', value: 600, region: '155' },
-		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
-		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
-	];
-
 	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
-	const locationData = shouldGate ? fakeData : data;
+	const locationData = shouldGate ? sampleLocations : data;
 
 	const heroElement = (
 		<>
