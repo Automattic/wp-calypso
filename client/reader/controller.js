@@ -535,13 +535,11 @@ export function setupReadRoutes() {
 			getRedirect: () => '/reader/search',
 		},
 		{
-			path: `/${ anyLangParam }/read/search`,
-			// regex: /^\/:[^/]+\/read\/search$/i,
+			path: `/${ langParam }/read/search`,
 			getRedirect: () => `/reader/search`,
 		},
 		{
-			path: `/${ langParam }/read/search`,
-			// regex: /^\/:[^/]+\/read\/search$/i,
+			path: `/${ anyLangParam }/read/search`,
 			getRedirect: () => `/reader/search`,
 		},
 		{
@@ -584,16 +582,19 @@ export function setupReadRoutes() {
 	];
 
 	readUrlsList.forEach( ( { path, regex, getRedirect } ) => {
+		// Get the URL query parameters to append to the new URL.
+		const urlQueryParams = location.search;
+
 		// If no regex is provided, just redirect to the new URL.
 		if ( ! regex ) {
-			page( path, getRedirect() );
+			page( path, getRedirect() + urlQueryParams );
 			return;
 		}
 
 		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
 		page( path, ( context, next ) => {
 			if ( context.path.match( regex ) ) {
-				page.redirect( getRedirect( context.params ) );
+				page.redirect( getRedirect( context.params ) + urlQueryParams );
 			}
 
 			next();
