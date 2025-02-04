@@ -45,6 +45,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"domain-to-plan-credit": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": true,
 		"google-my-business": true,
@@ -180,8 +181,7 @@
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": true,
-		"yolo/command-palette": true,
-		"woocommerce/rebrand-2-0": true
+		"yolo/command-palette": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
