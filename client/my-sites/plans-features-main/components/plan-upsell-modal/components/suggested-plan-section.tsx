@@ -27,30 +27,31 @@ export default function SuggestedPlanSection( {
 	onPlanSelected,
 }: Props ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
-			description: useHasEnTranslation()( 'Free one-year domain and some premium themes' )
+			description: hasEnTranslation( 'Free one-year domain and some premium themes' )
 				? translate( 'Free one-year domain and some premium themes' )
 				: translate( 'Domain credit, some premium themes' ),
 			disabled: hidePersonalPlan,
 		},
 		{
 			planSlug: PLAN_PREMIUM,
-			description: useHasEnTranslation()( 'Free one-year domain and all premium themes' )
+			description: hasEnTranslation( 'Free one-year domain and all premium themes' )
 				? translate( 'Free one-year domain and all premium themes' )
 				: translate( 'Domain credit, all premium themes' ),
 			disabled: hidePremiumPlan,
 		},
 		{
 			planSlug: PLAN_BUSINESS,
-			description: useHasEnTranslation()( 'Free one-year domain, plugins, and all premium themes' )
+			description: hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' )
 				? translate( 'Free one-year domain, plugins, and all premium themes' )
 				: translate( 'Domain credit, plugins, all premium themes' ),
 		},
 		{
 			planSlug: PLAN_ECOMMERCE,
-			description: useHasEnTranslation()(
+			description: hasEnTranslation(
 				'Free one-year domain, plugins, all premium and store themes, WooCommerce'
 			)
 				? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
