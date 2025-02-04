@@ -41,6 +41,7 @@
 		"current-site/stale-cart-notice": false,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"domain-to-plan-credit": false,
 		"cookie-banner": false,
 		"google-my-business": true,
 		"global-styles/on-personal-plan": true,

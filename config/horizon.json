@@ -30,6 +30,7 @@
 		"current-site/stale-cart-notice": false,
 		"design-picker/use-assembler-styles": true,
 		"devdocs": false,
+		"domain-to-plan-credit": false,
 		"cookie-banner": true,
 		"google-my-business": false,
 		"global-styles/on-personal-plan": true,

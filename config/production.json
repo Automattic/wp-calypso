@@ -42,6 +42,7 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
 		"cookie-banner": true,
+		"domain-to-plan-credit": false,
 		"google-my-business": true,
 		"global-styles/on-personal-plan": true,
 		"help": true,
