@@ -20,9 +20,11 @@ export function useValidationMessage(
 	const [ authDebounced ] = useDebounce( auth, 500 );
 
 	const hasGoodDomain = doesStringResembleDomain( domainDebounced );
+	const hasAnyAuthCode = auth.trim().length > 0;
 	const hasGoodAuthCode = hasGoodDomain && auth.trim().length > 5;
 
-	const passedLocalValidation = hasGoodDomain && hasGoodAuthCode && ! hasDuplicates;
+	const passedLocalValidation =
+		hasGoodDomain && ( ! hasAnyAuthCode || hasGoodAuthCode ) && ! hasDuplicates;
 
 	const isDebouncing = domainDebounced !== domain || authDebounced !== auth;
 
@@ -58,11 +60,14 @@ export function useValidationMessage(
 		};
 	}
 
-	if ( ! hasGoodAuthCode ) {
+	if ( hasAnyAuthCode && ! hasGoodAuthCode ) {
 		return {
 			valid: false,
 			loading: false,
 			message: __( 'Please enter a valid authentication code.' ),
+			rawPrice: validationResult?.raw_price,
+			saleCost: validationResult?.sale_cost,
+			currencyCode: validationResult?.currency_code,
 		};
 	}
 
@@ -71,7 +76,7 @@ export function useValidationMessage(
 		return {
 			valid: false,
 			loading: true,
-			message: __( 'Checking domain lock status.' ),
+			message: __( 'Checking domain status.' ),
 		};
 	}
 
@@ -99,7 +104,7 @@ export function useValidationMessage(
 			loading: false,
 			message: __( "Sorry, we don't support some higher tier premium domain transfers." ),
 		};
-	} else if ( validationResult?.auth_code_valid === false ) {
+	} else if ( hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
 		// the auth check API has a bug and returns error 400 for incorrect auth codes,
 		// in which case, the `useIsDomainCodeValid` hook returns `false`.
 		return {
@@ -120,6 +125,16 @@ export function useValidationMessage(
 			currencyCode: validationResult?.currency_code,
 			refetch,
 			errorStatus: validationResult?.status,
+		};
+	} else if ( ! hasAnyAuthCode && validationResult?.auth_code_valid === false ) {
+		// We don't want to return a message here - an attempt was performed
+		// with an empty auth code, which is not an error.
+		return {
+			valid: false,
+			loading: false,
+			rawPrice: validationResult.raw_price,
+			saleCost: validationResult.sale_cost,
+			currencyCode: validationResult.currency_code,
 		};
 	}
 
