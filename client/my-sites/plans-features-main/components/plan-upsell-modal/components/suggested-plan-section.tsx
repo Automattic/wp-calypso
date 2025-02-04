@@ -30,14 +30,13 @@ export default function SuggestedPlanSection( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const [ , , variationName ] = useGoalsFirstExperiment();
-	const shouldUseNewTranslation = variationName === 'treatment_cumulative';
+	const shouldUseNewCopy = variationName === 'treatment_cumulative';
 
 	const suggestedPlans = [
 		{
 			planSlug: PLAN_PERSONAL,
 			description:
-				hasEnTranslation( 'Free one-year domain and some premium themes' ) &&
-				shouldUseNewTranslation
+				hasEnTranslation( 'Free one-year domain and some premium themes' ) && shouldUseNewCopy
 					? translate( 'Free one-year domain and some premium themes' )
 					: translate( 'Domain credit, some premium themes' ),
 			disabled: hidePersonalPlan,
@@ -45,7 +44,7 @@ export default function SuggestedPlanSection( {
 		{
 			planSlug: PLAN_PREMIUM,
 			description:
-				hasEnTranslation( 'Free one-year domain and all premium themes' ) && shouldUseNewTranslation
+				hasEnTranslation( 'Free one-year domain and all premium themes' ) && shouldUseNewCopy
 					? translate( 'Free one-year domain and all premium themes' )
 					: translate( 'Domain credit, all premium themes' ),
 			disabled: hidePremiumPlan,
@@ -54,7 +53,7 @@ export default function SuggestedPlanSection( {
 			planSlug: PLAN_BUSINESS,
 			description:
 				hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' ) &&
-				shouldUseNewTranslation
+				shouldUseNewCopy
 					? translate( 'Free one-year domain, plugins, and all premium themes' )
 					: translate( 'Domain credit, plugins, all premium themes' ),
 		},
@@ -63,7 +62,7 @@ export default function SuggestedPlanSection( {
 			description:
 				hasEnTranslation(
 					'Free one-year domain, plugins, all premium and store themes, WooCommerce'
-				) && shouldUseNewTranslation
+				) && shouldUseNewCopy
 					? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
 					: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
 		},
