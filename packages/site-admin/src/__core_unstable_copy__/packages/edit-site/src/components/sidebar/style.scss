@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/variables"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/mixins"; // @todo: different from core: not imported
+@import '@wordpress/base-styles/variables'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/mixins'; // @todo: different from core: not imported
 
 .edit-site-sidebar__content {
 	flex-grow: 1;
@@ -14,7 +14,7 @@
 
 @keyframes local--slide-from-right {
 	from {
-		transform: translateX(50px);
+		transform: translateX( 50px );
 		opacity: 0;
 	}
 	to {
@@ -25,7 +25,7 @@
 
 @keyframes local--slide-from-left {
 	from {
-		transform: translateX(-50px);
+		transform: translateX( -50px );
 		opacity: 0;
 	}
 	to {
@@ -36,7 +36,7 @@
 
 .edit-site-sidebar__screen-wrapper {
 	overflow-x: auto;
-	@include custom-scrollbars-on-hover(transparent, $gray-700);
+	@include custom-scrollbars-on-hover( transparent, $gray-700 );
 	scrollbar-gutter: stable;
 	display: flex;
 	flex-direction: column;
@@ -62,5 +62,4 @@
 	&.slide-from-right {
 		animation-name: local--slide-from-right;
 	}
-
 }

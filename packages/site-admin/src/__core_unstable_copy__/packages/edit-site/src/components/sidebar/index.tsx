@@ -20,16 +20,29 @@ type SidebarNavigationContextType = {
 	navigate: ( direction: string, focusSelector?: string | null ) => void;
 };
 
-export const SidebarNavigationContext = createContext< SidebarNavigationContextType | null >(
-	null
-);
+/*
+ * Default value for SidebarNavigationContext
+ * @unstable: TS fix -> SidebarNavigationContextType should be defined.
+ * Not implemented in core.
+ */
+const defaultValue: SidebarNavigationContextType = {
+	get: () => {
+		throw new Error( 'SidebarNavigationContext is not provided' );
+	},
+	navigate: () => {
+		throw new Error( 'SidebarNavigationContext is not provided' );
+	},
+};
+
+export const SidebarNavigationContext =
+	createContext< SidebarNavigationContextType >( defaultValue );
 
 function focusSidebarElement(
 	el: HTMLElement,
 	direction: string | null,
 	focusSelector: string | null
 ) {
-	let elementToFocus;
+	let elementToFocus: HTMLElement | null = null; // @unstable: TS fix -> HTMLElement should be defined
 	if ( direction === 'back' && focusSelector ) {
 		elementToFocus = el.querySelector( focusSelector );
 	}

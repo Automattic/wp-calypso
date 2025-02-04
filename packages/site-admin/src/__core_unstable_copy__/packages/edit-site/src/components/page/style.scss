@@ -1,15 +1,15 @@
-@import "@wordpress/base-styles/variables"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/mixins"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/breakpoints"; // @todo: different from core: not imported
+@import '@wordpress/base-styles/variables'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/mixins'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/breakpoints'; // @todo: different from core: not imported
 
 .edit-site-page {
 	color: $gray-800;
 	background: $white;
-	height: calc(100% - #{$header-height});
+	height: calc( 100% - #{$header-height} );
 
 	container: edit-site-page / inline-size;
 
-	@media not (prefers-reduced-motion) {
+	@media not ( prefers-reduced-motion ) {
 		transition: width ease-out 0.2s;
 	}
 
@@ -24,9 +24,9 @@
 	background: $white;
 	position: sticky;
 	top: 0;
-	z-index: z-index(".edit-site-page-header");
+	z-index: z-index( '.edit-site-page-header' );
 
-	@media not (prefers-reduced-motion) {
+	@media not ( prefers-reduced-motion ) {
 		transition: padding ease-out 0.1s;
 	}
 
@@ -60,5 +60,5 @@
 	display: flex;
 	flex-flow: column;
 	position: relative;
-	z-index: z-index(".edit-site-page-content");
+	z-index: z-index( '.edit-site-page-content' );
 }

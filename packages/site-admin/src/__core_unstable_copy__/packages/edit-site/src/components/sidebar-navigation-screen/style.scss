@@ -1,6 +1,6 @@
-@import "@wordpress/base-styles/variables"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/mixins"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/breakpoints"; // @todo: different from core: not imported
+@import '@wordpress/base-styles/variables'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/mixins'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/breakpoints'; // @todo: different from core: not imported
 
 .edit-site-sidebar-navigation-screen {
 	display: flex;
@@ -61,7 +61,7 @@
 	padding-top: $grid-unit-60;
 	margin-bottom: $grid-unit-10;
 	padding-bottom: $grid-unit-10;
-	z-index: z-index(".edit-site-sidebar-navigation-screen__title-icon");
+	z-index: z-index( '.edit-site-sidebar-navigation-screen__title-icon' );
 }
 
 .edit-site-sidebar-navigation-screen__title {
@@ -102,14 +102,13 @@
 }
 
 .edit-site-sidebar-navigation-screen__content .edit-site-global-styles-variations_item {
-
 	// Use a white outline to provide contrast with the dark background.
 	.edit-site-global-styles-variations_item-preview {
-		outline-color: rgba($white, 0.05);
+		outline-color: rgba( $white, 0.05 );
 	}
 
-	&:not(.is-active):hover .edit-site-global-styles-variations_item-preview {
-		outline-color: rgba($white, 0.15);
+	&:not( .is-active ):hover .edit-site-global-styles-variations_item-preview {
+		outline-color: rgba( $white, 0.15 );
 	}
 
 	&.is-active .edit-site-global-styles-variations_item-preview {
@@ -117,7 +116,7 @@
 	}
 
 	&:focus-visible .edit-site-global-styles-variations_item-preview {
-		outline-color: var(--wp-admin-theme-color);
+		outline-color: var( --wp-admin-theme-color );
 	}
 }
 

@@ -31,6 +31,7 @@ interface Match {
 	widths: Record< string, number >;
 	query?: Record< string, any >;
 	params?: Record< string, any >;
+	state?: Record< string, any >; // @unstable -> core doesn't have this prop
 }
 
 export type BeforeNavigate = ( arg: { path: string; query: Record< string, any > } ) => {

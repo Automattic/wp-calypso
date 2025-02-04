@@ -11,6 +11,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { store as editSiteStore } from '@wordpress/edit-site';
 import { useContext } from '@wordpress/element';
 import { isRTL, __ } from '@wordpress/i18n';

@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/variables"; // @todo: different from core: not imported
-@import "@wordpress/base-styles/mixins"; // @todo: different from core: not imported
+@import '@wordpress/base-styles/variables'; // @todo: different from core: not imported
+@import '@wordpress/base-styles/mixins'; // @todo: different from core: not imported
 
 .edit-site-sidebar-navigation-item.components-item {
 	color: $gray-600;
@@ -10,7 +10,7 @@
 
 	&:hover,
 	&:focus,
-	&[aria-current="true"] {
+	&[aria-current='true'] {
 		color: $gray-200;
 
 		.edit-site-sidebar-navigation-item__drilldown-indicator {
@@ -18,7 +18,7 @@
 		}
 	}
 
-	&[aria-current="true"] {
+	&[aria-current='true'] {
 		background: $gray-800;
 		color: $white;
 		font-weight: $font-weight-medium;
@@ -26,7 +26,7 @@
 
 	// Make sure the focus style is drawn on top of the current item background.
 	&:focus-visible {
-		transform: translateZ(0);
+		transform: translateZ( 0 );
 	}
 
 	.edit-site-sidebar-navigation-item__drilldown-indicator {

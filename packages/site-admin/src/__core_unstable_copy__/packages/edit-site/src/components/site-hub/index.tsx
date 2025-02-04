@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { store as commandsStore } from '@wordpress/commands';
 import {
 	Button,
@@ -11,6 +13,8 @@ import {
 } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { store as editSiteStore } from '@wordpress/edit-site';
 import { memo, forwardRef, useContext } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';

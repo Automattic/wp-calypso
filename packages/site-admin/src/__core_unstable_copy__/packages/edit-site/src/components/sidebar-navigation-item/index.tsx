@@ -39,7 +39,7 @@ export default function SidebarNavigationItem( {
 	withChevron = false,
 	suffix,
 	uid,
-	to,
+	to = '', // @Todo: @unstable: added default value
 	as, // @Todo: @unstable: added 'as' prop
 	onClick,
 	children,
@@ -53,7 +53,7 @@ export default function SidebarNavigationItem( {
 	const history = useHistory();
 	const { navigate } = useContext( SidebarNavigationContext );
 	// If there is no custom click handler, create one that navigates to `params`.
-	function handleClick( e ) {
+	function handleClick( e: React.MouseEvent ) {
 		if ( onClick ) {
 			onClick( e );
 			navigate( 'forward' );
