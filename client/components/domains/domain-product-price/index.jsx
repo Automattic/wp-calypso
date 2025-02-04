@@ -115,12 +115,12 @@ export class DomainProductPrice extends Component {
 
 		return (
 			<div className={ className }>
+				<div className="domain-product-price__free-text">{ message }</div>
 				{ this.props.isMappingProduct
 					? null
 					: this.props.translate( '%(cost)s/year', {
 							args: { cost: this.props.price },
 					  } ) }
-				<div className="domain-product-price__free-text">{ message }</div>
 			</div>
 		);
 	}
