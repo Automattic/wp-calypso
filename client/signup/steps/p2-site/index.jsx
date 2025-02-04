@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
+import { FormLabel, Gridicon } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import { createRef } from '@wordpress/element';
 import { reusableBlock, Icon } from '@wordpress/icons';
@@ -9,7 +9,6 @@ import { includes, isEmpty, map, deburr, get, debounce } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -461,7 +460,7 @@ class P2Site extends Component {
 					id="site-address-input"
 					autoCapitalize="off"
 					className="p2-site__site-suggested-url"
-					disabled={ true }
+					disabled
 					name="suggested-site"
 					value={ site ? `https://${ site }.wordpress.com` : '' }
 				/>
@@ -545,7 +544,7 @@ class P2Site extends Component {
 					</FormLabel>
 					<FormTextInput
 						id="site-title-input"
-						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+						autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 						autoCapitalize="off"
 						className="p2-site__site-title"
 						disabled={ submitting }

@@ -1,13 +1,14 @@
-import { Gridicon } from '@automattic/components';
+import { Badge, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { HUNDRED_YEAR_DOMAIN_FLOW } from '@automattic/onboarding';
+import { HTTPS_SSL } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
@@ -20,10 +21,17 @@ import {
 	hasDomainInCart,
 	isPaidDomain,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
-import { HTTPS_SSL } from 'calypso/lib/url/support';
+import {
+	getDomainPrice,
+	getDomainSalePrice,
+	getTld,
+	isHstsRequired,
+	isDotGayNoticeRequired,
+} from 'calypso/lib/domains';
+import { shouldUseMultipleDomainsInCart } from 'calypso/signup/steps/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
@@ -32,6 +40,7 @@ class DomainRegistrationSuggestion extends Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
@@ -44,6 +53,7 @@ class DomainRegistrationSuggestion extends Component {
 			match_reasons: PropTypes.arrayOf( PropTypes.oneOf( VALID_MATCH_REASONS ) ),
 			currency_code: PropTypes.string,
 		} ).isRequired,
+		suggestionSelected: PropTypes.bool,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		premiumDomain: PropTypes.object,
@@ -56,6 +66,7 @@ class DomainRegistrationSuggestion extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		productCost: PropTypes.string,
+		renewCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
 		isReskinned: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
@@ -91,12 +102,14 @@ class DomainRegistrationSuggestion extends Component {
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
 				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
+				tld: getTld( this.props.suggestion.domain_name ),
+				flow_name: this.props.flowName,
 			} );
 		}
 	}
 
-	onButtonClick = () => {
-		const { suggestion, railcarId } = this.props;
+	onButtonClick = ( previousState ) => {
+		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			return;
@@ -109,7 +122,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion );
+		this.props.onButtonClick( suggestion, uiPosition, previousState );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -123,12 +136,30 @@ class DomainRegistrationSuggestion extends Component {
 			isSignupStep,
 			selectedSite,
 			suggestion,
+			suggestionSelected,
 			translate,
 			pendingCheckSuggestion,
 			premiumDomain,
+			isCartPendingUpdateDomain,
+			flowName,
+			temporaryCart,
+			domainRemovalQueue,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
-		const isAdded = hasDomainInCart( cart, domain );
+
+		let isAdded =
+			suggestionSelected ||
+			hasDomainInCart( cart, domain ) ||
+			( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) );
+
+		// If we're removing this domain, let's instantly show that for the user
+		if (
+			domainRemovalQueue?.length > 0 &&
+			domainRemovalQueue.some( ( item ) => item.meta === domain ) &&
+			! ( temporaryCart && temporaryCart.some( ( item ) => item.meta === domain ) )
+		) {
+			isAdded = false;
+		}
 
 		let buttonContent;
 		let buttonStyles = this.props.buttonStyles;
@@ -140,6 +171,15 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 
 			buttonStyles = { ...buttonStyles, primary: false };
+
+			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+				buttonStyles = { ...buttonStyles, borderless: true };
+
+				buttonContent = translate( '{{checkmark/}} Selected', {
+					context: 'Domain is already added to shopping cart',
+					components: { checkmark: <Gridicon style={ { height: 21 } } icon="checkmark" /> },
+				} );
+			}
 		} else {
 			buttonContent =
 				! isSignupStep &&
@@ -162,14 +202,26 @@ class DomainRegistrationSuggestion extends Component {
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
 			} );
-		} else if ( pendingCheckSuggestion?.domain_name === domain ) {
+		} else if (
+			pendingCheckSuggestion?.domain_name === domain ||
+			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name === domain )
+		) {
 			buttonStyles = { ...buttonStyles, busy: true, disabled: true };
-		} else if ( pendingCheckSuggestion || this.props.isCartPendingUpdate ) {
+		} else if (
+			pendingCheckSuggestion ||
+			( this.props.isCartPendingUpdate && isCartPendingUpdateDomain?.domain_name !== domain )
+		) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 		}
+
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+			buttonStyles = { ...buttonStyles, primary: false, busy: false, disabled: false };
+		}
+
 		return {
 			buttonContent,
 			buttonStyles,
+			isAdded,
 		};
 	}
 
@@ -199,7 +251,6 @@ class DomainRegistrationSuggestion extends Component {
 	 * becomes the tld. This is not very comprehensive since there can be
 	 * subdomains which would fail this test. However, for our purpose of
 	 * highlighting the TLD in domain suggestions, this is good enough.
-	 *
 	 * @param {string} domain The domain to be parsed
 	 */
 	getDomainParts( domain ) {
@@ -212,45 +263,77 @@ class DomainRegistrationSuggestion extends Component {
 		};
 	}
 
-	renderDomainParts( domain ) {
+	renderDomain() {
+		const {
+			showHstsNotice,
+			showDotGayNotice,
+			suggestion: { domain_name: domain },
+		} = this.props;
+
 		const { name, tld } = this.getDomainParts( domain );
+
+		const titleWrapperClassName = clsx( 'domain-registration-suggestion__title-wrapper', {
+			'domain-registration-suggestion__title-domain':
+				this.props.showStrikedOutPrice && ! this.props.isFeatured,
+			'domain-registration-suggestion__larger-domain': name.length > 15 ? true : false,
+		} );
+
 		return (
-			<div className="domain-registration-suggestion__domain-title">
-				<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
-				<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+			<div className="domain-registration-suggestion__title-info">
+				<div className={ titleWrapperClassName }>
+					<h3 className="domain-registration-suggestion__title">
+						<div className="domain-registration-suggestion__domain-title">
+							<span className="domain-registration-suggestion__domain-title-name">{ name }</span>
+							<span className="domain-registration-suggestion__domain-title-tld">{ tld }</span>
+							{ ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
+						</div>
+					</h3>
+				</div>
 			</div>
 		);
 	}
 
-	renderDomain() {
+	getHstsMessage() {
 		const {
-			showHstsNotice,
+			translate,
 			suggestion: { domain_name: domain },
 		} = this.props;
 
-		const title = this.renderDomainParts( domain );
+		return translate(
+			'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+				'to host a website. When you host this domain at WordPress.com an SSL ' +
+				'certificate is included. {{a}}Learn more{{/a}}.',
+			{
+				args: {
+					tld: '.' + getTld( domain ),
+				},
+				components: {
+					a: (
+						<a
+							href={ localizeUrl( HTTPS_SSL ) }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+							} }
+						/>
+					),
+					strong: <strong />,
+				},
+			}
+		);
+	}
 
-		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
-			'domain-registration-suggestion__title-domain':
-				this.props.showStrikedOutPrice && ! this.props.isFeatured,
-		} );
+	getDotGayMessage() {
+		const { translate } = this.props;
 
-		return (
-			<div className={ titleWrapperClassName }>
-				<h3 className="domain-registration-suggestion__title">
-					{ title } { showHstsNotice && this.renderInfoBubble() }
-				</h3>
-				{ this.renderBadges() }
-			</div>
+		return translate(
+			'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
 		);
 	}
 
 	renderInfoBubble() {
-		const {
-			isFeatured,
-			suggestion: { domain_name: domain },
-			translate,
-		} = this.props;
+		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
 
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		return (
@@ -258,30 +341,10 @@ class DomainRegistrationSuggestion extends Component {
 				className="domain-registration-suggestion__hsts-tooltip"
 				iconSize={ infoPopoverSize }
 				position="right"
+				showOnHover
 			>
-				{ translate(
-					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-						'to host a website. When you host this domain at WordPress.com an SSL ' +
-						'certificate is included. {{a}}Learn more{{/a}}.',
-					{
-						args: {
-							tld: '.' + getTld( domain ),
-						},
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( HTTPS_SSL ) }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ ( event ) => {
-										event.stopPropagation();
-									} }
-								/>
-							),
-							strong: <strong />,
-						},
-					}
-				) }
+				{ ( showHstsNotice && this.getHstsMessage() ) ||
+					( showDotGayNotice && this.getDotGayMessage() ) }
 			</InfoPopover>
 		);
 	}
@@ -363,6 +426,7 @@ class DomainRegistrationSuggestion extends Component {
 			isFeatured,
 			suggestion: { domain_name: domain },
 			productCost,
+			renewCost,
 			productSaleCost,
 			premiumDomain,
 			showStrikedOutPrice,
@@ -371,7 +435,7 @@ class DomainRegistrationSuggestion extends Component {
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
 
-		const extraClasses = classNames( {
+		const extraClasses = clsx( {
 			'featured-domain-suggestion': isFeatured,
 			'is-unavailable': isUnavailableDomain,
 		} );
@@ -382,6 +446,7 @@ class DomainRegistrationSuggestion extends Component {
 				premiumDomain={ premiumDomain }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
+				renewPrice={ renewCost }
 				salePrice={ productSaleCost }
 				domain={ domain }
 				domainsWithPlansOnly={ domainsWithPlansOnly }
@@ -391,6 +456,7 @@ class DomainRegistrationSuggestion extends Component {
 				showStrikedOutPrice={ showStrikedOutPrice }
 				isReskinned={ isReskinned }
 			>
+				{ this.renderBadges() }
 				{ this.renderDomain() }
 				{ this.renderMatchReason() }
 			</DomainSuggestion>
@@ -409,16 +475,23 @@ const mapStateToProps = ( state, props ) => {
 
 	let productCost;
 	let productSaleCost;
+	let renewCost;
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
+		renewCost = props.premiumDomain?.renew_cost;
 		if ( props.premiumDomain?.sale_cost ) {
 			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
 				stripZeros,
 			} );
 		}
+	} else if ( HUNDRED_YEAR_DOMAIN_FLOW === flowName ) {
+		productCost = props.suggestion.cost;
+		renewCost = props.suggestion.renew_cost;
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		// Renew cost is the same as the product cost for non-premium domains
+		renewCost = productCost;
 		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
@@ -429,9 +502,12 @@ const mapStateToProps = ( state, props ) => {
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
+		renewCost,
 		productSaleCost,
 		flowName,
+		currentUser: getCurrentUser( state ),
 	};
 };
 

@@ -1,6 +1,9 @@
+import { doesStringResembleDomain } from '@automattic/onboarding';
+import { translate } from 'i18n-calypso';
 import { untrailingslashit } from 'calypso/lib/route';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { Context } from '@automattic/calypso-router';
 
 /**
  * Return the product slug or product alias from a checkout route.
@@ -25,17 +28,9 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * 5. `/checkout/example.com::blog/pro` (path contains a domain followed by a product)
  * 6. `/checkout/pro/example.com::blog` (path contains a product followed by a domain)
  */
-export function getProductSlugFromContext( context: PageJS.Context ): string | undefined {
+export function getProductSlugFromContext( context: Context ): string | undefined {
 	const { params, store, pathname } = context;
-	const {
-		domainOrProduct,
-		product,
-		productSlug,
-	}: {
-		domainOrProduct: string | undefined;
-		product: string | undefined;
-		productSlug: string | undefined;
-	} = params;
+	const { domainOrProduct, product, productSlug } = params;
 	const state = store.getState();
 	const selectedSite = getSelectedSite( state );
 	const isGiftPurchase = pathname.includes( '/gift/' );
@@ -94,28 +89,8 @@ export function getProductSlugFromContext( context: PageJS.Context ): string | u
 	return '';
 }
 
-function doesStringResembleDomain( domainOrProduct: string ): boolean {
-	try {
-		// Domain names should all contain a dot.
-		const hasDot = domainOrProduct.includes( '.' );
-		if ( ! hasDot ) {
-			return false;
-		}
-
-		// Subdomain site slugs contain the install path after two colons.
-		const domainBeforeColons = domainOrProduct.split( '::' )[ 0 ];
-
-		// Domains should be able to become a valid URL.
-		// eslint-disable-next-line no-new
-		new URL( 'http://' + domainBeforeColons );
-		return true;
-	} catch {}
-	return false;
-}
-
 /**
  * Prepends "http(s)" to user-supplied URL if protocol is missing.
- *
  * @param {string} inputUrl User-supplied URL
  * @param {?boolean} httpsIsDefault Default to 'https' if true vs 'http' if false
  * @returns {string} URL string with http(s) included
@@ -130,7 +105,7 @@ export function addHttpIfMissing( inputUrl: string, httpsIsDefault = true ): str
 	return untrailingslashit( url );
 }
 
-export function isContextJetpackSitelessCheckout( context: PageJS.Context ): boolean {
+export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 	const hasJetpackPurchaseToken = Boolean( context.query.purchasetoken );
 	const hasJetpackPurchaseNonce = Boolean( context.query.purchaseNonce );
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
@@ -150,4 +125,34 @@ export function isContextJetpackSitelessCheckout( context: PageJS.Context ): boo
 		return false;
 	}
 	return true;
+}
+
+export function isContextSourceMyJetpack( context: Context ): boolean {
+	return context.query?.source === 'my-jetpack';
+}
+
+export function getAffiliateCouponLabel(): string {
+	// translators: The label of the coupon line item in checkout
+	return translate( 'Exclusive Offer Applied' );
+}
+
+export function getCouponLabel(
+	originalLabel: string,
+	experimentVariationName: string | null | undefined
+): string {
+	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
+}
+
+export function isCouponBoxHidden(
+	productSlugs: string[],
+	experimentVariationName: string | null | undefined
+): boolean {
+	const ignoredProductSlugs = [ 'wp_difm_lite' ];
+	const containsIgnoredProduct = productSlugs.some( ( slug ) =>
+		ignoredProductSlugs.includes( slug )
+	);
+	if ( containsIgnoredProduct ) {
+		return false;
+	}
+	return experimentVariationName === 'treatment' ? true : false;
 }

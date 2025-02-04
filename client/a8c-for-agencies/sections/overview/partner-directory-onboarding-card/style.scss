@@ -1,0 +1,72 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.partner-directory-onboarding-card {
+	.sticky-card__body {
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		> * {
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		@include break-small {
+			display: block;
+
+			> * {
+				max-width: 420px;
+				height: auto;
+			}
+		}
+	}
+}
+
+.partner-director-onboarding-card__banner {
+	height: auto;
+}
+
+.partner-directory-onboarding-card__content {
+	display: flex;
+	flex-direction: column;
+	padding: 8px 16px;
+	gap: 8px;
+}
+
+.partner-directory-onboarding-card__content-title,
+.partner-directory-onboarding-card__content-description {
+	font-size: rem(14px);
+	line-height: 1.4;
+}
+
+.partner-directory-onboarding-card__content-title {
+	font-weight: 500;
+}
+
+.partner-directory-onboarding-card__content-description {
+	font-weight: 400;
+}
+
+.partner-directory-onboarding-card__footer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding: 8px 16px 16px;
+
+	@include break-small {
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-end;
+	}
+}
+
+.partner-directoy-onboarding-card__dismiss-button {
+	cursor: pointer;
+	color: var(--color-primary);
+
+	&:hover {
+		text-decoration: underline;
+	}
+}

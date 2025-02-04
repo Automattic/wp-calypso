@@ -20,15 +20,15 @@ import {
 	getProductFromSlug,
 	getJetpackProductDisplayName,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import Debug from 'debug';
 import { get, some, startsWith } from 'lodash';
-import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
-import { JETPACK_PRICING_PAGE } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -93,7 +93,6 @@ const analyticsPageTitleByType = {
  * For now we just redirect directly to checkout since we do not have any
  * upsell logic ready and want to avoid confusion by show full price products
  * on the plan page.
- *
  * @todo Should we dynamically fetch partners and presets?
  * @todo Should we make a coupon validation request? If the coupon is invalid, we leave the user on the plans page.
  * @todo Accept partner coupon as a query parameter during the initial auth request (client/jetpack-connect/schema.js).

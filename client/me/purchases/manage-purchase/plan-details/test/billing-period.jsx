@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import page from '@automattic/calypso-router';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import page from 'page';
 import { PlanBillingPeriod } from '../billing-period';
 
 const props = {
@@ -34,7 +34,7 @@ jest.mock( 'calypso/lib/cart-values/cart-items', () => ( {
 	planItem: jest.fn(),
 } ) );
 
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
 describe( 'PlanBillingPeriod', () => {
 	describe( 'a monthly plan', () => {
@@ -47,7 +47,9 @@ describe( 'PlanBillingPeriod', () => {
 			render( <PlanBillingPeriod { ...props } /> );
 			const btn = screen.getByRole( 'button', { name: /upgrade/i } );
 			fireEvent.click( btn );
-			expect( page ).toHaveBeenCalledWith( '/checkout/site.com/jetpack_premium' );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/site.com/jetpack_premium?upgrade_from=jetpack_premium_monthly'
+			);
 		} );
 
 		it( 'should display a message instead of the upgrade button for a disconnected site', () => {

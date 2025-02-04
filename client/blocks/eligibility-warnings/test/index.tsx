@@ -2,27 +2,25 @@
  * @jest-environment jsdom
  */
 
+import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import page from 'page';
-import { ReactChild } from 'react';
+import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import EligibilityWarnings from '..';
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-function renderWithStore( element: ReactChild, initialState: Record< string, unknown > ) {
+function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
 	const store = createStore( ( state ) => state, initialState );
 	return {
 		...render( <Provider store={ store }>{ element }</Provider> ),
 		store,
 	};
 }
-
-global.document = {};
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};

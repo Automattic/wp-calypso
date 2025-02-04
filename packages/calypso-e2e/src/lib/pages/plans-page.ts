@@ -4,7 +4,16 @@ import { clickNavTab } from '../../element-helper';
 import envVariables from '../../env-variables';
 
 // Types to restrict the string arguments passed in. These are fixed sets of strings, so we can be more restrictive.
-export type Plans = 'Free' | 'Personal' | 'Premium' | 'Business' | 'eCommerce';
+export type Plans =
+	| 'Free'
+	| 'Personal'
+	| 'Premium'
+	| 'Business'
+	| 'eCommerce'
+	| 'Starter'
+	| 'Explorer'
+	| 'Creator'
+	| 'Entrepreneur';
 export type PlansPageTab = 'My Plan' | 'Plans';
 export type PlanActionButton = 'Manage plan' | 'Upgrade';
 
@@ -20,6 +29,12 @@ const selectors = {
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
+	selectModalUpsellPlanButton: ( name: 'Free' | 'Personal' ) => {
+		if ( name === 'Free' ) {
+			return `button.is-upsell-modal-free-plan:visible`;
+		}
+		return `button.is-upsell-modal-${ name.toLowerCase() }-plan:visible`;
+	},
 
 	// Navigation
 	mobileNavTabsToggle: `button.section-nav__mobile-header`,
@@ -34,7 +49,7 @@ const selectors = {
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
 	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
-
+	spotlightPlan: '.plan-features-2023-grid__plan-spotlight',
 	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
@@ -89,6 +104,21 @@ export class PlansPage {
 		await locator.first().click();
 	}
 
+	/**
+	 * Selects the plan on the modal upsell.
+	 *
+	 * @param {Plans} plan Plan to select.
+	 */
+	async selectModalUpsellPlan( plan: Plans ): Promise< void > {
+		if ( plan !== 'Free' && plan !== 'Personal' ) {
+			throw Error( `Unsupported plan to be selected in modal upsell: ${ plan }` );
+		}
+
+		const locator = this.page.locator( selectors.selectModalUpsellPlanButton( plan ) );
+
+		await locator.first().click();
+	}
+
 	/* Generic */
 
 	/**
@@ -102,13 +132,7 @@ export class PlansPage {
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		await Promise.race( [
-			this.page.locator( selectors.myPlanTitle( expectedPlan ) ).waitFor(),
-			// There can be lots of these link buttons for different viewports.
-			// We only need one to be there! We must use strict selection.
-			// Any of these link buttons means the right plan is selected.
-			this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor(),
-		] );
+		await this.page.locator( selectors.spotlightPlan ).getByText( expectedPlan ).waitFor();
 	}
 
 	/**
@@ -117,7 +141,6 @@ export class PlansPage {
 	async clickManagePlan(): Promise< void > {
 		await this.page.click( selectors.managePlanButton );
 	}
-
 	/**
 	 * Validates that the provided tab name is the the currently active tab in the wrapper Plans page. Throws if it isn't.
 	 *

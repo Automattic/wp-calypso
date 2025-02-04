@@ -1,51 +1,77 @@
 import {
-	TERM_MONTHLY,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	GROUP_JETPACK,
+	GROUP_P2,
+	GROUP_WPCOM,
+	JETPACK_RESET_PLANS,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+	PLAN_MIGRATION_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_CENTENNIALLY,
+	TERM_DECENNIALLY,
+	TERM_MONTHLY,
+	TERM_NOVENNIALLY,
+	TERM_OCTENNIALLY,
+	TERM_QUADRENNIALLY,
+	TERM_QUINQUENNIALLY,
+	TERM_SEPTENNIALLY,
+	TERM_SEXENNIALLY,
 	TERM_TRIENNIALLY,
+	TYPE_100_YEAR,
+	TYPE_ALL,
+	TYPE_BLOGGER,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-	TYPE_PRO,
-	TYPE_FREE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 	TYPE_FLEXIBLE,
-	TYPE_STARTER,
-	TYPE_BLOGGER,
+	TYPE_FREE,
+	TYPE_JETPACK_STARTER,
+	TYPE_P2_PLUS,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_PRO,
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
-	TYPE_ALL,
-	GROUP_WPCOM,
-	GROUP_JETPACK,
-	JETPACK_RESET_PLANS,
-	FEATURE_JETPACK_SEARCH,
-	FEATURE_JETPACK_SEARCH_MONTHLY,
-	TYPE_P2_PLUS,
-	TYPE_ENTERPRISE_GRID_WPCOM,
+	TYPE_STARTER,
+	TYPE_JETPACK_GROWTH,
+	WOO_EXPRESS_PLANS,
 } from './constants';
-import { featureGroups } from './feature-group-plan-map';
+import {
+	resolveFeatureGroupsForComparisonGrid,
+	resolveFeatureGroupsForFeaturesGrid,
+	resolveWooExpressFeatureGroupsForComparisonGrid,
+} from './feature-group-plan-map';
+import { FEATURES_LIST } from './features-list';
 import { PLANS_LIST } from './plans-list';
 import {
-	isJetpackBusiness,
+	getProductFromSlug,
 	isBusiness,
-	isEnterprise,
 	isEcommerce,
+	isEnterprise,
+	isJetpackBusiness,
 	isPro,
 	isVipPlan,
-	getProductFromSlug,
 } from '.';
 import type {
-	Product,
-	Plan,
+	FeatureGroupMap,
+	FeatureList,
 	JetpackPlan,
-	WPComPlan,
+	Plan,
 	PlanMatchesQuery,
 	PlanSlug,
+	Product,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
-	FeatureGroupMap,
+	WPComPlan,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -53,8 +79,25 @@ export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
 }
 
-export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
-	return featureGroups;
+export function getSimplifiedPlanFeaturesGroupedForFeaturesGrid() {
+	return resolveFeatureGroupsForFeaturesGrid( { showSimplifiedFeatures: true } );
+}
+
+export function getPlanFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForFeaturesGrid();
+}
+
+export function getPlanFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveFeatureGroupsForComparisonGrid();
+}
+
+export function getWooExpressFeaturesGroupedForFeaturesGrid(): Partial< FeatureGroupMap > {
+	// Same as getPlanFeaturesGroupedForFeaturesGrid() for now
+	return getPlanFeaturesGroupedForFeaturesGrid();
+}
+
+export function getWooExpressFeaturesGroupedForComparisonGrid(): Partial< FeatureGroupMap > {
+	return resolveWooExpressFeatureGroupsForComparisonGrid();
 }
 
 export function getPlansSlugs(): string[] {
@@ -92,10 +135,6 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-flexible-plan';
 	}
 
-	if ( isStarterPlan( planKey ) ) {
-		return 'is-starter-plan';
-	}
-
 	if ( isBloggerPlan( planKey ) ) {
 		return 'is-blogger-plan';
 	}
@@ -110,6 +149,18 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isBusinessPlan( planKey ) ) {
 		return 'is-business-plan';
+	}
+
+	if ( isWooExpressPlusPlan( planKey ) ) {
+		return 'is-wooexpress-plus-plan';
+	}
+
+	if ( isWooExpressMediumPlan( planKey ) ) {
+		return 'is-wooexpress-medium-plan';
+	}
+
+	if ( isWooExpressSmallPlan( planKey ) ) {
+		return 'is-wooexpress-small-plan';
 	}
 
 	if ( isEcommercePlan( planKey ) ) {
@@ -142,6 +193,18 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isCompletePlan( planKey ) ) {
 		return 'is-complete-plan';
+	}
+
+	if ( isJetpackGrowthPlan( planKey ) ) {
+		return 'is-jetpack-growth-plan';
+	}
+
+	if ( isFreeHostingTrial( planKey ) ) {
+		return 'is-free-hosting-trial';
+	}
+
+	if ( isP2PlusPlan( planKey ) ) {
+		return 'is-p2-plus-plan';
 	}
 
 	return '';
@@ -300,10 +363,38 @@ export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
+export function isFreeHostingTrial( planSlug: string ): boolean {
+	return planSlug === PLAN_HOSTING_TRIAL_MONTHLY;
+}
+
+export function isBusinessTrial( planSlug: string ): boolean {
+	return planSlug === PLAN_HOSTING_TRIAL_MONTHLY || planSlug === PLAN_MIGRATION_TRIAL_MONTHLY;
+}
+
+export function is100YearPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_100_YEAR } );
+}
+
 // Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
+}
+
+export function isWooExpressPlusPlan( planSlug: string ): boolean {
+	return PLAN_WOOEXPRESS_PLUS === planSlug;
+}
+
+export function isWooExpressMediumPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressSmallPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressPlan( planSlug: string ): boolean {
+	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
@@ -312,6 +403,14 @@ export function isFlexiblePlan( planSlug: string ): boolean {
 
 export function isStarterPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_STARTER } );
+}
+
+export function isJetpackStarterPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_STARTER } );
+}
+
+export function isJetpackGrowthPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_JETPACK_GROWTH } );
 }
 
 export function isSecurityDailyPlan( planSlug: string ): boolean {
@@ -400,6 +499,10 @@ export function isJetpackFreePlan( planSlug: string ): boolean {
 
 export function isJetpackOfferResetPlan( planSlug: string ): boolean {
 	return ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( planSlug );
+}
+
+export function isP2FreePlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_P2 } );
 }
 
 export function isP2PlusPlan( planSlug: string ): boolean {
@@ -513,6 +616,22 @@ export function getBillingMonthsForTerm( term: string ): number {
 		return 24;
 	} else if ( term === TERM_TRIENNIALLY ) {
 		return 36;
+	} else if ( term === TERM_QUADRENNIALLY ) {
+		return 48;
+	} else if ( term === TERM_QUINQUENNIALLY ) {
+		return 60;
+	} else if ( term === TERM_SEXENNIALLY ) {
+		return 72;
+	} else if ( term === TERM_SEPTENNIALLY ) {
+		return 84;
+	} else if ( term === TERM_OCTENNIALLY ) {
+		return 96;
+	} else if ( term === TERM_NOVENNIALLY ) {
+		return 108;
+	} else if ( term === TERM_DECENNIALLY ) {
+		return 120;
+	} else if ( term === TERM_CENTENNIALLY ) {
+		return 1200;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -526,6 +645,8 @@ export function getBillingYearsForTerm( term: string ): number {
 		return 2;
 	} else if ( term === TERM_TRIENNIALLY ) {
 		return 3;
+	} else if ( term === TERM_CENTENNIALLY ) {
+		return 100;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -539,6 +660,22 @@ export function getBillingTermForMonths( term: number ): string {
 		return TERM_BIENNIALLY;
 	} else if ( term === 36 ) {
 		return TERM_TRIENNIALLY;
+	} else if ( term === 48 ) {
+		return TERM_QUADRENNIALLY;
+	} else if ( term === 60 ) {
+		return TERM_QUINQUENNIALLY;
+	} else if ( term === 72 ) {
+		return TERM_SEXENNIALLY;
+	} else if ( term === 84 ) {
+		return TERM_SEPTENNIALLY;
+	} else if ( term === 96 ) {
+		return TERM_OCTENNIALLY;
+	} else if ( term === 108 ) {
+		return TERM_NOVENNIALLY;
+	} else if ( term === 120 ) {
+		return TERM_DECENNIALLY;
+	} else if ( term === 1200 ) {
+		return TERM_CENTENNIALLY;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -565,12 +702,22 @@ export function plansLink(
 	return url.toString();
 }
 
+export type FilteredPlan = Plan &
+	Pick<
+		WPComPlan,
+		| 'getPlanCompareFeatures'
+		| 'getAnnualPlansOnlyFeatures'
+		| 'getPlanTagline'
+		| 'getNewsletterTagLine'
+		| 'getLinkInBioTagLine'
+		| 'getBlogOnboardingTagLine'
+	>;
+
 export function applyTestFiltersToPlansList(
 	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
-): Plan &
-	Pick< WPComPlan, 'getPlanCompareFeatures' | 'getAnnualPlansOnlyFeatures' | 'getPlanTagline' > {
+): FilteredPlan {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );
@@ -652,6 +799,8 @@ export function getPlanTermLabel(
 			return translate( 'Two year subscription' );
 		case TERM_TRIENNIALLY:
 			return translate( 'Three year subscription' );
+		case TERM_CENTENNIALLY:
+			return translate( 'Hundred year subscription' );
 	}
 }
 
@@ -661,7 +810,7 @@ export const getPopularPlanSpec = ( {
 	isJetpack,
 	availablePlans,
 }: {
-	flowName: string;
+	flowName?: string | null;
 	customerType: string;
 	isJetpack: boolean;
 	availablePlans: string[];
@@ -729,8 +878,8 @@ export const chooseDefaultCustomerType = ( {
 	currentPlan,
 }: {
 	currentCustomerType: string;
-	selectedPlan: string;
-	currentPlan: { product_slug: string };
+	selectedPlan?: string;
+	currentPlan: { productSlug: PlanSlug | undefined };
 } ): string => {
 	if ( currentCustomerType ) {
 		return currentCustomerType;
@@ -758,7 +907,7 @@ export const chooseDefaultCustomerType = ( {
 		return businessPlanSlugs.includes( selectedPlan as PlanSlug ) ? 'business' : 'personal';
 	} else if ( currentPlan ) {
 		const isPlanInBusinessGroup =
-			businessPlanSlugs.indexOf( currentPlan.product_slug as PlanSlug ) !== -1;
+			businessPlanSlugs.indexOf( currentPlan.productSlug as PlanSlug ) !== -1;
 		return isPlanInBusinessGroup ? 'business' : 'personal';
 	}
 
@@ -787,4 +936,23 @@ export function planHasJetpackClassicSearch(
 			isPro( plan ) ||
 			isVipPlan( plan ) )
 	);
+}
+
+export function getFeaturesList(): FeatureList {
+	return FEATURES_LIST;
+}
+
+export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {
+	if ( ! planFeaturesList ) {
+		return [];
+	}
+	return planFeaturesList.map( ( featuresConst ) => FEATURES_LIST[ featuresConst ] );
+};
+
+export function isValidFeatureKey( feature: string ) {
+	return !! FEATURES_LIST[ feature ];
+}
+
+export function getFeatureByKey( feature: string ) {
+	return FEATURES_LIST[ feature ];
 }

@@ -2,7 +2,6 @@ import { pickBy } from 'lodash';
 
 /**
  * Returns a normalized post terms object for sending to the API
- *
  * @param  {Object} post Raw post object
  * @returns {Object}      Normalized post object
  */

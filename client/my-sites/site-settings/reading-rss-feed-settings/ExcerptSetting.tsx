@@ -1,7 +1,7 @@
+import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
@@ -19,9 +19,10 @@ export const ExcerptSetting = ( {
 	const translate = useTranslate();
 	return (
 		<FormFieldset>
-			<FormLabel>{ translate( 'For each post in a feed, include' ) }</FormLabel>
+			<FormLabel className="increase-margin-bottom-fix">
+				{ translate( 'For each post in a feed, include' ) }
+			</FormLabel>
 			<FormLabel>
-				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormRadio
 					checked={ ! value }
 					onChange={ () => updateFields?.( { rss_use_excerpt: false } ) }
@@ -30,7 +31,6 @@ export const ExcerptSetting = ( {
 				/>
 			</FormLabel>
 			<FormLabel>
-				{ /* @ts-expect-error FormRadio is not typed and is causing errors */ }
 				<FormRadio
 					checked={ value }
 					onChange={ () => updateFields?.( { rss_use_excerpt: true } ) }

@@ -6,7 +6,6 @@ Supported routes:
 
 - `/domains/manage` - entry point for domains management
 - `/domains/manage/:site` - lists domains for a site
-- `/domains/manage/:domain/contacts-privacy/:site` - displays contacts and privacy information for a domain
 - `/domains/manage/:domain/dns/:site` - manages DNS records for a domain
 - `/domains/manage/:domain/add-dns-record/:site` - add new DNS record for a domain
 - `/domains/manage/:domain/edit-dns-record/:site` - update DNS record for a domain

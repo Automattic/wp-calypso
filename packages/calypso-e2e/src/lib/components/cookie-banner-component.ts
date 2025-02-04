@@ -1,7 +1,8 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 const selectors = {
-	acceptCookie: '.a8c-cookie-banner__ok-button',
+	acceptCookie: '.a8c-cookie-banner__ok-button, .a8c-cookie-banner__accept-all-button',
 };
 
 /**
@@ -9,15 +10,15 @@ const selectors = {
  */
 export class CookieBannerComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
-	 * @param {Page } page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -26,14 +27,22 @@ export class CookieBannerComponent {
 	 * Accept and clear the cookie notice.
 	 */
 	async acceptCookie(): Promise< void > {
-		const locator = this.editor.locator( selectors.acceptCookie );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.acceptCookie );
 
 		// Whether the cookie banner appears is not deterministic.
 		// If it is not present, exit early.
+		try {
+			await locator.waitFor( { timeout: 100 } );
+		} catch ( e ) {
+			// Probably doesn't exist. That's ok.
+		}
 		if ( ( await locator.count() ) === 0 ) {
 			return;
 		}
 
-		await locator.click();
+		if ( await locator.isVisible() ) {
+			await locator.dispatchEvent( 'click' );
+		}
 	}
 }

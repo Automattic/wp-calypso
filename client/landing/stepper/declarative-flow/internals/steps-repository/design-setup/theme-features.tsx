@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import './theme-features.scss';
 
 interface Feature {
@@ -12,7 +12,7 @@ interface FeaturesProps {
 }
 
 const ThemeFeatures = ( { classNames, features, heading }: FeaturesProps ) => {
-	const classes = classnames( 'theme-features__features-wrap', classNames );
+	const classes = clsx( 'theme-features__features-wrap', classNames );
 	return (
 		<>
 			{ features.length > 0 && (

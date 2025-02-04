@@ -12,7 +12,6 @@ import 'calypso/state/login/init';
 
 /**
  * Disconnects the current WordPress.com account from a third-party social account (Google ...).
- *
  * @param  {string}   socialService The social service name
  * @returns {Function}               A thunk that can be dispatched
  */

@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import SearchCard from 'calypso/components/search-card';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
+import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query-v1';
 import HelpResults from 'calypso/me/help/help-results';
 import NoResults from 'calypso/my-sites/no-results';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -73,7 +73,7 @@ export default function HelpSearch( props ) {
 
 		const forumBaseUrl = helpLinks.wordpress_forum_links_localized
 			? localizeUrl( 'https://wordpress.com/forums/' )
-			: 'https://wordpress.com/forums/';
+			: 'https://wordpress.com/forums/'; // eslint-disable-line wpcalypso/i18n-unlocalized-url
 
 		return (
 			<div>
@@ -82,7 +82,9 @@ export default function HelpSearch( props ) {
 					header={ translate( 'WordPress.com Documentation' ) }
 					helpLinks={ helpLinks.wordpress_support_links }
 					iconTypeDescription="book"
+					// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 					searchLink={ 'https://wordpress.com/support?s=' + searchQuery }
+					openInHelpCenter
 				/>
 				<HelpResults
 					footer={ translate( 'See more from Community Forum…' ) }

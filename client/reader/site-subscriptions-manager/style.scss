@@ -1,0 +1,167 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+@import "client/landing/subscriptions/styles/search-component";
+@import "client/landing/subscriptions/components/site-subscriptions-list/styles/variables";
+
+@mixin hover-color {
+	&:hover,
+	&:focus {
+		color: var(--color-text-inverted);
+		background: var(--color-primary);
+
+		.reader-import-button__label,
+		.reader-export-button__label {
+			color: var(--color-text-inverted);
+		}
+
+		svg path {
+			fill: var(--color-text-inverted);
+		}
+
+		svg path[stroke],
+		svg path[stroke-width],
+		svg path[stroke-opacity] {
+			stroke: var(--color-text-inverted);
+		}
+	}
+}
+
+body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
+	&.main {
+		max-width: 1168px;
+		min-height: 100vh;
+		margin: 0 auto;
+
+		@media (max-width: $break-small) {
+			padding: 0 16px;
+
+			.navigation-header {
+				padding: 16px 0;
+			}
+		}
+
+		@extend %search-component-subscriptions-style;
+	}
+
+	&__header-h-stack {
+		margin: 0 0 26px;
+
+		& .formatted-header {
+			&.is-left-align,
+			&.is-right-align {
+				margin: 0;
+			}
+
+			&__subtitle {
+				margin-bottom: 0;
+
+				a.site-subscriptions-manager__manage-notifications-button {
+					font-size: inherit;
+					font-family: inherit;
+					line-height: inherit;
+					text-decoration: none;
+					color: var(--color-primary);
+				}
+			}
+		}
+	}
+
+	.site-subscriptions-manager__nav {
+		margin-bottom: 32px;
+	}
+
+	hr.subscriptions__separator {
+		width: 100%;
+		height: 0;
+		margin: 0;
+		padding: 0;
+		border: none;
+		border-top: 1px solid $studio-gray-5;
+	}
+
+	&__import-export-popover {
+		box-sizing: border-box;
+		width: 305px;
+
+		button.components-button {
+			@include hover-color;
+
+			padding: 0 15px;
+
+			justify-content: flex-start;
+
+			.reader-import-button__label,
+			.reader-export-button__label {
+				padding-left: 8px;
+			}
+		}
+	}
+
+	.not-found-site-subscriptions,
+	.site-subscriptions__search-recommendations-label {
+		color: $studio-gray-60;
+		font-size: $font-body-small;
+		font-weight: 500;
+		font-family: "SF Pro Text", $sans;
+		line-height: $font-title-small;
+		margin: 48px 0 16px;
+	}
+
+	.reader-unsubscribed-feeds-search-list {
+		border-block-start: 1px solid $site-subscriptions-list-row-divider-color;
+	}
+}
+
+hr.subscriptions__separator {
+	width: 100%;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-top: 1px solid $studio-gray-5;
+}
+
+.subscriptions-ellipsis-menu__popover.popover.site-subscriptions-manager__import-export-popover .popover__inner,
+.subscriptions-ellipsis-menu__popover.popover.comment-settings-popover .popover__inner {
+	padding: 5px 0 !important;
+}
+
+.subscriptions-ellipsis-menu__popover.popover .popover__inner {
+	padding: 5px 0 14px !important;
+
+	.settings.site-settings {
+		padding: 15px 0 0;
+
+		.setting-item {
+			padding: 0 21px;
+
+			&.email-me-new-comments-toggle {
+				margin-bottom: 16px;
+			}
+		}
+
+		.delivery-frequency-input__control {
+			max-width: 100%;
+		}
+	}
+
+	.site-settings-popover__unsubscribe-button.components-button.has-icon:not(:last-child) {
+		margin-bottom: 16px;
+	}
+
+	.subscriptions__separator {
+		margin: 0 24px 15px;
+		width: auto;
+	}
+
+	& > .components-button,
+	.site-settings-popover__view-feed-button {
+		padding: 0 21px;
+		line-height: 36px;
+		width: 100%;
+
+		@include hover-color;
+
+	}
+}

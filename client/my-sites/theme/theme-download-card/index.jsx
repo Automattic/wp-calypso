@@ -1,4 +1,5 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -14,10 +15,13 @@ class ThemeDownloadCard extends PureComponent {
 		const { href, translate } = this.props;
 
 		const downloadText = translate(
-			'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
+			'This theme is available for download to be used on your {{a}}WordPress self-hosted{{icon/}}{{/a}} installation.',
 			{
 				components: {
-					a: <a href="https://wordpress.org" />,
+					a: <a href="https://wordpress.org" target="_blank" rel="noreferrer" />,
+					icon: (
+						<Icon icon={ external } size={ 16 } className="theme-download-card__external-icon" />
+					),
 				},
 			}
 		);

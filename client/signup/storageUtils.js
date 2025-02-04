@@ -20,17 +20,107 @@ export const clearSignupDestinationCookie = () => {
 	document.cookie = cookie.serialize( 'wpcom_signup_complete_destination', '', options );
 };
 
+/**
+ * Ignore fatals when trying to access window.sessionStorage so that we do not
+ * see them logged in Sentry. Please don't use this for anything else.
+ */
+function ignoreFatalsForStorage( callback ) {
+	try {
+		return callback();
+	} catch {
+		// Do nothing.
+		return undefined;
+	}
+}
+
 export const getSignupCompleteSlug = () =>
-	sessionStorage.getItem( 'wpcom_signup_complete_site_slug' );
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_slug' ) );
 export const setSignupCompleteSlug = ( value ) =>
-	sessionStorage.setItem( 'wpcom_signup_complete_site_slug', value );
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value )
+	);
+export const clearSignupCompleteSlug = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_site_slug' ) );
+export const getSignupCompleteSiteID = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_site_id' ) );
+export const setSignupCompleteSiteID = ( value ) =>
+	ignoreFatalsForStorage( () => sessionStorage?.setItem( 'wpcom_signup_complete_site_id', value ) );
+export const setDomainsDependencies = ( dependencies ) => {
+	ignoreFatalsForStorage( () =>
+		sessionStorage.setItem( 'wpcom_domains_dependencies', JSON.stringify( dependencies ) )
+	);
+};
+export const getDomainsDependencies = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_domains_dependencies' ) );
+export const clearDomainsDependencies = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_domains_dependencies' ) );
 export const wasSignupCheckoutPageUnloaded = () =>
-	sessionStorage.getItem( 'was_signup_checkout_page_unloaded' );
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' ) );
 export const setSignupCheckoutPageUnloaded = ( value ) =>
-	sessionStorage.setItem( 'was_signup_checkout_page_unloaded', value );
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'was_signup_checkout_page_unloaded', value )
+	);
 export const getSignupCompleteFlowName = () =>
-	sessionStorage.getItem( 'wpcom_signup_complete_flow_name' );
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_flow_name' ) );
+
 export const setSignupCompleteFlowName = ( value ) =>
-	sessionStorage.setItem( 'wpcom_signup_complete_flow_name', value );
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_flow_name', value )
+	);
 export const clearSignupCompleteFlowName = () =>
-	sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_flow_name' ) );
+export const getSignupCompleteFlowNameAndClear = () => {
+	const value = getSignupCompleteFlowName();
+	clearSignupCompleteFlowName();
+	return value;
+};
+export const getSignupCompleteStepName = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_step_name' ) );
+export const setSignupCompleteStepName = ( value ) =>
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_step_name', value )
+	);
+export const clearSignupCompleteStepName = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_complete_step_name' ) );
+export const getSignupCompleteStepNameAndClear = () => {
+	const value = getSignupCompleteStepName();
+	clearSignupCompleteStepName();
+	return value;
+};
+export const setSignupStartTime = () =>
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_start_time', performance.now() )
+	);
+export const getSignupStartTime = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_start_time' ) );
+
+export const clearSignupStartTime = () =>
+	ignoreFatalsForStorage( () => sessionStorage?.removeItem( 'wpcom_signup_start_time' ) );
+
+export const getSignupCompleteElapsedTime = () => {
+	const startTime = getSignupStartTime();
+
+	if ( startTime == null ) {
+		return null;
+	}
+
+	clearSignupStartTime();
+
+	return Math.floor( performance.now() - startTime );
+};
+
+export const setSignupIsNewUser = ( userId ) =>
+	ignoreFatalsForStorage( () =>
+		localStorage?.setItem( `wpcom_signup_is_new_user_${ userId }`, true )
+	);
+export const getSignupIsNewUser = ( userId ) =>
+	ignoreFatalsForStorage( () => localStorage?.getItem( `wpcom_signup_is_new_user_${ userId }` ) );
+export const clearSignupIsNewUser = ( userId ) =>
+	ignoreFatalsForStorage( () =>
+		localStorage?.removeItem( `wpcom_signup_is_new_user_${ userId }` )
+	);
+export const getSignupIsNewUserAndClear = ( userId ) => {
+	const value = getSignupIsNewUser( userId );
+	clearSignupIsNewUser( userId );
+	return value;
+};

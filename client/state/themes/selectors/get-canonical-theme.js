@@ -35,10 +35,9 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  * the one with richest information. Checks WP.com (which has a long description
  * and multiple screenshots, and a preview URL) first, then WP.org (which has a
  * preview URL), then the given JP site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Jetpack Site ID to fall back to
- * @param  {string | null}  themeId Theme ID
+ * @param  {string|null|undefined}  themeId Theme ID
  * @returns {?Theme}         Theme object
  */
 export function getCanonicalTheme( state, siteId, themeId ) {

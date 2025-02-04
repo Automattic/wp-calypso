@@ -1,7 +1,6 @@
 $animation-timing: 300ms;
 
 .help-center__container {
-
 	.back-to-top-button__help-center {
 		position: sticky;
 		bottom: 0;
@@ -14,10 +13,9 @@ $animation-timing: 300ms;
 
 		background-color: var(--studio-white);
 		color: var(--studio-black);
-		border-color: rgba(0, 0, 0, 0.1);
 
 		border-radius: 0;
-		border-width: 1px 0 0;
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
 
 		visibility: hidden;
 		opacity: 0;

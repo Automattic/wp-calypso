@@ -1,0 +1,82 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.overview-products {
+	.overview-products__items {
+		display: grid;
+		column-gap: 24px;
+		row-gap: 32px;
+
+		margin: 0;
+
+		list-style-type: none;
+
+		@include break-large {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	.simple-item-card {
+		column-gap: 16px;
+	}
+
+	.more-info-link {
+		font-size: rem(13px);
+		text-decoration: underline;
+		cursor: pointer;
+		color: var(--color-neutral-100);
+	}
+
+	.simple-item-card__title {
+		font-size: rem(14px);
+		line-height: normal;
+	}
+
+	.simple-item-card__footer {
+		font-size: rem(13px);
+		padding: 4px 0 0;
+	}
+
+	.simple-item-card__price {
+		font-size: rem(12px);
+	}
+
+	.simple-item-card__body {
+		border: none;
+	}
+
+	.simple-item-card__icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.plan-price {
+		font-size: rem(12px);
+	}
+
+	.plan-price__fraction {
+		vertical-align: baseline;
+		font-weight: 600;
+	}
+
+	.plan-price__integer {
+		font-size: rem(12px);
+		font-weight: 600;
+	}
+
+	.plan-price__currency-symbol {
+		vertical-align: baseline;
+		font-weight: 600;
+	}
+
+	.display-price__billing-time-frame {
+		.normal {
+			display: none;
+		}
+
+		.compact {
+			display: none;
+		}
+	}
+}

@@ -12,7 +12,10 @@ import {
 import { combineReducers } from 'calypso/state/utils';
 import authors from './authors/reducer';
 
-export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, siteId, type } ) {
+export function diffs(
+	state = {},
+	{ diffs: diffsFromServer, postId, revisions, revision_fields, siteId, type }
+) {
 	if ( type !== POST_REVISIONS_RECEIVE ) {
 		return state;
 	}
@@ -62,6 +65,7 @@ export function diffs( state = {}, { diffs: diffsFromServer, postId, revisions, 
 					...keyBy( filteredDiffs, ( d ) => `${ d.from }:${ d.to }` ),
 				},
 				revisions: mergedRevisions,
+				revisionFields: revision_fields,
 			},
 		},
 	};

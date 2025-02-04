@@ -1,14 +1,15 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
@@ -24,6 +25,8 @@ function ThemeEnhancements( {
 	fields,
 	customizeUrl,
 	siteId,
+	isFSEActive,
+	isFSEActiveLoading,
 } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
 	const translate = useTranslate();
@@ -72,7 +75,7 @@ function ThemeEnhancements( {
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/support/infinite-scroll/'
+								? localizeUrl( 'https://wordpress.com/support/infinite-scroll/' )
 								: 'https://jetpack.com/support/infinite-scroll/'
 						}
 						privacyLink={ ! isAtomic }
@@ -83,31 +86,35 @@ function ThemeEnhancements( {
 						) }
 					</FormSettingExplanation>
 					<RadioOptions />
-					<hr />
-					<SupportInfo
-						text={ translate(
-							"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
-						) }
-						link={
-							isAtomic
-								? 'https://wordpress.com/support/editing-css/'
-								: 'https://jetpack.com/support/custom-css/'
-						}
-						privacyLink={ ! isAtomic }
-					/>
-					<JetpackModuleToggle
-						siteId={ siteId }
-						moduleSlug="custom-css"
-						label={ translate( 'Enhance CSS customization panel' ) }
-						disabled={ isFormPending }
-					/>
+					{ ! isFSEActiveLoading && ! isFSEActive && (
+						<>
+							<hr />
+							<SupportInfo
+								text={ translate(
+									"Adds names for CSS preprocessor use, disabling the theme's CSS, or custom image width."
+								) }
+								link={
+									isAtomic
+										? localizeUrl( 'https://wordpress.com/support/editing-css/' )
+										: 'https://jetpack.com/support/custom-css/'
+								}
+								privacyLink={ ! isAtomic }
+							/>
+							<JetpackModuleToggle
+								siteId={ siteId }
+								moduleSlug="custom-css"
+								label={ translate( 'Enhance CSS customization panel' ) }
+								disabled={ isFormPending }
+							/>
+						</>
+					) }
 				</Card>
 			) : (
 				<Card>
 					<FormLegend>{ translate( 'Infinite scroll' ) }</FormLegend>
 					<SupportInfo
 						text={ translate( 'Control how additional posts are loaded.' ) }
-						link="https://wordpress.com/support/infinite-scroll/"
+						link={ localizeUrl( 'https://wordpress.com/support/infinite-scroll/' ) }
 						privacyLink={ false }
 					/>
 					<ToggleControl
@@ -154,7 +161,7 @@ ThemeEnhancements.propTypes = {
 	site: PropTypes.object,
 };
 
-export default connect( ( state ) => {
+const ConnectedThemeEnhancements = connect( ( state ) => {
 	const site = getSelectedSite( state );
 	const selectedSiteId = get( site, 'ID' );
 
@@ -163,3 +170,5 @@ export default connect( ( state ) => {
 		selectedSiteId,
 	};
 } )( localize( ThemeEnhancements ) );
+
+export default withIsFSEActive( ConnectedThemeEnhancements );

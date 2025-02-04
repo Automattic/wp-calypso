@@ -1,9 +1,9 @@
-import classnames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import InfoPopover from 'calypso/components/info-popover';
 import ProductCardPriceGroup from './price-group';
@@ -41,7 +41,7 @@ const ProductCardOptions = ( {
 				{ options.map( ( option ) => (
 					<FormLabel
 						key={ `product-option-${ option.slug }` }
-						className={ classnames( 'product-card__option', {
+						className={ clsx( 'product-card__option', {
 							'is-selected': option.slug === selectedSlug,
 						} ) }
 					>

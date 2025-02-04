@@ -60,7 +60,7 @@
 }
 
 .dns-records.main {
-	* + .email-setup {
+	.email-setup.foldable-card.card {
 		margin-top: 32px;
 	}
 }

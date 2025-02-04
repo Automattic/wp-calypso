@@ -1,8 +1,8 @@
 // ==========================================================================
 // Horizontal bar list
 // ==========================================================================
-@import "../styles/typography.scss";
-@import "./stats-variables.scss";
+@import "../styles/typography";
+@import "./stats-variables";
 
 .horizontal-bar-list {
 	list-style: none;
@@ -26,8 +26,7 @@
 		}
 
 		&:hover,
-		&:focus,
-		&:focus-within {
+		&:focus {
 			background-color: var(--theme-highlight-color);
 			color: var(--studio-white);
 
@@ -122,6 +121,13 @@
 	cursor: pointer;
 }
 
+.horizontal-bar-list-item--link-underlined {
+	a {
+		font-weight: 400;
+		text-decoration: underline;
+	}
+}
+
 .horizontal-bar-list-item--indicated {
 	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
 }
@@ -130,16 +136,50 @@
 	cursor: auto;
 }
 
+.horizontal-bar-list-item--no-bg {
+	.horizontal-bar-list-item-bar {
+		padding-left: 0;
+
+		&::before {
+			display: none;
+		}
+	}
+}
+
 .horizontal-bar-list-item--additional {
 	@include additional-columns-wrapper;
 }
 
+.horizontal-bar-list-item__left-icon {
+	padding-right: 8px;
+	display: flex;
+}
+
 .horizontal-bar-list-group {
 	list-style: none;
-	margin: $space-between-rows 0 $row-height 0;
+	margin: $space-between-rows 0 ($space-between-rows * 2) 0;
 }
 
 .horizontal-bar-list-group-toggle {
 	position: relative;
 	top: 2px;
+}
+
+.horizontal-bar-list__group-label {
+	position: relative;
+	overflow: hidden;
+	text-overflow: ellipsis;
+
+	> svg,
+	> span {
+		vertical-align: middle;
+	}
+
+	> svg + span {
+		padding: 8px;
+	}
+
+	> span + svg {
+		padding-left: 17px;
+	}
 }

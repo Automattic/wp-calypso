@@ -70,13 +70,53 @@
 		}
 	}
 
+	// General notice, but without background
+	&.is-transparent-info {
+		background: unset;
+		color: var(--color-error-40);
+		margin-bottom: 0;
+
+		&.is-compact {
+			.notice__icon-wrapper-drop {
+				width: 18px;
+				height: 18px;
+				top: unset;
+				left: unset;
+			}
+
+			.notice__icon-wrapper {
+				align-items: center;
+				padding-top: 0;
+			}
+		}
+
+		.notice__text a {
+			color: var(--color-link);
+		}
+
+		.notice__icon-wrapper {
+			background: transparent;
+			align-items: center;
+			padding: 0;
+		}
+		.notice__icon-wrapper-drop {
+			background: var(--color-error);
+			border-radius: 50%;
+			width: 24px;
+			height: 24px;
+			top: unset;
+			left: unset;
+		}
+	}
+
 	&.is-loading {
 		.notice__icon-wrapper {
 			animation: notice-loading-pulse 0.8s ease-in-out infinite;
 		}
 	}
 
-	.notice__dismiss {
+	.notice__dismiss,
+	.notice__link {
 		overflow: hidden;
 		color: var(--color-neutral-20);
 
@@ -86,11 +126,17 @@
 		}
 	}
 
+	.notice__link {
+		// This matches the gridicon size, since we will not be using it with links
+		margin-right: 18px;
+	}
+
 	&.is-success,
 	&.is-error,
 	&.is-warning,
 	&.is-info {
-		.notice__dismiss {
+		.notice__dismiss,
+		.notice__link {
 			overflow: hidden;
 		}
 	}
@@ -141,6 +187,14 @@
 				color: var(--color-text-inverted);
 				text-decoration: none;
 			}
+
+			.is-transparent-info & {
+				color: var(--color-link);
+
+				&:hover {
+					color: var(--color-link-dark);
+				}
+			}
 		}
 
 		ul {
@@ -174,7 +228,8 @@
 }
 
 // "X" for dismissing a notice
-.notice__dismiss {
+.notice__dismiss,
+.notice__link {
 	display: flex;
 	flex-shrink: 0;
 	padding: 12px;
@@ -251,6 +306,10 @@ a.notice__action {
 	vertical-align: middle;
 	line-height: 1.5;
 
+	&.is-full-width {
+		width: 100%;
+	}
+
 	.notice__content {
 		font-size: $font-body-extra-small;
 		padding: 6px 10px;
@@ -273,7 +332,8 @@ a.notice__action {
 		height: 12px;
 	}
 
-	.notice__dismiss {
+	.notice__dismiss,
+	.notice__link {
 		position: relative;
 		align-self: center;
 		flex: none;
@@ -307,6 +367,91 @@ a.notice__action {
 			height: 14px;
 			vertical-align: sub;
 			opacity: 1;
+		}
+	}
+}
+
+.notice.is-reskinned {
+	background: var(--studio-gray-0);
+	color: inherit;
+	border-radius: 4px;
+
+	.notice__content {
+		padding: 13px 0;
+		.notice__text {
+			a,
+			a:visited,
+			button.is-link {
+				color: var(--color-link);
+
+				&:hover {
+					color: var(--color-link);
+				}
+			}
+		}
+	}
+
+	.notice__icon-wrapper {
+		border-top-left-radius: 4px;
+		border-bottom-left-radius: 4px;
+		background: var(--studio-gray-0);
+		padding: 16px;
+		align-items: flex-start;
+		width: unset;
+	}
+
+	&.is-info,
+	&.is-success {
+		.notice__icon-wrapper {
+			color: var(--studio-green-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
+	&.is-warning {
+		.notice__icon-wrapper {
+			color: var(--studio-orange-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
+	&.is-error {
+		.notice__icon-wrapper {
+			color: var(--studio-red-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
+	&.is-plain {
+		.notice__icon-wrapper {
+			color: inherit;
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
+		}
+	}
+
+	// "X" for dismissing a notice
+	.notice__dismiss,
+	.notice__link {
+		display: flex;
+		flex-shrink: 0;
+		padding: 16px;
+		cursor: pointer;
+		&:hover,
+		&:focus {
+			color: var(--color-text);
+		}
+		.gridicon {
+			width: 18px;
+			height: 18px;
 		}
 	}
 }

@@ -10,7 +10,6 @@ const noop = () => {};
 
 /**
  * Dispatches a request to fetch profile links of the current user
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
@@ -26,7 +25,6 @@ export const requestUserProfileLinks = ( action ) =>
 
 /**
  * Dispatches a user profile links receive action when the request succeeded.
- *
  * @param   {Object} action             Redux action
  * @param   {Array}  data               Response from the endpoint
  * @param   {Object} data.profile_links Profile links

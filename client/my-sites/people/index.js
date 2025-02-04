@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import peopleController from './controller';
@@ -50,6 +50,16 @@ export default function () {
 		siteSelection,
 		navigation,
 		peopleController.peopleInviteDetails,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/people/pending-invites/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peoplePendingInvites,
 		makeLayout,
 		clientRender
 	);

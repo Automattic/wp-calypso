@@ -3,6 +3,12 @@ import { PlansPage, Plans } from '../plans-page';
 import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-client.types';
 
 /**
+ * The plans page URL regex.
+ */
+export const plansPageUrl =
+	/.*setup\/onboarding\/plans|start\/plans|start\/with-theme\/plans-theme-preselected.*/;
+
+/**
  * Represents the Signup > Pick a Plan page.
  *
  * With the overhauled Plans, this class is a thin wrapper around the PlansPage object.
@@ -28,10 +34,7 @@ export class SignupPickPlanPage {
 	 * @returns {Promise<SiteDetails>} Details of the newly created site.
 	 */
 	async selectPlan( name: Plans ): Promise< NewSiteResponse > {
-		await Promise.all( [
-			this.page.waitForURL( /.*start\/plans.*/ ),
-			this.page.waitForLoadState(),
-		] );
+		await this.page.waitForURL( plansPageUrl );
 
 		let url: RegExp;
 		if ( name !== 'Free' ) {
@@ -42,7 +45,7 @@ export class SignupPickPlanPage {
 		}
 
 		const actions = [
-			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } ),
 			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];

@@ -5,6 +5,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const TIME_CHECK_TRANSFER_STATUS = 3000;
 
@@ -32,14 +33,17 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const urlQueryParams = useQuery();
 	const siteSlug = urlQueryParams.get( 'siteSlug' );
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceSite = useSelect( ( select ) =>
-		sourceSlug ? select( SITE_STORE ).getSite( sourceSlug ) : undefined
+	const sourceSite = useSelect(
+		( select ) =>
+			sourceSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ) : undefined,
+		[ sourceSlug ]
 	);
 	const sourceSiteId = sourceSite?.ID;
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
-	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
-		select( SITE_STORE )
+	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
+		( select ) => select( SITE_STORE ) as SiteSelect,
+		[]
 	);
 
 	useEffect( () => {

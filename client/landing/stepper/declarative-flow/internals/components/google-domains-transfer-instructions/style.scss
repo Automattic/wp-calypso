@@ -1,0 +1,25 @@
+.google-domains-transfer-instructions__modal {
+	font-size: rem(14px);
+	width: 600px;
+	max-width: 95%;
+	max-height: 75vh;
+	margin: auto auto;
+
+	summary {
+		font-weight: bold;
+		cursor: pointer;
+	}
+
+	details {
+		margin-top: 18px;
+
+		p {
+			margin: 8px 0 16px;
+		}
+	}
+
+	video {
+		max-width: 100%;
+		height: auto;
+	}
+}

@@ -1,24 +1,27 @@
 import { Page, Response } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-import { reloadAndRetry, clickNavTab } from '../../element-helper';
+import { reloadAndRetry } from '../../element-helper';
 
 type TrashedMenuItems = 'Restore' | 'Copy link' | 'Delete Permanently';
 type GenericMenuItems = 'Trash';
 
 type MenuItems = TrashedMenuItems | GenericMenuItems;
-type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trashed';
+type PostsPageTabs = 'Published' | 'Drafts' | 'Scheduled' | 'Trash';
 
 const selectors = {
 	// General
-	placeholder: `div.is-placeholder`,
-	addNewPostButton: 'a.post-type-list__add-post',
+	addNewPostButton: 'a.page-title-action, span.split-page-title-action>a',
 
 	// Post Item
-	postItem: ( title: string ) => `div.post-item:has([data-e2e-title="${ title }"])`,
+	postRow: 'tr.type-post',
+	postItem: ( title: string ) =>
+		`a.row-title:has-text("${ title }"), strong>span:has-text("${ title }")`,
 
-	// Menu
-	menuToggleButton: 'button[title="Toggle menu"]',
-	menuItem: ( item: string ) => `button[role="menuitem"]:has-text("${ item }")`,
+	// Status Filter
+	statusItem: ( item: string ) => `ul.subsubsub a:has-text("${ item }")`,
+
+	// Actions
+	actionItem: ( item: string ) => `.row-actions a:has-text("${ item }")`,
 };
 
 /**
@@ -42,38 +45,24 @@ export class PostsPage {
 	 * Example {@link https://wordpress.com/posts}
 	 */
 	async visit(): Promise< Response | null > {
-		const response = await this.page.goto( getCalypsoURL( 'posts' ) );
-		await this.waitUntilLoaded();
-		return response;
+		return await this.page.goto( getCalypsoURL( 'posts' ) );
 	}
 
 	/**
-	 * Clicks on the navigation tab (desktop) or dropdown (mobile).
+	 * Clicks on the navigation tab.
 	 *
 	 * @param {string} name Name of the tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: PostsPageTabs ): Promise< void > {
-		// Without waiting for the `networkidle` event to fire, the clicks on the
-		// mobile navbar dropdowns are swallowed up.
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
-
-		await clickNavTab( this.page, name );
-		await this.waitUntilLoaded();
+		const locator = this.page.locator( selectors.statusItem( name ) );
+		await locator.click();
 	}
 
 	/* Page readiness */
 
 	/**
-	 * Wait until the page is completely loaded.
-	 */
-	async waitUntilLoaded(): Promise< void > {
-		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
-	}
-
-	/**
 	 * Ensures the post item denoted by the parameter `title` is shown on the page.
-	 * This method is a superset of the `waitUntilLoaded` method.
 	 *
 	 * Due to a race condition, sometimes the expected post does not appear
 	 * on the list of posts. This can occur when state for multiple posts are being modified
@@ -82,15 +71,13 @@ export class PostsPage {
 	 * @param {string} title Post title.
 	 */
 	private async ensurePostShown( title: string ): Promise< void > {
-		await this.waitUntilLoaded();
-
 		/**
 		 * Closure to wait until the post to appear in the list of posts.
 		 *
 		 * @param {Page} page Page object.
 		 */
 		async function waitForPostToAppear( page: Page ): Promise< void > {
-			const postLocator = page.locator( selectors.postItem( title ) );
+			const postLocator = page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
 			await postLocator.waitFor( { state: 'visible', timeout: 20 * 1000 } );
 		}
 
@@ -103,7 +90,7 @@ export class PostsPage {
 	async newPost(): Promise< void > {
 		const locator = this.page.locator( selectors.addNewPostButton );
 		await Promise.all( [
-			this.page.waitForNavigation( { url: /post/, timeout: 20 * 1000 } ),
+			this.page.waitForNavigation( { url: /post-new.php/, timeout: 20 * 1000 } ),
 			locator.click(),
 		] );
 	}
@@ -119,37 +106,37 @@ export class PostsPage {
 	async clickPost( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator( selectors.postItem( title ) );
+		const locator = this.page.locator( `${ selectors.postRow } ${ selectors.postItem( title ) }` );
 		await locator.click();
 	}
 
 	/**
-	 * Toggles the Post Menu (hamberger menu) of a matching post.
+	 * Toggles the Post Actions of a matching post.
 	 *
-	 * @param {string} title Post title on which the menu should be toggled.
+	 * @param {string} title Post title on which the actions should be toggled.
 	 */
-	async togglePostMenu( title: string ): Promise< void > {
+	async togglePostActions( title: string ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		const locator = this.page.locator(
-			`${ selectors.postItem( title ) } ${ selectors.menuToggleButton }`
-		);
-		await locator.click();
+		const locator = this.page.locator( selectors.postRow, {
+			has: this.page.locator( selectors.postItem( title ) ),
+		} );
+		await locator.hover();
 	}
 
 	/* Menu actions */
 
 	/**
-	 * Given a post title and target menu item, performs the following actions:
+	 * Given a post title and target action item, performs the following actions:
 	 * 	- locate the post with matching title.
-	 * 	- toggle the post menu.
-	 * 	- click on an menu action with matching name.
+	 * 	- toggle the post action.
+	 * 	- click on an action with matching name.
 	 *
 	 * @param param0 Object parameter.
 	 * @param {string} param0.title Title of the post.
 	 * @param {MenuItems} param0.action Name of the target action in the menu.
 	 */
-	async clickMenuItemForPost( {
+	async clickActionItemForPost( {
 		title,
 		action,
 	}: {
@@ -158,34 +145,20 @@ export class PostsPage {
 	} ): Promise< void > {
 		await this.ensurePostShown( title );
 
-		await this.togglePostMenu( title );
-		await this.clickMenuItem( action );
+		await this.togglePostActions( title );
+		await this.clickActionItem( title, action );
 	}
 
 	/**
-	 * Clicks on the menu item.
+	 * Clicks on the action item.
 	 *
+	 * @param {string} title Title of the post.
 	 * @param {string} menuItem Target menu item.
 	 */
-	private async clickMenuItem( menuItem: string ): Promise< void > {
-		const locator = this.page.locator( selectors.menuItem( menuItem ) );
-
-		// {@TODO} In the future, a possible idea may be to implement a following structure:
-		// pre-process
-		// perform the menu click
-		// post-process
-		// This is because sometimes the action performed on the menu may require additional
-		// pre- and post-processing, such as in the case of Delete Permanently.
-		// The pre-process and post-process actions are to be called through either a
-		// case-switch statement, or by locating and exeucting predefined function in
-		// an dictionary object, keyed by the value of menuItem.
-
-		if ( menuItem === 'Delete Permanently' ) {
-			this.page.once( 'dialog', async ( dialog ) => {
-				await dialog.accept();
-			} );
-		}
-
-		await locator.click();
+	private async clickActionItem( title: string, menuItem: string ): Promise< void > {
+		const locator = this.page.locator( selectors.postRow, {
+			has: this.page.locator( selectors.postItem( title ) ),
+		} );
+		await locator.locator( selectors.actionItem( menuItem ) ).click();
 	}
 }

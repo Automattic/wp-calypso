@@ -1,14 +1,15 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
+import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import type { DetailsCardProps } from './types';
 
@@ -27,11 +28,15 @@ const RegisteredDomainDetails = ( {
 	);
 
 	const renderDates = () => {
-		const untilDateLabel = domain.expired
-			? // translators: this is followed by a date, e.g. Expired on December 15, 2021
-			  translate( 'Expired on' )
-			: // translators: this is followed by a date, e.g. Registered until January 21, 2023
-			  translate( 'Registered until' );
+		// translators: this is followed by a date, e.g. Registered until December 15, 2021
+		let untilDateLabel = translate( 'Registered until' );
+		if ( domain.expired ) {
+			// translators: this is followed by a date, e.g. Expired on December 15, 2021
+			untilDateLabel = translate( 'Expired on' );
+		} else if ( domain.isHundredYearDomain ) {
+			// translators: this is followed by a date, e.g. Paid until December 15, 2021
+			untilDateLabel = translate( 'Paid until' );
+		}
 
 		return (
 			<>
@@ -52,6 +57,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.currentUserIsOwner ||
 			( ! isLoadingPurchase && ! purchase ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			domain.aftermarketAuction
 		);
 	};
@@ -85,13 +91,17 @@ const RegisteredDomainDetails = ( {
 				  } )
 				: null;
 
+		if ( ! purchase ) {
+			return null;
+		}
+
 		return (
 			<>
 				<AutoRenewToggle
 					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
 					purchase={ purchase }
-					withTextStatus={ true }
+					withTextStatus
 					toggleSource="registered-domain-status"
 				/>
 				{ autoRenewAdditionalText && (
@@ -105,9 +115,10 @@ const RegisteredDomainDetails = ( {
 		return (
 			! domain.subscriptionId ||
 			domain.isPendingRenewal ||
+			domain.pendingRegistrationAtRegistry ||
 			domain.pendingRegistration ||
 			! domain.currentUserCanManage ||
-			( domain.expired && ! domain.isRenewable && ! domain.isRedeemable ) ||
+			( ! domain.isRenewable && ! domain.isRedeemable ) ||
 			( ! isLoadingPurchase && ! purchase ) ||
 			domain.aftermarketAuction
 		);
@@ -124,11 +135,6 @@ const RegisteredDomainDetails = ( {
 				selectedSite={ selectedSite }
 				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
-				customLabel={
-					! domain.expired || domain.isRenewable
-						? translate( 'Renew now' )
-						: translate( 'Redeem now' )
-				}
 				disabled={ isLoadingPurchase }
 			/>
 		);
@@ -138,18 +144,18 @@ const RegisteredDomainDetails = ( {
 		if ( ! domain.subscriptionId ) {
 			return null;
 		}
-		return (
-			<Button href={ getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId ) }>
-				{ translate( 'Payment details' ) }
-			</Button>
-		);
+		const managePurchaseLink = config.isEnabled( 'calypso/all-domain-management' )
+			? managePurchase( selectedSite.slug, domain.subscriptionId )
+			: getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId );
+
+		return <Button href={ managePurchaseLink }>{ translate( 'Payment details' ) }</Button>;
 	};
 
 	return (
 		<div className="details-card">
 			<div className="details-card__section dates">{ renderDates() }</div>
 			<div className="details-card__section">{ renderAutoRenewToggle() }</div>
-			<div className="details-card__section">
+			<div className="details-card__section details-card__section-actions">
 				{ renderRenewButton() }
 				{ renderPaymentDetailsButton() }
 			</div>

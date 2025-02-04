@@ -2,61 +2,58 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
+import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
-import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { useHCWindowCommunicator } from '../happychat-window-communicator';
-import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
+import {
+	HelpCenterRequiredContextProvider,
+	useHelpCenterContext,
+	type HelpCenterRequiredInformation,
+} from '../contexts/HelpCenterContext';
+import { useActionHooks } from '../hooks';
+import { useOpeningCoordinates } from '../hooks/use-opening-coordinates';
+import { HELP_CENTER_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
-
+import HelpCenterSmooch from './help-center-smooch';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
+const HelpCenter: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	currentRoute = window.location.pathname + window.location.search,
+} ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
-	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
-	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
-	const { show, isMinimized } = useSelect( ( select ) => ( {
-		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
-		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-	} ) );
-
-	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
+	const { isHelpCenterShown, isMinimized } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
+			isMinimized: helpCenterSelect.getIsMinimized(),
+		};
+	}, [] );
+	const { currentUser, canConnectToZendesk } = useHelpCenterContext();
+	const { data: supportInteractionsOpen, isLoading: isLoadingOpenInteractions } =
+		useGetSupportInteractions( 'zendesk', 10, 'open' );
+	const hasOpenZendeskConversations =
+		! isLoadingOpenInteractions && supportInteractionsOpen
+			? supportInteractionsOpen?.length > 0
+			: false;
 
 	useEffect( () => {
-		setUnreadCount( unreadCount );
-	}, [ unreadCount, setUnreadCount ] );
-
-	useEffect( () => {
-		if ( data?.status === 'assigned' ) {
-			setShowHelpCenter( true );
+		if ( currentUser ) {
+			initializeAnalytics( currentUser, null );
 		}
-	}, [ data, setShowHelpCenter ] );
+	}, [ currentUser ] );
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const primarySiteId = useSelector( ( state ) => getPrimarySiteId( state ) );
+	useActionHooks();
 
-	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-
-	const currentSite = window?.helpCenterData?.currentSite;
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId || primarySiteId ) );
-
-	setSite( currentSite ? currentSite : site );
-	useSupportAvailability( 'CHAT' );
-
-	useStillNeedHelpURL();
+	const openingCoordinates = useOpeningCoordinates( isHelpCenterShown, isMinimized );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -69,15 +66,32 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 
 		return () => {
 			document.body.removeChild( portalParent );
-			closeChat();
 			handleClose();
 		};
-	}, [ portalParent ] );
+	}, [ portalParent, handleClose ] );
 
 	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
+		<>
+			<HelpCenterContainer
+				handleClose={ handleClose }
+				hidden={ hidden }
+				currentRoute={ currentRoute }
+				openingCoordinates={ openingCoordinates }
+			/>
+			{ canConnectToZendesk && (
+				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
+			) }
+		</>,
 		portalParent
 	);
 };
 
-export default HelpCenter;
+export default function ContextualizedHelpCenter(
+	props: Container & HelpCenterRequiredInformation
+) {
+	return (
+		<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenter { ...props } />
+		</HelpCenterRequiredContextProvider>
+	);
+}

@@ -1,8 +1,13 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	stagingSiteNotSupportedRedirect,
+	sites,
+} from 'calypso/my-sites/controller';
 import controller from './controller';
 import * as paths from './paths';
 
@@ -10,11 +15,11 @@ function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
 
-const commonHandlers = [ siteSelection, navigation ];
+const commonHandlers = [ siteSelection, navigation, stagingSiteNotSupportedRedirect ];
 
-const emailInboxSiteSelectionHeader = ( context, next ) => {
+const emailMailboxesSiteSelectionHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
-		return translate( 'Select a site to open {{strong}}My Inbox{{/strong}}', {
+		return translate( 'Select a site to open {{strong}}My Mailboxes{{/strong}}', {
 			components: {
 				strong: <strong />,
 			},
@@ -25,30 +30,30 @@ const emailInboxSiteSelectionHeader = ( context, next ) => {
 };
 
 export default function () {
-	page( paths.emailManagement(), siteSelection, sites, makeLayout, clientRender );
+	page( paths.getEmailManagementPath(), siteSelection, sites, makeLayout, clientRender );
 
 	page(
-		paths.emailManagementInbox(),
+		paths.getMailboxesPath(),
 		siteSelection,
-		emailInboxSiteSelectionHeader,
+		emailMailboxesSiteSelectionHeader,
 		sites,
 		makeLayout,
 		clientRender
 	);
 
 	page(
-		paths.emailManagementInbox( ':site' ),
+		paths.getMailboxesPath( ':site' ),
 		...commonHandlers,
-		controller.emailManagementInbox,
+		controller.emailManagementMailboxes,
 		makeLayout,
 		clientRender
 	);
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagement( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
-			paths.emailManagement( ':site', ':domain' ),
-			paths.emailManagement( ':site' ),
+			paths.getEmailManagementPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getEmailManagementPath( ':site', ':domain' ),
+			paths.getEmailManagementPath( ':site' ),
 		],
 		handlers: [ ...commonHandlers, controller.emailManagement, makeLayout, clientRender ],
 	} );
@@ -57,12 +62,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddEmailForwards(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementAddEmailForwards( ':site', ':domain' ),
+			paths.getAddEmailForwardsPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getAddEmailForwardsPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -74,13 +75,13 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementAddGSuiteUsers(
+			paths.getAddGSuiteUsersPath(
 				':site',
 				':domain',
 				productType,
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementAddGSuiteUsers( ':site', ':domain', productType ),
+			paths.getAddGSuiteUsersPath( ':site', ':domain', productType ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -92,12 +93,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementManageTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementManageTitanAccount( ':site', ':domain' ),
+			paths.getManageTitanAccountPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getManageTitanAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -109,12 +106,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementManageTitanMailboxes(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementManageTitanMailboxes( ':site', ':domain' ),
+			paths.getManageTitanMailboxesPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getManageTitanMailboxesPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -125,7 +118,7 @@ export default function () {
 	} );
 
 	registerMultiPage( {
-		paths: [ paths.emailManagementInDepthComparison( ':site', ':domain' ) ],
+		paths: [ paths.getEmailInDepthComparisonPath( ':site', ':domain' ) ],
 		handlers: [
 			...commonHandlers,
 			controller.emailManagementInDepthComparison,
@@ -136,12 +129,12 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementPurchaseNewEmailAccount(
+			paths.getPurchaseNewEmailAccountPath(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ),
+			paths.getPurchaseNewEmailAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -153,12 +146,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementNewTitanAccount(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementNewTitanAccount( ':site', ':domain' ),
+			paths.getNewTitanAccountPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getNewTitanAccountPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -170,12 +159,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetUpMailbox(
-				':site',
-				':domain',
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ),
+			paths.getTitanSetUpMailboxPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getTitanSetUpMailboxPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,
@@ -187,12 +172,12 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanControlPanelRedirect(
+			paths.getTitanControlPanelRedirectPath(
 				':site',
 				':domain',
 				paths.emailManagementAllSitesPrefix
 			),
-			paths.emailManagementTitanControlPanelRedirect( ':site', ':domain' ),
+			paths.getTitanControlPanelRedirectPath( ':site', ':domain' ),
 		],
 		// Note that we don't have the commonHandlers here, as we want to avoid the nav bar etc
 		handlers: [ controller.emailManagementTitanControlPanelRedirect, makeLayout, clientRender ],
@@ -200,26 +185,8 @@ export default function () {
 
 	registerMultiPage( {
 		paths: [
-			paths.emailManagementTitanSetUpThankYou(
-				':site',
-				':domain',
-				null,
-				paths.emailManagementAllSitesPrefix
-			),
-			paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ),
-		],
-		handlers: [
-			...commonHandlers,
-			controller.emailManagementTitanSetUpThankYou,
-			makeLayout,
-			clientRender,
-		],
-	} );
-
-	registerMultiPage( {
-		paths: [
-			paths.emailManagementForwarding( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
-			paths.emailManagementForwarding( ':site', ':domain' ),
+			paths.getForwardingPath( ':site', ':domain', paths.emailManagementAllSitesPrefix ),
+			paths.getForwardingPath( ':site', ':domain' ),
 		],
 		handlers: [
 			...commonHandlers,

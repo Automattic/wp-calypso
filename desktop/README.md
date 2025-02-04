@@ -7,7 +7,7 @@ WordPress.com for Desktop is an [Electron](https://github.com/atom/electron) wra
 The steps marked _Production\*_ can be omitted but should be taken when building the production version of the app.
 
 1. Clone the Calypso repository locally
-1. Install all root level dependencies with `yarn` or `yarn install --frozen-lockfile`
+1. Install all root level dependencies with `yarn`
 1. Export the environment variables:
    - _Production\*_: `CONFIG_ENV` (set to `release`)
    - _Production\*_: `CALYPSO_SECRETS_ENCRYPTION_KEY` (it's a secret!)
@@ -26,6 +26,7 @@ export DEBUG='*'
 
 For a quicker and more efficient development experience, the application can be run in "development mode", which executes the application code directly (i.e. without building the app). This development mode can be ran against production WordPress.com webapp, or a local instance of Calypso.
 
+- First, create your config file with `yarn run build:config`
 - Use `yarn run dev` to run development mode and load production WordPress.com, _OR_
 - Boot Calpyso from the root of the Calypso repository with `yarn start`. Once Calypso is ready, the desktop app can be booted with `yarn run dev:localhost` to load the local instance of Calypso.
 

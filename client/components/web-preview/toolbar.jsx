@@ -1,14 +1,14 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -46,6 +46,8 @@ class PreviewToolbar extends Component {
 		onEdit: PropTypes.func,
 		// Whether or not the current user has access to the customizer
 		canUserEditThemeOptions: PropTypes.bool,
+		isUnlaunchedSite: PropTypes.bool,
+		selectedSiteId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -72,17 +74,6 @@ class PreviewToolbar extends Component {
 		window.location.href = this.props.customizeUrl;
 	};
 
-	constructor( props ) {
-		super();
-
-		this.devices = {
-			computer: { title: props.translate( 'Desktop' ), icon: 'computer' },
-			tablet: { title: props.translate( 'Tablet' ), icon: 'tablet' },
-			phone: { title: props.translate( 'Phone' ), icon: 'phone' },
-			seo: { title: props.translate( 'Search & Social' ), icon: 'globe' },
-		};
-	}
-
 	render() {
 		const {
 			canUserEditThemeOptions,
@@ -101,9 +92,17 @@ class PreviewToolbar extends Component {
 			showSEO,
 			showEditHeaderLink,
 			translate,
+			isUnlaunchedSite,
 		} = this.props;
 
-		const selectedDevice = this.devices[ currentDevice ];
+		const devices = {
+			computer: { title: translate( 'Desktop' ), icon: 'computer' },
+			tablet: { title: translate( 'Tablet' ), icon: 'tablet' },
+			phone: { title: translate( 'Phone' ), icon: 'phone' },
+			seo: { title: translate( 'Search & Social' ), icon: 'globe' },
+		};
+
+		const selectedDevice = devices[ currentDevice ];
 		const devicesToShow = showSEO ? possibleDevices.concat( 'seo' ) : possibleDevices;
 		return (
 			<div className="web-preview__toolbar">
@@ -131,10 +130,10 @@ class PreviewToolbar extends Component {
 								key={ device }
 								selected={ device === currentDevice }
 								onClick={ () => setDeviceViewport( device ) }
-								icon={ <Gridicon size={ 18 } icon={ this.devices[ device ].icon } /> }
+								icon={ <Gridicon size={ 18 } icon={ devices[ device ].icon } /> }
 								e2eTitle={ device }
 							>
-								{ this.devices[ device ].title }
+								{ devices[ device ].title }
 							</SelectDropdown.Item>
 						) ) }
 					</SelectDropdown>
@@ -168,18 +167,20 @@ class PreviewToolbar extends Component {
 						</Button>
 					) }
 					{ showExternal && (
-						<Button
-							primary
-							className="web-preview__external"
-							href={ externalUrl || previewUrl }
-							target={ isModalWindow ? '_blank' : null }
-							rel="noopener noreferrer"
-							onClick={ this.handleEditorWebPreviewExternalClick }
-						>
-							{ translate( 'Visit site' ) }
-						</Button>
+						<>
+							<Button
+								primary={ ! isUnlaunchedSite }
+								className="web-preview__external"
+								href={ externalUrl || previewUrl }
+								target={ isModalWindow ? '_blank' : null }
+								rel="noopener noreferrer"
+								onClick={ this.handleEditorWebPreviewExternalClick }
+							>
+								{ translate( 'Visit site' ) }
+							</Button>
+						</>
 					) }
-					<div className="web-preview__toolbar-tray">{ this.props.children }</div>
+					{ this.props.children }
 				</div>
 			</div>
 		);
@@ -197,6 +198,8 @@ export default connect(
 		return {
 			canUserEditThemeOptions,
 			customizeUrl: getCustomizerUrl( state, siteId, null, window.location.href ),
+			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
+			selectedSiteId,
 		};
 	},
 	{ recordTracksEvent }

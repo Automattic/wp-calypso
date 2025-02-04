@@ -42,4 +42,21 @@ describe( 'Phone Number: findCountyFromNumber', () => {
 		const result = findCountryFromNumber( number ).isoCode;
 		expect( result ).toEqual( expected );
 	} );
+
+	test.each( [
+		{ number: '+1 ', fallback: 'CA', expected: 'CA' },
+		{ number: '+1 ', expected: 'US' },
+		{ number: '+1 20', fallback: 'CA', expected: 'CA' },
+		{ number: '+1 20', expected: 'US' },
+		{ number: '+1 204', expected: 'CA' },
+		{ number: '+551204', fallback: 'CA', expected: 'BR' },
+		{ number: '+551204', fallback: 'US', expected: 'BR' },
+		{ number: '+551204', expected: 'BR' },
+	] )(
+		`Fallback to $fallback if prefix matches - else returns a country as soon as possible from "$number"`,
+		function ( { number, fallback, expected } ) {
+			const result = findCountryFromNumber( number, fallback ).isoCode;
+			expect( result ).toEqual( expected );
+		}
+	);
 } );

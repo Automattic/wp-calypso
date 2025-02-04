@@ -1,16 +1,16 @@
 // Must be included in root style.scss of /stats, /store, and /google-my-business/stats
 
 @use "sass:math";
-@import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@automattic/components/src/highlight-cards/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 $stats-background-color: #fdfdfd;
 $stats-sections-max-width: 1224px;
 $stats-layout-contnet-padding-top: 79px;
-$sidebar-appearance-break-point: 783px;
+$sidebar-appearance-break-point: $break-medium;
 
 // Elements above main layout content per pages
 .stats__section-header,
-.store-stats__section-header,
 .stats-navigation,
 .stats-banner-wrapper {
 	background-color: var(--studio-white);
@@ -24,17 +24,23 @@ $sidebar-appearance-break-point: 783px;
 	> .highlight-cards,
 	> .stats__all-time-highlights-section,
 	> .stats__all-time-views-section,
-	> .stats__post-detail-highlights-section,
 	> .stats__post-detail-table-section,
-	> .stats__gmb-location-wrapper {
+	> .stats__gmb-location-wrapper,
+	> .subscribers-page,
+	> .post-trends {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
 	}
 
 	// Ensures horizontal padding for all sections.
-	@media ( min-width: $custom-mobile-breakpoint ) {
-		> * {
-			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+	> * {
+		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+
+		&:not(.navigation-header) {
+			@media (max-width: $break-small) {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 	}
 
@@ -43,8 +49,23 @@ $sidebar-appearance-break-point: 783px;
 		margin-bottom: 32px;
 	}
 
-	&.has-fixed-nav {
-		padding-top: 44px;
+	.navigation-header {
+		margin-bottom: 0;
+		padding-bottom: 24px;
+		padding-left: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+		padding-right: max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+		background-color: var(--studio-white);
+
+		@media (max-width: $break-small) {
+			// Restore padding to 16px on mobile as per the `.navigation-header` style.
+			padding: 16px;
+			// Reduce gap to the following section on mobile.
+			padding-bottom: 24px;
+		}
+
+		@media (max-width: $break-mobile) {
+			padding-bottom: 0;
+		}
 	}
 }
 
@@ -58,7 +79,7 @@ $sidebar-appearance-break-point: 783px;
 	&.theme-default .focus-content .layout__content {
 		padding: $stats-layout-contnet-padding-top 0 0 0;
 
-		@media ( min-width: $sidebar-appearance-break-point ) {
+		@media (min-width: $sidebar-appearance-break-point) {
 			padding: $stats-layout-contnet-padding-top 0 0 calc(var(--sidebar-width-max) + 1px);
 		}
 

@@ -1,5 +1,6 @@
 import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export type Location = {
 	pathname: string;
@@ -23,10 +24,16 @@ export interface HelpCenterSite {
 	ID: number | string;
 	name: string;
 	URL: string;
+	domain: string;
 	plan: Plan;
 	is_wpcom_atomic: boolean;
 	jetpack: boolean;
 	logo: SiteLogo;
+	options: {
+		launchpad_screen: string;
+		site_intent: string;
+		admin_url: string;
+	};
 }
 
 export interface Dispatch {
@@ -37,3 +44,5 @@ export interface APIFetchOptions {
 	global: boolean;
 	path: string;
 }
+
+export type HelpCenterSelect = SelectFromMap< typeof selectors >;

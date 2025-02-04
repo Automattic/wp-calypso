@@ -1,15 +1,18 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { Field } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useState } from 'react';
-import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useDispatch as useReduxDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
+import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 
 import './style.scss';
@@ -17,9 +20,13 @@ import './style.scss';
 export default function CreditCardFields() {
 	const { __ } = useI18n();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
-		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	const fields: StoreState< string > = useSelect(
+		( select ) => select( creditCardStore ).getFields(),
+		[]
+	);
+	const useAsPrimaryPaymentMethod: boolean = useSelect(
+		( select ) => select( creditCardStore ).useAsPrimaryPaymentMethod(),
+		[]
 	);
 	const getField = ( key: string | number ) => fields[ key ] || {};
 	const getErrorMessagesForField = ( key: string | number ) => {
@@ -68,12 +75,14 @@ export default function CreditCardFields() {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
+	const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
+
 	return (
 		<>
 			{ ! isStripeFullyLoaded && <CreditCardLoading /> }
 
 			<div
-				className={ classnames( 'credit-card-fields', {
+				className={ clsx( 'credit-card-fields', {
 					'credit-card-fields--is-loaded': isStripeFullyLoaded,
 				} ) }
 			>
@@ -82,7 +91,7 @@ export default function CreditCardFields() {
 					className="credit-card-fields__input-field"
 					type="Text"
 					autoComplete="cc-name"
-					label={ __( 'Name' ) }
+					label={ isNewCardAdditionEnabled ? __( 'Name on card' ) : __( 'Name' ) }
 					value={ cardholderName?.value ?? '' }
 					onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
 					isError={ !! cardholderNameErrorMessage }

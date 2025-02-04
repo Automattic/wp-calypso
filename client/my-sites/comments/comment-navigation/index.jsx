@@ -1,16 +1,22 @@
-import { Button, Gridicon } from '@automattic/components';
+import {
+	Button,
+	Count,
+	Gridicon,
+	Popover,
+	SegmentedControl,
+	FormLabel,
+} from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual, map } from 'lodash';
-import { Component } from 'react';
+import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
-import Count from 'calypso/components/count';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import SegmentedControl from 'calypso/components/segmented-control';
 import UrlSearch from 'calypso/lib/url-search';
 import {
 	bumpStat,
@@ -21,6 +27,7 @@ import {
 import {
 	changeCommentStatus,
 	deleteComment,
+	emptyComments,
 	requestCommentsList,
 	unlikeComment,
 } from 'calypso/state/comments/actions';
@@ -46,7 +53,12 @@ export class CommentNavigation extends Component {
 		order: NEWEST_FIRST,
 	};
 
-	shouldComponentUpdate = ( nextProps ) => ! isEqual( this.props, nextProps );
+	state = {
+		showPopover: false,
+	};
+
+	shouldComponentUpdate = ( nextProps, nextState ) =>
+		! isEqual( this.props, nextProps ) || ! isEqual( this.state, nextState );
 
 	componentDidUpdate = ( prevProps ) => {
 		const { commentsListQuery, hasPendingBulkAction, refreshPage } = this.props;
@@ -62,6 +74,19 @@ export class CommentNavigation extends Component {
 			window.confirm( translate( 'Delete these comments permanently?' ) )
 		) {
 			this.setBulkStatus( 'delete' )();
+		}
+	};
+
+	emptyPermanently = () => {
+		const { status, translate } = this.props;
+		if (
+			window.confirm(
+				status === 'spam'
+					? translate( 'Empty all spam permanently?' )
+					: translate( 'Empty all trash permanently?' )
+			)
+		) {
+			this.props.emptyPermanently( status );
 		}
 	};
 
@@ -175,15 +200,28 @@ export class CommentNavigation extends Component {
 		return this.props.toggleSelectAll( this.props.visibleComments );
 	};
 
+	popoverButtonRef = createRef();
+
+	showPopover = () => {
+		this.setState( { showPopover: true } );
+	};
+
+	closePopover = () => {
+		this.setState( { showPopover: false } );
+	};
+
 	render() {
 		const {
 			doSearch,
+			filterUnreplied,
 			hasSearch,
 			hasComments,
 			isBulkMode,
+			isPostView,
 			isSelectedAll,
 			query,
 			selectedComments,
+			setFilterUnreplied,
 			setOrder,
 			order,
 			status: queryStatus,
@@ -271,7 +309,7 @@ export class CommentNavigation extends Component {
 						<NavItem
 							key={ status }
 							count={ count }
-							compactCount={ true }
+							compactCount
 							onClick={ this.changeFilter( status ) }
 							path={ this.getStatusPath( status ) }
 							selected={ queryStatus === status }
@@ -304,9 +342,55 @@ export class CommentNavigation extends Component {
 					) }
 
 					{ hasComments && (
-						<Button compact onClick={ toggleBulkMode }>
-							{ translate( 'Bulk edit' ) }
-						</Button>
+						<>
+							<Button compact onClick={ toggleBulkMode }>
+								{ translate( 'Bulk edit' ) }
+							</Button>
+
+							{ this.statusHasAction( 'delete' ) && ! isPostView && (
+								<Button
+									compact
+									scary
+									onClick={ this.emptyPermanently }
+									className="comment-navigation__button-empty"
+								>
+									{ this.props.status === 'spam'
+										? translate( 'Empty spam' )
+										: translate( 'Empty trash' ) }
+								</Button>
+							) }
+						</>
+					) }
+
+					{ hasComments && (
+						<>
+							<Button
+								title={ translate( 'Settings' ) }
+								compact
+								borderless
+								onClick={ this.showPopover }
+								ref={ this.popoverButtonRef }
+								aria-haspopup
+							>
+								<Gridicon icon="cog" />
+							</Button>
+							<Popover
+								onClose={ this.closePopover }
+								context={ this.popoverButtonRef.current }
+								isVisible={ this.state.showPopover }
+								position="top left"
+							>
+								<FormFieldset className="comment-navigation__unreplied-comments">
+									<FormLabel>
+										<FormCheckbox
+											checked={ filterUnreplied }
+											onChange={ setFilterUnreplied( ! filterUnreplied ) }
+										/>
+										<span>{ translate( 'Collapse replied comments' ) }</span>
+									</FormLabel>
+								</FormFieldset>
+							</Popover>
+						</>
 					) }
 				</CommentNavigationTab>
 
@@ -362,6 +446,17 @@ const mapDispatchToProps = ( dispatch, { siteId, commentsListQuery } ) => ( {
 					bumpStat( 'calypso_comment_management', 'comment_deleted' )
 				),
 				deleteComment( siteId, postId, commentId, { showSuccessNotice: true }, commentsListQuery )
+			)
+		),
+	// Empty all comments (from spam or trash only)
+	emptyPermanently: ( status ) =>
+		dispatch(
+			withAnalytics(
+				composeAnalytics(
+					recordTracksEvent( 'calypso_comment_management_empty' ),
+					bumpStat( 'calypso_comment_management', 'comments_emptied' )
+				),
+				emptyComments( siteId, status, { showSuccessNotice: true }, commentsListQuery )
 			)
 		),
 	recordBulkAction: ( action, count, fromList, view = 'site' ) =>

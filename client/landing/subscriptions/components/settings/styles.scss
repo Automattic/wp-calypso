@@ -1,0 +1,55 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+.settings {
+	.setting-item {
+		margin-bottom: 24px;
+
+		&__hint {
+			color: $studio-gray-50;
+			font-size: $font-body-extra-small;
+			text-align: left;
+		}
+
+		&__label,
+		.components-toggle-control__label {
+			font-size: $font-body-small;
+			line-height: $font-title-small;
+			font-weight: 400;
+			color: $studio-gray-100;
+		}
+
+		&__label {
+			margin-bottom: 8px;
+			text-align: left;
+		}
+
+		.components-toggle-control {
+			margin: 0;
+		}
+
+		&__app-hint {
+			margin: 16px 0 8px;
+			padding: 16px;
+			background-color: $studio-gray-0;
+			font-size: $font-body-extra-small;
+			text-align: left;
+			display: flex;
+
+			.jetpack-logo {
+				display: inline-block;
+				vertical-align: middle;
+				margin-right: 8px;
+			}
+
+			p {
+				margin: 0;
+			}
+
+			a {
+				color: $studio-gray-90;
+				text-decoration: underline;
+			}
+		}
+	}
+}

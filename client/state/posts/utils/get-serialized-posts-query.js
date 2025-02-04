@@ -2,7 +2,6 @@ import { getNormalizedPostsQuery } from 'calypso/state/posts/utils/get-normalize
 
 /**
  * Returns a serialized posts query
- *
  * @param  {Object} query  Posts query
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized posts query

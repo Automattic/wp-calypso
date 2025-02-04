@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 

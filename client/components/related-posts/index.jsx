@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { times } from 'lodash';
 import { connect } from 'react-redux';
 import RelatedPost from 'calypso/blocks/reader-related-card';
@@ -47,7 +47,7 @@ function RelatedPosts( {
 
 	return (
 		/* eslint-disable */
-		<div className={ classnames( 'reader-related-card__blocks', className ) }>
+		<div className={ clsx( 'reader-related-card__blocks', className ) }>
 			{ ! posts && <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } /> }
 			<h1 className="reader-related-card__heading">{ title }</h1>
 			<ul className="reader-related-card__list">{ listItems }</ul>

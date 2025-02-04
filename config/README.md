@@ -29,6 +29,8 @@ You can search for feature flags by partial string or regular expression with th
 
 Run `yarn feature-search [search]` from the root calypso directory to see example searches.
 
+You can also activate feature flags only in your development environment. To do this, create a `.env` file in the root folder of the cloned repository. Add the variable `ACTIVE_FEATURE_FLAGS`, and specify the feature flags you want to activate, as a string separated by commas. For more details of how to create the `.env` file, see <https://github.com/mrsteele/dotenv-webpack#create-a-env-file>.
+
 ### Progression of Environments
 
 When working with feature flags, there is a progression of environments that should be considered.
@@ -40,6 +42,10 @@ For development of WordPress.com, that looks something like:
 For development of Jetpack, this looks something like:
 
 > jetpack-cloud-development -> jetpack-cloud-horizon -> jetpack-cloud-stage -> jetpack-cloud-production
+
+For development of Automattic for Agencies, this looks something like:
+
+> a8c-for-agencies-development -> a8c-for-agencies-horizon -> a8c-for-agencies-stage -> a8c-for-agencies-production
 
 As we enable a feature through these progressions, left to right, the feature should most likely be enabled on environments to the left. For example, if a WordPress.com feature is currently enabled in horizon, it should likely also be enabled in development and wpcalypso.
 

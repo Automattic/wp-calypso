@@ -37,6 +37,10 @@ export default function isJetpackSitePred( options?: IsJetpackSitePredOptions ) 
 		// Merge default options with options.
 		const mergedOptions = options ? { ...DEFAULT_OPTIONS, ...options } : DEFAULT_OPTIONS;
 
+		if ( site.options?.is_wpcom_simple ) {
+			return false;
+		}
+
 		// If the site is an Atomic site, but we should not treat it as Jetpack site, return false.
 		if ( ! mergedOptions.treatAtomicAsJetpackSite && site.options?.is_wpcom_atomic ) {
 			return false;

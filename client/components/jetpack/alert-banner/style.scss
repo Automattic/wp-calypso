@@ -1,0 +1,33 @@
+:root {
+	--alert-yellow: #f0b849;
+	--alert-yellow-light: #fef8ee;
+}
+
+.alert-banner {
+	padding: 12px;
+	font-weight: 400;
+	font-size: 0.75rem;
+	border-radius: 4px;
+	line-height: 24px;
+}
+
+// except for warning, colors are placeholders.
+.alert-banner__success {
+	border-left: 4px solid var(--studio-green-40);
+	background-color: var(--studio-green-5);
+}
+
+.alert-banner__info {
+	border-left: 4px solid var(--studio-blue-40);
+	background-color: var(--studio-blue-5);
+}
+
+.alert-banner__warning {
+	border-left: 4px solid var(--alert-yellow);
+	background-color: var(--alert-yellow-light);
+}
+
+.alert-banner__error {
+	border-left: 4px solid var(--color-scary-40);
+	background-color: var(--color-scary-5);
+}

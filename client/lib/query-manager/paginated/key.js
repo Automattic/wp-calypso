@@ -9,7 +9,6 @@ import { PAGINATION_QUERY_KEYS } from './constants';
 export default class PaginatedQueryKey extends QueryKey {
 	/**
 	 * Returns a serialized query, given a query object
-	 *
 	 * @param  {Object} query Query object
 	 * @returns {string}       Serialized query
 	 */
@@ -19,7 +18,6 @@ export default class PaginatedQueryKey extends QueryKey {
 
 	/**
 	 * Returns a query object, given a serialized query
-	 *
 	 * @param  {string} key Serialized query
 	 * @returns {Object}     Query object
 	 */

@@ -16,9 +16,8 @@ const debug = debugFactory( 'calypso:site-features:actions' );
 
 /**
  * Fetches features for the given site.
- *
  * @param {number} siteId identifier of the site
- * @returns {Function} a promise that will resolve once fetching is completed
+ * @returns {import('redux-thunk').ThunkAction} Action thunk - a promise that will resolve once fetching is completed
  */
 export function fetchSiteFeatures( siteId ) {
 	return ( dispatch ) => {
@@ -29,8 +28,9 @@ export function fetchSiteFeatures( siteId ) {
 
 		return wpcom.req
 			.get( `/sites/${ siteId }/features` )
-			.then( ( data ) => {
-				dispatch( fetchSiteFeaturesCompleted( siteId, data ) );
+			.then( ( features ) => {
+				dispatch( fetchSiteFeaturesCompleted( siteId, features ) );
+				return features;
 			} )
 			.catch( ( error ) => {
 				debug( 'Fetching site features failed: ', error );
@@ -91,7 +91,6 @@ function fetchJetpackSitesFeaturesReceive( features ) {
 /**
  * Returns an action object to be used in signalling that an object containing
  * the features for a given site have been received.
- *
  * @param {number} siteId - identifier of the site
  * @param {Object} features - list of features received from the API
  * @returns {Object} the corresponding action object

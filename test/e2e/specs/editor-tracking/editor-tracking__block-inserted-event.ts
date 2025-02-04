@@ -8,7 +8,6 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
 	SiteType,
@@ -40,7 +39,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {
@@ -83,9 +82,8 @@ describe(
 
 					let tracksEventProperties: TracksEventProperties;
 					beforeAll( async function () {
-						[ , tracksEventProperties ] = await editorTracksEventManager.getMostRecentMatchingEvent(
-							'wpcom_block_inserted'
-						);
+						[ , tracksEventProperties ] =
+							await editorTracksEventManager.getMostRecentMatchingEvent( 'wpcom_block_inserted' );
 					} );
 
 					it( '"editor_type" is "post"', async function () {
@@ -147,7 +145,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new page', async function () {
@@ -163,14 +161,8 @@ describe(
 
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
-					// @TODO Consider moving this to EditorPage.
-					const editorWindowLocator = editorPage.getEditorWindowLocator();
-					const pageTemplateModalComponent = new PageTemplateModalComponent(
-						page,
-						editorWindowLocator
-					);
-					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
-					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
+					await editorPage.selectTemplateCategory( 'About' );
+					await editorPage.selectTemplate( 'Two column about me layout' );
 				} );
 
 				it( '"wpcom_block_inserted" event fires with "from_template_selector" set to true', async function () {
@@ -207,7 +199,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			afterAll( async () => {
@@ -218,7 +210,7 @@ describe(
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 
@@ -313,9 +305,8 @@ describe(
 				// to adjust the test to match the tracking behavior or adjust
 				// the underlyting tracking behavior.
 				it( '"wpcom_block_instered" event does NOT fire', async function () {
-					const eventDidFire = await editorTracksEventManager.didEventFire(
-						'wpcom_block_inserted'
-					);
+					const eventDidFire =
+						await editorTracksEventManager.didEventFire( 'wpcom_block_inserted' );
 					expect( eventDidFire ).toBe( false );
 				} );
 			} );

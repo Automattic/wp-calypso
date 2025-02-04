@@ -3,18 +3,69 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
+import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { createReduxStore } from 'calypso/state';
+import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
+import initialReducer from 'calypso/state/reducer';
+import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( {
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
+			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+		];
+
+		if ( siteIntentOption === 'free' ) {
+			checklist = [
+				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+				{
+					id: 'domain_upsell',
+					completed: false,
+					disabled: false,
+					title: 'Choose a domain',
+					badge_text: 'Upgrade plan',
+				},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		if ( siteIntentOption === 'newsletter' ) {
+			checklist = [
+				{
+					id: 'newsletter_setup',
+					completed: false,
+					disabled: true,
+					title: 'Personalize newsletter',
+				},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		return {
+			data: {
+				site_intent: siteIntentOption,
+				checklist,
+			},
+			isFetchedAfterMount: true,
+		};
+	},
 } ) );
 
 const siteName = 'testlinkinbio';
@@ -26,8 +77,8 @@ const sidebarDomain = buildDomainResponse( {
 	isWPCOMDomain: true,
 } );
 
-const upgradeDomainBadgeText = 'Customize';
-const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }`;
+const upgradeDomainBadgeText = 'Pick a custom domain';
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }?domainAndPlanPackage=true`;
 
 const props = {
 	sidebarDomain,
@@ -36,11 +87,33 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
-	flow: 'link-in-bio',
+	flow: 'link-in-bio-tld',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
-function renderSidebar( props, siteDetails = defaultSiteDetails ) {
+const user = {
+	ID: 1234,
+	username: 'testUser',
+	email: 'testemail@wordpress.com',
+	email_verified: false,
+};
+
+function renderSidebar( props, siteDetails = defaultSiteDetails, emailVerified = false ) {
+	const initialState = getInitialState( initialReducer, user.ID );
+	const reduxStore = createReduxStore(
+		{
+			...initialState,
+			currentUser: {
+				user: {
+					...user,
+					email_verified: emailVerified,
+				},
+			},
+		},
+		initialReducer
+	);
+	setStore( reduxStore, getStateFromCache( user.ID ) );
+
 	function TestSidebar( props ) {
 		const SITE_STORE = Site.register( {
 			client_id: config( 'wpcom_signup_id' ),
@@ -52,25 +125,34 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
-				<Sidebar { ...props } />
-			</MemoryRouter>
+			<redux.Provider store={ reduxStore }>
+				<MemoryRouter
+					initialEntries={ [ `/setup/link-in-bio-tld/launchpad?siteSlug=${ siteSlug }` ] }
+				>
+					<Sidebar { ...props } />
+				</MemoryRouter>
+			</redux.Provider>
 		);
 	}
 
-	render( <TestSidebar { ...props } /> );
+	renderWithProvider( <TestSidebar { ...props } /> );
 }
 
 describe( 'Sidebar', () => {
-	afterEach( () => {
-		props.sidebarDomain = sidebarDomain;
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ props.siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
 	} );
 
-	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
-		renderSidebar( props );
-
-		const escapeHatchButton = screen.getByRole( 'button', { name: /Skip to dashboard/i } );
-		expect( escapeHatchButton ).toBeVisible();
+	afterEach( () => {
+		nock.cleanAll();
+		props.sidebarDomain = sidebarDomain;
 	} );
 
 	it( 'displays the current site url', () => {
@@ -85,6 +167,30 @@ describe( 'Sidebar', () => {
 		expect( renderedDomain ).toBeVisible();
 	} );
 
+	it( 'start-writing flow does not display the current site url', () => {
+		renderSidebar( {
+			...props,
+			flow: 'start-writing',
+		} );
+
+		const renderedDomain = screen.queryByText( ( content ) =>
+			content.includes( secondAndTopLevelDomain )
+		);
+		expect( renderedDomain ).toBeNull();
+	} );
+
+	it( 'design-first flow does not display the current site url', () => {
+		renderSidebar( {
+			...props,
+			flow: 'design-first',
+		} );
+
+		const renderedDomain = screen.queryByText( ( content ) =>
+			content.includes( secondAndTopLevelDomain )
+		);
+		expect( renderedDomain ).toBeNull();
+	} );
+
 	it( 'displays customize badge for wpcom domains (free)', () => {
 		renderSidebar( props );
 		expect( screen.getByRole( 'link', { name: upgradeDomainBadgeText } ) ).toHaveAttribute(
@@ -97,6 +203,22 @@ describe( 'Sidebar', () => {
 		props.sidebarDomain = buildDomainResponse( {
 			domain: 'paidtestlinkinbio.blog',
 			isWPCOMDomain: false,
+		} );
+
+		renderSidebar( props );
+
+		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {
+			name: 'upgradeDomainBadgeText',
+		} );
+
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
+	} );
+
+	it( 'does not display customize badge for a flow with a redundant domain upsell task', () => {
+		props.sidebarDomain = buildDomainResponse( {
+			domain: 'paidtestlinkinbio.blog',
+			flow: 'free',
+			isWPCOMDomain: true,
 		} );
 
 		renderSidebar( props );
@@ -140,7 +262,7 @@ describe( 'Sidebar', () => {
 			} );
 
 			const domainProcessingNotification = screen.queryByText(
-				/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				/We are currently setting up your new domain!/i
 			);
 
 			expect( domainProcessingNotification ).not.toBeInTheDocument();
@@ -173,7 +295,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.getByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).toBeInTheDocument();
@@ -207,7 +329,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.queryByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).not.toBeInTheDocument();
@@ -239,6 +361,53 @@ describe( 'Sidebar', () => {
 
 				const title = screen.getByRole( 'heading', { name: /link and launch/i } );
 				expect( title ).toBeVisible();
+			} );
+		} );
+	} );
+
+	describe( 'when the tailored flow includes a upsell task', () => {
+		describe( 'and the site is on a free plan', () => {
+			it( 'displays the upgrade plan badge on the "Choose a domain" task for free flow', () => {
+				const freeFlowProps = { ...props, flow: 'free' };
+
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						site_intent: 'free',
+					},
+					plan: {
+						is_free: true,
+					},
+				} );
+				renderSidebar( freeFlowProps, siteDetails );
+
+				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+
+				expect( domainUpsellTaskFreeFlow ).toBeVisible();
+				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and the site is on a paid plan', () => {
+			it( 'does not display the upgrade plan badge on the "Choose a domain" task for free flow', () => {
+				const freeFlowProps = { ...props, flow: 'free' };
+
+				const siteDetails = buildSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						site_intent: 'free',
+					},
+					plan: {
+						is_free: false,
+					},
+				} );
+				renderSidebar( freeFlowProps, siteDetails );
+
+				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
+				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
+				expect( domainUpsellTask ).toBeVisible();
+				expect( domainUpsellTaskBadge ).toBeNull();
 			} );
 		} );
 	} );

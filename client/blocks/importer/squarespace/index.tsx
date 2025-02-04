@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
@@ -63,6 +63,11 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 		};
 	}
 
+	function onTryAgainClick() {
+		job?.importerId && resetImport( siteId, job.importerId );
+		stepNavigator?.goToImportCapturePage?.();
+	}
+
 	function checkProgress() {
 		return job?.importerState === appStates.IMPORTING;
 	}
@@ -91,7 +96,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 
 	return (
 		<>
-			<div className={ classnames( `importer-${ importer }`, 'import-layout__center' ) }>
+			<div className={ clsx( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( ! job ) {
 						return;
@@ -106,12 +111,7 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return (
-							<ErrorMessage
-								onStartBuilding={ stepNavigator?.goToIntentPage }
-								onBackToStart={ stepNavigator?.goToImportCapturePage }
-							/>
-						);
+						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					}

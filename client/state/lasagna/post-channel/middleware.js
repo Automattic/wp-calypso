@@ -79,7 +79,6 @@ const leaveChannel = ( topic ) => lasagna.leaveChannel( topic );
 
 /**
  * Middleware
- *
  * @param store middleware store
  */
 export default ( store ) => ( next ) => ( action ) => {

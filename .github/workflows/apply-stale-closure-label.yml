@@ -1,0 +1,35 @@
+name: Add [Closed] Stale label to closed issues
+
+on:
+  issues:
+    types: closed
+
+jobs:
+  add_label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Get all comments on issue
+        uses: octokit/request-action@v2.x
+        id: get_all_comments
+        with:
+          route: GET /repos/${{github.repository}}/issues/${{ github.event.issue.number }}/comments
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Identify last comment
+        id: get_last_comment
+        env:
+          COMMENTS_OUTPUT: ${{ steps.get_all_comments.outputs.data }}
+        run: |
+          last_comment=$( echo "$COMMENTS_OUTPUT" | tr -d '[:cntrl:]' | jq -r '.[-1].body' )
+          echo comment=$last_comment >> $GITHUB_OUTPUT
+
+      - name: Add [Closed] Stale label
+        id: add_closed_stale_label
+        uses: actions-ecosystem/action-add-labels@v1
+        if: contains( steps.get_last_comment.outputs.comment, 'Since this issue has been inactive for quite some time, it has now been closed.' )
+        with:
+          labels: "[Closed] Stale"

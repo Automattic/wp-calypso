@@ -5,8 +5,14 @@ import { Page } from 'playwright';
  *
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
-export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
-type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
+export type StepName =
+	| 'goals'
+	| 'vertical'
+	| 'intent'
+	| 'designSetup'
+	| 'options'
+	| 'designChoices';
+type WriteActions = 'Start writing' | 'Start learning' | 'View designs';
 
 const selectors = {
 	// Generic
@@ -16,15 +22,15 @@ const selectors = {
 	// Inputs
 	blogNameInput: 'input[name="siteTitle"]:not(:disabled)',
 	taglineInput: 'input[name="tagline"]:not(:disabled)',
-	verticalInput: '.select-vertical__suggestion-input input',
-	verticalSelectItem: ( target: string ) => `.suggestions__item :text("${ target }")`,
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
 
 	// Goals
-	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
-	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
+	goalButton: ( goal: string ) =>
+		`.select-card-checkbox__container:has-text("${ goal.toLowerCase() }")`,
+	selectedGoalButton: ( goal: string ) =>
+		`.select-card-checkbox__container:has(:checked):has-text("${ goal }")`,
 
 	// Step containers
 	contentAgnosticContainer: '.step-container',
@@ -33,6 +39,7 @@ const selectors = {
 	verticalsStepContainer: '.site-vertical',
 	intentStepContainer: '.intent-step',
 	optionsStepContainer: '.is-step-write',
+	designChoicesStepContainer: '.design-choices',
 };
 
 /**
@@ -56,7 +63,7 @@ export class StartSiteFlow {
 	 * @param {string} text User-visible text on the button.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( selectors.button( text ) );
+		await this.page.getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
@@ -68,9 +75,6 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.goalsStepContainer ).count() ) > 0 ) {
 			return 'goals';
 		}
-		if ( ( await this.page.locator( selectors.verticalsStepContainer ).count() ) > 0 ) {
-			return 'vertical';
-		}
 		if ( ( await this.page.locator( selectors.intentStepContainer ).count() ) > 0 ) {
 			return 'intent';
 		}
@@ -80,6 +84,9 @@ export class StartSiteFlow {
 		if ( ( await this.page.locator( selectors.optionsStepContainer ).count() ) > 0 ) {
 			return 'options';
 		}
+		if ( ( await this.page.locator( selectors.designChoicesStepContainer ).count() ) > 0 ) {
+			return 'designChoices';
+		}
 		throw new Error( `Unknown or invalid step` );
 	}
 
@@ -88,27 +95,21 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} goal The goal to select
 	 */
-	async selectGoal( goal: Goals ): Promise< void > {
+	async selectGoal( goal: string ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
 
 	/**
-	 * Enter site vertical.
+	 * Select a design choice by text.
 	 *
-	 * @param {string} vertical Name of the vertical to select
+	 * @param {string} choice The button text
 	 */
-	async enterVertical( vertical: string ): Promise< void > {
-		const input = this.page.locator( selectors.verticalInput );
-		await input.fill( vertical );
+	async clickDesignChoice( choice: 'theme' | 'ai' ): Promise< void > {
+		// It's best to select the element using accessible text
+		const choiceLabel = choice === 'theme' ? 'Start with a theme' : 'Create with AI (BETA)';
 
-		const targetVerticalLocator = this.page.locator( selectors.verticalSelectItem( vertical ) );
-		await targetVerticalLocator.click();
-
-		const readBack = await input.inputValue();
-		if ( readBack !== vertical ) {
-			throw new Error( `Failed to set vertical: expected ${ vertical }, got ${ readBack }` );
-		}
+		await this.page.getByRole( 'button', { name: choiceLabel } ).click();
 	}
 
 	/**
@@ -145,6 +146,29 @@ export class StartSiteFlow {
 		}
 	}
 
+	/* Write Goal */
+
+	/**
+	 * Performs action available in the Write intent.
+	 *
+	 * @param {WriteActions} action Actions for the Write intent.
+	 */
+	async clickWriteAction( action: WriteActions ) {
+		await this.page.getByRole( 'button', { name: action } ).click();
+
+		if ( action === 'Start writing' ) {
+			// Extended timeout because the site is being
+			// headstarted at this time.
+			await this.page.waitForURL( /setup\/site-setup\/processing/, { timeout: 20 * 1000 } );
+		}
+		if ( action === 'Start learning' ) {
+			await this.page.waitForURL( /setup\/site-setup\/courses/ );
+		}
+		if ( action === 'View designs' ) {
+			await this.page.waitForURL( /setup\/site-setup\/designSetup/ );
+		}
+	}
+
 	/**
 	 * Validates we've landed on the design picker screen.
 	 */
@@ -165,7 +189,6 @@ export class StartSiteFlow {
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
 	async selectTheme( themeName: string ): Promise< void > {
-		const locator = this.page.locator( selectors.individualThemeContainer( themeName ) );
-		await locator.click();
+		await this.page.getByRole( 'link', { name: themeName } ).first().click();
 	}
 }

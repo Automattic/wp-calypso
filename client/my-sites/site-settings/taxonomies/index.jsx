@@ -1,34 +1,35 @@
-import classnames from 'classnames';
+import { useLocale } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
 import TaxonomyManager from 'calypso/blocks/taxonomy-manager';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
+	const locale = useLocale();
 	const taxonomyName = labels.name?.toLowerCase();
 
 	return (
-		<Main wideLayout className={ classnames( 'taxonomies', taxonomy ) }>
-			<ScreenOptionsTab wpAdminPath={ `edit-tags.php?taxonomy=${ taxonomy }` } />
+		<Main wideLayout className={ clsx( 'taxonomies', taxonomy ) }>
 			<DocumentHead
 				title={ translate( 'Manage %(taxonomy)s', { args: { taxonomy: labels.name } } ) }
 			/>
-			<FormattedHeader
-				brandFont
-				headerText={ labels.name }
-				subHeaderText={ translate(
+			<NavigationHeader
+				screenOptionsTab={ `edit-tags.php?taxonomy=${ taxonomy }` }
+				navigationItems={ [] }
+				title={ labels.name }
+				subtitle={ translate(
 					'Create, edit, and manage the %(taxonomy)s on your site. {{learnMoreLink/}}',
 					{
-						args: { taxonomy: taxonomyName },
+						args: { taxonomy: locale === 'de' ? labels.name : taxonomyName },
 						components: {
 							learnMoreLink: (
 								<InlineSupportLink
@@ -40,8 +41,6 @@ const Taxonomies = ( { translate, labels, postType, taxonomy } ) => {
 						},
 					}
 				) }
-				align="left"
-				hasScreenOptions
 			/>
 			<TaxonomyManager taxonomy={ taxonomy } postType={ postType } />
 		</Main>

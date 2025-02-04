@@ -23,7 +23,11 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 		// Avoid confusing the receipt ID for the site ID in domain-only checkouts.
 		0 === basePath.indexOf( '/checkout/thank-you/no-site/' ) ||
 		// Avoid confusing the subscription ID for the site ID in gifting checkouts.
-		( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) )
+		( basePath.includes( '/gift/' ) && basePath.startsWith( '/checkout/' ) ) ||
+		// Avoid confusing the subscription ID for the site ID in Akismet checkouts.
+		( basePath.includes( '/akismet/' ) && basePath.startsWith( '/checkout/' ) ) ||
+		// Avoid confusing the subscription ID for the site ID in Marketplace checkouts.
+		( basePath.includes( '/marketplace/' ) && basePath.startsWith( '/checkout/' ) )
 	) {
 		return false;
 	}
@@ -45,6 +49,14 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	// e.g. /checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534
 	else if ( basePath.includes( '/offer-plan-upgrade/' ) && basePath.startsWith( '/checkout/' ) ) {
 		searchPositions = [ 2 ];
+	}
+	// For this specific path, the site fragment is in the last index position.
+	// e.g /checkout/offer-professional-email/new-domain.com/example.wordpress.com (last)
+	else if (
+		basePath.includes( '/offer-professional-email/' ) &&
+		basePath.startsWith( '/checkout/' )
+	) {
+		searchPositions = [ pieces.length - 1 ];
 	}
 
 	// Search for site slug in the URL positions defined in searchPositions.
@@ -155,7 +167,6 @@ export function getMessagePathForJITM( path: URLString, siteFragment?: SiteSlug 
 // TODO: Add status enum (see `client/my-sites/pages/main.jsx`).
 /**
  * Post status in our routes mapped to valid API values
- *
  * @param status  Status param from route
  * @returns        mapped status value
  */

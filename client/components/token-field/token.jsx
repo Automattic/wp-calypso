@@ -1,8 +1,7 @@
-import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Gridicon, Tooltip } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 export default class extends PureComponent {
 	static displayName = 'Token';
@@ -25,7 +24,7 @@ export default class extends PureComponent {
 
 	render() {
 		const { value, status, isBorderless, tooltip, displayTransform } = this.props;
-		const tokenClasses = classNames( 'token-field__token', {
+		const tokenClasses = clsx( 'token-field__token', {
 			'is-error': 'error' === status,
 			'is-success': 'success' === status,
 			'is-validating': 'validating' === status,
@@ -48,13 +47,7 @@ export default class extends PureComponent {
 					onClick={ ! this.props.disabled ? this._onClickRemove : null }
 				/>
 				{ tooltip && (
-					<Tooltip
-						showOnMobile
-						context={ this }
-						status={ status }
-						isVisible={ true }
-						position="bottom"
-					>
+					<Tooltip showOnMobile context={ this } status={ status } isVisible position="bottom">
 						{ tooltip }
 					</Tooltip>
 				) }

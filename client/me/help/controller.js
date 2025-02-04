@@ -1,11 +1,12 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CONTACT, SUPPORT_ROOT } from '@automattic/urls';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import { login } from 'calypso/lib/paths';
-import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import ContactComponent from './help-contact';
-import CoursesComponent from './help-courses';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import HelpComponent from './main';
 
 export function loggedOut( context, next ) {
@@ -50,17 +51,8 @@ export function help( context, next ) {
 	next();
 }
 
-export function courses( context, next ) {
-	context.primary = <CoursesComponent />;
-	next();
-}
-
-export function contact( context, next ) {
-	// Scroll to the top
-	if ( typeof window !== 'undefined' ) {
-		window.scrollTo( 0, 0 );
-	}
-
-	context.primary = <ContactComponent />;
-	next();
+export function contactRedirect( context ) {
+	const state = context.store.getState();
+	const previousRoute = getPreviousRoute( state );
+	page.redirect( addQueryArgs( '/help', { from: previousRoute } ) );
 }

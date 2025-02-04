@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import NavigationHeader from 'calypso/components/navigation-header';
 
 import './style.scss';
 
@@ -9,10 +9,11 @@ export default function EmailHeader() {
 
 	return (
 		<div className="email-header">
-			<FormattedHeader
-				brandFont
-				headerText={ translate( 'Emails' ) }
-				subHeaderText={ translate(
+			<NavigationHeader
+				className="domains-email__navigation-header"
+				navigationItems={ [] }
+				title={ translate( 'Emails' ) }
+				subtitle={ translate(
 					'Your home base for accessing, setting up, and managing your emails. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 					{
 						components: {
@@ -20,7 +21,6 @@ export default function EmailHeader() {
 						},
 					}
 				) }
-				align="left"
 			/>
 		</div>
 	);

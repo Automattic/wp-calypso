@@ -28,7 +28,7 @@ const GettingStartedVideo: React.FunctionComponent = () => {
 					}
 				) }
 			</p>
-			<ReaderFeaturedVideoBlock { ...video } videoEmbed={ video } isExpanded={ true } />
+			<ReaderFeaturedVideoBlock { ...video } videoEmbed={ video } isExpanded />
 		</div>
 	);
 };

@@ -1,15 +1,14 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import page from '@automattic/calypso-router';
+import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import page from 'page';
 import { FC, useState, useCallback, useEffect, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import footerCardImg from 'calypso/assets/images/jetpack/licensing-card.png';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs, urlToSlug } from 'calypso/lib/url';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
@@ -28,6 +27,8 @@ interface Props {
 	receiptId?: number;
 	source?: string;
 	jetpackTemporarySiteId?: number;
+	fromSiteSlug?: string;
+	redirectTo?: string;
 }
 
 type JetpackSite = {
@@ -36,6 +37,7 @@ type JetpackSite = {
 	is_wpcom_atomic: boolean;
 	products: Product[];
 	plan: Product;
+	slug: string;
 };
 
 type Product = {
@@ -53,6 +55,8 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	receiptId = 0,
 	source = 'onboarding-calypso-ui',
 	jetpackTemporarySiteId = 0,
+	fromSiteSlug,
+	redirectTo,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -63,7 +67,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		hasProductInfo ? getProductName( state, productSlug ) : null
 	);
 	const productsList: ProductsList = useSelector( getProductsList );
-	const isProductListFetching = useSelector( ( state ) => getIsProductListFetching( state ) );
+	const isProductListFetching = useSelector( getIsProductListFetching );
 	const userName = useSelector( getCurrentUserName );
 	const jetpackSites = useSelector( getJetpackSites ) as JetpackSite[];
 
@@ -81,6 +85,20 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const [ selectedSite, setSelectedSite ] = useState( '' );
 	const [ error, setError ] = useState< TranslateResult | false >( false );
 
+	const initialSelectedSite = useMemo( () => {
+		if ( ! fromSiteSlug ) {
+			return '';
+		}
+		const validSiteThatMatchesFromSiteSlugProp = ( site: JetpackSite ) =>
+			site.is_wpcom_atomic === false && site.slug === fromSiteSlug;
+
+		return jetpackSites.find( validSiteThatMatchesFromSiteSlugProp )?.URL || '';
+	}, [ jetpackSites, fromSiteSlug ] );
+
+	useEffect( () => {
+		setSelectedSite( initialSelectedSite );
+	}, [ initialSelectedSite ] );
+
 	const manualActivationUrl = useMemo( () => {
 		return addQueryArgs(
 			{
@@ -92,17 +110,13 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		);
 	}, [ jetpackTemporarySiteId, productSlug, source, receiptId ] );
 
-	const onContinue = useCallback(
-		( e ) => {
-			e.preventDefault();
+	const handleAutoActivate = useCallback(
+		( siteUrl: string ) => {
 			setError( false );
-			if ( selectedSite === 'activate-license-manually' ) {
-				return page( manualActivationUrl );
-			}
 			dispatch(
 				recordTracksEvent( 'calypso_siteless_checkout_submit_website_address', {
 					product_slug: productSlug,
-					site_url: selectedSite,
+					site_url: siteUrl,
 					receipt_id: receiptId,
 				} )
 			);
@@ -110,23 +124,35 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			// transfer the temporary-site subscription to the user's selectedSite.
 			dispatch(
 				requestUpdateJetpackCheckoutSupportTicket(
-					selectedSite,
+					siteUrl,
 					receiptId,
 					source,
 					jetpackTemporarySiteId
 				)
 			);
 		},
-		[
-			dispatch,
-			manualActivationUrl,
-			jetpackTemporarySiteId,
-			productSlug,
-			receiptId,
-			selectedSite,
-			source,
-		]
+		[ dispatch, jetpackTemporarySiteId, productSlug, receiptId, source ]
 	);
+
+	const onContinue = useCallback(
+		( e: React.MouseEvent ) => {
+			e.preventDefault();
+			if ( selectedSite === 'activate-license-manually' ) {
+				return page( manualActivationUrl );
+			}
+			handleAutoActivate( selectedSite );
+		},
+		[ selectedSite, handleAutoActivate, manualActivationUrl ]
+	);
+
+	// Prevent auto-activation if it will fail at the initial attempt.
+	const [ attemptAutoActivate, setAttemptAutoActivate ] = useState( true );
+	useEffect( () => {
+		if ( attemptAutoActivate && fromSiteSlug && initialSelectedSite.includes( fromSiteSlug ) ) {
+			setAttemptAutoActivate( false );
+			handleAutoActivate( initialSelectedSite );
+		}
+	}, [ attemptAutoActivate, fromSiteSlug, handleAutoActivate, initialSelectedSite ] );
 
 	useEffect( () => {
 		if ( error || supportTicketRequestStatus === undefined ) {
@@ -152,7 +178,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								strong: <strong />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 								incompatibleProductName,
 							},
@@ -171,7 +197,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 								a: <a href={ manualActivationUrl } />,
 							},
 							args: {
-								productName,
+								productName: productName as string,
 								selectedSite: urlToSlug( selectedSite ),
 							},
 						}
@@ -182,6 +208,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			const thankYouCompletedUrl = addQueryArgs(
 				{
 					destinationSiteId,
+					redirect_to: redirectTo,
 				},
 				`/checkout/jetpack/thank-you/licensing-auto-activate-completed/${ productSlug }`
 			);
@@ -195,6 +222,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
+		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,
 		translate,
@@ -208,8 +236,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			.filter( ( site ) => ! site.is_wpcom_atomic )
 			.filter(
 				( site ) =>
-					! site.products.some( isProductActivatedOnSite ) &&
-					! isProductActivatedOnSite( site.plan )
+					( ! site.products.some( isProductActivatedOnSite ) &&
+						! isProductActivatedOnSite( site.plan ) ) ||
+					site.URL === initialSelectedSite
 			)
 			.map( ( site ) => ( {
 				value: site?.URL,
@@ -223,7 +252,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					},
 				},
 			} ) );
-	}, [ jetpackSites, selectedSite, productSlug ] );
+	}, [ jetpackSites, productSlug, initialSelectedSite, selectedSite ] );
 
 	const lastSelectOption = {
 		value: 'activate-license-manually',
@@ -254,10 +283,14 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			{ hasProductInfo && <QueryProducts type="jetpack" /> }
 			<LicensingActivation
 				title={
-					<>
-						{ translate( 'Thank you for your purchase!' ) }{ ' ' }
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</>
+					source === 'connect-after-checkout' ? (
+						<>{ translate( 'Activate your product:' ) }</>
+					) : (
+						<>
+							{ translate( 'Thank you for your purchase!' ) }{ ' ' }
+							{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+						</>
+					)
 				}
 				footerImage={ footerCardImg }
 				showProgressIndicator
@@ -281,7 +314,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 						<br />
 						{ translate( 'Select the site you want %(productName)s on:', {
 							args: {
-								productName,
+								productName: productName as string,
 							},
 						} ) }
 					</p>
@@ -290,31 +323,34 @@ const LicensingActivationThankYou: FC< Props > = ( {
 					className="licensing-thank-you-auto-activation__select"
 					selectedText={ selectedItem ? selectedItem.label : translate( 'Select…' ) }
 				>
-					{ selectDropdownItems.map( ( option ) => (
-						<SelectDropdown.Item { ...option.props }>
-							<div
-								className={ classnames(
-									'licensing-thank-you-auto-activation__dropdown-item-flex-container',
-									{
-										'has-seperator': option.value === 'activate-license-manually',
-									}
-								) }
-							>
-								<span className="licensing-thank-you-auto-activation__dropdown-item-text">
-									{ option.value === 'activate-license-manually' ? (
-										<strong>{ option.label }</strong>
-									) : (
-										option.label
+					{ selectDropdownItems.map( ( option ) => {
+						const { key: itemKey, ...props } = option.props;
+						return (
+							<SelectDropdown.Item key={ itemKey } { ...props }>
+								<div
+									className={ clsx(
+										'licensing-thank-you-auto-activation__dropdown-item-flex-container',
+										{
+											'has-seperator': option.value === 'activate-license-manually',
+										}
 									) }
-								</span>
-								{ option.value !== 'activate-license-manually' && (
-									<span>
-										<Gridicon icon="link" size={ 18 } />
+								>
+									<span className="licensing-thank-you-auto-activation__dropdown-item-text">
+										{ option.value === 'activate-license-manually' ? (
+											<strong>{ option.label }</strong>
+										) : (
+											option.label
+										) }
 									</span>
-								) }
-							</div>
-						</SelectDropdown.Item>
-					) ) }
+									{ option.value !== 'activate-license-manually' && (
+										<span>
+											<Gridicon icon="link" size={ 18 } />
+										</span>
+									) }
+								</div>
+							</SelectDropdown.Item>
+						);
+					} ) }
 				</SelectDropdown>
 				{ error && <FormInputValidation isError={ !! error } text={ error }></FormInputValidation> }
 				<Button

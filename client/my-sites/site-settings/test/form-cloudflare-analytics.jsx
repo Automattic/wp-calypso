@@ -21,6 +21,18 @@ const props = {
 };
 
 describe( 'CloudflareAnalyticsSettings basic tests', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	test( 'Cloudflare form should not show upgrade nudge if disabled', () => {
 		render( <CloudflareAnalyticsSettings { ...props } showUpgradeNudge={ false } /> );
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();

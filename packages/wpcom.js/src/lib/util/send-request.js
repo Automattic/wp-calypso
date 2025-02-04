@@ -6,7 +6,6 @@ const debug_res = debugFactory( 'wpcom:send-request:res' );
 
 /**
  * Request to WordPress REST API
- *
  * @param {string | Object} params - params object
  * @param {Object} [query] - query object parameter
  * @param {Object} [body] - body object parameter

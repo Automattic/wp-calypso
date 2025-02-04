@@ -1,9 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT, SUPPORT_ROOT } from '@automattic/urls';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { CALYPSO_CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
 import type {
 	ThankYouNextStepProps,
 	ThankYouProps,
@@ -28,6 +28,12 @@ const ThankYouSectionTitle = styled.h1`
 
 const ThankYouSectionContainer = styled.div`
 	margin-bottom: 35px;
+	&:not( :first-of-type ) {
+		border-top: 1px solid var( --studio-gray-5 );
+	}
+	&:last-child {
+		border-top: none;
+	}
 `;
 
 const ThankYouBody = styled.div`
@@ -214,8 +220,8 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	) );
 
 	return (
-		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
-			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
+		<ThankYouContainer className={ clsx( 'thank-you__container', containerClassName ) }>
+			<ThankYouHeader className={ clsx( 'thank-you__container-header', headerClassName ) }>
 				{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>

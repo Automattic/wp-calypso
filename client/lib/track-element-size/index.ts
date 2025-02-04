@@ -2,12 +2,12 @@ import { throttle } from 'lodash';
 import { useRef, useEffect, useState } from 'react';
 import * as React from 'react';
 
-type NullableDOMRect = ClientRect | DOMRect | null;
+export type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
 
 export const THROTTLE_RATE = 200;
 
-function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
+export function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	if ( prevRect === null ) {
 		return nextRect === null;
 	}
@@ -26,7 +26,7 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	);
 }
 
-function rectIsZero( rect: NullableDOMRect ) {
+export function rectIsZero( rect: NullableDOMRect ) {
 	if ( rect === null ) {
 		return null;
 	}
@@ -45,7 +45,6 @@ function rectIsZero( rect: NullableDOMRect ) {
  * on window resize events.
  * Does not notify when an element resizes due to reasons other than the window resizing.
  * Uses throttling on the events, to avoid making changes too often.
- *
  * @param callback The function to call back on changes. Takes a single parameter: `boundingClientRect`.
  * @returns The ref to be set on the consumer component.
  */
@@ -96,12 +95,11 @@ export function useWindowResizeCallback(
  * on window resize events.
  * Does not notify when an element resizes due to reasons other than the window resizing.
  * Uses throttling on the events, to avoid making changes too often.
- *
  * @returns A tuple with the ref to be set on the consumer component, and the current rect.
  */
 export function useWindowResizeRect(): [
 	React.MutableRefObject< NullableElement >,
-	NullableDOMRect
+	NullableDOMRect,
 ] {
 	const [ rect, setRect ] = useState< NullableDOMRect >( null );
 	const callbackRef = useWindowResizeCallback( setRect );

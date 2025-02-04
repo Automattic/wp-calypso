@@ -73,12 +73,12 @@ export class CommentsComponent {
 			// do nothing.
 			await waitForWPWidgetsIfNecessary( this.page );
 
-			const likeButtonFrame = this.page.frameLocator(
-				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`
-			);
+			const likeButtonFrame = this.page
+				.frameLocator( `iframe[name^="like-comment-frame"]:below(:text("${ comment }"))` )
+				.first();
 
-			likeButton = likeButtonFrame.locator( 'a:text-is("Like"):visible' );
-			likedStatus = likeButtonFrame.locator( ':text("Liked by"):visible' );
+			likeButton = likeButtonFrame.getByRole( 'link', { name: 'Like' } );
+			likedStatus = likeButtonFrame.getByRole( 'link', { name: 'Liked by you' } );
 		} else {
 			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
 
@@ -86,7 +86,15 @@ export class CommentsComponent {
 			likedStatus = commentContent.locator( ':text("Liked by"):visible' );
 		}
 
+		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
+		await likeButton.waitFor();
 		await likeButton.click();
+		// On Atomic, we add a second click since the first one opens a window to log-in the user.
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await this.page.waitForTimeout( 5 * 1000 );
+			await likeButton.waitFor();
+			await likeButton.click();
+		}
 		await likedStatus.waitFor();
 	}
 
@@ -103,12 +111,11 @@ export class CommentsComponent {
 			// See the like() method for info on the following method call.
 			await waitForWPWidgetsIfNecessary( this.page );
 
-			const likeButtonFrame = this.page.frameLocator(
-				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`
-			);
+			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
+			const likeButtonFrame = commentContent.frameLocator( "iframe[name^='like-comment-frame']" );
 
-			unlikeButton = likeButtonFrame.locator( 'a:text("Liked by")' );
-			unlikedStatus = likeButtonFrame.locator( 'a:text-is("Like")' );
+			unlikeButton = likeButtonFrame.getByRole( 'link', { name: 'Liked by you' } );
+			unlikedStatus = likeButtonFrame.getByRole( 'link', { name: 'Like' } );
 		} else {
 			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
 
@@ -116,6 +123,7 @@ export class CommentsComponent {
 			unlikedStatus = commentContent.locator( '.comment-not-liked > span:text-is("Like"):visible' );
 		}
 
+		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
 		await unlikeButton.click();
 		await unlikedStatus.waitFor();
 	}

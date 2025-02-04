@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import {
@@ -6,11 +6,34 @@ import {
 	siteSelection,
 	sites,
 	wpForTeamsGeneralNotSupportedRedirect,
+	stagingSiteNotSupportedRedirect,
+	noSite,
 } from 'calypso/my-sites/controller';
+import emailController from '../email/controller';
 import domainsController from './controller';
 import domainManagementController from './domain-management/controller';
+import {
+	DOMAIN_OVERVIEW,
+	EMAIL_MANAGEMENT,
+} from './domain-management/domain-overview-pane/constants';
+import {
+	ADD_MAILBOX,
+	ADD_FORWARDING_EMAIL,
+	COMPARE_EMAIL_PROVIDERS,
+	DNS_RECORDS,
+	ADD_DNS_RECORD,
+	EDIT_DNS_RECORD,
+	EDIT_CONTACT_INFO,
+	TRANSFER_OTHER_SITE,
+} from './domain-management/subpage-wrapper/subpages';
 import * as paths from './paths';
 
+/**
+ * Registers a multi-page route.
+ * @param {Object} options - The options object.
+ * @param {Array} options.paths - The paths to register.
+ * @param {Array} options.handlers - The handlers to register. These will be applied to each path.
+ */
 function registerMultiPage( { paths: givenPaths, handlers } ) {
 	givenPaths.forEach( ( path ) => page( path, ...handlers ) );
 }
@@ -27,9 +50,15 @@ function registerStandardDomainManagementPages( pathFunction, controller ) {
 
 function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
+	noSiteSelection = false,
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation, wpForTeamsGeneralNotSupportedRedirect ];
+	const handlers = [
+		...( noSiteSelection ? [] : [ siteSelection ] ),
+		navigation,
+		wpForTeamsGeneralNotSupportedRedirect,
+		stagingSiteNotSupportedRedirect,
+	];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );
@@ -61,7 +90,10 @@ export default function () {
 			paths.domainManagementEmail( ':site', ':domain' ),
 			paths.domainManagementEmail( ':site' ),
 		],
-		handlers: [ domainManagementController.domainManagementEmailRedirect ],
+		handlers: [
+			stagingSiteNotSupportedRedirect,
+			domainManagementController.domainManagementEmailRedirect,
+		],
 	} );
 
 	registerStandardDomainManagementPages(
@@ -72,11 +104,6 @@ export default function () {
 	registerStandardDomainManagementPages(
 		paths.domainManagementRedirectSettings,
 		domainManagementController.domainManagementRedirectSettings
-	);
-
-	registerStandardDomainManagementPages(
-		paths.domainManagementContactsPrivacy,
-		domainManagementController.domainManagementContactsPrivacy
 	);
 
 	registerStandardDomainManagementPages(
@@ -125,13 +152,19 @@ export default function () {
 	);
 
 	registerStandardDomainManagementPages(
+		paths.domainManagementTransferToAnyUser,
+		domainManagementController.domainManagementTransferToAnyUser
+	);
+
+	registerStandardDomainManagementPages(
 		paths.domainManagementTransferToOtherSite,
 		domainManagementController.domainManagementTransferToOtherSite
 	);
 
 	page(
 		paths.domainManagementRoot(),
-		...getCommonHandlers( { noSitePath: false } ),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
 		domainManagementController.domainManagementListAllSites,
 		makeLayout,
 		clientRender
@@ -141,6 +174,23 @@ export default function () {
 		paths.domainManagementList( ':site' ),
 		...getCommonHandlers(),
 		domainManagementController.domainManagementList,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEditSelectedContactInfo(),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
+		domainManagementController.domainManagementAllEditSelectedContactInfo,
+		makeLayout,
+		clientRender
+	);
+	page(
+		paths.domainManagementEditSelectedContactInfo( ':site' ),
+		noSite,
+		...getCommonHandlers( { noSitePath: false, noSiteSelection: true } ),
+		domainManagementController.domainManagementEditSelectedContactInfo,
 		makeLayout,
 		clientRender
 	);
@@ -166,6 +216,7 @@ export default function () {
 		domainsController.domainsAddHeader,
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -176,6 +227,7 @@ export default function () {
 		siteSelection,
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -186,6 +238,7 @@ export default function () {
 		siteSelection,
 		domainsController.domainsAddHeader,
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -196,6 +249,7 @@ export default function () {
 		siteSelection,
 		domainsController.domainsAddRedirectHeader,
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		sites,
 		makeLayout,
 		clientRender
@@ -208,6 +262,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.domainSearch,
 		makeLayout,
 		clientRender
@@ -219,6 +274,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.emailUpsellForDomainRegistration,
 		makeLayout,
 		clientRender
@@ -231,6 +287,7 @@ export default function () {
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.redirectToUseYourDomainIfVipSite(),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.redirectToDomainSearchSuggestion
 	);
 
@@ -240,6 +297,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/mapping' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.mapDomain,
 		makeLayout,
 		clientRender
@@ -250,6 +308,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.mapDomainSetup,
 		makeLayout,
 		clientRender
@@ -261,6 +320,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/site-redirect' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.siteRedirect,
 		makeLayout,
 		clientRender
@@ -272,6 +332,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add/transfer' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.transferDomain,
 		makeLayout,
 		clientRender
@@ -283,6 +344,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.useYourDomain,
 		makeLayout,
 		clientRender
@@ -294,6 +356,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/add' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.useMyDomain,
 		makeLayout,
 		clientRender
@@ -305,6 +368,7 @@ export default function () {
 		navigation,
 		domainsController.redirectIfNoSite( '/domains/manage' ),
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainsController.transferDomainPrecheck,
 		makeLayout,
 		clientRender
@@ -312,6 +376,7 @@ export default function () {
 
 	page(
 		paths.domainManagementRoot() + '/:domain/edit',
+		stagingSiteNotSupportedRedirect,
 		domainsController.redirectDomainToSite,
 		makeLayout,
 		clientRender
@@ -322,7 +387,126 @@ export default function () {
 		siteSelection,
 		navigation,
 		domainsController.jetpackNoDomainsWarning,
+		stagingSiteNotSupportedRedirect,
 		domainManagementController.domainManagementIndex,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementV2,
+		domainManagementController.domainManagementPaneView( DOMAIN_OVERVIEW ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/:site',
+		siteSelection,
+		navigation,
+		emailController.emailManagement,
+		domainManagementController.domainManagementPaneView( EMAIL_MANAGEMENT ),
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/compare/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( COMPARE_EMAIL_PROVIDERS ),
+		emailController.emailManagementInDepthComparison,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/forwarding/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_FORWARDING_EMAIL ),
+		emailController.emailManagementAddEmailForwards,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllRoot() + '/contact-info/edit/:domain/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_CONTACT_INFO ),
+		domainManagementController.domainManagementEditContactInfo,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( DNS_RECORDS ),
+		domainManagementController.domainManagementDns,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/add/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_DNS_RECORD ),
+		domainManagementController.domainManagementDnsAddRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/dns/edit/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( EDIT_DNS_RECORD ),
+		domainManagementController.domainManagementDnsEditRecord,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementAllEmailRoot() + '/:domain/titan/new/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( ADD_MAILBOX ),
+		emailController.emailManagementNewTitanAccount,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		paths.domainManagementOverviewRoot() + '/:domain/transfer/other-site/:site',
+		siteSelection,
+		navigation,
+		domainManagementController.domainManagementSubpageParams( TRANSFER_OTHER_SITE ),
+		domainManagementController.domainManagementTransferToOtherSite,
+		domainManagementController.domainManagementSubpageView,
+		domainManagementController.domainDashboardLayout,
 		makeLayout,
 		clientRender
 	);

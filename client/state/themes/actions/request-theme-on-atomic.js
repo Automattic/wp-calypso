@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch a specific theme on an atomic site.
- *
  * @param  {string}   themeId Theme ID
  * @param  {number}   siteId  Site ID
  * @returns {Function}         Action thunk

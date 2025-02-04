@@ -8,8 +8,8 @@ import moment from 'moment';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
+	isStorageOrRetentionReached,
 } from 'calypso/lib/jetpack/backup-utils';
-import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { getRewindStorageUsageLevel } from 'calypso/state/rewind/selectors';
 import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
@@ -20,7 +20,6 @@ const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
 jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
 	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-	useIsDateVisible: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
@@ -40,13 +39,13 @@ jest.mock( 'calypso/components/data/query-rewind-policies', () => () => 'query-r
 
 jest.mock( '../status-card/no-backups-yet', () => () => <div data-testid="no-backups-yet" /> );
 jest.mock( '../status-card/backup-scheduled', () => () => <div data-testid="backup-scheduled" /> );
-jest.mock( '../status-card/visible-days-limit', () => () => (
-	<div data-testid="visible-days-limit" />
-) );
 jest.mock( '../status-card/no-backups-on-selected-date', () => () => (
 	<div data-testid="no-backups-on-selected-date" />
 ) );
 jest.mock( '../status-card/backup-failed', () => () => <div data-testid="backup-failed" /> );
+jest.mock( '../status-card/backup-no-storage', () => () => (
+	<div data-testid="backup-no-storage" />
+) );
 jest.mock( '../status-card/backup-successful', () => () => (
 	<div data-testid="backup-successful" />
 ) );
@@ -63,10 +62,10 @@ describe( 'DailyBackupStatus', () => {
 	} );
 
 	beforeEach( () => {
-		useIsDateVisible.mockImplementation( () => () => true );
 		getSiteFeatures.mockReset();
 		isSuccessfulDailyBackup.mockReset();
 		isSuccessfulRealtimeBackup.mockReset();
+		isStorageOrRetentionReached.mockReset();
 		getRewindStorageUsageLevel.mockImplementation( () => StorageUsageLevels.Normal );
 	} );
 
@@ -105,13 +104,6 @@ describe( 'DailyBackupStatus', () => {
 
 		render( <DailyBackupStatus selectedDate={ now } lastBackupDate={ {} } /> );
 		expect( screen.queryByTestId( 'backup-scheduled' ) ).toBeNull();
-	} );
-
-	test( 'shows a visible limit status when the selected date does not fall within display rules', () => {
-		useIsDateVisible.mockImplementation( () => () => false );
-
-		render( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } /> );
-		expect( screen.queryByTestId( 'visible-days-limit' ) ).toBeVisible();
 	} );
 
 	test( 'shows "no backups on this date" when no backup is provided and the selected date is not today', () => {
@@ -153,15 +145,25 @@ describe( 'DailyBackupStatus', () => {
 	test( 'shows "backup failed" for non-Backup Real-time sites when a failed daily backup is provided', () => {
 		// Default mock behavior behaves as if the current site doesn't have Backup Real-time
 		isSuccessfulDailyBackup.mockImplementation( () => false );
+		isStorageOrRetentionReached.mockImplementation( () => false );
 
 		render( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
 		expect( screen.queryByTestId( 'backup-failed' ) ).toBeVisible();
+	} );
+
+	test( 'shows "backup no storage" for Real-time sites when a not rewindable backup is provided', () => {
+		isSuccessfulRealtimeBackup.mockImplementation( () => false );
+		isStorageOrRetentionReached.mockImplementation( () => true );
+
+		render( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );
+		expect( screen.queryByTestId( 'backup-no-storage' ) ).toBeVisible();
 	} );
 
 	test( 'shows "backup failed" for Backup Real-time sites when a failed real-time backup is provided', () => {
 		getSiteFeatures.mockImplementation( () => ( {
 			active: [ WPCOM_FEATURES_REAL_TIME_BACKUPS ],
 		} ) );
+		isStorageOrRetentionReached.mockImplementation( () => false );
 		isSuccessfulRealtimeBackup.mockImplementation( () => false );
 
 		render( <DailyBackupStatus selectedDate={ ARBITRARY_DATE } backup={ {} } /> );

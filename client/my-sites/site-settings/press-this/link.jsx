@@ -6,7 +6,6 @@ import { newPost } from 'calypso/lib/paths';
 /**
  * Retrieves selection, title, and URL from current page and pops
  * open new editor window with contents
- *
  * @param  {string} postURL Editor URL for selected site
  */
 const pressThis = function ( postURL ) {
@@ -24,10 +23,6 @@ const pressThis = function ( postURL ) {
 		sel = docGetSel();
 	} else {
 		sel = docSel ? docSel.createRange().text : '';
-	}
-
-	if ( ! encodeURIComponent( sel ) ) {
-		sel = doc.title;
 	}
 
 	const url =
@@ -63,7 +58,6 @@ class PressThisLink extends Component {
 
 	/**
 	 * generate press-this link pointing to current environment
-	 *
 	 * @returns {string} javascript pseudo-protocol link
 	 */
 	buildPressThisLink() {

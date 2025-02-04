@@ -4,6 +4,7 @@ import {
 	getCommentLike,
 	getPostCommentsTree,
 	getPostCommentsCountAtDate,
+	getInlineCommentsExpandedState,
 } from '../selectors';
 
 const state = {
@@ -190,6 +191,64 @@ describe( 'selectors', () => {
 			);
 
 			expect( res ).toBe( 2 );
+		} );
+	} );
+
+	describe( '#getInlineCommentsExpandedState()', () => {
+		const streamKey = 'stream-A';
+		const siteId = 123;
+		const postId = 456;
+		const initState = {
+			comments: {},
+		};
+		const savedState = ( value ) => ( {
+			comments: {
+				inlineExpansion: {
+					[ streamKey ]: {
+						[ siteId ]: {
+							[ postId ]: value,
+						},
+					},
+				},
+			},
+		} );
+		const biggerState = {
+			comments: {
+				inlineExpansion: {
+					'stream-B': {
+						123: {
+							456: false,
+						},
+					},
+					[ streamKey ]: {
+						[ siteId ]: {
+							[ postId ]: true,
+							[ postId + '123' ]: false,
+						},
+						[ siteId + '123' ]: {
+							890: {
+								789: false,
+							},
+						},
+					},
+				},
+			},
+		};
+		test( 'returns false if value is not set in state', () => {
+			const res = getInlineCommentsExpandedState( initState, streamKey, siteId, postId );
+			expect( res ).toBe( false );
+		} );
+		test( 'returns true state value when set', () => {
+			const res = getInlineCommentsExpandedState( savedState( true ), streamKey, siteId, postId );
+			expect( res ).toBe( true );
+		} );
+		test( 'returns false state value when set', () => {
+			const res = getInlineCommentsExpandedState( savedState( false ), streamKey, siteId, postId );
+			expect( res ).toBe( false );
+		} );
+		test( 'returns correct value from larger state object', () => {
+			const res = getInlineCommentsExpandedState( biggerState, streamKey, siteId, postId );
+			expect( res ).toBe( true );
 		} );
 	} );
 } );

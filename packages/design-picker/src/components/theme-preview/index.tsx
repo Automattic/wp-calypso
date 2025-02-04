@@ -3,7 +3,7 @@ import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import './style.scss';
@@ -17,9 +17,12 @@ interface ThemePreviewProps {
 	url: string;
 	inlineCss?: string;
 	viewportWidth?: number;
+	iframeScaleRatio?: number;
+	iframeToken?: string;
 	isFitHeight?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowDeviceSwitcher?: boolean;
+	isFullscreen?: boolean;
 	recordDeviceClick?: ( device: string ) => void;
 }
 
@@ -32,18 +35,30 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	inlineCss,
 	viewportWidth,
+	iframeScaleRatio = 1,
+	iframeToken,
 	isFitHeight,
 	isShowFrameBorder,
 	isShowDeviceSwitcher,
+	isFullscreen,
 	recordDeviceClick,
 } ) => {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
+	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
-	const calypso_token = useMemo( () => uuid(), [] );
-	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
+	const calypso_token = useMemo( () => iframeToken || uuid(), [ iframeToken ] );
+	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : iframeScaleRatio;
+
+	const wrapperHeight = useMemo( () => {
+		if ( ! viewport || iframeScaleRatio === 1 ) {
+			return 0;
+		}
+
+		return viewport.height * iframeScaleRatio;
+	}, [ viewport?.height, iframeScaleRatio ] );
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -61,7 +76,9 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			switch ( data.type ) {
 				case 'partially-loaded':
 					setIsLoaded( true );
+					return;
 				case 'page-dimensions-on-load':
+					setIsFullyLoaded( true );
 				case 'page-dimensions-on-resize':
 					if ( isFitHeight ) {
 						setViewport( data.payload );
@@ -79,8 +96,10 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		};
 	}, [ setIsLoaded, setViewport ] );
 
+	// Ideally the iframe's document.body is already available on isLoaded = true.
+	// Unfortunately that's not always the case, so isFullyLoaded serves as another retry.
 	useEffect( () => {
-		if ( isLoaded ) {
+		if ( isLoaded || isFullyLoaded ) {
 			iframeRef.current?.contentWindow?.postMessage(
 				{
 					channel: `preview-${ calypso_token }`,
@@ -90,19 +109,25 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'*'
 			);
 		}
-	}, [ inlineCss, isLoaded ] );
+	}, [ inlineCss, isLoaded, isFullyLoaded ] );
 
 	return (
 		<DeviceSwitcher
-			className={ classnames( 'theme-preview__container', {
-				'theme-preview__container--loading': ! isLoaded,
+			className={ clsx( 'theme-preview__container', {
+				'theme-preview__container--loading': ! isLoaded && ! isFullyLoaded,
 			} ) }
 			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
 			isShowFrameBorder={ isShowFrameBorder }
+			isFullscreen={ isFullscreen }
 			onDeviceChange={ recordDeviceClick }
 		>
 			{ containerResizeListener }
-			<div className="theme-preview__frame-wrapper">
+			<div
+				className="theme-preview__frame-wrapper"
+				style={ {
+					...( wrapperHeight > 0 && { height: wrapperHeight } ),
+				} }
+			>
 				{ ! isLoaded && (
 					<div className="theme-preview__frame-message">
 						<Spinner />
@@ -118,7 +143,6 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 						transform: `scale(${ scale })`,
 					} }
 					src={ addQueryArgs( url, { calypso_token } ) }
-					scrolling={ isFitHeight ? 'no' : 'yes' }
 					tabIndex={ -1 }
 				/>
 			</div>

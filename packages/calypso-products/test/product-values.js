@@ -44,7 +44,6 @@ import {
 
 /**
  * Test helper to build a product object
- *
  * @param   {string} product_slug Product slug
  * @returns {Object}              Object containing product_slug
  */

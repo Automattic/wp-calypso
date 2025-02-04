@@ -1,5 +1,7 @@
 # Our Approach to Data
 
+**Important notice:**: This document is slightly out of date. There's actually a fifth era of data fetching and manipulation in Calypso, using `@tanstack/react-query`. We discourage the use of our legacy data layer (found in `client/state/data-layer`) for new components – while there's definitely a case for using Redux as a state library and thunks for some data fetching, we generally recommend using `@tanstack/react-query` for most of your data needs. Please refer [`client/data/README.md`](https://github.com/Automattic/wp-calypso/blob/trunk/client/data/README.md) to get more information about usage conventions and recommendations (the document is currently a work in progress).
+
 Throughout Calypso's development, our approach to handling data has evolved to allow us to better adapt to the scale at which the application has grown. These shifts have not been ubiquitously adopted throughout the codebase, so you'll occasionally encounter legacy code which is not consistent with our current recommendations. The purpose of this document is to outline a history of these approaches such that you as the developer can understand the differences between each. Furthermore, it seeks to prescribe our current set of recommendations with regard to data management.
 
 ## History

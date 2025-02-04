@@ -11,7 +11,7 @@ import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
 import 'calypso/state/reader/init';
 
-export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
+export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL, size = 2 ) {
 	return function ( dispatch ) {
 		dispatch( {
 			type: READER_RELATED_POSTS_REQUEST,
@@ -19,6 +19,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 				siteId,
 				postId,
 				scope,
+				size,
 			},
 		} );
 
@@ -33,18 +34,18 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 		}
 
 		if ( scope === SCOPE_SAME ) {
-			query.size_local = 2;
+			query.size_local = size;
 			query.size_global = 0;
 		} else if ( scope === SCOPE_OTHER ) {
 			query.size_local = 0;
-			query.size_global = 2;
+			query.size_global = size;
 		}
 
 		return wpcom.req.get( `/read/site/${ siteId }/post/${ postId }/related`, query ).then(
 			( response ) => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
-					payload: { siteId, postId, scope },
+					payload: { siteId, postId, scope, size },
 				} );
 
 				// collect posts and dispatch
@@ -55,6 +56,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 							siteId,
 							postId,
 							scope,
+							size,
 							posts: ( response && response.posts ) || [],
 						},
 					} );
@@ -63,7 +65,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 			( err ) => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
-					payload: { siteId, postId, scope, error: err },
+					payload: { siteId, postId, scope, size, error: err },
 					error: true,
 				} );
 
@@ -73,6 +75,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 						siteId,
 						postId,
 						scope,
+						size,
 						posts: [],
 					},
 				} );

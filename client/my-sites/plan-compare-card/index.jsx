@@ -1,5 +1,5 @@
 import { Button, Card, Ribbon, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -32,8 +32,8 @@ class PlanCompareCard extends Component {
 	};
 
 	render() {
-		const classes = classNames( this.props.className, 'plan-compare-card' );
-		const buttonClasses = classNames( 'plan-compare-card__button', {
+		const classes = clsx( this.props.className, 'plan-compare-card' );
+		const buttonClasses = clsx( 'plan-compare-card__button', {
 			'is-current': this.props.currentPlan,
 		} );
 		return (

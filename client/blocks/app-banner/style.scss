@@ -25,18 +25,13 @@ body.app-banner-is-visible {
 	left: 0;
 	width: 100%;
 	background-color: var(--color-surface);
-	color: var(--color-primary-80);
-	padding: 20px;
+	color: var(--color-neutral-100);
+	padding: 30px 24px;
 	margin-bottom: 0;
 	box-shadow: 3px -2px 24px 4px rgba(0, 0, 0, 0.29);
 	overflow: hidden;
-
-	&.jetpack {
-		color: var(--color-neutral-100);
-		padding: 30px 24px;
-		text-align: center;
-		font-family: "SF Pro Text", $sans;
-	}
+	text-align: center;
+	font-family: "SF Pro Text", $sans;
 }
 
 .app-banner__circle {
@@ -77,79 +72,61 @@ body.app-banner-is-visible {
 }
 
 .app-banner__text-content {
-	width: 100%;
-
-	&.jetpack {
-		letter-spacing: -0.4px;
-		margin: 36px auto 0;
-	}
+	letter-spacing: -0.4px;
+	margin: 36px auto 0;
 }
 
 .app-banner__title {
-	font-size: rem(22px); //typography-exception
-	font-family: $brand-serif;
+	font-size: rem(28px); //typography-exception
 	line-height: 30px;
-
-	&.jetpack {
-		font-size: rem(28px); //typography-exception
-		font-weight: 500;
-		max-width: 18em;
-		margin-left: auto;
-		margin-right: auto;
-		-webkit-font-smoothing: auto;
-		-moz-osx-font-smoothing: initial;
-		text-rendering: auto;
-		@extend .wp-brand-font;
-	}
+	font-weight: 500;
+	max-width: 18em;
+	margin-left: auto;
+	margin-right: auto;
+	-webkit-font-smoothing: auto;
+	-moz-osx-font-smoothing: initial;
+	text-rendering: auto;
+	@extend .wp-brand-font;
 }
 
 .app-banner__copy {
-	margin-top: 12px;
-	font-size: rem(15px); //typography-exception
-
-	&.jetpack {
-		font-size: rem(16px); //typography-exception
-		line-height: 21px;
-		max-width: 18em;
-		margin-left: auto;
-		margin-right: auto;
-		margin-top: 18px;
-	}
+	font-size: rem(16px); //typography-exception
+	line-height: 21px;
+	max-width: 18em;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 18px;
 }
 
 .app-banner__buttons {
-	width: 100%;
 	margin-top: 36px;
+
+	.button {
+		width: 100%;
+		min-width: 110px;
+		max-width: 366px;
+		margin: auto;
+		display: block;
+		padding: 15px 18px;
+		font-size: rem(18px); //typography-exception;
+	}
 }
 
 .button.app-banner__open-button {
-	background-color: var(--color-accent-40);
+	background-color: var(--studio-jetpack-green-40);
 	border: 0;
 	border-radius: 4px;
-	margin-right: 10px;
+	margin-bottom: 12px;
 
-	&.jetpack {
-		background-color: var(--color-jetpack);
-		margin-bottom: 12px;
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
+		border-color: var(--studio-jetpack-green-60);
 	}
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
-	color: var(--color-text-subtle);
-
-	&.jetpack {
-		color: var(--color-text);
-	}
-}
-
-.button.jetpack {
-	width: 100%;
-	min-width: 110px;
-	max-width: 366px;
-	margin: auto;
-	display: block;
-	padding: 15px 18px;
-	font-size: rem(18px); //typography-exception;
+	color: var(--color-text);
 }

@@ -2,7 +2,7 @@ import 'calypso/state/signup/init';
 import { initialState, MEDIA_UPLOAD_STATES } from './constants';
 import type { WebsiteContentCollectionState } from './types';
 
-export interface WebsiteContentStateModel {
+export interface WebsiteContentStateModel extends Record< string, unknown > {
 	signup: {
 		steps: {
 			websiteContentCollection: WebsiteContentCollectionState;

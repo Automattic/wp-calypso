@@ -9,7 +9,7 @@ export * from './contact-form';
 export * from './blog-posts';
 export * from './post-carousel';
 export * from './timeline';
-export * from './premium-content';
+export * from './paid-content';
 export * from './subscribe';
 export * from './payments';
 export * from './contact-info';
@@ -18,6 +18,18 @@ export * from './slideshow';
 export * from './tiled-gallery';
 export * from './youtube';
 export * from './layout-grid';
+export * from './ai-assistant';
+export * from './donations-form';
+export * from './all-form-fields';
+export * from './form-patterns';
+export * from './ad';
+export * from './paywall';
+export * from './form-ai';
+export * from './image-compare';
+export * from './map';
+export * from './gif';
+export * from './markdown';
+export * from './related-posts';
 
 /* Types */
 export * from './types';

@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -11,7 +11,6 @@ import {
 	ImportingPane as ImportingPaneBase,
 	resourcesRemaining,
 } from 'calypso/my-sites/importer/importing-pane';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import './importing-pane.scss';
 
@@ -25,14 +24,18 @@ class ImportingPane extends ImportingPaneBase {
 			urlData,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = classNames( 'importing-pane__progress', {
+		const progressClasses = clsx( 'importing-pane__progress', {
 			'is-complete': this.isFinished(),
 		} );
 
 		// Add the site favicon as author's icon
 		if ( importerStatus?.customData?.sourceAuthors ) {
 			for ( const author of importerStatus.customData.sourceAuthors ) {
-				author.icon = ( urlData as UrlData )?.meta?.favicon;
+				const authorIcon = ( urlData as UrlData | undefined )?.meta?.favicon;
+
+				if ( authorIcon ) {
+					author.icon = authorIcon;
+				}
 			}
 		}
 
@@ -82,7 +85,7 @@ class ImportingPane extends ImportingPaneBase {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) &&
 					( percentComplete >= 0 ? (
-						<ProgressBar compact={ true } className={ progressClasses } value={ percentComplete } />
+						<ProgressBar compact className={ progressClasses } value={ percentComplete } />
 					) : (
 						<div>
 							<Spinner className="importing-pane__spinner" />
@@ -101,7 +104,6 @@ class ImportingPane extends ImportingPaneBase {
 }
 
 export default connect( null, {
-	loadTrackingTool,
 	mapAuthor,
 	startImporting,
 } )( localize( ImportingPane ) );

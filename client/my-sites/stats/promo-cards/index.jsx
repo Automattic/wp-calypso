@@ -1,13 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { AppPromoFullWidth } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { AppPromoCard, DotPager } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
+import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
-import DotPager from 'calypso/components/dot-pager';
 import { PromoteWidgetStatus, usePromoteWidget } from 'calypso/lib/promote-post';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -28,7 +27,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 	// TODO: Figure out an approach that doesn't require replicating state value from DotPager.
 	const [ dotPagerIndex, setDotPagerIndex ] = useState( 0 );
 
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const jetpackNonAtomic = useSelector(
 		( state ) => isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId )
 	);
@@ -121,7 +120,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 								'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
 							) }
 							ctaText={ translate( 'Get started' ) }
-							image={ blazeDropDownIllustration }
+							image={ blazeIllustration }
 							href={ `/advertising/${ slug || '' }` }
 						/>
 					) }
@@ -138,7 +137,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 							href={ `/plugins/wordpress-seo-premium/${ slug }` }
 						/>
 					) }
-					<AppPromoFullWidth
+					<AppPromoCard
 						className="stats__promo-card-apps"
 						clickHandler={ promoCardDidReceiveClick }
 					/>

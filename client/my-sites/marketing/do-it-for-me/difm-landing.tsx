@@ -1,33 +1,40 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	WPCOM_DIFM_LITE,
 	getPlan,
-	PLAN_WPCOM_PRO,
-	PLAN_PREMIUM,
 	isBusiness,
 	isPremium,
 	isEcommerce,
 	isPro,
 	getDIFMTieredPriceDetails,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	getFeatureByKey,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
-import { useTranslate } from 'i18n-calypso';
+import { numberFormat, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { CHARACTER_LIMIT } from 'calypso/signup/steps/website-content/section-types/constants';
+import { useSelector } from 'calypso/state';
+import {
+	getProductBySlug,
+	getProductCost,
+	getProductCurrencyCode,
+} from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
+
+import './difm-landing.scss';
 
 const Placeholder = styled.span`
 	padding: 0 60px;
@@ -51,16 +58,24 @@ const Placeholder = styled.span`
 const Wrapper = styled.div`
 	display: flex;
 	align-items: flex-start;
-	gap: 96px;
-	padding: 12px;
+	padding: 32px;
+	max-width: 1040px;
+	margin: 0 auto;
+
+	.difmStartingPoint & {
+		padding: 12px;
+	}
 `;
 
 const ContentSection = styled.div`
 	flex: 1;
+	padding-right: 10px;
+	width: 50%;
 `;
 
 const ImageSection = styled.div`
-	width: 540px;
+	min-width: 540px;
+	width: 50%;
 	height: 562px;
 	padding-top: 75px;
 	display: flex;
@@ -72,8 +87,14 @@ const ImageSection = styled.div`
 `;
 
 const Header = styled( FormattedHeader )`
+	margin: 0 0 24px 0 !important;
 	.formatted-header__title {
+		font-size: 2.75rem !important;
+		margin-bottom: 16px !important;
 		line-height: 3rem;
+	}
+	.formatted-header__subtitle {
+		font-size: 1rem;
 	}
 `;
 
@@ -107,6 +128,7 @@ const FAQSection = styled.div`
 const FoldableFAQ = styled( FoldableFAQComponent )`
 	border: 1px solid #e9e9ea;
 	padding: 0;
+	border-radius: 4px;
 	margin-bottom: 24px;
 	.foldable-faq__question {
 		padding: 24px 16px 24px 24px;
@@ -115,6 +137,7 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		svg {
 			margin-inline-end: 0;
 			margin-inline-start: auto;
+			flex-shrink: 0;
 		}
 		.foldable-faq__question-text {
 			padding-inline-start: 0;
@@ -122,18 +145,17 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 		}
 	}
 	&.is-expanded {
-		border: 2px solid var( --studio-blue-50 );
-		background: linear-gradient(
-			180deg,
-			rgba( 6, 117, 196, 0.2 ) -44.3%,
-			rgba( 255, 255, 255, 0 ) 100%
-		);
+		border: 2px solid var( --studio-wordpress-blue-50 );
 		.foldable-faq__answer {
 			margin: 0 16px 24px 0;
 			ul {
 				margin: 0 0 0 16px;
 			}
 		}
+	}
+	&:not( .is-expanded ) .foldable-faq__question:focus {
+		box-shadow: 0 0 0 var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		outline: 3px solid transparent;
 	}
 	.foldable-faq__answer {
 		padding: 0 16px 0 24px;
@@ -143,17 +165,44 @@ const FoldableFAQ = styled( FoldableFAQComponent )`
 
 const CTASectionWrapper = styled.div`
 	display: flex;
-	gap: 32px;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 18px;
 	margin: 2rem 0;
-`;
-
-const LinkButton = styled( Button )`
-	font-size: 1rem;
+	.components-button.is-primary {
+		border-radius: 4px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		justify-content: center;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
+	}
+	.components-button.is-secondary {
+		border-radius: 4px;
+		box-shadow: inset 0 0 0 1px
+			var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		outline: 1px solid transparent;
+		white-space: nowrap;
+		color: var( --studio-wordpress-blue-50, var( --wp-admin-theme-color, #3858e9 ) );
+		background: transparent;
+		border: none;
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var( --color-accent-60 );
+			outline-offset: 2px;
+		}
+	}
 `;
 
 const StepContainer = styled.div`
 	display: flex;
 	gap: 20px;
+	margin-top: 0;
 `;
 
 const ProgressLine = styled.div`
@@ -201,6 +250,19 @@ const Description = styled.div`
 	font-size: 0.875rem;
 `;
 
+const hasHigherPlan = ( currentPlan: string, plan: typeof PLAN_PREMIUM | typeof PLAN_BUSINESS ) => {
+	const planMatchers =
+		plan === PLAN_PREMIUM
+			? [ isPremium, isBusiness, isEcommerce, isPro ]
+			: [ isBusiness, isEcommerce, isPro ];
+
+	return planMatchers.some( ( planMatcher ) =>
+		planMatcher( {
+			productSlug: currentPlan,
+		} )
+	);
+};
+
 const Step = ( {
 	index,
 	title,
@@ -225,27 +287,50 @@ const Step = ( {
 };
 
 export default function DIFMLanding( {
-	onSubmit,
+	showNewOrExistingSiteChoice,
+	onPrimarySubmit,
+	onSecondarySubmit,
 	siteId,
+	isStoreFlow,
 }: {
-	onSubmit: () => void;
-	onSkip?: () => void;
-	isInOnboarding: boolean;
+	onPrimarySubmit: () => void;
+	onSecondarySubmit?: () => void;
+	showNewOrExistingSiteChoice: boolean;
 	siteId?: number | null;
+	isStoreFlow: boolean;
 } ) {
+	const requiredProductSlugs = [ PLAN_PREMIUM, WPCOM_DIFM_LITE, PLAN_BUSINESS ];
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const productCost = product?.cost;
 
+	const planSlug = isStoreFlow ? PLAN_BUSINESS : PLAN_PREMIUM;
+	const planObject = getPlan( planSlug );
+	const planTitle = planObject?.getTitle();
+	const planCostInteger = useSelector( ( state ) => getProductCost( state, planSlug ) );
+	const planStorageSlug = planObject?.getStorageFeature?.();
+	const planStorageString = planStorageSlug ? getFeatureByKey( planStorageSlug )?.getTitle() : '';
+
 	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
 	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
 
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && extraPageCost && currencyCode;
+	// This is used in a FAQ item.
+	const businessPlanCostInteger = useSelector( ( state ) =>
+		getProductCost( state, PLAN_BUSINESS )
+	);
+
+	const currencyCode = useSelector( ( state ) => getProductCurrencyCode( state, WPCOM_DIFM_LITE ) );
+	const hasPriceDataLoaded =
+		productCost && extraPageCost && planCostInteger && businessPlanCostInteger && currencyCode;
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+		: '';
+
+	const planCost = hasPriceDataLoaded
+		? formatCurrency( planCostInteger, currencyCode, { stripZeros: true } )
 		: '';
 
 	const extraPageDisplayCost = hasPriceDataLoaded
@@ -253,6 +338,10 @@ export default function DIFMLanding( {
 				stripZeros: true,
 				isSmallestUnit: true,
 		  } )
+		: '';
+
+	const businessPlanCost = hasPriceDataLoaded
+		? formatCurrency( businessPlanCostInteger, currencyCode, { stripZeros: true } )
 		: '';
 
 	const faqHeader = useRef( null );
@@ -270,33 +359,32 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
-	const planTitle = isEnabled( 'plans/pro-plan' )
-		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
-		: getPlan( PLAN_PREMIUM )?.getTitle();
-
-	const headerText = translate(
-		'Hire a professional to set up your site for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
-		{
-			components: {
-				PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
-				sup: <sup />,
-			},
-			args: {
-				displayCost,
-			},
-		}
-	);
+	const headerTextTranslateArgs = {
+		components: {
+			PriceWrapper: ! hasPriceDataLoaded ? <Placeholder /> : <span />,
+			sup: <sup />,
+		},
+		args: {
+			displayCost,
+			days: 4,
+		},
+	};
+	const headerText = isStoreFlow
+		? translate(
+				'Let us build your store in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  )
+		: translate(
+				'Let us build your site in %(days)d days for {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}}{{sup}}*{{/sup}}',
+				headerTextTranslateArgs
+		  );
 
 	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
-	const hasPremiumOrHigherPlan = currentPlan?.product_slug
-		? [ isPremium, isBusiness, isEcommerce, isPro ].some( ( planMatcher ) =>
-				planMatcher( {
-					productSlug: currentPlan.product_slug,
-				} )
-		  )
+	const hasCurrentPlanOrHigherPlan = currentPlan?.product_slug
+		? hasHigherPlan( currentPlan.product_slug, planSlug )
 		: false;
 
-	const subHeaderText = hasPremiumOrHigherPlan
+	const subHeaderText = hasCurrentPlanOrHigherPlan
 		? translate(
 				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
@@ -312,7 +400,7 @@ export default function DIFMLanding( {
 				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
 				{
 					args: {
-						plan: planTitle,
+						plan: planTitle ?? '',
 						freePages: 5,
 					},
 					components: {
@@ -321,12 +409,80 @@ export default function DIFMLanding( {
 				}
 		  );
 
+	const faqPlanCostOldCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and live chat support.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+	const faqPlanCostNewCopy = translate(
+		'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and expert support from our team.',
+		{
+			args: {
+				displayCost,
+				planTitle: planTitle ?? '',
+				planCost,
+				storage: planStorageString,
+			},
+		}
+	);
+
+	let faqRevisionsAnswer = translate(
+		'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+			'Furthermore, our %s plan offers live chat and priority email support if you need assistance.',
+		{
+			args: [ planTitle || '' ],
+		}
+	);
+	if ( planSlug === PLAN_BUSINESS ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers 24X7 priority support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+	if ( planSlug === PLAN_PREMIUM ) {
+		const isCopyTranslated = hasEnTranslation(
+			'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+				'Furthermore, our %s plan offers fast support from our experts if you need assistance.'
+		);
+		if ( isCopyTranslated ) {
+			faqRevisionsAnswer = translate(
+				'While this service does not include revisions, once you’ve received your completed site, you can modify everything using the WordPress editor – colors, text, images, adding new pages, and anything else you’d like to tweak. ' +
+					'Furthermore, our %s plan offers fast support from our experts if you need assistance.',
+				{
+					args: [ planTitle || '' ],
+				}
+			);
+		}
+	}
+
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
+			{ ! hasPriceDataLoaded && (
+				<QueryProductsList productSlugList={ requiredProductSlugs } type="partial" />
+			) }
 			<Wrapper>
 				<ContentSection>
-					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
+					<Header
+						brandFont
+						align="left"
+						headerText={ headerText }
+						subHeaderText={ subHeaderText }
+					/>
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -354,7 +510,11 @@ export default function DIFMLanding( {
 						<Step
 							index={ translate( '4' ) }
 							title={ translate( 'Submit content for your new website' ) }
-							description={ translate( 'Content can be edited later with the WordPress editor.' ) }
+							description={
+								isStoreFlow
+									? translate( 'Products can be added later with the WordPress editor.' )
+									: translate( 'Content can be edited later with the WordPress editor.' )
+							}
 						/>
 					</VerticalStepProgress>
 					<p>
@@ -367,14 +527,28 @@ export default function DIFMLanding( {
 							}
 						) }
 					</p>
-					<CTASectionWrapper>
-						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Hire a professional' ) }
-						</NextButton>
-					</CTASectionWrapper>
+					{ showNewOrExistingSiteChoice ? (
+						<CTASectionWrapper>
+							<NextButton onClick={ onPrimarySubmit }>
+								{ translate( 'Use an existing site' ) }
+							</NextButton>
+							<span>{ translate( 'or' ) }</span>
+							<NextButton onClick={ onSecondarySubmit } variant="secondary">
+								{ translate( 'Start a new site' ) }
+							</NextButton>
+						</CTASectionWrapper>
+					) : (
+						<CTASectionWrapper>
+							<NextButton onClick={ onPrimarySubmit }>{ translate( 'Get started' ) }</NextButton>
+						</CTASectionWrapper>
+					) }
 				</ContentSection>
 				<ImageSection>
-					<AsyncLoad require="./site-build-showcase" placeholder={ <LoadingEllipsis /> } />
+					<AsyncLoad
+						require="./site-build-showcase"
+						placeholder={ <LoadingEllipsis /> }
+						isStoreFlow={ isStoreFlow }
+					/>
 				</ImageSection>
 			</Wrapper>
 
@@ -396,123 +570,49 @@ export default function DIFMLanding( {
 						</FAQHeader>
 						<FoldableFAQ
 							id="faq-1"
-							expanded={ true }
-							question={ translate( 'What is Built By WordPress.com Express?' ) }
-						>
-							<p>
-								{ translate(
-									'This service was created for customers who would like to hire a professional to set up their website. Our professional builders have expert knowledge of the WordPress editor, themes, and available blocks; they take advantage of all the best options for your new site build. Once you’ve provided us with your content, we’ll create custom layouts for each page of your website and add your content to each of them. You will receive an email with a link to your finished website within 4 business days. You can then edit all of the content of the site using the WordPress editor. Add as many new pages or posts as you need, and contact WordPress.com support with any questions regarding how to edit or further customize your new site!'
-								) }
-							</p>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
-							<ul>
-								<li>
-									{ translate( 'Click {{a}}Hire a professional{{/a}} to begin.', {
-										components: {
-											a: <LinkButton isLink={ true } onClick={ onSubmit } />,
-										},
-									} ) }
-								</li>
-								<li>
-									{ translate(
-										'Choose {{b}}New site{{/b}} to begin a new site or {{b}}Existing WordPress.com{{/b}} site if you’d like to use an existing site on your account. (Note that all existing website content will be deleted from the site so we can start fresh).',
-										{
-											components: {
-												b: <b />,
-											},
-										}
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Submit your business information and optionally add your social media profiles.'
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Select your design from our catalog of professionally designed themes, or select {{b}}Let us choose{{/b}} to let our professionals select the best design for your site (recommended).',
-										{
-											components: {
-												b: <b />,
-											},
-										}
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Select up to five page types to use for your new site (About, Services, Contact, etc).'
-									) }
-								</li>
-								<li>{ translate( 'Complete the purchase at Checkout.' ) }</li>
-								<li>
-									{ translate(
-										'Submit the content for your new website, adding text and images (optional) for each page. You can always edit this content on the site later using the WordPress editor.'
-									) }
-								</li>
-								<li>
-									{ translate( 'Receive your finished website in 4 business days or less!' ) }
-								</li>
-							</ul>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-3" question={ translate( 'Who is this service for?' ) }>
-							<ul>
-								<li>{ translate( 'Small business owners looking to get online quickly.' ) }</li>
-								<li>
-									{ translate( 'Bloggers wanting some help with their initial site setup.' ) }
-								</li>
-								<li>{ translate( 'Anyone who could benefit from professional page layouts.' ) }</li>
-							</ul>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
-							<p>
-								{ translate(
-									'The service costs %(displayCost)s, plus an additional purchase of the %(planTitle)s hosting plan.',
-									{
-										args: {
-											displayCost,
-											planTitle,
-										},
-									}
-								) }
-							</p>
-						</FoldableFAQ>
-						<FoldableFAQ id="faq-5" question={ translate( 'What does the service include?' ) }>
-							<ul>
-								<li>
-									{ translate(
-										'Custom page layouts for up to 5 pages, using the content you provide during sign up.'
-									) }
-								</li>
-								<li>
-									{ translate(
-										'Theme selection (when the “Let us choose” option is selected during sign up).'
-									) }
-								</li>
-								<li>{ translate( 'Color palette creation, based on your branding.' ) }</li>
-								<li>
-									{ translate(
-										'Your logo (provided by you) added to the site, and creation of a site icon.'
-									) }
-								</li>
-								<li>{ translate( 'Creation of a main navigation menu.' ) }</li>
-								<li>{ translate( 'Creation of a social profiles menu.' ) }</li>
-								<li>{ translate( 'Creation of a contact form.' ) }</li>
-								<li>{ translate( 'Addition of custom CSS (when needed).' ) }</li>
-								<li>
-									{ translate( 'Sourcing of additional professional images (when needed).' ) }
-								</li>
-							</ul>
-						</FoldableFAQ>
-						<FoldableFAQ
-							id="faq-6"
+							expanded
 							question={ translate(
-								'I need more than the included 5 pages. Can I purchase additional pages?'
+								'What is the Express Website Design Service, and who is it for?'
 							) }
 						>
 							<p>
 								{ translate(
-									'Yes! Additional pages can be purchased for %(extraPageDisplayCost)s each.',
+									'Our website-building service is for anyone who wants a polished website fast: small businesses, personal websites, bloggers, clubs or organizations, and more. ' +
+										"Just answer a few questions, submit your content, and we'll handle the rest. " +
+										"Click the button above to start, and you'll receive your customized 5-page site within 4 business days!"
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-2" question={ translate( 'How much does it cost?' ) }>
+							<p>
+								{ hasEnTranslation(
+									'The service costs %(displayCost)s, plus an additional %(planCost)s for the %(planTitle)s plan, which offers fast, secure hosting, video embedding, %(storage)s of storage, a free domain for one year, and fast support from our expert team.'
+								)
+									? faqPlanCostNewCopy
+									: faqPlanCostOldCopy }
+							</p>
+						</FoldableFAQ>
+						{ isStoreFlow && (
+							<FoldableFAQ
+								id="faq-2-1"
+								question={ translate( 'What does my store setup include?' ) }
+							>
+								<p>
+									{ translate(
+										'Your purchase includes the setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+											'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. ' +
+											'You can set these up later, support is happy to help if you have questions.'
+									) }
+								</p>
+							</FoldableFAQ>
+						) }
+						<FoldableFAQ
+							id="faq-3"
+							question={ translate( 'Can I purchase additional pages if I need more than five?' ) }
+						>
+							<p>
+								{ translate(
+									'Yes, extra pages can be purchased for %(extraPageDisplayCost)s each.',
 									{
 										args: {
 											extraPageDisplayCost,
@@ -522,30 +622,170 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-7"
-							question={ translate( 'What will my finished site look like?' ) }
+							id="faq-4"
+							question={ translate( "What if I don't have enough images or content?" ) }
 						>
 							<p>
 								{ translate(
-									'Your finished site will be built using a WordPress.com theme. The layout of your site will be a mobile-friendly responsive design and the content will adjust to look great on every device. The professional website builder will create the layout of each page based on the content you provide during the signup process. Additional high-quality professional images may be sourced from Pexels, a vast open source library of stock photos, to make sure each page stands out. Custom CSS may be added for further design tweaks.'
+									"Don't worry if you don't have images or content for every page. " +
+										"After checkout, you'll have an option to opt into AI text creation. " +
+										'Our design team can select images and use AI to create your site content, all of which you can edit later using the editor. ' +
+										"If you select the blog page during sign up, we'll even create three blog posts for you to get you started!"
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-5" question={ translate( 'When will you contact me?' ) }>
+							<p>
+								{ translate(
+									'After you check out, you’ll fill out a content upload form that includes any design preferences and reference sites. ' +
+										"While we can't guarantee an exact match, we'll consider all your feedback during site construction, and you'll receive an email when your new site is ready — always within four business days."
 								) }
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-8"
-							question={ translate( 'What if I want changes to the finished site?' ) }
+							id="faq-6"
+							question={ translate( 'What will my completed website look like?' ) }
 						>
 							<p>
 								{ translate(
-									'Although revisions aren’t included with this service, you will be able to edit all content of the site using the WordPress editor. You will be able to change images, edit text, and also add additional pages and posts. You could even try a new theme for a different look, and you will still have the professionally designed page layouts. Your %(planTitle)s plan comes with access to live chat and priority email support, so you can always contact support if you need help customizing your new site or have questions about this service.',
+									'Each website is unique, mobile-friendly, and customized to your brand and content. ' +
+										'With a 97% satisfaction rate, we are confident that you will love your new site, just like hundreds of customers before you. ' +
+										'Additionally, we offer a 14-day refund window, giving you peace of mind.'
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-7" question={ translate( 'How many revisions are included?' ) }>
+							<p>{ faqRevisionsAnswer }</p>
+						</FoldableFAQ>
+						<FoldableFAQ
+							id="faq-8"
+							question={ translate( 'What happens to my existing content?' ) }
+						>
+							<p>
+								{ translate(
+									'If you choose to use your current WordPress.com site, your existing content will remain untouched. ' +
+										"We'll create new pages with your provided content while applying a new, customized theme. However, we won't edit any existing content on your site's pages."
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ id="faq-9" question={ translate( 'What are the content guidelines?' ) }>
+							<p>
+								{ translate(
+									'{{strong}}Fresh Content Only:{{/strong}} Please provide original content rather than requesting migrations or content from existing pages, external websites, or files.',
 									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Timely Submission:{{/strong}} Submit your content {{strong}}within %(refundPeriodDays)d days{{/strong}} of purchase to keep things on track. If we don't receive it in time, we'll use AI-generated text and stock images based on your search terms to bring your site to life.",
+									{
+										components: {
+											strong: <strong />,
+										},
 										args: {
-											planTitle,
+											refundPeriodDays: 14,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'{{strong}}Bite-sized Content:{{/strong}} Keep each page under %s characters. Longer content will be trimmed using AI to ensure everything looks great.',
+									{
+										components: {
+											strong: <strong />,
+										},
+										args: [ numberFormat( CHARACTER_LIMIT ) ],
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Design Approach:{{/strong}} We follow established design guidelines while customizing your site to reflect your brand. With your logo, colors, and style preferences, we'll create a professional site that captures your essence using our curated design elements.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Stay Connected:{{/strong}} After you submit your content, we'll review it. If everything meets our guidelines, we'll notify you when your site is ready for launch. If adjustments are needed, we'll reach out.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Perfect As-Is:{{/strong}} We aim to get it right the first time! While revisions aren't included, you can always make updates later using the WordPress editor.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Plugin Potential:{{/strong}} The initial setup doesn't include every feature, but it's a great starting point. Add options like appointments, courses, property listings, memberships, payments, animations, and more after we finish your site. Our Happiness Engineers can make recommendations based on your plan.",
+									{
+										components: {
+											strong: <strong />,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									"{{strong}}Custom Requests:{{/strong}} We focus on attractive and functional designs, but we can't accommodate very specific layout requests or exact matches to designs. For fully custom solutions or pixel-perfect recreations, we can connect you with an expert WordPress agency partner, with projects starting at $5,000.",
+									{
+										components: {
+											strong: <strong />,
 										},
 									}
 								) }
 							</p>
 						</FoldableFAQ>
+						<FoldableFAQ id="faq-10" question={ translate( 'Can I use my existing domain name?' ) }>
+							<p>
+								{ translate(
+									'Yes, our support team will help you connect your existing domain name to your site after the build is complete.'
+								) }
+							</p>
+						</FoldableFAQ>
+						{ ! isStoreFlow && (
+							<FoldableFAQ id="faq-11" question={ translate( 'Can I have a store set up?' ) }>
+								<>
+									<p>
+										{ translate(
+											'We offer an ecommerce store setup option which includes setup of the WooCommerce shop landing page, cart, checkout, and my account pages, along with additional pages you choose while signing up. ' +
+												'Please note, individual product setup, payments, taxes, shipping, and other WooCommerce extensions or settings are not included. You can set these up later, support is happy to help if you have questions. ' +
+												'An additional purchase of the %(businessPlanName)s plan, costing %(businessPlanCost)s, is required for a store site.',
+											{
+												args: {
+													businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() || '',
+													businessPlanCost,
+												},
+											}
+										) }
+									</p>
+									<Button
+										variant="primary"
+										onClick={ () => ( window.location.href = '/start/do-it-for-me-store' ) }
+									>
+										{ translate( 'Get started' ) }
+									</Button>
+								</>
+							</FoldableFAQ>
+						) }
 					</>
 				) }
 			</FAQSection>

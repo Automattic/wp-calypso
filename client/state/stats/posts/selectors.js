@@ -5,7 +5,6 @@ import 'calypso/state/stats/init';
 /**
  * Returns true if current requesting post stat for the specified site ID,
  * post ID and stat key, or * false otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
@@ -19,7 +18,6 @@ export function isRequestingPostStats( state, siteId, postId, fields = [] ) {
 /**
  * Returns the stat value for the specified site ID,
  * post ID and stat key
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id
@@ -32,7 +30,6 @@ export function getPostStat( state, siteId, postId, stat ) {
 
 /**
  * Returns the stats for the for the specified site ID, postId
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {number}  postId Post Id

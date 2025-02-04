@@ -5,7 +5,6 @@ import { isSiteAllowedFileTypesToBeTrusted } from 'calypso/lib/media/utils/is-si
  * Returns true if the specified item is a valid file for the given site,
  * or false otherwise. A file is valid if the sites allowable file types
  * contains the item's type.
- *
  * @param  {Object}  item Media object
  * @param  {Object}  site Site object
  * @returns {boolean}      Whether the site supports the item

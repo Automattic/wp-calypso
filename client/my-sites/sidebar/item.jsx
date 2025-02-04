@@ -6,6 +6,7 @@
  * These two cases might be to be split up?
  */
 
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { memo } from 'react';
 import { useDispatch } from 'react-redux';
@@ -23,15 +24,19 @@ export const MySitesSidebarUnifiedItem = ( {
 	slug,
 	title,
 	url,
+	className = '',
 	shouldOpenExternalLinksInCurrentTab,
-	canNavigate,
+	showTooltip = false,
+	forceExternalLink = false,
+	forceShowExternalIcon = false,
+	forceChevronIcon = false,
+	trackClickEvent,
 } ) => {
 	const reduxDispatch = useDispatch();
 
-	const onNavigate = ( event ) => {
-		if ( ! canNavigate( url ) ) {
-			event?.preventDefault();
-			return;
+	const onNavigate = () => {
+		if ( typeof trackClickEvent === 'function' ) {
+			trackClickEvent( url );
 		}
 
 		reduxDispatch( collapseAllMySitesSidebarSections() );
@@ -43,12 +48,19 @@ export const MySitesSidebarUnifiedItem = ( {
 			badge={ badge }
 			count={ count }
 			label={ title }
+			tooltip={ showTooltip ? title : undefined }
 			link={ url }
 			onNavigate={ onNavigate }
 			selected={ selected }
 			customIcon={ <SidebarCustomIcon icon={ icon } /> }
 			forceInternalLink={ shouldOpenExternalLinksInCurrentTab }
-			className={ isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent' }
+			forceExternalLink={ forceExternalLink }
+			forceShowExternalIcon={ forceShowExternalIcon }
+			forceChevronIcon={ forceChevronIcon }
+			className={ clsx(
+				isSubItem ? 'sidebar__menu-item--child' : 'sidebar__menu-item-parent',
+				className
+			) }
 		>
 			<MySitesSidebarUnifiedStatsSparkline slug={ slug } />
 		</SidebarItem>
@@ -58,13 +70,17 @@ export const MySitesSidebarUnifiedItem = ( {
 MySitesSidebarUnifiedItem.propTypes = {
 	badge: PropTypes.string,
 	count: PropTypes.number,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 	sectionId: PropTypes.string,
 	slug: PropTypes.string,
 	title: PropTypes.string,
+	showTooltip: PropTypes.bool,
 	url: PropTypes.string,
 	shouldOpenExternalLinksInCurrentTab: PropTypes.bool.isRequired,
-	canNavigate: PropTypes.func.isRequired,
+	forceExternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
+	forceChevronIcon: PropTypes.bool,
+	trackClickEvent: PropTypes.func,
 };
 
 export default memo( MySitesSidebarUnifiedItem );

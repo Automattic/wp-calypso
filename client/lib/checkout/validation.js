@@ -10,7 +10,6 @@ import {
 
 /**
  * Returns the credit card validation rule set
- *
  * @returns {Object} the ruleset
  */
 export function getCreditCardFieldRules() {
@@ -55,7 +54,6 @@ export function getCreditCardFieldRules() {
 
 /**
  * Returns the credit card validation rule set for stripe elements
- *
  * @returns {Object} the ruleset
  */
 export function getStripeElementsRules() {
@@ -83,7 +81,6 @@ export function getStripeElementsRules() {
 
 /**
  * Returns the token validation rule set
- *
  * @returns {Object} the ruleset
  */
 export function tokenFieldRules() {
@@ -106,7 +103,6 @@ export function tokenFieldRules() {
 
 /**
  * Returns a validation ruleset to use for the given payment type
- *
  * @param {Object} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
  * @returns {Object | null} the ruleset
@@ -138,7 +134,6 @@ export function paymentFieldRules( paymentDetails, paymentType ) {
 /**
  * Returns arguments deep-merged into one object with any array values
  * concatentated and deduped
- *
  * @param {Object} rulesets Objects describing the rulesets to be combined
  * @returns {Object} The aggregated ruleset
  */
@@ -312,7 +307,6 @@ validators.validStreetNumber = {
  * Returns an object with one property: `errors`. That object is another object
  * with keys that are the field names of those errors.  The value of each
  * property of that object is an array of error strings.
- *
  * @param {Object.<string, string>} paymentDetails object containing fieldname/value keypairs
  * @param {string} paymentType credit-card|paypal|p24|netbanking|token|stripe|ebanx
  * @returns {{errors:Object.<string, string[]>}} validation errors, if any
@@ -334,7 +328,6 @@ export function validatePaymentDetails( paymentDetails, paymentType ) {
 
 /**
  * Retrieves the type of credit card from the specified number.
- *
  * @param {string} number - credit card number
  * @returns {string|null} the type of the credit card
  * @see {@link http://en.wikipedia.org/wiki/Bank_card_number} for more information

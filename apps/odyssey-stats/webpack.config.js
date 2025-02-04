@@ -1,6 +1,5 @@
 const path = require( 'path' );
 const process = require( 'process' ); // eslint-disable-line
-const BuildMetaPlugin = require( '@automattic/calypso-apps-builder/build-meta-webpack-plugin.cjs' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const Minify = require( '@automattic/calypso-build/webpack/minify' );
 const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
@@ -29,26 +28,43 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
+const excludedPackages = [
+	/^calypso\/components\/inline-support-link$/,
+	/^calypso\/components\/web-preview.*$/,
+	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
+	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
+	/^calypso\/components\/data\/query-keyring-connections$/,
+	/^calypso\/components\/data\/query-jetpack-modules$/,
+	/^calypso\/components\/data\/query-site-keyrings$/,
+	/^calypso\/components\/data\/query-preferences$/,
+];
+
+const excludedPackagePlugins = excludedPackages.map(
+	// Note: apparently the word "package" is a reserved keyword here for some reason
+	( pkg ) =>
+		new webpack.NormalModuleReplacementPlugin(
+			pkg,
+			path.resolve( __dirname, 'src/components/nothing' )
+		)
+);
+
 module.exports = {
 	bail: ! isDevelopment,
-	entry: path.join( __dirname, 'src', 'app' ),
+	entry: {
+		build: path.join( __dirname, 'src', 'app' ),
+		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
+	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,
 	output: {
 		path: outputPath,
-		filename: 'build.min.js',
+		filename: '[name].min.js',
+		chunkFilename: '[name]-[contenthash].js?minify=false',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
 		concatenateModules: ! shouldEmitStats,
-		minimizer: Minify( {
-			extractComments: false,
-			terserOptions: {
-				ecma: 5,
-				safari10: true,
-				mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
-			},
-		} ),
+		minimizer: Minify(),
 		splitChunks: false,
 	},
 	module: {
@@ -94,16 +110,19 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
+		alias: {
+			'@wordpress/upload-media': false,
+		},
 	},
 	node: false,
 	plugins: [
-		BuildMetaPlugin( { outputPath } ),
 		new webpack.DefinePlugin( {
 			global: 'window',
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 		} ),
 		...SassConfig.plugins( {
-			filename: 'build.min.css',
+			filename: '[name].min.css',
+			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
@@ -128,9 +147,15 @@ module.exports = {
 						'@wordpress/primitives',
 						'@wordpress/url',
 						'@wordpress/warning',
+						'moment',
+						'../moment',
 					].includes( request )
 				) {
 					return;
+				}
+				// moment locales requires moment.js main file, so we need to handle it as an external as well.
+				if ( request === '../moment' ) {
+					request = 'moment';
 				}
 				return defaultRequestToExternal( request );
 			},
@@ -156,6 +181,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-config$/,
+			path.resolve( __dirname, 'src/lib/config-api' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'
 		),
@@ -163,6 +192,19 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-site-purchases$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-site-purchases' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-products-list$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-products' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/data\/query-memberships$/,
+			path.resolve( __dirname, 'src/components/odyssey-query-memberships' )
+		),
+		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',

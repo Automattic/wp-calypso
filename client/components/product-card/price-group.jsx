@@ -1,11 +1,12 @@
-import classNames from 'classnames';
+import { PlanPrice } from '@automattic/components';
+import clsx from 'clsx';
+import { isNumber } from 'lodash';
 import PropTypes from 'prop-types';
-import PlanPrice from 'calypso/my-sites/plan-price';
 
 const ProductCardPriceGroup = ( props ) => {
 	const { billingTimeFrame, currencyCode, discountedPrice, fullPrice } = props;
-	const isDiscounted = !! discountedPrice;
-	const priceGroupClasses = classNames( 'product-card__price-group', {
+	const isDiscounted = isNumber( discountedPrice );
+	const priceGroupClasses = clsx( 'product-card__price-group', {
 		'is-discounted': isDiscounted,
 	} );
 

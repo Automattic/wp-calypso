@@ -11,7 +11,6 @@ export const DEFAULT_GRIDICON = 'info-outline';
 
 /**
  * Transforms API response into array of activities
- *
  * @param  {Object} apiResponse API response body
  * @returns {Object}             Object with an entry for proccessed item objects and another for oldest item timestamp
  */
@@ -21,7 +20,6 @@ export function transformer( apiResponse ) {
 
 /**
  * Takes an Activity item in the API format and returns a processed Activity item for use in UI
- *
  * @param  {Object}  item Validated Activity item
  * @returns {Object}       Processed Activity item ready for use in UI
  */
@@ -64,6 +62,8 @@ export function processItem( item ) {
 			activityDescription: parseBlock( item.content ),
 			activityMedia: get( item, 'image' ),
 			activityMeta,
+			baseRewindId: item.base_rewind_id,
+			rewindStepCount: item.rewind_step_count,
 		},
 		item.rewind_id && { rewindId: item.rewind_id },
 		item.status && { activityStatus: item.status },

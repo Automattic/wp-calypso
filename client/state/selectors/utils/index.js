@@ -5,7 +5,6 @@ import getPublicizeConnection from 'calypso/state/selectors/get-publicize-connec
  * Propagate publicize-connections with the share actions
  * passed as a parameter.
  * Thus, it returns richest array adding and crossing information for each action.
- *
  * @param  {Object} state - Global state tree
  * @param  {Array} postShareActions - share actions of a post
  * @returns {Array} richest post actions array
@@ -23,7 +22,7 @@ export function enrichPublicizeActionsWithConnections( state, postShareActions )
 				connectionName: connection?.external_display,
 				message,
 				result,
-				service: connection?.service ?? 'twitter',
+				service: connection?.service,
 				date: share_date,
 				status,
 				url,

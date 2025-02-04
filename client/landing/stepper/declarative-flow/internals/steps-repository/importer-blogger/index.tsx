@@ -3,9 +3,9 @@ import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 
-const ImporterBlogger: Step = function ( props ) {
-	const Importer = withImporterWrapper( BloggerImporter );
+const Importer = withImporterWrapper( BloggerImporter );
 
+const ImporterBlogger: Step = function ( props ) {
 	return <Importer importer="blogger" { ...props } />;
 };
 

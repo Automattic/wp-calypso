@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -6,11 +6,12 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
@@ -50,7 +51,7 @@ class StoreStats extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
-		const statsWrapperClass = classNames( 'stats-content', {
+		const statsWrapperClass = clsx( 'stats-content', {
 			'is-period-year': unit === 'year',
 		} );
 
@@ -66,15 +67,14 @@ class StoreStats extends Component {
 				) }
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="store-stats__section-header modernized-header"
-						headerText={ translate( 'Jetpack Stats' ) }
-						align="left"
-						subHeaderText={ translate(
+					<NavigationHeader
+						className="stats__section-header modernized-header"
+						title={ translate( 'Jetpack Stats' ) }
+						subtitle={ translate(
 							'Learn valuable insights about the purchases made on your store.'
 						) }
-					/>
+						screenReader={ navItems.store?.label }
+					></NavigationHeader>
 
 					<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 

@@ -41,7 +41,7 @@ $sidebar-width-desktop: 324px;
 		max-height: none;
 	}
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		width: calc(100% - 32px);
 		height: 90vh;
 		// prevents a 1px strip of content being visible after scrolling
@@ -52,7 +52,7 @@ $sidebar-width-desktop: 324px;
 		}
 	}
 
-	@media screen and ( min-width: $breakpoint-desktop ) {
+	@media screen and (min-width: $breakpoint-desktop) {
 		width: calc(100% - 64px);
 	}
 
@@ -82,12 +82,12 @@ $sidebar-width-desktop: 324px;
 	font-size: 2rem;
 	line-height: 1.25;
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		font-size: 2.25rem;
 		line-height: 1.1;
 	}
 	&--default {
-		@media screen and ( min-width: $breakpoint-desktop ) {
+		@media screen and (min-width: $breakpoint-desktop) {
 			font-size: 3rem;
 			line-height: 1.35;
 		}
@@ -102,7 +102,7 @@ $sidebar-width-desktop: 324px;
 }
 
 .page-pattern-modal__inner {
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		padding: 0 20px;
 	}
 }
@@ -148,7 +148,7 @@ $sidebar-width-desktop: 324px;
 }
 
 .page-pattern-modal__sidebar {
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		position: fixed;
 		width: $sidebar-width;
 		padding-right: 22px;
@@ -170,7 +170,7 @@ $sidebar-width-desktop: 324px;
 			pointer-events: auto;
 		}
 	}
-	@media screen and ( min-width: $breakpoint-desktop ) {
+	@media screen and (min-width: $breakpoint-desktop) {
 		width: $sidebar-width-desktop;
 		padding-right: 48px;
 	}
@@ -184,7 +184,7 @@ $sidebar-width-desktop: 324px;
 	padding: 2px 0 2px 14px;
 	margin-left: -14px;
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		display: block;
 	}
 
@@ -232,7 +232,7 @@ $sidebar-width-desktop: 324px;
 	grid-template-columns: 1fr 1fr;
 	column-gap: 8px;
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		// No grid layout necessary on desktop view
 		display: inline;
 	}
@@ -266,16 +266,16 @@ $sidebar-width-desktop: 324px;
 	font-size: $default-font-size;
 	border-color: $pattern-selector-border-color;
 
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		display: none;
 	}
 }
 
 .page-pattern-modal__pattern-list-container {
-	@media screen and ( min-width: $breakpoint-mobile ) {
+	@media screen and (min-width: $breakpoint-mobile) {
 		padding-left: $sidebar-width;
 	}
-	@media screen and ( min-width: $breakpoint-desktop ) {
+	@media screen and (min-width: $breakpoint-desktop) {
 		padding-left: $sidebar-width-desktop;
 	}
 }

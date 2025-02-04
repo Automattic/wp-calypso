@@ -1,6 +1,6 @@
 # Happiness Support
 
-This component renders a card presenting our support resources, including links to the support form and documentation. It can also render a button to open a Live chat window if the prop `showLiveChatButton` is `true`.
+This component renders a card presenting our support resources, including links to the support form and documentation.
 
 ## Usage
 
@@ -8,13 +8,7 @@ This component renders a card presenting our support resources, including links 
 import HappinessSupport from 'calypso/components/happiness-support';
 
 export default () => {
-	return (
-		<HappinessSupport
-			isJetpack
-			liveChatButtonEventName="calypso_chat_button_clicked"
-			showLiveChatButton
-		/>
-	);
+	return <HappinessSupport isJetpack contactButtonEventName="calypso_chat_button_clicked" />;
 };
 ```
 
@@ -22,5 +16,4 @@ export default () => {
 
 - _isJetpack_ (boolean) – Indicates that the Happiness Support card is related to a Jetpack Plan.
 - _isJetpackFreePlan_ (boolean) – Indicates that the Happiness Support card is related to a Jetpack Free Plan.
-- _liveChatButtonEventName_ (string) – event name that will be recorded when the `HappychatButton` is clicked.
-- _showLiveChatButton_ (boolean) – Whether to show a `HappychatButton` instead of the support link `Button`
+- _contactButtonEventName_ (string) – event name that will be recorded when the contact button/link is clicked.

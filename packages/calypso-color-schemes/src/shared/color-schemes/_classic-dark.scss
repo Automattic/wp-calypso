@@ -206,6 +206,7 @@
 	--color-border-shadow-rgb: var(--color-neutral-0-rgb);
 	--color-border-inverted: var(--studio-white);
 	--color-border-inverted-rgb: var(--studio-white-rgb);
+	--color-border-secondary: #f1f1f1;
 
 	--color-link: var(--studio-blue-50);
 	--color-link-rgb: var(--studio-blue-50-rgb);
@@ -255,6 +256,8 @@
 	--color-masterbar-background: #101517;
 	--color-masterbar-border: #333;
 	--color-masterbar-text: var(--studio-white);
+	--color-masterbar-icon: var(--studio-white);
+	--color-masterbar-highlight: #00b9eb;
 	--color-masterbar-item-hover-background: #333;
 	--color-masterbar-item-active-background: #23282d;
 	--color-masterbar-item-new-editor-background: var(--studio-gray-50);
@@ -264,11 +267,10 @@
 	--color-masterbar-toggle-drafts-editor-hover-background: var(--studio-gray-40);
 	--color-masterbar-toggle-drafts-editor-border: var(--studio-gray-10);
 
-	--color-jetpack-masterbar-background: var(--studio-white);
-	--color-jetpack-masterbar-border: var(--studio-gray-5);
-	--color-jetpack-masterbar-text: var(--studio-gray-50);
-	--color-jetpack-masterbar-item-hover-background: var(--studio-gray-5);
-	--color-jetpack-masterbar-item-active-background: var(--studio-gray-20);
+	--color-checkout-masterbar-background: transparent;
+	--color-checkout-masterbar-text: var(--studio-gray-80);
+	--color-checkout-masterbar-item-hover-background: var(--studio-gray-5);
+	--color-checkout-masterbar-item-active-background: var(--studio-gray-20);
 
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
@@ -299,14 +301,16 @@
 	--color-wordpress-org: #585c60;
 
 	--color-blogger: #ff5722;
+	--color-bluesky: #0085ff;
 	--color-eventbrite: #ff8000;
-	--color-facebook: #39579a;
+	--color-facebook: #0866ff;
 	--color-godaddy: #5ea95a;
 	--color-google-plus: #df4a32;
 	--color-instagram: #d93174;
 	--color-linkedin: #0976b4;
 	--color-mastodon: #6364ff;
 	--color-medium: #12100e;
+	--color-nextdoor: #8ed500;
 	--color-pinterest: #cc2127;
 	--color-pocket: #ee4256;
 	--color-print: #f8f8f8;
@@ -316,10 +320,12 @@
 	--color-substack: #ff6719;
 	--color-squarespace: #222;
 	--color-telegram: #08c;
+	--color-threads: #000;
 	--color-tumblr: #35465c;
 	--color-twitter: #55acee;
 	--color-whatsapp: #43d854;
 	--color-wix: #faad4d;
+	--color-x: #000;
 
 	--color-email: var(--studio-gray-0);
 	--color-podcasting: #9b4dd5;
@@ -333,4 +339,15 @@
 	--color-sidebar-submenu-text: #b4b9be;
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-text: var(--studio-white);
+
+	/* Sidebar Submenu - Nav Redesign */
+	--color-navredesign-sidebar-submenu-hover-text: var(--color-sidebar-submenu-hover-text);
+	--color-navredesign-sidebar-submenu-selected-hover-text: var(--color-sidebar-submenu-text);
+
+	/* Collapse Menu Button */
+	--color-collapse-menu-text: var(--color-sidebar-text-alternative);
+
+	/* Gutenberg components */
+	--wp-admin-theme-color: var(--color-accent);
+	--wp-admin-theme-color-darker-20: var(--color-accent-60);
 }

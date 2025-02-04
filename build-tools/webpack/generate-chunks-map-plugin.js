@@ -3,7 +3,6 @@ const path = require( 'path' );
 
 /**
  * Plugin name.
- *
  * @type {string}
  */
 const PLUGIN_NAME = 'GenerateChunksMap';
@@ -22,7 +21,7 @@ class GenerateChunksMapPlugin {
 			for ( const chunk of chunks ) {
 				// This logic assumes there is only one `.js`. If there are more than one `.js` file linked to a chunk,
 				// this will be non deterministic as `chunk.files` iteration order is not guaranteed.
-				const name = Array.from( chunk.files ).find( ( file ) => /\.js$/.test( file ) );
+				const name = Array.from( chunk.files ).find( ( file ) => /.js(\?.*)?$/.test( file ) );
 				if ( ! name ) {
 					continue;
 				}

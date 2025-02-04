@@ -1,67 +1,54 @@
-import { localize, translate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
-import { connect, ConnectedProps } from 'react-redux';
-import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
-import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Title } from '@automattic/onboarding';
+import { useEffect } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import React, { useRef, useState } from 'react';
+import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { isSupportedImporterEngine } from 'calypso/lib/importer/importer-config';
+import { triggerMigrationStartingEvent } from 'calypso/my-sites/migrate/helpers';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser, getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import ScanningStep from '../scanning';
-import { GoToStep, UrlData } from '../types';
+import { GoToStep } from '../types';
 import CaptureInput from './capture-input';
 import type { OnInputEnter, OnInputChange } from './types';
 import type { FunctionComponent } from 'react';
 
 import './style.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 interface Props {
-	translate: typeof translate;
+	hasError?: boolean;
 	onInputEnter: OnInputEnter;
 	onInputChange?: OnInputChange;
-	hasError?: boolean;
 	onDontHaveSiteAddressClick?: () => void;
 }
-const Capture: FunctionComponent< Props > = ( props ) => {
-	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
+export const Capture: FunctionComponent< Props > = ( props ) => {
+	const translate = useTranslate();
+	const { onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
 
 	return (
-		<div className="import-layout__center">
-			<div className="import-layout">
-				<div className="import-layout__column">
-					<div className="import__heading">
-						<FormattedHeader
-							align="left"
-							headerText={ translate( 'Where will you import from?' ) }
-							subHeaderText={ translate(
-								'After a brief scan, we’ll prompt with what we can import from your website.'
-							) }
-						/>
-						<div className="step-wrapper__header-image">
-							<img alt="Light import" src={ illustrationImg } aria-hidden="true" />
-						</div>
-					</div>
-				</div>
-				<div className="import-layout__column">
-					<CaptureInput
-						onInputEnter={ onInputEnter }
-						onInputChange={ onInputChange }
-						onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
-						hasError={ hasError }
-					/>
-				</div>
+		<>
+			<div className="import__heading import__heading-center">
+				<Title>{ translate( 'Where will you import from?' ) }</Title>
 			</div>
-		</div>
+			<div className="import__capture-container">
+				<CaptureInput
+					onInputEnter={ onInputEnter }
+					onInputChange={ onInputChange }
+					onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+					hasError={ hasError }
+				/>
+			</div>
+		</>
 	);
 };
 
-const LocalizedCapture = localize( Capture );
-
-export { LocalizedCapture as Capture };
-
-type StepProps = ConnectedProps< typeof connector > & {
+type StepProps = {
+	initialUrl?: string;
+	disableImportListStep?: boolean;
 	goToStep: GoToStep;
+	onValidFormSubmit?: ( dependencies: Record< string, unknown > ) => void;
+	onImportListClick?: () => void;
 };
 
 const trackEventName = 'calypso_signup_step_start';
@@ -70,28 +57,58 @@ const trackEventParams = {
 	step: 'capture',
 };
 
-const CaptureStep: React.FunctionComponent< StepProps > = ( {
+export const CaptureStep: React.FunctionComponent< StepProps > = ( {
+	initialUrl = '',
+	disableImportListStep,
 	goToStep,
-	analyzeUrl,
-	resetError,
-	isAnalyzing,
-	analyzerError,
-	recordTracksEvent,
+	onValidFormSubmit,
+	onImportListClick,
 } ) => {
-	/**
-	 ↓ Methods
-	 */
+	const currentUser = useSelector( getCurrentUser );
+	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
+	const isStartingPointEventTriggeredRef = useRef( false );
+	const [ url, setUrl ] = useState( initialUrl );
+	const {
+		data: urlData,
+		isFetching: isAnalyzing,
+		error: analyzerError,
+		isFetchedAfterMount,
+	} = useAnalyzeUrlQuery( url );
+	const showCapture = ! isAnalyzing || ( initialUrl && isFetchedAfterMount );
 
-	const runProcess = ( url: string ): void => {
-		// Analyze the URL and when we receive the urlData, decide where to go next.
-		analyzeUrl( url ).then( ( response: UrlData ) => {
-			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
+	useEffect( () => {
+		if ( window && window.hj ) {
+			window.hj( 'trigger', 'importer_capture_step_2' );
+		}
+	}, [ detectedCountryCode ] );
 
-			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
-				stepSectionName = 'wpcom';
-			}
-			goToStep( 'ready', stepSectionName );
-		} );
+	const decideStepRedirect = () => {
+		if ( ! urlData ) {
+			return;
+		}
+
+		const stepName = 'ready';
+		let stepSectionName;
+
+		switch ( urlData.platform ) {
+			case 'unknown':
+				stepSectionName = 'not';
+				break;
+
+			case 'wordpress':
+				stepSectionName = urlData.platform_data?.is_wpcom ? 'wpcom' : 'preview';
+				break;
+
+			default:
+				if ( ! isSupportedImporterEngine( urlData.platform ) ) {
+					stepSectionName = 'not';
+				} else {
+					stepSectionName = 'preview';
+				}
+				break;
+		}
+
+		goToStep( stepName, stepSectionName, { fromUrl: url } );
 	};
 
 	const recordScanningEvent = () => {
@@ -121,21 +138,41 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
+	const recordMigrationStartingPointEvent = () => {
+		if ( currentUser && currentUser.ID && ! isStartingPointEventTriggeredRef.current ) {
+			isStartingPointEventTriggeredRef.current = true;
+			triggerMigrationStartingEvent( currentUser );
+		}
+	};
+
+	const onDontHaveSiteAddressClick = () => {
+		onImportListClick ? onImportListClick() : goToStep( 'list' );
+	};
+
 	/**
 	 ↓ Effects
 	 */
 	useEffect( recordScanningEvent, [ isAnalyzing ] );
 	useEffect( recordScanningErrorEvent, [ analyzerError ] );
+	useEffect( recordMigrationStartingPointEvent, [ currentUser ] );
 	useEffect( recordCaptureScreen, [] );
+	useEffect( () => decideStepRedirect(), [ urlData ] );
 
 	return (
 		<>
-			{ ! isAnalyzing && (
-				<LocalizedCapture
-					onInputEnter={ runProcess }
-					onDontHaveSiteAddressClick={ () => goToStep( 'list' ) }
+			{ showCapture && (
+				<Capture
+					onInputEnter={ ( url ) => {
+						onValidFormSubmit ? onValidFormSubmit( { url } ) : setUrl( url );
+					} }
+					onDontHaveSiteAddressClick={
+						disableImportListStep ? undefined : onDontHaveSiteAddressClick
+					}
 					hasError={ !! analyzerError }
-					onInputChange={ () => resetError() }
+					onInputChange={ () => {
+						// resets the error when the user starts typing again
+						setUrl( '' );
+					} }
 				/>
 			) }
 			{ isAnalyzing && <ScanningStep /> }
@@ -143,16 +180,4 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	);
 };
 
-const connector = connect(
-	( state ) => ( {
-		isAnalyzing: isAnalyzing( state ),
-		analyzerError: getAnalyzerError( state ),
-	} ),
-	{
-		analyzeUrl,
-		resetError,
-		recordTracksEvent,
-	}
-);
-
-export default connector( CaptureStep );
+export default CaptureStep;

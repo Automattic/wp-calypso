@@ -3,145 +3,179 @@ import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
-import { User as UserStore } from '@automattic/data-stores';
-import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { UserActions, User as UserStore } from '@automattic/data-stores';
+import { geolocateCurrencySymbol } from '@automattic/format-currency';
+import {
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+	SITE_MIGRATION_FLOW,
+} from '@automattic/onboarding';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
-import ReactDom from 'react-dom';
-import { QueryClientProvider } from 'react-query';
+import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
-import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import { retargetFullStory } from 'calypso/lib/analytics/fullstory';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import getSuperProps from 'calypso/lib/analytics/super-props';
+import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
+import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
-import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
-import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { loadPersistedState } from 'calypso/state/persisted-state';
-import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
+import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { requestSites } from 'calypso/state/sites/actions';
-import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
-import { setupWpDataDebug } from '../gutenboarding/devtools';
-import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { FlowRenderer } from './declarative-flow/internals';
+import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
+import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
-import { useQuery } from './hooks/use-query';
-import { ONBOARD_STORE, USER_STORE } from './stores';
-import type { Flow } from './declarative-flow/internals/types';
+import { USER_STORE } from './stores';
+import { setupWpDataDebug } from './utils/devtools';
+import { enhanceFlowWithUtilityFunctions } from './utils/enhance-flow-with-utils';
+import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowWithAuth';
+import redirectPathIfNecessary from './utils/flow-redirect-handler';
+import { getFlowFromURL } from './utils/get-flow-from-url';
+import { startStepperPerformanceTracking } from './utils/performance-tracking';
+import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
+import type { AnyAction } from 'redux';
 
 declare const window: AppWindow;
 
-function generateGetSuperProps() {
-	return () => ( {
-		environment: process.env.NODE_ENV,
-		environment_id: config( 'env_id' ),
-		site_id_label: 'wpcom',
-		client: config( 'client_slug' ),
-	} );
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
-	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
-	reduxStore.dispatch( requestSites() );
 }
 
 function determineFlow() {
-	if ( isAnchorFmFlow() ) {
-		return availableFlows[ 'anchor-fm-flow' ];
-	}
-
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
 	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
 }
-
-/**
- * TODO: this is no longer a switch and should be removed
- */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
-	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
-
-	const recurType = useQuery().get( 'recur' );
-
-	if ( flow.name === ECOMMERCE_FLOW ) {
-		const isValidRecurType =
-			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
-		if ( isValidRecurType ) {
-			setEcommerceFlowRecurType( recurType );
-		} else {
-			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
-		}
-	}
-
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
-
-	return <FlowRenderer flow={ flow } />;
-};
 interface AppWindow extends Window {
-	BUILD_TARGET?: string;
+	BUILD_TARGET: string;
 }
 
-window.AppBoot = async () => {
-	// backward support the old Stepper URL structure (?flow=something)
-	const flowNameFromQueryParam = new URLSearchParams( window.location.search ).get( 'flow' );
-	if ( flowNameFromQueryParam && availableFlows[ flowNameFromQueryParam ] ) {
-		window.location.href = `/setup/${ flowNameFromQueryParam }`;
+const DEFAULT_FLOW = 'site-setup';
+
+const getSiteIdFromURL = () => {
+	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
+	return siteId ? Number( siteId ) : null;
+};
+
+const HOTJAR_ENABLED_FLOWS = [
+	SITE_MIGRATION_FLOW,
+	HOSTED_SITE_MIGRATION_FLOW,
+	MIGRATION_SIGNUP_FLOW,
+];
+
+const initializeHotJar = ( flowName: string ) => {
+	if ( HOTJAR_ENABLED_FLOWS.includes( flowName ) ) {
+		addHotJarScript();
+	}
+};
+
+async function main() {
+	const { pathname, search } = window.location;
+
+	// Before proceeding we redirect the user if necessary.
+	if ( redirectPathIfNecessary( pathname, search ) ) {
+		return null;
 	}
 
+	const flowName = getFlowFromURL();
+	const siteId = getSiteIdFromURL();
+
+	if ( ! flowName ) {
+		// Stop the boot process if we can't determine the flow, reducing the number of edge cases
+		return ( window.location.href = `/setup/${ DEFAULT_FLOW }${ window.location.search }` );
+	}
+
+	const flowLoader = determineFlow();
+	// Load the flow asynchronously while things happen in parallel.
+	const flowPromise = flowLoader();
+
+	// Start tracking performance, bearing in mind this is a full page load.
+	startStepperPerformanceTracking( { fullPageLoad: true } );
+
+	initializeHotJar( flowName );
 	// put the proxy iframe in "all blog access" mode
 	// see https://github.com/Automattic/wp-calypso/pull/60773#discussion_r799208216
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	addHotJarScript();
-	retargetFullStory();
 
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
-	const queryClient = createQueryClient();
-	await hydrateBrowserState( queryClient, userId );
-
-	initializeAnalytics( user, generateGetSuperProps() );
+	const { queryClient } = await createQueryClient( userId );
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
+	onDisablePersistence( persistOnChange( reduxStore, userId ) );
 	setupLocale( user, reduxStore );
+	const { receiveCurrentUser } = dispatch( USER_STORE ) as UserActions;
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	if ( user ) {
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		receiveCurrentUser( user as UserStore.CurrentUser );
+	}
+
+	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
 
-	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader();
+	let { default: flow } = await flowPromise;
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
 
-	ReactDom.render(
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
+
+	// Checking for initialize implies this is a V2 flow.
+	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2
+	// The `onboarding` flow is the only flow that uses in-stepper auth so far, so all the auth logic catering V1 can be deleted.
+	if ( 'initialize' in flow && flowSteps ) {
+		// Cache the flow steps for later internal usage. We need to cache them because we promise to call `initialize` only once.
+		flowSteps = injectUserStepInSteps( flowSteps );
+		flow.__flowSteps = flowSteps;
+		enhanceFlowWithUtilityFunctions( flow );
+	} else if ( 'useSteps' in flow ) {
+		// V1 flows have to be enhanced by changing their `useSteps` hook.
+		flow = enhanceFlowWithAuth( flow );
+	}
+
+	// When re-using steps from /start, we need to set the current flow name in the redux store, since some depend on it.
+	reduxStore.dispatch( setCurrentFlowName( flow.name ) );
+	reduxStore.dispatch( setSelectedSiteId( siteId ) as unknown as AnyAction );
+
+	// No need to await this, it's not critical to the boot process and will slow booting down.
+	geolocateCurrencySymbol();
+
+	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
+
+	root.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
@@ -151,12 +185,14 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
-					{ config.isEnabled( 'signup/inline-help' ) && (
-						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
+					<AsyncHelpCenter user={ user as UserStore.CurrentUser } />
+					{ 'development' === process.env.NODE_ENV && (
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
 					) }
 				</QueryClientProvider>
 			</Provider>
-		</CalypsoI18nProvider>,
-		document.getElementById( 'wpcom' )
+		</CalypsoI18nProvider>
 	);
-};
+}
+
+main();

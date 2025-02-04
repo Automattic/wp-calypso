@@ -3,10 +3,12 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
-	is2023PricingGridEnabled,
+	isPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { camelToSnakeCase } from '@automattic/js-utils';
+import * as oauthToken from '@automattic/oauth-token';
 import debugModule from 'debug';
 import {
 	clone,
@@ -21,13 +23,13 @@ import {
 	omit,
 	startsWith,
 } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { startedInHostingFlow } from 'calypso/landing/stepper/utils/hosting-flow';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import {
 	recordSignupStart,
@@ -36,17 +38,19 @@ import {
 	recordSignupInvalidStep,
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
+	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+	isBlazeProOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
@@ -57,13 +61,11 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -72,12 +74,16 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import BlazeProSignupProcessingScreen from './blaze-pro-processing-screen';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
+import { isReskinnedFlow, isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
+	setDomainsDependencies,
+	clearDomainsDependencies,
 	setSignupCompleteSlug,
 	getSignupCompleteSlug,
 	setSignupCompleteFlowName,
@@ -88,8 +94,6 @@ import {
 	getDestination,
 	getFirstInvalidStep,
 	getStepUrl,
-	isReskinnedFlow,
-	isP2Flow,
 } from './utils';
 import WpcomLoginForm from './wpcom-login-form';
 import './style.scss';
@@ -97,9 +101,11 @@ import './style.scss';
 const debug = debugModule( 'calypso:signup' );
 
 function dependenciesContainCartItem( dependencies ) {
+	// @TODO: cartItem is now deprecated. Remove dependencies.cartItem and
+	// dependencies.domainItem once all steps and flows have been updated to use cartItems
 	return !! (
 		dependencies &&
-		( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem )
+		( dependencies.cartItem || dependencies.domainItem || dependencies.cartItems )
 	);
 }
 
@@ -120,15 +126,8 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
-		'pressable-nux',
-		'setup-site',
-		'importer',
-		'domain',
-		LINK_IN_BIO_TLD_FLOW,
-	];
-
-	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+	const flow = flows.getFlow( flowName );
+	return ! flow.hideProgressIndicator;
 }
 
 class Signup extends Component {
@@ -137,8 +136,6 @@ class Signup extends Component {
 		domainsWithPlansOnly: PropTypes.bool,
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
-		loadTrackingTool: PropTypes.func.isRequired,
-		submitSiteType: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -148,8 +145,8 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
+		hostingFlow: PropTypes.bool.isRequired,
 	};
 
 	state = {
@@ -238,7 +235,7 @@ class Signup extends Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( isReskinnedFlow( flowName ) ) {
+		if ( isReskinnedFlow( flowName ) || this.props.isGravatar ) {
 			document.body.classList.add( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 		} else {
@@ -253,29 +250,37 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
-		this.startTrackingForBusinessSite();
+
+		if ( flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.enableHotjar ) {
+			addHotJarScript();
+		}
+
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+
+		// User-social is recorded as user, to avoid messing up the tracks funnels that we have
 		if ( ! this.state.shouldShowLoadingScreen ) {
-			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
+			recordSignupStep(
+				this.props.flowName,
+				this.props.stepName === 'user-social' ? 'user' : this.props.stepName,
+				this.getRecordProps()
+			);
 		}
 		this.preloadNextStep();
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug, signupDependencies } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
-			recordSignupStep( flowName, stepName, this.getRecordProps() );
-		}
-
-		if (
-			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
-		) {
-			this.startTrackingForBusinessSite();
+			// User-social is recorded as user, to avoid messing up the tracks funnels that we have
+			recordSignupStep(
+				flowName,
+				stepName === 'user-social' ? 'user' : stepName,
+				this.getRecordProps()
+			);
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -287,7 +292,7 @@ class Signup extends Component {
 		if ( sitePlanSlug && prevProps.sitePlanSlug && sitePlanSlug !== prevProps.sitePlanSlug ) {
 			recordSignupPlanChange(
 				flowName,
-				stepName,
+				stepName === 'user-social' ? 'user' : stepName,
 				prevProps.sitePlanName,
 				prevProps.sitePlanSlug,
 				sitePlanName,
@@ -309,17 +314,56 @@ class Signup extends Component {
 				this.props.locale
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
-			this.handleDestination( this.props.signupDependencies, stepUrl );
+			this.handleDestination( this.props.signupDependencies, stepUrl, this.props.flowName );
+		}
+
+		const { domainItem: prevDomainItem } = prevProps.signupDependencies;
+
+		// Clear domains dependencies when the domains data is updated.
+		if ( stepName === 'domains' && signupDependencies.domainItem !== prevDomainItem ) {
+			clearDomainsDependencies();
 		}
 	}
 
+	getRecordPropsFromFlow = () => {
+		const requiredDeps = this.getCurrentFlowSupportedQueryParams();
+
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+		const optionalDeps = this.extractFlowDependenciesFromQuery( optionalDependenciesInQuery );
+
+		const deps = { ...requiredDeps, ...optionalDeps };
+
+		const snakeCaseDeps = {};
+
+		for ( const depsKey in deps ) {
+			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
+		}
+
+		return snakeCaseDeps;
+	};
+
 	getRecordProps() {
-		const { signupDependencies } = this.props;
+		const { signupDependencies, hostingFlow, queryObject, wccomFrom, oauth2Client } = this.props;
+		const mainFlow = queryObject?.main_flow;
+
+		let theme = get( signupDependencies, 'selectedDesign.theme' );
+
+		if ( ! theme && signupDependencies.themeParameter ) {
+			theme = signupDependencies.themeParameter;
+		}
+
+		const deps = this.getRecordPropsFromFlow();
 
 		return {
-			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			...deps,
+			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
+			is_in_hosting_flow: hostingFlow,
+			wccom_from: wccomFrom,
+			oauth2_client_id: oauth2Client?.id,
+			...( mainFlow ? { flow: mainFlow } : {} ),
 		};
 	}
 
@@ -331,7 +375,7 @@ class Signup extends Component {
 		const flowName = this.props.flowName;
 		// p2v1 also has a user step at the end but the flow is otherwise broken.
 		// reader also has a user step at the end, but this change doesn't fix that flow.
-		const eligbleFlows = [ 'domain', 'add-domain' ];
+		const eligbleFlows = [ 'domain' ];
 		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
@@ -370,29 +414,40 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
+		// Persist current domains data in the onboarding flow.
+		if ( this.props.flowName === 'onboarding' ) {
+			const { domainItem, siteUrl, domainCart } = dependencies;
+			const { stepSectionName } = this.props;
+
+			setDomainsDependencies( {
+				step: {
+					stepName: 'domains',
+					domainItem,
+					siteUrl,
+					isPurchasingItem: true,
+					stepSectionName,
+					domainCart,
+				},
+				dependencies: { domainItem, siteUrl, domainCart },
+			} );
+		}
+
 		this.handleFlowComplete( dependencies, filteredDestination );
 
 		this.handleLogin( dependencies, filteredDestination );
 
 		await this.handlePostFlowCallbacks( dependencies );
 
-		this.handleDestination( dependencies, filteredDestination );
+		this.handleDestination( dependencies, filteredDestination, this.props.flowName );
 	};
-
-	startTrackingForBusinessSite() {
-		const siteType = get( this.props.signupDependencies, 'siteType' );
-
-		if ( siteType === 'business' ) {
-			this.props.loadTrackingTool( 'HotJar' );
-		}
-	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
 			isWooOAuth2Client( this.props.oauth2Client ) ||
+			this.props.isGravatar ||
 			'videopress-account' === this.props.flowName
 		) {
-			// We don't want to show the loading screen for the Woo signup and videopress-account flow.
+			// We don't want to show the loading screen for the Woo signup, Gravatar signup, and videopress-account flow.
 			return;
 		}
 
@@ -469,55 +524,71 @@ class Signup extends Component {
 	handleFlowComplete = ( dependencies, destination ) => {
 		debug( 'The flow is completed. Destination: %s', destination );
 
-		const { isNewishUser, existingSiteCount } = this.props;
+		const { existingSiteCount } = this.props;
 
-		const isNewUser = !! ( dependencies && dependencies.username );
+		const isNewUser = !! ( dependencies && dependencies.is_new_account );
 		const siteId = dependencies && dependencies.siteId;
-		const isNew7DUserSite = !! (
-			isNewUser ||
-			( isNewishUser && dependencies && dependencies.siteSlug && existingSiteCount <= 1 )
-		);
 		const hasCartItems = dependenciesContainCartItem( dependencies );
+		// @TODO: cartItem is now deprecated. Remove this once all steps and flows have been
+		// updated to use cartItems
 		const cartItem = get( dependencies, 'cartItem' );
+		const cartItems = get( dependencies, 'cartItems' );
 		const domainItem = get( dependencies, 'domainItem' );
 		const selectedDesign = get( dependencies, 'selectedDesign' );
 		const intent = get( dependencies, 'intent' );
 		const startingPoint = get( dependencies, 'startingPoint' );
+		const signupDomainOrigin = get( dependencies, 'signupDomainOrigin' );
+		const planProductSlug = cartItems?.length
+			? cartItems.find( ( item ) => isPlan( item ) )?.product_slug
+			: cartItem?.product_slug;
 
 		const debugProps = {
-			isNewishUser,
 			existingSiteCount,
 			isNewUser,
 			hasCartItems,
-			isNew7DUserSite,
 			flow: this.props.flowName,
 			siteId,
 			theme: selectedDesign?.theme,
 			intent,
 			startingPoint,
 		};
-		debug( 'Tracking signup completion.', debugProps );
 
-		recordSignupComplete( {
-			flow: this.props.flowName,
-			siteId,
-			isNewUser,
-			hasCartItems,
-			planProductSlug: hasCartItems && cartItem !== null ? cartItem.product_slug : undefined,
-			domainProductSlug:
-				undefined !== domainItem && domainItem.is_domain_registration
-					? domainItem.product_slug
-					: undefined,
-			isNew7DUserSite,
-			// Record the following values so that we can know the user completed which branch under the hero flow
-			theme: selectedDesign?.theme,
-			intent,
-			startingPoint,
-			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
-		} );
+		// In case of the flow just serves as a bridge to a Stepper flow, do not fire
+		// the signup completion event. Theoretically speaking this can be applied to other scenarios,
+		// but it's not recommended outside of this, hence the name toStepper. See Automattic/growth-foundations#72 for more context.
+		if ( ! dependencies.toStepper ) {
+			debug( 'Tracking signup completion.', debugProps );
+			const isMapping = domainItem && isDomainMapping( domainItem );
+			const isTransfer = domainItem && isDomainTransfer( domainItem );
+			const signupDomainOriginValue =
+				isTransfer || isMapping
+					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
+					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
+
+			recordSignupComplete( {
+				flow: this.props.flowName,
+				siteId,
+				isNewUser,
+				hasCartItems,
+				planProductSlug,
+				domainProductSlug:
+					undefined !== domainItem && domainItem.is_domain_registration
+						? domainItem.product_slug
+						: undefined,
+				// Record the following values so that we can know the user completed which branch under the hero flow
+				theme: selectedDesign?.theme,
+				intent,
+				startingPoint,
+				isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
+				isMapping: isMapping,
+				isTransfer: isTransfer,
+				signupDomainOrigin: signupDomainOriginValue,
+				framework: 'start',
+			} );
+		}
 	};
 
-	handleDestination( dependencies, destination ) {
+	handleDestination( dependencies, destination, flowName ) {
 		if ( this.props.isLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
 			if ( /^https?:\/\//.test( destination ) ) {
@@ -527,6 +598,11 @@ class Signup extends Component {
 			// deferred in case the user is logged in and the redirect triggers a dispatch
 			defer( () => {
 				debug( `Redirecting you to "${ destination }"` );
+				// Experimental: added the flowName check to restrict this functionality only for the 'website-design-services' flow.
+				if ( destination?.startsWith( '/checkout/' ) && 'website-design-services' === flowName ) {
+					page( destination );
+					return;
+				}
 				window.location.href = destination;
 			} );
 
@@ -597,14 +673,11 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getDependenciesInQuery = () => {
+	extractFlowDependenciesFromQuery = ( dependencies ) => {
 		const queryObject = this.props.initialContext?.query ?? {};
-		const dependenciesInQuery =
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
-			[];
 
 		const result = {};
-		for ( const dependencyKey of dependenciesInQuery ) {
+		for ( const dependencyKey of dependencies ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
 				result[ dependencyKey ] = value;
@@ -612,6 +685,13 @@ class Signup extends Component {
 		}
 
 		return result;
+	};
+
+	getDependenciesInQuery = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+
+		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
@@ -730,10 +810,6 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
-		}
-
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
@@ -748,36 +824,27 @@ class Signup extends Component {
 			);
 		}
 
+		if ( isBlazeProOAuth2Client( this.props.oauth2Client ) ) {
+			return <BlazeProSignupProcessingScreen />;
+		}
+
 		return <SignupProcessingScreen flowName={ this.props.flowName } />;
 	}
 
 	renderCurrentStep( isReskinned ) {
-		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-		const currentStepProgress = find( this.props.progress, { stepName: this.props.stepName } );
+		const { stepName, flowName } = this.props;
+
+		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
+		const flowStepProps = flow?.props?.[ stepName ] || {};
+
+		const currentStepProgress = find( this.props.progress, { stepName } );
 		const CurrentComponent = this.props.stepComponent;
 		const propsFromConfig = {
 			...omit( this.props, 'locale' ),
-			...steps[ this.props.stepName ].props,
+			...steps[ stepName ].props,
+			...flowStepProps,
 		};
-		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : this.props.stepName;
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-		const planWithDomain =
-			this.props.domainsWithPlansOnly &&
-			domainItem &&
-			( isDomainRegistration( domainItem ) ||
-				isDomainTransfer( domainItem ) ||
-				isDomainMapping( domainItem ) );
-
-		// Hide the free option in the signup flow
-		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
-
-		// For the onboarding/2023-pricing-grid hiding the free plan is not yet supported and breaks the plans comparison grid
-		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
-		// For now we always show the free plan for the 2023-pricing-grid
-		// More Context : Automattic/martech#1464
-		const hideFreePlan = is2023PricingGridEnabled()
-			? false
-			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
+		const stepKey = this.state.shouldShowLoadingScreen ? 'processing' : stepName;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
@@ -790,9 +857,14 @@ class Signup extends Component {
 			};
 		}
 
+		// If a coupon is provided as a query dependency, then hide the free plan.
+		// It's assumed here that the coupon applies to paid plans at the minimum, and
+		// in this scenario it wouldn't be necessary to show a free plan.
+		const hideFreePlan = this.props.signupDependencies.coupon ?? false;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
+				<div className={ `signup__step is-${ stepName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -804,12 +876,12 @@ class Signup extends Component {
 							step={ currentStepProgress }
 							initialContext={ this.props.initialContext }
 							steps={ flow.steps }
-							stepName={ this.props.stepName }
+							stepName={ stepName }
 							meta={ flow.meta || {} }
 							goToNextStep={ this.goToNextStep }
 							goToStep={ this.goToStep }
 							previousFlowName={ this.state.previousFlowName }
-							flowName={ this.props.flowName }
+							flowName={ flowName }
 							signupDependencies={ this.props.signupDependencies }
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
@@ -844,14 +916,8 @@ class Signup extends Component {
 		}
 
 		// siteDomains is sometimes empty, so we need to force update.
-		if ( isDomainsForSiteEmpty && ! isImportingFlow ) {
+		if ( isDomainsForSiteEmpty && ! isImportingFlow && this.props.siteId ) {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
-		}
-	}
-
-	getPageTitle() {
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return this.props.pageTitle;
 		}
 	}
 	render() {
@@ -871,18 +937,18 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
-					{ ! isP2Flow( this.props.flowName ) && (
+					{ showPageHeader && (
 						<SignupHeader
 							progressBar={ {
 								flowName: this.props.flowName,
 								stepName: this.props.stepName,
 							} }
-							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={
@@ -921,6 +987,8 @@ export default connect(
 		// See: https://github.com/Automattic/wp-calypso/pull/57386
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const hostingFlow = startedInHostingFlow( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -931,23 +999,22 @@ export default connect(
 			signupDependencies,
 			isLoggedIn: isUserLoggedIn( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isNewishUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 			existingSiteCount: getCurrentUserSiteCount( state ),
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			sitePlanName: getSitePlanName( state, siteId ),
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
-			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
+			isGravatar: isGravatarOAuth2Client( oauth2Client ),
+			wccomFrom: getWccomFrom( state ),
+			hostingFlow,
 		};
 	},
 	{
-		submitSiteType,
 		submitSignupStep,
 		removeStep,
-		loadTrackingTool,
 		addStep,
 	}
 )( Signup );

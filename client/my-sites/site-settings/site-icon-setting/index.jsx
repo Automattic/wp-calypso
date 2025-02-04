@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEqual, flow, compact, includes } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { withUploadSiteIcon } from 'calypso/data/media/with-upload-site-icon';
 import accept from 'calypso/lib/accept';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
@@ -206,8 +206,14 @@ class SiteIconSetting extends Component {
 					<InfoPopover position="bottom right">
 						{ translate(
 							'The Site Icon is used as a browser and app icon for your site.' +
-								' Icons must be square, and at least %s pixels wide and tall.',
-							{ args: [ 512 ] }
+								' Icons must be square, and at least %s pixels wide and tall.' +
+								' {{a}}Learn more{{/a}}.',
+							{
+								args: [ 512 ],
+								components: {
+									a: <InlineSupportLink supportContext="site-icons" showIcon={ false } />,
+								},
+							}
 						) }
 					</InfoPopover>
 				</FormLabel>
@@ -260,7 +266,7 @@ class SiteIconSetting extends Component {
 						labels={ {
 							confirm: translate( 'Continue' ),
 						} }
-						disableLargeImageSources={ true }
+						disableLargeImageSources
 						single
 					/>
 				) }

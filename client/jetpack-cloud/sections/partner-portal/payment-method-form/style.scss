@@ -1,0 +1,48 @@
+.payment-method-form {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.payment-method-form__title {
+	font-size: rem(20px);
+	line-height: 1.2;
+	font-weight: 500;
+}
+
+.payment-method-form__footer {
+	display: flex;
+	gap: 16px;
+}
+
+.payment-method-form__submit-button {
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
+	}
+}
+
+.payment-method-form__back-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.payment-method-form__notice,
+.payment-method-form .credit-card-fields__input-field :is(label, .credit-card-fields__label-text) {
+	font-size: rem(14px);
+	line-height: 1.4;
+	font-weight: 500;
+}
+
+.payment-method-form__notice {
+	color: var(--studio-gray-50);
+	font-weight: 400;
+	margin-block-start: 24px;
+	display: flex;
+	gap: 8px;
+}
+
+.payment-method-form__notice-icon {
+	fill: var(--studio-gray-30);
+	flex-shrink: 0;
+}

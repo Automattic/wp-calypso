@@ -1,21 +1,33 @@
-import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
-import { Component } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import NavigationHeader from 'calypso/components/navigation-header';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
+import StatsModuleAuthors from 'calypso/my-sites/stats/features/modules/stats-authors';
+import StatsModuleClicks from 'calypso/my-sites/stats/features/modules/stats-clicks';
+import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-countries';
+import StatsModuleDownloads from 'calypso/my-sites/stats/features/modules/stats-downloads';
+import StatsModuleReferrers from 'calypso/my-sites/stats/features/modules/stats-referrers';
+import StatsModuleSearch from 'calypso/my-sites/stats/features/modules/stats-search';
+import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { getUpsellModalView } from 'calypso/state/stats/paid-stats-upsell/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import Countries from '../stats-countries';
-import StatsModule from '../stats-module';
+import StatsModuleLocations from '../features/modules/stats-locations';
+import StatsModuleUTM from '../features/modules/stats-utm';
+import { StatsGlobalValuesContext } from '../pages/providers/global-provider';
+import DownloadCsv from '../stats-download-csv';
+import AllTimeNav from '../stats-module/all-time-nav';
+import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
+import StatsUpsellModal from '../stats-upsell-modal';
 import VideoPlayDetails from '../stats-video-details';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPressStatsModule from '../videopress-stats-module';
@@ -29,13 +41,35 @@ class StatsSummary extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
+	renderSummaryHeader( path, statType, hideNavigation, query ) {
+		const period = this.props.period;
+
+		const headerCSVButton = (
+			<div className="stats-module__heaver-nav-button">
+				<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
+			</div>
+		);
+
+		return (
+			<AllTimeNav
+				path={ path }
+				query={ query }
+				period={ period }
+				hideNavigation={ hideNavigation }
+				navigationSwap={ headerCSVButton }
+			/>
+		);
+	}
+
 	render() {
-		const { translate, statsQueryOptions, siteId } = this.props;
+		const { translate, statsQueryOptions, siteId, supportsUTMStats } = this.props;
 		const summaryViews = [];
 		let title;
 		let summaryView;
 		let chartTitle;
 		let barChart;
+		let path;
+		let statType;
 
 		// Navigation settings. One of the following, depending on the summary view.
 		// Traffic => /stats/day/
@@ -53,113 +87,189 @@ class StatsSummary extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 			max: 0,
 		};
+
+		// Update query with date range if it provided.
+		// Note that we force the period to 'day' for custom date ranges as other periods do not make sense
+		// in the context of our updated Traffic page and do not match the results as shown there.
+		const dateRange = this.props.dateRange;
+		if ( dateRange ) {
+			query.start_date = dateRange.startDate.format( 'YYYY-MM-DD' );
+			query.date = dateRange.endDate.format( 'YYYY-MM-DD' );
+			query.summarize = 1;
+			query.period = 'day'; // Override for custom date ranges.
+		}
+
+		const moduleQuery = merge( {}, statsQueryOptions, query );
 		const urlParams = new URLSearchParams( this.props.context.querystring );
+		const listItemClassName = 'stats__summary--narrow-mobile';
 
 		switch ( this.props.context.params.module ) {
 			case 'referrers':
 				title = translate( 'Referrers' );
+				path = 'referrers';
+				statType = 'statsReferrers';
+
 				summaryView = (
-					<StatsModule
-						key="referrers-summary"
-						path="referrers"
-						moduleStrings={ StatsStrings.referrers }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsReferrers"
-						summary
-					/>
+					<Fragment key="referrers-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleReferrers
+							moduleStrings={ StatsStrings.referrers }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
 			case 'clicks':
 				title = translate( 'Clicks' );
+				path = 'clicks';
+				statType = 'statsClicks';
+
 				summaryView = (
-					<StatsModule
-						key="clicks-summary"
-						path="clicks"
-						moduleStrings={ StatsStrings.clicks }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsClicks"
-						summary
-					/>
+					<Fragment key="clicks-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleClicks
+							moduleStrings={ StatsStrings.clicks }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
 			case 'countryviews':
 				title = translate( 'Countries' );
+				path = 'countryviews';
+				statType = 'statsCountryViews';
+
 				summaryView = (
-					<Countries
-						key="countries-summary"
-						path="countryviews"
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						summary={ true }
-					/>
+					<Fragment key="countries-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						{ isEnabled( 'stats/locations' ) ? (
+							<StatsModuleLocations
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) : (
+							<StatsModuleCountries
+								moduleStrings={ StatsStrings.countries }
+								period={ this.props.period }
+								query={ moduleQuery }
+								summary
+								listItemClassName={ listItemClassName }
+							/>
+						) }
+					</Fragment>
+				);
+				break;
+
+			case 'locations':
+				title = translate( 'Locations' );
+				path = 'locations';
+				statType = 'statsCountryViews';
+
+				summaryView = (
+					<Fragment key="countries-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleLocations
+							moduleStrings={ StatsStrings.countries }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
 			case 'posts':
 				title = translate( 'Posts & pages' );
+				path = 'posts';
+				statType = 'statsTopPosts';
+
 				summaryView = (
-					<StatsModule
-						key="posts-summary"
-						path="posts"
-						moduleStrings={ StatsStrings.posts }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsTopPosts"
-						summary
-					/>
+					<Fragment key="posts-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleTopPosts
+							moduleStrings={ StatsStrings.posts }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
 			case 'authors':
 				title = translate( 'Authors' );
+				path = 'authors';
+				statType = 'statsTopAuthors';
+
 				// TODO: should be refactored so that className doesn't have to be passed in
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
-					<StatsModule
-						key="authors-summary"
-						path="authors"
-						moduleStrings={ StatsStrings.authors }
-						period={ this.props.period }
-						query={ query }
-						statType="statsTopAuthors"
-						className="stats__author-views"
-						summary={ true }
-					/>
+					<Fragment key="authors-summary">
+						{ this.renderSummaryHeader( path, statType, true, query ) }
+						<StatsModuleAuthors
+							moduleStrings={ StatsStrings.authors }
+							period={ this.props.period }
+							query={ query }
+							className="stats__author-views"
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				/* eslint-enable wpcalypso/jsx-classname-namespace */
 				break;
 
 			case 'videoplays':
 				title = translate( 'Videos' );
+				path = 'videoplays';
+				statType = 'statsVideoPlays';
+
 				summaryView = (
-					<VideoPressStatsModule
-						key="videopress-stats-module"
-						path="videoplays"
-						moduleStrings={ StatsStrings.videoplays }
-						period={ this.props.period }
-						query={ query }
-						statType="statsVideoPlays"
-						summary
-					/>
+					<Fragment key="videopress-stats-module">
+						{ /* For CSV button to work, video page needs to pass custom data to the button.
+								It can't use the shared header as long as the CSV download button stays there. */ }
+						<VideoPressStatsModule
+							path={ path }
+							moduleStrings={ StatsStrings.videoplays }
+							period={ this.props.period }
+							query={ query }
+							statType={ statType }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
 			case 'filedownloads':
 				title = translate( 'File Downloads' );
+				path = 'filedownloads';
+				statType = 'statsFileDownloads';
+
 				summaryView = (
-					<StatsModule
-						key="filedownloads-summary"
-						path="filedownloads"
-						moduleStrings={ StatsStrings.filedownloads }
-						period={ this.props.period }
-						query={ query }
-						statType="statsFileDownloads"
-						summary
-					/>
+					<Fragment key="filedownloads-summary">
+						{ this.renderSummaryHeader( path, statType, true, query ) }
+						<StatsModuleDownloads
+							moduleStrings={ StatsStrings.filedownloads }
+							period={ this.props.period }
+							query={ query }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 
@@ -206,16 +316,20 @@ class StatsSummary extends Component {
 
 			case 'searchterms':
 				title = translate( 'Search Terms' );
+				path = 'searchterms';
+				statType = 'statsSearchTerms';
+
 				summaryView = (
-					<StatsModule
-						key="search-terms-summary"
-						path="searchterms"
-						moduleStrings={ StatsStrings.search }
-						period={ this.props.period }
-						query={ merge( {}, statsQueryOptions, query ) }
-						statType="statsSearchTerms"
-						summary
-					/>
+					<Fragment key="search-terms-summary">
+						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+						<StatsModuleSearch
+							moduleStrings={ StatsStrings.search }
+							period={ this.props.period }
+							query={ moduleQuery }
+							summary
+							listItemClassName={ listItemClassName }
+						/>
+					</Fragment>
 				);
 				break;
 			case 'annualstats':
@@ -224,26 +338,35 @@ class StatsSummary extends Component {
 				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
+			case 'utm': {
+				title = translate( 'UTM insights' );
+				backLabel = localizedTabNames.traffic;
+				backLink = `/stats/traffic/`;
+				path = 'utm';
+				statType = 'statsUTM';
+				summaryView = <></>; // done inline to use context values
+				break;
+			}
+			case 'devices': {
+				// TODO: finish after the Traffic page.
+				title = translate( 'Devices' );
+				path = 'devices';
+				statType = 'statsDevices';
+
+				summaryView = <></>;
+				break;
+			}
 		}
 
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
-		// Set up for FixedNavigationHeader.
 		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-
-		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-			'stats/horizontal-bars-everywhere'
-		);
-
-		const cardParentClassName = classNames( 'stats-summary-view', {
-			'stats-summary__positioned': isHorizontalBarComponentEnabledEverywhere,
-		} );
 
 		return (
 			<Main className="has-fixed-nav" wideLayout>
@@ -251,13 +374,35 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<FixedNavigationHeader navigationItems={ navigationItems } />
+				<NavigationHeader className="stats-summary-view" navigationItems={ navigationItems } />
 
-				<div id="my-stats-content" className={ cardParentClassName }>
-					{ /* TODO: move the header <AllTimeNav /> here when modernising summary detail page */ }
-					{ summaryViews }
+				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
+					{ this.props.context.params.module === 'utm' ? (
+						<StatsGlobalValuesContext.Consumer>
+							{ ( isInternal ) => (
+								<>
+									{ supportsUTMStats || isInternal ? (
+										<>
+											{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
+											<StatsModuleUTM
+												siteId={ siteId }
+												period={ this.props.period }
+												query={ moduleQuery }
+												summary
+											/>
+										</>
+									) : (
+										<div>{ translate( 'This path is not available.' ) }</div>
+									) }
+								</>
+							) }
+						</StatsGlobalValuesContext.Consumer>
+					) : (
+						summaryViews
+					) }
 					<JetpackColophon />
 				</div>
+				{ this.props.upsellModalView && <StatsUpsellModal siteId={ siteId } /> }
 			</Main>
 		);
 	}
@@ -265,9 +410,15 @@ class StatsSummary extends Component {
 
 export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
+	const upsellModalView = isEnabled( 'stats/paid-wpcom-v2' ) && getUpsellModalView( state, siteId );
+
+	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
+
 	return {
 		siteId: getSelectedSiteId( state ),
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
+		upsellModalView,
+		supportsUTMStats,
 	};
 } )( localize( StatsSummary ) );

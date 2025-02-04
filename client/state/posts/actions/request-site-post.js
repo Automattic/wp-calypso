@@ -10,7 +10,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Triggers a network request to fetch a specific post from a site.
- *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @returns {Function}        Action thunk

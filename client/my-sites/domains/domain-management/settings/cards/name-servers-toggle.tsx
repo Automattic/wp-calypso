@@ -1,6 +1,6 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -28,7 +28,12 @@ const wpcomNameServersToggleButtonClick = ( domainName: string, enabled: boolean
 	);
 };
 
-const NameserversToggle = ( { enabled, onToggle, selectedDomainName }: NameServersToggleProps ) => {
+const NameserversToggle = ( {
+	enabled,
+	onToggle,
+	selectedDomainName,
+	isSaving,
+}: NameServersToggleProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -42,6 +47,7 @@ const NameserversToggle = ( { enabled, onToggle, selectedDomainName }: NameServe
 			<ToggleControl
 				onChange={ handleToggle }
 				checked={ enabled }
+				disabled={ isSaving }
 				label={ translate( 'Use WordPress.com name servers' ) }
 			/>
 		</form>

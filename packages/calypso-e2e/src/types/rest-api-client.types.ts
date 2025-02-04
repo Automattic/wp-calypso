@@ -1,5 +1,7 @@
 /* Parameter Interfaces */
 
+export type SitePostState = 'publish' | 'draft' | 'trash' | 'future';
+
 export interface AccountDetails {
 	userID: number;
 	username: string;
@@ -119,14 +121,24 @@ export interface Invite {
 // Export as Array to expose function calls of arrays.
 export type AllInvitesResponse = Array< Invite >;
 
+interface Widget {
+	id: string;
+	sidebar: string;
+	position: number;
+}
+
+export type AllWidgetsResponse = Array< Widget >;
+
 export interface DeleteInvitesResponse {
 	deleted: string[];
 	invalid: string[];
 }
 
-export interface NewPostResponse {
+export interface PostResponse {
+	ID: number;
 	URL: string;
 	title: string;
+	status: 'trash' | 'publish' | 'private' | 'draft' | 'future' | 'deleted';
 }
 
 export interface NewMediaResponse {
@@ -150,6 +162,13 @@ export interface ReaderResponse {
 
 export interface NewCommentResponse {
 	ID: number;
+	raw_content: string;
+}
+
+export interface CommentLikeResponse {
+	success: boolean;
+	i_like: boolean;
+	like_count: number;
 }
 
 export interface PluginResponse {
@@ -170,6 +189,58 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface JetpackSearchParams {
+	query: string;
+	size?: number;
+	// Lots more of course -- add as needed!
+}
+
+export interface JetpackSearchResponse {
+	results: unknown[];
+	// Lots more of course -- add as needed!
+}
+
+export interface PublicizeConnection {
+	ID: number;
+	site_ID: number;
+	label: string;
+	external_ID: string;
+}
+
+export interface PublicizeConnectionDeletedResponse {
+	ID: number;
+	deleted: boolean;
+}
+
+export interface Subscriber {
+	user_id: number;
+	subscription_id: number;
+	email_address: string;
+	display_name: string;
+	date_subscribed: string;
+}
+
+export interface SubscriberDeletedResponse {
+	follower_id: string;
+	deleted: true;
+}
+
+export interface PostCountsResponse {
+	counts: {
+		all: {
+			publish: number;
+			future: number;
+			draft: number;
+			trash: number;
+		};
+		mine: {
+			draft: number;
+			publish: number;
+			trash: number;
+		};
+	};
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
@@ -179,7 +250,7 @@ export interface BearerTokenErrorResponse {
 			{
 				code: string;
 				message: string;
-			}
+			},
 		];
 	};
 }

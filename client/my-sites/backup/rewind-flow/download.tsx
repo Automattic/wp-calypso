@@ -1,12 +1,15 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequest from 'calypso/state/selectors/get-request';
+import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import isGranularBackupDownloadRequested from 'calypso/state/selectors/is-granular-backup-download-requested';
 import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
@@ -50,6 +53,8 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		getBackupProgress( state, siteId )
 	) as BackupProgress | null;
 
+	const requestedBackup = useSelector( ( state ) => getRequestedBackup( state, siteId ) );
+
 	const downloadId = backupProgress?.downloadId;
 	const downloadUrl = backupProgress?.url;
 	const downloadSize = backupProgress?.bytesFormatted;
@@ -62,6 +67,10 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		getRequest( state, getRewindBackupProgress( siteId ) )
 	);
 
+	const isGranularRestore = useSelector( ( state ) =>
+		isGranularBackupDownloadRequested( state, siteId )
+	);
+
 	const requestDownload = useCallback(
 		() => dispatch( rewindBackup( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
@@ -72,9 +81,16 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 	);
 
 	const isDownloadInfoRequestComplete = downloadInfoRequest?.hasLoaded;
-	const isOtherDownloadInfo = downloadRewindId !== rewindId;
+	const isOtherDownloadInfo =
+		downloadRewindId !== rewindId || ( downloadId !== 0 && requestedBackup !== downloadId );
 	const isOtherDownloadInProgress = isOtherDownloadInfo && downloadProgress !== undefined;
 	const isDownloadURLNotReady = downloadUrl === undefined || downloadUrl === '';
+
+	useEffect( () => {
+		if ( ! isDownloadURLNotReady ) {
+			dispatch( recordTracksEvent( 'calypso_jetpack_backup_download_ready' ) );
+		}
+	}, [ isDownloadURLNotReady, dispatch ] );
 
 	const renderConfirm = () => (
 		<>
@@ -244,7 +260,7 @@ const BackupDownloadFlow: FunctionComponent< Props > = ( {
 		if ( ! isDownloadInfoRequestComplete ) {
 			return <Loading />;
 		} else if (
-			isOtherDownloadInfo ||
+			( isOtherDownloadInfo && ! isGranularRestore ) ||
 			( downloadProgress === undefined && isDownloadURLNotReady )
 		) {
 			return renderConfirm();

@@ -29,15 +29,14 @@ export class UserBlock extends Component {
 	 * Specifically here for showing when a comment was made.
 	 *
 	 * If within the past five days, a relative time
-	 *   e.g. "23 sec. ago", "15 min. ago", "4 hrs. ago", "1 day ago"
+	 * e.g. "23 sec. ago", "15 min. ago", "4 hrs. ago", "1 day ago"
 	 *
 	 * If older than five days, absolute date
-	 *   e.g. "30 Apr 2015"
+	 * e.g. "30 Apr 2015"
 	 *
 	 * If anything goes wrong, ISO date
-	 *   e.g. "2020-12-20"
+	 * e.g. "2020-12-20"
 	 * Localized dates are always better, but ISO dates should be broadly recognizable.
-	 *
 	 * @param {string} timestamp - Timestamp in Date.parse()'able format
 	 * @returns {string} - Timestamp formatted for display or '' if input invalid
 	 */
@@ -128,7 +127,7 @@ export class UserBlock extends Component {
 			const homeClassName =
 				timeIndicator !== '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
-				<p className={ homeClassName }>
+				<div className={ homeClassName }>
 					<span className="wpnc__user__ago">{ timeIndicator }</span>
 					<a
 						className="wpnc__user__site"
@@ -139,7 +138,7 @@ export class UserBlock extends Component {
 					>
 						{ home_title }
 					</a>
-				</p>
+				</div>
 			);
 		} else {
 			homeTemplate = (
@@ -169,11 +168,13 @@ export class UserBlock extends Component {
 					<a className="wpnc__user__site" href={ home_url } target="_blank" rel="noreferrer">
 						<img src={ grav.url } height={ grav.height } width={ grav.width } alt="Avatar" />
 					</a>
-					<span className="wpnc__user__username">
-						<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
-							{ this.props.block.text }
-						</a>
-					</span>
+					<div>
+						<span className="wpnc__user__username">
+							<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
+								{ this.props.block.text }
+							</a>
+						</span>
+					</div>
 					{ homeTemplate }
 					{ followLink }
 				</div>

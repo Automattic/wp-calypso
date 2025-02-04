@@ -6,21 +6,20 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	getJetpackProductsDisplayNames,
 } from '@automattic/calypso-products';
-import { Gridicon, Button } from '@automattic/components';
-import classNames from 'classnames';
+import page from '@automattic/calypso-router';
+import { Gridicon, Button, PlanPrice } from '@automattic/components';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useEffect, useMemo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import { useExperiment } from 'calypso/lib/explat';
 import { preventWidows } from 'calypso/lib/formatting';
-import badge14Src from 'calypso/my-sites/checkout/composite-checkout/components/assets/icons/badge-14.svg';
-import PlanPrice from 'calypso/my-sites/plan-price';
+import badge14Src from 'calypso/my-sites/checkout/src/components/assets/icons/badge-14.svg';
 import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
@@ -53,7 +52,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		'calypso_jetpack_upsell_page_2022_06'
 	);
 
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const isFetchingPurchases = useSelector( isFetchingSitePurchases );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -122,7 +121,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 		[ rootUrl, siteSlug ]
 	);
 	const onCtaClick = useCallback(
-		( productSlug, isUpsell = false ) => {
+		( productSlug: string, isUpsell = false ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_upsell_page_product_click', {
 					site_id: siteId || undefined,
@@ -175,7 +174,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 						<h1 className="jetpack-upsell__heading">
 							{ translate( 'Nice choice, we added %(productName)s to your cart.', {
 								args: {
-									productName,
+									productName: productName as string,
 								},
 							} ) }
 							<br />
@@ -185,7 +184,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 
 					<div className="jetpack-upsell__card">
 						<div className="jetpack-upsell__card-header">
-							<Gridicon icon="star" size={ 18 } aria-hidden={ true } />
+							<Gridicon icon="star" size={ 18 } aria-hidden />
 							{ translate( 'Best value' ) }
 						</div>
 						<div className="jetpack-upsell__card-body">
@@ -197,15 +196,12 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 										const isProductSelected = slug === productSlug;
 
 										return (
-											<li
-												className={ classNames( { 'is-selected': isProductSelected } ) }
-												key={ slug }
-											>
+											<li className={ clsx( { 'is-selected': isProductSelected } ) } key={ slug }>
 												<span className="jetpack-upsell__icon-ctn">
 													<Gridicon
 														icon={ isProductSelected ? 'checkmark' : 'plus' }
 														size={ 18 }
-														aria-hidden={ true }
+														aria-hidden
 													/>
 												</span>
 												<span className="jetpack-upsell__features-product">
@@ -251,7 +247,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'Upgrade to %(productName)s', {
 										args: {
-											productName: upsellName,
+											productName: upsellName as string,
 										},
 									} ) }
 								</Button>
@@ -262,7 +258,7 @@ const JetpackUpsellPage: React.FC< Props > = ( {
 								>
 									{ translate( 'No thanks, proceed with %(productName)s', {
 										args: {
-											productName,
+											productName: productName as string,
 										},
 									} ) }
 								</a>

@@ -10,7 +10,6 @@ import 'calypso/state/user-settings/init';
 
 /**
  * Redux thunk which exclusively updates given unsaved user settings
- *
  * @param {Array} fields Array of keys to be saved from unsaved user settings
  */
 const saveUnsavedUserSettings =

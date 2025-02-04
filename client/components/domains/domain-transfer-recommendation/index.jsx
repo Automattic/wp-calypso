@@ -1,9 +1,8 @@
-import { Button, Card } from '@automattic/components';
+import { Badge, Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
 import { __ } from '@wordpress/i18n';
-import Badge from 'calypso/components/badge';
 import CardHeading from 'calypso/components/card-heading';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
 
 import './style.scss';
 

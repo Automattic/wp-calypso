@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { isExternal } from 'calypso/lib/url';
 import { getThemeCustomizeUrl } from 'calypso/state/themes/selectors';
 
@@ -8,7 +8,6 @@ import 'calypso/state/themes/init';
  * Triggers a switch to the try&customize page of theme.
  * When theme is not available dispatches FAILURE action
  * that trigers displaying error notice by notices middlewaere
- *
  * @param  {string}   themeId      WP.com Theme ID
  * @param  {string}   siteId       Jetpack Site ID
  * @returns {Function}              Action thunk

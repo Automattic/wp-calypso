@@ -1,5 +1,11 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+
+body.is-section-earn.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
 
 .memberships__module-header {
 	background: var(--color-surface);
@@ -18,6 +24,13 @@
 	height: 40px; // 1
 	overflow: hidden; // 1
 	width: auto;
+}
+
+.memberships__module-content {
+	max-height: 520px;
+	overflow-y: auto;
+	margin-top: -24px;
+	border-bottom: 1px solid var(--color-neutral-5);
 }
 
 .memberships__onboarding-wrapper {
@@ -140,95 +153,193 @@
 	}
 }
 
-.memberships__subscriber-profile {
-	position: relative;
-	@include clear-fix;
-	border-bottom: 1px solid var(--color-neutral-0);
-	box-shadow: none;
-
-	&.is-placeholder {
-		.memberships__subscriber-username,
-		.memberships__subscriber-email,
-		.gravatar.is-placeholder {
-			color: transparent;
-			background-color: var(--color-neutral-0);
-			animation: loading-fade 1.6s ease-in-out infinite;
-		}
-
-		.memberships__subscriber-username {
-			width: 36%;
-		}
+.memberships__delete-plan-modal,
+.memberships__stripe-disconnect-modal {
+	width: 580px;
+	max-width: 98%;
+	h1 {
+		margin-bottom: 1em;
 	}
 }
 
-.memberships__subscriber-gravatar {
-	float: left;
-}
-
-.memberships__subscriber-gravatar .gravatar {
-	width: 56px !important;
-	height: 56px !important;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		width: 72px !important;
-		height: 72px !important;
-	}
-}
-
-.memberships__subscriber-detail {
-	margin-left: 80px;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		margin-left: 96px;
-	}
-}
-
-.memberships__subscriber-username {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
-	font-weight: 600;
-	white-space: pre;
-	text-overflow: clip;
-	overflow: hidden;
-	position: relative;
-
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-title-small;
-	}
-
-	&::before {
-		@include long-content-fade();
-	}
-}
-
-.memberships__subscriber-email {
-	color: var(--color-text-subtle);
+.memberships__commission-notice {
 	font-size: $font-body-small;
+	color: var(--studio-gray-70);
+}
 
-	@include breakpoint-deprecated( ">480px" ) {
-		font-size: $font-body;
-		margin-top: -3px;
+.supporters-list {
+	margin: 20px 0 0;
+
+	.row {
+		border-block-end: 1px solid $studio-gray-5;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+		padding-top: 20px;
+		padding-bottom: 20px;
+
+		> * {
+			flex: 1;
+		}
+
+		.supporters-list__checkbox-column,
+		.supporters-list__profile-column,
+		.supporters-list__offer-type-column,
+		.supporters-list__total-column,
+		.supporters-list__since-column,
+		.supporters-list__menu-column {
+			font-weight: 400;
+			font-size: $font-body-small;
+			line-height: 20px;
+			letter-spacing: -0.15px;
+			color: $studio-gray-60;
+		}
+
+		.supporters-list__profile-column {
+			display: flex;
+			align-items: center;
+			flex: 2;
+			min-width: 0;
+		}
+
+		.supporters-list__offer-type-column {
+			flex: 2;
+			.supporters-list__offer-type-title {
+				font-weight: 600;
+				/* stylelint-disable-next-line unit-allowed-list */
+				max-width: 28ch;
+				overflow: hidden;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+			}
+			.supporters-list__offer-type-price {
+				font-size: $font-body-extra-small;
+				color: $studio-gray-40;
+			}
+		}
+
+		.supporters-list__menu-column {
+			flex-basis: 48px;
+			flex-grow: initial;
+
+			.gridicon {
+				fill: $studio-gray-50;
+			}
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		&:last-child {
+			border-bottom: none;
+		}
+
+		&.header {
+			padding-bottom: $font-code;
+			padding-top: 8px;
+
+			span {
+				font-weight: 500;
+			}
+
+			@media (max-width: $break-small) {
+				display: none;
+			}
+		}
+	}
+
+	.supporters-list__user-profile {
+		display: flex;
+		align-items: center;
+		min-width: 0;
+
+		.supporters-list__user-image {
+			height: 40px;
+			width: 40px;
+			border-radius: 50%;
+			margin-right: 12px;
+			flex: 0;
+		}
+
+		.supporters-list__user-details {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			max-width: 100%;
+			overflow: hidden;
+			min-width: 0;
+
+			.supporters-list__user-name {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font-weight: 600;
+				font-size: $font-code;
+				min-width: 0;
+			}
+
+			.supporters-list__user-email {
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+				font-weight: 400;
+				font-size: $font-body-extra-small;
+				color: $studio-gray-40;
+				min-width: 0;
+			}
+		}
 	}
 }
 
-.memberships__subscriber-subscribed {
-	color: var(--color-text-subtle);
-	font-size: $font-body-extra-small;
-	margin-top: 4px;
+@media (max-width: $break-large) {
+	.supporters-list {
+		padding-left: 16px;
+		padding-right: 16px;
+
+		.supporters-list__since-column {
+			display: none;
+		}
+	}
+}
+
+@media (max-width: $break-medium) {
+	.supporters-list {
+		padding-left: 16px;
+		padding-right: 16px;
+
+		.supporters-list__offer-type-column {
+			display: none;
+		}
+	}
 }
 
 .memberships__module-footer {
+	display: none;
 	margin-top: 20px;
 }
 
-.memberships__module-plans-title {
+@media (max-width: $break-small) {
+	.memberships__module-footer {
+		display: block;
+	}
+}
+
+.memberships__module-plans-title,
+.memberships__products-card-title {
 	color: var(--color-neutral-100);
+	font-size: $font-body-small;
 }
 
 .memberships__module-settings-title {
 	color: var(--color-neutral-100);
 	display: flex;
 	align-items: center;
+}
+
+.memberships__loading {
+	text-align: center;
+	padding: 3em 0;
 }
 
 .memberships__module-settings-description {
@@ -258,6 +369,10 @@
 	margin-right: 6px;
 }
 
+.memberships__products-list {
+	margin-bottom: 30px;
+}
+
 .memberships__products-product-card {
 	display: flex;
 }
@@ -265,15 +380,26 @@
 	flex-grow: 1;
 }
 .memberships__products-product-price {
-	color: var(--color-neutral-70);
-	font-size: $font-body;
+	color: var(--color-text-subtle);
+	font-size: $font-body-small;
 	line-height: 1.5;
 }
 .memberships__products-product-title {
-	color: var(--color-text-subtle);
-	font-size: $font-body-small;
+	color: var(--color-text);
+	font-size: $font-body;
+	font-weight: bold;
+}
+.memberships__products-product-badge {
+	margin-top: 10px;
+	margin-left: -5px;
+}
+.memberships__coupons-coupon-badge {
+	float: left;
+	margin-top: 10px;
+	margin-left: 5px;
 }
 .memberships__earnings-breakdown-notes {
+	display: block;
 	clear: both;
 	color: var(--color-neutral-30);
 	padding-bottom: 12px;
@@ -282,37 +408,12 @@
 	line-height: 1.6;
 	font-style: italic;
 	text-align: center;
-}
-.memberships__earnings-breakdown-notes em {
-	font-weight: 600;
+	em {
+		font-weight: 600;
+	}
 }
 .memberships__subscriber-actions {
 	float: right;
-}
-
-.memberships__dialog-nav.section-nav {
-	box-shadow: none;
-	border-bottom: 1px solid var(--color-neutral-5);
-}
-
-.memberships__dialog-sections {
-	display: grid;
-	grid-template: "item" 1fr / 1fr;
-}
-
-.memberships__dialog-section {
-	grid-area: item; // Sections are displayed in the same grid area so the dialog takes the size of the biggest section.
-	background-color: var(--color-surface);
-
-	&.is-visible {
-		z-index: z-index(".dialog__backdrop", ".memberships__dialog-section.is-visible"); // Visible section is placed above so it hides the ones below.
-	}
-}
-
-.memberships__dialog-form-header {
-	font-size: $font-body-small;
-	font-weight: 600;
-	margin-bottom: 1.5em;
 }
 
 /**
@@ -346,4 +447,23 @@
 .memberships__settings-link:active,
 .memberships__settings-link:visited {
 	color: inherit;
+}
+
+.earn__payments-loading {
+	margin-top: 25px;
+
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: auto;
+	}
+}
+
+.memberships__settings-sandbox-warning {
+	float: left;
+	padding: 5px 11px;
+
+	&.stripe-disconnected {
+		padding: 5px 11px;
+		margin-right: 8px;
+	}
 }

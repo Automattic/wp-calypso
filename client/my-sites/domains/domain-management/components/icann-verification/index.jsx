@@ -1,14 +1,15 @@
 import { localizeUrl } from '@automattic/i18n-utils';
+import { EMAIL_VALIDATION_AND_VERIFICATION } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryWhois from 'calypso/components/data/query-whois';
 import { resendIcannVerification } from 'calypso/lib/domains';
-import { EMAIL_VALIDATION_AND_VERIFICATION } from 'calypso/lib/url/support';
 import EmailVerificationCard from 'calypso/my-sites/domains/domain-management/components/email-verification';
 import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getRegistrantWhois from 'calypso/state/selectors/get-registrant-whois';
 
 class IcannVerificationCard extends Component {
@@ -62,8 +63,19 @@ class IcannVerificationCard extends Component {
 	}
 
 	render() {
-		const { contactDetails, selectedDomainName, selectedSiteSlug, translate, compact } = this.props;
-		const changeEmailHref = domainManagementEditContactInfo( selectedSiteSlug, selectedDomainName );
+		const {
+			contactDetails,
+			selectedDomainName,
+			selectedSiteSlug,
+			translate,
+			compact,
+			currentRoute,
+		} = this.props;
+		const changeEmailHref = domainManagementEditContactInfo(
+			selectedSiteSlug,
+			selectedDomainName,
+			currentRoute
+		);
 
 		if ( ! contactDetails ) {
 			return <QueryWhois domain={ selectedDomainName } />;
@@ -89,6 +101,7 @@ class IcannVerificationCard extends Component {
 export default connect(
 	( state, ownProps ) => {
 		return {
+			currentRoute: getCurrentRoute( state ),
 			contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
 		};
 	},

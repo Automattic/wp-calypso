@@ -12,7 +12,7 @@ type Fields = {
 type RssFeedSettingsSectionProps = {
 	fields: Fields;
 	onChangeField: ( field: string ) => ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	handleSubmitForm: ( event: React.FormEvent< HTMLFormElement > ) => void;
+	handleSubmitForm: ( event?: React.FormEvent< HTMLFormElement > ) => void;
 	updateFields: ( fields: Fields ) => void;
 	disabled?: boolean;
 	siteUrl?: string;
@@ -33,7 +33,6 @@ export const RssFeedSettingsSection = ( {
 
 	return (
 		<>
-			{ /* @ts-expect-error SettingsSectionHeader is not typed and is causing errors */ }
 			<SettingsSectionHeader
 				title={ translate( 'RSS feed settings' ) }
 				showButton

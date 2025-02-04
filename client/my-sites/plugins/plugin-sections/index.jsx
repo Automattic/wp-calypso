@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
 import { createRef, Component } from 'react';
@@ -162,14 +162,14 @@ class PluginSections extends Component {
 	getDefaultSection = () => {
 		const sections = this.props.plugin.sections;
 		return find( this.getFilteredSections(), function ( section ) {
-			return sections[ section.key ];
-		} ).key;
+			return sections?.[ section.key ];
+		} )?.key;
 	};
 
 	getAvailableSections = () => {
 		const sections = this.props.plugin.sections;
 		return filter( this.getFilteredSections(), function ( section ) {
-			return sections[ section.key ];
+			return sections?.[ section.key ];
 		} );
 	};
 
@@ -191,7 +191,7 @@ class PluginSections extends Component {
 	};
 
 	renderSelectedSection() {
-		const contentClasses = classNames( 'plugin-sections__content' );
+		const contentClasses = clsx( 'plugin-sections__content' );
 		const banner = this.props.plugin?.banners?.high || this.props.plugin?.banners?.low;
 		const videoUrl = this.props.plugin?.banner_video_src;
 
@@ -205,7 +205,7 @@ class PluginSections extends Component {
 				<div
 					ref={ this.descriptionContent }
 					className={ contentClasses }
-					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 					dangerouslySetInnerHTML={ {
 						__html: this.props.plugin.sections[ this.getSelected() ],
 					} }
@@ -224,7 +224,7 @@ class PluginSections extends Component {
 						/>
 					</div>
 					<div
-						// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+						// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 						dangerouslySetInnerHTML={ {
 							__html: this.props.plugin.sections[ this.getSelected() ],
 						} }
@@ -244,7 +244,7 @@ class PluginSections extends Component {
 				</div>
 
 				<div
-					// Sanitized in client/lib/plugins/utils.js with sanitizeHtml
+					// Sanitized in client/lib/plugins/utils.ts with sanitizeHtml
 					dangerouslySetInnerHTML={ {
 						__html: this.props.plugin.sections[ this.getSelected() ],
 					} }
@@ -257,7 +257,12 @@ class PluginSections extends Component {
 	render() {
 		const availableSections = this.getAvailableSections();
 		// Defensively check if this plugin has sections. If not, don't render anything.
-		if ( ! this.props.plugin || ! this.props.plugin.sections || ! availableSections ) {
+		if (
+			! this.props.plugin ||
+			! this.props.plugin.sections ||
+			! availableSections ||
+			! this.getSelected()
+		) {
 			return null;
 		}
 

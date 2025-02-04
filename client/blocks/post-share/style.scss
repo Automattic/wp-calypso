@@ -177,6 +177,17 @@ $section-border: solid 1px var(--color-neutral-5);
 		width: 22px;
 	}
 
+	&.is-round::before {
+		border-radius: 50%;
+	}
+
+	// if it's the child of .mastodon class, set border radius to ::before to 30%
+	.mastodon & {
+		&::before {
+			border-radius: 30%;
+		}
+	}
+
 	.google_plus & {
 		top: 11px;
 
@@ -185,6 +196,23 @@ $section-border: solid 1px var(--color-neutral-5);
 			height: 24px;
 			width: 24px;
 		}
+	}
+
+	.instagram-business & {
+		&::before {
+			border-radius: 30%;
+		}
+	}
+
+	&:has(.threads) {
+		&::before {
+			border-radius: 40%;
+		}
+	}
+
+	svg.threads {
+		width: 20px;
+		height: 20px;
 	}
 }
 
@@ -236,12 +264,24 @@ $section-border: solid 1px var(--color-neutral-5);
 		color: var(--color-google-plus);
 	}
 
+	.social-logo.nextdoor {
+		color: var(--color-nextdoor);
+	}
+
+	.social-logo.mastodon {
+		color: var(--color-mastodon);
+	}
+
 	.social-logo.linkedin {
 		color: var(--color-linkedin);
 	}
 
 	.social-logo.tumblr {
 		color: var(--color-tumblr);
+	}
+
+	.social-logo.instagram {
+		color: var(--color-instagram);
 	}
 
 	.social-logo.eventbrite {

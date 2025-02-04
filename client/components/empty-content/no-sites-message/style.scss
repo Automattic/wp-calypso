@@ -1,0 +1,27 @@
+@import "@automattic/typography/styles/variables";
+
+.no-sites-message {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	.empty-content__illustration {
+		margin-block-end: 30px;
+	}
+
+	&__title {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: $font-title-large;
+		margin-block-end: 20px;
+	}
+
+	&__line {
+		max-width: 550px;
+		font-size: $font-body-small;
+	}
+
+	&--no-illustration {
+		margin-block-start: 10%;
+	}
+}

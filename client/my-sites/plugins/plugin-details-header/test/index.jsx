@@ -10,6 +10,24 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
 } ) );
 
+jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
+	return jest.fn().mockImplementation( () => {
+		return {
+			currentVersionsRange: {
+				min: '1.0.0',
+				max: null,
+			},
+			updatedVersions: [ '1.0.0' ],
+			hasUpdate: true,
+		};
+	} );
+} );
+
+jest.mock( 'calypso/data/marketplace/use-marketplace-reviews', () => ( {
+	useMarketplaceReviewsQuery: () => ( { data: [] } ),
+	useMarketplaceReviewsStatsQuery: () => ( { data: [] } ),
+} ) );
+
 jest.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => {
 		if ( 'magnificent_non_en_locales' === key ) {

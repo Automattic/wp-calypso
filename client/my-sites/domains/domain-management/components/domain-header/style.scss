@@ -15,7 +15,6 @@
 
 .domain-header__buttons,
 .domain-header__buttons-mobile {
-	align-items: center;
 
 	> * + * {
 		margin-left: 16px;
@@ -30,7 +29,7 @@
 		}
 	}
 
-	@include break-mobile {
+	@include break-large {
 		.options-domain-button.ellipsis {
 			padding-right: 0;
 		}
@@ -44,7 +43,7 @@
 		margin-left: 8px;
 	}
 
-	@include break-mobile {
+	@include break-large {
 		display: none;
 	}
 }
@@ -52,19 +51,10 @@
 .domain-header__buttons {
 	display: none;
 
-	@include break-mobile {
+	@include break-large {
 		display: flex;
-	}
-}
-
-.domain-header__spacer {
-	height: 58px;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		height: 66px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		height: 76px;
+		.ellipsis-menu__toggle.button.is-borderless {
+			padding: 0 15px 10px 15px;
+		}
 	}
 }

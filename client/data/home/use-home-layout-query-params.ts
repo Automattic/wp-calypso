@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 
 export interface HomeLayoutQueryParams {

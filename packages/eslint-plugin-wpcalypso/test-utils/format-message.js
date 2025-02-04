@@ -8,7 +8,6 @@
 /**
  * Given a message containing data terms, format the string using the specified
  * terms object.
- *
  * @see https://github.com/eslint/eslint/blob/v2.12.0/lib/eslint.js#L964-L971
  * @param  {string} message Message template
  * @param  {Object} terms   Terms

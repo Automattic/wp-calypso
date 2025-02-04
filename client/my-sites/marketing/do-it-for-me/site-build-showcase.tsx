@@ -13,6 +13,12 @@ import esSite3 from 'calypso/assets/images/difm/site-builds-es/es-3.jpg';
 import esSite4 from 'calypso/assets/images/difm/site-builds-es/es-4.jpg';
 import esSite5 from 'calypso/assets/images/difm/site-builds-es/es-5.jpg';
 import esSite6 from 'calypso/assets/images/difm/site-builds-es/es-6.jpg';
+import wooSite1 from 'calypso/assets/images/difm/woo-site-builds-en/woo-1.jpg';
+import wooSite2 from 'calypso/assets/images/difm/woo-site-builds-en/woo-2.jpg';
+import wooSite3 from 'calypso/assets/images/difm/woo-site-builds-en/woo-3.jpg';
+import wooSite4 from 'calypso/assets/images/difm/woo-site-builds-en/woo-4.jpg';
+import wooSite5 from 'calypso/assets/images/difm/woo-site-builds-en/woo-5.jpg';
+import wooSite6 from 'calypso/assets/images/difm/woo-site-builds-en/woo-6.jpg';
 import type { CSSPropertiesWithMultiValues } from '@emotion/serialize';
 
 /**
@@ -23,7 +29,6 @@ import type { CSSPropertiesWithMultiValues } from '@emotion/serialize';
  *
  * Since the keyframes need to be expressed in terms of a percentage,
  * this function calculates the percentage in terms of the total animation time.
- *
  * @param slideCount Total number of slides in the slideshow
  * @param interval Time interval for displaying each slide, in seconds.
  * @param fadeDelay Time taken for the fade animation, in seconds.
@@ -54,7 +59,6 @@ function fadeAnimation( slideCount: number, interval: number, fadeDelay: number 
  *
  * For example, if the interval is 5 seconds, the second slide will start
  * fading in after 5 seconds, the third after 10 seconds and so on.
- *
  * @param slideCount Total number of slides in the slideshow
  * @param interval Time interval for displaying each slide, in seconds.
  */
@@ -77,7 +81,6 @@ type AnimatedSlideShowProps = {
 /**
  * This container element renders an animated slideshow with a fade animation.
  * The child elements should be div elements.
- *
  * @param props
  * @param props.slideCount Total number of slides in the slideshow
  * @param props.interval Time interval for displaying each slide, in seconds.
@@ -103,7 +106,10 @@ const AnimatedSlideshow = styled.div< AnimatedSlideShowProps >`
 	${ ( props ) => nthOfTypeAnimationDelay( props.slideCount, props.interval ) }
 `;
 
-const getLocalizedImages = ( locale: string ) => {
+const getLocalizedImages = ( locale: string, isStoreFlow: boolean ) => {
+	if ( isStoreFlow ) {
+		return [ wooSite1, wooSite2, wooSite3, wooSite4, wooSite5, wooSite6 ];
+	}
 	switch ( locale ) {
 		case 'es':
 			return [ esSite1, esSite2, esSite3, esSite4, esSite5, esSite6 ];
@@ -112,9 +118,9 @@ const getLocalizedImages = ( locale: string ) => {
 	}
 };
 
-export default function SiteBuildShowcase() {
+export default function SiteBuildShowcase( { isStoreFlow }: { isStoreFlow: boolean } ) {
 	const locale = useLocale();
-	const images = getLocalizedImages( locale );
+	const images = getLocalizedImages( locale, isStoreFlow );
 	return (
 		<AnimatedSlideshow slideCount={ images.length } interval={ 8 } fadeDelay={ 2.5 }>
 			{ images.map( ( image, index ) => (

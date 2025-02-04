@@ -61,6 +61,7 @@ export class ConversationCommentList extends Component {
 		enableCaterpillar: true,
 		shouldRequestComments: true,
 		setActiveReply: noop,
+		filterParents: true,
 	};
 
 	state = {
@@ -73,20 +74,26 @@ export class ConversationCommentList extends Component {
 		this.setActiveReplyComment( commentId );
 		recordAction( 'comment_reply_click' );
 		recordGaEvent( 'Clicked Reply to Comment' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_click', {
-			blog_id: this.props.post.site_ID,
-			comment_id: commentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_reply_click',
+			{
+				comment_id: commentId,
+			},
+			{ post: this.props.post }
+		);
 	};
 
 	onReplyCancel = () => {
 		this.setState( { commentText: '' } );
 		recordAction( 'comment_reply_cancel_click' );
 		recordGaEvent( 'Clicked Cancel Reply to Comment' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_comment_reply_cancel_click', {
-			blog_id: this.props.post.site_ID,
-			comment_id: this.props.activeReplyCommentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comment_reply_cancel_click',
+			{
+				comment_id: this.props.activeReplyCommentId,
+			},
+			{ post: this.props.post }
+		);
 		this.resetActiveReplyComment();
 	};
 
@@ -158,16 +165,17 @@ export class ConversationCommentList extends Component {
 
 	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
+		const { commentIds, expansions, commentsTree, sortedComments, filterParents } = this.props;
 
 		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
 			.filter( ( comment ) => comment.ID >= minId || comment.isPlaceholder )
 			.map( ( comment ) => comment.ID );
 
-		const parentIds = startingCommentIds
-			.map( ( id ) => this.getParentId( commentsTree, id ) )
-			.filter( Boolean );
+		let parentIds = startingCommentIds;
+		if ( filterParents ) {
+			parentIds = parentIds.map( ( id ) => this.getParentId( commentsTree, id ) ).filter( Boolean );
+		}
 
 		const startingExpanded = Object.fromEntries(
 			[ startingCommentIds, ...parentIds ].map( ( id ) => [
@@ -247,7 +255,7 @@ export class ConversationCommentList extends Component {
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }
-								showReadMoreInActions={ true }
+								showReadMoreInActions
 								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 							/>
 						);

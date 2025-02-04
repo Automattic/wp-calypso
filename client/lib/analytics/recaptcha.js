@@ -7,7 +7,6 @@ const GOOGLE_RECAPTCHA_SCRIPT_URL = 'https://www.google.com/recaptcha/api.js?ren
 
 /**
  * Loads Google reCAPTCHA
- *
  * @returns {boolean} false if the script failed to load
  */
 async function loadGoogleRecaptchaScript() {
@@ -29,7 +28,6 @@ async function loadGoogleRecaptchaScript() {
 
 /**
  * Renders reCAPTCHA badge to an explicit DOM id that should already be on the page
- *
  * @param {string} elementId - render client to this existing DOM node
  * @param {string} siteKey - reCAPTCHA site key
  * @returns {number} reCAPTCHA clientId
@@ -50,7 +48,6 @@ async function renderRecaptchaClient( elementId, siteKey ) {
 
 /**
  * Records an arbitrary action to Google reCAPTCHA
- *
  * @param {number} clientId - a clientId of the reCAPTCHA instance
  * @param {string} action  - name of action to record in reCAPTCHA
  */
@@ -74,7 +71,6 @@ export async function recordGoogleRecaptchaAction( clientId, action ) {
 
 /**
  * Records reCAPTCHA action, loading Google script if necessary.
- *
  * @param {string} elementId - a DOM id in which to render the reCAPTCHA client
  * @param {string} siteKey - reCAPTCHA site key
  * @returns {number|null} either the reCAPTCHA clientId, or null if the function fails

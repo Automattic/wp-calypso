@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval';
+import { useDispatch, useSelector } from 'calypso/state';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';

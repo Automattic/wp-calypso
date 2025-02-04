@@ -3,20 +3,21 @@ import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
-import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	hasLoadedUserPurchasesFromServer,
 	isFetchingUserPurchases,
 	getUserPurchases,
 } from 'calypso/state/purchases/selectors';
-import getSiteFeatures from 'calypso/state/selectors/get-site-features';
+import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteSelect } from '@automattic/data-stores';
+import type { SiteExcerptData } from '@automattic/sites';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface SiteCopyOptions {
@@ -58,19 +59,19 @@ export const useSiteCopy = (
 	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
 	options: SiteCopyOptions = { enabled: true }
 ) => {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const hasCopySiteFeature = useSafeSiteHasFeature(
 		site?.ID,
 		WPCOM_FEATURES_COPY_SITE,
 		options.enabled
 	);
-	const { isRequesting: isRequestingSiteFeatures } = useSelector( ( state ) => {
-		const siteFeatures = getSiteFeatures( state, site?.ID );
-		return siteFeatures ? siteFeatures : { isRequesting: true };
-	} );
+	const requestingSiteFeatures = useSelector( ( state ) =>
+		isRequestingSiteFeatures( state, site?.ID )
+	);
 	const isAtomic = useSelect(
-		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
-		[ site?.ID, options.enabled ]
+		( select ) =>
+			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
+		[ site, options.enabled ]
 	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
@@ -80,7 +81,7 @@ export const useSiteCopy = (
 		( state ) => isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state )
 	);
 
-	const purchases = useSelector( ( state ) => getUserPurchases( state ) );
+	const purchases = useSelector( getUserPurchases );
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
@@ -126,11 +127,11 @@ export const useSiteCopy = (
 			shouldShowSiteCopyItem,
 			startSiteCopy,
 			resumeSiteCopy,
-			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
+			isFetching: isLoadingPurchases || requestingSiteFeatures,
 		} ),
 		[
 			isLoadingPurchases,
-			isRequestingSiteFeatures,
+			requestingSiteFeatures,
 			resumeSiteCopy,
 			shouldShowSiteCopyItem,
 			startSiteCopy,

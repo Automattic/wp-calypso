@@ -1,6 +1,5 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
-import config from '@automattic/calypso-config';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -59,13 +58,15 @@ import {
 	receiveRecommendedThemes,
 	updateThemes,
 	addExternalManagedThemeToCart,
+	livePreview,
+	redirectToLivePreview,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( ( flag ) => {
-		const allowedFlags = [ 'themes/third-party-premium' ];
+		const allowedFlags = [];
 		if ( allowedFlags.includes( flag ) ) {
 			return true;
 		}
@@ -125,7 +126,7 @@ describe( 'actions', () => {
 			const theme = { id: 'twentysixteen', name: 'Twenty Sixteen' };
 			receiveTheme( theme, 'wpcom' )( spy, getState );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEMES_REQUEST_SUCCESS,
 				themes: [ { id: 'twentysixteen', name: 'Twenty Sixteen' } ],
 				siteId: 'wpcom',
@@ -161,7 +162,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch themes request success action', () => {
 				receiveThemes( themes, 'wpcom', query, 4 )( spy, getState );
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 'wpcom',
 					query,
@@ -179,7 +180,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch themes request success action', () => {
 				receiveThemes( themes, 77203074, {} )( spy, getState );
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST_SUCCESS,
 					siteId: 77203074,
 					query: {},
@@ -191,17 +192,27 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestThemes()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
-				const url =
-					'/rest/v1.2/themes' +
-					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
-						? '?include_blankcanvas_theme=true'
-						: '?include_blankcanvas_theme=' ) +
-					( config.isEnabled( 'themes/third-party-premium' )
-						? '&include_marketplace_themes=true'
-						: '&include_marketplace_themes=' );
+				const url = '/rest/v1.2/themes?include_blankcanvas_theme=';
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {
@@ -213,10 +224,10 @@ describe( 'actions', () => {
 					} );
 			} );
 
-			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wpcom' )( spy );
+			test( 'should dispatch fetch action when thunk triggered', async () => {
+				await requestThemes( 'wpcom' )( spy, getState );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
 					siteId: 'wpcom',
 					query: {},
@@ -244,9 +255,9 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 77203074 )( spy );
+				requestThemes( 77203074 )( spy, getState );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
 					siteId: 77203074,
 					query: {},
@@ -254,8 +265,29 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fail action when request fails', () => {
-				return requestThemes( 1916284 )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+				const jetpackGetState = () => ( {
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager(),
+						},
+					},
+					sites: {
+						items: {
+							1916284: {
+								options: { is_wpcom_atomic: false, jetpack_connection_active_plugins: [ 'foo' ] },
+							},
+						},
+					},
+					productsList: {
+						items: {},
+					},
+					purchases: {
+						data: {},
+					},
+				} );
+
+				return requestThemes( 1916284 )( spy, jetpackGetState ).then( () => {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEMES_REQUEST_FAILURE,
 						siteId: 1916284,
 						query: {},
@@ -287,9 +319,9 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch fetch action when thunk triggered', () => {
-				requestThemes( 'wporg' )( spy );
+				requestThemes( 'wporg' )( spy, getState );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEMES_REQUEST,
 					siteId: 'wporg',
 					query: {},
@@ -315,7 +347,7 @@ describe( 'actions', () => {
 			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentysixteen', 'wpcom' )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_REQUEST,
 					siteId: 'wpcom',
 					themeId: 'twentysixteen',
@@ -327,7 +359,7 @@ describe( 'actions', () => {
 					'twentysixteen',
 					'wpcom'
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 'wpcom',
 						themeId: 'twentysixteen',
@@ -340,7 +372,7 @@ describe( 'actions', () => {
 					'twentyumpteen',
 					'wpcom'
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wpcom',
 						themeId: 'twentyumpteen',
@@ -366,7 +398,7 @@ describe( 'actions', () => {
 			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentyfifteen', 77203074 )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_REQUEST,
 					siteId: 77203074,
 					themeId: 'twentyfifteen',
@@ -378,7 +410,7 @@ describe( 'actions', () => {
 					'twentyfifteen',
 					77203074
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 77203074,
 						themeId: 'twentyfifteen',
@@ -391,7 +423,7 @@ describe( 'actions', () => {
 					'twentyumpteen',
 					77203074
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_FAILURE,
 						siteId: 77203074,
 						themeId: 'twentyumpteen',
@@ -423,7 +455,7 @@ describe( 'actions', () => {
 			test( 'should dispatch request action when thunk triggered', () => {
 				requestTheme( 'twentyseventeen', 'wporg' )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_REQUEST,
 					siteId: 'wporg',
 					themeId: 'twentyseventeen',
@@ -435,7 +467,7 @@ describe( 'actions', () => {
 					'twentyseventeen',
 					'wporg'
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_SUCCESS,
 						siteId: 'wporg',
 						themeId: 'twentyseventeen',
@@ -448,7 +480,7 @@ describe( 'actions', () => {
 					'twentyumpteen',
 					'wporg'
 				)( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: THEME_REQUEST_FAILURE,
 						siteId: 'wporg',
 						themeId: 'twentyumpteen',
@@ -521,7 +553,33 @@ describe( 'actions', () => {
 		describe( 'when switching between any theme', () => {
 			test( 'should refresh the admin bar', () => {
 				themeActivated( 'pub/mayland-blocks', 2211667 )( spy, fakeGetState );
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
+					type: 'THEME_ACTIVATE_SUCCESS',
+					themeStylesheet: 'pub/mayland-blocks',
+					siteId: 2211667,
+					meta: {
+						analytics: [
+							{
+								payload: {
+									name: 'calypso_themeshowcase_theme_activate',
+									properties: {
+										previous_theme: 'twentyfifteen',
+										purchased: false,
+										search_taxonomies: '',
+										search_term: 'simple, white',
+										source: 'unknown',
+										style_variation_slug: '',
+										theme: 'mayland-blocks',
+										theme_type: 'free',
+									},
+									service: 'tracks',
+								},
+								type: 'ANALYTICS_EVENT_RECORD',
+							},
+						],
+					},
+				} );
+				expect( spy ).toHaveBeenCalledWith( {
 					type: 'ADMIN_MENU_REQUEST',
 					siteId: 2211667,
 				} );
@@ -543,6 +601,7 @@ describe( 'actions', () => {
 									source: 'unknown',
 									style_variation_slug: '',
 									theme: 'twentysixteen',
+									theme_type: 'free',
 								},
 								service: 'tracks',
 							},
@@ -555,7 +614,33 @@ describe( 'actions', () => {
 				siteId: 2211667,
 			};
 			themeActivated( 'pub/twentysixteen', 2211667 )( spy, fakeGetState );
-			expect( spy ).toBeCalledWith( expectedActivationSuccess );
+			expect( spy ).toHaveBeenCalledWith( {
+				type: 'THEME_ACTIVATE_SUCCESS',
+				themeStylesheet: 'pub/twentysixteen',
+				siteId: 2211667,
+				meta: {
+					analytics: [
+						{
+							payload: {
+								name: 'calypso_themeshowcase_theme_activate',
+								properties: {
+									previous_theme: 'twentyfifteen',
+									purchased: false,
+									search_taxonomies: '',
+									search_term: 'simple, white',
+									source: 'unknown',
+									style_variation_slug: '',
+									theme: 'twentysixteen',
+									theme_type: 'free',
+								},
+								service: 'tracks',
+							},
+							type: 'ANALYTICS_EVENT_RECORD',
+						},
+					],
+				},
+			} );
+			expect( spy ).toHaveBeenCalledWith( expectedActivationSuccess );
 		} );
 	} );
 
@@ -598,9 +683,9 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'twentysixteen' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'twentysixteen' } )
 				.reply( 200, { id: 'karuna', version: '1.0.3' } )
-				.post( '/rest/v1.1/sites/2211667/themes/mine', { theme: 'badTheme' } )
+				.post( '/rest/v1.1/sites/2211667/themes/mine?_locale=user', { theme: 'badTheme' } )
 				.reply( 404, {
 					error: 'theme_not_found',
 					message: 'The specified theme was not found',
@@ -610,7 +695,7 @@ describe( 'actions', () => {
 		test( 'should dispatch request action when thunk is triggered', () => {
 			activateTheme( 'twentysixteen', 2211667 )( spy, getState );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_ACTIVATE,
 				siteId: 2211667,
 				themeId: 'twentysixteen',
@@ -640,7 +725,7 @@ describe( 'actions', () => {
 				2211667,
 				trackingData
 			)( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith( themeActivationFailure );
+				expect( spy ).toHaveBeenCalledWith( themeActivationFailure );
 			} );
 		} );
 	} );
@@ -656,6 +741,23 @@ describe( 'actions', () => {
 				version: '5.3.0',
 			},
 		];
+
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
 
 		const successfulParameters = {
 			themes: [ 'storefront', 'twentysixteen' ],
@@ -680,7 +782,7 @@ describe( 'actions', () => {
 		test( 'Theme update action should be triggered', () => {
 			updateThemes( [ 'storefront', 'twentysixteen' ], 2211667 )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEMES_UPDATE,
 				siteId: 2211667,
 				themeSlugs: [ 'storefront', 'twentysixteen' ],
@@ -707,25 +809,25 @@ describe( 'actions', () => {
 				[ 'unknown' ],
 				2211667
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( themeActivationFailure );
+				expect( spy ).toHaveBeenCalledWith( themeActivationFailure );
 			} );
 		} );
 
 		test( 'should update the badges in the UI by dispatching the actions', () => {
 			themesUpdated( 2211667, [ 'storefront', 'twentysixteen' ] )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEMES_UPDATE_SUCCESS,
 				themeSlugs: [ 'storefront', 'twentysixteen' ],
 				siteId: 2211667,
 			} );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: ADMIN_MENU_REQUEST,
 				siteId: 2211667,
 			} );
 
-			spy.mock.calls[ 2 ][ 0 ]( spy );
+			spy.mock.calls[ 2 ][ 0 ]( spy, getState );
 
 			expect( spy.mock.calls[ 3 ][ 0 ].type ).toEqual( THEMES_REQUEST );
 		} );
@@ -745,10 +847,10 @@ describe( 'actions', () => {
 					'karuna-wpcom',
 					2211667
 				)( stub ).then( () => {
-					expect( stub ).toBeCalledWith(
+					expect( stub ).toHaveBeenCalledWith(
 						expect.toMatchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
 					);
-					expect( stub ).toBeCalledWith(
+					expect( stub ).toHaveBeenCalledWith(
 						expect.toMatchFunction( activateTheme( 'karuna-wpcom', 2211667 ) )
 					);
 					done();
@@ -778,15 +880,19 @@ describe( 'actions', () => {
 					queries: {
 						wpcom: new ThemeQueryManager(),
 					},
+					themeActivationModal: {
+						themeId: 'karuna',
+						accepted: true,
+					},
 				},
 			} );
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
 				return new Promise( ( done ) => {
 					activate( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
-						expect( stub ).toBeCalledWith(
+						expect( stub ).toHaveBeenCalledWith(
 							expect.toMatchFunction( activateTheme( 'karuna', 77203074 ) )
 						);
-						expect( stub ).not.toBeCalledWith(
+						expect( stub ).not.toHaveBeenCalledWith(
 							expect.toMatchFunction( installAndActivateTheme( 'karuna-wpcom', 77203074 ) )
 						);
 						done();
@@ -814,15 +920,19 @@ describe( 'actions', () => {
 								items: { karuna: {} },
 							} ),
 						},
+						themeActivationModal: {
+							themeId: 'karuna',
+							accepted: true,
+						},
 					},
 				} );
 				test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
 					return new Promise( ( done ) => {
 						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).toBeCalledWith(
+							expect( stub ).toHaveBeenCalledWith(
 								expect.toMatchFunction( activateTheme( 'karuna', 2211667 ) )
 							);
-							expect( stub ).not.toBeCalledWith(
+							expect( stub ).not.toHaveBeenCalledWith(
 								expect.toMatchFunction( installAndActivateTheme( 'karuna-wpcom', 2211667 ) )
 							);
 							done();
@@ -836,15 +946,19 @@ describe( 'actions', () => {
 					...sitesState,
 					themes: {
 						queries: {},
+						themeActivationModal: {
+							themeId: 'karuna',
+							accepted: true,
+						},
 					},
 				} );
 				test( 'should dispatch (only) installAndActivateTheme() and pass the suffixed themeId', () => {
 					return new Promise( ( done ) => {
 						activate( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).not.toBeCalledWith(
+							expect( stub ).not.toHaveBeenCalledWith(
 								expect.toMatchFunction( activate( 'karuna', 2211667 ) )
 							);
-							expect( stub ).toBeCalledWith(
+							expect( stub ).toHaveBeenCalledWith(
 								expect.toMatchFunction( installAndActivateTheme( 'karuna-wpcom', 2211667 ) )
 							);
 							done();
@@ -923,7 +1037,7 @@ describe( 'actions', () => {
 		test( 'should dispatch active theme request action when triggered', () => {
 			requestActiveTheme( 2211667 )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: ACTIVE_THEME_REQUEST,
 				siteId: 2211667,
 			} );
@@ -932,7 +1046,7 @@ describe( 'actions', () => {
 		describe( 'when request completes successfully', () => {
 			test( 'should dispatch active theme request success action', () => {
 				return requestActiveTheme( 2211667 )( spy, fakeGetState ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: ACTIVE_THEME_REQUEST_SUCCESS,
 						siteId: 2211667,
 						theme: successResponse,
@@ -943,7 +1057,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch active theme request failure action when request completes', () => {
 			return requestActiveTheme( 666 )( spy, fakeGetState ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: ACTIVE_THEME_REQUEST_FAILURE,
 					siteId: 666,
 					error: expect.objectContaining( { message: 'Unknown blog' } ),
@@ -974,10 +1088,9 @@ describe( 'actions', () => {
 		test( 'should dispatch success on status complete', () => {
 			return pollThemeTransferStatus(
 				siteId,
-				1,
-				'themes'
+				1
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_TRANSFER_STATUS_RECEIVE,
 					siteId,
 					transferId: 1,
@@ -992,11 +1105,10 @@ describe( 'actions', () => {
 			return pollThemeTransferStatus(
 				siteId,
 				2,
-				'themes',
 				10,
 				25
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
 					transferId: 2,
@@ -1006,10 +1118,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch status update', async () => {
-			await pollThemeTransferStatus( siteId, 3, 'themes', 20 )( spy );
+			await pollThemeTransferStatus( siteId, 3, 20 )( spy );
 			// Two 'progress' then a 'complete'
-			expect( spy ).toBeCalledTimes( 4 );
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledTimes( 3 );
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_TRANSFER_STATUS_RECEIVE,
 				siteId: siteId,
 				transferId: 3,
@@ -1017,7 +1129,7 @@ describe( 'actions', () => {
 				message: 'in progress',
 				themeId: undefined,
 			} );
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_TRANSFER_STATUS_RECEIVE,
 				siteId: siteId,
 				transferId: 3,
@@ -1028,15 +1140,17 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch failure on receipt of error', async () => {
-			await pollThemeTransferStatus( siteId, 4, 'themes' )( spy );
-			expect( spy ).toBeCalledWith(
+			await pollThemeTransferStatus( siteId, 4 )( spy );
+			expect( spy ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					type: THEME_TRANSFER_STATUS_FAILURE,
 					siteId,
 					transferId: 4,
 				} )
 			);
-			expect( spy ).toBeCalledWith( expect.objectContaining( { error: expect.toBeTruthy() } ) );
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( { error: expect.toBeTruthy() } )
+			);
 		} );
 	} );
 
@@ -1053,9 +1167,9 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success', () => {
 			return initiateThemeTransfer( siteId )( spy ).then( () => {
-				expect( spy ).toBeCalledTimes( 3 );
+				expect( spy ).toHaveBeenCalledTimes( 3 );
 
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						meta: expect.objectContaining( {} ),
 						type: THEME_TRANSFER_INITIATE_REQUEST,
@@ -1063,7 +1177,7 @@ describe( 'actions', () => {
 					} )
 				);
 
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						meta: expect.objectContaining( {} ),
 						type: THEME_TRANSFER_INITIATE_SUCCESS,
@@ -1072,21 +1186,23 @@ describe( 'actions', () => {
 					} )
 				);
 
-				expect( spy ).toBeCalledWith( expect.any( Function ) );
+				expect( spy ).toHaveBeenCalledWith( expect.any( Function ) );
 			} );
 		} );
 		test( 'should dispatch failure on error', () => {
 			/* eslint-disable jest/no-conditional-expect */
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
-				expect( spy ).toBeCalledTimes( 1 );
+				expect( spy ).toHaveBeenCalledTimes( 1 );
 
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: THEME_TRANSFER_INITIATE_FAILURE,
 						siteId,
 					} )
 				);
-				expect( spy ).toBeCalledWith( expect.objectContaining( { error: expect.toBeTruthy() } ) );
+				expect( spy ).toHaveBeenCalledWith(
+					expect.objectContaining( { error: expect.toBeTruthy() } )
+				);
 			} );
 			/* eslint-enable jest/no-conditional-expect */
 		} );
@@ -1150,7 +1266,7 @@ describe( 'actions', () => {
 		test( 'should dispatch install theme request action when triggered', () => {
 			installTheme( 'karuna-wpcom', 2211667 )( spy, getState );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_INSTALL,
 				siteId: 2211667,
 				themeId: 'karuna-wpcom',
@@ -1159,7 +1275,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch wpcom theme install request success action when request completes', () => {
 			return installTheme( 'karuna-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_INSTALL_SUCCESS,
 					siteId: 2211667,
 					themeId: 'karuna-wpcom',
@@ -1169,7 +1285,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch wpcom theme install request failure action when theme was not found', () => {
 			return installTheme( 'typist-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
 					themeId: 'typist-wpcom',
@@ -1180,7 +1296,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch wpcom theme install request failure action when theme is already installed', () => {
 			return installTheme( 'pinboard-wpcom', 2211667 )( spy, getState ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_INSTALL_FAILURE,
 					siteId: 2211667,
 					themeId: 'pinboard-wpcom',
@@ -1204,7 +1320,7 @@ describe( 'actions', () => {
 				'karuna',
 				2211667
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_DELETE_SUCCESS,
 					siteId: 2211667,
 					themeId: 'karuna',
@@ -1218,7 +1334,7 @@ describe( 'actions', () => {
 				'blahblah',
 				2211667
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: THEME_DELETE_FAILURE,
 						siteId: 2211667,
@@ -1244,10 +1360,10 @@ describe( 'actions', () => {
 					'karuna-wpcom',
 					2211667
 				)( stub ).then( () => {
-					expect( stub ).toBeCalledWith(
+					expect( stub ).toHaveBeenCalledWith(
 						expect.toMatchFunction( installTheme( 'karuna-wpcom', 2211667 ) )
 					);
-					expect( stub ).toBeCalledWith(
+					expect( stub ).toHaveBeenCalledWith(
 						expect.toMatchFunction( tryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
 					);
 					done();
@@ -1277,10 +1393,10 @@ describe( 'actions', () => {
 			test( 'should dispatch (only) activateTheme() and pass the unsuffixed themeId', () => {
 				return new Promise( ( done ) => {
 					tryAndCustomize( 'karuna', 77203074 )( stub, fakeGetState ).then( () => {
-						expect( stub ).toBeCalledWith(
+						expect( stub ).toHaveBeenCalledWith(
 							expect.toMatchFunction( tryAndCustomizeTheme( 'karuna', 77203074 ) )
 						);
-						expect( stub ).not.toBeCalledWith(
+						expect( stub ).not.toHaveBeenCalledWith(
 							expect.toMatchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 77203074 ) )
 						);
 						done();
@@ -1313,10 +1429,10 @@ describe( 'actions', () => {
 				test( 'should dispatch (only) tryAndCustomizeTheme() and pass the unsuffixed themeId', () => {
 					return new Promise( ( done ) => {
 						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).toBeCalledWith(
+							expect( stub ).toHaveBeenCalledWith(
 								expect.toMatchFunction( tryAndCustomizeTheme( 'karuna', 2211667 ) )
 							);
-							expect( stub ).not.toBeCalledWith(
+							expect( stub ).not.toHaveBeenCalledWith(
 								expect.toMatchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
 							);
 							done();
@@ -1335,11 +1451,152 @@ describe( 'actions', () => {
 				test( 'should dispatch (only) installAndTryAndCustomizeTheme() and pass the suffixed themeId', () => {
 					return new Promise( ( done ) => {
 						tryAndCustomize( 'karuna', 2211667 )( stub, fakeGetState ).then( () => {
-							expect( stub ).not.toBeCalledWith(
+							expect( stub ).not.toHaveBeenCalledWith(
 								expect.toMatchFunction( tryAndCustomize( 'karuna', 2211667 ) )
 							);
-							expect( stub ).toBeCalledWith(
+							expect( stub ).toHaveBeenCalledWith(
 								expect.toMatchFunction( installAndTryAndCustomizeTheme( 'karuna-wpcom', 2211667 ) )
+							);
+							done();
+						} );
+					} );
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#livePreview', () => {
+		const dispatch = jest.fn();
+		dispatch.mockReturnValue(
+			new Promise( ( res ) => {
+				res();
+			} )
+		);
+		const livePreviewStartAction = {
+			type: 'LIVE_PREVIEW_START',
+			themeId: 'pendant',
+			meta: {
+				analytics: [
+					{
+						payload: {
+							name: 'calypso_block_theme_live_preview_click',
+							properties: {
+								active_theme: 'twentyfifteen',
+								site_id: 2211667,
+								source: 'detail',
+								theme: 'pendant',
+								theme_style: 'pendant',
+								theme_type: 'free',
+							},
+							service: 'tracks',
+						},
+						type: 'ANALYTICS_EVENT_RECORD',
+					},
+				],
+			},
+		};
+		describe( 'on a WordPress.com site', () => {
+			const state = () => ( {
+				sites: {
+					items: {
+						2211667: {
+							jetpack: false,
+						},
+					},
+				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+					queries: {
+						wpcom: new ThemeQueryManager( {
+							items: {},
+						} ),
+					},
+				},
+			} );
+			test( 'should redirect users to the Live Preview', () => {
+				return new Promise( ( done ) => {
+					livePreview(
+						2211667,
+						'pendant',
+						'detail'
+					)( dispatch, state ).then( () => {
+						expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
+						expect( dispatch ).toHaveBeenCalledWith(
+							expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
+						);
+						expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
+						done();
+					} );
+				} );
+			} );
+		} );
+		describe( 'on a Jetpack site', () => {
+			const baseState = {
+				sites: {
+					items: {
+						2211667: {
+							jetpack: true,
+						},
+					},
+				},
+				themes: {
+					activeThemes: {
+						2211667: 'twentyfifteen',
+					},
+				},
+			};
+			describe( 'if the theme is already installed', () => {
+				const state = () => ( {
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {
+							2211667: new ThemeQueryManager( {
+								items: { pendant: {} },
+							} ),
+						},
+					},
+				} );
+				test( 'should redirect users to the Live Preview', () => {
+					return new Promise( ( done ) => {
+						livePreview(
+							2211667,
+							'pendant',
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
+							expect( dispatch ).toHaveBeenCalledWith(
+								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
+							);
+							expect( dispatch ).not.toHaveBeenCalledWith( installTheme( 'pendant', 2211667 ) );
+							done();
+						} );
+					} );
+				} );
+			} );
+			describe( "if the theme isn't installed", () => {
+				const state = () => ( {
+					...baseState,
+					themes: {
+						...baseState.themes,
+						queries: {},
+					},
+				} );
+				test( 'should install the theme and then redirect users to the Live Preview', () => {
+					return new Promise( ( done ) => {
+						livePreview(
+							2211667,
+							'pendant',
+							'detail'
+						)( dispatch, state ).then( () => {
+							expect( dispatch ).toHaveBeenCalledWith( livePreviewStartAction );
+							expect( dispatch ).toHaveBeenCalledWith(
+								expect.toMatchFunction( installTheme( 'pendant', 2211667 ) )
+							);
+							expect( dispatch ).toHaveBeenCalledWith(
+								expect.toMatchFunction( redirectToLivePreview( 'pendant', 2211667 ) )
 							);
 							done();
 						} );
@@ -1360,7 +1617,7 @@ describe( 'actions', () => {
 		const filter = 'nonsense-test-filter';
 		test( 'should dispatch fetch action', () => {
 			getRecommendedThemes( filter )( spy );
-			expect( spy ).toBeCalledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
+			expect( spy ).toHaveBeenCalledWith( { type: RECOMMENDED_THEMES_FETCH, filter } );
 		} );
 	} );
 
@@ -1369,7 +1626,7 @@ describe( 'actions', () => {
 		const filter = 'test-filter-nonsense';
 		test( 'should dispatch success action with themes as payload', () => {
 			receiveRecommendedThemes( themes, filter )( spy );
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: RECOMMENDED_THEMES_SUCCESS,
 				payload: themes,
 				filter,
@@ -1424,7 +1681,7 @@ describe( 'actions', () => {
 
 			await expect(
 				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
-			).rejects.toThrowError( 'Theme is not externally managed' );
+			).rejects.toThrow( 'Theme is not externally managed' );
 		} );
 
 		test( 'Should throw error if theme is already purchased', async () => {
@@ -1445,7 +1702,7 @@ describe( 'actions', () => {
 
 			await expect(
 				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
-			).rejects.toThrowError( 'Theme is already purchased' );
+			).rejects.toThrow( 'Theme is already purchased' );
 		} );
 	} );
 
@@ -1465,7 +1722,7 @@ describe( 'actions', () => {
 		test( 'should dispatch THEME_REQUEST', () => {
 			requestThemeOnAtomic( 'makoney', 1234 )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: THEME_REQUEST,
 				siteId: 1234,
 				themeId: 'makoney',
@@ -1477,7 +1734,7 @@ describe( 'actions', () => {
 				'makoney',
 				1234
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_REQUEST_SUCCESS,
 					siteId: 1234,
 					themeId: 'makoney',
@@ -1490,7 +1747,7 @@ describe( 'actions', () => {
 				'solarone',
 				1234
 			)( spy ).finally( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: THEME_REQUEST_FAILURE,
 					siteId: 1234,
 					themeId: 'solarone',

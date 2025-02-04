@@ -57,7 +57,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch receive action when request completes', () => {
 				return sendSubscriptionToWPCOM( 'someTruthyValue' )( spy, getState ).then( () => {
-					expect( spy ).toBeCalledWith(
+					expect( spy ).toHaveBeenCalledWith(
 						expect.objectContaining( {
 							type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
 							data: expect.objectContaining( {

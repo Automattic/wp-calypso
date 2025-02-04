@@ -1,0 +1,114 @@
+.jetpack-ai-logo-generator-modal-presenter__wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.jetpack-ai-logo-generator-modal-presenter {
+	display: flex;
+}
+
+.jetpack-ai-logo-generator-modal-presenter__content {
+	border-radius: 4px;
+	background: var(--studio-gray-0, #f6f7f7);
+	display: flex;
+	align-items: center;
+	flex-grow: 1;
+	max-height: 229px;
+
+	@media (max-width: 700px) {
+		flex-direction: column;
+		max-height: unset;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-presenter__rectangle {
+	position: relative;
+	width: 0;
+
+	&::after {
+		width: 15px;
+		height: 15px;
+		transform: rotate(-45deg);
+		background-color: var(--studio-gray-0, #f6f7f7);
+		content: "";
+		position: absolute;
+		top: -7.5px;
+		left: -66px;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-presenter__loading-text {
+	flex-grow: 1;
+	text-align: center;
+}
+
+.jetpack-ai-logo-generator-modal-presenter__logo {
+	width: 198px;
+	height: 198px;
+	margin: 16px 30px 16px 16px;
+
+	@media (max-width: 700px) {
+		margin: 16px;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-presenter__action-wrapper {
+	height: 100%;
+	flex-grow: 1;
+	margin-right: 32px;
+	display: flex;
+	flex-direction: column;
+	padding: 16px 0;
+	box-sizing: border-box;
+
+	@media (max-width: 700px) {
+		margin-left: 32px;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-presenter__description {
+	flex-grow: 1;
+	padding-top: 16px;
+	color: var(--studio-gray-50, #646970);
+	overflow-y: auto;
+}
+
+.jetpack-ai-logo-generator-modal-presenter__actions {
+	padding-top: 16px;
+	margin-top: 16px;
+	border-top: 1px solid var(--studio-gray-5, #dcdcde);
+	display: flex;
+	gap: 24px;
+}
+
+.jetpack-ai-logo-generator-modal-presenter__action {
+	display: flex;
+	align-items: center;
+
+	&.components-button,
+	&.components-button:hover,
+	&.components-button:active {
+		color: var(--color-link, #3858e9);
+	}
+
+	.action-text {
+		font-size: $font-body-extra-small;
+	}
+
+	.jetpack-ai-logo-generator-icon {
+		margin-right: 8px;
+	}
+}
+
+.jetpack-ai-logo-generator-modal-presenter__success-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 16px;
+	width: 100%;
+
+	@media (max-width: 700px) {
+		padding-bottom: 16px;
+	}
+}

@@ -1,19 +1,19 @@
-import classnames from 'classnames';
+import { SubTitle, Title } from '@automattic/onboarding';
+import clsx from 'clsx';
 import { includes } from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
-import ImporterHeader from 'calypso/my-sites/importer/importer-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { ImportJob } from '../../types';
-import './style.scss';
 import ImportingPane from '../importing-pane/importing-pane';
 import UploadingPane from '../uploading-pane/uploading-pane';
+import type { ImportJob } from '../../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import './style.scss';
 
 /**
  * Module variables
@@ -37,7 +37,7 @@ interface Props {
 	importerStatus: ImportJob;
 	importerData: ImporterConfig;
 	site: SiteDetails | null | undefined;
-	urlData: UrlData;
+	urlData?: UrlData | null;
 	startImport: ( siteId: number, type: string ) => void;
 }
 const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
@@ -46,19 +46,18 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const isEnabled = appStates.DISABLED !== importerState;
 
 	return (
-		<div className={ classnames( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
-			<ImporterHeader
-				importerStatus={ importerStatus }
-				icon={ importerData?.icon }
-				title={ importerData?.title }
-				description={ importerData?.description }
-			/>
+		<div className={ clsx( 'importer-drag', `importer-drag-${ importerData?.engine }` ) }>
+			<div className="import__heading import__heading-center">
+				<Title>{ importerData?.title }</Title>
+				<SubTitle>{ importerData?.description }</SubTitle>
+			</div>
 			{ errorData && (
 				<ErrorPane
 					type={ errorData.type }
 					description={ errorData.description }
 					siteSlug={ site?.slug }
 					code={ errorData.code }
+					importerEngine={ importerData?.engine }
 				/>
 			) }
 			{ includes( importingStates, importerState ) && (

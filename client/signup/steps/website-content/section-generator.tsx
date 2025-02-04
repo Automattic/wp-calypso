@@ -1,12 +1,22 @@
-import { BLOG_PAGE, CONTACT_PAGE, SHOP_PAGE } from 'calypso/signup/difm/constants';
+import {
+	BLOG_PAGE,
+	CASE_STUDIES_PAGE,
+	CONTACT_PAGE,
+	CUSTOM_PAGE,
+	PHOTO_GALLERY_PAGE,
+	PORTFOLIO_PAGE,
+	SHOP_PAGE,
+	VIDEO_GALLERY_PAGE,
+} from 'calypso/signup/difm/constants';
 import {
 	ContactPageDetails,
+	CustomPageDetails,
 	FeedbackSection,
-	LogoUploadSection,
+	SiteInformation,
 } from 'calypso/signup/steps/website-content/section-types';
-import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/constants';
+import { SITE_INFORMATION_SECTION_ID } from 'calypso/state/signup/steps/website-content/constants';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/types';
-import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
+import { DefaultPageDetails } from './section-types/default-page-details';
 import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
@@ -24,32 +34,43 @@ interface SectionProcessedResult {
 	elapsedSections: number;
 }
 
-const generateLogoSection = (
+const generateSiteInformationSection = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
 ): SectionProcessedResult => {
-	const { translate, formValues } = params;
+	const { translate, formValues, formErrors } = params;
 
 	const fieldNumber = elapsedSections + 1;
 	return {
 		sectionsDetails: [
 			{
-				title: translate( '%(fieldNumber)d. Site Logo', {
+				title: translate( '%(fieldNumber)d. Site Information', {
 					args: {
 						fieldNumber,
 					},
 					comment: 'This is the serial number: 1',
 				} ),
 				component: (
-					<LogoUploadSection
-						sectionID={ LOGO_SECTION_ID }
+					<SiteInformation
+						sectionID={ SITE_INFORMATION_SECTION_ID }
+						formErrors={ formErrors }
+						searchTerms={ formValues.siteInformationSection?.searchTerms }
 						// The structure of the state tree changed and can generate errors for stale data where siteLogoUrl lived in the root of this state tree
 						// So the optional parameter was added to safegaurd for any errors.
 						// This should eventually be removed with a fix that prevents this type of bug
-						logoUrl={ formValues.siteLogoSection?.siteLogoUrl }
+						logoUrl={ formValues.siteInformationSection?.siteLogoUrl }
 					/>
 				),
-				showSkip: true,
+				showSkip: false,
+				validate: () => {
+					const isValid = Boolean( formValues.siteInformationSection?.searchTerms?.length );
+					return {
+						result: isValid,
+						errors: {
+							searchTerms: isValid ? null : translate( `Please enter search terms.` ),
+						},
+					};
+				},
 			},
 		],
 		elapsedSections: elapsedSections + 1,
@@ -60,6 +81,8 @@ const resolveDisplayedComponent = ( pageId: string ) => {
 	switch ( pageId ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
+		case CUSTOM_PAGE:
+			return CustomPageDetails;
 		default:
 			return DefaultPageDetails;
 	}
@@ -75,20 +98,22 @@ const generateWebsiteContentSections = (
 		[ CONTACT_PAGE ]: true,
 		[ BLOG_PAGE ]: true,
 		[ SHOP_PAGE ]: true,
+		[ VIDEO_GALLERY_PAGE ]: true,
+		[ PHOTO_GALLERY_PAGE ]: true,
+		[ PORTFOLIO_PAGE ]: true,
+		[ CASE_STUDIES_PAGE ]: true,
 	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
-		const { title: pageTitle } = page;
+		let pageTitle = page.title;
+
+		if ( ! pageTitle && page.id === CUSTOM_PAGE ) {
+			pageTitle = translate( 'Custom Page' );
+		}
+
 		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
 
-		switch ( page.id ) {
-			case CONTACT_PAGE:
-				break;
-
-			default:
-				break;
-		}
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -97,7 +122,7 @@ const generateWebsiteContentSections = (
 				},
 				comment: 'This is the serial number: 1',
 			} ),
-			summary: page.content,
+			summary: page.useFillerContent ? translate( 'AI Content 🌟' ) : page.content,
 			component: (
 				<DisplayedPageComponent
 					page={ page }
@@ -108,17 +133,15 @@ const generateWebsiteContentSections = (
 			),
 			showSkip: !! OPTIONAL_PAGES[ page.id ],
 			validate: () => {
-				const isValid = OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length );
+				const isContentValid =
+					OPTIONAL_PAGES[ page.id ] || Boolean( page.content?.length ) || page.useFillerContent;
+				const isTitleValid = Boolean( page.title?.length );
+
 				return {
-					result: isValid,
+					result: isContentValid && isTitleValid,
 					errors: {
-						[ page.id + CONTENT_SUFFIX ]: isValid
-							? null
-							: translate( `Please enter '%(pageTitle)s' content`, {
-									args: {
-										pageTitle,
-									},
-							  } ),
+						content: isContentValid ? null : translate( 'Please enter content for this page.' ),
+						title: isTitleValid ? null : translate( 'Please enter a title for this page.' ),
 					},
 				};
 			},
@@ -157,8 +180,8 @@ const generateFeedbackSection = (
 export const sectionGenerator = (
 	params: SectionGeneratorReturnType< WebsiteContent >
 ): AccordionSectionProps< any >[] => {
-	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: logoSection } =
-		generateLogoSection( params );
+	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: siteInformationSection } =
+		generateSiteInformationSection( params );
 
 	const {
 		sectionsDetails: websiteContentSections,
@@ -170,5 +193,5 @@ export const sectionGenerator = (
 		elapsedSectionAfterWebsiteContent
 	);
 
-	return [ ...logoSection, ...websiteContentSections, ...feedbackSection ];
+	return [ ...siteInformationSection, ...websiteContentSections, ...feedbackSection ];
 };

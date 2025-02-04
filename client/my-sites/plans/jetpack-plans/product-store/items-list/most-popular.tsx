@@ -1,5 +1,5 @@
 import { isJetpackPlanSlug } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
 import { HeroImage } from '../hero-image';
@@ -17,7 +17,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	onClickMoreInfoFactory,
 	siteId,
 } ) => {
-	const wrapperClassName = classNames( 'jetpack-product-store__most-popular', className );
+	const wrapperClassName = clsx( 'jetpack-product-store__most-popular', className );
 
 	const {
 		getCheckoutURL,
@@ -40,7 +40,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 
 	return (
 		<div className={ wrapperClassName }>
-			<h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2>
+			{ heading && <h2 className="jetpack-product-store__most-popular--heading">{ heading }</h2> }
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
@@ -74,20 +74,14 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						/>
 					);
 
-					const description = (
-						<p>
-							<span>{ item.featuredDescription }</span>
-							<br />
-
-							{ ! hideMoreInfoLink && (
-								<MoreInfoLink
-									item={ item }
-									isExternal={ isExternal }
-									onClick={ onClickMoreInfoFactory( item ) }
-								/>
-							) }
-						</p>
-					);
+					const description = <span>{ item.featuredDescription }</span>;
+					const moreInfoLink = ! hideMoreInfoLink ? (
+						<MoreInfoLink
+							item={ item }
+							isLinkExternal={ isExternal }
+							onClick={ onClickMoreInfoFactory( item ) }
+						/>
+					) : null;
 
 					const ctaAsPrimary = ! (
 						isProductInCart ||
@@ -115,6 +109,8 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
+								isVertical
+								moreInfoLink={ moreInfoLink }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
 								isProductInCart={ isProductInCart }

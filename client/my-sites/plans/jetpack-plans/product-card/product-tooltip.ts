@@ -13,7 +13,6 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 
 /**
  * Gets tooltip for product.
- *
  * @param product Product to check.
  * @param tiers Product price tiers.
  * @param currencyCode Currency code for user.

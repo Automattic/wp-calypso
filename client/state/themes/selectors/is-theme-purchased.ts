@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
  * marketplace themes need to be checked via isMarketplaceThemeSubscribed().
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
- *
  * @param   {AppState} state   Global state tree
  * @param   {string}   themeId Theme ID
  * @param   {number}   siteId  Site ID

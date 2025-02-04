@@ -1,11 +1,16 @@
 import { FormInputValidation } from '@automattic/components';
 import styled from '@emotion/styled';
+import { Icon } from '@wordpress/icons';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ReactChild } from 'react';
+import { ChangeEvent, ChangeEventHandler, ReactNode } from 'react';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
+import InfoPopover from 'calypso/components/info-popover';
 import SocialLogo from 'calypso/components/social-logo';
+import { tip } from 'calypso/signup/icons';
 
 // TODO: This probably should be moved out to a more suitable folder name like difm-components
 export const Label = styled.label`
@@ -87,7 +92,49 @@ const AddressField = styled.div`
 	flex-basis: 100%;
 `;
 
-interface TextInputFieldProps {
+const FormSettingExplanationContainer = styled.div`
+	.form-setting-explanation {
+		display: flex;
+		align-items: center;
+		margin: 16px 0;
+		font-style: normal;
+		color: var( --studio-gray-40 );
+
+		.site-options__form-icon {
+			margin-right: 8px;
+		}
+	}
+`;
+
+const StyledFormInputValidation = styled( FormInputValidation )< { isWarning?: boolean } >`
+	margin-top: ${ ( props ) => ( props.isWarning ? '24px' : 0 ) };
+`;
+
+const FlexFormFieldset = styled( FormFieldset )`
+	display: flex;
+`;
+
+const StyledFormFieldset = styled( FormFieldset, {
+	shouldForwardProp: ( prop ) => prop !== 'hasFillerContentCheckbox',
+} )( ( props ) => ( {
+	marginBottom: props.hasFillerContentCheckbox ? '12px' : '20px',
+} ) );
+
+const StyledFormCheckbox = styled( FormCheckbox )`
+	&.form-checkbox {
+		margin-right: 6px;
+	}
+`;
+
+const ClickableLabel = styled( Label )`
+	cursor: pointer;
+`;
+
+const CharacterCounter = styled.small`
+	float: right;
+`;
+
+type TextInputFieldProps = {
 	name: string;
 	label?: TranslateResult;
 	placeholder?: TranslateResult;
@@ -95,16 +142,12 @@ interface TextInputFieldProps {
 	error?: TranslateResult | null;
 	sublabel?: TranslateResult;
 	rows?: number;
+	explanation?: TranslateResult;
+	disabled?: boolean;
 	onChange?: ( event: ChangeEvent< HTMLInputElement > ) => void;
-}
+};
 
-export function LabelBlock( {
-	inputName,
-	children,
-}: {
-	inputName?: string;
-	children: ReactChild | ReactChild[];
-} ) {
+export function LabelBlock( { inputName, children }: { inputName?: string; children: ReactNode } ) {
 	return (
 		<LabelContainer>
 			<Label htmlFor={ inputName }>{ children }</Label>
@@ -118,30 +161,111 @@ export function TextInputField( props: TextInputFieldProps ) {
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextInput { ...props } isError={ !! props.error } />
-			{ props.error && <FormInputValidation isError text={ props.error } /> }
+			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
+			{ props.explanation && (
+				<FormSettingExplanationContainer>
+					<FormSettingExplanation>
+						<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+						{ props.explanation }
+					</FormSettingExplanation>
+				</FormSettingExplanationContainer>
+			) }
 		</FormFieldset>
 	);
 }
 
-interface TextAreaFieldProps extends TextInputFieldProps {
+type TextAreaFieldProps = TextInputFieldProps & {
 	rows?: number;
-}
+	hasFillerContentCheckbox?: boolean;
+} & (
+		| {
+				characterLimit?: never;
+				characterLimitError?: never;
+				shouldEnforceCharacterLimit?: never;
+		  }
+		| {
+				characterLimitError: TranslateResult;
+				characterLimit: number;
+				shouldEnforceCharacterLimit?: boolean;
+		  }
+	);
 
 export function TextAreaField( props: TextAreaFieldProps ) {
+	const {
+		hasFillerContentCheckbox,
+		value,
+		characterLimit,
+		characterLimitError,
+		shouldEnforceCharacterLimit,
+		onChange: onChangeFromProps,
+		...otherProps
+	} = props;
+
+	const onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+		if ( shouldEnforceCharacterLimit ) {
+			if ( event.target.value.length <= characterLimit ) {
+				return onChangeFromProps?.( event );
+			}
+			return;
+		}
+		return onChangeFromProps?.( event );
+	};
+
 	return (
-		<FormFieldset>
+		<StyledFormFieldset hasFillerContentCheckbox={ hasFillerContentCheckbox }>
 			{ props.label && <LabelBlock inputName={ props.name }>{ props.label } </LabelBlock> }
 			{ props.sublabel && <SubLabel htmlFor={ props.name }>{ props.sublabel }</SubLabel> }
 			<TextArea
-				{ ...props }
+				{ ...otherProps }
+				onChange={ onChange }
+				value={ value }
 				rows={ props.rows ? props.rows : 10 }
 				isError={ !! props.error }
 				autoCapitalize="off"
 				autoCorrect="off"
 				spellCheck="false"
 			/>
-			{ props.error && <FormInputValidation isError text={ props.error } /> }
-		</FormFieldset>
+			{ characterLimit && value?.length ? (
+				<CharacterCounter>
+					{ value.length }/{ characterLimit }
+				</CharacterCounter>
+			) : null }
+			{ characterLimit &&
+				( shouldEnforceCharacterLimit
+					? value?.length === characterLimit
+					: value?.length > characterLimit ) && (
+					<StyledFormInputValidation isError={ false } isWarning text={ characterLimitError } />
+				) }
+			{ props.error && <StyledFormInputValidation isError text={ props.error } /> }
+		</StyledFormFieldset>
+	);
+}
+
+export function CheckboxField( props: {
+	checked: boolean;
+	name: string;
+	value: string;
+	onChange: ChangeEventHandler< HTMLInputElement >;
+	label: TranslateResult;
+	helpText: TranslateResult;
+} ) {
+	return (
+		<FlexFormFieldset>
+			<ClickableLabel>
+				<>
+					<StyledFormCheckbox
+						name={ props.name }
+						value={ props.value }
+						checked={ props.checked }
+						onChange={ props.onChange }
+					/>
+					{ props.label }
+				</>
+			</ClickableLabel>
+			<InfoPopover showOnHover position="top">
+				{ props.helpText }
+			</InfoPopover>
+		</FlexFormFieldset>
 	);
 }
 

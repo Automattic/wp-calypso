@@ -2,12 +2,12 @@ import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOP } from '@automattic/calypso-produ
 import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch, useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { EXCLUDED_STEPS } from '../intent/index';
@@ -45,7 +45,7 @@ export default function StoreFeaturesStep( props: Props ) {
 	 * Branch steps to skip design selection for WooCommerce flow
 	 */
 	const EXCLUDED_STORE_STEPS: { [ key: string ]: string[] } = {
-		power: [ 'design-setup-site' ],
+		power: [],
 		simple: [],
 	};
 	const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
@@ -99,8 +99,8 @@ export default function StoreFeaturesStep( props: Props ) {
 				</>
 			}
 			align="left"
-			hideSkip={ true }
-			isHorizontalLayout={ true }
+			hideSkip
+			isHorizontalLayout
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',

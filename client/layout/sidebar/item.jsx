@@ -1,11 +1,9 @@
-import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import { Count, Badge, Gridicon } from '@automattic/components';
+import { Icon, chevronRightSmall, external } from '@wordpress/icons';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
-import Count from 'calypso/components/count';
-import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { isExternal } from 'calypso/lib/url';
@@ -14,13 +12,14 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );
-	const showAsExternal = isExternalLink && ! props.forceInternalLink;
-	const classes = classnames( props.className, props.tipTarget, {
+	const showAsExternal = ( isExternalLink && ! props.forceInternalLink ) || props.forceExternalLink;
+	const classes = clsx( props.className, props.tipTarget, {
 		selected: props.selected,
 		'has-unseen': props.hasUnseen,
+		'tooltip tooltip-right': !! props.tooltip,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
+	const { icon, customIcon, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -29,6 +28,10 @@ export default function SidebarItem( props ) {
 			_preloaded = true;
 			preload();
 		}
+	};
+
+	const handleNavigate = ( event ) => {
+		props.onNavigate?.( event, props.link );
 	};
 
 	const expandSectionIfSelected = () => {
@@ -44,23 +47,25 @@ export default function SidebarItem( props ) {
 	const linkProps = showAsExternal ? { target: '_blank', rel: 'noreferrer' } : {};
 
 	return (
-		<li className={ classes } data-tip-target={ props.tipTarget } data-post-type={ props.postType }>
+		<li
+			className={ classes }
+			data-tip-target={ props.tipTarget }
+			data-tooltip={ props.tooltip }
+			data-post-type={ props.postType }
+		>
 			<a
 				className="sidebar__menu-link"
-				onClick={ props.onNavigate }
+				onClick={ handleNavigate }
 				href={ props.link }
 				onMouseEnter={ itemPreload }
 				{ ...linkProps }
 			>
-				{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } /> }
-
-				{ materialIcon && (
-					<MaterialIcon
-						className="sidebar__menu-icon"
-						icon={ materialIcon }
-						style={ materialIconStyle }
-					/>
-				) }
+				{ icon &&
+					( typeof icon === 'string' ? (
+						<Gridicon className="sidebar__menu-icon" icon={ icon } size={ 24 } />
+					) : (
+						<Icon icon={ icon } className="sidebar__menu-icon" size={ 24 } />
+					) ) }
 
 				{ customIcon && customIcon }
 
@@ -79,7 +84,10 @@ export default function SidebarItem( props ) {
 						</Badge>
 					) }
 				</span>
-				{ showAsExternal && ! sidebarIsCollapsed && <Gridicon icon="external" size={ 24 } /> }
+				{ ( showAsExternal || props.forceShowExternalIcon ) && ! sidebarIsCollapsed && (
+					<Icon icon={ external } size={ 18 } />
+				) }
+				{ props.forceChevronIcon && <Icon icon={ chevronRightSmall } size={ 24 } /> }
 				{ props.children }
 			</a>
 		</li>
@@ -88,17 +96,18 @@ export default function SidebarItem( props ) {
 
 SidebarItem.propTypes = {
 	label: TranslatableString.isRequired,
+	tooltip: TranslatableString,
 	className: PropTypes.string,
 	link: PropTypes.string.isRequired,
 	onNavigate: PropTypes.func,
-	icon: PropTypes.string,
+	icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 	customIcon: PropTypes.object,
-	materialIcon: PropTypes.string,
-	materialIconStyle: PropTypes.string,
 	selected: PropTypes.bool,
 	expandSection: PropTypes.func,
 	preloadSectionName: PropTypes.string,
+	forceExternalLink: PropTypes.bool,
 	forceInternalLink: PropTypes.bool,
+	forceShowExternalIcon: PropTypes.bool,
 	testTarget: PropTypes.string,
 	tipTarget: PropTypes.string,
 	count: PropTypes.number,

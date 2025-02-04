@@ -28,8 +28,8 @@ const SalePriceWithInterval = ( {
 	standardPrice,
 }: {
 	intervalLength: IntervalLength;
-	salePrice: string | null;
-	standardPrice: string | null;
+	salePrice: string;
+	standardPrice: string;
 } ) => {
 	const translateArguments = {
 		args: {
@@ -70,7 +70,7 @@ const StandardPriceWithInterval = ( {
 	standardPrice,
 }: {
 	intervalLength: IntervalLength;
-	standardPrice: string | null;
+	standardPrice: string;
 } ) => {
 	const translateArguments = {
 		args: { standardPrice },

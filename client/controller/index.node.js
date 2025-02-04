@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
@@ -36,6 +36,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
+	renderHeaderSection,
 	redirectUri,
 	i18n,
 	showGdprBanner,
@@ -51,6 +52,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 					<LayoutLoggedOut
 						primary={ primary }
 						secondary={ secondary }
+						renderHeaderSection={ renderHeaderSection }
 						redirectUri={ redirectUri }
 						showGdprBanner={ showGdprBanner }
 					/>
@@ -74,9 +76,22 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
 /**
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
  */
+export const redirectWithoutLocaleParamInFrontIfLoggedIn = () => {};
+export const redirectInvalidLanguage = () => {};
 export const redirectLoggedOut = () => {};
+export const redirectLoggedOutToSignup = () => {};
+export const redirectToDashboard = () => {};
+export const redirectMyJetpack = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
+// eslint-disable-next-line no-unused-vars
+export const redirectIfCurrentUserCannot = ( capability ) => () => {};
+export const redirectIfP2 = () => {};
+export const redirectIfJetpackNonAtomic = () => {};
+export const redirectToHostingPromoIfNotAtomic = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};
 export const ProviderWrappedLayout = () => null;
 export const notFound = () => null;
+export const setSelectedSiteIdByOrigin = () => {};
+// eslint-disable-next-line no-unused-vars
+export const redirectIfDuplicatedView = ( wpAdminPath ) => () => {};

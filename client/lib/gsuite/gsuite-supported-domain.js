@@ -10,7 +10,6 @@ import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
 /**
  * Filters a list of domains by the domains that eligible for G Suite.
- *
  * @param {ResponseDomain[]} domains - list of domain objects
  * @returns {ResponseDomain[]} - the list of domains that are eligible for G Suite
  */
@@ -46,7 +45,6 @@ export function getGSuiteSupportedDomains( domains ) {
 
 /**
  * Given a list of domains does one of them support G Suite
- *
  * @param {ResponseDomain?[]} domains - list of domain objects
  * @returns {boolean} - Does list of domains contain a G Suited supported domain
  */

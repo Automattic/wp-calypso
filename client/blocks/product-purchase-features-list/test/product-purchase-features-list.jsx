@@ -335,6 +335,6 @@ describe( '<HappinessSupportCard isEligibleForLiveChat', () => {
 			},
 		};
 		render( <ProductPurchaseFeaturesList { ...props } /> );
-		expect( screen.getByRole( 'link', { name: /ask a question/i } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /ask a question/i } ) ).toBeVisible();
 	} );
 } );

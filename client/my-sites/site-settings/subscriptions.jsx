@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -23,6 +24,10 @@ const Subscriptions = ( {
 	subscriptionsModuleActive,
 	translate,
 } ) => {
+	const viewFollowersSubscribersLink = ! isEnabled( 'user-management-revamp' )
+		? `/people/email-followers/${ selectedSiteSlug }`
+		: `/people/subscribers/${ selectedSiteSlug }`;
+
 	return (
 		<div>
 			<QueryJetpackConnection siteId={ selectedSiteId } />
@@ -74,12 +79,8 @@ const Subscriptions = ( {
 				</FormFieldset>
 			</CompactCard>
 
-			<CompactCard href={ '/people/email-followers/' + selectedSiteSlug }>
-				{ translate( 'View your email followers' ) }
-			</CompactCard>
-
-			<CompactCard href={ 'https://wordpress.com/manage/' + selectedSiteId }>
-				{ translate( 'Migrate followers from another site' ) }
+			<CompactCard href={ viewFollowersSubscribersLink }>
+				{ translate( 'View or add subscribers' ) }
 			</CompactCard>
 		</div>
 	);

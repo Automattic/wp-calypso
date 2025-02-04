@@ -1,6 +1,13 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_FEATURES_CDN, WPCOM_FEATURES_CLOUDFLARE_CDN } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	WPCOM_FEATURES_CDN,
+	WPCOM_FEATURES_CLOUDFLARE_CDN,
+	getPlan,
+} from '@automattic/calypso-products';
 import { CompactCard } from '@automattic/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
@@ -13,16 +20,16 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
+	const localizeUrl = useLocalizeUrl();
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
+	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const hasCloudflareCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CLOUDFLARE_CDN )
 	);
 	const hasJetpackCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CDN )
 	);
-
 	const recordClick = () => {
 		dispatch(
 			composeAnalytics( recordTracksEvent( 'calypso_performance_settings_cloudflare_click' ) )
@@ -43,11 +50,20 @@ const Cloudflare = () => {
 								<p className="site-settings__cloudflare-title">
 									{ translate( 'Jetpack Site Accelerator' ) }
 								</p>
-								<p>{ translate( 'Comes built-in with WordPress.com Business plans.' ) }</p>
+								<p>
+									{ translate(
+										'The CDN that comes built-in with WordPress.com %(businessPlanName)s plans.',
+										{
+											args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+										}
+									) }
+								</p>
 								<p>
 									<a
 										onClick={ recordClick }
-										href="https://jetpack.com/features/design/content-delivery-network/"
+										href={ localizeUrl(
+											'https://jetpack.com/features/design/content-delivery-network/'
+										) }
 										target="_blank"
 										rel="noreferrer"
 									>
@@ -59,10 +75,12 @@ const Cloudflare = () => {
 					</CompactCard>
 					{ ! hasJetpackCDN && (
 						<UpsellNudge
-							title={ translate( 'Available on Business plan or higher' ) }
+							title={ translate( 'Available on %(businessPlanName)s plan or higher', {
+								args: { businessPlanName: getPlan( PLAN_BUSINESS ).getTitle() },
+							} ) }
 							feature={ WPCOM_FEATURES_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }
@@ -77,7 +95,7 @@ const Cloudflare = () => {
 								</p>
 								<p>
 									{ translate(
-										'An alternative to Jetpack CDN, with security-focused plans available for sites with a custom domain enabled.'
+										'An alternative to Jetpack Site Accelerator, with security-focused plans available for sites with a custom domain enabled.'
 									) }
 								</p>
 								<p>
@@ -95,13 +113,15 @@ const Cloudflare = () => {
 					</CompactCard>
 					{ ! hasCloudflareCDN && (
 						<UpsellNudge
-							title={ translate( 'Available with Premium plans or higher' ) }
+							title={ translate( 'Available with %(premiumPlanName)s plans or higher', {
+								args: { premiumPlanName: getPlan( PLAN_PREMIUM ).getTitle() },
+							} ) }
 							description={ translate(
 								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
 							) }
 							feature={ WPCOM_FEATURES_CLOUDFLARE_CDN }
 							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
-							showIcon={ true }
+							showIcon
 							forceDisplay
 						/>
 					) }

@@ -1,11 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useQueryJetpackPartnerPortalPartner } from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
 import PluginsMain from 'calypso/my-sites/plugins/main';
 import PluginDetails from 'calypso/my-sites/plugins/plugin-details';
+import { useDispatch, useSelector } from 'calypso/state';
 import {
 	hasActivePartnerKey,
 	hasFetchedPartner,
@@ -39,6 +40,8 @@ export default function PluginsOverview( { filter, search, site, pluginSlug, pat
 			dispatch( setSelectedSiteId( null ) );
 		}
 	}, [ dispatch, site ] );
+
+	useQueryJetpackPartnerPortalPartner();
 
 	if ( hasFetched && ! hasActiveKey ) {
 		return <SelectPartnerKey />;

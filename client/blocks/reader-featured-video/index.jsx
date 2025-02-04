@@ -1,4 +1,5 @@
-import classnames from 'classnames';
+import { getUrlParts } from '@automattic/calypso-url';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle } from 'lodash';
 import PropTypes from 'prop-types';
@@ -9,8 +10,11 @@ import playIconImage from 'calypso/assets/images/reader/play-icon.png';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import QueryReaderThumbnail from 'calypso/components/data/query-reader-thumbnails';
 import EmbedHelper from 'calypso/reader/embed-helper';
+import {
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT,
+	READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH,
+} from 'calypso/state/reader/posts/sizes';
 import { getThumbnailForIframe } from 'calypso/state/reader/thumbnails/selectors';
-
 import './style.scss';
 
 const noop = () => {};
@@ -27,7 +31,9 @@ class ReaderFeaturedVideo extends Component {
 		className: PropTypes.string,
 		href: PropTypes.string,
 		isExpanded: PropTypes.bool,
+		isCompactPost: PropTypes.bool,
 		expandCard: PropTypes.func,
+		hasExcerpt: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -51,8 +57,12 @@ class ReaderFeaturedVideo extends Component {
 		if ( this.videoEmbedRef ) {
 			const iframe = ReactDom.findDOMNode( this.videoEmbedRef ).querySelector( 'iframe' );
 			const availableWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+			const style = {
+				...this.getEmbedSize( availableWidth ),
+				borderRadius: '6px',
+			};
 
-			Object.assign( iframe.style, this.getEmbedSize( availableWidth ) );
+			Object.assign( iframe.style, style );
 		}
 	};
 
@@ -92,14 +102,20 @@ class ReaderFeaturedVideo extends Component {
 			thumbnailUrl,
 			autoplayIframe,
 			iframe,
+			imageWidth,
+			imageHeight,
 			translate,
 			allowPlaying,
 			className,
 			href,
 			isExpanded,
+			isCompactPost,
+			hasExcerpt,
 		} = this.props;
 
-		const classNames = classnames( className, 'reader-featured-video' );
+		const classNames = clsx( className, 'reader-featured-video', {
+			'is-pocketcasts': videoEmbed.type === 'pocketcasts',
+		} );
 
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
@@ -109,7 +125,11 @@ class ReaderFeaturedVideo extends Component {
 					onClick={ this.handleThumbnailClick }
 					className={ classNames }
 					href={ href }
-					fetched={ true }
+					fetched
+					isCompactPost={ isCompactPost }
+					hasExcerpt={ hasExcerpt }
+					imageWidth={ imageWidth }
+					imageHeight={ imageHeight }
 				>
 					{ allowPlaying && (
 						<img
@@ -144,8 +164,41 @@ class ReaderFeaturedVideo extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	thumbnailUrl: getThumbnailForIframe( state, ownProps.videoEmbed.src ),
-} );
+const checkEmbedSizeDimensions = ( embed ) => {
+	let _embed = embed;
+	// convert frame to a DOM element if frame is a string
+	if ( _embed && typeof _embed === 'string' ) {
+		_embed = new DOMParser().parseFromString( _embed, 'text/html' )?.body?.firstChild;
+	}
+	// set width and height to max width and height if they are not set
+	if ( _embed.width === 0 && _embed.height === 0 ) {
+		_embed.width = READER_COMPACT_POST_FEATURED_MAX_IMAGE_WIDTH;
+		_embed.height = READER_COMPACT_POST_FEATURED_MAX_IMAGE_HEIGHT;
+		_embed.aspectRatio = _embed.width / _embed.height;
+	}
+	return _embed;
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	// Check if width and height are set for the embed
+	const videoEmbed = checkEmbedSizeDimensions( ownProps.videoEmbed );
+	const thumbnailUrl = getThumbnailForIframe( state, videoEmbed.src );
+	let imageWidth = videoEmbed.width;
+	let imageHeight = videoEmbed.height;
+	if ( videoEmbed.type === 'pocketcasts' ) {
+		// Pocket cast thumbnail width and height are passed in the thumbnailUrl as w and h query params
+		const { searchParams } = getUrlParts( thumbnailUrl );
+		imageWidth = searchParams.get( 'w' );
+		imageHeight = searchParams.get( 'h' );
+	}
+	return {
+		videoEmbed: videoEmbed,
+		iframe: checkEmbedSizeDimensions( ownProps.iframe )?.outerHTML,
+		autoplayIframe: checkEmbedSizeDimensions( ownProps.autoplayIframe )?.outerHTML,
+		thumbnailUrl: thumbnailUrl,
+		imageWidth: imageWidth,
+		imageHeight: imageHeight,
+	};
+};
 
 export default connect( mapStateToProps )( localize( ReaderFeaturedVideo ) );

@@ -1,4 +1,5 @@
 import { isDomainMapping } from './is-domain-mapping';
+import { isDomainMoveInternal } from './is-domain-move-internal';
 import { isDomainRegistration } from './is-domain-registration';
 import type { WithSnakeCaseSlug, WithCamelCaseSlug } from './types';
 
@@ -8,5 +9,7 @@ export function isDomainProduct(
 		isDomainRegistration?: boolean;
 	}
 ): boolean {
-	return isDomainMapping( product ) || isDomainRegistration( product );
+	return (
+		isDomainMapping( product ) || isDomainRegistration( product ) || isDomainMoveInternal( product )
+	);
 }

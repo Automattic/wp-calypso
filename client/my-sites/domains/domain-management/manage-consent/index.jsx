@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card, Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,7 +11,7 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
-import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 class ManageConsent extends Component {
@@ -31,7 +31,7 @@ class ManageConsent extends Component {
 		const { translate } = this.props;
 
 		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToContactsPrivacy } />;
+			return <DomainMainPlaceholder />;
 		}
 
 		return (
@@ -108,7 +108,7 @@ class ManageConsent extends Component {
 
 	goToContactsPrivacy = () => {
 		page(
-			domainManagementContactsPrivacy(
+			domainManagementEdit(
 				this.props.selectedSite.slug,
 				this.props.selectedDomainName,
 				this.props.currentRoute

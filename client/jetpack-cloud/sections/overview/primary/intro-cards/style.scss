@@ -1,0 +1,36 @@
+.intro-cards {
+	p,
+	li {
+		font-size: rem(16px);
+		font-weight: 400;
+		line-height: 24px;
+		color: var(--studio-gray-80);
+	}
+
+	h1 {
+		font-size: rem(36px);
+		font-weight: 700;
+		line-height: 48px;
+		color: var(--studio-black);
+		margin-top: 24px;
+		margin-bottom: 16px;
+	}
+
+	ul {
+		margin: 0 0 0 1rem;
+		margin-left: 1rem;
+	}
+
+	.dot-pager {
+		&__control-gap {
+			margin-right: 24px;
+		}
+		&__button {
+			padding: 5px 26px;
+		}
+	}
+}
+
+.card:has(.intro-cards) {
+	padding: 32px;
+}

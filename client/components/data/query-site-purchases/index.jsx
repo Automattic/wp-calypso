@@ -8,7 +8,7 @@ import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 const debug = debugFactory( 'calypso:query-site-purchases' );
 
 export const useQuerySitePurchases = ( siteId ) => {
-	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
+	const isRequesting = useSelector( isFetchingSitePurchases );
 	const reduxDispatch = useDispatch();
 	const previousSiteId = useRef();
 

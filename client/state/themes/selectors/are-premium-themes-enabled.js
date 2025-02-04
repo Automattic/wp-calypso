@@ -6,7 +6,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Whether a site can see premium themes at all.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID, optional
  * @returns {boolean}        True if the site should see premium themes in the showcase

@@ -4,4 +4,5 @@ export const transferStates = {
 	COMPLETED: 'completed',
 	ERROR: 'error',
 	REVERTED: 'reverted',
+	PROVISIONED: 'provisioned',
 };

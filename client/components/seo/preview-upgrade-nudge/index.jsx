@@ -4,13 +4,15 @@ import {
 	TYPE_BUSINESS,
 	TYPE_SECURITY_DAILY,
 	FEATURE_SEO_PREVIEW_TOOLS,
+	PLAN_BUSINESS,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import FeatureExample from 'calypso/components/feature-example';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -27,9 +29,11 @@ export const SeoPreviewNudge = ( {
 	site,
 	isJetpack = false,
 } ) => {
+	const planName = getPlan( PLAN_BUSINESS )?.getTitle() ?? '';
 	return (
 		<div className="preview-upgrade-nudge">
-			<QueryPlans />
+			{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+			<QueryProducts />
 			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 
 			<UpsellNudge
@@ -43,9 +47,12 @@ export const SeoPreviewNudge = ( {
 				}
 				title={
 					canCurrentUserUpgrade
-						? translate( 'Upgrade to a Business plan to unlock the power of our SEO tools!' )
+						? translate( 'Upgrade to a %(planName)s plan to unlock the power of our SEO tools!', {
+								args: { planName },
+						  } )
 						: translate(
-								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a Business plan."
+								"Unlock powerful SEO tools! Contact your site's administrator to upgrade to a %(planName)s plan.",
+								{ args: { planName } }
 						  )
 				}
 				forceDisplay

@@ -2,8 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "calypso/assets/stylesheets/p2-extends";
 
-.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow) {
-	.login.is-jetpack {
+@import "~@automattic/color-studio/dist/color-variables";
+
+$breakpoint-mobile: 782px; //Mobile size.
+
+.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
 			border-color: var(--studio-jetpack-green-70);
@@ -17,6 +21,24 @@
 				box-shadow: 0 0 0 2px var(--studio-jetpack-green-30);
 			}
 		}
+	}
+}
+
+.is-automattic-for-agencies-flow {
+	// Override accent variables with A4A colors
+	--color-accent: #{$studio-automattic-blue};
+	--color-accent-light: #{$studio-automattic-blue-20};
+	--color-accent-dark: #{$studio-automattic-blue-50};
+	--color-accent-60: #{$studio-automattic-blue-40};
+
+	// Override global colors with accent variables
+	--color-primary: #{$studio-automattic-blue};
+	--color-primary-light: #{$studio-automattic-blue-40};
+	--color-primary-dark: #{$studio-automattic-blue-50};
+
+	::selection {
+		color: var(--color-text-inverted);
+		background: var(--color-accent);
 	}
 }
 
@@ -123,6 +145,36 @@
 	margin-bottom: 0;
 }
 
+.wp-login__main .login .is-social-first .card.login__form > .social-buttons__button.button {
+	background: var(--studio-wordpress-blue, #3858e9);
+	border: none;
+
+	& > svg:not(.social-icons__mail):not(.jetpack-logo) path {
+		fill: #fff;
+	}
+
+	& > svg.social-icons__mail {
+		path,
+		rect {
+			stroke: #fff;
+		}
+	}
+
+	& > svg.jetpack-logo {
+		polygon {
+			fill: var(--studio-wordpress-blue, #3858e9);
+		}
+
+		path {
+			fill: #fff;
+		}
+	}
+
+	& > span {
+		color: #fff;
+	}
+}
+
 .login__form .login__form-userdata {
 	label {
 		color: var(--color-neutral-70);
@@ -143,6 +195,16 @@
 
 		&.is-error {
 			margin-bottom: 0;
+		}
+	}
+
+	.login__form-suggested-email {
+		color: var(--color-link);
+		cursor: pointer;
+		text-decoration: none;
+
+		&:hover {
+			color: var(--color-link-dark);
 		}
 	}
 }
@@ -230,15 +292,22 @@
 	}
 }
 
-.login__form-password.is-hidden {
-	// hide the password field in a way that still makes it "visible" for password managers.
-	// 1Password doesn't fill the field if it has display:none or visibility:hidden.
-	position: fixed;
-	bottom: 0;
-	height: 0;
-	width: 0;
-	overflow: hidden;
-	opacity: 0;
+.login__form-password {
+
+	&.is-hidden {
+		// hide the password field in a way that still makes it "visible" for password managers.
+		// 1Password doesn't fill the field if it has display:none or visibility:hidden.
+		position: fixed;
+		bottom: 0;
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		opacity: 0;
+	}
+
+	.form-input-validation {
+		padding-right: 0;
+	}
 }
 
 .login__jetpack-logo {
@@ -263,7 +332,8 @@
 	}
 }
 
-.login__jetpack-plus-wpcom-logo {
+.login__jetpack-plus-wpcom-logo,
+.login__a4a-plus-wpcom-logo {
 	margin: 40px 0 16px;
 }
 
@@ -385,7 +455,7 @@
 		}
 	}
 
-	.login__social {
+	.auth-form__social {
 		padding: 0;
 		box-shadow: none;
 		margin-bottom: 2em;
@@ -413,6 +483,14 @@
 		}
 	}
 
+	.auth-form__social-buttons {
+		gap: 1em;
+
+		.social-buttons__button {
+			margin-bottom: 0;
+		}
+	}
+
 	.wp-login__links {
 		display: flex;
 		flex-direction: column;
@@ -432,35 +510,156 @@
 		}
 	}
 
-	.login__divider {
-		color: var(--p2-color-border);
-		font-size: var(--p2-font-size-form-xs);
-		margin: 0 auto 2rem;
-		max-width: 400px;
-		overflow: hidden;
-		text-align: center;
-		width: 100%;
-		text-transform: none;
+	.auth-form__separator {
+		margin: 2rem 0;
+	}
+}
 
-		&::before,
-		&::after {
-			background-color: var(--p2-color-border);
-			content: "";
-			display: inline-block;
-			height: 1px;
-			position: relative;
-			vertical-align: middle;
-			width: 50%;
+.is-wpcom-migration.main {
+	--color-accent: var(--studio-blue);
+	--color-accent-light: var(--studio-blue-20);
+	--color-accent-dark: var(--studio-blue-60);
+	--color-accent-60: var(--studio-blue-60);
+	--color-primary: var(--studio-blue-40);
+	--color-primary-light: var(--studio-blue-20);
+	--color-primary-dark: var(--studio-blue-60);
+
+	max-width: 472px !important;
+	$login-border-radius: 4px;
+
+	.login {
+		form {
+			max-width: 400px;
+			margin: 0 auto;
+
+			.login__form-userdata input:last-of-type {
+				margin-bottom: 10px;
+			}
+
+			input[disabled] {
+				border: 1px solid var(--studio-gray-10);
+			}
 		}
 
-		&::before {
-			margin-left: -50%;
-			right: 0.5em;
+		.card {
+			padding-left: 0;
+			padding-right: 0;
 		}
 
-		&::after {
-			left: 0.5em;
-			margin-right: -50%;
+		.login__form,
+		.auth-form__social {
+			border: none;
+			background: none;
+			box-shadow: none;
+		}
+
+		.login__form {
+			margin-top: 1.5rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.auth-form__social {
+			padding-top: 2rem;
+			padding-bottom: 2rem;
+
+			.auth-form__social-buttons {
+				align-items: center;
+			}
+
+			.social-buttons__button {
+				border: none;
+				background: none;
+				text-align: unset;
+
+				svg {
+					border: 1px solid var(--studio-gray-10);
+					padding: 12px;
+					border-radius: 24px; /* stylelint-disable-line scales/radii */
+				}
+			}
+		}
+
+		.auth-form__separator {
+			margin-top: -12px;
+		}
+
+		.login__form-header {
+			font-size: rem(44px);
+			line-height: rem(48px);
+			font-family: $brand-serif;
+			margin-bottom: 0;
+		}
+
+		.login__form-terms {
+			text-align: left;
+			font-size: 0.875rem;
+			margin-bottom: 2rem;
+			color: var(--studio-gray-50);
+		}
+
+		.button.is-primary {
+			border: none !important;
+			background-color: var(--color-accent) !important;
+			box-shadow: 0 0 0 2px var(--color-accent) !important;
+
+			&:hover,
+			&:focus {
+				background-color: var(--color-accent-dark) !important;
+				box-shadow: 0 0 0 2px var(--color-accent-dark) !important;
+			}
+
+			.accessible-focus &:focus {
+				box-shadow: 0 0 0 2px var(--color-accent) !important;
+			}
+		}
+	}
+}
+
+.login__form-subheader-terms {
+	display: none;
+}
+
+.is-white-login {
+	.is-social-first {
+		.login__form-subheader-terms {
+			display: block;
+			max-width: 450px;
+			margin: 0 auto;
+
+			color: var(--studio-gray-50, #646970);
+			text-align: center;
+			font-size: $font-body-small;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px;
+
+			a {
+				color: var(--studio-gray-50, #646970);
+				text-decoration: underline;
+			}
+		}
+
+		.login__form-terms {
+			display: none;
+		}
+	}
+}
+
+.is-gravatar {
+	.login__form-terms {
+		display: block;
+	}
+
+	.auth-form__social {
+		.auth-form__social-buttons-container {
+			width: unset;
+			.social-buttons__button {
+				> svg {
+					border: 1px solid var(--studio-gray-10);
+					border-radius: 24px; /* stylelint-disable-line scales/radii */
+					padding: 12px;
+				}
+			}
 		}
 	}
 }

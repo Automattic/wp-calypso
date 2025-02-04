@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import './styles.scss';
@@ -7,6 +7,7 @@ type AllowedTagNames = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
 interface TitlesProps {
 	className?: string;
 	tagName?: AllowedTagNames;
+	children?: string | React.ReactNode;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -18,7 +19,7 @@ export const Title: React.FunctionComponent< TitlesProps > = ( {
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-title', className ), ...rest },
+		{ className: clsx( 'onboarding-title', className ), ...rest },
 		children
 	);
 
@@ -30,6 +31,6 @@ export const SubTitle: React.FunctionComponent< TitlesProps > = ( {
 } ) =>
 	React.createElement(
 		tagName,
-		{ className: classnames( 'onboarding-subtitle', className ), ...rest },
+		{ className: clsx( 'onboarding-subtitle', className ), ...rest },
 		children
 	);

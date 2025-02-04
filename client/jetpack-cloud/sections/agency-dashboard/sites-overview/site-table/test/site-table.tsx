@@ -2,18 +2,37 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { siteColumns } from '../../utils';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
 import SiteTable from '../index';
 import type { SiteData } from '../../types';
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
+jest.mock( 'calypso/components/data/query-reader-teams', () => 'span' );
+
 describe( '<SiteTable>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
@@ -37,6 +56,7 @@ describe( '<SiteTable>', () => {
 		is_connection_healthy: true,
 		awaiting_plugin_updates: [],
 		is_favorite: false,
+		is_connected: true,
 	};
 	const items: Array< SiteData > = [
 		{
@@ -44,12 +64,28 @@ describe( '<SiteTable>', () => {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
+				status: 'active',
+			},
+			stats: {
+				type: 'stats',
+				status: 'active',
+				value: {
+					views: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+					visitors: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+				},
 			},
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),
-				status: 'failed',
+				status: 'critical',
 			},
 			monitor: {
 				error: false,
@@ -83,7 +119,41 @@ describe( '<SiteTable>', () => {
 	const props = {
 		items,
 		isLoading: false,
-		columns: siteColumns,
+		columns: [
+			{
+				key: 'site',
+				title: 'Site',
+				isSortable: true,
+			},
+			{
+				key: 'stats',
+				title: 'Stats',
+				className: 'width-fit-content',
+				isExpandable: true,
+			},
+			{
+				key: 'backup',
+				title: 'Backup',
+				className: 'fixed-site-column',
+				isExpandable: true,
+			},
+			{
+				key: 'scan',
+				title: 'Scan',
+				className: 'fixed-site-column',
+			},
+			{
+				key: 'monitor',
+				title: 'Monitor',
+				className: 'min-width-100px',
+				isExpandable: true,
+			},
+			{
+				key: 'plugin',
+				title: 'Plugins',
+				className: 'width-fit-content',
+			},
+		],
 	};
 	const initialState = {
 		partnerPortal: {
@@ -91,38 +161,38 @@ describe( '<SiteTable>', () => {
 				isPartnerOAuthTokenLoaded: true,
 			},
 		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
+			},
+		},
+		a8cForAgencies: { agencies: {} },
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
-	const { getByTestId } = render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<SiteTable { ...props } />
-			</QueryClientProvider>
-		</Provider>
-	);
-
 	test( 'should render correctly and have href and status for each row', () => {
-		const backupEle = getByTestId( `row-${ blogId }-backup` );
-		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ siteUrl }` );
-		expect( backupEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			'Failed'
+		const { getByTestId, getByText } = render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<SiteTable { ...props } />
+				</QueryClientProvider>
+			</Provider>
 		);
+
+		const backupEle = getByTestId( `row-${ blogId }-backup` );
+		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ urlToSlug( siteUrl ) }` );
+		expect( getByText( /failed/i ) ).toBeInTheDocument();
 
 		const scanEle = getByTestId( `row-${ blogId }-scan` );
-		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ siteUrl }` );
-		expect( scanEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			`${ scanThreats } Threats`
-		);
+		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ urlToSlug( siteUrl ) }` );
+		expect( getByText( `${ scanThreats } Threats` ) ).toBeInTheDocument();
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
-			`https://wordpress.com/plugins/updates/${ siteUrl }`
+			`/plugins/updates/${ urlToSlug( siteUrl ) }`
 		);
-		expect( pluginEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			`${ pluginUpdates.length } Available`
-		);
+		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
 	} );
 } );

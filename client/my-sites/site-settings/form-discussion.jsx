@@ -1,11 +1,11 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { flowRight, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -68,25 +68,31 @@ class SiteSettingsFormDiscussion extends Component {
 	}
 
 	commentDisplaySettings() {
-		const { isJetpack } = this.props;
-		if ( ! isJetpack ) {
-			return null;
-		}
-
-		const { fields, isRequestingSettings, isSavingSettings, onChangeField } = this.props;
+		const {
+			isJetpack,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			onChangeField,
+			handleAutosavingToggle,
+		} = this.props;
 
 		const commentDisplaySettingsFields = {
 			highlander_comment_form_prompt: fields.highlander_comment_form_prompt,
 			jetpack_comment_form_color_scheme: fields.jetpack_comment_form_color_scheme,
+			enable_verbum_commenting: fields.enable_verbum_commenting,
+			enable_blocks_comments: fields.enable_blocks_comments,
 		};
 
 		return (
 			<div>
-				<QueryJetpackModules siteId={ this.props.siteId } />
+				{ isJetpack && <QueryJetpackModules siteId={ this.props.siteId } /> }
 				<CommentDisplaySettings
 					onChangeField={ onChangeField }
 					submittingForm={ isRequestingSettings || isSavingSettings }
 					fields={ commentDisplaySettingsFields }
+					isJetpack={ isJetpack }
+					handleAutosavingToggle={ handleAutosavingToggle }
 				/>
 				<hr />
 			</div>
@@ -166,48 +172,55 @@ class SiteSettingsFormDiscussion extends Component {
 						'Comments should be displayed with the older comments at the top of each page'
 					) }
 				/>
-				<SupportInfo
-					text={ translate( 'Allow readers to use markdown in comments.' ) }
-					link={
-						isJetpack && ! isAtomic
-							? 'https://jetpack.com/support/markdown/'
-							: 'https://wordpress.com/support/markdown-quick-reference/'
-					}
-				/>
-				<ToggleControl
-					checked={ !! fields.wpcom_publish_comments_with_markdown }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
-					label={ translate( 'Use Markdown for comments.' ) }
-				/>
-
-				{ this.props.isJetpack && (
-					<SupportInfo
-						text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
-						link="https://jetpack.com/support/gravatar-hovercards/"
+				<div className="site-settings__tooltip-container">
+					<ToggleControl
+						checked={ !! fields.wpcom_publish_comments_with_markdown }
+						disabled={ isRequestingSettings || isSavingSettings }
+						onChange={ handleAutosavingToggle( 'wpcom_publish_comments_with_markdown' ) }
+						label={ translate( 'Use Markdown for comments.' ) }
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
-					moduleSlug="gravatar-hovercards"
-					siteId={ siteId }
-				/>
-
-				{ this.props.isJetpack && (
 					<SupportInfo
-						text={ translate(
-							'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
-						) }
-						link="https://jetpack.com/support/comment-likes/"
+						text={ translate( 'Allow readers to use markdown in comments' ) }
+						link={
+							isJetpack && ! isAtomic
+								? 'https://jetpack.com/support/markdown/'
+								: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
+						}
 					/>
-				) }
-				<JetpackModuleToggle
-					disabled={ isRequestingSettings || isSavingSettings }
-					label={ translate( 'Enable comment likes' ) }
-					moduleSlug="comment-likes"
-					siteId={ siteId }
-				/>
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable pop-up business cards over commenters’ Gravatars' ) }
+						moduleSlug="gravatar-hovercards"
+						siteId={ siteId }
+					/>
+
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate( 'Hovercards appear when you place your mouse over any Gravatar.' ) }
+							link="https://jetpack.com/support/gravatar-hovercards/"
+						/>
+					) }
+				</div>
+
+				<div className="site-settings__tooltip-container">
+					<JetpackModuleToggle
+						disabled={ isRequestingSettings || isSavingSettings }
+						label={ translate( 'Enable comment likes' ) }
+						moduleSlug="comment-likes"
+						siteId={ siteId }
+					/>
+					{ this.props.isJetpack && (
+						<SupportInfo
+							text={ translate(
+								'Comment Likes are a fun, easy way to demonstrate your appreciation or agreement.'
+							) }
+							link="https://jetpack.com/support/comment-likes/"
+						/>
+					) }
+				</div>
 			</FormFieldset>
 		);
 	}
@@ -618,7 +631,7 @@ const connectComponent = connect( ( state ) => {
 	};
 } );
 
-const getFormSettings = ( settings ) => {
+export const getFormSettings = ( settings ) => {
 	return pick( settings, [
 		'default_pingback_flag',
 		'default_ping_status',
@@ -651,6 +664,8 @@ const getFormSettings = ( settings ) => {
 		'stb_enabled',
 		'stc_enabled',
 		'wpcom_publish_comments_with_markdown',
+		'enable_verbum_commenting',
+		'enable_blocks_comments',
 	] );
 };
 

@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -76,7 +76,7 @@ class SiteImporter extends PureComponent {
 		const { importerStatus } = this.props;
 		const isEnabled = appStates.DISABLED !== importerStatus.importerState;
 		const showStart = includes( compactStates, importerStatus.importerState );
-		const cardClasses = classNames( 'importer__site-importer-card', {
+		const cardClasses = clsx( 'importer__site-importer-card', {
 			'is-compact': showStart,
 			'is-disabled': ! isEnabled,
 		} );

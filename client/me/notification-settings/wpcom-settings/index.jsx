@@ -3,9 +3,9 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -21,6 +21,7 @@ import {
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
 import Navigation from '../navigation';
 import ActionButtons from '../settings-form/actions';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 import EmailCategory from './email-category';
 
 import './style.scss';
@@ -35,6 +36,9 @@ const options = {
 	promotion: 'promotion',
 	news: 'news',
 	digest: 'digest',
+	reports: 'reports',
+	news_developer: 'news_developer',
+	scheduled_updates: 'scheduled_updates',
 	jetpack_marketing: 'jetpack_marketing',
 	jetpack_research: 'jetpack_research',
 	jetpack_promotion: 'jetpack_promotion',
@@ -120,10 +124,32 @@ class WPCOMNotifications extends Component {
 					name={ options.digest }
 					isEnabled={ get( settings, options.digest ) }
 					title={ translate( 'Digests' ) }
+					description={ translate( 'Popular content from the blogs you follow.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.reports }
+					isEnabled={ get( settings, options.reports ) }
+					title={ translate( 'Reports' ) }
 					description={ translate(
-						'Popular content from the blogs you follow, and reports on ' +
-							'your own site and its performance.'
+						'Complimentary reports and updates regarding site performance and traffic.'
 					) }
+				/>
+
+				<EmailCategory
+					name={ options.news_developer }
+					isEnabled={ get( settings, options.news_developer ) }
+					title={ translate( 'Developer Newsletter' ) }
+					description={ translate(
+						'A once-monthly roundup of notable news for WordPress developers.'
+					) }
+				/>
+
+				<EmailCategory
+					name={ options.scheduled_updates }
+					isEnabled={ get( settings, options.scheduled_updates ) }
+					title={ translate( 'Scheduled updates' ) }
+					description={ translate( 'Complimentary reports regarding scheduled plugin updates.' ) }
 				/>
 
 				{ this.props.hasJetpackSites ? (
@@ -190,10 +216,12 @@ class WPCOMNotifications extends Component {
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'Notification Settings' ) }
-					align="left"
+
+				<SubscriptionManagementBackButton />
+
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />

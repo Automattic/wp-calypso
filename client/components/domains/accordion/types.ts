@@ -5,6 +5,10 @@ export type AccordionProps = {
 	title: string;
 	subtitle?: string | React.ReactNode;
 	expanded?: boolean;
+	onClose?: () => void;
+	onOpen?: () => void;
 
 	isPlaceholder?: boolean;
+	isDisabled?: boolean;
+	className?: string;
 };

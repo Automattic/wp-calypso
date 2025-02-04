@@ -27,7 +27,6 @@ const MONTHLY_PLAN_BILLING_PERIOD = 31;
 /**
  * Calculates the monthly price of a plan
  * Annual plans are only priced yearly
- *
  * @param plan the plan object
  */
 function getMonthlyPrice( plan: PricedAPIPlan ) {
@@ -36,7 +35,6 @@ function getMonthlyPrice( plan: PricedAPIPlan ) {
 
 /**
  * Calculates the yearly price of a monthly plan
- *
  * @param plan the plan object
  */
 function getAnnualPrice( plan: PricedAPIPlan ) {
@@ -46,7 +44,6 @@ function getAnnualPrice( plan: PricedAPIPlan ) {
 /**
  * Formats the plan price according to 'format-currency' package rules
  * We use this for consistency in prices formats across monthly and annual plans
- *
  * @param plan the plan object
  */
 function getFormattedPrice( plan: PricedAPIPlan ) {
@@ -62,7 +59,7 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 		if ( annualPlan && monthlyPlan ) {
 			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
 			const annualCostIfPaidAnnually = annualPlan.rawPrice;
-			const discount = Math.round(
+			const discount = Math.floor(
 				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
 			);
 			annualPlan.annualDiscount = discount;
@@ -72,17 +69,20 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 }
 
 function processFeatures( features: DetailsAPIFeature[] ) {
-	return features.reduce( ( features, feature ) => {
-		features[ feature.id ] = {
-			id: feature.id,
-			name: feature.name,
-			description: feature.description,
-			type: 'checkbox',
-			requiresAnnuallyBilledPlan:
-				FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
-		};
-		return features;
-	}, {} as Record< string, PlanFeature > );
+	return features.reduce(
+		( features, feature ) => {
+			features[ feature.id ] = {
+				id: feature.id,
+				name: feature.name,
+				description: feature.description,
+				type: 'checkbox',
+				requiresAnnuallyBilledPlan:
+					FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN.indexOf( feature.id ) > -1,
+			};
+			return features;
+		},
+		{} as Record< string, PlanFeature >
+	);
 }
 
 function featureRequiresAnnual(
@@ -186,10 +186,13 @@ export function* getSupportedPlans( locale = 'en' ) {
 			features: processPlanFeatures( plan, features ),
 			storage: plan.storage,
 			title: plan.short_name,
-			featuresSlugs: plan.features.reduce( ( slugs, slug ) => {
-				slugs[ slug ] = true;
-				return slugs;
-			}, {} as Record< string, boolean > ),
+			featuresSlugs: plan.features.reduce(
+				( slugs, slug ) => {
+					slugs[ slug ] = true;
+					return slugs;
+				},
+				{} as Record< string, boolean >
+			),
 			isFree: planSlug === TIMELESS_PLAN_FREE,
 			isPopular: planSlug === TIMELESS_PLAN_PREMIUM,
 			periodAgnosticSlug: planSlug,

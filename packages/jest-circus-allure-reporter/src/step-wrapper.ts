@@ -5,7 +5,10 @@ import type { ContentType } from './types/interface';
 import type { AllureStep, StepInterface, Stage } from 'allure-js-commons';
 
 export class StepWrapper {
-	constructor( private readonly reporter: AllureReporter, private readonly step: AllureStep ) {}
+	constructor(
+		private readonly reporter: AllureReporter,
+		private readonly step: AllureStep
+	) {}
 
 	get name() {
 		return this.step.name;

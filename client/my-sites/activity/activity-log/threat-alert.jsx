@@ -1,18 +1,18 @@
-import { Button, Card, Spinner } from '@automattic/components';
+import { Button, Card, Spinner, FoldableCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import DiffViewer from 'calypso/components/diff-viewer';
-import FoldableCard from 'calypso/components/foldable-card';
 import InfoPopover from 'calypso/components/info-popover';
+import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import MarkedLines from 'calypso/components/marked-lines';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import TimeSince from 'calypso/components/time-since';
 import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
-import { JETPACK_CONTACT_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 import { fixThreatAlert, ignoreThreatAlert } from 'calypso/state/jetpack/site-alerts/actions';
 import { requestRewindState } from 'calypso/state/rewind/state/actions';
@@ -22,7 +22,28 @@ import ActivityIcon from '../activity-log-item/activity-icon';
 import './threat-alert.scss';
 
 export class ThreatAlert extends Component {
-	state = { requesting: false };
+	state = { requesting: false, showThreatDialog: false, actionToPerform: 'fix' };
+
+	openDialog = ( action ) => {
+		this.setState( { showThreatDialog: true, actionToPerform: action } );
+	};
+
+	closeDialog = () => {
+		this.setState( { showThreatDialog: false } );
+	};
+
+	confirmAction = () => {
+		this.closeDialog();
+
+		switch ( this.state.actionToPerform ) {
+			case 'fix':
+				this.handleFix();
+				break;
+			case 'ignore':
+				this.handleIgnore();
+				break;
+		}
+	};
 
 	handleFix = () => {
 		this.setState( { requesting: true } );
@@ -313,68 +334,79 @@ export class ThreatAlert extends Component {
 	render() {
 		const { threat, translate } = this.props;
 		const inProgress = this.state.requesting || threat.fixer_status === 'in_progress';
-		const className = classNames( {
+		const className = clsx( {
 			'activity-log__threat-alert': true,
 			'activity-log__threat-alert-database': 'database' === this.getDetailType(),
 		} );
 
 		return (
-			<Fragment>
-				<FoldableCard
-					className={ className }
-					compact
-					clickableHeader={ true }
-					actionButton={ <span /> }
-					header={
-						<Fragment>
-							<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
-							<div className="activity-log__threat-alert-header">
-								<div className="activity-log__threat-header-top">
-									<span className="activity-log__threat-alert-title">
-										{ this.renderTitle() }
-										<TimeSince
-											className="activity-log__threat-alert-time-since"
-											date={ threat.first_detected }
-											dateFormat="ll"
-										/>
-									</span>
-									{ inProgress && <Spinner /> }
-									{ inProgress && (
-										<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
-									) }
-									<SplitButton
-										compact
-										primary
-										label={ threat.fixable ? translate( 'Fix threat' ) : translate( 'Get help' ) }
-										onClick={ threat.fixable ? this.handleFix : this.handleGetHelp }
-										disabled={ inProgress }
-									>
-										{ threat.fixable && (
-											<PopoverMenuItem
-												onClick={ this.handleGetHelp }
-												className="activity-log__threat-menu-item"
-												icon="chat"
-											>
-												<span>{ translate( 'Get help' ) }</span>
-											</PopoverMenuItem>
+			<>
+				<Fragment>
+					<FoldableCard
+						className={ className }
+						compact
+						clickableHeader
+						actionButton={ <span /> }
+						header={
+							<Fragment>
+								<ActivityIcon activityIcon="notice-outline" activityStatus="error" />
+								<div className="activity-log__threat-alert-header">
+									<div className="activity-log__threat-header-top">
+										<span className="activity-log__threat-alert-title">
+											{ this.renderTitle() }
+											<TimeSince
+												className="activity-log__threat-alert-time-since"
+												date={ threat.first_detected }
+												dateFormat="ll"
+											/>
+										</span>
+										{ inProgress && <Spinner /> }
+										{ inProgress && (
+											<Interval onTick={ this.refreshRewindState } period={ EVERY_TEN_SECONDS } />
 										) }
-										<PopoverMenuItem
-											onClick={ this.handleIgnore }
-											className="activity-log__threat-menu-item"
-											icon="trash"
+										<SplitButton
+											compact
+											primary
+											label={ threat.fixable ? translate( 'Fix threat' ) : translate( 'Get help' ) }
+											onClick={
+												threat.fixable ? () => this.openDialog( 'fix' ) : this.handleGetHelp
+											}
+											disabled={ inProgress }
 										>
-											<span>{ translate( 'Ignore threat' ) }</span>
-										</PopoverMenuItem>
-									</SplitButton>
+											{ threat.fixable && (
+												<PopoverMenuItem
+													onClick={ this.handleGetHelp }
+													className="activity-log__threat-menu-item"
+													icon="chat"
+												>
+													<span>{ translate( 'Get help' ) }</span>
+												</PopoverMenuItem>
+											) }
+											<PopoverMenuItem
+												onClick={ () => this.openDialog( 'ignore' ) }
+												className="activity-log__threat-menu-item"
+												icon="trash"
+											>
+												<span>{ translate( 'Ignore threat' ) }</span>
+											</PopoverMenuItem>
+										</SplitButton>
+									</div>
+									<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
 								</div>
-								<span className="activity-log__threat-alert-type">{ this.renderSubtitle() }</span>
-							</div>
-						</Fragment>
-					}
-				>
-					{ this.renderCardContent() }
-				</FoldableCard>
-			</Fragment>
+							</Fragment>
+						}
+					>
+						{ this.renderCardContent() }
+					</FoldableCard>
+				</Fragment>
+				<ThreatDialog
+					showDialog={ this.state.showThreatDialog }
+					onCloseDialog={ this.closeDialog }
+					onConfirmation={ this.confirmAction }
+					threat={ this.props.threat }
+					action={ this.state.actionToPerform }
+				/>
+			</>
 		);
 	}
 }

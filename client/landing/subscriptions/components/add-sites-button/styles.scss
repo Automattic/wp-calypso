@@ -1,0 +1,21 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.subscriptions-add-sites__button {
+
+	.subscriptions-add-sites__button-icon {
+		display: none;
+	}
+
+	@media (max-width: $break-medium) {
+		.subscriptions-add-sites__button-text {
+			display: none;
+		}
+
+		.subscriptions-add-sites__button-icon {
+			display: block;
+			margin-top: 0;
+			margin-right: 0 !important;
+			top: 0;
+		}
+	}
+}

@@ -1,16 +1,16 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useProtectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
@@ -48,9 +48,18 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 			.then( () => {
 				markSaved();
 
+				const email = ( unsavedUserSettings?.user_email as string ) || '';
+
 				dispatch(
 					successNotice(
-						translate( 'Your account email address was updated successfully.' ),
+						translate(
+							'We sent an email to %(email)s. Please check your inbox to verify your email.',
+							{
+								args: {
+									email: email,
+								},
+							}
+						),
 						noticeOptions
 					)
 				);
@@ -72,7 +81,7 @@ const SecurityAccountEmail = ( { path }: { path: string } ) => {
 
 			<DocumentHead title={ translate( 'Account Email' ) } />
 
-			<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 			<HeaderCake backText={ translate( 'Back' ) } backHref="/me/security">
 				{ translate( 'Account Email' ) }

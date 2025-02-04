@@ -1,6 +1,6 @@
-import { useSelector } from 'react-redux';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 

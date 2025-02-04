@@ -1,9 +1,9 @@
 import { ReactElement, useCallback } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import { useSelector } from 'calypso/state';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';

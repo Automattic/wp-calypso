@@ -38,13 +38,15 @@ export class TimelineBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const firstParagraphLocator = context.editorLocator.locator( selectors.entryParagraph( 1 ) );
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+
+		const firstParagraphLocator = editorCanvas.locator( selectors.entryParagraph( 1 ) );
 		await firstParagraphLocator.fill( this.configurationData.firstEntry );
 
-		const addEntryButtonLocator = context.editorLocator.locator( selectors.addEntryButton );
+		const addEntryButtonLocator = editorCanvas.locator( selectors.addEntryButton );
 		await addEntryButtonLocator.click();
 
-		const secondParagraphLocator = context.editorLocator.locator( selectors.entryParagraph( 2 ) );
+		const secondParagraphLocator = editorCanvas.locator( selectors.entryParagraph( 2 ) );
 		await secondParagraphLocator.fill( this.configurationData.secondEntry );
 	}
 

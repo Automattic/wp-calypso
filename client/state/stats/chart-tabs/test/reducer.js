@@ -4,7 +4,9 @@ import { counts, isLoading } from '../reducer';
 
 describe( 'reducer', () => {
 	const siteId = 1234;
+	const date = '2018-09-20';
 	const period = 'day';
+	const quantity = 1;
 	const responseWithViews = [
 		{
 			period: '2018-09-20',
@@ -38,17 +40,20 @@ describe( 'reducer', () => {
 			expect( counts( undefined, {} ) ).toEqual( {} );
 		} );
 
+		const requestKey = `${ date }-${ period }-${ quantity }`;
+
 		test( 'should append count records onto the state if no prior records exist', () => {
 			const state = counts( undefined, {
 				type: STATS_CHART_COUNTS_RECEIVE,
 				siteId,
 				period,
 				data: responseWithViews,
+				requestKey,
 			} );
 
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: [
+					[ requestKey ]: [
 						{
 							period: '2018-09-20',
 							views: 247,
@@ -63,19 +68,20 @@ describe( 'reducer', () => {
 		test( 'should merge count records with the same siteId and period', () => {
 			const state = counts(
 				{
-					[ siteId ]: { [ period ]: responseWithViews },
+					[ siteId ]: { [ requestKey ]: responseWithViews },
 				},
 				{
 					type: STATS_CHART_COUNTS_RECEIVE,
 					siteId,
 					period,
 					data: responseWithVisitors,
+					requestKey,
 				}
 			);
 
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: [
+					[ requestKey ]: [
 						{
 							period: '2018-09-20',
 							views: 247,
@@ -91,19 +97,20 @@ describe( 'reducer', () => {
 		test( 'should not merge count records with differing period values', () => {
 			const state = counts(
 				{
-					[ siteId ]: { [ period ]: responseWithViews },
+					[ siteId ]: { [ requestKey ]: responseWithViews },
 				},
 				{
 					type: STATS_CHART_COUNTS_RECEIVE,
 					siteId,
 					period,
 					data: responseWithADifferentPeriod,
+					requestKey,
 				}
 			);
 
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: [
+					[ requestKey ]: [
 						{
 							period: '2018-09-30',
 							views: 487,
@@ -130,16 +137,19 @@ describe( 'reducer', () => {
 			expect( isLoading( undefined, {} ) ).toEqual( {} );
 		} );
 
+		const requestKey = `${ date }-${ period }-${ quantity }`;
+
 		test( 'should mark status as loading upon receving the corresponding event', () => {
 			const state = isLoading( undefined, {
 				type: STATS_CHART_COUNTS_REQUEST,
 				siteId,
 				period,
 				statFields: [ 'views', 'visitors' ],
+				requestKey,
 			} );
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: {
+					[ requestKey ]: {
 						views: true,
 						visitors: true,
 					},
@@ -151,7 +161,7 @@ describe( 'reducer', () => {
 			const state = isLoading(
 				{
 					[ siteId ]: {
-						[ period ]: {
+						[ requestKey ]: {
 							apples: false,
 						},
 					},
@@ -161,11 +171,12 @@ describe( 'reducer', () => {
 					siteId,
 					period,
 					statFields: [ 'views', 'visitors' ],
+					requestKey,
 				}
 			);
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: {
+					[ requestKey ]: {
 						apples: false,
 						views: true,
 						visitors: true,
@@ -180,10 +191,11 @@ describe( 'reducer', () => {
 				siteId,
 				period,
 				data: responseWithViewsAndVisitors,
+				requestKey,
 			} );
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: {
+					[ requestKey ]: {
 						views: false,
 						visitors: false,
 					},
@@ -195,7 +207,7 @@ describe( 'reducer', () => {
 			const state = isLoading(
 				{
 					[ siteId ]: {
-						[ period ]: {
+						[ requestKey ]: {
 							apples: true,
 						},
 					},
@@ -205,12 +217,13 @@ describe( 'reducer', () => {
 					siteId,
 					period,
 					data: responseWithViewsAndVisitors,
+					requestKey,
 				}
 			);
 
 			expect( state ).toEqual( {
 				[ siteId ]: {
-					[ period ]: {
+					[ requestKey ]: {
 						apples: true,
 						views: false,
 						visitors: false,

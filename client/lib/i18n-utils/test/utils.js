@@ -12,6 +12,16 @@ import {
 	translationExists,
 	isMagnificentLocale,
 } from '@automattic/i18n-utils';
+import { getWpI18nLocaleSlug } from '@automattic/i18n-utils/src/locale-context';
+
+jest.mock( '@automattic/i18n-utils/src/locale-context', () => {
+	const originalModule = jest.requireActual( '@automattic/i18n-utils/src/locale-context' );
+	return {
+		__esModule: true,
+		...originalModule,
+		getWpI18nLocaleSlug: jest.fn( () => '' ),
+	};
+} );
 
 jest.mock( '@automattic/calypso-config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {
@@ -70,17 +80,6 @@ jest.mock( '@automattic/calypso-config', () => ( key ) => {
 		];
 	}
 } );
-
-// Mock only the getLocaleSlug function from i18n-calypso, and use
-// original references for all the other functions
-function mockFunctions() {
-	const original = jest.requireActual( 'i18n-calypso' ).default;
-	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
-		getLocaleSlug: jest.fn( () => 'en' ),
-	} );
-}
-jest.mock( 'i18n-calypso', () => mockFunctions() );
-const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {
@@ -244,12 +243,12 @@ describe( 'utils', () => {
 			);
 		} );
 
-		test( 'client/lib/i18n-utils/localizeUrl still uses getLocaleSlug', () => {
-			getLocaleSlug.mockImplementationOnce( () => 'en' );
+		test( 'localizeUrl still uses getLocaleSlug', () => {
+			getWpI18nLocaleSlug.mockImplementationOnce( () => 'en' );
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/support/'
 			);
-			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			getWpI18nLocaleSlug.mockImplementationOnce( () => 'de' );
 			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
 				'https://wordpress.com/de/support/'
 			);
@@ -311,7 +310,7 @@ describe( 'utils', () => {
 		} );
 
 		it( 'should return false for a string without translation', function () {
-			getLocaleSlug.mockImplementationOnce( () => 'fr' );
+			getWpI18nLocaleSlug.mockImplementationOnce( () => 'fr' );
 			expect(
 				translationExists(
 					'It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness…'

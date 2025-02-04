@@ -80,7 +80,6 @@ class MailboxForm< T extends EmailProvider > {
 
 	/**
 	 * On demand validators may be async i.e. making network calls, or may require a set of conditions to be fulfilled
-	 *
 	 * @private
 	 */
 	private getOnDemandValidators(): Record< string, [ ValidatorFieldNames, Validator< unknown > ] > {

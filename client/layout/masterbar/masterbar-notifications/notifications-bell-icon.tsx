@@ -10,7 +10,7 @@ export const BellIcon: React.FC< Props > = ( { newItems, active } ) => (
 		</defs>
 		<g>
 			<path
-				fill="var( --color-masterbar-text )"
+				fill="var( --color-masterbar-icon )"
 				d="M9.9,20h4c0,0.5-0.2,1-0.6,1.4   c-0.8,0.8-2,0.8-2.8,0C10.1,21,9.9,20.5,9.9,20z M20,17.5v1H4v-1l0.9-0.7C5.5,16.3,6,15.5,6,15l0-5.5c0-3.3,2.7-6,6-6   c3.3,0,6,2.7,6,6V15c0,0.5,0.5,1.4,1.1,1.8L20,17.5z"
 			/>
 			{ newItems && (

@@ -15,7 +15,6 @@ const debug = debugFactory( 'calypso:state:all-domains:actions' );
 
 /**
  * Returns an action object to request a user's domains.
- *
  * @returns {Object} siteId - action object
  */
 export const getAllDomainsRequest = () => {
@@ -28,7 +27,6 @@ export const getAllDomainsRequest = () => {
 };
 /**
  * Returns an action object for signalling that a request was successful and domains received.
- *
  * @param {Object} domains - domains array gotten from WP REST-API response
  * @returns {Object} siteId - action object
  */
@@ -44,7 +42,6 @@ export const getAllDomainsRequestSuccess = ( domains ) => {
 
 /**
  * Returns an action object for signalling that a request failed.
- *
  * @param {Object} error - error message according to REST-API error response
  * @returns {Object} action object
  */

@@ -96,7 +96,7 @@
 	}
 
 	.purchase-detail__notice-icon.gridicon {
-		fill: var(--color-warning);
+		fill: var(--studio-blue-30);
 		height: 24px;
 		position: relative;
 		right: -26px;
@@ -145,6 +145,7 @@
 .purchase-detail__text {
 	flex-grow: 1;
 	word-break: break-word;
+	text-wrap: pretty;
 }
 
 .purchase-detail__body {
@@ -152,7 +153,7 @@
 }
 
 .purchase-detail__required-notice {
-	background-color: var(--color-warning);
+	background-color: var(--studio-blue-10);
 	color: var(--color-text);
 	font-size: $font-body-small;
 	padding: 8px;

@@ -1,34 +1,37 @@
-export { default } from './components';
-export { default as FeaturedPicksButtons } from './components/featured-picks-buttons';
-export { default as PremiumBadge } from './components/premium-badge';
-export { default as BadgeContainer } from './components/badge-container';
-export { default as StyleVariationBadges } from './components/style-variation-badges';
-export { default as ThemePreview } from './components/theme-preview';
-export { default as UnifiedDesignPicker } from './components/unified-design-picker';
-export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
-export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
+export * from './components';
 export {
-	availableDesignsConfig,
-	getAvailableDesigns,
-	getFontTitle,
-	getDesignUrl,
+	getAssemblerDesign,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	isDefaultGlobalStylesVariationSlug,
 	getMShotOptions,
+	isLockedStyleVariation,
+	getCategoryType,
 } from './utils';
 export {
-	FONT_PAIRINGS,
-	ANCHORFM_FONT_PAIRINGS,
+	DEFAULT_GLOBAL_STYLES_VARIATION_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
-	BLANK_CANVAS_DESIGN,
+	FREE_THEME,
+	PERSONAL_THEME,
+	PREMIUM_THEME,
+	DOT_ORG_THEME,
+	BUNDLED_THEME,
+	MARKETPLACE_THEME,
+	SHOW_ALL_SLUG,
+	CATEGORIES,
+	DESIGN_TIER_CATEGORIES,
 } from './constants';
 export type {
-	FontPair,
 	Design,
+	DesignOptions,
+	DesignRecipe,
+	DesignType,
 	Category,
+	PreviewData,
+	SoftwareSet,
 	StyleVariation,
 	StyleVariationSettingsColorPalette,
 	StyleVariationPreview,
@@ -36,4 +39,5 @@ export type {
 	StyleVariationStylesColor,
 } from './types';
 export { useCategorization } from './hooks/use-categorization';
+export { useDesignPickerFilters } from './hooks/use-design-picker-filters';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

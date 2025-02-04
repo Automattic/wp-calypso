@@ -13,90 +13,111 @@ import {
 	isYearly,
 	isBiennially,
 	isTriennially,
+	isJetpackAISlug,
+	isJetpackStatsPaidTieredProductSlug,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function getSublabel( serverCartItem: ResponseCartProduct ): string {
-	const isRenewalItem = isRenewal( serverCartItem );
-	const { meta, product_name: productName, product_slug: productSlug } = serverCartItem;
+export function DefaultLineItemSublabel( { product }: { product: ResponseCartProduct } ) {
+	const isRenewalItem = isRenewal( product );
+	const { meta, product_name: productName, product_slug: productSlug } = product;
 
-	if ( isDotComPlan( serverCartItem ) ) {
+	if ( isDotComPlan( product ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Plan Renewal' ) );
+			return translate( 'Plan Renewal' );
 		}
 	}
 
-	if ( isPlan( serverCartItem ) || isJetpackProductSlug( productSlug ) ) {
-		if ( isP2Plus( serverCartItem ) ) {
-			return String( translate( 'Monthly subscription' ) );
+	if ( isPlan( product ) || isJetpackProductSlug( productSlug ) ) {
+		if ( isP2Plus( product ) ) {
+			return translate( 'Monthly subscription' );
 		}
 
-		return isRenewalItem
-			? String( translate( 'Plan Renewal' ) )
-			: String( translate( 'Plan Subscription' ) );
+		return isRenewalItem ? translate( 'Plan Renewal' ) : translate( 'Plan Subscription' );
 	}
 
-	if ( isGoogleWorkspace( serverCartItem ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
+	if ( isGoogleWorkspace( product ) || isGSuiteOrExtraLicenseProductSlug( productSlug ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Mailboxes and Productivity Tools Renewal' ) );
+			return translate( 'Mailboxes and Productivity Tools Renewal' );
 		}
 
-		return String( translate( 'Mailboxes and Productivity Tools' ) );
+		return translate( 'Mailboxes and Productivity Tools' );
 	}
 
-	if ( isTitanMail( serverCartItem ) ) {
+	if ( isTitanMail( product ) ) {
 		if ( isRenewalItem ) {
-			return String( translate( 'Mailboxes Renewal' ) );
+			return translate( 'Mailboxes Renewal' );
 		}
 
-		return String( translate( 'Mailboxes' ) );
+		return translate( 'Mailboxes' );
 	}
 
-	if ( meta && ( isDomainProduct( serverCartItem ) || isDomainTransfer( serverCartItem ) ) ) {
+	if ( meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
 		if ( ! isRenewalItem ) {
 			return productName || '';
 		}
 
 		if ( productName ) {
-			return String( translate( '%(productName)s Renewal', { args: { productName } } ) );
+			return translate( '%(productName)s Renewal', { args: { productName } } );
 		}
 	}
 
-	if ( isAddOn( serverCartItem ) && ! isRenewalItem ) {
-		return String( translate( 'Add-On' ) );
+	if ( isAddOn( product ) && ! isRenewalItem ) {
+		return translate( 'Add-On' );
 	}
 
 	if ( isRenewalItem ) {
-		return String( translate( 'Renewal' ) );
+		return translate( 'Renewal' );
 	}
 
-	if ( isMonthlyProduct( serverCartItem ) ) {
-		return String( translate( 'Billed monthly' ) );
+	if ( isMonthlyProduct( product ) ) {
+		return translate( 'Billed monthly' );
 	}
 
-	if ( isYearly( serverCartItem ) ) {
-		return String( translate( 'Billed annually' ) );
+	if ( isYearly( product ) ) {
+		return translate( 'Billed annually' );
 	}
 
-	if ( isBiennially( serverCartItem ) ) {
-		return String( translate( 'Billed every two years' ) );
+	if ( isBiennially( product ) ) {
+		return translate( 'Billed every two years' );
 	}
 
-	if ( isTriennially( serverCartItem ) ) {
-		return String( translate( 'Billed every three years' ) );
+	if ( isTriennially( product ) ) {
+		return translate( 'Billed every three years' );
 	}
 
-	return '';
+	return null;
 }
 
-export function getLabel( serverCartItem: ResponseCartProduct ): string {
-	if (
-		serverCartItem.meta &&
-		( isDomainProduct( serverCartItem ) || isDomainTransfer( serverCartItem ) )
-	) {
-		return serverCartItem.meta;
+export function getLabel( product: ResponseCartProduct ): string {
+	if ( product.meta && ( isDomainProduct( product ) || isDomainTransfer( product ) ) ) {
+		return product.meta;
 	}
-	return serverCartItem.product_name || '';
+
+	// In theory, it'll fallback to 0, but just in case.
+	const quantity = product.quantity || product.current_quantity || 0;
+
+	if ( isJetpackAISlug( product.product_slug ) && quantity > 1 ) {
+		return translate( '%(productName)s (%(quantity)d requests per month)', {
+			args: {
+				productName: product.product_name,
+				quantity: quantity,
+			},
+			textOnly: true,
+		} );
+	}
+
+	if ( isJetpackStatsPaidTieredProductSlug( product.product_slug ) && product.quantity ) {
+		return translate( '%(productName)s - %(quantity)s views per month', {
+			args: {
+				productName: product.product_name,
+				quantity: numberFormat( product.quantity, { decimals: 0 } ),
+			},
+			textOnly: true,
+		} );
+	}
+
+	return product.product_name || '';
 }

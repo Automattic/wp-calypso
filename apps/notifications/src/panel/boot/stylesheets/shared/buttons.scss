@@ -82,7 +82,6 @@
 			height: 18px;
 		}
 	}
-
 	// Primary buttons
 	.wpnc__button.is-primary {
 		background-color: var(--color-accent);
@@ -107,6 +106,18 @@
 
 		&.is-compact {
 			color: var(--color-text-inverted);
+		}
+
+		&.is-rich {
+			background-color: $wpnc__rich-blue;
+			border-color: $wpnc__rich-blue;
+
+			&:active:not(:disabled),
+			&:hover:not(:disabled),
+			&:focus:not(:disabled) {
+				background-color: $wpnc__dark-rich-blue;
+				border-color: $wpnc__dark-rich-blue;
+			}
 		}
 	}
 

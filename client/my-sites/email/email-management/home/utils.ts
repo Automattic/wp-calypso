@@ -1,6 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
@@ -8,6 +8,7 @@ import {
 	hasUnusedMailboxWarning,
 	hasUnverifiedEmailForward,
 } from 'calypso/lib/emails';
+import { EMAIL_WARNING_CODE_GRAVATAR_DOMAIN } from 'calypso/lib/emails/email-provider-constants';
 import {
 	getGSuiteMailboxCount,
 	getGSuiteSubscriptionId,
@@ -66,7 +67,6 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 
 /**
  * Retrieves the email purchase associated to the specified domain.
- *
  * @param state - global Redux state
  * @param domain - domain object
  * @returns the corresponding email purchase, or null if not found
@@ -79,7 +79,6 @@ export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomai
 
 /**
  * Retrieves the identifier of the email subscription for the specified domain.
- *
  * @param domain - domain object
  * @returns the corresponding subscription id, or null if not found
  */
@@ -97,7 +96,6 @@ function getEmailSubscriptionIdByDomain( domain: ResponseDomain ) {
 
 /**
  * Determines whether an email subscription exists for the specified domain.
- *
  * @param domain - domain object
  * @returns true if an email subscription exists, false otherwise
  */
@@ -135,6 +133,23 @@ export function resolveEmailPlanStatus(
 			comment: 'Current user is not allowed to manage email subscription',
 		} ),
 	};
+
+	const gravatarDomainStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Gravatar domain', {
+			comment: 'Current user is not allowed to purchase new email subscriptions',
+		} ),
+	};
+
+	// Some Gravatar domains already had email purchased for them before we disabled it.
+	// These domains have a specific warning message.
+	if (
+		! canCurrentUserAddEmail( domain ) &&
+		getCurrentUserCannotAddEmailReason( domain )?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN
+	) {
+		return gravatarDomainStatus;
+	}
 
 	if ( hasGSuiteWithUs( domain ) ) {
 		if ( ! canCurrentUserAddEmail( domain ) ) {
@@ -186,7 +201,7 @@ export function resolveEmailPlanStatus(
 		}
 
 		// Check for unused mailboxes
-		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
+		if ( ! isLoadingEmails && emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
 			return errorStatus;
 		}
 
@@ -232,9 +247,8 @@ export function recordEmailAppLaunchEvent( {
  * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
  *
  * Events tracked:
- * `calypso_inbox_upsell`, when upsell triggered by a CTA click from the Inbox.
+ * `calypso_inbox_upsell`, when upsell triggered by a CTA click from My Mailboxes.
  * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
- *
  * @param source - source generating the event.
  * @param context context, where this event was logged.
  */

@@ -44,7 +44,7 @@
 		.site__domain {
 			color: var(--color-sidebar-menu-selected-text);
 			&::after {
-				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background-rgb ) );
+				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background ) );
 			}
 		}
 
@@ -78,7 +78,7 @@
 	.site__title,
 	.site__domain {
 		&::after {
-			@include long-content-fade( $color: var( --color-neutral-5-rgb ) );
+			@include long-content-fade( $color: var( --color-neutral-5 ) );
 		}
 	}
 }
@@ -110,7 +110,7 @@
 	.site__domain {
 		color: var(--color-sidebar-menu-hover-text);
 		&::after {
-			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background-rgb ) );
+			@include long-content-fade( $color: var( --color-sidebar-menu-hover-background ) );
 		}
 	}
 

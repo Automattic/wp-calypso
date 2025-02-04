@@ -3,7 +3,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import QueryPreferences from 'calypso/components/data/query-preferences';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -61,11 +60,10 @@ class ConversationsIntro extends Component {
 						<span>
 							{ isInternal
 								? translate(
-										'{{strong}}Welcome to A8C Conversations{{/strong}}, where you can read ' +
-											'and reply to all your P2 conversations in one place. ' +
-											"Automattic P2 posts you've liked or commented on " +
-											'will appear when they have new comments. ' +
-											'{{a}}More info. {{/a}}',
+										`{{strong}}Welcome to A8C Conversations.{{/strong}} ` +
+											`Automattic P2 posts you've written, followed, or commented on will appear here when they have new comments. ` +
+											`Posts with the most recent comments appear on top. ` +
+											`{{a}}More info.{{/a}}`,
 										{
 											components: {
 												strong: <strong />,
@@ -74,10 +72,9 @@ class ConversationsIntro extends Component {
 										}
 								  )
 								: translate(
-										'{{strong}}Welcome to Conversations.{{/strong}} You can read ' +
-											'and reply to all your conversations in one place. ' +
-											"WordPress posts you've liked or commented on " +
-											'will appear when they have new comments.',
+										`{{strong}}Welcome to Conversations{{/strong}} ` +
+											`WordPress posts you've written, followed, or commented on will appear here when they have new comments. ` +
+											`Posts with the most recent comments appear on top.`,
 										{
 											components: {
 												strong: <strong />,
@@ -86,7 +83,6 @@ class ConversationsIntro extends Component {
 								  ) }
 						</span>
 					</div>
-					<img className="conversations__intro-character" src={ charactersImage } alt="" />
 
 					<button
 						className="conversations__intro-close"

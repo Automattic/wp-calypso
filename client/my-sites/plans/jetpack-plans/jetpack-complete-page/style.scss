@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 
-.layout.is-section-jetpack-connect {
+.layout.is-section-jetpack-connect:not(.is-woocommerce-core-profiler-flow) {
 	background-color: #f6f6f6;
 	#content.layout__content {
 		padding: 44px 17px 26px 18px;

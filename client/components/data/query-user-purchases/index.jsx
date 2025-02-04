@@ -30,7 +30,7 @@ function QueryUserPurchases() {
 }
 
 export const useQueryUserPurchases = ( enabled = true ) => {
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const isRequesting = useSelector( ( state ) => state.purchases.isFetchingUserPurchases );
 	const hasLoaded = useSelector( ( state ) => state.purchases.hasLoadedUserPurchasesFromServer );
 	const reduxDispatch = useDispatch();

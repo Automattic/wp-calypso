@@ -10,7 +10,6 @@ import 'calypso/state/posts/init';
 /**
  * Returns an array of normalized posts for the posts query, including all
  * known queried pages, or null if the posts for the query are not known.
- *
  * @param   {Object}  state  Global state tree
  * @param   {?number} siteId Site ID, or `null` for all-sites queries
  * @param   {Object}  query  Post query object

@@ -73,6 +73,25 @@ class ReskinSideExplainer extends Component {
 					<span>{ translate( 'Choose my domain later' ) }</span>
 				);
 				break;
+			case 'free-domain-explainer-check-paid-plans':
+				title = translate( 'Not ready to choose a domain just yet?' );
+				subtitle = translate(
+					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
+				);
+				subtitle2 = translate( 'You can claim your custom domain name later when you’re ready.' );
+				ctaText = translate( 'Check paid plans »' );
+				break;
+
+			case 'free-domain-explainer-treatment-search':
+				title = translate( 'Get a free domain with select paid plans' );
+				subtitle = translate(
+					'Select any annual paid plan and we’ll pay the first year’s domain registration fees for you.'
+				);
+				subtitle2 = translate(
+					'Not ready to choose domain yet? Get your plan now and claim your domain later!'
+				);
+				ctaText = translate( 'Check paid plans »' );
+				break;
 
 			case 'use-your-domain':
 				title = translate( 'Already own a domain?' );
@@ -111,14 +130,13 @@ class ReskinSideExplainer extends Component {
 				</div>
 				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
-						<span
+						<button
 							className="reskin-side-explainer__cta-text"
-							role="button"
 							onClick={ this.props.onClick }
 							tabIndex="0"
 						>
 							{ ctaText }
-						</span>
+						</button>
 					</div>
 				) }
 			</div>

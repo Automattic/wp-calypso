@@ -1,12 +1,12 @@
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { CALYPSO_HELP_WITH_HELP_CENTER } from '@automattic/urls';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -34,6 +34,7 @@ function DomainTransferOrConnect( {
 	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
+	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
 	productsList,
@@ -73,6 +74,7 @@ function DomainTransferOrConnect( {
 		domainInboundTransferStatusInfo: inboundTransferStatusInfo,
 		isSignupStep,
 		onConnect: handleConnect,
+		onSkip,
 		onTransfer: handleTransfer,
 		primaryWithPlansOnly,
 		productsList,
@@ -134,7 +136,12 @@ function DomainTransferOrConnect( {
 					<div className={ baseClassName + '__support-link' }>
 						{ createInterpolateElement(
 							__( "Not sure what's best for you? <a>We're happy to help!</a>" ),
-							{ a: createElement( 'a', { target: '_blank', href: CALYPSO_CONTACT } ) }
+							{
+								a: createElement( 'a', {
+									target: '_blank',
+									href: CALYPSO_HELP_WITH_HELP_CENTER,
+								} ),
+							}
 						) }
 					</div>
 				) }

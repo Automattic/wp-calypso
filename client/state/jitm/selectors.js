@@ -5,7 +5,6 @@ import 'calypso/state/jitm/init';
 
 /**
  * Get the list of available jitms for the current site/section
- *
  * @param {Object} state The application state
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Array} An array of jitms
@@ -15,7 +14,6 @@ export const getJITM = ( state, messagePath ) =>
 
 /**
  * Get the top jitm available for the current site/section
- *
  * @param {Object} state Thee application state
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @returns {Object} A jitm
@@ -29,3 +27,6 @@ export const getTopJITM = ( state, messagePath ) => {
 
 	return jitms[ 0 ];
 };
+
+export const isFetchingJITM = ( state, messagePath ) =>
+	get( state, [ 'jitm', 'isFetchingJITM', messagePath + getSelectedSiteId( state ) ], false );

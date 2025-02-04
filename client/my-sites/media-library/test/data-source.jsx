@@ -18,7 +18,7 @@ jest.mock( 'calypso/components/popover-menu', () => {
 // electron related build error
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = ( property ) => property.startsWith( 'external-media' );
+	config.isEnabled = jest.fn();
 	return config;
 } );
 
@@ -29,7 +29,7 @@ describe( 'MediaLibraryDataSource', () => {
 			setStore( store );
 			render(
 				<ReduxProvider store={ store }>
-					<MediaLibraryDataSource source="" onSourceChange={ noop } ignorePermissions={ true } />
+					<MediaLibraryDataSource source="" onSourceChange={ noop } ignorePermissions />
 				</ReduxProvider>
 			);
 
@@ -46,7 +46,7 @@ describe( 'MediaLibraryDataSource', () => {
 						source=""
 						onSourceChange={ noop }
 						disabledSources={ [ 'pexels' ] }
-						ignorePermissions={ true }
+						ignorePermissions
 					/>
 				</ReduxProvider>
 			);

@@ -5,13 +5,14 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useInView } from 'react-intersection-observer';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
 	plan: Site.SiteDetailsPlan;
 	isSiteOwner: boolean;
 	checkoutUrl: string;
+	isUpgradeable?: boolean;
 }
 
 const PlanRenewContainer = styled.div( {
@@ -21,12 +22,14 @@ const PlanRenewContainer = styled.div( {
 	marginTop: '-2px',
 } );
 
-const PlanRenewLink = styled.a( {
-	whiteSpace: 'nowrap',
-	textDecoration: 'underline',
-	fontSize: '12px',
-	paddingTop: '2px',
-} );
+const PlanRenewLink = styled.a`
+	white-space: nowrap;
+	text-decoration: underline !important;
+	font-size: 12px;
+	font-weight: 400 !important;
+	padding-top: 2px;
+	color: var( --color-link ) !important;
+`;
 
 const IconContainer = styled.div( {
 	color: '#ea303f',
@@ -49,7 +52,12 @@ const PlanRenewNoticeExpireText = styled.div( {
 	overflow: 'hidden',
 } );
 
-export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
+export const PlanRenewNag = ( {
+	isSiteOwner,
+	plan,
+	checkoutUrl,
+	isUpgradeable,
+}: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const trackCallback = useCallback(
 		() =>
@@ -60,9 +68,12 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 			} ),
 		[ isSiteOwner, plan.product_slug ]
 	);
-	const ref = useInView< HTMLDivElement >( trackCallback );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && trackCallback(),
+	} );
 
-	const renewText = __( 'Renew plan' );
+	const actionText = isUpgradeable ? __( 'Upgrade' ) : __( 'Renew plan' );
+
 	return (
 		<PlanRenewContainer ref={ ref }>
 			<IconContainer>
@@ -88,9 +99,9 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 							} );
 						} }
 						href={ checkoutUrl }
-						title={ renewText }
+						title={ actionText }
 					>
-						{ renewText }
+						{ actionText }
 					</PlanRenewLink>
 				) }
 			</PlanRenewNotice>

@@ -40,7 +40,6 @@ export const validStatusValues = {
 /**
  * Attempts to parse a response from the comment endpoint
  * and return the mapped comment object with its author
- *
  * @param {number} siteId site id is not included in the response items
  * @param {Object} data raw comment data from API
  * @returns {Object} comment and WordPress.com user if available

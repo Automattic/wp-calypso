@@ -7,7 +7,11 @@ import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import * as React from 'react';
 import PagePatternModal from '../page-pattern-modal';
 
-jest.mock( '@wordpress/block-editor/build/components/block-preview', () => () => null );
+jest.mock( '@wordpress/block-editor/build/components/block-preview', () => {
+	const BlockPreview = () => null;
+	BlockPreview.Async = () => null;
+	return BlockPreview;
+} );
 
 const noop = () => undefined;
 
@@ -75,7 +79,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
@@ -98,7 +102,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }
@@ -121,7 +125,7 @@ describe( '<PagePatternModal>', () => {
 		const insertPattern = jest.fn();
 		render(
 			<PagePatternModal
-				isOpen={ true }
+				isOpen
 				patterns={ patterns }
 				insertPattern={ insertPattern }
 				savePatternChoice={ noop }

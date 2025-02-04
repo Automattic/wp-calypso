@@ -80,7 +80,7 @@ describe( 'SeoForm basic tests', () => {
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has any SEO features', () => {
-		const { rerender } = render( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
+		const { rerender } = render( <SeoForm { ...props } hasSeoPreviewFeature /> );
 		expect( screen.queryByTestId( 'UpsellNudge' ) ).not.toBeInTheDocument();
 
 		rerender( <SeoForm { ...props } hasSeoPreviewFeature={ false } hasAdvancedSEOFeature /> );
@@ -103,7 +103,7 @@ describe( 'SeoForm basic tests', () => {
 	} );
 
 	test( 'should render SEO editor when has advanced seo and there is no conflicted SEO plugin', () => {
-		render( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		render( <SeoForm { ...props } showAdvancedSeo /> );
 		expect( screen.queryByTestId( 'MetaTitleEditor' ) ).toBeVisible();
 	} );
 
@@ -117,10 +117,10 @@ describe( 'SeoForm basic tests', () => {
 
 	test( 'should render website meta editor when appropriate', () => {
 		const editorName = /Front Page Meta Description/i;
-		const { rerender } = render( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		const { rerender } = render( <SeoForm { ...props } showAdvancedSeo /> );
 		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).toBeVisible();
 
-		rerender( <SeoForm { ...props } showWebsiteMeta={ true } /> );
+		rerender( <SeoForm { ...props } showWebsiteMeta /> );
 		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).toBeVisible();
 	} );
 
@@ -131,17 +131,15 @@ describe( 'SeoForm basic tests', () => {
 		);
 		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
 
-		rerender(
-			<SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } showAdvancedSeo={ true } />
-		);
+		rerender( <SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } showAdvancedSeo /> );
 		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
 
 		rerender(
 			<SeoForm
 				{ ...props }
 				conflictedSeoPlugin={ { name: 'test' } }
-				siteIsJetpack={ true }
-				showWebsiteMeta={ true }
+				siteIsJetpack
+				showWebsiteMeta
 			/>
 		);
 		expect( screen.queryByRole( 'textbox', { name: editorName } ) ).not.toBeInTheDocument();
@@ -181,9 +179,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
 		`Jetpack Security Daily for (%s)`,
 		( product_slug ) => {
-			render(
-				<SeoForm { ...props } siteIsJetpack={ true } selectedSite={ { plan: { product_slug } } } />
-			);
+			render( <SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } /> );
 			expect( screen.getByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalledWith(
 				expect.objectContaining( { href: expect.stringContaining( PLAN_JETPACK_SECURITY_DAILY ) } ),

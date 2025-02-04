@@ -1,96 +1,88 @@
-.tag-stream__header {
-	display: flex;
-	flex-direction: column;
-}
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
-.tag-stream__header-follow {
-	display: flex;
-	justify-content: flex-end;
-	min-height: 20px;
-}
+.is-section-reader .tag-stream__header {
+	&.has-description {
+		.info-popover {
+			display: none;
+		}
+		.formatted-header__subtitle {
+			display: inline-block;
+		}
+	}
 
-.tag-stream__header .follow-button {
-	z-index: z-index(".tag-stream__header-follow", ".follow-button");
+	.navigation-header {
+		margin: 0 auto;
+		padding: 0 0 16px 0;
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 12px 20px 0 15px;
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0 16px 16px;
+		}
 	}
 }
 
-.tag-stream__header .follow-button__label {
-
-	@include breakpoint-deprecated( "<660px" ) {
-		display: inline;
-	}
-}
-
-.tag-stream__header-image {
-	background: var(--color-neutral-0);
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: right center;
-	box-sizing: content-box;
-	display: flex;
-	flex-direction: column;
-	min-height: 120px;
-	margin-top: 15px;
-	padding: 10px;
-	position: relative;
-	z-index: 0;
-
-	&::before {
-		content: "";
-		background: rgba(0, 0, 0, 0.3);
-		height: 100%;
-		position: absolute;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		z-index: 1;
-	}
-}
-
-.tag-stream__header-image .gridicon.gridicons-tag {
-	fill: var(--color-text-inverted);
-	position: relative;
-	right: 6px;
-	top: 3px;
-	z-index: 2;
-}
-
-.tag-stream__header-image-title {
-	color: var(--color-text-inverted);
-	font-size: $font-title-large;
-	line-height: 1.3;
-	margin-top: 42px;
-	text-align: center;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-	z-index: 2;
-}
-
-.tag-stream__header-image-byline {
-	color: var(--color-text-inverted);
-	font-size: $font-body-extra-small;
+// .has-header-section only applies for logged out views
+.layout.has-header-section.is-section-reader .tag-stream__header .navigation-header h1 {
+	@extend .wp-brand-font;
 	font-weight: 600;
-	padding-top: 24px;
-	text-align: right;
-	text-shadow: 0 1px rgba(0, 0, 0, 0.3);
-	z-index: 2;
-	-webkit-font-smoothing: antialiased;
+	font-size: 2.25rem;
+	line-height: 48px;
+	margin-bottom: 4px;
 }
 
-.tag-stream__header-image-byline-label {
-	opacity: 0.7;
+.tag-stream__header {
+	margin-bottom: 10px;
+	.tag-stream__header-follow .follow-button {
+		background: inherit;
+	}
 }
 
-.tag-stream__header-image-byline-link,
-.tag-stream__header-image-byline-link:visited {
-	color: var(--color-text-inverted);
-	opacity: 0.9;
+.reader__content .tag-stream__header {
+	margin-bottom: 24px;
 }
 
-.tag-stream__header-image-byline-link:hover {
-	color: var(--color-text-inverted);
+.reader__content .tag-stream__header.has-description {
+	padding-bottom: 16px;
+}
+
+.tag-stream__header-title-group {
+	display: block;
+	padding-bottom: 40px;
+}
+
+.tag-stream__header-title {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-size: 2rem;
+	text-transform: capitalize;
+	font-weight: 600;
+	line-height: 24px;
+	margin-bottom: 4px;
+}
+
+.tag-stream__header-controls {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px;
+	}
+}
+
+.tag-stream__header-sort-picker {
+	width: 200px;
+}
+
+.has-description .tag-stream__header-title {
+	font-size: $font-title-small;
+}
+
+.tag-stream__header-description {
+	font-family: "Noto Serif", Georgia, "Times New Roman", Times, serif;
+	font-size: $font-headline-small;
+	font-weight: 600;
+	line-height: 48px;
 }
 
 // Back button in Tag streams
@@ -99,28 +91,42 @@
 	box-shadow: none;
 	padding: 0;
 	position: relative;
-	left: -3px;
-	top: 8px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		left: 13px;
-		top: 20px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		top: 14px;
-	}
 
 	.button.header-cake__back {
 		padding: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 16px 16px;
+	}
+}
+
+.is-reader-page .reader-feed-header.has-back-button .card.header-cake {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 32px 0;
 	}
 }
 
 .is-reader-page .main .tag-stream__empty-content {
 	margin-top: 15px;
+
+	.tag-stream__empty-content-message {
+		margin: 16px 0 24px;
+	}
 }
 
-// Overrides default 720px width
-.is-reader-page .tag-stream__main.main {
-	max-width: 800px;
+// Tag page only shows site titles in the sidebar, so spacing needs to be tighter
+.tag-stream__main {
+
+	.stream__two-column .stream__right-column {
+		margin-top: 0;
+		.reader-subscription-list-item .follow-button__label {
+			display: none;
+		}
+	}
+
+	.reader-sidebar-site_link {
+		align-items: center;
+		margin-bottom: 12px;
+	}
 }

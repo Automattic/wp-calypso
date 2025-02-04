@@ -31,7 +31,13 @@ export const getDomainSuggestions = (
 	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
 	// We need to go through the `select` store to get the resolver action
-	return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
+	return (
+		select( STORE_KEY ) as {
+			__internalGetDomainSuggestions: (
+				queryObject: DomainSuggestionQuery
+			) => DomainSuggestion[] | undefined;
+		}
+	 ).__internalGetDomainSuggestions( normalizedQuery );
 };
 
 export const getDomainState = ( state: State ): DataStatus => {
@@ -51,14 +57,15 @@ export const isLoadingDomainSuggestions = (
 ): boolean => {
 	const normalizedQuery = normalizeDomainSuggestionQuery( search, options );
 
-	return select( 'core/data' ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [
-		normalizedQuery,
-	] );
+	return (
+		select( 'core/data' ) as {
+			isResolving: ( storeKey: string, resolverName: string, args: unknown[] ) => boolean;
+		}
+	 ).isResolving( STORE_KEY, '__internalGetDomainSuggestions', [ normalizedQuery ] );
 };
 
 /**
  * Do not use this selector. It is for internal use.
- *
  * @param state Store state
  * @param queryObject Normalized object representing the query
  * @returns suggestions

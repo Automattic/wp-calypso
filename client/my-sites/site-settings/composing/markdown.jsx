@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -23,7 +24,7 @@ const Markdown = ( {
 				link={
 					siteIsJetpack && ! isAtomic
 						? 'https://jetpack.com/support/markdown/'
-						: 'https://wordpress.com/support/markdown-quick-reference/'
+						: localizeUrl( 'https://wordpress.com/support/markdown-quick-reference/' )
 				}
 				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>

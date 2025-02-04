@@ -13,6 +13,7 @@ beforeAll( () => {
 		.spyOn( document, 'getElementById' )
 		.mockImplementation( ( id ) => ( id === 'header' ? header : null ) );
 	jest.spyOn( ReactDom, 'findDOMNode' ).mockImplementation( ( node ) => node );
+	jest.spyOn( window, 'getComputedStyle' ).mockImplementation( () => ( { position: 'fixed' } ) );
 } );
 
 describe( 'calculateOffset', () => {

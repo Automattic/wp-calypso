@@ -1,0 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.main.is-wide-layout.jetpack-manage-pricing-page {
+	max-width: 1192px;
+	padding: 0 1rem; // this is for plans page on WPCOM
+
+	@include break-wide {
+		padding: 0;
+	}
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-manage-pricing .jpcom-masterbar {
+	.header {
+		width: 100%;
+		color: #101517;
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		transition: background 0.1s;
+	}
+}
+
+.jetpack-product-store .header {
+	margin-top: 4em;
+}

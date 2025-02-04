@@ -1,43 +1,65 @@
-import React from 'react';
+import { memo } from 'react';
+import { normalizeMinHeight } from '../html-transformers';
+import { shufflePosts } from '../styles-transformers';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
+import type { RenderedStyle } from '../types';
 
 interface Props {
-	patternId: string;
-	viewportWidth?: number;
-	viewportHeight?: number;
+	maxHeight?: 'none' | number;
 	minHeight?: number;
-	maxHeight?: string | number;
-	maxHeightFor100vh?: number;
+	patternId: string;
+	scripts?: string;
+	styles?: RenderedStyle[];
+	transformHtml?: ( patternHtml: string ) => string;
+	viewportHeight?: number;
+	viewportWidth?: number;
 }
 
 const PatternRenderer = ( {
-	patternId,
-	viewportWidth,
-	viewportHeight,
-	minHeight,
 	maxHeight,
-	maxHeightFor100vh,
+	minHeight,
+	patternId,
+	scripts = '',
+	styles = [],
+	transformHtml,
+	viewportHeight,
+	viewportWidth,
 }: Props ) => {
-	const renderedPatterns = usePatternsRendererContext();
+	const { renderedPatterns, shouldShufflePosts } = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
+
+	let patternHtml = pattern?.html ?? '';
+	if ( viewportHeight ) {
+		patternHtml = normalizeMinHeight( patternHtml, viewportHeight );
+	}
+	if ( transformHtml ) {
+		patternHtml = transformHtml( patternHtml );
+	}
+
+	let patternStyles = [ ...styles, ...( pattern?.styles ?? [] ) ];
+	if ( shouldShufflePosts ) {
+		const css = shufflePosts( patternId, patternHtml );
+		patternStyles = [ ...patternStyles, { css } as RenderedStyle ];
+	}
+
+	const patternScripts = [ pattern?.scripts ?? '', scripts ];
 
 	return (
 		<BlockRendererContainer
-			styles={ pattern?.styles ?? [] }
+			key={ pattern?.ID }
+			styles={ patternStyles }
+			scripts={ patternScripts.join( '' ) }
 			viewportWidth={ viewportWidth }
-			viewportHeight={ viewportHeight }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
-			isMinHeight100vh={ pattern?.html?.includes( 'min-height:100vh' ) }
-			maxHeightFor100vh={ maxHeightFor100vh }
 		>
 			<div
 				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
+				dangerouslySetInnerHTML={ { __html: patternHtml } }
 			/>
 		</BlockRendererContainer>
 	);
 };
 
-export default PatternRenderer;
+export default memo( PatternRenderer );

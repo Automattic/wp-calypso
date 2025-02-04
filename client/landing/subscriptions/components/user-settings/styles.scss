@@ -1,0 +1,7 @@
+@import "../../styles/submit-button";
+
+.user-settings {
+	&__submit-button {
+		@extend .subscriptions__submit-button;
+	}
+}

@@ -1,6 +1,13 @@
+import {
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	getPlan,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -41,34 +48,40 @@ class MediaLibraryListPlanPromo extends Component {
 	};
 
 	getSummary = () => {
+		const contactAdminText = this.props.translate(
+			'Contact your site administrator and ask them to upgrade this site to WordPress.com %(premiumPlanName)s, %(businessPlanName)s, or %(commercePlanName)s.',
+			{
+				args: {
+					premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle(),
+					businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle(),
+					commercePlanName: getPlan( PLAN_ECOMMERCE )?.getTitle(),
+				},
+			}
+		);
 		switch ( this.props.filter ) {
 			case 'videos':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload video files to your site, upgrade your plan.', {
-								textOnly: true,
-								context: 'Media upgrade promo',
+						? /* translators: %(planName)s is the short-hand version of the Premium plan name */
+						  this.props.translate( 'Upgrade to the %(planName)s plan to enable VideoPress', {
+								args: { planName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
 						  } )
 						: this.props.translate( 'Uploading video requires a paid plan.' ) +
 								' ' +
-								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
-								),
+								contactAdminText,
 					2
 				);
 
 			case 'audio':
 				return preventWidows(
 					this.props.canUpgrade
-						? this.props.translate( 'To upload audio files to your site, upgrade your plan.', {
-								textOnly: true,
-								context: 'Media upgrade promo',
+						? /* translators: %(planName)s is the short-hand version of the Personal plan name */
+						  this.props.translate( 'Upgrade to the %(planName)s plan to enable audio uploads', {
+								args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
 						  } )
 						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
 								' ' +
-								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
-								),
+								contactAdminText,
 					2
 				);
 

@@ -1,9 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { PropsWithChildren, useCallback, useContext } from 'react';
-import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
 import {
@@ -11,9 +10,10 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { internalToPublicLicenseSortField } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/route';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { internalToPublicLicenseSortField } from '../lib/license-sort-fields';
 import './style.scss';
 
 function setSortingConfig(
@@ -62,12 +62,12 @@ function SortButton( {
 	}, [ dispatch, sortField, currentSortField, currentSortDirection ] );
 
 	return (
-		<h2 className={ classnames( { 'is-selected': sortField === currentSortField } ) }>
+		<h2 className={ clsx( { 'is-selected': sortField === currentSortField } ) }>
 			<button onClick={ sort }>
 				{ children }
 				<Gridicon
 					icon="dropdown"
-					className={ classnames( 'license-list-item__sort-indicator', {
+					className={ clsx( 'license-list-item__sort-indicator', {
 						[ `is-sort-${ currentSortDirection }` ]: true,
 					} ) }
 				/>
@@ -82,7 +82,9 @@ export default function LicenseListHeader() {
 
 	return (
 		<LicenseListItem header className="license-list__header">
-			<h2>{ translate( 'License state' ) }</h2>
+			<h2>{ translate( 'Product' ) }</h2>
+
+			<h2>{ translate( 'Site' ) }</h2>
 
 			<SortButton
 				sortField={ LicenseSortField.IssuedAt }

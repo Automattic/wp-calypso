@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -106,7 +107,6 @@ function waitForPreferredEditorView( context ) {
  * auth cookies from being stored while embedding WP Admin in Calypso (i.e. if the browser is preventing cross-site
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
- *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
  * @returns {*}            Whatever the next callback returns.
@@ -153,12 +153,33 @@ export const authenticate = ( context, next ) => {
 	// can cause the browser to not update it before redirecting to WP Admin. To avoid that, we manually generate the
 	// URL from the relevant parts.
 	const origin = window.location.origin;
-	const returnUrl = addQueryArgs(
+	let returnUrl = addQueryArgs(
 		{ ...context.query, authWpAdmin: true },
 		`${ origin }${ context.path }`
 	);
 
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+
+	// If non-SSO Jetpack lets ensure return URL uses the sites native editor, as the dotcom
+	// redirect does not happen.
+	if ( isJetpack && ! isSSOEnabled( state, siteId ) ) {
+		const postType = determinePostType( context );
+		const postId = getPostID( context );
+
+		if ( postType ) {
+			returnUrl = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+			if ( postId ) {
+				returnUrl = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+			}
+		} else {
+			returnUrl = `${ siteAdminUrl }site-editor.php`;
+		}
+
+		// pass along parameters, for example press-this
+		returnUrl = addQueryArgs( context.query, returnUrl );
+	}
+
 	const wpAdminLoginUrl = addQueryArgs(
 		{ redirect_to: returnUrl },
 		`${ siteAdminUrl }../wp-login.php`
@@ -205,8 +226,14 @@ export const redirect = async ( context, next ) => {
 };
 
 function getPressThisData( query ) {
-	const { text, url, title, image, embed } = query;
-	return url ? { text, url, title, image, embed } : null;
+	const { url, text, title, comment_content, comment_author } = query;
+
+	return url ? { url, text, title, comment_content, comment_author } : null;
+}
+
+function getBloggingPromptData( query ) {
+	const { answer_prompt } = query;
+	return answer_prompt ? { answer_prompt } : null;
 }
 
 function getAnchorFmData( query ) {
@@ -231,6 +258,7 @@ export const post = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const pressThisData = getPressThisData( context.query );
+	const bloggingPromptData = getBloggingPromptData( context.query );
 	const anchorFmData = getAnchorFmData( context.query );
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
@@ -247,6 +275,7 @@ export const post = ( context, next ) => {
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThisData={ pressThisData }
+			bloggingPromptData={ bloggingPromptData }
 			anchorFmData={ anchorFmData }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
@@ -254,23 +283,6 @@ export const post = ( context, next ) => {
 			showDraftPostModal={ getSessionStorageOneTimeValue(
 				'wpcom_signup_complete_show_draft_post_modal'
 			) }
-		/>
-	);
-
-	return next();
-};
-
-export const siteEditor = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType="site"
-			completedFlow={ getSessionStorageOneTimeValue( 'wpcom_signup_completed_flow' ) }
 		/>
 	);
 
@@ -285,3 +297,46 @@ export const exitPost = ( context, next ) => {
 	}
 	next();
 };
+
+/**
+ * Redirects to the un-iframed Site Editor if the config is enabled.
+ * @param {Object} context Shared context in the route.
+ * @returns {*}            Whatever the next callback returns.
+ */
+export const redirectSiteEditor = async ( context ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteEditorUrl = getSiteEditorUrl( state, siteId );
+	// Calling replace to avoid adding an entry to the browser history upon redirect.
+	return window.location.replace( addQueryArgs( context.query, siteEditorUrl ) );
+};
+/**
+ * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns undefined      Whatever the next callback returns.
+ */
+export function redirectToPermalinkIfLoggedOut( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	if ( ! siteFragment || ! context.path ) {
+		return next();
+	}
+	// "single view" pages are parsed from URLs like these:
+	// (posts, pages, custom post types, etc…)
+	//  - /page/{site}/{post_id}
+	//  - /post/{site}/{post_id}
+	//  - /edit/jetpack-portfolio/{site}/{post_id}
+	//  - /edit/jetpack-testimonial/{site}/{post_id}
+	const postId = parseInt( context.params.post, 10 );
+	const linksToSingleView = postId > 0;
+	if ( linksToSingleView ) {
+		// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+		window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
+		return;
+	}
+	// Else redirect the user to the login page.
+	return next();
+}

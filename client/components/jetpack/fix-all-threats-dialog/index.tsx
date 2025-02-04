@@ -68,7 +68,7 @@ const FixAllThreatsDialog = ( { onConfirmation, onCloseDialog, showDialog, threa
 							<ThreatFixHeader
 								key={ threat.id }
 								threat={ threat }
-								fixAllDialog={ true }
+								fixAllDialog
 								onCheckFix={ onSelectCheckbox }
 								action="fix"
 							/>

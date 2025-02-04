@@ -1,8 +1,8 @@
 import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { getPurchaseNewEmailAccountPath } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -16,7 +16,6 @@ type EmailListInactiveItemProps = {
 
 const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps ) => {
 	const translate = useTranslate();
-
 	const selectedSite = useSelector( getSelectedSite );
 	const currentRoute = useSelector( getCurrentRoute );
 
@@ -25,8 +24,8 @@ const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps )
 			<span>{ domain.name }</span>
 
 			<Button
-				href={ emailManagementPurchaseNewEmailAccount(
-					selectedSite?.slug ?? '',
+				href={ getPurchaseNewEmailAccountPath(
+					selectedSite?.slug,
 					domain.name,
 					currentRoute,
 					source

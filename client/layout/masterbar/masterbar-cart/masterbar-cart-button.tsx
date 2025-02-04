@@ -4,7 +4,7 @@ import { MiniCart } from '@automattic/mini-cart';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MasterbarItem from '../item';
 import { MasterBarCartCount } from './masterbar-cart-count';
@@ -72,7 +72,13 @@ export function MasterbarCartButton( {
 		setIsActive( ( active ) => {
 			if ( ! active ) {
 				// This is to prevent an error in updating the component in the same event loop
-				setTimeout( reloadFromServer, 0 ); // Refresh the cart whenever the popup is made visible.
+				setTimeout(
+					() =>
+						reloadFromServer().catch( () => {
+							// No need to do anything here. CartMessages will report this error to the user.
+						} ),
+					0
+				); // Refresh the cart whenever the popup is made visible.
 				reduxDispatch( recordTracksEvent( 'calypso_masterbar_cart_open' ) );
 			}
 			return ! active;

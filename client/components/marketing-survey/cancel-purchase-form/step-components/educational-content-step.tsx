@@ -1,14 +1,15 @@
+import page from '@automattic/calypso-router';
+import { MaterialIcon } from '@automattic/components';
+import { useHasEnTranslation, useLocalizeUrl } from '@automattic/i18n-utils';
+import { useOpenZendeskMessaging } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useState } from 'react';
 import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
 import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
 import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
 import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import FormattedHeader from 'calypso/components/formatted-header';
-import MaterialIcon from 'calypso/components/material-icon';
-import useHappyChat from '../use-happychat';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { TranslateResult } from 'i18n-calypso';
@@ -46,7 +47,7 @@ function Content( { image, ...props }: ContentProps ) {
 				<div className="cancel-purchase-form__edu-buttons">
 					<p>{ translate( 'Thanks, but this is not what I need' ) }</p>
 					<Button
-						isSecondary
+						variant="secondary"
 						onClick={ () => {
 							setIsBusy( true );
 							props.onDecline?.();
@@ -71,7 +72,10 @@ type StepProps = {
 
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
-	const happyChat = useHappyChat();
+	const hasEnTranslation = useHasEnTranslation();
+	const localizeUrl = useLocalizeUrl();
+	const { isOpeningZendeskWidget, openZendeskWidget } =
+		useOpenZendeskMessaging( 'pre-cancellation' );
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -126,7 +130,12 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									'Read more about how to improve your site’s speed and performance {{link}}here{{/link}}.',
 									{
 										components: {
-											link: <Button href="https://wordpress.com/support/site-speed/" isLink />,
+											link: (
+												<Button
+													href={ localizeUrl( 'https://wordpress.com/support/site-speed/' ) }
+													variant="link"
+												/>
+											),
 										},
 									}
 								) }
@@ -153,7 +162,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plan’s free domain',
 								{
 									components: {
-										link: <Button href={ `/domains/add/${ site.slug }` } isLink />,
+										link: <Button href={ `/domains/add/${ site.slug }` } variant="link" />,
 									},
 								}
 							) }
@@ -180,7 +189,12 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 							{ translate( 'Read more about domains {{link}}here{{/link}}.', {
 								components: {
 									link: (
-										<Button href="https://wordpress.com/support/domains/register-domain/" isLink />
+										<Button
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/register-domain/'
+											) }
+											variant="link"
+										/>
 									),
 								},
 							} ) }
@@ -202,8 +216,10 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 								components: {
 									link: (
 										<Button
-											href="https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain"
-											isLink
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain'
+											) }
+											variant="link"
 										/>
 									),
 								},
@@ -222,33 +238,73 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 							) }
 						</li>
 						<li>
-							{ translate(
-								'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
-								{
-									components: {
-										link: (
-											<Button
-												href="https://wordpress.com/support/domains/connect-existing-domain/"
-												isLink
-											/>
-										),
-										chat: (
-											<Button
-												onClick={ () => {
-													page( `/domains/manage/${ site.slug }` );
-													const userInfo = happyChat.getUserInfo( { site } );
-													happyChat.open();
-													happyChat.sendUserInfo( {
-														...userInfo,
-														cancellationReason: props.cancellationReason,
-													} );
-												} }
-												isLink
-											/>
-										),
-									},
-								}
-							) }
+							{ hasEnTranslation(
+								'Read more about domain connection {{link}}here{{/link}} or {{chat}}contact us{{/chat}} right now.'
+							)
+								? translate(
+										'Read more about domain connection {{link}}here{{/link}} or {{chat}}contact us{{/chat}} right now.',
+										{
+											components: {
+												link: (
+													<Button
+														href={ localizeUrl(
+															'https://wordpress.com/support/domains/connect-existing-domain/'
+														) }
+														variant="link"
+													/>
+												),
+												chat: (
+													<Button
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
+														onClick={ () => {
+															page( `/domains/manage/${ site.slug }` );
+															openZendeskWidget( {
+																message:
+																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+																	props.cancellationReason,
+																siteUrl: site.URL,
+																siteId: site.ID,
+															} );
+														} }
+														variant="link"
+													/>
+												),
+											},
+										}
+								  )
+								: translate(
+										'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
+										{
+											components: {
+												link: (
+													<Button
+														href={ localizeUrl(
+															'https://wordpress.com/support/domains/connect-existing-domain/'
+														) }
+														variant="link"
+													/>
+												),
+												chat: (
+													<Button
+														isBusy={ isOpeningZendeskWidget }
+														disabled={ isOpeningZendeskWidget }
+														onClick={ () => {
+															page( `/domains/manage/${ site.slug }` );
+															openZendeskWidget( {
+																message:
+																	"User is contacting us from pre-cancellation form. Cancellation reason they've given: " +
+																	props.cancellationReason,
+																siteUrl: site.URL,
+																siteId: site.ID,
+															} );
+														} }
+														variant="link"
+													/>
+												),
+											},
+										}
+								  ) }
 						</li>
 					</ul>
 				</Content>
@@ -315,11 +371,16 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									'Find other tips to optimize your site for search engines {{link}}here{{/link}}. If you’re looking for a full introduction to Search Engine Optimization, you can join our {{seo}}free SEO course{{/seo}}.',
 									{
 										components: {
-											link: <Button href="https://wordpress.com/support/seo/" isLink />,
+											link: (
+												<Button
+													href={ localizeUrl( 'https://wordpress.com/support/seo/' ) }
+													variant="link"
+												/>
+											),
 											seo: (
 												<Button
-													href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
-													isLink
+													href="https://wordpress.com/learn/courses/intro-to-seo/"
+													variant="link"
 												/>
 											),
 										},

@@ -11,27 +11,29 @@ export const trackForm = ( WrappedComponent ) =>
 		};
 
 		updateFields = ( fields, callback ) => {
-			const newState = {
-				dirtyFields: [ ...new Set( [].concat( this.state.dirtyFields, Object.keys( fields ) ) ) ],
-				fields: {
-					...this.state.fields,
-					...fields,
-				},
-			};
-			debug( 'updateFields', { fields, newState } );
-
-			this.setState( newState, callback );
+			this.setState( ( prevState ) => {
+				const newState = {
+					dirtyFields: [ ...new Set( [].concat( prevState.dirtyFields, Object.keys( fields ) ) ) ],
+					fields: {
+						...prevState.fields,
+						...fields,
+					},
+				};
+				debug( 'updateFields', { fields, newState } );
+				return newState;
+			}, callback );
 		};
 
 		replaceFields = ( fields, callback, keepPrevFields = true ) => {
 			debug( 'replaceFields', { fields, keepPrevFields } );
-			const prevFields = keepPrevFields ? this.state.fields : {};
-			const newFields = {
-				...prevFields,
-				...fields,
-			};
-
-			this.setState( { fields: newFields }, callback );
+			this.setState( ( prevState ) => {
+				const prevFields = keepPrevFields ? prevState.fields : {};
+				const newFields = {
+					...prevFields,
+					...fields,
+				};
+				return { fields: newFields };
+			}, callback );
 		};
 
 		clearDirtyFields = () => {

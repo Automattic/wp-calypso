@@ -13,9 +13,11 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
+const Dotenv = require( 'dotenv-webpack' );
 const DuplicatePackageCheckerPlugin = require( 'duplicate-package-checker-webpack-plugin' );
 const MomentTimezoneDataPlugin = require( 'moment-timezone-data-webpack-plugin' );
 const pkgDir = require( 'pkg-dir' );
@@ -44,6 +46,7 @@ const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
+const shouldHotReload = isDevelopment && process.env.CALYPSO_DISABLE_HOT_RELOAD !== 'true';
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
@@ -51,15 +54,16 @@ const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 const shouldUsePersistentCache = process.env.PERSISTENT_CACHE === 'true';
 
+// NOTE: We reverted some of these changes, but in the future, we will need to avoid
+// using the readonly cache again if we generate the cache image inline on trunk.
+//
 // Readonly cache prevents writing to the cache directory, which is good for performance.
 // However, on trunk (and when generating cache images), we want to write to the cache
 // so that we can then update the cache to use in subsequent builds. While this costs
 // a minute in the current build, an updated cache saves 2 minutes in many future builds.
 // Note that in local builds, IS_DEFAULT_BRANCH is not set, in which case we should also write to the cache.
 const shouldUseReadonlyCache = ! (
-	process.env.IS_DEFAULT_BRANCH === 'true' ||
-	process.env.GENERATE_CACHE_IMAGE === 'true' ||
-	process.env.IS_DEFAULT_BRANCH === undefined
+	process.env.GENERATE_CACHE_IMAGE === 'true' || process.env.IS_DEFAULT_BRANCH === undefined
 );
 
 const shouldProfile = process.env.PROFILE === 'true';
@@ -124,7 +128,6 @@ function filterEntrypoints( entrypoints ) {
  *
  * Note this is not the same as looking for `__dirname+'/node_modules/'+pkgName`, as the package may be in a parent
  * `node_modules`
- *
  * @param {string} pkgName Name of the package to search for.
  */
 function findPackage( pkgName ) {
@@ -180,9 +183,9 @@ const webpackConfig = {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
-		'entry-gutenboarding': [ path.join( __dirname, 'landing', 'gutenboarding' ) ],
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
+		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,
@@ -207,14 +210,7 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify( {
-			parallel: workerCount,
-			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
-			terserOptions: {
-				compress: true,
-				mangle: true,
-			},
-		} ),
+		minimizer: Minify(),
 	},
 	module: {
 		strictExportPresence: true,
@@ -226,6 +222,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
+				plugins: shouldHotReload ? [ require.resolve( 'react-refresh/babel' ) ] : [],
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
@@ -291,11 +288,17 @@ const webpackConfig = {
 			calypso: __dirname,
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
+			'@wordpress/upload-media': false,
 		} ),
+		fallback: {
+			stream: require.resolve( 'stream-browserify' ),
+		},
 	},
 	node: false,
 	plugins: [
+		new Dotenv(),
 		new webpack.DefinePlugin( {
+			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
@@ -304,6 +307,9 @@ const webpackConfig = {
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
+			fingerprintJsVersion: JSON.stringify(
+				require( '../packages/fingerprintjs/package.json' ).version
+			),
 			global: 'window',
 		} ),
 		// Node polyfills
@@ -402,6 +408,12 @@ const webpackConfig = {
 					// Sentry should _never_ fail the webpack build, so only emit warnings here:
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
 				},
+			} ),
+		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
+		shouldHotReload &&
+			new ReactRefreshWebpackPlugin( {
+				overlay: false,
+				exclude: [ /node_modules/, /devdocs/ ],
 			} ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],

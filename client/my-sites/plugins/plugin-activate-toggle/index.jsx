@@ -104,11 +104,11 @@ export class PluginActivateToggle extends Component {
 	render() {
 		const { inProgress, site, plugin, disabled, translate, hideLabel, isJetpackCloud } = this.props;
 
-		if ( ! site ) {
+		if ( ! site || ! plugin ) {
 			return null;
 		}
 
-		const isJetpackPlugin = plugin && 'jetpack' === plugin.slug;
+		const isJetpackPlugin = 'jetpack' === plugin.slug;
 
 		if ( ! isJetpackCloud && isJetpackPlugin ) {
 			return (
@@ -126,7 +126,7 @@ export class PluginActivateToggle extends Component {
 				className="plugin-activate-toggle"
 				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }
-				status={ plugin && plugin.active }
+				status={ plugin.active }
 				action={ this.toggleActivation }
 				htmlFor={ 'activate-' + plugin.slug + '-' + site.ID }
 				hideLabel={ hideLabel }
@@ -147,7 +147,7 @@ PluginActivateToggle.defaultProps = {
 
 export default connect(
 	( state, { site, plugin } ) => ( {
-		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+		inProgress: plugin && isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
 	} ),
 	{
 		recordGoogleEvent,

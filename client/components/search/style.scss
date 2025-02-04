@@ -144,6 +144,7 @@
 
 	.search__open-icon {
 		color: var(--color-neutral-60);
+		opacity: 0.3;
 	}
 
 	.search__close-icon {
@@ -168,7 +169,7 @@
 		&::before {
 			@include long-content-fade(
 				$size: 32px,
-				$z-index: z-index( ".search", ".search__input" ) + 2
+				$z-index: z-index(".search", ".search__input") + 2
 			);
 			border-radius: inherit;
 		}
@@ -179,7 +180,7 @@
 				@include long-content-fade(
 					$direction: right,
 					$size: 32px,
-					$z-index: z-index( ".search", ".search__input" ) + 2
+					$z-index: z-index(".search", ".search__input") + 2
 				);
 				border-radius: inherit;
 			}

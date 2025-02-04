@@ -2,7 +2,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns the marketing price group of the current user.
- *
  * @param {Object} state Global state tree
  * @returns {string?} The price group slug
  */

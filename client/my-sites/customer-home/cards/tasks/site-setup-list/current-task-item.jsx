@@ -1,7 +1,6 @@
-import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import { Badge, Button, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import Badge from 'calypso/components/badge';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
@@ -36,7 +35,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					{ currentTask.customFirstButton }
 					{ currentTask.actionText && (
 						<Button
-							className={ classnames( 'site-setup-list__task-action', 'task__action', {
+							className={ clsx( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
 								'is-jetpack-branded': currentTask.jetpackBranding,
 							} ) }

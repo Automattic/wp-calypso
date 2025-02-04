@@ -2,14 +2,20 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	WPCOM_FEATURES_LIVE_SUPPORT,
 } from '@automattic/calypso-products';
+import { PluginPeriodVariations } from 'calypso/data/marketplace/types';
+import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { default as isVipSite } from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { canPublishThemeReview } from 'calypso/state/themes/selectors/can-publish-theme-review';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isMarketplaceProduct } from '../products-list/selectors';
 
 /*
  * shouldUpgradeCheck:
@@ -31,6 +37,8 @@ const shouldUpgradeCheck = ( state: IAppState, siteId: number | null ): boolean 
 	const isVip = isVipSite( state, siteId );
 	return ! canInstallPurchasedPlugins && ! isStandaloneJetpack && ! isVip;
 };
+
+export default shouldUpgradeCheck;
 
 /*
  * hasOrIntendsToBuyLiveSupport:
@@ -67,4 +75,41 @@ export const hasOrIntendsToBuyLiveSupport = ( state: IAppState ): boolean => {
 	return hasLiveSupport;
 };
 
-export default shouldUpgradeCheck;
+export function canPublishProductReviews(
+	state: IAppState,
+	productType: string,
+	productSlug: string,
+	variations?: PluginPeriodVariations
+) {
+	if ( productType === 'theme' ) {
+		return canPublishThemeReview( state, productSlug );
+	}
+	if ( productType === 'plugin' ) {
+		return canPublishPluginReview( state, productSlug, variations );
+	}
+	throw new Error( `Unknown product type: ${ productType }` );
+}
+
+export function canPublishPluginReview(
+	state: IAppState,
+	pluginSlug: string,
+	variations?: PluginPeriodVariations
+) {
+	const isMarketplacePlugin = isMarketplaceProduct( state, pluginSlug );
+	const isLoggedIn = isUserLoggedIn( state );
+
+	const hasActiveSubscription = hasActivePluginSubscription( state, variations );
+
+	return isLoggedIn && ( ! isMarketplacePlugin || hasActiveSubscription );
+}
+
+export function hasActivePluginSubscription(
+	state: IAppState,
+	variations?: PluginPeriodVariations
+) {
+	const purchases = getUserPurchases( state );
+	const purchasedPlugin = getPluginPurchased( { variations }, purchases || [] );
+	const hasActiveSubscription = !! purchasedPlugin;
+
+	return hasActiveSubscription;
+}

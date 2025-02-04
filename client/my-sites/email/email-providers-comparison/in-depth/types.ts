@@ -23,7 +23,7 @@ const EMAIL_PROVIDER_FEATURES_TYPE = [
 	'tools',
 ] as const;
 
-type EmailProviderFeature = typeof EMAIL_PROVIDER_FEATURES_TYPE[ number ];
+type EmailProviderFeature = ( typeof EMAIL_PROVIDER_FEATURES_TYPE )[ number ];
 
 export type EmailProviderFeatures = {
 	badge?: ReactNode;
@@ -41,6 +41,7 @@ export type EmailProvidersInDepthComparisonProps = {
 	selectedDomainName: string;
 	selectedIntervalLength?: IntervalLength;
 	source?: string;
+	showBackButton?: boolean;
 };
 
 export type LearnMoreLinkProps = {

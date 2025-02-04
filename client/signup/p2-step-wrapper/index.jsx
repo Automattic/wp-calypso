@@ -1,6 +1,6 @@
 import { Path, SVG, Button } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
@@ -23,7 +23,7 @@ function P2StepWrapper( {
 	const dispatch = useDispatch();
 
 	return (
-		<div className={ classnames( 'p2-step-wrapper', className ) }>
+		<div className={ clsx( 'p2-step-wrapper', className ) }>
 			<div className="p2-step-wrapper__header">
 				<div className="p2-step-wrapper__header-logo">
 					<SVG xmlns="http://www.w3.org/2000/svg" width="67" height="32" viewBox="0 0 67 32">
@@ -69,7 +69,7 @@ function P2StepWrapper( {
 			</div>
 			<StepWrapper
 				hideFormattedHeader
-				shouldHideNavButtons={ true }
+				shouldHideNavButtons
 				flowName={ flowName }
 				stepName={ stepName }
 				positionInFlow={ positionInFlow }

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { navigate } from 'calypso/lib/navigate';
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
@@ -85,6 +85,7 @@ describe( 'parseAuthorizationQuery', () => {
 			site_url: 'https://yourjetpack.blog',
 			state: '1',
 			allow_site_connection: '1',
+			installed_ext_success: '1',
 		};
 		const result = parseAuthorizationQuery( data );
 		expect( result ).not.toBeNull();
@@ -144,7 +145,7 @@ jest.mock( 'calypso/lib/navigate', () => ( {
 	navigate: jest.fn(),
 } ) );
 
-jest.mock( 'page', () => ( {
+jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 

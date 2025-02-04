@@ -1,3 +1,4 @@
+import colorStudio from '@automattic/color-studio';
 import { swatches } from './swatches';
 
 export type Theme = {
@@ -22,6 +23,7 @@ export type Theme = {
 		textColor: string;
 		textColorLight: string;
 		textColorDark: string;
+		textColorDisabled: string;
 		error: string;
 		warningBackground: string;
 		outline: string;
@@ -58,27 +60,28 @@ const theme: Theme = {
 	colors: {
 		background: swatches.gray0,
 		surface: swatches.white,
-		primary: swatches.pink50,
+		primary: colorStudio.colors[ 'WordPress Blue 50' ],
 		primaryBorder: swatches.pink80,
-		primaryOver: swatches.pink60,
-		highlight: swatches.blue50,
-		highlightBorder: swatches.blue80,
-		highlightOver: swatches.blue60,
-		success: swatches.green50,
-		discount: swatches.green50,
-		disabledPaymentButtons: swatches.gray0,
-		disabledPaymentButtonsAccent: swatches.gray5,
-		disabledButtons: swatches.gray20,
+		primaryOver: colorStudio.colors[ 'WordPress Blue 60' ],
+		highlight: colorStudio.colors[ 'WordPress Blue 50' ],
+		highlightBorder: colorStudio.colors[ 'WordPress Blue 80' ],
+		highlightOver: colorStudio.colors[ 'WordPress Blue 60' ],
+		success: colorStudio.colors[ 'Green 30' ],
+		discount: colorStudio.colors[ 'Green 30' ],
+		disabledPaymentButtons: colorStudio.colors[ 'Gray 5' ],
+		disabledPaymentButtonsAccent: colorStudio.colors[ 'Gray 20' ],
+		disabledButtons: colorStudio.colors[ 'White' ],
 		borderColor: swatches.gray10,
 		borderColorLight: swatches.gray5,
 		borderColorDark: swatches.gray50,
 		upcomingStepBackground: swatches.gray5,
-		textColor: swatches.gray80,
-		textColorLight: swatches.gray50,
-		textColorDark: swatches.black,
+		textColor: colorStudio.colors[ 'Gray 60' ],
+		textColorLight: colorStudio.colors[ 'Gray 50' ],
+		textColorDark: colorStudio.colors[ 'Gray 100' ],
+		textColorDisabled: colorStudio.colors[ 'Gray 10' ],
 		error: swatches.red50,
 		warningBackground: swatches.red0,
-		outline: swatches.blue30,
+		outline: colorStudio.colors[ 'WordPress Blue 30' ],
 		applePayButtonColor: swatches.black,
 		applePayButtonRollOverColor: swatches.gray80,
 		noticeBackground: swatches.gray80,
@@ -87,7 +90,7 @@ const theme: Theme = {
 		paypalGold: '#F0C443',
 		paypalGoldHover: '#FFB900',
 		modalBackground: 'rgba( 255,255,255,0.9 )',
-		disabledField: swatches.gray0,
+		disabledField: colorStudio.colors[ 'Gray 0' ],
 		placeHolderTextColor: swatches.gray30,
 	},
 	breakpoints: {
@@ -97,7 +100,7 @@ const theme: Theme = {
 		smallPhoneUp: 'min-width: 400px',
 	},
 	weights: {
-		bold: '600',
+		bold: '500',
 		normal: '400',
 	},
 	fonts: {

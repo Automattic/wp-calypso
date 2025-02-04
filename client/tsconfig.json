@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"rootDir": ".",
 		"noEmit": true,
-		"types": [ "node", "@types/gtag.js" ],
+		"types": [ "node", "@types/gtag.js", "@emotion/react/types/css-prop" ],
 		"paths": {
 			"calypso/*": [ "./*" ],
 
@@ -21,7 +21,13 @@
 		"./lib/domains/tlds/wpcom-multi-level-tlds.json",
 		"./__mocks__/lib/json-schema-draft-04.json",
 		"./package.json",
-		"./state/data-layer/wpcom/sites/jitm/schema.json"
+		"./state/data-layer/wpcom/sites/jitm/schema.json",
+		"./declarations.d.ts"
 	],
-	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./server/devdocs/search-index.js" ]
+	"exclude": [
+		"./**/node_modules/**/*",
+		"./**/test/**/*",
+		"./server/devdocs/search-index.js",
+		"./**/.stories.tsx"
+	]
 }

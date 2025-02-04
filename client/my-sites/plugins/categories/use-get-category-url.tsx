@@ -1,5 +1,5 @@
-import { useSelector } from 'react-redux';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import { useSelector } from 'calypso/state';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 

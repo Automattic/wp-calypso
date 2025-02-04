@@ -4,7 +4,6 @@
  */
 
 import {
-	DataHelper,
 	TestAccount,
 	envVariables,
 	EditorPage,
@@ -17,7 +16,11 @@ import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( `Editor: Revisions`, function () {
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
@@ -36,7 +39,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 
@@ -53,14 +56,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 
 	it( 'View revisions', async function () {
 		await editorPage.openSettings();
-
-		if ( envVariables.TEST_ON_ATOMIC ) {
-			// Revisions are opened on a dedicated page on Atomic sites, e.g.
-			// https://yourblog.wpcomstaging.com/wp-admin/revision.php?revision=123
-			await Promise.all( [ page.waitForNavigation(), editorPage.viewRevisions() ] );
-		} else {
-			await editorPage.viewRevisions();
-		}
+		await editorPage.viewRevisions();
 	} );
 
 	it( 'Select first revision', async function () {
@@ -90,7 +86,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 	it( 'Load selected revision', async function () {
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			await revisionsPage.loadSelectedRevision();
-			await editorPage.waitUntilLoaded();
 		} else {
 			await revisionsComponent.loadSelectedRevision();
 		}

@@ -1,0 +1,138 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.billing-summary {
+	display: flex;
+	flex-direction: column;
+
+	@include break-xlarge() {
+		flex-direction: row;
+	}
+}
+
+.billing-summary__stat {
+	display: flex;
+	flex: 0 1 0;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-block-end: 18px;
+
+	@include break-xlarge() {
+		flex-direction: column;
+		&.billing-summary__stat {
+			flex: 1 1 0;
+			margin-block-end: 0;
+		}
+
+		& + & {
+			margin-inline-start: 36px;
+			padding-inline-start: 36px;
+			border-inline-start: 1px solid var(--color-neutral-5);
+		}
+
+		&:nth-child(odd) {
+			flex-basis: calc(50% - 18px);
+		}
+
+		&:nth-child(even) {
+			flex-basis: calc(50% - 1px - 18px);
+			margin-inline-start: 18px;
+			padding-inline-start: 18px;
+			border-inline-start: 1px solid var(--color-neutral-5);
+		}
+	}
+}
+
+.billing-summary__stat:nth-last-child(-n + 2) {
+	margin-block-end: 0;
+}
+
+.billing-summary__cost.billing-summary__stat {
+	display: none;
+
+	@include break-xlarge() {
+		display: block;
+		flex-grow: 1.25;
+		margin-inline-start: auto;
+		border-inline-start: 0;
+		text-align: right;
+	}
+}
+
+.billing-summary__label {
+	display: block;
+	margin-block-end: 8px;
+	font-size: 1.25rem;
+	line-height: 28px;
+	color: var(--color-neutral-80);
+
+	@include break-wide() {
+		white-space: nowrap;
+	}
+}
+
+.billing-summary__value {
+	display: block;
+	font-weight: 700;
+	font-size: 1.75rem;
+	line-height: 36px;
+
+	@media (min-width: 661px) and (max-width: 781px) {
+		// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
+		// a lot of the available space.
+		font-size: 1.25rem;
+	}
+}
+
+.billing-summary__cost-tooltip.popover {
+	&.is-bottom .popover__arrow {
+		border-block-end-color: #fff;
+	}
+
+	.popover__inner {
+		padding: 16px 58px 16px 16px;
+		color: var(--color-neutral-70);
+		background: #fff;
+		border-radius: 2px;
+		box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+
+		p {
+			font-size: 1rem;
+			margin: 0;
+		}
+	}
+
+	@include break-mobile() {
+		max-width: 312px;
+	}
+}
+
+.billing-summary__open-cost-tooltip {
+	margin-inline-end: 8px;
+
+	&.button {
+		padding: 0;
+
+		.gridicon {
+			inset-block-start: 4px;
+		}
+	}
+}
+
+.billing-summary__close-cost-tooltip {
+	position: absolute;
+	inset-inline-end: 16px;
+	inset-block-start: 16px;
+	color: var(--color-neutral-40);
+
+	&.button {
+		height: 18px;
+		padding: 0;
+	}
+}
+
+.billing-summary__placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	display: block;
+}

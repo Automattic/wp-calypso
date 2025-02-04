@@ -44,7 +44,7 @@ Regardless, it's a good idea to always check `responseCart.messages.errors` and 
 - `removeProductFromCart: ( uuidToRemove: string ) => Promise<ResponseCart>`. A function that requests removing a product from the cart.
 - `applyCoupon: ( couponId: string ) => Promise<ResponseCart>`. A function that requests applying a coupon to the cart (only one coupon can be applied at a time).
 - `removeCoupon: () => Promise<ResponseCart>`. A function that requests removing a coupon to the cart.
-- `updateLocation: ( location: CartLocation ) => Promise<ResponseCart>`. A function that can be used to change the tax location of the cart.
+- `updateLocation: ( location: LocationUpdate ) => Promise<ResponseCart>`. A function that can be used to change the tax location of the cart. Note that this completely replaces the current location. The [convertTaxLocationToLocationUpdate](#convertTaxLocationToLocationUpdate) function can be used to convert the current `responseCart.tax.location` value into the properties required by this function if you need to only update one value.
 - `replaceProductInCart: ( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => Promise<ResponseCart>`. A function that can replace one product in the cart with another, retaining the same UUID; useful for changing product variants.
 - `replaceProductsInCart: ( products: RequestCartProduct[] ) => Promise<ResponseCart>`. A function that replaces all the products in the cart with a new set of products. Can also be used to clear the cart.
 - `reloadFromServer: () => Promise<ResponseCart>`. A function to throw away the current cart cache and fetch it fresh from the shopping cart API.
@@ -102,3 +102,7 @@ A `ShoppingCartManager` has the following properties:
 - `actions: ShoppingCartManagerActions`. An object whose properties are the various actions that can be taken on the cart. They are the same as the actions returned by [useShoppingCart](#useShoppingCart).
 - `subscribe: ( callback: () => void ) => () => void`. A function to subscribe to updates to a `ShoppingCartManager` for a given cart key. The `callback` will be called any time the `ShoppingCartManager` changes for that key. The return value of the function is an unsubscribe function.
 - `fetchInitialCart: () => Promise<ResponseCart>`. A function that should be called after the cart manager is created in order to perform the initial fetch. If another action is called first, this will be called automatically before that action is dispatched.
+
+## convertTaxLocationToLocationUpdate
+
+Converts the `responseCart.tax.location` data in a `ResponseCart` to the data required by the `updateLocation()` cart action.

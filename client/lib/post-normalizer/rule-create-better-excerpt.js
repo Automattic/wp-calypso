@@ -4,7 +4,6 @@ import { domForHtml } from './utils';
 
 /**
  * Removes an HTML element from the DOM
- *
  * @param {Node} element DOM element to remove
  */
 function removeElement( element ) {
@@ -14,7 +13,6 @@ function removeElement( element ) {
 /**
  *  Trims any empty starting `br` tags.  Recurses into non-empty tags.
  *  will remove all of the leading `br`s it can find.
- *
  * @param {Node} dom DOM element to remove br tags from.
  */
 function stripLeadingBreaklines( dom ) {
@@ -31,7 +29,6 @@ function stripLeadingBreaklines( dom ) {
 /**
  *  Returns the node if first element ( checking nested ) is a `br`
  *  else returns falsy
- *
  * @param {Node} dom DOM element to check
  */
 function firstElementIsBreakline( dom ) {

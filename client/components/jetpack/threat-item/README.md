@@ -28,6 +28,10 @@ Optional callback function that is called when a threat fix is triggered.
 
 Optional callback function that is called when a threat ignore is triggered.
 
+### `onUnignoreThreat`
+
+Optional callback function that is called when a threat unignore is triggered.
+
 ### `isFixing`
 
 If the threat is being fixed.

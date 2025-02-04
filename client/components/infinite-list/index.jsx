@@ -1,8 +1,8 @@
 /* eslint-disable react/no-string-refs */
 // TODO: remove string ref usage.
 
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import ReactDom from 'react-dom';
@@ -30,6 +30,7 @@ export default class InfiniteList extends Component {
 		renderLoadingPlaceholders: PropTypes.func.isRequired,
 		renderTrailingItems: PropTypes.func,
 		context: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
+		selectedItem: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -95,6 +96,25 @@ export default class InfiniteList extends Component {
 		this._isMounted = true;
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
+		} else {
+			// This is a workaround to ensure the scroll container is ready by scrolling after the
+			// current callstack is executed. Some streams and device widths for the reader are not
+			// fully ready to have their scroll position set until everything is mounted, causing the
+			// stream to jump back to the top when coming back to view from a post.
+
+			// Use the scrollTop setting from the time the component mounted, as this state could be
+			// changed in the initial update cycle to save scroll position before the saved position
+			// is set.
+			const scrollTop = this.state.scrollTop;
+			// Apply these at the end of the callstack to ensure the scroll container is ready.
+			window.setTimeout( () => {
+				if ( this._contextLoaded() ) {
+					this._setContainerY( scrollTop );
+					this.updateScroll( {
+						triggeredByScroll: false,
+					} );
+				}
+			}, 0 );
 		}
 
 		// only override browser history scroll if navigated via history
@@ -105,6 +125,7 @@ export default class InfiniteList extends Component {
 		this.updateScroll( {
 			triggeredByScroll: false,
 		} );
+
 		if ( this._contextLoaded() ) {
 			this._scrollContainer.addEventListener( 'scroll', this.onScroll );
 		}
@@ -191,8 +212,10 @@ export default class InfiniteList extends Component {
 	}
 
 	componentWillUnmount() {
-		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
-		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		if ( this._scrollContainer ) {
+			this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
+			this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
+		}
 		this.cancelAnimationFrame();
 		this.cancelScrollUpdate();
 		this._isMounted = false;
@@ -326,7 +349,6 @@ export default class InfiniteList extends Component {
 	 *
 	 * This includes any items that are partially visible in the viewport.
 	 * Instance method that is called externally (via a ref) by a parent component.
-	 *
 	 * @param {Object} options - offset properties
 	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
 	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
@@ -442,7 +464,8 @@ export default class InfiniteList extends Component {
 	 * HTML5 history.
 	 */
 	_overrideHistoryScroll() {
-		if ( ! this._contextLoaded() ) {
+		// If we have a selected item, assume scroll is handled elsewhere.
+		if ( ! this._contextLoaded() || this.props.selectedItem ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
@@ -461,7 +484,6 @@ export default class InfiniteList extends Component {
 
 	/**
 	 * Determine whether context is available or still being rendered.
-	 *
 	 * @returns {boolean} whether context is available
 	 */
 	_contextLoaded() {

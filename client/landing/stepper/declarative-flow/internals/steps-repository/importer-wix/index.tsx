@@ -3,10 +3,10 @@ import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { withImporterWrapper } from '../importer';
 import './style.scss';
 
-const ImporterWix: Step = function ( props ) {
-	const Importer = withImporterWrapper( WixImporter );
+const Importer = withImporterWrapper( WixImporter );
 
-	return <Importer importer="wix" { ...props } />;
+const ImporterWix: Step = function ( props ) {
+	return <Importer importer="wix" { ...props } navigation={ props.navigation } />;
 };
 
 export default ImporterWix;

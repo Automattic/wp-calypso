@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
@@ -93,7 +93,7 @@ const PhoneInput: FC< PhoneInputProps > = ( {
 	);
 
 	return (
-		<div className={ classnames( className, 'phone-input' ) }>
+		<div className={ clsx( className, 'phone-input' ) }>
 			<FormTextInput
 				placeholder={ translate( 'Phone' ) }
 				onChange={ handleInput }
@@ -104,7 +104,7 @@ const PhoneInput: FC< PhoneInputProps > = ( {
 				inputRef={ numberInputRef }
 				type="tel"
 				disabled={ disabled }
-				className={ classnames( 'phone-input__number-input', {
+				className={ clsx( 'phone-input__number-input', {
 					'is-error': isError,
 				} ) }
 			/>
@@ -306,7 +306,6 @@ function calculateInputAndCountryCode(
 
 /**
  * Decides whether to guess the country from the input value
- *
  * @param {string} value - The phone number
  * @param {string} countryCode - The country code
  * @param {boolean} freezeSelection - True if we should never guess
@@ -328,7 +327,6 @@ function shouldGuessCountry(
 
 /**
  * Returns the selected country from dropdown or guesses the country from input
- *
  * @param {string} value - Input number
  * @param {string} fallbackCountryCode - Fallback country code in case we can't find a match
  * @param {boolean} freezeSelection - True if we should never guess the country
@@ -339,7 +337,7 @@ function guessCountryFromValueOrGetSelected(
 	freezeSelection: boolean
 ) {
 	if ( shouldGuessCountry( value, fallbackCountryCode, freezeSelection ) ) {
-		return findCountryFromNumber( value ) || getCountry( 'world' );
+		return findCountryFromNumber( value, fallbackCountryCode ) || getCountry( 'world' );
 	}
 
 	return getCountry( fallbackCountryCode );
@@ -347,7 +345,6 @@ function guessCountryFromValueOrGetSelected(
 
 /**
  * Format the phone number for display
- *
  * @param {string} value - The phone number value to format
  * @param {string} countryCode - The country code to use for the format
  * @returns {string} The formatted number

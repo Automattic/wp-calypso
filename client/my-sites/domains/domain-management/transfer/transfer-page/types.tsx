@@ -5,6 +5,8 @@ import type { ReactNode } from 'react';
 
 export type TransferPageProps = {
 	domains: ResponseDomain[];
+	canTransferToOtherSite: boolean;
+	canTransferToAnyUser: boolean;
 	currentRoute: string;
 	errorNotice: ( notice: ReactNode, options: Record< string, unknown > ) => NoticeActionCreator;
 	isAtomic: boolean;

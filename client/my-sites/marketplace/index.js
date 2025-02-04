@@ -1,12 +1,12 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import {
-	renderDomainsPage,
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsInstallPage,
+	renderThemesInstallPage,
 	redirectToHome,
 	renderMarketplaceSignupSuccess,
 } from './controller';
@@ -23,19 +23,24 @@ export default function () {
 		);
 	}
 
-	if ( config.isEnabled( 'marketplace-domain-bundle' ) ) {
-		page( '/marketplace/domain/:site?', renderDomainsPage, makeLayout, clientRender );
-	}
-
 	page(
-		'/marketplace/:productSlug?/install/:site?',
+		'/marketplace/plugin/:productSlug?/install/:site?',
 		siteSelection,
 		renderPluginsInstallPage,
 		makeLayout,
 		clientRender
 	);
+
 	page(
-		'/marketplace/thank-you/:productSlug/:site?',
+		'/marketplace/theme/:themeSlug?/install/:site?',
+		siteSelection,
+		renderThemesInstallPage,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketplace/thank-you/:site?',
 		siteSelection,
 		renderMarketplaceThankYou,
 		makeLayout,

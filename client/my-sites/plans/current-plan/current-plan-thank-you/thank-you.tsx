@@ -3,7 +3,7 @@ import { isDesktop } from '@automattic/viewport';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
 import { FC, ReactElement, useCallback, useMemo } from 'react';
 import * as React from 'react';
-import { connect, DefaultRootState } from 'react-redux';
+import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -13,11 +13,12 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const mapStateToProps = ( state: DefaultRootState ) => {
+const mapStateToProps = ( state: IAppState ) => {
 	const currentUser = getCurrentUser( state );
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = getSelectedSiteId( state );
@@ -88,7 +89,7 @@ export const ThankYouCard: FC< Props > = ( {
 		[ currentRoute, queryArgs ]
 	);
 	const recordThankYouClick = useCallback(
-		( productName, value ) => {
+		( productName: string, value?: string ) => {
 			dispatchRecordTracksEvent( 'calypso_jetpack_product_thankyou', {
 				product_name: productName,
 				site: 'jetpack',

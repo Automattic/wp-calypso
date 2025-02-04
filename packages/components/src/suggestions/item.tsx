@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { escapeRegExp } from 'lodash';
 import { useEffect, memo, forwardRef } from 'react';
 import type { ForwardRefRenderFunction, FocusEvent, MouseEvent } from 'react';
@@ -17,7 +17,7 @@ const createTextWithHighlight = ( text: string, query: string ) => {
 	return parts.map( ( part, i ) => {
 		const key = text + i;
 		const lowercasePart = part.toLowerCase();
-		const spanClass = classNames( 'suggestions__label', {
+		const spanClass = clsx( 'suggestions__label', {
 			'is-emphasized': lowercasePart === match,
 		} );
 
@@ -54,7 +54,7 @@ const Item: ForwardRefRenderFunction< HTMLButtonElement, Props > = (
 		onMouseDown();
 	};
 
-	const className = classNames( 'suggestions__item', { 'has-highlight': hasHighlight } );
+	const className = clsx( 'suggestions__item', { 'has-highlight': hasHighlight } );
 
 	return (
 		<button

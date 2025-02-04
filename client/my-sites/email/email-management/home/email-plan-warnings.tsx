@@ -1,6 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, ButtonProps, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
 import {
@@ -9,7 +8,8 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath } from 'calypso/my-sites/email/paths';
+import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { EmailPlanWarningNotice } from './email-plan-warning-notice';
 import type { EmailAccount } from 'calypso/data/emails/types';
@@ -18,9 +18,10 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 type EmailPlanWarningsProps = {
 	domain: ResponseDomain;
 	emailAccount: EmailAccount;
+	ctaBtnProps?: ButtonProps;
 };
 
-const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
+const EmailPlanWarnings = ( { domain, emailAccount, ctaBtnProps }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug ?? '';
@@ -40,7 +41,8 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 			<Button
 				compact
 				primary
-				href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domain.name ) }
+				href={ getTitanSetUpMailboxPath( selectedSiteSlug, domain.name ) }
+				{ ...ctaBtnProps }
 			>
 				{ translate( 'Set up mailbox' ) }
 			</Button>
@@ -55,6 +57,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 					recordTracksEvent( 'calypso_email_management_google_workspace_accept_tos_link_click' );
 				} }
 				target="_blank"
+				{ ...ctaBtnProps }
 			>
 				{ translate( 'Finish setup' ) }
 				<Gridicon icon="external" />

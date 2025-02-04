@@ -13,11 +13,14 @@ function editorPathFromSite( site ) {
 
 /**
  * Returns a URL to the post editor for a new post on a given site.
- *
  * @param  {Object | string} site Site object or site slug
  * @returns {string}      URL to post editor
  */
 export function newPost( site ) {
 	const sitePath = editorPathFromSite( site );
 	return '/post' + sitePath;
+}
+
+export function createAccountUrl( { redirectTo, ref } ) {
+	return `/start/account?redirect_to=${ redirectTo }&ref=${ ref }`;
 }

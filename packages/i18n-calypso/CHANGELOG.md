@@ -1,3 +1,23 @@
+## 7.2.1
+
+- `compact` option for `numberFormat`
+
+## 7.2.0
+
+- Replace `number_format` with `Intl.NumberFormat`
+- Add and export `getBrowserSafeLocal` method
+
+## 7.1.0
+
+- Add new `fixMe` method for conditionally loading a copy given a respective translation exists
+
+## 7.0.0
+
+- Update React peer dependency to v18.
+- Improve TypeScript type definitions.
+- Update dependency `@wordpress/compose` to `^6.25.0`.
+- Update dependency `use-subscription` to `1.6.0`.
+
 ## 6.0.1
 
 - Fix an issue in the published build of i18n-calypso which prevented it from installing correctly.

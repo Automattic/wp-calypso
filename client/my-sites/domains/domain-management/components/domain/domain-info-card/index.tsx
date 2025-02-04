@@ -5,7 +5,7 @@ import type { CardProps, GenericActionCardProps } from './types';
 import './style.scss';
 
 const DomainInfoCard = ( props: GenericActionCardProps ) => {
-	const { title, description, type } = props;
+	const { title, description, type, buttonDisabled } = props;
 	const cardProps: CardProps = {
 		headerText: title,
 		mainText: description,
@@ -16,7 +16,12 @@ const DomainInfoCard = ( props: GenericActionCardProps ) => {
 		case 'href':
 			return (
 				<ActionCard { ...cardProps }>
-					<Button compact primary={ props.isPrimary } href={ props.href }>
+					<Button
+						compact
+						primary={ props.isPrimary }
+						href={ ! buttonDisabled ? props.href : undefined }
+						disabled={ buttonDisabled }
+					>
 						{ props.ctaText }
 					</Button>
 				</ActionCard>
@@ -25,7 +30,12 @@ const DomainInfoCard = ( props: GenericActionCardProps ) => {
 		case 'click':
 			return (
 				<ActionCard { ...cardProps }>
-					<Button compact primary={ props.isPrimary } onClick={ props.onClick }>
+					<Button
+						compact
+						primary={ props.isPrimary }
+						onClick={ props.onClick }
+						disabled={ buttonDisabled }
+					>
 						{ props.ctaText }
 					</Button>
 				</ActionCard>

@@ -8,7 +8,6 @@ const registeredNames = new Set();
 
 /**
  * Loads action handlers into the data layer
- *
  * @param {string} id name of handler set
  * @param {Object<string, Array<Function>>} handlers set of handlers to inject
  */
@@ -23,7 +22,6 @@ export const registerHandlers = ( id, handlers ) => {
 
 /**
  * Returns list of handlers for given action type else undefined
- *
  * @param {string} actionType requested action type
  * @returns {?Array<Function>} list of handlers for type
  */

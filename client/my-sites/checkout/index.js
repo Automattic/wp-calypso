@@ -1,18 +1,22 @@
-import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import {
 	makeLayout,
 	redirectLoggedOut,
+	redirectMyJetpack,
 	render as clientRender,
 	setLocaleMiddleware,
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
+import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
 	checkout,
+	checkoutAkismetSiteless,
 	checkoutPending,
 	checkoutJetpackSiteless,
+	checkoutMarketplaceSiteless,
 	checkoutThankYou,
+	licensingPendingAsyncActivation,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
@@ -23,6 +27,11 @@ import {
 	redirectToSupportSession,
 	upsellNudge,
 	upsellRedirect,
+	akismetCheckoutThankYou,
+	hundredYearCheckoutThankYou,
+	transferDomainToAnyUser,
+	checkoutFailedPurchases,
+	refreshUserSession,
 } from './controller';
 
 export default function () {
@@ -34,6 +43,14 @@ export default function () {
 		setLocaleMiddleware(),
 		noSite,
 		checkoutJetpackSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/jetpack/thank-you/licensing-pending-async-activation/:product',
+		noSite,
+		licensingPendingAsyncActivation,
 		makeLayout,
 		clientRender
 	);
@@ -94,12 +111,78 @@ export default function () {
 		clientRender
 	);
 
+	page(
+		'/checkout/100-year/thank-you/:site/:receiptId',
+		loggedInSiteSelection,
+		hundredYearCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/marketplace/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/marketplace/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutMarketplaceSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// Akismet siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
+	page(
+		`/checkout/akismet/:productSlug`,
+		setLocaleMiddleware(),
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		`/checkout/akismet/:productSlug/renew/:purchaseId`,
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutAkismetSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/akismet/thank-you/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		akismetCheckoutThankYou,
+		makeLayout,
+		clientRender
+	);
+
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
 
 	page(
+		'/checkout/domain-transfer-to-any-user/thank-you/:domain',
+		redirectLoggedOut,
+		transferDomainToAnyUser,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		checkoutPending,
 		makeLayout,
@@ -110,6 +193,7 @@ export default function () {
 	// not include the `siteSelection` middleware.
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
+		refreshUserSession, // Load user session into state in userless checkout
 		redirectLoggedOut,
 		noSite,
 		checkoutThankYou,
@@ -153,6 +237,8 @@ export default function () {
 		clientRender
 	);
 
+	page( '/checkout/failed-purchases', checkoutFailedPurchases, makeLayout, clientRender );
+
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 
 	page(
@@ -164,48 +250,46 @@ export default function () {
 		clientRender
 	);
 
-	if ( isEnabled( 'upsell/concierge-session' ) ) {
-		// For backwards compatibility, retaining the old URL structure.
-		page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
-
-		page(
-			'/checkout/offer-support-session/:site?',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-support-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:site?',
-			loggedInSiteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-
-		page(
-			'/checkout/offer-quickstart-session/:receiptId/:site',
-			redirectLoggedOut,
-			siteSelection,
-			upsellNudge,
-			makeLayout,
-			clientRender
-		);
-	}
+	// For backwards compatibility, retaining the old URL structure.
+	page( '/checkout/:site/add-support-session/:receiptId?', redirectToSupportSession );
 
 	page(
-		'/checkout/offer-professional-email/:domain/:receiptId/:site?',
+		'/checkout/offer-support-session/:site?',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-support-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:site?',
+		loggedInSiteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/checkout/offer-quickstart-session/:receiptId/:site',
+		redirectLoggedOut,
+		siteSelection,
+		upsellNudge,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ),
 		redirectLoggedOut,
 		siteSelection,
 		upsellNudge,
@@ -225,6 +309,7 @@ export default function () {
 	page(
 		`/checkout/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -236,6 +321,7 @@ export default function () {
 	page(
 		`/checkout/:product/:domainOrProduct`,
 		setLocaleMiddleware(),
+		redirectMyJetpack,
 		redirectLoggedOut,
 		siteSelection,
 		redirectJetpackLegacyPlans,
@@ -244,8 +330,16 @@ export default function () {
 		clientRender
 	);
 
-	// Visiting /renew without a domain is invalid and should be redirected to /me/purchases
-	page( '/checkout/:product/renew/:purchaseId', '/me/purchases' );
+	// A renewal link without a site is not allowed, but we send the user to
+	// checkout anyway so they can see a helpful error message.
+	page(
+		'/checkout/:product/renew/:purchaseId',
+		redirectLoggedOut,
+		noSite,
+		checkout,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		'/checkout/:product/renew/:purchaseId/:domain',

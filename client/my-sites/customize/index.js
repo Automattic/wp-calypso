@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
 import { customize } from './controller';

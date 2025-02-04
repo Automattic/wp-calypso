@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { allBucketsTrue } from './consts';
+import { defaultBuckets } from './consts';
 import { GranularConsent } from './granular-consent';
 import type { Buckets, CustomizedConsentContent } from './types';
 
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const CustomizedConsent = ( { content, onAccept }: Props ) => {
-	const [ buckets, setBuckets ] = useState( allBucketsTrue );
+	const [ buckets, setBuckets ] = useState( defaultBuckets );
 	const handleChangeBucket = ( bucket: keyof Buckets ) => ( checked: boolean ) => {
 		setBuckets( ( prevBuckets ) => ( {
 			...prevBuckets,

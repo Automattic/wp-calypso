@@ -2,13 +2,14 @@ import debugFactory from 'debug';
 import { getEmptyResponseCart } from './empty-carts';
 import type {
 	TempResponseCart,
-	CartLocation,
+	TaxLocationUpdate,
 	RequestCart,
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
 	GetCart,
 	CartKey,
+	ResponseCartTaxLocation,
 } from './types';
 
 const debug = debugFactory( 'shopping-cart:cart-functions' );
@@ -33,6 +34,7 @@ export function convertResponseCartToRequestCart( {
 	products,
 	coupon,
 	tax,
+	blog_id,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
 	if (
@@ -41,7 +43,9 @@ export function convertResponseCartToRequestCart( {
 		tax.location.subdivision_code ||
 		tax.location.vat_id ||
 		tax.location.organization ||
-		tax.location.address
+		tax.location.address ||
+		tax.location.city ||
+		tax.location.is_for_business
 	) {
 		requestCartTax = {
 			location: {
@@ -51,10 +55,13 @@ export function convertResponseCartToRequestCart( {
 				vat_id: tax.location.vat_id,
 				organization: tax.location.organization,
 				address: tax.location.address,
+				city: tax.location.city,
+				is_for_business: tax.location.is_for_business,
 			},
 		};
 	}
 	return {
+		blog_id,
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
 		coupon,
 		temporary: false,
@@ -106,29 +113,60 @@ export function removeCouponFromResponseCart( cart: TempResponseCart ): TempResp
 	};
 }
 
+/**
+ * Convert the `tax.location` data in a response cart to the data required by
+ * the `updateLocation()` cart action.
+ */
+export function convertTaxLocationToLocationUpdate(
+	location: ResponseCartTaxLocation
+): TaxLocationUpdate {
+	return {
+		countryCode: location.country_code || undefined,
+		postalCode: location.postal_code || undefined,
+		subdivisionCode: location.subdivision_code || undefined,
+		vatId: location.vat_id || undefined,
+		organization: location.organization || undefined,
+		address: location.address || undefined,
+		city: location.city || undefined,
+		isForBusiness: location.is_for_business || undefined,
+	};
+}
+
+/**
+ * Convert the tax location data used by the `updateLocation()` cart action to
+ * the `tax.location` data in the response cart.
+ */
+export function convertLocationUpdateToTaxLocation(
+	location: TaxLocationUpdate
+): ResponseCartTaxLocation {
+	return {
+		country_code: location.countryCode || undefined,
+		postal_code: location.postalCode || undefined,
+		subdivision_code: location.subdivisionCode || undefined,
+		vat_id: location.vatId || undefined,
+		organization: location.organization || undefined,
+		address: location.address || undefined,
+		city: location.city || undefined,
+		is_for_business: location.isForBusiness || undefined,
+	};
+}
+
 export function addLocationToResponseCart(
 	cart: TempResponseCart,
-	location: CartLocation
+	location: TaxLocationUpdate
 ): TempResponseCart {
 	return {
 		...cart,
 		tax: {
 			...cart.tax,
-			location: {
-				country_code: location.countryCode || undefined,
-				postal_code: location.postalCode || undefined,
-				subdivision_code: location.subdivisionCode || undefined,
-				vat_id: location.vatId || undefined,
-				organization: location.organization || undefined,
-				address: location.address || undefined,
-			},
+			location: convertLocationUpdateToTaxLocation( location ),
 		},
 	};
 }
 
 export function doesCartLocationDifferFromResponseCartLocation(
 	cart: TempResponseCart,
-	location: CartLocation
+	location: TaxLocationUpdate
 ): boolean {
 	const {
 		countryCode: newCountryCode = '',
@@ -137,6 +175,8 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		vatId: newVatId = '',
 		organization: newOrganization = '',
 		address: newAddress = '',
+		city: newCity = '',
+		isForBusiness: newIsForBusiness = false,
 	} = location;
 	const {
 		country_code: oldCountryCode = '',
@@ -145,6 +185,8 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		vat_id: oldVatId = '',
 		organization: oldOrganization = '',
 		address: oldAddress = '',
+		city: oldCity = '',
+		is_for_business: oldIsForBusiness = false,
 	} = cart.tax?.location ?? {};
 
 	if ( location.countryCode !== undefined && newCountryCode !== oldCountryCode ) {
@@ -163,6 +205,12 @@ export function doesCartLocationDifferFromResponseCartLocation(
 		return true;
 	}
 	if ( location.address !== undefined && newAddress !== oldAddress ) {
+		return true;
+	}
+	if ( location.city !== undefined && newCity !== oldCity ) {
+		return true;
+	}
+	if ( location.isForBusiness !== undefined && newIsForBusiness !== oldIsForBusiness ) {
 		return true;
 	}
 	return false;

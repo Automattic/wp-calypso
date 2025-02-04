@@ -1,12 +1,21 @@
 import config from '@automattic/calypso-config';
-import globalPageInstance from 'page';
-import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
+import globalPageInstance from '@automattic/calypso-router';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getIsSubscriptionOnly from 'calypso/state/selectors/get-is-subscription-only';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { requestSite } from 'calypso/state/sites/actions';
-import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSite,
+	getSiteSlug,
+	getSiteAdminUrl,
+	isAdminInterfaceWPAdmin,
+} from 'calypso/state/sites/selectors';
+import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
+import { getSelectedSiteId } from './state/ui/selectors';
 
 /**
  * @param clientRouter Unused. We can't use the isomorphic router because we want to do redirects.
@@ -40,7 +49,12 @@ async function handleLoggedIn( page, context ) {
 		redirectPath += `?${ context.querystring }`;
 	}
 
-	page.redirect( redirectPath );
+	if ( redirectPath.startsWith( '/' ) ) {
+		page.redirect( redirectPath );
+	} else {
+		// Case for wp-admin redirection when primary site has classic admin interface.
+		window.location.assign( redirectPath );
+	}
 }
 
 // Helper thunk that ensures that the requested site info is fetched into Redux state before we
@@ -76,29 +90,42 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	await dispatch( waitForPrefs() );
 	const useSitesAsLandingPage = hasSitesAsLandingPage( getState() );
 
-	const siteCount = getCurrentUser( getState() )?.site_count;
-
-	if ( useSitesAsLandingPage && siteCount > 1 ) {
+	if ( useSitesAsLandingPage ) {
 		return '/sites';
+	}
+
+	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
+
+	if ( useReaderAsLandingPage ) {
+		return '/read';
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
-	const primarySiteId = getPrimarySiteId( getState() );
-	await dispatch( waitForSite( primarySiteId ) );
-
-	const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+	const primaryOrSelectedSiteId = getSelectedSiteId( getState() ) || getPrimarySiteId( getState() );
+	await dispatch( waitForSite( primaryOrSelectedSiteId ) );
+	const primarySiteSlug = getSiteSlug( getState(), primaryOrSelectedSiteId );
 
 	if ( ! primarySiteSlug ) {
-		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
-		return '/read';
+		if ( getIsSubscriptionOnly( getState() ) ) {
+			return '/read';
+		}
+		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
+		return '/sites';
 	}
 
-	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( getState(), primarySiteId );
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome(
+		getState(),
+		primaryOrSelectedSiteId
+	);
 
 	if ( isCustomerHomeEnabled ) {
+		if ( isAdminInterfaceWPAdmin( getState(), primaryOrSelectedSiteId ) ) {
+			// This URL starts with 'https://' because it's the access to wp-admin.
+			return getSiteAdminUrl( getState(), primaryOrSelectedSiteId );
+		}
 		return `/home/${ primarySiteSlug }`;
 	}
 
-	return `/stats/${ primarySiteSlug }`;
+	return `/stats/day/${ primarySiteSlug }`;
 }

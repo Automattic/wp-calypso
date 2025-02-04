@@ -15,7 +15,7 @@ class AccountSettingsCloseLink extends Component {
 			<CompactCard href={ href } onClick={ onClick } className="account__settings-close">
 				<div>
 					<p className="account__close-section-title is-warning">
-						{ translate( 'Close your account permanently' ) }
+						{ translate( 'Delete your account permanently' ) }
 					</p>
 					<p className="account__close-section-desc">
 						{ translate( 'Delete all of your sites, and close your account completely.' ) }

@@ -3,14 +3,15 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -30,6 +31,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getFirstCategoryFromTags } from '../categories/use-categories';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
@@ -68,7 +70,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		! isJetpackSelfHosted;
 
 	// Keep me updated
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const keepMeUpdatedPreferenceId = `jetpack-self-hosted-keep-updated-${ userId }`;
 	const keepMeUpdatedPreference = useSelector( ( state ) =>
 		getPreference( state, keepMeUpdatedPreferenceId )
@@ -99,6 +101,12 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const { isPreinstalledPremiumPlugin, preinstalledPremiumPluginProduct } =
 		usePreinstalledPremiumPlugin( plugin.slug );
 
+	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
+	// therefore we should prevent users from installing these standalone plugin equivalents.
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
+		plugin.slug
+	);
+
 	const productsList = useSelector( getProductsList );
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
@@ -112,6 +120,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		buttonText = translate( 'Upgrade your plan' );
 	} else if ( shouldUpgrade ) {
 		buttonText = translate( 'Upgrade and activate' );
+	} else if ( atomicSiteHasEquivalentFeatureToPlugin ) {
+		buttonText = translate( 'Included with your plan' );
 	}
 
 	return (
@@ -145,7 +155,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
-				showCloseIcon={ true }
+				showCloseIcon
 			>
 				<EligibilityWarnings
 					currentContext="plugin-details"
@@ -197,7 +207,10 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					} );
 				} }
 				disabled={
-					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
+					( isJetpackSelfHosted && isMarketplaceProduct ) ||
+					isSiteConnected === false ||
+					atomicSiteHasEquivalentFeatureToPlugin ||
+					disabled
 				}
 			>
 				{ buttonText }
@@ -235,6 +248,8 @@ function onClickInstallPlugin( {
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
+	const tags = Object.keys( plugin.tags );
+
 	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
@@ -252,6 +267,8 @@ function onClickInstallPlugin( {
 			blog_id: selectedSite?.ID,
 			marketplace_product: isMarketplaceProduct,
 			needs_plan_upgrade: upgradeAndInstall,
+			tags: tags.join( ',' ),
+			category: getFirstCategoryFromTags( tags ),
 		} )
 	);
 
@@ -280,12 +297,12 @@ function onClickInstallPlugin( {
 
 	if ( isPreinstalledPremiumPlugin ) {
 		const checkoutUrl = `/checkout/${ selectedSite.slug }/${ preinstalledPremiumPluginProduct }`;
-		const installUrl = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+		const installUrl = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(

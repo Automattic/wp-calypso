@@ -1,0 +1,93 @@
+@import "@automattic/onboarding/styles/variables";
+
+.hundred-year-plan-setup__diy-or-difm {
+	.step-container__header {
+		margin-top: 60px;
+
+		@include break-large {
+			margin-top: 0;	
+		}
+	}
+
+	.hundred-year-plan__benefits {
+		margin: 0 0.5rem 2.5rem 0.5rem;
+		list-style-type: none;
+
+		li {
+			color: var(--studio-gray-60);
+			margin-bottom: 8px;
+			display: flex;
+		}
+
+		svg {
+			position: relative;
+			padding: 5px !important;
+			margin-right: 8px !important;
+			background-color: var(--studio-gray-5);
+			border-radius: 100%;
+			min-width: 18px;
+		}
+	}
+
+	.buttons-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		.components-button {
+			margin-bottom: 1rem;
+
+			&.is-primary {
+				padding-left: 1.5rem;
+				padding-right: 1.5rem;
+				background-color: var(--studio-gray-100);
+
+				&:hover {
+					background-color: var(--studio-gray-70);
+				}
+			}
+
+			&.is-link {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+}
+
+.calendly-overlay {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 1rem;
+
+	// match Calendly breakpoints
+	@media (max-width: 682px) {
+		padding: 0;
+	}
+	@media (max-width: 649px) {
+		padding: 4rem 0 0 0;
+	}
+
+	.calendly-popup {
+		height: 100%;
+
+	}
+	.calendly-popup-content {
+		height: 100%;
+	}
+	.calendly-popup-close {
+		position: absolute;
+		top: 1.5rem;
+		right: 2rem;
+		width: 19px;
+		height: 19px;
+		cursor: pointer;
+		background: url(calypso/assets/images/icons/close-icon.svg) no-repeat;
+		background-size: contain;
+	}
+}
+

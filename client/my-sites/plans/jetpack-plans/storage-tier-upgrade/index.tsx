@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPurchaseURLCallback } from '../get-purchase-url-callback';
@@ -21,12 +21,12 @@ export const StorageTierUpgrade: React.FC< Props > = ( {
 	siteSlug: siteSlugProp,
 	locale,
 } ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) );
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlugState = useSelector( getSelectedSiteSlug );
 	const siteSlug = siteSlugProp || siteSlugState || '';
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
-	const storageUpgrades = useStorageUpgradesToDisplay( siteId as number, duration );
+	const storageUpgrades = useStorageUpgradesToDisplay( siteId as number );
 
 	const noop = () => {
 		// Do nothing

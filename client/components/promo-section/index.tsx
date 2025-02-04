@@ -5,7 +5,7 @@ import type { Props as PromoCardCtaProps } from './promo-card/cta';
 import type { TranslateResult } from 'i18n-calypso';
 import type { FunctionComponent } from 'react';
 
-interface PromoSectionCardProps extends PromoCardProps {
+export interface PromoSectionCardProps extends PromoCardProps {
 	body: string | TranslateResult;
 	actions?: PromoCardCtaProps;
 }
@@ -25,6 +25,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	body,
 	badge,
 	actions,
+	variation,
 } ) => {
 	const cta = actions?.cta;
 	const learnMoreLink = actions?.learnMoreLink;
@@ -45,6 +46,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 			image={ image }
 			badge={ badge }
 			icon={ icon }
+			variation={ variation }
 		>
 			<p>{ body }</p>
 			{ ctaComponent }
@@ -55,7 +57,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 const PromoSection: FunctionComponent< Props > = ( { header, promos } ) => {
 	return (
 		<div className="promo-section">
-			{ header && <PromoSectionCard isPrimary={ true } { ...header } /> }
+			{ header && <PromoSectionCard isPrimary { ...header } /> }
 			<div className="promo-section__promos">
 				{ promos.map( ( promo, i ) => (
 					<PromoSectionCard { ...promo } key={ i } />

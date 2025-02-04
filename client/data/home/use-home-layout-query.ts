@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { useHomeLayoutQueryParams, HomeLayoutQueryParams } from './use-home-layout-query-params';
 
@@ -12,7 +12,9 @@ const useHomeLayoutQuery = (
 ): UseQueryResult => {
 	const query = useHomeLayoutQueryParams();
 
-	return useQuery( getCacheKey( siteId ), () => fetchHomeLayout( siteId, query ), {
+	return useQuery( {
+		queryKey: getCacheKey( siteId ),
+		queryFn: () => fetchHomeLayout( siteId, query ),
 		enabled: !! siteId && enabled,
 
 		// The `/layout` endpoint can return a random view. Disable implicit refetches

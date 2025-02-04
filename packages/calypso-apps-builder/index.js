@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
-import { exec } from 'child_process';
-import { EventEmitter } from 'events';
+import { exec, spawnSync } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+import { writeFile, copyFile } from 'node:fs/promises';
+import path from 'node:path';
 import chokidar from 'chokidar';
 import runAll from 'npm-run-all';
 import treeKill from 'tree-kill';
@@ -11,7 +13,7 @@ import { hideBin } from 'yargs/helpers';
 // When we run a build which has more than 10 build tasks in parallel (like ETK),
 // Node shows a warning. We just need to increase the number of allowed listeners
 // to handle larger numbers of parallel tasks.
-EventEmitter.setMaxListeners( 20 );
+EventEmitter.setMaxListeners( 30 );
 
 // Default NODE_ENV is development unless manually set to production.
 if ( process.env.NODE_ENV == null ) {
@@ -40,11 +42,14 @@ const VERBOSE = argv.verbose;
 try {
 	await runBuilder( argv );
 } catch ( e ) {
-	const { pid } = process;
-	if ( VERBOSE ) {
-		console.log( `Removing children of PID: ${ pid }` );
+	// treeKill doesn't really work in CI and also isn't necessary.
+	if ( process.env.IS_CI !== 'true' ) {
+		const { pid } = process;
+		if ( VERBOSE ) {
+			console.log( `Removing children of PID: ${ pid }` );
+		}
+		treeKill( pid );
 	}
-	treeKill( pid );
 	showTips( e.tasks );
 	console.error( e.message );
 }
@@ -66,17 +71,29 @@ async function runBuilder( args ) {
 	await runAll( [ 'clean' ], runOpts );
 
 	console.log( 'Starting webpack...' );
-	return Promise.all( [
+	await Promise.all( [
 		runAll( [ `build:*${ watch ? ' --watch' : '' }` ], runOpts ).then( () => {
 			console.log( 'Build completed!' );
-			if ( ! watch && sync ) {
-				// In non-watch + sync mode, we sync only once after the build has finished.
-				setupRemoteSync( localPath, remotePath );
-			}
+			const translate = runAll( 'translate', runOpts ).catch( () => {} );
+			translate.then( () => {
+				if ( ! watch && sync ) {
+					// In non-watch + sync mode, we sync only once after the build has finished.
+					setupRemoteSync( localPath, remotePath );
+				}
+			} );
 		} ),
 		// In watch + sync mode, we start watching to sync while the webpack build is happening.
 		watch && sync && setupRemoteSync( localPath, remotePath, true ),
 	] );
+
+	// Create build_meta.json and copy the README as needed for the production
+	// artifact. We do it here rather than in webpack, because several apps use
+	// multiple simultaneous webpack processes. As a result, some apps don't have
+	// one true config we could add this to. Thankfully, every calypso app does
+	// use this builder script, making it a good place to put it.
+	if ( ! watch ) {
+		await copyMetaFiles( localPath );
+	}
 }
 
 /**
@@ -86,6 +103,8 @@ async function runBuilder( args ) {
  * mode after a full sync. Is otherwise pending until the user kills the process.
  */
 function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
+	const remoteHost = process.env.WPCOM_SANDBOX || 'wpcom-sandbox';
+
 	return new Promise( ( resolve, reject ) => {
 		let rsync = null;
 		const debouncedSync = debouncer( () => {
@@ -97,7 +116,7 @@ function setupRemoteSync( localPath, remotePath, shouldWatch = false ) {
 				rsync.kill( 'SIGINT' );
 			}
 			rsync = exec(
-				`rsync -ahz --exclude=".*" ${ localPath } wpcom-sandbox:${ remotePath }`,
+				`rsync -ahz --exclude=".*" ${ localPath } ${ remoteHost }:${ remotePath }`,
 				( err ) => {
 					rsync = null;
 					// err.signal is null on macOS, so use error code 20 in that case.
@@ -149,10 +168,6 @@ function showTips( tasks ) {
 		return;
 	}
 
-	const tips = {
-		'build:newspack-blocks': 'You may need to run `composer install` from wp-calypso root.',
-	};
-
 	const numFailed = tasks.reduce( ( total, { code } ) => total + ( code ? 1 : 0 ), 0 );
 	if ( numFailed === tasks.length ) {
 		console.log(
@@ -160,11 +175,35 @@ function showTips( tasks ) {
 		);
 		return;
 	}
+}
 
-	// If only individual tasks failed, print individual tips.
-	tasks.forEach( ( { code, name } ) => {
-		if ( code !== 0 && tips[ name ] ) {
-			console.log( tips[ name ] );
-		}
-	} );
+function git( cmd ) {
+	return spawnSync( 'git', cmd.split( ' ' ), {
+		encoding: 'utf8',
+	} ).stdout.replace( '\n', '' );
+}
+
+async function copyMetaFiles( archiveDir ) {
+	const buildNumber = process.env.build_number;
+
+	// Use commit hash from the environment if available. In TeamCity, that reflects
+	// the GitHub data -- the local data may be different.
+	const commitHash = process.env.commit_sha ?? git( 'rev-parse HEAD' );
+	// Calypso repo short sha is currently at 11 characters.
+	const cacheBuster = commitHash.slice( 0, 11 );
+
+	const buildMeta = {
+		build_number: buildNumber ?? 'dev',
+		cache_buster: cacheBuster,
+		commit_hash: commitHash,
+		commit_url: `https://github.com/Automattic/wp-calypso/commit/${ commitHash }`,
+	};
+
+	await writeFile(
+		path.join( archiveDir, 'build_meta.json' ),
+		JSON.stringify( buildMeta, null, 2 )
+	);
+
+	// Copy README.md to the root of the archive.
+	await copyFile( path.join( process.cwd(), 'README.md' ), path.join( archiveDir, 'README.md' ) );
 }

@@ -13,7 +13,6 @@ import { combineReducers, keyedReducer } from 'calypso/state/utils';
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack connection updates
- *
  * @param  {Array}  state  Current state
  * @param  {Object} action action
  * @returns {Array}         Updated state
@@ -30,7 +29,6 @@ export const items = keyedReducer( 'siteId', ( state = {}, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack connection requests
- *
  * @param {Object} state - current state
  * @param {Object} action - action
  * @returns {Object} updated state
@@ -50,7 +48,6 @@ export const requests = keyedReducer( 'siteId', ( state = false, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack user connection data
- *
  * @param  {Array}  state  Current state
  * @param  {Object} action action
  * @returns {Array}         Updated state
@@ -67,7 +64,6 @@ export const dataItems = keyedReducer( 'siteId', ( state = {}, action ) => {
 /**
  * `Reducer` function which handles request/response actions
  * concerning Jetpack user connection data requests
- *
  * @param {Object} state - current state
  * @param {Object} action - action
  * @returns {Object} updated state

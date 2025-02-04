@@ -54,7 +54,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestCountryStates( 'us' )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: COUNTRY_STATES_REQUEST,
 				countryCode: 'us',
 			} );
@@ -62,7 +62,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch country states receive action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: COUNTRY_STATES_RECEIVE,
 					countryCode: 'us',
 					countryStates: [
@@ -75,7 +75,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch country states request success action when request completes', () => {
 			return requestCountryStates( 'us' )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: COUNTRY_STATES_REQUEST_SUCCESS,
 					countryCode: 'us',
 				} );
@@ -84,7 +84,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestCountryStates( 'ca' )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: COUNTRY_STATES_REQUEST_FAILURE,
 					countryCode: 'ca',
 					error: expect.objectContaining( { message: 'A server error occurred' } ),

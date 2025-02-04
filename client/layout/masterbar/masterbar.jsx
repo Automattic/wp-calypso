@@ -1,10 +1,10 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
 
 const Masterbar = ( { children, className } ) => (
-	<header id="header" className={ classNames( 'masterbar', className ) }>
+	<header id="header" className={ clsx( 'masterbar', className ) }>
 		{ children }
 	</header>
 );

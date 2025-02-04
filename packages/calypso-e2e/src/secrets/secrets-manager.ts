@@ -11,19 +11,25 @@ export const TEST_ACCOUNT_NAMES = [
 	'simpleSitePersonalPlanUser',
 	'gutenbergSimpleSiteUser',
 	'gutenbergSimpleSiteEdgeUser',
+	'gutenbergSimpleSiteBlockUpgradeUser',
 	'gutenbergAtomicSiteUser',
 	'gutenbergAtomicSiteEdgeUser',
+	'gutenbergAtomicSiteEdgeNightliesUser',
 	'coBlocksSimpleSiteEdgeUser',
 	'coBlocksAtomicSiteEdgeUser',
 	'siteEditorSimpleSiteUser',
 	'siteEditorSimpleSiteEdgeUser',
+	'siteEditorAtomicSiteUser',
+	'siteEditorAtomicSiteEdgeUser',
 	'martechTosUser',
 	'calypsoPreReleaseUser',
 	'i18nUser',
 	'p2User',
 	'totpUser',
 	'smsUser',
-	'jetpackUser',
+	'jetpackRemoteSiteUser',
+	'jetpackStagingUser',
+	'jetpackStagingFseUser',
 	'jetpackUserPREMIUM',
 	'jetpackUserJN',
 	'desktopAppUser',
@@ -31,6 +37,14 @@ export const TEST_ACCOUNT_NAMES = [
 	'notificationsUser',
 	'googleLoginUser',
 	'appleLoginUser',
+	'jetpackAtomicDefaultUser',
+	'jetpackAtomicPhpOldUser',
+	'jetpackAtomicPhpNewUser',
+	'jetpackAtomicEcommPlanUser',
+	'jetpackAtomicPrivateUser',
+	'jetpackAtomicWpBetaUser',
+	'jetpackAtomicWpPreviousUser',
+	'automatticForAgenciesUser',
 ] as const;
 
 /**
@@ -85,6 +99,7 @@ export class SecretsManager {
 				'Failed to initialize the E2E secrets: Could not find and parse the secrets file.\n' +
 					'Have you decrypted the secrets file yet?\n' +
 					'Export the decryption key to E2E_SECRETS_KEY and run "yarn decrypt-secrets".\n' +
+					'Then, please build the package by running "yarn workspace @automattic/calypso-e2e build".\n' +
 					`Original error message: ${ error.message }`
 			);
 		}
@@ -109,7 +124,7 @@ export class SecretsManager {
 							'This also may mean the typings for the secrets are stale and need updating.\n\n' +
 							'Details:\n' +
 							`\tInvalid or missing key: ${ fullKeyPath }\n` +
-							`\tExpected type: ${ typeof reference[ key ] }`
+							`\tExpected type: ${ typeof reference[ key ] }, got ${ typeof target[ key ] }`
 					);
 				}
 
@@ -133,16 +148,31 @@ export class SecretsManager {
 			password: 'FAKE_VALUE',
 		};
 
+		const fakeFullAccount = {
+			...fakeAccount,
+			userID: 0,
+			email: 'FAKE_VALUE',
+			testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+		};
+
 		return {
 			storeSandboxCookieValue: 'FAKE_VALUE',
 			testCouponCode: 'FAKE_VALUE',
 			wpccAuthPath: 'FAKE_VALUE',
+			wooSignupPath: 'FAKE_VALUE',
+			wooLoginPath: 'FAKE_VALUE',
 			calypsoOauthApplication: {
 				client_id: 'FAKE_VALUE',
 				client_secret: 'FAKE_VALUE',
 			},
 			martechTosUploadCredentials: {
 				bearer_token: 'FAKE_VALUE',
+			},
+			socialAccounts: {
+				tumblr: {
+					username: 'FAKE_VALUE',
+					password: 'FAKE_VALUE',
+				},
 			},
 			mailosaur: {
 				apiKey: 'FAKE_VALUE',
@@ -151,31 +181,30 @@ export class SecretsManager {
 				domainsInboxId: 'FAKE_VALUE',
 				defaultUserInboxId: 'FAKE_VALUE',
 				totpUserInboxId: 'FAKE_VALUE',
+				manualTesting: 'FAKE_VALUE',
 			},
 			testAccounts: {
 				defaultUser: {
-					...fakeAccount,
-					userID: 0,
-					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
-					email: 'FAKE_VALUE',
+					...fakeFullAccount,
 				},
 				atomicUser: {
-					...fakeAccount,
-					userID: 0,
-					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
-					email: 'FAKE_VALUE',
+					...fakeFullAccount,
 				},
 				eCommerceUser: { ...fakeAccount },
 				simpleSiteFreePlanUser: { ...fakeAccount },
 				simpleSitePersonalPlanUser: { ...fakeAccount },
 				gutenbergSimpleSiteUser: { ...fakeAccount },
 				gutenbergSimpleSiteEdgeUser: { ...fakeAccount },
+				gutenbergSimpleSiteBlockUpgradeUser: { ...fakeFullAccount },
 				gutenbergAtomicSiteUser: { ...fakeAccount },
 				gutenbergAtomicSiteEdgeUser: { ...fakeAccount },
+				gutenbergAtomicSiteEdgeNightliesUser: { ...fakeAccount },
 				coBlocksSimpleSiteEdgeUser: { ...fakeAccount },
 				coBlocksAtomicSiteEdgeUser: { ...fakeAccount },
 				siteEditorSimpleSiteUser: { ...fakeAccount },
 				siteEditorSimpleSiteEdgeUser: { ...fakeAccount },
+				siteEditorAtomicSiteUser: { ...fakeAccount },
+				siteEditorAtomicSiteEdgeUser: { ...fakeAccount },
 				martechTosUser: { ...fakeAccount },
 				calypsoPreReleaseUser: { ...fakeAccount },
 				i18nUser: { ...fakeAccount },
@@ -184,7 +213,21 @@ export class SecretsManager {
 				totpUser: { ...fakeAccount, totpKey: 'FAKE_VALUE' },
 				// The following user needs smsNumber
 				smsUser: { ...fakeAccount, smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' } },
-				jetpackUser: { ...fakeAccount },
+				jetpackRemoteSiteUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE', remotePassword: 'FAKE_VALUE' } },
+				},
+				jetpackStagingUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+				},
+				jetpackStagingFseUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+				},
 				jetpackUserPREMIUM: { ...fakeAccount },
 				jetpackUserJN: { ...fakeAccount },
 				desktopAppUser: { ...fakeAccount },
@@ -197,6 +240,30 @@ export class SecretsManager {
 				},
 				appleLoginUser: {
 					...fakeAccount,
+				},
+				jetpackAtomicDefaultUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPhpOldUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPhpNewUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicEcommPlanUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicPrivateUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicWpBetaUser: {
+					...fakeFullAccount,
+				},
+				jetpackAtomicWpPreviousUser: {
+					...fakeFullAccount,
+				},
+				automatticForAgenciesUser: {
+					...fakeFullAccount,
 				},
 			},
 			otherTestSites: {

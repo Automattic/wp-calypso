@@ -1,9 +1,13 @@
+import page from '@automattic/calypso-router';
 import { ResponsiveToolbarGroup } from '@automattic/components';
-import page from 'page';
-import { useDispatch } from 'react-redux';
+import clsx from 'clsx';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
+
+import './style.scss';
 
 export type Category = {
 	menu: string;
@@ -14,6 +18,7 @@ export type Category = {
 	description?: string;
 	icon?: string;
 	separator?: boolean;
+	showOnlyActive?: boolean;
 };
 
 export type Plugin = {
@@ -26,6 +31,7 @@ export type Plugin = {
 const Categories = ( { selected, noSelection }: { selected?: string; noSelection?: boolean } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	// We hide these special categories from the category selector
 	const displayCategories = ALLOWED_CATEGORIES.filter(
@@ -51,14 +57,19 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 
 	return (
 		<ResponsiveToolbarGroup
-			className="categories__menu"
+			className={ clsx( 'categories__menu', {
+				'is-logged-in': isLoggedIn,
+			} ) }
 			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
-			forceSwipe={ 'undefined' === typeof window }
+			forceSwipe={ isLoggedIn ? false : 'undefined' === typeof window }
+			swipeEnabled={ ! isLoggedIn }
 		>
 			{ categories.map( ( category ) => (
-				<span key={ `category-${ category.slug }` }>{ category.menu }</span>
+				<span key={ `category-${ category.slug }` } title={ category.menu }>
+					{ category.menu }
+				</span>
 			) ) }
 		</ResponsiveToolbarGroup>
 	);

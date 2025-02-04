@@ -1,12 +1,17 @@
 import { translate } from 'i18n-calypso';
 import { isEmpty, mapValues } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
-import { USER_SETTINGS_REQUEST, USER_SETTINGS_SAVE } from 'calypso/state/action-types';
+import {
+	USER_SETTINGS_REQUEST,
+	USER_SETTINGS_SAVE,
+	USER_SETTINGS_SAVE_SUCCESS,
+} from 'calypso/state/action-types';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { dispatchProfileCompleteNotice } from 'calypso/state/reader/onboarding/handlers';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import {
 	clearUnsavedUserSettings,
@@ -21,6 +26,14 @@ import {
  * that the REST API returns already HTML-encoded
  */
 const PROPERTIES_TO_DECODE = new Set( [ 'display_name', 'description', 'user_URL' ] );
+
+/*
+ * Properties that should not trigger a notification when changed
+ * ex. advertising_targeting_opt_out should fail quietly in the event they have an expired 2fa token
+ * and a success notification is not standard when accepting or denying cookies
+ */
+const PROPERTIES_TO_SUPRESS_NOTIFICATIONS = new Set( [ 'advertising_targeting_opt_out' ] );
+
 export const fromApi = ( apiResponse ) =>
 	mapValues( apiResponse, ( value, name ) =>
 		PROPERTIES_TO_DECODE.has( name ) ? decodeEntities( value ) : value
@@ -90,6 +103,16 @@ export function userSettingsSaveFailure( { settingsOverride }, error ) {
 		];
 	}
 
+	// If every property in settingsOverride is to be suppressed, don't show a notification
+	if (
+		settingsOverride &&
+		Object.keys( settingsOverride || {} ).every( ( key ) =>
+			PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
+		)
+	) {
+		return;
+	}
+
 	return [
 		errorNotice( error.message || translate( 'There was a problem saving your changes.' ), {
 			id: 'save-user-settings',
@@ -118,6 +141,16 @@ export const userSettingsSaveSuccess =
 			return;
 		}
 
+		// If every property in settingsOverride is to be suppressed, don't show a notification
+		if (
+			settingsOverride &&
+			Object.keys( settingsOverride ).every( ( key ) =>
+				PROPERTIES_TO_SUPRESS_NOTIFICATIONS.has( key )
+			)
+		) {
+			return;
+		}
+
 		dispatch(
 			successNotice( translate( 'Settings saved successfully!' ), {
 				id: 'save-user-settings',
@@ -142,4 +175,5 @@ registerHandlers( 'state/data-layer/wpcom/me/settings/index.js', {
 			fromApi,
 		} ),
 	],
+	[ USER_SETTINGS_SAVE_SUCCESS ]: [ dispatchProfileCompleteNotice ],
 } );

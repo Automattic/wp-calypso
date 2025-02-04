@@ -1,5 +1,15 @@
 #### Unreleased
 
+#### v8.0.0 (2023-09-14)
+
+- Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 46.5.1, which
+  may result in more rule violations which were not previously detected.
+- Breaking: Minimum node version is now 14.21.3 (formerly 14.0.0).
+- Breaking: Minimum eslint version is now 8.48.0 (formerly >=8.6.0).
+- Enhancement: Added rule `wpcalypso/i18n-translate-identifier`.
+- Enhancement: Added rule `wpcalypso/i18n-unlocalized-url`.
+- Fix: Fixed spread operator error.
+
 #### v7.0.0 (2022-01-24)
 
 - Breaking: For JSDoc types like `{object}`, prefer capitalized variants to match

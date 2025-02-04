@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 export const modeType = {
 	SUGGESTED: 'suggested',
 	ADVANCED: 'advanced',
+	DC: 'dc',
 	DONE: 'done',
 	OWNERSHIP_VERIFICATION: 'ownership_verification',
 	TRANSFER: 'transfer',
@@ -33,6 +34,8 @@ export const stepSlug = {
 	ADVANCED_UPDATE: 'advanced_update',
 	ADVANCED_VERIFYING: 'advanced_verifying',
 	ADVANCED_CONNECTED: 'advanced_connected',
+	DC_START: 'dc_start',
+	DC_RETURN: 'dc_return',
 	OWNERSHIP_VERIFICATION_LOGIN: 'ownership_verification_login',
 	OWNERSHIP_VERIFICATION_AUTH_CODE: 'ownership_verification_auth_code',
 	TRANSFER_START: 'transfer_start',
@@ -55,6 +58,7 @@ export const defaultDomainSetupInfo = {
 	data: {
 		default_ip_addresses: [ '192.0.78.24', '192.0.78.25' ],
 		wpcom_name_servers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
+		is_subdomain: false,
 	},
 } as const;
 
@@ -62,6 +66,16 @@ export const domainLockStatusType = {
 	LOCKED: 'locked',
 	UNLOCKED: 'unlocked',
 	UNKNOWN: 'unknown',
+} as const;
+
+export const domainMappingInstructionsMode = {
+	[ modeType.SUGGESTED ]: stepSlug.SUGGESTED_UPDATE,
+	[ modeType.ADVANCED ]: stepSlug.ADVANCED_UPDATE,
+} as const;
+
+export const subdomainMappingInstructionsMode = {
+	[ modeType.SUGGESTED ]: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE,
+	[ modeType.ADVANCED ]: stepSlug.SUBDOMAIN_ADVANCED_UPDATE,
 } as const;
 
 export const stepsHeading = {

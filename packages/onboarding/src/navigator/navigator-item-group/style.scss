@@ -1,0 +1,28 @@
+@import "@automattic/typography/styles/fonts";
+
+.navigator-item-group {
+	flex-shrink: 0;
+
+	.components-item-group > div[role="listitem"] {
+		display: flex;
+	}
+
+	.navigator-item {
+		flex-grow: 1;
+	}
+
+	&:nth-child(1 of &):nth-last-child(1 of &) {
+		.navigator-item-group__title {
+			display: none;
+		}
+	}
+}
+
+.navigator-item-group__title {
+	color: var(--color-neutral-100);
+	font-size: $font-body-small;
+	font-weight: 500;
+	letter-spacing: -0.15px;
+	line-height: 1.4;
+	margin-bottom: 8px;
+}

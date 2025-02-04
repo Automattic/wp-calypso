@@ -1,7 +1,7 @@
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { Button, Gridicon, SelectDropdown } from '@automattic/components';
+import clsx from 'clsx';
+import { localize, translate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import BulkSelect from 'calypso/components/bulk-select';
 import ButtonGroup from 'calypso/components/button-group';
 import SectionHeader from 'calypso/components/section-header';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -109,7 +108,6 @@ export class PluginsListHeader extends PureComponent {
 		const {
 			hasManagePluginsFeature,
 			isWpComAtomic,
-			translate,
 			siteId,
 			isJetpackCloud,
 			isBulkManagementActive,
@@ -154,6 +152,7 @@ export class PluginsListHeader extends PureComponent {
 					compact
 					disabled={ ! this.hasSelectedPlugins() }
 					onClick={ this.props.updatePluginNotice }
+					id="plugin-list-header__buttons-update-button"
 				>
 					{ translate( 'Update Plugins' ) }
 				</Button>
@@ -198,6 +197,7 @@ export class PluginsListHeader extends PureComponent {
 					disabled={ ! this.hasSelectedPlugins() }
 					compact
 					onClick={ this.props.autoupdateEnablePluginNotice }
+					id="plugin-list-header__buttons-autoupdate-button"
 				>
 					{ translate( 'Autoupdate' ) }
 				</Button>
@@ -279,7 +279,7 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionDropdown() {
-		const { translate, selected, isBulkManagementActive } = this.props;
+		const { selected, isBulkManagementActive } = this.props;
 		if ( ! isBulkManagementActive ) {
 			return null;
 		}
@@ -349,8 +349,8 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	render() {
-		const { label, selected, plugins, isBulkManagementActive, translate } = this.props;
-		const sectionClasses = classNames( 'plugin-list-header plugin-list-header-new', {
+		const { label, selected, plugins, isBulkManagementActive } = this.props;
+		const sectionClasses = clsx( 'plugin-list-header plugin-list-header-new', {
 			'is-bulk-editing': isBulkManagementActive,
 			'is-action-bar-visible': this.state.actionBarVisible,
 		} );

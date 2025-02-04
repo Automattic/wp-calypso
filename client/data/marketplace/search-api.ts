@@ -11,7 +11,6 @@ const SORT_QUERY_MAP = new Map( [
 ] );
 /**
  * Map sort values to ones compatible with the API.
- *
  * @param {string} sort - Sort value.
  * @returns {string} Mapped sort value.
  */
@@ -30,7 +29,6 @@ function mapSortToApiValue( sort: string ) {
 
 /**
  * Generate the query string for an API request
- *
  * @returns {string} The generated query string.
  */
 function generateApiQueryString( {
@@ -41,6 +39,7 @@ function generateApiQueryString( {
 	pageHandle,
 	pageSize,
 	locale,
+	slugs,
 }: SearchParams ) {
 	const sort = 'score_default';
 
@@ -86,7 +85,11 @@ function generateApiQueryString( {
 				params.sort = 'plugin_modified';
 				break;
 			default:
-				params.filter = getFilterByCategory( category );
+				if ( Array.isArray( slugs ) && slugs.length ) {
+					params.filter = getFilterbySlugs( slugs || [] );
+				} else {
+					params.filter = getFilterByCategory( category );
+				}
 				params.sort = 'active_installs';
 		}
 	}
@@ -99,7 +102,6 @@ const apiVersion = '1.3';
 
 /**
  * Perform a search.
- *
  * @param {Object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */
@@ -159,6 +161,18 @@ function getFilterbySlug( slug: string ): {
 	};
 }
 
+function getFilterbySlugs( slugs: string[] ): {
+	bool: {
+		should: { terms: object }[];
+	};
+} {
+	return {
+		bool: {
+			should: [ { terms: { slug: slugs } } ],
+		},
+	};
+}
+
 function getFilterByCategory( category: string ): {
 	bool: object;
 } {
@@ -167,12 +181,14 @@ function getFilterByCategory( category: string ): {
 	return {
 		bool: {
 			should: [
+				// matching category name from titles
+				{ match: { 'plugin.title.en': category } },
 				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
-				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags || [ category ] } },
 				// matching wc.com categories and tags
 				{ term: { 'taxonomy.wpcom_marketplace_categories.slug': category } },
-				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags } },
+				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags || [ category ] } },
 			],
 		},
 	};

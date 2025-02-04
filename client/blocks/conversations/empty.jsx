@@ -1,9 +1,8 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import EmptyContent from 'calypso/components/empty-content';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { withReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
@@ -37,12 +36,11 @@ class ConversationsEmptyContent extends Component {
 				title={ this.props.translate( 'Welcome to Conversations' ) }
 				line={ this.props.translate(
 					"When WordPress posts spark lively conversations, they'll appear here. " +
-						'To get started, like or comment on some posts.'
+						'To get started, follow or comment on some posts.'
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ charactersImage }
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 	}
@@ -50,5 +48,5 @@ class ConversationsEmptyContent extends Component {
 }
 
 export default connect( null, { recordReaderTracksEvent } )(
-	withPerformanceTrackerStop( localize( ConversationsEmptyContent ) )
+	withReaderPerformanceTrackerStop( localize( ConversationsEmptyContent ) )
 );

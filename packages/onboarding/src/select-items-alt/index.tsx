@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
@@ -23,7 +23,7 @@ interface Props< T > {
 
 function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ) {
 	return (
-		<div className={ classnames( 'select-items-alt', className ) }>
+		<div className={ clsx( 'select-items-alt', className ) }>
 			{ items.map(
 				( { disable, disableText, show, key, description, actionText, value } ) =>
 					show && (
@@ -43,7 +43,7 @@ function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ) {
 								{ disable && (
 									<>
 										&nbsp;
-										<Tooltip text={ disableText } position="bottom center">
+										<Tooltip text={ disableText as string } position="bottom center">
 											<div className="select-items-alt__item-disabled-info">
 												<Icon icon={ info } size={ 20 } />
 											</div>

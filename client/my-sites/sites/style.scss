@@ -17,10 +17,10 @@
 	font-size: $font-title-small;
 	font-weight: 400;
 	line-height: inherit;
-	margin-top: 16px;
+	margin-top: 55px;
 	margin-bottom: 24px;
 
-	strong {
+	.strong--capitalize {
 		text-transform: capitalize;
 	}
 }

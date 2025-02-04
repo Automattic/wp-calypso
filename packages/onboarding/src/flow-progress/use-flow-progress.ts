@@ -1,34 +1,21 @@
-import {
-	ECOMMERCE_FLOW,
-	LINK_IN_BIO_FLOW,
-	LINK_IN_BIO_TLD_FLOW,
-	FREE_FLOW,
-	COPY_SITE_FLOW,
-} from '../utils/flows';
+import { ECOMMERCE_FLOW, LINK_IN_BIO_TLD_FLOW, COPY_SITE_FLOW } from '../utils/flows';
 
 /* eslint-disable no-restricted-imports */
 interface FlowProgress {
 	stepName?: string;
 	flowName?: string;
+	variantSlug?: string;
 }
 
 const flows: Record< string, { [ step: string ]: number } > = {
 	newsletter: {
 		intro: 0,
 		user: 0,
-		newsletterSetup: 1,
+		newsletterSetup: 0,
+		newsletterGoals: 1,
 		domains: 2,
 		'plans-newsletter': 3,
 		subscribers: 4,
-		launchpad: 5,
-	},
-	[ LINK_IN_BIO_FLOW ]: {
-		intro: 0,
-		user: 0,
-		patterns: 1,
-		linkInBioSetup: 2,
-		domains: 3,
-		plans: 4,
 		launchpad: 5,
 	},
 	[ LINK_IN_BIO_TLD_FLOW ]: {
@@ -39,36 +26,12 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 4,
 		launchpad: 5,
 	},
-	[ FREE_FLOW ]: {
-		intro: 0,
-		user: 0,
-		freeSetup: 1,
-		designSetup: 2,
-		launchpad: 3,
-	},
-	videopress: {
-		intro: 0,
-		videomakerSetup: 1,
-		user: 2,
-		options: 3,
-		chooseADomain: 4,
-		chooseAPlan: 5,
-		processing: 6,
-		launchpad: 7,
-	},
-	sensei: {
-		senseiSetup: 1,
-		senseiDomain: 2,
-		senseiPlan: 3,
-		senseiPurpose: 4,
-		senseiLaunch: 5,
-	},
 	[ ECOMMERCE_FLOW ]: {
 		intro: 0,
 		storeProfiler: 1,
 		designCarousel: 2,
 		domains: 3,
-		siteCreationStep: 4,
+		createSite: 4,
 		processing: 4,
 		waitForAtomic: 4,
 		checkPlan: 4,
@@ -76,19 +39,19 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	},
 	[ COPY_SITE_FLOW ]: {
 		domains: 0,
-		'site-creation-step': 1,
+		'create-site': 1,
 		processing: 2,
 		'automated-copy': 3,
 		'processing-copy': 3,
 	},
 };
 
-export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {
+export const useFlowProgress = ( { stepName, flowName, variantSlug }: FlowProgress = {} ) => {
 	if ( ! stepName || ! flowName ) {
 		return;
 	}
 
-	const flow = flows[ flowName ];
+	const flow = flows[ variantSlug ?? flowName ];
 
 	return (
 		flow && {

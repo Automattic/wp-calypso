@@ -1,5 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -7,16 +7,12 @@ import { connect } from 'react-redux';
 import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
+import './earnings.scss';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
 		earnings: PropTypes.object,
-		showTotals: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		showTotals: true,
 	};
 
 	state = {
@@ -119,7 +115,7 @@ class WordAdsEarnings extends Component {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
 			earnings && earnings.total_amount_owed
-				? numberFormat( earnings.total_amount_owed, 2 )
+				? numberFormat( earnings.total_amount_owed, { decimals: 2 } )
 				: '0.00';
 		const notice = translate(
 			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
@@ -202,19 +198,25 @@ class WordAdsEarnings extends Component {
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total earnings', { context: 'Sum of earnings' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( total, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( total, { decimals: 2 } ) }
+					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Total paid', { context: 'Sum of earnings that have been distributed' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( paid, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( paid, { decimals: 2 } ) }
+					</span>
 				</li>
 				<li className="ads__earnings-breakdown-item">
 					<span className="ads__earnings-breakdown-label">
 						{ translate( 'Outstanding amount', { context: 'Sum earnings left unpaid' } ) }
 					</span>
-					<span className="ads__earnings-breakdown-value">${ numberFormat( owed, 2 ) }</span>
+					<span className="ads__earnings-breakdown-value">
+						${ numberFormat( owed, { decimals: 2 } ) }
+					</span>
 				</li>
 			</ul>
 		);
@@ -224,7 +226,7 @@ class WordAdsEarnings extends Component {
 		const { numberFormat, translate } = this.props;
 		const rows = [];
 		const infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline';
-		const classes = classNames( 'earnings_history', {
+		const classes = clsx( 'earnings_history', {
 			'is-showing-info': this.getInfoToggle( type ),
 		} );
 
@@ -234,7 +236,7 @@ class WordAdsEarnings extends Component {
 					<tr key={ type + '-' + period }>
 						<td className="ads__earnings-history-value">{ this.swapYearMonth( period ) }</td>
 						<td className="ads__earnings-history-value">
-							${ numberFormat( earnings[ period ].amount, 2 ) }
+							${ numberFormat( earnings[ period ].amount, { decimals: 2 } ) }
 						</td>
 						<td className="ads__earnings-history-value">
 							{ numberFormat( earnings[ period ].pageviews ) }
@@ -248,78 +250,45 @@ class WordAdsEarnings extends Component {
 		}
 
 		return (
-			<Card className={ classes }>
-				<div className="ads__module-header module-header">
-					<h1 className="ads__module-header-title module-header-title">{ header_text }</h1>
-					<ul className="ads__module-header-actions module-header-actions">
-						<li className="ads__module-header-action module-header-action toggle-info">
-							<button
-								className="ads__module-header-action-link module-header-action-link"
-								aria-label={ translate( 'Show or hide panel information' ) }
-								title={ translate( 'Show or hide panel information' ) }
-								onClick={ this.handleInfoToggle( type ) }
-							>
-								<Gridicon icon={ infoIcon } />
-							</button>
-						</li>
-					</ul>
+			<>
+				<div className="ads__table-header">
+					<h3 className="ads__table-header-title">{ header_text }</h3>
+					<button
+						className="ads__table-header-button"
+						aria-label={ translate( 'Show or hide panel information' ) }
+						title={ translate( 'Show or hide panel information' ) }
+						onClick={ this.handleInfoToggle( type ) }
+					>
+						<Gridicon icon={ infoIcon } />
+					</button>
 				</div>
-				<div className="ads__module-content module-content">
-					{ this.infoNotice() }
-					<table>
-						<thead>
-							<tr>
-								<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
-								<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
-							</tr>
-						</thead>
-						<tbody>{ rows }</tbody>
-					</table>
-				</div>
-			</Card>
+				<Card className={ classes }>
+					<div className="ads__module-content module-content">
+						{ this.infoNotice() }
+						<table>
+							<thead>
+								<tr>
+									<th className="ads__earnings-history-header">{ translate( 'Period' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Earnings' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Ads Served' ) }</th>
+									<th className="ads__earnings-history-header">{ translate( 'Status' ) }</th>
+								</tr>
+							</thead>
+							<tbody>{ rows }</tbody>
+						</table>
+					</div>
+				</Card>
+			</>
 		);
 	}
 
 	render() {
-		const { showTotals, siteId, earnings, translate } = this.props;
-		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline';
-		const classes = classNames( 'earnings_breakdown', {
-			'is-showing-info': this.state.showEarningsNotice,
-		} );
+		const { siteId, earnings, translate } = this.props;
 
 		return (
-			<div>
+			<>
 				<QueryWordadsEarnings siteId={ siteId } />
 
-				{ showTotals && (
-					<Card className={ classes }>
-						<div className="ads__module-header module-header">
-							<h1 className="ads__module-header-title module-header-title">
-								{ translate( 'Totals' ) }
-							</h1>
-							<ul className="ads__module-header-actions module-header-actions">
-								<li className="ads__module-header-action module-header-action toggle-info">
-									{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-									<a
-										href="#"
-										className="ads__module-header-action-link module-header-action-link"
-										aria-label={ translate( 'Show or hide panel information' ) }
-										title={ translate( 'Show or hide panel information' ) }
-										onClick={ this.handleEarningsNoticeToggle }
-									>
-										<Gridicon icon={ infoIcon } />
-									</a>
-								</li>
-							</ul>
-						</div>
-						<div className="ads__module-content module-content">
-							{ this.payoutNotice() }
-							{ this.earningsBreakdown() }
-						</div>
-					</Card>
-				) }
 				{ earnings && this.checkSize( earnings.wordads )
 					? this.earningsTable( earnings.wordads, translate( 'Earnings history' ), 'wordads' )
 					: null }
@@ -337,7 +306,7 @@ class WordAdsEarnings extends Component {
 							'adjustment'
 					  )
 					: null }
-			</div>
+			</>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}

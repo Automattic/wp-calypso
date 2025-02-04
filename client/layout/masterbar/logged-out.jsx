@@ -1,12 +1,16 @@
 import config from '@automattic/calypso-config';
-import { isDefaultLocale, addLocaleToPath } from '@automattic/i18n-utils';
+import { WordPressWordmark } from '@automattic/components';
+import {
+	isDefaultLocale,
+	addLocaleToPath,
+	addLocaleToPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -20,6 +24,7 @@ class MasterbarLoggedOut extends Component {
 		title: PropTypes.string,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
+		isCheckoutFailed: PropTypes.bool,
 
 		// Connected props
 		currentQuery: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ),
@@ -31,6 +36,48 @@ class MasterbarLoggedOut extends Component {
 		sectionName: '',
 		title: '',
 	};
+
+	renderTagsItem() {
+		const { translate } = this.props;
+		const tagsUrl = addLocaleToPathLocaleInFront( '/tags' );
+
+		return (
+			<Item url={ tagsUrl }>
+				{ translate( 'Popular Tags', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~15 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderSearchItem() {
+		const { translate } = this.props;
+		const searchUrl = addLocaleToPathLocaleInFront( '/read/search' );
+
+		return (
+			<Item url={ searchUrl }>
+				{ translate( 'Search', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
+
+	renderDiscoverItem() {
+		const { translate } = this.props;
+		const discoverUrl = addLocaleToPathLocaleInFront( '/discover' );
+
+		return (
+			<Item url={ discoverUrl }>
+				{ translate( 'Discover', {
+					context: 'Toolbar',
+					comment: 'Should be shorter than ~12 chars',
+				} ) }
+			</Item>
+		);
+	}
 
 	renderLoginItem() {
 		const { currentQuery, currentRoute, sectionName, translate, redirectUri } = this.props;
@@ -86,6 +133,13 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		/**
+		 * Hide signup for OAuth flow (it doesn't correctly route the arugments)
+		 */
+		if ( currentQuery?.client_id !== null && currentQuery?.redirect_to != null ) {
+			return null;
+		}
+
+		/**
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
@@ -124,6 +178,13 @@ class MasterbarLoggedOut extends Component {
 			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
+		// Use Reader-specific signup stepper
+		// and add referrer query parameter for tracking
+		if ( sectionName === 'reader' ) {
+			signupUrl += '/reader';
+			signupUrl = addQueryArgs( { ref: 'reader-lp' }, signupUrl );
+		}
+
 		return (
 			<Item url={ signupUrl }>
 				{ translate( 'Sign Up', {
@@ -134,31 +195,56 @@ class MasterbarLoggedOut extends Component {
 		);
 	}
 
-	render() {
-		const { title, isCheckout, isCheckoutPending } = this.props;
+	renderWordPressItem() {
+		const { locale } = this.props;
 
-		if ( isCheckout || isCheckoutPending ) {
+		let homeUrl = '/';
+		if ( ! isDefaultLocale( locale ) ) {
+			homeUrl = addLocaleToPath( homeUrl, locale );
+		}
+
+		return (
+			<Item url={ homeUrl } className="masterbar__item-logo masterbar__item--always-show-content">
+				<WordPressLogo className="masterbar__wpcom-logo" />
+				<WordPressWordmark className="masterbar__wpcom-wordmark" />
+			</Item>
+		);
+	}
+
+	render() {
+		const { title, isCheckout, isCheckoutPending, isCheckoutFailed, sectionName } = this.props;
+
+		if ( isCheckout || isCheckoutPending || isCheckoutFailed ) {
 			return (
 				<AsyncLoad
 					require="calypso/layout/masterbar/checkout.tsx"
 					placeholder={ null }
 					title={ title }
 					isLeavingAllowed={ ! isCheckoutPending }
+					shouldClearCartWhenLeaving={ ! isCheckoutFailed }
 				/>
 			);
 		}
 
 		return (
-			<Masterbar>
-				<Item className="masterbar__item-logo">
-					<WordPressLogo className="masterbar__wpcom-logo" />
-					<WordPressWordmark className="masterbar__wpcom-wordmark" />
-				</Item>
-				<Item className="masterbar__item-title">{ title }</Item>
-				<div className="masterbar__login-links">
-					{ this.renderSignupItem() }
-					{ this.renderLoginItem() }
-				</div>
+			<Masterbar className="masterbar__loggedout">
+				{ this.renderWordPressItem() }
+				{ title && <Item className="masterbar__item-title">{ title }</Item> }
+				{ sectionName === 'reader' && (
+					<div className="masterbar__login-links">
+						{ this.renderDiscoverItem() }
+						{ this.renderTagsItem() }
+						{ this.renderSearchItem() }
+						{ this.renderLoginItem() }
+						{ this.renderSignupItem() }
+					</div>
+				) }
+				{ sectionName !== 'reader' && (
+					<div className="masterbar__login-links">
+						{ this.renderLoginItem() }
+						{ this.renderSignupItem() }
+					</div>
+				) }
 			</Masterbar>
 		);
 	}

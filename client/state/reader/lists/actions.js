@@ -9,8 +9,10 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_RECEIVE,
+	READER_LIST_CREATE_SUCCESS,
+	READER_LIST_CREATE_FAILURE,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
@@ -22,6 +24,7 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
+	READER_USER_LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -35,7 +38,6 @@ import 'calypso/state/reader/init';
 
 /**
  * Returns an action object to signal that list objects have been received.
- *
  * @param  {Array}  lists Lists received
  * @returns {Object}       Action object
  */
@@ -48,7 +50,6 @@ export function receiveLists( lists ) {
 
 /**
  * Request the current user's subscribed lists.
- *
  * @returns {Object}       Action object
  */
 export function requestSubscribedLists() {
@@ -63,7 +64,6 @@ export function createReaderList( list ) {
 
 /**
  * Request a single Reader list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -72,14 +72,16 @@ export function requestList( listOwner, listSlug ) {
 	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
+/**
+ * Receive a single Reader list.
+ * @param  {Object}  data List
+ * @returns {Object}       Action object
+ */
 export function receiveReaderList( data ) {
-	return {
-		type: READER_LIST_REQUEST_SUCCESS,
-		data,
-	};
+	return { type: READER_LIST_RECEIVE, data };
 }
 
-export function handleReaderListRequestFailure( errorInfo ) {
+export function handleRequestListFailure( errorInfo ) {
 	return {
 		type: READER_LIST_REQUEST_FAILURE,
 		error: errorInfo.error,
@@ -88,9 +90,24 @@ export function handleReaderListRequestFailure( errorInfo ) {
 	};
 }
 
+export function receiveCreateReaderList( data ) {
+	return {
+		type: READER_LIST_CREATE_SUCCESS,
+		data,
+	};
+}
+
+export function handleCreateReaderListFailure( errorInfo ) {
+	return {
+		type: READER_LIST_CREATE_FAILURE,
+		error: errorInfo.error,
+		owner: errorInfo.owner,
+		slug: errorInfo.slug,
+	};
+}
+
 /**
  * Follow a list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -105,7 +122,6 @@ export function followList( listOwner, listSlug ) {
 
 /**
  * Receive a successful list follow.
- *
  * @param  {Object} list Followed list
  * @returns {Object} Action object
  */
@@ -118,7 +134,6 @@ export function receiveFollowList( list ) {
 
 /**
  * Unfollow a list.
- *
  * @param  {string}  listOwner List owner
  * @param  {string}  listSlug List slug
  * @returns {Object}       Action object
@@ -133,7 +148,6 @@ export function unfollowList( listOwner, listSlug ) {
 
 /**
  * Receive a successful list unfollow.
- *
  * @param  {Object} list Unfollowed list
  * @returns {Object}    Action object
  */
@@ -146,7 +160,6 @@ export function receiveUnfollowList( list ) {
 
 /**
  * Triggers a network request to update a list's details.
- *
  * @param   {Object} list List details to save
  * @returns {Object} Action object
  */
@@ -163,7 +176,6 @@ export function updateReaderList( list ) {
 
 /**
  * Handle updated list object from the API.
- *
  * @param   {Object} data List to save
  * @returns {Object} Action object
  */
@@ -176,7 +188,6 @@ export function receiveUpdatedListDetails( data ) {
 
 /**
  * Handle an error from the list update API.
- *
  * @param   {Error}  error Error during the list update process
  * @param   {Object} list List details to save
  * @returns {Object} Action object
@@ -281,3 +292,10 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 	listOwner,
 	listSlug,
 } );
+
+export function requestUserLists( userLogin ) {
+	return {
+		type: READER_USER_LISTS_REQUEST,
+		userLogin,
+	};
+}

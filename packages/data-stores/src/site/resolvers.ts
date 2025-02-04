@@ -1,13 +1,19 @@
 // wpcomRequest is a temporary rename while we're working on migrating generators to thunks
 import wpcomRequest from 'wpcom-proxy-request';
-import type { SiteDetails, Domain, SiteSettings, Dispatch, NewSiteErrorResponse } from './types';
+import type {
+	CurrentTheme,
+	SiteDetails,
+	Domain,
+	SiteSettings,
+	Dispatch,
+	NewSiteErrorResponse,
+} from './types';
 
 /**
  * Attempt to find a site based on its id, and if not return undefined.
  * We are currently ignoring error messages and silently failing if we can't find a
  * site. This could be extended in the future by retrieving the `error` and
  * `message` strings returned by the API.
- *
  * @param siteId {number}	The site to look up
  */
 export const getSite =
@@ -18,6 +24,7 @@ export const getSite =
 			const existingSite: SiteDetails | undefined = await wpcomRequest( {
 				path: '/sites/' + encodeURIComponent( siteId ),
 				apiVersion: '1.1',
+				query: 'force=wpcom',
 			} );
 			dispatch.receiveSite( siteId, existingSite );
 		} catch ( err ) {
@@ -27,7 +34,6 @@ export const getSite =
 
 /**
  * Get all site domains
- *
  * @param siteId {number} The site id
  */
 export const getSiteDomains =
@@ -42,7 +48,6 @@ export const getSiteDomains =
 
 /**
  * Get all site settings
- *
  * @param siteId {number} The site id
  */
 export const getSiteSettings =
@@ -54,4 +59,19 @@ export const getSiteSettings =
 		} );
 
 		dispatch.receiveSiteSettings( siteId, result?.settings );
+	};
+
+/**
+ * Get current site theme
+ * @param siteId {number} The site id
+ */
+export const getSiteTheme =
+	( siteId: number ) =>
+	async ( { dispatch }: Dispatch ) => {
+		const theme: CurrentTheme = await wpcomRequest( {
+			path: '/sites/' + encodeURIComponent( siteId ) + '/themes/mine',
+			apiVersion: '1.1',
+		} );
+
+		dispatch.receiveSiteTheme( siteId, theme );
 	};

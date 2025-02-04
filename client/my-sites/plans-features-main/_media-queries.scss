@@ -1,0 +1,17 @@
+$plans-2023-small-breakpoint: 780px;
+
+/**
+ * @see client/my-sites/plans/modernized-layout.tsx
+ * This file introduces padding for the header on the plans page
+ * at a custom mobile breakpoint.
+ *
+ * This mixin can be use to target that particular breakpoint.
+ *
+ */
+@mixin plans-section-custom-mobile-breakpoint() {
+	.is-section-plans & {
+		@media (min-width: $plans-2023-small-breakpoint) {
+			@content;
+		}
+	}
+}

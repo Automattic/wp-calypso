@@ -4,7 +4,6 @@ import 'calypso/state/user-settings/init';
 
 /**
  * Is two-step sms enabled for the current user?
- *
  * @param  {Object} state Global state tree
  * @returns {boolean} return true if two-step sms is enabled
  */

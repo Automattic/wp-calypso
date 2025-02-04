@@ -11,6 +11,11 @@ const request = ( siteId, themeId ) => ( dispatch, getState ) => {
 };
 
 function QueryTheme( { siteId, themeId } ) {
+	useQueryTheme( siteId, themeId );
+	return null;
+}
+
+export function useQueryTheme( siteId, themeId ) {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
@@ -18,8 +23,18 @@ function QueryTheme( { siteId, themeId } ) {
 			dispatch( request( siteId, themeId ) );
 		}
 	}, [ dispatch, siteId, themeId ] );
+}
 
-	return null;
+export function useQueryThemes( siteId, themeIds ) {
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		themeIds.forEach( ( themeId ) => {
+			if ( siteId && themeId ) {
+				dispatch( request( siteId, themeId ) );
+			}
+		} );
+	}, [ dispatch, siteId, themeIds ] );
 }
 
 QueryTheme.propTypes = {

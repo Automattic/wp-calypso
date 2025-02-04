@@ -1,4 +1,5 @@
 import { Card, Spinner } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -8,6 +9,7 @@ import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/stat
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
+import './security-key-form.scss';
 
 class SecurityKeyForm extends Component {
 	static propTypes = {
@@ -29,9 +31,11 @@ class SecurityKeyForm extends Component {
 		isAuthenticating: false,
 	};
 
-	initiateSecurityKeyAuthentication = ( event ) => {
-		event.preventDefault();
+	componentDidMount() {
+		this.initiateSecurityKeyAuthentication();
+	}
 
+	initiateSecurityKeyAuthentication = () => {
 		const { onSuccess } = this.props;
 		this.setState( { isAuthenticating: true } );
 		this.props
@@ -44,10 +48,18 @@ class SecurityKeyForm extends Component {
 		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
 
 		return (
-			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
+			<form
+				className={ clsx( 'two-factor-authentication__verification-code-form-wrapper', {
+					isWoo: isWoo,
+				} ) }
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					this.initiateSecurityKeyAuthentication();
+				} }
+			>
 				<Card compact className="two-factor-authentication__verification-code-form">
 					{ ! this.state.isAuthenticating && (
-						<div>
+						<div className="security-key-form__help-text">
 							<p>
 								{ translate( '{{strong}}Use your security key to finish logging in.{{/strong}}', {
 									components: {
@@ -56,13 +68,9 @@ class SecurityKeyForm extends Component {
 								} ) }
 							</p>
 							<p>
-								{ isWoo
-									? translate(
-											'Insert your security key into your USB port, then tap the button or gold disc.'
-									  )
-									: translate(
-											'Insert your security key into your USB port. Then tap the button or gold disc.'
-									  ) }
+								{ translate(
+									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
+								) }
 							</p>
 						</div>
 					) }
@@ -72,7 +80,11 @@ class SecurityKeyForm extends Component {
 							<p className="security-key-form__add-wait-for-key-heading">
 								{ translate( 'Waiting for security key' ) }
 							</p>
-							<p>{ translate( 'Connect and touch your security key to log in.' ) }</p>
+							<p>
+								{ translate(
+									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
+								) }
+							</p>
 						</div>
 					) }
 					<FormButton

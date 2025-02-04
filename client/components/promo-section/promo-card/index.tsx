@@ -1,12 +1,11 @@
-import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Badge, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import { Children, cloneElement, FunctionComponent, isValidElement } from 'react';
 import ActionPanel from 'calypso/components/action-panel';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelTitle from 'calypso/components/action-panel/title';
-import Badge from 'calypso/components/badge';
 import PromoCardCta from './cta';
 import type { ReactElement } from 'react';
 
@@ -24,6 +23,11 @@ export enum TitleLocation {
 	FIGURE,
 }
 
+export enum PromoCardVariation {
+	Compact = 'compact',
+	Default = 'default',
+}
+
 export interface Props {
 	icon?: string;
 	image?: Image | ReactElement;
@@ -33,6 +37,8 @@ export interface Props {
 	isPrimary?: boolean;
 	badge?: string | ReactElement;
 	className?: string;
+	children?: React.ReactNode;
+	variation?: PromoCardVariation;
 }
 
 const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnProperty( 'path' );
@@ -47,11 +53,15 @@ const PromoCard: FunctionComponent< Props > = ( {
 	children,
 	badge,
 	className,
+	variation = PromoCardVariation.Default,
 } ) => {
-	const classes = classNames(
+	const isCompact = variation === PromoCardVariation.Compact;
+
+	const classes = clsx(
 		{
 			'promo-card': true,
 			'is-primary': isPrimary,
+			compact: isCompact,
 		},
 		className
 	);
@@ -72,17 +82,17 @@ const PromoCard: FunctionComponent< Props > = ( {
 
 	return (
 		<ActionPanel className={ classes }>
-			{ image && (
+			{ image && ! isCompact && (
 				<ActionPanelFigure inlineBodyText={ false } align={ imageActionPanelAlignment }>
 					{ isImage( image ) ? (
-						<img src={ image.path } alt={ image.alt } className={ image.className } />
+						<img src={ image.path } alt={ image.alt || '' } className={ image.className } />
 					) : (
 						image
 					) }
 					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
 				</ActionPanelFigure>
 			) }
-			{ icon && (
+			{ icon && ! isCompact && (
 				<ActionPanelFigure inlineBodyText={ false } align="left">
 					<Gridicon icon={ icon } size={ 32 } />
 					{ titleComponentLocation === TitleLocation.FIGURE && titleComponentHeader }
@@ -90,7 +100,8 @@ const PromoCard: FunctionComponent< Props > = ( {
 			) }
 			<ActionPanelBody>
 				{ title && (
-					<ActionPanelTitle className={ classNames( { 'is-primary': isPrimary } ) }>
+					<ActionPanelTitle className={ clsx( { 'is-primary': isPrimary } ) }>
+						{ icon && isCompact && <Gridicon icon={ icon } size={ 32 } /> }
 						{ title }
 						{ badgeComponent }
 					</ActionPanelTitle>
@@ -98,7 +109,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 				{ titleComponentLocation === TitleLocation.BODY && titleComponentHeader }
 				{ isPrimary
 					? Children.map( children, ( child ) => {
-							if ( ! child || ! isValidElement( child ) ) {
+							if ( ! child || ! isValidElement< { isPrimary?: boolean } >( child ) ) {
 								return child;
 							}
 							return PromoCardCta === child.type ? cloneElement( child, { isPrimary } ) : child;

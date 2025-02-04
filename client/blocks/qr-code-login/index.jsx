@@ -1,9 +1,10 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/app.png';
 import ExternalLink from 'calypso/components/external-link';
@@ -53,8 +54,10 @@ function TokenQRCode( { tokenData } ) {
 		excavate: false,
 	};
 	return (
-		<QRCode
-			value={ `https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }` }
+		<QRCodeSVG
+			value={ localizeUrl(
+				`https://apps.wordpress.com/get/?campaign=login-qr-code#qr-code-login?token=${ token }&data=${ encrypted }`
+			) }
 			size={ 300 }
 			imageSettings={ imageSettings }
 		/>
@@ -219,8 +222,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 				),
 			},
 		} ),
-		translate( 'Tap the My Site Tab.' ),
-		translate( 'Tap your Profile image in the top right corner of the screen.' ),
+		translate( 'Tap the Me Tab.' ),
 		translate( 'Tap the {{strong}}Scan Login Code{{/strong}} option.', {
 			components: {
 				strong: <strong />,
@@ -230,7 +232,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	];
 
 	const notice = translate(
-		"Login via the mobile app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
+		"Logging in via the Jetpack app is {{strong}}not available{{/strong}} if you've enabled two-step authentication on your account.",
 		{
 			components: {
 				strong: <strong />,

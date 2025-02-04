@@ -37,7 +37,7 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 				skipLabelText={ translate( 'Skip to dashboard' ) }
 				goNext={ () => submitIntent( 'skip-to-my-home' ) }
 				skipButtonAlign="top"
-				isHorizontalLayout={ true }
+				isHorizontalLayout
 				formattedHeader={
 					<FormattedHeader
 						id="intent-header"

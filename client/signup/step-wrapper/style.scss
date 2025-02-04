@@ -8,6 +8,7 @@
 
 	.formatted-header {
 		flex-grow: 1;
+		text-wrap: pretty;
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -56,7 +57,7 @@
 	@mixin unstick {
 		position: absolute;
 		top: 9px;
-		left: 11px;
+		left: 56px;
 		right: 16px;
 		padding: 0;
 		border: none;
@@ -173,12 +174,6 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 24px;
 		}
-	}
-
-	// pressable-nux has no title or subtitle so
-	// needs to not hide the (W) logo
-	.is-pressable-nux & {
-		margin-top: 30px;
 	}
 
 	// On small screens remove the margin from the

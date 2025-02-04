@@ -2,7 +2,6 @@ import debug from './debug';
 
 /**
  * Decodes a url-safe base64 encoded string.
- *
  * @param {string} str The url-safe base64 encoded string
  * @returns {string} The decoded string
  */
@@ -19,7 +18,6 @@ function urlSafeBase64DecodeString( str ) {
 /**
  * Decodes a URL param encoded by AMP's linker.js
  * See also https://github.com/ampproject/amphtml/blob/HEAD/extensions/amp-analytics/linker-id-receiving.md
- *
  * @param {string} value Value to be decoded
  * @returns {null | Object} null or and object containing key/value pairs
  */
@@ -44,7 +42,6 @@ function parseAmpEncodedParams( value ) {
  * Returns a URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
  * URL parameters explicitly present in the URL take precedence over the ones extracted from `tk_amp`.
  * This function is used to support AMP-compatible tracking.
- *
  * @param {string} url URL to be parsed like `document.location.href`.
  * @returns {Object} A URL instance with the original data plus the data extracted from `tk_amp`. Null if not a valid absolute URL.
  */

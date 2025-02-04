@@ -1,0 +1,144 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.stored-credit-card-v2__card {
+	position: relative;
+
+	&.is-loading {
+		opacity: 0.3;
+	}
+
+	.stored-credit-card-v2__card-content {
+		padding-inline: 24px;
+		height: 220px;
+		border-radius: 18px; /* stylelint-disable-line scales/radii */
+		color: var(--studio-white);
+		background: url(calypso/assets/images/jetpack/credit-card-1.svg) no-repeat;
+	}
+
+	// Apply background images to every second card
+	&:nth-child(3n-1) .stored-credit-card-v2__card-content {
+		background: url(calypso/assets/images/jetpack/credit-card-2.svg) no-repeat;
+	}
+
+	// Apply background images to every third card
+	&:nth-child(3n) .stored-credit-card-v2__card-content {
+		background: url(calypso/assets/images/jetpack/credit-card-3.svg) no-repeat;
+	}
+}
+
+.stored-credit-card-v2__card-number {
+	padding-block-start: 90px;
+	font-size: rem(24px);
+	font-weight: 700;
+	line-height: 1.5;
+
+	@include break-mobile {
+		font-size: rem(35px);
+		padding-block-start: 65px;
+	}
+}
+
+.stored-credit-card-v2__card-info-heading {
+	font-size: rem(11px);
+	text-wrap: nowrap;
+}
+
+.stored-credit-card-v2__card-info-value {
+	font-size: rem(14px);
+	font-weight: 700;
+	line-height: 1;
+
+	@include break-mobile {
+		font-size: rem(18px);
+	}
+}
+
+.stored-credit-card-v2__card-details {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-block-start: 24px;
+}
+
+.stored-credit-card-v2__payment-logo {
+	position: absolute;
+	top: -20px;
+	right: 0;
+
+	svg {
+		width: 100px;
+		height: 100px;
+	}
+
+	// This is a hack to fix the position of the payment logos
+	// because the SVGs are not all the same size
+	// Ideal solution would be to create a  new component with all the SVGs the same size.
+	&.stored-credit-card-v2__payment-logo-visa {
+		right: 17px;
+	}
+
+	&.stored-credit-card-v2__payment-logo-discover,
+	&.stored-credit-card-v2__payment-logo-amex {
+		right: 23px;
+	}
+
+	&.stored-credit-card-v2__payment-logo-diners {
+		right: -4px;
+	}
+}
+
+// Change the color of the payment logos so they are visible on the dark background
+.stored-credit-card-v2__payment-logo-discover,
+.stored-credit-card-v2__payment-logo-amex {
+	svg path:first-child {
+		fill: var(--studio-white);
+	}
+}
+
+.stored-credit-card-v2__card-footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	margin-block-start: 16px;
+}
+
+.stored-credit-card-v2__card-footer-title {
+	font-size: rem(16px);
+	font-weight: 500;
+}
+
+.stored-credit-card-v2__card-footer-subtitle {
+	font-size: rem(12px);
+	font-weight: 400;
+}
+
+button.button.stored-credit-card-v2__card-footer-actions {
+	padding: 16px;
+}
+
+.stored-credit-card-v2__card-footer-actions-popover {
+	.popover__menu-item {
+		padding-block: 12px;
+
+		&:hover,
+		&:focus {
+			background: var(--color-sidebar-menu-hover-background);
+			color: var(--color-text);
+			fill: var(--color-text);
+
+			.gridicon {
+				fill: var(--color-text);
+			}
+		}
+	}
+
+
+	.popover__menu-item.stored-credit-card-v2__card-footer-actions-delete {
+		&,
+		&:hover,
+		&:focus {
+			color: var(--studio-red-50);
+		}
+	}
+}

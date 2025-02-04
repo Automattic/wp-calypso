@@ -1,13 +1,18 @@
 import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import ContactDisplay from 'calypso/my-sites/domains/domain-management/contacts-privacy/contact-display';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import {
+	domainManagementAllEditContactInfo,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -17,10 +22,20 @@ import {
 	redactDomainContactInfo,
 } from 'calypso/state/sites/domains/actions';
 import { isUpdatingDomainPrivacy } from 'calypso/state/sites/domains/selectors';
+import { IAppState } from 'calypso/state/types';
+import ContactDisplay from './contact-display';
 import type { ContactsCardPassedProps, ContactsCardProps } from './types';
 
 const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 	const translate = useTranslate();
+
+	const { data, isLoading } = useDomainTransferRequestQuery(
+		props.selectedSite.slug,
+		props.selectedDomainName
+	);
+	const disableEdit = !! ( isLoading || data?.email );
+	const pendingContactUpdate = props.hasPendingContactUpdate;
+
 	const togglePrivacy = () => {
 		const { selectedSite, privateDomain, selectedDomainName: name } = props;
 
@@ -100,7 +115,12 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 			<p className="contact-information__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
-						a: <a href={ localizeUrl( PUBLIC_VS_PRIVATE ) } target="blank" />,
+						a: (
+							<InlineSupportLink
+								supportContext="public-vs-private-registration-and-gdpr"
+								showIcon={ false }
+							/>
+						),
 					},
 				} ) }
 			</p>
@@ -115,9 +135,15 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 			isUpdatingPrivacy,
 			privacyAvailable,
 			privateDomain,
+			isHundredYearDomain,
 		} = props;
 
-		if ( ! privacyAvailable || ! contactInfoDisclosureAvailable || privateDomain ) {
+		if (
+			! privacyAvailable ||
+			! contactInfoDisclosureAvailable ||
+			privateDomain ||
+			isHundredYearDomain
+		) {
 			return false;
 		}
 
@@ -147,48 +173,94 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 		);
 	};
 
-	const { selectedDomainName, canManageConsent } = props;
+	const renderTrusteeNotice = () => {
+		return (
+			<Notice
+				text={ translate(
+					'Your domain is using a trustee service. The information displayed in public Whois database may differ from that displayed below.'
+				) }
+				icon="info"
+				showDismiss={ false }
+				status="is-warning"
+			>
+				<NoticeAction external href={ props.registeredViaTrusteeUrl }>
+					{ translate( 'More info' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	};
+
+	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
+		props;
+	const editContactInfoLink = isUnderDomainManagementOverview( currentRoute )
+		? domainManagementAllEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  )
+		: domainManagementEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  );
 
 	return (
 		<div>
 			<Card className="contact-information__card">
 				<div className="contact-information__main">
+					{ props.registeredViaTrustee && renderTrusteeNotice() }
 					<ContactDisplay selectedDomainName={ selectedDomainName } />
 					<div className="contact-information__button-container">
-						<Button
-							href={ domainManagementEditContactInfo(
-								props.selectedSite.slug,
-								props.selectedDomainName,
-								props.currentRoute as undefined
-							) }
-						>
-							{ translate( 'Edit' ) }
-						</Button>
+						{ ! isHundredYearDomain && (
+							<Button
+								disabled={ disableEdit || readOnly || pendingContactUpdate }
+								href={ disableEdit || readOnly || pendingContactUpdate ? '' : editContactInfoLink }
+							>
+								{ translate( 'Edit' ) }
+							</Button>
+						) }
+
 						{ canManageConsent && (
 							<Button
 								href={ domainManagementManageConsent(
 									props.selectedSite.slug,
 									props.selectedDomainName,
-									props.currentRoute as undefined
+									currentRoute
 								) }
 							>
 								{ translate( 'Manage consent' ) }
 							</Button>
 						) }
 					</div>
+					{ disableEdit && ! readOnly && (
+						<p className="contact-information__transfer-warn">
+							{ translate(
+								'Contact modifications are disabled while domain transfers are pending.'
+							) }
+						</p>
+					) }
+					{ pendingContactUpdate && (
+						<p className="contact-information__pending-update-warn">
+							{ translate(
+								"This domain has a pending contact information update. You will be able to update your contact information once the pending update is complete. If you don't confirm the update, the pending request will be canceled after 5 days."
+							) }
+						</p>
+					) }
 				</div>
-				<div className="contact-information__toggle-container">
-					{ getPrivacyProtection() }
-					{ getContactInfoDisclosed() }
-					{ getPrivacyProtectionRecommendationText() }
-				</div>
+				{ ! isHundredYearDomain && (
+					<div className="contact-information__toggle-container">
+						{ getPrivacyProtection() }
+						{ getContactInfoDisclosed() }
+						{ getPrivacyProtectionRecommendationText() }
+					</div>
+				) }
 			</Card>
 		</div>
 	);
 };
 
 export default connect(
-	( state, ownProps: ContactsCardPassedProps ) => ( {
+	( state: IAppState, ownProps: ContactsCardPassedProps ) => ( {
 		currentRoute: getCurrentRoute( state ),
 		isUpdatingPrivacy: isUpdatingDomainPrivacy(
 			state,

@@ -1,6 +1,5 @@
+import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
-import { get } from 'lodash';
-import page from 'page';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import {
@@ -101,7 +100,16 @@ export const clearValidationError = ( siteId ) => ( dispatch ) => {
 };
 
 export const requestSiteAddressChange =
-	( siteId, newBlogName, domain, oldDomain, siteType, discard = true ) =>
+	(
+		siteId,
+		newBlogName,
+		domain,
+		oldDomain,
+		siteType,
+		discard = true,
+		requireVerifiedEmail = true,
+		skipRedirection = false
+	) =>
 	async ( dispatch, getState ) => {
 		dispatch( {
 			type: SITE_ADDRESS_CHANGE_REQUEST,
@@ -115,6 +123,7 @@ export const requestSiteAddressChange =
 			old_domain: oldDomain,
 			site_type: siteType,
 			discard,
+			require_verified_email: requireVerifiedEmail,
 		};
 
 		dispatch( recordTracksEvent( 'calypso_siteaddresschange_request', eventProperties ) );
@@ -126,10 +135,18 @@ export const requestSiteAddressChange =
 					path: `/sites/${ siteId }/site-address-change`,
 					apiNamespace: 'wpcom/v2',
 				},
-				{ blogname: newBlogName, domain, old_domain: oldDomain, type: siteType, discard, nonce }
+				{
+					blogname: newBlogName,
+					domain,
+					old_domain: oldDomain,
+					type: siteType,
+					discard,
+					nonce,
+					require_verified_email: requireVerifiedEmail,
+				}
 			);
 
-			const newSlug = get( data, 'new_slug' );
+			const newSlug = data?.new_slug;
 
 			if ( newSlug ) {
 				dispatch( recordTracksEvent( 'calypso_siteaddresschange_success', eventProperties ) );
@@ -158,7 +175,10 @@ export const requestSiteAddressChange =
 				const siteSlug = getSiteSlug( getState(), siteId );
 				// new name of the `*.wordpress.com` domain that we just changed
 				const newDomain = newSlug + '.' + domain;
-				page( domainManagementEdit( siteSlug, newDomain ) );
+
+				if ( ! skipRedirection ) {
+					page( domainManagementEdit( siteSlug, newDomain ) );
+				}
 			}
 		} catch ( error ) {
 			dispatch(

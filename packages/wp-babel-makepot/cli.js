@@ -51,11 +51,12 @@ program
 		const filesGlob = files.trim().replace( /^~/, os.homedir() ).split( /\s/gm );
 		const ignore = program.ignore && program.ignore.split( ',' );
 
-		const { dir, base, output, linesFilter } = program;
+		const { preset, dir, base, output, linesFilter } = program;
 
 		filesGlob.forEach( ( pattern ) => {
 			glob.sync( pattern, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
 				makePot( filepath, {
+					preset,
 					base,
 					dir,
 				} )

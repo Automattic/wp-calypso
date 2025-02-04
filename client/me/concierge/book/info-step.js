@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { CompactCard, FormInputValidation } from '@automattic/components';
+import { CompactCard, FormInputValidation, FormLabel } from '@automattic/components';
 import { getLanguage } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -10,7 +10,6 @@ import Site from 'calypso/blocks/site';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -203,7 +202,7 @@ class InfoStep extends Component {
 
 					<FormButton
 						disabled={ ! this.canSubmitForm() }
-						isPrimary={ true }
+						isPrimary
 						type="button"
 						onClick={ onComplete }
 					>

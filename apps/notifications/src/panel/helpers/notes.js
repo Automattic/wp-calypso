@@ -7,7 +7,6 @@ function getActionBlock( blocks ) {
 
 /**
  * Returns an object specifying which actions are enabled for a note and their values
- *
  * @param note
  * @returns {Object}
  */
@@ -17,7 +16,6 @@ export function getActions( note ) {
 
 /**
  * Returns an id for a type of reference in a note or null
- *
  * @param note
  * @param {string} type can be 'post', 'comment', 'site', etc...
  * @returns {number|null} null if no reference of type is found
@@ -35,7 +33,6 @@ export function getReferenceId( note, type ) {
  * It's a Calypso link for WP.com sites and
  * Jetpack sites with the `edit_links_calypso_redirect` option set.
  * It's a wp-admin link otherwise.
- *
  * @param note
  * @returns {string}
  */
@@ -45,7 +42,6 @@ export function getEditCommentLink( note ) {
 
 /**
  * Returns the new post link for the note post.
- *
  * @param note
  * @returns {string}
  */

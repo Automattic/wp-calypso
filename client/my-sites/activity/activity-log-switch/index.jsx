@@ -25,7 +25,6 @@ class ActivityLogSwitch extends Component {
 
 	/**
 	 * Renders the main button whose functionality and label varies depending on why Jetpack Backup is unavailable.
-	 *
 	 * @returns {Object} Primary button.
 	 */
 	getMainButton() {

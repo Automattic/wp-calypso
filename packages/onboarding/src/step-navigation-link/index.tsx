@@ -1,19 +1,19 @@
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
-import { ReactChild } from 'react';
+import clsx from 'clsx';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import './style.scss';
 
 interface Props {
 	direction: 'back' | 'forward';
 	handleClick?: () => void;
-	label?: string | ReactChild;
+	label?: TranslateResult;
 	hasBackIcon?: boolean;
 	hasForwardIcon?: boolean;
 	primary?: boolean;
 	borderless?: boolean;
 	cssClass?: string;
 	rel?: string;
+	backUrl?: string;
 	recordClick?: () => void;
 }
 
@@ -28,6 +28,7 @@ const StepNavigationLink: React.FC< Props > = ( {
 	cssClass,
 	rel,
 	recordClick,
+	backUrl,
 } ) => {
 	const translate = useTranslate();
 
@@ -47,7 +48,7 @@ const StepNavigationLink: React.FC< Props > = ( {
 		text = label ? label : translate( 'Skip for now' );
 	}
 
-	const buttonClasses = classnames( 'navigation-link', cssClass );
+	const buttonClasses = clsx( 'navigation-link', cssClass );
 
 	const onClick = () => {
 		recordClick?.();
@@ -60,6 +61,7 @@ const StepNavigationLink: React.FC< Props > = ( {
 			borderless={ borderless }
 			className={ buttonClasses }
 			onClick={ onClick }
+			href={ backUrl }
 			rel={ rel }
 		>
 			{ backGridicon }

@@ -31,7 +31,6 @@ const defaults = {
 
 /**
  * Send the request
- *
  * @param  {Object} req - request instance
  * @param  {Object} settings - request settings
  * @param  {Function} fn - callback function
@@ -77,7 +76,7 @@ const sendResponse = ( req, settings, fn ) => {
 					body = body.body;
 				}
 
-				headers.status = statusCode;
+				headers = { ...headers, status: statusCode };
 
 				if ( null !== statusCode && 2 !== Math.floor( statusCode / 100 ) ) {
 					debug( 'Error detected!' );
@@ -189,7 +188,6 @@ function enableStreamModeProcessing( req, onStreamRecord ) {
 
 /**
  * Returns `true` if `v` is a File Form Data, `false` otherwise.
- *
  * @param {Object} v - instance to analyze
  * @returns {boolean} `true` if `v` is a DOM File instance
  */
@@ -201,7 +199,6 @@ function isFile( v ) {
 
 /**
  * Performs an XMLHttpRequest against the WordPress.com REST API.
- *
  * @param {Object | string} options - `request path` or `request parameters`
  * @param {Function} fn - callback function
  * @returns { Object } xhr instance
@@ -259,13 +256,17 @@ export default function request( options, fn ) {
 
 	// create HTTP Request instance
 	const req = superagent[ method ]( settings.url );
-
-	// querystring
 	if ( query ) {
 		req.query( query );
 		debug( 'API send URL querystring: %o', query );
+		if ( typeof query === 'string' ) {
+			settings.isEnvelopeMode = isRestAPI
+				? query.includes( 'http_envelope=1' )
+				: query.includes( '_envelope=1' );
+		} else {
+			settings.isEnvelopeMode = isRestAPI ? query.http_envelope : query._envelope;
+		}
 
-		settings.isEnvelopeMode = isRestAPI ? query.http_envelope : query._envelope;
 		debug( 'envelope mode: %o', settings.isEnvelopeMode );
 	}
 

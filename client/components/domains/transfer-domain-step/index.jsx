@@ -1,17 +1,17 @@
-import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, getPlan, isPlan } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import classnames from 'classnames';
+import { INCOMING_DOMAIN_TRANSFER } from '@automattic/urls';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import QueryPlans from 'calypso/components/data/query-plans';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
 import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
@@ -36,7 +36,6 @@ import {
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
-import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
 import {
@@ -48,6 +47,7 @@ import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selector
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import TransferDomainPrecheck from './transfer-domain-precheck';
@@ -219,7 +219,7 @@ class TransferDomainStep extends Component {
 
 		return (
 			<div
-				className={ classnames( 'transfer-domain-step__price', {
+				className={ clsx( 'transfer-domain-step__price', {
 					'is-free-with-plan': isFreewithPlan || domainsWithPlansOnlyButNoPlan,
 					'is-sale-price':
 						domainProductSalePrice && ! ( isFreewithPlan || domainsWithPlansOnlyButNoPlan ),
@@ -241,7 +241,6 @@ class TransferDomainStep extends Component {
 		return (
 			<div>
 				<QueryProducts />
-				<QueryPlans />
 				{ this.notice() }
 				<form className="transfer-domain-step__form card" onSubmit={ this.handleFormSubmit }>
 					<div className="transfer-domain-step__domain-description">
@@ -254,7 +253,7 @@ class TransferDomainStep extends Component {
 					<div className="transfer-domain-step__add-domain" role="group">
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							autoFocus
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }
@@ -296,12 +295,12 @@ class TransferDomainStep extends Component {
 	}
 
 	startPendingInboundTransfer = ( domain, authCode ) => {
-		const { selectedSite, translate } = this.props;
+		const { currentRoute, selectedSite, translate } = this.props;
 
 		startInboundTransfer( selectedSite.ID, domain, authCode )
 			.then( () => {
 				this.props.fetchSiteDomains( selectedSite.ID );
-				page( domainManagementTransferIn( selectedSite.slug, domain ) );
+				page( domainManagementTransferIn( selectedSite.slug, domain, currentRoute ) );
 			} )
 			.catch( () => {
 				this.props.errorNotice( translate( 'We were unable to start the transfer.' ) );
@@ -408,11 +407,25 @@ class TransferDomainStep extends Component {
 				<div>
 					<UpsellNudge
 						description={ translate(
-							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
+							// translators: %s is the Starter/Personal plan name
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a %(planName)s plan.',
+							{
+								args: {
+									planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+								},
+							}
 						) }
 						plan={ PLAN_PERSONAL }
-						title={ translate( 'Personal plan required' ) }
-						showIcon={ true }
+						title={
+							// translators: %s is the Starter/Personal plan name
+							translate( '%(planName)s plan required', {
+								args: {
+									planName: getPlan( PLAN_PERSONAL )?.getTitle(),
+								},
+							} )
+						}
+						showIcon
+						event="domains_transfer_plan_required"
 					/>
 					{ content }
 				</div>
@@ -458,7 +471,8 @@ class TransferDomainStep extends Component {
 	registerSuggestedDomain = () => {
 		this.props.recordAddDomainButtonClickInTransferDomain(
 			this.state.suggestion.domain_name,
-			this.props.analyticsSection
+			this.props.analyticsSection,
+			this.props.flowName
 		);
 
 		return this.props.onRegisterDomain( this.state.suggestion );
@@ -528,6 +542,7 @@ class TransferDomainStep extends Component {
 				{ domainName: domain, blogId: get( this.props, 'selectedSite.ID', null ) },
 				( error, result ) => {
 					const status = get( result, 'status', error );
+					const tld = result.tld || getTld( domain );
 					switch ( status ) {
 						case domainAvailability.AVAILABLE:
 							this.setState( { suggestion: result } );
@@ -541,8 +556,6 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						case domainAvailability.TLD_NOT_SUPPORTED: {
-							const tld = getTld( domain );
-
 							this.setState( {
 								notice: this.props.translate(
 									'This domain appears to be available for registration, however we do not offer registrations or accept transfers for domains ending in {{strong}}.%(tld)s{{/strong}}. ' +
@@ -562,8 +575,6 @@ class TransferDomainStep extends Component {
 						case domainAvailability.MAPPABLE:
 						case domainAvailability.TLD_NOT_SUPPORTED_TEMPORARILY:
 						case domainAvailability.TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: {
-							const tld = getTld( domain );
-
 							this.setState( {
 								notice: this.props.translate(
 									"We don't support transfers for domains ending with {{strong}}.%(tld)s{{/strong}}, " +
@@ -712,6 +723,7 @@ const recordMapDomainButtonClick = ( section ) =>
 
 export default connect(
 	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
 		currentUser: getCurrentUser( state ),
 		currencyCode: getCurrentUserCurrencyCode( state ),
 		selectedSite: getSelectedSite( state ),

@@ -1,18 +1,21 @@
+import config from '@automattic/calypso-config';
 import moment from 'moment/moment';
 import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import schema from './schema.json';
 
 const noop = () => {};
+const isRunningInJetpackSite = config.isEnabled( 'is_running_in_jetpack_site' );
+const jitmSchema = isRunningInJetpackSite ? { ...schema, ...schema.properties.data } : schema;
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.
- *
  * @param {string} str The string to decode
  * @returns {string} The decoded string
  */
@@ -21,13 +24,15 @@ const unescapeDecimalEntities = ( str ) =>
 
 /**
  * Given an object from the api, prepare it to be consumed by the ui by transforming the shape of the data
- *
- * @param {Object} response The response object from the jitms endpoint
- * @param {Object} response.data The jitms to display from the api
+ * @param {Object} jitms The response object from the jitms endpoint
  * @returns {Object} The transformed data to display
  */
-const transformApiRequest = ( { data: jitms } ) =>
-	jitms.map( ( jitm ) => ( {
+export const transformApiRequest = ( jitms ) => {
+	// Different shape of date between Calypso and Jetpack.
+	if ( jitms && jitms.data ) {
+		jitms = jitms.data;
+	}
+	return jitms.map( ( jitm ) => ( {
 		message: unescapeDecimalEntities( jitm.content.message || '' ),
 		description: unescapeDecimalEntities( jitm.content.description || '' ),
 		classes: unescapeDecimalEntities( jitm.content.classes || '' ),
@@ -36,7 +41,10 @@ const transformApiRequest = ( { data: jitms } ) =>
 		featureClass: jitm.feature_class,
 		CTA: {
 			message: unescapeDecimalEntities( jitm.CTA.message ),
-			link: unescapeDecimalEntities( jitm.CTA.link || '' ),
+			link: unescapeDecimalEntities( jitm.CTA.link || jitm.url ),
+			target: unescapeDecimalEntities(
+				jitm.CTA.target || '' === jitm.CTA.target ? jitm.CTA.target : '_blank'
+			),
 		},
 		tracks: jitm.tracks,
 		action: jitm.action,
@@ -47,15 +55,15 @@ const transformApiRequest = ( { data: jitms } ) =>
 		title: unescapeDecimalEntities( jitm.content.title || '' ),
 		disclaimer: jitm.content.disclaimer.map( unescapeDecimalEntities ),
 	} ) );
+};
 
 /**
  * Processes the current state and determines if it should fire a jitm request
- *
  * @param {Object} action The fetch action
  * @returns {Object} The HTTP fetch action
  */
-export const doFetchJITM = ( action ) => {
-	return http(
+export const doFetchJITM = ( action ) =>
+	http(
 		{
 			method: 'GET',
 			path: `/jetpack-blogs/${ action.siteId }/rest-api/`,
@@ -63,6 +71,7 @@ export const doFetchJITM = ( action ) => {
 				path: '/jetpack/v4/jitm',
 				query: JSON.stringify( {
 					message_path: action.messagePath,
+					query: action.searchQuery,
 				} ),
 				http_envelope: 1,
 				locale: action.locale,
@@ -70,12 +79,9 @@ export const doFetchJITM = ( action ) => {
 		},
 		{ ...action }
 	);
-};
-
 /**
  * Dismisses a jitm on the jetpack site, it returns nothing useful and will return no useful error, so we'll
  * fail and succeed silently.
- *
  * @param {Object} action The dismissal action
  * @returns {Object} The HTTP fetch action
  */
@@ -97,9 +103,38 @@ export const doDismissJITM = ( action ) =>
 		action
 	);
 
+const doJetpackFetchJITM = ( action ) =>
+	http(
+		{
+			method: 'GET',
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
+			query: {
+				message_path: action.messagePath,
+				query: action.searchQuery,
+			},
+			locale: action.locale,
+		},
+		{ ...action }
+	);
+
+const doJetpackDismissJITM = ( action ) =>
+	http(
+		{
+			method: 'POST',
+			apiNamespace: 'jetpack/v4',
+			path: '/jitm',
+			body: JSON.stringify( {
+				feature_class: action.featureClass,
+				id: action.id,
+			} ),
+			json: false,
+		},
+		action
+	);
+
 /**
  * Called when the http layer receives a valid jitm
- *
  * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
@@ -113,7 +148,6 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
 
 /**
  * Called when a jitm fails for any network related reason
- *
  * @param {Object} action action object
  * @param {number} action.siteId The site id
  * @param {string} action.messagePath The jitm message path (ex: calypso:comments:admin_notices)
@@ -121,22 +155,23 @@ export const receiveJITM = ( action, jitms ) => ( dispatch, getState ) => {
  */
 export const failedJITM = ( action ) => ( dispatch, getState ) => {
 	const siteId = action.siteId || action.site_id || getSelectedSiteId( getState() );
+	dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
 	dispatch( clearJITM( siteId, action.messagePath ) );
 };
 
 registerHandlers( 'state/data-layer/wpcom/sites/jitm/index.js', {
 	[ JITM_FETCH ]: [
 		dispatchRequest( {
-			fetch: doFetchJITM,
+			fetch: isRunningInJetpackSite ? doJetpackFetchJITM : doFetchJITM,
 			onSuccess: receiveJITM,
 			onError: failedJITM,
-			fromApi: makeJsonSchemaParser( schema, transformApiRequest ),
+			fromApi: makeJsonSchemaParser( jitmSchema, transformApiRequest ),
 		} ),
 	],
 
 	[ JITM_DISMISS ]: [
 		dispatchRequest( {
-			fetch: doDismissJITM,
+			fetch: isRunningInJetpackSite ? doJetpackDismissJITM : doDismissJITM,
 			onSuccess: noop,
 			onError: noop,
 		} ),

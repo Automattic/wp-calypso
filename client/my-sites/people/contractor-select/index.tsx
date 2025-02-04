@@ -1,8 +1,8 @@
+import { FormLabel } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
 import type { ChangeEventHandler } from 'react';
 

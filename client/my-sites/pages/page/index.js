@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
+import pageRouter from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
 import { saveAs } from 'browser-filesaver';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import pageRouter from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -85,7 +85,7 @@ class Page extends Component {
 	recordEllipsisMenuItemClickEvent = ( item ) => {
 		this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
 			page_type: 'real',
-			blog_id: this.props.site.ID,
+			blog_id: this.props.site?.ID,
 			item,
 		} );
 	};
@@ -565,7 +565,7 @@ class Page extends Component {
 		}
 
 		const hierarchyIndent = cardClasses[ 'is-indented' ] && (
-			<div className={ classNames( hierarchyIndentClasses ) } />
+			<div className={ clsx( hierarchyIndentClasses ) } />
 		);
 
 		const innerPageTitle = (
@@ -583,7 +583,7 @@ class Page extends Component {
 		);
 
 		return (
-			<CompactCard className={ classNames( cardClasses ) }>
+			<CompactCard className={ clsx( cardClasses ) }>
 				<QueryJetpackModules siteId={ siteId } />
 				{ hierarchyIndent }
 				{ this.props.multisite ? <SiteIcon siteId={ page.site_ID } size={ 34 } /> : null }

@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
+import { DotPager } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { createElement, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import DotPager from 'calypso/components/dot-pager';
+import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import {
+	EDUCATION_AFFILIATES,
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_EARN,
 	EDUCATION_STORE,
@@ -15,6 +16,7 @@ import {
 	EDUCATION_PROMOTE_POST,
 	EDUCATION_SITE_EDITOR_QUICK_START,
 } from 'calypso/my-sites/customer-home/cards/constants';
+import EducationAffiliates from 'calypso/my-sites/customer-home/cards/education/affiliates';
 import BloggingQuickStart from 'calypso/my-sites/customer-home/cards/education/blogging-quick-start';
 import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
 import FindSuccess from 'calypso/my-sites/customer-home/cards/education/find-success';
@@ -25,10 +27,13 @@ import RespondToCustomerFeedback from 'calypso/my-sites/customer-home/cards/educ
 import SiteEditorQuickStart from 'calypso/my-sites/customer-home/cards/education/site-editor-quick-start';
 import EducationStore from 'calypso/my-sites/customer-home/cards/education/store';
 import WpCourses from 'calypso/my-sites/customer-home/cards/education/wpcourses';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import trackMyHomeCardImpression, {
+	CardLocation,
+} from 'calypso/my-sites/customer-home/track-my-home-card-impression';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const cardComponents = {
+	[ EDUCATION_AFFILIATES ]: EducationAffiliates,
 	[ EDUCATION_FREE_PHOTO_LIBRARY ]: FreePhotoLibrary,
 	[ EDUCATION_EARN ]: EducationEarn,
 	[ EDUCATION_STORE ]: EducationStore,
@@ -42,7 +47,6 @@ const cardComponents = {
 
 const LearnGrow = () => {
 	const cards = useLearnGrowCards();
-	const dispatch = useDispatch();
 	const viewedCards = useRef( new Set() );
 
 	const handlePageSelected = ( index ) => {
@@ -52,7 +56,7 @@ const LearnGrow = () => {
 		}
 
 		viewedCards.current.add( selectedCard );
-		dispatch( trackCardImpression( selectedCard ) );
+		trackMyHomeCardImpression( { card: selectedCard, location: CardLocation.SECONDARY } );
 	};
 
 	useEffect( () => handlePageSelected( 0 ) );
@@ -70,6 +74,7 @@ const LearnGrow = () => {
 			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
+					cardComponents[ card ].isDisabled !== true &&
 					createElement( cardComponents[ card ], {
 						key: index,
 					} )
@@ -82,6 +87,7 @@ function useLearnGrowCards() {
 	const siteId = useSelector( getSelectedSiteId );
 	const { data: layout } = useHomeLayoutQuery( siteId, { enabled: false } );
 
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 	const { localeSlug } = useTranslate();
 
 	let allCards = layout?.[ 'secondary.learn-grow' ] ?? [];
@@ -94,13 +100,6 @@ function useLearnGrowCards() {
 
 	// Remove cards we don't know how to deal with on the client-side
 	return allCards.filter( ( card ) => !! cardComponents[ card ] );
-}
-
-function trackCardImpression( card ) {
-	return composeAnalytics(
-		recordTracksEvent( 'calypso_customer_home_card_impression', { card } ),
-		bumpStat( 'calypso_customer_home_card_impression', card )
-	);
 }
 
 export default LearnGrow;

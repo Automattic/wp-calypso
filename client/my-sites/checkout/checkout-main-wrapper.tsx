@@ -1,33 +1,34 @@
 import config from '@automattic/calypso-config';
+import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import colorStudio from '@automattic/color-studio';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
+import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useBigSkyBeforePlans } from 'calypso/landing/stepper/declarative-flow/helpers/use-bigsky-before-plans-experiment';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { captureException } from 'calypso/lib/sentry';
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/composite-checkout/components/checkout-order-banner';
+import { getStripeConfiguration, getRazorpayConfiguration } from 'calypso/lib/store-transactions';
 import Recaptcha from 'calypso/signup/recaptcha';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutMain from './composite-checkout/components/checkout-main';
-import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
+import CheckoutMain from './src/components/checkout-main';
+import { logStashLoadErrorEvent } from './src/lib/analytics';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
-	logToLogstash( {
-		feature: 'calypso_client',
-		message: 'composite checkout load error',
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			type: 'checkout_system_decider',
-			message: error.message + '; Stack: ' + error.stack,
-		},
-	} );
-	captureException( error );
+	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
+
+const CheckoutMainWrapperStyles = styled.div`
+	background-color: ${ colorStudio.colors[ 'White' ] };
+
+	a {
+		color: ${ colorStudio.colors[ 'WordPress Blue 50' ] };
+	}
+`;
 
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
@@ -39,13 +40,16 @@ export default function CheckoutMainWrapper( {
 	plan,
 	selectedSite,
 	redirectTo,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackCheckout,
 	isGiftPurchase,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	connectAfterCheckout,
+	fromSiteSlug,
+	adminUrl,
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
@@ -56,26 +60,39 @@ export default function CheckoutMainWrapper( {
 	plan?: string;
 	selectedSite?: { slug?: string };
 	redirectTo?: string;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	connectAfterCheckout?: boolean;
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as in siteless checkout. As opposed to `siteSlug` which is
+	 * the site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 */
+	fromSiteSlug?: string;
+	adminUrl?: string;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	useBigSkyBeforePlans();
 
-	const prepurchaseNotices = <PrePurchaseNotices />;
+	useEffect( () => {
+		window.scrollTo( 0, 0 );
+	}, [] );
 
 	useEffect( () => {
 		if ( productAliasFromUrl ) {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'CheckoutMainWrapper saw productSlug to add',
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				severity: config( 'env_id' ) === 'production' ? 'info' : 'debug',
 				extra: {
 					productSlug: productAliasFromUrl,
 				},
@@ -97,38 +114,41 @@ export default function CheckoutMainWrapper( {
 	}
 
 	return (
-		<>
+		<CheckoutMainWrapperStyles>
 			<CheckoutErrorBoundary
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
 				<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 					<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
-						<CheckoutOrderBanner />
-						<CheckoutMain
-							siteSlug={ siteSlug }
-							siteId={ selectedSiteId }
-							productAliasFromUrl={ productAliasFromUrl }
-							productSourceFromUrl={ productSourceFromUrl }
-							purchaseId={ purchaseId }
-							couponCode={ couponCode }
-							redirectTo={ redirectTo }
-							feature={ selectedFeature }
-							plan={ plan }
-							isComingFromUpsell={ isComingFromUpsell }
-							infoMessage={ prepurchaseNotices }
-							isLoggedOutCart={ isLoggedOutCart }
-							isNoSiteCart={ isNoSiteCart }
-							isJetpackCheckout={ isJetpackCheckout }
-							isGiftPurchase={ isGiftPurchase }
-							jetpackSiteSlug={ jetpackSiteSlug }
-							jetpackPurchaseToken={ jetpackPurchaseToken }
-							isUserComingFromLoginForm={ isUserComingFromLoginForm }
-						/>
+						<RazorpayHookProvider fetchRazorpayConfiguration={ getRazorpayConfiguration }>
+							<CheckoutMain
+								siteSlug={ siteSlug }
+								siteId={ selectedSiteId }
+								productAliasFromUrl={ productAliasFromUrl }
+								productSourceFromUrl={ productSourceFromUrl }
+								purchaseId={ purchaseId }
+								couponCode={ couponCode }
+								redirectTo={ redirectTo }
+								feature={ selectedFeature }
+								plan={ plan }
+								isComingFromUpsell={ isComingFromUpsell }
+								sitelessCheckoutType={ sitelessCheckoutType }
+								isLoggedOutCart={ isLoggedOutCart }
+								isNoSiteCart={ isNoSiteCart }
+								isGiftPurchase={ isGiftPurchase }
+								jetpackSiteSlug={ jetpackSiteSlug }
+								jetpackPurchaseToken={ jetpackPurchaseToken }
+								isUserComingFromLoginForm={ isUserComingFromLoginForm }
+								connectAfterCheckout={ connectAfterCheckout }
+								fromSiteSlug={ fromSiteSlug }
+								adminUrl={ adminUrl }
+							/>
+						</RazorpayHookProvider>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
-		</>
+		</CheckoutMainWrapperStyles>
 	);
 }

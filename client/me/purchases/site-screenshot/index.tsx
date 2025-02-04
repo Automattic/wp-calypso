@@ -1,7 +1,7 @@
 import { SiteThumbnail, Spinner } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 import './style.scss';
 
@@ -12,7 +12,6 @@ interface SiteScreenshotProps extends ComponentProps< typeof SiteThumbnail > {
 
 /**
  * Create a site screenshot using mShots.
- *
  * @returns SiteThumbnail
  */
 export const SiteScreenshot = ( { site, alt, ...props }: SiteScreenshotProps ) => {

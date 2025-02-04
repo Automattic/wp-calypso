@@ -1,11 +1,10 @@
-import { Page, Response } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	// Reader main stream
 	readerCard: '.reader-post-card',
 	streamPlaceholder: 'span.reader__placeholder-text',
-	visitSiteLink: '.reader-visit-link',
 	actionButton: ( action: 'Share' | 'Comment' ) =>
 		`.reader-post-actions__item:has-text("${ action }")`,
 
@@ -36,18 +35,9 @@ export class ReaderPage {
 	 *
 	 * Example {@link https://wordpress.com/read}
 	 */
-	async visit(): Promise< Response | null > {
-		return await this.page.goto( getCalypsoURL( 'read' ) );
-	}
-
-	/**
-	 * Get the URL of the latest post in Reader
-	 *
-	 * @returns {Promise<string>} String of URL for latest post.
-	 */
-	async siteOfLatestPost(): Promise< string > {
-		const href = await this.page.getAttribute( selectors.visitSiteLink, 'href' );
-		return new URL( href ? href : '' ).host;
+	async visit(): Promise< void > {
+		await this.page.goto( getCalypsoURL( 'read' ) );
+		await this.page.waitForURL( /read/ );
 	}
 
 	/**

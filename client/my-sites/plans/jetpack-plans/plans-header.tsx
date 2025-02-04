@@ -5,19 +5,19 @@ import {
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import { preventWidows } from 'calypso/lib/formatting';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
+import { useSelector } from 'calypso/state';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getPlanRecommendationFromContext } from './plan-upgrade/utils';
+import type { Context } from '@automattic/calypso-router';
 
 type HeaderProps = {
-	context: PageJS.Context;
+	context: Context;
 	shouldShowPlanRecommendation?: boolean;
 };
 
@@ -38,7 +38,7 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		) }
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
-				{ preventWidows( translate( 'Best-in-class products for your WordPress site' ) ) }
+				{ translate( 'Security, performance, and marketing tools by the WordPress experts' ) }
 			</h2>
 		) }
 	</>
@@ -59,7 +59,7 @@ const ConnectFlowPlansHeader = () => (
 );
 
 const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
 	// Site plan
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
@@ -100,7 +100,7 @@ const PlansHeader = ( { context, shouldShowPlanRecommendation }: HeaderProps ) =
 	);
 };
 
-export default function setJetpackHeader( context: PageJS.Context ): void {
+export default function setJetpackHeader( context: Context ) {
 	const planRecommendation = getPlanRecommendationFromContext( context );
 	const shouldShowPlanRecommendation = !! planRecommendation;
 

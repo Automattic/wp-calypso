@@ -1,10 +1,11 @@
+import { Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import Count from 'calypso/components/count';
+import { useCurrentRoute } from 'calypso/components/route';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { type as domainType } from 'calypso/lib/domains/constants';
 import { getEmailAddress } from 'calypso/lib/emails';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import DomainInfoCard from '..';
 import type { DomainInfoCardProps } from '../types';
 
@@ -15,10 +16,15 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 		selectedSite.ID,
 		domain.name
 	);
+	const { currentRoute } = useCurrentRoute();
 
 	let emailAddresses: string[] = [];
 
-	if ( ! canCurrentUserAddEmail( domain ) || typesUnableToAddEmail.includes( domain.type ) ) {
+	if (
+		! canCurrentUserAddEmail( domain ) ||
+		typesUnableToAddEmail.includes( domain.type ) ||
+		domain.pendingRegistrationAtRegistry
+	) {
 		return null;
 	}
 
@@ -33,18 +39,19 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 	return ! emailAddresses.length ? (
 		<DomainInfoCard
 			type="href"
-			href={ emailManagement( selectedSite.slug, domain.name ) }
+			href={ getEmailManagementPath( selectedSite.slug, domain.name, currentRoute ) }
 			title={ translate( 'Email' ) }
 			description={ translate( 'Send and receive emails from youremail@%(domainName)s', {
 				args: { domainName: domain.name },
 			} ) }
 			ctaText={ translate( 'Add professional email' ) }
-			isPrimary={ true }
+			isPrimary
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	) : (
 		<DomainInfoCard
 			type="href"
-			href={ emailManagement( selectedSite.slug, domain.name ) }
+			href={ getEmailManagementPath( selectedSite.slug, domain.name, currentRoute ) }
 			title={
 				<>
 					{ translate( 'Email' ) }
@@ -53,6 +60,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 			}
 			description={ emailAddresses.join( '\n' ) }
 			ctaText={ translate( 'View emails' ) }
+			buttonDisabled={ domain.isMoveToNewSitePending }
 		/>
 	);
 };

@@ -34,7 +34,7 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 		this.configurationData = configurationData;
 	}
 
-	blockSidebarName = 'Pay with Paypal';
+	blockSidebarName = 'Pay with PayPal';
 	blockEditorSelector = blockParentSelector;
 
 	// @todo the `configure` below should also support a target: SiteType option as it wraps the `EditorPage`
@@ -44,13 +44,14 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const nameLocator = context.editorLocator.locator( selectors.name );
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+		const nameLocator = editorCanvas.locator( selectors.name );
 		await nameLocator.fill( this.configurationData.name );
 
-		const priceLocator = context.editorLocator.locator( selectors.price );
+		const priceLocator = editorCanvas.locator( selectors.price );
 		await priceLocator.fill( this.configurationData.price.toString() );
 
-		const emailLocator = context.editorLocator.locator( selectors.email );
+		const emailLocator = editorCanvas.locator( selectors.email );
 		await emailLocator.fill( this.configurationData.email );
 
 		// If the post is not saved as draft, the Pay with Paypal block is not rendered in the published post.

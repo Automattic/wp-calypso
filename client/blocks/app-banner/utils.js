@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
@@ -22,12 +21,10 @@ const emptyBanner = {
 };
 
 export function getAppBannerData( translate, sectionName, isRTL ) {
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
 	switch ( sectionName ) {
 		case GUTENBERG:
 			return {
-				title: translate( 'Rich mobile publishing.' ),
+				title: translate( 'Rich mobile publishing' ),
 				copy: translate(
 					'A streamlined editor with faster, simpler image uploading? Check and mate.'
 				),
@@ -35,7 +32,7 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 			};
 		case NOTES:
 			return {
-				title: translate( 'Watch engagement happening.' ),
+				title: translate( 'Watch engagement happening' ),
 				copy: translate(
 					'Is your new post a hit? With push notifications, see reactions as they roll in.'
 				),
@@ -43,28 +40,22 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 			};
 		case READER:
 			return {
-				title: translate( 'Read posts, even offline.' ),
+				title: translate( 'Read posts, even offline' ),
 				copy: translate( 'Catch up with new posts on the go or save them to read offline.' ),
 				icon: `/calypso/animations/app-promo/jp-reader${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case STATS:
 			return {
-				title: translate( 'Stats at your fingertips.' ),
+				title: translate( 'Stats at your fingertips' ),
 				copy: translate( 'See your real-time stats anytime, anywhere.' ),
 				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case HOME:
-			if ( displayJetpackAppBranding ) {
-				return {
-					title: translate( 'The Jetpack app makes WordPress better.' ),
-					copy: translate(
-						'Everything you need to write, publish, and manage a world-class site.'
-					),
-					icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
-				};
-			}
-
-			return emptyBanner;
+			return {
+				title: translate( 'The Jetpack app makes WordPress better' ),
+				copy: translate( 'Everything you need to write, publish, and manage a world-class site.' ),
+				icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
+			};
 		default:
 			return emptyBanner;
 	}

@@ -11,7 +11,6 @@ import 'calypso/state/sharing/init';
 
 /**
  * Triggers a network request for Keyring services.
- *
  * @returns {Function} Action thunk
  */
 export function requestKeyringServices() {

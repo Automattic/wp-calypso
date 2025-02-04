@@ -11,7 +11,6 @@ const trackRequests = {
 
 /**
  * Send an API request for information about a site's Rewind policies.
- *
  * @param	{number|null} siteId	Site ID
  * @returns	Action object
  */
@@ -20,4 +19,4 @@ export const requestPolicies = ( siteId: number | null ) =>
 		type: REWIND_POLICIES_REQUEST,
 		siteId,
 		...trackRequests,
-	} as const );
+	} ) as const;

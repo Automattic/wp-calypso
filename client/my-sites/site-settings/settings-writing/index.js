@@ -1,8 +1,19 @@
-import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import page from '@automattic/calypso-router';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectIfDuplicatedView as _redirectIfDuplicatedView,
+} from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
-import { podcasting, taxonomies, writing } from './controller';
+import { taxonomies, writing } from './controller';
+
+const redirectIfDuplicatedView = ( context, next ) => {
+	_redirectIfDuplicatedView( `edit-tags.php?taxonomy=${ context.params.taxonomy }` )(
+		context,
+		next
+	);
+};
 
 export default function () {
 	page(
@@ -20,21 +31,10 @@ export default function () {
 	page(
 		'/settings/taxonomies/:taxonomy/:site_id',
 		siteSelection,
+		redirectIfDuplicatedView,
 		navigation,
 		setScroll,
 		taxonomies,
-		makeLayout,
-		clientRender
-	);
-
-	page( '/settings/podcasting', siteSelection, sites, makeLayout, clientRender );
-
-	page(
-		'/settings/podcasting/:site_id',
-		siteSelection,
-		navigation,
-		setScroll,
-		podcasting,
 		makeLayout,
 		clientRender
 	);

@@ -10,18 +10,17 @@ function isConnected( keyringConnection, externalUser, siteKeyring ) {
 }
 
 /**
- * Returns a list of site connections to Google My Business keyring.
+ * Returns a list of site connections to Google Business Profile keyring.
  * Given that, in the case of GMB, the id of the keyring connection
  * is stored in the site's settings, there can only be one item in this list.
  * The format of the `connections` returned matches the one returned by
  * `getSiteUserConnectionsForService` used for Publicize services.
- *
  * @param  {Object} state  Global state tree
  * @param  {Object} siteId The site ID
  * @returns {Object}        List of GMB connections for this site
  */
 export default function getSiteUserConnectionsForGoogleMyBusiness( state, siteId ) {
-	// Google My Business can only have one location connected at a time
+	// Google Business Profile can only have one location connected at a time
 	const googleMyBusinessSiteKeyring = last(
 		getSiteKeyringsForService( state, siteId, 'google_my_business' )
 	);

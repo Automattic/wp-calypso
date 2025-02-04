@@ -3,7 +3,6 @@ import moment from 'moment-timezone';
 /**
  * A collection of parameters for applying a site's timezone or UTC offset to
  * a given MomentInput.
- *
  * @typedef OffsetParams
  * @property {string|null} [timezone] Timezone representation to apply.
  * @property {string|number|null} [gmtOffset] Offset to apply if timezone isn't supplied.
@@ -22,7 +21,6 @@ import moment from 'moment-timezone';
 /**
  * Accepts (optional) timezone and offset and applies one to the provided date, preferring the
  * timezone. If neither are provided, creates a default moment.js object in local timezone.
- *
  * @param  {import('moment-timezone').MomentInput}  input Valid input for moment (string, timestamp, moment.js object)
  *                        to which timezone or offset will be applied.
  * @param  {OffsetParams} params Parameters

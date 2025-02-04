@@ -14,10 +14,9 @@ import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './sche
  *
  * In development, if you are receiving Redux errors like this:
  *
- *     Error: Given action "CURRENT_USER_RECEIVE", reducer "id" returned undefined.
+ * Error: Given action "CURRENT_USER_RECEIVE", reducer "id" returned undefined.
  *
  * This is likely caused by a server-side error or stored state corruption/auth token expiry.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -68,7 +67,6 @@ export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) =
  *
  * Capability sets are simple objects with boolean flags,
  * so comparison is as simple as comparing objects at the first level.
- *
  * @param  {Object} capA First set of capabilities
  * @param  {Object} capB Second set of capabilities
  * @returns {boolean} True if capability sets are the same, false otherwise.
@@ -87,7 +85,6 @@ function areCapabilitiesEqual( capA, capB ) {
  * Returns the updated capabilities state after an action has been dispatched.
  * The state maps site ID keys to an object of current user capabilities for
  * that site.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

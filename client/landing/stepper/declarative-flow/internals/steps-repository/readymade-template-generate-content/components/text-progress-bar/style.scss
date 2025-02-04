@@ -1,0 +1,24 @@
+@import "../../../style";
+
+.readymade-progress-bar {
+	.progress-bar__text {
+		color: var(--studio-gray-70);
+		font-size: $font-body-extra-small;
+		padding-top: 5px;
+	}
+	.progress-bar {
+		height: 8px;
+		border-radius: 4px;
+		transition: width 0.2s, background-color 0.2s;
+		margin-top: 10px;
+	}
+	.progress-bar.red {
+		background-color: var(--studio-red-60);
+	}
+	.progress-bar.yellow {
+		background-color: var(--studio-yellow-30);
+	}
+	.progress-bar.green {
+		background-color: var(--studio-green-50);
+	}
+}

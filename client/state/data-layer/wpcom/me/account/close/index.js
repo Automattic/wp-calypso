@@ -30,12 +30,12 @@ export function fromApi( response ) {
 	return response;
 }
 
-export function receiveAccountCloseSuccess() {
+export function receiveAccountCloseSuccess( _action, response ) {
 	recordTracksEvent( 'calypso_account_closed' );
-	return closeAccountSuccess();
+	return closeAccountSuccess( response );
 }
 
-export function receiveAccountCloseError( action, error ) {
+export function receiveAccountCloseError( _action, error ) {
 	if ( error.error === 'active-subscriptions' ) {
 		return errorNotice(
 			translate( 'This user account cannot be closed while it has active subscriptions.' )

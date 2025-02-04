@@ -1,10 +1,13 @@
+/* eslint-disable prettier/prettier */
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate, useRtl } from 'i18n-calypso';
+import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -17,6 +20,7 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import getSites from 'calypso/state/selectors/get-sites';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
@@ -24,7 +28,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
 import NavItem from './nav-item';
-
 /**
  * Import Styles
  */
@@ -58,6 +61,11 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodca
 		advanceToNextIncompleteTask();
 	}
 };
+
+const unverifiedEmailTaskComparator = memoize(
+	( isEmailUnverified ) => ( task ) =>
+		isEmailUnverified && CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED === task.id ? -1 : 0
+);
 
 const skipTask = (
 	dispatch,
@@ -114,6 +122,7 @@ const SiteSetupList = ( {
 	tasks,
 	taskUrls,
 	userEmail,
+	siteCount,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -121,6 +130,7 @@ const SiteSetupList = ( {
 	const [ useAccordionLayout, setUseAccordionLayout ] = useState( false );
 	const [ showAccordionSelectedTask, setShowAccordionSelectedTask ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
+
 	const dispatch = useDispatch();
 	const { skipCurrentView } = useSkipCurrentViewMutation( siteId );
 
@@ -166,7 +176,7 @@ const SiteSetupList = ( {
 		}
 		if ( currentTaskId && currentTask && tasks.length ) {
 			const rawCurrentTask = tasks.find( ( task ) => task.id === currentTaskId );
-			if ( rawCurrentTask.isCompleted && ! currentTask.isCompleted ) {
+			if ( rawCurrentTask?.isCompleted && ! currentTask.isCompleted ) {
 				const nextTaskId = tasks.find( ( task ) => ! task.isCompleted )?.id;
 				setTaskIsManuallySelected( false );
 				setCurrentTaskId( nextTaskId );
@@ -190,6 +200,7 @@ const SiteSetupList = ( {
 				isBlogger,
 				isFSEActive,
 				isRtl,
+				siteCount,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -210,6 +221,7 @@ const SiteSetupList = ( {
 		isBlogger,
 		isFSEActive,
 		isRtl,
+		siteCount,
 	] );
 
 	useEffect( () => {
@@ -230,7 +242,7 @@ const SiteSetupList = ( {
 	};
 
 	return (
-		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
+		<Card className={ clsx( 'site-setup-list', { 'is-loading': isLoading } ) }>
 			{ isLoading && <Spinner /> }
 			{ ! useAccordionLayout && (
 				<CurrentTaskItem
@@ -275,7 +287,11 @@ const SiteSetupList = ( {
 						const isCompleted = task.isCompleted;
 
 						return (
-							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
+							<li
+								key={ task.id }
+								className={ `site-setup-list__task-${ task.id }` }
+								role="presentation"
+							>
 								<NavItem
 									key={ task.id }
 									taskId={ task.id }
@@ -336,7 +352,7 @@ const SiteSetupList = ( {
 
 const ConnectedSiteSetupList = connect( ( state, props ) => {
 	const { isFSEActive } = props;
-
+	const siteCount = getSites( state ).length;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -352,20 +368,39 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	} );
 	// Existing usage didn't have a global selector, we can tidy this in a follow up.
 	const emailVerificationStatus = state?.currentUser?.emailVerification?.status;
+	const isEmailUnverified = ! isCurrentUserEmailVerified( state );
 
 	return {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
-		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isEmailUnverified,
 		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
-		tasks: taskList.getAll(),
+		tasks: taskList.getAllSorted( unverifiedEmailTaskComparator( isEmailUnverified ) ),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
+		siteCount,
 	};
 } )( SiteSetupList );
 
-export default withIsFSEActive( ConnectedSiteSetupList );
+const WithIsFSEActiveSiteSetupList = withIsFSEActive( ConnectedSiteSetupList );
+export default WithIsFSEActiveSiteSetupList;
+
+const SiteSetupListWrapper = ( { siteId } ) => {
+	if ( ! siteId ) {
+		return null;
+	}
+	return (
+		<>
+			<QuerySiteChecklist siteId={ siteId } />
+			<WithIsFSEActiveSiteSetupList />
+		</>
+	);
+};
+
+export const ConnectedSiteSetupListWrapper = connect( ( state ) => ( {
+	siteId: getSelectedSiteId( state ),
+} ) )( SiteSetupListWrapper );

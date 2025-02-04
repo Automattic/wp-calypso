@@ -13,7 +13,6 @@ const debug = debugFactory( 'calypso:user:settings' );
 /**
  * Checks if an incoming change to settings.language is a change to the existing settings
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
- *
  * @param  {string}  languageSettingValue the newly-set language slug string.
  * @param  {Object}  settings user settings object.
  * @returns {boolean} if the language setting has been changed.
@@ -34,8 +33,7 @@ function hasLanguageChanged( languageSettingValue, settings = {} ) {
 /**
  * Split a path into an array.
  *
- * Example: Input of `calypso_preferences.colorScheme` results in `[ 'calypso_preferences', 'colorScheme' ]`
- *
+ * Example: Input of `calypso_preferences.preferenceName` results in `[ 'calypso_preferences', 'preferenceName' ]`
  * @param {string|Array} path Path to be split into an array
  */
 function castPath( path ) {
@@ -46,15 +44,9 @@ function castPath( path ) {
 	return path.split( '.' );
 }
 
-/* FIXME: excluding these settings is a workaround which allows
-for those settings to be set if there's no default value; the API
-should provide a default value, which would make these lines obsolete */
-export const ALLOW_EMPTY_DEFAULTS = [ 'calypso_preferences.colorScheme' ];
-
 /**
  * Handles the storage and removal of changed setting that are pending
  * being saved to the WPCOM API.
- *
  * @param  {string} settingName - setting name
  * @param  {*} value - setting value
  * @returns {Function} Action thunk that returns updating successful response
@@ -66,7 +58,7 @@ export default function setUserSetting( settingName, value ) {
 
 		const originalSetting = get( settings, settingPath );
 
-		if ( originalSetting === undefined && ! ALLOW_EMPTY_DEFAULTS.includes( settingName ) ) {
+		if ( originalSetting === undefined ) {
 			debug( settingName + ' does not exist in user-settings data module.' );
 			return;
 		}

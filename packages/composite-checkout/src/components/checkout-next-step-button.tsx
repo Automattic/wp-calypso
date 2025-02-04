@@ -8,7 +8,13 @@ function CheckoutNextStepButton( {
 	...props
 }: CheckoutNextStepButtonProps & ButtonProps & React.ButtonHTMLAttributes< HTMLButtonElement > ) {
 	return (
-		<Button onClick={ onClick } buttonType="primary" aria-label={ ariaLabel } { ...props }>
+		<Button
+			className="checkout-next-step-button"
+			onClick={ onClick }
+			buttonType="primary"
+			aria-label={ ariaLabel }
+			{ ...props }
+		>
 			{ value }
 		</Button>
 	);

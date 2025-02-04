@@ -1,19 +1,19 @@
 import { translate } from 'i18n-calypso';
 import { map, get } from 'lodash';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest, getHeaders } from 'calypso/state/data-layer/wpcom-http/utils';
-import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { READER_TAGS_REQUEST } from 'calypso/state/reader/action-types';
 import { receiveTags } from 'calypso/state/reader/tags/items/actions';
 
 export function requestTags( action ) {
-	const path =
-		action.payload && action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
+	const path = action.payload.slug ? `/read/tags/${ action.payload.slug }` : '/read/tags';
 
 	return http( {
 		path,
+		query: { locale: action.payload.locale },
 		method: 'GET',
 		apiVersion: '1.2',
 		onSuccess: action,

@@ -14,18 +14,20 @@ const CardExample = () => (
 		<CardHeader isShady={ false }>
 			<FlexBlock>Header: Code is Poetry</FlexBlock>
 			<FlexItem>
-				<Button isLink>Dismiss</Button>
+				<Button variant="link">Dismiss</Button>
 			</FlexItem>
 		</CardHeader>
 
 		<CardBody>...</CardBody>
-		<CardDivider />
+
+		<CardDivider className="card-example" />
+
 		<CardBody>...</CardBody>
 
 		<CardFooter isShady={ false }>
 			<FlexBlock>Footer: Code is Poetry</FlexBlock>
 			<FlexItem>
-				<Button isPrimary>Action</Button>
+				<Button variant="primary">Action</Button>
 			</FlexItem>
 		</CardFooter>
 	</Card>

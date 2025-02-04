@@ -50,7 +50,6 @@ export const markReadStatus = ( noteId, isRead, callback ) =>
 
 /**
  * Mark post as seen using the new more granular per post API.
- *
  * @param blogId blog identifier
  * @param postId post identifier
  */

@@ -37,6 +37,7 @@ function adaptFeed( feed ) {
 		image: feed.image,
 		organization_id: feed.organization_id,
 		unseen_count: feed.unseen_count,
+		subscription_id: feed.subscription_id,
 	};
 }
 

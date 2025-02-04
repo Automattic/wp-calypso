@@ -1,16 +1,16 @@
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useContext } from 'react';
-import { useQueryClient } from 'react-query';
-import { useDispatch } from 'react-redux';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice, removeNotice } from 'calypso/state/notices/actions';
 import SitesOverviewContext from '../context';
-import type { APIError, Site } from '../types';
+import type { APIError, Site, APIToggleFavorite, ToggleFavoriteOptions } from '../types';
 
 import './style.scss';
 
@@ -25,14 +25,14 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 	const { showOnlyFavorites } = filter;
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 	const siblingQueryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
-		{ ...filter, showOnlyFavorites: ! showOnlyFavorites },
+		{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
 	];
 	const successNoticeId = 'success-notice';
 
@@ -41,7 +41,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		page.redirect( '/dashboard/favorites?highlight=favorite-tab' );
 	};
 
-	const handleOnChangeFavoriteSuccess = () => {
+	const handleOnChangeFavoriteSuccess = ( isFavorite: boolean ) => {
 		const text = (
 			<span>
 				{ ! isFavorite
@@ -78,7 +78,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		return {
 			onMutate: async ( { siteId, isFavorite }: { siteId: number; isFavorite: boolean } ) => {
 				// Cancel any current refetches, so they don't overwrite our optimistic update
-				await queryClient.cancelQueries( queryKey );
+				await queryClient.cancelQueries( {
+					queryKey,
+				} );
 
 				// Snapshot the previous value
 				const previousSites = queryClient.getQueryData( queryKey );
@@ -87,7 +89,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 					return {
 						...oldSites,
-						sites: oldSites?.sites.map( ( site: Site ) => {
+						sites: oldSites?.sites?.map( ( site: Site ) => {
 							if ( site.blog_id === siteId ) {
 								return {
 									...site,
@@ -114,8 +116,8 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				// Store previous settings in case of failure
 				return { previousSites };
 			},
-			onSuccess: () => {
-				handleOnChangeFavoriteSuccess();
+			onSuccess: ( _data: APIToggleFavorite, options: ToggleFavoriteOptions ) => {
+				handleOnChangeFavoriteSuccess( options.isFavorite );
 			},
 			onError: ( error: APIError, options: any, context: any ) => {
 				queryClient.setQueryData( queryKey, context?.previousSites );
@@ -123,12 +125,14 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 				dispatch( errorNotice( errorMessage ) );
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( queryKey );
+				queryClient.invalidateQueries( {
+					queryKey,
+				} );
 			},
 		};
 	};
 
-	const { isLoading, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
+	const { isPending, mutate } = useToggleFavoriteSiteMutation( handleMutation() );
 
 	const handleFavoriteChange = () => {
 		mutate( { siteId, isFavorite } );
@@ -145,9 +149,9 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 		<Button
 			borderless
 			compact
-			disabled={ isLoading }
+			disabled={ isPending }
 			onClick={ handleFavoriteChange }
-			className={ classNames(
+			className={ clsx(
 				'site-set-favorite__favorite-icon',
 				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'

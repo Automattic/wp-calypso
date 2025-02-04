@@ -4,45 +4,47 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
-import { Button, FormInputValidation, Popover } from '@automattic/components';
-import {
-	useSubmitTicketMutation,
-	useSubmitForumsMutation,
-	useSiteAnalysis,
-	useUserSites,
-	AnalysisReport,
-	useSibylQuery,
-	SiteDetails,
-	HelpCenterSite,
-} from '@automattic/data-stores';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
+import { FormInputValidation, Popover, Spinner } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
-import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
+import {
+	useCanConnectToZendeskMessaging,
+	useOpenZendeskMessaging,
+} from '@automattic/zendesk-client';
+import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import React, { useEffect, useRef, useState } from 'react';
-import { useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { getQueryArgs } from '@wordpress/url';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { preventWidows } from 'calypso/lib/formatting';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { getQueryArgs } from 'calypso/lib/query-args';
-import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
+import { EMAIL_SUPPORT_LOCALES } from '../constants';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useJetpackSearchAIQuery } from '../data/use-jetpack-search-ai';
+import { useSiteAnalysis } from '../data/use-site-analysis';
+import { useSubmitForumsMutation } from '../data/use-submit-forums-topic';
+import { useSubmitTicketMutation } from '../data/use-submit-support-ticket';
+import { useUserSites } from '../data/use-user-sites';
+import { useChatStatus, useContactFormTitle } from '../hooks';
+import { queryClient } from '../query-client';
 import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
-import { SitePicker } from '../types';
-import { BackButton } from './back-button';
-import { HelpCenterOwnershipNotice } from './help-center-notice';
-import { SibylArticles } from './help-center-sibyl-articles';
+import { SearchResult } from '../types';
+import { HelpCenterGPT } from './help-center-gpt';
+import HelpCenterSearchResults from './help-center-search-results';
+import { HelpCenterSitePicker } from './help-center-site-picker';
+import ThirdPartyCookiesNotice from './help-center-third-party-cookies-notice';
+import type { JetpackSearchAIResult } from '../data/use-jetpack-search-ai';
+import type { AnalysisReport } from '../types';
+import type { HelpCenterSelect, SiteDetails, HelpCenterSite } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
-
-export const SITE_STORE = 'automattic/site';
 
 const fakeFaces = [
 	'john',
@@ -59,129 +61,62 @@ const fakeFaces = [
 ].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
-const HelpCenterSitePicker: React.FC< SitePicker > = ( {
-	onSelect,
-	currentSite,
-	siteId,
-	enabled,
-} ) => {
-	const otherSite = {
-		name: __( 'Other site', __i18n_text_domain__ ),
-		ID: 0,
-		logo: { id: '', sizes: [] as never[], url: '' },
-		URL: '',
-	} as const;
-
-	function pickSite( ID: number | string ) {
-		onSelect( ID );
-	}
-
-	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
-
-	return (
-		<SitePickerDropDown
-			enabled={ enabled }
-			onPickSite={ pickSite }
-			options={ options }
-			siteId={ siteId }
-		/>
-	);
-};
-
-function useFormTitles( mode: Mode ): {
-	formTitle: string;
-	formSubtitle?: string;
-	trayText?: string;
-	formDisclaimer?: string;
-	buttonLabel: string;
-	buttonSubmittingLabel: string;
-	buttonLoadingLabel?: string;
-} {
-	return {
-		CHAT: {
-			formTitle: __( 'Start live chat', __i18n_text_domain__ ),
-			trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
-			buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
-		},
-		EMAIL: {
-			formTitle: __( 'Send us an email', __i18n_text_domain__ ),
-			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
-			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
-		},
-		FORUM: {
-			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
-			formDisclaimer: __(
-				'Please do not provide financial or contact information when submitting this form.',
-				__i18n_text_domain__
-			),
-			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
-			buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
-			buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
-		},
-	}[ mode ];
-}
-
-const getSupportedLanguages = ( supportType: string, locale: string ) => {
-	const isLiveChatLanguageSupported = (
-		config( 'livechat_support_locales' ) as Array< string >
-	 ).includes( locale );
-
-	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-		locale
-	);
-
-	switch ( supportType ) {
-		case 'CHAT':
-			return ! isLiveChatLanguageSupported;
-		case 'EMAIL':
-			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
-
-		default:
-			return false;
-	}
+const isLocaleNotSupportedInEmailSupport = ( locale: string ) => {
+	return ! EMAIL_SUPPORT_LOCALES.includes( locale );
 };
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
-	const sectionName = useSelector( getSectionName );
+	const { sectionName, currentUser, site } = useHelpCenterContext();
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
-	const history = useHistory();
+	const wapuuFlow = params.get( 'wapuuFlow' ) === 'true';
+	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
-	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
-	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const userId = useSelector( getCurrentUserId );
-	const { data: userSites } = useUserSites( userId );
+	const { isPending: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
+	const { isPending: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const { data: userSites } = useUserSites( currentUser.ID );
 	const userWithNoSites = userSites?.sites.length === 0;
-	const queryClient = useQueryClient();
-	const email = useSelector( getCurrentUserEmail );
-	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
-		'CURRENT_SITE'
+	const [ isSelfDeclaredSite, setIsSelfDeclaredSite ] = useState< boolean >( false );
+	const [ gptResponse, setGptResponse ] = useState< JetpackSearchAIResult >();
+	const { currentSupportInteraction, subject, message, userDeclaredSiteUrl } = useSelect(
+		( select ) => {
+			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+			return {
+				currentSupportInteraction: helpCenterSelect.getCurrentSupportInteraction(),
+				subject: helpCenterSelect.getSubject(),
+				message: helpCenterSelect.getMessage(),
+				userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
+			};
+		},
+		[]
 	);
-	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
-		return {
-			currentSite: select( HELP_CENTER_STORE ).getSite(),
-			subject: select( HELP_CENTER_STORE ).getSubject(),
-			message: select( HELP_CENTER_STORE ).getMessage(),
-			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
-		};
-	} );
+
+	const odieId =
+		currentSupportInteraction?.events.find( ( event ) => event.event_source === 'odie' )
+			?.event_external_id ?? null;
 
 	const {
-		setSite,
 		resetStore,
-		setUserDeclaredSiteUrl,
+		setShowHelpCenter,
 		setUserDeclaredSite,
+		setShowMessagingChat,
 		setSubject,
 		setMessage,
 	} = useDispatch( HELP_CENTER_STORE );
+
+	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
+	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
+		sectionName,
+		'zendesk_support_chat_key',
+		isEligibleForChat || hasActiveChats
+	);
 
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
@@ -195,77 +130,169 @@ export const HelpCenterContactForm = () => {
 
 	useEffect( () => {
 		if ( userWithNoSites ) {
-			setSitePickerChoice( 'OTHER_SITE' );
+			setIsSelfDeclaredSite( true );
 		}
 	}, [ userWithNoSites ] );
 
-	const formTitles = useFormTitles( mode );
+	const formTitles = useContactFormTitle( mode );
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
-		userId,
+		currentUser.ID,
 		userDeclaredSiteUrl,
-		sitePickerChoice === 'OTHER_SITE'
+		isSelfDeclaredSite
 	);
 
 	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
-	const isSubmitting = submittingTicket || submittingTopic;
+	const isSubmitting = submittingTicket || submittingTopic || isOpeningZendeskWidget;
 
 	// if the user picked a site from the picker, we don't need to analyze the ownership
-	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
+	if ( site && ! isSelfDeclaredSite ) {
 		ownershipResult = {
 			result: 'OWNED_BY_USER',
 			isWpcom: true,
-			siteURL: currentSite.URL,
-			site: currentSite,
+			siteURL: site.URL,
+			site: site,
 		};
 	}
 
 	// record the resolved site
 	useEffect( () => {
-		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
+		if ( ownershipResult?.site && isSelfDeclaredSite ) {
 			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
-	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
+	}, [ ownershipResult, setUserDeclaredSite, isSelfDeclaredSite ] );
 
 	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
-	if ( sitePickerChoice === 'OTHER_SITE' ) {
+	if ( isSelfDeclaredSite ) {
 		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = currentSite as HelpCenterSite;
+		supportSite = site as HelpCenterSite;
 	}
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+	const [ debouncedSubject ] = useDebounce( subject || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery(
-		debouncedMessage,
-		Boolean( supportSite?.jetpack ),
-		Boolean( supportSite?.is_wpcom_atomic )
+	const enableGPTResponse =
+		config.isEnabled( 'help/gpt-response' ) &&
+		! ( params.get( 'disable-gpt' ) === 'true' ) &&
+		! wapuuFlow;
+
+	const showingSearchResults = params.get( 'show-results' ) === 'true';
+	const skipResources = params.get( 'skip-resources' ) === 'true';
+	const showingGPTResponse = enableGPTResponse && params.get( 'show-gpt' ) === 'true';
+
+	const redirectToArticle = useCallback(
+		( event: React.MouseEvent< HTMLAnchorElement, MouseEvent >, result: SearchResult ) => {
+			event.preventDefault();
+
+			// if result.post_id isn't set then open in a new window
+			if ( ! result.post_id ) {
+				const tracksData = {
+					search_query: debouncedMessage,
+					force_site_id: true,
+					location: 'help-center',
+					result_url: result.link,
+					post_id: result.post_id,
+					blog_id: result.blog_id,
+				};
+				recordTracksEvent( `calypso_inlinehelp_article_no_postid_redirect`, tracksData );
+				window.open( result.link, '_blank' );
+				return;
+			}
+
+			const params = new URLSearchParams( {
+				link: result.link,
+				postId: String( result.post_id ),
+				query: debouncedMessage || '',
+				title: preventWidows( decodeEntities( result.title ) ),
+			} );
+
+			if ( result.blog_id ) {
+				params.set( 'blogId', String( result.blog_id ) );
+			}
+
+			navigate( `/post/?${ params }` );
+		},
+		[ debouncedMessage, navigate ]
 	);
 
-	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	// this indicates the user was happy with the GPT response
+	function handleGPTClose() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_close', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		resetStore();
+
+		navigate( '/' );
+	}
+
+	function navigateToContactForm() {
+		navigate( {
+			pathname: '/contact-form',
+			search: params.toString(),
+		} );
+	}
+
+	function handleGPTCancel() {
+		// send a tracks event
+		recordTracksEvent( 'calypso_inlinehelp_contact_gpt_cancel', {
+			force_site_id: true,
+			location: 'help-center',
+			section: sectionName,
+		} );
+
+		// stop loading the GPT response
+		params.set( 'show-gpt', 'false' );
+		params.set( 'disable-gpt', 'true' );
+		navigateToContactForm();
+	}
+
 	function handleCTA() {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if (
+			! enableGPTResponse &&
+			! showingSearchResults &&
+			! wapuuFlow &&
+			! skipResources &&
+			mode !== 'FORUM'
+		) {
 			params.set( 'show-results', 'true' );
-			history.push( {
-				pathname: '/contact-form',
-				search: params.toString(),
-			} );
+			navigateToContactForm();
 			return;
 		}
-		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
+
+		if ( ! showingGPTResponse && enableGPTResponse && ! wapuuFlow && mode !== 'FORUM' ) {
+			params.set( 'show-gpt', 'true' );
+			navigateToContactForm();
+			return;
+		}
+
+		// if the user was chatting with Wapuu, we need to disable GPT (no more AI)
+		if ( wapuuFlow ) {
+			params.set( 'disable-gpt', 'true' );
+			params.set( 'show-gpt', 'false' );
+		}
+
+		// Domain only sites don't have plans.
+		const productSlug = ( supportSite as HelpCenterSite )?.plan?.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
 
+		const aiChatId = wapuuFlow ? odieId?.toString() ?? '' : gptResponse?.answer_id;
+
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-						support_variation: 'happychat',
+						support_variation: 'messaging',
 						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
@@ -278,7 +305,33 @@ export const HelpCenterContactForm = () => {
 						location: 'help-center',
 						section: sectionName,
 					} );
-					history.push( '/inline-chat' );
+
+					let initialChatMessage = message;
+					if ( gptResponse ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += `<strong>Automated AI response from ${ gptResponse.source } that was presented to user before they started chat</strong>:<br />`;
+						initialChatMessage += gptResponse.response;
+					}
+
+					if ( wapuuFlow ) {
+						initialChatMessage += '<br /><br />';
+						initialChatMessage += odieId
+							? `<strong>Wapuu chat reference: ${ odieId }</strong>:<br />`
+							: '<strong>Wapuu chat reference is not available</strong>:<br />';
+						initialChatMessage += 'User was chatting with Wapuu before they started chat<br />';
+					}
+
+					openZendeskWidget( {
+						aiChatId: aiChatId,
+						message: initialChatMessage,
+						siteUrl: supportSite.URL,
+						siteId: supportSite.ID,
+						onError: () => setHasSubmittingError( true ),
+						onSuccess: () => {
+							resetStore();
+							setShowHelpCenter( false );
+						},
+					} );
 					break;
 				}
 				break;
@@ -290,7 +343,7 @@ export const HelpCenterContactForm = () => {
 						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
 					];
 
-					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
+					if ( getQueryArgs( window.location.href )?.ref === 'woocommerce-com' ) {
 						ticketMeta.push(
 							`Created during store setup on ${
 								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
@@ -308,21 +361,27 @@ export const HelpCenterContactForm = () => {
 						is_chat_overflow: overflow,
 						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
+						ai_chat_id: aiChatId,
+						ai_message: gptResponse?.response,
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-								support_variation: 'kayako',
+								support_variation: 'email',
 								force_site_id: true,
 								location: 'help-center',
 								section: sectionName,
 							} );
-							history.push( '/success' );
+							navigate( '/success' );
+
 							resetStore();
+
 							// reset support-history cache
 							setTimeout( () => {
 								// wait 30 seconds until support-history endpoint actually updates
 								// yup, it takes that long (tried 5, and 10)
-								queryClient.invalidateQueries( [ `activeSupportTickets`, email ] );
+								queryClient.invalidateQueries( {
+									queryKey: [ 'help-support-history', 'ticket', currentUser.ID ],
+								} );
 							}, 30000 );
 						} )
 						.catch( () => {
@@ -332,6 +391,8 @@ export const HelpCenterContactForm = () => {
 				break;
 
 			case 'FORUM':
+				params.set( 'show-results', 'true' );
+				navigateToContactForm();
 				submitTopic( {
 					ownershipResult,
 					message: message ?? '',
@@ -347,7 +408,7 @@ export const HelpCenterContactForm = () => {
 							location: 'help-center',
 							section: sectionName,
 						} );
-						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
+						navigate( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
 					.catch( () => {
@@ -358,7 +419,7 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const InfoTip = () => {
-		const ref = useRef< any >();
+		const ref = useRef< HTMLButtonElement >( null );
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
@@ -373,7 +434,7 @@ export const HelpCenterContactForm = () => {
 					<Icon icon={ info } size={ 18 } />
 				</button>
 				<Popover
-					className="help-center-contact-form__site-picker-privacy-popover"
+					className="help-center"
 					isVisible={ isOpen }
 					context={ ref.current }
 					position="top left"
@@ -389,10 +450,48 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
-	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+	const shouldShowHelpLanguagePrompt = isLocaleNotSupportedInEmailSupport( locale );
+
+	const getHEsTraySection = () => {
+		return (
+			<section>
+				<div className="help-center-contact-form__site-picker-hes-tray">
+					{ randomTwoFaces.map( ( f ) => (
+						<img key={ f } src={ f } aria-hidden="true" alt=""></img>
+					) ) }
+					<p className="help-center-contact-form__site-picker-hes-tray-text">
+						{ formTitles.trayText }
+					</p>
+				</div>
+			</section>
+		);
+	};
+
+	let jpSearchAiQueryText = debouncedMessage;
+	// For the JP search, we want to join the subject and message together if they're not the same
+	if (
+		debouncedSubject &&
+		debouncedMessage &&
+		debouncedSubject.slice( 0, 50 ) !== debouncedMessage.slice( 0, 50 )
+	) {
+		jpSearchAiQueryText = `${ debouncedSubject }\n\n${ debouncedMessage }`;
+	}
+
+	const { isFetching: isFetchingGPTResponse, isError: isGPTError } = useJetpackSearchAIQuery( {
+		siteId: '9619154',
+		query: jpSearchAiQueryText,
+		stopAt: 'response',
+		enabled: enableGPTResponse && showingGPTResponse,
+	} );
 
 	const isCTADisabled = () => {
 		if ( isSubmitting || ! message || ownershipStatusLoading ) {
+			return true;
+		}
+
+		// We're prefetching the GPT response,
+		// so only disabling the button while fetching if we're on the response screen
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
 			return true;
 		}
 
@@ -407,15 +506,25 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const getCTALabel = () => {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		const showingHelpOrGPTResults = showingSearchResults || showingGPTResponse;
+
+		if ( mode === 'FORUM' && showingSearchResults ) {
+			return formTitles.buttonSubmittingLabel;
+		}
+
+		if ( ! showingGPTResponse && ! showingSearchResults && ! skipResources ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingSibylResults ) {
-			return __( 'Still chat with us', __i18n_text_domain__ );
+		if ( showingGPTResponse && isFetchingGPTResponse ) {
+			return __( 'Gathering quick response.', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'EMAIL' && showingSibylResults ) {
+		if ( mode === 'CHAT' && showingHelpOrGPTResults ) {
+			return __( 'Still contact us', __i18n_text_domain__ );
+		}
+
+		if ( mode === 'EMAIL' && showingHelpOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -426,154 +535,200 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	return showingSibylResults ? (
-		<div className="help-center__sibyl-articles-page">
-			<BackButton />
-			<SibylArticles
-				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
-				supportSite={ supportSite }
-				message={ message }
-				articleCanNavigateBack
-			/>
-			<section className="contact-form-submit">
-				<Button
-					disabled={ isCTADisabled() }
-					onClick={ handleCTA }
-					primary
-					className="help-center-contact-form__site-picker-cta"
-				>
-					{ getCTALabel() }
-				</Button>
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</section>
-		</div>
-	) : (
-		<main className="help-center-contact-form">
-			<BackButton />
-			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
-			{ formTitles.formSubtitle && (
-				<p className="help-center-contact-form__site-picker-form-subtitle">
-					{ formTitles.formSubtitle }
-				</p>
-			) }
+	if ( hasActiveChats ) {
+		setShowMessagingChat( true );
+	}
 
-			{ formTitles.formDisclaimer && (
-				<p className="help-center-contact-form__site-picker-form-warning">
-					{ formTitles.formDisclaimer }
-				</p>
-			) }
+	if ( isLoadingChatStatus ) {
+		return (
+			<div className="help-center__loading">
+				<Spinner baseClassName="" />
+			</div>
+		);
+	}
 
-			{ ! userWithNoSites && (
-				<section>
-					<HelpCenterSitePicker
-						enabled={
-							mode === 'FORUM' &&
-							( ( supportSite?.plan?.product_slug &&
-								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
-								userWithNoSites )
-						}
-						currentSite={ currentSite }
-						onSelect={ ( id: string | number ) => {
-							if ( id !== 0 ) {
-								setSite( currentSite );
-							}
-							setSitePickerChoice( id === 0 ? 'OTHER_SITE' : 'CURRENT_SITE' );
-						} }
-						siteId={ sitePickerChoice === 'CURRENT_SITE' ? currentSite?.ID : 0 }
-					/>
-				</section>
-			) }
+	if ( mode === 'CHAT' && ! canConnectToZendesk ) {
+		return <ThirdPartyCookiesNotice />;
+	}
 
-			{ sitePickerChoice === 'OTHER_SITE' && (
-				<>
-					<section>
-						<TextControl
-							label={ __( 'Site address', __i18n_text_domain__ ) }
-							value={ userDeclaredSiteUrl ?? '' }
-							onChange={ setUserDeclaredSiteUrl }
+	if ( enableGPTResponse && showingGPTResponse ) {
+		return (
+			<>
+				<div className="help-center-contact-form__wrapper">
+					<div className="help-center__articles-page">
+						<HelpCenterGPT
+							redirectToArticle={ redirectToArticle }
+							onResponseReceived={ setGptResponse }
 						/>
-					</section>
-					<HelpCenterOwnershipNotice ownershipResult={ ownershipResult } />
-				</>
-			) }
+						<section className="contact-form-submit">
+							<Button
+								isBusy={ isFetchingGPTResponse }
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant={ showingGPTResponse && ! isGPTError ? 'secondary' : 'primary' }
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ ! isFetchingGPTResponse && showingGPTResponse && ! hasSubmittingError && (
+								<Button variant={ isGPTError ? 'secondary' : 'primary' } onClick={ handleGPTClose }>
+									{ __( 'Close', __i18n_text_domain__ ) }
+								</Button>
+							) }
+							{ isFetchingGPTResponse && ! isGPTError && (
+								<Button variant="secondary" onClick={ handleGPTCancel }>
+									{ __( 'Cancel', __i18n_text_domain__ ) }
+								</Button>
+							) }
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</section>
+						{ ! isFetchingGPTResponse &&
+							showingGPTResponse &&
+							[ 'CHAT', 'EMAIL' ].includes( mode ) &&
+							getHEsTraySection() }
+					</div>
+				</div>
+			</>
+		);
+	}
 
-			{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<TextControl
-						className="help-center-contact-form__subject"
-						label={ __( 'Subject', __i18n_text_domain__ ) }
-						value={ subject ?? '' }
-						onChange={ setSubject }
-					/>
-				</section>
-			) }
-
-			<section>
-				<label
-					className="help-center-contact-form__label"
-					htmlFor="help-center-contact-form__message"
-				>
-					{ __( 'How can we help you today?', __i18n_text_domain__ ) }
-				</label>
-				<textarea
-					id="help-center-contact-form__message"
-					rows={ 10 }
-					value={ message ?? '' }
-					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
-					className="help-center-contact-form__message"
-				/>
-			</section>
-
-			{ mode === 'FORUM' && (
-				<section>
-					<div className="help-center-contact-form__domain-sharing">
-						<CheckboxControl
-							checked={ hideSiteInfo }
-							label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
-							help={ <InfoTip /> }
-							onChange={ ( value ) => setHideSiteInfo( value ) }
+	return (
+		<>
+			<div className="help-center-contact-form__wrapper">
+				{ showingSearchResults ? (
+					<div className="help-center__articles-page">
+						<HelpCenterSearchResults
+							onSelect={ redirectToArticle }
+							searchQuery={ message || '' }
+							openAdminInNewTab
+							placeholderLines={ 4 }
+							location="help-center-contact-form"
 						/>
+						<section className="contact-form-submit">
+							<Button
+								isBusy={ isSubmitting }
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant="primary"
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</section>
+						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
 					</div>
-				</section>
-			) }
+				) : (
+					<div className="help-center-contact-form">
+						<main>
+							<h1 className="help-center-contact-form__site-picker-title">
+								{ formTitles.formTitle }
+							</h1>
 
-			<section className="contact-form-submit">
-				<Button
-					disabled={ isCTADisabled() }
-					onClick={ handleCTA }
-					primary
-					className="help-center-contact-form__site-picker-cta"
-				>
-					{ getCTALabel() }
-				</Button>
-				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
-					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
-				) }
-				{ hasSubmittingError && (
-					<FormInputValidation
-						isError
-						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
-					/>
-				) }
-			</section>
-			{ [ 'CHAT', 'EMAIL' ].includes( mode ) && (
-				<section>
-					<div className="help-center-contact-form__site-picker-hes-tray">
-						{ randomTwoFaces.map( ( f ) => (
-							<img key={ f } src={ f } aria-hidden="true" alt=""></img>
-						) ) }
-						<p className="help-center-contact-form__site-picker-hes-tray-text">
-							{ formTitles.trayText }
-						</p>
+							{ formTitles.formDisclaimer && (
+								<p className="help-center-contact-form__site-picker-form-warning">
+									{ formTitles.formDisclaimer }
+								</p>
+							) }
+
+							<HelpCenterSitePicker
+								ownershipResult={ ownershipResult }
+								isSelfDeclaredSite={ isSelfDeclaredSite }
+								onSelfDeclaredSite={ setIsSelfDeclaredSite }
+							/>
+
+							{ [ 'FORUM', 'EMAIL' ].includes( mode ) && (
+								<section>
+									<TextControl
+										className="help-center-contact-form__subject"
+										label={ __( 'Subject', __i18n_text_domain__ ) }
+										value={ subject ?? '' }
+										onChange={ setSubject }
+									/>
+								</section>
+							) }
+
+							<section>
+								<label
+									className="help-center-contact-form__label"
+									htmlFor="help-center-contact-form__message"
+								>
+									{ __( 'How can we help you today?', __i18n_text_domain__ ) }
+								</label>
+								<textarea
+									id="help-center-contact-form__message"
+									rows={ 10 }
+									value={ message ?? '' }
+									onInput={ ( event ) => setMessage( event.currentTarget.value ) }
+									className="help-center-contact-form__message"
+								/>
+							</section>
+
+							{ mode === 'FORUM' && (
+								<section>
+									<div className="help-center-contact-form__domain-sharing">
+										<CheckboxControl
+											checked={ hideSiteInfo }
+											label={ __( 'Don’t display my site’s URL publicly', __i18n_text_domain__ ) }
+											help={ <InfoTip /> }
+											onChange={ ( value ) => setHideSiteInfo( value ) }
+										/>
+									</div>
+								</section>
+							) }
+						</main>
+						<div className="contact-form-submit">
+							<Button
+								isBusy={ isSubmitting }
+								disabled={ isCTADisabled() }
+								onClick={ handleCTA }
+								variant="primary"
+								className="help-center-contact-form__site-picker-cta"
+							>
+								{ getCTALabel() }
+							</Button>
+							{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
+								<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+							) }
+							{ hasSubmittingError && (
+								<FormInputValidation
+									isError
+									text={ __(
+										'Something went wrong, please try again later.',
+										__i18n_text_domain__
+									) }
+								/>
+							) }
+						</div>
+						{ [ 'CHAT', 'EMAIL' ].includes( mode ) && getHEsTraySection() }
+						{ ! [ 'FORUM' ].includes( mode ) && (
+							<HelpCenterSearchResults
+								onSelect={ redirectToArticle }
+								searchQuery={ message || '' }
+								openAdminInNewTab
+								placeholderLines={ 4 }
+								location="help-center-contact-form"
+							/>
+						) }
 					</div>
-				</section>
-			) }
-			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
-		</main>
+				) }
+			</div>
+		</>
 	);
 };

@@ -1,98 +1,139 @@
-import { useLocale } from '@automattic/i18n-utils';
+import config from '@automattic/calypso-config';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import recordGTMDatalayerEvent from 'calypso/lib/analytics/ad-tracking/woo/record-gtm-datalayer-event';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep, {
-	AssignTrialResult,
-} from './internals/steps-repository/assign-trial-plan';
-import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
+import { STEPS } from './internals/steps';
+import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
+	isSignupFlow: true,
 
 	useSteps() {
-		return [
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'assignTrialPlan', component: AssignTrialPlanStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'error', component: ErrorStep },
-		];
+		return stepsWithRequiredLogin( [
+			STEPS.SITE_CREATION_STEP,
+			STEPS.PROCESSING,
+			STEPS.ASSIGN_TRIAL_PLAN,
+			STEPS.WAIT_FOR_ATOMIC,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.ERROR,
+		] );
 	},
-	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flowName = this.name;
-		const locale = useLocale();
+	useLoginParams() {
+		const [ searchParams ] = useSearchParams();
 
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
+		const oauth2ClientId = searchParams.get( 'client_id' );
+		const wccomFrom = searchParams.get( 'wccom-from' );
+		const aff = searchParams.get( 'aff' );
+		const vendorId = searchParams.get( 'vid' );
 
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/wooexpress` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			// Early return approach
-			if ( locale || locale === 'en' ) {
-				return `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-			}
-
-			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-
-			// Initial URL approach
-			const baseUrl = '/start/account/user' + ( locale && locale !== 'en' ? `/${ locale }` : '' );
-
-			return baseUrl + `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+		return {
+			customLoginPath: '/log-in',
+			extraQueryParams: {
+				...( oauth2ClientId ? { oauth2ClientId } : {} ),
+				...( wccomFrom ? { wccomFrom } : {} ),
+				...( aff ? { aff } : {} ),
+				...( vendorId ? { vendorId } : {} ),
+			},
 		};
+	},
 
-		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
-			result = {
-				state: AssertConditionState.FAILURE,
-				message: 'wooexpress-trial requires a logged in user',
-			};
+	useAssertConditions(): AssertConditionResult {
+		const { setProfilerData } = useDispatch( ONBOARD_STORE );
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
+		const translate = useTranslate();
+
+		setSiteSetupError(
+			undefined,
+			translate(
+				'It looks like something went wrong while setting up your store. Please contact support so that we can help you out.'
+			)
+		);
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const profilerData = queryParams.get( 'profilerdata' );
+
+		if ( profilerData ) {
+			try {
+				const decodedProfilerData = JSON.parse(
+					decodeURIComponent( escape( window.atob( profilerData ) ) )
+				);
+
+				setProfilerData( decodedProfilerData );
+				// Ignore any bad/invalid data and prevent it from causing downstream issues.
+			} catch {}
 		}
 
-		return result;
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/wooexpress/create-site route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/wooexpress/<locale> starting points and /setup/wooexpress/create-site/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			// Log when profiler data does not contain valid data.
+			let isValidProfile = false;
+			try {
+				if ( profilerData ) {
+					const data = JSON.parse( decodeURIComponent( escape( window.atob( profilerData ) ) ) );
+					isValidProfile = [ 'woocommerce_onboarding_profile', 'blogname' ].every(
+						( key ) => key in data
+					);
+				}
+			} catch {}
+			if ( ! isValidProfile ) {
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'calypso_stepper_wooexpress_invalid_profiler_data',
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					properties: {
+						env: config( 'env_id' ),
+					},
+					extra: {
+						'profiler-data': profilerData,
+					},
+				} );
+			}
+		}, [] );
+
+		return { state: AssertConditionState.SUCCESS };
 	},
+
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const siteSlugParam = useSiteSlugParam();
 
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
 
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
-		setStepProgress( flowProgress );
-
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) );
+		const { getSiteIdBySlug, getSiteOption } = useSelect(
+			( select ) => select( SITE_STORE ) as SiteSelect,
+			[]
+		);
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
+			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
-				case 'siteCreationStep': {
-					return navigate( 'processing' );
+				case 'create-site': {
+					return navigate( 'processing', {
+						currentStep,
+					} );
 				}
 
 				case 'processing': {
@@ -103,7 +144,19 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return exitFlow( `/home/${ siteSlug }` );
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
+						recordGTMDatalayerEvent( 'free trial processing' );
+						// Redirect users to the login page with the 'action=jetpack-sso' parameter to initiate Jetpack SSO login and redirect them to the wc admin page after.
+						const redirectTo = encodeURIComponent(
+							`${ adminUrl as string }admin.php?page=wc-admin`
+						);
+
+						return exitFlow(
+							`//${ siteSlug }/wp-login.php?action=jetpack-sso&redirect_to=${ redirectTo }`
+						);
 					}
 
 					return navigate( 'assignTrialPlan', { siteSlug } );
@@ -120,6 +173,12 @@ const wooexpress: Flow = {
 				}
 
 				case 'waitForAtomic': {
+					return navigate( 'processing', {
+						currentStep,
+					} );
+				}
+
+				case 'waitForPluginInstall': {
 					return navigate( 'processing' );
 				}
 			}

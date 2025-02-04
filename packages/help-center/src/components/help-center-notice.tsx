@@ -3,16 +3,17 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import type { SupportTicket } from '../types';
-import type { AnalysisReport } from '@automattic/data-stores';
+import type { AnalysisReport, SupportActivity } from '../types';
 import type { ReactNode } from 'react';
+
+import './help-center-notice.scss';
 
 type Props = {
 	ownershipResult: AnalysisReport | null;
 };
 
 function getResponses( siteName?: string ) {
-	const responses: Record< AnalysisReport[ 'result' ], React.ReactChild > = {
+	const responses: Record< AnalysisReport[ 'result' ], React.ReactElement | string > = {
 		NOT_OWNED_BY_USER: (
 			<p>
 				{ sprintf(
@@ -38,9 +39,11 @@ function getResponses( siteName?: string ) {
 					),
 					{
 						hosted_on_our_services: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
 							<ExternalLink href={ localizeUrl( 'https://wordpress.com/support/com-vs-org/' ) } />
 						),
 						wordpress_org_community_forums: (
+							// @ts-expect-error Children must be passed to External link. This is done by createInterpolateElement, but the types don't see that.
 							<ExternalLink href={ localizeUrl( 'https://wordpress.org/support/forums/' ) } />
 						),
 					}
@@ -97,7 +100,7 @@ export function HelpCenterOwnershipNotice( { ownershipResult }: Props ) {
 export function HelpCenterActiveTicketNotice( {
 	tickets,
 }: {
-	tickets: SupportTicket[] | undefined;
+	tickets: SupportActivity[] | undefined;
 } ) {
 	const locale = useLocale();
 
@@ -119,7 +122,6 @@ export function HelpCenterActiveTicketNotice( {
 						} )
 					) }
 				</strong>{ ' ' }
-				&nbsp;
 				{ __(
 					`Rest assured that we got your message and we'll be in touch as soon as we can.`,
 					__i18n_text_domain__

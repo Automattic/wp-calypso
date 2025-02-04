@@ -41,12 +41,12 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 	} );
 
 	it( 'Enter page title', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.enterTitle( postTitle );
 	} );
 
@@ -69,7 +69,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				date: date.getUTCDate(),
 				hours: 12,
 				minutes: 1,
-				meridian: 'am',
+				meridian: 'AM',
 			} );
 		} );
 
@@ -97,10 +97,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			const tmpPage = await browser.newPage(); // Calling from browser opens new incognito window
 
 			await tmpPage.goto( postURL.href );
-			await new PublishedPostPage( tmpPage ).validateTextInPost(
-				'It looks like nothing was found at this location. Maybe try a search?'
-			);
-
+			await tmpPage.locator( 'body.error404' ).waitFor();
 			await tmpPage.close();
 		} );
 	} );
@@ -110,7 +107,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			await editorPage.openSettings();
 		} );
 
-		it( 'Schedule post to fist of the current month of last year', async function () {
+		it( 'Schedule post to first of the current month of last year', async function () {
 			const date = new Date();
 			date.setUTCFullYear( date.getUTCFullYear() - 1 );
 
@@ -120,7 +117,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 				month: date.getUTCMonth(),
 				hours: 12,
 				minutes: 59,
-				meridian: 'pm',
+				meridian: 'PM',
 			} );
 		} );
 

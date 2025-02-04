@@ -1,3 +1,4 @@
+@use "sass:meta";
 // Comment Base Style
 
 .card.comment {
@@ -32,6 +33,19 @@
 // `transition` here is applied with less specificity to avoid overwriting CSSTransition's animation.
 .comment {
 	transition: margin 0.15s linear;
+}
+
+// Collapsed Comment
+
+.comment.foldable-card {
+	.foldable-card__main {
+		color: var(--color-text-subtle);
+		font-size: $font-body-extra-small;
+	}
+
+	&.is-expanded .foldable-card__content {
+		padding: 0;
+	}
 }
 
 // Comment Header Block
@@ -181,10 +195,8 @@
 	}
 }
 
-// Comment Content Block
-
 .comment__content {
-	padding: 8px 16px 16px 56px;
+	padding: 16px;
 
 	.comment__post-link {
 		font-weight: 600;
@@ -241,16 +253,24 @@
 			color: var(--color-primary);
 		}
 	}
+}
 
-	.comment__content-body *:last-child {
+// Comment Content
+.comment__content-body:not(.with-blocks) {
+	*:last-child {
 		margin-bottom: 0;
 	}
-
-	.comment__content-body blockquote {
+	blockquote {
 		padding: 8px 16px;
 		margin: 8px 0 16px;
 		border-left: 2px solid var(--color-neutral-0);
 	}
+}
+
+.comment__content-body.with-blocks {
+	// This encloses the blocks CSS to this div only.
+	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/style.css");
+	@include meta.load-css( "node_modules/@wordpress/block-library/build-style/theme.css");
 }
 
 .comment__content-preview {
@@ -384,40 +404,41 @@
 	display: none;
 	padding: 0 16px 16px;
 	position: relative;
-}
 
-.comment__reply-textarea {
-	font-size: $font-body-small;
-	height: 47px; // 1 line
-	line-height: 21px;
-	min-height: 47px; // 1 line
-	overflow: hidden;
-	padding: 12px 70px 12px 16px;
-	resize: vertical;
-	transition: min-height 0.15s linear;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-
-	&::placeholder {
-		color: var(--color-text-subtle);
+	.comment__reply-textarea {
+		font-size: $font-body-small;
+		height: 47px; // 1 line
+		line-height: 21px;
+		min-height: 47px; // 1 line
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
+		padding: 12px 70px 12px 16px;
+		resize: vertical;
+		transition: min-height 0.15s linear;
+		white-space: pre-wrap;
+		word-wrap: break-word;
 
-	&:not(:focus) {
-		resize: none;
-	}
+		&::placeholder {
+			color: var(--color-text-subtle);
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
 
-	&:focus,
-	&.has-focus {
-		min-height: 68px; // 2 lines
-	}
+		&:not(:focus) {
+			resize: none;
+		}
 
-	&.has-scrollbar {
-		overflow-y: auto;
+		&:focus,
+		&.has-focus {
+			min-height: 68px; // 2 lines
+		}
+
+		&.has-scrollbar {
+			overflow-y: auto;
+		}
 	}
 }
+
 
 .comment__reply-submit.button.is-compact.is-borderless {
 	color: var(--color-neutral-light);

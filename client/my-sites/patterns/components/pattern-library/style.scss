@@ -1,0 +1,170 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
+@import "calypso/my-sites/patterns/mixins";
+
+.pattern-library__wrapper {
+	position: relative;
+}
+
+.pattern-library__filters {
+	background: var(--studio-white);
+	position: sticky;
+	top: 0;
+	z-index: 3;
+	transition: box-shadow 0.2s linear;
+
+	&.pattern-library__filters--sticky {
+		box-shadow: 0 0 8px hsla(0, 0%, 0%, 0.08);
+	}
+
+	.pattern-library__filters-inner {
+		@include patterns-page-width;
+		padding-top: 32px;
+		padding-bottom: 32px;
+		display: flex;
+	}
+
+	.category-pill-navigation {
+		overflow: hidden;
+	}
+
+	@media (max-width: $break-wide) {
+		.pattern-library__filters-inner {
+			padding-top: 24px;
+			padding-bottom: 24px;
+		}
+	}
+
+	@media (max-width: $break-mobile) {
+		position: static;
+
+		.category-pill-navigation {
+			flex: 1;
+			overflow: visible;
+		}
+	}
+}
+
+.pattern-library__filters + .patterns-section {
+	padding-top: 48px;
+}
+
+.is-logged-in {
+	&.is-section-patterns .pattern-library__filters {
+		top: var(--masterbar-height);
+	}
+}
+
+.pattern-library__body-search {
+	display: flex;
+	margin-left: 16px;
+
+	@media (max-width: $break-medium) {
+		display: none;
+	}
+
+	.search {
+		border-radius: 4px;
+		border: 1px solid #c3c4c7;
+		overflow: hidden;
+		height: 42px;
+		width: 42px;
+		margin-bottom: 0;
+
+		.search__input.form-text-input[type="search"] {
+			font-size: rem(14px);
+			padding-left: 16px;
+		}
+
+		.search__open-icon,
+		.search__close-icon {
+			width: 42px;
+		}
+
+		.search__icon-navigation {
+			order: 1;
+		}
+
+		&.is-open {
+			width: 252px;
+
+			.search__close-icon {
+				display: none;
+			}
+		}
+
+		&.is-open.has-focus {
+			box-shadow: none;
+			border: 1px solid #3858e9;
+
+			&:hover {
+				box-shadow: none;
+			}
+		}
+
+		&:has(.search__input[value]:not([value=""])) {
+			.search__open-icon {
+				display: none;
+			}
+
+			.search__close-icon {
+				display: block;
+			}
+		}
+	}
+}
+
+.pattern-library {
+	@include patterns-page-width;
+	padding-bottom: 96px;
+
+	@media (max-width: $break-xlarge) {
+		padding-top: 24px;
+		padding-bottom: 24px;
+	}
+}
+
+.pattern-library__header {
+	align-items: center;
+	display: flex;
+	gap: 24px;
+	padding: 56px 0 48px;
+
+	@media (max-width: $break-medium) {
+		align-items: initial;
+		flex-direction: column;
+		padding: 0 0 24px;
+	}
+
+	.pattern-library__title {
+		margin-right: auto;
+		font-family: $font-recoleta;
+		font-size: rem(40px);
+		color: #101517;
+		line-height: 1.2;
+		letter-spacing: 0.185px;
+	}
+
+	@media (max-width: $break-medium) {
+		.pattern-library__title:not(.pattern-library__title--search) {
+			display: none;
+		}
+	}
+}
+
+.pattern-gallery__body-no-search-results {
+	text-align: center;
+	padding: 48px 0 24px;
+
+	.pattern-gallery__search-all-categories {
+		border-color: currentColor;
+		color: #3858e9;
+		background: none;
+
+		&:hover,
+		&:focus {
+			border-color: currentColor;
+			color: #1d35b4;
+		}
+	}
+}

@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchJITM } from 'calypso/state/jitm/actions';
 
-export default function QueryJITM( { siteId, messagePath } ) {
+export default function QueryJITM( { siteId, messagePath, searchQuery } ) {
 	const locale = useSelector( getCurrentUserLocale );
 	const dispatch = useDispatch();
 	useEffect( () => {
-		dispatch( fetchJITM( siteId, messagePath, locale ) );
-	}, [ dispatch, siteId, messagePath, locale ] );
+		dispatch( fetchJITM( siteId, messagePath, searchQuery, locale ) );
+	}, [ dispatch, siteId, messagePath, searchQuery, locale ] );
 
 	return null;
 }

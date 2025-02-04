@@ -14,10 +14,9 @@ import 'calypso/state/themes/init';
  * Triggers a network request to install a WordPress.org or WordPress.com theme on a Jetpack site.
  * To install a theme from WordPress.com, suffix the theme name with '-wpcom'. Note that this options
  * requires Jetpack 4.4
- *
- * @param  {string}   themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
- * @param  {string}   siteId  Jetpack Site ID
- * @returns {Function}         Action thunk
+ * @param  {string} themeId Theme ID. If suffixed with '-wpcom', install from WordPress.com
+ * @param  {number} siteId  Jetpack Site ID
+ * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
 export function installTheme( themeId, siteId ) {
 	return ( dispatch, getState ) => {
@@ -31,11 +30,6 @@ export function installTheme( themeId, siteId ) {
 			.post( `/sites/${ siteId }/themes/${ themeId }/install` )
 			.then( ( theme ) => {
 				dispatch( receiveTheme( theme, siteId ) );
-				dispatch( {
-					type: THEME_INSTALL_SUCCESS,
-					siteId,
-					themeId,
-				} );
 
 				// Install parent theme if theme requires one
 				if ( themeId.endsWith( '-wpcom' ) ) {
@@ -49,6 +43,13 @@ export function installTheme( themeId, siteId ) {
 				}
 			} )
 			.then( () => dispatch( requestThemes( siteId, {} ) ) )
+			.then( () => {
+				dispatch( {
+					type: THEME_INSTALL_SUCCESS,
+					siteId,
+					themeId,
+				} );
+			} )
 			.catch( ( error ) => {
 				dispatch( {
 					type: THEME_INSTALL_FAILURE,

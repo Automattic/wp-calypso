@@ -1,17 +1,20 @@
 import {
-	LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
-	VIDEOPRESS_FLOW,
-	SENSEI_FLOW,
-	FREE_FLOW,
+	WRITE_FLOW,
+	BUILD_FLOW,
+	START_WRITING_FLOW,
+	DESIGN_FIRST_FLOW,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
 
-export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunchpadStrings {
+export function getLaunchpadTranslations(
+	flow: string | null,
+	hasSkippedCheckout = false
+): TranslatedLaunchpadStrings {
 	const translatedStrings: TranslatedLaunchpadStrings = {
-		flowName: translate( 'WordPress' ),
+		flowName: translate( 'WordPress.com' ),
 		title: translate( 'Your website is ready!' ),
 		subtitle: translate( 'Keep up the momentum with these final steps.' ),
 	};
@@ -19,12 +22,9 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	switch ( flow ) {
 		case NEWSLETTER_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
-			translatedStrings.title = translate( "You're all set to start publishing" );
-			translatedStrings.subtitle = translate(
-				'Why not welcome your readers with your first post?'
-			);
+			translatedStrings.title = translate( "Your newsletter's ready!" );
+			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
 			break;
-		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.title = translate( "You're ready to link and launch" );
@@ -33,24 +33,22 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 				"All that's left is to add some links and launch your site."
 			);
 			break;
-		case FREE_FLOW:
-			translatedStrings.flowName = translate( 'Free Website' );
-			translatedStrings.title = translate( "Your new site's ready!" );
-			translatedStrings.launchTitle = translate( "Your new site's ready!" );
-			translatedStrings.subtitle = translate(
-				'Launch it to the world. Or add some finishing touches. (You can come back to make changes any time.)'
-			);
+		case START_WRITING_FLOW:
+		case DESIGN_FIRST_FLOW:
+			translatedStrings.flowName = translate( 'Blog' );
+			translatedStrings.title = translate( "Your blog's almost ready!" );
+			translatedStrings.launchTitle = translate( "Your blog's almost ready!" );
 			break;
-		case VIDEOPRESS_FLOW:
-			translatedStrings.flowName = translate( 'Video' );
-			translatedStrings.title = translate( 'Your site is almost ready!' );
-			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
-			break;
-		case SENSEI_FLOW:
-			translatedStrings.flowName = translate( 'Sensei' );
-			translatedStrings.title = translate( 'Your Course Site is ready to launch!' );
-			translatedStrings.launchTitle = translate( 'Your Course Site is ready to launch!' );
-			break;
+		case WRITE_FLOW:
+		case BUILD_FLOW:
+			if ( hasSkippedCheckout ) {
+				translatedStrings.title = translate( 'Get started with WordPress.com' );
+				translatedStrings.launchTitle = translate( 'Get started with WordPress.com' );
+			} else {
+				translatedStrings.title = translate( "Let's get ready to launch!" );
+				translatedStrings.launchTitle = translate( "Let's get ready to launch!" );
+			}
+			translatedStrings.subtitle = translate( "Here's what to do next." );
 	}
 
 	return translatedStrings;

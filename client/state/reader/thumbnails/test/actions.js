@@ -31,9 +31,11 @@ describe( 'actions', () => {
 	describe( '#requestThumbnail', () => {
 		const thumbnailUrl = 'https://i.vimeocdn.com/video/459553940_640.webp';
 		const successfulEmbedUrl = 'https://vimeo.com/6999927';
+		const unSuccessfulEmbedUrl = 'https://vimeo.com/6999928';
 		const youtubeEmbedUrl = 'https://youtube.com/?v=UoOCrbV3ZQ';
 		const youtubeThumbnailUrl = 'https://img.youtube.com/vi/UoOCrbV3ZQ/mqdefault.jpg';
 		const videopressEmbedUrl = 'https://videopress.com/v/ABCDabcd';
+		const failingVideopressEmbedUrl = 'https://videopress.com/v/FOO0barr';
 		const videopressThumbnailUrl =
 			'https://videos.files.wordpress.com/ABCDabcd/filename.original.jpg';
 
@@ -47,6 +49,9 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.1/videos/ABCDabcd/poster' )
 				.reply( 200, deepFreeze( sampleVideoPressResponse ) );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/videos/FOO0barr/poster' )
+				.reply( 500, deepFreeze( {} ) );
 		} );
 
 		afterAll( () => {
@@ -77,6 +82,26 @@ describe( 'actions', () => {
 			} );
 
 			expect( dispatchSpy ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'vimeo: should handle fetch failures properly', async () => {
+			const dispatchSpy = jest.fn();
+
+			expect( async () => {
+				await requestThumbnail( unSuccessfulEmbedUrl )( dispatchSpy );
+			} ).not.toThrow();
+
+			expect( dispatchSpy ).not.toHaveBeenCalled();
+		} );
+
+		test( 'videopress: should handle fetch failures properly', async () => {
+			const dispatchSpy = jest.fn();
+
+			expect( async () => {
+				await requestThumbnail( failingVideopressEmbedUrl )( dispatchSpy );
+			} ).not.toThrow();
+
+			expect( dispatchSpy ).not.toHaveBeenCalled();
 		} );
 
 		test( 'youtube: should dispatch action with thumbnail instantly', () => {

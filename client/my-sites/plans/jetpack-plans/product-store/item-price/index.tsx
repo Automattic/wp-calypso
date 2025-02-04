@@ -1,7 +1,8 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import DisplayPrice from 'calypso/components/jetpack/card/jetpack-product-card/display-price';
+import productTooltip from 'calypso/my-sites/plans/jetpack-plans/product-card/product-tooltip';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import useItemPrice from '../../use-item-price';
 import { useItemPriceCompact } from '../hooks/use-item-price-compact';
@@ -17,11 +18,8 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	siteId,
 	isMultiSiteIncompatible,
 } ) => {
-	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
-		siteId,
-		item,
-		item?.monthlyProductSlug || ''
-	);
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching, priceTierList } =
+		useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
@@ -38,7 +36,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	}
 
 	return (
-		<div className={ classNames( 'item-price', { 'is-compact': isCompact } ) } ref={ containerRef }>
+		<div className={ clsx( 'item-price', { 'is-compact': isCompact } ) } ref={ containerRef }>
 			<DisplayPrice
 				isFree={ item.isFree }
 				isOwned={ isOwned }
@@ -51,6 +49,10 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 				belowPriceText={ item.belowPriceText }
 				billingTerm={ item.displayTerm || item.term }
 				productName={ item.displayName }
+				displayPriceText={ item.displayPriceText }
+				tooltipText={
+					priceTierList.length > 0 && productTooltip( item, priceTierList, currencyCode ?? 'USD' )
+				}
 			/>
 		</div>
 	);

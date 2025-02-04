@@ -1,17 +1,12 @@
-import { useMemo } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
+import { useSelector } from 'calypso/state';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { KEY_PRODUCTS } from './constants';
 import type { Props } from '.';
 
-const useProducts = () => {
-	const { search } = window.location;
-	const products = useMemo( () => new URLSearchParams( search ).get( KEY_PRODUCTS ), [ search ] );
-
-	return products;
-};
-
 const AsyncCheckoutModal = ( props: Props ) => {
-	const products = useProducts();
+	const queryArguments = useSelector( getCurrentQueryArguments );
+	const products = queryArguments?.[ KEY_PRODUCTS ];
 
 	if ( ! products ) {
 		return null;

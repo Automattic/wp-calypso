@@ -25,6 +25,7 @@ module.exports = {
 				],
 			},
 		],
+		'jest/no-mocks-import': 'off',
 	},
 	overrides: [
 		{
@@ -36,6 +37,12 @@ module.exports = {
 			rules: {
 				// We use a log of console.log() in examples.
 				'no-console': 'off',
+			},
+		},
+		{
+			files: [ '**/*.stories.tsx' ],
+			rules: {
+				'import/no-extraneous-dependencies': 'off',
 			},
 		},
 	],

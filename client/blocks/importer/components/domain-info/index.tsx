@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { Badge } from '@automattic/components';
 import { __ } from '@wordpress/i18n';
-import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {

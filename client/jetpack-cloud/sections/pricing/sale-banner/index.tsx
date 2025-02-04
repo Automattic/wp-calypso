@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { JetpackSaleCoupon } from 'calypso/state/marketing/selectors';
 
@@ -30,6 +30,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 	const moment = useLocalizedMoment();
 	const [ isClosed, setIsClosed ] = useState( false );
 	const saleTitle = coupon.sale_title;
+	const saleDescription = coupon.sale_description;
 	const now = moment.utc().unix();
 	const expiryDate = moment.utc( coupon?.expiry_date ).unix();
 	const isBeforeExpiry = coupon && now <= expiryDate;
@@ -62,9 +63,7 @@ const SaleBanner: React.FC< Props > = ( { coupon } ) => {
 						<div>
 							<b>{ saleTitle }</b>
 							&nbsp;
-							{ translate( 'Take %(discount)d%% off all new annual Jetpack purchases.', {
-								args: { discount: coupon.final_discount },
-							} ) }
+							{ saleDescription }
 						</div>
 						<span className="sale-banner__countdown-timer">
 							{ translate( 'Sale ends in: %(days)dd %(hours)dh %(minutes)dm %(seconds)ss', {

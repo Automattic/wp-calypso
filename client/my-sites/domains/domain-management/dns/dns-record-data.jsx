@@ -1,8 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
-import { DNS_RECORDS_EDITING_OR_DELETING } from 'calypso/lib/url/support';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import DnsRecordsListItem from './dns-records-list-item';
 
 class DnsRecordData extends Component {
@@ -21,21 +20,30 @@ class DnsRecordData extends Component {
 		const { dnsRecord, translate } = this.props;
 		const { type, aux, port, weight } = dnsRecord;
 		const data = this.trimDot( dnsRecord.data );
-		const target = this.trimDot( dnsRecord.target );
+		const target = dnsRecord.target !== '.' ? this.trimDot( dnsRecord.target ) : '.';
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
+			let supportContext = 'dns_default_records';
+			switch ( type ) {
+				case 'MX':
+					supportContext = 'dns-default-mx-records';
+					break;
+				case 'A':
+					supportContext = 'dns-default-a-records';
+					break;
+				case 'CNAME':
+					supportContext = 'dns-default-cname-records';
+					break;
+			}
+
 			if ( 'MX' === type ) {
 				return translate(
 					'Mail handled by WordPress.com email forwarding. {{supportLink}}Learn more{{/supportLink}}.',
 					{
 						components: {
 							supportLink: (
-								<ExternalLink
-									href={ DNS_RECORDS_EDITING_OR_DELETING }
-									target="_blank"
-									icon={ false }
-								/>
+								<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
 							),
 						},
 					}
@@ -44,9 +52,7 @@ class DnsRecordData extends Component {
 
 			return translate( 'Handled by WordPress.com. {{supportLink}}Learn more{{/supportLink}}.', {
 				components: {
-					supportLink: (
-						<ExternalLink href={ DNS_RECORDS_EDITING_OR_DELETING } target="_blank" icon={ false } />
-					),
+					supportLink: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 				},
 			} );
 		}
@@ -84,12 +90,14 @@ class DnsRecordData extends Component {
 		const { name, service, protocol, type } = this.props.dnsRecord;
 		const domain = this.props.selectedDomainName;
 
-		if ( name.replace( /\.$/, '' ) === domain ) {
-			return '@';
+		if ( 'SRV' === type ) {
+			return `${ service }.${ protocol }.${
+				name.replace( /\.$/, '' ) === domain ? name : name + '.' + domain + '.'
+			}`;
 		}
 
-		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ name }`;
+		if ( name.replace( /\.$/, '' ) === domain ) {
+			return '@';
 		}
 
 		return name;

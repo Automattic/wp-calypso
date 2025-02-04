@@ -8,7 +8,6 @@ const initialState = {
 
 /**
  * Tracks the state of the ui locale
- *
  * @param {Object} state  Current state
  * @param {Object} action Action payload
  * @returns {Object} Updated state

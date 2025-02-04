@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import { isLoadingTabs, getCountRecords } from 'calypso/state/stats/email-chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatTabs from '../stats-tabs';
 import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
@@ -83,7 +82,7 @@ class StatModuleChartTabs extends Component {
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
-			<div className={ classNames( ...classes ) }>
+			<div className={ clsx( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
 					activeTab={ this.props.activeTab }
@@ -99,14 +98,6 @@ class StatModuleChartTabs extends Component {
 					minBarWidth={ 35 }
 					sliceFromBeginning={ false }
 					onChangeMaxBars={ onChangeMaxBars }
-				/>
-				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
-					activeKey="period"
 				/>
 			</div>
 		);

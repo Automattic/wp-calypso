@@ -68,7 +68,6 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
  * There are some redundant checks here, for example, vip and atomic sites are all
  * jetpack sites. We eventually want to support atomic sites with logmein so I'm erring
  * on being specific about the exclusions.
- *
  * @param site Site object from redux state
  */
 function isValidLogmeinSite( site: SiteDetails ): boolean {

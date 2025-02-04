@@ -1,4 +1,4 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { without } from 'lodash';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeAppointmentDetails from 'calypso/components/data/query-concierge-appointment-details';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Timezone from 'calypso/components/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

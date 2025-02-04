@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { find } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -32,7 +32,7 @@ export default class DocsSelectorsSingle extends Component {
 			const res = await fetch( `/devdocs/service/selectors?${ query }` );
 			if ( res.ok ) {
 				const results = await res.json();
-				const result = find( results, { name: selector } );
+				const result = find( results, { item: { name: selector } } );
 				this.setState( { result } );
 			}
 		} catch ( error ) {
@@ -53,7 +53,7 @@ export default class DocsSelectorsSingle extends Component {
 
 	render() {
 		const { selector } = this.props;
-		const { result: { name, description, tags } = {} } = this.state;
+		const { result: { item: { name, description, tags } = {} } = {} } = this.state;
 
 		return (
 			<div>

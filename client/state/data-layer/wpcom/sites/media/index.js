@@ -42,13 +42,22 @@ export function requestMedia( action ) {
 	const path =
 		query && query.source ? `/meta/external-media/${ query.source }` : `/sites/${ siteId }/media`;
 
+	const googlePhotosPicker = query.source === 'google_photos' && query.session_id;
+	const fetchOptions = googlePhotosPicker
+		? {
+				apiNamespace: 'wpcom/v2',
+		  }
+		: {
+				apiVersion: '1.1',
+		  };
+
 	return [
 		http(
 			{
 				method: 'GET',
 				path,
-				apiVersion: '1.1',
 				query,
+				...fetchOptions,
 			},
 			action
 		),

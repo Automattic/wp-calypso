@@ -634,7 +634,7 @@ describe( 'TokenField', () => {
 		} );
 
 		test( 'should remove the token to the left when backspace pressed', () => {
-			const { container } = render( <TokenFieldWrapper /> );
+			const { container } = render( <TokenFieldWrapper />, { legacyRoot: true } );
 
 			screen.getAllByRole( 'textbox' )[ 1 ].focus();
 

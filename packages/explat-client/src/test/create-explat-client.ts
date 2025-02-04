@@ -476,7 +476,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	it( 'should log and return fallback when given an invalid name', () => {
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
@@ -501,7 +501,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	} );
 
 	it( `should log and return fallback when the matching experiment hasn't loaded yet`, () => {
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
@@ -527,7 +527,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 
 	it( `should log and return fallback when the matching experiment hasn't loaded yet but is currently loading`, async () => {
 		jest.useFakeTimers();
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
@@ -599,5 +599,79 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 		  ],
 		]
 	` );
+	} );
+} );
+
+describe( 'ExPlatClient.dangerouslyGetMaybeLoadedExperimentAssignment', () => {
+	it( 'should log and return fallback when given an invalid name', () => {
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
+		const client = createExPlatClient( mockedConfig );
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		expect( client.dangerouslyGetMaybeLoadedExperimentAssignment( '' ) ).toEqual( {
+			experimentName: '',
+			retrievedTimestamp: firstNow,
+			ttl: 60,
+			variationName: null,
+			isFallbackExperimentAssignment: true,
+		} );
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
+		Array [
+		  Array [
+		    Object {
+		      "experimentName": "",
+		      "message": "Invalid experimentName: ",
+		      "source": "dangerouslyGetMaybeLoadedExperimentAssignment-error",
+		    },
+		  ],
+		]
+	` );
+	} );
+
+	it( `return null when the matching experiment hasn't loaded yet`, () => {
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
+		const client = createExPlatClient( mockedConfig );
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		expect(
+			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
+		).toBeNull();
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls.length ).toEqual( 0 );
+	} );
+
+	it( `return null when the matching experiment hasn't loaded yet but is currently loading`, async () => {
+		jest.useFakeTimers();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
+		const client = createExPlatClient( mockedConfig );
+		const firstNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
+		const secondNow = Date.now();
+		spiedMonotonicNow.mockImplementationOnce( () => secondNow );
+		const promise = client.loadExperimentAssignment( 'experiment_name_a' );
+		expect(
+			client.dangerouslyGetMaybeLoadedExperimentAssignment( 'experiment_name_a' )
+		).toBeNull();
+		expect( ( mockedConfig.logError as MockedFunction ).mock.calls.length ).toEqual( 0 );
+		jest.runAllTimers();
+		await promise;
+		jest.useRealTimers();
+	} );
+
+	it( `should return a loaded ExperimentAssignment`, async () => {
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
+		const client = createExPlatClient( mockedConfig );
+		mockFetchExperimentAssignmentToMatchExperimentAssignment(
+			mockedConfig,
+			validExperimentAssignment
+		);
+		spiedMonotonicNow.mockImplementationOnce(
+			() => validExperimentAssignment.retrievedTimestamp + 1
+		);
+		await client.loadExperimentAssignment( validExperimentAssignment.experimentName );
+		expect(
+			client.dangerouslyGetMaybeLoadedExperimentAssignment(
+				validExperimentAssignment.experimentName
+			)
+		).toEqual( validExperimentAssignment );
 	} );
 } );

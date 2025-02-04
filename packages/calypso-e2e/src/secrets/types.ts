@@ -1,11 +1,12 @@
 import { TEST_ACCOUNT_NAMES } from '.';
 
 type OtherTestSiteName = 'notifications';
-export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
+export type TestAccountName = ( typeof TEST_ACCOUNT_NAMES )[ number ];
 
 interface TestAccountSites {
 	id: number;
 	url: string;
+	remotePassword?: string;
 }
 
 export interface TestAccountCredentials {
@@ -29,12 +30,20 @@ export interface Secrets {
 	storeSandboxCookieValue: string;
 	testCouponCode: string;
 	wpccAuthPath: string;
+	wooSignupPath: string;
+	wooLoginPath: string;
 	calypsoOauthApplication: {
 		client_id: string;
 		client_secret: string;
 	};
 	martechTosUploadCredentials: {
 		bearer_token: string;
+	};
+	socialAccounts: {
+		tumblr: {
+			username: string;
+			password: string;
+		};
 	};
 	mailosaur: {
 		apiKey: string;
@@ -43,6 +52,7 @@ export interface Secrets {
 		domainsInboxId: string;
 		defaultUserInboxId: string;
 		totpUserInboxId: string;
+		manualTesting: string;
 	};
 	testAccounts: {
 		[ key in TestAccountName ]: TestAccountCredentials;

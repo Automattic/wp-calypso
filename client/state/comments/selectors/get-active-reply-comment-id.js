@@ -4,7 +4,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Returns the active reply comment for a given site and post.
- *
  * @param  {Object}  options options object.
  * @param  {Object}  options.state   Global state tree
  * @param  {number}  options.siteId  The ID of the site we're querying

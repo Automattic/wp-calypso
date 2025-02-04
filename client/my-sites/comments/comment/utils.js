@@ -2,7 +2,6 @@ import { get } from 'lodash';
 
 /**
  * Create a stripped down comment object containing only the bare minimum fields needed by CommentList's actions.
- *
  * @param {Object} comment A comment object.
  * @returns {Object} A stripped down comment object.
  */
@@ -13,3 +12,7 @@ export const getMinimumComment = ( comment ) => ( {
 	status: get( comment, 'status' ),
 	can_moderate: get( comment, 'can_moderate' ),
 } );
+
+export function hasBlocks( comment = '' ) {
+	return comment.includes( '<!-- wp:' );
+}

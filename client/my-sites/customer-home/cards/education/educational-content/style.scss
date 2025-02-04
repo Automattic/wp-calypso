@@ -12,8 +12,8 @@
 	}
 
 	h2 {
-		font-weight: 600;
-		font-size: $font-body;
+		font-weight: 500;
+		font-size: $font-body-large;
 		margin-bottom: 8px;
 	}
 
@@ -50,4 +50,8 @@
 			}
 		}
 	}
+
+	.educational-content__illustration.wp-courses-card {
+		padding-top: 40px
+	  }
 }

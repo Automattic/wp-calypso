@@ -9,7 +9,9 @@ describe( 'isSiteSupportingImageEditor()', () => {
 				},
 				// isPrivateSite falls back on siteSettings.
 				// An empty siteSettings object allows getSiteSettings to pass
-				siteSettings: {},
+				siteSettings: {
+					items: {},
+				},
 			},
 			2916284
 		);

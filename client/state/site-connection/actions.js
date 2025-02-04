@@ -10,7 +10,6 @@ import {
 
 /**
  * Request the Jetpack connection status for a certain site.
- *
  * @param  {number}       siteId  ID of the site.
  * @returns {Function}          Action thunk to request the Jetpack connection status when called.
  */

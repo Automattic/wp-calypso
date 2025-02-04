@@ -1,14 +1,22 @@
-import { planHasFeature, FEATURE_UPLOAD_THEMES_PLUGINS } from '@automattic/calypso-products';
+import {
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	getPlan,
+	PLAN_BUSINESS,
+	PLAN_WOOEXPRESS_SMALL,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import HeaderCake from 'calypso/components/header-cake';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
+import { isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MigrateButton from './migrate-button.jsx';
 
@@ -27,9 +35,11 @@ class StepConfirmMigration extends Component {
 	}
 
 	handleClick = () => {
-		const { sourceSite, startMigration, targetSiteSlug } = this.props;
+		const { sourceSite, startMigration, targetSiteSlug, targetSite } = this.props;
 		const sourceSiteId = get( sourceSite, 'ID' );
+		const targetSiteId = get( targetSite, 'ID' );
 		const sourceSiteSlug = get( sourceSite, 'slug', sourceSiteId );
+		const sourceSiteUrl = get( sourceSite, 'URL', sourceSiteId );
 
 		const hasCompatiblePlan = this.isTargetSitePlanCompatible();
 
@@ -38,7 +48,16 @@ class StepConfirmMigration extends Component {
 		} );
 
 		if ( hasCompatiblePlan ) {
-			return startMigration();
+			const trackEventProps = {
+				source_site_id: sourceSiteId,
+				source_site_url: sourceSiteUrl,
+				target_site_id: targetSiteId,
+				target_site_slug: targetSiteSlug,
+				is_migrate_from_wp: false,
+				is_trial: isMigrationTrialSite( targetSite ),
+				type: 'in-product',
+			};
+			return startMigration( trackEventProps );
 		}
 
 		page( `/migrate/upgrade/from/${ sourceSiteSlug }/to/${ targetSiteSlug }` );
@@ -51,9 +70,31 @@ class StepConfirmMigration extends Component {
 		return planSlug && planHasFeature( planSlug, FEATURE_UPLOAD_THEMES_PLUGINS );
 	}
 
-	renderCardBusinessFooter() {
-		const { translate } = this.props;
+	getFooterText() {
+		const { translate, targetSite } = this.props;
+		const currentPlanSlug = get( targetSite, 'plan.product_slug' );
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const upsellPlanName = isEcommerceTrial
+			? getPlan( PLAN_WOOEXPRESS_SMALL )?.getTitle()
+			: getPlan( PLAN_BUSINESS )?.getTitle();
+		if ( isEcommerceTrial ) {
+			// translators: %(essentialPlanName)s is the name of the Essential plan
+			return translate( 'An %(essentialPlanName)s Plan is required to import everything.', {
+				args: {
+					essentialPlanName: upsellPlanName,
+				},
+			} );
+		}
 
+		// translators: %(businessPlanName)s is the name of the Creator/Business plan
+		return translate( 'A %(businessPlanName)s Plan is required to import everything.', {
+			args: {
+				businessPlanName: upsellPlanName,
+			},
+		} );
+	}
+
+	renderCardFooter() {
 		// If the site is has an appropriate plan, no upgrade footer is required
 		if ( this.isTargetSitePlanCompatible() ) {
 			return null;
@@ -62,9 +103,7 @@ class StepConfirmMigration extends Component {
 		return (
 			<CompactCard className="migrate__card-footer">
 				<Gridicon className="migrate__card-footer-gridicon" icon="info-outline" size={ 12 } />
-				<span className="migrate__card-footer-text">
-					{ translate( 'A Business Plan is required to import everything.' ) }
-				</span>
+				<span className="migrate__card-footer-text">{ this.getFooterText() }</span>
 			</CompactCard>
 		);
 	}
@@ -138,7 +177,7 @@ class StepConfirmMigration extends Component {
 					</div>
 					{ this.renderMigrationButton() }
 				</CompactCard>
-				{ this.renderCardBusinessFooter() }
+				{ this.renderCardFooter() }
 			</>
 		);
 	}

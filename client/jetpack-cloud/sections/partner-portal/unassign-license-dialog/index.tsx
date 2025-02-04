@@ -1,9 +1,9 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/lib/constants';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
-import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/use-refresh-license-list';
@@ -39,10 +39,10 @@ export default function UnassignLicenseDialog( {
 	} );
 
 	close = useCallback( () => {
-		if ( ! mutation.isLoading ) {
+		if ( ! mutation.isPending ) {
 			onClose();
 		}
-	}, [ onClose, mutation.isLoading ] );
+	}, [ onClose, mutation.isPending ] );
 
 	const unassign = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_partner_portal_license_list_unassign_dialog_unassign' ) );
@@ -54,14 +54,14 @@ export default function UnassignLicenseDialog( {
 			{ translate( 'Go back' ) }
 		</Button>,
 
-		<Button primary scary busy={ mutation.isLoading } onClick={ unassign }>
+		<Button primary scary busy={ mutation.isPending } onClick={ unassign }>
 			{ translate( 'Unassign License' ) }
 		</Button>,
 	];
 
 	return (
 		<Dialog
-			isVisible={ true }
+			isVisible
 			buttons={ buttons }
 			additionalClassNames="unassign-license-dialog"
 			onClose={ close }
@@ -78,7 +78,7 @@ export default function UnassignLicenseDialog( {
 					'Unassigning this license means that the site {{bold}}%(siteUrl)s{{/bold}} will no longer have access to {{bold}}%(product)s{{/bold}}. Once this action is completed, you will be able to assign the license to another site. You will continue to be billed.',
 					{
 						components: { bold: <strong /> },
-						args: { siteUrl, product },
+						args: { siteUrl: siteUrl ?? '', product },
 					}
 				) }
 				&nbsp;

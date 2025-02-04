@@ -130,7 +130,8 @@ class DomainConnectAuthorize extends Component {
 
 	render() {
 		const { params, translate } = this.props;
-		const { domain } = params;
+		const { domain: rootDomain, host } = params;
+		const domain = host ? `${ host }.${ rootDomain }` : rootDomain;
 
 		return (
 			<Main className="domain-connect__main">

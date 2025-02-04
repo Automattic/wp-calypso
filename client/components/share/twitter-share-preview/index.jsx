@@ -1,6 +1,6 @@
+import { TwitterPreviews } from '@automattic/social-previews';
 import { PureComponent } from 'react';
-
-import './style.scss';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export class TwitterSharePreview extends PureComponent {
 	render() {
@@ -8,48 +8,35 @@ export class TwitterSharePreview extends PureComponent {
 			articleUrl,
 			externalDisplay,
 			externalName,
-			externalProfileURL,
 			externalProfilePicture,
 			message,
 			imageUrl,
+			seoTitle,
+			articleSummary,
+			hidePostPreview,
+			media,
 		} = this.props;
 
 		return (
 			<div className="twitter-share-preview">
-				<div className="twitter-share-preview__content">
-					<div className="twitter-share-preview__profile-picture-part">
-						<img
-							alt="Preview of Twitter profile"
-							className="twitter-share-preview__profile-picture"
-							src={ externalProfilePicture }
-						/>
-					</div>
-					<div className="twitter-share-preview__content-part">
-						<div className="twitter-share-preview__profile-line">
-							<a className="twitter-share-preview__profile-name" href={ externalProfileURL }>
-								{ externalName }
-							</a>
-							<a className="twitter-share-preview__profile-handle" href={ externalProfileURL }>
-								{ externalDisplay }
-							</a>
-						</div>
-						<div className="twitter-share-preview__message">{ message }</div>
-						<div className="twitter-share-preview__article-url-line">
-							<a className="twitter-share-preview__article-url" href={ articleUrl }>
-								{ articleUrl }
-							</a>
-						</div>
-						{ imageUrl && (
-							<div className="twitter-share-preview__image-wrapper">
-								<img
-									alt="Preview when shared to Twitter"
-									className="twitter-share-preview__image"
-									src={ imageUrl }
-								/>
-							</div>
-						) }
-					</div>
-				</div>
+				<TwitterPreviews
+					tweets={ [
+						{
+							cardType: imageUrl ? 'summary_large_image' : null,
+							description: decodeEntities( articleSummary ),
+							title: decodeEntities( seoTitle ),
+							image: imageUrl,
+							url: articleUrl,
+							date: Date.now(),
+							name: externalName,
+							profileImage: externalProfilePicture,
+							screenName: externalDisplay,
+							text: message,
+							media,
+						},
+					] }
+					hidePostPreview={ hidePostPreview }
+				/>
 			</div>
 		);
 	}

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -56,8 +56,8 @@ class PendingGSuiteTosNotice extends PureComponent {
 	render() {
 		const href =
 			this.props.domains.length === 1
-				? emailManagement( this.props.siteSlug, this.props.domains[ 0 ].name )
-				: emailManagement( this.props.siteSlug );
+				? getEmailManagementPath( this.props.siteSlug, this.props.domains[ 0 ].name )
+				: getEmailManagementPath( this.props.siteSlug );
 
 		return (
 			<Notice

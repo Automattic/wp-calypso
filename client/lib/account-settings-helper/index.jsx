@@ -1,10 +1,11 @@
 import languages from '@automattic/languages';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { useInView } from 'react-intersection-observer';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import LanguagePicker from 'calypso/components/language-picker';
-import { getPreference } from 'calypso/state/preferences/selectors';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -16,7 +17,7 @@ export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const isFetching = useSelector( isFetchingUserSettings );
-	const colorSchemePreference = useSelector( ( state ) => getPreference( state, 'colorScheme' ) );
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const updateLanguage = ( event ) => {
 		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
@@ -43,8 +44,9 @@ export function AccountSettingsHelper() {
 		<>
 			<QueryUserSettings />
 			<div>Account Settings</div>
-			<div className="account-settings-helper__popover">
+			<div ref={ ref } className="account-settings-helper__popover">
 				<div>Language Picker</div>
+				{ inView && <ReauthRequired twoStepAuthorization={ twoStepAuthorization } /> }
 				<LanguagePicker
 					isLoading={ isFetching }
 					languages={ languages }
@@ -54,16 +56,13 @@ export function AccountSettingsHelper() {
 					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }
 				/>
-				<div>Dashboard color scheme</div>
-				<ColorSchemePicker defaultSelection={ colorSchemePreference } />
 			</div>
 		</>
 	);
 }
 export default ( element, store ) =>
-	ReactDom.render(
+	createRoot( element ).render(
 		<Provider store={ store }>
 			<AccountSettingsHelper />
-		</Provider>,
-		element
+		</Provider>
 	);

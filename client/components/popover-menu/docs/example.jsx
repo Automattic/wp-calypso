@@ -1,6 +1,5 @@
-import { Popover } from '@automattic/components';
+import { FormLabel, Popover } from '@automattic/components';
 import { PureComponent, createRef } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';

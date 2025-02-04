@@ -1,18 +1,20 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { UserData } from 'calypso/lib/user/user';
-
 import './style.scss';
 
 export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?: boolean } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const [ isIframeLoaded, setIsIframeLoaded ] = useState( false );
 
@@ -46,9 +48,9 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			stepCount: hasSites ? <Gridicon icon="checkmark" size={ 16 } /> : 1,
 			title: translate( 'Add your Jetpack sites' ),
 			description: translate(
-				'Manage features and monitor your clients’ sites by adding them to your Jetpack Pro Dashboard. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
+				'Manage features and monitor your clients’ sites by adding them to Jetpack Manage. To do so, connect the sites to Jetpack using your {{strong}}%(userEmail)s{{/strong}} user account.',
 				{
-					args: { userEmail: user?.email },
+					args: { userEmail: user?.email ?? '' },
 					components: {
 						strong: <strong />,
 					},
@@ -57,15 +59,18 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 			video:
 				'https://video.wordpress.com/embed/T6pTlPK8?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
-				<Button
-					target="_blank"
-					borderless
-					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
-					onClick={ onHowToAddNewSiteClick }
-				>
-					{ translate( 'How to add sites to the dashboard' ) } &nbsp;
+				<div className="onboarding-widget__how-to-add-sites-btn">
+					<Button
+						target="_blank"
+						borderless
+						href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+						onClick={ onHowToAddNewSiteClick }
+					>
+						{ translate( 'How to add sites to the dashboard' ) }
+					</Button>
+					&nbsp;
 					<Gridicon icon="external" size={ 24 } />
-				</Button>
+				</div>
 			),
 			isCompleted: hasSites,
 		},
@@ -79,7 +84,8 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 				'https://video.wordpress.com/embed/nsqG1pBO?hd=1&amp;autoPlay=0&amp;permalink=1&amp;loop=0&amp;preloadContent=metadata&amp;muted=0&amp;playsinline=0&amp;controls=1&amp;cover=1',
 			extraContent: (
 				<Button
-					href="/partner-portal/issue-license"
+					disabled={ ! partnerCanIssueLicense }
+					href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
 					onClick={ onIssueNewLicenseClick }
 					primary
 					style={ { marginLeft: 'auto' } }
@@ -96,12 +102,12 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 
 	return (
 		<div
-			className={ classNames( 'onboarding-widget__empty-list', {
+			className={ clsx( 'onboarding-widget__empty-list', {
 				'is-licenses-page': isLicensesPage,
 			} ) }
 		>
 			<h2 className="onboarding-widget__title">
-				{ translate( "Let's get started with the Jetpack Pro Dashboard" ) }
+				{ translate( "Let's get started with Jetpack Manage" ) }
 			</h2>
 
 			<div className="onboarding-widget__steps">
@@ -116,7 +122,7 @@ export default function OnboardingWidget( { isLicensesPage }: { isLicensesPage?:
 							{ step.isCompleted && completedStep }
 						</div>
 						<div
-							className={ classNames( 'onboarding-widget__video', {
+							className={ clsx( 'onboarding-widget__video', {
 								'is-loading-iframe': ! isIframeLoaded,
 							} ) }
 						>

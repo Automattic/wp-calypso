@@ -42,11 +42,13 @@ const SERVER_WIDTH = 769;
 
 export const MOBILE_BREAKPOINT = '<480px';
 export const DESKTOP_BREAKPOINT = '>960px';
+export const WIDE_BREAKPOINT = '>1280px';
 
 const isServer = typeof window === 'undefined' || ! window.matchMedia;
 
 const noop = () => null;
 
+export type QueryOption = { min?: number; max?: number };
 export type QueryItem = false | MinimalMediaQueryList | MediaQueryList;
 export type ListenerCallback = ( matches: boolean ) => void;
 export type UnsubcribeCallback = () => void;
@@ -66,7 +68,7 @@ function addListenerFunctions(
 	};
 }
 
-function createMediaQueryList( args?: { min?: number; max?: number } ): QueryItem {
+function createMediaQueryList( args?: QueryOption ): QueryItem {
 	const { min, max } = args ?? {};
 	if ( min !== undefined && max !== undefined ) {
 		return isServer
@@ -89,30 +91,35 @@ function createMediaQueryList( args?: { min?: number; max?: number } ): QueryIte
 	return false;
 }
 
-const mediaQueryLists: Record< string, QueryItem > = {
-	'<480px': createMediaQueryList( { max: 480 } ),
-	'<660px': createMediaQueryList( { max: 660 } ),
-	'<782px': createMediaQueryList( { max: 782 } ),
-	'<800px': createMediaQueryList( { max: 800 } ),
-	'<960px': createMediaQueryList( { max: 960 } ),
-	'<1040px': createMediaQueryList( { max: 1040 } ),
-	'<1280px': createMediaQueryList( { max: 1280 } ),
-	'<1400px': createMediaQueryList( { max: 1400 } ),
-	'>480px': createMediaQueryList( { min: 480 } ),
-	'>660px': createMediaQueryList( { min: 660 } ),
-	'>782px': createMediaQueryList( { min: 782 } ),
-	'>800px': createMediaQueryList( { min: 800 } ),
-	'>960px': createMediaQueryList( { min: 960 } ),
-	'>1040px': createMediaQueryList( { min: 1040 } ),
-	'>1280px': createMediaQueryList( { min: 1280 } ),
-	'>1400px': createMediaQueryList( { min: 1400 } ),
-	'480px-660px': createMediaQueryList( { min: 480, max: 660 } ),
-	'660px-960px': createMediaQueryList( { min: 660, max: 960 } ),
-	'480px-960px': createMediaQueryList( { min: 480, max: 960 } ),
+// @todo We should algin the behavior with the `break-*` mixins from Gutenberg to include minimums
+// See https://github.com/WordPress/gutenberg/blob/f1d0bd550f85f5fa4279a3fdb9a2b9c28a7544c6/packages/base-styles/_mixins.scss#L27
+const mediaQueryOptions: Record< string, QueryOption > = {
+	'<480px': { max: 480 },
+	'<660px': { max: 660 },
+	'<782px': { max: 782 },
+	'<800px': { max: 800 },
+	'<960px': { max: 960 },
+	'<1040px': { max: 1040 },
+	'<1180px': { max: 1180 },
+	'<1280px': { max: 1280 },
+	'<1400px': { max: 1400 },
+	'>480px': { min: 480 },
+	'>660px': { min: 660 },
+	'>=782px': { min: 781 },
+	'>782px': { min: 782 },
+	'>800px': { min: 800 },
+	'>=960px': { min: 959 },
+	'>960px': { min: 960 },
+	'>1040px': { min: 1040 },
+	'>1280px': { min: 1280 },
+	'>1400px': { min: 1400 },
+	'480px-660px': { min: 480, max: 660 },
+	'660px-960px': { min: 660, max: 960 },
+	'480px-960px': { min: 480, max: 960 },
 };
 
 export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
-	if ( ! mediaQueryLists.hasOwnProperty( breakpoint ) ) {
+	if ( ! mediaQueryOptions.hasOwnProperty( breakpoint ) ) {
 		try {
 			// eslint-disable-next-line no-console
 			console.warn( 'Undefined breakpoint used in `mobile-first-breakpoint`', breakpoint );
@@ -120,12 +127,11 @@ export function getMediaQueryList( breakpoint: string ): undefined | QueryItem {
 		return undefined;
 	}
 
-	return mediaQueryLists[ breakpoint ];
+	return createMediaQueryList( mediaQueryOptions[ breakpoint ] );
 }
 
 /**
  * Returns whether the current window width matches a breakpoint.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @returns {boolean|undefined} Whether the provided breakpoint is matched.
  */
@@ -136,7 +142,6 @@ export function isWithinBreakpoint( breakpoint: string ): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to breakpoint matching status.
- *
  * @param {string} breakpoint The breakpoint to consider.
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The function to be called when unsubscribing.
@@ -163,7 +168,6 @@ export function subscribeIsWithinBreakpoint(
 
 /**
  * Returns whether the current window width matches the mobile breakpoint.
- *
  * @returns {boolean|undefined} Whether the mobile breakpoint is matched.
  */
 export function isMobile(): boolean | undefined {
@@ -172,7 +176,6 @@ export function isMobile(): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to mobile breakpoint matching status.
- *
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The registered subscription; undefined if none.
  */
@@ -182,7 +185,6 @@ export function subscribeIsMobile( listener: ListenerCallback ): UnsubcribeCallb
 
 /**
  * Returns whether the current window width matches the desktop breakpoint.
- *
  * @returns {boolean|undefined} Whether the desktop breakpoint is matched.
  */
 export function isDesktop(): boolean | undefined {
@@ -191,7 +193,6 @@ export function isDesktop(): boolean | undefined {
 
 /**
  * Registers a listener to be notified of changes to desktop breakpoint matching status.
- *
  * @param {Function} listener The listener to be called on change.
  * @returns {Function} The registered subscription; undefined if none.
  */
@@ -202,7 +203,6 @@ export function subscribeIsDesktop( listener: ListenerCallback ): UnsubcribeCall
 /**
  * Returns the current window width.
  * Avoid using this method, as it triggers a layout recalc.
- *
  * @returns {number} The current window width, in pixels.
  */
 export function getWindowInnerWidth(): number {

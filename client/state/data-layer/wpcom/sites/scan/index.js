@@ -12,7 +12,6 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 /**
  * Make a Threat object response contain only camel-case keys and transform
  * dates represented as string to Date object.
- *
  * @param {Object} threat Raw threat object from Scan endpoint
  * @returns {Object} Processed threat object
  */
@@ -39,7 +38,6 @@ export const formatScanThreat = ( threat ) => ( {
 /**
  * Make a Scan object response contain only camel-case keys and transform
  * dates represented as string to Date object.
- *
  * @param {Object} scanState Raw Scan state object from Scan endpoint
  * @param {string} scanState.state State of the scan. E.g. "idle"
  * @param {Object[]} scanState.threats Array of active threats
@@ -122,6 +120,7 @@ const onFetchStatusSuccess = ( action, scan ) => ( dispatch ) => {
 				type: JETPACK_SCAN_REQUEST,
 				siteId: action.siteId,
 				pooling: true,
+				retryCount: ( action.retryCount || 0 ) + 1,
 			} );
 		}, POOL_EVERY_MILLISECONDS );
 	}

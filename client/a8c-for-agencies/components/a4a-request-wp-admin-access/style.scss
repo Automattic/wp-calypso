@@ -1,0 +1,59 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.a4a-request-wp-admin-access {
+	display: flex;
+	flex-direction: column;
+
+	@include break-xlarge {
+		flex-direction: row;
+		background: var(--color-neutral-0);
+		border-radius: 4px;
+	}
+}
+
+.a4a-request-wp-admin-access__content {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 32px 8px;
+
+	@include break-xlarge {
+		padding: 32px;
+	}
+
+	.a4a-request-wp-admin-access__heading {
+		@include a4a-font-heading-lg;
+		padding-block-end: 16px;
+	}
+
+	.a4a-request-wp-admin-access__description {
+		@include a4a-font-body-lg;
+		padding-block-end: 24px;
+	}
+}
+
+.a4a-request-wp-admin-access__illustration {
+	display: flex;
+
+	@include break-xlarge {
+		justify-content: flex-end;
+		width: 50%;
+	}
+}
+
+a.components-button.a4a-request-wp-admin-access__learn-more-button {
+	@include a4a-font-body-md;
+	color: var(--color-primary);
+	justify-content: flex-start;
+	background: none;
+	text-decoration: none;
+
+	&:hover {
+		color: var(--color-primary-60);
+	}
+
+	svg {
+		margin-inline-start: 4px;
+	}
+}

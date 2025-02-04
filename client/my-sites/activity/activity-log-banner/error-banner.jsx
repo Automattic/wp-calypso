@@ -1,15 +1,13 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import HappychatButton from 'calypso/components/happychat/button';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
 	dismissRewindBackupProgress,
 	dismissRewindRestoreProgress as dismissRewindRestoreProgressAction,
 } from 'calypso/state/activity-log/actions';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ActivityLogBanner from './index';
 
 class ErrorBanner extends PureComponent {
@@ -54,15 +52,7 @@ class ErrorBanner extends PureComponent {
 			: this.props.dismissDownloadError( this.props.siteId, this.props.downloadId );
 
 	render() {
-		const {
-			errorCode,
-			failureReason,
-			timestamp,
-			translate,
-			downloadId,
-			trackHappyChatBackup,
-			trackHappyChatRestore,
-		} = this.props;
+		const { errorCode, failureReason, timestamp, translate, downloadId } = this.props;
 		const strings =
 			typeof downloadId === 'undefined'
 				? {
@@ -101,15 +91,6 @@ class ErrorBanner extends PureComponent {
 				<Button primary onClick={ this.handleClickRestart }>
 					{ translate( 'Try again' ) }
 				</Button>
-				<HappychatButton
-					className="activity-log-banner__happychat-button"
-					onClick={
-						typeof downloadId === 'undefined' ? trackHappyChatRestore : trackHappyChatBackup
-					}
-				>
-					<Gridicon icon="chat" />
-					<span>{ translate( 'Get help' ) }</span>
-				</HappychatButton>
 			</ActivityLogBanner>
 		);
 	}
@@ -118,6 +99,4 @@ class ErrorBanner extends PureComponent {
 export default connect( null, {
 	dismissRewindRestoreProgress: dismissRewindRestoreProgressAction,
 	dismissDownloadError: dismissRewindBackupProgress,
-	trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_error_banner_backup' ),
-	trackHappyChatRestore: () => recordTracksEvent( 'calypso_activitylog_error_banner_restore' ),
 } )( localize( ErrorBanner ) );

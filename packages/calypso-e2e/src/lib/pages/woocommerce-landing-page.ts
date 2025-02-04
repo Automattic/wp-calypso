@@ -4,8 +4,8 @@ const selectors = {
 	start: '.woocommerce .empty-content button:text("Start a new store")',
 	installer: '.is-woocommerce-install',
 	learnMore: '.woocommerce span:text("Learn more")',
-	supportDialog: '.support-article-dialog',
-	supportDialogClose: '.support-article-dialog button:text("Close")',
+	helpCenter: '.help-center__container',
+	helpCenterClose: '.help-center__container .help-center-header__close',
 };
 
 /**
@@ -26,14 +26,14 @@ export class WoocommerceLandingPage {
 	 */
 	async openLearnMore(): Promise< void > {
 		await this.page.click( selectors.learnMore );
-		await this.page.waitForSelector( selectors.supportDialog );
+		await this.page.waitForSelector( selectors.helpCenter );
 	}
 
 	/**
 	 * Click the Close button
 	 */
 	async closeLearnMore(): Promise< void > {
-		await this.page.click( selectors.supportDialogClose );
+		await this.page.click( selectors.helpCenterClose );
 	}
 
 	/**

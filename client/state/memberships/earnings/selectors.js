@@ -13,7 +13,7 @@ export function getEarningsWithDefaultsForSiteId( state, siteId ) {
 		total: earnings.total ?? 0,
 		last_month: earnings.last_month ?? 0,
 		forecast: earnings.forecast ?? 0,
-		currency: earnings.currency ?? 'USD',
+		currency: earnings.currency ?? 'USD', // For the record, this is never sent by the backend
 		commission: earnings.commission ?? null,
 	};
 }

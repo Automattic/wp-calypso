@@ -1,34 +1,73 @@
-.reader-share__button.button {
-	color: var(--color-text-subtle);
-	display: flex;
-	align-items: center;
-	padding: 0;
+.reader-share {
+	.reader-share__button.button {
+		color: var(--color-text-subtle);
+		fill: var(--color-text-subtle);
+		display: flex;
+		align-items: center;
+		padding: 0;
+		font-size: $font-body-small;
+		font-weight: 400;
+		gap: 4px;
+		line-height: normal;
 
-	&:hover,
-	&:active {
-		color: var(--color-primary);
-	}
-
-	&:focus {
-		outline: thin dotted;
-	}
-
-	&.is-borderless {
-		.gridicon {
-			margin-right: 0;
-			margin-top: 0;
-		}
-	}
-
-	.gridicon {
-		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
-
-	&.is-active {
-		color: var(--color-primary);
-
-		.gridicon {
+		&:hover,
+		&:active {
+			color: var(--color-primary);
 			fill: var(--color-primary);
+		}
+
+		&:focus {
+			outline: thin dotted;
+		}
+
+		&.is-borderless {
+			.gridicon {
+				margin-right: 0;
+				margin-top: 0;
+			}
+		}
+
+		.gridicon {
+			transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+		}
+
+		.gridicons-reblog {
+			top: 0;
+		}
+
+		&.is-active {
+			color: var(--color-primary);
+
+			.gridicon {
+				fill: var(--color-primary);
+			}
+		}
+
+		&.tooltip {
+			position: relative;
+			overflow: visible;
+		}
+
+		&.tooltip::after {
+			height: 20px;
+			line-height: 20px;
+			background: var(--color-sidebar-tooltip-background);
+			border-radius: 4px;
+			color: var(--color-sidebar-tooltip-text);
+			content: attr(data-tooltip);
+			display: none;
+			font-size: $font-body-extra-small;
+			padding: 3px 6px;
+			position: absolute;
+			white-space: nowrap;
+			top: -29px;
+			left: 50%;
+			transform: translateX(-50%);
+			z-index: 8;
+		}
+
+		&.tooltip:hover::after {
+			display: block;
 		}
 	}
 }
@@ -113,6 +152,7 @@
 		fill: var(--color-facebook);
 	}
 
+	&:focus,
 	&:hover {
 		.gridicon,
 		.reader-twitter,
@@ -157,7 +197,7 @@
 .reader-share__site-selector .site__title,
 .reader-share__site-selector .site__domain {
 	&::after {
-		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		@include long-content-fade();
 		border-radius: 50%;
 	}
 }

@@ -22,6 +22,7 @@ import {
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { mapStateToProps } from '../main';
 
+jest.mock( 'smooch', () => {} );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 jest.mock( '../help-unverified-warning', () => 'HelpUnverifiedWarning' );
 jest.mock( 'calypso/components/main', () => 'Main' );
@@ -37,15 +38,14 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 
 jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) =>
-		(
-			<Comp
-				{ ...props }
-				translate={ function ( x ) {
-					return x;
-				} }
-			/>
-		),
+	localize: ( Comp ) => ( props ) => (
+		<Comp
+			{ ...props }
+			translate={ function ( x ) {
+				return x;
+			} }
+		/>
+	),
 	translate: ( x ) => x,
 	numberFormat: ( x ) => x,
 } ) );

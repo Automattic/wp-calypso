@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 const panel = '.entities-saved-states__panel';
 const selectors = {
@@ -10,15 +11,15 @@ const selectors = {
  */
 export class FullSiteEditorSavePanelComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -27,7 +28,8 @@ export class FullSiteEditorSavePanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async confirmSave(): Promise< void > {
-		const locator = this.editor.locator( selectors.saveButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.saveButton );
 		await locator.click();
 	}
 }

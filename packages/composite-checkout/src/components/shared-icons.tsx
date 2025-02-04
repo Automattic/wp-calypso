@@ -7,7 +7,7 @@ const CheckIconSvg = styled.svg`
 export function CheckIcon( { className, id }: { className?: string; id: string } ) {
 	return (
 		<CheckIconSvg
-			width="20"
+			width="16"
 			height="20"
 			viewBox="0 0 20 20"
 			xmlns="http://www.w3.org/2000/svg"
@@ -65,6 +65,21 @@ export function InfoIcon( { className }: { className?: string } ) {
 				fill="#FFFFFF"
 				d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
 			/>
+		</svg>
+	);
+}
+
+export function CloseIcon( { className }: { className?: string } ) {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			height="24"
+			viewBox="0 -960 960 960"
+			className={ className }
+			width="24"
+			aria-hidden="true"
+		>
+			<path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
 		</svg>
 	);
 }

@@ -4,7 +4,6 @@ import type { ProductSlug } from './types';
 
 /**
  * Return the yearly variant of a product
- *
  * @param {ProductSlug} productSlug Slug of the product to get the yearly variant from
  * @returns {string} Slug of the yearly variant
  */

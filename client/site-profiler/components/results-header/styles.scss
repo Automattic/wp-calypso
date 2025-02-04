@@ -1,0 +1,67 @@
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
+
+.results-header--container {
+	display: flex;
+	flex-direction: column;
+	margin-top: 8rem;
+
+	h1 {
+		margin-top: 12px;
+		font-weight: 500;
+	}
+
+	@media (max-width: $break-small) {
+		margin-top: 30px;
+		h1 {
+			margin-top: 20px;
+		}
+	}
+
+}
+
+.results-header--domain-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	font-family: "SF Pro Display", $sans;
+
+	.domain-title {
+		font-weight: 500;
+	}
+	.domain-message {
+		color: #a8aaad;
+
+	}
+
+}
+.results-header--button-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 26px;
+	align-items: center;
+	margin-top: 48px;
+
+	@media (max-width: $break-small) {
+		gap: 16px;
+	}
+
+	button {
+		background-color: var(--color-button);
+		border: none;
+		color: #fff;
+		padding: 10px 24px;
+
+		&:hover {
+			color: #fff;
+			background-color: var(--color-button-60);
+		}
+	}
+	.link-component {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+	}
+}

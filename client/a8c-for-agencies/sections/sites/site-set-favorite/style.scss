@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.site-set-favorite__favorite-icon {
+	position: absolute;
+	top: 6px;
+	color: var(--color-accent-20);
+}
+
+.site-set-favorite__favorite-icon-active {
+	visibility: visible;
+	color: var(--color-primary);
+}
+
+button.button.site-set-favorite__view-favorite {
+	color: var(--color-text-white);
+	text-decoration: underline;
+	font-size: inherit;
+	position: relative;
+	top: 4px;
+	left: 4px;
+	padding: 0;
+
+	&:hover {
+		color: var(--color-text-white);
+	}
+}

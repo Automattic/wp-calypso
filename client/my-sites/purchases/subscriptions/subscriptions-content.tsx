@@ -1,22 +1,25 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import JetpackRnaActionCard from 'calypso/components/jetpack/card/jetpack-rna-action-card';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { Purchase } from 'calypso/lib/purchases/types';
 import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 import PurchasesSite from 'calypso/me/purchases/purchases-site';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
+import { useSelector } from 'calypso/state';
+import { hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector } from 'calypso/state/partner-portal/partner/selectors';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
 	isFetchingSitePurchases,
 } from 'calypso/state/purchases/selectors';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { SiteDetails } from 'calypso/../packages/data-stores/src';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -26,17 +29,16 @@ function SubscriptionsContent( {
 	selectedSiteId,
 	selectedSite,
 	purchases,
-	cards,
 }: {
 	isFetchingPurchases: boolean;
 	hasLoadedPurchases: boolean;
 	selectedSiteId: number | null;
 	selectedSite: undefined | null | SiteDetails;
 	purchases: Purchase[];
-	cards: StoredCard[];
 } ) {
 	const getManagePurchaseUrlFor = ( siteSlug: string, purchaseId: number ) =>
 		`/purchases/subscriptions/${ siteSlug }/${ purchaseId }`;
+	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 
 	// If there is no selected site, show the "no sites" page
 	if ( ! selectedSiteId ) {
@@ -90,7 +92,6 @@ export default function SubscriptionsContentWrapper() {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const selectedSite = useSelector( getSelectedSite );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-	const cards = useSelector( getAllStoredCards );
 
 	return (
 		<SubscriptionsContent
@@ -99,32 +100,55 @@ export default function SubscriptionsContentWrapper() {
 			selectedSiteId={ selectedSiteId }
 			selectedSite={ selectedSite }
 			purchases={ purchases }
-			cards={ cards }
 		/>
 	);
 }
 
 function NoPurchasesMessage() {
 	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const translate = useTranslate();
+	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
+	const commonEventProps = { context: 'site' };
+
+	let url;
+	if ( ! isJetpackCloud() ) {
+		url = selectedSite ? `/plans/${ selectedSite.slug }` : '/plans';
+	} else if ( hasJetpackPartnerAccess ) {
+		url = selectedSiteId
+			? `/partner-portal/issue-license?site_id=${ selectedSiteId }`
+			: '/partner-portal/issue-license';
+	} else {
+		url = selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing';
+	}
+
 	return isJetpackCloud() ? (
 		<JetpackRnaActionCard
 			headerText={ translate( 'You don’t have any active subscriptions for this site.' ) }
 			subHeaderText={ translate(
 				'Check out how Jetpack’s security, performance, and growth tools can improve your site.'
 			) }
-			ctaButtonLabel={ translate( 'Compare plans' ) }
-			ctaButtonURL={ selectedSite ? `/pricing/${ selectedSite.slug }` : '/pricing' }
+			ctaButtonLabel={ translate( 'View products' ) }
+			ctaButtonURL={ url }
 		/>
 	) : (
 		<CompactCard className="subscriptions__list">
-			<EmptyContent
-				title={ translate( 'Looking to upgrade?' ) }
-				line={ translate( 'You have made no purchases for this site.' ) }
-				action={ translate( 'Upgrade now' ) }
-				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
-				illustration="/calypso/images/illustrations/illustration-nosites.svg"
-			/>
+			<>
+				<TrackComponentView
+					eventName="calypso_no_purchases_upgrade_nudge_impression"
+					eventProperties={ commonEventProps }
+				/>
+				<EmptyContent
+					title={ translate( 'Looking to upgrade?' ) }
+					line={ translate( 'You have made no purchases for this site.' ) }
+					action={ translate( 'Upgrade now' ) }
+					actionURL={ url }
+					illustration={ noSitesIllustration }
+					actionCallback={ () => {
+						recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
+					} }
+				/>
+			</>
 		</CompactCard>
 	);
 }

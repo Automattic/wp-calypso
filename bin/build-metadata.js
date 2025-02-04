@@ -57,7 +57,6 @@ const areaCodes = {
  * Some countries share a dial code and need a priority order to make an early guess. These are made up numbers to order
  * the countries by their population.
  * Priorities should be distinct among the same dial code group.
- *
  * @type Object
  */
 const priorityData = {
@@ -173,7 +172,6 @@ function processNumberFormat( format ) {
 
 /**
  * Deeply iterates over the keys of an object to remove any keys that are "undefined". This method modifies the object.
- *
  * @param {Object} obj
  * @returns {Object} obj, with keys with value "undefined" removed.
  */
@@ -229,7 +227,6 @@ function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryDat
 
 /**
  * Processes Google's libphonenumber data and generates a proper JS object
- *
  * @param {{}} libPhoneNumberData
  * @returns {{}}
  */
@@ -333,7 +330,6 @@ function injectHardCodedValues( libPhoneNumberData ) {
 
 /**
  * Creates aliases. E.g. allows `uk` to be found by both `gb` and `uk`.
- *
  * @param data
  */
 function insertCountryAliases( data ) {
@@ -345,7 +341,6 @@ function insertCountryAliases( data ) {
 
 /**
  * Wraps and saves data to '../client/components/phone-input/data.js'
- *
  * @param {Object} data
  */
 function saveToFile( data ) {

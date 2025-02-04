@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -130,12 +130,12 @@ export class CommentReply extends Component {
 		// Only show the scrollbar if the textarea content exceeds the max height
 		const hasScrollbar = textareaHeight === TEXTAREA_MAX_HEIGHT;
 
-		const buttonClasses = classNames( 'comment__reply-submit', {
+		const buttonClasses = clsx( 'comment__reply-submit', {
 			'has-scrollbar': hasScrollbar,
 			'is-active': hasReplyContent,
 		} );
 
-		const textareaClasses = classNames( 'comment__reply-textarea', {
+		const textareaClasses = clsx( 'comment__reply-textarea', {
 			'has-content': hasReplyContent,
 			'has-focus': hasReplyFocus,
 			'has-scrollbar': hasScrollbar,

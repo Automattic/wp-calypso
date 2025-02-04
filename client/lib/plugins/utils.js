@@ -12,6 +12,7 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
@@ -59,7 +60,6 @@ export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
 
 /**
  * Filter function that return notices that fit a certain criteria.
- *
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin Id
  * @param  {Object} log      Notice log Object
@@ -123,7 +123,8 @@ export function getAllowedPluginData( plugin ) {
 		'variations',
 		'version',
 		'wp_admin_settings_page_url',
-		'saas_landing_page'
+		'saas_landing_page',
+		'categories'
 	);
 }
 
@@ -187,6 +188,10 @@ export function normalizeCompatibilityList( compatibilityList ) {
 		}
 		return version.join( '.' );
 	} );
+}
+
+export function mapStarRatingToPercent( starRating ) {
+	return ( ( starRating ?? 0 ) / 5 ) * 100;
 }
 
 export function normalizePluginData( plugin, pluginData ) {
@@ -271,7 +276,6 @@ export function normalizePluginsList( pluginsList ) {
 
 /**
  * Return logs that match a certain critia.
- *
  * @param  {Array} logs      List of all notices
  * @param  {number} siteId   Site Object
  * @param  {string} pluginId Plugin ID
@@ -288,7 +292,6 @@ export const DEVELOPER_PATTERN = /developer:(?:\s)*"(.*)"/;
 
 /**
  * Extract author and search params from the plugin search query
- *
  * @param {string} searchTerm The full plugin search query
  * @returns {Array<string | undefined>} The first item will be the search and the second will be the author if exists
  */
@@ -306,7 +309,6 @@ export function extractSearchInformation( searchTerm = '' ) {
  * - Try to extract the author keyword from author_profile
  * - Try to get the author_name
  * - Send an empty string if none of the previous actions works
- *
  * @param plugin
  * @returns {string} the author keyword or an empty string
  */
@@ -334,7 +336,6 @@ export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 
 /**
  * Get the author keyword from author_profile property
- *
  * @param plugin
  * @returns {string|null} the author keyword
  */
@@ -376,12 +377,11 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 
 /**
  * Determines the URL to use for managing a connection.
- *
  * @param {string} siteSlug The site slug to use in the URL.
  * @returns The URL to use for managing a connection.
  */
 export const getManageConnectionHref = ( siteSlug ) => {
-	return isJetpackCloud()
+	return isJetpackCloud() || isA8CForAgencies()
 		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
 		: `/settings/manage-connection/${ siteSlug }`;
 };
@@ -389,7 +389,6 @@ export const getManageConnectionHref = ( siteSlug ) => {
 /**
  * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
  * but require a paid upgrade to function.
- *
  * @typedef {Object} PluginVariations
  * @property {Object} monthly The plugin's monthly variation
  * @property {string} monthly.product_slug The plugin's monthly variation's product slug
@@ -411,8 +410,7 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 
 /**
  * Returns the product slug of periodVariation passed filtering the productsList passed only if required
- *
- * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param {{ product_slug?: string; product_id?: number } | undefined} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
  * @param {Record<string, Object>} productsList The list of products
  * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
  * it will find the product slug in the productsList filtering by the variation.product_id.
@@ -449,14 +447,13 @@ export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
 	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 
 /**
+ * @typedef {import('calypso/lib/purchases/types').Purchase} Purchase
  * @param  {Object} plugin The plugin object
  * @param  {Array} purchases An array of site purchases
- * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
- * @returns {Object} The purchase object, if found.
+ * @returns {Purchase} The purchase object, if found.
  */
-export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
+export const getPluginPurchased = ( plugin, purchases ) => {
 	return (
-		isMarketplaceProduct &&
 		plugin?.variations &&
 		purchases.find( ( purchase ) =>
 			Object.values( plugin.variations ).some(
@@ -468,7 +465,6 @@ export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) =>
 
 /**
  * Gets the SaaS redirect URL of a plugin if it exits and is valid
- *
  * @param {plugin} plugin The plugin object  to read the SaaS redirect url from
  * @param {number} userId The user id
  * @param {number} siteId The site id

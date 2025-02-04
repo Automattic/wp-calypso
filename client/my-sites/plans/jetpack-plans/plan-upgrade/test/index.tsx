@@ -78,6 +78,6 @@ describe( '<PlanUpgradeSection />', () => {
 
 		expect( personalHeader.outerHTML ).toContain( 'Premium' );
 		expect( antiSpamHeader.outerHTML ).toContain( 'Anti-spam' );
-		expect( backupDailyHeader.outerHTML ).toContain( 'Backup <em>Daily</em>' );
+		expect( backupDailyHeader.outerHTML ).toContain( 'Backup <span>Daily</span>' );
 	} );
 } );

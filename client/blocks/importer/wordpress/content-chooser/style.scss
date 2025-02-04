@@ -1,4 +1,4 @@
-@import "@automattic/onboarding/styles/base-styles.scss";
+@import "@automattic/onboarding/styles/base-styles";
 
 .content-chooser {
 	.formatted-header__title {
@@ -21,6 +21,7 @@
 	}
 
 	.card.list__importer-option {
+		background: transparent;
 		box-shadow: none;
 		padding: 0;
 		margin: 1.25rem 0;

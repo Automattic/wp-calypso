@@ -1,21 +1,17 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
+import { Button } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { AnchorHTMLAttributes, memo, useState } from 'react';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useInView } from 'calypso/lib/use-in-view';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
-import { SitesEllipsisMenu } from './sites-ellipsis-menu';
-import { SitesGridActionRenew } from './sites-grid-action-renew';
+import { memo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { displaySiteUrl } from '../utils';
 import { SitesGridTile } from './sites-grid-tile';
-import SitesLaunchStatusBadge from './sites-launch-status-badge';
-import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
-import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
-import { ThumbnailLink } from './thumbnail-link';
+import TransferNoticeWrapper from './sites-transfer-notice-wrapper';
+import { WithAtomicTransfer } from './with-atomic-transfer';
+import type { SiteExcerptData } from '@automattic/sites';
 
 const SIZES_ATTR = [
 	'(min-width: 1345px) calc((1280px - 64px) / 3)',
@@ -32,11 +28,14 @@ const THUMBNAIL_DIMENSION = {
 	height: 401 / ASPECT_RATIO,
 };
 
-const badges = css( {
+const selectAction = css( {
 	display: 'flex',
 	gap: '8px',
 	alignItems: 'center',
 	marginInlineStart: 'auto',
+	button: {
+		whiteSpace: 'nowrap',
+	},
 } );
 
 export const siteThumbnail = css( {
@@ -48,82 +47,50 @@ export const siteThumbnail = css( {
 
 const SitesGridItemSecondary = styled.div( {
 	display: 'flex',
-	gap: '32px',
+	gap: '20px',
+	fontSize: '14px',
 	justifyContent: 'space-between',
-} );
-
-const EllipsisMenuContainer = styled.div( {
-	width: '24px',
-} );
-
-const ellipsis = css( {
-	'.button.ellipsis-menu__toggle': {
-		padding: 0,
-	},
-
-	'.gridicon.ellipsis-menu__toggle-icon': {
-		width: '24px',
-		height: '16px',
-		insetBlockStart: '4px',
-	},
 } );
 
 interface SitesGridItemProps {
 	site: SiteExcerptData;
+	onSiteSelectBtnClick: ( site: SiteExcerptData ) => void;
 }
 
-export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
+export const SitesGridItem = memo( ( props: SitesGridItemProps ) => {
 	const { __ } = useI18n();
-
-	const isP2Site = site.options?.is_wpforteams_site;
-	const translatedStatus = useSiteLaunchStatusLabel( site );
-
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLDivElement >( () => setInViewOnce( true ) );
-
-	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
-		href: getDashboardUrl( site.slug ),
-		title: __( 'Visit Dashboard' ),
-	};
+	const { site, onSiteSelectBtnClick } = props;
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
 		siteUrl = site.options?.unmapped_url;
 	}
-
 	return (
 		<SitesGridTile
 			ref={ ref }
 			leading={
 				<>
-					<ThumbnailLink { ...siteDashboardUrlProps }>
+					<div>
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
-							showPlaceholder={ ! inViewOnce }
+							showPlaceholder={ ! inView }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }
 							sizesAttr={ SIZES_ATTR }
 						/>
-					</ThumbnailLink>
-					{ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
+					</div>
 				</>
 			}
 			primary={
 				<>
-					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
-						{ site.title }
-					</SiteName>
-
-					<div className={ badges }>
-						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						{ getSiteLaunchStatus( site ) !== 'public' && (
-							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
-						) }
-						<EllipsisMenuContainer>
-							{ inViewOnce && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
-						</EllipsisMenuContainer>
+					<SiteName fontSize={ 16 }>{ site.title }</SiteName>
+					<div className={ selectAction }>
+						<Button compact primary onClick={ () => onSiteSelectBtnClick( site ) }>
+							{ __( 'Select this site' ) }
+						</Button>
 					</div>
 				</>
 			}
@@ -132,7 +99,14 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 					<SiteUrl href={ siteUrl } title={ siteUrl }>
 						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 					</SiteUrl>
-					<SiteLaunchNag site={ site } />
+					<WithAtomicTransfer site={ site }>
+						{ ( result ) => {
+							if ( result.wasTransferring ) {
+								return <TransferNoticeWrapper { ...result } />;
+							}
+							return <></>;
+						} }
+					</WithAtomicTransfer>
 				</SitesGridItemSecondary>
 			}
 		/>

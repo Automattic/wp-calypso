@@ -36,7 +36,6 @@ const postLike = {
 
 /**
  * Make a quick clone of an object for testing
- *
  * @param {Object} o object to shallow-clone
  * @returns {Object} cloned object
  */

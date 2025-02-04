@@ -5,7 +5,6 @@ import getSiteDomain from './get-site-domain';
  * Returns a title by which the site can be canonically referenced. Uses the
  * site's name if available, falling back to its domain. Returns null if the
  * site is not known.
- *
  * @param  {Object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @returns {?string}        Site title

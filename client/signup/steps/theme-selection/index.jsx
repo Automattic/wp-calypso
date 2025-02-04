@@ -103,13 +103,11 @@ class ThemeSelectionStep extends Component {
 	}
 
 	render() {
-		const { useHeadstart, flowName } = this.props;
-
-		// If a user skips the step in `design-first`, let segment and vertical determine content.
-		const defaultDependencies =
-			'design-first' === flowName
-				? { themeSlugWithRepo: 'pub/maywood', useThemeHeadstart: false }
-				: { themeSlugWithRepo: 'pub/twentysixteen', useThemeHeadstart: useHeadstart };
+		const { useHeadstart } = this.props;
+		const defaultDependencies = {
+			themeSlugWithRepo: 'pub/twentytwentythree',
+			useThemeHeadstart: useHeadstart,
+		};
 
 		const headerText = this.headerText();
 		const subHeaderText = this.subHeaderText();

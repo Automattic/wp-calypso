@@ -8,11 +8,11 @@ const STATIC_PATHS = [
 	'/nostats.js',
 	'/version',
 	'/__webpack_hmr',
+	'_favicon.ico',
 ];
 
 /**
  * Returns true if the request is to a static file, like JS bundles.
- *
  * @param req The express request object
  */
 export default function isStaticRequest( req: PartialReq ) {

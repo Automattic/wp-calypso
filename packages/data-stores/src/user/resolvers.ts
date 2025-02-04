@@ -1,6 +1,5 @@
 import { wpcomRequest } from '../wpcom-request-controls';
 import { createActions } from './actions';
-import type { WpcomClientCredentials } from '../shared-types';
 import type { CurrentUser } from './types';
 
 declare global {
@@ -9,8 +8,8 @@ declare global {
 	}
 }
 
-export function createResolvers( clientCreds: WpcomClientCredentials ) {
-	const { receiveCurrentUser, receiveCurrentUserFailed } = createActions( clientCreds );
+export function createResolvers() {
+	const { receiveCurrentUser, receiveCurrentUserFailed } = createActions();
 
 	function* getCurrentUser() {
 		// In environments where `wpcom-user-bootstrap` is set to true, the currentUser

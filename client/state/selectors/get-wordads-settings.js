@@ -7,7 +7,6 @@ import 'calypso/state/wordads/init';
 /**
  * Returns the WordAds settings on a certain site.
  * Returns null if the site is unknown, or settings have not been fetched yet.
- *
  * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  The ID of the site we're querying
  * @returns {?Object}        WordAds settings
@@ -38,11 +37,13 @@ export const getWordadsSettings = createSelector(
 					display_archive: siteSettings.wordads_display_archive,
 					enable_header_ad: siteSettings.enable_header_ad,
 					second_belowpost: siteSettings.wordads_second_belowpost,
+					inline_enabled: siteSettings.wordads_inline_enabled,
 				},
 				ccpa_enabled: siteSettings.wordads_ccpa_enabled,
 				ccpa_privacy_policy_url: siteSettings.wordads_ccpa_privacy_policy_url,
 				custom_adstxt_enabled: siteSettings.wordads_custom_adstxt_enabled,
 				custom_adstxt: siteSettings.wordads_custom_adstxt,
+				cmp_enabled: siteSettings.wordads_cmp_enabled,
 			};
 		}
 

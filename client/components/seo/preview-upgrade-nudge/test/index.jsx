@@ -5,6 +5,7 @@ jest.mock( 'calypso/lib/analytics/track-component-view', () => ( { eventName } )
 jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan } ) => (
 	<div data-testid="upsell-nudge">{ plan }</div>
 ) );
+jest.mock( 'calypso/components/data/query-products-list', () => 'query-products' );
 
 import {
 	PLAN_FREE,

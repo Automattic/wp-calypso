@@ -2,26 +2,34 @@
 @import "@wordpress/base-styles/mixins";
 
 .themes-list {
-	$theme-item-min-width: 320px;
-	$theme-item-horizontal-margin: 32px; // Keep using margin as there might be an empty row
-
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax($theme-item-min-width + $theme-item-horizontal-margin, 1fr));
+	grid-template-columns: 100%;
 	list-style: none;
 	padding: 0;
 	margin: 0 -10px; // items flush against list edge
+
+	@include break-small {
+		$theme-item-min-width: 320px;
+		$theme-item-horizontal-margin: 32px; // Keep using margin as there might be an empty row
+
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax($theme-item-min-width + $theme-item-horizontal-margin, 1fr));
+	}
 
 	.feature-example & {
 		max-width: 1000px;
 		margin: auto;
 	}
 
-	.pattern-assembler-cta-wrapper {
+	.second-upsell-wrapper {
 		grid-column: 1/-1;
-		grid-row-start: 9;
-		background: #fff;
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
-		margin: 0 16px 48px;
+		grid-row-start: 7;
+		padding: 0 16px;
+
+		.upsell-nudge {
+			margin-top: 0 !important;
+			margin-bottom: 2rem !important;
+		}
 	}
 }
 
@@ -126,6 +134,47 @@
 	.themes-list__option-description {
 		color: var(--studio-gray-60);
 		font-size: 0.875rem;
+
+		> ul {
+			color: var(--studio-gray-60);
+			counter-reset: li;
+			display: flex;
+			flex-direction: column;
+			font-size: 0.875rem;
+			font-weight: 400;
+			gap: 12px;
+			line-height: 20px;
+			list-style-type: none;
+			margin: 0;
+
+			> li {
+				align-items: center;
+				display: flex;
+				padding-left: 28px;
+				position: relative;
+
+				&::before {
+					align-items: center;
+					border: 0.909px solid var(--studio-gray-80);
+					border-radius: 50%;
+					box-sizing: border-box;
+					color: var(--studio-gray-80);
+					content: counter(li);
+					counter-increment: li;
+					display: flex;
+					font-size: 10.909px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+					font-weight: 400;
+					height: 20px;
+					justify-content: center;
+					left: 0;
+					letter-spacing: -0.061px;
+					line-height: 20px;
+					position: absolute;
+					top: 0;
+					width: 20px;
+				}
+			}
+		}
 	}
 
 	.themes-list__option:last-child {
@@ -138,6 +187,19 @@
 			@include break-small {
 				padding-bottom: 20px;
 			}
+		}
+	}
+}
+
+.theme-showcase.is-collection-view {
+	.themes-list {
+		grid-template-columns: repeat(1, 1fr);
+
+		@include breakpoint-deprecated( ">660px" ) {
+			grid-template-columns: repeat(2, 1fr);
+		}
+		@include break-xlarge {
+			grid-template-columns: repeat(3, 1fr);
 		}
 	}
 }

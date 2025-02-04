@@ -12,8 +12,8 @@ import {
 	paymentLogoType,
 	hasPaymentMethod,
 } from 'calypso/lib/purchases';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 import type { ReactNode } from 'react';
 
 export default function PaymentInfoBlock( {
@@ -21,14 +21,12 @@ export default function PaymentInfoBlock( {
 	cards,
 }: {
 	purchase: Purchase;
-	cards: StoredCard[];
+	cards: StoredPaymentMethod[];
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isBackupMethodAvailable = cards.some(
-		( card ) =>
-			card.stored_details_id !== purchase.payment.storedDetailsId &&
-			card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+		( card ) => card.stored_details_id !== purchase.payment.storedDetailsId && card.is_backup
 	);
 
 	if ( isIncludedWithPlan( purchase ) ) {

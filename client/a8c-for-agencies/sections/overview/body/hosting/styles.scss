@@ -1,0 +1,46 @@
+.a4a-overview-hosting__wp-logo {
+	fill: var(--color-primary-50);
+	margin: 0;
+}
+
+.a4a-overview-pressable-offering-header-title {
+	.badge {
+		margin-left: 12px;
+	}
+
+	.badge--success {
+		background: var(--studio-green-5);
+		color: var(--studio-green-50);
+	}
+	.badge--warning {
+		background: var(--studio-yellow-5);
+		color: var(--studio-yellow-70);
+	}
+	.badge--error {
+		background: var(--studio-red-5);
+		color: var(--studio-red-70);
+	}
+}
+
+.pressable-icon {
+	width: 24px;
+	height: 24px;
+}
+
+.is-section-a8c-for-agencies-overview {
+	.a4a-migration-offer-v3 {
+		padding: 24px !important;
+		margin-bottom: 10px;
+		background-color: var(--color-primary-0);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 4px;
+
+		@media (min-width: 480px) {
+			margin-bottom: 16px;
+		}
+
+		.a4a-migration-offer-v3__view-toggle {
+			padding: 0;
+		}
+	}
+}

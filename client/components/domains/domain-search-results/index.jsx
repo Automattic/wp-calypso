@@ -1,5 +1,6 @@
-import { CompactCard, ScreenReaderText } from '@automattic/components';
-import classNames from 'classnames';
+import { PLAN_PREMIUM, getPlan } from '@automattic/calypso-products';
+import { CompactCard, ScreenReaderText, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,11 +11,11 @@ import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggest
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
 import FeaturedDomainSuggestions from 'calypso/components/domains/featured-domain-suggestions';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import { isDomainMappingFree, isNextDomainFree } from 'calypso/lib/cart-values/cart-items';
-import { getTld } from 'calypso/lib/domains';
+import { isSubdomain } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getRootDomain } from 'calypso/lib/domains/utils';
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 
@@ -29,6 +30,7 @@ class DomainSearchResults extends Component {
 		lastDomainSearched: PropTypes.string,
 		cart: PropTypes.object,
 		isCartPendingUpdate: PropTypes.bool,
+		isCartPendingUpdateDomain: PropTypes.object,
 		premiumDomains: PropTypes.object,
 		products: PropTypes.object,
 		selectedSite: PropTypes.object,
@@ -56,6 +58,7 @@ class DomainSearchResults extends Component {
 		unavailableDomains: PropTypes.array,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
+		wpcomSubdomainSelected: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
 	};
 
 	renderDomainAvailability() {
@@ -64,11 +67,12 @@ class DomainSearchResults extends Component {
 			lastDomainIsTransferrable,
 			lastDomainStatus,
 			lastDomainSearched,
+			lastDomainTld,
 			selectedSite,
 			translate,
 			isDomainOnly,
 		} = this.props;
-		const availabilityElementClasses = classNames( {
+		const availabilityElementClasses = clsx( {
 			'domain-search-results__domain-is-available': availableDomain,
 			'domain-search-results__domain-not-available': ! availableDomain,
 		} );
@@ -122,8 +126,11 @@ class DomainSearchResults extends Component {
 					);
 				} else {
 					offer = translate(
-						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com Premium.',
-						{ args: { domain }, components }
+						'If you purchased %(domain)s elsewhere, you can {{a}}connect it{{/a}} with WordPress.com %(premiumPlanName)s.',
+						{
+							args: { domain, premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() ?? '' },
+							components,
+						}
 					);
 				}
 			}
@@ -133,11 +140,15 @@ class DomainSearchResults extends Component {
 				offer = null;
 			}
 
-			let domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
+			let domainUnavailableMessage;
+
+			const domainArgument = ! isSubdomain( domain ) ? domain : getRootDomain( domain );
+
+			domainUnavailableMessage = [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
 				? translate(
 						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
 						{
-							args: { tld: getTld( domain ) },
+							args: { tld: lastDomainTld },
 							components: {
 								strong: <strong />,
 							},
@@ -146,14 +157,14 @@ class DomainSearchResults extends Component {
 				: translate(
 						'{{strong}}%(domain)s{{/strong}} is already registered. {{a}}Do you own it?{{/a}}',
 						{
-							args: { domain },
+							args: { domain: domainArgument },
 							components: {
 								strong: <strong />,
 								a: (
 									// eslint-disable-next-line jsx-a11y/anchor-is-valid
 									<a
 										href="#"
-										onClick={ this.props.onClickUseYourDomain }
+										onClick={ () => this.props.onClickUseYourDomain( domainArgument ) }
 										data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 									/>
 								),
@@ -161,13 +172,41 @@ class DomainSearchResults extends Component {
 						}
 				  );
 
-			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
+			if (
+				isSubdomain( domain ) &&
+				! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus )
+			) {
+				const rootDomain = getRootDomain( domain );
 				domainUnavailableMessage = translate(
-					'{{strong}}%(domain)s{{/strong}} is already registered. Please try another search.',
+					'{{strong}}%(rootDomain)s{{/strong}} is already registered. Do you own {{strong}}%(rootDomain)s{{/strong}} and want to {{a}}{{strong}}connect %(domain)s{{/strong}}{{/a}} with WordPress.com?',
 					{
-						args: { domain },
+						args: { rootDomain, domain },
 						components: {
 							strong: <strong />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a
+									href="#"
+									onClick={ this.props.onClickUseYourDomain }
+									data-tracks-button-click-source={ this.props.tracksButtonClickSource }
+								/>
+							),
+						},
+					}
+				);
+			}
+
+			if ( isDomainOnly && ! [ TLD_NOT_SUPPORTED, UNKNOWN ].includes( lastDomainStatus ) ) {
+				domainUnavailableMessage = translate(
+					'{{strong}}%(domain)s{{/strong}} is already registered. Do you own this domain? {{a}}Transfer it to WordPress.com{{/a}} now, or try another search.',
+					{
+						args: { domain: domainArgument },
+						components: {
+							strong: <strong />,
+							a: (
+								// eslint-disable-next-line jsx-a11y/anchor-is-valid
+								<a href={ `/setup/domain-transfer?new=${ domain ?? '' }` } />
+							),
 						},
 					}
 				);
@@ -178,7 +217,7 @@ class DomainSearchResults extends Component {
 					'{{strong}}.%(tld)s{{/strong}} domains are temporarily not offered on WordPress.com. ' +
 						'Please try again later or choose a different extension.',
 					{
-						args: { tld: getTld( domain ) },
+						args: { tld: lastDomainTld },
 						components: { strong: <strong /> },
 					}
 				);
@@ -282,6 +321,9 @@ class DomainSearchResults extends Component {
 					isReskinned={ this.props.isReskinned }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+					temporaryCart={ this.props.temporaryCart }
+					domainRemovalQueue={ this.props.domainRemovalQueue }
 				/>
 			);
 
@@ -295,6 +337,9 @@ class DomainSearchResults extends Component {
 						isCartPendingUpdate={ this.props.isCartPendingUpdate }
 						isDomainOnly={ isDomainOnly }
 						suggestion={ suggestion }
+						suggestionSelected={
+							this.props.wpcomSubdomainSelected?.domain_name === suggestion?.domain_name
+						}
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						isSignupStep={ this.props.isSignupStep }
@@ -312,6 +357,9 @@ class DomainSearchResults extends Component {
 						isReskinned={ this.props.isReskinned }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
+						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
+						temporaryCart={ this.props.temporaryCart }
+						domainRemovalQueue={ this.props.domainRemovalQueue }
 					/>
 				);
 			} );

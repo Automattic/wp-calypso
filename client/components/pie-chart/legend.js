@@ -6,18 +6,21 @@ import DataType from './data-type';
 
 const NUM_COLOR_SECTIONS = 3;
 
-function transformData( data ) {
+export function sortData( data ) {
 	return sortBy( data, ( datum ) => datum.value )
 		.reverse()
 		.map( ( datum, index ) => ( {
 			...datum,
-			sectionNum: index % NUM_COLOR_SECTIONS,
+			sectionNum: index % ( data.length || NUM_COLOR_SECTIONS ),
 		} ) );
 }
 
 class PieChartLegend extends Component {
 	static propTypes = {
 		data: PropTypes.arrayOf( DataType ).isRequired,
+		onlyPercent: PropTypes.bool,
+		fixedOrder: PropTypes.bool,
+		svgElement: PropTypes.element,
 	};
 
 	state = {
@@ -30,7 +33,7 @@ class PieChartLegend extends Component {
 			return {
 				data: nextProps.data,
 				dataTotal: nextProps.data.reduce( ( sum, { value } ) => sum + value, 0 ),
-				transformedData: transformData( nextProps.data ),
+				transformedData: sortData( nextProps.data ),
 			};
 		}
 
@@ -40,9 +43,11 @@ class PieChartLegend extends Component {
 	render() {
 		const { transformedData, dataTotal } = this.state;
 
+		const legendItems = this.props.fixedOrder ? this.props.data : transformedData;
+
 		return (
 			<div className="pie-chart__legend">
-				{ transformedData.map( ( datum ) => {
+				{ legendItems.map( ( datum ) => {
 					const percent =
 						dataTotal > 0 ? Math.round( ( datum.value / dataTotal ) * 100 ).toString() : '0';
 
@@ -50,10 +55,11 @@ class PieChartLegend extends Component {
 						<LegendItem
 							key={ datum.name }
 							name={ datum.name }
-							value={ datum.value.toString() }
-							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum }` }
+							value={ this.props.onlyPercent ? '' : datum.value.toString() }
+							circleClassName={ `pie-chart__legend-sample-${ datum.sectionNum } pie-chart__legend-sample-${ datum.className }` }
 							percent={ percent }
 							description={ datum.description }
+							svgElement={ this.props.svgElement }
 						/>
 					);
 				} ) }

@@ -18,7 +18,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		min-height: $wpcom-modal-content-min-height;
 
-		@media ( max-width: $wpcom-modal-breakpoint ) {
+		@media (max-width: $wpcom-modal-breakpoint) {
 			width: 90vw;
 			min-width: 90vw;
 			left: 5vw;
@@ -27,7 +27,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 			min-height: unset;
 		}
 
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media (min-width: $wpcom-modal-breakpoint) {
 			width: 720px;
 			height: $wpcom-modal-content-min-height;
 			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
@@ -75,7 +75,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	}
 
 	.components-guide__page {
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media (min-width: $wpcom-modal-breakpoint) {
 			flex-direction: row;
 		}
 	}
@@ -102,7 +102,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 		// Temporarily disable dots on mobile as alignment is wonky.
 		display: none;
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media (min-width: $wpcom-modal-breakpoint) {
 			display: block;
 		}
 	}
@@ -128,7 +128,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		margin-top: 13%;
 	}
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		flex-direction: column;
 		justify-content: flex-end;
 		min-height: $wpcom-modal-content-min-height;
@@ -139,7 +139,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .modal__text,
 .modal__visual {
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		flex: 1 auto;
 	}
 }
@@ -168,7 +168,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	font-size: calc(#{$font-body-extra-small} * 0.65);
 	color: var(--color-text-subtle);
 
-	@media ( max-width: $wpcom-modal-breakpoint ) {
+	@media (max-width: $wpcom-modal-breakpoint) {
 		font-size: $font-body-extra-small;
 	}
 }
@@ -190,7 +190,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	flex-direction: column;
 	flex: 1;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		height: auto;
 	}
 }
@@ -203,7 +203,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	font-size: $font-title-medium;
 	line-height: 1;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		font-size: $font-headline-small;
 	}
 
@@ -211,7 +211,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	body.locale-de & {
 		font-size: $font-headline-small;
 
-		@media ( min-width: $wpcom-modal-breakpoint ) {
+		@media (min-width: $wpcom-modal-breakpoint) {
 			font-size: $font-title-medium;
 		}
 	}
@@ -220,7 +220,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__sidebar {
 	display: none;
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		display: block;
 		background-color: var(--studio-blue-5);
 		min-width: 45%;
@@ -254,7 +254,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	/* Gray / Gray 60 */
 	color: var(--studio-gray-60);
 
-	@media ( min-width: $wpcom-modal-breakpoint ) {
+	@media (min-width: $wpcom-modal-breakpoint) {
 		font-size: $font-body;
 		line-height: 26px;
 	}

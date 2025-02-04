@@ -1,17 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSiteFragment } from 'calypso/lib/route';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import EditTeamMember from './edit-team-member-form';
 import InvitePeople from './invite-people';
 import PeopleList from './main';
-import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
+import PeopleInvitesPending from './people-invites-pending';
 import SubscriberDetails from './subscriber-details';
 import SubscribersTeam from './subscribers-team';
 import TeamInvite from './team-invite';
@@ -50,6 +50,10 @@ export default {
 		renderPeopleInviteDetails( context, next );
 	},
 
+	peoplePendingInvites( context, next ) {
+		renderPendingInvites( context, next );
+	},
+
 	teamMembers( context, next ) {
 		renderTeamMembers( context, next );
 	},
@@ -58,16 +62,24 @@ export default {
 		renderViewerTeamMember( context, next );
 	},
 
-	subscribers( context, next ) {
-		renderSubscribers( context, next );
+	subscribers( context ) {
+		// Redirect to the new Subscribers page
+		const state = context.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+		const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+		page.redirect( redirectURL );
 	},
 
 	subscriberDetails( context, next ) {
 		renderSubscribersDetails( context, next );
 	},
 
-	peopleAddSubscribers( context, next ) {
-		renderPeopleAddSubscribers( context, next );
+	peopleAddSubscribers( context ) {
+		// Redirect to the new Subscribers page
+		const state = context.store.getState();
+		const siteSlug = getSelectedSiteSlug( state );
+		const redirectURL = '/subscribers/' + ( siteSlug ? siteSlug : '' );
+		page.redirect( redirectURL );
 	},
 };
 
@@ -137,6 +149,25 @@ function renderPeopleInvites( context, next ) {
 	next();
 }
 
+function renderPendingInvites( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Pending Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvitesPending site={ site } />
+		</>
+	);
+	next();
+}
+
 function renderTeamMembers( context, next ) {
 	const TeamMembersTitle = () => {
 		const translate = useTranslate();
@@ -147,22 +178,6 @@ function renderTeamMembers( context, next ) {
 	context.primary = (
 		<>
 			<TeamMembersTitle />
-			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
-		</>
-	);
-	next();
-}
-
-function renderSubscribers( context, next ) {
-	const SubscribersTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'Subscribers', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<SubscribersTitle />
 			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
@@ -183,22 +198,6 @@ function renderSubscribersDetails( context, next ) {
 		<>
 			<SubscriberDetailsTitle />
 			<SubscriberDetails subscriberId={ id } subscriberType={ type } />
-		</>
-	);
-	next();
-}
-
-function renderPeopleAddSubscribers( context, next ) {
-	const PeopleAddSubscribersTitle = () => {
-		const translate = useTranslate();
-
-		return <DocumentHead title={ translate( 'Add Subscribers', { textOnly: true } ) } />;
-	};
-
-	context.primary = (
-		<>
-			<PeopleAddSubscribersTitle />
-			<PeopleAddSubscribers />
 		</>
 	);
 	next();

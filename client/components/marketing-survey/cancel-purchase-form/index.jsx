@@ -4,35 +4,31 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
-import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
+import { Plans } from '@automattic/data-stores';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
-import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InfoPopover from 'calypso/components/info-popover';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { isRefundable } from 'calypso/lib/purchases';
-import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isAgencyPartnerType, isPartnerPurchase, isRefundable } from 'calypso/lib/purchases';
+import { cancelPurchaseSurveyCompleted, submitSurvey } from 'calypso/lib/purchases/actions';
 import wpcom from 'calypso/lib/wp';
+import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
-import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import {
-	getDowngradePlanRawPrice,
-	getDowngradePlanToMonthlyRawPrice,
 	willAtomicSiteRevertAfterPurchaseDeactivation,
+	getDowngradePlanFromPurchase,
+	getDowngradePlanToMonthlyFromPurchase,
 } from 'calypso/state/purchases/selectors';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getSiteImportEngine from 'calypso/state/selectors/get-site-import-engine';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -51,7 +47,14 @@ import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
-import { ATOMIC_REVERT_STEP, FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP } from './steps';
+import {
+	ATOMIC_REVERT_STEP,
+	FEEDBACK_STEP,
+	UPSELL_STEP,
+	NEXT_ADVENTURE_STEP,
+	REMOVE_PLAN_STEP,
+} from './steps';
+
 import './style.scss';
 
 class CancelPurchaseForm extends Component {
@@ -66,6 +69,7 @@ class CancelPurchaseForm extends Component {
 		cancelBundledDomain: PropTypes.bool,
 		includedDomainPurchase: PropTypes.object,
 		linkedPurchases: PropTypes.array,
+		skipRemovePlanSurvey: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -73,10 +77,15 @@ class CancelPurchaseForm extends Component {
 	};
 
 	getAllSurveySteps() {
-		const { willAtomicSiteRevert } = this.props;
+		const { purchase, skipRemovePlanSurvey, willAtomicSiteRevert } = this.props;
 		let steps = [ FEEDBACK_STEP ];
 
-		if ( ! isPlan( this.props.purchase ) ) {
+		if (
+			skipRemovePlanSurvey ||
+			( isPartnerPurchase( purchase ) && isAgencyPartnerType( purchase.partnerType ) )
+		) {
+			steps = [];
+		} else if ( ! isPlan( purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.upsell ) {
 			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
@@ -86,6 +95,10 @@ class CancelPurchaseForm extends Component {
 
 		if ( willAtomicSiteRevert ) {
 			steps.push( ATOMIC_REVERT_STEP );
+		}
+
+		if ( skipRemovePlanSurvey && steps.length === 0 ) {
+			steps.push( REMOVE_PLAN_STEP );
 		}
 
 		return steps;
@@ -268,6 +281,10 @@ class CancelPurchaseForm extends Component {
 						isSubmitting: false,
 					} );
 				} );
+
+			if ( this.props.flowType === CANCEL_FLOW_TYPE.CANCEL_AUTORENEW ) {
+				this.props.cancelPurchaseSurveyCompleted( purchase.id );
+			}
 		}
 
 		this.props.onClickFinalConfirm();
@@ -300,6 +317,7 @@ class CancelPurchaseForm extends Component {
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
+		// TODO clk numberFormat pass through numberFormat if it stays
 		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
 			style: 'currency',
 			currency: currencyCode,
@@ -314,9 +332,18 @@ class CancelPurchaseForm extends Component {
 	};
 
 	surveyContent() {
-		const { atomicTransfer, translate, isImport, moment, purchase, site, hasBackupsFeature } =
-			this.props;
+		const {
+			atomicTransfer,
+			translate,
+			isImport,
+			moment,
+			purchase,
+			site,
+			hasBackupsFeature,
+			flowType,
+		} = this.props;
 		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
+		const { productName } = purchase;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -384,45 +411,52 @@ class CancelPurchaseForm extends Component {
 
 		if ( surveyStep === ATOMIC_REVERT_STEP ) {
 			const atomicTransferDate = moment( atomicTransfer.created_at ).format( 'LL' );
+			const isPlanPurchase = isPlan( purchase );
+			const isRemovePlan = flowType === CANCEL_FLOW_TYPE.REMOVE && isPlanPurchase;
+			const createInfoPopover = (
+				<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
+					{ translate(
+						'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. If you deactivate your plan, we will move your site back to its original platform.',
+						{ args: { atomicTransferDate } }
+					) }
+				</InfoPopover>
+			);
+
 			let subHeaderText;
-			if ( isPlan( purchase ) ) {
-				subHeaderText = translate(
-					'If you deactivate your plan, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features ' +
-						'on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
-					{
-						args: { atomicTransferDate },
-						components: {
-							moreInfoTooltip: (
-								<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
-									{ translate(
-										'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. ' +
-											'If you deactivate your plan, we will move your site back to its original platform.',
-										{ args: { atomicTransferDate } }
-									) }
-								</InfoPopover>
-							),
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-							strong: <strong className="is-highlighted" />,
-						},
-					}
-				);
+			if ( isPlanPurchase ) {
+				if ( isRemovePlan ) {
+					subHeaderText = translate(
+						'If you deactivate your plan, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
+						{
+							args: { atomicTransferDate },
+							components: {
+								moreInfoTooltip: createInfoPopover,
+								strong: <strong className="is-highlighted" />,
+							},
+						}
+					);
+				} else {
+					subHeaderText = translate(
+						'If you cancel your plan, when your plan expires on {{strong}}%(purchaseRenewalDate)s{{/strong}}, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
+						{
+							args: {
+								purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+								atomicTransferDate,
+							},
+							components: {
+								moreInfoTooltip: createInfoPopover,
+								strong: <strong className="is-highlighted" />,
+							},
+						}
+					);
+				}
 			} else {
 				subHeaderText = translate(
-					'If you deactivate your product, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features ' +
-						'on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
+					'If you deactivate your product, we will set your site to private and revert it to the point when you installed your first plugin or custom theme, or activated hosting features on {{strong}}%(atomicTransferDate)s{{/strong}}. All of your posts, pages, and media will be preserved, except for content generated by plugins or custom themes. {{moreInfoTooltip/}}',
 					{
 						args: { atomicTransferDate },
 						components: {
-							moreInfoTooltip: (
-								<InfoPopover className="cancel-purchase-form__atomic-revert-more-info">
-									{ translate(
-										'On %(atomicTransferDate)s, we automatically moved your site to a platform that supports the usage of plugins, custom themes, and hosting features. ' +
-											'If you deactivate your product, we will move your site back to its original platform.',
-										{ args: { atomicTransferDate } }
-									) }
-								</InfoPopover>
-							),
-							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							moreInfoTooltip: createInfoPopover,
 							strong: <strong className="is-highlighted" />,
 						},
 					}
@@ -442,32 +476,107 @@ class CancelPurchaseForm extends Component {
 						) }
 					</p>
 					<CheckboxControl
-						label={ translate(
-							'Any themes/plugins you have installed on the site will be removed, along with their data.'
-						) }
+						className={
+							atomicRevertCheckOne ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
+						}
+						label={
+							isPlanPurchase && ! isRemovePlan
+								? translate(
+										'Any themes/plugins you have installed on the site will be removed on %(purchaseRenewalDate)s, along with their data.',
+										{
+											args: {
+												purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+											},
+										}
+								  )
+								: translate(
+										'Any themes/plugins you have installed on the site will be removed, along with their data.'
+								  )
+						}
 						checked={ atomicRevertCheckOne }
 						onChange={ ( isChecked ) => this.setState( { atomicRevertCheckOne: isChecked } ) }
 					/>
 					<CheckboxControl
-						label={ translate(
-							'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
-						) }
+						className={
+							atomicRevertCheckTwo ? 'cancel-purchase-form__atomic-revert-checkbox-enabled' : ''
+						}
+						label={
+							isPlanPurchase && ! isRemovePlan
+								? translate(
+										'On %(purchaseRenewalDate)s, your site will return to its original settings and theme right before the first plugin or custom theme was installed.',
+										{
+											args: {
+												purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+											},
+										}
+								  )
+								: translate(
+										'Your site will return to its original settings and theme right before the first plugin or custom theme was installed.'
+								  )
+						}
 						checked={ atomicRevertCheckTwo }
 						onChange={ ( isChecked ) => this.setState( { atomicRevertCheckTwo: isChecked } ) }
 					/>
 					{ hasBackupsFeature && (
 						<div className="cancel-purchase-form__backups">
-							<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
-							<p>
-								{ translate(
-									"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
-								) }
-							</p>
-							<ExternalLink icon href={ `/backup/${ site.slug }` }>
+							<div>
+								<h4>{ translate( 'Would you like to download the backup of your site?' ) }</h4>
+								<p>
+									{ translate(
+										"To make sure you have everything after your plan is deactivated or if you'd like to migrate, you can download a backup."
+									) }
+								</p>
+							</div>
+							<GutenbergButton variant="primary" href={ `/backup/${ site.slug }` }>
 								{ translate( 'Go to your backups' ) }
-							</ExternalLink>
+							</GutenbergButton>
 						</div>
 					) }
+				</div>
+			);
+		}
+
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<div className="cancel-purchase-form__remove-plan">
+					<FormattedHeader
+						brandFont
+						headerText={ translate( 'Sorry to see you go' ) }
+						subHeaderText={
+							<>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business"
+										translate(
+											'If you remove your plan, you will lose access to the features of the %(planName)s plan.',
+											{
+												args: {
+													planName: productName,
+												},
+											}
+										)
+									}
+								</span>
+								<span className="cancel-purchase-form__remove-plan-text">
+									{
+										// Translators: %(planName)s: name of the plan being canceled, eg: "WordPress.com Business". %(purchaseRenewalDate)s: date when the plan will expire, eg: "January 1, 2022"
+										translate(
+											'If you keep your plan, you will be able to continue using your %(planName)s plan features until {{strong}}%(purchaseRenewalDate)s{{/strong}}.',
+											{
+												args: {
+													planName: productName,
+													purchaseRenewalDate: moment( purchase.expiryDate ).format( 'LL' ),
+												},
+												components: {
+													strong: <strong className="is-highlighted" />,
+												},
+											}
+										)
+									}
+								</span>
+							</>
+						}
+					/>
 				</div>
 			);
 		}
@@ -496,6 +605,10 @@ class CancelPurchaseForm extends Component {
 	canGoNext() {
 		const { surveyStep, isSubmitting } = this.state;
 		const { disableButtons, isImport } = this.props;
+
+		if ( disableButtons || isSubmitting ) {
+			return false;
+		}
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			if ( isImport && ! this.state.importQuestionRadio ) {
@@ -572,19 +685,41 @@ class CancelPurchaseForm extends Component {
 			);
 		}
 
+		if ( surveyStep === REMOVE_PLAN_STEP ) {
+			return (
+				<>
+					<GutenbergButton
+						className="cancel-purchase-form__remove-plan-button"
+						isPrimary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.onSubmit }
+					>
+						{ this.getFinalActionText() }
+					</GutenbergButton>
+					<GutenbergButton
+						isSecondary
+						isBusy={ isCancelling }
+						disabled={ ! this.canGoNext() }
+						onClick={ this.closeDialog }
+					>
+						{ translate( 'Keep plan' ) }
+					</GutenbergButton>
+				</>
+			);
+		}
+
 		return (
-			<>
-				<GutenbergButton
-					isPrimary={ surveyStep !== UPSELL_STEP }
-					isSecondary={ surveyStep === UPSELL_STEP }
-					isDefault={ surveyStep !== UPSELL_STEP }
-					isBusy={ isCancelling }
-					disabled={ ! this.canGoNext() }
-					onClick={ this.onSubmit }
-				>
-					{ this.getFinalActionText() }
-				</GutenbergButton>
-			</>
+			<GutenbergButton
+				isPrimary={ surveyStep !== UPSELL_STEP }
+				isSecondary={ surveyStep === UPSELL_STEP }
+				isDefault={ surveyStep !== UPSELL_STEP }
+				isBusy={ isCancelling }
+				disabled={ ! this.canGoNext() }
+				onClick={ this.onSubmit }
+			>
+				{ this.getFinalActionText() }
+			</GutenbergButton>
 		);
 	};
 
@@ -651,11 +786,40 @@ class CancelPurchaseForm extends Component {
 		return translate( 'Cancel product' );
 	}
 
+	getCanceledProduct() {
+		const {
+			purchase: { productSlug, productName, meta },
+			site: { slug },
+			translate,
+		} = this.props;
+		const headerTitle = this.getHeaderTitle();
+		switch ( productSlug ) {
+			case 'domain_map':
+				/* 	Translators: If canceled product is domain connection,
+					displays canceled product and domain connection being canceled
+					eg: "Remove product: Domain Connection for externaldomain.com" */
+				return translate( '%(headerTitle)s: %(productName)s for %(purchaseMeta)s', {
+					args: { headerTitle, productName, purchaseMeta: meta },
+				} );
+			case 'offsite_redirect':
+				/* 	Translators: If canceled product is site redirect,
+					displays canceled product and domain site is being directed to
+					eg: "Remove product: Site Redirect to redirectedsite.com" */
+				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
+					args: { headerTitle, productName, purchaseMeta: meta },
+				} );
+			default:
+				/* Translators: If canceled product is site plan or other product,
+					displays plan or product being canceled and primary address of product being canceled
+					eg: "Cancel plan: WordPress.com Business for primarydomain.com" */
+				return translate( '%(headerTitle)s: %(productName)s for %(siteSlug)s', {
+					args: { headerTitle, productName, siteSlug: slug },
+				} );
+		}
+	}
 	render() {
-		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
+		const { purchase, site } = this.props;
 		const { surveyStep } = this.state;
-		const shouldShowChatButton =
-			( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT;
 
 		if ( ! surveyStep ) {
 			return null;
@@ -663,37 +827,32 @@ class CancelPurchaseForm extends Component {
 
 		return (
 			<>
-				<QueryPlans />
+				{ /** QueryProducts added to ensure currency-code state gets populated for usages of getCurrentUserCurrencyCode */ }
+				<QueryProducts />
 				{ site && <QuerySitePlans siteId={ site.ID } /> }
-				<QuerySupportTypes />
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
-							{ this.getHeaderTitle() }
-							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
-							{ shouldShowChatButton && (
-								<PrecancellationChatButton
-									icon="chat_bubble"
-									onClick={ this.closeDialog }
-									purchase={ purchase }
-									surveyStep={ surveyStep }
-									atBottom={ false }
-								/>
+							{ site && (
+								<span className="cancel-purchase-form__site-slug">
+									{ this.getCanceledProduct() }
+								</span>
 							) }
+							<PrecancellationChatButton
+								icon="chat_bubble"
+								onClick={ this.closeDialog }
+								purchase={ purchase }
+								surveyStep={ surveyStep }
+							/>
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
-								<div className="cancel-purchase-form__buttons">{ this.renderStepButtons() }</div>
-								{ shouldShowChatButton && (
-									<PrecancellationChatButton
-										icon="chat_bubble"
-										onClick={ this.closeDialog }
-										purchase={ purchase }
-										surveyStep={ surveyStep }
-										atBottom={ true }
-									/>
-								) }
+								<div
+									className={ `cancel-purchase-form__buttons cancel-purchase-form__${ surveyStep }-buttons` }
+								>
+									{ this.renderStepButtons() }
+								</div>
 							</div>
 						</BlankCanvas.Footer>
 					</BlankCanvas>
@@ -703,15 +862,10 @@ class CancelPurchaseForm extends Component {
 	}
 }
 
-export default connect(
+const ConnectedCancelPurchaseForm = connect(
 	( state, { purchase, linkedPurchases } ) => ( {
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
 		isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 		isImport: !! getSiteImportEngine( state, purchase.siteId ),
-		downgradePlanToPersonalPrice: getDowngradePlanRawPrice( state, purchase ),
-		downgradePlanToMonthlyPrice: getDowngradePlanToMonthlyRawPrice( state, purchase ),
-		supportVariation: getSupportVariation( state ),
 		site: getSite( state, purchase.siteId ),
 		willAtomicSiteRevert: willAtomicSiteRevertAfterPurchaseDeactivation(
 			state,
@@ -722,8 +876,34 @@ export default connect(
 		hasBackupsFeature: siteHasFeature( state, purchase.siteId, WPCOM_FEATURES_BACKUPS ),
 	} ),
 	{
+		cancelPurchaseSurveyCompleted,
 		fetchAtomicTransfer,
 		recordTracksEvent,
 		submitSurvey,
 	}
 )( localize( withLocalizedMoment( CancelPurchaseForm ) ) );
+
+const WrappedCancelPurchaseForm = ( props ) => {
+	const personalDowngradePlan = getDowngradePlanFromPurchase( props.purchase );
+	const monthlyDowngradePlan = getDowngradePlanToMonthlyFromPurchase( props.purchase );
+	const pricingMeta = Plans.usePricingMetaForGridPlans( {
+		planSlugs: [ personalDowngradePlan?.getStoreSlug(), monthlyDowngradePlan?.getStoreSlug() ],
+		coupon: undefined,
+		siteId: null,
+		useCheckPlanAvailabilityForPurchase,
+	} );
+
+	return (
+		<ConnectedCancelPurchaseForm
+			{ ...props }
+			downgradePlanToPersonalPrice={
+				pricingMeta?.[ personalDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+			}
+			downgradePlanToMonthlyPrice={
+				pricingMeta?.[ monthlyDowngradePlan?.getStoreSlug() ]?.originalPrice?.full
+			}
+		/>
+	);
+};
+
+export default WrappedCancelPurchaseForm;

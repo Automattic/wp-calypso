@@ -1,4 +1,4 @@
-import { registerStore } from '@wordpress/data';
+import { register } from '@wordpress/data';
 
 export interface StoreStateValue {
 	value: string;
@@ -34,6 +34,6 @@ export type StoreActions< N extends string > = Record<
 	( payload: string ) => StoreAction
 >;
 
-export interface PaymentMethodStore< N extends string > extends ReturnType< typeof registerStore > {
+export interface PaymentMethodStore< N extends string > extends ReturnType< typeof register > {
 	getState: () => StoreState< N >;
 }

@@ -19,7 +19,6 @@ const announceIt = ( service ) => console.log( `Clicked on ${ service }` );
 <VerticalMenu onClick={ announceIt }>
 	<SocialItem service="google" />
 	<SocialItem service="facebook" />
-	<SocialItem service="twitter" />
 </VerticalMenu>;
 ```
 
@@ -37,4 +36,3 @@ const announceIt = ( service ) => console.log( `Clicked on ${ service }` );
 - `"facebook"`
 - `"wordpress"`
 - `"linkedin"`
-- `"twitter"`

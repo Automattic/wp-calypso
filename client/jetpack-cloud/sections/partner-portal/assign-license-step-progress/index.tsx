@@ -1,17 +1,16 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactChild } from 'react';
 
 import './style.scss';
 
-function getStepClassName( currentStep: number, step: number ): any {
-	return classnames( {
+function getStepClassName( currentStep: number, step: number ): string {
+	return clsx( {
 		'step-current': currentStep === step,
 		'step-next': currentStep < step,
 		'step-complete': currentStep > step,
@@ -34,31 +33,63 @@ function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: 
 	);
 }
 
-type StepKey = 'issueLicense' | 'addPaymentMethod' | 'assignLicense';
+type StepKey =
+	| 'issueLicense'
+	| 'reviewLicense'
+	| 'addPaymentMethod'
+	| 'assignLicense'
+	| 'downloadProducts';
 
 interface Step {
 	key: StepKey;
-	label: ReactChild | null;
+	label: string;
 }
 
 interface Props {
 	currentStep: StepKey;
 	selectedSite?: SiteDetails | null;
+	showDownloadStep?: boolean;
+	showAssignLicenseStep?: boolean;
+	isBundleLicensing?: boolean;
 }
 
-export default function AssignLicenseStepProgress( { currentStep, selectedSite }: Props ) {
+const AssignLicenseStepProgress = ( {
+	currentStep,
+	selectedSite,
+	showDownloadStep,
+	isBundleLicensing,
+}: Props ) => {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
 
-	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];
+	const steps: Step[] = [
+		{
+			key: 'issueLicense',
+			label: isBundleLicensing ? translate( 'Select licenses' ) : translate( 'Issue new license' ),
+		},
+	];
+
+	if ( isBundleLicensing ) {
+		steps.push( {
+			key: 'reviewLicense',
+			label: translate( 'Review selections' ),
+		} );
+	}
 
 	if ( paymentMethodRequired ) {
 		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
 	}
 
 	if ( sites > 0 && ! selectedSite ) {
-		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
+		steps.push( {
+			key: 'assignLicense',
+			label: translate( 'Assign licenses' ),
+		} );
+	}
+
+	if ( showDownloadStep ) {
+		steps.push( { key: 'downloadProducts', label: translate( 'Download product' ) } );
 	}
 
 	// Don't show the breadcrumbs if we have less than 2 as they are not very informative in this case.
@@ -92,4 +123,10 @@ export default function AssignLicenseStepProgress( { currentStep, selectedSite }
 			) ) }
 		</div>
 	);
-}
+};
+
+AssignLicenseStepProgress.defaultProps = {
+	showDownloadStep: false,
+};
+
+export default AssignLicenseStepProgress;

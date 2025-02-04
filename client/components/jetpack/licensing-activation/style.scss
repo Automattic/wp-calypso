@@ -55,14 +55,15 @@
 	padding: 0;
 	border-radius: 4px;
 	box-shadow: 0 0 40px 0 #00000014;
-
 	width: 100%;
 	max-width: none;
+	margin-top: var(--masterbar-checkout-height);
 
 	@include break-large {
 		flex-direction: row;
 		width: auto;
 		max-width: 1200px;
+		margin-top: calc(var(--masterbar-checkout-height) + 24px);
 	}
 }
 
@@ -108,8 +109,9 @@
 .licensing-activation__title {
 	font-style: normal;
 	font-weight: bold;
-	font-size: $font-headline-small;
-	line-height: 44px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 44px;
+	line-height: 52px;
 
 	margin-bottom: 24px;
 }

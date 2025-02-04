@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
-import page from 'page';
 import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
 
 const debug = debugFactory( 'calypso:search-url' );

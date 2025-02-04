@@ -1,9 +1,10 @@
 import { filter, mapValues } from 'lodash';
 
-function validateAllFields( fieldValues, domainName ) {
+function validateAllFields( fieldValues, domainName, domain ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
 			value,
+			domain,
 			domainName,
 			name: fieldName,
 			type: fieldValues.type,
@@ -13,10 +14,10 @@ function validateAllFields( fieldValues, domainName ) {
 	} );
 }
 
-function validateField( { name, value, type, domainName } ) {
+function validateField( { name, value, type, domain, domainName } ) {
 	switch ( name ) {
 		case 'name':
-			return isValidName( value, type, domainName );
+			return isValidName( value, type, domainName, domain );
 		case 'target':
 			return isValidDomain( value, type );
 		case 'data':
@@ -29,6 +30,10 @@ function validateField( { name, value, type, domainName } ) {
 			const intValue = parseInt( value, 10 );
 			return intValue >= 0 && intValue <= 65535;
 		}
+		case 'ttl': {
+			const intValue = parseInt( value, 10 );
+			return intValue >= 300 && intValue <= 86400;
+		}
 		case 'service':
 			return value.match( /^[^\s.]+$/ );
 		default:
@@ -37,7 +42,9 @@ function validateField( { name, value, type, domainName } ) {
 }
 
 function isValidDomain( name, type ) {
-	if ( name.length > 253 ) {
+	const maxLength = name.endsWith( '.' ) ? 254 : 253;
+
+	if ( name.length > maxLength ) {
 		return false;
 	}
 
@@ -45,11 +52,11 @@ function isValidDomain( name, type ) {
 		return true;
 	}
 
-	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
+	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}(\.)?$/i.test( name );
 }
 
-function isValidName( name, type, domainName ) {
-	if ( isRootDomain( name, domainName ) && canBeRootDomain( type ) ) {
+function isValidName( name, type, domainName, domain ) {
+	if ( isRootDomain( name, domainName ) && canBeRootDomain( type, domain ) ) {
 		return true;
 	}
 
@@ -57,6 +64,10 @@ function isValidName( name, type, domainName ) {
 		case 'A':
 		case 'AAAA':
 			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
+		case 'CNAME':
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name ) || name === '*';
+		case 'TXT':
+			return /^(\*\.|)([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 		default:
 			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
 	}
@@ -68,18 +79,25 @@ function isValidData( data, type ) {
 			return data.match( /^(\d{1,3}\.){3}\d{1,3}$/ );
 		case 'AAAA':
 			return data.match( /^[a-f0-9:]+$/i );
+		case 'ALIAS':
 		case 'CNAME':
 		case 'MX':
+		case 'NS':
 			return isValidDomain( data );
 		case 'TXT':
-			return data.length > 0 && data.length < 256;
+			return data.length > 0 && data.length <= 2048;
 	}
 }
 
-function getNormalizedData( record, selectedDomainName ) {
+function getNormalizedData( record, selectedDomainName, selectedDomain ) {
 	const normalizedRecord = Object.assign( {}, record );
 	normalizedRecord.data = getFieldWithDot( record.data );
-	normalizedRecord.name = getNormalizedName( record.name, record.type, selectedDomainName );
+	normalizedRecord.name = getNormalizedName(
+		record.name,
+		record.type,
+		selectedDomainName,
+		selectedDomain
+	);
 	if ( record.target ) {
 		normalizedRecord.target = getFieldWithDot( record.target );
 	}
@@ -87,10 +105,10 @@ function getNormalizedData( record, selectedDomainName ) {
 	return normalizedRecord;
 }
 
-function getNormalizedName( name, type, selectedDomainName ) {
+function getNormalizedName( name, type, selectedDomainName, selectedDomain ) {
 	const endsWithDomain = name.endsWith( '.' + selectedDomainName );
 
-	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
+	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type, selectedDomain ) ) {
 		return selectedDomainName + '.';
 	}
 
@@ -112,8 +130,13 @@ function isRootDomain( name, domainName ) {
 	return ! name || rootDomainVariations.includes( name );
 }
 
-function canBeRootDomain( type ) {
-	return [ 'A', 'AAAA', 'MX', 'SRV', 'TXT' ].includes( type );
+function canBeRootDomain( type, domain ) {
+	// Root NS records can be edited only for subdomains
+	if ( type === 'NS' && domain?.isSubdomain ) {
+		return true;
+	}
+
+	return [ 'A', 'AAAA', 'ALIAS', 'MX', 'SRV', 'TXT' ].includes( type );
 }
 
 function getFieldWithDot( field ) {

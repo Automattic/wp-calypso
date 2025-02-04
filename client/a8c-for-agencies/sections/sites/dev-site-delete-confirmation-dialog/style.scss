@@ -1,0 +1,24 @@
+.dev-site-delete-confirmation-dialog {
+	&.dialog.card {
+		max-width: 800px;
+	}
+
+	p {
+		font-size: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	fieldset {
+		margin-top: 2rem;
+		margin-bottom: 0;
+
+		label {
+			font-size: 1rem;
+			font-weight: 500;
+
+			strong {
+				color: var(--color-scary-50);
+			}
+		}
+	}
+}

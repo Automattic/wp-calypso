@@ -1,0 +1,35 @@
+.partner-directory-agency-cta__footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-block-start: -16px;
+
+	@include breakpoint-deprecated("<660px") {
+		flex-direction: column;
+	}
+}
+
+.partner-directory-agency-cta__footer a {
+
+	@include breakpoint-deprecated("<660px") {
+		width: 100%;
+		order: 2;
+	}
+}
+
+.partner-directory__body {
+	.searchable-dropdown input.components-combobox-control__input[type="text"] {
+		font-size: rem(14px);
+	}
+
+	.searchable-dropdown .components-form-token-field__suggestions-list li {
+		font-size: rem(14px);
+	}
+}
+
+.partner-directory-agency-cta__required-information {
+	font-size: rem(14px);
+	color: var(--color-neutral-50);
+	margin-block-start: -32px;
+}

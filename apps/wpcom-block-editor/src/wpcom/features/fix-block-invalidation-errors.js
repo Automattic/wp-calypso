@@ -14,7 +14,6 @@ import { isEditorReadyWithBlocks } from '../../utils';
  *
  * Note that we return 'true' if we don't understand how to validate the block.
  * This way, we continue auto-fixing other blocks if we can.
- *
  * @param {Object} block The block to check for content.
  * @returns bool True if the block has content. False otherwise.
  */

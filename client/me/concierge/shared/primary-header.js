@@ -1,9 +1,9 @@
 import { Card } from '@automattic/components';
+import { CONCIERGE_SUPPORT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { CONCIERGE_SUPPORT } from 'calypso/lib/url/support';
 import ClosureNotice from '../shared/closure-notice';
 
 class PrimaryHeader extends Component {
@@ -13,22 +13,9 @@ class PrimaryHeader extends Component {
 		return (
 			<Fragment>
 				<ClosureNotice
-					displayAt="2022-04-10 00:00Z"
-					closesAt="2022-04-17 00:00Z"
-					reopensAt="2022-04-18 07:00Z"
-					holidayName="Easter"
-				/>
-				<ClosureNotice
-					displayAt="2022-12-17 00:00Z"
-					closesAt="2022-12-24 00:00Z"
-					reopensAt="2022-12-26 07:00Z"
-					holidayName="Christmas"
-				/>
-				<ClosureNotice
-					displayAt="2022-12-26 07:00Z"
-					closesAt="2022-12-31 00:00Z"
-					reopensAt="2023-01-02 07:00Z"
-					holidayName="New Year's Day"
+					displayAt="2023-12-26 00:00Z"
+					closesAt="2023-12-31 00:00Z"
+					reopensAt="2024-01-02 07:00Z"
 				/>
 				<Card>
 					<img

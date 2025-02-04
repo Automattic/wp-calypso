@@ -13,6 +13,7 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import ExternalLink from 'calypso/components/external-link';
+import { preventWidows } from 'calypso/lib/formatting';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -29,6 +30,23 @@ class IntroBanner extends Component {
 
 	recordDismiss = () => this.props.recordTracksEvent( 'calypso_activitylog_intro_banner_dismiss' );
 
+	renderUpgradeIntroText() {
+		const { translate, siteIsJetpack, siteHasFullActivityLog } = this.props;
+		if ( siteHasFullActivityLog ) {
+			return preventWidows(
+				translate( 'Looking for something specific? You can filter the events by type and date.' )
+			);
+		}
+		if ( siteIsJetpack ) {
+			return preventWidows(
+				translate( 'You currently have access to the 20 most recent events on your site.' )
+			);
+		}
+		return preventWidows(
+			translate( 'With your free plan, you can monitor the 20 most recent events on your site.' )
+		);
+	}
+
 	renderCardContent() {
 		const { siteIsAtomic, siteIsJetpack, siteSlug, translate, siteHasFullActivityLog } = this.props;
 		const buttonHref =
@@ -42,17 +60,17 @@ class IntroBanner extends Component {
 					{ translate(
 						'We’ll keep track of all the events that take place on your site to help manage things easier. '
 					) }
-					{ siteHasFullActivityLog
-						? translate(
-								'Looking for something specific? You can filter the events by type and date.'
-						  )
-						: translate(
-								'With your free plan, you can monitor the 20 most recent events on your site.'
-						  ) }
+					{ this.renderUpgradeIntroText() }
 				</p>
 				{ ! siteHasFullActivityLog && (
 					<>
-						<p>{ translate( 'Upgrade to a paid plan to unlock powerful features:' ) }</p>
+						<p>
+							{ siteIsJetpack
+								? translate(
+										'Upgrade to Jetpack VaultPress Backup or Jetpack Security to unlock powerful features:'
+								  )
+								: translate( 'Upgrade to a paid plan to unlock powerful features:' ) }
+						</p>
 						<ul className="activity-log-banner__intro-list">
 							<li>
 								<Gridicon icon="checkmark" size={ 18 } />

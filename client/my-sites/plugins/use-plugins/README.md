@@ -22,8 +22,6 @@ The `usePlugins` hook receives a set of options to be able to configure it's beh
 - `search` (string) (optional): A search term to filter plugins through search.
 - `infinite` (boolean) (optional): A flag to activate infinite fetching on the dot org plugins, right now infinite search is not supported by dotcom hooks since there is a limited amount of plugins.
 - `locale` (string) (optional): The locale that is sent to wporg endpoint.
-- `wpcomEnabled` (boolean) (optional): Enables the wordpress.com plugin fetching by default this is set to true.
-- `wporgEnabled` (boolean) (optional): Enables the wordpress.org plugin fetching by default this is set to true.
 
 ## Infinite fetching
 

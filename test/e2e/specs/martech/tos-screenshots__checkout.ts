@@ -3,10 +3,7 @@
  */
 import {
 	DataHelper,
-	NavbarComponent,
-	PlansPage,
 	CartCheckoutPage,
-	SidebarComponent,
 	BrowserManager,
 	TestAccount,
 	RestAPIClient,
@@ -33,19 +30,18 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.martechTosUser );
 
 		await restAPIClient.setMySettings( { language: 'en' } );
-		await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
+		await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 	} );
 
-	it( 'Navigate to Upgrades > Plans', async function () {
-		const navbarCompnent = new NavbarComponent( page );
-		await navbarCompnent.clickMySites();
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Upgrades', 'Plans' );
+	it( 'See Home', async function () {
+		await page.waitForURL( /home/ );
 	} );
 
 	it( 'Add WordPress.com Business plan to cart', async function () {
-		const plansPage = new PlansPage( page );
-		await Promise.all( [ page.waitForURL( /.*checkout.*/ ), plansPage.selectPlan( 'Business' ) ] );
+		await Promise.all( [
+			page.waitForURL( /.*checkout.*/ ),
+			page.goto( DataHelper.getCalypsoURL( `/checkout/business` ) ),
+		] );
 	} );
 
 	describe.each( DataHelper.getMag16Locales() )(
@@ -57,7 +53,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				cartCheckoutPage = new CartCheckoutPage( page );
 
 				await restAPIClient.setMySettings( { language: locale } );
-				await page.reload( { waitUntil: 'networkidle', timeout: EXTENDED_TIMEOUT } );
+				await page.reload( { waitUntil: 'domcontentloaded', timeout: EXTENDED_TIMEOUT } );
 			} );
 
 			it( `Screenshot checkout page for ${ locale }`, async function () {

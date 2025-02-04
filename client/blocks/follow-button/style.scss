@@ -3,6 +3,7 @@ $follow-button-gray-disabled: var(--color-neutral-10);
 .follow-button,
 button.follow-button {
 	align-items: center;
+	background: unset;
 	border: 0;
 	display: flex;
 	padding: 0;
@@ -17,7 +18,8 @@ button.follow-button {
 
 	.follow-button__label {
 		color: var(--color-text-subtle);
-		margin-left: 5px;
+		margin-left: 3px;
+		white-space: nowrap;
 	}
 
 	&:hover {
@@ -26,6 +28,7 @@ button.follow-button {
 		.follow-button__label {
 			color: var(--color-success);
 		}
+
 		svg.reader-follow-feed path {
 			fill: var(--color-success);
 		}
@@ -46,11 +49,8 @@ button.follow-button {
 			display: inline-block;
 			pointer-events: auto;
 
-			path.following-icon-background {
+			path {
 				fill: var(--color-success);
-			}
-			path.following-icon-tick {
-				stroke: var(--color-success);
 			}
 		}
 
@@ -66,12 +66,10 @@ button.follow-button {
 
 		&:hover {
 			color: var(--color-success);
+
 			svg.reader-following-feed {
-				path.following-icon-background {
+				path {
 					fill: var(--color-success);
-				}
-				path.following-icon-tick {
-					stroke: var(--color-success);
 				}
 			}
 		}
@@ -115,6 +113,38 @@ button.follow-button {
 
 		&:active {
 			border-width: 1px 1px 2px;
+		}
+	}
+
+	&.has-button-style,
+	&.has-button-style:hover {
+		background-color: var(--color-accent);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-weight: 500;
+		padding: 12px 24px 12px 20px;
+
+		svg.reader-follow-feed * {
+			fill: var(--color-text-inverted);
+		}
+
+		.follow-button__label {
+			color: var(--color-text-inverted);
+			margin-left: 8px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				display: unset;
+			}
+		}
+
+		&.is-following,
+		&.is-following:hover {
+			background-color: var(--color-surface);
+			border: 1px solid var(--color-neutral-10);
+
+			.follow-button__label {
+				color: var(--color-text);
+			}
 		}
 	}
 }

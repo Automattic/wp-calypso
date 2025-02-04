@@ -1,4 +1,4 @@
-import { forEach, omit, size } from 'lodash';
+import { forEach, omit } from 'lodash';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
@@ -58,7 +58,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				}
 			} );
 
-			if ( size( newState ) === 0 ) {
+			if ( Object.keys( newState ).length === 0 ) {
 				return state;
 			}
 

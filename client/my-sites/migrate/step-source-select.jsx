@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, Card, CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -10,8 +10,13 @@ import HeaderCake from 'calypso/components/header-cake';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
 import SitesBlock from 'calypso/my-sites/migrate/components/sites-block';
-import { getImportSectionLocation, redirectTo } from 'calypso/my-sites/migrate/helpers';
+import {
+	getImportSectionLocation,
+	redirectTo,
+	triggerMigrationStartingEvent,
+} from 'calypso/my-sites/migrate/helpers';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import './section-migrate.scss';
 
 class StepSourceSelect extends Component {
@@ -104,7 +109,13 @@ class StepSourceSelect extends Component {
 	};
 
 	componentDidMount() {
+		const { user } = this.props;
 		this.props.recordTracksEvent( 'calypso_importer_wordpress_source_select_viewed' );
+
+		if ( user && user.ID ) {
+			const migrationFlow = 'in-product';
+			triggerMigrationStartingEvent( user, migrationFlow );
+		}
 	}
 
 	render() {
@@ -148,7 +159,7 @@ class StepSourceSelect extends Component {
 				/>
 
 				<Card>
-					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary={ true }>
+					<Button busy={ this.state.isLoading } onClick={ this.handleContinue } primary>
 						{ translate( 'Continue' ) }
 					</Button>
 				</Card>
@@ -156,4 +167,9 @@ class StepSourceSelect extends Component {
 		);
 	}
 }
-export default connect( null, { recordTracksEvent } )( localize( StepSourceSelect ) );
+export default connect(
+	( state ) => ( {
+		user: getCurrentUser( state ) || {},
+	} ),
+	{ recordTracksEvent }
+)( localize( StepSourceSelect ) );

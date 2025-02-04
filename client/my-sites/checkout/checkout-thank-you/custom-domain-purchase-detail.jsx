@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import customDomainBloggerImage from 'calypso/assets/images/illustrations/custom-domain-blogger.svg';
@@ -10,6 +10,19 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
+const useGetBundledDomainDescription = ( onlyBlogDomain ) => {
+	const translate = useTranslate();
+
+	if ( onlyBlogDomain ) {
+		return translate(
+			'Your plan includes a free .blog domain for one year, which gives your site a more professional, branded feel.'
+		);
+	}
+	return translate(
+		'Your plan includes a free custom domain for one year, which gives your site a more professional, branded feel.'
+	);
+};
+
 const CustomDomainPurchaseDetail = ( {
 	selectedSite,
 	hasDomainCredit,
@@ -19,6 +32,8 @@ const CustomDomainPurchaseDetail = ( {
 	translate,
 } ) => {
 	const customDomainIcon = onlyBlogDomain ? customDomainBloggerImage : customDomainImage;
+	const description = useGetBundledDomainDescription( onlyBlogDomain );
+
 	if ( hasDomainCredit ) {
 		return (
 			<PurchaseDetail
@@ -28,15 +43,7 @@ const CustomDomainPurchaseDetail = ( {
 						? translate( 'Select your .blog domain' )
 						: translate( 'Select your custom domain' )
 				}
-				description={
-					onlyBlogDomain
-						? translate(
-								'Your plan includes a free .blog domain for one year, which gives your site a more professional, branded feel.'
-						  )
-						: translate(
-								'Your plan includes a free custom domain for one year, which gives your site a more professional, branded feel.'
-						  )
-				}
+				description={ description }
 				buttonText={ translate( 'Claim your free domain' ) }
 				href={ `/domains/add/${ selectedSite.slug }` }
 			/>

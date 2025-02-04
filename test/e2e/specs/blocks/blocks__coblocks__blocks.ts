@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	MediaHelper,
 	EditorPage,
 	TestFile,
@@ -21,13 +20,18 @@ import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( {
-	...envVariables,
-	// See https://github.com/Automattic/wp-calypso/pull/73052
-	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
-} );
+const features = envToFeatureKey( envVariables );
+// For this spec, all Atomic testing is always edge.
+// See https://github.com/Automattic/wp-calypso/pull/73052
+if ( envVariables.TEST_ON_ATOMIC ) {
+	features.coblocks = 'edge';
+}
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Blocks', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
@@ -45,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 		page = await browser.newPage();
 		logoImage = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
@@ -59,16 +63,27 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Blocks' ), () => {
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
-		pricingTableBlock = new PricingTableBlock( blockHandle );
+		pricingTableBlock = new PricingTableBlock( page, blockHandle );
 		await pricingTableBlock.enterPrice( 1, pricingTableBlockPrices[ 0 ] );
 		await pricingTableBlock.enterPrice( 2, pricingTableBlockPrices[ 1 ] );
 	} );
 
 	it( `Insert ${ DynamicHRBlock.blockName } block`, async function () {
-		await editorPage.addBlockFromSidebar(
-			DynamicHRBlock.blockName,
-			DynamicHRBlock.blockEditorSelector
-		);
+		// Manual override of the Dyanmic HR/Separator block that comes with CoBlocks.
+		// On AT, the block is called Dynamic Separator.
+		// On Simple, the block is called Dynamic HR.
+		// See: https://github.com/Automattic/wp-calypso/issues/75092
+		if ( features.siteType === 'atomic' ) {
+			await editorPage.addBlockFromSidebar(
+				'Dynamic Separator',
+				'[aria-label="Block: Dynamic Separator"]'
+			);
+		} else {
+			await editorPage.addBlockFromSidebar(
+				DynamicHRBlock.blockName,
+				DynamicHRBlock.blockEditorSelector
+			);
+		}
 	} );
 
 	it( `Insert ${ HeroBlock.blockName } block and enter heading`, async function () {

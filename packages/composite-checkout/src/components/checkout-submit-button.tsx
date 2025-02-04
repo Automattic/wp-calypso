@@ -1,13 +1,19 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { cloneElement } from 'react';
+import { cloneElement, useCallback } from 'react';
 import joinClasses from '../lib/join-classes';
 import { useAllPaymentMethods, usePaymentMethodId } from '../lib/payment-methods';
+import { makeErrorResponse } from '../lib/payment-processors';
 import { useFormStatus, FormStatus, useProcessPayment } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import type { PaymentMethod, PaymentProcessorSubmitData } from '../types';
+import { useHandlePaymentProcessorResponse } from './use-process-payment';
+import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
+	& > button {
+		height: 50px;
+	}
+
 	&.checkout-submit-button--inactive {
 		display: none;
 	}
@@ -57,29 +63,56 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	disabled?: boolean;
 	onLoadError?: ( error: Error ) => void;
 } ) {
+	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
 	const [ activePaymentMethodId ] = usePaymentMethodId();
 	const isActive = paymentMethod.id === activePaymentMethodId;
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY || ! isActive;
 	const onClick = useProcessPayment( paymentMethod?.paymentProcessorId ?? '' );
-	const onClickWithValidation = ( processorData: PaymentProcessorSubmitData ) => {
+	const onClickWithValidation: ProcessPayment = async (
+		processorData: PaymentProcessorSubmitData
+	) => {
 		if ( ! isActive ) {
-			return;
+			const rejection = Promise.resolve(
+				makeErrorResponse( __( 'This payment method is not currently available.' ) )
+			);
+			handlePaymentProcessorPromise( paymentMethod.id, rejection );
+			return rejection;
 		}
+
 		if ( validateForm ) {
-			validateForm().then( ( validationResult: boolean ) => {
+			return validateForm().then( ( validationResult: boolean ) => {
 				if ( validationResult ) {
-					onClick( processorData );
+					return onClick( processorData );
 				}
-				// Take no action if the form is not valid. User notification must be
-				// handled elsewhere.
+				// Take no action if the form is not valid. User notification should be
+				// handled inside the validation callback itself but we will return a
+				// generic error message here in case something needs it.
+				return Promise.resolve(
+					makeErrorResponse( __( 'The information requried by this payment method is not valid.' ) )
+				);
 			} );
-			return;
 		}
+
 		// Always run if there is no validation callback.
 		return onClick( processorData );
 	};
+
+	// Add payment method to any errors that get logged.
+	const onLoadErrorWithPaymentMethodId = useCallback(
+		( error: Error ) => {
+			if ( ! onLoadError ) {
+				return;
+			}
+			const errorWithCause = new Error(
+				`Error while rendering submit button for payment method '${ paymentMethod.id }': ${ error.message } (${ error.name })`,
+				{ cause: error }
+			);
+			onLoadError( errorWithCause );
+		},
+		[ onLoadError, paymentMethod.id ]
+	);
 
 	const { submitButton } = paymentMethod;
 	if ( ! submitButton ) {
@@ -94,7 +127,7 @@ function CheckoutSubmitButtonForPaymentMethod( {
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ __( 'There was a problem with the submit button.' ) }
-			onError={ onLoadError }
+			onError={ onLoadErrorWithPaymentMethodId }
 		>
 			<CheckoutSubmitButtonWrapper
 				className={ joinClasses( [

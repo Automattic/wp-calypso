@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { getStoredItem, setStoredItem } from 'calypso/lib/browser-storage';
-import { WAS_STATE_RANDOMLY_CLEARED_KEY } from 'calypso/state/initial-state';
+import { useDispatch } from 'calypso/state';
+import { WAS_STATE_RANDOMLY_CLEARED_KEY } from 'calypso/state/constants';
 import { warningNotice } from 'calypso/state/notices/actions';
 
 export function SympathyDevWarning() {

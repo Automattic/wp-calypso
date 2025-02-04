@@ -1,4 +1,4 @@
-import { Query } from 'react-query';
+import { Query } from '@tanstack/react-query';
 
 type PersistencePredicate< T > = ( data: T ) => boolean;
 

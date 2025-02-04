@@ -44,7 +44,6 @@ function mergePurchase( existingPurchases, newPurchase ) {
 /**
  * Merges a new array of purchases with the existing array and updates items
  * in-place if they change.
- *
  * @param {Array} existingPurchases - an array of purchases in the store
  * @param {Array} newPurchases - an array of purchases fetched from the API
  * @returns {Array} An array of purchases

@@ -6,7 +6,6 @@ import data from './data';
 /**
  * Pass in a react-generated html string to remove react-specific attributes
  * to make it easier to compare to expected html structure
- *
  * @param  {string} string React-generated html string
  * @returns {string}        html with react attributes removed
  */
@@ -20,6 +19,7 @@ describe( 'I18n', function () {
 	} );
 
 	afterEach( function () {
+		jest.clearAllMocks();
 		i18n.configure(); // ensure everything is reset
 	} );
 
@@ -201,6 +201,48 @@ describe( 'I18n', function () {
 		} );
 	} );
 
+	describe( 'getBrowserSafeLocale()', function () {
+		it( 'should return locale without variant when localeVariant is set with underscore _', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'de_AT',
+					localeSlug: 'de',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'de' );
+		} );
+
+		it( 'should return locale with region code when localeVariant is set with dash -', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: 'en-US',
+					localeSlug: 'en',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'en-US' );
+		} );
+
+		it( 'should return localeSlug when localeVariant is not set', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: undefined,
+					localeSlug: 'en',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'en' );
+		} );
+
+		it( 'should return localeSlug when localeVariant is null', function () {
+			i18n.setLocale( {
+				'': {
+					localeVariant: null,
+					localeSlug: 'fr',
+				},
+			} );
+			expect( i18n.getBrowserSafeLocale() ).toBe( 'fr' );
+		} );
+	} );
+
 	describe( 'numberFormat()', function () {
 		describe( 'default numberFormat', function () {
 			it( 'should truncate decimals', function () {
@@ -216,17 +258,13 @@ describe( 'I18n', function () {
 
 		describe( 'with decimal', function () {
 			it( 'should default to locale decimal separator (, for German in test)', function () {
-				expect( numberFormat( 150, 2 ) ).toBe( '150,00' );
+				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
+			} );
+			it( 'should force the specified decimals to a not fractional number/integer', function () {
+				expect( numberFormat( 150, { decimals: 2 } ) ).toBe( '150,00' );
 			} );
 			it( 'should truncate to specified decimal', function () {
-				expect( numberFormat( 150.312, 2 ) ).toBe( '150,31' );
-			} );
-			it( 'should accept decimal as argument or object attribute', function () {
-				expect(
-					numberFormat( 150, {
-						decimals: 2,
-					} )
-				).toBe( '150,00' );
+				expect( numberFormat( 150.312, { decimals: 2 } ) ).toBe( '150,31' );
 			} );
 		} );
 
@@ -235,10 +273,35 @@ describe( 'I18n', function () {
 				expect(
 					numberFormat( 2500.33, {
 						decimals: 3,
-						thousandsSep: '*',
-						decPoint: '@',
 					} )
-				).toBe( '2*500@330' );
+				).toBe( '2.500,330' );
+			} );
+		} );
+
+		describe( 'compact notation', function () {
+			describe( 'ar', () => {
+				beforeEach( function () {
+					i18n.setLocale( {
+						'': {
+							localeVariant: undefined,
+							localeSlug: 'ar',
+						},
+					} );
+				} );
+				test( 'defaults to latin notation and localised unit', () => {
+					expect(
+						numberFormat( 1234, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } )
+					).toEqual( '1.2 ألف' );
+				} );
+				test( 'non-latin/original notation and localised unit', () => {
+					expect(
+						numberFormat( 1234, {
+							numberFormatOptions: { notation: 'compact' },
+							decimals: 1,
+							forceLatin: false,
+						} )
+					).toEqual( '١٫٢ ألف' );
+				} );
 			} );
 		} );
 	} );
@@ -281,6 +344,54 @@ describe( 'I18n', function () {
 			expect( translate( 'red' ) ).toBe( 'edra' );
 			expect( translate( 'grey' ) ).toBe( 'reyga' );
 			expect( translate( 'green', { context: 'color' } ) ).toBe( 'cursus' );
+		} );
+	} );
+
+	describe( 'fixMe', () => {
+		it( 'should return null if text is missing or wrong type', () => {
+			const result = i18n.fixMe( {} );
+			expect( result ).toBe( null );
+		} );
+
+		it( 'should return newCopy if locale is en', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'hello',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return newCopy if locale is en-gb', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'en-gb' );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'hello',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hello' );
+		} );
+
+		it( 'should return newCopy if text has a translation', () => {
+			i18n.hasTranslation = jest.fn().mockReturnValue( true );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'bonjour' );
+		} );
+
+		it( 'should return oldCopy if text does not have a translation and locale is not English', () => {
+			i18n.getLocaleSlug = jest.fn().mockReturnValue( 'fr' );
+			i18n.hasTranslation = jest.fn().mockReturnValue( false );
+			const result = i18n.fixMe( {
+				text: 'hello',
+				newCopy: 'bonjour',
+				oldCopy: 'hi',
+			} );
+			expect( result ).toBe( 'hi' );
 		} );
 	} );
 } );

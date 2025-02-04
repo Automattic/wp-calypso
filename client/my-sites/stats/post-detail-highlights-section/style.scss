@@ -1,15 +1,19 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
-@import "@automattic/components/src/highlight-cards/variables.scss";
+@import "@automattic/components/src/highlight-cards/variables";
+@import "@wordpress/base-styles/mixins";
 
 .stats__post-detail-highlights-section {
+	@include break-small {
+		// padding-bottom: $vertical-margin;
+	}
 	padding-top: $vertical-margin;
+
 	padding-bottom: $vertical-margin;
 
 	.stats > & {
-		@media ( max-width: $break-medium ) {
-			padding-left: 0;
-			padding-right: 0;
+		@media (max-width: $break-small) {
+			padding-top: $mobile-highlights-section-top-padding;
 		}
 	}
 
@@ -18,12 +22,6 @@
 		box-shadow: none;
 	}
 
-	.highlight-cards-heading {
-		@media ( max-width: $break-medium ) {
-			margin-left: 0.875rem;
-			margin-right: 0.875rem;
-		}
-	}
 
 	.section-nav {
 		box-shadow: inset 0 -1px 0 #0000000d;
@@ -31,12 +29,12 @@
 
 	.highlight-cards-list {
 		display: grid;
-		grid-template-columns: 3fr 2fr;
+		grid-template-columns: minmax(600px, 3fr) minmax(200px, 1fr);
 		grid-template-rows: 1fr;
 		column-gap: 10px;
 		overflow-x: auto;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			display: block;
 			padding: 0;
 
@@ -51,7 +49,6 @@
 			}
 
 			.highlight-card {
-				min-width: unset;
 				height: 180px;
 				margin: math.div($vertical-margin, 2) 0;
 				border-left: 0;
@@ -64,9 +61,8 @@
 	.post-stats-card {
 		margin: 0;
 		max-height: unset;
-		min-width: 770px;
 
-		@media ( max-width: $break-small ) {
+		@media (max-width: $break-small) {
 			gap: 24px 12px;
 		}
 	}
@@ -74,16 +70,16 @@
 	.post-stats-card__thumbnail {
 		max-height: 300px;
 
-		@media ( max-width: $break-medium ) {
+		@media (max-width: $break-medium) {
 			max-height: unset;
 		}
 	}
 
 	.highlight-card {
+		width: 100%;
+		max-height: 300px;
 		padding: 24px;
-		height: 300px;
 		overflow-y: auto;
-		min-width: 300px;
 	}
 
 	.highlight-card-heading {
@@ -97,7 +93,8 @@
 		line-height: 26px;
 	}
 
-	.likes-count {
+	// Overwrite the styles from component Count
+	.count {
 		margin-left: 8px;
 		padding: 4px 8px;
 		background-color: var(--color-neutral-5);
@@ -105,12 +102,14 @@
 		font-weight: 500;
 		font-size: $font-body-extra-small;
 		line-height: 20px;
+		border: 0;
 	}
 
 	.card.stats-post-likes {
 		padding: 0;
 		margin: 0 0 -7px 0;
 		box-shadow: none;
+		overflow: hidden;
 
 		.module-header {
 			display: none;
@@ -130,8 +129,8 @@
 
 		.post-likes__count {
 			vertical-align: bottom;
-			margin: 0 0 7px 25px;
-			padding: 0;
+			margin: 0;
+			padding: 6px 16px;
 			border: 0;
 			color: var(--color-neutral-60);
 			font-size: $font-body-small;

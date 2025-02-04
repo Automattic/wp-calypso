@@ -18,11 +18,10 @@ const OVERFLOW_BUFFER = 4; // fairly arbitrary. feel free to tweak
  * How to specify which domNode to keep track of? In React it is always a bit awkward to get a handle on
  * actual domnodes so this HoC provides a few methods:
  * 1. default: wrap child component in a div and track the div.  requires no ref passing.  means the component essentially gets its own
- *     available width/height/overflow properties
+ *    available width/height/overflow properties
  * 2. provide a prom domTarget to the created component: <EnhancedComponent domTarget={ domNode } />
  * 3. call the provided setWithDimensionsRef function:
  *    withDimensions( ({}) => <div> <span ref ={ this.props.setWithDimensionsRef }> </span></div> )
- *
  * @example withDimensions( Component )
  * @param {Object} EnhancedComponent - react component to wrap and give the prop width/height to
  * @returns {Object} the enhanced component
@@ -39,7 +38,7 @@ export default ( EnhancedComponent ) =>
 			height: 0,
 		};
 
-		handleResize = afterLayoutFlush( () => {
+		handleResize = afterLayoutFlush( ( prevState ) => {
 			const domElement = this.props.domTarget || this.setRef || this.divRef;
 
 			if ( domElement ) {
@@ -51,7 +50,15 @@ export default ( EnhancedComponent ) =>
 				const { width, height } = dimensions;
 				const overflowX = domElement.scrollWidth > domElement.clientWidth + OVERFLOW_BUFFER;
 				const overflowY = domElement.scrollHeight > domElement.clientHeight + OVERFLOW_BUFFER;
-
+				if (
+					prevState &&
+					prevState.width === width &&
+					prevState.height === height &&
+					prevState.overflowX === overflowX &&
+					prevState.overflowY === overflowY
+				) {
+					return;
+				}
 				this.setState( { width, height, overflowX, overflowY } );
 			}
 		} );
@@ -64,8 +71,8 @@ export default ( EnhancedComponent ) =>
 			this.handleResize();
 		}
 
-		componentDidUpdate() {
-			this.handleResize();
+		componentDidUpdate( prevProps, prevState ) {
+			this.handleResize( prevState );
 		}
 
 		componentWillUnmount() {

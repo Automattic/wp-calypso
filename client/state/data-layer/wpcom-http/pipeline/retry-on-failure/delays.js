@@ -8,8 +8,6 @@
  * This should mitigate load on the server after failed requests and
  * lead towards more retry attempts succeeding faster than with the
  * naïve delay formulas.
- *
- *
  * @module state/data-layer/wpcom-http/pipeline/retry-on-failure/delays
  */
 
@@ -17,7 +15,6 @@ import { random } from 'lodash';
 
 /**
  * Computes "decorrelated jitter" delay
- *
  * @see https://www.awsarchitectureblog.com/2015/03/backoff.html
  * @param {number} baseDelay number of ms for initial delay
  * @param {number} retryCount attempt number for retry

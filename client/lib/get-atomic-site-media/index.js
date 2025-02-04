@@ -40,9 +40,12 @@ export function getAtomicSiteMediaViaProxyRetry( siteId, mediaPath, options ) {
 			if ( retries < 3 ) {
 				return new Promise( ( resolve ) => {
 					++retries;
-					setTimeout( () => {
-						resolve( request() );
-					}, ( retries * retries * 1000 ) / 2 );
+					setTimeout(
+						() => {
+							resolve( request() );
+						},
+						( retries * retries * 1000 ) / 2
+					);
 				} );
 			}
 

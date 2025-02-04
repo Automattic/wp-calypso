@@ -1,12 +1,31 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location, HelpCenterSite } from './types';
+import type { SupportInteraction } from '@automattic/odie-client/src/types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
+			return action.show;
+	}
+	return state;
+};
+
+const showMessagingLauncher: Reducer< boolean | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_LAUNCHER':
+			return action.show;
+	}
+	return state;
+};
+
+const showMessagingWidget: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_SHOW_MESSAGING_WIDGET':
 			return action.show;
 	}
 	return state;
@@ -23,6 +42,16 @@ const hasSeenWhatsNewModal: Reducer< boolean | undefined, HelpCenterAction > = (
 	return state;
 };
 
+const currentSupportInteraction: Reducer< SupportInteraction | undefined, HelpCenterAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'HELP_CENTER_SET_CURRENT_SUPPORT_INTERACTION' ) {
+		return action.supportInteraction;
+	}
+	return state;
+};
+
 const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
@@ -31,11 +60,29 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
-const site: Reducer< HelpCenterSite | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
-		return undefined;
-	} else if ( action.type === 'HELP_CENTER_SET_SITE' ) {
-		return action.site;
+const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_IS_CHAT_LOADED':
+			return action.isChatLoaded;
+	}
+	return state;
+};
+
+const areSoundNotificationsEnabled: Reducer< boolean, HelpCenterAction > = (
+	state = true,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED':
+			return action.areSoundNotificationsEnabled;
+	}
+	return state;
+};
+
+const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
+			return action.zendeskClientId;
 	}
 	return state;
 };
@@ -67,15 +114,6 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
-const chatTag: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
-	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
-		return undefined;
-	} else if ( action.type === 'HELP_CENTER_SET_CHAT_TAG' ) {
-		return action.chatTag;
-	}
-	return state;
-};
-
 const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -97,42 +135,48 @@ const userDeclaredSite: Reducer< SiteDetails | undefined, HelpCenterAction > = (
 	return state;
 };
 
-const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_IFRAME' ) {
-		return action.iframe;
-	} else if ( action.type === 'HELP_CENTER_RESET_IFRAME' ) {
-		return undefined;
+const navigateToRoute: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_NAVIGATE_TO_ROUTE' ) {
+		return action.route;
 	}
 	return state;
 };
 
-const routerState: Reducer< { history: Location[] | undefined; index: number | undefined } > = (
-	state = { history: undefined, index: undefined },
+const odieInitialPromptText: Reducer< string | undefined, HelpCenterAction > = (
+	state,
 	action
 ) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_ROUTER_STATE':
-			return { history: action.history, index: action.index };
+	if ( action.type === 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT' ) {
+		return action.text;
+	}
+	return state;
+};
+
+const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG' ) {
+		return action.odieBotNameSlug;
 	}
 	return state;
 };
 
 const reducer = combineReducers( {
+	currentSupportInteraction,
 	showHelpCenter,
-	site,
+	showMessagingLauncher,
+	showMessagingWidget,
 	subject,
 	message,
-	chatTag,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
 	hasSeenWhatsNewModal,
 	isMinimized,
+	isChatLoaded,
+	areSoundNotificationsEnabled,
+	zendeskClientId,
 	unreadCount,
-	iframe,
-	routerState,
+	navigateToRoute,
+	odieInitialPromptText,
+	odieBotNameSlug,
 } );
 
 export type State = ReturnType< typeof reducer >;

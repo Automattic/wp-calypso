@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestLicensesCounts } from 'calypso/state/user-licensing/actions';
 import { isFetchingUserLicensesCounts } from 'calypso/state/user-licensing/selectors';
 

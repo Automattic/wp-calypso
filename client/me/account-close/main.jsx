@@ -1,8 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ActionPanel from 'calypso/components/action-panel';
@@ -14,8 +14,8 @@ import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-li
 import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import NavigationHeader from 'calypso/components/navigation-header';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
 import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
@@ -70,7 +70,7 @@ class AccountSettingsClose extends Component {
 		const { translate, hasAtomicSites, hasCancelablePurchases, isLoading, purchasedPremiumThemes } =
 			this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
-		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
+		const containerClasses = clsx( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
@@ -78,10 +78,10 @@ class AccountSettingsClose extends Component {
 		return (
 			<div className={ containerClasses } role="main">
 				<QueryUserPurchases />
-				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Account Settings' ) } />
 
 				<HeaderCake onClick={ this.goBack }>
-					<h1>{ translate( 'Close account' ) }</h1>
+					<h1>{ translate( 'Delete account' ) }</h1>
 				</HeaderCake>
 				<ActionPanel>
 					<ActionPanelBody>
@@ -123,15 +123,17 @@ class AccountSettingsClose extends Component {
 											<ActionPanelFigureListItem>
 												{ translate( 'Media' ) }
 											</ActionPanelFigureListItem>
+											<ActionPanelFigureListItem>
+												{ translate( 'Domains' ) }
+											</ActionPanelFigureListItem>
 										</Fragment>
 									) }
-									<ActionPanelFigureListItem>{ translate( 'Domains' ) }</ActionPanelFigureListItem>
-									<ActionPanelFigureListItem>{ translate( 'Gravatar' ) }</ActionPanelFigureListItem>
 									{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 										<ActionPanelFigureListItem>
 											{ translate( 'Premium themes' ) }
 										</ActionPanelFigureListItem>
 									) }
+									<ActionPanelFigureListItem>Gravatar</ActionPanelFigureListItem>
 								</ActionPanelFigureList>
 							</ActionPanelFigure>
 						) }
@@ -173,9 +175,11 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Fragment>
 								<p className="account-close__body-copy">
-									{ translate(
-										'Account closure cannot be undone. It will remove your account along with all your sites and all their content.'
-									) }
+									<strong>
+										{ translate(
+											'Deleting your account will also delete all your sites and their content.'
+										) }
+									</strong>
 								</p>
 								{ purchasedPremiumThemes && purchasedPremiumThemes.length > 0 && (
 									<Fragment>
@@ -200,13 +204,13 @@ class AccountSettingsClose extends Component {
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com and Gravatar.com. Once your WordPress.com account is closed, these services will also be closed and you will lose access to any orders or support history you may have.'
+										'You will not be able to log in to any other Automattic Services that use your WordPress.com account as a login. This includes WooCommerce.com, Crowdsignal.com, IntenseDebate.com, and Gravatar.com. Once your WordPress.com account is deleted, these services will also be deleted and you will lose access to any orders or support history you may have.'
 									) }
 								</p>
 								<p className="account-close__body-copy">
 									{ translate(
-										'If you have any questions at all about what happens when you close an account, ' +
-											'please {{a}}chat with someone from our support team{{/a}} first. ' +
+										'If you have any questions at all about what happens when you delete an account, ' +
+											'please {{a}}contact someone from our support team{{/a}} first. ' +
 											"They'll explain the ramifications and help you explore alternatives. ",
 										{
 											components: {
@@ -215,9 +219,6 @@ class AccountSettingsClose extends Component {
 										}
 									) }
 								</p>
-								<p className="account-close__body-copy">
-									{ translate( 'When you\'re ready to proceed, use the "Close account" button.' ) }
-								</p>
 							</Fragment>
 						) }
 					</ActionPanelBody>
@@ -225,7 +226,7 @@ class AccountSettingsClose extends Component {
 						{ ( isLoading || isDeletePossible ) && (
 							<Button scary onClick={ this.handleDeleteClick } data-testid="close-account-button">
 								<Gridicon icon="trash" />
-								{ translate( 'Close account', { context: 'button label' } ) }
+								{ translate( 'Delete account', { context: 'button label' } ) }
 							</Button>
 						) }
 						{ hasAtomicSites && ! hasCancelablePurchases && (

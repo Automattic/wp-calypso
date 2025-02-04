@@ -11,13 +11,13 @@ import {
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { useSelector } from 'calypso/state';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
@@ -136,7 +136,10 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const showExpiryNotice = item.legacy && isExpiring;
 
 	const isUpgradeableToYearly =
-		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
+		isOwned &&
+		selectedTerm === TERM_ANNUALLY &&
+		item.term === TERM_MONTHLY &&
+		! item.forceNoYearlyUpgrade;
 
 	// Sets the currency. This is needed for the tooltip below.
 	item.displayCurrency = item.displayCurrency ?? currencyCode ?? undefined;

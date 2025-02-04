@@ -7,18 +7,12 @@
  */
 import { select, subscribe } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { register } from '..';
+import { store } from '../';
 
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
-
-let store: ReturnType< typeof register >;
-
-beforeAll( () => {
-	store = register();
-} );
 
 beforeEach( () => {
 	( wpcomRequest as jest.Mock ).mockReset();
@@ -52,7 +46,7 @@ describe( 'selectors', () => {
 		// First call returns undefined
 		expect( select( store ).getProductsList() ).toEqual( undefined );
 
-		await new Promise( ( resolve ) => {
+		await new Promise< void >( ( resolve ) => {
 			const unsubscribe = subscribe( () => {
 				if ( select( store ).getProductsList() === undefined ) {
 					return;

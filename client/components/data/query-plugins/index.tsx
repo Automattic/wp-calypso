@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import QueryAllJetpackSitesPlugins from '../query-all-jetpack-sites-plugins';
 import QueryJetpackPlugins from '../query-jetpack-plugins';

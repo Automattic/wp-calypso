@@ -1,5 +1,5 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { useRef, useState, useCallback, ChangeEvent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -14,11 +14,13 @@ interface Choice {
 interface JetpackCancellationSurveyProps {
 	selectedAnswerId: string | null;
 	onAnswerChange: ( answerId: string | null, answerText: TranslateResult | string ) => void;
+	isAkismet?: boolean;
 }
 
 export default function JetpackCancellationSurvey( {
 	selectedAnswerId,
 	onAnswerChange,
+	isAkismet = false,
 }: JetpackCancellationSurveyProps ) {
 	const translate = useTranslate();
 	const [ customAnswerText, setCustomAnswerText ] = useState( '' );
@@ -31,11 +33,11 @@ export default function JetpackCancellationSurvey( {
 		},
 		{
 			id: 'want-to-downgrade',
-			answerText: translate( "I'd like to downgrade to another plan." ),
+			answerText: translate( 'I’d like to downgrade to another plan.' ),
 		},
 		{
 			id: 'upgrade-by-mistake',
-			answerText: translate( "This upgrade didn't include what I needed." ),
+			answerText: translate( 'This upgrade didn’t include what I needed.' ),
 		},
 		{
 			id: 'could-not-activate',
@@ -44,6 +46,10 @@ export default function JetpackCancellationSurvey( {
 		{
 			id: 'dont-need-website',
 			answerText: translate( 'I no longer need a website.' ),
+		},
+		{
+			id: 'could-not-get-support',
+			answerText: translate( 'I couldn’t get the support I needed.' ),
 		},
 		{
 			id: 'another-reason',
@@ -81,7 +87,7 @@ export default function JetpackCancellationSurvey( {
 
 		return (
 			<Card
-				className={ classnames( 'jetpack-cancellation-survey__card', {
+				className={ clsx( 'jetpack-cancellation-survey__card', {
 					'is-selected': isSelected,
 				} ) }
 				id={ choice.id }
@@ -113,13 +119,17 @@ export default function JetpackCancellationSurvey( {
 		);
 	};
 
+	const headerText = isAkismet
+		? translate( 'Before you go, help us improve Akismet' )
+		: translate( 'Before you go, help us improve Jetpack' );
+
 	return (
 		<>
 			<FormattedHeader
-				headerText={ translate( 'Before you go, help us improve Jetpack' ) }
+				headerText={ headerText }
 				subHeaderText={ translate( 'Please let us know why you are cancelling.' ) }
 				align="center"
-				isSecondary={ true }
+				isSecondary
 			/>
 			{ choices.map( renderChoiceCard ) }
 		</>

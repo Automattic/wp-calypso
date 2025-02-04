@@ -1,6 +1,6 @@
-import { plugins, registerStore, use } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
-import persistOptions from '../one-week-persistence-config';
+import { registerPlugins } from '../plugins';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
@@ -8,6 +8,8 @@ import * as selectors from './selectors';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
 export type { State };
+export type OnboardSelect = SelectFromMap< typeof selectors >;
+export type OnboardActions = DispatchFromMap< typeof actions >;
 
 export { SiteGoal, SiteIntent } from './constants';
 export * as utils from './utils';
@@ -21,34 +23,35 @@ export function register(): typeof STORE_KEY {
 	if ( isRegistered ) {
 		return STORE_KEY;
 	}
-	use( plugins.persistence, persistOptions );
 
-	registerStore< State >( STORE_KEY, {
+	registerPlugins();
+
+	registerStore( STORE_KEY, {
 		actions,
 		controls,
-		reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+		reducer,
 		selectors,
 		persist: [
-			'anchorPodcastId',
-			'anchorEpisodeId',
-			'anchorSpotifyUrl',
+			'domainTransferNames',
+			'shouldImportDomainTransferDnsRecords',
 			'domain',
 			'domainSearch',
 			'domainForm',
 			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',
-			'hideFreePlan',
 			'intent',
+			'paidSubscribers',
 			'lastLocation',
 			'planProductId',
 			'randomizedDesigns',
 			'selectedDesign',
+			'selectedStyleVariation',
+			'selectedGlobalStyles',
 			'selectedFeatures',
-			'selectedFonts',
 			'selectedSite',
+			'readymadeTemplate',
 			'siteTitle',
-			'patternContent',
 			'siteDescription',
 			'siteLogo',
 			'siteAccentColor',
@@ -56,16 +59,14 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
+			'couponCode',
+			'storageAddonSlug',
 			'domainCartItem',
 			'planCartItem',
 			'productCartItems',
+			'createWithBigSky',
 		],
 	} );
 	isRegistered = true;
 	return STORE_KEY;
-}
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

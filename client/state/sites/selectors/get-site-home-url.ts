@@ -5,12 +5,11 @@ import type { AppState } from 'calypso/types';
 
 /**
  * Determine the default section to show for the specified site.
- *
  * @param  {Object}  state  Global state tree.
  * @param  {?number} siteId Site ID.
  * @returns {string}         Url of the site home.
  */
-export default function getSiteHomeUrl( state: AppState, siteId?: number ): string {
+export default function getSiteHomeUrl( state: AppState, siteId?: number | null ): string {
 	const selectedSiteId = siteId || getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, selectedSiteId );
 

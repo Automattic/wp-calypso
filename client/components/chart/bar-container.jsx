@@ -14,10 +14,12 @@ export default class ChartBarContainer extends PureComponent {
 		isTouch: PropTypes.bool,
 		width: PropTypes.number,
 		yAxisMax: PropTypes.number,
+		hideXAxis: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		isPlaceholder: false,
+		hideXAxis: false,
 	};
 
 	render() {
@@ -39,7 +41,7 @@ export default class ChartBarContainer extends PureComponent {
 						/>
 					) ) }
 				</div>
-				{ ! this.props.isPlaceholder && (
+				{ ! this.props.isPlaceholder && ! this.props.hideXAxis && (
 					<XAxis
 						data={ this.props.data }
 						labelWidth={ X_AXIS_LABEL_WIDTH }

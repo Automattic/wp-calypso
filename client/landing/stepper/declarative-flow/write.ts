@@ -1,11 +1,15 @@
-import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, WRITE_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { WRITE_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import wpcom from 'calypso/lib/wp';
+import { useEffect } from 'react';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import { USER_STORE } from '../stores';
+import { getLoginUrl } from '../utils/path';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
 import {
@@ -14,12 +18,14 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const write: Flow = {
 	name: WRITE_FLOW,
 	get title() {
 		return translate( 'Write' );
 	},
+	isSignupFlow: false,
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
@@ -29,31 +35,20 @@ const write: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
-		setStepProgress( flowProgress );
+		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: flowName,
-				step: _currentStep,
-			}
-		);
+		triggerGuidesForStep( flowName, _currentStep );
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-
 			switch ( _currentStep ) {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true&launchpadComplete=true`
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
 						);
 					}
 
@@ -64,10 +59,14 @@ const write: Flow = {
 			}
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					skipLaunchpad( {
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
 					return navigate( 'freeSetup' );
@@ -78,12 +77,17 @@ const write: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const queryParams = new URLSearchParams( window.location.search );
 		const flowName = this.name;
-		const locale = useLocale();
+
+		const locale = useFlowLocale();
+
 		const flags = queryParams.get( 'flags' );
 		const siteSlug = queryParams.get( 'siteSlug' );
 
@@ -105,17 +109,28 @@ const write: Flow = {
 				window?.location?.pathname +
 				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
 
-			const url =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
+			const logInUrl = getLoginUrl( {
+				variationName: flowName,
+				redirectTo: redirectTarget,
+				locale,
+			} );
 
-			return url + ( flags ? `&flags=${ flags }` : '' );
+			return logInUrl + ( flags ? `&flags=${ flags }` : '' );
 		};
 
+		// Despite sending a CHECKING state, this function gets called again with the
+		// /setup/write/launchpad route which has no locale in the path so we need to
+		// redirect off of the first render.
+		// This effects both /setup/write/<locale> starting points and /setup/write/launchpad/<locale> urls.
+		// The double call also hapens on urls without locale.
+		useEffect( () => {
+			if ( ! userIsLoggedIn ) {
+				const logInUrl = getStartUrl();
+				window.location.assign( logInUrl );
+			}
+		}, [] );
+
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'write-flow requires a logged in user',

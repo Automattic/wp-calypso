@@ -3,7 +3,6 @@ import type { DataStatus } from './constants';
 export interface DomainSuggestionQuery {
 	/**
 	 * True to include .blog subdomain suggestions
-	 *
 	 * @example
 	 * example.photo.blog
 	 */
@@ -11,11 +10,15 @@ export interface DomainSuggestionQuery {
 
 	/**
 	 * True to include WordPress.com subdomain suggestions
-	 *
 	 * @example
 	 * example.wordpress.com
 	 */
 	include_wordpressdotcom: boolean;
+
+	/**
+	 * True to include domains registered with wpcom in the response
+	 */
+	include_internal_move_eligible?: boolean;
 
 	/**
 	 * Localizes domain results, e.g., price format
@@ -24,7 +27,6 @@ export interface DomainSuggestionQuery {
 
 	/**
 	 * True to only provide a wordpress.com subdomain
-	 *
 	 * @example
 	 * example.wordpress.com
 	 */
@@ -68,35 +70,30 @@ export type DomainName = string;
 export interface DomainSuggestion {
 	/**
 	 * The domain name
-	 *
 	 * @example "example.com"
 	 */
 	domain_name: DomainName;
 
 	/**
 	 * Rendered formatted cost
-	 *
 	 * @example "Free" or "€15.00"
 	 */
 	cost: string;
 
 	/**
 	 * Raw price
-	 *
 	 * @example 40
 	 */
 	raw_price: number;
 
 	/**
 	 * Currency code
-	 *
 	 * @example USD
 	 */
 	currency_code: string;
 
 	/**
 	 * Relevance as a percent: 0 <= relevance <= 1
-	 *
 	 * @example 0.9
 	 */
 	relevance?: number;
@@ -113,7 +110,6 @@ export interface DomainSuggestion {
 
 	/**
 	 * Reasons for suggestion the domain
-	 *
 	 * @example [ "exact-match" ]
 	 */
 	match_reasons?: readonly string[];
@@ -137,6 +133,11 @@ export interface DomainSuggestion {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
+
+	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
 
 	/**
 	 * Whether the domain is unavailable
@@ -197,7 +198,6 @@ export interface DomainAvailability {
 
 	/**
 	 * Rendered cost with currency
-	 *
 	 * @example "€15.00"
 	 */
 	cost?: string;
@@ -211,6 +211,11 @@ export interface DomainAvailability {
 	 * Whether the domain requires HSTS
 	 */
 	hsts_required?: boolean;
+
+	/**
+	 * Whether the domain requires to show the notice for .gay tld
+	 */
+	is_dot_gay_notice_required?: boolean;
 }
 
 export type TimestampMS = ReturnType< typeof Date.now >;

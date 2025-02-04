@@ -9,11 +9,12 @@ The component's `children` prop will be used for the link text; if none is suppl
 ## Example Usage (deprecated)
 
 ```js
+import { localizeUrl } from '@automattic/i18n-utils';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function Link() {
 	const inlineSupportProps = {
-		supportLink: 'https://wordpress.com/support/audio/podcasting/',
+		supportLink: localizeUrl( 'https://wordpress.com/support/audio/podcasting/' ),
 		supportPostId: 38147,
 	};
 	return <InlineSupportLink { ...inlineSupportProps }>Link Text</InlineSupportLink>;
@@ -33,10 +34,11 @@ function Link() {
 The `supportContext` is a combination of the `supportPostId` and `supportLink` found in _context-links.js_.
 
 ```js
+import { localizeUrl } from '@automattic/i18n-utils';
 const contextLinks = {
 	// ...
 	purchases: {
-		link: 'https://wordpress.com/support/manage-purchases/',
+		link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
 		post_id: 111349,
 	},
 	// ...
@@ -51,6 +53,7 @@ const contextLinks = {
 - `showText` - _optional_ (bool) Whether or not to display the link text. Default `true`.
 - `showIcon` - _optional_ (bool) Whether or not to display the "help-outline" Gridicon. Default `true`.
 - `iconSize` - _optional_ (number) Gridicon size. Default `14`.
+- `linkTitle` - _optional_ (string) Text to use in the link's `title=` attribute.
 - `tracksEvent` - _optional_ (string) Tracks Analytics Event name
 - `tracksOptions` - _optional_ (object) Tracks Analytics options
 - `statsGroup` - _optional_ (string) Stat analytics group name

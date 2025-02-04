@@ -47,11 +47,18 @@ class JetpackModuleToggle extends Component {
 	};
 
 	recordTracksEvent = ( name, status ) => {
+		const { moduleSlug, path } = this.props;
+
 		const tracksProps = {
-			module: this.props.moduleSlug,
-			path: this.props.path,
+			module: moduleSlug,
+			path,
 			toggled: status,
 		};
+
+		this.props.recordTracksEvent(
+			`calypso_jetpack_module_toggle_${ moduleSlug }_${ status }`,
+			tracksProps
+		);
 
 		this.props.recordTracksEvent( name, tracksProps );
 	};

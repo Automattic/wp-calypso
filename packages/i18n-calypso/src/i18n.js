@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import sha1 from 'hash.js/lib/hash/sha/1';
 import LRU from 'lru';
 import Tannin from 'tannin';
-import numberFormat from './number-format';
 
 /**
  * Module variables
@@ -15,8 +14,6 @@ const debug = debugFactory( 'i18n-calypso' );
 /**
  * Constants
  */
-const decimal_point_translation_key = 'number_format_decimals';
-const thousands_sep_translation_key = 'number_format_thousands_sep';
 const domain_key = 'messages';
 
 const translationLookup = [
@@ -45,7 +42,6 @@ function simpleArguments( args ) {
 
 /**
  * Coerce the possible arguments and normalize to a single object.
- *
  * @param   {any} args - arguments passed in from `translate()`
  * @returns {Object}         - a single object describing translation needs
  */
@@ -102,7 +98,6 @@ function normalizeTranslateArguments( args ) {
 
 /**
  * Takes translate options object and coerces to a Tannin request to retrieve translation.
- *
  * @param   {Object} tannin  - tannin data object
  * @param   {Object} options - object describing translation
  * @returns {string}         - the returned translation from Tannin
@@ -139,7 +134,6 @@ function I18N() {
 	// Tannin always needs a plural form definition, or it fails when dealing with plurals.
 	this.defaultPluralForms = ( n ) => ( n === 1 ? 0 : 1 );
 	this.state = {
-		numberFormatSettings: {},
 		tannin: undefined,
 		locale: undefined,
 		localeSlug: undefined,
@@ -174,17 +168,48 @@ I18N.prototype.emit = function ( ...args ) {
 
 /**
  * Formats numbers using locale settings and/or passed options.
- *
- * @param   {string|number}  number to format (required)
- * @param   {number | Object}  options  Number of decimal places or options object (optional)
- * @returns {string}         Formatted number as string
+ * @returns {string | number}  Formatted number as string, or original number if formatting fails
  */
-I18N.prototype.numberFormat = function ( number, options = {} ) {
-	const decimals = typeof options === 'number' ? options : options.decimals || 0;
-	const decPoint = options.decPoint || this.state.numberFormatSettings.decimal_point || '.';
-	const thousandsSep = options.thousandsSep || this.state.numberFormatSettings.thousands_sep || ',';
+I18N.prototype.numberFormat = function (
+	number,
+	{ decimals = 0, forceLatin = true, numberFormatOptions = {} } = {}
+) {
+	const browserSafeLocale = this.getBrowserSafeLocale();
 
-	return numberFormat( number, decimals, decPoint, thousandsSep );
+	/**
+	 * TS will flag this as an error, but best to check for undefined here for older usages
+	 * `Intl.NumberFormat` will return NaN for undefined values, which is not helpful. Null becomes 0, also potentially risky.
+	 */
+	if ( typeof number === 'undefined' || number === null ) {
+		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
+		return number;
+	}
+
+	try {
+		return Intl.NumberFormat( `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`, {
+			minimumFractionDigits: decimals, // default is 0
+			maximumFractionDigits: decimals, // default is the greater between minimumFractionDigits and 3
+			// TODO clk numberFormat this may be the only difference, where some cases use 2 (they can just pass the option to Intl.NumberFormat)
+			...numberFormatOptions,
+		} ).format( number );
+	} catch ( error ) {
+		warn( 'numberFormat(): Error formatting number with Intl.NumberFormat: ', number, error );
+	}
+
+	return number;
+};
+
+/**
+ * Returns a browser-safe locale string that can be used with `Intl.NumberFormat`.
+ * @returns {string} The locale string
+ */
+I18N.prototype.getBrowserSafeLocale = function () {
+	/**
+	 * The `Intl.NumberFormat` constructor fails only when there is a variant, divided by `_`.
+	 * These suffixes should be removed. `localeVariant` values like `de-at` or `es-mx`
+	 * should all be valid inputs for the constructor.
+	 */
+	return this.getLocaleVariant()?.split( '_' )[ 0 ] ?? this.getLocaleSlug();
 };
 
 I18N.prototype.configure = function ( options ) {
@@ -275,25 +300,6 @@ I18N.prototype.setLocale = function ( localeData ) {
 
 	this.state.tannin = new Tannin( { [ domain_key ]: this.state.locale } );
 
-	// Updates numberFormat preferences with settings from translations
-	this.state.numberFormatSettings.decimal_point = getTranslationFromTannin(
-		this.state.tannin,
-		normalizeTranslateArguments( [ decimal_point_translation_key ] )
-	);
-	this.state.numberFormatSettings.thousands_sep = getTranslationFromTannin(
-		this.state.tannin,
-		normalizeTranslateArguments( [ thousands_sep_translation_key ] )
-	);
-
-	// If translation isn't set, define defaults.
-	if ( this.state.numberFormatSettings.decimal_point === decimal_point_translation_key ) {
-		this.state.numberFormatSettings.decimal_point = '.';
-	}
-
-	if ( this.state.numberFormatSettings.thousands_sep === thousands_sep_translation_key ) {
-		this.state.numberFormatSettings.thousands_sep = ',';
-	}
-
 	this.stateObserver.emit( 'change' );
 };
 
@@ -303,7 +309,6 @@ I18N.prototype.getLocale = function () {
 
 /**
  * Get the current locale slug.
- *
  * @returns {string} The string representing the currently loaded locale
  */
 I18N.prototype.getLocaleSlug = function () {
@@ -313,7 +318,6 @@ I18N.prototype.getLocaleSlug = function () {
 /**
  * Get the current locale variant. That's set for some special locales that don't have a
  * standard ISO code, like `de_formal` or `sr_latin`.
- *
  * @returns {string|undefined} The string representing the currently loaded locale's variant
  */
 I18N.prototype.getLocaleVariant = function () {
@@ -322,7 +326,6 @@ I18N.prototype.getLocaleVariant = function () {
 
 /**
  * Get the current text direction, left-to-right (LTR) or right-to-left (RTL).
- *
  * @returns {boolean} `true` in case the current locale has RTL text direction
  */
 I18N.prototype.isRtl = function () {
@@ -331,7 +334,6 @@ I18N.prototype.isRtl = function () {
 
 /**
  * Adds new translations to the locale data, overwriting any existing translations with a matching key.
- *
  * @param {Object} localeData Locale data
  */
 I18N.prototype.addTranslations = function ( localeData ) {
@@ -346,7 +348,6 @@ I18N.prototype.addTranslations = function ( localeData ) {
 
 /**
  * Checks whether the given original has a translation.
- *
  * @returns {boolean} whether a translation exists
  */
 I18N.prototype.hasTranslation = function () {
@@ -354,9 +355,35 @@ I18N.prototype.hasTranslation = function () {
 };
 
 /**
+ * Returns `newCopy` if given `text` is translated or locale is English, otherwise returns the `oldCopy`.
+ * ------------------
+ * Important - Usage:
+ * ------------------
+ * `newCopy` prop should be an actual `i18n.translate()` call from the consuming end.
+ * This is the only way currently to ensure that it is picked up by our string extraction mechanism
+ * and propagate into GlotPress for translation.
+ * ------------------
+ * @param {Object} options
+ * @param {string} options.text - The text to check for translation.
+ * @param {string | Object} options.newCopy - The translation to return if the text is translated.
+ * @param {string | Object | undefined } options.oldCopy - The fallback to return if the text is not translated.
+ */
+I18N.prototype.fixMe = function ( { text, newCopy, oldCopy } ) {
+	if ( typeof text !== 'string' ) {
+		warn( 'fixMe() requires an object with a proper text property (string)' );
+		return null;
+	}
+
+	if ( [ 'en', 'en-gb' ].includes( this.getLocaleSlug() ) || this.hasTranslation( text ) ) {
+		return newCopy;
+	}
+
+	return oldCopy;
+};
+
+/**
  * Exposes single translation method.
  * See sibling README
- *
  * @returns {string | Object | undefined} translated text or an object containing React children that can be inserted into a parent component
  */
 I18N.prototype.translate = function () {

@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Card, Button } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Card, Button, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { filter, get, groupBy, includes, pickBy, some } from 'lodash';
-import page from 'page';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
@@ -15,7 +16,6 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -28,7 +28,6 @@ import TokenField from 'calypso/components/token-field';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import getWpcomFollowerRole from 'calypso/lib/get-wpcom-follower-role';
 import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
@@ -389,7 +388,7 @@ class InvitePeople extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://wordpress.com/support/user-roles/"
+				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 				onClick={ this.onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }
@@ -800,6 +799,4 @@ const mapDispatchToProps = {
 
 const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
-export default connectComponent(
-	localize( withTrackingTool( 'HotJar' )( withSiteRoles( InvitePeople ) ) )
-);
+export default connectComponent( localize( withSiteRoles( InvitePeople ) ) );

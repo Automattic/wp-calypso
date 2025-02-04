@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-products",
-	"version": "1.0.0",
+	"version": "1.2.1",
 	"description": "This module contains information about the various products sold within calypso, such as product slugs, plan intervals, etc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
@@ -9,7 +9,8 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
-		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
+		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
@@ -36,14 +37,21 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/shopping-cart": "workspace:^",
+		"@automattic/urls": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.7.4"
+		"@wordpress/data": "^10.16.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"react": "^17.0.2"
-	},
-	"private": true
+		"@wordpress/data": "^10.16.0",
+		"react": "^18.3.1"
+	}
 }

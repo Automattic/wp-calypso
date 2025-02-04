@@ -1,10 +1,8 @@
-import config from '@automattic/calypso-config';
-import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
-import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
+import { getTitanSetUpMailboxPath } from 'calypso/my-sites/email/paths';
 import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
 import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
@@ -59,35 +57,10 @@ export const getTask = (
 		isBlogger,
 		isFSEActive,
 		isRtl,
+		siteCount,
 	} = {}
 ) => {
 	let taskData = {};
-
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
-	const wpAppBanner = {
-		title: translate( 'Try the WordPress app' ),
-		description: isBlogger
-			? translate( 'Write posts, check stats, and reply to comments on the go!' )
-			: translate(
-					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-			  ),
-	};
-
-	const jetpackAppBanner = {
-		title: translate( 'Try the Jetpack app' ),
-		subtitle: translate( 'Put your site in your pocket' ),
-		icon: (
-			<AnimatedIcon
-				icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
-				className="site-setup-list__task-icon"
-			/>
-		),
-		description: translate(
-			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
-		),
-		jetpackBranding: true,
-	};
 
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
@@ -145,12 +118,24 @@ export const getTask = (
 					: translate( 'Give your new site a title to let people know what your site is about.' ),
 				actionText: isBlogger ? translate( 'Name your blog' ) : translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
-				tour: 'checklistSiteTitle',
+				// only show the tour for the first two sites.
+				tour: siteCount > 2 ? undefined : 'checklistSiteTitle',
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
-				...( displayJetpackAppBranding ? jetpackAppBanner : wpAppBanner ),
+				title: translate( 'Get the mobile app' ),
+				subtitle: translate( 'Put your site in your pocket' ),
+				icon: (
+					<AnimatedIcon
+						icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+						className="site-setup-list__task-icon"
+					/>
+				),
+				description: translate(
+					'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
+				),
+				jetpackBranding: true,
 				timing: 3,
 				actionText: isBlogger
 					? translate( 'Download the app' )
@@ -160,6 +145,19 @@ export const getTask = (
 					actionDispatch: requestSiteChecklistTaskUpdate,
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.CART_ITEMS_ABANDONED:
+			taskData = {
+				timing: 5,
+				title: translate( 'Complete checkout' ),
+				description: translate(
+					'Unlock all the benefits of managed hosting, including unmetered bandwidth, multisite management, and realtime backups.'
+				),
+				actionText: translate( 'Go to checkout' ),
+				actionUrl: `/checkout/${ siteSlug }`,
+				actionDisableOnComplete: false,
 				isSkippable: true,
 			};
 			break;
@@ -201,13 +199,14 @@ export const getTask = (
 				: translate(
 						"Your site is private and only visible to you. When you're ready, launch your site to make it public."
 				  );
-			const descriptionOnCompleted = createInterpolateElement(
-				/* translators: pressing <Link> will redirect user to Settings -> Privacy where they can change the site visibilidty */
-				translate(
-					'Your site is already live. You can change your site visibility in <Link>privacy options</Link> at any time.'
-				),
+			const descriptionOnCompleted = translate(
+				'Your site is already live. You can change your site visibility in {{link}}privacy options{{/link}} at any time.',
 				{
-					Link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					components: {
+						link: <a href={ `/settings/general/${ siteSlug }#site-privacy-settings` } />,
+					},
+					comment:
+						'pressing <Link> will redirect the user to Settings -> Privacy where they can change the site visibility',
 				}
 			);
 
@@ -295,7 +294,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Set up mailbox' ),
 				isSkippable: false,
-				actionUrl: emailManagementTitanSetUpMailbox( siteSlug, task.domain ),
+				actionUrl: getTitanSetUpMailboxPath( siteSlug, task.domain ),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED:
@@ -348,14 +347,38 @@ export const getTask = (
 				title: translate( 'Enable post sharing' ),
 				description: isBlogger
 					? translate(
-							'Enable post sharing to automatically share your new blog posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+							'Enable post sharing to automatically share your new blog posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
 					  )
 					: translate(
-							'Enable post sharing to automatically share your new posts to Twitter, Facebook, or LinkedIn to ensure your audience will never miss an update.'
+							'Enable post sharing to automatically share your new posts to Facebook, LinkedIn, Instagram, Tumblr, or Mastodon to ensure your audience will never miss an update.'
 					  ),
 				actionText: translate( 'Enable sharing' ),
 				actionUrl: `/marketing/connections/${ siteSlug }`,
 				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.INSTALL_CUSTOM_PLUGIN:
+			taskData = {
+				timing: 5,
+				title: translate( 'Install a custom plugin' ),
+				description: translate(
+					'Add new features to your site with plugins. Choose from thousands of free and premium plugins or upload your own to make your site stand out.'
+				),
+				actionText: translate( 'Install' ),
+				actionUrl: `/plugins/${ siteSlug }`,
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SETUP_SSH:
+			taskData = {
+				timing: 5,
+				title: translate( 'Set up SSH' ),
+				description: translate(
+					'Connect to your site via SSH to run commands and manage files on your server.'
+				),
+				actionText: translate( 'Setup' ),
+				actionUrl: `/hosting-config/${ siteSlug }#sftp-credentials`,
+				isSkippable: false,
 			};
 			break;
 	}

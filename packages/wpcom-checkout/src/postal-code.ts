@@ -91,7 +91,6 @@ function isCountryCodeDataWithFormatter(
 
 /**
  * Tries to convert given postal code based on the country code into a standardised format
- *
  * @param {string} postalCode user inputted postal code
  * @param {string|null|undefined} countryCode user selected country
  * @returns {string} formatted postal code

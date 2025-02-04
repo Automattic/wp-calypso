@@ -1,18 +1,32 @@
+import config from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import cx from 'classnames';
+import clsx from 'clsx';
 import { useEffect } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { useMarketingMessage } from './use-marketing-message';
 import './style.scss';
 
 type NudgeProps = {
-	useMockData: boolean;
-	siteId: number | null;
-	className?: string;
-	path: string;
+	siteId?: number | null;
+	path?: string;
 };
 
-const Container = styled.div< Pick< NudgeProps, 'path' > >`
+type JITMTProps = {
+	id: string;
+	template: string;
+	message?: string;
+	CTA?: Partial< {
+		message: string;
+		hook: string;
+		newWindow: boolean;
+		primary: boolean;
+		link: string;
+		target: string;
+	} >;
+};
+
+const Container = styled.div`
 	display: flex;
 
 	&.is-signup-plans {
@@ -61,7 +75,7 @@ const Message = styled.div< { isPlansStep: boolean } >`
 	}
 `;
 
-const Text = styled.p< Pick< NudgeProps, 'path' > >`
+const Text = styled.p`
 	white-space: pre-wrap;
 	text-indent: -1.5em;
 	margin: 0;
@@ -75,8 +89,23 @@ function slugify( text: string ) {
 		.replace( /^-+|-+$/g, '' );
 }
 
-export default function MarketingMessage( { siteId, useMockData, ...props }: NudgeProps ) {
-	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId, useMockData );
+const limitedTimeOfferDiscountNudge = () => {
+	return (
+		<AsyncLoad
+			require="calypso/blocks/jitm"
+			placeholder={ null }
+			messagePath="calypso:plans:lto_notices"
+			onClick={ ( jitm: JITMTProps ) => {
+				jitm.message =
+					'Discount coupon applied! Select your plan below and check your final discounted price at checkout.';
+				jitm.CTA = {};
+			} }
+		/>
+	);
+};
+
+export default function MarketingMessage( { siteId = null, path = '' }: NudgeProps ) {
+	const [ isFetching, messages, removeMessage ] = useMarketingMessage( siteId );
 	const hasNudge = ! isFetching && messages.length > 0;
 
 	useEffect( () => {
@@ -84,16 +113,19 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 	}, [ hasNudge ] );
 
 	if ( ! hasNudge ) {
+		if ( config.isEnabled( 'jitms' ) ) {
+			return limitedTimeOfferDiscountNudge();
+		}
 		return null;
 	}
 
-	const classNames = cx( 'nudge-container', props.className, `is-${ slugify( props.path ) }` );
+	const classNames = clsx( 'nudge-container', { [ `is-${ slugify( path ) }` ]: path } );
 
 	return (
-		<Container path={ props.path } className={ classNames }>
+		<Container className={ classNames } role="status">
 			{ messages.map( ( msg ) => (
-				<Message key={ msg.id } isPlansStep={ props.path === 'signup/plans' }>
-					<Text path={ props.path }>{ msg.text }</Text>
+				<Message key={ msg.id } isPlansStep={ path === 'signup/plans' }>
+					<Text>{ msg.text }</Text>
 					<Button compact borderless onClick={ () => removeMessage( msg.id ) }>
 						<Gridicon icon="cross" size={ 24 } />
 					</Button>
@@ -102,9 +134,3 @@ export default function MarketingMessage( { siteId, useMockData, ...props }: Nud
 		</Container>
 	);
 }
-
-MarketingMessage.defaultProps = {
-	useMockData: false,
-	siteId: null,
-	path: '',
-};

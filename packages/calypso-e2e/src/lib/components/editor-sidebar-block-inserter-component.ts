@@ -1,12 +1,14 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { EditorComponent } from './editor-component';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
-	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
+	// This selector was updated to the capitalized label in Gutenberg v19.5.0. Once that is released, we should be able to remove the old selector ("Close block inserter").
+	// See: https://github.com/WordPress/gutenberg/pull/65983
+	closeBlockInserterButton:
+		'button[aria-label="Close Block Inserter"], button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,
-	blockResultItem: ( name: string ) =>
-		`${ sidebarParentSelector } .block-editor-block-types-list__list-item span:text("${ name }")`,
 	patternResultItem: ( name: string ) => `${ sidebarParentSelector } div[aria-label="${ name }"]`,
 };
 
@@ -15,15 +17,15 @@ const selectors = {
  */
 export class EditorSidebarBlockInserterComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -39,10 +41,10 @@ export class EditorSidebarBlockInserterComponent {
 			return;
 		}
 
-		const blockInserterPanelLocator = this.editor.locator( selectors.closeBlockInserterButton );
-		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
-			await blockInserterPanelLocator.click();
-		}
+		const editorParent = await this.editor.parent();
+		await editorParent.locator( selectors.closeBlockInserterButton ).click();
+
+		await this.page.locator( sidebarParentSelector ).waitFor( { state: 'detached' } );
 	}
 
 	/**
@@ -51,7 +53,8 @@ export class EditorSidebarBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.blockSearchInput );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
 
@@ -67,14 +70,30 @@ export class EditorSidebarBlockInserterComponent {
 	 */
 	async selectBlockInserterResult(
 		name: string,
-		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
+		{
+			type = 'block',
+			blockFallBackName = '',
+		}: { type?: 'block' | 'pattern'; blockFallBackName?: string } = {}
 	): Promise< void > {
+		const editorParent = await this.editor.parent();
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) ).first();
+			locator = editorParent.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
+			const optionName = blockFallBackName
+				? new RegExp( `(${ name }|${ blockFallBackName })` )
+				: name;
+			locator = editorParent
+				// The DOM structure that hold the block options changes a LOT dependent on whether there's a search.
+				// This combined selector is not the slickest, but capture both cases.
+				// There's not an easy way to use "getByRole" to capture two cases without a lot of promise racing.
+				.locator( `.block-editor-inserter__block-list,.block-editor-block-types-list` )
+				.getByRole( 'option', {
+					name: optionName,
+					exact: true,
+				} )
+				.first();
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );

@@ -6,6 +6,7 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from '../availability-messages';
 
 jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
 	translate: jest.fn( () => 'default' ),
 } ) );
 
@@ -53,13 +54,18 @@ describe( 'getAvailabilityNotice()', () => {
 		} );
 	} );
 
+	test( 'Should return default message if TLD is unsupported', () => {
+		expect(
+			getAvailabilityNotice( 'test-domain.se', domainAvailability.TLD_NOT_SUPPORTED, null )
+		).toEqual( { message: 'default', severity: 'error' } );
+	} );
+
 	test( 'Should return no message when domain unavailable, unmappable, unknown, tld not supported, or search results are empty', () => {
 		// These are special cases where the error notice should not be handled by client/components/domains/register-domain-step/index.jsx
 		// but in client/components/domains/domain-search-results/index.jsx
 		[
 			domainAvailability.MAPPABLE,
 			domainAvailability.AVAILABLE,
-			domainAvailability.TLD_NOT_SUPPORTED,
 			domainAvailability.UNKNOWN,
 		].forEach( ( error ) => {
 			expect( getAvailabilityNotice( null, error, null ) ).toEqual( {

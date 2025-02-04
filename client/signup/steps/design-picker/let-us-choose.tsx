@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { preventWidows } from 'calypso/lib/formatting';
 import type { Design } from '@automattic/design-picker';
 
 interface Props {
@@ -49,14 +50,12 @@ const LetUsChoose = ( { flowName, designs, onSelect }: Props ) => {
 		} );
 	}
 
+	const title = translate( 'Unsure? Let us choose, and we’ll create the perfect design!' );
+
 	return (
 		<LetUsChooseContainer>
-			<div>
-				{ translate(
-					"Can't decide? No problem, our experts can choose the perfect design for your site!"
-				) }
-			</div>
-			<LetUsChooseButton isSecondary onClick={ onClick }>
+			<div>{ preventWidows( title ) }</div>
+			<LetUsChooseButton variant="primary" onClick={ onClick }>
 				{ translate( 'Let us choose' ) }
 			</LetUsChooseButton>
 		</LetUsChooseContainer>

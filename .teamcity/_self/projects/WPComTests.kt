@@ -3,6 +3,7 @@ package _self.projects
 import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
+import _self.lib.utils.*
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
@@ -12,7 +13,13 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
+import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
+import jetbrains.buildServer.configs.kotlin.v2019_2.ParameterDisplay
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.exec
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -43,27 +50,40 @@ object WPComTests : Project({
 	// Gutenberg Atomic Edge
 	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
 	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
+	// Gutenberg Atomic Nightly
+	buildType(gutenbergPlaywrightBuildType("desktop", "a3f58555-56bb-42c6-8543-ab27213d3085" , atomic=true, nightly=true));
+	buildType(gutenbergPlaywrightBuildType("mobile", "8191e677-0682-4709-9201-66a7788980f0", atomic=true, nightly=true));
 
-	// Editor Tracking
-	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
-	// Editor Tracking Edge
-	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
+	// E2E Tests for Jetpack Simple Deployment
+	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
+	buildType(jetpackSimpleDeploymentE2eBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661"));
 
-	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
-	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
+	// E2E Tests for Jetpack Atomic Deployment
+	// Just desktop to start
+	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
+
+	// E2E Tests for smoke testing each new Jetpack build on Atomic
+	// Also just desktop to start
+	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
 
 	buildType(I18NTests);
 	buildType(P2E2ETests)
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, nightly: Boolean = false): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
+	var releaseType = when {
+		nightly -> "nightly"
+		edge -> "edge"
+		else -> "production"
+	}
 
-    return E2EBuildType (
-		buildId = "WPComTests_gutenberg_${siteType}_${edgeType}_$targetDevice",
+	val buildName = "Gutenberg $siteType E2E tests $releaseType ($targetDevice)"
+
+	return E2EBuildType (
+		buildId = "WPComTests_gutenberg_${siteType}_${releaseType}_$targetDevice",
 		buildUuid = buildUuid,
-		buildName = "Gutenberg $siteType E2E tests $edgeType ($targetDevice)",
+		buildName = buildName,
 		buildDescription = "Runs Gutenberg $siteType E2E tests on $targetDevice size",
 		testGroup = "gutenberg",
 		buildParams = {
@@ -82,7 +102,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				checked = "true",
 				unchecked = "false"
 			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser")
+			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser,simpleSitePersonalPlanUser,gutenbergAtomicSiteUser,gutenbergAtomicSiteEdgeUser,gutenbergAtomicSiteEdgeNightliesUser")
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			if (atomic) {
 				param("env.TEST_ON_ATOMIC", "true")
@@ -90,9 +110,37 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
 				param("JEST_E2E_WORKERS", "1")
+
 			}
+
+			if (nightly) {
+				param("env.GUTENBERG_NIGHTLY", "true");
+			}
+
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
+			}
+
+			password("GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN", "credentialsJSON:8196e9b8-cf0a-4ab5-9547-95145134f04a", display = ParameterDisplay.HIDDEN);
+			// Uncomment the following to route it to the test channel, don't forget to change the reference in the exec() calls below, too.
+			// Ask someone from the Team Calypso Platform to know what these channels are. They are also available in the source for `announce.sh` (par of Gutenbot).
+			// password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID_TEST", "credentialsJSON:180d1bb6-a28e-4985-bf9a-8acba63bb90c", display = ParameterDisplay.HIDDEN);
+			password("GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID", "credentialsJSON:b8ca97ea-322f-499f-aa21-ecdb8b373527", display = ParameterDisplay.HIDDEN);
+			text("GB_E2E_ANNOUNCEMENT_THREAD_TS", value = "", allowEmpty = true, display = ParameterDisplay.HIDDEN);
+		},
+		buildSteps = {
+			exec {
+				name = "Post Successful Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName passed successfully! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
+			}
+
+			exec {
+				name = "Post Failure Message to Slack"
+				executionMode = BuildStep.ExecutionMode.RUN_ONLY_ON_FAILURE
+				path = "./bin/post-threaded-slack-message.sh"
+				arguments = "%GB_E2E_ANNOUNCEMENT_SLACK_CHANNEL_ID% %GB_E2E_ANNOUNCEMENT_THREAD_TS% \"The $buildName failed! Could you have a look?! <%teamcity.serverUrl%/viewLog.html?buildId=%teamcity.build.id%|View build>\" %GB_E2E_ANNOUNCEMENT_SLACK_API_TOKEN%"
 			}
 		},
 		buildFeatures = {
@@ -126,92 +174,201 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 	)
 }
 
-fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
-	var siteType = if (atomic) "atomic" else "simple";
-	var edgeType = if (edge) "edge" else "production";
+fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType({
+		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
+		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
 
-    return E2EBuildType (
-		buildId = "WPComTests_editor_tracking_${siteType}_${edgeType}_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Editor tracking $siteType E2E tests $edgeType ($targetDevice)",
-		buildDescription = "Runs editor tracking $siteType E2E tests on $targetDevice size",
-		testGroup = "editor-tracking",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,siteEditorSimpleSiteEdgeUser,siteEditorSimpleSiteUser")
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
 			param("env.VIEWPORT_NAME", "$targetDevice")
-			if (atomic) {
-				param("env.TEST_ON_ATOMIC", "true")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+		}
+
+		triggers {
+			finishBuildTrigger {
+				buildType = "JetpackStaging_JetpackSunMoonUpdated"
 			}
-			if (edge) {
-				param("env.GUTENBERG_EDGE", "true")
-			}
-		},
-		buildFeatures = {
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
+					sendTo = "#jetpack-alerts"
 					messageFormat = verboseMessageFormat {
-						addBranch = true
 						addStatusText = true
-						maximumNumberOfChanges = 10
 					}
 				}
 				branchFilter = "+:<default>"
+				buildFailedToStart = true
 				buildFailed = true
-				buildFinishedSuccessfully = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
 			}
 		}
-	)
+
+		failureConditions {
+			defaultE2eFailureConditions()
+		}
+	});
 }
 
-fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBuildType {
-	return E2EBuildType (
-		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Jetpack E2E Tests ($targetDevice)",
-		buildDescription = "Runs Jetpack E2E tests as $targetDevice",
-		testGroup = "jetpack",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			checkbox(
-				name = "env.TEST_ON_JETPACK",
-				value = "true",
-				label = "Test on Jetpack",
-				description = "Use a Jetpack blog to test against",
-				checked = "true",
-				unchecked = "false"
-			)
-		},
-		buildFeatures = {},
-		buildTriggers = {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 5
-			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
+fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
+
+	return BuildType({
+		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
+		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
+
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
 		}
-	}
-	)
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.TEST_ON_ATOMIC", "true")
+			// We run all the tests on all variations, and go through each variation sequentially.
+			// We can easily overwhlem the target Atomic site under test if we have too much parallelization.
+			// This number of works plays nicely with the expected load handling on these Atomic sites.
+			// See: pMz3w-ix0-p2
+			param("JEST_E2E_WORKERS", "5")
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			atomicVariations.forEach { variation ->
+				runE2eTestsWithRetry(
+					testGroup = "jetpack-wpcom-integration",
+					additionalEnvVars = mapOf(
+						"ATOMIC_VARIATION" to variation,
+						"RUN_ID" to "Atomic: $variation"
+					),
+					stepName = "Run Atomic Jetpack E2E Tests: $variation",
+				)
+			}
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#jetpack-alerts"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		}
+
+		failureConditions {
+			defaultE2eFailureConditions()
+			// These are long-running tests, and we have to scale back the parallelization too.
+			// Let's give them some more breathing room.
+			// This number is arbitrary, but tests in mid-2024 tend to run longer than 30 minutes.
+			executionTimeoutMin = 51
+		}
+	});
 }
+
+fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
+	return BuildType({
+		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
+		uuid = buildUuid
+		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
+		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. It uses a randomized mix of Atomic environment variations."
+
+		artifactRules = defaultE2eArtifactRules();
+
+		vcs {
+			root(Settings.WpCalypso)
+			cleanCheckout = true
+		}
+
+		params {
+			defaultE2eParams()
+			calypsoBaseUrlParam()
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", "wpcom-deployment")
+			param("env.TEST_ON_ATOMIC", "true")
+			param("env.ATOMIC_VARIATION", "mixed")
+			// We need to be careful of overwhelming the Atomic sites under test.
+			// The mixing of Atomic variations happens per-worker.
+			// There are currently 7 variations. So let's do 2 workers per variation for 14 workers total.
+			param("JEST_E2E_WORKERS", "14")
+		}
+
+		steps {
+			prepareE2eEnvironment()
+
+			runE2eTestsWithRetry(testGroup = "jetpack-wpcom-integration")
+
+			collectE2eResults()
+		}
+
+		features {
+			perfmon {}
+
+			notifications {
+				notifierSettings = slackNotifier {
+					connection = "PROJECT_EXT_11"
+					sendTo = "#jetpack-alerts"
+					messageFormat = verboseMessageFormat {
+						addStatusText = true
+					}
+				}
+				branchFilter = "+:<default>"
+				buildFailedToStart = true
+				buildFailed = true
+				buildFinishedSuccessfully = false
+				buildProbablyHanging = true
+			}
+		}
+
+		failureConditions {
+			defaultE2eFailureConditions()
+		}
+	});
+}
+
 
 private object I18NTests : E2EBuildType(
 	buildId = "WPComTests_i18n",
@@ -240,7 +397,7 @@ private object I18NTests : E2EBuildType(
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#i18n-bots"
+				sendTo = "#i18n-devs"
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = "trunk"
@@ -310,4 +467,3 @@ object P2E2ETests : E2EBuildType(
 		}
 	}
 )
-

@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { get } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
@@ -204,7 +204,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 
 		if ( getRole() ) {
 			roleBadge = (
-				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass() ) }>
+				<div className={ clsx( 'people-profile__role-badge', getRoleBadgeClass() ) }>
 					{ getRoleBadgeText() }
 				</div>
 			);
@@ -282,12 +282,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 
 		return (
 			<div className="people-profile__badges">
-				<div
-					className={ classNames(
-						'people-profile__role-badge',
-						getRoleBadgeClass( 'subscriber' )
-					) }
-				>
+				<div className={ clsx( 'people-profile__role-badge', getRoleBadgeClass( 'subscriber' ) ) }>
 					{ user.login && translate( 'Follower' ) }
 					{ ! user.login && translate( 'Email subscriber' ) }
 				</div>
@@ -299,7 +294,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 		const role = 'viewer';
 		return (
 			<div className="people-profile__badges">
-				<div className={ classNames( 'people-profile__role-badge', getRoleBadgeClass( role ) ) }>
+				<div className={ clsx( 'people-profile__role-badge', getRoleBadgeClass( role ) ) }>
 					{ getRoleBadgeText( role ) }
 				</div>
 			</div>
@@ -310,7 +305,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 		return user && ! user.roles && user.date_subscribed;
 	};
 
-	const classes = classNames( 'people-profile', {
+	const classes = clsx( 'people-profile', {
 		'is-placeholder': ! user,
 	} );
 

@@ -1,0 +1,84 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$illustration-top: 32px;
+$illustration-layer-offset: 16px;
+$illustration-height: 139px;
+$illustration-width: 214px;
+
+.task {
+	&.task__domain-upsell {
+		.task__illustration {
+			display: flex;
+			
+			@include break-small {
+				width: calc(45% + 32px);
+				margin-bottom: -32px !important;
+				margin-right: -32px !important;
+			}
+		}
+	}
+	.task__domain-upsell-illustration {
+		position: relative;
+		width: 100%;
+		height: auto;
+
+		> *:not(.task__domain-upsell-illustration--background) {
+			position: absolute;
+			left: 0;
+			top: $illustration-top;
+			width: 70%;
+			aspect-ratio: calc($illustration-width / $illustration-height);
+		}
+
+		> .task__domain-upsell-illustration--mask {
+			top: #{$illustration-top + $illustration-layer-offset};
+			left: 16px;
+			background-color: var(--studio-gray-10);
+		}
+		> .task__domain-upsell-illustration--site {
+			top: #{$illustration-top + 2 * $illustration-layer-offset};
+			left: 32px;
+		}
+		> .task__domain-upsell-illustration--domain {
+			top: calc(
+				#{$illustration-top} +
+				#{$illustration-layer-offset} * 2 +
+				#{$illustration-height} / 2 -
+				18px
+			);
+			left: initial;
+			right: 32px;
+			height: 28px;
+			width: auto;
+			max-width: calc(70% - #{$illustration-layer-offset} / 2);
+			background-color: var(--studio-white);
+
+			display: flex;
+  			align-items: center;
+			border: 1px solid var(--color-primary);
+			border-radius: 2px;
+			padding-left: 4px;
+			padding-right: 6px;
+			font-size: rem(13px);
+
+			> svg {
+				flex-shrink: 0;
+				fill: var(--color-primary);
+			}
+
+			> div {
+				padding-right: 2px;
+				border-right: 1px solid var(--studio-black);
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+
+				> span:first-of-type {
+					background-color: var(--studio-gray-5);
+				}
+			}
+
+		}
+	}
+}

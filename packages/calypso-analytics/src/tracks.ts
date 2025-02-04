@@ -3,11 +3,11 @@
 import { EventEmitter } from 'events';
 import { loadScript } from '@automattic/load-script';
 import cookie from 'cookie';
-import { includes, omitBy, times } from 'lodash';
 import { getPageViewParams } from './page-view-params';
 import { getCurrentUser, setCurrentUser } from './utils/current-user';
 import debug from './utils/debug';
 import getDoNotTrack from './utils/do-not-track';
+import getTrackingPrefs from './utils/get-tracking-prefs';
 
 declare global {
 	interface Window {
@@ -21,8 +21,10 @@ declare const window: undefined | ( Window & { BUILD_TIMESTAMP?: number } );
  * See internal Nosara repo?
  */
 const TRACKS_SPECIAL_PROPS_NAMES = [ 'geo', 'message', 'request', 'geocity', 'ip' ];
+const ALLOWED_EVENT_SOURCES = [ 'calypso', 'jetpack', 'remotedatablocks', 'wpcom_dsp_widget' ];
 const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_ok',
+	'a8c_cookie_banner_view',
 	'a8c_ccpa_optout',
 	// WooCommerce Onboarding / Connection Flow.
 	'wcadmin_storeprofiler_create_jetpack_account',
@@ -35,12 +37,15 @@ const EVENT_NAME_EXCEPTIONS = [
 	'calypso_checkout_composite_p24_submit_clicked',
 	// Launch Bar
 	'wpcom_launchbar_button_click',
+	// Request for free migration
+	'wpcom_support_free_migration_request_click',
 ];
+
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w.js?67' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -55,7 +60,9 @@ function createRandomId( randomBytesLength = 9 ): string {
 		randomBytes = new Uint8Array( randomBytesLength );
 		window.crypto.getRandomValues( randomBytes );
 	} else {
-		randomBytes = times( randomBytesLength, () => Math.floor( Math.random() * 256 ) );
+		randomBytes = Array( randomBytesLength )
+			.fill( 0 )
+			.map( () => Math.floor( Math.random() * 256 ) );
 	}
 
 	return window.btoa( String.fromCharCode( ...randomBytes ) );
@@ -122,7 +129,6 @@ export const analyticsEvents: EventEmitter = new EventEmitter();
 
 /**
  * Returns the anoymous id stored in the `tk_ai` cookie
- *
  * @returns The Tracks anonymous user id
  */
 export function getTracksAnonymousUserId(): string {
@@ -145,6 +151,12 @@ export function initializeAnalytics(
 	if ( 'object' === typeof currentUser ) {
 		debug( 'identifyUser', currentUser );
 		identifyUser( currentUser );
+	}
+
+	const tracksLinkerId = getUrlParameter( '_tkl' );
+	if ( tracksLinkerId && tracksLinkerId !== getTracksAnonymousUserId() ) {
+		// Link tk_ai anonymous ids if _tkl parameter is present in URL and ids between pages are different (e.g. cross-domain)
+		signalUserFromAnotherProduct( tracksLinkerId, 'anon' );
 	}
 
 	// Tracks blocked?
@@ -171,17 +183,40 @@ export function identifyUser( userData: any ): any {
 	pushEventToTracksQueue( [ 'identifyUser', currentUser.ID, currentUser.username ] );
 }
 
+/**
+ * For tracking users between our products, generally passing the id via a request parameter.
+ *
+ * Use 'anon' for userIdType for anonymous users.
+ */
+export function signalUserFromAnotherProduct( userId: string, userIdType: string ): any {
+	debug( 'Tracks signalUserFromAnotherProduct.', userId, userIdType );
+	pushEventToTracksQueue( [ 'signalAliasUserGeneral', userId, userIdType ] );
+}
+
 export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 	eventProperties = eventProperties || {};
 
+	const currentUser = getCurrentUser();
+
+	if ( currentUser?.localeSlug ) {
+		eventProperties[ 'user_lang' ] = currentUser.localeSlug;
+	}
+
+	const trackingPrefs = getTrackingPrefs();
+	if ( ! trackingPrefs?.buckets.analytics ) {
+		debug(
+			'Analytics has been disabled - Ignoring event "%s" with actual props %o',
+			eventName,
+			eventProperties
+		);
+		return;
+	}
+
 	if ( process.env.NODE_ENV !== 'production' && typeof console !== 'undefined' ) {
-		if (
-			! /^calypso(?:_[a-z0-9]+){2,}$/.test( eventName ) &&
-			! includes( EVENT_NAME_EXCEPTIONS, eventName )
-		) {
+		if ( ! isValidEventName( eventName ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
 			// eslint-disable-next-line no-console
 			console.error(
-				'Tracks: Event `%s` will be ignored because it does not match /^calypso(?:_[a-z0-9]+){2,}$/ and is ' +
+				'Tracks: Event `%s` will be ignored because it does not match with the naming convention and is ' +
 					'not a listed exception. Please use a compliant event name.',
 				eventName
 			);
@@ -221,8 +256,8 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	debug( 'Record event "%s" called with props %o', eventName, eventProperties );
 
-	if ( ! eventName.startsWith( 'calypso_' ) && ! includes( EVENT_NAME_EXCEPTIONS, eventName ) ) {
-		debug( '- Event name must be prefixed by "calypso_" or added to `EVENT_NAME_EXCEPTIONS`' );
+	if ( ! isValidEventSource( eventName ) && ! EVENT_NAME_EXCEPTIONS.includes( eventName ) ) {
+		debug( '- Event name must be prefixed by a known source or added to `EVENT_NAME_EXCEPTIONS`' );
 		return;
 	}
 
@@ -233,12 +268,32 @@ export function recordTracksEvent( eventName: string, eventProperties?: any ) {
 
 	// Remove properties that have an undefined value
 	// This allows a caller to easily remove properties from the recorded set by setting them to undefined
-	eventProperties = omitBy( eventProperties, ( prop ) => typeof prop === 'undefined' );
+	eventProperties = Object.fromEntries(
+		Object.entries( eventProperties ).filter( ( [ , val ] ) => typeof val !== 'undefined' )
+	);
 
 	debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 	pushEventToTracksQueue( [ 'recordEvent', eventName, eventProperties ] );
 	analyticsEvents.emit( 'record-event', eventName, eventProperties );
+}
+
+/**
+ * Checks if the event name follows the Tracks naming convention.
+ */
+function isValidEventName( eventName: string ): boolean {
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+		new RegExp( `^${ eventSource }(?:_[a-z0-9]+){2,}$` ).test( eventName )
+	);
+}
+
+/**
+ * Checks if the event name has a valid source prefix.
+ */
+function isValidEventSource( eventName: string ): boolean {
+	return ALLOWED_EVENT_SOURCES.some( ( eventSource: string ): boolean =>
+		eventName.startsWith( `${ eventSource }_` )
+	);
 }
 
 export function recordTracksPageView( urlPath: string, params: any ) {
@@ -260,16 +315,21 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 		eventProperties = Object.assign( eventProperties, params );
 	}
 
-	// Record all `utm` marketing parameters as event properties on the page view event
+	// Record some query parameters as event properties on the page view event
 	// so we can analyze their performance with our analytics tools
 	if ( typeof window !== 'undefined' && window.location ) {
 		const urlParams = new URL( window.location.href ).searchParams;
+
+		// Record all `utm` marketing params.
 		const utmParamEntries =
 			urlParams &&
 			Array.from( urlParams.entries() ).filter( ( [ key ] ) => key.startsWith( 'utm_' ) );
 		const utmParams = utmParamEntries ? Object.fromEntries( utmParamEntries ) : {};
 
-		eventProperties = Object.assign( eventProperties, utmParams );
+		// Record the 'ref' param.
+		const refParam = urlParams && urlParams.get( 'ref' ) ? { ref: urlParams.get( 'ref' ) } : {};
+
+		eventProperties = Object.assign( eventProperties, { ...utmParams, ...refParam } );
 	}
 
 	recordTracksEvent( 'calypso_page_view', eventProperties );
@@ -278,4 +338,24 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 export function recordTracksPageViewWithPageParams( urlPath: string, params?: any ) {
 	const pageViewParams = getPageViewParams( urlPath );
 	recordTracksPageView( urlPath, Object.assign( params || {}, pageViewParams ) );
+}
+
+export function getGenericSuperPropsGetter( config: ( key: string ) => string ) {
+	return () => {
+		const superProps = {
+			environment: process.env.NODE_ENV,
+			environment_id: config( 'env_id' ),
+			site_id_label: 'wpcom',
+			client: config( 'client_slug' ),
+		};
+
+		if ( typeof window !== 'undefined' ) {
+			Object.assign( superProps, {
+				vph: window.innerHeight,
+				vpw: window.innerWidth,
+			} );
+		}
+
+		return superProps;
+	};
 }

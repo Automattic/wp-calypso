@@ -3,31 +3,17 @@ import { dispatch } from '@wordpress/data';
 import { getQueryArgs } from '@wordpress/url';
 import { isEditorReady } from '../../utils';
 
-const { url, title, text, image, embed } = getQueryArgs( window.location.href );
+const { url, title, text, comment_content, comment_author } = getQueryArgs( window.location.href );
 
 if ( url ) {
 	( async () => {
 		// Wait for the editor to be initialized and the core blocks registered.
 		await isEditorReady();
 
-		const link = `<a href="${ url }">${ title }</a>`;
-
 		const blocks = [];
 
-		if ( embed ) {
-			blocks.push( createBlock( 'core/embed', { url: embed } ) );
-		}
-
-		if ( image ) {
-			blocks.push(
-				createBlock( 'core/image', {
-					url: image,
-					caption: text ? '' : link,
-				} )
-			);
-		}
-
-		if ( text ) {
+		if ( text && text !== title ) {
+			const link = `<a href="${ url }">${ title }</a>`;
 			blocks.push(
 				createBlock( 'core/quote', {
 					value: `<p>${ text }</p>`,
@@ -36,7 +22,13 @@ if ( url ) {
 			);
 		}
 
+		if ( comment_content ) {
+			blocks.push(
+				createBlock( 'core/quote', { value: comment_content, citation: comment_author } )
+			);
+		}
+		blocks.push( createBlock( 'core/embed', { url, type: 'wp-embed' } ) );
+
 		dispatch( 'core/editor' ).resetEditorBlocks( blocks );
-		dispatch( 'core/editor' ).editPost( { title: title } );
 	} )();
 }

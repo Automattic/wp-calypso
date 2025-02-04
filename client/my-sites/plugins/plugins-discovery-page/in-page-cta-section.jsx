@@ -144,7 +144,7 @@ const InPageCTASection = () => {
 						'Build your site. Sell your stuff. Start your blog. This and much more with unlimited plugins!'
 					)
 				) }
-				dark={ true }
+				dark
 			>
 				<Button
 					className="is-primary marketplace-cta in-page-cta"

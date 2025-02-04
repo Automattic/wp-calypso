@@ -1,9 +1,8 @@
 import { get } from 'lodash';
 /**
  * Returns true if site is a WP for Teams site, false if not and null if unknown
- *
- * @param  {Object}   state  Global state tree
- * @param  {number}   siteId Site ID
+ * @param  {Object|unknown}   state  Global state tree
+ * @param  {number|null}   siteId Site ID
  * @returns {?boolean}        Whether site is a WP for Teams site
  */
 export default function isSiteWPForTeams( state, siteId ) {

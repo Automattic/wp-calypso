@@ -34,7 +34,7 @@ class VideoEditorExample extends Component {
 					} }
 				>
 					<h4>Changes to the poster above are shown below</h4>
-					{ this.state.posterUrl && <img src={ this.state.posterUrl } /> }
+					{ this.state.posterUrl && <img src={ this.state.posterUrl } alt="poster" /> }
 				</div>
 			</div>
 		);

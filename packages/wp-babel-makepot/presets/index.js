@@ -1,9 +1,9 @@
 const path = require( 'path' );
+const decoratorsPreset = require( './decorators' );
 const defaultPreset = require( './default' );
 
 /**
  * Extend babel base options.
- *
  * @param   {Object} options         Babel options
  * @param   {Array}  options.presets Babel presets
  * @param   {Array}  options.plugins Babel plugins
@@ -29,6 +29,7 @@ const extendBaseOptions = ( { presets = [], plugins = [], ...rest } ) => ( {
 
 const presets = {
 	default: extendBaseOptions( defaultPreset ),
+	decorators: extendBaseOptions( decoratorsPreset ),
 };
 
 module.exports = presets;

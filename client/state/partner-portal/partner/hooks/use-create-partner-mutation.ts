@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { APIError, APIPartner, PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 
@@ -10,6 +10,9 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 			name: details.name,
 			contact_person: details.contactPerson,
 			company_website: details.companyWebsite,
+			company_type: details.companyType,
+			managed_sites: details.managedSites,
+			partner_program_opt_in: details.partnerProgramOptIn,
 			city: details.city,
 			line1: details.line1,
 			line2: details.line2,
@@ -17,6 +20,7 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 			postal_code: details.postalCode,
 			state: details.state,
 			tos: details.tos,
+			referrer: details.referrer,
 		},
 	} );
 }
@@ -24,8 +28,8 @@ function createPartner( details: PartnerDetailsPayload ): Promise< APIPartner > 
 export default function useCreatePartnerMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, APIError, PartnerDetailsPayload, TContext >
 ): UseMutationResult< APIPartner, APIError, PartnerDetailsPayload, TContext > {
-	return useMutation< APIPartner, APIError, PartnerDetailsPayload, TContext >(
-		createPartner,
-		options
-	);
+	return useMutation< APIPartner, APIError, PartnerDetailsPayload, TContext >( {
+		...options,
+		mutationFn: createPartner,
+	} );
 }

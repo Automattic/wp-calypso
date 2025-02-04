@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import AddMailboxes from 'calypso/my-sites/email/add-mailboxes';
@@ -11,23 +11,24 @@ import EmailProvidersInDepthComparison from 'calypso/my-sites/email/email-provid
 import { castIntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailProvidersStackedComparison from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import InboxManagement from 'calypso/my-sites/email/inbox';
+import MailboxesManagement from 'calypso/my-sites/email/mailboxes';
 import * as paths from 'calypso/my-sites/email/paths';
 import TitanSetUpMailbox from 'calypso/my-sites/email/titan-set-up-mailbox';
-import TitanSetUpThankYou from 'calypso/my-sites/email/titan-set-up-thank-you';
 
 export default {
 	emailManagementAddEmailForwards( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementAddEmailForwards( ':site', ':domain' ) }
+					path={ paths.getAddEmailForwardsPath( ':site', ':domain' ) }
 					title="Email Management > Add Email Forwards"
 				/>
 
 				<EmailForwardsAdd
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showFormHeader={ pageContext.params.showFormHeader }
+					showPageHeader={ pageContext.params.showPageHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -39,7 +40,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementAddGSuiteUsers( ':site', ':domain', ':productType' ) }
+					path={ paths.getAddGSuiteUsersPath( ':site', ':domain', ':productType' ) }
 					title="Email Management > Add Google Users"
 				/>
 
@@ -58,7 +59,7 @@ export default {
 		pageContext.primary = (
 			<>
 				<PageViewTracker
-					path={ paths.emailManagementManageTitanAccount( ':site', ':domain' ) }
+					path={ paths.getManageTitanAccountPath( ':site', ':domain' ) }
 					title="Email Management > Titan > Manage Account"
 				/>
 
@@ -76,7 +77,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementManageTitanMailboxes( ':site', ':domain' ) }
+					path={ paths.getManageTitanMailboxesPath( ':site', ':domain' ) }
 					title="Email Management > Titan > Manage All Mailboxes"
 				/>
 
@@ -94,7 +95,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementNewTitanAccount( ':site', ':domain' ) }
+					path={ paths.getNewTitanAccountPath( ':site', ':domain' ) }
 					title="Email Management > Add Titan Mailboxes"
 				/>
 
@@ -102,6 +103,9 @@ export default {
 					provider={ EmailProvider.Titan }
 					selectedDomainName={ pageContext.params.domain }
 					source={ pageContext.query.source }
+					showPageHeader={ pageContext?.params?.showPageHeader }
+					showFormHeader={ pageContext?.params?.showFormHeader }
+					customFormHeader={ pageContext?.params?.customFormHeader }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -113,7 +117,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementTitanSetUpMailbox( ':site', ':domain' ) }
+					path={ paths.getTitanSetUpMailboxPath( ':site', ':domain' ) }
 					title="Email Management > Set Up Titan Mailbox"
 				/>
 
@@ -131,7 +135,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementPurchaseNewEmailAccount( ':site', ':domain' ) }
+					path={ paths.getPurchaseNewEmailAccountPath( ':site', ':domain' ) }
 					title="Email Comparison"
 					properties={ {
 						source: pageContext.query.source,
@@ -157,7 +161,7 @@ export default {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagementInDepthComparison(
+					path={ paths.getEmailInDepthComparisonPath(
 						':site',
 						':domain',
 						null,
@@ -171,6 +175,7 @@ export default {
 					selectedDomainName={ pageContext.params.domain }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 					source={ pageContext.query.source }
+					showBackButton={ pageContext.params.showBackButton }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -190,40 +195,27 @@ export default {
 		next();
 	},
 
-	emailManagementTitanSetUpThankYou( pageContext, next ) {
-		pageContext.primary = (
-			<>
-				<PageViewTracker
-					path={ paths.emailManagementTitanSetUpThankYou( ':site', ':domain' ) }
-					title="Checkout > Purchased Titan mailbox"
-				/>
-
-				<TitanSetUpThankYou
-					containerClassName="titan-set-up-thank-you__container_wrapped"
-					domainName={ pageContext.params.domain }
-					emailAddress={ pageContext.query.email }
-				/>
-			</>
-		);
-
-		next();
-	},
-
 	emailManagementForwardingRedirect( pageContext ) {
-		page.redirect( paths.emailManagement( pageContext.params.site, pageContext.params.domain ) );
+		page.redirect(
+			paths.getEmailManagementPath( pageContext.params.site, pageContext.params.domain )
+		);
 	},
 
 	emailManagement( pageContext, next ) {
 		pageContext.primary = (
 			<CalypsoShoppingCartProvider>
 				<PageViewTracker
-					path={ paths.emailManagement( ':site', pageContext.params.domain ? ':domain' : null ) }
+					path={ paths.getEmailManagementPath(
+						':site',
+						pageContext.params.domain ? ':domain' : null
+					) }
 					title="Email Home"
 					properties={ { source: pageContext.query.source } }
 				/>
 
 				<EmailHome
 					source={ pageContext.query.source }
+					context={ pageContext.section.name }
 					selectedDomainName={ pageContext.params.domain }
 					selectedEmailProviderSlug={ pageContext.query.provider }
 					selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
@@ -234,11 +226,11 @@ export default {
 		next();
 	},
 
-	emailManagementInbox( pageContext, next ) {
+	emailManagementMailboxes( pageContext, next ) {
 		pageContext.primary = (
-			// Defer PageViewTracker to `InboxManagement` component, since we track different page
+			// Defer PageViewTracker to `MailboxesManagement` component, since we track different page
 			// view contexts depending on a few parameters
-			<InboxManagement
+			<MailboxesManagement
 				selectedIntervalLength={ castIntervalLength( pageContext.query.interval ) }
 			/>
 		);

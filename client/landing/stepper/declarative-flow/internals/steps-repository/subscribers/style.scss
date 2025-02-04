@@ -1,0 +1,70 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/components/src/styles/typography";
+
+@import "../style";
+.subscribers {
+	.add-subscriber__title-container {
+		margin: 20px 0 40px 0 !important;
+
+		@include break-small {
+			margin: 36px auto 58px auto !important;
+		}
+	}
+	.step-container.subscribers {
+		.subscribers {
+			padding-top: 0;
+		}
+		padding: 0 1.5rem;
+
+		.add-subscriber__title-container,
+		.add-subscriber__form--container {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		.add-subscriber .add-subscriber__title-container {
+			text-align: center;
+
+			.onboarding-subtitle {
+				margin-bottom: 1.5rem;
+				font-size: rem(16px); //typography-exception
+				line-height: rem(24px); //typography-exception
+			}
+		}
+
+		.add-subscriber .add-subscriber__form--container {
+			max-width: 368px;
+		}
+
+		.add-subscriber__form--container {
+			input {
+				&::placeholder {
+					color: var(--studio-gray-30);
+				}
+			}
+		}
+
+		.add-subscriber__form-submit-btn {
+			display: block;
+			width: 100%;
+			margin: 2rem 0;
+			&:disabled {
+				color: var(--studio-white);
+			}
+		}
+
+		.add-subscriber__form-skip-link-wrapper {
+			justify-content: center;
+			.add-subscriber__form-skip-link {
+				color: var(--studio-blue-50);
+			}
+		}
+
+		.add-subscriber__form--container .form-input-validation.is-error.is-file-validation {
+			background-color: var(--studio-gray-0);
+			padding: 16px;
+			padding-inline-start: 3.5rem;
+			padding-inline-end: 3.25;
+		}
+	}
+}

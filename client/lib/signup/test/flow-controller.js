@@ -4,7 +4,7 @@
 
 import { size } from 'lodash';
 import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { thunk } from 'redux-thunk';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import signupReducer from 'calypso/state/signup/reducer';
@@ -17,6 +17,11 @@ jest.mock( 'calypso/signup/config/flows-pure', () =>
 );
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/lib/logstash', () => {
+	return {
+		logToLogstash: jest.fn(),
+	};
+} );
 
 function createSignupStore( initialState ) {
 	return createStore(

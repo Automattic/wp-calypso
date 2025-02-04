@@ -1,9 +1,7 @@
-@import "calypso/my-sites/stats/theme-override-mixin.scss";
+@import "calypso/my-sites/stats/theme-override-mixin";
 
 .stats .customer-home__card.stats__with-chart {
 	box-shadow: none;
-	border-bottom: none;
-	margin-bottom: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		padding: 16px 24px 0;
@@ -11,7 +9,7 @@
 	}
 }
 
-.stats .chart {
+.stats .customer-home__card .chart {
 	margin: 0 -16px;
 	background: none;
 
@@ -54,7 +52,7 @@
 	}
 }
 
-.stats .inline-support-link {
+.stats .customer-home__card .inline-support-link {
 	margin-left: 4px;
 
 	&:focus-visible {
@@ -91,13 +89,13 @@
 	flex-direction: column;
 
 	&:first-child {
-		border-top-left-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-top-left-radius: 3px;
 	}
 
 	&:last-child {
 		padding-right: 24px;
 		border-right: 1px solid var(--color-neutral-5);
-		border-top-right-radius: 3px; /* stylelint-disable-line scales/radii */
+		border-top-right-radius: 3px;
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -112,7 +110,7 @@
 			border-bottom: none;
 		}
 		&:nth-child(2) {
-			border-top-right-radius: 3px; /* stylelint-disable-line scales/radii */
+			border-top-right-radius: 3px;
 			border-right: 1px solid var(--color-neutral-5);
 		}
 	}
@@ -147,8 +145,8 @@
 .stats__all {
 	margin: 0 -24px;
 	border-top: none;
-	border-bottom-left-radius: 3px; /* stylelint-disable-line scales/radii */
-	border-bottom-right-radius: 3px; /* stylelint-disable-line scales/radii */
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 	@include breakpoint-deprecated( ">660px" ) {
 		border: 1px solid var(--color-neutral-5);
 	}
@@ -166,5 +164,26 @@
 	&:focus {
 		background: var(--color-primary);
 		color: var(--color-text-inverted);
+	}
+}
+
+.layout__primary .customer-home__layout-col-right {
+	.stats__data-item {
+		width: 50%;
+		text-align: left;
+		font-size: rem(14px);
+		padding: 14px;
+
+		&:nth-child(1),
+		&:nth-child(2) {
+			border-bottom: none;
+		}
+		&:nth-child(2) {
+			border-right: 1px solid var(--color-neutral-5);
+		}
+	}
+
+	.stats__all-link {
+		padding: 14px;
 	}
 }

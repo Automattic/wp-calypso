@@ -1,61 +1,74 @@
+import { isEnabled } from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Gridicon } from '@automattic/components';
+import { Badge, Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-import page from 'page';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useCallback, useEffect, useState, useContext } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
+import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
+import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
-import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import {
+	LicenseState,
+	LicenseFilter,
+	LicenseType,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { addQueryArgs } from 'calypso/lib/url';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import BundleDetails from '../license-details/bundle-details';
+import LicenseActions from './license-actions';
+import LicenseBundleDropDown from './license-bundle-dropdown';
+
 import './style.scss';
 
 interface Props {
 	licenseKey: string;
 	product: string;
-	username: string | null;
 	blogId: number | null;
 	siteUrl: string | null;
+	hasDownloads: boolean;
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
-	filter: LicenseFilter;
+	licenseType: LicenseType;
+	parentLicenseId?: number | null;
+	quantity?: number | null;
+	isChildLicense?: boolean;
 }
 
 export default function LicensePreview( {
 	licenseKey,
 	product,
-	username,
 	blogId,
 	siteUrl,
+	hasDownloads,
 	issuedAt,
 	attachedAt,
 	revokedAt,
-	filter,
+	licenseType,
+	parentLicenseId,
+	quantity,
+	isChildLicense,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const { filter } = useContext( LicenseListContext );
+
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
 	const [ isOpen, setOpen ] = useState( isHighlighted );
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
-	const showDomain =
-		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
 
-	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
-
-	const justIssued = moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
-
-	const justAssigned = moment.utc( attachedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
+	const site = useSelector( ( state ) => getSite( state, blogId as number ) );
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -102,63 +115,86 @@ export default function LicensePreview( {
 		}
 	}, [] );
 
+	const isSiteAtomic =
+		isEnabled( 'jetpack/pro-dashboard-wpcom-atomic-hosting' ) && site?.is_wpcom_atomic;
+
+	const isParentLicense = quantity && parentLicenseId;
+
+	const bundleCountContent = quantity && (
+		<Badge className="license-preview__license-count" type="info">
+			{ translate( '%(quantity)d License Bundle', {
+				context: 'bundle license count',
+				args: {
+					quantity,
+				},
+			} ) }
+		</Badge>
+	);
+
 	return (
 		<div
-			className={ classnames( {
+			className={ clsx( {
 				'license-preview': true,
-				'license-preview--is-open': isOpen,
+				'license-preview--is-open': isOpen && ! isChildLicense,
 			} ) }
 		>
 			<LicenseListItem
-				className={ classnames( {
+				className={ clsx( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
 					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,
+					'license-preview__card--child-license': isChildLicense,
 				} ) }
 			>
 				<div>
-					<h3 className="license-preview__domain">
-						{ showDomain && <span>{ domain }</span> }
-
-						{ licenseState === LicenseState.Detached && (
-							<span className="license-preview__tag license-preview__tag--is-detached">
-								<Gridicon icon="info-outline" size={ 18 } />
-								{ translate( 'Unassigned' ) }
-							</span>
-						) }
-
-						{ licenseState === LicenseState.Revoked && (
-							<span className="license-preview__tag license-preview__tag--is-revoked">
-								<Gridicon icon="block" size={ 18 } />
-								{ translate( 'Revoked' ) }
-							</span>
-						) }
-
-						{ justIssued && ! justAssigned && (
-							<span className="license-preview__tag license-preview__tag--is-just-issued">
-								<Gridicon icon="checkmark-circle" size={ 18 } />
-								{ translate( 'Just issued' ) }
-							</span>
-						) }
-
-						{ justAssigned && (
-							<span className="license-preview__tag license-preview__tag--is-assigned">
-								<Gridicon icon="checkmark-circle" size={ 18 } />
-								{ translate( 'Successfully assigned' ) }
-							</span>
-						) }
-					</h3>
-
-					<span className="license-preview__product">
-						<span>{ translate( 'Product:' ) } </span>
-						{ product }
-					</span>
+					<span className="license-preview__product">{ product }</span>
 				</div>
 
 				<div>
-					<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+					{ quantity ? (
+						<div className="license-preview__bundle">
+							<Gridicon icon="minus" className="license-preview__no-value" />
+							<div className="license-preview__product-small">{ product }</div>
+							<div>{ bundleCountContent }</div>
+						</div>
+					) : (
+						<>
+							<div className="license-preview__product-small">{ product }</div>
+							{ domain }
+							{ ! domain && licenseState === LicenseState.Detached && (
+								<span>
+									<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
+									{ licenseType === LicenseType.Partner && (
+										<Button
+											className="license-preview__assign-button"
+											borderless
+											compact
+											onClick={ assign }
+										>
+											{ translate( 'Assign' ) }
+										</Button>
+									) }
+								</span>
+							) }
+							{ revokedAt && (
+								<span>
+									<Badge type="error">{ translate( 'Revoked' ) }</Badge>
+								</span>
+							) }
+						</>
+					) }
+				</div>
 
-					<FormattedDate date={ issuedAt } format="YYYY-MM-DD" />
+				<div>
+					{ quantity ? (
+						<Gridicon icon="minus" className="license-preview__no-value" />
+					) : (
+						<>
+							<div className="license-preview__label">{ translate( 'Issued on:' ) }</div>
+
+							<FormattedDate date={ issuedAt } format="YYYY-MM-DD" />
+						</>
+					) }
 				</div>
 
 				{ filter !== LicenseFilter.Revoked ? (
@@ -187,34 +223,58 @@ export default function LicensePreview( {
 					</div>
 				) }
 
+				<div className="license-preview__badge-container">
+					{ isParentLicense
+						? bundleCountContent
+						: LicenseType.Standard === licenseType && (
+								<Badge type="success">{ translate( 'Standard license' ) }</Badge>
+						  ) }
+				</div>
+
 				<div>
-					{ licenseState === LicenseState.Detached && (
-						<Button compact onClick={ assign }>
-							{ translate( 'Assign License' ) }
+					{ isParentLicense && (
+						<LicenseBundleDropDown
+							product={ product }
+							licenseKey={ licenseKey }
+							bundleSize={ quantity }
+						/>
+					) }
+					{ isSiteAtomic ? (
+						<LicenseActions
+							siteUrl={ siteUrl }
+							licenseKey={ licenseKey }
+							product={ product }
+							attachedAt={ attachedAt }
+							revokedAt={ revokedAt }
+							licenseType={ licenseType }
+							isChildLicense={ isChildLicense }
+						/>
+					) : (
+						<Button onClick={ open } className="license-preview__toggle" borderless>
+							<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
 						</Button>
 					) }
 				</div>
-
-				<div>
-					<Button onClick={ open } className="license-preview__toggle" borderless>
-						<Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } />
-					</Button>
-				</div>
 			</LicenseListItem>
 
-			{ isOpen && (
-				<LicenseDetails
-					licenseKey={ licenseKey }
-					product={ product }
-					siteUrl={ siteUrl }
-					username={ username }
-					blogId={ blogId }
-					issuedAt={ issuedAt }
-					attachedAt={ attachedAt }
-					revokedAt={ revokedAt }
-					onCopyLicense={ onCopyLicense }
-				/>
-			) }
+			{ isOpen &&
+				( isParentLicense ? (
+					<BundleDetails parentLicenseId={ parentLicenseId } />
+				) : (
+					<LicenseDetails
+						licenseKey={ licenseKey }
+						product={ product }
+						siteUrl={ siteUrl }
+						blogId={ blogId }
+						hasDownloads={ hasDownloads }
+						issuedAt={ issuedAt }
+						attachedAt={ attachedAt }
+						revokedAt={ revokedAt }
+						onCopyLicense={ onCopyLicense }
+						licenseType={ licenseType }
+						isChildLicense={ isChildLicense }
+					/>
+				) ) }
 		</div>
 	);
 }

@@ -1,6 +1,5 @@
 /**
  * Merges multiple lodash imports into a single statement
- *
  * @example
  * // input
  * import { zip } from 'lodash';

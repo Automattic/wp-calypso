@@ -5,7 +5,6 @@ import 'calypso/state/timezones/init';
  * Each element is has the shape `[ value ]: label`.
  * The `value` is the timezone-value used to data processing,
  * and the `label` is the value used for the UI.
- *
  * @param  {Object} state - Global state tree
  * @returns {Object} An object of timezones labels
  */

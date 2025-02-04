@@ -7,7 +7,6 @@ import './setup';
 
 /**
  * Records the anonymous user id and wpcom user id in DCM Floodlight
- *
  * @returns {void}
  */
 export function recordAliasInFloodlight() {

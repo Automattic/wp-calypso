@@ -1,0 +1,64 @@
+.reader-sidebar-recent {
+	$recent-font-size: 13px;
+	$recent-line-height: 1.5;
+	$recent-item-padding-x: 18px;
+	$recent-item-padding-y: 6px;
+	$recent-site-icon-size: 16px;
+	$recent-item-gap: 8px;
+
+	&__item {
+		width: 100%;
+		cursor: pointer;
+		text-align: left;
+		display: grid;
+		grid-template-columns: $recent-site-icon-size 1fr auto;
+		gap: $recent-item-gap;
+		align-items: center;
+		padding: $recent-item-padding-y $recent-item-padding-x;
+		font-size: $recent-font-size;
+		line-height: $recent-line-height;
+
+		&:hover {
+			background-color: var( --color-sidebar-menu-hover-background );
+		}
+
+		&--selected {
+			font-weight: 700;
+		}
+
+		&--without-icon {
+			padding-left: $recent-item-padding-x + $recent-site-icon-size + $recent-item-gap; // 15px + 16px + 8px;
+			grid-template-columns: 1fr auto;
+		}
+	}
+
+	&__site {
+		&-name {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		&-icon {
+			border-radius: 50%;
+			width: $recent-site-icon-size;
+			height: $recent-site-icon-size;
+		}
+
+		&-count {
+			font-size: $recent-font-size;
+			font-weight: 400;
+			margin-right: 6px; // To get alignment with menu chevron icon; bleh
+		}
+	}
+
+	&__view-more {
+		color: var( --color-link );
+		text-decoration: underline;
+		padding-bottom: $recent-item-padding-y * 2;
+	}
+
+	&.sidebar__menu--selected:not( :hover ) path {
+		fill: var( --color-sidebar-gridicon-selected-fill ) !important;
+	}
+}

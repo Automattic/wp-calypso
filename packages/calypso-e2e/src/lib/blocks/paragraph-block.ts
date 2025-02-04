@@ -1,9 +1,5 @@
 import { Page, ElementHandle } from 'playwright';
 
-const selectors = {
-	block: 'p',
-};
-
 /**
  * Represents the Paragraph block.
  */
@@ -27,8 +23,12 @@ export class ParagraphBlock {
 	 *
 	 * @param {string} text Text to be entered into the paragraph.
 	 */
-	async enterParagraph( text: string ): Promise< void > {
-		await this.block.fill( text );
+	async enterParagraph( text: string, { type }: { type?: boolean } = {} ): Promise< void > {
+		if ( type ) {
+			await this.block.type( text );
+		} else {
+			await this.block.fill( text );
+		}
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class ParagraphBlock {
 		contents: ( string | number )[]
 	): Promise< void > {
 		for await ( const content of contents ) {
-			await page.waitForSelector( `${ selectors.block }:text("${ content.toString() }")` );
+			await page.locator( `:text("${ content.toString() }"):visible` ).waitFor();
 		}
 	}
 }

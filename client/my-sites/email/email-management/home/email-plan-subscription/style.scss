@@ -1,0 +1,52 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.email-plan-subscription__card.card.is-compact {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+
+	@include break-small {
+		flex-wrap: initial;
+	}
+
+	&.email-plan-subscription__placeholder {
+		div {
+			@include placeholder( --color-neutral-5 );
+			margin: 0 auto;
+			width: 150px;
+			height: 28px;
+		}
+	}
+
+	.email-plan-subscription__description {
+		font-size: $font-body-small;
+
+		&.email-plan-subscription__description--expired {
+			color: var(--color-error-50);
+		}
+	}
+
+	.email-plan-subscription__renew {
+		margin-left: auto;
+		margin-right: 16px;
+
+		@include break-small {
+			flex: 1 1 auto;
+			margin-left: 16px;
+		}
+	}
+
+	.email-plan-subscription__auto-renew {
+		/* Ensure auto-renew text is using the standard font size */
+		label {
+			font-size: $font-body;
+		}
+
+		/* vertically aligns the auto-renew toggle - not sure if there's a better way... */
+		> div > div {
+			margin-top: auto;
+			margin-bottom: auto;
+		}
+	}
+}

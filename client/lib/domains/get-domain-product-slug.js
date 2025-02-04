@@ -4,7 +4,7 @@ export function getDomainProductSlug( domain ) {
 	const tld = getTld( domain );
 	const tldSlug = tld.replace( /\./g, 'dot' );
 
-	if ( [ 'com', 'net', 'org' ].includes( tldSlug ) ) {
+	if ( 'com' === tldSlug ) {
 		return 'domain_reg';
 	}
 

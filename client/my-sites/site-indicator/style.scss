@@ -106,10 +106,7 @@
 
 	// Links within the action message
 	a:link,
-	a.is-borderless.button:hover,
-	a:visited,
-	.button.is-borderless.is-scary,
-	.site-indicator__action-button {
+	a:visited {
 		color: var(--color-text-inverted);
 		text-decoration: underline;
 	}
@@ -121,11 +118,8 @@
 	}
 
 	> span {
-		display: flex;
-		flex-direction: column;
-
-		.button.is-borderless.is-scary {
-			align-self: baseline;
+		.button-plain {
+			margin-left: 0.5em;
 		}
 	}
 }

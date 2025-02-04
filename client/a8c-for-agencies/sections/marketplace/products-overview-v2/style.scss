@@ -1,0 +1,103 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../variables";
+@import "../shared";
+
+$header-height: 300px;
+$header-height-mobile: 350px;
+$header-compact-height: 114px;
+$header-compact-height-mobile: 128px;
+$action-panel-height: 72px;
+$action-panel-height-mobile: 128px;
+
+.products-overview-v2.main.hosting-dashboard-layout {
+	.hosting-dashboard-layout__container {
+		height: auto;
+		overflow-y: scroll;
+		display: block;
+	}
+
+	.hosting-dashboard-layout__top-wrapper {
+		max-height: auto;
+		background: url( calypso/assets/images/a8c-for-agencies/marketplace-hosting-page-v3-bg.svg ) no-repeat top right $header-background-color;
+        border-block-end: none;
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		overflow: hidden;
+		transition: height .25s ease-out;
+		box-sizing: border-box;
+		height: $header-height-mobile;
+
+		@include break-medium {
+			height: $header-height;
+		}
+    }
+
+	.hosting-dashboard-layout__header > * {
+		z-index: 10;
+	}
+
+	.hosting-dashboard-layout__header-breadcrumb {
+		color: var(--color-neutral-40);
+		fill: var(--color-neutral-40);
+
+		a {
+			color: var(--color-primary-5);
+		}
+	}
+
+	.hosting-dashboard-layout__header-actions {
+		background-color: var(--color-surface);
+		border-radius: 8px; /* stylelint-disable-line */
+		padding: 8px 16px;
+
+		.shopping-cart {
+			margin: 0;
+		}
+	}
+
+	.components-button:is(.is-primary, .is-secondary) {
+		min-height: 40px;
+	}
+
+	.product-category-menu {
+		opacity: 1;
+		transition: opacity .25s ease-out;
+	}
+
+	.product-action-panel {
+		position: sticky;
+		top: $header-compact-height-mobile;
+		z-index: 2;
+
+		@include break-medium {
+			top: $header-compact-height;
+		}
+	}
+
+	.product-listing-section__header-wrapper {
+		position: sticky;
+		padding-block: 16px;
+
+		top: calc( $header-compact-height-mobile + $action-panel-height-mobile );
+
+		@include break-medium {
+			top: calc( $header-compact-height + $action-panel-height );
+		}
+	}
+}
+
+.products-overview-v2.main.hosting-dashboard-layout.is-compact {
+	.hosting-dashboard-layout__top-wrapper {
+		height: $header-compact-height-mobile;
+
+		@include break-medium {
+			height: $header-compact-height;
+		}
+	}
+
+	.product-category-menu {
+		opacity: 0;
+	}
+}

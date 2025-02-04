@@ -1,5 +1,5 @@
 import { TERM_MONTHLY } from '@automattic/calypso-products';
-import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
@@ -9,7 +9,10 @@ interface TimeFrameProps {
 	expiryDate?: Moment;
 	billingTerm: Duration;
 	discountedPriceDuration?: number;
+	discountPercentage?: number;
 	formattedOriginalPrice?: string;
+	isDiscounted?: boolean;
+	finalPrice?: number;
 }
 
 interface RegularTimeFrameProps {
@@ -18,6 +21,10 @@ interface RegularTimeFrameProps {
 
 interface ExpiringDateTimeFrameProps {
 	productExpiryDate: Moment;
+}
+
+interface OneYearDiscountTimeFrameProps {
+	discountPercentage: number;
 }
 
 interface PartialDiscountTimeFrameProps {
@@ -30,6 +37,10 @@ interface A11yProps {
 	forScreenReader?: boolean;
 }
 
+interface YearlyFreeTrialMonthTimeFrameProps extends A11yProps {
+	formattedOriginalPrice: string;
+}
+
 const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 	billingTerm,
 	forScreenReader,
@@ -39,7 +50,7 @@ const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 	const billingTermText = useMemo( () => {
 		if ( billingTerm === TERM_MONTHLY ) {
 			return {
-				normal: translate( '/month, billed monthly' ),
+				normal: translate( 'per month, billed monthly' ),
 				compact: translate( '/mo, billed monthly', {
 					comment: '/mo should be as compact as possible',
 				} ),
@@ -47,7 +58,7 @@ const RegularTimeFrame: React.FC< RegularTimeFrameProps & A11yProps > = ( {
 		}
 
 		return {
-			normal: translate( '/month, billed yearly' ),
+			normal: translate( 'per month, billed yearly' ),
 			compact: translate( '/mo, billed yearly', {
 				comment: '/mo should be as compact as possible',
 			} ),
@@ -108,43 +119,61 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 
 	/* eslint-disable wpcalypso/i18n-mismatched-placeholders */
 	if ( billingTerm === TERM_MONTHLY ) {
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed monthly' )
-		) {
-			text = translate(
-				'for the first month, then %(original_price)s /month, billed monthly',
-				'for the first %(months)d months, then %(original_price)s /month, billed monthly',
-				opts
-			);
-		} else {
-			text = translate(
-				'for the first month, billed monthly',
-				'for the first %(months)d months, billed monthly',
-				opts
-			);
-		}
+		text = translate(
+			'for the first month, then %(original_price)s /month, billed monthly',
+			'for the first %(months)d months, then %(original_price)s /month, billed monthly',
+			opts
+		);
 	} else {
 		// eslint-disable-next-line no-lonely-if
-		if (
-			getLocaleSlug() === 'en' ||
-			getLocaleSlug() === 'en-gb' ||
-			i18n.hasTranslation( 'for the first month, then %(original_price)s /month, billed yearly' )
-		) {
-			text = translate(
-				'for the first month, then %(original_price)s /month, billed yearly',
-				'for the first %(months)d months, then %(original_price)s /month, billed yearly',
-				opts
-			);
-		} else {
-			text = translate(
-				'for the first month, billed yearly',
-				'for the first %(months)d months, billed yearly',
-				opts
-			);
-		}
+		text = translate(
+			'for the first month, then %(original_price)s /month, billed yearly',
+			'for the first %(months)d months, then %(original_price)s /month, billed yearly',
+			opts
+		);
 	}
+
+	if ( forScreenReader ) {
+		return <>{ text }</>;
+	}
+
+	return <span className="display-price__billing-time-frame">{ text }</span>;
+};
+
+const OneYearDiscountTimeFrame: React.FC< OneYearDiscountTimeFrameProps & A11yProps > = ( {
+	forScreenReader,
+	discountPercentage,
+} ) => {
+	const translate = useTranslate();
+	let text: TranslateResult;
+	if ( ! discountPercentage ) {
+		text = translate( 'per month, billed yearly' );
+	} else {
+		text = translate( 'per month, billed yearly. %(discount)d%% off the first year.', {
+			args: {
+				discount: discountPercentage,
+			},
+			comment: 'The discount percentage is a number, e.g. "20%".',
+		} );
+	}
+
+	if ( forScreenReader ) {
+		return <>{ text }</>;
+	}
+
+	return <span className="display-price__billing-time-frame">{ text }</span>;
+};
+
+const YearlyFreeTrialMonthTimeFrame: React.FC< YearlyFreeTrialMonthTimeFrameProps > = ( {
+	formattedOriginalPrice,
+	forScreenReader,
+} ) => {
+	const translate = useTranslate();
+	const text = translate( 'for the first month, then %(original_price)s /month, billed yearly', {
+		args: {
+			original_price: formattedOriginalPrice,
+		},
+	} );
 
 	if ( forScreenReader ) {
 		return <>{ text }</>;
@@ -157,8 +186,11 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 	expiryDate,
 	billingTerm,
 	discountedPriceDuration,
+	discountPercentage = 0,
 	formattedOriginalPrice,
 	forScreenReader,
+	isDiscounted,
+	finalPrice,
 } ) => {
 	const moment = useLocalizedMoment();
 	const productExpiryDate =
@@ -168,13 +200,32 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 		return <ExpiringDateTimeFrame productExpiryDate={ productExpiryDate } />;
 	}
 
-	if ( discountedPriceDuration && formattedOriginalPrice ) {
+	// `1 === discountedPriceDuration` condition taken from client/my-sites/plans/jetpack-plans/product-lightbox/payment-plan.tsx:56
+	if ( isDiscounted ) {
+		if ( 1 === discountedPriceDuration && formattedOriginalPrice ) {
+			if ( finalPrice === 0 && formattedOriginalPrice ) {
+				return (
+					<YearlyFreeTrialMonthTimeFrame
+						forScreenReader={ forScreenReader }
+						formattedOriginalPrice={ formattedOriginalPrice }
+					/>
+				);
+			}
+
+			return (
+				<PartialDiscountTimeFrame
+					billingTerm={ billingTerm }
+					discountedPriceDuration={ discountedPriceDuration }
+					forScreenReader={ forScreenReader }
+					formattedOriginalPrice={ formattedOriginalPrice }
+				/>
+			);
+		}
+
 		return (
-			<PartialDiscountTimeFrame
-				billingTerm={ billingTerm }
-				discountedPriceDuration={ discountedPriceDuration }
+			<OneYearDiscountTimeFrame
 				forScreenReader={ forScreenReader }
-				formattedOriginalPrice={ formattedOriginalPrice }
+				discountPercentage={ discountPercentage }
 			/>
 		);
 	}

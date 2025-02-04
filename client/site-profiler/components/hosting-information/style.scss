@@ -1,0 +1,31 @@
+.popover.info-popover__tooltip {
+	outline: none;
+
+	.popover__inner {
+		color: var(--color-neutral-50);
+		font-size: $font-body-small;
+		max-width: 300px;
+		padding: 1rem;
+		text-align: left;
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+
+		a {
+			color: var(--wp-admin-theme-color);
+			text-decoration: underline;
+		}
+	}
+}
+.hosting-provider-name__container {
+	.hosting-provider-name__link {
+		padding: 0;
+	}
+	.hosting-provider-name__tooltip {
+		margin-left: 0.5rem;
+		vertical-align: middle;
+		margin-top: -1px;
+	}
+}
+

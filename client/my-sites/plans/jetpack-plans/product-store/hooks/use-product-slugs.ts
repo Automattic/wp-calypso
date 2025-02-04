@@ -1,6 +1,6 @@
 import { JETPACK_SOCIAL_PRODUCTS } from '@automattic/calypso-products';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getPlansToDisplay, getProductsToDisplay } from '../../product-grid/utils';
 import useGetPlansGridProducts from '../../use-get-plans-grid-products';

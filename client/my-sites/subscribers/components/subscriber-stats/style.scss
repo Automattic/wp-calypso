@@ -1,0 +1,35 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.subscriber-details .subscriber-stats {
+	margin-bottom: 32px;
+
+	&__tip {
+		display: flex;
+		align-items: center;
+		color: var(--studio-gray-50);
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+		margin-top: 8px;
+
+		svg {
+			margin-right: 2px;
+		}
+
+		path {
+			fill: var(--studio-gray-50);
+		}
+	}
+}
+
+/* Media Queries */
+@media (max-width: $break-large) {
+	.subscriber-stats__list {
+		flex-flow: column;
+		padding: 0;
+		overflow: visible;
+		.card.highlight-card {
+			margin: 10px 0;
+		}
+	}
+}

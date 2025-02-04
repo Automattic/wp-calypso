@@ -24,7 +24,6 @@ const decompose = ( path ) => {
  * added by `git` and other utilities to separate the left
  * from the right when looking at the contents of a single
  * file over time.
- *
  * @param {Object} options deconstructed argument
  * @param {string} options.oldFileName filename of left contents
  * @param {string} options.newFileName filename of right contents

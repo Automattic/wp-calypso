@@ -1,0 +1,51 @@
+@import "@automattic/typography/styles/variables";
+.odie-support-doc-link__container {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 8px;
+
+	.odie-support-doc-link__link {
+		display: flex;
+		align-items: center;
+		background-color: var(--color-body-background);
+		text-decoration: none;
+		color: var(--color-text);
+		border-radius: 4px;
+
+		&:hover {
+			background-color: var(--studio-gray-0);
+		}
+
+		a {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			text-decoration: none;
+			color: var(--studio-gray-100);
+
+			svg:last-child {
+				fill: var(--studio-gray-20);
+			}
+
+			.icon-background {
+				background-color: var(--studio-gray-0);
+				padding: 8px;
+				border-radius: 4px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-right: 8px;
+				svg {
+					fill: var(--studio-blue-50);
+				}
+			}
+
+			span {
+				flex-grow: 2;
+				font-size: $font-body-small;
+				-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+}

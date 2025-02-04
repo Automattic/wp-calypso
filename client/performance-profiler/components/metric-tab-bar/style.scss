@@ -1,0 +1,100 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+$blueberry-color: #3858e9;
+
+.metric-tab-bar {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-width: 250px;
+	align-self: self-start;
+	gap: 16px;
+
+	button {
+		color: inherit;
+	}
+
+}
+
+.metric-tab-bar__tab {
+	display: flex;
+	gap: 6px;
+	text-align: initial;
+	flex-grow: 1;
+	padding: 16px 22px;
+	width: 100%;
+
+	border: 1px solid transparent;
+	border-bottom: 1px solid var(--gutenberg-gray-100, #f0f0f0);
+
+	&.active {
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 6px;
+		border-color: transparent;
+
+		$metric-tab-shadow: 0 0 0 var(--wp-admin-border-width-focus) $blueberry-color;
+
+		box-shadow: $metric-tab-shadow;
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 3px solid transparent;
+
+		&.metric-tab-bar__performance {
+			border-inline-width: 0;
+			margin-inline: -1px;
+			padding-inline: 24px;
+			width: calc(100% + 2px);
+			box-shadow: $metric-tab-shadow inset;
+		}
+	}
+
+	&:last-child {
+		border-bottom: 0;
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: $blueberry-color;
+	}
+}
+
+.metric-tab-bar__tab-status {
+	line-height: normal;
+	display: none;
+}
+
+.metric-tab-bar__tab-text {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.metric-tab-bar__tab-header {
+	font-family: $font-sf-pro-display;
+	font-size: $font-body-small;
+	font-weight: 500;
+	margin-bottom: 6px;
+}
+.metric-tab-bar__tab-metric {
+	font-family: $font-sf-pro-display;
+	font-size: $font-size-header-small;
+
+	&.good {
+		color: $studio-green-30;
+	}
+
+	&.needs-improvement {
+		color: $studio-orange-40;
+	}
+
+	&.bad {
+		color: $studio-red-50;
+	}
+}
+
+.metric-tab-bar__performance,
+.metric-tab-bar__tab-container {
+	border: 1px solid var(--studio-gray-5);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
+}

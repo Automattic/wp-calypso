@@ -18,24 +18,32 @@ jest.mock( '@automattic/languages', () => [
 		wpLocale: 'it_US',
 		popular: 1,
 		territories: [ '019' ],
+		calypsoPercentTranslated: 99,
+		isTranslatedIncompletely: false,
 	},
 	{
 		value: 465,
 		langSlug: 'mt',
 		name: 'Malti',
 		territories: [ '039' ],
+		calypsoPercentTranslated: 0,
+		isTranslatedIncompletely: true,
 	},
 	{
 		value: 455,
 		langSlug: 'tl',
 		name: 'Tagalog',
 		territories: [ '035' ],
+		calypsoPercentTranslated: 4,
+		isTranslatedIncompletely: true,
 	},
 	{
 		value: 73,
 		langSlug: 'uk',
 		name: 'Українська',
 		territories: [ '151' ],
+		calypsoPercentTranslated: 11,
+		isTranslatedIncompletely: true,
 	},
 ] );
 

@@ -1,0 +1,244 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+import { Gridicon } from '@automattic/components';
+import { Icon, starEmpty } from '@wordpress/icons';
+import { localize } from 'i18n-calypso';
+import { filter, some } from 'lodash';
+import PropTypes from 'prop-types';
+import { Component } from 'react';
+import { connect } from 'react-redux';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { decodeEntities } from 'calypso/lib/formatting';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ButtonsLabelEditor from './label-editor';
+import ButtonsPreviewAction from './preview-action';
+import ButtonsPreviewButtons from './preview-buttons';
+import ButtonsTray from './tray';
+
+class SharingButtonsPreview extends Component {
+	static displayName = 'SharingButtonsPreview';
+
+	static propTypes = {
+		isPrivateSite: PropTypes.bool,
+		style: PropTypes.oneOf( [ 'icon-text', 'icon', 'text', 'official' ] ),
+		label: PropTypes.string,
+		buttons: PropTypes.array,
+		showLike: PropTypes.bool,
+		showReblog: PropTypes.bool,
+		onLabelChange: PropTypes.func,
+		onButtonsChange: PropTypes.func,
+	};
+
+	static defaultProps = {
+		style: 'icon',
+		buttons: [],
+		showLike: true,
+		showReblog: true,
+		onLabelChange: function () {},
+		onButtonsChange: function () {},
+	};
+
+	state = {
+		isEditingLabel: false,
+		buttonsTrayVisibility: null,
+	};
+
+	toggleEditLabel = () => {
+		const { path } = this.props;
+
+		const isEditingLabel = ! this.state.isEditingLabel;
+		this.setState( { isEditingLabel: isEditingLabel } );
+
+		if ( isEditingLabel ) {
+			this.hideButtonsTray();
+			recordTracksEvent( 'calypso_sharing_buttons_edit_text_click', { path } );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Text Link' );
+		} else {
+			recordTracksEvent( 'calypso_sharing_buttons_edit_text_close_click', { path } );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Text Done Button' );
+		}
+	};
+
+	showButtonsTray = ( visibility ) => {
+		const { path } = this.props;
+
+		this.setState( {
+			isEditingLabel: false,
+			buttonsTrayVisibility: visibility,
+		} );
+
+		if ( 'hidden' === visibility ) {
+			recordTracksEvent( 'calypso_sharing_buttons_more_button_click', { path } );
+			gaRecordEvent( 'Sharing', 'Clicked More Button Link', visibility );
+		} else {
+			recordTracksEvent( 'calypso_sharing_buttons_edit_button_click', { path } );
+			gaRecordEvent( 'Sharing', 'Clicked Edit Button Link', visibility );
+		}
+	};
+
+	hideButtonsTray = () => {
+		const { path } = this.props;
+
+		if ( ! this.state.buttonsTrayVisibility ) {
+			return;
+		}
+
+		// Hide button tray by resetting state to default
+		this.setState( { buttonsTrayVisibility: null } );
+
+		recordTracksEvent( 'calypso_sharing_buttons_edit_buttons_close_click', { path } );
+		gaRecordEvent( 'Sharing', 'Clicked Edit Buttons Done Button' );
+	};
+
+	getButtonsTrayToggleButtonLabel = ( visibility, enabledButtonsExist ) => {
+		if ( 'visible' === visibility ) {
+			if ( enabledButtonsExist ) {
+				return this.props.translate( 'Edit sharing buttons', {
+					context: 'Sharing: Buttons edit label',
+				} );
+			}
+			return this.props.translate( 'Add sharing buttons', {
+				context: 'Sharing: Buttons edit label',
+			} );
+		} else if ( enabledButtonsExist ) {
+			return this.props.translate( 'Edit “More” buttons', {
+				context: 'Sharing: Buttons edit label',
+			} );
+		}
+
+		return this.props.translate( 'Add “More” button', {
+			context: 'Sharing: Buttons edit label',
+		} );
+	};
+
+	getButtonsTrayToggleButtonElement = ( visibility ) => {
+		const enabledButtonsExist = some( this.props.buttons, {
+			visibility: visibility,
+			enabled: true,
+		} );
+
+		return (
+			<ButtonsPreviewAction
+				active={ null === this.state.buttonsTrayVisibility }
+				onClick={ this.showButtonsTray.bind( null, visibility ) }
+				icon={ enabledButtonsExist ? 'pencil' : 'plus' }
+				position="bottom-left"
+			>
+				{ this.getButtonsTrayToggleButtonLabel( visibility, enabledButtonsExist ) }
+			</ButtonsPreviewAction>
+		);
+	};
+
+	// 16 is used in the preview to match the buttons on the frontend of the website.
+	getReblogButtonElement = () => {
+		if ( this.props.showReblog ) {
+			return (
+				<div className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__reblog">
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
+					<Gridicon icon="reblog" size={ 16 } />
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+					{ this.props.translate( 'Reblog' ) }
+				</div>
+			);
+		}
+	};
+
+	getLikeButtonElement = () => {
+		if ( this.props.showLike ) {
+			return (
+				<span className="sharing-buttons-preview__like-container">
+					<div className="sharing-buttons-preview-button is-enabled style-icon-text sharing-buttons-preview__like">
+						{ /* 16 is used in the preview to match the buttons on the frontend of the website. */ }
+						<Icon icon={ starEmpty } className="sharing-buttons-preview__like-icon" />
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+						{ this.props.translate( 'Like' ) }
+					</div>
+					<div className="sharing-buttons-preview__fake-user">
+						<img
+							src="https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60"
+							alt="Matt Mullenweg"
+						/>
+					</div>
+					<div className="sharing-buttons-preview__fake-like">
+						{ this.props.translate( '1 like' ) }
+					</div>
+				</span>
+			);
+		}
+	};
+
+	getPreviewButtonsElement = () => {
+		const enabledButtons = filter( this.props.buttons, { enabled: true } );
+
+		if ( enabledButtons.length ) {
+			return (
+				<ButtonsPreviewButtons
+					buttons={ enabledButtons }
+					visibility="visible"
+					style={ this.props.style }
+					showMore={ some( this.props.buttons, { visibility: 'hidden' } ) }
+				/>
+			);
+		}
+	};
+
+	render() {
+		return (
+			<div className="sharing-buttons-preview">
+				<ButtonsPreviewAction
+					active={ ! this.state.isEditingLabel }
+					onClick={ this.toggleEditLabel }
+					icon="pencil"
+					position="top-left"
+				>
+					{ this.props.translate( 'Edit label text', {
+						context: 'Sharing: Buttons edit label',
+					} ) }
+				</ButtonsPreviewAction>
+				<ButtonsLabelEditor
+					active={ this.state.isEditingLabel }
+					value={ this.props.label }
+					onChange={ this.props.onLabelChange }
+					onClose={ this.toggleEditLabel }
+					hasEnabledButtons={ some( this.props.buttons, { enabled: true } ) }
+				/>
+
+				<h2 className="sharing-buttons-preview__heading">{ this.props.translate( 'Preview' ) }</h2>
+				<div className="sharing-buttons-preview__display">
+					<span className="sharing-buttons-preview__label">
+						{ decodeEntities( this.props.label ) }
+					</span>
+					<div className="sharing-buttons-preview__buttons">
+						{ this.getPreviewButtonsElement() }
+					</div>
+
+					<div className="sharing-buttons-preview__reblog-like">
+						{ this.getReblogButtonElement() }
+						{ this.getLikeButtonElement() }
+					</div>
+				</div>
+
+				<div className="sharing-buttons-preview__button-tray-actions">
+					{ this.getButtonsTrayToggleButtonElement( 'visible' ) }
+					{ this.getButtonsTrayToggleButtonElement( 'hidden' ) }
+				</div>
+
+				<ButtonsTray
+					buttons={ this.props.buttons }
+					style={ 'official' === this.props.style ? 'text' : this.props.style }
+					visibility={ this.state.buttonsTrayVisibility }
+					onButtonsChange={ this.props.onButtonsChange }
+					onClose={ this.hideButtonsTray }
+					active={ null !== this.state.buttonsTrayVisibility }
+					limited={ this.props.isPrivateSite }
+				/>
+			</div>
+		);
+	}
+}
+
+export default connect( ( state ) => {
+	return { path: getCurrentRouteParameterized( state, getSelectedSiteId( state ) ) };
+} )( localize( SharingButtonsPreview ) );

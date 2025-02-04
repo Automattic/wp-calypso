@@ -10,17 +10,17 @@
 	}
 
 	.domain-suggestion__content-domain {
+		align-items: center;
 		justify-content: space-between;
 	}
 
 	&.is-clickable {
 		cursor: pointer;
 
-		// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo
+		/* NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo */
 		transition: box-shadow 0.25s cubic-bezier(0.19, 1, 0.22, 1);
 
 		&:hover {
-			box-shadow: 0 0 0 1px var(--color-neutral-light);
 			z-index: z-index("root", ".domain-suggestion.is-clickable:hover");
 		}
 	}
@@ -39,11 +39,10 @@
 	}
 
 	.badge {
-		margin-left: 0;
 		border-radius: 4px;
 		font-size: 0.75rem;
 		font-weight: 500;
-		margin-right: 4px;
+		margin: 2px 4px 0 0;
 
 		&.badge--warning {
 			background-color: var(--color-warning-10);
@@ -64,6 +63,13 @@
 	.is-section-signup & {
 		@include breakpoint-deprecated( ">480px" ) {
 			flex-direction: row;
+			align-items: center;
+		}
+	}
+
+	.is-section-stepper & {
+		@include breakpoint-deprecated(">480px") {
+			flex-direction: column;
 			align-items: center;
 		}
 	}
@@ -101,6 +107,7 @@
 .domain-suggestion__content {
 	width: 100%;
 	min-height: 32px;
+	gap: 16px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
@@ -141,17 +148,9 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		.is-placeholder & {
-			margin-right: 50%;
 			min-height: 22px;
 		}
 
-		.is-placeholder:nth-of-type(2n + 1) & {
-			margin-right: 52%;
-		}
-
-		.is-placeholder:nth-of-type(1) & {
-			margin-right: 40%;
-		}
 	}
 
 	> h3 {
@@ -169,24 +168,25 @@
 	}
 }
 
+.domain-registration-suggestion__title-info {
+	@include breakpoint-deprecated( ">800px" ) {
+		max-width: 55%;
+	}
+}
+
 .domain-registration-suggestion__title-wrapper {
 	display: flex;
 	flex-direction: column-reverse;
 	flex-wrap: nowrap;
-
-	@include break-mobile {
-		flex-direction: row;
-	}
+	align-items: flex-start;
 
 	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( ">480px" ) {
-			max-width: 50%;
 			min-width: 50%;
 			margin-right: 1em;
 		}
 
 		@include breakpoint-deprecated( ">800px" ) {
-			max-width: 55%;
 			min-width: 55%;
 			margin-right: 1em;
 		}
@@ -196,15 +196,11 @@
 		width: auto;
 		max-width: 100%;
 		padding-right: 0.2em;
-		display: flex;
-	}
-
-	.badge {
-		align-self: center;
 	}
 
 	.domain-registration-suggestion__hsts-tooltip {
-		display: flex;
+		display: inline;
+		vertical-align: middle;
 		align-items: center;
 		justify-content: center;
 		margin-left: 4px;
@@ -222,15 +218,19 @@
 	word-break: break-all;
 
 	@include breakpoint-deprecated( ">480px" ) {
-		align-self: center;
 		padding-right: 2em;
 	}
+}
+
+.domain-registration-suggestion__domain-title-tld {
+	word-break: normal;
 }
 
 .domain-suggestion__price-container,
 .domain-suggestion__action-container {
 	flex: 0 0 auto;
 	width: 100%;
+	height: 40px;
 
 	@include break-mobile {
 		width: auto;
@@ -248,16 +248,20 @@
 .button.domain-suggestion__action {
 	width: 100%;
 	height: 40px;
-	min-width: 66px;
+	min-width: 130px;
 	text-align: center;
-	margin-top: 16px;
 	padding: 0.25em 3em;
-	transition: all 0.1s linear;
+	margin-top: 10px;
+	margin-left: 0;
 
-	@include break-mobile {
+	&:focus {
+		box-shadow: none !important;
+		border-color: #c3c4c7 !important;
+	}
+
+	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
-		margin-left: 1em;
 		margin-top: 0;
 	}
 
@@ -273,9 +277,24 @@
 
 	&.is-borderless {
 		color: var(--color-primary);
-		margin-top: 0;
 		padding: 0;
+		display: flex;
+		align-items: center;
+
+		&:focus {
+			box-shadow: none !important;
+			border-color: transparent !important;
+		}
+
+		/* Checkmark for selected domains */
+		svg {
+			height: 20px;
+			top: 0;
+			left: -2px;
+			margin-right: 4px;
+		}
 	}
+
 }
 
 .domain-suggestion__chevron {
@@ -306,13 +325,18 @@
 	margin: 0 0 10px;
 	display: flex;
 	align-items: center;
+	&:not(.featured-domain-suggestion) {
+		width: 100%;
+	}
+
 
 	@include break-mobile {
 		margin: 0 0 0 4px;
-		align-self: center;
 	}
 }
 
+
+body.is-section-stepper,
 body.is-section-signup.is-white-signup {
 	svg {
 		padding-top: 0;
@@ -321,8 +345,7 @@ body.is-section-signup.is-white-signup {
 
 	.domain-registration-suggestion__badges {
 		margin-left: 0;
-		margin-top: 0;
-		margin-bottom: 10px;
+		margin-bottom: 4px;
 
 		.badge {
 			border-radius: 4px;
@@ -332,9 +355,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		@include break-wide {
-			align-self: baseline;
-			margin-left: 12px;
-			margin-bottom: 0;
 			flex: 1;
 		}
 	}
@@ -346,10 +366,10 @@ body.is-section-signup.is-white-signup {
 	.domain-suggestion {
 		flex-direction: column;
 		box-shadow: none;
+		margin: 0;
 
-		@include break-mobile {
+		@include break-small {
 			margin: 0 20px;
-			flex-direction: row;
 		}
 
 		@include break-large {
@@ -362,12 +382,20 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-suggestion__content-domain {
 			justify-content: space-between;
-			margin-right: 40px;
+			gap: 1rem;
 		}
 
 		.domain-product-price__free-text {
-			color: var(--color-neutral-60);
-			font-size: $font-body;
+			font-size: $font-body-small;
+			color: var(--studio-green-60);
+		}
+
+		.domain-product-price__free-price {
+			font-weight: initial;
+
+			@include break-mobile {
+				font-weight: 500;
+			}
 		}
 
 		.domain-product-price__price {
@@ -388,6 +416,7 @@ body.is-section-signup.is-white-signup {
 
 		.domain-registration-suggestion__title {
 			font-size: 0.875rem;
+			margin-right: 12px;
 
 			@include break-mobile {
 				font-size: 1rem;
@@ -400,28 +429,17 @@ body.is-section-signup.is-white-signup {
 
 		& .domain-registration-suggestion__domain-title {
 			color: var(--studio-gray-90);
-		}
-
-		& .domain-product-price__free-price {
-			font-size: $font-body-small;
-			font-weight: initial;
-			color: var(--studio-green-60);
-			line-height: 20px;
-			letter-spacing: 0.2px;
-
-			@include break-mobile {
-				font-weight: 500;
-			}
+			white-space: normal;
 		}
 
 		&:not(.featured-domain-suggestion) {
 			background: none;
 			border-bottom: 1px solid rgba(220, 220, 222, 0.64);
-			border-top: 1px solid #fff; //This white border is to prevent jumpiness while showing borders on hover
+			border-top: 1px solid #fff; /*This white border is to prevent jumpiness while showing borders on hover*/
 			padding: 16px 20px;
 
 			@include break-mobile {
-				padding: 16px 5px;
+				padding: 16px 24px;
 			}
 
 			.domain-registration-suggestion__domain-title {
@@ -431,6 +449,14 @@ body.is-section-signup.is-white-signup {
 
 				.domain-registration-suggestion__domain-title-tld {
 					font-weight: 500;
+				}
+			}
+
+			.domain-product-price {
+				width: unset;
+
+				@include break-small {
+					flex-grow: 1;
 				}
 			}
 
@@ -446,21 +472,51 @@ body.is-section-signup.is-white-signup {
 				font-size: $font-body-small;
 			}
 
+			.domain-suggestion__action.is-borderless {
+				color: var(--color-text);
+				padding: 0 1.5em;
+				line-height: 24px;
+				@include break-mobile {
+					width: auto;
+				}
+
+				.gridicons-checkmark {
+					color: var(--studio-green-60);
+				}
+
+				&:disabled {
+					color: var(--color-neutral-20);
+
+					.gridicons-checkmark {
+						color: var(--color-neutral-20);
+					}
+				}
+
+				&.is-busy {
+					pointer-events: none;
+					animation: button__busy-animation 3000ms infinite linear;
+					background-size: 120px 100%;
+					background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
+				}
+			}
 			.domain-suggestion__action:not(.is-borderless) {
 				width: 100%;
 				height: auto;
 				line-height: 20px;
 				padding: 0.57em 1.17em;
-				font-weight: 500;
 				border-radius: 4px;
-				box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;
 
 				@include break-mobile {
 					padding: 0.65em 2.8em;
-					width: auto;
+					width: 100%;
+				}
+
+				&:focus {
+					border-color: var(--color-primary);
+					box-shadow: 0 0 0 2px var(--color-primary-light);
 				}
 			}
 
@@ -487,8 +543,35 @@ body.is-section-signup.is-white-signup {
 				}
 				.domain-suggestion__chevron {
 					fill: $cod-grey;
+					margin-right: 20px;
 					margin-left: 0;
 				}
+			}
+		}
+
+		&.featured-domain-suggestion .domain-suggestion__action-container .domain-suggestion__action.is-borderless {
+			padding: 0.57em 1.3em !important;
+			box-shadow: none !important;
+			color: var(--color-text);
+			font-weight: normal !important;
+
+			.gridicons-checkmark {
+				color: var(--studio-green-60);
+			}
+
+			&:disabled {
+				color: var(--color-neutral-20);
+
+				.gridicons-checkmark {
+					color: var(--color-neutral-20);
+				}
+			}
+
+			&.is-busy {
+				pointer-events: none;
+				animation: button__busy-animation 3000ms infinite linear;
+				background-size: 120px 100%;
+				background-image: linear-gradient(-45deg, var(--color-neutral-10) 28%, var(--studio-gray-5) 28%, var(--studio-gray-5) 72%, var(--color-neutral-10) 72%);
 			}
 		}
 	}

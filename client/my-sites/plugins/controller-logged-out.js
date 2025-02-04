@@ -12,6 +12,7 @@ import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getCategories } from './categories/use-categories';
+import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
@@ -30,7 +31,7 @@ function getQueryOptions( { path, lang } ) {
 function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 	const queryType = infinite ? 'prefetchInfiniteQuery' : 'prefetchQuery';
 
-	return queryClient[ queryType ]( ...fetchParams );
+	return queryClient[ queryType ]( fetchParams );
 }
 
 const prefetchPaidPlugins = ( queryClient, options ) =>
@@ -64,7 +65,10 @@ const prefetchProductList = ( queryClient, store ) => {
 	const type = 'all';
 
 	return queryClient
-		.fetchQuery( [ 'products-list', type ], () => wpcom.req.get( '/products', { type } ) )
+		.fetchQuery( {
+			queryKey: [ 'products-list', type ],
+			queryFn: () => wpcom.req.get( '/products', { type } ),
+		} )
 		.then( ( productsList ) => {
 			return store.dispatch( receiveProductsList( productsList, type ) );
 		} );
@@ -180,6 +184,11 @@ export async function fetchPlugin( context, next ) {
 		return next();
 	}
 
+	const pluginSlug = decodeURIComponent( context.params.plugin );
+	if ( UNLISTED_PLUGINS.includes( pluginSlug ) ) {
+		return next( 'route' );
+	}
+
 	const options = {
 		...getQueryOptions( context ),
 		pluginSlug: context.params?.plugin,
@@ -187,7 +196,7 @@ export async function fetchPlugin( context, next ) {
 
 	const dataOrError = await prefetchTimebox(
 		[
-			// We need to have the product list before prefetchPlugin so it can determin where to fetch from.
+			// We need to have the product list before prefetchPlugin so it can determine where to fetch from.
 			prefetchProductList( queryClient, store ).then( () =>
 				prefetchPlugin( queryClient, store, options )
 			),
@@ -207,7 +216,11 @@ export async function fetchPlugin( context, next ) {
 export function validatePlugin( { path, params: { plugin } }, next ) {
 	const siteFragment = getSiteFragment( path );
 
-	if ( siteFragment || Number.isInteger( parseInt( plugin, 10 ) ) ) {
+	if (
+		plugin === 'scheduled-updates' ||
+		siteFragment ||
+		Number.isInteger( parseInt( plugin, 10 ) )
+	) {
 		return next( 'route' );
 	}
 	next();

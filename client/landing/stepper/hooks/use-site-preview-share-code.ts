@@ -1,7 +1,7 @@
 import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useEffect } from 'react';
-import { useCreateSitePreviewLink } from 'calypso/components/site-preview-link/use-create-site-preview-link';
-import { useSitePreviewLinks } from 'calypso/components/site-preview-link/use-site-preview-links';
+import { useCreateSitePreviewLink } from 'calypso/components/site-preview-links/use-create-site-preview-link';
+import { useSitePreviewLinks } from 'calypso/components/site-preview-links/use-site-preview-links';
 import { useSite } from './use-site';
 
 export function useSitePreviewShareCode() {
@@ -18,13 +18,13 @@ export function useSitePreviewShareCode() {
 		site?.is_coming_soon && ( isBusinessPlan || isEcommercePlan ) && site?.is_wpcom_atomic;
 
 	// Retrieves site preview share code if it exists
-	const { data: previewLinks, isLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
+	const { data: previewLinks, isInitialLoading: isPreviewLinksLoading } = useSitePreviewLinks( {
 		siteId: Number( site?.ID ),
 		isEnabled: usePreviewSiteLinksQueryEnabled ?? false,
 	} );
 
 	// Provides createLink() function used to generate a new site preview share code
-	const { createLink, isLoading: isCreatingSitePreviewLinks } = useCreateSitePreviewLink( {
+	const { createLink, isPending: isCreatingSitePreviewLinks } = useCreateSitePreviewLink( {
 		siteId: Number( site?.ID ),
 	} );
 

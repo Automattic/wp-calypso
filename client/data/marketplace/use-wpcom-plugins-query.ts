@@ -5,14 +5,15 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQueries,
-} from 'react-query';
+} from '@tanstack/react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
-import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { BASE_STALE_TIME } from 'calypso/state/constants';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 
 type Type = 'all' | 'featured' | 'launched';
 
@@ -48,18 +49,17 @@ export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = getCacheKey( type + searchTerm + tag + '-normalized' );
-	const fetchFn = () =>
-		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
+): { queryKey: QueryKey; queryFn: QueryFunction< Plugin[] > } => {
+	const queryKey = getCacheKey( type + searchTerm + tag + '-normalized' );
+	const queryFn = () =>
+		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: Plugin[] } ) =>
 			normalizePluginsList( data.results )
 		);
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
  * Returns marketplace plugins list filtered by searchterm and type.
- *
  * @param {Type} type Optional The query type
  * @param {string} searchTerm Optional The term to search for
  * @param {string} tag Optional The tag to search for
@@ -70,9 +70,14 @@ export const useWPCOMPluginsList = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
-): UseQueryResult => {
-	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions< Plugin[] >, 'queryKey' > = {}
+): UseQueryResult< Plugin[] > => {
+	return useQuery( {
+		...getWPCOMPluginsQueryParams( type, searchTerm, tag ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -85,28 +90,34 @@ const fetchWPCOMPlugin = ( slug: string ) =>
 		apiNamespace: pluginsApiNamespace,
 	} );
 
-export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
-	const cacheKey = getCacheKey( slug + '-normalized' );
-	const fetchFn = () =>
+export const getWPCOMPluginQueryParams = (
+	slug: string
+): { queryKey: QueryKey; queryFn: QueryFunction } => {
+	const queryKey = getCacheKey( slug + '-normalized' );
+	const queryFn = () =>
 		fetchWPCOMPlugin( slug ).then( ( data: any ) =>
 			normalizePluginData( { detailsFetched: Date.now() }, data )
 		);
 
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
  * Returns a marketplace plugin data
- *
  * @param {Type} slug The plugin slug to query
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
 export const useWPCOMPlugin = (
 	slug: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: Omit< UseQueryOptions, 'queryKey' > = {}
 ): UseQueryResult< any > => {
-	return useQuery( ...getWPCOMPluginQueryParams( slug ), {
+	return useQuery( {
+		...getWPCOMPluginQueryParams( slug ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -114,30 +125,30 @@ export const useWPCOMPlugin = (
 };
 
 export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
-	return useQueries(
-		slugs.map( ( slug ) => {
-			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
-
-			return { queryKey: cacheKey, queryFn: fetchFn };
-		} )
-	);
+	return useQueries( {
+		queries: slugs.map( ( slug ) => {
+			return getWPCOMPluginQueryParams( slug );
+		} ),
+	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = 'plugins-featured-list-normalized';
-	const fetchFn = () =>
+export const getWPCOMFeaturedPluginsQueryParams = (): {
+	queryKey: QueryKey;
+	queryFn: QueryFunction;
+} => {
+	const queryKey = [ 'plugins-featured-list-normalized' ];
+	const queryFn = () =>
 		wpcom.req
 			.get( {
 				path: featuredPluginsApiBase,
 				apiNamespace: pluginsApiNamespace,
 			} )
 			.then( normalizePluginsList );
-	return [ cacheKey, fetchFn ];
+	return { queryKey, queryFn };
 };
 
 /**
  * Returns the featured list of plugins from WPCOM
- *
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
@@ -145,8 +156,9 @@ export const useWPCOMFeaturedPlugins = ( {
 	enabled = true,
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
-}: UseQueryOptions = {} ): UseQueryResult => {
-	return useQuery( ...getWPCOMFeaturedPluginsQueryParams(), {
+}: Omit< UseQueryOptions, 'queryKey' > = {} ): UseQueryResult => {
+	return useQuery( {
+		...getWPCOMFeaturedPluginsQueryParams(),
 		enabled,
 		staleTime,
 		refetchOnMount,

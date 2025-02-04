@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import { Button } from '@wordpress/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState, useCallback } from 'react';
-import FormButton from 'calypso/components/forms/form-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
 import './style.scss';
@@ -10,6 +10,7 @@ const noop = () => {};
 
 function FormTextInputWithAction( {
 	className,
+	clearOnSubmit = false,
 	action,
 	inputRef,
 	onFocus = noop,
@@ -53,8 +54,11 @@ function FormTextInputWithAction( {
 	const handleAction = useCallback(
 		( e ) => {
 			onAction( value, e );
+			if ( clearOnSubmit ) {
+				setValue( '' );
+			}
 		},
-		[ onAction, value ]
+		[ clearOnSubmit, onAction, value ]
 	);
 
 	const handleKeyDown = useCallback(
@@ -69,7 +73,7 @@ function FormTextInputWithAction( {
 
 	return (
 		<div
-			className={ classNames( 'form-text-input-with-action', className, {
+			className={ clsx( 'form-text-input-with-action', className, {
 				'is-focused': focused,
 				'is-disabled': disabled,
 				'is-error': isError,
@@ -88,19 +92,21 @@ function FormTextInputWithAction( {
 				onBlur={ handleBlur }
 				onKeyDown={ handleKeyDown }
 			/>
-			<FormButton
-				className="form-text-input-with-action__button is-compact"
+			<Button
+				size="compact"
+				className="form-text-input-with-action__button"
 				disabled={ disabled || ! value }
 				onClick={ handleAction }
 			>
 				{ action }
-			</FormButton>
+			</Button>
 		</div>
 	);
 }
 
 FormTextInputWithAction.propTypes = {
 	className: PropTypes.string,
+	clearOnSubmit: PropTypes.bool,
 	action: PropTypes.node,
 	inputRef: PropTypes.func,
 	onFocus: PropTypes.func,

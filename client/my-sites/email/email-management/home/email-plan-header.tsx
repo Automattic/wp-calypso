@@ -1,7 +1,6 @@
-import { CompactCard } from '@automattic/components';
-import classnames from 'classnames';
-import MaterialIcon from 'calypso/components/material-icon';
-import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
+import { CompactCard, MaterialIcon } from '@automattic/components';
+import clsx from 'clsx';
+import { EmailPlanSubscription } from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
@@ -20,7 +19,7 @@ type EmailPlanHeaderProps = {
 	selectedSite: SiteDetails;
 };
 
-const EmailPlanHeader = ( {
+export const EmailPlanHeader = ( {
 	domain,
 	emailAccount,
 	hasEmailSubscription,
@@ -39,7 +38,7 @@ const EmailPlanHeader = ( {
 		isLoadingEmails
 	);
 
-	const cardClasses = classnames( 'email-plan-header', statusClass );
+	const cardClasses = clsx( 'email-plan-header', statusClass );
 
 	return (
 		<>
@@ -56,7 +55,7 @@ const EmailPlanHeader = ( {
 					</span>
 				</div>
 
-				{ hasEmailSubscription && emailAccount && (
+				{ ! isLoadingEmails && hasEmailSubscription && emailAccount && (
 					<EmailPlanWarnings domain={ domain } emailAccount={ emailAccount } />
 				) }
 			</CompactCard>
@@ -64,7 +63,6 @@ const EmailPlanHeader = ( {
 			{ hasEmailSubscription && (
 				<EmailPlanSubscription
 					purchase={ purchase }
-					domain={ domain }
 					selectedSite={ selectedSite }
 					isLoadingPurchase={ isLoadingPurchase }
 				/>
@@ -72,5 +70,3 @@ const EmailPlanHeader = ( {
 		</>
 	);
 };
-
-export default EmailPlanHeader;

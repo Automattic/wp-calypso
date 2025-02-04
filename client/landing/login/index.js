@@ -3,7 +3,7 @@
  */
 import 'calypso/boot/polyfills';
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { setupLocale } from 'calypso/boot/locale';
 import { render } from 'calypso/controller/web-util';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
@@ -17,7 +17,8 @@ import 'calypso/assets/stylesheets/style.scss';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 
-const boot = ( currentUser ) => {
+async function main() {
+	const currentUser = await initializeCurrentUser();
 	const store = createStore();
 	setStore( store, getStateFromCache( currentUser?.ID ) );
 	configureReduxStore( currentUser, store );
@@ -35,10 +36,7 @@ const boot = ( currentUser ) => {
 	} );
 
 	initLoginSection( ( route, ...handlers ) => page( route, ...handlers, render ) );
-	page.start( { decodeURLComponents: false } );
-};
+	page.start();
+}
 
-window.AppBoot = async () => {
-	const user = await initializeCurrentUser();
-	boot( user );
-};
+main();

@@ -3,25 +3,24 @@
 
 .task {
 	display: flex;
+	flex-direction: column;
 	position: relative;
+	margin-top: 0;
 	margin-bottom: 30px;
-	border-radius: 3px; /* stylelint-disable-line scales/radii */
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include break-small {
+		flex-direction: row;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin-bottom: 16px;
+		border-radius: 3px;
 	}
 
 	.task__text,
 	.task__illustration {
+		padding: 24px 16px;
 		box-sizing: border-box;
-		padding: 24px 24px 0;
 
-		@include breakpoint-deprecated( ">660px" ) {
-			padding: 24px 16px;
-		}
-
-		@include breakpoint-deprecated( ">1040px" ) {
+		@include break-xlarge {
 			padding: 32px 24px;
 		}
 	}
@@ -30,14 +29,24 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+
+		> :last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.task__illustration {
-		width: 33.33%;
+		width: 100%;
 		align-self: center;
 		flex-shrink: 0;
 		margin-left: auto;
 		text-align: center;
+		margin-top: 32px;
+
+		@include break-small {
+			width: 33.33%;
+			margin-top: 0;
+		}
 	}
 
 	.task__timing {
@@ -62,9 +71,9 @@
 		@extend .wp-brand-font;
 		font-size: $font-title-large;
 		line-height: 36px;
-		margin-bottom: 4px;
+		margin-bottom: 16px;
 
-		@include breakpoint-deprecated( ">800px" ) {
+		@include break-medium {
 			line-height: 40px;
 		}
 	}
@@ -73,9 +82,9 @@
 		margin-bottom: 24px;
 		font-size: $font-body;
 		line-height: 24px;
-		color: var(--color-text);
+		color: var(--color-text-subtle);
 
-		@include breakpoint-deprecated( ">800px" ) {
+		@include break-medium {
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
@@ -83,21 +92,17 @@
 
 	.task__actions {
 		display: flex;
+		flex-wrap: wrap;
+		gap: 16px;
 		padding-top: 0;
 		margin-top: auto;
 		font-size: $font-body-small;
 
 		.is-link {
-			padding: 0 8px;
-
 			&:focus-visible {
 				box-shadow: 0 0 0 2px var(--color-primary);
 			}
 		}
-	}
-
-	.task__action {
-		margin-right: 16px;
 	}
 
 	.spinner {

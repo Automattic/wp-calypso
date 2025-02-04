@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { pick } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
@@ -122,7 +122,7 @@ class CalendarButton extends Component {
 			<Fragment>
 				<Button
 					{ ...buttonsProperties }
-					className={ classNames( 'calendar-button', this.props.className ) }
+					className={ clsx( 'calendar-button', this.props.className ) }
 					ref={ this.buttonRef }
 					onClick={ this.togglePopover }
 				>

@@ -33,6 +33,7 @@ class JetpackInstallStep extends Component {
 
 	renderAlreadyHaveJetpackButton() {
 		return (
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			<a
 				className="jetpack-connect__already-installed-jetpack-button"
 				href="#"
@@ -45,6 +46,7 @@ class JetpackInstallStep extends Component {
 
 	renderNotJetpackButton() {
 		return (
+			// eslint-disable-next-line jsx-a11y/anchor-is-valid
 			<a
 				className="jetpack-connect__no-jetpack-button"
 				href="#"
@@ -75,9 +77,7 @@ class JetpackInstallStep extends Component {
 				title: translate( '2. Activate Jetpack' ),
 				text: translate( 'Next, click the blue “Activate Plugin” button to activate Jetpack.' ),
 				action: null,
-				example: (
-					<JetpackExampleActivate url={ currentUrl } isInstall={ true } onClick={ onClick } />
-				),
+				example: <JetpackExampleActivate url={ currentUrl } isInstall onClick={ onClick } />,
 			},
 			connectJetpackAfterInstall: {
 				title: translate( '3. Connect Jetpack' ),

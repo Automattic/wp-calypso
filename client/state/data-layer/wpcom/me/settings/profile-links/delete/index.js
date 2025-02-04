@@ -11,7 +11,6 @@ import 'calypso/state/profile-links/init';
 
 /**
  * Dispatches a request to delete a profile link for the current user
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
@@ -27,7 +26,6 @@ export const deleteUserProfileLink = ( action ) =>
 
 /**
  * Dispatches a user profile links deletion success action when the request succeeded.
- *
  * @param   {Object} action          Redux action
  * @param   {string} action.linkSlug Slug of the link
  * @returns {Object} Dispatched user profile links delete success action
@@ -36,7 +34,6 @@ export const handleDeleteSuccess = ( { linkSlug } ) => deleteUserProfileLinkSucc
 
 /**
  * Dispatches a user profile links deletion error action when the request failed.
- *
  * @param   {Object} action          Redux action
  * @param   {string} action.linkSlug Slug of the link
  * @param   {Object} error           Error returned

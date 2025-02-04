@@ -26,7 +26,6 @@ const legacyRoutes: LegacyRoute[] = [
 
 /**
  * Determines if a path is a legacy route, and should be ignored by Calypso
- *
  * @param path The path to check
  * @returns True if legacy path, false otherwise
  */

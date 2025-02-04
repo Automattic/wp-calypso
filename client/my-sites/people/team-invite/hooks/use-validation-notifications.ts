@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getTokenValidation } from 'calypso/state/invites/selectors';
 import { warningNotice } from 'calypso/state/notices/actions';
 
@@ -10,7 +10,9 @@ export function useValidationNotifications() {
 
 	const { failure } = useSelector( getTokenValidation );
 
-	useEffect( () => failure && showValidationFailureNotice(), [ failure ] );
+	useEffect( () => {
+		failure && showValidationFailureNotice();
+	}, [ failure ] );
 
 	function showValidationFailureNotice() {
 		dispatch(

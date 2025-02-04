@@ -53,7 +53,7 @@ describe( 'localstorage-bypass', () => {
 		test( 'calls the original setItem function for an allowed key', () => {
 			setItem( db, [ 'key' ], _setItem )( 'key', 'value' );
 			expect( db.key ).toBeUndefined();
-			expect( _setItem ).toBeCalledWith( 'key', 'value' );
+			expect( _setItem ).toHaveBeenCalledWith( 'key', 'value' );
 		} );
 
 		test( 'when there is no original setItem, sets an item in the memory store for an allowed key', () => {
@@ -80,7 +80,7 @@ describe( 'localstorage-bypass', () => {
 
 		test( 'calls the original getItem function for an allowed key', () => {
 			expect( getItem( db, [ 'first' ], _getItem )( 'first' ) ).toEqual( 'first' );
-			expect( _getItem ).toBeCalledWith( 'first' );
+			expect( _getItem ).toHaveBeenCalledWith( 'first' );
 		} );
 
 		test( 'when there is no original getItem, gets an item from the memory store for an allowed key', () => {
@@ -106,7 +106,7 @@ describe( 'localstorage-bypass', () => {
 		test( 'calls the original removeItem function for an allowed key', () => {
 			removeItem( db, [ 'first' ], _removeItem )( 'first' );
 			expect( db.first ).toEqual( 'abc' );
-			expect( _removeItem ).toBeCalledWith( 'first' );
+			expect( _removeItem ).toHaveBeenCalledWith( 'first' );
 		} );
 
 		test( 'when there is no original removeItem, removes an item from the memory store for an allowed key', () => {

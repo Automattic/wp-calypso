@@ -31,19 +31,8 @@
 				margin-bottom: 0.5em;
 			}
 		}
-	}
-	.formatted-header__title {
-		font-weight: 400;
-		margin: 0 0 4px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 100%;
-
-		@include break-zoomed-in {
-			font-size: $font-title-medium;
-		}
-
-		@include break-small {
-			font-size: $font-title-large;
+		ul {
+			margin: 0 0 0 1em;
 		}
 	}
 }

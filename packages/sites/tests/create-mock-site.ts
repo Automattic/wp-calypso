@@ -4,21 +4,27 @@ export function createMockSite( {
 	URL,
 	is_private = false,
 	is_coming_soon = false,
+	is_deleted = false,
 	visible = true,
 	options = {
 		is_redirect: false,
 		unmapped_url: '',
 	},
+	site_migration,
 }: {
 	ID?: number;
 	name?: string;
 	URL?: string;
 	is_private?: boolean;
 	is_coming_soon?: boolean;
+	is_deleted?: boolean;
 	visible?: boolean;
 	options?: {
 		is_redirect?: boolean;
 		unmapped_url?: string;
+	};
+	site_migration?: {
+		migration_status?: string;
 	};
 } = {} ) {
 	const slug = `site${ ID }.io`;
@@ -30,7 +36,9 @@ export function createMockSite( {
 		title: name ?? slug,
 		is_private,
 		is_coming_soon,
+		is_deleted,
 		visible,
 		options,
+		site_migration,
 	};
 }

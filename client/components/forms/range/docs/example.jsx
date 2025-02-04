@@ -23,7 +23,7 @@ export default class extends PureComponent {
 				max="100"
 				value={ this.state.rangeValue }
 				onChange={ this.onChange }
-				showValueLabel={ true }
+				showValueLabel
 			/>
 		);
 	}

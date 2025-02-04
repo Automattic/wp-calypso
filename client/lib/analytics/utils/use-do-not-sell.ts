@@ -1,12 +1,19 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
+import {
+	recordTracksEvent,
+	getTrackingPrefs,
+	setTrackingPrefs,
+	isRegionInCcpaZone,
+} from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import isRegionInCcpaZone from './is-region-in-ccpa-zone';
-import { getTrackingPrefs, refreshCountryCodeCookieGdpr, setTrackingPrefs } from '.';
+import { useDispatch } from 'react-redux';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
+import { refreshCountryCodeCookieGdpr } from '.';
 
 export default () => {
 	const [ shouldSeeDoNotSell, setShouldSeeDoNotSell ] = useState( false );
 	const [ isDoNotSell, setIsDoNotSell ] = useState( false );
+	const dispatch = useDispatch();
 
 	useEffect( () => {
 		const controller = new AbortController();
@@ -30,8 +37,16 @@ export default () => {
 		setIsDoNotSell( ! getTrackingPrefs().buckets.advertising );
 	}, [] );
 
+	const setUserAdvertisingOptOut = useCallback(
+		( isOptedOut: boolean ) => {
+			dispatch( saveUserSettings( { advertising_targeting_opt_out: isOptedOut } ) );
+		},
+		[ saveUserSettings ]
+	);
+
 	const onSetDoNotSell = useCallback(
 		( isActive: boolean ) => {
+			// Update the preferences in the cookie
 			// isActive = true means user has opted out of "advertising" tracking
 			const prefs = setTrackingPrefs( { ok: true, buckets: { advertising: ! isActive } } );
 
@@ -43,10 +58,11 @@ export default () => {
 				} );
 			}
 
+			setUserAdvertisingOptOut( isActive );
 			setIsDoNotSell( ! prefs.buckets.advertising );
 		},
 		[ setIsDoNotSell ]
 	);
 
-	return { shouldSeeDoNotSell, onSetDoNotSell, isDoNotSell };
+	return { shouldSeeDoNotSell, onSetDoNotSell, setUserAdvertisingOptOut, isDoNotSell };
 };

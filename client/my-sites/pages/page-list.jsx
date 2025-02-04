@@ -191,9 +191,8 @@ class Pages extends Component {
 		const { search, status } = this.props.query;
 
 		return (
-			( ! config.isEnabled( 'unified-pages/virtual-home-page' ) ||
-				/** Blog posts page is for themes that don't support FSE */
-				! isFSEActive ) &&
+			/** Blog posts page is for themes that don't support FSE */
+			! isFSEActive &&
 			site &&
 			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
@@ -212,7 +211,6 @@ class Pages extends Component {
 		const { search, status } = this.props.query;
 
 		return (
-			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
 			/** Virtual homepage is for themes that support FSE */
 			isFSEActive &&
 			site &&
@@ -327,7 +325,7 @@ class Pages extends Component {
 					onShadowStatusChange={ this.updateShadowStatus }
 					page={ page }
 					multisite={ false }
-					hierarchical={ true }
+					hierarchical
 					hierarchyLevel={ page.indentLevel || 0 }
 					showPublishedStatus={ showPublishedStatus }
 				/>
@@ -384,6 +382,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				{ this.renderBlogPostsPage() }
+				{ this.renderVirtualHomePage() }
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
@@ -397,9 +396,7 @@ class Pages extends Component {
 			( loading || areBlockEditorSettingsLoading || isFSEActiveLoading ) && ! hasPage;
 
 		if ( ! isInitialLoad && hasSites ) {
-			return pages.length > 0 || this.showVirtualHomepage()
-				? this.renderPagesList( { pages } )
-				: this.renderNoContent();
+			return pages.length > 0 ? this.renderPagesList( { pages } ) : this.renderNoContent();
 		}
 
 		return this.renderLoading();

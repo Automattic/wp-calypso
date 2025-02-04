@@ -1,14 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
-import {
-	stripeConfiguration,
-	mockStripeElements,
-} from 'calypso/my-sites/checkout/composite-checkout/test/util';
+import { stripeConfiguration, mockStripeElements } from 'calypso/my-sites/checkout/src/test/util';
 import { createReduxStore } from 'calypso/state';
 import { PURCHASES_SITE_FETCH_COMPLETED } from 'calypso/state/action-types';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
@@ -16,7 +13,7 @@ import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import ChangePaymentMethod from '../change-payment-method';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { StoredPaymentMethod } from '../../../../lib/checkout/payment-methods';
 
 jest.mock( '@stripe/react-stripe-js', () => {
 	const stripe = jest.requireActual( '@stripe/react-stripe-js' );
@@ -35,25 +32,21 @@ jest.mock( '@stripe/stripe-js', () => {
 
 // `recordPageView()` calls `fetch` for analytics with no guards and it is not
 // available outside of a browser so we must mock it here to avoid fatals.
-global.fetch = jest.fn( () => Promise.resolve() );
+global.fetch = jest.fn( () => Promise.resolve() ) as any;
 
 const userId = 1;
 const siteId = 1;
 
-const storedCard1: StoredCard = {
-	added: '2022-05-23',
-	card: '4242',
+const storedCard1: Partial< StoredPaymentMethod > = {
+	card_last_4: '4242',
 	card_type: 'visa',
 	email: '',
 	expiry: '2033-11-30',
 	is_expired: false,
-	last_service: 'wordpress-com',
-	last_used: '2022-01-26 17:19:54',
-	meta: [],
 	mp_ref: '12345abcd',
 	name: 'Human Person',
 	payment_partner: 'stripe',
-	remember: '1',
+	remember: true,
 	stored_details_id: '1',
 	user_id: String( userId ),
 };
@@ -184,9 +177,9 @@ describe( 'ChangePaymentMethod', () => {
 	it( 'renders a list of existing cards', async () => {
 		const queryClient = new QueryClient();
 
-		const paymentMethods: StoredCard[] = [ storedCard1 ];
+		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )
@@ -210,12 +203,42 @@ describe( 'ChangePaymentMethod', () => {
 		expect( await screen.findByLabelText( new RegExp( storedCard1.name ) ) ).toBeInTheDocument();
 	} );
 
-	it( 'renders a new credit card payment method', async () => {
+	it( 'renders a new credit card payment method that reads "Credit or debit card"', async () => {
 		const queryClient = new QueryClient();
 
-		const paymentMethods: StoredCard[] = [ storedCard1 ];
+		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
+			.reply( 200, paymentMethods );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/stripe-configuration' )
+			.reply( 200, stripeConfiguration );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ChangePaymentMethod
+						getManagePurchaseUrlFor={ ( siteSlug: string, purchaseId: number ) =>
+							`/manage-purchase-url/${ siteSlug }/${ purchaseId }`
+						}
+						purchaseId={ 1 }
+						purchaseListUrl="purchase-list-url"
+						siteSlug="example.com"
+					/>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		expect( await screen.findByLabelText( 'New credit or debit card' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a new credit card payment method that reads "New credit or debit card"', async () => {
+		const queryClient = new QueryClient();
+
+		const paymentMethods: Partial< StoredPaymentMethod >[] = [];
+
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )
@@ -242,9 +265,9 @@ describe( 'ChangePaymentMethod', () => {
 	it( 'renders a PayPal payment method', async () => {
 		const queryClient = new QueryClient();
 
-		const paymentMethods: StoredCard[] = [ storedCard1 ];
+		const paymentMethods: Partial< StoredPaymentMethod >[] = [ storedCard1 ];
 		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/payment-methods?expired=include' )
+			.get( '/rest/v1.2/me/payment-methods?type=card&expired=exclude' )
 			.reply( 200, paymentMethods );
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/stripe-configuration' )

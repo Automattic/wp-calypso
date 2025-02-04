@@ -1,10 +1,11 @@
 import { Page } from 'playwright';
 
 const selectors = {
-	cartButton: 'masterbar-cart-button',
-	popover: '.popover',
+	cartButton: '.masterbar-cart-button',
+	popover: '.masterbar-cart-button__popover',
 	removeItemButton: 'text=Remove from cart',
-	removeDialogConfirmButton: 'text=Continue',
+	removeDialogConfirmButton: '.masterbar-cart-button__popover button:text("Continue")',
+	busyCheckoutButton: '.masterbar-cart-button__popover button:text("Checkout").is-busy',
 };
 /**
  * Component representing the navbar/masterbar at top of WPCOM.
@@ -22,29 +23,14 @@ export class NavbarCartComponent {
 	}
 
 	/**
-	 * Returns whether the cart is visible.
-	 *
-	 * If the popover cart is visible, there are at least one item(s) in the
-	 * cart pending a checkout.
-	 *
-	 * @returns {Promise<boolean>} True if the cart is visible. False otherwise.
-	 */
-	private async cartVisible(): Promise< boolean > {
-		await this.page.waitForLoadState( 'load' );
-		return await this.page.isVisible( selectors.cartButton );
-	}
-
-	/**
 	 * Opens the popover cart.
 	 */
-	async openCart(): Promise< boolean > {
-		if ( await this.cartVisible() ) {
-			await this.page.click( selectors.cartButton );
-			const elementHandle = await this.page.waitForSelector( selectors.popover );
-			await elementHandle.waitForElementState( 'stable' );
-			return true;
-		}
-		return false;
+	async openCart(): Promise< void > {
+		await this.page.locator( selectors.cartButton ).click();
+		await this.page.locator( selectors.popover ).waitFor();
+		// Sometimes there is background work happening when you open the popover. This can interrupt later actions taken.
+		// Best indicator is that the Checkout button is no longer busy.
+		await this.page.locator( selectors.busyCheckoutButton ).waitFor( { state: 'detached' } );
 	}
 
 	/**
@@ -53,11 +39,14 @@ export class NavbarCartComponent {
 	 * This method expects the cart popover to be open. Otherwise, this method will throw.
 	 *
 	 * @param param0 Parameter object.
-	 * @param {number} param0.index 1-indexed value representing the cart item to remove.
+	 * @param {number} param0.index 0-indexed value representing the cart item to remove.
 	 */
-	async removeCartItem( { index = 1 }: { index: number } ): Promise< void > {
-		await this.page.click( `:nth-match( ${ selectors.removeItemButton }, ${ index })` );
-		await this.page.click( selectors.removeDialogConfirmButton );
+	async removeCartItem( { index = 0 }: { index: number } ): Promise< void > {
+		await this.page.locator( selectors.removeItemButton ).nth( index ).click();
+		await this.page.locator( selectors.removeDialogConfirmButton ).click();
+		// We have to wait for the removal to go through, or weird race conditions happen.
+		// The safest indicator is that there is no longer a "busy"-state Checkout button.
+		await this.page.locator( selectors.busyCheckoutButton ).waitFor( { state: 'detached' } );
 	}
 
 	/**
@@ -66,9 +55,10 @@ export class NavbarCartComponent {
 	 * This method expects the cart popover to be open. Otherwise, this method will throw.
 	 */
 	async emptyCart(): Promise< void > {
-		const items = await this.page.$$( selectors.removeItemButton );
-		items.forEach( async ( _, index ) => {
-			await this.removeCartItem( { index: index + 1 } );
-		} );
+		const numberOfCartItems = await this.page.locator( selectors.removeItemButton ).count();
+		for ( let index = 0; index < numberOfCartItems; index++ ) {
+			// Since we're going one by one and removing them all, we can always just remove the first item until there are none.
+			await this.removeCartItem( { index: 0 } );
+		}
 	}
 }

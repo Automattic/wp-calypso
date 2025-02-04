@@ -19,7 +19,6 @@ let tracksIdentity: Identity | null = null;
 /**
  * Populate `identity` on WPCOM and ATOMIC to enable tracking.
  * Always disabled for regular self-hosted installations.
- *
  * @param identity Info about identity.
  */
 export const initializeWithIdentity = ( identity: Identity ): void => {
@@ -29,7 +28,6 @@ export const initializeWithIdentity = ( identity: Identity ): void => {
 
 /**
  * Track a view of the layout selector.
- *
  * @param source Source triggering the view.
  */
 export const trackView = ( source: string ): void => {
@@ -64,7 +62,6 @@ export const trackDismiss = (): void => {
 
 /**
  * Track layout selection.
- *
  * @param pattern Pattern slug.
  */
 export const trackSelection = ( pattern: string ): void => {

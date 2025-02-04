@@ -1,11 +1,20 @@
 {
 	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src"
 	},
-	"include": [ "src" ],
+	"include": [ "src", "src/*.json", "types" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../viewport" }, { "path": "../site-picker" } ]
+	"references": [
+		{ "path": "../state-utils" },
+		{ "path": "../viewport" },
+		{ "path": "../odie-client" },
+		{ "path": "../whats-new" },
+		{ "path": "../wpcom-checkout" },
+		{ "path": "../zendesk-client" }
+	]
 }

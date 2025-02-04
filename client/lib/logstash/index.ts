@@ -2,7 +2,6 @@ import wpcom from 'calypso/lib/wp';
 
 /**
  * Parameters sent to logstash endpoint.
- *
  * @see PCYsg-5T4-p2
  */
 interface LogToLogstashParams {
@@ -15,6 +14,7 @@ interface LogToLogstashParams {
 	message: string;
 	extra?: any;
 	site_id?: number;
+	tags?: string[];
 	[ key: string ]: any;
 }
 

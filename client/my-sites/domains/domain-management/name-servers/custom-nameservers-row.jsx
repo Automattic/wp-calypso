@@ -16,6 +16,7 @@ class CustomNameserversRow extends PureComponent {
 		nameserver: PropTypes.string,
 		onChange: PropTypes.func,
 		onRemove: PropTypes.func,
+		isSaving: PropTypes.bool,
 	};
 
 	renderRemoveIcon() {
@@ -24,7 +25,7 @@ class CustomNameserversRow extends PureComponent {
 		}
 
 		return (
-			<Button borderless compact onClick={ this.handleRemove }>
+			<Button borderless compact onClick={ this.handleRemove } disabled={ this.props.isSaving }>
 				<Gridicon icon="trash" />
 			</Button>
 		);
@@ -39,6 +40,7 @@ class CustomNameserversRow extends PureComponent {
 						onChange={ this.handleChange }
 						onFocus={ this.handleFocus }
 						value={ this.props.nameserver }
+						disabled={ this.props.isSaving }
 					/>
 
 					{ this.renderRemoveIcon() }

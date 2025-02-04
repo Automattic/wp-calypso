@@ -15,7 +15,6 @@ type RenderSwitchProps = {
 /**
  * Renders one option or another based on a boolean condition,
  * optionally after a query has completed.
- *
  * @param {RenderSwitchProps} props - The component properties.
  * @param {Function}  props.loadingCondition - Returns true if more information is required to make a render decision; false, otherwise.
  * @param {Function}  props.renderCondition - Returns true if trueComponent should be rendered, and false if falseComponent should be rendered.

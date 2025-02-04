@@ -8,19 +8,47 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
+export const mapToRequestBody = ( action ) => {
+	const requestBody = {};
+
+	if ( action.softwareSet ) {
+		requestBody.software_set = action.softwareSet;
+	}
+
+	if ( action.themeSlug ) {
+		requestBody.theme_slug = action.themeSlug;
+	}
+
+	if ( action.pluginSlug ) {
+		requestBody.plugin_slug = action.pluginSlug;
+	}
+
+	if ( action.themeFile ) {
+		requestBody.theme_file = action.themeFile;
+	}
+
+	if ( action.pluginFile ) {
+		requestBody.plugin_file = action.pluginFile;
+	}
+
+	if ( action.context ) {
+		requestBody.context = action.context;
+	}
+
+	if ( action.transferIntent ) {
+		requestBody.transfer_intent = action.transferIntent;
+	}
+
+	return requestBody;
+};
+
 const initiateAtomicTransfer = ( action ) =>
 	http(
 		{
 			apiNamespace: 'wpcom/v2',
 			method: 'POST',
 			path: `/sites/${ action.siteId }/atomic/transfers/`,
-			...( action.softwareSet
-				? {
-						body: {
-							software_set: action.softwareSet,
-						},
-				  }
-				: {} ),
+			body: mapToRequestBody( action ),
 		},
 		action
 	);

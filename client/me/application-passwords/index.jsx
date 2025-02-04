@@ -1,7 +1,9 @@
 import { Button, Card, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import SectionHeader from 'calypso/components/section-header';
 import useAppPasswordsQuery from 'calypso/data/application-passwords/use-app-passwords-query';
 import useCreateAppPasswordMutation from 'calypso/data/application-passwords/use-create-app-password-mutation';
@@ -91,11 +93,20 @@ function ApplicationPasswords() {
 				) }
 
 				<p className="application-passwords__nobot">
-					{ translate(
-						'With Two-Step Authentication active, you can generate a custom password for ' +
-							'each third-party application you authorize to use your WordPress.com account. ' +
-							'You can revoke access for an individual application here if you ever need to.'
-					) }
+					<>
+						{ translate(
+							'With Two-Step Authentication active, you can generate a custom password for ' +
+								'each third-party application you authorize to use your WordPress.com account. ' +
+								'You can revoke access for an individual application here if you ever need to.'
+						) }{ ' ' }
+						<InlineSupportLink
+							supportPostId={ 263616 }
+							showIcon={ false }
+							supportLink={ localizeUrl(
+								'https://wordpress.com/support/security/two-step-authentication/application-specific-passwords'
+							) }
+						/>
+					</>
 				</p>
 
 				<AppPasswordsList appPasswords={ appPasswords } />

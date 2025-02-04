@@ -6,7 +6,7 @@ import {
 	AllureRuntime,
 	AllureConfig,
 } from '@automattic/jest-circus-allure-reporter';
-import { EnvironmentContext } from '@jest/environment';
+import { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
 import { parse as parseDocBlock } from 'jest-docblock';
 import NodeEnvironment from 'jest-environment-node';
 import {
@@ -56,16 +56,22 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
 	 *
-	 * @param {Config.ProjectConfig} config Jest configuration.
-	 * @param {EnvironmentContext} context Jest execution context.
+	 * @param config Jest configuration.
+	 * @param context Jest execution context.
 	 */
-	constructor( config: Config.ProjectConfig, context: EnvironmentContext ) {
-		super( config );
+	constructor( config: JestEnvironmentConfig, context: EnvironmentContext ) {
+		super( config, context );
 
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
+		// We need the test file name for some ENV var calculation.
+		// Set the global value both in the Jest context (the code here)...
+		global.testFileName = this.testFilename;
+		// ...and pass the global value to the environment running the test code. (What the "this" does here.)
+		// Yes, we need to do both!
+		this.global.testFileName = this.testFilename;
 		this.testArtifactsPath = '';
-		this.allure = this.initializeAllureReporter( config );
+		this.allure = this.initializeAllureReporter( config.projectConfig );
 	}
 
 	/**
@@ -97,6 +103,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	async setup() {
 		await super.setup();
 
+		// Make sure we have valid env variables, and fail early if we don't!
+		env.validate();
+
 		// Determine the browser that should be used for the spec.
 		const browserType: BrowserType = await determineBrowser( this.testFilePath );
 
@@ -110,20 +119,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testArtifactsPath = await fs.mkdtemp(
 			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
-		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
 		// Start the browser.
 		const browser = await browserType.launch( {
 			...config.launchOptions,
-			logger: {
-				log: async ( name: string, severity: string, message: string ) => {
-					await fs.appendFile(
-						logFilePath,
-						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
-					);
-				},
-				isEnabled: ( name ) => name === 'api',
-			},
 		} );
 
 		// Set up the proxy trap.
@@ -143,49 +142,86 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * The browser is then shut down at the end regardless of failure status.
 	 */
 	async teardown(): Promise< void > {
-		if ( ! this.global.browser ) {
-			throw new Error( 'Browser instance unavailable' );
-		}
-		const contexts = this.global.browser.contexts();
-		if ( this.failure ) {
-			let contextIndex = 1;
+		try {
+			if ( ! this.global.browser ) {
+				throw new Error( 'Browser instance unavailable' );
+			}
+			const contexts = this.global.browser.contexts();
+			if ( this.failure ) {
+				let contextIndex = 1;
 
-			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+				// Spec file name and step that filed.
+				let artifactPrefix = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 
-			for await ( const context of contexts ) {
-				let pageIndex = 1;
-				const traceFilePath = path.join(
-					this.testArtifactsPath,
-					`${ artifactFilename }__${ contextIndex }.zip`
-				);
+				if ( env.RUN_ID ) {
+					artifactPrefix = `${ artifactPrefix }__${ sanitizeString( env.RUN_ID ) }`;
+				}
 
-				// Traces are saved per context.
-				await context.tracing.stop( { path: traceFilePath } );
+				if ( env.RETRY_COUNT ) {
+					artifactPrefix = `${ artifactPrefix }__retry-${ env.RETRY_COUNT }`;
+				}
 
-				for await ( const page of context.pages() ) {
-					// Define artifact filename.
-					const mediaFilePath = path.join(
+				for await ( const context of contexts ) {
+					let pageIndex = 1;
+					// Save trace file per page.
+					const traceFilePath = path.join(
 						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+						`${ artifactPrefix }__${ contextIndex }.zip`
 					);
 
-					// Screenshots and video are saved per page, where numerous
-					// pages may exist within a context.
-					await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+					// Traces are saved per context.
+					await context.tracing.stop( { path: traceFilePath } );
 
-					// Close the now unnecessary page which also triggers saving
-					// of video to the disk.
-					await page.close();
-					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
-					pageIndex++;
+					for await ( const page of context.pages() ) {
+						const pageName = `${ artifactPrefix }__${ contextIndex }-${ pageIndex }`;
+						// Define artifact filename.
+						const mediaFilePath = path.join( this.testArtifactsPath, pageName );
+
+						// Screenshots and video are saved per page, where numerous
+						// pages may exist within a context.
+						try {
+							await page.screenshot( {
+								path: `${ mediaFilePath }-fullpage.png`,
+								timeout: env.TIMEOUT,
+								fullPage: true,
+							} );
+							await page.screenshot( {
+								path: `${ mediaFilePath }.png`,
+								timeout: env.TIMEOUT,
+							} );
+						} catch ( error ) {
+							console.error(
+								`Error while capturing page (${ pageName }) screenshot. ` +
+									'This may mean the page already crashed during test execution. Error: ',
+								error
+							);
+						}
+
+						try {
+							// Close the now unnecessary page which also triggers saving
+							// of video to the disk.
+							await page.close();
+							await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+						} catch ( error ) {
+							console.error(
+								`Error while closing page (${ pageName }) and saving video. ` +
+									'This may mean the page already crashed during test execution. Error: ',
+								error
+							);
+						}
+
+						pageIndex++;
+					}
+					contextIndex++;
 				}
-				contextIndex++;
+				// Print paths to captured artifacts for faster triaging.
+				console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 			}
-			// Print paths to captured artifacts for faster triaging.
-			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
+			// Regardless of pass/fail status, close the browser instance.
+			await this.global.browser.close();
+		} catch ( error ) {
+			console.error( 'Unexepected error during Jest teardown: ', error );
 		}
-		// Regardless of pass/fail status, close the browser instance.
-		await this.global.browser.close();
 
 		await super.teardown();
 	}
@@ -391,6 +427,26 @@ function setupBrowserProxyTrap( browser: Browser ): Browser {
 						if ( response.status() === 502 ) {
 							await page.reload();
 						}
+					} );
+
+					// Disable the WhatsNewGuide to prevent the element we want to click from
+					// being covered by it so that the element isn't clickable.
+					await page.route( /wpcom\/v2\/whats-new\/list/, ( route ) =>
+						route.fulfill( {
+							status: 200,
+							body: undefined,
+						} )
+					);
+
+					// Add route abort for slow requests on AT sites.
+					await page.route( /store\/v1\/cart/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /rest\/v1\/batch/, ( route ) => {
+						route.abort();
+					} );
+					await page.route( /pubmine/, ( route ) => {
+						route.abort();
 					} );
 
 					const context = page.context();

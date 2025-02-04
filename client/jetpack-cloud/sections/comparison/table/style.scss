@@ -20,23 +20,38 @@
 
 		.item-price {
 			margin: 0.5rem 0;
+			max-height: 2rem;
+			min-height: rem(50px);
 
-			.display-price:not(.is-placeholder) {
+			.display-price,
+			.display-price.is-placeholder {
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				max-height: 2rem;
 
-				.display-price__details,
-				.display-price__billing-time-frame {
-					line-height: 0.5;
+				.plan-price {
+					transform: none;
+					max-height: rem(30px);
 				}
 
-				.display-price__prices {
-					.plan-price__currency-symbol,
-					.plan-price__integer,
-					.plan-price__fraction {
-						font-size: 1.5rem;
+				.display-price__billing-time-frame {
+					margin-top: 3px;
+					max-height: rem(15px);
+				}
+
+				&:not(.is-placeholder) {
+					.display-price__details,
+					.display-price__billing-time-frame {
+						display: block;
+						white-space: normal;
+					}
+
+					.display-price__prices {
+						.plan-price__currency-symbol,
+						.plan-price__integer,
+						.plan-price__fraction {
+							font-size: 1.5rem;
+						}
 					}
 				}
 			}
@@ -102,6 +117,7 @@
 
 	tr {
 		border-bottom: 1px solid var(--studio-white);
+		padding: 0 1rem;
 
 		@media (max-width: $break-large) {
 			display: block;
@@ -193,6 +209,10 @@
 			align-items: center;
 			justify-content: center;
 		}
+	}
+
+	.feature-heading {
+		vertical-align: middle;
 	}
 
 	.feature-heading__icon-container {
@@ -301,7 +321,7 @@
 		width: 200px;
 	}
 
-	col.product-jetpack-backup {
+	col.product-jetpack-growth {
 		background-color: rgba(157, 217, 119, 0.1);
 	}
 

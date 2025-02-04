@@ -1,0 +1,22 @@
+@import "@automattic/typography/styles/variables";
+
+.odie-button-default {
+	padding: 10px 20px;
+	border: 1px solid #000;
+	background-color: #fff;
+	color: #000;
+
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.odie-button-compact {
+	padding: 5px 10px;
+	font-size: $font-body-small;
+}
+
+.odie-button-borderless {
+	border: none;
+	padding: 10px;
+}

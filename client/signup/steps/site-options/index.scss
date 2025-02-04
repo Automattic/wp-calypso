@@ -2,17 +2,17 @@
 @import "@wordpress/base-styles/mixins";
 
 .signup__step .is-site-options,
-.signup__step .is-difm-store-options
+.signup__step .is-difm-store-options,
 .signup__step .is-difm-options {
-	.step-wrapper__header {
-		@include break-small {
-			flex-basis: 34%;
-		}
-	}
-
 	.step-wrapper__content {
 		@include break-small {
 			flex-basis: 50%;
+		}
+	}
+
+	.step-wrapper.is-horizontal-layout {
+		@include break-small {
+			margin-top: 15vh;
 		}
 	}
 }

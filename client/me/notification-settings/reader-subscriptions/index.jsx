@@ -1,26 +1,29 @@
-import { Card } from '@automattic/components';
+import { Card, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
+import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import FormButton from 'calypso/components/forms/form-button';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { protectForm } from 'calypso/lib/protect-form';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import withFormBase from 'calypso/me/form-base/with-form-base';
 import Navigation from 'calypso/me/notification-settings/navigation';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
+import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 class NotificationSubscriptions extends Component {
 	handleClickEvent( action ) {
@@ -31,12 +34,10 @@ class NotificationSubscriptions extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	handleCheckboxEvent( action ) {
+	handleCheckboxEvent( action, invert = false ) {
 		return ( event ) => {
-			const eventAction = 'Clicked ' + action + ' checkbox';
-			const optionValue = event.target.checked ? 1 : 0;
-
-			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
+			const optionValue = invert ? ! event.target.checked : event.target.checked;
+			this.props.recordGoogleEvent( 'Me', `Clicked ${ action } checkbox`, 'checked', +optionValue );
 		};
 	}
 
@@ -55,18 +56,24 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
+		const { teams } = this.props;
+		const isAutomattician = isAutomatticTeamMember( teams );
+
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
+				<QueryReaderTeams />
+
 				<PageViewTracker
 					path="/me/notifications/subscriptions"
 					title="Me > Notifications > Subscriptions Delivery"
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				<FormattedHeader
-					brandFont
-					headerText={ this.props.translate( 'Notification Settings' ) }
-					align="left"
+				<SubscriptionManagementBackButton />
+
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ this.props.translate( 'Notification Settings' ) }
 				/>
 
 				<Navigation path={ this.props.path } />
@@ -203,7 +210,7 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>{ this.props.translate( 'Block emails' ) }</FormLegend>
+							<FormLegend>{ this.props.translate( 'Pause emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
@@ -215,11 +222,38 @@ class NotificationSubscriptions extends Component {
 								/>
 								<span>
 									{ this.props.translate(
-										'Block all email updates from blogs you’re following on WordPress.com'
+										'Pause all email updates from sites you’re subscribed to on WordPress.com'
 									) }
 								</span>
 							</FormLabel>
+							<FormSettingExplanation>
+								{ this.props.translate(
+									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
+
+						{ isAutomattician && (
+							<FormFieldset>
+								<FormLegend>Auto-follow P2 posts (Automatticians only)</FormLegend>
+								<FormLabel>
+									<FormCheckbox
+										checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
+										disabled={ this.props.getDisabledState() }
+										id="p2_disable_autofollow_on_comment"
+										name="p2_disable_autofollow_on_comment"
+										onChange={ this.props.toggleSetting }
+										onClick={ this.handleCheckboxEvent(
+											'Enable auto-follow P2 upon comment',
+											true
+										) }
+									/>
+									<span>
+										Automatically subscribe to P2 post notifications when you leave a comment.
+									</span>
+								</FormLabel>
+							</FormFieldset>
+						) }
 
 						<FormButton
 							isSubmitting={ this.props.isUpdatingUserSettings }
@@ -237,8 +271,16 @@ class NotificationSubscriptions extends Component {
 	}
 }
 
+const mapStateToProps = ( state ) => ( {
+	teams: getReaderTeams( state ),
+} );
+
+const mapDispatchToProps = {
+	recordGoogleEvent,
+};
+
 export default compose(
-	connect( null, { recordGoogleEvent } ),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocalizedMoment,

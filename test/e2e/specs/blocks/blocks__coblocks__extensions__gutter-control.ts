@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	EditorPage,
 	PricingTableBlock,
 	TestAccount,
@@ -17,13 +16,18 @@ declare const browser: Browser;
 
 const isAtomic = envVariables.TEST_ON_ATOMIC;
 const isSimple = ! envVariables.TEST_ON_ATOMIC;
-const features = envToFeatureKey( {
-	...envVariables,
-	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
-	COBLOCKS_EDGE: isAtomic || envVariables.COBLOCKS_EDGE,
-} );
+const features = envToFeatureKey( envVariables );
+// For this spec, all Atomic testing is always edge.
+// See https://github.com/Automattic/wp-calypso/pull/73052
+if ( isAtomic ) {
+	features.coblocks = 'edge';
+}
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Gutter Control', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
@@ -34,7 +38,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testAccount = new TestAccount( accountName );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		await testAccount.authenticate( page );
 	} );
@@ -48,7 +52,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Gutter Control' ),
 			PricingTableBlock.blockName,
 			PricingTableBlock.blockEditorSelector
 		);
-		pricingTableBlock = new PricingTableBlock( blockHandle );
+		pricingTableBlock = new PricingTableBlock( page, blockHandle );
 	} );
 
 	it( 'Open settings sidebar', async () => {

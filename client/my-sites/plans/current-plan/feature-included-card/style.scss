@@ -35,6 +35,10 @@
 			font-weight: 600;
 			font-size: $font-body;
 
+			&.reduced-padding {
+				margin-top: 0;
+			}
+
 			@media (max-width: $break-mobile) {
 				margin: 0;
 				font-size: $font-body-small;

@@ -1,6 +1,6 @@
-import classnames from 'classnames';
+import { FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import TranslatableString from 'calypso/components/translatable/proptype';
 
@@ -13,7 +13,7 @@ const FormRadioWithThumbnail = ( { label, thumbnail, disabled, ...otherProps } )
 		<div className="form-radio-with-thumbnail">
 			<FormLabel>
 				<div
-					className={ classnames( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
+					className={ clsx( 'form-radio-with-thumbnail__thumbnail', cssClass ) }
 					style={ { backgroundColor: cssColor, opacity: disabled ? 0.5 : 1 } }
 				>
 					{ imageUrl && <img src={ imageUrl } alt={ label } /> }

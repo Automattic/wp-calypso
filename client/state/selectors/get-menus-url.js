@@ -3,7 +3,6 @@ import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites
 
 /**
  * Returns the menus admin URL for the given site ID
- *
  * @param {Object}  state   Global state tree
  * @param {number}  siteId  A site ID
  * @returns {?string}        Menus admin URL

@@ -1,25 +1,19 @@
+import { WordPressWordmark } from '@automattic/components';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
-import { HelpCenter } from '@automattic/data-stores';
-import { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
-import {
-	useSelect as useDataStoreSelect,
-	useDispatch as useDataStoreDispatch,
-} from '@wordpress/data';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
-import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
+import { DefaultMasterbarContact } from 'calypso/my-sites/checkout/checkout-thank-you/redesign-v2/masterbar-styled/default-contact';
+import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
+import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Item from './item';
 import Masterbar from './masterbar';
-
-const HELP_CENTER_STORE = HelpCenter.register();
 
 interface Props {
 	title: string;
@@ -27,6 +21,7 @@ interface Props {
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
+	shouldClearCartWhenLeaving?: boolean;
 	loadHelpCenterIcon?: boolean;
 }
 
@@ -36,32 +31,40 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
+	shouldClearCartWhenLeaving,
 	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
-	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
-	const isJetpack = isJetpackCheckout || isJetpackNotAtomic;
+	const getCheckoutType = () => {
+		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
+			return 'jetpack';
+		}
+
+		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
+			return 'akismet';
+		}
+
+		return 'wpcom';
+	};
+	const checkoutType = getCheckoutType();
+
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isShowingHelpCenter = useDataStoreSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).isHelpCenterShown()
-	);
-
-	const closeAndLeave = () =>
+	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) =>
 		leaveCheckout( {
 			siteSlug,
-			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
+			userHasClearedCart: options?.userHasClearedCart ?? false,
 		} );
 
 	const clickClose = () => {
-		if ( responseCart.products.length > 0 ) {
+		if ( shouldClearCartWhenLeaving && responseCart.products.length > 0 ) {
 			setIsModalVisible( true );
 			return;
 		}
@@ -76,14 +79,19 @@ const CheckoutMasterbar = ( {
 	const modalSecondaryText = translate( 'Empty cart' );
 	const clearCartAndLeave = () => {
 		replaceProductsInCart( [] );
-		closeAndLeave();
+		closeAndLeave( {
+			userHasClearedCart: true,
+		} );
 	};
 
-	const showCloseButton = isLeavingAllowed && ! isJetpack;
+	const showCloseButton = isLeavingAllowed && checkoutType === 'wpcom';
 
 	return (
 		<Masterbar
-			className={ classnames( 'masterbar--is-checkout', { 'masterbar--is-jetpack': isJetpack } ) }
+			className={ clsx( 'masterbar--is-checkout', {
+				'masterbar--is-jetpack': checkoutType === 'jetpack',
+				'masterbar--is-akismet': checkoutType === 'akismet',
+			} ) }
 		>
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
@@ -95,22 +103,17 @@ const CheckoutMasterbar = ( {
 						tipTarget="close"
 					/>
 				) }
-				{ ! isJetpack && <WordPressWordmark className="masterbar__wpcom-wordmark" /> }
-				{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
+				{ checkoutType === 'wpcom' && (
+					<WordPressWordmark className="masterbar__wpcom-wordmark" color="#2c3338" />
+				) }
+				{ checkoutType === 'jetpack' && (
+					<JetpackLogo className="masterbar__jetpack-wordmark" full />
+				) }
+				{ checkoutType === 'akismet' && <AkismetLogo className="masterbar__akismet-wordmark" /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ loadHelpCenterIcon && (
-				<Item
-					onClick={ () => setShowHelpCenter( ! isShowingHelpCenter ) }
-					className={ classnames( 'masterbar__item-help', {
-						'is-active': isShowingHelpCenter,
-					} ) }
-					icon={ <HelpIcon /> }
-				>
-					{ translate( 'Help' ) }
-				</Item>
-			) }
+			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }

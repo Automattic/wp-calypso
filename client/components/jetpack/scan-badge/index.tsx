@@ -1,7 +1,6 @@
-import { ScreenReaderText } from '@automattic/components';
+import { Badge, ScreenReaderText } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {
@@ -11,7 +10,7 @@ interface Props {
 
 const ScanBadge: FunctionComponent< Props > = ( { numberOfThreatsFound, progress } ) => {
 	const translate = useTranslate();
-	const hasProgressPercentage = Number.isFinite( progress );
+	const hasProgressPercentage = progress != null && Number.isFinite( progress );
 
 	if ( ! numberOfThreatsFound && ! hasProgressPercentage ) {
 		return null;

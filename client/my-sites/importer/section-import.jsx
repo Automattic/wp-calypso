@@ -5,17 +5,18 @@ import { once } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
 import memoizeLast from 'calypso/lib/memoize-last';
+import version_compare from 'calypso/lib/version-compare';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
 import SquarespaceImporter from 'calypso/my-sites/importer/importer-squarespace';
@@ -31,20 +32,18 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { getSiteOption, getSiteTitle } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-
 import './section-import.scss';
 
 /**
  * Configuration mapping import engines to associated import components.
  * The key is the engine, and the value is the component. To add new importers,
  * add it here and add its configuration to lib/importer/importer-config.
- *
  * @type {Object}
  */
 const importerComponents = {
@@ -57,6 +56,35 @@ const importerComponents = {
 };
 
 const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
+
+/**
+ * Turns filesize into a range divided by 100MB, so that we dont'need to track specific filesizes in Tracks.
+ *
+ * For example:
+ * 0mb   = 0—100MB (1 chunk)
+ * 85mb   = 0—100MB (1 chunk)
+ * 100mb  = 100—200MB (2 chunks)
+ * 110mb  = 100—200MB (2 chunks)
+ * 350mb  = 300—400MB (4 chunks)
+ */
+const bytesToFilesizeRange = ( bytes ) => {
+	const megabytes = parseInt( bytes / ( 1024 * 1024 ) );
+	const maxChunk = 100;
+
+	// How many full chunks can fit into our megabytes?
+	const chunks = Math.floor( megabytes / maxChunk );
+
+	const min = chunks * 100;
+	const max = min + maxChunk;
+
+	// Range of mbs where the filesize fits
+	return `${ min }—${ max }MB`;
+};
+
+/**
+ * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
+ */
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -89,7 +117,20 @@ class SectionImport extends Component {
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
-			this.trackImporterStateChange( importerState, importerId );
+			let eventProps = {};
+
+			// Log more info about upload failures
+			if ( importerState === appStates.UPLOAD_FAILURE ) {
+				eventProps = {
+					error_code: importItem.errorData.code,
+					error_type: importItem.errorData.type,
+					filesize_range: importItem.file?.size
+						? bytesToFilesizeRange( importItem.file.size )
+						: null,
+				};
+			}
+
+			this.trackImporterStateChange( importerState, importerId, eventProps );
 		} );
 	};
 
@@ -99,7 +140,7 @@ class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
-	trackImporterStateChange = memoizeLast( ( importerState, importerId ) => {
+	trackImporterStateChange = memoizeLast( ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
 			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
@@ -113,6 +154,7 @@ class SectionImport extends Component {
 		if ( stateToEventNameMap[ importerState ] ) {
 			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {
 				importer_id: importerId,
+				...eventProps,
 			} );
 		}
 	} );
@@ -138,14 +180,13 @@ class SectionImport extends Component {
 
 	/**
 	 * Renders each enabled importer at the provided `state`
-	 *
 	 * @param {string} importerState The state constant for the importer components
 	 * @returns {Array} A list of react elements for each enabled importer
 	 */
 	renderIdleImporters( importerState ) {
-		const { site, siteTitle } = this.props;
+		const { site, siteSlug, siteTitle } = this.props;
 		const importers = getImporters( {
-			isAtomic: site.options.is_wpcom_atomic,
+			isAtomic: site.options?.is_wpcom_atomic,
 			isJetpack: site.jetpack,
 		} );
 
@@ -165,10 +206,12 @@ class SectionImport extends Component {
 				<ImporterComponent
 					key={ engine }
 					site={ site }
+					siteSlug={ siteSlug }
 					siteTitle={ siteTitle }
 					importerStatus={ importerStatus }
-					isAtomic={ site.options.is_wpcom_atomic }
+					isAtomic={ site.options?.is_wpcom_atomic }
 					isJetpack={ site.jetpack }
+					fromSite={ this.props.fromSite }
 				/>
 			);
 		} );
@@ -177,7 +220,7 @@ class SectionImport extends Component {
 		return (
 			<>
 				{ importerElements }
-				<CompactCard href={ site.options.admin_url + 'import.php' }>
+				<CompactCard href={ site.options?.admin_url + 'import.php' }>
 					{ this.props.translate( 'Choose from full list' ) }
 				</CompactCard>
 			</>
@@ -186,11 +229,10 @@ class SectionImport extends Component {
 
 	/**
 	 * Renders list of importer elements for active import jobs
-	 *
 	 * @returns {Array} Importer react elements for the active import jobs
 	 */
 	renderActiveImporters() {
-		const { fromSite, site, siteTitle, siteImports } = this.props;
+		const { fromSite, site, siteSlug, siteTitle, siteImports } = this.props;
 
 		return siteImports.map( ( importItem, idx ) => {
 			const importer = getImporterByKey( importItem.type );
@@ -206,6 +248,7 @@ class SectionImport extends Component {
 						key={ idx }
 						site={ site }
 						fromSite={ fromSite }
+						siteSlug={ siteSlug }
 						siteTitle={ siteTitle }
 						importerStatus={ importItem }
 					/>
@@ -216,7 +259,6 @@ class SectionImport extends Component {
 
 	/**
 	 * Return rendered importer elements
-	 *
 	 * @returns {Array} Importer react elements
 	 */
 	renderImporters() {
@@ -284,15 +326,23 @@ class SectionImport extends Component {
 			options: { is_wpcom_atomic: isAtomic },
 		} = site;
 
+		// Target site Jetpack version is not compatible with the importer.
+		const jetpackVersionInCompatible = version_compare(
+			this.props.siteJetpackVersion,
+			JETPACK_IMPORT_MIN_PLUGIN_VERSION,
+			'<'
+		);
+
+		const hasUnifiedImporter = isEnabled( 'importer/unified' );
+
 		return (
 			<Main>
-				<ScreenOptionsTab wpAdminPath="import.php" />
 				<DocumentHead title={ translate( 'Import Content' ) } />
-				<FormattedHeader
-					brandFont
-					className="importer__page-heading"
-					headerText={ translate( 'Import Content' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="import.php"
+					navigationItems={ [] }
+					title={ translate( 'Import Content' ) }
+					subtitle={ translate(
 						'Import content from another website or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -300,14 +350,24 @@ class SectionImport extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic && ! isEnabled( 'importer/unified' ) ? (
+					{ isJetpack && ! isAtomic && ! hasUnifiedImporter ? (
 						<JetpackImporter />
 					) : (
-						this.renderImportersList()
+						<>
+							{ /** Show a plugin update warning if Jetpack version does not support import endpoints */ }
+							{ isJetpack && ! isAtomic && (
+								<JetpackPluginUpdateWarning
+									siteId={ this.props.siteId }
+									minJetpackVersion={ JETPACK_IMPORT_MIN_PLUGIN_VERSION }
+									warningRequirement={ translate( 'To make sure you can import reliably' ) }
+								/>
+							) }
+							{ isJetpack && ! isAtomic && jetpackVersionInCompatible
+								? this.renderIdleImporters( appStates.DISABLED )
+								: this.renderImportersList() }
+						</>
 					) }
 				</EmailVerificationGate>
 			</Main>
@@ -326,6 +386,7 @@ export default connect(
 			siteImports: getImporterStatusForSiteId( state, siteId ),
 			canImport: canCurrentUser( state, siteId, 'manage_options' ),
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
+			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
 		};
 	},
 	{ recordTracksEvent, startImport, fetchImporterState, cancelImport }

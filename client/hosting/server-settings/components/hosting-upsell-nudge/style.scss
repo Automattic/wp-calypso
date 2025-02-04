@@ -1,0 +1,79 @@
+@use "sass:math";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+// Extra specificity needed to override banner alignment rules
+.hosting-upsell-nudge.banner.card {
+	@include break-mobile {
+		align-items: flex-start;
+	}
+
+	.banner__title {
+		font-size: $font-body;
+		color: var(--color-neutral-90);
+		font-weight: 500;
+		margin-bottom: 18px;
+
+		// Vertically aligns the title with the icon which is 31px tall.
+		line-height: 31px;
+	}
+
+	.banner__content {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.banner__info {
+		@include break-mobile {
+			width: 100%;
+		}
+	}
+
+	.banner__action {
+		@include break-mobile {
+			text-align: initial;
+			width: 100%;
+			margin: 22px 0 12px 0;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		.button:not(:first-child) {
+			margin-top: 15px;
+
+			@include break-mobile {
+				margin-left: 12px;
+				margin-top: 0;
+			}
+		}
+	}
+
+	ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 22px 24px;
+	}
+
+	.hosting-upsell-nudge__feature-icon {
+		margin-right: 8px;
+	}
+
+	.hosting-upsell-nudge__feature-title {
+		font-size: $font-body-small;
+		font-weight: 500;
+		color: var(--color-neutral-80);
+		margin-bottom: 10px;
+		display: flex;
+		align-items: center;
+	}
+
+	.hosting-upsell-nudge__feature-description {
+		font-size: $font-body-small;
+		color: var(--color-neutral-50);
+
+		[lang^="en"] & {
+			letter-spacing: math.div(-0.15px, $root-font-size) * 1rem;
+		}
+	}
+}

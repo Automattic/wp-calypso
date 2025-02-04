@@ -1,7 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
+import { useDispatch, useSelector } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
 import {
 	getJetpackCredentialsBannerPreference as getPreference,
@@ -16,7 +16,7 @@ interface Props {
 const JetpackCredentialsBanner = ( { siteSlug }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const preference: Preference[] = useSelector( ( state ) => getPreference( state ) );
+	const preference: Preference[] = useSelector( getPreference );
 
 	const savePreferenceType = useCallback(
 		( type: PreferenceType ) => {

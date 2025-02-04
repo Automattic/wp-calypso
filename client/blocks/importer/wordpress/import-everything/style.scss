@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -17,21 +19,14 @@
 		flex: 100%;
 	}
 
-	.onboarding-title {
-		font-family: var(--font-base, var(--font-base-default));
-		color: var(--studio-gray-100);
-		font-size: 1.25rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.5rem;
-		margin-bottom: 1.5rem;
-	}
-
 	.onboarding-subtitle {
-		color: var(--studio-gray-50);
-		font-size: 1rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.5rem;
-		margin-bottom: 3rem;
+		button.is-borderless {
+			padding: 0;
+			text-decoration: underline;
+			display: inline;
+			font-size: inherit;
+			line-height: inherit;
+		}
 	}
 
 	.action_buttons__button {
@@ -89,99 +84,83 @@
 			color: var(--studio-gray-40);
 		}
 	}
+
 }
 
-.import__upgrade-plan {
-	p {
-		color: var(--studio-gray-40);
+.onboarding-progress {
+	min-width: 100% !important;
+
+	.progress-bar {
+		max-width: 520px;
+		margin-bottom: rem(24px);
+	}
+}
+
+.import__import-everything--redesign {
+	.action-buttons__borderless {
+		font-weight: 500;
+		text-decoration: underline;
+		color: var(--studio-gray-100);
 	}
 
-	.import__upgrade-plan-container {
-		border: solid var(--studio-gray-5) 1px;
-		border-radius: 4px;
-		padding: 1.75em;
-		margin-bottom: 2em;
+	.action-buttons__migration-method-cta {
+		text-decoration: underline;
+		color: var(--studio-gray-100);
+		padding: 0;
+		font-size: 1rem;
+	}
+
+	.import__footer-button-container {
 		display: flex;
-		gap: 1.5rem;
 		flex-direction: column;
+		align-items: center;
 
 		@include break-medium {
 			flex-direction: row;
+			justify-content: center;
+		}
+
+		button {
+			margin: 8px 0;
+			@include break-medium {
+				margin: 0 8px;
+			}
+		}
+
+		.action-buttons__install-jetpack-manually {
+			text-decoration: underline;
 		}
 	}
 
-	.import__upgrade-plan-price,
-	.import__upgrade-plan-details {
+	.import__note {
+		text-align: center;
+		margin-bottom: 2.5rem;
+	}
+
+	.select-items-wrapper {
 		display: flex;
-	}
+		justify-content: center;
 
-	.import__upgrade-plan-price {
-		min-width: 150px;
-		flex-direction: column;
+		.select-items {
+			border: solid 1px var(--studio-gray-5);
+			border-radius: 4px;
+			margin: 12px 0 24px;
+			padding-left: 50px;
+			max-width: 525px;
+			box-sizing: border-box;
 
-		.plan-title {
-			font-weight: 500;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 1.25em;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25em;
-			color: var(--studio-gray-60);
-		}
-
-		.plan-price {
-			font-weight: 500;
-		}
-
-		.plan-price__currency-symbol {
-			font-size: inherit;
-			color: inherit;
-			vertical-align: unset;
-		}
-
-		.plan-price__integer {
-			font-weight: inherit;
-		}
-
-		.plan-time-frame {
-			font-size: 0.75em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-			color: var(--studio-gray-40);
-		}
-	}
-
-	.import__upgrade-plan-details {
-		ul {
-			margin: 0;
-		}
-
-		.import__upgrade-plan-feature,
-		.import__upgrade-plan-feature-more {
-			padding-left: 25px;
-			color: var(--studio-gray-40);
-			flex-basis: 100%;
-
-			@include break-small {
-				flex-basis: 50%;
+			.select-items__item {
+				padding: 1rem 0;
+				width: 100%;
 			}
 
-			button {
-				color: var(--studio-gray-40);
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 1.5em;
-				cursor: pointer;
+			.select-items__item-icon {
+				top: 20px;
+				left: -38px;
 			}
 
-			span {
-				margin: 0;
-			}
-
-			svg {
-				fill: var(--color-success);
-			}
-		}
-
-		.import__upgrade-plan-feature-more {
-			svg {
-				fill: var(--studio-gray-60);
+			.select-items__item-button {
+				margin-right: 1rem;
 			}
 		}
 	}

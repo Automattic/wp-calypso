@@ -1,0 +1,165 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.trial-plan--container {
+	max-width: 692px;
+	margin: auto;
+	padding: 1rem;
+	text-align: center;
+	// 60px is the height of .step-container__navigation.action-buttons
+	padding-bottom: calc(60px + 3rem);
+
+	.onboarding-title {
+		margin-bottom: 0.5rem;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 2.5rem;
+	}
+
+	.action-buttons__next {
+		padding-left: 1.5rem;
+		padding-right: 1.5rem;
+	}
+
+	p {
+		color: var(--studio-gray-100);
+		margin-bottom: 2.5rem;
+		text-align: start;
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	.trial-plan--details {
+		display: flex;
+		text-align: initial;
+		flex-direction: column;
+		border: solid var(--studio-gray-5) 1px;
+		border-radius: 4px;
+		padding: 1rem;
+		margin-bottom: 1rem;
+		gap: 1.5rem;
+
+		@include break-medium {
+			flex-direction: row;
+		}
+	}
+
+	.trial-plan--details-name,
+	.trial-plan--details-features {
+		display: flex;
+	}
+
+	.trial-plan--details-name {
+		min-width: 150px;
+		flex-direction: column;
+
+		.plan-title {
+			font-weight: 500;
+			font-size: 1.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 1.25rem;
+			color: var(--studio-gray-60);
+		}
+
+		.plan-duration {
+			@include onboarding-font-recoleta;
+			font-weight: 500;
+			font-size: 2rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 3rem;
+		}
+	}
+
+	.trial-plan--details-features {
+		flex-basis: 100%;
+
+		ul {
+			width: 100%;
+			margin: 0;
+			list-style: none;
+			column-gap: 0;
+			column-count: 1;
+
+			@include break-small {
+				column-count: 3;
+			}
+		}
+
+		li:not(:last-child) {
+			margin-bottom: 0.25rem;
+		}
+
+		li {
+			font-size: 0.875rem;
+			letter-spacing: -0.1px;
+
+			display: inline-flex;
+			width: 100%;
+			flex-direction: row;
+			align-items: baseline;
+			gap: 4px;
+
+			svg {
+				fill: var(--color-success);
+				position: relative;
+				top: 4px;
+				flex-grow: 0;
+				flex-shrink: 0;
+			}
+		}
+	}
+
+	.trial-plan--details-limitation {
+		text-align: start;
+		padding-left: 1.5rem;
+		position: relative;
+
+		strong {
+			font-size: 0.875rem;
+		}
+
+		small {
+			color: var(--studio-gray-60);
+		}
+
+		img {
+			position: absolute;
+			inset-block-start: 4px;
+			inset-inline-start: 0;
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+}
+
+.popover.info-popover__tooltip--trial-plan .popover__inner {
+	max-width: 280px;
+}
+
+$blueberry-color: #3858e9;
+$dark-blueberry-color: #2145e6;
+$blueberry-focus-color: #abc0f5;
+
+.entrepreneur button.entrepreneur-trial-acknowledge__cta {
+	background-color: $blueberry-color;
+	border-color: $blueberry-color;
+
+	&:not(:disabled) {
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: $dark-blueberry-color;
+			border-color: $dark-blueberry-color;
+		}
+
+		&:focus {
+			box-shadow: inset 0 0 0 1px $studio-white, 0 0 0 0.5px $blueberry-color;
+		}
+	}
+}

@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -83,7 +83,7 @@ class PostItem extends Component {
 			<PostShare
 				post={ post }
 				siteId={ post.site_ID }
-				showClose={ true }
+				showClose
 				onClose={ this.props.hideActiveSharePanel }
 			/>
 		);
@@ -110,14 +110,14 @@ class PostItem extends Component {
 		const isTrashed = post && 'trash' === post.status;
 		const enabledPostLink = isPlaceholder || isTrashed ? null : postUrl;
 
-		const panelClasses = classnames( 'post-item__panel', className, {
+		const panelClasses = clsx( 'post-item__panel', className, {
 			'is-untitled': ! title,
 			'is-placeholder': isPlaceholder,
 		} );
 
 		const isAuthorVisible = this.hasMultipleUsers() && post && post.author;
 
-		const rootClasses = classnames( 'post-item', {
+		const rootClasses = clsx( 'post-item', {
 			'is-expanded': !! hasExpandedContent,
 		} );
 
@@ -137,11 +137,13 @@ class PostItem extends Component {
 								</a>
 							) }
 						</div>
-						<h1 // eslint-disable-line
+						{ /* eslint-disable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
+						<h1
 							className="post-item__title"
 							onClick={ this.clickHandler( 'title' ) }
 							onMouseOver={ preloadEditor }
 						>
+							{ /* eslint-enable jsx-a11y/mouse-events-have-key-events, jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */ }
 							{ ! externalPostLink && ! isTrashed && (
 								<a
 									href={ enabledPostLink }
@@ -160,7 +162,7 @@ class PostItem extends Component {
 
 							{ ! isPlaceholder && externalPostLink && (
 								<ExternalLink
-									icon={ true }
+									icon
 									href={ postUrl }
 									target="_blank"
 									className="post-item__title-link"
@@ -177,7 +179,7 @@ class PostItem extends Component {
 										link={ enabledPostLink }
 										target={ null }
 										gridiconSize={ ICON_SIZE }
-										includeBasicStatus={ true }
+										includeBasicStatus
 										showPublishedStatus={ showPublishedStatus }
 									/>
 								) }

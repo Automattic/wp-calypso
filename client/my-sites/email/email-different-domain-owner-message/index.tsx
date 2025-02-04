@@ -1,7 +1,7 @@
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 export const EmailDifferentDomainOwnerMessage = () => {
 	const translate = useTranslate();

@@ -1,10 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import HappychatButton from 'calypso/components/happychat/button';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -27,7 +26,6 @@ import './success-banner.scss';
  * The chosen comparison date is older than
  * WordPress so no backups should already
  * exist prior to that date 😉
- *
  * @param {number} ts timestamp in 's' or 'ms'
  * @returns {number} timestamp in 'ms'
  */
@@ -68,17 +66,8 @@ class SuccessBanner extends PureComponent {
 		} );
 
 	render() {
-		const {
-			applySiteOffset,
-			moment,
-			siteUrl,
-			timestamp,
-			translate,
-			backupUrl,
-			context,
-			trackHappyChatBackup,
-			trackHappyChatRestore,
-		} = this.props;
+		const { applySiteOffset, moment, siteUrl, timestamp, translate, backupUrl, context } =
+			this.props;
 		const date = applySiteOffset( moment( ms( timestamp ) ) ).format( 'LLLL' );
 		const params = backupUrl
 			? {
@@ -98,7 +87,6 @@ class SuccessBanner extends PureComponent {
 							{ translate( 'Download' ) }
 						</Button>
 					),
-					trackHappyChat: trackHappyChatBackup,
 			  }
 			: {
 					title:
@@ -125,7 +113,6 @@ class SuccessBanner extends PureComponent {
 							{ translate( 'View site' ) }
 						</Button>
 					),
-					trackHappyChat: trackHappyChatRestore,
 			  };
 		return (
 			<ActivityLogBanner
@@ -144,13 +131,6 @@ class SuccessBanner extends PureComponent {
 							{ translate( 'Thanks, got it!' ) }
 						</Button>
 					) }
-					<HappychatButton
-						className="activity-log-banner__happychat-button"
-						onClick={ params.trackHappyChat }
-					>
-						<Gridicon icon="chat" />
-						<span>{ translate( 'Get help' ) }</span>
-					</HappychatButton>
 				</div>
 			</ActivityLogBanner>
 		);
@@ -166,9 +146,6 @@ export default compose(
 			dismissRestoreProgress: dismissRewindRestoreProgress,
 			dismissBackupProgress: dismissRewindBackupProgress,
 			recordTracksEvent: recordTracksEvent,
-			trackHappyChatBackup: () => recordTracksEvent( 'calypso_activitylog_success_banner_backup' ),
-			trackHappyChatRestore: () =>
-				recordTracksEvent( 'calypso_activitylog_success_banner_restore' ),
 		}
 	),
 	localize,

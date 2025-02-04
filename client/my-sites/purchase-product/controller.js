@@ -5,9 +5,9 @@ import {
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import Debug from 'debug';
 import { get, some } from 'lodash';
-import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';

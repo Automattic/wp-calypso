@@ -7,7 +7,6 @@ import 'calypso/state/posts/init';
 
 /**
  * Returns a post object by site ID post ID pairing, with editor revisions.
- *
  * @param   {Object} state  Global state tree
  * @param   {number} siteId Site ID
  * @param   {number} postId Post ID

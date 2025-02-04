@@ -48,7 +48,7 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 									count: extraPageCount,
 									args: {
 										extraPageCount,
-										costOfExtraPages,
+										costOfExtraPages: costOfExtraPages as string,
 									},
 								}
 							) }
@@ -59,23 +59,27 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 		}
 
 		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
-		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
-			components: {
-				displayPrice: (
-					<span>
-						{ formatCurrency( priceInteger, currencyCode, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</span>
-				),
-				period: <span className="manage-purchase__time-period" />,
-			},
-		} );
+		return (
+			<>
+				{ translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
+					components: {
+						displayPrice: (
+							<span>
+								{ formatCurrency( priceInteger, currencyCode, {
+									stripZeros: true,
+									isSmallestUnit: true,
+								} ) }
+							</span>
+						),
+						period: <span className="manage-purchase__time-period" />,
+					},
+				} ) }
+			</>
+		);
 	}
 
 	if ( isIncludedWithPlan( purchase ) ) {
-		return translate( 'Free with Plan' );
+		return <>{ translate( 'Free with Plan' ) }</>;
 	}
 
 	const getPeriod = () => {
@@ -124,20 +128,24 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 		}
 
 		//translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
-		return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
-			args: { period },
-			components: {
-				displayPrice: (
-					<span>
-						{ formatCurrency( priceInteger, currencyCode, {
-							stripZeros: true,
-							isSmallestUnit: true,
-						} ) }
-					</span>
-				),
-				period: <span className="manage-purchase__time-period" />,
-			},
-		} );
+		return (
+			<>
+				{ translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
+					args: { period },
+					components: {
+						displayPrice: (
+							<span>
+								{ formatCurrency( priceInteger, currencyCode, {
+									stripZeros: true,
+									isSmallestUnit: true,
+								} ) }
+							</span>
+						),
+						period: <span className="manage-purchase__time-period" />,
+					},
+				} ) }
+			</>
+		);
 	};
 
 	return getPriceLabel( getPeriod() );

@@ -1,20 +1,24 @@
-import { ProgressBar, FormInputValidation, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { ProgressBar, FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { truncate } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { WPImportError } from 'calypso/blocks/importer/wordpress/types';
+import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/types';
 import DropZone from 'calypso/components/drop-zone';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import TextInput from 'calypso/components/forms/form-text-input';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import { startMappingAuthors, startUpload, failPreUpload } from 'calypso/state/imports/actions';
-import { appStates } from 'calypso/state/imports/constants';
+import {
+	startMappingAuthors,
+	startUpload,
+	failPreUpload,
+	startImporting,
+} from 'calypso/state/imports/actions';
+import { appStates, MAX_FILE_SIZE } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
 	getUploadPercentComplete,
@@ -44,6 +48,9 @@ export class UploadingPane extends PureComponent {
 			invalidDescription: PropTypes.string,
 			validate: PropTypes.func,
 		} ),
+		fromSite: PropTypes.string,
+		acceptedFileTypes: PropTypes.array,
+		hideActionButtons: PropTypes.bool,
 	};
 
 	static defaultProps = { description: null, optionalUrl: null };
@@ -65,12 +72,20 @@ export class UploadingPane extends PureComponent {
 				prevImporterStatus.importerState === appStates.UPLOAD_SUCCESS ) &&
 			importerStatus.importerState === appStates.UPLOAD_SUCCESS
 		) {
-			this.props.startMappingAuthors( importerStatus.importerId );
+			switch ( importerStatus.importerFileType ) {
+				case 'content':
+					this.props.startMappingAuthors( importerStatus.importerId );
+					break;
+				case 'playground':
+				case 'jetpack_backup':
+					// The startImporting action is dispatched from the onboarding flow
+					break;
+			}
 		}
 	}
 
 	getMessage = () => {
-		const { importerState } = this.props.importerStatus;
+		const { importerState, importerFileType } = this.props.importerStatus;
 		const { filename, percentComplete = 0 } = this.props;
 
 		switch ( importerState ) {
@@ -79,11 +94,20 @@ export class UploadingPane extends PureComponent {
 				if ( this.state.fileToBeUploaded ) {
 					return <p>{ this.state?.fileToBeUploaded?.name?.substring?.( 0, 100 ) }</p>;
 				}
-				return <p>{ this.props.translate( 'Drag a file here, or click to upload a file' ) }</p>;
+				return (
+					<p>
+						{ this.props.translate(
+							'Drag a file here, or {{span}}click to upload a file{{/span}}',
+							{
+								components: { span: <span /> },
+							}
+						) }
+					</p>
+				);
 			case appStates.UPLOAD_PROCESSING:
 			case appStates.UPLOADING: {
 				const uploadPercent = percentComplete;
-				const progressClasses = classNames( 'importer__upload-progress', {
+				const progressClasses = clsx( 'importer__upload-progress', {
 					'is-complete': uploadPercent > 95,
 				} );
 				const uploaderPrompt =
@@ -106,6 +130,28 @@ export class UploadingPane extends PureComponent {
 				);
 			}
 			case appStates.UPLOAD_SUCCESS:
+				if ( importerFileType === 'playground' ) {
+					return (
+						<div className="importer-upload-warning">
+							<p>
+								{ this.props.translate(
+									'Playground imports are not yet available through this form.{{br/}}' +
+										'Please head over to {{a}}this page{{/a}} to resume the import process.',
+									{
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href={ `/setup/import-focused/importerWordpress?siteSlug=${ this.props.site.slug }&option=content` }
+												/>
+											),
+										},
+									}
+								) }{ ' ' }
+							</p>
+						</div>
+					);
+				}
 				return (
 					<div>
 						<p>{ this.props.translate( 'Success! File uploaded.' ) }</p>
@@ -126,7 +172,11 @@ export class UploadingPane extends PureComponent {
 	};
 
 	initiateFromUploadButton = () => {
-		this.startUpload( this.state.fileToBeUploaded, this.state.urlInput );
+		let url = this.state.urlInput;
+		if ( this.props.optionalUrl && this.props.fromSite ) {
+			url = this.props.fromSite;
+		}
+		this.startUpload( this.state.fileToBeUploaded, url );
 	};
 
 	setupUpload = ( file ) => {
@@ -139,8 +189,15 @@ export class UploadingPane extends PureComponent {
 			this.props.failPreUpload(
 				importerStatus.importerId,
 				'',
-				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED
+				WPImportError.WPRESS_FILE_IS_NOT_SUPPORTED,
+				file
 			);
+			return;
+		}
+
+		// Fail fast if a user tries to upload a too big file
+		if ( file.size > MAX_FILE_SIZE ) {
+			this.props.failPreUpload( importerStatus.importerId, '', FileTooLarge.FILE_TOO_LARGE, file );
 			return;
 		}
 
@@ -186,9 +243,10 @@ export class UploadingPane extends PureComponent {
 	};
 
 	render() {
-		const { importerStatus, site, isEnabled } = this.props;
+		const { importerStatus, site, isEnabled, fromSite, acceptedFileTypes, hideActionButtons } =
+			this.props;
 		const isReadyForImport = this.isReadyForImport();
-		const importerStatusClasses = classNames(
+		const importerStatusClasses = clsx(
 			'importer__upload-content',
 			this.props.importerStatus.importerState
 		);
@@ -206,7 +264,9 @@ export class UploadingPane extends PureComponent {
 
 		return (
 			<div>
-				<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				{ this.props.description && (
+					<p className="importer__uploading-pane-description">{ this.props.description }</p>
+				) }
 				<div
 					className="importer__uploading-pane"
 					role="button"
@@ -230,11 +290,12 @@ export class UploadingPane extends PureComponent {
 							type="file"
 							name="exportFile"
 							onChange={ this.initiateFromForm }
+							accept={ acceptedFileTypes ? acceptedFileTypes.join( ',' ) : undefined }
 						/>
 					) }
 					<DropZone onFilesDrop={ isReadyForImport ? this.initiateFromDrop : noop } />
 				</div>
-				{ this.props.optionalUrl && (
+				{ this.props.optionalUrl && ! fromSite && (
 					<div className="importer__uploading-pane-url-input">
 						<FormLabel>
 							{ this.props.optionalUrl.title }
@@ -252,22 +313,24 @@ export class UploadingPane extends PureComponent {
 						) }
 					</div>
 				) }
-				<ImporterActionButtonContainer>
-					{ this.props.optionalUrl && (
-						<ImporterActionButton
-							primary
-							onClick={ this.initiateFromUploadButton }
-							disabled={ ! uploadButtonEnabled }
-						>
-							{ this.props.translate( 'Upload' ) }
-						</ImporterActionButton>
-					) }
-					<ImporterCloseButton
-						importerStatus={ importerStatus }
-						site={ site }
-						isEnabled={ isEnabled }
-					/>
-				</ImporterActionButtonContainer>
+				{ ! hideActionButtons && (
+					<ImporterActionButtonContainer>
+						{ this.props.optionalUrl && (
+							<ImporterActionButton
+								primary
+								onClick={ this.initiateFromUploadButton }
+								disabled={ ! uploadButtonEnabled }
+							>
+								{ this.props.translate( 'Upload' ) }
+							</ImporterActionButton>
+						) }
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
+					</ImporterActionButtonContainer>
+				) }
 			</div>
 		);
 	}
@@ -278,5 +341,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload, failPreUpload }
+	{ startMappingAuthors, startUpload, startImporting, failPreUpload }
 )( localize( UploadingPane ) );

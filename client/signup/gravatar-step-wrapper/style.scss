@@ -1,0 +1,148 @@
+/* stylelint-disable declaration-property-unit-allowed-list */
+
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+$font-title: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$font-body: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+$color-white: #fff;
+$color-black: #00101c;
+$color-gray: #9ea4a8;
+$color-light-gray: #e7e9ea;
+$color-blue: #1d4fc4;
+$color-light-blue: #399ce3;
+$color-dark-blue: #163d98;
+
+.gravatar-step-wrapper {
+	background-color: $color-light-gray;
+	padding: 0 20px 36px;
+
+	.gravatar-step-wrapper__innder {
+		font-family: $font-body;
+		display: flex;
+		flex-direction: column;
+		max-width: 560px;
+		margin: 0 auto;
+		padding: 20px 30px;
+		background-color: $color-white;
+		color: $color-black;
+		border-radius: 2px;
+		box-sizing: border-box;
+
+		a {
+			color: $color-blue;
+		}
+	}
+
+	.gravatar-step-wrapper__header {
+		font-family: $font-title;
+		font-size: 24px;
+		/* stylelint-disable-next-line scales/font-weights */
+		font-weight: 900;
+		line-height: 1.2;
+		margin: 32px 0 24px;
+	}
+
+	.gravatar-step-wrapper__sub-header {
+		margin-bottom: 24px;
+	}
+
+	.logged-out-form {
+		max-width: none;
+		margin: 0;
+		padding: 0;
+		box-shadow: none;
+	}
+
+	// Hide the label, but keep it for accessibility
+	.form-label {
+		position: absolute;
+		clip: rect(0 0 0 0);
+	}
+
+	input[type="email"].signup-form__passwordless-email {
+		font-family: $font-body;
+		padding: 14px 16px;
+		border-color: $color-gray;
+		line-height: 1.5;
+
+		&::placeholder {
+			color: $color-gray;
+		}
+	}
+
+	.form-input-validation {
+		padding-top: 15px;
+		padding-bottom: 0;
+	}
+
+	.signup-form__terms-of-service-link {
+		margin: 32px 0 20px;
+		font-size: 13px;
+		color: rgba($color-black, 0.6);
+	}
+
+	.logged-out-form__footer {
+		margin: 0;
+		padding: 0;
+	}
+
+	.button.is-primary {
+		font-family: $font-body;
+		background-color: $color-blue;
+		padding: 10px 16px;
+		border: 0;
+		font-size: 1rem;
+		font-weight: 600;
+
+		&:hover,
+		&:focus {
+			background-color: $color-dark-blue;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px $color-light-blue;
+		}
+
+		&.is-busy {
+			background-image: linear-gradient(-45deg, $color-blue 28%, $color-dark-blue 28%, $color-dark-blue 72%, $color-blue 72%);
+		}
+	}
+
+	.gravatar-step-wrapper__divider {
+		background-color: $color-light-gray;
+		width: 80px;
+		margin: 32px 0 20px;
+	}
+
+	.gravatar-step-wrapper__footer {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		font-size: 15px;
+		line-height: 1;
+
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	@include break-small {
+		.gravatar-step-wrapper__innder {
+			padding: 40px 56px;
+		}
+
+		.gravatar-step-wrapper__header {
+			font-size: 40px;
+			margin-top: 48px;
+		}
+
+		.signup-form__terms-of-service-link {
+			margin-top: 44px;
+		}
+
+		.gravatar-step-wrapper__divider {
+			margin-top: 48px;
+		}
+	}
+}

@@ -1,11 +1,11 @@
 .uploading-pane {
 	cursor: pointer;
 	position: relative;
-	height: 180px;
-	margin-bottom: 40px;
+	height: 200px;
+	margin-bottom: 1rem;
 
 	background-color: transparent;
-	border: 2px dashed var(--studio-gray-10);
+	border: 1px dashed var(--studio-gray-10);
 	border-radius: 4px;
 	transition: all 200ms ease-out, color 100ms ease-out;
 	fill: var(--color-neutral-20);
@@ -41,7 +41,6 @@
 	}
 
 	.drop-zone {
-		// background: none;
 		margin: 0;
 		border: none;
 		transition: none;
@@ -71,9 +70,13 @@
 			content: "\A";
 		}
 
+		&:hover {
+			color: var(--studio-gray-100);
+		}
+
 		white-space: pre;
 		text-decoration: underline;
-		color: var(--studio-gray-100);
+		color: inherit;
 	}
 }
 

@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 

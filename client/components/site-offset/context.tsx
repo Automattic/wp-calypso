@@ -1,8 +1,8 @@
 import { MomentInput, Moment } from 'moment';
 import { createContext, FunctionComponent, useCallback } from 'react';
-import { useSelector } from 'react-redux';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // Required to get site time offset
 import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useSelector } from 'calypso/state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -14,6 +14,7 @@ const SiteOffsetContext = createContext< contextType >( null );
 
 interface Props {
 	site: string;
+	children?: React.ReactNode;
 }
 
 const SiteOffsetProvider: FunctionComponent< Props > = ( { children, site } ) => {

@@ -140,7 +140,7 @@ type MutableFormFieldNames = Exclude< FormFieldNames, typeof FIELD_DOMAIN | type
 type ValidatorFieldNames = FormFieldNames | null;
 
 type ProviderKeys = keyof typeof MailboxFormFieldsMap;
-type ProviderTypes = typeof MailboxFormFieldsMap[ ProviderKeys ];
+type ProviderTypes = ( typeof MailboxFormFieldsMap )[ ProviderKeys ];
 type ExtractInstanceType< T > = T extends new ( domain: string ) => infer R ? R : never;
 
 class MailboxFormFieldsFactory {

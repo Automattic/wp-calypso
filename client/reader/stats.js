@@ -1,3 +1,4 @@
+import { localeRegexString } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { pick } from 'lodash';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -35,6 +36,8 @@ export function recordPermalinkClick( source, post, eventProperties = {} ) {
 }
 
 function getLocation( path ) {
+	const searchParams = new URLSearchParams( path.slice( path.indexOf( '?' ) ) );
+
 	if ( path === undefined || path === '' ) {
 		return 'unknown';
 	}
@@ -48,7 +51,8 @@ function getLocation( path ) {
 		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
-		return 'topic_page';
+		const sort = searchParams.get( 'sort' );
+		return `topic_page:${ sort === 'relevance' ? 'relevance' : 'date' }`;
 	}
 	if ( path.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i ) ) {
 		return 'single_post';
@@ -72,12 +76,21 @@ function getLocation( path ) {
 		return 'following_manage';
 	}
 	if ( path.indexOf( '/discover' ) === 0 ) {
-		return 'discover';
+		const selectedTab = searchParams.get( 'selectedTab' );
+
+		if ( ! selectedTab || selectedTab === 'recommended' ) {
+			return 'discover_recommended';
+		} else if ( selectedTab === 'latest' ) {
+			return 'discover_latest';
+		} else if ( selectedTab === 'firstposts' ) {
+			return 'discover_firstposts';
+		}
+		return `discover_tag:${ selectedTab }`;
 	}
 	if ( path.indexOf( '/read/recommendations/posts' ) === 0 ) {
 		return 'recommended_posts';
 	}
-	if ( path.indexOf( '/read/search' ) === 0 ) {
+	if ( path.match( new RegExp( `^(/${ localeRegexString })?/read/search` ) ) ) {
 		return 'search';
 	}
 	if ( path.indexOf( '/read/conversations/a8c' ) === 0 ) {
@@ -86,7 +99,29 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/conversations' ) === 0 ) {
 		return 'conversations';
 	}
+	if ( path.indexOf( '/home' ) === 0 ) {
+		return 'home';
+	}
 	return 'unknown';
+}
+
+/**
+ *
+ * @param {Object} eventProperties extra event properties to add
+ * @param {*} pathnameOverride Overwrites location used for determining ui_algo. See notes in
+ * `recordTrack` function docs below for more info.
+ * @param {Object|null} post Optional post object used to build post event props.
+ * @returns new eventProperties object with default reader values added.
+ */
+export function buildReaderTracksEventProps( eventProperties, pathnameOverride, post ) {
+	const location = getLocation(
+		pathnameOverride || window.location.pathname + window.location.search
+	);
+	let composedProperties = Object.assign( { ui_algo: location }, eventProperties );
+	if ( post ) {
+		composedProperties = Object.assign( getTracksPropertiesForPost( post ), composedProperties );
+	}
+	return composedProperties;
 }
 
 /**
@@ -103,8 +138,7 @@ function getLocation( path ) {
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
 
-	const location = getLocation( pathnameOverride || window.location.pathname );
-	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+	eventProperties = buildReaderTracksEventProps( eventProperties, pathnameOverride );
 
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (
@@ -133,7 +167,8 @@ allowedTracksRailcarEventNames
 	.add( 'calypso_reader_permalink_click' )
 	.add( 'calypso_reader_recommended_post_clicked' )
 	.add( 'calypso_reader_recommended_site_clicked' )
-	.add( 'calypso_reader_recommended_post_dismissed' );
+	.add( 'calypso_reader_recommended_post_dismissed' )
+	.add( 'calypso_reader_article_engaged_time' );
 
 export function recordTracksRailcar( action, eventName, railcar, overrides = {} ) {
 	// flatten the railcar down into the event props
@@ -180,17 +215,13 @@ export function getTracksPropertiesForPost( post = {} ) {
 	};
 }
 
-export function recordRailcar( eventName, railcar, eventProperties ) {
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
 	recordTracksRailcarInteract(
 		eventName,
 		railcar,
 		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
 	);
-}
-
-export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
-	recordTrack( eventName, eventProperties );
-	recordRailcar( eventName, railcar, eventProperties );
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
@@ -213,7 +244,9 @@ export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {
 }
 
 export function recordFollow( url, railcar, additionalProps = {} ) {
-	const source = additionalProps.source || getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_follows', source );
 	recordAction( 'followed_blog' );
 	recordGaEvent( 'Clicked Follow Blog', source );
@@ -228,7 +261,9 @@ export function recordFollow( url, railcar, additionalProps = {} ) {
 }
 
 export function recordUnfollow( url, railcar, additionalProps = {} ) {
-	const source = getLocation( window.location.pathname );
+	const source =
+		additionalProps.follow_source ||
+		getLocation( window.location.pathname + window.location.search );
 	bumpStat( 'reader_unfollows', source );
 	recordAction( 'unfollowed_blog' );
 	recordGaEvent( 'Clicked Unfollow Blog', source );

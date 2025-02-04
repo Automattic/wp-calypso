@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,21 +14,16 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:sofort-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'sofort';
 type NounsInStore = 'customerName';
 type SofortStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -43,6 +37,17 @@ const selectors: StoreSelectorsWithState< NounsInStore > = {
 	},
 };
 
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'sofort' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
 export function createSofortPaymentMethodStore(): SofortStore {
 	debug( 'creating a new sofort payment method store' );
 	const store = registerStore( 'sofort', {
@@ -50,7 +55,7 @@ export function createSofortPaymentMethodStore(): SofortStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -65,13 +70,20 @@ export function createSofortPaymentMethodStore(): SofortStore {
 	return store;
 }
 
-export function createSofortMethod( { store }: { store: SofortStore } ): PaymentMethod {
+export function createSofortMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: SofortStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'sofort',
+		hasRequiredFields: true,
 		paymentProcessorId: 'sofort',
 		label: <SofortLabel />,
 		activeContent: <SofortFields />,
-		submitButton: <SofortPayButton store={ store } />,
+		submitButton: <SofortPayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		inactiveContent: <SofortSummary />,
 		getAriaLabel: () => 'Sofort',
 	};
@@ -80,7 +92,7 @@ export function createSofortMethod( { store }: { store: SofortStore } ): Payment
 function SofortFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'sofort' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -135,14 +147,15 @@ function SofortPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: SofortStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -168,25 +181,13 @@ function SofortPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
-}
-
 function SofortSummary() {
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

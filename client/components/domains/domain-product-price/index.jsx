@@ -1,10 +1,19 @@
-import classnames from 'classnames';
+import {
+	PLAN_100_YEARS,
+	PLAN_PERSONAL,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE_MONTHLY,
+	getPlan,
+} from '@automattic/calypso-products';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSitePlanSlug, hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -12,11 +21,14 @@ class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,
+		renewPrice: PropTypes.string,
 		freeWithPlan: PropTypes.bool,
 		requiresPlan: PropTypes.bool,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
 		isMappingProduct: PropTypes.bool,
 		salePrice: PropTypes.string,
+		isCurrentPlan100YearPlan: PropTypes.bool,
+		isBusinessOrEcommerceMonthlyPlan: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -43,7 +55,9 @@ class DomainProductPrice extends Component {
 				}
 				break;
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( 'Personal plan required' );
+				message = translate( '%(planName)s plan required', {
+					args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+				} );
 				break;
 		}
 
@@ -57,8 +71,30 @@ class DomainProductPrice extends Component {
 		return this.renderReskinDomainPrice();
 	}
 
+	renderRenewalPrice() {
+		const { price, renewPrice, translate } = this.props;
+		const isRenewCostDifferent = renewPrice && price !== renewPrice;
+
+		if ( isRenewCostDifferent ) {
+			return (
+				<div className="domain-product-price__renewal-price">
+					{ translate( 'Renews for %(cost)s {{small}}/year{{/small}}', {
+						args: { cost: renewPrice },
+						components: { small: <small /> },
+						comment: '%(cost)s is the annual renewal price of the domain',
+					} ) }
+				</div>
+			);
+		}
+	}
+
 	renderReskinFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
+		const {
+			isMappingProduct,
+			translate,
+			isCurrentPlan100YearPlan,
+			isBusinessOrEcommerceMonthlyPlan,
+		} = this.props;
 
 		const domainPriceElement = ( message ) => (
 			<div className="domain-product-price__free-text">{ message }</div>
@@ -68,7 +104,21 @@ class DomainProductPrice extends Component {
 			return domainPriceElement( translate( 'Included in paid plans' ) );
 		}
 
-		const message = translate( '{{span}}Free for the first year{{/span}}', {
+		if ( isCurrentPlan100YearPlan ) {
+			return domainPriceElement( translate( 'Free with your plan' ) );
+		}
+
+		if ( isBusinessOrEcommerceMonthlyPlan ) {
+			return domainPriceElement(
+				<>
+					<span className="domain-product-price__free-price">
+						{ translate( 'Free domain for one year' ) }
+					</span>
+				</>
+			);
+		}
+
+		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
 			components: { span: <span className="domain-product-price__free-price" /> },
 		} );
 
@@ -87,8 +137,28 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	// This method returns "Free for the first year" text (different from "Free with plan")
+	renderFreeForFirstYear() {
+		const { translate } = this.props;
+
+		const className = clsx( 'domain-product-price', 'is-free-domain', {
+			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<div className="domain-product-price__free-text">
+					<span className="domain-product-price__free-price">
+						{ translate( 'Free for the first year' ) }
+					</span>
+				</div>
+				{ this.renderReskinDomainPrice() }
+			</div>
+		);
+	}
+
 	renderFreeWithPlan() {
-		const className = classnames( 'domain-product-price', 'is-free-domain', {
+		const className = clsx( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
@@ -111,12 +181,11 @@ class DomainProductPrice extends Component {
 
 	renderFree() {
 		const { showStrikedOutPrice, translate } = this.props;
-
-		const className = classnames( 'domain-product-price', {
+		const className = clsx( 'domain-product-price domain-product-single-price', {
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
 
-		const productPriceClassName = classnames( 'domain-product-price__price', {
+		const productPriceClassName = clsx( 'domain-product-price__price', {
 			'domain-product-price__free-price': showStrikedOutPrice,
 		} );
 
@@ -129,10 +198,28 @@ class DomainProductPrice extends Component {
 		);
 	}
 
+	renderDomainMovePrice() {
+		const { showStrikedOutPrice, translate } = this.props;
+
+		const className = clsx( 'domain-product-price', {
+			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
+		} );
+
+		return (
+			<div className={ className }>
+				<span>
+					{ translate( 'Move your existing domain.', {
+						context: 'Line item description in cart.',
+					} ) }
+				</span>
+			</div>
+		);
+	}
+
 	renderSalePrice() {
 		const { price, salePrice, translate } = this.props;
 
-		const className = classnames( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
+		const className = clsx( 'domain-product-price', 'is-free-domain', 'is-sale-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
@@ -144,13 +231,14 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</div>
-				<div className="domain-product-price__renewal-price">
+				<div className="domain-product-price__regular-price">
 					{ translate( '%(cost)s {{small}}/year{{/small}}', {
 						args: { cost: price },
 						components: { small: <small /> },
 						comment: '%(cost)s is the annual renewal price of a domain currently on sale',
 					} ) }
 				</div>
+				{ this.renderRenewalPrice() }
 			</div>
 		);
 	}
@@ -161,7 +249,7 @@ class DomainProductPrice extends Component {
 			return this.renderSalePrice();
 		}
 
-		const className = classnames( 'domain-product-price', {
+		const className = clsx( 'domain-product-price domain-product-single-price', {
 			'is-free-domain': showStrikedOutPrice,
 			'domain-product-price__domain-step-signup-flow': showStrikedOutPrice,
 		} );
@@ -175,6 +263,18 @@ class DomainProductPrice extends Component {
 						components: { small: <small /> },
 					} ) }
 				</span>
+				{ this.renderRenewalPrice() }
+			</div>
+		);
+	}
+
+	/**
+	 * Used to render the price of 100-year domains, which are a one time purchase
+	 */
+	renderOneTimePrice() {
+		return (
+			<div className="domain-product-price domain-product-single-price">
+				<span>{ this.props.price }</span>
 			</div>
 		);
 	}
@@ -189,12 +289,18 @@ class DomainProductPrice extends Component {
 		}
 
 		switch ( this.props.rule ) {
+			case 'ONE_TIME_PRICE':
+				return this.renderOneTimePrice();
 			case 'FREE_DOMAIN':
 				return this.renderFree();
+			case 'FREE_FOR_FIRST_YEAR':
+				return this.renderFreeForFirstYear();
 			case 'FREE_WITH_PLAN':
 			case 'INCLUDED_IN_HIGHER_PLAN':
 			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
 				return this.renderFreeWithPlan();
+			case 'DOMAIN_MOVE_PRICE':
+				return this.renderDomainMovePrice();
 			case 'PRICE':
 			default:
 				return this.renderPrice();
@@ -202,8 +308,16 @@ class DomainProductPrice extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	domainsWithPlansOnly: getCurrentUser( state )
-		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
-		: true,
-} ) )( localize( DomainProductPrice ) );
+export default connect( ( state ) => {
+	const sitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+
+	return {
+		domainsWithPlansOnly: getCurrentUser( state )
+			? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+			: true,
+		isCurrentPlan100YearPlan: sitePlanSlug === PLAN_100_YEARS,
+		isBusinessOrEcommerceMonthlyPlan:
+			( sitePlanSlug === PLAN_BUSINESS_MONTHLY || sitePlanSlug === PLAN_ECOMMERCE_MONTHLY ) &&
+			hasDomainCredit( state, getSelectedSiteId( state ) ),
+	};
+} )( localize( DomainProductPrice ) );

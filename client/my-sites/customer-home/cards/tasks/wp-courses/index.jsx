@@ -11,7 +11,7 @@ const WPCourses = () => {
 			actionUrl="https://wordpress.com/learn/?utm_source=wordpressdotcom&utm_medium=referral&utm_campaign=learn_launch_myhome"
 			actionTarget="_blank"
 			illustration={ wpLearnLogo }
-			completeOnStart={ true }
+			completeOnStart
 			taskId={ TASK_WP_COURSES }
 		/>
 	);

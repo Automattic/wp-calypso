@@ -17,8 +17,20 @@ const allowedEventProps = [
 	'referrer',
 ];
 
-export async function trackAffiliateReferral( { affiliateId, campaignId, subId, referrer } ) {
-	referDebug( 'Recording affiliate referral.', { affiliateId, campaignId, subId, referrer } );
+export async function trackAffiliateReferral( {
+	vendorId,
+	affiliateId,
+	campaignId,
+	subId,
+	referrer,
+} ) {
+	referDebug( 'Recording affiliate referral.', {
+		vendorId,
+		affiliateId,
+		campaignId,
+		subId,
+		referrer,
+	} );
 
 	const headers = {
 		'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -35,7 +47,7 @@ export async function trackAffiliateReferral( { affiliateId, campaignId, subId, 
 	referDebug( 'Fetching Refer platform response.' );
 
 	try {
-		const response = await window.fetch( 'https://refer.wordpress.com/clicks/67402', {
+		const response = await window.fetch( `https://refer.wordpress.com/clicks/${ vendorId }`, {
 			credentials: 'include', // Needed to check and set the 'wp-affiliate-tracker' cookie.
 			method: 'POST',
 			headers,

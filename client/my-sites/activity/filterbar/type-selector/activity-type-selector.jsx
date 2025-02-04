@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import { connect } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { updateFilter } from 'calypso/state/activity-log/actions';
@@ -9,10 +9,16 @@ import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-t
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TypeSelector } from './type-selector';
 
-const ActivityTypeSelector = ( props ) => {
-	const { translate } = props;
-
-	return <TypeSelector { ...props } title={ translate( 'Activity Type' ) } />;
+const ActivityTypeSelector = ( { translate, variant = 'default', ...otherProps } ) => {
+	return (
+		<TypeSelector
+			{ ...otherProps }
+			title={ translate( 'Activity type' ) }
+			showAppliedFiltersCount
+			variant={ variant }
+			translate={ translate }
+		/>
+	);
 };
 
 const activityCountsQueryKey = ( siteId, filter ) => [
@@ -24,20 +30,18 @@ const activityCountsQueryKey = ( siteId, filter ) => [
 ];
 const withActivityTypes = ( WrappedComponent ) => ( props ) => {
 	const { siteId, filter } = props;
-	const { data } = useQuery(
-		activityCountsQueryKey( siteId, filter ),
-		() =>
+	const { data } = useQuery( {
+		queryKey: activityCountsQueryKey( siteId, filter ),
+		queryFn: () =>
 			wpcom.req
 				.get(
 					{ path: `/sites/${ siteId }/activity/count/group`, apiNamespace: 'wpcom/v2' },
 					filterStateToApiQuery( filter, false )
 				)
 				.then( fromActivityTypeApi ),
-		{
-			enabled: !! siteId,
-			staleTime: 10 * 1000,
-		}
-	);
+		enabled: !! siteId,
+		staleTime: 10 * 1000,
+	} );
 	return <WrappedComponent { ...props } types={ data ?? [] } />;
 };
 

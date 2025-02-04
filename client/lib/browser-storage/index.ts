@@ -257,7 +257,6 @@ async function _idbSafariReset(): Promise< void > {
 
 /**
  * Whether persistent storage should be bypassed, using a memory store instead.
- *
  * @param shouldBypassPersistentStorage Whether persistent storage should be bypassed.
  */
 export function bypassPersistentStorage( shouldBypassPersistentStorage: boolean ) {
@@ -270,7 +269,6 @@ export function bypassPersistentStorage( shouldBypassPersistentStorage: boolean 
 
 /**
  * Get a stored item.
- *
  * @param key The stored item key.
  * @returns A promise with the stored value. `undefined` if missing.
  */
@@ -281,12 +279,16 @@ export async function getStoredItem< T >( key: string ): Promise< T | undefined 
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		const valueString = window.localStorage.getItem( key );
-		if ( valueString === undefined || valueString === null ) {
+		try {
+			const valueString = window.localStorage.getItem( key );
+			if ( valueString === undefined || valueString === null ) {
+				return undefined;
+			}
+
+			return JSON.parse( valueString );
+		} catch {
 			return undefined;
 		}
-
-		return JSON.parse( valueString );
 	}
 
 	return await idbGet( key );
@@ -294,7 +296,6 @@ export async function getStoredItem< T >( key: string ): Promise< T | undefined 
 
 /**
  * Get all stored items.
- *
  * @param pattern The pattern to match on returned item keys.
  * @returns A promise with the stored key/value pairs as an object. Empty if none.
  */
@@ -305,16 +306,20 @@ export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItem
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		const entries = Object.entries( window.localStorage ).map( ( [ key, value ] ) => [
-			key,
-			value !== undefined ? JSON.parse( value ) : undefined,
-		] );
+		try {
+			const entries = Object.entries( window.localStorage ).map( ( [ key, value ] ) => [
+				key,
+				value !== undefined ? JSON.parse( value ) : undefined,
+			] );
 
-		if ( ! pattern ) {
-			return Object.fromEntries( entries );
+			if ( ! pattern ) {
+				return Object.fromEntries( entries );
+			}
+
+			return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
+		} catch {
+			return {};
 		}
-
-		return Object.fromEntries( entries.filter( ( [ key ] ) => pattern.test( key ) ) );
 	}
 
 	return await idbGetAll( pattern );
@@ -322,7 +327,6 @@ export async function getAllStoredItems( pattern?: RegExp ): Promise< StoredItem
 
 /**
  * Set an item in storage.
- *
  * @param key The key to store the item under.
  * @param value The value of the item to be stored.
  * @returns A promise that gets resolved when the item is successfully stored.
@@ -334,7 +338,11 @@ export async function setStoredItem< T >( key: string, value: T ): Promise< void
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		window.localStorage.setItem( key, JSON.stringify( value ) );
+		try {
+			window.localStorage.setItem( key, JSON.stringify( value ) );
+		} catch {
+			// Do nothing.
+		}
 		return;
 	}
 
@@ -343,7 +351,6 @@ export async function setStoredItem< T >( key: string, value: T ): Promise< void
 
 /**
  * Clear all stored items.
- *
  * @returns A promise that gets resolved when all items are successfully cleared.
  */
 export async function clearStorage(): Promise< void > {
@@ -353,7 +360,11 @@ export async function clearStorage(): Promise< void > {
 
 	const idbSupported = await supportsIDB();
 	if ( ! idbSupported ) {
-		window.localStorage.clear();
+		try {
+			window.localStorage.clear();
+		} catch {
+			// Do nothing.
+		}
 		return;
 	}
 

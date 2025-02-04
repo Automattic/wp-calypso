@@ -1,45 +1,36 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { translate } from 'i18n-calypso';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import wpcom from 'calypso/lib/wp';
-import {
-	getGlobalStylesId,
-	getGlobalStylesVariations,
-	updateGlobalStyles,
-} from 'calypso/state/global-styles/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	productsReinstall,
 	productsReinstallNotStarted,
 } from 'calypso/state/marketplace/products-reinstall/actions';
 import { requestedReinstallProducts } from 'calypso/state/marketplace/products-reinstall/selectors';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
 import {
 	getThemePreviewThemeOptions,
 	isMarketplaceThemeSubscribed,
 } from 'calypso/state/themes/selectors';
-
 import 'calypso/state/themes/init';
+import { activateStyleVariation } from './activate-style-variation';
 
 /**
  * Triggers a network request to activate a specific theme on a given site.
- *
- * @param {string}  themeId            Theme ID
- * @param {number}  siteId             Site ID
- * @param {string}  source             The source that is requesting theme activation, e.g. 'showcase'
- * @param {boolean} purchased          Whether the theme has been purchased prior to activation
- * @param {boolean} dontChangeHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
- * @returns {Function}                 Action thunk
+ * @param {string}  themeId   Theme ID
+ * @param {number}  siteId    Site ID
+ * @param {Object}  [options] The options
+ * @param {string}  [options.source]     The source that is requesting theme activation, e.g. 'showcase'
+ * @param {boolean} [options.purchased]  Whether the theme has been purchased prior to activation
+ * @param {boolean} [options.showSuccessNotice]  Whether the theme has been purchased prior to activation
+ * @returns {Function}        Action thunk
  */
-export function activateTheme(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	dontChangeHomepage = false
-) {
+export function activateTheme( themeId, siteId, options = {} ) {
 	return ( dispatch, getState ) => {
+		const { source = 'unknown', purchased = false, showSuccessNotice = false } = options || {};
 		const themeOptions = getThemePreviewThemeOptions( getState() );
 		const styleVariationSlug =
 			themeOptions && themeOptions.themeId === themeId
@@ -53,27 +44,18 @@ export function activateTheme(
 		} );
 
 		return wpcom.req
-			.post( `/sites/${ siteId }/themes/mine`, {
+			.post( `/sites/${ siteId }/themes/mine?_locale=user`, {
 				theme: themeId,
-				...( dontChangeHomepage && { dont_change_homepage: true } ),
-				...( isEnabled( 'themes/theme-switch-persist-template' ) && {
-					persist_homepage_template: true,
-				} ),
 			} )
 			.then( async ( theme ) => {
 				if ( styleVariationSlug ) {
-					const themeStylesheet = theme.stylesheet || themeId;
-					const variations = await dispatch( getGlobalStylesVariations( siteId, themeStylesheet ) );
-					const currentVariation = variations.find(
-						( variation ) =>
-							variation.title &&
-							variation.title.split( ' ' ).join( '-' ).toLowerCase() === styleVariationSlug
+					await dispatch(
+						activateStyleVariation(
+							themeId,
+							siteId,
+							styleVariationSlug !== 'default' ? themeOptions.styleVariation : {}
+						)
 					);
-
-					if ( currentVariation ) {
-						const globalStylesId = await dispatch( getGlobalStylesId( siteId, themeStylesheet ) );
-						await dispatch( updateGlobalStyles( siteId, globalStylesId, currentVariation ) );
-					}
 				}
 
 				return theme;
@@ -84,6 +66,32 @@ export function activateTheme(
 				dispatch(
 					themeActivated( themeStylesheet, siteId, source, purchased, styleVariationSlug )
 				);
+
+				if ( showSuccessNotice ) {
+					dispatch(
+						successNotice(
+							translate( 'The %(themeName)s theme is activated successfully!', {
+								args: { themeName: theme.name },
+							} ),
+							{
+								button: translate( 'View site' ),
+								href: getSiteUrl( getState(), siteId ),
+								duration: 20000,
+								showDismiss: false,
+								onClick: () => {
+									dispatch(
+										recordTracksEvent( 'calypso_theme_activated_notice_view_site', {
+											theme: themeId,
+											site: siteId,
+										} )
+									);
+								},
+							}
+						)
+					);
+				}
+
+				return themeStylesheet;
 			} )
 			.catch( ( error ) => {
 				if ( isMarketplaceThemeSubscribed( getState(), themeId, siteId ) ) {

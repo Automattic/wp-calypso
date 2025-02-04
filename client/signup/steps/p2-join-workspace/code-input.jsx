@@ -2,7 +2,7 @@ import { Spinner } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 
@@ -160,7 +160,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 		return fieldset;
 	};
 
-	const formClasses = classnames( 'p2-join-workspace__code-input-form', {
+	const formClasses = clsx( 'p2-join-workspace__code-input-form', {
 		'has-error': error,
 	} );
 
@@ -174,7 +174,7 @@ function P2JoinWorkspaceCodeInput( { workspaceStatus, setWorkspaceStatus } ) {
 				<Button
 					className="p2-join-workspace__code-input-submit"
 					onClick={ handleSubmitCode }
-					isPrimary={ true }
+					isPrimary
 					disabled={ challengeCode.length !== CHALLENGE_CODE_LENGTH }
 					isBusy={ isLoading }
 				>

@@ -1,5 +1,5 @@
-import { Button, Spinner } from '@automattic/components';
-import classnames from 'classnames';
+import { Button, FormLabel, Spinner } from '@automattic/components';
+import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { isEqual } from 'lodash';
@@ -8,7 +8,6 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import Image from 'calypso/components/image';
 import { withAddMedia } from 'calypso/data/media/with-add-media';
 import { createTransientMediaId } from 'calypso/lib/media/utils';
@@ -181,7 +180,7 @@ class PodcastCoverImageSetting extends PureComponent {
 		const imageSrc = imageUrl && resizeImageUrl( imageUrl, 96 );
 		const isTransient = !! transientMediaId;
 
-		const classNames = classnames( 'podcast-cover-image-setting__preview', {
+		const classNames = clsx( 'podcast-cover-image-setting__preview', {
 			'is-blank': ! imageSrc,
 			'is-transient': isTransient,
 			'is-disabled': isDisabled,
@@ -233,7 +232,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					labels={ {
 						confirm: translate( 'Continue' ),
 					} }
-					disableLargeImageSources={ true }
+					disableLargeImageSources
 					single
 				/>
 			)

@@ -1,0 +1,106 @@
+@import "@automattic/typography/styles/variables";
+
+.help-center-contact-support {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 16px;
+
+	& > button {
+		border: #fff;
+		background: none;
+		padding: 0;
+
+		&:disabled {
+			cursor: auto;
+
+			.help-center-contact-support__box-icon {
+				background-color: var(--studio-gray-0);
+
+				svg {
+					fill: var(--studio-gray-20);
+				}
+			}
+
+			h2,
+			p {
+				color: var(--studio-gray-60) !important;
+			}
+		}
+	}
+
+	a {
+		text-decoration: none;
+		color: #1d2327;
+	}
+
+	.help-center-contact-support__box {
+		display: flex;
+		flex-direction: row;
+		border: 1px solid var(--studio-gray-5);
+		overflow: hidden;
+		border-radius: 2px;
+		cursor: pointer;
+		text-align: left;
+
+		.help-center-contact-support__box-icon {
+			border-radius: 2px 0 0 2px;
+			display: flex;
+			background-color: var(--color-primary);
+			width: 56px;
+
+			svg {
+				fill: var(--color-primary-0);
+				display: block;
+				margin: auto;
+
+				path {
+					stroke: var(--color-primary-0);
+				}
+			}
+		}
+
+		h2 {
+			font-size: $font-body-small !important;
+			line-height: normal;
+			margin: 0 !important;
+		}
+
+		p {
+			font-size: $font-body-extra-small !important;
+			color: var(--studio-gray-60);
+			line-height: normal;
+			font-style: normal;
+		}
+
+		&.support {
+			svg path {
+				stroke: none;
+			}
+		}
+
+		// Text box
+		:not(.help-center-contact-support__box-icon) {
+			padding: 0 15px;
+			margin: 16px 0;
+
+			>* {
+				padding: 0;
+				margin: 0;
+			}
+
+			p {
+				margin-top: 2px;
+			}
+
+			h2 {
+				font-weight: 500;
+				font-size: $font-body;
+			}
+		}
+	}
+
+	.disabled {
+		order: 3;
+	}
+}

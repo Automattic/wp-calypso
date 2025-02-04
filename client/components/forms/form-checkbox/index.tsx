@@ -1,12 +1,19 @@
-import classnames from 'classnames';
-import { FunctionComponent, InputHTMLAttributes } from 'react';
+import clsx from 'clsx';
+import { InputHTMLAttributes, forwardRef } from 'react';
 
 import './style.scss';
 
 type CheckboxProps = InputHTMLAttributes< HTMLInputElement >;
 
-const FormInputCheckbox: FunctionComponent< CheckboxProps > = ( { className, ...otherProps } ) => (
-	<input { ...otherProps } type="checkbox" className={ classnames( className, 'form-checkbox' ) } />
+const FormInputCheckbox = forwardRef< HTMLInputElement | null, CheckboxProps >(
+	( { className, ...otherProps }, ref ) => (
+		<input
+			ref={ ref }
+			{ ...otherProps }
+			type="checkbox"
+			className={ clsx( className, 'form-checkbox' ) }
+		/>
+	)
 );
 
 export default FormInputCheckbox;

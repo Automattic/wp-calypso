@@ -27,6 +27,7 @@ export function Client() {
 	this.subscribing = false;
 	this.subscribed = false;
 	this.firstRender = true;
+	this.locale = null;
 	this.inbox = [];
 
 	window.addEventListener( 'storage', handleStorageEvent.bind( this ) );
@@ -166,6 +167,7 @@ function getNotes() {
 	const parameters = {
 		fields: 'id,type,unread,body,subject,timestamp,meta,note_hash',
 		number: this.noteRequestLimit,
+		locale: this.locale,
 	};
 
 	const notes = getAllNotes( store.getState() );
@@ -341,7 +343,6 @@ function cleanupLocalCache() {
  * Update lastSeenTime in object instance, localStorage, and remote database.
  * Advance this.lastSeenTime to proposedTime or the latest visible note time.
  * If the timestamp comes from a note, update the remote database.
- *
  * @param {number} proposedTime A proposed update to our lastSeenTime timestamp
  * @param {boolean} fromStorage Whether this call is from handleStorageEvent
  * @returns {boolean} whether or not we will update our lastSeenTime value
@@ -378,8 +379,8 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 
 	debug( 'updateLastSeenTime 1', {
 		proposedTime: proposedTime,
-		showing: this.showing,
-		visible: this.visible,
+		showing: this.isShowing,
+		visible: this.isVisible,
 		lastSeenTime: this.lastSeenTime,
 		mostRecentNoteTime: mostRecentNoteTime,
 	} );
@@ -476,7 +477,13 @@ function setVisibility( { isShowing, isVisible } ) {
 	this.isShowing = isShowing;
 	this.isVisible = isVisible;
 
-	if ( isVisible && isShowing ) {
+	debug( 'Visibility set', {
+		isShowing: this.isShowing,
+		isVisible: this.isVisible,
+	} );
+
+	// Fetch notification when visible for the first time or visible and showing
+	if ( isVisible && ( ! this.lastSeenTime || isShowing ) ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}

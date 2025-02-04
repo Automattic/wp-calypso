@@ -2,7 +2,7 @@
 
 The _**notifications panel**_ (also known as "masterbar notifications" and "the bell notifications") is a cross-environment app that runs directly inside of Calypso and in an `iframe` on WordPress.com sites which aren't Calypso.
 
-This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://widgets.wp.com/notes` or `https://widgets.wp.com/notifications`.
+This module is where the code for the notifications panel lives. Calypso views are imported as normal `node` imports while the `iframe` version is served from `https://wordpress.com/widgets/notifications/` or from the legacy URL `https://widgets.wp.com/notifications/`.
 
 This code is developed in the calypso monorepo at <https://github.com/Automattic/wp-calypso/tree/trunk/apps/notifications>.
 
@@ -12,8 +12,14 @@ Most work on the notifications panel should happen in Calypso the same way other
 That is, you can work in these files and rely on the normal Calypso dev server.
 **However** things are often different inside the `iframe` in unexpected ways and so we need to verify that any changes apply properly in both environments.
 
-CircleCI generates notifications panel build artifacts on every commit that it processes.
-Alternatively you can manually build the app with `yarn` and copy the built files to your sandbox.
+TeamCity generates notifications panel build artifacts on every commit that it processes. You can find the last one in the PR checks by searching for `Notifications (WPCom Plugins)` then clicking the `artifacts` tab (requires access to the A8C TeamCity instance).
+
+Alternatively you can manually build the app with `yarn` and pass `--sync` to sync to your sandbox automatically (requires your to configure an alias called `wpcom-sandbox` in `~/.ssh/config`):
+
+1. `yarn dev --sync` to sync a dev build to your sandbox;
+1. `yarn build --sync` to sync a production build to your sandbox.
+
+You will also need to sandbox the `widgets.wp.com` domain.
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`

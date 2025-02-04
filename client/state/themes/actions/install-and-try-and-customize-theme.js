@@ -8,7 +8,6 @@ import 'calypso/state/themes/init';
  * After installataion it switches page to the customizer
  * See installTheme doc for install options.
  * Requires Jetpack 4.4
- *
  * @param  {string}   themeId      WP.com Theme ID
  * @param  {string}   siteId       Jetpack Site ID
  * @returns {Function}              Action thunk

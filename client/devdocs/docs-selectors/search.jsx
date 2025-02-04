@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { map } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { stringify } from 'qs';
 import { Component } from 'react';
@@ -62,7 +62,7 @@ export default class DocsSelectorsSearch extends Component {
 					<EmptyContent title="No selectors found" line="Try another search query" />
 				) }
 				<ul className="docs-selectors__results">
-					{ map( results, ( { name, description, tags } ) => (
+					{ map( results, ( { item: { name, description, tags } } ) => (
 						<li key={ name }>
 							<DocsSelectorsResult
 								{ ...{ name, description, tags } }

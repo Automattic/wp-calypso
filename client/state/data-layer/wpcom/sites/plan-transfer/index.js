@@ -13,7 +13,6 @@ const noticeOptions = ( siteId ) => ( {
 
 /**
  * Dispatches a request to transfer a site's plan to another user.
- *
  * @param   {Object} action Redux action
  * @returns {Object} Dispatched http action
  */
@@ -32,7 +31,6 @@ export const requestPlanOwnershipTransfer = ( action ) =>
 
 /**
  * Dispatches a success notice when the request succeeded.
- *
  * @param   {Object} action Redux action
  * @param   {number} action.siteId
  * @returns {Object} Success notice action
@@ -47,7 +45,6 @@ export const handleTransferSuccess = ( { siteId } ) => [
 
 /**
  * Dispatches an error notice when the request failed.
- *
  * @param   {Object} action Redux action
  * @param   {number} action.siteId
  * @param   {Object} error  Error object

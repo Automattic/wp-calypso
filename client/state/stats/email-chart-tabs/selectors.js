@@ -6,7 +6,6 @@ const EMPTY_RESULT = [];
 
 /**
  * Returns the count records for a given site and period
- *
  * @param   {Object}  state    Global state tree
  * @param   {number}  siteId   Site ID
  * @param   {number}  postId   Post ID
@@ -28,7 +27,6 @@ export function getCountRecords( state, siteId, postId, period, statType ) {
 
 /**
  * Returns a boolean indicating if the tabs are still loading
- *
  * @param   {Object}  state       Global state tree
  * @param   {number}  siteId      Site ID
  * @param   {number}  postId      Post ID

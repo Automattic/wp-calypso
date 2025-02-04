@@ -1,8 +1,4 @@
-import {
-	JETPACK_BACKUP_RETENTION_SET,
-	REWIND_SIZE_GET,
-	REWIND_SIZE_SET,
-} from 'calypso/state/action-types';
+import { JETPACK_BACKUP_RETENTION_SET, REWIND_SIZE_SET } from 'calypso/state/action-types';
 import sizeReducer from '../reducer';
 
 // @TODO: Add tests for the other reducers
@@ -11,17 +7,7 @@ describe( 'rewind.size reducers', () => {
 		it.each( [
 			{
 				state: undefined,
-				action: {},
-				expected: null,
-			},
-			{
-				state: undefined,
-				action: { type: REWIND_SIZE_GET },
-				expected: null,
-			},
-			{
-				state: { lastBackupSize: 100 },
-				action: { type: REWIND_SIZE_GET },
+				action: { type: REWIND_SIZE_SET, size: { lastBackupSize: 100 } },
 				expected: 100,
 			},
 			{
@@ -41,18 +27,8 @@ describe( 'rewind.size reducers', () => {
 		it.each( [
 			{
 				state: undefined,
-				action: {},
-				expected: null,
-			},
-			{
-				state: undefined,
-				action: { type: REWIND_SIZE_GET },
-				expected: null,
-			},
-			{
-				state: { retentionDays: 30 },
-				action: { type: REWIND_SIZE_GET },
-				expected: 30,
+				action: { type: REWIND_SIZE_SET, size: { retentionDays: 7 } },
+				expected: 7,
 			},
 			{
 				state: { retentionDays: 30 },
@@ -80,6 +56,28 @@ describe( 'rewind.size reducers', () => {
 					{ type: JETPACK_BACKUP_RETENTION_SET, retentionDays: 7 }
 				).retentionDays
 			).toEqual( 7 );
+		} );
+	} );
+
+	describe( 'backupsStopped', () => {
+		it( 'should return the value when the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: { backupsStopped: true } } )
+					.backupsStopped
+			).toEqual( true );
+		} );
+		it( 'should return new the value when it is updated and the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer(
+					{ backupsStopped: true },
+					{ type: REWIND_SIZE_SET, size: { backupsStopped: false } }
+				).backupsStopped
+			).toEqual( false );
+		} );
+		it( 'should return null when the action is not REWIND_SIZE_SET and the state is undefined', () => {
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET } ).backupsStopped
+			).toEqual( null );
 		} );
 	} );
 } );

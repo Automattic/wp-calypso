@@ -6,7 +6,6 @@ import isJetpackSite from './is-jetpack-site';
  * Returns true if the Jetpack site is running a version meeting the specified
  * minimum, or false if the Jetpack site is running an older version. Returns
  * null if the version cannot be determined or if not a Jetpack site.
- *
  * @param  {Object}   state   Global state tree
  * @param  {number}   siteId  Site ID
  * @param  {string}   version Minimum version

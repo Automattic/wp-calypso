@@ -12,6 +12,7 @@ import {
 	isCustomDesign,
 	isDIFMProduct,
 	isDomainMapping,
+	isDomainMoveInternal,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainTransfer,
@@ -41,7 +42,12 @@ import {
 	isWpComFreePlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
+	isAkismetProduct,
+	isWpcomEnterpriseGridPlan,
+	is100Year,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { isDomainForGravatarFlow, isHundredYearDomainFlow } from '@automattic/onboarding';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
@@ -120,12 +126,12 @@ export function hasBusinessPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
 }
 
-export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
-	return getAllCartItems( cart ).some( isStarter );
+export function has100YearPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( is100Year );
 }
 
-export function hasDomainCredit( cart: ResponseCart ): boolean {
-	return cart.has_bundle_credit || hasPlan( cart );
+export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( isStarter );
 }
 
 export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
@@ -165,6 +171,17 @@ export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 
 export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
+}
+
+export function hasFreeCouponTransfersOnly( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).every( ( item ) => {
+		return (
+			( isDomainTransfer( item ) &&
+				item.is_sale_coupon_applied &&
+				item.item_subtotal_integer === 0 ) ||
+			isPartialCredits( item )
+		);
+	} );
 }
 
 export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
@@ -216,8 +233,8 @@ export function hasRenewableSubscription( cart: ObjectWithProducts ): boolean {
  * Creates a new shopping cart item for a plan.
  */
 export function planItem( productSlug: string ): { product_slug: string } | null {
-	// Free plan doesn't have shopping cart.
-	if ( isWpComFreePlan( productSlug ) ) {
+	// Free and Enterprise plans don't have shopping cart.
+	if ( isWpComFreePlan( productSlug ) || isWpcomEnterpriseGridPlan( productSlug ) ) {
 		return null;
 	}
 
@@ -228,7 +245,6 @@ export function planItem( productSlug: string ): { product_slug: string } | null
 
 /**
  * Determines whether a domain Item supports purchasing a privacy subscription
- *
  * @param {string} productSlug - e.g. domain_reg, dotblog_domain
  * @param {{product_slug: string, is_privacy_protection_product_purchase_allowed?: boolean}[]} productsList - The list of products retrieved using getProductsList from state/products-list/selectors
  * @returns {boolean} true if the domainItem supports privacy protection purchase
@@ -245,7 +261,6 @@ export function supportsPrivacyProtectionPurchase(
 
 /**
  * Creates a new shopping cart item for a domain.
- *
  * @param {string} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
  * @param {string|undefined} [source] - optional source for the domain item, e.g. `getdotblog`.
@@ -269,7 +284,6 @@ export function domainItem(
 
 /**
  * Creates a new shopping cart item for a premium theme.
- *
  * @param {string} themeSlug - the unique string that identifies the product
  * @param {string} [source] - optional source for the domain item, e.g. `getdotblog`.
  * @returns {MinimalRequestCartProduct} the new item
@@ -286,7 +300,6 @@ export function themeItem( themeSlug: string, source?: string ): MinimalRequestC
 
 /**
  * Creates a new shopping cart item for a marketplace theme subscription.
- *
  * @param productSlug the unique string that identifies the product
  * @returns {MinimalRequestCartProduct} the new item
  */
@@ -304,10 +317,12 @@ export function domainRegistration( properties: {
 	domain: string;
 	source?: string;
 	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct & { is_domain_registration: boolean } {
 	return {
 		...domainItem( properties.productSlug, properties.domain, properties.source ),
 		is_domain_registration: true,
+		...( properties.volume ? { volume: properties.volume } : {} ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
 	};
 }
@@ -341,11 +356,13 @@ export function siteRedirect( properties: {
 export function domainTransfer( properties: {
 	domain: string;
 	source?: string;
-	extra: RequestCartProductExtra;
+	extra?: RequestCartProductExtra;
+	volume?: number;
 } ): MinimalRequestCartProduct {
 	return {
 		...domainItem( domainProductSlugs.TRANSFER_IN, properties.domain, properties.source ),
 		...( properties.extra ? { extra: properties.extra } : {} ),
+		...( properties.volume ? { volume: properties.volume } : {} ),
 	};
 }
 
@@ -498,6 +515,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for an Akismet product.
+ */
+export function akismetProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Creates a new shopping cart item for a renewable product.
  */
 export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
@@ -511,6 +537,15 @@ export function renewableProductItem( slug: string ): MinimalRequestCartProduct 
  */
 export function getDomainRegistrations( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.is_domain_registration === true );
+}
+
+/**
+ * Retrieves all the domain registration items in the specified shopping cart.
+ */
+export function getDomainsInCart( cart: ObjectWithProducts ): ResponseCartProduct[] {
+	return getAllCartItems( cart ).filter(
+		( product ) => isDomainRegistration( product ) || isDomainMoveInternal( product )
+	);
 }
 
 /**
@@ -540,6 +575,10 @@ function createRenewalCartItemFromProduct(
 
 	if ( isJetpackProduct( product ) ) {
 		return jetpackProductItem( slug );
+	}
+
+	if ( isAkismetProduct( product ) ) {
+		return akismetProductItem( slug );
 	}
 
 	if ( isUnlimitedThemes( product ) ) {
@@ -630,7 +669,10 @@ export function getRenewalItemFromCartItem< T extends MinimalRequestCartProduct 
 
 export function hasDomainInCart( cart: ObjectWithProducts, domain: string ): boolean {
 	return getAllCartItems( cart ).some( ( product ) => {
-		return product.is_domain_registration === true && product.meta === domain;
+		return (
+			product.meta === domain &&
+			( isDomainRegistration( product ) || isDomainMoveInternal( product ) )
+		);
 	} );
 }
 
@@ -801,6 +843,7 @@ export function getDomainPriceRule(
 		product_slug?: string;
 		productSlug?: string;
 		cost?: string;
+		sale_cost?: number;
 		domain_name?: string;
 		is_premium?: boolean;
 	},
@@ -808,6 +851,11 @@ export function getDomainPriceRule(
 	flowName: string,
 	domainAndPlanUpsellFlow: boolean
 ): string {
+	// We'll show a fixed, one time price in the 100-year domain flow
+	if ( isHundredYearDomainFlow( flowName ) ) {
+		return 'ONE_TIME_PRICE';
+	}
+
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
 	}
@@ -816,8 +864,16 @@ export function getDomainPriceRule(
 		return 'PRICE';
 	}
 
+	if ( hasSomeSlug( suggestion ) && isDomainMoveInternal( suggestion ) ) {
+		return 'DOMAIN_MOVE_PRICE';
+	}
+
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
+	}
+
+	if ( isDomainForGravatarFlow( flowName ) ) {
+		return suggestion.sale_cost === 0 ? 'FREE_FOR_FIRST_YEAR' : 'PRICE';
 	}
 
 	if ( domainAndPlanUpsellFlow ) {
@@ -837,10 +893,6 @@ export function getDomainPriceRule(
 			return 'INCLUDED_IN_HIGHER_PLAN';
 		}
 
-		return 'PRICE';
-	}
-
-	if ( isDomainOnly ) {
 		return 'PRICE';
 	}
 
@@ -870,4 +922,18 @@ export function hasStaleItem( cart: ObjectWithProducts ): boolean {
 			cartItem.time_added_to_cart * 1000 < Date.now() - 10 * 60 * 1000
 		);
 	} );
+}
+
+export function getPlanCartItem( cartItems?: MinimalRequestCartProduct[] | null ) {
+	/**
+	 * A null planCartItem corresponds to a free plan. It seems like this is case throughout the signup/plans
+	 * onboarding codebase. There are, however, tests in client/signup/steps/plans/test/index.jsx that
+	 * represent a free plan as a non null product.
+	 *
+	 * Additionally, free plans are, in fact, represented as products with product slugs elsewhere in the
+	 * codebase. This is why we check for both cases here. When we conduct a more thorough investigation and
+	 * determine that PLAN_FREE is no longer, in fact, used to represent free plans in signup/onboarding, we
+	 * can remove PLAN_FREE check. p4TIVU-aLF-p2
+	 */
+	return cartItems?.find( ( item ) => isPlan( item ) || item.product_slug === PLAN_FREE ) ?? null;
 }

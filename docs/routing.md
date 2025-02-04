@@ -5,7 +5,7 @@ Let’s start with an informal definition of a section: A _section_ is usually a
 Now if you’ve worked in a given Calypso section before, you’ve probably encountered a piece of code inside your section’s `index.js[x]` that reads like this:
 
 ```js
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import menus from './controller';

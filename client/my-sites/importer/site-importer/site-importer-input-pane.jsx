@@ -1,12 +1,11 @@
-import url from 'url'; // eslint-disable-line no-restricted-imports
 import config from '@automattic/calypso-config';
+import { FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, flowRight, trim, sortBy } from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import TextInput from 'calypso/components/forms/form-text-input';
 import { validateImportUrl } from 'calypso/lib/importer/url-validation';
@@ -148,22 +147,14 @@ class SiteImporterInputPane extends Component {
 			return;
 		}
 
-		const { hostname, pathname } = url.parse(
-			siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL
-		);
-
-		if ( ! hostname ) {
-			return;
-		}
-
 		const errorMessage = validateImportUrl( siteURL );
-
 		if ( errorMessage ) {
 			return this.props.setValidationError( errorMessage );
 		}
 
-		// normalized URL
-		const urlForImport = hostname + pathname;
+		// normalized URL -- validateImportUrl already checks that new URL creation works.
+		const importUrl = new URL( siteURL.startsWith( 'http' ) ? siteURL : 'https://' + siteURL );
+		const urlForImport = importUrl.hostname + importUrl.pathname;
 
 		return this.props.validateSiteIsImportable( {
 			params: {

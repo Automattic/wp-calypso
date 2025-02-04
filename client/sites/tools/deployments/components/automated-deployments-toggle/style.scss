@@ -1,0 +1,11 @@
+.automated-deployments-toggle-switch {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	.components-form-toggle {
+		line-height: 1;
+	}
+}

@@ -41,7 +41,6 @@ As you complete the tasks in this list, please update the relevant lines with di
 
 **Publish internal announcements**
 
-- [ ] Slack: #team-calypso
 - [ ] Slack: #wpcom-happy-announce
 - [ ] P2: wpcomhappy
 

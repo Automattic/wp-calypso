@@ -1,4 +1,4 @@
-import { CompactCard } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -6,15 +6,14 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
-import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import withSiteRoles from 'calypso/data/site-roles/with-site-roles';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -87,11 +86,18 @@ class JetpackSiteStats extends Component {
 			onChange = handleAutosavingToggle( name );
 		}
 
+		// Admin users should always be able to access stats, so we don't want to enable the toggle for them.
+		const isAdminToggleForStatsVisibilitySection = name === 'roles_administrator';
+
 		return (
 			<ToggleControl
-				checked={ checked }
+				checked={ checked || isAdminToggleForStatsVisibilitySection }
 				disabled={
-					isRequestingSettings || isSavingSettings || moduleUnavailable || ! statsModuleActive
+					isRequestingSettings ||
+					isSavingSettings ||
+					moduleUnavailable ||
+					! statsModuleActive ||
+					isAdminToggleForStatsVisibilitySection
 				}
 				onChange={ onChange }
 				key={ name }
@@ -115,10 +121,10 @@ class JetpackSiteStats extends Component {
 		);
 
 		return (
-			<div className="site-settings__traffic-settings">
+			<PanelCard className="site-settings__traffic-settings">
 				<QueryJetpackConnection siteId={ siteId } />
 
-				<SettingsSectionHeader title={ translate( 'Jetpack Stats' ) } />
+				<PanelCardHeading>{ translate( 'Jetpack Stats' ) }</PanelCardHeading>
 
 				<FoldableCard
 					className="site-settings__foldable-card is-top-level"
@@ -170,10 +176,10 @@ class JetpackSiteStats extends Component {
 					</FormFieldset>
 				</FoldableCard>
 
-				<CompactCard href={ getStatsPathForTab( 'day', siteSlug ) }>
+				<Button href={ getStatsPathForTab( 'day', siteSlug ) }>
 					{ translate( 'View your site stats' ) }
-				</CompactCard>
-			</div>
+				</Button>
+			</PanelCard>
 		);
 	}
 }

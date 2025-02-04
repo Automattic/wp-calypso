@@ -20,6 +20,7 @@ export const billingTransactionsSchema = {
 					pay_ref: { type: 'string' },
 					pay_part: { type: 'string' },
 					cc_type: { type: 'string' },
+					cc_display_type: { type: [ 'string', 'null' ] },
 					cc_num: { type: 'string' },
 					cc_name: { type: 'string' },
 					cc_email: { type: 'string' },

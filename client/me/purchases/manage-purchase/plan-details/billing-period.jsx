@@ -1,13 +1,13 @@
 import { isMonthly, getYearlyPlanByMonthly } from '@automattic/calypso-products';
-import { Button } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Button, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_SUPPORT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -17,9 +17,8 @@ import {
 	isRenewing,
 	showCreditCardExpiringWarning,
 } from 'calypso/lib/purchases';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackTemporarySitePurchase } from '../../utils';
+import { isTemporarySitePurchase } from '../../utils';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -41,7 +40,9 @@ export class PlanBillingPeriod extends Component {
 				'/checkout/' +
 				purchase.domain +
 				'/' +
-				yearlyPlanSlug
+				yearlyPlanSlug +
+				'?upgrade_from=' +
+				purchase.productSlug
 		);
 	};
 
@@ -96,7 +97,7 @@ export class PlanBillingPeriod extends Component {
 			return;
 		}
 
-		const isJetpackTemporarySite = isJetpackTemporarySitePurchase( purchase.domain );
+		const isTemporarySite = isTemporarySitePurchase( purchase );
 
 		return (
 			<Fragment>
@@ -108,7 +109,7 @@ export class PlanBillingPeriod extends Component {
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && ! isJetpackTemporarySite && ! purchase.isLocked && (
+				{ ! site && ! isTemporarySite && ! purchase.isLocked && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',

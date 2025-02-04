@@ -5,7 +5,6 @@ const MINUTE_IN_MS = 60 * 1000;
 /**
  * Returns true if the site is created less than 30 mins ago.
  * False otherwise.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {boolean}        Whether site is newly created.

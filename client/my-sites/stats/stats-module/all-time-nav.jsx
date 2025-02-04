@@ -1,26 +1,46 @@
-import config from '@automattic/calypso-config';
-import { ComponentSwapper } from '@automattic/components';
-import classnames from 'classnames';
+import { ComponentSwapper, SegmentedControl, SelectDropdown } from '@automattic/components';
+import { Icon, lock } from '@wordpress/icons';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
+import { connect, useDispatch } from 'react-redux';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { toggleUpsellModal } from 'calypso/state/stats/paid-stats-upsell/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
+	STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
+	STATS_FEATURE_SUMMARY_LINKS_ALL,
+	STATS_FEATURE_SUMMARY_LINKS_DAY,
+	STATS_FEATURE_SUMMARY_LINKS_QUARTER,
+	STATS_FEATURE_SUMMARY_LINKS_YEAR,
+} from '../constants';
+import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import DatePicker from '../stats-date-picker';
+
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
-	const { translate, path, siteSlug, query, period, children, hideNavigation, navigationSwap } =
-		props;
+	const {
+		translate,
+		path,
+		siteSlug,
+		query,
+		period,
+		hideNavigation,
+		navigationSwap,
+		shouldGateOptions,
+		siteId,
+	} = props;
+
+	const dispatch = useDispatch();
 
 	const getSummaryPeriodLabel = () => {
+		if ( query.start_date ) {
+			return translate( 'Custom Range Summary' );
+		}
 		switch ( period.period ) {
 			case 'day':
 				return translate( 'Day Summary' );
@@ -37,116 +57,155 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
 	};
 
+	const handleClick = ( item ) => ( event ) => {
+		if ( item.isGated ) {
+			event.preventDefault();
+			dispatch( toggleUpsellModal( siteId, item.statType ) );
+		}
+		recordStats( item );
+	};
+
+	// Template for standard range options (7, 30, Quarter, Year, All Time).
 	const summaryPath = `/stats/day/${ path }/${ siteSlug }?startDate=${ moment().format(
 		'YYYY-MM-DD'
 	) }&summarize=1&num=`;
-	const summaryPeriodPath = `/stats/${
+
+	// Path for summary or custom range option. ie: The first button in the row.
+	// Defaults to one day/week/month/year.
+	let summaryPeriodPath = `/stats/${
 		period.period
 	}/${ path }/${ siteSlug }?startDate=${ period.endOf.format( 'YYYY-MM-DD' ) }`;
+	// Override if custom range was used in query.
+	if ( query.start_date ) {
+		summaryPeriodPath = `/stats/${ period.period }/${ path }/${ siteSlug }?startDate=${ query.start_date }&endDate=${ query.date }`;
+	}
+
 	const options = [
-		{ value: '0', label: getSummaryPeriodLabel(), path: summaryPeriodPath, stat: 'Period Summary' },
-		{ value: '7', label: translate( '7 days' ), path: `${ summaryPath }7`, stat: '7 Days' },
-		{ value: '30', label: translate( '30 days' ), path: `${ summaryPath }30`, stat: '30 Days' },
-		{ value: '90', label: translate( 'Quarter' ), path: `${ summaryPath }90`, stat: 'Quarter' },
-		{ value: '365', label: translate( 'Year' ), path: `${ summaryPath }365`, stat: 'Year' },
-		{ value: '-1', label: translate( 'All Time' ), path: `${ summaryPath }-1`, stat: 'All Time' },
+		{
+			value: '0',
+			label: getSummaryPeriodLabel(),
+			path: summaryPeriodPath,
+			stat: 'Period Summary',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_DAY ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_DAY,
+		},
+		{
+			value: '7',
+			label: translate( '7 days' ),
+			path: `${ summaryPath }7`,
+			stat: '7 Days',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_7_DAYS,
+		},
+		{
+			value: '30',
+			label: translate( '30 days' ),
+			path: `${ summaryPath }30`,
+			stat: '30 Days',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_30_DAYS,
+		},
+		{
+			value: '90',
+			label: translate( 'Quarter' ),
+			path: `${ summaryPath }90`,
+			stat: 'Quarter',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_QUARTER,
+		},
+		{
+			value: '365',
+			label: translate( 'Year' ),
+			path: `${ summaryPath }365`,
+			stat: 'Year',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_YEAR ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_YEAR,
+		},
+		{
+			value: '-1',
+			label: translate( 'All Time' ),
+			path: `${ summaryPath }-1`,
+			stat: 'All Time',
+			isGated: shouldGateOptions[ STATS_FEATURE_SUMMARY_LINKS_ALL ],
+			statType: STATS_FEATURE_SUMMARY_LINKS_ALL,
+		},
 	];
 
 	const numberDays = get( query, 'num', '0' );
-	const selected = find( options, { value: numberDays } );
-
-	const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-		'stats/horizontal-bars-everywhere'
-	);
+	let selected = find( options, { value: numberDays } );
+	selected = selected || options[ 0 ];
 
 	const tabs = (
 		<SegmentedControl
 			primary
-			className={ classnames( 'stats-summary-nav__intervals' ) }
+			className={ clsx( 'stats-summary-nav__intervals' ) }
 			compact={ false }
 		>
 			{ options.map( ( i ) => (
 				<SegmentedControl.Item
 					key={ i.value }
-					path={ i.path }
+					path={ i.isGated ? '' : i.path }
 					selected={ i.value === selected.value }
+					onClick={ handleClick( i ) }
 				>
 					{ i.label }
+					{ i.isGated && <Icon icon={ lock } width={ 16 } height={ 16 } /> }
 				</SegmentedControl.Item>
 			) ) }
 		</SegmentedControl>
 	);
 	const select = (
-		<SelectDropdown className="section-nav-tabs__dropdown" selectedText={ selected.label }>
+		<SelectDropdown
+			className="section-nav-tabs__dropdown stats-summary-nav__select"
+			selectedText={ selected.label }
+		>
 			{ options.map( ( i, index ) => (
 				<SelectDropdown.Item
 					{ ...i }
 					key={ 'navTabsDropdown-' + index }
 					path={ i.path }
 					selected={ i.value === selected.value }
+					onClick={ handleClick( i ) }
 				>
 					{ i.label }
+					{ i.isGated && (
+						<Icon
+							className="stats-summary-nav__gated-icon"
+							icon={ lock }
+							width={ 16 }
+							height={ 16 }
+						/>
+					) }
 				</SelectDropdown.Item>
 			) ) }
 		</SelectDropdown>
 	);
 
+	const navClassName = clsx( 'stats-summary-nav', {
+		[ 'stats-summary-nav--with-button' ]: hideNavigation && navigationSwap,
+	} );
+
 	return (
-		<>
-			{ isHorizontalBarComponentEnabledEverywhere && (
-				<div className="stats-summary-nav">
-					<div className="stats-summary-nav__header">
-						<DatePicker
-							period={ period.period }
-							date={ period.startOf }
-							path={ path }
-							query={ query }
-							summary={ false }
-						/>
-					</div>
-					{ ! hideNavigation && (
-						<ComponentSwapper
-							className={ classnames( 'stats-summary-nav__intervals-container' ) }
-							breakpoint="<660px"
-							breakpointActiveComponent={ select }
-							breakpointInactiveComponent={ tabs }
-						/>
-					) }
-					{ hideNavigation && navigationSwap }
-				</div>
+		<div className={ navClassName }>
+			{ ! hideNavigation && (
+				<ComponentSwapper
+					className={ clsx( 'stats-summary-nav__intervals-container' ) }
+					breakpoint="<660px"
+					breakpointActiveComponent={ select }
+					breakpointInactiveComponent={ tabs }
+				/>
 			) }
-			{ ! isHorizontalBarComponentEnabledEverywhere && (
-				<div className="stats-module__all-time-nav">
-					<SectionNav selectedText={ selected.label }>
-						<NavTabs label={ translate( 'Summary' ) }>
-							{ options.map( ( item ) => {
-								const onClick = () => {
-									recordStats( item );
-								};
-								return (
-									<NavItem
-										path={ item.path }
-										selected={ item.value === selected.value }
-										key={ item.value }
-										onClick={ onClick }
-									>
-										{ item.label }
-									</NavItem>
-								);
-							} ) }
-						</NavTabs>
-						{ children }
-					</SectionNav>
-					<DatePicker
-						period={ period.period }
-						date={ period.startOf }
-						path={ path }
-						query={ query }
-						summary={ false }
-					/>
-				</div>
-			) }
-		</>
+			<div className="stats-summary-nav__header">
+				<DatePicker
+					period={ period.period }
+					date={ period.startOf }
+					path={ path }
+					query={ query }
+					summary={ false }
+				/>
+			</div>
+			{ hideNavigation && navigationSwap }
+		</div>
 	);
 };
 
@@ -154,8 +213,40 @@ const connectComponent = connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, siteId );
+		const shouldGateOptions = {
+			[ STATS_FEATURE_SUMMARY_LINKS_DAY ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_DAY
+			),
+			[ STATS_FEATURE_SUMMARY_LINKS_7_DAYS ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_7_DAYS
+			),
+			[ STATS_FEATURE_SUMMARY_LINKS_30_DAYS ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_30_DAYS
+			),
+			[ STATS_FEATURE_SUMMARY_LINKS_QUARTER ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_QUARTER
+			),
+			[ STATS_FEATURE_SUMMARY_LINKS_YEAR ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_YEAR
+			),
+			[ STATS_FEATURE_SUMMARY_LINKS_ALL ]: shouldGateStats(
+				state,
+				siteId,
+				STATS_FEATURE_SUMMARY_LINKS_ALL
+			),
+		};
 
-		return { siteSlug };
+		return { siteId, siteSlug, shouldGateOptions };
 	},
 	{ recordGoogleEvent }
 );

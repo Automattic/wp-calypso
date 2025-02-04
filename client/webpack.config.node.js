@@ -38,7 +38,6 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
- *
  * @returns {Array} list of externals
  */
 
@@ -136,6 +135,7 @@ const webpackConfig = {
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
 			'@automattic/calypso-config': 'calypso/server/config',
+			'@wordpress/upload-media': false,
 		},
 	},
 	node: {
@@ -160,6 +160,7 @@ const webpackConfig = {
 			} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
+			'typeof window': JSON.stringify( 'undefined' ),
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
 			COMMIT_SHA: JSON.stringify( commitSha ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),

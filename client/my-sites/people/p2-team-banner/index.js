@@ -32,7 +32,7 @@ const P2TeamBanner = ( { site, context } ) => {
 							'_blank'
 						)
 					}
-					disableHref={ true }
+					disableHref
 					showIcon={ false }
 					className="p2-team-banner p2-team-banner--invite p2-banner"
 				/>

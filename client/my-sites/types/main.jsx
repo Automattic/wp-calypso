@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPostTypes from 'calypso/components/data/query-post-types';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
@@ -70,14 +70,7 @@ function Types( {
 			<ScreenOptionsTab wpAdminPath={ `edit.php?post_type=${ query.type }` } />
 			<DocumentHead title={ get( postType, 'label', '' ) } />
 			<PageViewTracker path={ siteId ? '/types/:site' : '/types' } title="Custom Post Type" />
-			<FormattedHeader
-				brandFont
-				className="types__page-heading"
-				headerText={ get( postType, 'label', '' ) }
-				subHeaderText={ subHeaderText }
-				align="left"
-				hasScreenOptions
-			/>
+			<NavigationHeader title={ get( postType, 'label', '' ) } subtitle={ subHeaderText } />
 			{ userCanEdit &&
 				postTypeSupported && [
 					<PostTypeFilter

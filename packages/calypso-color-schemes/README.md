@@ -14,7 +14,7 @@ yarn add @automattic/calypso-color-schemes
 
 ### Using the CSS output
 
-Add this packages CSS from `css/calypso-color-schemes.css` in order to access the CSS custom
+Add this packages CSS from `css/index.css` in order to access the CSS custom
 properties.
 
 When importing, you can do
@@ -24,6 +24,12 @@ import '@automattic/calypso-color-schemes';
 ```
 
 And this will give you the CSS.
+
+If you want only the `:root` rules without all the schemes, you can do
+
+```js
+import '@automattic/calypso-color-schemes/root-only';
+```
 
 ### Using the JS output
 

@@ -1,16 +1,16 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, check } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent, useEffect, FormEvent, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, ChangeEvent, useEffect, FormEvent, useRef, useCallback } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import RoleSelect from 'calypso/my-sites/people/role-select';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { validateTokens, sendInvites } from 'calypso/state/invites/actions';
 import { getTokenValidation, getSendInviteState } from 'calypso/state/invites/selectors';
@@ -40,7 +40,7 @@ function InviteForm( props: Props ) {
 	];
 	const defaultEmailControlPlaceholder = translate( 'Add another email or username' );
 
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
 	const siteId = site?.ID as number;
 	const defaultUserRole = useInitialRole( siteId );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
@@ -63,11 +63,25 @@ function InviteForm( props: Props ) {
 	const [ showContractorCb, setShowContractorCb ] = useState( false );
 	const [ readyForSubmit, setReadyForSubmit ] = useState( false );
 
-	useEffect( extendTokenFormControls, [ tokenValues ] );
-	useEffect( toggleShowContractorCb, [ role ] );
-	useEffect( checkSubmitReadiness, [ tokenErrors, validationProgress ] );
-	useEffect( reactOnInvitationSuccess, [ invitingSuccess ] );
-	useEffect( () => ( prevInvitingProgress.current = invitingProgress ), [ invitingProgress ] );
+	useEffect( extendTokenFormControls, [ tokenControlNum, tokenValues ] );
+	useEffect( toggleShowContractorCb, [ isSiteForTeams, role ] );
+	useEffect( checkSubmitReadiness, [
+		readyForSubmit,
+		tokenErrors,
+		tokenValues,
+		validationProgress,
+	] );
+	const resetFormValues = useCallback( () => {
+		setRole( defaultUserRole );
+		setTokenValues( [ '' ] );
+		setContractor( false );
+		setMessage( '' );
+	}, [ defaultUserRole ] );
+
+	useEffect( reactOnInvitationSuccess, [ invitingSuccess, onInviteSuccess, resetFormValues ] );
+	useEffect( () => {
+		prevInvitingProgress.current = invitingProgress;
+	}, [ invitingProgress ] );
 	useValidationNotifications();
 	useInvitingNotifications( tokenValues );
 
@@ -83,23 +97,22 @@ function InviteForm( props: Props ) {
 		dispatch( recordTracksEvent( 'calypso_invite_people_form_submit' ) );
 	}
 
+	function tokenValidation( i: number, tokenValues: unknown[] ) {
+		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
+	}
+
+	/**
+	 * Add debouncedCallback to prevent API requests on evert keystroke
+	 */
+	const [ debouncedTokenValidation ] = useDebouncedCallback( tokenValidation, 2000 );
+
 	function onTokenChange( val: string, i: number ) {
 		const value = val.trim();
 		const _tokenValues = tokenValues.slice();
 
 		_tokenValues[ i ] = value;
 		setTokenValues( _tokenValues );
-	}
-
-	function onTokenBlur( i: number ) {
-		tokenValues[ i ] && dispatch( validateTokens( siteId, tokenValues, role ) );
-	}
-
-	function resetFormValues() {
-		setRole( defaultUserRole );
-		setTokenValues( [ '' ] );
-		setContractor( false );
-		setMessage( '' );
+		debouncedTokenValidation( i, _tokenValues );
 	}
 
 	function reactOnInvitationSuccess() {
@@ -135,7 +148,8 @@ function InviteForm( props: Props ) {
 		const valuesNum = tokenValues.filter( ( x ) => !! x ).length;
 		const valuesErrorNum = tokenValues.filter( ( x ) => tokenErrors && !! tokenErrors[ x ] ).length;
 
-		setReadyForSubmit( ! validationProgress && valuesNum > 0 && valuesNum > valuesErrorNum );
+		const newReadyForSubmit = ! validationProgress && valuesNum > 0 && valuesNum > valuesErrorNum;
+		setReadyForSubmit( newReadyForSubmit );
 	}
 
 	/**
@@ -144,7 +158,8 @@ function InviteForm( props: Props ) {
 	function getRoleLearnMoreLink() {
 		return (
 			<Button
-				plain={ true }
+				className="team-invite-form-learn-more__link"
+				plain
 				target="_blank"
 				href={ localizeUrl( 'https://wordpress.com/support/user-roles/' ) }
 			>
@@ -156,7 +171,7 @@ function InviteForm( props: Props ) {
 	return (
 		<form
 			autoComplete="off"
-			className={ classNames( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
+			className={ clsx( 'team-invite-form', { 'team-invite-form-valid': readyForSubmit } ) }
 			onSubmit={ onFormSubmit }
 		>
 			<RoleSelect
@@ -184,10 +199,9 @@ function InviteForm( props: Props ) {
 							value={ tokenValues[ i ] || '' }
 							isError={ tokenErrors && !! tokenErrors[ tokenValues[ i ] ] }
 							placeholder={ emailControlPlaceholder[ i ] || defaultEmailControlPlaceholder }
-							onBlur={ () => onTokenBlur( i ) }
-							onChange={ ( e: ChangeEvent< HTMLInputElement > ) =>
-								onTokenChange( e.target.value, i )
-							}
+							onChange={ ( e: ChangeEvent< HTMLInputElement > ) => {
+								onTokenChange( e.target.value, i );
+							} }
 						/>
 						{ tokenValues[ i ] && tokenErrors && ! tokenErrors[ tokenValues[ i ] ] && (
 							<div className="form-validation-icon">
@@ -214,8 +228,8 @@ function InviteForm( props: Props ) {
 				{ ! showMsg && (
 					<Button
 						className="team-invite-form__add-message"
-						primary={ true }
-						borderless={ true }
+						primary
+						borderless
 						onClick={ () => setShowMsg( true ) }
 					>
 						{ translate( '+ Add a message' ) }

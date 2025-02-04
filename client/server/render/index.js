@@ -44,7 +44,6 @@ function bumpStat( group, name ) {
 
 /**
  * Render JSX template to a markup string.
- *
  * @param {string} view - JSX template to render (basename)
  * @param {Object} props - Properties which got passed to the JSX template
  * @returns {string} Rendered markup
@@ -70,7 +69,6 @@ export function renderJsx( view, props ) {
 /**
  * Render and cache supplied React element to a markup string.
  * Cache is keyed by stringified element by default.
- *
  * @param {Object} element - React element to be rendered to html
  * @param {string} key - cache key
  * @param {Object} req - Request object
@@ -299,7 +297,6 @@ export function serverRender( req, res ) {
  *
  * Warning: Having context.serverSideRender=true is not sufficient for performing SSR. The app-level checks are also
  * applied before truly SSRing (@see isServerSideRenderCompatible)
- *
  * @param {Object}   context  The entire request context
  * @param {Function} next     As all middlewares, will call next in the sequence
  */
@@ -323,7 +320,6 @@ export function setShouldServerSideRender( context, next ) {
  * Warning: if you think about calling this method or adding these conditions to the middlewares themselves (the ones
  * that set context.serverSideRender), think twice: the context may not be populated with all the necessary values
  * when the sections-specific middlewares are run (examples: context.layout, context.user).
- *
  * @param {Object}   context The currently built context
  * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
@@ -339,7 +335,6 @@ function isServerSideRenderCompatible( context ) {
  * The main entry point for server-side rendering checks, and the final authority if a page should be SSRed.
  *
  * Warning: the context needs to be 'ready' for these checks (needs to have all values)
- *
  * @param {Object}   context The currently built context
  * @returns {boolean} if the current page/request should return a SSR response
  */

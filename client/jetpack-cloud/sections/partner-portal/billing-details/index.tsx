@@ -58,11 +58,19 @@ export default function BillingDetails() {
 
 							<div className="billing-details__subtotal">
 								{ useDailyPrices &&
+									// Do not show number of days for Jetpack Search since that can be misleading
+									// as Search uses metered pricing on top of daily pricing.
+									product.productSlug !== 'jetpack-search' &&
 									// Translators: * designates a footnote explaining how we calculate the number of days.
 									translate( '%(count)d Day*', '%(count)d Days*', {
 										count: product.productQuantity,
 										args: { count: product.productQuantity },
 									} ) }
+
+								{ /* Empty element to keep vertical alignment equal when we're not displaying days. */ }
+								{ useDailyPrices && product.productSlug === 'jetpack-search' && (
+									<span>&nbsp;</span>
+								) }
 
 								{ ! useDailyPrices &&
 									translate( '%(count)d License', '%(count)d Licenses', {

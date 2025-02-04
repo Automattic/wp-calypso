@@ -25,8 +25,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( store.dispatch ).not.toBeCalled();
-		expect( next ).toBeCalledWith( action );
+		expect( store.dispatch ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledWith( action );
 	} );
 
 	test( 'should pass along local actions untouched', () => {
@@ -38,8 +38,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).toBeCalledWith( action );
-		expect( adder ).not.toBeCalled();
+		expect( next ).toHaveBeenCalledWith( action );
+		expect( adder ).not.toHaveBeenCalled();
 	} );
 
 	test( 'should pass along non-local actions with non data-layer meta', () => {
@@ -51,8 +51,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).toBeCalledTimes( 1 );
-		expect( adder ).toBeCalledWith( store, action );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( adder ).toHaveBeenCalledWith( store, action );
 	} );
 
 	test( 'should pass non-local actions with data-layer meta but no bypass', () => {
@@ -64,8 +64,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).toBeCalledTimes( 1 );
-		expect( adder ).toBeCalledWith( store, action );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( adder ).toHaveBeenCalledWith( store, action );
 	} );
 
 	test( 'should intercept actions in appropriate handler', () => {
@@ -77,8 +77,8 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).not.toBeCalledWith( action );
-		expect( adder ).toBeCalledWith( store, action );
+		expect( next ).not.toHaveBeenCalledWith( action );
+		expect( adder ).toHaveBeenCalledWith( store, action );
 	} );
 
 	test( 'should allow continuing the action down the chain', () => {
@@ -90,9 +90,9 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( next ).toBeCalledTimes( 1 );
-		expect( next ).toBeCalledWith( bypassDataLayer( action ) );
-		expect( adder ).toBeCalledWith( store, action );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( next ).toHaveBeenCalledWith( bypassDataLayer( action ) );
+		expect( adder ).toHaveBeenCalledWith( store, action );
 	} );
 
 	test( 'should call all given handlers (same list)', () => {
@@ -105,9 +105,9 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( adder ).toBeCalledWith( store, action );
-		expect( doubler ).toBeCalledWith( store, action );
-		expect( next ).toBeCalledTimes( 1 );
+		expect( adder ).toHaveBeenCalledWith( store, action );
+		expect( doubler ).toHaveBeenCalledWith( store, action );
+		expect( next ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should call all given handlers (different lists)', () => {
@@ -125,9 +125,9 @@ describe( 'WordPress.com API Middleware', () => {
 
 		middleware( ( actionType ) => handlers[ actionType ] )( store )( next )( action );
 
-		expect( adder ).toBeCalledWith( store, action );
-		expect( doubler ).toBeCalledWith( store, action );
-		expect( next ).toBeCalledTimes( 1 );
+		expect( adder ).toHaveBeenCalledWith( store, action );
+		expect( doubler ).toHaveBeenCalledWith( store, action );
+		expect( next ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	describe( 'network response', () => {
@@ -150,7 +150,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).not.toBeCalled();
+			expect( next ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains data', () => {
@@ -161,7 +161,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).not.toBeCalled();
+			expect( next ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains an error', () => {
@@ -172,7 +172,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).not.toBeCalled();
+			expect( next ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not pass along actions for a network response that contains a progress report', () => {
@@ -183,7 +183,7 @@ describe( 'WordPress.com API Middleware', () => {
 				meta,
 			} );
 
-			expect( next ).not.toBeCalled();
+			expect( next ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

@@ -1,5 +1,5 @@
 import { Card, Button, Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
@@ -14,12 +14,12 @@ const ActionCard = ( {
 	buttonHref,
 	buttonOnClick,
 	children,
-	compact,
+	compact = true,
 	classNames,
-	buttonDisabled,
+	buttonDisabled = false,
 	illustration,
 } ) => (
-	<Card className={ classnames( 'action-card', classNames ) } compact={ compact }>
+	<Card className={ clsx( 'action-card', classNames ) } compact={ compact }>
 		{ illustration && (
 			<img
 				className="action-card__illustration"
@@ -61,11 +61,6 @@ ActionCard.propTypes = {
 	compact: PropTypes.bool,
 	illustration: PropTypes.string,
 	classNames: PropTypes.string,
-};
-
-ActionCard.defaultProps = {
-	compact: true,
-	buttonDisabled: false,
 };
 
 export default ActionCard;

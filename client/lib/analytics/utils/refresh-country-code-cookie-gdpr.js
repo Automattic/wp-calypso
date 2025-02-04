@@ -5,7 +5,6 @@ let refreshRequest = null;
 
 /**
  * Refreshes the GDPR `country_code` cookie every 6 hours (like A8C_Analytics wpcom plugin).
- *
  * @param {AbortSignal} signal optional AbortSignal to cancel the request (use if needed)
  * @returns {Promise<void>} Promise that resolves when the refreshing is done (or immediately)
  */

@@ -1,5 +1,4 @@
 export { canCurrentUserAddEmail } from './can-current-user-add-email';
-export { canCurrentUserCreateSiteFromDomainOnly } from './can-current-user-create-site-from-domain-only';
 export { isDomainAndEmailSubscriptionsOwnedByDifferentUsers } from './is-domain-and-email-subscriptions-owned-by-different-users';
 export { canRedirect } from './can-redirect';
 export { checkAuthCode } from './check-auth-code';
@@ -23,6 +22,7 @@ export { getUnformattedDomainSalePrice } from './get-unformatted-domain-sale-pri
 export { isDomainUpdateable } from './is-domain-updateable';
 export { isDomainInGracePeriod } from './is-domain-in-grace-period';
 export { isHstsRequired } from './is-hsts-required';
+export { isDotGayNoticeRequired } from './is-dot-gay-notice-required';
 export { isSubdomain } from './is-subdomain';
 export {
 	getMappedDomains,
@@ -34,3 +34,5 @@ export { getRegisteredDomains, isFreeUrlDomain, isRegisteredDomain } from './reg
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
+export { getTransferredInDomains, isTransferredInDomain } from './transferred-domains';
+export { extractDomainFromInput } from './get-domain-from-input';

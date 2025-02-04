@@ -1,17 +1,18 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
+import { useSelector } from 'calypso/state';
 import SitesList from '../sites-list';
-import type { Plugin } from '../types';
+import { getSitesThatAreNotInternal } from '../utils/get-sites-that-are-not-internal';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
 	sites: Array< SiteDetails | null | undefined >;
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	isLoading: boolean;
-	plugin: Plugin;
+	plugin: PluginComponentProps;
 }
 
 export default function PluginAvailableOnSitesList( props: Props ) {
@@ -28,18 +29,22 @@ export default function PluginAvailableOnSitesList( props: Props ) {
 
 	const sitesWithSecondarySites = useSelector( ( state ) =>
 		getSitesWithSecondarySites( state, props.sites )
-	);
+	).map( ( site ) => site.site );
 
-	if ( ! sitesWithSecondarySites?.length ) {
+	const sitesThatAreNotInternal = useSelector( ( state ) => {
+		return getSitesThatAreNotInternal( state, sitesWithSecondarySites );
+	} );
+
+	if ( ! sitesThatAreNotInternal?.length ) {
 		return null;
 	}
 
 	return (
-		<div>
+		<div className="plugin-details-v2__sites-list separators-top-bottom">
 			<div className="plugin-details-v2__title">{ translate( 'Available on' ) }</div>
 			<SitesList
 				{ ...props }
-				items={ sitesWithSecondarySites.map( ( site ) => site.site ) }
+				items={ sitesThatAreNotInternal.filter( ( site ) => site && ! site.is_deleted ) }
 				columns={ columns }
 			/>
 		</div>

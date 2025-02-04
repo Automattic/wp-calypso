@@ -7,6 +7,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { UPDATE_PLUGIN, ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getSite } from 'calypso/state/sites/selectors';
 import UpdatePlugin from '../update-plugin';
 import { site, plugin } from './utils/constants';
 
@@ -36,7 +37,7 @@ const initialState = {
 
 const props = {
 	plugin,
-	selectedSite: site,
+	selectedSite: getSite( initialState, site.ID ),
 	className: 'update-plugin',
 	updatePlugin: jest.fn(),
 };
@@ -45,7 +46,7 @@ describe( '<UpdatePlugin>', () => {
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 
-	test( 'should render correctly and show current and new version', async () => {
+	test( 'should show current and new versions', async () => {
 		const { container } = render(
 			<Provider store={ store }>
 				<UpdatePlugin { ...props } />
@@ -57,9 +58,23 @@ describe( '<UpdatePlugin>', () => {
 		).toEqual( plugin.version );
 
 		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
-		expect( updateButton.textContent ).toEqual( `Update to  ${ plugin.update.new_version }` );
+		expect( updateButton.textContent ).toEqual( `Update to ${ plugin.update.new_version }` );
+	} );
 
+	test( 'should show confirmation dialog and update correctly', async () => {
+		const { container } = render(
+			<Provider store={ store }>
+				<UpdatePlugin { ...props } />
+			</Provider>
+		);
+
+		const [ updateButton ] = container.getElementsByClassName( 'update-plugin__new-version' );
 		await userEvent.click( updateButton );
+
+		// debug elements
+		const [ confirmButton ] = document.querySelectorAll( '.accept__dialog-buttons .is-primary' );
+		await userEvent.click( confirmButton );
+
 		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -155,6 +170,11 @@ describe( '<UpdatePlugin>', () => {
 
 	test( 'should render correctly and show auto-managed', () => {
 		site.jetpack = false;
+		const updatedInitialState = {
+			...initialState,
+		};
+
+		const store = mockStore( updatedInitialState );
 		const { getAllByText } = render(
 			<Provider store={ store }>
 				<UpdatePlugin { ...props } />

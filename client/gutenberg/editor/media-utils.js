@@ -6,7 +6,6 @@ const DEFAULT_DISABLED_DATA_SOURCES = [ 'google_photos', 'openverse', 'pexels' ]
 
 /**
  * Convert the Calypso Media Modal output to the format expected by Gutenberg
- *
  * @param {Object} media Calypso media modal output
  * @returns {Array | Object} Gutenberg media blocks input
  */

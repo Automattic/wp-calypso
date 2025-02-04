@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { createSelector } from '@automattic/state-utils';
-import { compact } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
 import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
@@ -13,7 +12,6 @@ import 'calypso/state/ui/init';
 /**
  * Returns the formatted document title, based on the currently set title,
  * capped unreadCount, and selected site.
- *
  * @param  {Object}  state  Global state tree
  * @returns {string}         Formatted title
  */
@@ -26,10 +24,12 @@ export const getDocumentHeadFormattedTitle = createSelector(
 			title += `(${ unreadCount }) `;
 		}
 
-		title += compact( [
+		title += [
 			getDocumentHeadTitle( state ),
 			isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) ),
-		] ).join( ' ‹ ' );
+		]
+			.filter( Boolean )
+			.join( ' ‹ ' );
 
 		if ( title ) {
 			title = decodeEntities( title ) + ' — ';

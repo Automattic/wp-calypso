@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
-import { ReactChild } from 'react';
+import { ReactElement, ReactNode } from 'react';
 
 import './style.scss';
 
 interface SectionProps {
-	header: ReactChild;
-	subheader?: ReactChild;
-	children: ReactChild | ReactChild[];
+	header: string | ReactElement;
+	subheader?: string | ReactElement;
+	children: ReactNode;
 	dark?: boolean;
 }
 
@@ -18,7 +18,13 @@ interface SectionHeaderProps {
 	dark?: boolean;
 }
 
+// TODO - re-add background color and usage of dark prop, to something other than a pseudo element.
+// We will need to adjust exterior containers margin etc. to accomodate this.
+// https://github.com/Automattic/wp-calypso/pull/93425
 export const SectionContainer = styled.div< SectionContainerProps >`
+	padding: 56px 0;
+	z-index: 1;
+
 	::before {
 		box-sizing: border-box;
 		content: '';
@@ -31,7 +37,6 @@ export const SectionContainer = styled.div< SectionContainerProps >`
 		z-index: -1;
 		margin-top: -56px;
 	}
-	padding: 56px 0;
 `;
 
 export const SectionHeader = styled.div< SectionHeaderProps >`
@@ -39,14 +44,24 @@ export const SectionHeader = styled.div< SectionHeaderProps >`
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	line-height: 1.2;
-	text-align: left;
+	html[dir='ltr'] & {
+		text-align: left;
+	}
+	html[dir='rtl'] & {
+		text-align: right;
+	}
 	font-size: var( --scss-font-title-large );
 `;
 
 const SectionSubHeader = styled.div< SectionHeaderProps >`
 	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
-	text-align: left;
+	html[dir='ltr'] & {
+		text-align: left;
+	}
+	html[dir='rtl'] & {
+		text-align: right;
+	}
 	font-size: var( --scss-font-body-small );
 `;
 

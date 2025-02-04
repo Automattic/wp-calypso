@@ -1,10 +1,10 @@
-import { Page, Locator } from 'playwright';
+import { Locator, Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
-import type { EditorPreviewOptions } from './types';
+import { EditorComponent } from './editor-component';
+import type { EditorPreviewOptions, EditorToolbarSettingsButton } from './types';
 
 const panel = '.interface-navigable-region[class*="header"]';
-const settingsButtonLabel = 'Settings';
 const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
@@ -12,14 +12,17 @@ const selectors = {
 	blockInserterButton: `${ panel } button[class*="inserter-toggle"]`,
 
 	// Draft
-	saveDraftButton: `${ panel } button[aria-label="Save draft"], button[aria-label="Saved"]`,
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
-	previewButton: `${ panel } :text("View"):visible`,
+	previewButton: `${ panel } :text("View"):visible, [aria-label="View"]:visible`,
+
+	// Post status
+	postStatusButton: `.editor-post-status > button`,
+
 	desktopPreviewMenuItem: ( target: EditorPreviewOptions ) =>
-		`button[role="menuitem"] span:text("${ target }")`,
-	previewPane: ( target: EditorPreviewOptions ) => `.is-${ target.toLowerCase() }-preview`,
+		`button[role*="menuitem"] span:text-is("${ target }")`,
+	previewPane: `.edit-post-visual-editor`,
 
 	// Publish
 	publishButton: ( state: 'disabled' | 'enabled' ) => {
@@ -37,10 +40,6 @@ const selectors = {
 	documentActionsDropdown: `${ panel } button[aria-label="Show template details"]`,
 	documentActionsDropdownItem: ( itemSelector: string ) => `.popover-slot ${ itemSelector }`,
 	documentActionsDropdownShowAll: `.popover-slot .edit-site-template-details__show-all-button`,
-
-	// Editor settings
-	settingsButton: ( label = settingsButtonLabel ) =>
-		`${ panel } .edit-post-header__settings .interface-pinned-items button[aria-label="${ label }"]`,
 
 	// Undo/Redo
 	undoButton: 'button[aria-disabled=false][aria-label="Undo"]',
@@ -62,15 +61,15 @@ const selectors = {
  */
 export class EditorToolbarComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -78,27 +77,28 @@ export class EditorToolbarComponent {
 	/**
 	 * Translate string.
 	 */
-	private async translateFromPage( string: string ): Promise< string > {
-		return translateFromPage( this.editor, string );
+	private async translateFromPage( string: string, context?: string ): Promise< string > {
+		const editorParent = await this.editor.parent();
+		return translateFromPage( editorParent, string, context );
 	}
 
 	/* General helper */
 
 	/**
-	 * Given a selector, determines whether the target button/toggle is
+	 * Given a Locator, determines whether the target button/toggle is
 	 * in an expanded state.
 	 *
 	 * If the toggle is in the on state or otherwise in an expanded
 	 * state, this method will return true. Otherwise, false.
 	 *
-	 * @param {string} selector Target selector.
+	 * @param {Locator} target Target button.
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
-	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const locator = this.editor.locator( selector );
-		const pressed = await locator.getAttribute( 'aria-pressed' );
-		const expanded = await locator.getAttribute( 'aria-expanded' );
-		return pressed === 'true' || expanded === 'true';
+	private async targetIsOpen( target: Locator ): Promise< boolean > {
+		const checked = await target.getAttribute( 'aria-checked' );
+		const pressed = await target.getAttribute( 'aria-pressed' );
+		const expanded = await target.getAttribute( 'aria-expanded' );
+		return checked === 'true' || pressed === 'true' || expanded === 'true';
 	}
 
 	/* Block Inserter */
@@ -107,8 +107,25 @@ export class EditorToolbarComponent {
 	 * Opens the block inserter.
 	 */
 	async openBlockInserter(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.blockInserterButton ) ) ) {
-			const locator = this.editor.locator( selectors.blockInserterButton );
+		const editorParent = await this.editor.parent();
+
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
+		const blockInserterButton = editorParent.getByRole( 'button', {
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
+			exact: true,
+		} );
+
+		if ( ! ( await this.targetIsOpen( blockInserterButton ) ) ) {
+			const editorParent = await this.editor.parent();
+			const locator = editorParent.locator( selectors.blockInserterButton );
 			await locator.click();
 		}
 	}
@@ -117,11 +134,28 @@ export class EditorToolbarComponent {
 	 * Closes the block inserter.
 	 */
 	async closeBlockInserter(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.blockInserterButton ) ) {
+		const editorParent = await this.editor.parent();
+
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the old name.
+		const translatedButtonNameOld = await this.translateFromPage(
+			'Toggle block inserter',
+			'Generic label for block inserter button'
+		);
+		const translatedButtonNameNew = await this.translateFromPage(
+			'Block Inserter',
+			'Generic label for block inserter button'
+		);
+		const blockInserterButton = editorParent.getByRole( 'button', {
+			name: new RegExp( `^(${ translatedButtonNameOld }|${ translatedButtonNameNew })` ),
+			exact: true,
+		} );
+
+		if ( await this.targetIsOpen( blockInserterButton ) ) {
 			// We click on the panel instead of on the block inserter button as a workaround for an issue
 			// that disables the block inserter button after inserting a block using the block API V2.
 			// See https://github.com/WordPress/gutenberg/issues/43090.
-			const locator = this.editor.locator( panel );
+			const editorParent = await this.editor.parent();
+			const locator = editorParent.locator( panel ).locator( 'button[class*="inserter-toggle"]' );
 			await locator.click();
 		}
 	}
@@ -129,24 +163,20 @@ export class EditorToolbarComponent {
 	/* Draft */
 
 	/**
-	 * Clicks on the 'Save Draft' button on the editor.
-	 *
-	 * If the button cannot be clicked, the method short-circuits.
+	 * Clicks the Save draft button and waits until it's saved.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton );
+		const editorParent = await this.editor.parent();
+		// On a Simple site (desktop viewport) the domain upsell banner can
+		// be covering the "Save draft" button. We need to close that banner to
+		// be able to perform the click action.
+		// See https://github.com/Automattic/wp-calypso/pull/76987
+		await Promise.any( [
+			editorParent.getByRole( 'button', { name: 'Save draft' } ).click( { trial: true } ),
+		] );
 
-		try {
-			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
-		} catch {
-			return;
-		}
-
-		const savedButtonLocator = this.editor.locator( `${ selectors.saveDraftButton }.is-saved` );
-
-		await saveButtonLocator.click();
-
-		await savedButtonLocator.waitFor();
+		await editorParent.getByRole( 'button', { name: 'Save draft' } ).click();
+		await editorParent.getByRole( 'button', { name: 'Saved' } ).waitFor();
 	}
 
 	/* Preview */
@@ -157,7 +187,8 @@ export class EditorToolbarComponent {
 	 * @returns {Page} Handler for the new page object.
 	 */
 	async openMobilePreview(): Promise< Page > {
-		const mobilePreviewButtonLocator = this.editor.locator( selectors.previewButton );
+		const editorParent = await this.editor.parent();
+		const mobilePreviewButtonLocator = editorParent.locator( selectors.previewButton );
 
 		const [ popup ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -175,13 +206,14 @@ export class EditorToolbarComponent {
 		await this.openDesktopPreviewMenu();
 
 		// Locate and click on the intended preview target.
-		const desktopPreviewMenuItemLocator = this.editor.locator(
+		const editorParent = await this.editor.parent();
+		const desktopPreviewMenuItemLocator = editorParent.locator(
 			selectors.desktopPreviewMenuItem( target )
 		);
 		await desktopPreviewMenuItemLocator.click();
 
 		// Verify the editor panel is resized and stable.
-		const desktopPreviewPaneLocator = this.editor.locator( selectors.previewPane( target ) );
+		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane );
 		await desktopPreviewPaneLocator.waitFor();
 		const elementHandle = await desktopPreviewPaneLocator.elementHandle();
 		await elementHandle?.waitForElementState( 'stable' );
@@ -194,8 +226,17 @@ export class EditorToolbarComponent {
 	 * Opens the Preview menu for Desktop viewport.
 	 */
 	async openDesktopPreviewMenu(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.previewButton ) ) ) {
-			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
+		const editorParent = await this.editor.parent();
+
+		const translatedButtonName = await this.translateFromPage( 'View' );
+		const previewButton = editorParent.getByRole( 'button', {
+			name: translatedButtonName,
+			exact: true,
+		} );
+
+		if ( ! ( await this.targetIsOpen( previewButton ) ) ) {
+			const editorParent = await this.editor.parent();
+			const desktopPreviewButtonLocator = editorParent.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -204,8 +245,17 @@ export class EditorToolbarComponent {
 	 * Closes the Preview menu for the Desktop viewport.
 	 */
 	async closeDesktopPreviewMenu(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.previewButton ) ) {
-			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
+		const editorParent = await this.editor.parent();
+
+		const translatedButtonName = await this.translateFromPage( 'View' );
+		const previewButton = editorParent.getByRole( 'button', {
+			name: translatedButtonName,
+			exact: true,
+		} );
+
+		if ( await this.targetIsOpen( previewButton ) ) {
+			const editorParent = await this.editor.parent();
+			const desktopPreviewButtonLocator = editorParent.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -213,14 +263,15 @@ export class EditorToolbarComponent {
 	/* Publish and unpublish */
 
 	/**
-	 * Returns the text present for the save/publish button.
+	 * Waits for the save/publish button.
 	 *
 	 * @returns {Promise<string>} String found on the button.
 	 */
-	async getPublishButtonText(): Promise< string > {
-		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+	async waitForPublishButton(): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 
-		return await publishButtonLocator.innerText();
+		await publishButtonLocator.waitFor();
 	}
 
 	/**
@@ -228,11 +279,12 @@ export class EditorToolbarComponent {
 	 *
 	 * This is applicable for the following scenarios:
 	 * 	- publish of a new article (Publish)
-	 * 	- update an existing article (Update)
+	 * 	- update/save an existing article (Update)
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
-		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+		const editorParent = await this.editor.parent();
+		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 		await publishButtonLocator.click();
 	}
 
@@ -241,8 +293,24 @@ export class EditorToolbarComponent {
 	 * the article.
 	 */
 	async switchToDraft(): Promise< void > {
-		const swithcToDraftLocator = this.editor.locator( selectors.switchToDraftButton );
-		await swithcToDraftLocator.click();
+		const editorParent = await this.editor.parent();
+
+		await Promise.race( [
+			( async () => {
+				// Works with Gutenberg >=v18.2.0
+				await editorParent.locator( selectors.postStatusButton ).click();
+				await editorParent.getByRole( 'radio', { name: 'Draft' } ).click();
+			} )(),
+			( async () => {
+				// Works with Gutenberg >=v15.8.0
+				await this.openSettings( 'Settings' );
+				await editorParent.getByRole( 'button', { name: 'Switch to draft' } ).click();
+			} )(),
+			( async () => {
+				// Works with Gutenberg <v15.8.0
+				await editorParent.getByRole( 'button', { name: 'Draft' } ).click();
+			} )(),
+		] );
 	}
 
 	/* Editor Settings sidebar */
@@ -250,55 +318,76 @@ export class EditorToolbarComponent {
 	/**
 	 * Opens the editor settings.
 	 */
-	async openSettings(): Promise< void > {
-		const label = await this.translateFromPage( settingsButtonLabel );
-		const selector = selectors.settingsButton( label );
+	async openSettings( target: EditorToolbarSettingsButton ): Promise< void > {
+		const editorParent = await this.editor.parent();
 
-		if ( await this.targetIsOpen( selector ) ) {
+		// To support i18n tests.
+		const translatedTargetName = await this.translateFromPage( target );
+
+		let button = editorParent
+			.locator( '.editor-header__settings, .edit-post-header__settings' )
+			.getByLabel( translatedTargetName );
+
+		// For other pinned settings, we need to open the options menu
+		// because those are hidden on mobile/small screens
+		if ( target !== 'Settings' ) {
+			await this.openMoreOptionsMenu();
+
+			button = editorParent.getByRole( 'menuitemcheckbox', { name: translatedTargetName } );
+		}
+
+		if ( await this.targetIsOpen( button ) ) {
+			await this.closeMoreOptionsMenu();
 			return;
 		}
-		const locator = this.editor.locator( selector );
-		await locator.click();
+
+		await button.click();
 	}
 
 	/**
 	 * Closes the editor settings.
 	 */
 	async closeSettings(): Promise< void > {
-		const label = await this.translateFromPage( settingsButtonLabel );
-		const selector = selectors.settingsButton( label );
+		const editorParent = await this.editor.parent();
 
-		if ( ! ( await this.targetIsOpen( selector ) ) ) {
+		// Post/Page settings and Jetpack settings close buttons have slightly
+		// different names. When building the accessible selector, a RegExp
+		// must be used in order to support multiple accessible names.
+		const translatedCloseSettingsName = await this.translateFromPage( 'Close Settings' );
+		const translatedCloseJetpackSettingsName = await this.translateFromPage( 'Close plugin' );
+
+		const buttonNames =
+			envVariables.VIEWPORT_NAME === 'mobile'
+				? `Settings`
+				: `${ translatedCloseJetpackSettingsName }|${ translatedCloseSettingsName }`;
+
+		const button = editorParent.getByRole( 'button', {
+			name: new RegExp( buttonNames ),
+		} );
+
+		if ( ! ( await this.targetIsOpen( button ) ) ) {
 			return;
 		}
-		const locator = this.editor.locator( selector );
-		await locator.click();
+
+		await button.click();
 	}
 
-	/* Navigation sidebar */
-
 	/**
-	 * Opens the nav sidebar.
+	 * Closes the editor.
+	 *
+	 * Clicks the `W` logo in the corner to close the editor.
 	 */
-	async openNavSidebar(): Promise< void > {
-		if ( await this.targetIsOpen( selectors.navSidebarButton ) ) {
+	async closeEditor(): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		const target = editorParent.getByRole( 'link', {
+			name: 'View Posts',
+		} );
+		if ( await this.targetIsOpen( target ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.navSidebarButton );
-		await locator.click();
-	}
-
-	/**
-	 * Closes the nav sidebar.
-	 */
-	async closeNavSidebar(): Promise< void > {
-		if ( ! ( await this.targetIsOpen( selectors.navSidebarButton ) ) ) {
-			return;
-		}
-
-		const locator = this.editor.locator( selectors.navSidebarButton );
-		await locator.click();
+		await target.click();
 	}
 
 	/* List view */
@@ -312,12 +401,17 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( await this.targetIsOpen( selectors.documentOverviewButton ) ) {
+		const editorParent = await this.editor.parent();
+
+		const target = editorParent.getByRole( 'button', {
+			name: 'Document Overview',
+		} );
+
+		if ( await this.targetIsOpen( target ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.documentOverviewButton );
-		await locator.click();
+		await target.click();
 	}
 
 	/**
@@ -329,12 +423,17 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		if ( ! ( await this.targetIsOpen( selectors.documentOverviewButton ) ) ) {
+		const editorParent = await this.editor.parent();
+
+		const target = editorParent.getByRole( 'button', {
+			name: 'Document Overview',
+		} );
+
+		if ( ! ( await this.targetIsOpen( target ) ) ) {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.documentOverviewButton );
-		await locator.click();
+		await target.click();
 	}
 
 	/**
@@ -343,7 +442,8 @@ export class EditorToolbarComponent {
 	 * @throws If the undo button is not enabled.
 	 */
 	async undo(): Promise< void > {
-		const locator = this.editor.locator( selectors.undoButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.undoButton );
 		await locator.click();
 	}
 
@@ -353,7 +453,8 @@ export class EditorToolbarComponent {
 	 * @throws If the redo button is not enabled.
 	 */
 	async redo(): Promise< void > {
-		const locator = this.editor.locator( selectors.redoButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.redoButton );
 		await locator.click();
 	}
 
@@ -361,13 +462,41 @@ export class EditorToolbarComponent {
 	 * Opens the more options menu (three dots).
 	 */
 	async openMoreOptionsMenu(): Promise< void > {
-		const label = await this.translateFromPage( moreOptionsLabel );
-		const selector = selectors.moreOptionsButton( label );
+		const button = await this.getMoreOptionsButton();
 
-		if ( ! ( await this.targetIsOpen( selector ) ) ) {
-			const locator = this.editor.locator( selector );
-			await locator.click();
+		if ( await this.targetIsOpen( button ) ) {
+			return;
 		}
+
+		await button.click();
+	}
+
+	/**
+	 * Closes the more options menu.
+	 */
+	async closeMoreOptionsMenu(): Promise< void > {
+		const button = await this.getMoreOptionsButton();
+
+		if ( await this.targetIsOpen( button ) ) {
+			await button.click();
+		}
+	}
+
+	/**
+	 * Returns the more options button instance.
+	 */
+	async getMoreOptionsButton() {
+		const editorParent = await this.editor.parent();
+
+		// To support i18n tests.
+		const translatedTargetName = await this.translateFromPage( 'Options' );
+		// Narrowing down to the "Editor top bar" is needed because it might conflict with
+		// the options button for the block toolbar, causing a strict-mode violation error
+		// due to duplicate elements on the page.
+		return editorParent.getByLabel( 'Editor top bar' ).getByRole( 'button', {
+			name: translatedTargetName,
+			exact: true,
+		} );
 	}
 
 	/** FSE unique buttons */
@@ -376,7 +505,8 @@ export class EditorToolbarComponent {
 	 * Click the save button (publish equivalent) for the full site editor.
 	 */
 	async saveSiteEditor(): Promise< void > {
-		const locator = this.editor.locator( selectors.saveSiteEditorButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.saveSiteEditorButton );
 		await locator.click();
 	}
 
@@ -384,7 +514,8 @@ export class EditorToolbarComponent {
 	 * Click the document actions icon for the full site editor.
 	 */
 	async clickDocumentActionsIcon(): Promise< void > {
-		const locator = this.editor.locator( selectors.documentActionsDropdown );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentActionsDropdown );
 		await locator.click();
 	}
 
@@ -392,7 +523,8 @@ export class EditorToolbarComponent {
 	 * Click the document actions icon for the full site editor.
 	 */
 	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.documentActionsDropdownItem( itemName ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }

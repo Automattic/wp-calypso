@@ -3,12 +3,12 @@
 import { isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isTitanMonthlyProduct } from 'calypso/lib/titan';
 import useGetDomainIntroductoryOfferEligibilities from 'calypso/my-sites/email/email-providers-comparison/price/use-get-domain-introductory-offer-eligibilities';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -71,7 +71,7 @@ export const FreeTrialPriceInformation = ( {
 
 	const translateArguments = {
 		args: {
-			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ),
+			firstRenewalPrice: getFirstRenewalPrice( product, currencyCode ?? '' ) as string,
 			standardPrice: formatCurrency( product.cost ?? 0, currencyCode ?? '', { stripZeros: true } ),
 		},
 		comment:

@@ -6,6 +6,7 @@ import {
 	ICON_MEDIA_RETARGETING_PIXEL_URL,
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL,
 } from './constants';
+import { circularReferenceSafeJSONStringify } from './debug';
 import { recordPageViewInFloodlight } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -20,7 +21,6 @@ let lastRetargetTime = 0;
 
 /**
  * Fire tracking events for the purposes of retargeting on all Calypso pages
- *
  * @param {string} urlPath The URL path we should report to the ad-trackers which may be different from the actual one
  * for privacy reasons.
  * @returns {void}
@@ -79,6 +79,12 @@ export async function retarget( urlPath ) {
 		window.adRoll.trackPageview();
 	}
 
+	// Reddit
+	if ( mayWeTrackByTracker( 'reddit' ) ) {
+		debug( 'retarget: [Reddit]' );
+		window.rdt( 'track', 'PageVisit' );
+	}
+
 	// Rate limited retargeting (secondary trackers)
 
 	const nowTimestamp = Date.now() / 1000;
@@ -122,5 +128,5 @@ export async function retarget( urlPath ) {
 	}
 
 	// uses JSON.stringify for consistency with recordOrder()
-	debug( 'retarget: dataLayer:', JSON.stringify( window.dataLayer, null, 2 ) );
+	debug( 'retarget: dataLayer:', circularReferenceSafeJSONStringify( window.dataLayer, 2 ) );
 }

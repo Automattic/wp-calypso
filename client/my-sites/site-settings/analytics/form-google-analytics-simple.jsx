@@ -2,18 +2,23 @@ import {
 	findFirstSimilarPlanKey,
 	FEATURE_GOOGLE_ANALYTICS,
 	TYPE_PREMIUM,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import {
+	FormInputValidation as FormTextValidation,
+	FormLabel,
+	Button,
+} from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { useEffect } from 'react';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 
 import './style.scss';
 
@@ -39,9 +44,9 @@ const GoogleAnalyticsSimpleForm = ( {
 } ) => {
 	const analyticsSupportUrl = localizeUrl( 'https://wordpress.com/support/google-analytics/' );
 	const nudgeTitle = translate(
-		'Connect your site to Google Analytics in seconds with the Premium plan'
+		'Connect your site to Google Analytics in seconds with the %(premiumPlanName)s plan',
+		{ args: { premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle() } }
 	);
-
 	useEffect( () => {
 		if ( fields?.wga?.code ) {
 			setDisplayForm( true );
@@ -74,7 +79,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				event="google_analytics_settings"
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
-				showIcon={ true }
+				showIcon
 				title={ nudgeTitle }
 			/>
 		);
@@ -84,29 +89,17 @@ const GoogleAnalyticsSimpleForm = ( {
 				id="analytics"
 				onSubmit={ handleSubmitForm }
 			>
-				<SettingsSectionHeader
-					disabled={ isSubmitButtonDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Google' ) }
-				/>
-
-				<CompactCard>
+				<>
+					<PanelCardHeading>{ translate( 'Google Analytics' ) }</PanelCardHeading>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
 							<img src={ googleIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
-							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Google Analytics' ) }
-							</p>
 							<p>
 								{ translate(
 									'A free analytics tool that offers additional insights into your site.'
-								) }
-							</p>
-							<p>
+								) }{ ' ' }
 								<a
 									onClick={ recordSupportLinkClick }
 									href={ analyticsSupportUrl }
@@ -137,7 +130,7 @@ const GoogleAnalyticsSimpleForm = ( {
 								/>
 								{ ! isCodeValid && (
 									<FormTextValidation
-										isError={ true }
+										isError
 										text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 									/>
 								) }
@@ -172,11 +165,11 @@ const GoogleAnalyticsSimpleForm = ( {
 							</p>
 						</div>
 					) }
-				</CompactCard>
+				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<CompactCard>
+					<>
 						<div className="analytics site-settings__analytics">
 							<ToggleControl
 								checked={ displayForm }
@@ -185,9 +178,16 @@ const GoogleAnalyticsSimpleForm = ( {
 								label={ translate( 'Add Google' ) }
 							/>
 						</div>
-					</CompactCard>
+						<Button
+							className="is-primary"
+							disabled={ isSubmitButtonDisabled }
+							busy={ isSavingSettings }
+							onClick={ handleSubmitForm }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</>
 				) }
-				<div className="analytics site-settings__analytics-spacer" />
 			</form>
 		);
 	};
@@ -197,7 +197,7 @@ const GoogleAnalyticsSimpleForm = ( {
 	if ( ! site ) {
 		return null;
 	}
-	return renderForm();
+	return <PanelCard>{ renderForm() }</PanelCard>;
 };
 
 export default GoogleAnalyticsSimpleForm;

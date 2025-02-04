@@ -1,5 +1,4 @@
 import { filter, get } from 'lodash';
-import { v4 as uuid } from 'uuid';
 import wpcom from 'calypso/lib/wp';
 import {
 	TERM_REMOVE,
@@ -19,7 +18,6 @@ import 'calypso/state/terms/init';
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
  * the site and taxonomy.
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {Object} term     Object of new term attributes
@@ -27,29 +25,13 @@ import 'calypso/state/terms/init';
  */
 export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
-		const temporaryId = 'temporary' + uuid();
-
-		dispatch(
-			receiveTerm( siteId, taxonomy, {
-				...term,
-				ID: temporaryId,
-			} )
-		);
-
 		return wpcom
 			.site( siteId )
 			.taxonomy( taxonomy )
 			.term()
 			.add( term )
-			.then(
-				( data ) => {
-					dispatch( receiveTerm( siteId, taxonomy, data ) );
-					return data;
-				},
-				() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
-			)
 			.then( ( data ) => {
-				dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
+				dispatch( receiveTerm( siteId, taxonomy, data ) );
 				return data;
 			} );
 	};
@@ -57,7 +39,6 @@ export function addTerm( siteId, taxonomy, term ) {
 
 /**
  * Returns an action thunk, editing a term and dispatching the updated term to the store
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   term Id
@@ -115,7 +96,6 @@ export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
 /**
  * Queries wp/v2 /taxonomies for a custom taxonomies rest_base. The rest_base of a taxonomy slug may not match its slug
  * For example tags have a taxonomy slug of post_tag, but are modifiable at /wp/v2/tags/
- *
  * @param   {number} siteId   Site ID
  * @param   {string} taxonomy Taxonomy Slug
  * @returns {Promise}         A promise that resolves to a wp/v2 taxonomy rest base string.
@@ -201,7 +181,6 @@ const removeTermFromState = ( { dispatch, getState, siteId, taxonomy, termId } )
 
 /**
  * Returns an action thunk, deleting a term and removing it from the store
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   term Id
@@ -233,7 +212,6 @@ export function deleteTerm( siteId, taxonomy, termId ) {
 
 /**
  * Returns an action object signalling that a term has been received
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {Object} term     Term object
@@ -246,7 +224,6 @@ export function receiveTerm( siteId, taxonomy, term ) {
 /**
  * Returns an action object signalling that terms have been received for
  * the site and taxonomy.
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {Array}  terms    An array of term objects
@@ -267,7 +244,6 @@ export function receiveTerms( siteId, taxonomy, terms, query, found ) {
 
 /**
  * Returns an action object signalling that a term is to be removed
- *
  * @param  {number} siteId   Site ID
  * @param  {string} taxonomy Taxonomy Slug
  * @param  {number} termId   Term ID
@@ -285,7 +261,6 @@ export function removeTerm( siteId, taxonomy, termId ) {
 /**
  * Returns an action thunk, dispatching progress of a request to retrieve terms
  * for a site and query options.
- *
  * @param  {number}   siteId   Site ID
  * @param  {string}   taxonomy Taxonomy Slug
  * @param  {Object}   query    Query Options

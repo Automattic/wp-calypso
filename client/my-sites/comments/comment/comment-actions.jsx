@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes, isEqual } from 'lodash';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import scrollTo from 'calypso/lib/scroll-to';
 import { getMinimumComment } from 'calypso/my-sites/comments/comment/utils';
+import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import {
 	bumpStat,
 	composeAnalytics,
@@ -24,7 +25,7 @@ import { removeNotice, successNotice } from 'calypso/state/notices/actions';
 
 const commentActions = {
 	unapproved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
-	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash' ],
+	approved: [ 'like', 'approve', 'edit', 'reply', 'spam', 'trash', 'view' ],
 	spam: [ 'approve', 'delete' ],
 	trash: [ 'approve', 'spam', 'delete' ],
 };
@@ -81,6 +82,9 @@ export class CommentActions extends Component {
 		}
 
 		this.showNotice( status );
+
+		// Refresh the admin menu on update of status to ensure count shown is not stale.
+		this.props.refreshAdminMenu();
 	};
 
 	setTrash = () => this.setStatus( 'trash' );
@@ -157,15 +161,21 @@ export class CommentActions extends Component {
 	};
 
 	render() {
-		const { canModerateComment, commentIsApproved, commentIsLiked, toggleReply, translate } =
-			this.props;
+		const {
+			canModerateComment,
+			commentIsApproved,
+			commentIsLiked,
+			commentURL,
+			toggleReply,
+			translate,
+		} = this.props;
 
 		return (
 			<div className="comment__actions">
 				{ this.hasAction( 'approve' ) && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-approve', {
+						className={ clsx( 'comment__action comment__action-approve', {
 							'is-approved': commentIsApproved,
 						} ) }
 						onClick={ this.toggleApproved }
@@ -219,7 +229,7 @@ export class CommentActions extends Component {
 				{ this.hasAction( 'like' ) && (
 					<Button
 						borderless
-						className={ classNames( 'comment__action comment__action-like', {
+						className={ clsx( 'comment__action comment__action-like', {
 							'is-liked': commentIsLiked,
 						} ) }
 						onClick={ this.toggleLike }
@@ -256,6 +266,20 @@ export class CommentActions extends Component {
 						<span>{ translate( 'Reply' ) }</span>
 					</Button>
 				) }
+
+				{ this.hasAction( 'view' ) && (
+					<Button
+						borderless
+						className="comment__action comment__action-view"
+						href={ commentURL }
+						target="_blank"
+						tabIndex="0"
+						disabled={ ! canModerateComment && ! commentIsApproved }
+					>
+						<Gridicon icon="external" />
+						<span>{ translate( 'View' ) }</span>
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -270,6 +294,7 @@ const mapStateToProps = ( state, { siteId, commentId } ) => {
 		commentIsApproved: 'approved' === commentStatus,
 		commentIsLiked: get( comment, 'i_like' ),
 		commentStatus,
+		commentURL: get( comment, 'URL' ),
 		minimumComment: getMinimumComment( comment ),
 	};
 };
@@ -324,6 +349,7 @@ const mapDispatchToProps = ( dispatch, { siteId, postId, commentId, commentsList
 				unlikeComment( siteId, postId, commentId )
 			)
 		),
+	refreshAdminMenu: () => dispatch( requestAdminMenu( siteId ) ),
 } );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( CommentActions ) );

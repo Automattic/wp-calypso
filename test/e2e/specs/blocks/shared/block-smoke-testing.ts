@@ -1,5 +1,4 @@
 import {
-	DataHelper,
 	BlockFlow,
 	EditorPage,
 	EditorContext,
@@ -8,6 +7,7 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	DataHelper,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -39,7 +39,7 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page );
 			const testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 		} );
@@ -48,27 +48,48 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 			await editorPage.visit( 'post' );
 		} );
 
+		it( 'Enter post title', async () => {
+			await editorPage.enterTitle( `${ specName } - ${ DataHelper.getDateString( 'ISO-8601' ) }` );
+		} );
+
 		describe( 'Add and configure blocks in the editor', function () {
+			const used = new Set();
 			for ( const blockFlow of blockFlows ) {
-				it( `${ blockFlow.blockSidebarName }: Add the block from the sidebar`, async function () {
-					await editorPage.addBlockFromSidebar(
-						blockFlow.blockSidebarName,
-						blockFlow.blockEditorSelector
+				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
+
+				if ( used.has( prefix ) ) {
+					throw new Error(
+						`Test name prefix "${ prefix }" is used by multiple BlockFlows! Set \`blockTestName\` to disambiguate.`
 					);
+				}
+				used.add( prefix );
+
+				it( `${ prefix }: Add the block from the sidebar`, async function () {
+					const blockHandle = await editorPage.addBlockFromSidebar(
+						blockFlow.blockSidebarName,
+						blockFlow.blockEditorSelector,
+						{
+							noSearch: blockFlow.noSearch === false ? false : true,
+							blockFallBackName: blockFlow.blockTestFallBackName,
+						}
+					);
+					const id = await blockHandle.getAttribute( 'id' );
+					const editorCanvas = await editorPage.getEditorCanvas();
+					const addedBlockLocator = editorCanvas.locator( `#${ id }` );
 					editorContext = {
-						page: page,
-						editorPage: editorPage,
-						editorLocator: editorPage.getEditorWindowLocator(),
+						page,
+						editorPage,
+						addedBlockLocator,
 					};
 				} );
 
-				it( `${ blockFlow.blockSidebarName }: Configure the block`, async function () {
+				it( `${ prefix }: Configure the block`, async function () {
 					if ( blockFlow.configure ) {
 						await blockFlow.configure( editorContext );
 					}
 				} );
 
-				it( `${ blockFlow.blockSidebarName }: There are no block warnings or errors in the editor`, async function () {
+				it( `${ prefix }: There are no block warnings or errors in the editor`, async function () {
 					expect( await editorPage.editorHasBlockWarnings() ).toBe( false );
 				} );
 			}
@@ -76,8 +97,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Publishing the post', function () {
 			it( 'Publish and visit post', async function () {
-				await editorPage.publish( { visit: true } );
+				await editorPage.publish( { visit: true, timeout: 15 * 1000 } );
 				publishedPostContext = {
+					browser: browser,
 					page: page,
 				};
 			} );
@@ -85,7 +107,9 @@ export function createBlockTests( specName: string, blockFlows: BlockFlow[] ): v
 
 		describe( 'Validating blocks in published post.', function () {
 			for ( const blockFlow of blockFlows ) {
-				it( `${ blockFlow.blockSidebarName }: Expected content is in published post`, async function () {
+				const prefix = blockFlow.blockTestName ?? blockFlow.blockSidebarName;
+
+				it( `${ prefix }: Expected content is in published post`, async function () {
 					if ( blockFlow.validateAfterPublish ) {
 						await blockFlow.validateAfterPublish( publishedPostContext );
 					}

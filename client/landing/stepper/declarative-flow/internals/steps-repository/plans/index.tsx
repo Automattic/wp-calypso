@@ -1,27 +1,51 @@
-import { is2023PricingGridEnabled } from '@automattic/calypso-products';
-import { StepContainer } from '@automattic/onboarding';
+import {
+	isBlogOnboardingFlow,
+	isDomainUpsellFlow,
+	isNewHostedSiteCreationFlow,
+	StepContainer,
+} from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
-import type { Step } from '../../types';
+import type { ProvidedDependencies, Step } from '../../types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-const plans: Step = function plans( { navigation, flow } ) {
-	const { submit, goBack } = navigation;
+/**
+ * @deprecated Use `unified-plans` instead. This step is deprecated and will be removed in the future.
+ */
+const plans: Step = function Plans( { navigation, flow } ) {
+	const { goBack, submit } = navigation;
 
-	const handleSubmit = () => {
-		submit?.();
+	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
+		const providedDependencies: ProvidedDependencies = {
+			plan,
+		};
+
+		if ( isDomainUpsellFlow( flow ) || isBlogOnboardingFlow( flow ) ) {
+			providedDependencies.goToCheckout = true;
+		}
+
+		submit?.( providedDependencies );
 	};
-	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
+
+	const isAllowedToGoBack = isDomainUpsellFlow( flow ) || isNewHostedSiteCreationFlow( flow );
+
 	return (
 		<StepContainer
 			stepName="plans"
 			goBack={ goBack }
 			isHorizontalLayout={ false }
-			isWideLayout={ ! is2023OnboardingPricingGrid }
-			isFullLayout={ is2023OnboardingPricingGrid }
-			hideFormattedHeader={ true }
+			isWideLayout={ false }
+			isExtraWideLayout
+			hideFormattedHeader
 			isLargeSkipLayout={ false }
-			hideBack={ true }
-			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
+			hideBack={ ! isAllowedToGoBack }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow }
+					onSubmit={ handleSubmit }
+					shouldIncludeFAQ={ isNewHostedSiteCreationFlow( flow ) }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

@@ -1,12 +1,14 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { domainManagementContactsPrivacy } from 'calypso/my-sites/domains/paths';
+import { useCurrentRoute } from 'calypso/components/route';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 
 import './privacy-enabled-card.scss';
 
 function EditContactInfoPrivacyEnabledCard( { selectedDomainName, selectedSiteSlug } ) {
 	const translate = useTranslate();
+	const { currentRoute } = useCurrentRoute();
 
 	return (
 		<Card className="edit-contact-info__privacy-enabled-card">
@@ -18,7 +20,11 @@ function EditContactInfoPrivacyEnabledCard( { selectedDomainName, selectedSiteSl
 						components: {
 							a: (
 								<a
-									href={ domainManagementContactsPrivacy( selectedSiteSlug, selectedDomainName ) }
+									href={ domainManagementEdit(
+										selectedSiteSlug,
+										selectedDomainName,
+										currentRoute
+									) }
 									rel="noopener noreferrer"
 								/>
 							),

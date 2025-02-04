@@ -1,23 +1,24 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { siteSelection, sites, navigation } from 'calypso/my-sites/controller';
-import { addOnsSiteSelectionHeader, addOnsManagement, redirectIfNotEnabled } from './controller';
+import {
+	siteSelection,
+	stagingSiteNotSupportedRedirect,
+	sites,
+	navigation,
+} from 'calypso/my-sites/controller';
+import { addOnsSiteSelectionHeader, addOnsManagement } from './controller';
+
+const commonHandlers = [
+	stagingSiteNotSupportedRedirect,
+	siteSelection,
+	addOnsSiteSelectionHeader,
+];
 
 export default function () {
-	page(
-		'/add-ons',
-		redirectIfNotEnabled,
-		siteSelection,
-		addOnsSiteSelectionHeader,
-		sites,
-		makeLayout,
-		clientRender
-	);
+	page( '/add-ons', ...commonHandlers, sites, makeLayout, clientRender );
 	page(
 		'/add-ons/:site',
-		redirectIfNotEnabled,
-		siteSelection,
-		addOnsSiteSelectionHeader,
+		...commonHandlers,
 		navigation,
 		addOnsManagement,
 		makeLayout,

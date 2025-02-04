@@ -14,7 +14,6 @@ function filterCommentsByStatus( comments, status ) {
 
 /**
  * Returns list of loaded comments for a given site, filtered by status
- *
  * @param {Object} state Redux state
  * @param {number} siteId Site for whose comments to find
  * @param {string} [status] Status to filter comments

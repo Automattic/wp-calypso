@@ -2,7 +2,6 @@ import formatCurrency from '@automattic/format-currency';
 
 /**
  * Applies a precision to the cost
- *
  * @param {number} cost - cost
  * @param {number} precision - precision to apply to cost
  * @returns {string} - Returns price with applied precision
@@ -14,7 +13,6 @@ function applyPrecision( cost, precision ) {
 
 /**
  * Formats price given cost and currency
- *
  * @param {number} cost - cost
  * @param {string} currencyCode - currency code to format with
  * @param {Object} options - options containing precision

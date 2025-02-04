@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { PLAN_BUSINESS, PLAN_ECOMMERCE, getPlan } from '@automattic/calypso-products';
 import { Button, CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
@@ -6,14 +7,15 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
@@ -78,10 +80,9 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
 	const [ oldSSHFingerprint, setOldSSHFingerprint ] = useState( '' );
 	const [ showDialog, setShowDialog ] = useState( false );
-
 	const { __ } = useI18n();
 
-	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
+	const { addSSHKey, isPending: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
@@ -129,7 +130,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 		},
 	} );
 
-	const { updateSSHKey, isLoading: keyBeingUpdated } = useUpdateSSHKeyMutation( {
+	const { updateSSHKey, isPending: keyBeingUpdated } = useUpdateSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( removeNotice( sshKeyUpdateFailureNoticeId ) );
 		},
@@ -162,6 +163,8 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 	const hasKeys = data && data.length > 0;
 	const redirectToHosting =
 		queryParams.source && queryParams.source === 'hosting-config' && queryParams.siteSlug;
+	const redirectToTools =
+		queryParams.source && queryParams.source === 'sites/tools/sftp-ssh' && queryParams.siteSlug;
 
 	const closeDialog = () => setShowDialog( false );
 
@@ -170,12 +173,14 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 			<PageViewTracker path="/me/security/ssh-key" title="Me > SSH Key" />
 			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
+			<NavigationHeader navigationItems={ [] } title={ __( 'Security' ) } />
 
 			<HeaderCake
-				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
+				backText={ __( 'Back' ) }
 				backHref={
-					redirectToHosting ? `/${ queryParams.source }/${ queryParams.siteSlug }` : '/me/security'
+					redirectToHosting || redirectToTools
+						? `/${ queryParams.source }/${ queryParams.siteSlug }`
+						: '/me/security'
 				}
 			>
 				{ __( 'SSH Key' ) }
@@ -191,8 +196,13 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 						) }
 					</p>
 					<p>
-						{ __(
-							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
+						{ sprintf(
+							// translators: %1$s is the short-form name of the Business plan, %2$s is the short-form name of the eCommerce plan.
+							__(
+								'Once added, attach the SSH key to a site with a %1$s or %2$s plan to enable SSH key authentication for that site.'
+							),
+							getPlan( PLAN_BUSINESS )?.getTitle() || '',
+							getPlan( PLAN_ECOMMERCE )?.getTitle() || ''
 						) }
 					</p>
 					<p style={ isLoading || hasKeys ? { marginBlockEnd: 0 } : undefined }>
@@ -203,12 +213,12 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 							{
 								br: <br />,
 								a: (
-									<a
-										href={ localizeUrl(
-											'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
+									<InlineSupportLink
+										supportPostId={ 100385 }
+										supportLink={ localizeUrl(
+											'https://developer.wordpress.com/docs/developer-tools/ssh/'
 										) }
-										target="_blank"
-										rel="noreferrer"
+										showIcon={ false }
 									/>
 								),
 							}
@@ -217,12 +227,7 @@ export const SecuritySSHKey = ( { queryParams }: SecuritySSHKeyProps ) => {
 				</div>
 
 				{ currentUser?.username && (
-					<Dialog
-						isVisible={ showDialog }
-						onClose={ closeDialog }
-						showCloseIcon={ true }
-						shouldCloseOnEsc={ true }
-					>
+					<Dialog isVisible={ showDialog } onClose={ closeDialog } showCloseIcon shouldCloseOnEsc>
 						<UpdateSSHDialogContainer>
 							<UpdateSSHModalTitle>{ __( 'Update SSH Key' ) }</UpdateSSHModalTitle>
 							<UpdateSSHModalDescription>

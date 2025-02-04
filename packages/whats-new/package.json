@@ -5,7 +5,7 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"calypso:src": "src/index.tsx",
-	"types": "./types.d.ts",
+	"types": "dist/types",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -30,9 +30,10 @@
 		"src"
 	],
 	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "transpile && copy-assets",
-		"prepack": "yarn run clean && yarn run build"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -40,21 +41,22 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/typography": "workspace:^",
-		"@wordpress/components": "^19.15.0",
-		"@wordpress/element": "^4.7.0",
-		"@wordpress/i18n": "^4.10.0",
-		"@wordpress/keycodes": "^3.10.0",
-		"@wordpress/react-i18n": "^3.7.0",
-		"classnames": "^2.3.1",
+		"@tanstack/react-query": "^5.15.5",
+		"@wordpress/components": "^29.2.0",
+		"@wordpress/element": "^6.16.0",
+		"@wordpress/i18n": "^5.16.0",
+		"@wordpress/keycodes": "^4.16.0",
+		"@wordpress/react-i18n": "^4.16.0",
+		"clsx": "^2.1.1",
+		"typescript": "^5.3.3",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^6.7.0",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
-		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2"
+		"@wordpress/data": "^10.16.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"redux": "^5.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

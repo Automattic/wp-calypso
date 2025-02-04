@@ -12,7 +12,7 @@ import Main from 'calypso/components/main';
 import { getTitanProductName } from 'calypso/lib/titan';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import TitanControlPanelLoginCard from 'calypso/my-sites/email/email-management/titan-control-panel-login-card';
-import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -56,7 +56,11 @@ class TitanManagementIframe extends Component {
 				</Main>
 			);
 		}
-		const emailManagementPath = emailManagement( selectedSiteSlug, domainName, currentRoute );
+		const emailManagementPath = getEmailManagementPath(
+			selectedSiteSlug,
+			domainName,
+			currentRoute
+		);
 		const pageTitle = translate( '%(titanProductName)s settings', {
 			args: {
 				titanProductName: getTitanProductName(),

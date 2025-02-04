@@ -5,8 +5,12 @@ import {
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	JETPACK_BACKUP_ADDON_PRODUCTS,
-	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
+	JETPACK_STATS_PRODUCTS,
+	PRODUCT_JETPACK_STATS_YEARLY,
+	findPlansKeys,
+	getPlan,
+	JETPACK_SEARCH_PRODUCTS,
+	PRODUCT_JETPACK_SEARCH,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -20,8 +24,12 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
-	const currentPlanTerms = currentPlanSlug
-		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
+	const currentPlan = currentPlanSlug && getPlan( currentPlanSlug );
+	const currentPlanTerms = currentPlan
+		? findPlansKeys( {
+				type: currentPlan.type,
+				group: currentPlan.group,
+		  } )
 		: [];
 
 	let planSlugsToDisplay = SELECTOR_PLANS;
@@ -83,7 +91,8 @@ export const getProductsToDisplay = ( {
 
 	const purchasedSlugs = purchasedProductsWithoutAddOn
 		?.map( ( p ) => p?.productSlug )
-		?.filter( ( slug ) => slug );
+		// Remove null or empty product slugs
+		?.filter( Boolean );
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
@@ -92,6 +101,23 @@ export const getProductsToDisplay = ( {
 		.filter( removeAddons )
 		// Remove products that don't match the selected duration
 		.filter( ( product ): product is SelectorProduct => product?.term === duration )
+		// TODO: Identify a suitable Stats plan according to the site classification.
+		.filter( ( product ) => {
+			if (
+				( JETPACK_STATS_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
+			) {
+				return product?.productSlug === PRODUCT_JETPACK_STATS_YEARLY;
+			}
+
+			// Removes Jetpack search free from products that can be displayed
+			if (
+				( JETPACK_SEARCH_PRODUCTS as ReadonlyArray< string > ).includes( product?.productSlug )
+			) {
+				return product?.productSlug === PRODUCT_JETPACK_SEARCH;
+			}
+
+			return true;
+		} )
 		// Remove duplicates (only happens if the site somehow has the same product
 		// both purchased and included in a plan, very unlikely)
 		.filter( ( product ) => {
@@ -106,9 +132,8 @@ export const getProductsToDisplay = ( {
 			return true;
 		} );
 	return (
-		[ ...purchasedProductsWithoutAddOn, ...filteredProducts ]
-			// Make sure we don't allow any null or invalid products
-			.filter( ( product ): product is SelectorProduct => !! product )
+		// Remove null or empty products
+		[ ...purchasedProductsWithoutAddOn, ...filteredProducts ].filter( Boolean )
 	);
 };
 

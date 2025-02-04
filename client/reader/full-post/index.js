@@ -1,6 +1,6 @@
-import page from 'page';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
-import { updateLastRoute, unmountSidebar, blogDiscoveryByFeedId } from 'calypso/reader/controller';
+import page from '@automattic/calypso-router';
+import { makeLayout, redirectLoggedOutToSignup, render as clientRender } from 'calypso/controller';
+import { updateLastRoute, blogDiscoveryByFeedId } from 'calypso/reader/controller';
 import { blogPost, feedPost } from './controller';
 
 export default function () {
@@ -8,9 +8,8 @@ export default function () {
 	page(
 		'/read/feeds/:feed/posts/:post',
 		blogDiscoveryByFeedId,
-		redirectLoggedOut,
+		redirectLoggedOutToSignup,
 		updateLastRoute,
-		unmountSidebar,
 		feedPost,
 		makeLayout,
 		clientRender
@@ -19,9 +18,8 @@ export default function () {
 	// Blog full post
 	page(
 		'/read/blogs/:blog/posts/:post',
-		redirectLoggedOut,
+		redirectLoggedOutToSignup,
 		updateLastRoute,
-		unmountSidebar,
 		blogPost,
 		makeLayout,
 		clientRender

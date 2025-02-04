@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { sidebar } from 'calypso/me/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
@@ -53,6 +53,14 @@ export default ( router ) => {
 		clientRender
 	);
 
+	router(
+		paths.purchasesRoot + '/subscription-removed',
+		sidebar,
+		membershipsController.cancelledSubscriptionReturnFromRedirect,
+		makeLayout,
+		clientRender
+	);
+
 	// Legacy:
 
 	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
@@ -89,6 +97,14 @@ export default ( router ) => {
 		clientRender
 	);
 
+	router(
+		paths.managePurchaseByOwnership( ':ownershipId' ),
+		sidebar,
+		controller.managePurchaseByOwnership,
+		makeLayout,
+		clientRender
+	);
+
 	/**
 	 * The siteSelection middleware has been removed from this route.
 	 * No selected site!
@@ -110,19 +126,25 @@ export default ( router ) => {
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.addPaymentMethod( ':site', ':purchaseId' ),
 		sidebar,
-		siteSelection,
 		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		sidebar,
-		siteSelection,
 		controller.changePaymentMethod,
 		makeLayout,
 		clientRender

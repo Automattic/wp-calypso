@@ -1,0 +1,89 @@
+.a4a-signup-intro {
+	text-align: center;
+	color: var(--color-text-white);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 32px;
+	padding-top: 80px;
+	padding-bottom: 48px;
+
+	h1 {
+		font-size: 2.75rem;
+		line-height: 1;
+		letter-spacing: -3%;
+		font-weight: 600;
+	}
+
+	p {
+		color: var(--color-neutral-10);
+		font-size: 1.25rem;
+		line-height: 1.4;
+		font-weight: 500;
+		max-width: 700px;
+		margin: 0;
+	}
+
+	&__logos {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 48px;
+		padding: 24px 48px;
+		border-radius: 48px; /* stylelint-disable-line scales/radii */
+		background:
+			linear-gradient(111deg, rgba(160, 221, 244, 0.1) -19.14%, rgba(0, 0, 0, 0) 54.32%, rgba(161, 218, 240, 0.1) 104.32%),
+			rgba(2, 156, 215, 0.04);
+		backdrop-filter: blur(10px);
+		box-shadow: 0 4px 44px 0 rgba(0, 0, 0, 0.12);
+		overflow: hidden;
+		margin-bottom: 24px;
+
+		&::before {
+			content: "";
+			position: absolute;
+			display: block;
+			left: 0;
+			right: 0;
+			top: 0;
+			border-top: 1px solid var(--color-primary-70);
+			border-radius: 99px; /* stylelint-disable-line scales/radii */
+		}
+	}
+
+	&__separator {
+		border: 2px solid var(--color-primary-70);
+		border-radius: 24px; /* stylelint-disable-line scales/radii */
+		padding: 8px 16px;
+		font-size: 0.75rem;
+		text-transform: uppercase;
+		font-weight: 700;
+		background-color: var(--color-surface-backdrop);
+
+		&::after {
+			content: "";
+			border-bottom: 1px solid var(--color-primary-70);
+			display: block;
+			height: 1px;
+			width: 100%;
+			position: absolute;
+			left: 0;
+			right: 0;
+			margin-top: -10px;
+			z-index: -1;
+		}
+	}
+
+	&__wp-admin-link {
+		color: var(--color-neutral-10);
+		font-size: 0.875rem;
+		font-weight: 500;
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--color-text-white);
+		}
+	}
+}

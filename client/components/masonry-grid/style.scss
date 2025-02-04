@@ -1,0 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.masonry-grid__wrapper {
+	display: grid;
+	align-items: start;
+	gap: 16px;
+
+	grid-template-columns: repeat(2, 1fr);
+
+	@media (max-width: $break-wide) {
+		grid-template-columns: repeat(1, 1fr);
+	}
+}

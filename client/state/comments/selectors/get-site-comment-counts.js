@@ -2,7 +2,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Return comment counts for the given site and post ID, if applicable.
- *
  * @param {Object} state Redux state
  * @param {number} siteId Site identifier
  * @param {number} [postId] Post identifier

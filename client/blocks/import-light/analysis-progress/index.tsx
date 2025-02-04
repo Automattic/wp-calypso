@@ -7,6 +7,7 @@ import './style.scss';
 
 interface Props {
 	percentage: number;
+	children?: React.ReactNode;
 }
 const AnalysisProgress: React.FunctionComponent< Props > = ( props ) => {
 	const { percentage, children } = props;
@@ -20,7 +21,7 @@ const AnalysisProgress: React.FunctionComponent< Props > = ( props ) => {
 			<div className="import__heading-center">
 				<Progress>
 					{ titleEl }
-					{ percentage && <ProgressBar value={ percentage } compact={ true } /> }
+					{ percentage && <ProgressBar value={ percentage } compact /> }
 					{ otherEl }
 				</Progress>
 			</div>

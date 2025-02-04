@@ -1,0 +1,73 @@
+@use 'sass:math';
+@import "@wordpress/base-styles/breakpoints";
+
+$column-gap: 19px; // Roughly 1.2rem, which is the gap in Gutenberg columns. This needs to be px for unit consistency in the math.div function.
+$column-min-width: math.div($reader-full-post-story-max-width - $reader-full-post-story-padding * 2 - $column-gap, 3);
+
+.wp-block-columns {
+	display: flex;
+	flex-wrap: wrap;
+	box-sizing: border-box;
+	align-items: initial;
+	gap: rem($column-gap);
+
+	&.are-vertically-aligned-top {
+		align-items: flex-start;
+	}
+
+	&.are-vertically-aligned-center {
+		align-items: center;
+	}
+
+	&.are-vertically-aligned-bottom {
+		align-items: flex-end;
+	}
+
+	& > .wp-block-column {
+		flex-basis: 100%;
+
+		@media (min-width: $break-medium) {
+			flex-basis: 0;
+			min-width: $column-min-width; // This is the minimum width of a column in a 3-column layout.
+		}
+	}
+
+	&.is-not-stacked-on-mobile {
+		flex-wrap: nowrap;
+
+		> .wp-block-column {
+			flex-basis: 0;
+			flex-grow: 1;
+			min-width: auto;
+		}
+	}
+}
+
+.wp-block-column {
+	flex-grow: 1;
+	min-width: 0;
+	word-break: break-word;
+	overflow-wrap: break-word;
+
+	&.is-vertically-aligned-top {
+		align-self: flex-start;
+	}
+
+	&.is-vertically-aligned-center {
+		align-self: center;
+	}
+
+	&.is-vertically-aligned-bottom {
+		align-self: flex-end;
+	}
+
+	&.is-vertically-aligned-stretch {
+		align-self: stretch;
+	}
+
+	&.is-vertically-aligned-top,
+	&.is-vertically-aligned-center,
+	&.is-vertically-aligned-bottom {
+		width: 100%;
+	}
+}

@@ -6,7 +6,6 @@ const UNREAD_COUNT_CAP = 40;
  * Returns a count reflecting unread items, capped at a value determined by
  * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
  * '1', '20', '39', '40+'
- *
  * @param  {Object}  state  Global state tree
  * @returns {string}         Unread count (string because it can be e.g. '40+')
  */

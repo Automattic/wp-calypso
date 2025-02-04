@@ -2,11 +2,13 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import Checkmark from 'calypso/assets/images/checkbox-icons/checkmark-jetpack.svg';
 import DesignIcon from 'calypso/assets/images/jetpack/jetpack-icon-design.svg';
+import EarnIcon from 'calypso/assets/images/jetpack/jetpack-icon-earn.svg';
 import GrowthIcon from 'calypso/assets/images/jetpack/jetpack-icon-growth.svg';
 import LockIcon from 'calypso/assets/images/jetpack/jetpack-icon-lock.svg';
 import MobileAppIcon from 'calypso/assets/images/jetpack/jetpack-icon-mobile-app.svg';
 import PerformanceIcon from 'calypso/assets/images/jetpack/jetpack-icon-performance.svg';
 import SupportIcon from 'calypso/assets/images/jetpack/jetpack-icon-support.svg';
+import AIIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-ai.svg';
 import AntiSpamIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-antispam.svg';
 import BackupIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-backup.svg';
 import BoostIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-boost.svg';
@@ -14,6 +16,7 @@ import CRMIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-crm.svg'
 import ScanIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-scan.svg';
 import SearchIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-search.svg';
 import SocialIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-social.svg';
+import StatsIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-stats.svg';
 import VideoPressIcon from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
 import { ComparisonDataItem } from '../types';
 import { links } from './links';
@@ -22,7 +25,7 @@ const CheckIcon = () => <img className="checkmark-icon" src={ Checkmark } alt=""
 
 const allChecked: ComparisonDataItem[ 'features' ][ number ][ 'info' ] = {
 	FREE: { content: <CheckIcon /> },
-	BACKUP: { content: <CheckIcon /> },
+	GROWTH: { content: <CheckIcon /> },
 	SECURITY: { content: <CheckIcon /> },
 	COMPLETE: { content: <CheckIcon /> },
 };
@@ -34,7 +37,7 @@ export const useComparisonData = () => {
 		() => [
 			{
 				sectionId: 'security',
-				sectionName: translate( 'Security' ),
+				sectionName: translate( 'Security', { context: 'Jetpack product name' } ),
 				icon: LockIcon,
 				features: [
 					{
@@ -43,20 +46,6 @@ export const useComparisonData = () => {
 						icon: BackupIcon,
 						url: links.backup,
 						info: {
-							BACKUP: {
-								highlight: true,
-								content: (
-									<>
-										{ translate( 'Real-time backups' ) }
-										<br data-screen="desktop" />
-										<span data-screen="mobile"> - </span>
-										{ translate( '%(amount)s storage', {
-											args: { amount: '10GB' },
-											comment: '%s is a storage amount like 1TB or 10GB',
-										} ) }
-									</>
-								),
-							},
 							SECURITY: {
 								highlight: true,
 								content: (
@@ -127,9 +116,8 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Last 20 events' ),
 							},
-							BACKUP: {
-								highlight: true,
-								content: translate( '30-day archive' ),
+							GROWTH: {
+								content: translate( 'Last 20 events' ),
 							},
 							SECURITY: {
 								highlight: true,
@@ -193,7 +181,7 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Manual Critical CSS' ),
 							},
-							BACKUP: {
+							GROWTH: {
 								content: translate( 'Manual Critical CSS' ),
 							},
 							SECURITY: {
@@ -214,7 +202,7 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( '1 video (Up to 1GB)' ),
 							},
-							BACKUP: {
+							GROWTH: {
 								content: translate( '1 video (Up to 1GB)' ),
 							},
 							SECURITY: {
@@ -236,12 +224,6 @@ export const useComparisonData = () => {
 						url: links.cdn,
 						info: allChecked,
 					},
-					{
-						id: 'lazy_image_loading',
-						name: translate( 'Lazy loading images' ),
-						url: links.lazy_image_loading,
-						info: allChecked,
-					},
 				],
 			},
 			{
@@ -249,6 +231,82 @@ export const useComparisonData = () => {
 				sectionName: translate( 'Growth' ),
 				icon: GrowthIcon,
 				features: [
+					{
+						id: 'stats',
+						name: translate( 'Stats' ),
+						url: links.stats,
+						icon: StatsIcon,
+						info: {
+							FREE: {
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
+							},
+							GROWTH: {
+								highlight: true,
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(10k page views)' ) }
+									</>
+								),
+							},
+							SECURITY: {
+								content: (
+									<>
+										{ translate( 'Basic stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(Personal sites only)' ) }
+									</>
+								),
+							},
+							COMPLETE: {
+								highlight: true,
+								content: (
+									<>
+										{ translate( 'Advanced stats' ) }
+										<br data-screen="desktop" />
+										{ /* Space between description and parenthesis on mobile */ }
+										<span data-screen="mobile"> </span>
+										{ translate( '(100k page views)' ) }
+									</>
+								),
+							},
+						},
+					},
+					{
+						id: 'social',
+						name: translate( 'Social' ),
+						url: links.social,
+						icon: SocialIcon,
+						info: {
+							FREE: {
+								content: translate( 'Social Free' ),
+							},
+							GROWTH: {
+								highlight: true,
+								content: translate( 'Social Advanced' ),
+							},
+							SECURITY: {
+								content: translate( 'Social Free' ),
+							},
+							COMPLETE: {
+								highlight: true,
+								content: translate( 'Social Advanced' ),
+							},
+						},
+					},
 					{
 						id: 'crm',
 						name: translate( '{{abbr}}CRM{{/abbr}}', {
@@ -262,7 +320,7 @@ export const useComparisonData = () => {
 							FREE: {
 								content: translate( 'Free' ),
 							},
-							BACKUP: {
+							GROWTH: {
 								content: translate( 'Free' ),
 							},
 							SECURITY: {
@@ -275,56 +333,36 @@ export const useComparisonData = () => {
 						},
 					},
 					{
-						id: 'social',
-						name: translate( 'Social' ),
-						url: links.social,
-						icon: SocialIcon,
+						id: 'ai',
+						name: translate( 'AI' ),
+						url: links.ai,
+						icon: AIIcon,
 						info: {
 							FREE: {
-								content: translate( 'Social Free' ),
+								content: translate( '20 free requests' ),
 							},
-							BACKUP: {
-								content: translate( 'Social Free' ),
+							GROWTH: {
+								content: translate( '20 free requests' ),
 							},
 							SECURITY: {
-								content: translate( 'Social Free' ),
+								content: translate( '20 free requests' ),
 							},
 							COMPLETE: {
+								content: translate( 'High request capacity' ),
 								highlight: true,
-								content: translate( 'Social Basic' ),
 							},
 						},
 					},
 					{
-						id: 'payments_block',
-						name: translate( 'Collect payments' ),
-						url: links.payments_block,
-						info: {
-							COMPLETE: { content: <CheckIcon /> },
-						},
+						id: 'blaze',
+						name: translate( 'Blaze' ),
+						url: links.blaze,
+						info: allChecked,
 					},
 					{
-						id: 'ad_network',
-						name: translate( 'Ad network' ),
-						url: links.ad_network,
-						info: {
-							SECURITY: { content: <CheckIcon /> },
-							COMPLETE: { content: <CheckIcon /> },
-						},
-					},
-					{
-						id: 'google_analytics',
-						name: translate( 'Google Analytics integration' ),
-						url: links.google_analytics,
-						info: {
-							SECURITY: { content: <CheckIcon /> },
-							COMPLETE: { content: <CheckIcon /> },
-						},
-					},
-					{
-						id: 'stats',
-						name: translate( 'Stats' ),
-						url: links.stats,
+						id: 'newsletter',
+						name: translate( 'Newsletter' ),
+						url: links.newsletter,
 						info: allChecked,
 					},
 					{
@@ -340,21 +378,44 @@ export const useComparisonData = () => {
 				],
 			},
 			{
+				sectionId: 'earn',
+				sectionName: translate( 'Monetize' ),
+				icon: EarnIcon,
+				features: [
+					{
+						id: 'ad_network',
+						name: translate( 'Ad network' ),
+						url: links.ad_network,
+						info: {
+							GROWTH: { content: <CheckIcon /> },
+							SECURITY: { content: <CheckIcon /> },
+							COMPLETE: { content: <CheckIcon /> },
+						},
+					},
+					{
+						id: 'payments_block',
+						name: translate( 'Collect payments' ),
+						url: links.payments_block,
+						info: allChecked,
+					},
+					{
+						id: 'transaction_fees',
+						name: translate( 'Transaction fees' ),
+						url: links.transaction_fees,
+						info: {
+							FREE: { content: translate( '10%' ) },
+							GROWTH: { content: translate( '2%' ) },
+							SECURITY: { content: translate( '4%' ) },
+							COMPLETE: { content: translate( '2%' ) },
+						},
+					},
+				],
+			},
+			{
 				sectionId: 'design',
 				sectionName: translate( 'Design' ),
 				icon: DesignIcon,
 				features: [
-					{
-						id: 'themes',
-						name: translate( 'Themes' ),
-						url: links.themes,
-						info: {
-							FREE: { content: translate( 'Starter Themes' ) },
-							BACKUP: { content: translate( 'Starter Themes' ) },
-							SECURITY: { content: translate( 'Starter Themes' ) },
-							COMPLETE: { content: translate( 'Starter Themes' ) },
-						},
-					},
 					{
 						id: 'related_posts',
 						name: translate( 'Related posts' ),
@@ -365,12 +426,6 @@ export const useComparisonData = () => {
 						id: 'galleries_and_slideshows',
 						name: translate( 'Gallery and slideshow tools' ),
 						url: links.galleries_and_slideshows,
-						info: allChecked,
-					},
-					{
-						id: 'subscriptions',
-						name: translate( 'Subscriptions' ),
-						url: links.subscriptions,
 						info: allChecked,
 					},
 					{
@@ -391,7 +446,7 @@ export const useComparisonData = () => {
 						name: translate( 'Priority support' ),
 						url: links.priority_support,
 						info: {
-							BACKUP: { content: <CheckIcon /> },
+							GROWTH: { content: <CheckIcon /> },
 							SECURITY: { content: <CheckIcon /> },
 							COMPLETE: { content: <CheckIcon /> },
 						},

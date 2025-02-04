@@ -1,0 +1,5 @@
+// Used by Rollup to load its own configuration file
+{
+	"extends": "./tsconfig.json",
+	"include": [ "rollup.config.ts" ]
+}

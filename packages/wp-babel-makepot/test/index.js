@@ -20,9 +20,10 @@ describe( 'makePot', () => {
 
 		fs.mkdirSync( path.join( potOutputDir, 'payload' ), { recursive: true } );
 
-		examplesPaths.forEach( ( filepath ) =>
-			makePot( filepath, { dir: potOutputDir, base: baseDir } )
-		);
+		examplesPaths.forEach( ( filepath ) => {
+			const preset = filepath.includes( 'decorators' ) ? 'decorators' : 'default';
+			makePot( filepath, { preset, dir: potOutputDir, base: baseDir } );
+		} );
 
 		concatPot( potOutputDir, concatenatedPotOutputPath );
 	} );

@@ -10,7 +10,6 @@ declare const window: undefined | ( Window & typeof globalThis );
  * Works in SSR.
  *
  * Should never throw.
- *
  * @param error Error to save
  */
 export const logError = ( error: Record< string, string > & { message: string } ): void => {

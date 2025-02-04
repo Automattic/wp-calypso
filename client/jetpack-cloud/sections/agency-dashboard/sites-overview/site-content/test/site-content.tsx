@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SiteContent from '../index';
@@ -13,7 +13,18 @@ import SiteContent from '../index';
 jest.mock( '@automattic/viewport-react', () => ( {
 	useDesktopBreakpoint: () => true,
 	useMobileBreakpoint: () => false,
+	useBreakpoint: () => true,
 } ) );
+
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table-row/index',
+	() => () => <tr />
+);
 
 describe( '<SiteContent>', () => {
 	nock( 'https://public-api.wordpress.com' )
@@ -22,12 +33,14 @@ describe( '<SiteContent>', () => {
 		.reply( 200, {
 			connected: true,
 		} );
+	const blogId = 1234;
 	const sites = [
 		{
-			blog_id: 1234,
+			blog_id: blogId,
 			url: 'test.jurassic.ninja',
 			monitor_settings: {
 				monitor_active: true,
+				monitor_site_status: true,
 			},
 		},
 	];
@@ -40,6 +53,11 @@ describe( '<SiteContent>', () => {
 		partnerPortal: {
 			partner: {
 				isPartnerOAuthTokenLoaded: true,
+			},
+		},
+		sites: {
+			items: {
+				[ blogId ]: sites[ 0 ],
 			},
 		},
 	};

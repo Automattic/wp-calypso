@@ -10,7 +10,7 @@ CSS class to be applied to a root div.
 
 ### `breakpoint { string } - default: '<660px'`
 
-A breakpoint that trigger component replacement. Only breakopints from  `mediaQueryLists` from '@automattic/viewport' are accepted.
+A breakpoint that trigger component replacement. Only breakopints from `mediaQueryLists` from '@automattic/viewport' are accepted.
 
 ### `onSwap { function }`
 

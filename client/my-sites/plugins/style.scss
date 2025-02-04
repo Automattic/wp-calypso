@@ -1,17 +1,27 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "./grid-mixins.scss";
-@import "./woocommerce-box.scss";
+@import "./woocommerce-box";
 
 .is-section-plugins .main {
-	padding-top: 24px; // Compensate for the fixed header.
 
-	@media ( max-width: 782px ) {
-		padding-top: 45px;
+	&.is-logged-out:not(.is-plugin-details) {
+		.navigation-header {
+			visibility: hidden;
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.is-logged-out.is-plugin-details {
+		.navigation-header {
+			margin-top: -47px;
+		}
 	}
 
-	@media ( max-width: 660px ) {
-		padding-top: 60px;
+	.navigation-header {
+		@media (max-width: $break-small) {
+			padding-bottom: 16px;
+			margin-bottom: 0;
+		}
 	}
 
 	.upsell-nudge {
@@ -29,6 +39,140 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 86px;
 			margin-bottom: -50px;
+		}
+	}
+}
+
+body.is-section-plugins {
+	.is-section-plugins.is-global-sidebar-visible {
+		background: var(--studio-gray-0);
+
+		.layout__content {
+			min-height: 100vh;
+		}
+
+		.layout__primary > * {
+			background-color: var(--color-surface);
+			border-radius: 8px; /* stylelint-disable-line scales/radii */
+			box-shadow: 0 0 17.4px 0 rgba(0, 0, 0, 0.05);
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
+			max-width: none;
+			overflow-y: auto;
+		}
+
+		.plugins-browser,
+		.is-plugin-details {
+			overflow-x: hidden;
+		}
+	}
+
+	.is-logged-in main:not(.hosting-dashboard-layout):not(.hosting-dashboard-layout-column) {
+		&:not(.plugins-browser),
+		&.plugins-browser .plugins-browser__content-wrapper {
+			padding-inline: 48px;
+
+			@media (max-width: $break-medium) {
+				padding-inline: 2rem;
+			}
+
+			@media (max-width: $break-small) {
+				padding-inline: 16px;
+			}
+		}
+
+		&.plugins-browser--site-view .plugins-browser__content-wrapper {
+			box-sizing: border-box;
+			margin: auto;
+			max-width: 1040px;
+		}
+	}
+
+	.is-section-plugins.is-global-sidebar-collapsed {
+		.sidebar__back-link .sidebar__site-title {
+			display: none;
+		}
+	}
+
+	.hosting-dashboard-layout-column {
+		overflow: auto;
+	}
+
+	.hosting-dashboard-layout-column.scheduled-updates-list-compact {
+		width: 400px;
+		flex: unset;
+		transition: all 0.2s;
+
+		.plugins-update-manager-multisite__header {
+			padding: 1rem 1.125rem;
+
+			h1 {
+				font-size: 1.25rem;
+			}
+		}
+
+		.plugins-update-manager-multisite-filters {
+			padding: 0;
+		}
+
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+			padding: 1rem 1.5rem;
+
+			.components-search-control {
+				max-width: 100%;
+			}
+		}
+
+		.plugins-update-manager-multisite-card {
+			margin: 0;
+			padding: 0.5rem 1.5rem;
+		}
+
+		@include breakpoint-deprecated( "<960px" ) {
+			display: none;
+		}
+
+		.empty-state {
+			max-width: 100%;
+			padding: 0 1rem;
+		}
+	}
+
+	.hosting-dashboard-layout-column.scheduled-updates-list {
+		.plugins-update-manager-multisite__header,
+		.plugins-update-manager-multisite-filter {
+			margin: 0;
+		}
+
+		.plugins-update-manager-multisite__header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: nowrap;
+			gap: 16px;
+
+			p {
+				margin-bottom: 0;
+				font-size: 0.875rem;
+				color: var(--color-neutral-60);
+			}
+		}
+
+		.empty-state {
+			padding: 0 4rem;
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 0 1rem;
+			}
+		}
+	}
+
+	.hosting-dashboard-layout-column.scheduled-updates-edit,
+	.hosting-dashboard-layout-column.scheduled-updates-create {
+		padding: 3rem;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 0.5rem;
 		}
 	}
 }
@@ -102,19 +246,19 @@ $calypso-header-height: 31px;
 	}
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
+	grid-template-columns: minmax(380px, auto) minmax(auto, 395px);
 	grid-column-gap: 60px;
 	grid-template-areas:
-		"header header actions"
-		"content content actions";
+		"header actions"
+		"content actions";
 	grid-auto-rows: auto 1fr;
 
-	@include breakpoint-deprecated( "<1280px" ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		grid-template-areas:
-			"header header header"
-			"actions actions actions"
-			"content content content";
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+			"header"
+			"actions"
+			"content";
+		grid-template-columns: minmax(0, 1fr);
 		padding-top: 20px;
 	}
 
@@ -130,12 +274,27 @@ $calypso-header-height: 31px;
 	.plugin-details__actions {
 		position: relative;
 		grid-area: actions;
-		background-color: var(--studio-gray-0);
-		padding: 40px;
 		height: fit-content;
 
-		@include breakpoint-deprecated( "<1280px" ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin-top: 40px;
+		}
+
+		.plugin-details__sidebar {
+			background-color: var(--studio-gray-0);
+			padding: 40px;
+
+			@include breakpoint-deprecated( "<1280px" ) {
+				padding: 30px;
+			}
+
+			@include breakpoint-deprecated( "<960px" ) {
+				padding: 40px;
+			}
+		}
+
+		.plugin-details-download-card {
+			margin-top: 50px;
 		}
 	}
 
@@ -152,10 +311,29 @@ $calypso-header-height: 31px;
 			@include grid-column( 3, 1 );
 		}
 	}
+
+	.plugin-details__plugin-download {
+		margin-top: 20px;
+		gap: 5px;
+		display: flex;
+		font-size: $font-body-extra-small;
+
+		@include breakpoint-deprecated( "<1280px" ) {
+			flex-direction: column;
+			gap: 10px;
+		}
+
+		.plugin-details__plugin-download-cta {
+			a {
+				font-size: $font-body-extra-small;
+				padding: 6px 14px;
+			}
+		}
+	}
 }
 
 .plugin-details__page {
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		padding: 16px;
 	}
 }
@@ -234,7 +412,7 @@ $calypso-header-height: 31px;
 		}
 	}
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		display: flex;
 		flex-direction: column;
 
@@ -252,7 +430,7 @@ $calypso-header-height: 31px;
 		}
 	}
 
-	@media screen and ( min-width: 481px ) {
+	@media screen and (min-width: 481px) {
 		.section-nav-tab:first-child .section-nav-tab__link {
 			padding-left: 0;
 		}
@@ -272,7 +450,7 @@ $calypso-header-height: 31px;
 	left: 50%;
 	width: calc(100vw - var(--sidebar-width-max) + 1px);
 
-	@media screen and ( max-width: 782px ) {
+	@media screen and (max-width: 782px) {
 		width: 100vw;
 	}
 }
@@ -281,15 +459,15 @@ $calypso-header-height: 31px;
 	max-width: 1040px;
 	margin: auto;
 
-	@media screen and ( max-width: 1400px ) {
+	@media screen and (max-width: 1400px) {
 		padding: 0 40px;
 	}
 
-	@media screen and ( max-width: 1040px ) {
+	@media screen and (max-width: 1040px) {
 		padding: 0 48px;
 	}
 
-	@media screen and ( max-width: 660px ) {
+	@media screen and (max-width: 660px) {
 		padding: 0 24px;
 	}
 }
@@ -298,7 +476,12 @@ body.is-section-plugins header .select-dropdown__item {
 	padding: 0 0 0 16px !important;
 }
 
+body.is-section-plugins .is-logged-in .navigation-header {
+	padding-top: 24px;
+}
+
 body.is-section-plugins #primary {
+
 	.search-box-header::before {
 		box-sizing: border-box;
 		content: "";
@@ -371,7 +554,7 @@ body.is-section-plugins #primary {
 			&:nth-child(3) {
 				margin-block-start: 12px;
 				display: block;
-				@media ( min-width: 425px ) {
+				@media (min-width: 425px) {
 					display: initial;
 					margin-block-start: initial;
 				}
@@ -399,23 +582,30 @@ body.is-section-plugins #primary {
 	}
 }
 .plugins__top-container {
-	margin: 0 -32px;
-	padding: 8px 48px 0;
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px 0;
-		border-bottom: 1px solid var(--color-primary-5);
+	padding: 0 16px;
+
+	@media (min-width: $break-small) {
+		padding: 0;
 	}
+}
+
+.plugins__top-container-jc {
+	margin: 0 -32px;
+	padding: 4px 48px 0;
+
 	@include break-large() {
 		padding: 6px 48px 0;
 	}
 }
 
-.plugins__top-container-wp {
-	padding-top: 4rem;
-	border-bottom: none;
-	@include break-large {
-		padding-top: 3rem;
-	}
+.plugin-management-wrapper.is-bulk-plugin-management {
+  .plugins__top-container-jc {
+      padding: 4px 0 0;
+
+      @include break-large() {
+          padding: 6px 0 0;
+      }
+  }
 }
 
 .plugins__content-wrapper {
@@ -425,18 +615,18 @@ body.is-section-plugins #primary {
 		padding: 0;
 	}
 }
+
 .plugins__main-content {
-	// We need these negative margin values because we want to make the container full-width,
-	// but our element is inside a limited-width parent.
-	margin: 0 -32px;
-	padding: 0 48px;
+	margin: 0;
+	padding: 0;
 	flex: 1 1 100%;
-	@include breakpoint-deprecated( ">660px" ) {
-		padding: 16px 48px;
+	@media (min-width: $break-small) {
+		padding: 16px 0;
 		background: rgba(255, 255, 255, 0.5);
 		margin-bottom: -32px;
 	}
 }
+
 .plugins__search {
 	height: 52px;
 	box-shadow: 0 0 0 1px var(--color-neutral-5);
@@ -450,28 +640,11 @@ body.is-section-plugins #primary {
 	}
 }
 
-.plugins__confirmation-modal {
-	.plugins__confirmation-modal-heading {
-		font-size: 1rem;
-		font-weight: 600;
-	}
+.plugin-details__reviews {
+	margin-bottom: 40px;
 
-	.plugins__confirmation-modal-desc {
-		display: block;
-		padding-top: 12px;
-		font-size: 1rem;
-		font-weight: 400;
-	}
-
-	.dialog__action-buttons {
-		padding: 24px;
-
-		button {
-			margin-inline-start: 16px;
-			padding: 7px;
-			font-size: 0.75rem;
-			line-height: 1;
-		}
+	@media screen and (max-width: 1040px) {
+		padding: 16px;
 	}
 }
 
@@ -483,7 +656,7 @@ body.is-section-plugins #primary {
 		inset-inline-start: 10px !important;
 	}
 
-	@media ( min-width: 782px ) {
+	@media (min-width: 782px) {
 		inset-inline-start: calc(var(--sidebar-width-min) + 10px) !important;
 	}
 
@@ -499,3 +672,14 @@ body.is-section-plugins #primary {
 	}
 }
 
+.banner.card.plugin-details__reviews-banner {
+
+	&:hover {
+		cursor: pointer;
+		box-shadow: 0 0 1px var(--color-neutral), 0 2px 4px var(--color-neutral-10);
+	}
+
+	~ .plugin-details__page .plugin-details__layout {
+		padding-top: calc($layout-padding-top - 40px);
+	}
+}

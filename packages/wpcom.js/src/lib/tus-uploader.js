@@ -36,7 +36,16 @@ export default class TusUploader {
 						.then( ( res ) => resolve( { media: [ res ] } ) )
 						.catch( ( err ) => reject( err ) );
 				},
-				onProgress: (/*bytesUploaded, bytesTotal*/) => {},
+				onProgress: ( bytesUploaded, bytesTotal ) => {
+					const uploadEvent = new CustomEvent( 'tus-upload-progress', {
+						detail: {
+							fileName: file.name,
+							progress: ( bytesUploaded / bytesTotal ) * 100,
+						},
+					} );
+
+					document.dispatchEvent( uploadEvent );
+				},
 			} );
 
 			return this.createGetJwtRequest().then( ( jwtData ) => uploader( file, jwtData ) );

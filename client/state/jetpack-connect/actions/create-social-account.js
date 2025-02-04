@@ -9,7 +9,6 @@ import 'calypso/state/jetpack-connect/init';
  * Create a user account
  *
  * !! Must have same return shape as createAccount !!
- *
  * @param  {Object}  socialInfo              …
  * @param  {string}  socialInfo.service      The name of the social service
  * @param  {string}  socialInfo.access_token An OAuth2 acccess token

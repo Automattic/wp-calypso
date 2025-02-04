@@ -1,11 +1,11 @@
 import { map, chunk } from 'lodash';
-import { useState, Children } from 'react';
+import { Children } from 'react';
+import { useInView } from 'react-intersection-observer';
 import ReadmeViewer from 'calypso/components/readme-viewer';
 import ComponentPlayground from 'calypso/devdocs/design/component-playground';
 import Placeholder from 'calypso/devdocs/devdocs-async-load/placeholder';
 import { camelCaseToSlug, getComponentName } from 'calypso/devdocs/docs-example/util';
 import DocsExampleWrapper from 'calypso/devdocs/docs-example/wrapper';
-import { useInView } from 'calypso/lib/use-in-view';
 import { getExampleCodeFromComponent } from './playground-utils';
 
 const shouldShowInstance = ( example, filter, component ) => {
@@ -139,8 +139,9 @@ const Collection = ( {
 };
 
 function LazyExampleGroup( { exampleGroup, examplesToMount } ) {
-	const [ inView, setInView ] = useState( false );
-	const ref = useInView( () => setInView( true ) );
+	const { ref, inView } = useInView( {
+		triggerOnce: true,
+	} );
 	return (
 		<div ref={ ref }>{ inView ? exampleGroup : <Placeholder count={ examplesToMount } /> }</div>
 	);

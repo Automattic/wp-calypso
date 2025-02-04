@@ -1,14 +1,17 @@
 import config from '@automattic/calypso-config';
 import {
+	isAkismetFreeProduct,
 	isDomainTransfer,
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
 } from '@automattic/calypso-products';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import InfoPopover from 'calypso/components/info-popover';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	hasPaymentMethod,
 	isRechargeable,
@@ -16,7 +19,10 @@ import {
 	isRenewable,
 	isExpired,
 } from 'calypso/lib/purchases';
+import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import AutoRenewToggle from './auto-renew-toggle';
 import type { SiteDetails } from '@automattic/data-stores';
 import type {
@@ -48,34 +54,44 @@ function PurchaseMetaExpiration( {
 }: ExpirationProps ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isJetpackPurchase = isJetpackPlan( purchase ) || isJetpackProduct( purchase );
+	const isCancellableSitelessPurchase = isAkismetTemporarySitePurchase( purchase );
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
-	const hideAutoRenew =
-		purchase &&
-		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
-		! isRenewable( purchase );
 
-	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
+	const allDomains = useSelector( getAllDomains );
+	const domainDetails = allDomains?.[ purchase.siteId ]?.find(
+		( domain: ResponseDomain ) => domain.domain === purchase.meta
+	);
+
+	if (
+		! purchase ||
+		isDomainTransfer( purchase ) ||
+		purchase?.isInAppPurchase ||
+		isAkismetFreeProduct( purchase )
+	) {
 		return null;
 	}
+
+	const hideAutoRenew =
+		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+		! isRenewable( purchase );
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
 		// If a jetpack site has been disconnected, the "site" prop will be null here.
-		const shouldRenderToggle = site && isProductOwner;
+		const shouldRenderToggle = ( isCancellableSitelessPurchase || site ) && isProductOwner;
 
 		const autoRenewToggle = shouldRenderToggle ? (
 			<AutoRenewToggle
-				planName={ site.plan?.product_name_short }
-				siteDomain={ site.domain }
-				siteSlug={ site.slug }
+				planName={ site && ! isCancellableSitelessPurchase ? site.plan?.product_name_short : '' }
+				siteDomain={ site && ! isCancellableSitelessPurchase ? site.domain : '' }
+				siteSlug={ site && ! isCancellableSitelessPurchase ? site.slug : '' }
 				purchase={ purchase }
 				toggleSource="manage-purchase"
-				showLink={ true }
+				showLink
 				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 			/>
 		) : (
@@ -127,6 +143,20 @@ function PurchaseMetaExpiration( {
 				},
 			} );
 		}
+		const shouldShowTooltip = () => {
+			if ( ! purchase.expiryDate || ! purchase.renewDate ) {
+				return false;
+			}
+
+			if (
+				purchase.renewDate !== purchase.expiryDate &&
+				( purchase.expiryStatus === 'active' || purchase.expiryStatus === 'auto-renewing' )
+			) {
+				return true;
+			}
+
+			return false;
+		};
 
 		return (
 			<li className="manage-purchase__meta-expiration">
@@ -139,11 +169,29 @@ function PurchaseMetaExpiration( {
 					</div>
 				) }
 				<span
-					className={ classNames( 'manage-purchase__detail', {
+					className={ clsx( 'manage-purchase__detail', {
 						'is-expiring': isCloseToExpiration( purchase ),
 					} ) }
 				>
 					{ subsBillingText }
+					{ shouldShowTooltip() && (
+						<InfoPopover position="bottom right">
+							{ translate(
+								'Your subscription is paid through {{dateSpan}}%(expireDate)s{{/dateSpan}}, but will be renewed prior to that date. {{inlineSupportLink}}Learn more{{/inlineSupportLink}}',
+								{
+									args: {
+										expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+									},
+									components: {
+										dateSpan,
+										inlineSupportLink: (
+											<InlineSupportLink supportContext="autorenewal" showIcon={ false } />
+										),
+									},
+								}
+							) }
+						</InfoPopover>
+					) }
 				</span>
 				{ ! isAutorenewalEnabled &&
 					! hideAutoRenew &&
@@ -162,7 +210,7 @@ function PurchaseMetaExpiration( {
 	return (
 		<li>
 			<em className="manage-purchase__detail-label">
-				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
+				{ renderRenewsOrExpiresOnLabel( { purchase, domainDetails, translate } ) }
 			</em>
 			<span className="manage-purchase__detail">
 				{ renderRenewsOrExpiresOn( {

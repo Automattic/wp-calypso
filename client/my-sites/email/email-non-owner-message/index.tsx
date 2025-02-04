@@ -1,11 +1,11 @@
 import { SiteDetails } from '@automattic/data-stores';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useEmailOwnerUserName } from 'calypso/components/data/query-email-owner-username';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { emailManagementEdit } from 'calypso/my-sites/email/paths';
+import { getEmailManagementPath } from 'calypso/my-sites/email/paths';
 
 import './style.scss';
 
@@ -26,13 +26,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 	const ownerUserName = useEmailOwnerUserName( selectedSite, domainName );
 
 	const buildLoginUrl = () => {
-		const redirectUrlParameter = emailManagementEdit(
-			selectedSite?.slug ?? '',
-			domainName,
-			'manage',
-			null,
-			'login-redirect'
-		);
+		const redirectUrlParameter = getEmailManagementPath( selectedSite?.slug, domainName );
 
 		return `/log-in/${ buildQueryString( {
 			email_address: ownerUserName,

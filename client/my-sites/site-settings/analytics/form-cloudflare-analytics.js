@@ -3,8 +3,14 @@ import {
 	TYPE_PREMIUM,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_GOOGLE_ANALYTICS,
+	getPlan,
+	PLAN_PREMIUM,
 } from '@automattic/calypso-products';
-import { CompactCard, FormInputValidation as FormTextValidation } from '@automattic/components';
+import {
+	FormInputValidation as FormTextValidation,
+	FormLabel,
+	Button,
+} from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { pick } from 'lodash';
 import { useState, useEffect } from 'react';
@@ -12,11 +18,9 @@ import { connect } from 'react-redux';
 import cloudflareIllustration from 'calypso/assets/images/illustrations/cloudflare-logo-small.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -42,6 +46,7 @@ export function CloudflareAnalyticsSettings( {
 	uniqueEventTracker,
 	showUpgradeNudge,
 	site,
+	premiumPlanName,
 } ) {
 	const [ isCodeValid, setIsCodeValid ] = useState( true );
 	const [ isCloudflareEnabled, setIsCloudflareEnabled ] = useState( false );
@@ -116,9 +121,9 @@ export function CloudflareAnalyticsSettings( {
 
 	const renderForm = () => {
 		const placeholderText = isRequestingSettings ? translate( 'Loading' ) : '';
-
-		const nudgeTitle = translate( 'Available with Premium plans or higher' );
-
+		const nudgeTitle = translate( 'Available with %(premiumPlanName)s plans or higher', {
+			args: { premiumPlanName },
+		} );
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
 			type: TYPE_PREMIUM,
 		} );
@@ -133,35 +138,23 @@ export function CloudflareAnalyticsSettings( {
 				feature={ FEATURE_CLOUDFLARE_ANALYTICS }
 				plan={ plan }
 				href={ null }
-				showIcon={ true }
+				showIcon
 				title={ nudgeTitle }
 			/>
 		);
 		return (
 			<form id="analytics" onSubmit={ handleSubmitForm }>
-				<SettingsSectionHeader
-					disabled={ isSubmitButtonDisabled }
-					isSaving={ isSavingSettings }
-					onButtonClick={ handleSubmitForm }
-					showButton
-					title={ translate( 'Cloudflare' ) }
-				/>
-
-				<CompactCard>
+				<>
+					<PanelCardHeading>{ translate( 'Cloudflare Web Analytics' ) }</PanelCardHeading>
 					<div className="analytics site-settings__analytics">
 						<div className="analytics site-settings__analytics-illustration">
 							<img src={ cloudflareIllustration } alt="" />
 						</div>
 						<div className="analytics site-settings__analytics-text">
-							<p className="analytics site-settings__analytics-title">
-								{ translate( 'Cloudflare Web Analytics' ) }
-							</p>
 							<p>
 								{ translate(
 									"Privacy-first metrics with unmatched accuracy that won't track your visitors."
-								) }
-							</p>
-							<p>
+								) }{ ' ' }
 								<a
 									onClick={ recordSupportLinkClick }
 									href="https://www.cloudflare.com/pg-lp/cloudflare-for-wordpress-dot-com?utm_source=wordpress.com&utm_medium=affiliate&utm_campaign=paygo_2021-02_a8_pilot&utm_content=traffic"
@@ -202,11 +195,11 @@ export function CloudflareAnalyticsSettings( {
 							) }
 						</FormFieldset>
 					) }
-				</CompactCard>
+				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<CompactCard>
+					<>
 						<div className="analytics site-settings__analytics">
 							<ToggleControl
 								checked={ isCloudflareEnabled }
@@ -215,9 +208,16 @@ export function CloudflareAnalyticsSettings( {
 								label={ translate( 'Add Cloudflare' ) }
 							/>
 						</div>
-					</CompactCard>
+						<Button
+							className="is-primary"
+							disabled={ isSubmitButtonDisabled }
+							busy={ isSavingSettings }
+							onClick={ handleSubmitForm }
+						>
+							{ translate( 'Save' ) }
+						</Button>
+					</>
 				) }
-				<div className="analytics site-settings__analytics-spacer" />
 			</form>
 		);
 	};
@@ -227,7 +227,7 @@ export function CloudflareAnalyticsSettings( {
 	if ( ! site ) {
 		return null;
 	}
-	return renderForm();
+	return <PanelCard>{ renderForm() }</PanelCard>;
 }
 
 const mapStateToProps = ( state ) => {
@@ -235,7 +235,6 @@ const mapStateToProps = ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const isAnalyticsEligible = siteHasFeature( state, siteId, FEATURE_GOOGLE_ANALYTICS );
 	const siteIsJetpack = isJetpackSite( state, siteId );
-	const sitePlugins = site ? getPlugins( state, [ site.ID ] ) : [];
 	const path = getCurrentRouteParameterized( state, siteId );
 
 	return {
@@ -243,9 +242,9 @@ const mapStateToProps = ( state ) => {
 		site,
 		siteId,
 		siteIsJetpack,
-		sitePlugins,
 		showUpgradeNudge: ! isAnalyticsEligible,
 		enableForm: isAnalyticsEligible,
+		premiumPlanName: getPlan( PLAN_PREMIUM )?.getTitle(),
 	};
 };
 

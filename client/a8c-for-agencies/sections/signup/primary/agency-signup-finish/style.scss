@@ -1,0 +1,28 @@
+.agency-signup-finish__wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 90vh;
+}
+
+.agency-signup-finish__text {
+	font-size: 2rem;
+	text-align: center;
+	color: var(--color-neutral-10);
+}
+
+.agency-signup-finish__logo {
+	animation: pulse_opacity 1.5s ease-in-out infinite alternate;
+	margin-block-end: 48px;
+}
+
+@keyframes pulse_opacity {
+	0% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+

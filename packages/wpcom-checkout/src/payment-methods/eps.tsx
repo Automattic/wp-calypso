@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,21 +14,16 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:eps-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'eps';
 type NounsInStore = 'customerName';
 type EpsStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -50,7 +44,7 @@ export function createEpsPaymentMethodStore(): EpsStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -64,22 +58,40 @@ export function createEpsPaymentMethodStore(): EpsStore {
 	return store;
 }
 
-export function createEpsMethod( { store }: { store: EpsStore } ): PaymentMethod {
+export function createEpsMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: EpsStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'eps',
+		hasRequiredFields: true,
 		paymentProcessorId: 'eps',
 		label: <EpsLabel />,
 		activeContent: <EpsFields />,
-		submitButton: <EpsPayButton store={ store } />,
+		submitButton: <EpsPayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		inactiveContent: <EpsSummary />,
 		getAriaLabel: ( __ ) => __( 'EPS e-Pay' ),
 	};
 }
 
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'eps' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
 function EpsFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'eps' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -134,14 +146,15 @@ function EpsPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: EpsStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -167,25 +180,13 @@ function EpsPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
-}
-
 function EpsSummary() {
-	const customerName = useSelect( ( select ) => select( 'eps' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

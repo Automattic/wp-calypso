@@ -8,6 +8,7 @@ import {
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import { getSite } from 'calypso/state/sites/selectors';
 import * as selectors from '../selectors';
+import { PLUGINS_STATUS } from '../status/constants';
 import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 
 const createError = function ( error, message, name = false ) {
@@ -45,6 +46,12 @@ const state = deepFreeze( {
 						status: 'error',
 						action: INSTALL_PLUGIN,
 						error: createError( 'no_package', 'Download failed.' ),
+					},
+				},
+				'site.three': {
+					'jetpack/jetpack': {
+						status: 'inProgress',
+						action: DEACTIVATE_PLUGIN,
 					},
 				},
 			},
@@ -433,6 +440,100 @@ describe( 'Installed plugin selectors', () => {
 
 		test( 'Should return an empty array if there are no matching statuses of that type.', () => {
 			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'getPluginsWithUpdateStatuses', () => {
+		test( 'Should update plugin status property based on its state from another objects.', () => {
+			const allPlugins = [
+				{
+					id: 'jetpack/jetpack',
+					slug: 'jetpack/jetpack',
+					sites: {
+						'site.one': {
+							active: true,
+							autoupdate: true,
+							update: true,
+							version: '1.0',
+						},
+					},
+				},
+				{
+					id: 'hello-dolly/hello-dolly',
+					slug: 'hello-dolly/hello-dolly',
+					sites: {
+						'site.one': {
+							active: true,
+						},
+					},
+				},
+				{
+					id: 'vaultpress/vaultpress',
+					slug: 'vaultpress/vaultpress',
+					sites: {
+						'site.one': {
+							active: false,
+						},
+					},
+				},
+			];
+
+			const pluginsWithUpdatesAndStatuses = selectors.getPluginsWithUpdateStatuses(
+				state,
+				allPlugins
+			);
+
+			expect( pluginsWithUpdatesAndStatuses ).toEqual(
+				expect.arrayContaining( [
+					{
+						id: 'jetpack/jetpack',
+						slug: 'jetpack/jetpack',
+						sites: {
+							'site.one': {
+								active: true,
+								autoupdate: true,
+								update: true,
+								version: '1.0',
+							},
+						},
+						status: [
+							PLUGINS_STATUS.UPDATE,
+							PLUGINS_STATUS.ACTIVE,
+							PLUGINS_STATUS.AUTOUPDATE_ENABLED,
+						],
+						allStatuses: [
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.one',
+								status: 'completed',
+							},
+							{
+								action: 'DEACTIVATE_PLUGIN',
+								pluginId: 'jetpack/jetpack',
+								siteId: 'site.three',
+								status: 'inProgress',
+							},
+						],
+					},
+					{
+						id: 'hello-dolly/hello-dolly',
+						slug: 'hello-dolly/hello-dolly',
+						sites: { 'site.one': { active: true } },
+						status: [ PLUGINS_STATUS.ACTIVE, PLUGINS_STATUS.AUTOUPDATE_DISABLED ],
+						allStatuses: [],
+					},
+					{
+						id: 'vaultpress/vaultpress',
+						slug: 'vaultpress/vaultpress',
+						sites: { 'site.one': { active: false } },
+						status: [ PLUGINS_STATUS.INACTIVE, PLUGINS_STATUS.AUTOUPDATE_DISABLED ],
+						allStatuses: [],
+					},
+				] )
+			);
+
+			expect( pluginsWithUpdatesAndStatuses.length ).toEqual( 3 );
 		} );
 	} );
 } );

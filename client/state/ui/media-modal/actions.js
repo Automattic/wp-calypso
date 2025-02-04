@@ -5,7 +5,6 @@ import 'calypso/state/ui/init';
 /**
  * Returns an action object used in signalling that the media modal current
  * view should be updated.
- *
  * @see ./constants.js (ModalViews)
  * @param  {any} view Media view
  * @returns {Object}          Action object
@@ -20,7 +19,6 @@ export function setMediaModalView( view ) {
 /**
  * Returns an action object used in signalling that the media modal current
  * view should be reset to its initial value.
- *
  * @see ./constants.js (ModalViews)
  * @returns {Object}          Action object
  */

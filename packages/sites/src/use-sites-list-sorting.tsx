@@ -1,24 +1,51 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useMemo } from 'react';
+import { getSiteLaunchStatus } from './site-status';
 import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'user_interactions' | 'options'
+	| 'title'
+	| 'user_interactions'
+	| 'options'
+	| 'is_wpcom_staging_site'
+	| 'ID'
+	| 'plan'
+	| 'is_deleted'
+	| 'is_coming_soon'
+	| 'is_private'
+	| 'launch_status'
 >;
 
-type SiteDetailsForSortingWithUserInteractions = Pick< MinimumSite, 'title' | 'options' > &
+type SiteDetailsForSortingWithUserInteractions = Pick<
+	MinimumSite,
+	| 'title'
+	| 'options'
+	| 'is_wpcom_staging_site'
+	| 'ID'
+	| 'plan'
+	| 'is_deleted'
+	| 'is_coming_soon'
+	| 'is_private'
+	| 'launch_status'
+> &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
 	| SiteDetailsForSortingWithOptionalUserInteractions
 	| SiteDetailsForSortingWithUserInteractions;
 
-const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ] as const;
+const validSortKeys = [
+	'lastInteractedWith',
+	'updatedAt',
+	'alphabetically',
+	'plan',
+	'status',
+] as const;
 const validSortOrders = [ 'asc', 'desc' ] as const;
 
-export type SitesSortKey = typeof validSortKeys[ number ];
-export type SitesSortOrder = typeof validSortOrders[ number ];
+export type SitesSortKey = ( typeof validSortKeys )[ number ];
+export type SitesSortOrder = ( typeof validSortOrders )[ number ];
 
 export const isValidSorting = ( input: {
 	sortKey: string;
@@ -44,11 +71,15 @@ export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return sortSitesByLastInteractedWith( allSites, sortOrder );
+				return sortSitesByStaging( sortSitesByLastInteractedWith( allSites, sortOrder ) );
 			case 'alphabetically':
 				return sortSitesAlphabetically( allSites, sortOrder );
 			case 'updatedAt':
 				return sortSitesByLastPublish( allSites, sortOrder );
+			case 'plan':
+				return sortSitesByPlan( allSites, sortOrder );
+			case 'status':
+				return sortSitesByStatus( allSites, sortOrder );
 			default:
 				return allSites;
 		}
@@ -94,6 +125,7 @@ const sortInteractedItems = ( interactedItems: SiteDetailsForSortingWithUserInte
 	};
 
 	const sortedInteractions = interactedItems.sort( ( a, b ) => {
+		// This implies that the user interactions are already sorted.
 		const mostRecentInteractionA = a.user_interactions[ 0 ];
 		const mostRecentInteractionB = b.user_interactions[ 0 ];
 
@@ -153,11 +185,95 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	return sortOrder === 'desc' ? sortedItems : sortedItems.reverse();
 }
 
+export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[] ) {
+	type SitesByIdType = {
+		index: number;
+		site: T;
+	};
+	const sitesById = sites.reduce< Record< number, SitesByIdType > >(
+		( acc, site, currentIndex ) => {
+			acc[ site.ID ] = {
+				index: currentIndex,
+				site,
+			};
+			return acc;
+		},
+		{}
+	);
+
+	const visited = new Set() as Set< number >;
+	const sortedItems = sites.reduce< T[] >( ( acc, site ) => {
+		// We have already visited this site, therefore, there is no need to proceed any further.
+		if ( visited.has( site.ID ) ) {
+			return acc;
+		}
+		// Site is staging but we haven't visit its production site yet...
+		// The production site exists in the site map, and
+		// that means that we are going to visit it later on.
+		// Don't add it to the list yet.
+		if (
+			site?.is_wpcom_staging_site &&
+			site.options?.wpcom_production_blog_id &&
+			! visited.has( site.options?.wpcom_production_blog_id ) &&
+			sitesById[ site.options?.wpcom_production_blog_id ]
+		) {
+			return acc;
+		}
+
+		// If the production site associated with this staging site is filtered out,
+		// or if we have a production site, add it to the list.
+		acc.push( site );
+		visited.add( site.ID );
+
+		// Sorting is useful when dealing with multiple staging sites.
+		// The sites are already sorted by 'sortSitesByLastInteractedWith',
+		// we want to maintain that order in case some of the staging sites are
+		// filtered out.
+		//
+		// Example:
+		// A site has the following staging siteIds in wpcom_staging_blog_ids:
+		// [ 1, 2, 3, 4]
+		// `sortSitesByLastInteractedWith` has already sorted the above sites as follows:
+		// [3, 2] and 1,4 are filtered out.
+		//
+		// If we add them in the order they exist in wpcom_staging_blog_ids array
+		// the order would be wrong.
+		//
+		// So instead, we first sort them, and the list becomes:
+		// [3, 2, 1, 4]
+		site.options?.wpcom_staging_blog_ids
+			?.sort?.( ( a, b ) => {
+				// If one of the two staging sites is filtered out, we should
+				// maintain the order of the remaining sites by moving it down
+				// in the list
+				if ( ! sitesById[ a ] ) {
+					return -1;
+				}
+				if ( ! sitesById[ b ] ) {
+					return 1;
+				}
+				return sitesById[ a ]?.index - sitesById[ b ]?.index;
+			} )
+			.forEach( ( siteId ) => {
+				if ( sitesById[ siteId ] && ! visited.has( siteId ) ) {
+					acc.push( sitesById[ siteId ].site );
+					visited.add( siteId );
+				}
+			} );
+		return acc;
+	}, [] );
+	return sortedItems;
+}
+
 function sortAlphabetically< T extends SiteDetailsForSorting >(
 	a: T,
 	b: T,
 	sortOrder: SitesSortOrder
 ) {
+	if ( ! a?.title || ! b?.title ) {
+		return 0;
+	}
+
 	const normalizedA = a.title.toLocaleLowerCase();
 	const normalizedB = b.title.toLocaleLowerCase();
 
@@ -192,6 +308,28 @@ function sortByLastPublish< T extends SiteDetailsForSorting >(
 	return 0;
 }
 
+function sortByPlan< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: SitesSortOrder ) {
+	const planA = a.plan?.product_name_short;
+	const planB = b.plan?.product_name_short;
+
+	if ( ! planA || ! planB ) {
+		return 0;
+	}
+
+	return sortOrder === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
+}
+
+function sortByStatus< T extends SiteDetailsForSorting >( a: T, b: T, sortOrder: SitesSortOrder ) {
+	const statusA = getSiteLaunchStatus( a );
+	const statusB = getSiteLaunchStatus( b );
+
+	if ( ! statusA || ! statusB ) {
+		return 0;
+	}
+
+	return sortOrder === 'asc' ? statusA.localeCompare( statusB ) : statusB.localeCompare( statusA );
+}
+
 function sortSitesAlphabetically< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesSortOrder
@@ -204,6 +342,20 @@ function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
 	sortOrder: SitesSortOrder
 ): T[] {
 	return [ ...sites ].sort( ( a, b ) => sortByLastPublish( a, b, sortOrder ) );
+}
+
+function sortSitesByPlan< T extends SiteDetailsForSorting >(
+	sites: T[],
+	sortOrder: SitesSortOrder
+): T[] {
+	return [ ...sites ].sort( ( a, b ) => sortByPlan( a, b, sortOrder ) );
+}
+
+function sortSitesByStatus< T extends SiteDetailsForSorting >(
+	sites: T[],
+	sortOrder: SitesSortOrder
+): T[] {
+	return [ ...sites ].sort( ( a, b ) => sortByStatus( a, b, sortOrder ) );
 }
 
 type SitesSortingProps = {

@@ -1,3 +1,8 @@
+import {
+	MAP_DOMAIN_CHANGE_NAME_SERVERS,
+	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
+	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
+} from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -5,11 +10,6 @@ import ExternalLink from 'calypso/components/external-link';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { Notice } from 'calypso/components/notice';
 import { isSubdomain } from 'calypso/lib/domains';
-import {
-	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-	MAP_EXISTING_DOMAIN_UPDATE_A_RECORDS,
-	MAP_SUBDOMAIN_WITH_CNAME_RECORDS,
-} from 'calypso/lib/url/support';
 import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/my-sites/domains/domain-management/name-servers/constants';
 
 import './style.scss';

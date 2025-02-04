@@ -1,8 +1,11 @@
+import { Onboard } from '@automattic/data-stores';
 import { FREE_POST_SETUP_FLOW } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import FreePostSetup from './internals/steps-repository/free-post-setup';
+import { ONBOARD_STORE } from '../stores';
+import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -11,17 +14,20 @@ const freePostSetup: Flow = {
 	get title() {
 		return translate( 'Free' );
 	},
-	useSteps() {
-		return [ { slug: 'freePostSetup', component: FreePostSetup } ];
+	isSignupFlow: false,
+	useSideEffect() {
+		const { setIntent } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setIntent( Onboard.SiteIntent.FreePostSetup );
+		}, [] );
 	},
-
+	useSteps() {
+		return [ STEPS.FREE_POST_SETUP ];
+	},
 	useStepNavigation( currentStep, navigate ) {
-		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'free-post-setup', flowName, currentStep );
-
 			switch ( currentStep ) {
 				case 'freePostSetup':
 					return window.location.assign(

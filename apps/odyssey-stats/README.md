@@ -32,7 +32,7 @@ $("#wpcom").on('click', 'a', function (e) {
 The `Gridicon` in `@automattic/components` leverages `<use>` to load SVG sprites and has issues when loading from CDN (i.e. other than the main domain). So we had to replace with one that doesn't load the SVG sprite file - `packages/components/src/gridicon/no-asset.tsx` - and then in Jetpack, we load it separately:
 
 ```
-$.get("https://widgets.wp.com/calypso-happychat/images/gridicons-506499ddac13811fee8e.svg", function(data) {
+$.get("https://widgets.wp.com/odyssey-stats/common/gridicons-506499ddac13811fee8e.svg", function(data) {
 	var div = document.createElement("div");
 	div.innerHTML = new XMLSerializer().serializeToString(data.documentElement);
 	div.style = 'display: none';

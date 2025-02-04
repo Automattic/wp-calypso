@@ -31,7 +31,7 @@ const ConnectDomainStepOwnershipAuthCode = ( {
 					.isAvailable( { apiVersion: '1.3', is_cart_pre_check: false } );
 				setRootDomainProvider( availability.root_domain_provider );
 			} catch {
-				setRootDomainProvider( 'unkwnown' );
+				setRootDomainProvider( 'unknown' );
 			}
 		} )();
 	} );

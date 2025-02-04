@@ -8,7 +8,6 @@ export interface SerializeOptions< TState > {
 
 /**
  * Add persistence support to a reducer, with optional custom serialization methods
- *
  * @param reducer Reducer to add persistence to
  * @param options Object with optional custom serialization methods
  * @param options.serialize Custom serialization method

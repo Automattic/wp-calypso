@@ -1,4 +1,8 @@
-.remove-purchase__card {
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.remove-purchase__card,
+.auto-renew-toggle__card {
 	margin: 10px auto;
 	width: 100%;
 	color: var(--color-link);
@@ -16,10 +20,20 @@
 		vertical-align: middle;
 	}
 }
+.remove-domain-dialog {
+	&.dialog.card {
+		max-width: 90%;
+
+		@include break-small {
+			max-width: 565px;
+		}
+	}
+}
 .dialog__button--domains-remove {
 	> .dialog__button-label {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		column-gap: 7px;
 
 		> svg {
@@ -28,14 +42,17 @@
 	}
 }
 
-@media ( min-width: 480px ) {
+@media (min-width: 480px) {
 	.remove-purchase__card {
 		margin: 16px auto;
 	}
 }
 
-.dialog__action-buttons {
-	.remove-domain-dialog__chat-button.precancellation-chat-button__main-button.button {
+.remove-domain-dialog.dialog {
+    max-width: 800px;
+
+	.remove-domain-dialog__chat-button,
+	.cancel-auto-renewal-form__chat-button {
 		display: block;
 		float: left;
 		font-size: 0.875rem;

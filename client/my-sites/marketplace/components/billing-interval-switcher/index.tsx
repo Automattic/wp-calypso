@@ -1,10 +1,10 @@
+import { FormLabel } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import FormLabel from 'calypso/components/forms/form-label';
+import { useEffect, type FunctionComponent } from 'react';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { PluginAnnualSaving } from 'calypso/my-sites/plugins/plugin-saving';
 import { IntervalLength } from './constants';
-import type { FunctionComponent } from 'react';
 
 type PluginAnnualSavingLabelProps = {
 	isSelected: boolean;
@@ -17,6 +17,7 @@ const PluginAnnualSavingLabelMobile = styled.span< PluginAnnualSavingLabelProps 
 
 const BillingIntervalSwitcherContainer = styled.div`
 	display: flex;
+	flex-wrap: wrap;
 	margin-top: -4px;
 	margin-bottom: 16px;
 `;
@@ -30,7 +31,7 @@ const RadioButton = styled( FormRadio )`
 const RadioButtonLabel = styled( FormLabel )`
 	color: var( --studio-gray-60 );
 
-	&:first-child {
+	&:first-of-type {
 		margin-right: 15px;
 	}
 `;
@@ -53,6 +54,25 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 	const translate = useTranslate();
 	const monthlyLabel = translate( 'Monthly' );
 	const annualLabel = translate( 'Annually' );
+	const saveLabel = translate( 'Save', { context: 'save money' } );
+
+	const searchParams = new URLSearchParams(
+		typeof document !== 'undefined' ? document.location.search : ''
+	);
+	const billingIntervalParam = searchParams.get( 'interval' );
+
+	/**
+	 * Change the billing period based on query params, if passed
+	 */
+	useEffect( () => {
+		if ( billingIntervalParam === 'monthly' ) {
+			onChange( IntervalLength.MONTHLY );
+		}
+
+		if ( billingIntervalParam === 'annually' ) {
+			onChange( IntervalLength.ANNUALLY );
+		}
+	}, [ onChange, billingIntervalParam ] );
 
 	return (
 		<BillingIntervalSwitcherContainer>
@@ -72,15 +92,16 @@ const BillingIntervalSwitcher: FunctionComponent< Props > = ( props: Props ) => 
 					label={
 						<>
 							{ annualLabel }
-							<PluginAnnualSaving plugin={ plugin }>
-								{ ( annualSaving: { saving: string | null } ) =>
+							<PluginAnnualSaving
+								plugin={ plugin }
+								renderContent={ ( annualSaving ) =>
 									annualSaving.saving && (
 										<PluginAnnualSavingLabelMobile isSelected={ false }>
-											&nbsp;(-{ annualSaving.saving })
+											&nbsp;({ saveLabel } { annualSaving.saving })
 										</PluginAnnualSavingLabelMobile>
 									)
 								}
-							</PluginAnnualSaving>
+							/>
 						</>
 					}
 				/>

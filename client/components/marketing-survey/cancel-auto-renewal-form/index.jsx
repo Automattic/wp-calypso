@@ -1,12 +1,11 @@
 import { isDomainRegistration, isPlan } from '@automattic/calypso-products';
-import { Dialog } from '@automattic/components';
+import { Dialog, FormLabel } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { shuffle } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
@@ -18,7 +17,7 @@ import './style.scss';
 class CancelAutoRenewalForm extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSiteId: PropTypes.number.isRequired,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -72,7 +71,7 @@ class CancelAutoRenewalForm extends Component {
 	}
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase, selectedSiteId } = this.props;
 		const { response } = this.state;
 
 		const surveyData = {
@@ -81,7 +80,7 @@ class CancelAutoRenewalForm extends Component {
 
 		this.props.submitSurvey(
 			'calypso-cancel-auto-renewal',
-			selectedSite.ID,
+			selectedSiteId,
 			enrichedSurveyData( surveyData, purchase )
 		);
 
@@ -128,7 +127,13 @@ class CancelAutoRenewalForm extends Component {
 			onClick: this.onSubmit,
 		};
 
-		const chat = <PrecancellationChatButton purchase={ purchase } onClick={ onClose } />;
+		const chat = (
+			<PrecancellationChatButton
+				purchase={ purchase }
+				onClick={ onClose }
+				className="cancel-auto-renewal-form__chat-button"
+			/>
+		);
 
 		return [ skip, submit, chat ];
 	};

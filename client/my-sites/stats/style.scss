@@ -1,8 +1,10 @@
 @use "sass:math";
-@import "calypso/my-sites/stats/modernized-tooltip-styles.scss";
-@import "calypso/my-sites/stats/modernized-chart-tabs-styles.scss";
-@import "calypso/my-sites/stats/modernized-layout-styles.scss";
-@import "calypso/my-sites/stats/theme-override-mixin.scss";
+@import "calypso/my-sites/stats/modernized-tooltip-styles";
+@import "calypso/my-sites/stats/modernized-chart-tabs-styles";
+@import "calypso/my-sites/stats/modernized-layout-styles";
+@import "calypso/my-sites/stats/theme-override-mixin";
+
+$stats-card-min-width: 390px;
 
 // Module container
 @include breakpoint-deprecated( ">960px" ) {
@@ -37,23 +39,6 @@
 	margin-left: 4px;
 }
 
-// Compensate for the fixed header.
-.is-section-stats .has-fixed-nav {
-	padding-top: 44px;
-
-	&.stats__email-detail {
-		padding: 44px 20px;
-	}
-
-	@media ( max-width: 782px ) {
-		padding-top: 65px;
-	}
-
-	@media ( max-width: 660px ) {
-		padding-top: 60px;
-	}
-}
-
 .stats-navigation__control {
 	margin-right: 16px;
 
@@ -62,16 +47,19 @@
 	}
 }
 
-.stats__sticky-navigation.is-sticky .sticky-panel__content {
+.stats__sticky-navigation.is-sticky .sticky-panel__content, .sticky-panel.is-sticky .sticky-panel__content {
 	background: var(--studio-white);
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), 0 0 56px rgba(0, 0, 0, 0.075);
 
 	.stats-period-navigation {
 		margin: 9px 0;
 	}
+}
 
-	.stats-date-picker__refresh-status {
-		display: none;
+
+.stats-card {
+	@media (max-width: $break-medium) {
+		min-width: $stats-card-min-width;
 	}
 }
 
@@ -235,6 +223,11 @@
 	&.color-scheme.is-classic-dark {
 		@include apply-improved-classic-dark-colors();
 	}
+
+	.sticky-panel.is-sticky {
+		padding: 0;
+	}
+
 }
 
 .list-emails {
@@ -248,5 +241,4 @@
 	}
 }
 
-
-@import "calypso/my-sites/stats/grid-layout.scss";
+@import "calypso/my-sites/stats/grid-layout";

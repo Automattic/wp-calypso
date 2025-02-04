@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { APILicense } from 'calypso/state/partner-portal/types';
 
@@ -20,8 +20,8 @@ function mutationUnassignLicense( {
 export default function useUnassignLicenseMutation< TContext = unknown >(
 	options?: UseMutationOptions< APILicense, Error, MutationUnassignLicenseVariables, TContext >
 ): UseMutationResult< APILicense, Error, MutationUnassignLicenseVariables, TContext > {
-	return useMutation< APILicense, Error, MutationUnassignLicenseVariables, TContext >(
-		mutationUnassignLicense,
-		options
-	);
+	return useMutation< APILicense, Error, MutationUnassignLicenseVariables, TContext >( {
+		...options,
+		mutationFn: mutationUnassignLicense,
+	} );
 }

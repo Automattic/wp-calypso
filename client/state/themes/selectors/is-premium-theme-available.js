@@ -1,4 +1,4 @@
-import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
@@ -9,7 +9,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Whether a WPCOM premium theme can be activated on a site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check availability
  * @param  {number}  siteId  Site ID
@@ -30,7 +29,11 @@ export function isPremiumThemeAvailable( state, themeId, siteId ) {
 		return false;
 	}
 
-	const hasPremiumThemesFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES );
+	const hasPremiumThemesFeature = siteHasFeature(
+		state,
+		siteId,
+		WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
+	);
 
 	/**
 	 * Bundled Themes are themes that contain software, like woo-on-plans. In

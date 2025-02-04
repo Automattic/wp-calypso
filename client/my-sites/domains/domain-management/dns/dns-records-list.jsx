@@ -1,15 +1,16 @@
+import page from '@automattic/calypso-router';
+import { MaterialIcon } from '@automattic/components';
 import { edit, Icon, info, redo, trash } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import MaterialIcon from 'calypso/components/material-icon';
 import { domainConnect } from 'calypso/lib/domains/constants';
 import DnsRecordsListHeader from 'calypso/my-sites/domains/domain-management/dns/dns-records-list-header';
 import { domainManagementDnsEditRecord } from 'calypso/my-sites/domains/paths';
 import { addDns, deleteDns } from 'calypso/state/domains/dns/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecordData from './dns-record-data';
 import DomainConnectInfoDialog from './domain-connect-info-dialog';
@@ -17,6 +18,7 @@ import DomainConnectInfoDialog from './domain-connect-info-dialog';
 class DnsRecordsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
+		selectedDomain: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};
@@ -109,8 +111,15 @@ class DnsRecordsList extends Component {
 	};
 
 	editDns = ( record ) => {
-		const { selectedDomainName, selectedSite } = this.props;
-		page( domainManagementDnsEditRecord( selectedSite.slug, selectedDomainName, record.id ) );
+		const { currentRoute, selectedDomainName, selectedSite } = this.props;
+		page(
+			domainManagementDnsEditRecord(
+				selectedSite.slug,
+				selectedDomainName,
+				currentRoute,
+				record.id
+			)
+		);
 	};
 
 	deleteDns = ( record, action = 'delete', confirmed = false ) => {
@@ -194,7 +203,7 @@ class DnsRecordsList extends Component {
 		if ( ! record.protected_field ) {
 			actions.push( { ...this.editRecordAction } );
 		}
-		if ( ! ( record.protected_field && 'MX' !== record.type ) ) {
+		if ( ! ( record.protected_field && 'MX' !== record.type ) || record.type === 'A' ) {
 			actions.push( { ...this.deleteRecordAction } );
 		}
 		return actions;
@@ -222,12 +231,15 @@ class DnsRecordsList extends Component {
 	}
 
 	render() {
-		const { dns, selectedDomainName, selectedSite } = this.props;
+		const { dns, selectedDomain, selectedDomainName, selectedSite } = this.props;
 		const { dialog } = this.state;
 
 		let domainConnectRecordIsEnabled = false;
 		const dnsRecordsList = dns.records.map( ( dnsRecord, index ) => {
-			if ( 'NS' === dnsRecord.type ) {
+			const isRootRecord = dnsRecord.name === `${ selectedDomainName }.`;
+
+			// We want to hide root NS records for root domains, but not for subdomains
+			if ( 'NS' === dnsRecord.type && ! selectedDomain.isSubdomain && isRootRecord ) {
 				return;
 			}
 
@@ -242,7 +254,7 @@ class DnsRecordsList extends Component {
 					dnsRecord={ dnsRecord }
 					selectedDomainName={ selectedDomainName }
 					selectedSite={ selectedSite }
-					enabled={ true }
+					enabled
 					actions={ this.getActionsForDnsRecord( dnsRecord ) }
 				/>
 			);
@@ -272,10 +284,15 @@ class DnsRecordsList extends Component {
 	}
 }
 
-export default connect( null, {
-	addDns,
-	deleteDns,
-	errorNotice,
-	removeNotice,
-	successNotice,
-} )( localize( DnsRecordsList ) );
+export default connect(
+	( state ) => ( {
+		currentRoute: getCurrentRoute( state ),
+	} ),
+	{
+		addDns,
+		deleteDns,
+		errorNotice,
+		removeNotice,
+		successNotice,
+	}
+)( localize( DnsRecordsList ) );

@@ -7,12 +7,11 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:18.13.0
+      - image: cimg/node:22.9.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
-      PUPPETEER_SKIP_DOWNLOAD: 'true'
-      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
       SKIP_TSC: 'true'
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
@@ -111,16 +110,23 @@ references:
   desktop-decrypt-certs: &desktop-decrypt-certs
     name: Decrypt desktop code signing certificates
     command: |
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
-    command: cd desktop && yarn ci:github:dismiss-review
+    command: |
+      source $HOME/.nvm/nvm.sh
+      nvm use
+      npm install -g yarn
+      cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
     name: Notify Github Failure
     when: on_fail
-    command: cd desktop && yarn ci:github:add-review
+    command: |
+      source $HOME/.nvm/nvm.sh
+      nvm use
+      npm install -g yarn
+      cd desktop && yarn ci:github:add-review
 
 commands:
   store-artifacts-and-test-results:
@@ -136,10 +142,11 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: cimg/node:18.13.0-browsers
+      - image: cimg/node:22.9.0-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     working_directory: ~/wp-calypso
     steps:
       - checkout
@@ -159,12 +166,13 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '12.3.0'
+      xcode: '15.4.0'
+    resource_class: macos.m1.medium.gen1
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
       CONFIG_ENV: release
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -177,24 +185,25 @@ jobs:
           name: Build Desktop Mac
           no_output_timeout: 45m
           environment:
-            CSC_LINK: resource/certificates/mac.p12
-            CSC_FOR_PULL_REQUEST: true
             USE_HARD_LINKS: 'false'
           command: |
             set +e
             source $HOME/.nvm/nvm.sh
             nvm use
 
+            pushd desktop
+
+            rbenv global $(cat .ruby-version) && rbenv rehash
+
+            bundle install
+
+            bundle exec fastlane configure_code_signing
+
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
             ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
-            # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
-            # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
-            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
-            export MACOSX_DEPLOYMENT_TARGET=11.1
-
-            cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
+            ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
           name: e2e Tests
           command: |
@@ -210,7 +219,9 @@ jobs:
             # If this isn't a full artifact build, ensure to persist the built application for inspection
             if ! ls desktop/release/*.zip &>/dev/null
             then
-              ditto -ck --rsrc --sequesterRsrc desktop/release/mac desktop/release/mac.app.zip
+              # Wildcard is to support both Intel and Apple Silicon builds.
+              # Intel artifcats are in `/mac`, Apple Silicon is in `/mac-arm64`.
+              ditto -ck --rsrc --sequesterRsrc desktop/release/mac* desktop/release/mac.app.zip
             fi
       - run:
           when: always
@@ -236,12 +247,13 @@ jobs:
     docker:
     # Important: the build fails on 18.13.0, so we pin it to a slightly older
     # version to keep this one working for now.
-      - image: cimg/node:18.10.0-browsers
+      - image: cimg/node:22.9.0-browsers
     <<: *desktop_defaults
+    resource_class: medium+
     shell: /bin/bash --login
     environment:
       CONFIG_ENV: release
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -310,7 +322,7 @@ jobs:
     working_directory: C:\Users\circleci\wp-calypso
     environment:
       CONFIG_ENV: release
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PLAYWRIGHT_SKIP_DOWNLOAD: 'true'
     steps:
       - checkout
       - attach_workspace:
@@ -336,11 +348,12 @@ jobs:
             yarn --version
       - run:
           name: Install Make
-          command: cinst make
+          command: choco install make
       - run:
           name: Install Desktop Dependencies
           command: yarn
       - when:
+          # Remove the condition on pipeline.git.tag on both steps to force a full artifact build for Windows.
           condition: << pipeline.git.tag >>
           steps:
             - run:
@@ -420,7 +433,7 @@ jobs:
   # GitHub release and generate the release notes using the Git commits history
   wp-desktop-publish:
     docker:
-      - image: circleci/golang:1.12-node
+      - image: cimg/go:1.20-node
     working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
@@ -430,7 +443,7 @@ jobs:
           at: /home/circleci/wp-calypso
       - run:
           name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
+          command: go install github.com/tcnksm/ghr@v0.16.0
       - run:
           name: Update wp-desktop repo README
           command: |
@@ -470,15 +483,15 @@ workflows:
                 - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
-#     - wp-desktop-mac:
-#         requires:
-#           - wp-desktop-assets
-#         filters:
-#           branches:
-#             only:
-#               - trunk
-#               - /release\/.*/
-#               - /desktop\/.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets

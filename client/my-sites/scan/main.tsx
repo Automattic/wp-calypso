@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, ProgressBar, Gridicon, Card } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -8,14 +8,15 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
-import FormattedHeader from 'calypso/components/formatted-header';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -28,9 +29,11 @@ import { getCount } from 'calypso/state/persistent-counter/selectors';
 import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ScanNavigation from './navigation';
 import type { TranslateResult } from 'i18n-calypso';
@@ -48,6 +51,7 @@ interface Props {
 	isInitialScan?: boolean;
 	isRequestingScan?: boolean;
 	scanPageVisitCount?: number;
+	scanRequestStatus?: 'pending' | 'success' | 'failed';
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
@@ -238,18 +242,14 @@ class ScanPage extends Component< Props > {
 	}
 
 	renderScanState() {
-		const { site, scanState, isRequestingScan } = this.props;
+		const { site, scanState, isRequestingScan, scanRequestStatus } = this.props;
 
-		// We don't know yet which site we're looking at,
-		// so show a placeholder until data comes in
+		// Show the loading placeholder until we have a site to work with.
 		if ( ! site ) {
 			return <ScanPlaceholder />;
 		}
 
-		// If we're scanning or preparing to scan, show those statuses;
-		// importantly, *don't* show the loading placeholder,
-		// because it disrupts the fluidity of the progress bar
-
+		// Show scanning states first - provisioning or in-progress scans take priority.
 		if ( scanState?.state === 'provisioning' ) {
 			return (
 				<>
@@ -258,20 +258,18 @@ class ScanPage extends Component< Props > {
 				</>
 			);
 		}
-
 		if ( scanState?.state === 'scanning' ) {
 			return this.renderScanning();
 		}
 
-		// *Now* we can show the loading placeholder,
-		// if in fact we're requesting a Scan status update
-		if ( isRequestingScan ) {
+		// Show the loading placeholder if we're requesting an update, and have no data to show yet.
+		if ( ! scanState && isRequestingScan ) {
 			return <ScanPlaceholder />;
 		}
 
 		// We should have a scanState by now, since we're not requesting an update;
 		// if we don't, that's an error condition and we should display that
-		if ( ! scanState ) {
+		if ( ! scanState || scanRequestStatus === 'failed' ) {
 			return (
 				<>
 					{ ' ' }
@@ -339,7 +337,7 @@ class ScanPage extends Component< Props > {
 
 		return (
 			<Main
-				className={ classNames( mainClass, {
+				className={ clsx( mainClass, {
 					is_jetpackcom: isJetpackPlatform,
 				} ) }
 			>
@@ -347,8 +345,8 @@ class ScanPage extends Component< Props > {
 				{ isJetpackPlatform && <SidebarNavigation /> }
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
-				{ ! isJetpackPlatform && (
-					<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
+				{ ! ( isJetpackPlatform || isA8CForAgencies() ) && (
+					<NavigationHeader navigationItems={ [] } title={ translate( 'Jetpack Scan' ) } />
 				) }
 
 				<QueryJetpackScan siteId={ siteId } />
@@ -361,7 +359,7 @@ class ScanPage extends Component< Props > {
 }
 
 export default connect(
-	( state ) => {
+	( state: IAppState ) => {
 		const site = getSelectedSite( state ) as Site;
 		const siteId = getSelectedSiteId( state );
 		if ( ! siteId ) {
@@ -377,6 +375,7 @@ export default connect(
 		const isRequestingScan = !! isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
 		const scanPageVisitCount = getCount( state, SCAN_VISIT_COUNTER_NAME, false );
+		const scanRequestStatus = getSiteScanRequestStatus( state, siteId );
 
 		return {
 			site,
@@ -388,6 +387,7 @@ export default connect(
 			siteSettingsUrl,
 			isRequestingScan,
 			scanPageVisitCount,
+			scanRequestStatus,
 		};
 	},
 	{

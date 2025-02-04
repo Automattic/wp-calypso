@@ -1,8 +1,6 @@
+import { ExternalLink } from '@wordpress/components';
 import debugModule from 'debug';
 import i18n from 'i18n-calypso';
-import { compact } from 'lodash';
-import page from 'page';
-import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
@@ -14,19 +12,14 @@ import {
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 const debug = debugModule( 'calypso:data-layer:update-credentials' );
-const navigateTo =
-	'undefined' !== typeof window
-		? ( path ) => window.open( path, '_blank' )
-		: ( path ) => page( path );
 
 const getMaybeNoticeId = ( action ) =>
 	'noticeId' in action ? { noticeId: action.noticeId } : {};
@@ -77,7 +70,7 @@ export const request = ( action ) => {
 };
 
 export const success = ( action, { rewind_state } ) =>
-	compact( [
+	[
 		{
 			type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 			siteId: action.siteId,
@@ -85,11 +78,12 @@ export const success = ( action, { rewind_state } ) =>
 		{
 			type: JETPACK_CREDENTIALS_STORE,
 			credentials: {
-				main: action.credentials,
+				[ action.credentials.role ]: action.credentials,
 			},
 			siteId: action.siteId,
 		},
-		action.shouldUseNotices &&
+		action.credentials.role === 'main' &&
+			action.shouldUseNotices &&
 			successNotice( i18n.translate( 'Your site is now connected.' ), {
 				duration: 4000,
 				...getMaybeNoticeId( action ),
@@ -113,11 +107,9 @@ export const success = ( action, { rewind_state } ) =>
 		// The idea is to mark the credentials test as valid so
 		// it doesn't need to be tested again.
 		markCredentialsAsValid( action.siteId, action.credentials.role ),
-	] );
+	].filter( Boolean );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
-	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
-
 	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
 
 	const dispatchFailure = ( message, options = {} ) => {
@@ -158,15 +150,32 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 	debug( 'failure: error=%o', error );
 
+	const onLearnMoreClick = () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_settings_credentials_error_learn_more_click', {
+				error: error.code,
+			} )
+		);
+	};
+
 	switch ( error.code ) {
 		case 'service_unavailable':
 			dispatchFailure(
 				i18n.translate(
 					'A error occurred when we were trying to validate your site information. ' +
 						'Please make sure your credentials and host URL are correct and try again. ' +
-						'If you need help, please click on the support link.'
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						'{{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: (
+								<ExternalLink
+									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/"
+									onClick={ onLearnMoreClick }
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
@@ -197,9 +206,19 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
-						"path you provided but couldn't find it."
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						"path you provided but couldn't find it. " +
+						'{{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: (
+								<ExternalLink
+									href="https://jetpack.com/support/backup/adding-credentials-to-jetpack/#troubleshoot-remote-server-credentials-errors"
+									onClick={ onLearnMoreClick }
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
@@ -207,9 +226,19 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			dispatchFailure(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
-						'To create backups and restore your site, we need permission to write to your server.'
-				),
-				{ button: i18n.translate( 'Get help' ), onClick: getHelp }
+						'To create backups and restore your site, we need permission to write to your server. ' +
+						'{{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: (
+								<ExternalLink
+									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
+									onClick={ onLearnMoreClick }
+								/>
+							),
+						},
+					}
+				)
 			);
 			break;
 
@@ -222,6 +251,25 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			);
 			break;
 
+		case 'helper_upload_failed':
+			dispatchFailure(
+				i18n.translate(
+					'Error saving. ' +
+						'Please ensure that the WordPress installation path has write permissions. ' +
+						'{{a}}Learn more{{/a}}',
+					{
+						components: {
+							a: (
+								<ExternalLink
+									href="https://jetpack.com/support/backup/ssh-sftp-and-ftp-credentials/#file-access-permission"
+									onClick={ onLearnMoreClick }
+								/>
+							),
+						},
+					}
+				)
+			);
+			break;
 		default:
 			dispatchFailure(
 				i18n.translate( 'Error saving. Please check your credentials and try again.' )

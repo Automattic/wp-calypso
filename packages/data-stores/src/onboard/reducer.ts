@@ -1,27 +1,24 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import type { DomainSuggestion } from '../domain-suggestions';
-import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
-import type { DomainForm } from './types';
+import type {
+	DomainForm,
+	ProfilerData,
+	DomainTransferNames,
+	DomainTransferAuthCodes,
+	ReadymadeTemplate,
+} from './types';
+import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
+import type { GlobalStyles } from '../site';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
-const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
-		return action.patternContent;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -42,6 +39,16 @@ const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) =>
 const domainCategory: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN_CATEGORY' ) {
 		return action.domainCategory;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const siteUrl: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_URL' ) {
+		return action.siteUrl;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -101,23 +108,18 @@ const randomizedDesigns: Reducer< { featured: Design[] }, OnboardAction > = (
 	return state;
 };
 
-const selectedFonts: Reducer< FontPair | undefined, OnboardAction > = (
-	state = undefined,
-	action
-) => {
-	if ( action.type === 'SET_FONTS' ) {
-		return action.fonts;
-	}
-	if ( action.type === 'RESET_FONTS' || action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
+
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		action?.skipFlags?.includes( 'skipSelectedDesign' )
+	) {
+		return state;
+	}
+
 	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return undefined;
 	}
@@ -135,6 +137,38 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 		return undefined;
 	}
 	return state;
+};
+
+const selectedGlobalStyles: Reducer< GlobalStyles | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_SELECTED_GLOBAL_STYLES':
+			return action.selectedGlobalStyles;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
+};
+
+const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
+	state = undefined, // Initial state is set to undefined
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_READYMADE_TEMPLATE':
+			return action.readymadeTemplate;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
 };
 
 const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
@@ -253,36 +287,6 @@ const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action )
 	return state;
 };
 
-const anchorPodcastId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_ID' ) {
-		return action.anchorPodcastId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorEpisodeId: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_EPISODE_ID' ) {
-		return action.anchorEpisodeId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const anchorSpotifyUrl: Reducer< string | null, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHOR_PODCAST_SPOTIFY_URL' ) {
-		return action.anchorSpotifyUrl;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
 	if ( action.type === 'ONBOARDING_START' ) {
 		return true;
@@ -306,6 +310,9 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && action?.skipFlags?.includes( 'skipIntent' ) ) {
+		return state;
 	}
 	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
@@ -369,19 +376,9 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 	return state;
 };
 
-const stepProgress: Reducer< { count: number; progress: number } | undefined, OnboardAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'SET_STEP_PROGRESS' ) {
-		return action.stepProgress;
-	}
-	return state;
-};
-
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
-		return action.goals;
+		return [ ...action.goals ];
 	}
 	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.Import );
@@ -389,19 +386,14 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && action?.skipFlags?.includes( 'skipGoals' ) ) {
+		return state;
+	}
+
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
-	return state;
-};
 
-const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_EDIT_EMAIL' ) {
-		return action.email;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
 	return state;
 };
 
@@ -435,6 +427,26 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 	return state;
 };
 
+const couponCode: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_COUPON_CODE' ) {
+		return action.couponCode;
+	}
+	if ( [ 'RESET_COUPON_CODE', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return '';
+	}
+	return state;
+};
+
+const storageAddonSlug: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_STORAGE_ADDON_SLUG' ) {
+		return action.storageAddonSlug;
+	}
+	if ( [ 'RESET_STORAGE_ADDON_SLUG', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return '';
+	}
+	return state;
+};
+
 const domainForm: Reducer< DomainForm, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_DOMAIN_FORM' ) {
 		return {
@@ -459,12 +471,36 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
+const hidePlansFeatureComparison: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_PLANS_FEATURE_COMPARISON' ) {
+		return action.hidePlansFeatureComparison;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
 	state = undefined,
 	action
 ) => {
 	if ( action.type === 'SET_DOMAIN_CART_ITEM' ) {
 		return action.domainCartItem;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
+const domainCartItems: Reducer< MinimalRequestCartProduct[] | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_DOMAIN_CART_ITEMS' ) {
+		return action.domainCartItems;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -483,24 +519,161 @@ const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, acti
 	return state;
 };
 
+const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLUGIN_SLUGS_TO_VERIFY' ) {
+		return action.pluginSlugs;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_PROFILER_DATA' ) {
+		return action.profilerData;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+export const domainTransferNames: Reducer< DomainTransferNames | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
+		// we don't want to store empty objects
+		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
+			// remove auth codes for safety
+			return Object.entries( action.bulkDomainsData ).reduce(
+				( domainTransferNames, [ key, value ] ) => {
+					domainTransferNames[ key ] = value.domain;
+					return domainTransferNames;
+				},
+				{} as DomainTransferNames
+			);
+		}
+		return undefined;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+/**
+ * A separate reducer for auth codes to avoid persisting sensitive data.
+ */
+export const domainTransferAuthCodes: Reducer<
+	DomainTransferAuthCodes | undefined,
+	OnboardAction
+> = ( state, action ) => {
+	if ( action.type === 'SET_DOMAINS_TRANSFER_DATA' ) {
+		// we don't want to store empty objects
+		if ( action.bulkDomainsData && Object.keys( action.bulkDomainsData ).length > 0 ) {
+			return Object.entries( action.bulkDomainsData ).reduce( ( authCodes, [ key, value ] ) => {
+				authCodes[ key ] = {
+					auth: value.auth,
+					valid: value.valid,
+					rawPrice: value.rawPrice,
+					saleCost: value.saleCost,
+					currencyCode: value.currencyCode,
+				};
+				return authCodes;
+			}, {} as DomainTransferAuthCodes );
+		}
+		return undefined;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+export const shouldImportDomainTransferDnsRecords: Reducer< boolean, OnboardAction > = (
+	state = true,
+	action
+) => {
+	if ( action.type === 'SET_SHOULD_IMPORT_DOMAIN_TRANSFER_DNS_RECORDS' ) {
+		return action.shouldImportDomainTransferDnsRecords;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return true;
+	}
+	return state;
+};
+
+const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
+		return action.paidSubscribers;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const partnerBundle: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_PARTNER_BUNDLE' ) {
+		return action.partnerBundle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_SIGNUP_DOMAIN_ORIGIN' ) {
+		return action.signupDomainOrigin;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
+const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
+		return action.createWithBigSky;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
-	anchorPodcastId,
-	anchorEpisodeId,
-	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
-	patternContent,
 	domainSearch,
 	domainCategory,
 	domainForm,
+	siteUrl,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
 	selectedFeatures,
+	domainTransferNames,
+	domainTransferAuthCodes,
+	shouldImportDomainTransferDnsRecords,
 	storeType,
-	selectedFonts,
 	selectedDesign,
 	selectedStyleVariation,
+	selectedGlobalStyles,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,
@@ -513,19 +686,28 @@ const reducer = combineReducers( {
 	pendingAction,
 	progress,
 	progressTitle,
-	stepProgress,
 	goals,
-	editEmail,
 	hideFreePlan,
+	hidePlansFeatureComparison,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
+	readymadeTemplate,
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	couponCode,
+	storageAddonSlug,
 	planCartItem,
 	productCartItems,
 	isMigrateFromWp,
+	domainCartItems,
+	pluginsToVerify,
+	profilerData,
+	paidSubscribers,
+	partnerBundle,
+	signupDomainOrigin,
+	createWithBigSky,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -37,7 +37,7 @@ function getViewport() {
 	return _viewport;
 }
 
-function onViewportChange() {
+export function onViewportChange() {
 	_viewport = updateViewport();
 }
 
@@ -301,7 +301,6 @@ export function offset( pos, el, target, relativePosition ) {
 /**
  * Extracted from `timoxley/offset`, but directly using a
  * TextRectangle instead of getting another version.
- *
  * @param {window.TextRectangle} box - result from a `getBoundingClientRect()` call
  * @param {window.Document} doc - Document instance to use
  * @returns {Object} an object with `top` and `left` Number properties
@@ -323,15 +322,15 @@ function _offset( box, doc ) {
 
 /**
  * Constrain a left to keep the element in the window
- *
  * @param {Object} off Proposed offset before constraining
  * @param {window.Element} el Element to be constained to viewport
  * @returns {number}    the best width
  */
-export function constrainLeft( off, el ) {
+export function constrainLeft( off, el, ignoreViewport = false ) {
 	const viewport = getViewport();
 	const ew = el.getBoundingClientRect().width;
-	off.left = Math.max( 0, Math.min( off.left, viewport.width - ew ) );
+	const offsetLeft = ignoreViewport ? off.left : Math.min( off.left, viewport.width - ew );
+	off.left = Math.max( 0, offsetLeft );
 
 	return off;
 }

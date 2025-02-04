@@ -8,10 +8,10 @@ import { combineReducers } from 'calypso/state/utils';
 import { key } from './utils';
 
 function setStateForKey( state, action, val ) {
-	const { siteId, postId, scope } = action.payload;
+	const { siteId, postId, scope, size } = action.payload;
 	return {
 		...state,
-		[ key( siteId, postId, scope ) ]: val,
+		[ key( siteId, postId, scope, size ) ]: val,
 	};
 }
 

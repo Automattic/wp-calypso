@@ -1,6 +1,7 @@
 import { NOTICE_CREATE } from 'calypso/state/action-types';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { READER_FOLLOW_COMPLETE } from 'calypso/state/reader/action-types';
 import { follow, unfollow } from 'calypso/state/reader/follows/actions';
 import { requestFollow, receiveFollow, followError } from '../';
 
@@ -28,7 +29,7 @@ describe( 'requestFollow', () => {
 
 describe( 'receiveFollow', () => {
 	test( 'should dispatch updateFollow with new subscription info', () => {
-		const action = follow( 'http://example.com' );
+		const action = follow( 'http://example.com', null, { siteId: 123 } );
 		const response = {
 			subscribed: true,
 			subscription: {
@@ -43,7 +44,7 @@ describe( 'receiveFollow', () => {
 			},
 		};
 		const result = receiveFollow( action, response );
-		expect( result ).toEqual(
+		expect( result[ 0 ] ).toMatchObject(
 			bypassDataLayer(
 				follow( 'http://example.com', {
 					ID: 1,
@@ -58,6 +59,12 @@ describe( 'receiveFollow', () => {
 				} )
 			)
 		);
+		expect( result[ 1 ] ).toMatchObject( {
+			type: READER_FOLLOW_COMPLETE,
+			payload: {
+				feedUrl: 'http://example.com',
+			},
+		} );
 	} );
 
 	test( 'should dispatch an error notice when subscribed is false', () => {
@@ -73,7 +80,13 @@ describe( 'receiveFollow', () => {
 				status: 'is-error',
 			},
 		} );
-		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		expect( result[ 1 ] ).toMatchObject( {
+			type: READER_FOLLOW_COMPLETE,
+			payload: {
+				feedUrl: 'http://example.com',
+			},
+		} );
+		expect( result[ 2 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );
 
@@ -83,6 +96,12 @@ describe( 'followError', () => {
 
 		const result = followError( action );
 		expect( result[ 0 ] ).toMatchObject( { type: NOTICE_CREATE } );
-		expect( result[ 1 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
+		expect( result[ 1 ] ).toMatchObject( {
+			type: READER_FOLLOW_COMPLETE,
+			payload: {
+				feedUrl: 'http://example.com',
+			},
+		} );
+		expect( result[ 2 ] ).toEqual( bypassDataLayer( unfollow( 'http://example.com' ) ) );
 	} );
 } );

@@ -5,7 +5,6 @@ import 'calypso/state/themes/init';
 /**
  * Returns an action object to be used in signalling that theme activated status
  * for site should be cleared
- *
  * @param  {number}   siteId    Site ID
  * @returns {Object}        Action object
  */

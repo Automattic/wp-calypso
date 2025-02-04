@@ -18,8 +18,16 @@ class DomainsLandingPage extends Component {
 	};
 
 	renderRegistrantVerificationContent() {
-		const { domain, email, token } = this.props.query;
-		return <RegistrantVerificationPage domain={ domain } email={ email } token={ token } />;
+		// The reseller parameter is optional and contains the name of the DSAPI reseller that the domain was registered with
+		const { domain, email, reseller, token } = this.props.query;
+		return (
+			<RegistrantVerificationPage
+				domain={ domain }
+				email={ email }
+				reseller={ reseller }
+				token={ token }
+			/>
+		);
 	}
 
 	renderTransferAwayConfirmation() {

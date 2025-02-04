@@ -9,7 +9,7 @@ import { LEFT, RIGHT } from '@wordpress/keycodes';
 /**
  * External dependencies
  */
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 interface Props {
@@ -45,8 +45,8 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 
 	return (
 		<Modal
-			className={ classnames( 'components-guide', className ) }
-			overlayClassName={ classnames( 'components-guide-overlay', className ) }
+			className={ clsx( 'components-guide', className ) }
+			overlayClassName={ clsx( 'components-guide-overlay', className ) }
 			onRequestClose={ onFinish }
 			onKeyDown={ ( event ) => {
 				if ( event.keyCode === LEFT ) {
@@ -69,14 +69,16 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 						>
 							<div className="guide__buttons">
 								{ currentPage > 0 && (
-									<Button className="guide__back-button" isTertiary onClick={ goBack }>
+									<Button className="guide__back-button" variant="tertiary" onClick={ goBack }>
+										{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+										{ /* @ts-ignore This is declared as a global variable and provided by webpack. */ }
 										{ __( 'Back', __i18n_text_domain__ ) }
 									</Button>
 								) }
 								<Button
 									className="guide__forward-button"
 									autoFocus={ currentPage === 0 } // eslint-disable-line jsx-a11y/no-autofocus
-									isPrimary
+									variant="primary"
 									onClick={ goForward }
 								>
 									{ canGoForward ? __( 'Next' ) : __( 'Done' ) }

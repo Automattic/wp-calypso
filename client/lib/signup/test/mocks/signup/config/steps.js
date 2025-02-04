@@ -73,7 +73,7 @@ export default {
 	plans: {
 		stepName: 'plans',
 		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'cartItem' ],
+		providesDependencies: [ 'cartItems' ],
 	},
 
 	'site-type': {

@@ -6,7 +6,6 @@ const DAY_IN_MILLIS = 24 * 60 * 1000 * 1000;
 
 /**
  * Returns true if we should fetch the feed
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  feedId The feed ID
  * @returns {boolean}        Whether feed should be fetched
@@ -28,7 +27,6 @@ function isStale( state, feedId ) {
 
 /**
  * Returns a feed object
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  feedId The feed ID
  * @returns {Object}        Feed

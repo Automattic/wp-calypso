@@ -1,0 +1,74 @@
+{
+	"productsList": {
+		"items": {
+			"jetpack_stats_yearly": {
+				"price_tier_list": [
+					{
+						"minimum_units": 0,
+						"maximum_units": 10000,
+						"minimum_price": 10000,
+						"maximum_price": 10000,
+						"minimum_price_display": "US$100",
+						"minimum_price_monthly_display": "US$8.34",
+						"maximum_price_display": "US$100",
+						"maximum_price_monthly_display": "US$8.34"
+					},
+					{
+						"minimum_units": 10001,
+						"maximum_units": 100000,
+						"minimum_price": 20000,
+						"maximum_price": 20000,
+						"minimum_price_display": "US$200",
+						"minimum_price_monthly_display": "US$16.67",
+						"maximum_price_display": "US$200",
+						"maximum_price_monthly_display": "US$16.67"
+					},
+					{
+						"minimum_units": 100001,
+						"maximum_units": 250000,
+						"minimum_price": 30000,
+						"maximum_price": 30000,
+						"minimum_price_display": "US$300",
+						"minimum_price_monthly_display": "US$25",
+						"maximum_price_display": "US$300",
+						"maximum_price_monthly_display": "US$25"
+					},
+					{
+						"minimum_units": 250001,
+						"maximum_units": 500000,
+						"minimum_price": 50000,
+						"maximum_price": 50000,
+						"minimum_price_display": "US$500",
+						"minimum_price_monthly_display": "US$41.67",
+						"maximum_price_display": "US$500",
+						"maximum_price_monthly_display": "US$41.67"
+					},
+					{
+						"minimum_units": 500001,
+						"maximum_units": 1000000,
+						"minimum_price": 70000,
+						"maximum_price": 70000,
+						"minimum_price_display": "US$700",
+						"minimum_price_monthly_display": "US$58.34",
+						"maximum_price_display": "US$700",
+						"maximum_price_monthly_display": "US$58.34"
+					},
+					{
+						"minimum_units": 1000001,
+						"maximum_units": null,
+						"minimum_price": 95000,
+						"maximum_price": 0,
+						"transform_quantity_divide_by": 1000000,
+						"transform_quantity_round": "up",
+						"flat_fee": 45000,
+						"per_unit_fee": 25000,
+						"minimum_price_display": "US$950",
+						"minimum_price_monthly_display": "US$79.17",
+						"maximum_price_display": null,
+						"maximum_price_monthly_display": null
+					}
+				]
+			}
+		}
+	}
+}

@@ -4,15 +4,15 @@ import ProductIcon from '.';
 
 const supportedSlugs = Object.values( iconToProductSlugMap ).flat();
 
-export default { title: 'ProductIcon' };
+export default { title: 'packages/components/ProductIcon' };
 
 export const Default = () => {
 	return (
 		<>
 			{ supportedSlugs.map( ( slug ) => (
-				<div className="index.stories__icon-tile">
-					<ProductIcon slug={ slug } className="index.stories__icon-image" />
-					<pre className="index.stories__icon-slug">{ slug }</pre>
+				<div className="product-icon-stories__icon-tile">
+					<ProductIcon slug={ slug } className="product-icon-stories__icon-image" />
+					<pre className="product-icon-stories__icon-slug">{ slug }</pre>
 				</div>
 			) ) }
 		</>

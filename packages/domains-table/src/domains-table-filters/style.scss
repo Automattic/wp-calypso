@@ -1,0 +1,31 @@
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/global-styles/src/components/search-control-styles";
+
+.domains-table-mobile-cards-controls-bulk-toggle {
+	.components-base-control.components-toggle-control {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	.components-form-toggle {
+		order: 2;
+	}
+}
+
+.domains-table-filter {
+	@include search-control-wpcom-styles;
+
+	display: flex;
+	justify-content: space-between;
+
+	@media (max-width: 480px) {
+		flex-direction: column;
+		align-items: center;
+		gap: 16px;
+	}
+
+	> button {
+		width: 100%;
+	}
+}

@@ -1,11 +1,8 @@
-import config from '@automattic/calypso-config';
 import { flowRight, get, pick } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import FeedSettings from 'calypso/my-sites/site-settings/feed-settings';
-import PodcastingLink from 'calypso/my-sites/site-settings/podcasting-details/link';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { requestPostTypes } from 'calypso/state/post-types/actions';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -13,17 +10,12 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Composing from './composing';
 import CustomContentTypes from './custom-content-types';
 import MediaSettingsWriting from './media-settings-writing';
-import PressThis from './press-this';
 import PublishingTools from './publishing-tools';
 import ThemeEnhancements from './theme-enhancements';
 import Widgets from './widgets';
 import wrapSettingsForm from './wrap-settings-form';
 
 class SiteSettingsFormWriting extends Component {
-	isMobile() {
-		return /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent );
-	}
-
 	render() {
 		const {
 			eventTracker,
@@ -33,7 +25,6 @@ class SiteSettingsFormWriting extends Component {
 			handleAutosavingToggle,
 			handleAutosavingRadio,
 			handleSubmitForm,
-			isPodcastingSupported,
 			isRequestingSettings,
 			isSavingSettings,
 			onChangeField,
@@ -98,8 +89,6 @@ class SiteSettingsFormWriting extends Component {
 					translate={ translate }
 				/>
 
-				{ isPodcastingSupported && <PodcastingLink fields={ fields } /> }
-
 				{ siteIsJetpack && <QueryJetpackModules siteId={ siteId } /> }
 
 				<ThemeEnhancements
@@ -123,22 +112,12 @@ class SiteSettingsFormWriting extends Component {
 					/>
 				) }
 
-				{ siteIsJetpack && config.isEnabled( 'press-this' ) && (
-					<PublishingTools
-						isAtomic={ isAtomic }
-						onSubmitForm={ handleSubmitForm }
-						isSavingSettings={ isSavingSettings }
-						isRequestingSettings={ isRequestingSettings }
-						fields={ fields }
-					/>
-				) }
-
-				{ config.isEnabled( 'press-this' ) && ! this.isMobile() && ! siteIsJetpack && (
-					<div>
-						<SettingsSectionHeader title={ translate( 'Publishing Tools' ) } />
-						<PressThis />
-					</div>
-				) }
+				<PublishingTools
+					fields={ fields }
+					isAtomic={ isAtomic }
+					siteId={ siteId }
+					siteIsJetpack={ siteIsJetpack }
+				/>
 			</form>
 		);
 	}
@@ -166,6 +145,7 @@ const getFormSettings = ( settings ) => {
 		'posts_per_page',
 		'posts_per_rss',
 		'rss_use_excerpt',
+		'default_category',
 		'default_post_format',
 		'custom-content-types',
 		'jetpack_testimonial',
@@ -201,7 +181,6 @@ const getFormSettings = ( settings ) => {
 		'start_of_week',
 		'time_format',
 		'timezone_string',
-		'podcasting_category_id',
 		'wpcom_publish_posts_with_markdown',
 		'featured_image_email_enabled',
 	] );

@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
 import { compose } from '@wordpress/compose';
-import classNames from 'classnames';
+import { getQueryArg } from '@wordpress/url';
+import clsx from 'clsx';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -65,14 +65,25 @@ export class AppBanner extends Component {
 	constructor( props ) {
 		super( props );
 
+		let isDraftPostModalShown = false;
+		try {
+			if (
+				typeof window !== 'undefined' &&
+				window.sessionStorage?.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+			) {
+				isDraftPostModalShown = true;
+			}
+		} catch ( e ) {}
+
+		let isLaunchpadEnabled = false;
 		if (
 			typeof window !== 'undefined' &&
-			window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' )
+			getQueryArg( window.location.href, 'showLaunchpad' ) === 'true'
 		) {
-			this.state = { isDraftPostModalShown: true };
-		} else {
-			this.state = { isDraftPostModalShown: false };
+			isLaunchpadEnabled = true;
 		}
+
+		this.state = { isDraftPostModalShown, isLaunchpadEnabled };
 	}
 
 	stopBubblingEvents = ( event ) => {
@@ -125,24 +136,21 @@ export class AppBanner extends Component {
 		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
-			const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-			const packageName = displayJetpackAppBranding
-				? 'com.jetpack.android'
-				: 'org.wordpress.android';
+			const scheme = 'jetpack';
+			const packageName = 'com.jetpack.android';
 			const utmDetails = `utm_source%3Dcalypso%26utm_campaign%3Dcalypso-mobile-banner`;
 
-			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://post&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case HOME:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://home&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case NOTES:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://notifications&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case READER:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://read&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 				case STATS:
-					return `intent://details?id=${ packageName }&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
+					return `intent://details?id=${ packageName }&url=${ scheme }://stats&referrer=${ utmDetails }#Intent;scheme=market;action=android.intent.action.VIEW;package=com.android.vending;end`;
 			}
 		}
 
@@ -157,9 +165,9 @@ export class AppBanner extends Component {
 		const { title, copy, icon } = getAppBannerData( translate, currentSection, isRtl );
 
 		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+			<div className={ clsx( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection, 'jetpack' ) }
+					className={ clsx( 'app-banner', 'is-compact', currentSection ) }
 					ref={ this.preventNotificationsClose }
 				>
 					<TrackComponentView
@@ -171,59 +179,6 @@ export class AppBanner extends Component {
 						statName="impression"
 					/>
 					<AnimatedIcon className="app-banner__icon" icon={ icon } />
-					<div className="app-banner__text-content jetpack">
-						<div className="app-banner__title jetpack">
-							<span> { title } </span>
-						</div>
-						<div className="app-banner__copy jetpack">
-							<span> { copy } </span>
-						</div>
-					</div>
-					<div className="app-banner__buttons jetpack">
-						<Button
-							primary
-							className="app-banner__open-button jetpack"
-							onClick={ this.openApp }
-							href={ this.getDeepLink() }
-						>
-							{ translate( 'Open in the Jetpack app' ) }
-						</Button>
-						<Button className="app-banner__no-thanks-button jetpack" onClick={ this.dismiss }>
-							{ translate( 'Continue in browser' ) }
-						</Button>
-					</div>
-				</Card>
-			</div>
-		);
-	};
-
-	getWordpressAppBanner = ( { translate, currentSection } ) => {
-		const { title, copy } = getAppBannerData( translate, currentSection );
-
-		// This conditional will be unnecessary once the 'jetpack/app-branding'
-		// feature flag is removed and its features are made the default
-		// experience, as getAppBannerData will then not include conditionals.
-		if ( ! title || ! copy ) {
-			return null;
-		}
-
-		return (
-			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
-				<Card
-					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-					ref={ this.preventNotificationsClose }
-				>
-					<TrackComponentView
-						eventName="calypso_mobile_app_banner_impression"
-						eventProperties={ {
-							page: currentSection,
-						} }
-						statGroup="calypso_mobile_app_banner"
-						statName="impression"
-					/>
-					<div className="app-banner__circle is-top-left is-yellow" />
-					<div className="app-banner__circle is-top-right is-blue" />
-					<div className="app-banner__circle is-bottom-right is-red" />
 					<div className="app-banner__text-content">
 						<div className="app-banner__title">
 							<span> { title } </span>
@@ -239,10 +194,10 @@ export class AppBanner extends Component {
 							onClick={ this.openApp }
 							href={ this.getDeepLink() }
 						>
-							{ translate( 'Open in app' ) }
+							{ translate( 'Open in the Jetpack app' ) }
 						</Button>
 						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
-							{ translate( 'No thanks' ) }
+							{ translate( 'Continue in browser' ) }
 						</Button>
 					</div>
 				</Card>
@@ -251,19 +206,20 @@ export class AppBanner extends Component {
 	};
 
 	render() {
-		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
+		if (
+			! this.props.shouldDisplayAppBanner ||
+			this.state.isDraftPostModalShown ||
+			this.state.isLaunchpadEnabled
+		) {
 			return null;
 		}
 
-		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
-		return displayJetpackAppBranding
-			? this.getJetpackAppBanner( this.props )
-			: this.getWordpressAppBanner( this.props );
+		return this.getJetpackAppBanner( this.props );
 	}
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 	const baseURI = 'https://apps.wordpress.com/get?campaign=calypso-open-in-app';
 	const fragment = buildDeepLinkFragment( currentRoute, currentSection );
 
@@ -272,7 +228,6 @@ export function getiOSDeepLink( currentRoute, currentSection ) {
 /**
  * Returns the universal link that then gets used to send the user to the correct editor.
  * If the app is installed otherwise they will end up on the new site creaton flow after creating an account.
- *
  * @param {string} currentRoute
  * @returns string
  */

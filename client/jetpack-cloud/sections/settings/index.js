@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	advancedCredentials,
@@ -10,6 +10,7 @@ import {
 } from 'calypso/jetpack-cloud/sections/settings/controller';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { confirmDisconnectPath, disconnectPath, settingsPath } from 'calypso/lib/jetpack/paths';
+import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 
 export default function () {
@@ -20,6 +21,7 @@ export default function () {
 			siteSelection,
 			navigation,
 			isEnabled( 'jetpack/server-credentials-advanced-flow' ) ? advancedCredentials : settings,
+			wrapInSiteOffsetProvider,
 			showNotAuthorizedForNonAdmins,
 			makeLayout,
 			clientRender

@@ -1,6 +1,8 @@
+/**
+ * @jest-environment jsdom
+ */
 /* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
-
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { localizeUrl, useLocalizeUrl } from '../';
 
 jest.mock( '../locale-context', () => {
@@ -9,12 +11,6 @@ jest.mock( '../locale-context', () => {
 		useLocale: jest.fn( () => 'en' ),
 	} );
 } );
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	// Useful because the getAvailableDesigns function uses feature flags for
-	// arguments default values
-	isEnabled: () => false,
-} ) );
 
 const { useLocale } = jest.requireMock( '../locale-context' );
 
@@ -91,11 +87,34 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+		const isLoggedIn = false;
+
+		// Add trailing slashes everywhere (default).
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/#baz'
+		);
+
+		// Preserve trailing slash variation.
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies'
+		);
+		expect(
+			localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn, true )
+		).toEqual( 'https://automattic.com/de/cookies?foo=bar' );
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies#baz'
 		);
 	} );
 
@@ -197,9 +216,15 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/go/', 'es' ) ).toEqual(
 			'https://wordpress.com/es/go/'
 		);
-		// Don't rewrite specific posts.
-		expect( localizeUrl( 'https://wordpress.com/go/category/test/', 'pt-br' ) ).toEqual(
-			'https://wordpress.com/go/category/test/'
+		// Rewrite specific posts only for Spanish.
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/category/a-post/'
 		);
 	} );
 
@@ -405,6 +430,44 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'learn', () => {
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'en', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', true ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'es', false ) ).toEqual(
+			'https://wordpress.com/learn/es/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/learn/webinars/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/learn/webinars/'
+		);
+	} );
 	test( 'tos', () => {
 		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
 			'https://wordpress.com/tos/'
@@ -423,21 +486,75 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'pricing', () => {
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'en' ) ).toEqual(
+			'https://wordpress.com/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'fr' ) ).toEqual(
+			'https://wordpress.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://wordpress.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/pricing/', 'xx' ) ).toEqual(
+			'https://wordpress.com/pricing/'
+		);
+	} );
+
 	test( 'jetpack', () => {
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'en' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'de' ) ).toEqual(
-			'https://de.jetpack.com/features/comparison/'
+			'https://jetpack.com/de/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pt-br' ) ).toEqual(
-			'https://br.jetpack.com/features/comparison/'
+			'https://jetpack.com/pt-br/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'zh-tw' ) ).toEqual(
-			'https://zh-tw.jetpack.com/features/comparison/'
+			'https://jetpack.com/zh-tw/features/comparison/'
 		);
 		expect( localizeUrl( 'https://jetpack.com/features/comparison/', 'pl' ) ).toEqual(
 			'https://jetpack.com/features/comparison/'
+		);
+	} );
+
+	test( 'cloud.jetpack.com', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/pricing/'
+		);
+	} );
+
+	test( 'Jetpack Manage', () => {
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'en' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'fr' ) ).toEqual(
+			'https://cloud.jetpack.com/fr/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'pt-br' ) ).toEqual(
+			'https://cloud.jetpack.com/pt-br/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'zh-tw' ) ).toEqual(
+			'https://cloud.jetpack.com/zh-tw/manage/pricing/'
+		);
+		expect( localizeUrl( 'https://cloud.jetpack.com/manage/pricing/', 'xx' ) ).toEqual(
+			'https://cloud.jetpack.com/manage/pricing/'
 		);
 	} );
 
@@ -448,6 +565,62 @@ describe( '#localizeUrl', () => {
 		expect( localizeUrl( 'https://wordpress.com/wp-login.php?action=lostpassword', 'de' ) ).toEqual(
 			'https://de.wordpress.com/wp-login.php?action=lostpassword'
 		);
+	} );
+
+	test( 'WordPress.com plans URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'en', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', false ) ).toEqual(
+			'https://wordpress.com/es/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'es', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Greek
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', false ) ).toEqual(
+			'https://wordpress.com/el/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'el', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Romanian
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', false ) ).toEqual(
+			'https://wordpress.com/ro/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'ro', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Non Mag-16, Finnish
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', false ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/plans/', 'fi', true ) ).toEqual(
+			'https://wordpress.com/plans/'
+		);
+
+		// Full path to a site plan
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'en', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', false )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
+
+		expect(
+			localizeUrl( 'https://wordpress.com/plans/example.wordpress.com', 'es', true )
+		).toEqual( 'https://wordpress.com/plans/example.wordpress.com/' );
 	} );
 
 	test( 'WordPress.com new style support URLs', () => {

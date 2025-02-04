@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "client/me/style";
 
 .help__heading {
 	display: flex;
@@ -55,6 +56,11 @@
 	color: var(--color-neutral-70);
 	font-size: $font-body;
 	font-weight: 600;
+
+	.help__support-link-title__external-icon {
+		vertical-align: text-bottom;
+		fill: currentColor;
+	}
 }
 
 .help__support-link-content {
@@ -110,19 +116,13 @@
 	margin-bottom: 15px;
 }
 
-.help__help-teaser-button.is-placeholder {
-	@include placeholder();
-	height: 64px;
-	margin-bottom: 15px;
-}
-
 .help-results.is-placeholder {
 	@include placeholder();
 	height: 380px;
 	margin-bottom: 15px;
 }
 
-.help__contact-us-card.card.is-card-link {
+.help__contact-us-card.card {
 	padding: 16px;
 	display: flex;
 	align-items: flex-start;

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export const Step2 = () => {
@@ -51,7 +51,7 @@ export const Step2 = () => {
 					} ) }
 				</li>
 				<li>
-					{ translate( '{{a}}Grow your brand{{/a}} with our Social Media Tools.', {
+					{ translate( '{{a}}Grow your brand{{/a}} with Jetpack Social.', {
 						components: {
 							a: (
 								<a

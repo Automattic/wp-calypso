@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,21 +14,16 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:bancontact-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'bancontact';
 type NounsInStore = 'customerName';
 type BancontactStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -50,7 +44,7 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -65,22 +59,42 @@ export function createBancontactPaymentMethodStore(): BancontactStore {
 	return store;
 }
 
-export function createBancontactMethod( { store }: { store: BancontactStore } ): PaymentMethod {
+export function createBancontactMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: BancontactStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'bancontact',
+		hasRequiredFields: true,
 		paymentProcessorId: 'bancontact',
 		label: <BancontactLabel />,
 		activeContent: <BancontactFields />,
 		inactiveContent: <BancontactSummary />,
-		submitButton: <BancontactPayButton store={ store } />,
+		submitButton: (
+			<BancontactPayButton store={ store } submitButtonContent={ submitButtonContent } />
+		),
 		getAriaLabel: () => 'Bancontact',
 	};
+}
+
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'bancontact' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
 }
 
 function BancontactFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'bancontact' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -135,14 +149,15 @@ function BancontactPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: BancontactStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useCustomerName();
 	if ( ! onClick ) {
 		throw new Error(
 			'Missing onClick prop; BancontactPayButton must be used as a payment button in CheckoutSubmitButton'
@@ -164,21 +179,9 @@ function BancontactPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isFormValid( store: BancontactStore ) {
@@ -223,7 +226,7 @@ function BancontactLogo() {
 }
 
 function BancontactSummary() {
-	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

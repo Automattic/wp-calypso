@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { PureComponent } from 'react';
 import HeaderCake from 'calypso/components/header-cake';
+import NavigationHeader from 'calypso/components/navigation-header';
 
 /**
  * Module vars
@@ -35,6 +36,17 @@ export default class extends PureComponent {
 				>
 					Header Cake with a custom action button
 				</HeaderCake>
+
+				<NavigationHeader
+					compactBreadcrumb={ false }
+					navigationItems={ [] }
+					mobileItem={ null }
+					title="My Home"
+					subtitle="NavigationHeader header with action button."
+					screenReader="Home"
+				>
+					<Button target="_blank">Visit site</Button>
+				</NavigationHeader>
 			</div>
 		);
 	}

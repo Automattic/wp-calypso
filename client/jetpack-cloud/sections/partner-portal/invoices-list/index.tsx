@@ -1,11 +1,13 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import InvoicesListCard from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-card';
 import InvoicesListRow from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-row';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-invoices-query';
 
 import './style.scss';
@@ -38,11 +40,24 @@ const InvoicePlaceholderCard = memo( () => {
 
 export default function InvoicesList() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const [ pagination, setPagination ] = useState( { starting_after: '', ending_before: '' } );
 	const invoices = useInvoicesQuery( pagination );
+
+	useEffect( () => {
+		if ( invoices.isError ) {
+			dispatch(
+				errorNotice( translate( 'We were unable to retrieve your invoices.' ), {
+					id: 'partner-portal-invoices-failure',
+					duration: 5000,
+				} )
+			);
+		}
+	}, [ dispatch, translate, invoices.isError ] );
+
 	const hasMore = invoices.isSuccess ? invoices.data.hasMore : false;
 	const onNavigateCallback = useCallback(
-		( page, direction ) => {
+		( page: number, direction: 'next' | 'prev' ) => {
 			if ( ! invoices.isSuccess || invoices.data.items.length === 0 ) {
 				return;
 			}
@@ -95,6 +110,8 @@ export default function InvoicesList() {
 						id={ invoice.id }
 						number={ invoice.number }
 						dueDate={ invoice.dueDate }
+						created={ invoice.created }
+						effectiveAt={ invoice.effectiveAt }
 						status={ invoice.status }
 						total={ invoice.total }
 						currency={ invoice.currency }
@@ -119,7 +136,7 @@ export default function InvoicesList() {
 
 			{ showPagination && (
 				<Pagination
-					className={ classnames( 'invoices-list__pagination', {
+					className={ clsx( 'invoices-list__pagination', {
 						'invoices-list__pagination--has-prev': page > 1,
 						'invoices-list__pagination--has-next': invoices.isFetching || hasMore,
 					} ) }

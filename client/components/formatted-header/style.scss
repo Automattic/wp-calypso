@@ -69,7 +69,7 @@
 			margin: 0;
 			padding-bottom: 16px;
 
-			@media ( max-width: $break-medium ) {
+			@media (max-width: $break-medium) {
 				margin: 0 16px;
 			}
 
@@ -87,10 +87,6 @@
 				font-size: $font-body-small;
 				line-height: 20px;
 				color: var(--color-neutral-60);
-			}
-
-			.inline-support-link {
-				color: var(--color-primary);
 			}
 		}
 	}

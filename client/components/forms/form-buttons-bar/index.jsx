@@ -1,9 +1,9 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
 const FormButtonsBar = ( { className, children, ...otherProps } ) => (
-	<div { ...otherProps } className={ classnames( className, 'form-buttons-bar' ) }>
+	<div { ...otherProps } className={ clsx( className, 'form-buttons-bar' ) }>
 		{ children }
 	</div>
 );

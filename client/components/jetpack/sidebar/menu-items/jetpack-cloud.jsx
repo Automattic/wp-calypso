@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -48,14 +47,12 @@ export default ( { path } ) => {
 		isSectionNameEnabled( 'site-purchases' ) &&
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) );
 
-	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
-
 	return (
 		<>
 			<QuerySiteFeatures siteIds={ [ siteId ] } />
 			<JetpackSidebarMenuItems
 				path={ path }
-				showIcons={ true }
+				showIcons
 				tracksEventNames={ {
 					activityClicked: 'calypso_jetpack_sidebar_activity_clicked',
 					backupClicked: 'calypso_jetpack_sidebar_backup_clicked',
@@ -64,7 +61,7 @@ export default ( { path } ) => {
 					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
-			{ isPluginManagementEnabled && isAgency && (
+			{ isAgency && (
 				<SidebarItem
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }

@@ -1,5 +1,5 @@
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import versionCompare from 'calypso/lib/version-compare';
@@ -110,7 +110,7 @@ const ScreenOptionsTab = ( { wpAdminPath } ) => {
 					{ _x( 'View', 'View options to switch between' ) }
 				</span>
 				<span
-					className={ classNames( 'screen-options-tab__icon', {
+					className={ clsx( 'screen-options-tab__icon', {
 						'screen-options-tab__icon--open': isOpen,
 						'screen-options-tab__icon--closed': ! isOpen,
 					} ) }

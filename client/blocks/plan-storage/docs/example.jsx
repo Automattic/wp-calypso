@@ -15,16 +15,16 @@ import PlanStorage from '../index';
 const PlanStorageExample = ( { siteId, siteSlug } ) => {
 	const mediaStorage = {
 		red: {
-			storage_used_bytes: 11362335981,
-			max_storage_bytes: 13958643712,
+			storageUsedBytes: 11362335981,
+			maxStorageBytes: 13958643712,
 		},
 		yellow: {
-			storage_used_bytes: 1971389988,
-			max_storage_bytes: 3221225472,
+			storageUsedBytes: 1971389988,
+			maxStorageBytes: 3221225472,
 		},
 		green: {
-			storage_used_bytes: 167503724,
-			max_storage_bytes: 3221225472,
+			storageUsedBytes: 167503724,
+			maxStorageBytes: 3221225472,
 		},
 	};
 

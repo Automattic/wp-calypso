@@ -121,6 +121,15 @@ describe( 'reducer', () => {
 				baz: 'qux',
 			} );
 		} );
+
+		test( 'should default undefined value to an empty object', () => {
+			const state = remoteValues( null, {
+				type: PREFERENCES_RECEIVE,
+				values: undefined,
+			} );
+
+			expect( state ).toEqual( {} );
+		} );
 	} );
 
 	describe( 'fetching()', () => {

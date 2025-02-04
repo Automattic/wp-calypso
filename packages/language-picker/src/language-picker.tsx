@@ -26,6 +26,7 @@ const Flex = WpFlex as ComponentType< {
 	direction?: string;
 	expanded?: boolean;
 	justify?: string;
+	children?: ReactNode;
 } >;
 
 type Props< TLanguage extends Language > = {
@@ -42,7 +43,6 @@ type Props< TLanguage extends Language > = {
  * Pick the first language group that includes the currently selected language.
  * If no language is currently selected then just use the default. Similarly,
  * if no language group can be found with the current language in it, use the default.
- *
  * @param selectedLanguage The currently selected language, if one exists.
  * @param languageGroups The language groups to choose from.
  * @param defaultLananguageGroupId The default language group to use when a language isn't picked or when the selected language isn't found in any of the groups.
@@ -165,7 +165,11 @@ function LanguagePicker< TLanguage extends Language >( {
 					hideLabelFromVision
 					value={ selectControlOptions.find( ( option ) => option.key === filter ) }
 					options={ selectControlOptions }
-					onChange={ ( { selectedItem } ) => selectedItem && setFilter( selectedItem.key ) }
+					onChange={ ( {
+						selectedItem,
+					}: {
+						selectedItem: ( typeof selectControlOptions )[ number ];
+					} ) => selectedItem && setFilter( selectedItem.key ) }
 				/>
 				<div className="language-picker-component__search-mobile">
 					<Search
@@ -207,7 +211,7 @@ function LanguagePicker< TLanguage extends Language >( {
 				<div className="language-picker-component__language-buttons">
 					{ languagesToRender.map( ( language ) => (
 						<Button
-							isPrimary={ selectedLanguage && language.langSlug === selectedLanguage.langSlug }
+							variant={ language.langSlug === selectedLanguage?.langSlug ? 'primary' : undefined }
 							className="language-picker-component__language-button"
 							key={ language.langSlug }
 							onClick={ () => onSelectLanguage( language ) }

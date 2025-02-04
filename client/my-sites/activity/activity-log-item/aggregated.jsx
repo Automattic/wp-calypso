@@ -1,11 +1,10 @@
-import { Button } from '@automattic/components';
+import { Button, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { omit, flowRight as compose } from 'lodash';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
@@ -77,7 +76,7 @@ class ActivityLogAggregatedItem extends Component {
 				{ actor }
 				{ activityMedia && isDesktop && (
 					<ActivityMedia
-						className={ classNames( {
+						className={ clsx( {
 							'activity-log-item__activity-media': true,
 							'is-desktop': true,
 							'has-gridicon': ! activityMedia.available,
@@ -119,7 +118,7 @@ class ActivityLogAggregatedItem extends Component {
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs, streamCount } = activity;
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
-		const classes = classNames( 'activity-log-item', 'is-aggregated' );
+		const classes = clsx( 'activity-log-item', 'is-aggregated' );
 		return (
 			<div className={ classes }>
 				<div className="activity-log-item__type">

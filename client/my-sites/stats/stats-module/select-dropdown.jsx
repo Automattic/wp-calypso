@@ -1,5 +1,5 @@
+import { SelectDropdown } from '@automattic/components';
 import PropTypes from 'prop-types';
-import SelectDropdown from 'calypso/components/select-dropdown';
 
 const StatsModuleSelectDropdown = ( { initialSelected, options, onSelect = () => {} } ) => {
 	return (

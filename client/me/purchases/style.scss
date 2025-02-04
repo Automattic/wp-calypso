@@ -1,5 +1,21 @@
 /* Layout
 ================================================== */
+.layout__primary .main {
+	& div.section-nav {
+		@media ( max-width: 480px ) {
+			&.is-open {
+				& > .section-nav__panel {
+					padding: 0;
+
+					& > .section-nav-group {
+						margin-top: 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 .purchases-layout__wrapper {
 	display: flex;
 	align-items: center;
@@ -129,6 +145,13 @@
 	}
 }
 
+.purchase-item__static-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
 .purchase-item__title {
 	color: var(--color-neutral-80);
 	overflow: hidden;
@@ -145,15 +168,13 @@
 
 .purchase-item__link,
 a.purchase-item__link {
-	color: var(--color-neutral-50);
-	text-decoration: underline;
+	color: var(--color-link);
 
 	&.purchase-item__link--error {
 		color: var(--color-error-50);
 	}
 
 	&:hover {
-		text-decoration: none;
 		cursor: pointer;
 	}
 

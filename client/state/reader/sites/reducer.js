@@ -1,4 +1,4 @@
-import { includes, keyBy, omit, omitBy, trim } from 'lodash';
+import { includes, keyBy, omit, omitBy } from 'lodash';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { withoutHttp } from 'calypso/lib/url';
 import {
@@ -36,7 +36,8 @@ function adaptSite( attributes ) {
 		attributes.domain = withoutHttp( attributes.URL );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
-	attributes.title = trim( attributes.name ) || attributes.domain;
+	attributes.title =
+		( typeof attributes.name === 'string' && attributes.name.trim() ) || attributes.domain;
 
 	if ( attributes.description ) {
 		attributes.description = decodeEntities( attributes.description );

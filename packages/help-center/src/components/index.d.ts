@@ -11,51 +11,19 @@ declare module 'calypso/components/search-card' {
 	const SearchCard: FC;
 	export = SearchCard;
 }
-declare module 'calypso/blocks/inline-help/inline-help-search-card' {
-	const InlineHelpSearchCard: FC;
-	export = InlineHelpSearchCard;
-}
 
 declare module 'calypso/blocks/inline-help/inline-help-search-results' {
 	const InlineHelpSearchResults: FC;
 	export = InlineHelpSearchResults;
 }
-
-declare module 'calypso/components/data/query-user-purchases' {
-	const QueryUserPurchases: () => null;
-	export const purchases: void;
-	export = QueryUserPurchases;
-}
-
-declare module 'calypso/components/data/query-reader-post' {
-	const QueryReaderPost: FC;
-	export default QueryReaderPost;
-}
-
-declare module 'calypso/components/data/query-reader-site' {
-	const QueryReaderSite: FC;
-	export default QueryReaderSite;
-}
-
 declare module 'calypso/components/embed-container' {
 	const EmbedContainer: FC;
 	export default EmbedContainer;
 }
 
-declare module 'calypso/data/support-article-alternates/use-support-article-alternates-query' {
-	const useSupportArticleAlternatesQuery: (
-		blogId: number,
-		postId: number
-	) => { isLoading: boolean; data?: { blog_id: number; page_id: number } };
-	export default useSupportArticleAlternatesQuery;
-}
-
-declare module 'calypso/data/help/use-active-support-tickets-query' {
-	import { SupportTicket } from '../types';
-	export const useActiveSupportTicketsQuery: (
-		email: string,
-		queryOptions?: unknown
-	) => { isLoading: boolean; data?: SupportTicket[] };
+declare module 'calypso/state/data-layer/wpcom-api-middleware' {
+	const WpcomApiMiddleware = ( Function ) => Function;
+	export const WpcomApiMiddleware;
 }
 
 declare module 'calypso/state/reader/posts/selectors' {
@@ -68,12 +36,13 @@ declare module 'calypso/state/purchases/selectors' {
 
 declare module 'calypso/state/ui/selectors' {
 	export const getSelectedSiteId: ( state: unknown ) => number;
-	export const getSectionName: ( state: unknown ) => string;
+	export const getSectionName: ( state: unknown ) => SectionName;
 }
 
 declare module 'calypso/state/sites/selectors' {
 	export const getSite: ( state: unknown, siteId: number ) => { is_wpcom_atomic: boolean };
 	export const getIsSimpleSite: ( state: unknown ) => boolean;
+	export const isJetpackSite: ( state: unknown, siteId: number ) => boolean | null;
 }
 
 declare module 'calypso/state/sites/selectors/is-simple-site' {
@@ -90,24 +59,82 @@ declare module 'calypso/state/sites/hooks' {
 	export const useSiteOption: ( state: unknown ) => string;
 }
 
-declare module 'calypso/state/selectors/get-primary-site-id' {
-	const getPrimarySiteId: ( state: unknown ) => number;
-	export default getPrimarySiteId;
-}
-
-declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
-	const hasCancelableUserPurchases: ( state: unknown ) => boolean;
-	export default hasCancelableUserPurchases;
-}
-
-declare module 'calypso/state/current-user/selectors' {
-	export const getCurrentUserEmail: ( state: unknown ) => string;
-}
 declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserId: ( state: unknown ) => string;
 }
 
-declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUser: ( state: unknown ) => { display_name: string };
+}
+
+declare module 'calypso/components/popover-menu/item' {
+	const PopoverMenuItem: FC< {
+		className?: string;
+		onClick: ( event: React.MouseEvent< HTMLButtonElement > ) => void;
+		children: React.ReactNode;
+	} >;
+
+	export default PopoverMenuItem;
+}
+
+declare module 'calypso/components/popover-menu' {
+	const EllipsisMenu: FC< {
+		popoverClassName?: string;
+		position?: string;
+		children: React.ReactNode;
+	} >;
+
+	export default EllipsisMenu;
+}
+
+declare module 'calypso/components/gravatar' {
+	const Gravatar: FC< {
+		user?: { display_name: string };
+		size?: number;
+		alt?: string;
+	} >;
+
+	export default Gravatar;
+}
+
+declare module 'calypso/components/section-nav' {
+	const SectionNav: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNav;
+}
+
+declare module 'calypso/components/section-nav/tabs' {
+	const SectionNavTabs: FC< {
+		children: React.ReactNode;
+	} >;
+	export default SectionNavTabs;
+}
+
+declare module 'calypso/components/section-nav/item' {
+	const SectionNavItem: FC< {
+		selected: boolean;
+		onClick: () => void;
+		count?: number;
+		children: React.ReactNode;
+	} >;
+	export default SectionNavItem;
+}
+
+declare module 'calypso/components/textarea-autosize' {
+	const TextareaAutosize: FC< {
+		placeholder: string;
+		className: string;
+		rows: number;
+		value: string;
+		onChange: ( event: React.ChangeEvent< HTMLTextAreaElement > ) => void;
+		onKeyPress: ( event: KeyboardEvent< HTMLTextAreaElement > ) => Promise< void >;
+	} >;
+
+	export default TextareaAutosize;
+}
+
+declare module 'calypso/state/selectors/get-admin-help-results' {
 	const getAdminHelpResults: (
 		state: unknown,
 		searchQuery: string,
@@ -123,7 +150,6 @@ declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
 }
 
 declare module 'calypso/lib/formatting' {
-	export const decodeEntities: ( text: string | React.ReactChild ) => string;
 	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
 }
 
@@ -142,8 +168,9 @@ declare module 'calypso/state/analytics/actions' {
 	};
 }
 
-declare module '@automattic/state-utils' {
-	export const createSelector = unknown;
-}
-
 declare module 'calypso/lib/mobile-app';
+
+declare module '*.svg' {
+	const content: string;
+	export default content;
+}

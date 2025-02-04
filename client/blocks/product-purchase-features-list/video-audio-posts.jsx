@@ -1,5 +1,9 @@
 import {
+	getPlan,
 	isProPlan,
+	isWooExpressMediumPlan,
+	isWooExpressPlan,
+	isWooExpressSmallPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPremiumPlan,
@@ -18,22 +22,45 @@ function getDescription( plan, translate ) {
 		);
 	}
 
-	if ( isWpComBusinessPlan( plan ) ) {
-		return translate(
-			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Business Plan has 200 GB storage.'
-		);
-	}
 	if ( isProPlan( plan ) ) {
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
 				'directly to your site — the Pro Plan has 50 GB storage.'
 		);
 	}
-	if ( isWpComEcommercePlan( plan ) ) {
+	if ( isWooExpressPlan( plan ) ) {
+		const wooExpressPlan = getPlan( plan );
+		let wooExpressStorageLimit = 3;
+		if ( isWooExpressMediumPlan( plan ) ) {
+			wooExpressStorageLimit = 200;
+		} else if ( isWooExpressSmallPlan( plan ) ) {
+			wooExpressStorageLimit = 50;
+		}
+		// Translators: %(planName)s is the name of the plan, %(storageLimit)d is the storage limit in GB.
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Ecommerce Plan has 200 GB storage.'
+				'directly to your site — the Woo Express: %(planName)s plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: wooExpressPlan.getTitle(),
+					storageLimit: wooExpressStorageLimit,
+				},
+			}
+		);
+	}
+
+	if ( isWpComBusinessPlan( plan ) || isWpComEcommercePlan( plan ) ) {
+		const newPlan = getPlan( plan );
+		// Translators: %(planName)s is the name of the plan - Creator, Entrepreneur, Business, or eCommerce. %(storageLimit)d is the storage limit in GB.
+		return translate(
+			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
+				'directly to your site — the %(planName)s Plan has %(storageLimit)d GB storage.',
+			{
+				args: {
+					planName: newPlan.getTitle(),
+					storageLimit: 50,
+				},
+			}
 		);
 	}
 

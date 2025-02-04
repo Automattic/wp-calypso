@@ -7,7 +7,7 @@ This is a basic counter that can be used to count any sort of Calypso event or a
 To create the counter and increment:
 
 ```
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { incrementCounter } from 'calypso/state/persistent-counter/actions';
 const dispatch = useDispatch();
 
@@ -39,7 +39,7 @@ dispatch( incrementCounter( MY_COUNTER_NAME ) );
 To retrieve a counter's current count, call the `getCount()` selector:
 
 ```
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 
 const currentCount = useSelector( state => getCount( MY_COUNTER_NAME, false ) );
 ```

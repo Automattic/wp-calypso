@@ -12,6 +12,7 @@ import { JetpackSignup } from '../signup.js';
 jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
 jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );
 jest.mock( 'calypso/components/social-buttons/apple', () => () => 'AppleLoginButton' );
+jest.mock( 'calypso/components/social-buttons/github', () => () => 'GitHubLoginButton' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, {
@@ -100,13 +101,13 @@ describe( 'JetpackSignup', () => {
 			authQuery: {
 				...DEFAULT_PROPS.authQuery,
 				from: 'woocommerce-payments',
-				woodna_service_name: 'WooCommerce Payments',
+				woodna_service_name: 'WooPayments',
 				isFullLoginFormVisible: false,
 			},
 		};
 
 		const expectedText =
-			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooCommerce Payments';
+			'Enter your email address to get started. Your account will enable you to start using the features and benefits offered by WooPayments';
 
 		render( <JetpackSignup { ...props } /> );
 

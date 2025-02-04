@@ -6,11 +6,11 @@ import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-export default function useGetDisplayDate() {
+export default function useGetDisplayDate( selectedSiteId = null ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( ( state ) => selectedSiteId ?? getSelectedSiteId( state ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 

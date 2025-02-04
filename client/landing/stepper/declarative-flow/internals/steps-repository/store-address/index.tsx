@@ -1,4 +1,4 @@
-import { FormInputValidation } from '@automattic/components';
+import { FormInputValidation, FormLabel } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { ComboboxControl } from '@wordpress/components';
@@ -8,15 +8,16 @@ import emailValidator from 'email-validator';
 import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
+import { useComingFromThemeActivationParam } from '../../../../hooks/use-coming-from-theme-activation';
 import { useCountries } from '../../../../hooks/use-countries';
 import SupportCard from './support-card';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type FormFields =
@@ -47,18 +48,27 @@ const CityZipRow = styled.div`
 `;
 
 const StoreAddress: Step = function StoreAddress( { navigation } ) {
-	const { goNext, submit } = navigation;
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const { goBack, goNext, submit } = navigation;
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const site = useSite();
 	const settings = useSelect(
-		( select ) => ( site?.ID && select( SITE_STORE ).getSiteSettings( site.ID ) ) || {}
+		( select ) =>
+			( site?.ID && ( select( SITE_STORE ) as SiteSelect ).getSiteSettings( site.ID ) ) || {},
+		[ site ]
 	);
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() || null );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser() || null,
+		[]
+	);
 	const { data: countries } = useCountries();
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+
+	const comingFromThemeActivation = useComingFromThemeActivationParam();
 
 	const [ settingChanges, setSettingChanges ] = useState< {
 		[ key: string ]: string;
@@ -245,7 +255,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 						<FormLabel htmlFor="store_postcode">{ __( 'Country / State' ) }</FormLabel>
 						<ComboboxControl
 							value={ getSettingsValue( 'store_country' ) }
-							onChange={ ( value: string | null ) => {
+							onChange={ ( value?: string | null ) => {
 								onChange( 'store_country', value || '' );
 							} }
 							options={ countriesAsOptions }
@@ -300,7 +310,8 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			stepName="store-address"
 			className={ `is-step-${ intent }` }
 			goNext={ goNext }
-			isHorizontalLayout={ true }
+			goBack={ goBack }
+			isHorizontalLayout
 			formattedHeader={
 				<FormattedHeader
 					id="site-options-header"
@@ -314,16 +325,15 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 			intent={ intent }
 			stepContent={ getContent() }
 			recordTracksEvent={ recordTracksEvent }
-			stepProgress={ stepProgress }
 			hideSkip
-			hideBack
+			hideBack={ ! comingFromThemeActivation }
 		/>
 	);
 };
 
 function ControlError( { error }: { error: string } ) {
 	if ( error ) {
-		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
+		return <FormInputValidation isError isValid={ false } text={ error } />;
 	}
 	return null;
 }

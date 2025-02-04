@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Gridicon, Tooltip } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
-import Tooltip from 'calypso/components/tooltip';
 
 import './style.scss';
 
@@ -45,7 +44,7 @@ class PodcastIndicator extends Component {
 				break;
 		}
 
-		const classes = classNames( 'podcast-indicator', this.props.className, {
+		const classes = clsx( 'podcast-indicator', this.props.className, {
 			'is-compact': this.props.isCompact,
 		} );
 

@@ -1,16 +1,21 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import page from 'page';
-import { useContext } from 'react';
+import { useContext, forwardRef } from 'react';
 import Pagination from 'calypso/components/pagination';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import EditButton from '../../dashboard-bulk-actions/edit-button';
+import DashboardDataContext from '../../sites-overview/dashboard-data-context';
 import SitesOverviewContext from '../context';
+import useDefaultSiteColumns from '../hooks/use-default-site-columns';
+import LicenseInfoModal from '../license-info-modal';
 import SiteBulkSelect from '../site-bulk-select';
 import SiteCard from '../site-card';
+import SiteSort from '../site-sort';
 import SiteTable from '../site-table';
-import { formatSites, siteColumns } from '../utils';
+import { Site } from '../types';
+import useFormattedSites from './hooks/use-formatted-sites';
 
 import './style.scss';
 
@@ -21,61 +26,68 @@ const addPageArgs = ( pageNumber: number ) => {
 };
 
 interface Props {
-	data: { sites: Array< any >; total: number; perPage: number; totalFavorites: number } | undefined;
+	data:
+		| { sites: Array< Site >; total: number; perPage: number; totalFavorites: number }
+		| undefined;
 	isLoading: boolean;
 	currentPage: number;
 	isFavoritesTab: boolean;
 }
 
-export default function SiteContent( { data, isLoading, currentPage, isFavoritesTab }: Props ) {
+const SiteContent = ( { data, isLoading, currentPage, isFavoritesTab }: Props, ref: any ) => {
 	const isMobile = useMobileBreakpoint();
-	const { isBulkManagementActive } = useContext( SitesOverviewContext );
 
-	const sites = formatSites( data?.sites );
+	const { isBulkManagementActive, currentLicenseInfo } = useContext( SitesOverviewContext );
+
+	const { isLargeScreen } = useContext( DashboardDataContext );
+
+	const sites = useFormattedSites( data?.sites ?? [] );
 
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );
 	};
 
+	const siteColumns = useDefaultSiteColumns( isLargeScreen );
+	const firstColumn = siteColumns[ 0 ];
+
 	return (
 		<>
-			{
-				// We are using CSS to hide/show add email content on mobile/large screen view instead of the breakpoint
-				// hook since the hook returns true only when the width > some value, and we have some
-				// styles applied using the CSS breakpoint which is true for width >= some value
-			 }
-			<div className="site-content__large-screen-view">
-				<SiteTable isLoading={ isLoading } columns={ siteColumns } items={ sites } />
-			</div>
-			<div className="site-content__small-screen-view">
-				<Card className="site-content__bulk-select">
-					{ isBulkManagementActive ? (
-						<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
-					) : (
-						<>
-							<span className="site-content__bulk-select-label">{ siteColumns[ 0 ].title }</span>
-							<EditButton sites={ sites } />
-						</>
-					) }
-				</Card>
-				<div className="site-content__mobile-view">
-					<>
-						{ isLoading ? (
-							<Card>
-								<TextPlaceholder />
-							</Card>
+			{ isLargeScreen ? (
+				<div className="site-content__large-screen-view">
+					<SiteTable ref={ ref } isLoading={ isLoading } columns={ siteColumns } items={ sites } />
+				</div>
+			) : (
+				<div className="site-content__small-screen-view">
+					<Card className="site-content__bulk-select">
+						{ isBulkManagementActive ? (
+							<SiteBulkSelect sites={ sites } isLoading={ isLoading } />
 						) : (
 							<>
-								{ sites.length > 0 &&
-									sites.map( ( rows, index ) => (
-										<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
-									) ) }
+								<SiteSort isSortable={ firstColumn.isSortable } columnKey={ firstColumn.key }>
+									<span className="site-content__bulk-select-label">{ firstColumn.title }</span>
+								</SiteSort>
+								<EditButton sites={ sites } isLoading={ isLoading } />
 							</>
 						) }
-					</>
+					</Card>
+					<div className="site-content__mobile-view">
+						<>
+							{ isLoading ? (
+								<Card>
+									<TextPlaceholder />
+								</Card>
+							) : (
+								<>
+									{ sites.length > 0 &&
+										sites.map( ( rows, index ) => (
+											<SiteCard key={ index } columns={ siteColumns } rows={ rows } />
+										) ) }
+								</>
+							) }
+						</>
+					</div>
 				</div>
-			</div>
-
+			) }
 			{ data && data?.total > 0 && (
 				<Pagination
 					compact={ isMobile }
@@ -85,6 +97,9 @@ export default function SiteContent( { data, isLoading, currentPage, isFavorites
 					pageClick={ handlePageClick }
 				/>
 			) }
+			{ currentLicenseInfo && <LicenseInfoModal currentLicenseInfo={ currentLicenseInfo } /> }
 		</>
 	);
-}
+};
+
+export default forwardRef( SiteContent );

@@ -1,13 +1,15 @@
 import React from 'react';
-import { useStoreItemInfo } from './hooks/use-store-item-info';
-import type { PlanRecommendation } from '../plan-upgrade/types';
-import type {
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import {
 	QueryArgs,
 	SelectorProduct,
 	Duration,
 	PurchaseCallback,
 	PurchaseURLCallback,
+	PartnerSelectorProduct,
 } from '../types';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
+import type { PlanRecommendation } from '../plan-upgrade/types';
 
 export type ViewType = 'products' | 'bundles';
 
@@ -54,7 +56,7 @@ export type ItemToDisplayProps = {
 
 export type MostPopularProps = {
 	className?: string;
-	heading: string;
+	heading?: string;
 	items: Array< SelectorProduct >;
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	siteId: number | null;
@@ -64,6 +66,10 @@ export type AllItemsProps = MostPopularProps;
 
 export type HeroImageProps = {
 	item: SelectorProduct;
+};
+
+export type HeroImageAPIFamilyProps = {
+	item: APIProductFamilyProduct;
 };
 
 export type FeaturesListProps = HeroImageProps;
@@ -88,16 +94,20 @@ export type FeaturedItemCardProps = {
 	amountSaved?: React.ReactNode;
 	ctaAsPrimary?: boolean;
 	ctaHref?: string;
-	ctaLabel: React.ReactNode;
+	ctaLabel?: React.ReactNode;
 	ctaAriaLabel?: string;
 	description: React.ReactNode;
 	hero: React.ReactNode;
+	moreInfoLink?: React.ReactNode;
+	isCondensedVersion?: boolean;
 	isCtaDisabled?: boolean;
 	isCtaExternal?: boolean;
 	isProductInCart?: boolean;
+	isVertical?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
+	variant?: React.ReactNode;
 };
 
 export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
@@ -105,9 +115,10 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 };
 
 export type MoreInfoLinkProps = {
-	item: SelectorProduct;
+	item: SelectorProduct | PartnerSelectorProduct;
 	onClick?: VoidFunction;
-	isExternal?: boolean;
+	isLinkExternal?: boolean;
+	withIcon?: boolean;
 };
 
 export type PricingBreakdownProps = {

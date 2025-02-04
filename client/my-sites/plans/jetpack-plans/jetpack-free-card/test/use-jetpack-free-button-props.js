@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useDispatch: jest.fn(),
@@ -16,7 +19,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -47,6 +50,19 @@ describe( 'useJetpackFreeButtonProps', () => {
 		);
 
 		expect( result.current.href ).toEqual( `/pricing/jetpack-free/welcome` );
+	} );
+
+	it( 'should link back to redirect_to, for Jetpack Cloud while unlinked and coming from My Jetpack', () => {
+		isJetpackCloud.mockReturnValue( true );
+		const { result } = renderHook( () =>
+			useJetpackFreeButtonProps( undefined, {
+				unlinked: '1',
+				source: 'my-jetpack',
+				redirect_to: adminUrl,
+			} )
+		);
+
+		expect( result.current.href ).toEqual( adminUrl );
 	} );
 
 	it( 'should link to the Jetpack section in the site admin, when site in state', () => {

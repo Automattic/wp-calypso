@@ -6,7 +6,13 @@ import {
 
 import 'calypso/state/domains/init';
 
-export const recordAddDomainButtonClick = ( domainName, section, isPremium = false ) =>
+export const recordAddDomainButtonClick = (
+	domainName,
+	section,
+	position,
+	isPremium = false,
+	flowName = ''
+) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -16,12 +22,14 @@ export const recordAddDomainButtonClick = ( domainName, section, isPremium = fal
 		),
 		recordTracksEvent( 'calypso_domain_search_add_button_click', {
 			domain_name: domainName,
+			position,
 			section,
 			is_premium: isPremium,
+			flow_name: flowName,
 		} )
 	);
 
-export const recordAddDomainButtonClickInMapDomain = ( domainName, section ) =>
+export const recordAddDomainButtonClickInMapDomain = ( domainName, section, flowName = '' ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -32,10 +40,11 @@ export const recordAddDomainButtonClickInMapDomain = ( domainName, section ) =>
 		recordTracksEvent( 'calypso_map_domain_step_add_domain_click', {
 			domain_name: domainName,
 			section,
+			flow_name: flowName,
 		} )
 	);
 
-export const recordAddDomainButtonClickInTransferDomain = ( domainName, section ) =>
+export const recordAddDomainButtonClickInTransferDomain = ( domainName, section, flowName = '' ) =>
 	composeAnalytics(
 		recordGoogleEvent(
 			'Domain Search',
@@ -46,6 +55,7 @@ export const recordAddDomainButtonClickInTransferDomain = ( domainName, section 
 		recordTracksEvent( 'calypso_transfer_domain_step_add_domain_click', {
 			domain_name: domainName,
 			section,
+			flow_name: flowName,
 		} )
 	);
 

@@ -20,8 +20,6 @@ function middleware( app ) {
 	let built = false;
 	let beforeFirstCompile = true;
 
-	app.use( hotMiddleware( compiler ) );
-
 	app.set( 'compiler', compiler );
 
 	if ( shouldProfile ) {
@@ -101,6 +99,7 @@ function middleware( app ) {
 
 	app.use( waitForCompiler );
 	app.use( webpackMiddleware( compiler ) );
+	app.use( hotMiddleware( compiler ) );
 }
 
 module.exports = middleware;

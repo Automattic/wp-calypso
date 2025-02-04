@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import type { ReactNode, FunctionComponent } from 'react';
 
 import './style.scss';
@@ -10,7 +10,7 @@ type Props = {
 
 const Ribbon: FunctionComponent< Props > = ( props ) => (
 	<div
-		className={ classNames( {
+		className={ clsx( {
 			ribbon: true,
 			'is-green': props.color === 'green',
 		} ) }

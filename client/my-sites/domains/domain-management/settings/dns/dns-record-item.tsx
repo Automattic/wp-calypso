@@ -10,7 +10,7 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 	const handledBy = () => {
 		const { type, aux, port, weight } = dnsRecord;
 		const data = trimDot( dnsRecord.data );
-		const target = trimDot( dnsRecord.target );
+		const target = '.' !== dnsRecord.target ? trimDot( dnsRecord.target ) : '.';
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
@@ -26,7 +26,7 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 				return translate( '%(data)s with priority %(aux)d', {
 					args: {
 						data,
-						aux,
+						aux: aux as number,
 					},
 					comment: '%(data)s is a hostname',
 				} );
@@ -35,9 +35,9 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 				return translate( '%(target)s:%(port)d, with priority %(aux)d and weight %(weight)d', {
 					args: {
 						target,
-						port,
-						aux,
-						weight,
+						port: port as number,
+						aux: aux as number,
+						weight: weight as number,
 						comment: '%(target)s is a hostname',
 					},
 				} );
@@ -49,12 +49,16 @@ const DnsRecordItem = ( { dnsRecord, selectedDomainName }: DnsRecordItemProps ) 
 	const getName = () => {
 		const { name, service, protocol, type } = dnsRecord;
 
-		if ( name.replace( /\.$/, '' ) === selectedDomainName ) {
-			return '@';
+		if ( 'SRV' === type ) {
+			return `${ service }.${ protocol }.${
+				name.replace( /\.$/, '' ) === selectedDomainName
+					? name
+					: name + '.' + selectedDomainName + '.'
+			}`;
 		}
 
-		if ( 'SRV' === type ) {
-			return `_${ service }._${ protocol }.${ name }`;
+		if ( name.replace( /\.$/, '' ) === selectedDomainName ) {
+			return '@';
 		}
 
 		return name;

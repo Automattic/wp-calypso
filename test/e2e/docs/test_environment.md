@@ -48,7 +48,7 @@ if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 
 Within `@automattic/calypso-e2e/src/secrets` is an encrypted file that holds various sensitive secrets, such as API keys and test account information. This must be decrypted prior to use.
 
-**Automatticians**: please refer to the [Field Guide page](PCYsg-vnR-p2) for more information.
+**Automatticians**: please refer to the Field Guide page - PCYsg-vnR-p2 for more information.
 
 **Trialmatticians**: please contact a team member in your Slack chat for the decryption key.
 

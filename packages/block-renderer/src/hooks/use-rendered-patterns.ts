@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useLocale } from '@automattic/i18n-utils';
+import { useQueries } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import type { RenderedPatterns, SiteInfo } from '../types';
-
-const PAGE_SIZE = 20;
+import type { RenderedPattern, RenderedPatterns, SiteInfo } from '../types';
 
 const fetchRenderedPatterns = (
 	siteId: number | string,
+	locale: string,
 	stylesheet: string,
+	category: string,
 	patternIds: string[],
-	siteInfo: SiteInfo,
-	page = 0
+	siteInfo: SiteInfo
 ): Promise< RenderedPatterns > => {
-	const pattern_ids = patternIds.slice( page * PAGE_SIZE, ( page + 1 ) * PAGE_SIZE ).join( ',' );
 	const { title, tagline } = siteInfo;
 	const params = new URLSearchParams( {
 		stylesheet,
-		pattern_ids,
+		category,
+		pattern_ids: patternIds.join( ',' ),
+		_locale: locale,
 	} );
 
 	if ( title ) {
@@ -36,29 +37,32 @@ const fetchRenderedPatterns = (
 const useRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
-	patternIds: string[],
+	patternIdsByCategory: Record< string, string[] >,
 	siteInfo: SiteInfo = {}
 ) => {
-	const [ renderedPatterns, setRenderedPatterns ] = useState( {} );
+	const locale = useLocale();
 
-	// If we query too many patterns at once, the endpoint will be very slow.
-	// Hence, do local pagination to ensure the performance.
-	const totalPage = Math.ceil( patternIds.length / PAGE_SIZE );
+	const queries = Object.entries( patternIdsByCategory ).map( ( [ category, patternIds ] ) => ( {
+		queryKey: [ 'rendered-patterns', siteId, locale, stylesheet, category, patternIds, siteInfo ],
+		queryFn: () =>
+			fetchRenderedPatterns( siteId, locale, stylesheet, category, patternIds, siteInfo ),
+		staleTime: 0,
+		refetchOnWindowFocus: false,
+	} ) );
 
-	useEffect( () => {
-		const promises = [];
-		for ( let i = 0; i < totalPage; i++ ) {
-			promises.push( fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, i ) );
-		}
+	const result = useQueries< RenderedPattern[] >( {
+		queries,
+	} );
 
-		Promise.all( promises ).then( ( pages ) => {
-			setRenderedPatterns(
-				pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
-			);
-		} );
-	}, [] );
-
-	return renderedPatterns;
+	return result
+		.filter( ( query ) => !! query.data )
+		.reduce(
+			( acc, cur ) => ( {
+				...acc,
+				...( cur.data as RenderedPattern[] ),
+			} ),
+			{}
+		);
 };
 
 export default useRenderedPatterns;

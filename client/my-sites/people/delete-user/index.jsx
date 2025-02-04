@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 
-import { Card, Button, CompactCard, Gridicon } from '@automattic/components';
+import { Card, Button, CompactCard, FormLabel, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
@@ -11,7 +11,6 @@ import AuthorSelector from 'calypso/blocks/author-selector';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import Gravatar from 'calypso/components/gravatar';
@@ -282,7 +281,7 @@ class DeleteUser extends Component {
 					</FormFieldset>
 
 					<FormButtonsBar>
-						<FormButton scary={ true } disabled={ this.isDeleteButtonDisabled() }>
+						<FormButton scary disabled={ this.isDeleteButtonDisabled() }>
 							{ translate( 'Delete user', { context: 'Button label' } ) }
 						</FormButton>
 					</FormButtonsBar>
@@ -321,10 +320,19 @@ class DeleteUser extends Component {
 		}
 
 		// A user should not be able to remove the Atomic or non-Jetpack site owner.
-		if (
-			( ! isJetpack && user.ID === siteOwner ) ||
-			( isAtomic && user.linked_user_ID === siteOwner )
-		) {
+		if ( ( ! isJetpack && user.ID === siteOwner ) || user.linked_user_ID === siteOwner ) {
+			const supportLink =
+				! isJetpack || isAtomic ? (
+					<InlineSupportLink
+						supportPostId={ 102743 }
+						supportLink={ localizeUrl(
+							'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
+						) }
+					/>
+				) : (
+					<InlineSupportLink supportLink="https://jetpack.com/redirect?source=jetpack-transfer-connection" />
+				);
+
 			return (
 				<Card className="delete-user__single-site">
 					<FormSectionHeading>{ this.getDeleteText() }</FormSectionHeading>
@@ -332,16 +340,7 @@ class DeleteUser extends Component {
 						{ translate(
 							'You cannot delete the site owner. Please transfer ownership of this site to a different account before deleting this user. {{supportLink}}Learn more.{{/supportLink}}',
 							{
-								components: {
-									supportLink: (
-										<InlineSupportLink
-											supportPostId={ 102743 }
-											supportLink={ localizeUrl(
-												'https://wordpress.com/support/transferring-a-site-to-another-wordpress-com-account/'
-											) }
-										/>
-									),
-								},
+								components: { supportLink },
 							}
 						) }
 					</p>

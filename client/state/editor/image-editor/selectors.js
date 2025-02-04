@@ -2,8 +2,6 @@ import 'calypso/state/editor/init';
 
 /**
  * Returns an object representing the image editor transform
- *
- *
  * @param {Object}  state Global state tree
  * @returns {Object}  image editor transform { degrees, scaleX, scaleY }
  */
@@ -13,7 +11,6 @@ export function getImageEditorTransform( state ) {
 
 /**
  * Returns an object containing the image data loaded in the editor
- *
  * @param  {Object}  state Global state tree
  * @returns {Object}  image data { src, fileName }
  */
@@ -23,7 +20,6 @@ export function getImageEditorFileInfo( state ) {
 
 /**
  * Returns true if there were any changes made to the editor
- *
  * @param  {Object}  state Global state tree
  * @returns {boolean} true if editor has changes
  */
@@ -33,7 +29,6 @@ export function imageEditorHasChanges( state ) {
 
 /**
  * Returns true if image has been loaded.
- *
  * @param  {Object}  state Global state tree
  * @returns {boolean} true if image has been loaded
  */
@@ -43,7 +38,6 @@ export function isImageEditorImageLoaded( state ) {
 
 /**
  * Returns the bounds of the canvas crop tool
- *
  * @param  {Object} state Global state tree
  * @returns {Object} topBound, leftBound, bottomBound and rightBound of the canvas
  */
@@ -53,7 +47,6 @@ export function getImageEditorCropBounds( state ) {
 
 /**
  * Returns the crop data for the image editor
- *
  * @param  {Object} state Global state tree
  * @returns {Object} topRatio, leftRatio, widthRatio and heightRatio of the crop
  */
@@ -63,7 +56,6 @@ export function getImageEditorCrop( state ) {
 
 /**
  * Returns the crop data for the image editor
- *
  * @param  {Object} state Global state tree
  * @returns {Object} one of the AspectRatios as defined in state/editor/image-editor/constants
  */

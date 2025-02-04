@@ -2,7 +2,6 @@ import 'calypso/state/legal/init';
 
 /**
  * Indicates if a Terms or Service update banner should be displayed.
- *
  * @param state {object}
  * @returns {boolean} Whether the ToS update banner should be displayed.
  */

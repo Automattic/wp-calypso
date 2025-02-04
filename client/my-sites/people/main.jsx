@@ -3,10 +3,9 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
@@ -167,18 +166,15 @@ class People extends Component {
 
 		return (
 			<Main>
-				<ScreenOptionsTab wpAdminPath="users.php" />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
 					title={ `People > ${ titlecase( filter ) }` }
 				/>
-				<FormattedHeader
-					brandFont
-					className="people__page-heading"
-					headerText={ this.renderHeaderText() }
-					subHeaderText={ this.renderSubheaderText() }
-					align="left"
-					hasScreenOptions
+				<NavigationHeader
+					screenOptionsTab="users.php"
+					navigationItems={ [] }
+					title={ this.renderHeaderText() }
+					subtitle={ this.renderSubheaderText() }
 				/>
 				<div>
 					<PeopleSectionNav

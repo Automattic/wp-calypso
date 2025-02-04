@@ -1,11 +1,11 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 function useRemoveExternalContributorMutation() {
 	const queryClient = useQueryClient();
-	const mutation = useMutation(
-		( { siteId, userId } ) =>
+	const mutation = useMutation( {
+		mutationFn: ( { siteId, userId } ) =>
 			wp.req.post(
 				`/sites/${ siteId }/external-contributors/remove`,
 				{
@@ -13,12 +13,10 @@ function useRemoveExternalContributorMutation() {
 				},
 				{ user_id: userId }
 			),
-		{
-			onSuccess( data, { siteId } ) {
-				queryClient.setQueryData( [ 'external-contributors', siteId ], data );
-			},
-		}
-	);
+		onSuccess( data, { siteId } ) {
+			queryClient.setQueryData( [ 'external-contributors', siteId ], data );
+		},
+	} );
 
 	const { mutate } = mutation;
 	const removeExternalContributor = useCallback(

@@ -18,7 +18,7 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSectionName: jest.fn(),
 } ) );
 
-describe( 'usePerfomranceTrackerStop hook', () => {
+describe( 'usePerformanceTrackerStop hook', () => {
 	let originalRequestAnimationFrame;
 
 	beforeEach( () => {
@@ -42,6 +42,28 @@ describe( 'usePerfomranceTrackerStop hook', () => {
 		usePerformanceTrackerStop();
 
 		expect( stopPerformanceTracking ).toHaveBeenCalledWith( 'pageName', expect.anything() );
+	} );
+
+	it( 'calls stopPerformanceTracking with any extra collectors', () => {
+		getSectionName.mockImplementation( () => 'pageName' );
+
+		const extraCollectors = [
+			( state ) => {
+				return ( rep ) => {
+					rep.data.set( 'stateFoo', state.foo );
+				};
+			},
+			( _, metadata ) => ( rep ) => {
+				rep.data.set( 'metadataBar', metadata.bar );
+			},
+		];
+
+		usePerformanceTrackerStop( extraCollectors );
+
+		expect( stopPerformanceTracking ).toHaveBeenCalledWith(
+			'pageName',
+			expect.objectContaining( { extraCollectors } )
+		);
 	} );
 
 	it( 'calls stop using useLayoutEffect and requestAnimationFrame', () => {

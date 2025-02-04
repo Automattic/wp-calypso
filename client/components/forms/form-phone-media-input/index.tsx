@@ -1,10 +1,9 @@
-import { FormInputValidation } from '@automattic/components';
-import classnames from 'classnames';
-import FormLabel from 'calypso/components/forms/form-label';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import PhoneInput from 'calypso/components/phone-input';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
 import type { PhoneInputValue } from 'calypso/components/phone-input';
-import type { FC, MutableRefObject } from 'react';
+import type { FC, MutableRefObject, ReactNode } from 'react';
 
 export type FormPhoneMediaInputProps = {
 	additionalClasses?: string;
@@ -13,12 +12,13 @@ export type FormPhoneMediaInputProps = {
 	value: PhoneInputValue;
 	className?: string;
 	disabled?: boolean;
-	errorMessage?: string;
+	errorMessage?: ReactNode;
 	isError?: boolean;
 	onChange: ( newValueAndCountry: PhoneInputValue ) => void;
 	countriesList: CountryListItem[];
 	enableStickyCountry?: boolean;
 	inputRef?: MutableRefObject< HTMLInputElement | undefined >;
+	children?: React.ReactNode;
 };
 
 const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
@@ -37,7 +37,7 @@ const FormPhoneMediaInput: FC< FormPhoneMediaInputProps > = ( {
 	children,
 } ) => {
 	return (
-		<div className={ classnames( additionalClasses, 'phone' ) }>
+		<div className={ clsx( additionalClasses, 'phone' ) }>
 			<div>
 				<FormLabel htmlFor={ name }>{ label }</FormLabel>
 				<PhoneInput

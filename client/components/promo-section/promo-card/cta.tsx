@@ -17,6 +17,7 @@ interface CtaAction {
 export interface CtaButton {
 	text: string | TranslateResult;
 	action: URL | ClickCallback | CtaAction;
+	isPrimary?: boolean;
 	component?: JSX.Element;
 	disabled?: boolean;
 	busy?: boolean;
@@ -54,7 +55,7 @@ function buttonProps( button: CtaButton, isPrimary: boolean ) {
 	}
 
 	return {
-		className: 'promo-card__cta-button',
+		className: `promo-card__cta-button ${ button.isPrimary && 'is-primary' }`,
 		primary: isPrimary,
 		disabled: button.disabled ? true : false,
 		busy: button.busy ? true : false,

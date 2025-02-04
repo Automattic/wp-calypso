@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Browser, Locator, Page } from 'playwright';
 import { EditorPage } from '../../pages';
 
 /**
@@ -6,7 +6,10 @@ import { EditorPage } from '../../pages';
  */
 export interface BlockFlow {
 	blockSidebarName: string;
+	blockTestName?: string;
+	blockTestFallBackName?: string;
 	blockEditorSelector: string;
+	noSearch?: boolean;
 	configure?( context: EditorContext ): Promise< void >;
 	validateAfterPublish?( context: PublishedPostContext ): Promise< void >;
 }
@@ -21,12 +24,13 @@ export interface EditorContext {
 	// We could also then get the editorLocator off of the EditorPage.
 	// However, they are provided in this context for convenience to simplify the writing of block flows!
 	editorPage: EditorPage;
-	editorLocator: Locator;
+	addedBlockLocator: Locator;
 }
 
 /**
  * An interface representing all the Playwright & DOM context that might be needed when validataing a block in a published post.
  */
 export interface PublishedPostContext {
+	browser: Browser;
 	page: Page;
 }

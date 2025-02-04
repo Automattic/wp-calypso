@@ -1,0 +1,44 @@
+.site-settings__general-settings-launch-site {
+	display: flex;
+	justify-content: space-between;
+}
+
+.site-settings__general-settings-launch-site-text {
+	flex-grow: 2;
+}
+
+.site-settings__general-settings-launch-site-button {
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 20px;
+	white-space: nowrap;
+}
+
+.site-settings__general-settings-refer-to-client-button {
+	margin-top: auto;
+	margin-bottom: auto;
+	margin-left: 20px;
+	white-space: nowrap;
+}
+
+.settings-site {
+	.site-settings__general-settings-launch-site {
+		flex-wrap: wrap;
+		justify-content: unset;
+	}
+
+	.site-settings__general-settings-launch-site-text {
+		flex-wrap: wrap;
+		flex-basis: 100%;
+	}
+
+	.site-settings__general-settings-launch-site-button {
+		margin: 0;
+		align-self: flex-end;
+	}
+
+	.site-settings__general-settings-refer-to-client-button {
+		margin-top: 15px;
+		margin-left: 10px;
+	}
+}

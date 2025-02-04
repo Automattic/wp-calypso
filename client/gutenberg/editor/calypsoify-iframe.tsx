@@ -1,33 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-/* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
-import { getQueryArg } from '@wordpress/url';
+import page from '@automattic/calypso-router';
+import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map, pickBy, flowRight } from 'lodash';
-import page from 'page';
 import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import DomainUpsellCallout from 'calypso/components/domains/domain-upsell-callout';
 import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { navigate } from 'calypso/lib/navigate';
-import {
-	withStopPerformanceTrackingProp,
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore - PerformanceTrackProps is defined calypso/lib/performance-tracking/index.web.js
-	PerformanceTrackProps,
-} from 'calypso/lib/performance-tracking';
+import { withStopPerformanceTrackingProp } from 'calypso/lib/performance-tracking';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
 import { addQueryArgs } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { selectMediaItems } from 'calypso/state/media/actions';
@@ -42,7 +31,6 @@ import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import shouldDisplayAppBanner from 'calypso/state/selectors/should-display-app-banner';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import {
@@ -60,16 +48,17 @@ import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { Placeholder } from './placeholder';
 import type { RequestCart } from '@automattic/shopping-cart';
+import type { PerformanceTrackProps } from 'calypso/lib/performance-tracking/index.web';
 import './style.scss';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 interface Props {
 	duplicatePostId: T.PostId;
 	creatingNewHomepage?: boolean;
 	postId: T.PostId;
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
-	pressThisData: any;
+	pressThisData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	bloggingPromptData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	anchorFmData: {
 		anchor_podcast: string | undefined;
 		anchor_episode: string | undefined;
@@ -80,7 +69,6 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
-	completedFlow?: string;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -89,17 +77,16 @@ interface CheckoutModalOptions extends RequestCart {
 }
 
 interface State {
-	allowedTypes?: any;
-	classicBlockEditorId?: any;
+	allowedTypes?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+	classicBlockEditorId?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	isIframeLoaded: boolean;
 	currentIFrameUrl: string;
 	isMediaModalVisible: boolean;
 	isCheckoutModalVisible: boolean;
-	multiple?: any;
+	multiple?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 	postUrl?: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 enum WindowActions {
 	Loaded = 'loaded',
@@ -108,6 +95,7 @@ enum WindowActions {
 
 enum EditorActions {
 	GoToAllPosts = 'goToAllPosts', // Unused action in favor of CloseEditor. Maintained here to support cached scripts.
+	WpAdminRedirect = 'wpAdminRedirect',
 	CloseEditor = 'closeEditor',
 	OpenMediaModal = 'openMediaModal',
 	OpenCheckoutModal = 'openCheckoutModal',
@@ -121,7 +109,6 @@ enum EditorActions {
 	OpenCustomizer = 'openCustomizer',
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
-	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
@@ -216,7 +203,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	 * this.
 	 *
 	 * Some historical work which has been combined into this timer:
-	 *
 	 * @see https://github.com/Automattic/wp-calypso/pull/43248
 	 * @see https://github.com/Automattic/wp-calypso/pull/36977
 	 * @see https://github.com/Automattic/wp-calypso/pull/41006
@@ -233,7 +219,11 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( this.disableRedirects ) {
 			return;
 		}
-		window.location.replace( this.props.iframeUrl );
+
+		// We have to remove the `frame-nonce` after the redirection to prevent it
+		// from being thought to be embedded in an iframe.
+		const redirectUrl = removeQueryArgs( this.props.iframeUrl, 'frame-nonce' );
+		window.location.replace( redirectUrl );
 	};
 
 	onMessage = ( { data, origin }: MessageEvent ) => {
@@ -283,7 +273,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		if ( WindowActions.ClassicBlockOpenMediaModel === action ) {
 			if ( data.imageId ) {
 				const { siteId } = this.props;
-				this.props.selectMediaItems( siteId, [ { ID: data.imageId } ] );
+				this.props.selectMediaItems( siteId ?? 0, [ { ID: data.imageId } ] );
 			}
 
 			this.setState( {
@@ -304,8 +294,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		// see: https://github.com/Automattic/wp-calypso/pull/45436
 		const ports = data.ports ?? backCompatPorts;
 
-		/* eslint-disable @typescript-eslint/no-explicit-any */
-		const { action, payload }: { action: EditorActions; payload: any } = data;
+		const { action, payload }: { action: EditorActions; payload: any } = data; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 		if ( EditorActions.OpenMediaModal === action && ports && ports[ 0 ] ) {
 			const { siteId } = this.props;
@@ -322,7 +311,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					? value.map( ( item ) => parseInt( item, 10 ) )
 					: [ parseInt( value, 10 ) ];
 				const selectedItems = ids.map( ( id ) => {
-					const media = this.props.getMediaItem( siteId, id );
+					const media = this.props.getMediaItem( siteId ?? 0, id );
 					if ( ! media ) {
 						this.props.fetchMediaItem( siteId, id );
 					}
@@ -332,9 +321,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 					};
 				} );
 
-				this.props.selectMediaItems( siteId, selectedItems );
+				this.props.selectMediaItems( siteId ?? 0, selectedItems );
 			} else {
-				this.props.selectMediaItems( siteId, [] );
+				this.props.selectMediaItems( siteId ?? 0, [] );
 			}
 
 			this.setState( { isMediaModalVisible: true, allowedTypes, multiple } );
@@ -366,23 +355,38 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.props.setRoute( `${ currentRoute }/${ postId }` );
 
 				//set postId on state.editor.postId, so components like editor revisions can read from it
-				this.props.startEditingPost( siteId, postId );
+				this.props.startEditingPost( siteId ?? 0, postId );
 
 				//set post type on state.posts.[ id ].type, so components like document head can read from it
-				this.props.editPost( siteId, postId, { type: postType } );
+				this.props.editPost( siteId ?? 0, postId, { type: postType } );
 			}
 		}
 
 		if ( EditorActions.TrashPost === action ) {
 			const { siteId, editedPostId, postTypeTrashUrl } = this.props;
-			this.props.trashPost( siteId, editedPostId );
+			if ( typeof siteId === 'number' && typeof editedPostId === 'number' ) {
+				this.props.trashPost( siteId, editedPostId );
+			}
 			navigate( postTypeTrashUrl );
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
-			const { unsavedChanges = false, destinationUrl = this.props.closeUrl } = payload;
+			let unsavedChanges = false;
+			let destinationUrl = this.props.closeUrl;
+			if ( payload?.unsavedChanges ) {
+				unsavedChanges = payload.unsavedChanges;
+			}
+			if ( payload?.destinationUrl ) {
+				destinationUrl = payload.destinationUrl;
+			}
 			this.props.setEditorIframeLoaded( false );
 			this.navigate( destinationUrl, unsavedChanges );
+		}
+
+		if ( EditorActions.WpAdminRedirect === action ) {
+			const { destinationUrl, unsavedChanges } = payload;
+
+			this.navigate( `https://${ this.props.siteSlug }${ destinationUrl }`, unsavedChanges );
 		}
 
 		if ( EditorActions.OpenRevisions === action ) {
@@ -413,10 +417,15 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( EditorActions.GetCloseButtonUrl === action ) {
 			const { closeUrl, closeLabel } = this.props;
-			ports[ 0 ].postMessage( {
-				closeUrl: `${ window.location.origin }${ closeUrl }`,
-				label: closeLabel,
-			} );
+
+			// If the closeLabel isn't a string, it's a React component and we can't serialize it over a message.
+			// Don't send the message and allow the editor to use it's default close URL and label.
+			if ( typeof closeLabel === 'string' ) {
+				ports[ 0 ].postMessage( {
+					closeUrl: `${ window.location.origin }${ closeUrl }`,
+					label: closeLabel,
+				} );
+			}
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
@@ -427,16 +436,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				isGutenboarding,
 				currentCalypsoUrl,
 			} );
-		}
-
-		if ( EditorActions.ToggleInlineHelpButton === action ) {
-			const inlineHelp: HTMLElement | null | undefined = window?.top?.document.querySelector(
-				'#wpcom > .layout > .inline-help'
-			);
-
-			if ( inlineHelp ) {
-				inlineHelp.hidden = payload.hidden;
-			}
 		}
 
 		if ( EditorActions.GetNavSidebarLabels === action ) {
@@ -511,7 +510,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 	setFrontPage = () => {
 		const { editedPostId, siteId } = this.props;
-		this.props.updateSiteFrontPage( siteId, {
+		this.props.updateSiteFrontPage( siteId ?? 0, {
 			show_on_front: 'page',
 			page_on_front: editedPostId,
 		} );
@@ -590,9 +589,13 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		this.setState( { isCheckoutModalVisible: false } );
 	};
 
-	/* eslint-disable @typescript-eslint/ban-types */
+	/* eslint-disable-next-line @typescript-eslint/ban-types */
 	openCustomizer = ( autofocus: object, unsavedChanges: boolean ) => {
 		let { customizerUrl } = this.props;
+		if ( ! customizerUrl ) {
+			return;
+		}
+
 		if ( autofocus ) {
 			const [ key, value ] = Object.entries( autofocus )[ 0 ];
 			customizerUrl = addQueryArgs(
@@ -678,7 +681,7 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	};
 
 	render() {
-		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
+		const { iframeUrl, shouldLoadIframe } = this.props;
 		const {
 			classicBlockEditorId,
 			isMediaModalVisible,
@@ -694,14 +697,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
 		const { redirectTo, isFocusedLaunch, ...cartData } = checkoutModalOptions || {};
 
-		if ( ! isNew7DUser && 'IN' === currentUserCountryCode ) {
-			addHotJarScript();
-
-			if ( window && window.hj ) {
-				window.hj( 'trigger', 'in_survey_1' );
-			}
-		}
-
 		return (
 			<Fragment>
 				<PageViewTracker
@@ -713,9 +708,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
-					{ isIframeLoaded && this.props.editorType !== 'site' && (
-						<DomainUpsellCallout trackEvent="site_editor_domain_upsell_callout" />
-					) }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
 							className={ isIframeLoaded ? 'is-loaded' : '' }
@@ -735,6 +727,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+							// Allow clipboard access for the iframe origin.
+							// This will still require users' permissions.
+							allow="clipboard-read; clipboard-write"
 						/>
 					) }
 				</div>
@@ -786,8 +781,8 @@ const mapStateToProps = (
 		anchorFmData,
 		showDraftPostModal,
 		pressThisData,
+		bloggingPromptData,
 		blockEditorSettings,
-		completedFlow,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -813,9 +808,8 @@ const mapStateToProps = (
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
-		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
-		completedFlow,
-		canvas: 'edit', // Load side editor in edit mode instead of displaying sidebar by default (Gutenberg v15.0.0)
+		...bloggingPromptData,
+		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions
@@ -870,7 +864,6 @@ const mapStateToProps = (
 		closeUrl,
 		closeLabel,
 		currentRoute,
-		currentUserCountryCode: getCurrentUserCountryCode( state ),
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
@@ -889,7 +882,6 @@ const mapStateToProps = (
 		parentPostId,
 		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
-		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 	};
 };
 

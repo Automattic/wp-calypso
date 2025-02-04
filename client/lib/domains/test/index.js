@@ -1,5 +1,9 @@
 import { forEach } from 'lodash';
-import { getFixedDomainSearch, getDomainSuggestionSearch } from 'calypso/lib/domains';
+import {
+	getFixedDomainSearch,
+	getDomainSuggestionSearch,
+	getDomainProductSlug,
+} from 'calypso/lib/domains';
 
 describe( 'index', () => {
 	describe( '#getFixedDomainSearch', () => {
@@ -33,6 +37,28 @@ describe( 'index', () => {
 				expect( getFixedDomainSearch( search ) ).toEqual( search );
 			} );
 		} );
+
+		test( 'should allow accent characters on domain search', () => {
+			const searches = [
+				{
+					search: 'alimentaçãosaudável.com.br',
+					expected: 'alimentaçãosaudável.com.br',
+				},
+				{
+					search: 'meudomínioação.com',
+					expected: 'meudomínioação.com',
+				},
+				{
+					// Should still remove & and * characteres
+					search: 'meudomínioação&*ê.com',
+					expected: 'meudomínioaçãoê.com',
+				},
+			];
+
+			forEach( searches, ( search ) => {
+				expect( getFixedDomainSearch( search.search ) ).toEqual( search.expected );
+			} );
+		} );
 	} );
 
 	describe( '#getDomainSuggestionSearch', () => {
@@ -53,6 +79,20 @@ describe( 'index', () => {
 		test( 'should return the original search string if it is long enough and is not one of the ignored strings', () => {
 			const search = 'hippos';
 			expect( getDomainSuggestionSearch( search ) ).toEqual( search );
+		} );
+	} );
+
+	describe( '#getDomainProductSlug', () => {
+		test( 'should return dotorg_domain for a .org domain', () => {
+			expect( getDomainProductSlug( 'test-domain.org' ) ).toEqual( 'dotorg_domain' );
+		} );
+
+		test( 'should return dotnet_domain for a .net domain', () => {
+			expect( getDomainProductSlug( 'test-domain.net' ) ).toEqual( 'dotnet_domain' );
+		} );
+
+		test( 'should return domain_reg for a .com domain', () => {
+			expect( getDomainProductSlug( 'test-domain.com' ) ).toEqual( 'domain_reg' );
 		} );
 	} );
 } );

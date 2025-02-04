@@ -1,5 +1,5 @@
 @use "sass:math";
-@import "@automattic/components/src/horizontal-bar-list/stats-variables.scss";
+@import "@automattic/components/src/horizontal-bar-list/stats-variables";
 
 // Module Content List
 .module-content-list {
@@ -494,6 +494,10 @@ ul.module-content-list-item-action-submenu {
 	display: inline-block;
 	margin: 0 1em 0 0;
 
+	button {
+		cursor: pointer;
+	}
+
 	// So that 'View' label is moved more to the right since icon has been dropped
 	@include breakpoint-deprecated( ">960px" ) {
 		.stats__module-list & {
@@ -534,7 +538,7 @@ ul.module-content-list-item-action-submenu {
 		}
 
 		// Hide 'View' label next to icon on 2-column modules
-		@media ( min-width: "783px" ) {
+		@media (min-width: "783px") {
 			.stats__module-list & span.module-content-list-item-action-label-view {
 				display: none;
 			}
@@ -543,7 +547,11 @@ ul.module-content-list-item-action-submenu {
 
 	// Color follow action when already following
 	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
-		color: var(--color-success);
+		color: var(--studio-white);
+
+		&:hover {
+			color: var(--studio-white);
+		}
 	}
 
 	// Display hidden label and change icon for Unfollow action
@@ -551,7 +559,6 @@ ul.module-content-list-item-action-submenu {
 	.module-content-list-item-action-wrapper.following:hover {
 		.module-content-list-item-action-label {
 			display: none;
-			color: var(--color-link-dark);
 		}
 
 		.module-content-list-item-action-label.unfollow {
@@ -864,7 +871,8 @@ ul.module-content-list-legend {
 }
 
 .list-countryviews,
-.list-countries {
+.list-countries,
+.list-locations {
 	.stats-list__flag-icon {
 		position: relative;
 		display: inline-block;
@@ -897,8 +905,7 @@ ul.module-content-list-legend {
 
 .horizontal-bar-list-item {
 	&:hover,
-	&:focus,
-	&:focus-within {
+	&:focus {
 		.stats-list-actions__mobile-toggle .gridicon,
 		.stats-list-actions__mobile-toggle .stats-icon {
 			fill: var(--color-text);

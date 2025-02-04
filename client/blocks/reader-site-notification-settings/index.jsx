@@ -1,12 +1,15 @@
-import { Gridicon } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Reader } from '@automattic/data-stores';
+import { Button, ToggleControl } from '@wordpress/components';
+import { Icon, settings } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { find, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import Settings from 'calypso/assets/images/icons/settings.svg';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import SegmentedControl from 'calypso/components/segmented-control';
+import FormSelect from 'calypso/components/forms/form-select';
+import SVGIcon from 'calypso/components/svg-icon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -26,13 +29,39 @@ import './style.scss';
 class ReaderSiteNotificationSettings extends Component {
 	static displayName = 'ReaderSiteNotificationSettings';
 	static propTypes = {
+		iconSize: PropTypes.number,
+		showLabel: PropTypes.bool,
 		siteId: PropTypes.number,
+		subscriptionId: PropTypes.number,
+	};
+
+	static defaultProps = {
+		iconSize: 20,
+		showLabel: true,
 	};
 
 	state = { showPopover: false };
 
 	iconRef = createRef();
 	spanRef = createRef();
+
+	getAvailableFrequencies = () => {
+		const { translate } = this.props;
+		return [
+			{
+				value: Reader.EmailDeliveryFrequency.Instantly,
+				label: translate( 'Instantly' ),
+			},
+			{
+				value: Reader.EmailDeliveryFrequency.Daily,
+				label: translate( 'Daily' ),
+			},
+			{
+				value: Reader.EmailDeliveryFrequency.Weekly,
+				label: translate( 'Weekly' ),
+			},
+		];
+	};
 
 	togglePopoverVisibility = () => {
 		this.setState( { showPopover: ! this.state.showPopover } );
@@ -42,7 +71,7 @@ class ReaderSiteNotificationSettings extends Component {
 		this.setState( { showPopover: false } );
 	};
 
-	setSelected = ( text ) => () => {
+	setSelected = ( text ) => {
 		const { siteId } = this.props;
 		this.props.updateNewPostEmailSubscription( siteId, text );
 
@@ -98,11 +127,18 @@ class ReaderSiteNotificationSettings extends Component {
 	render() {
 		const {
 			translate,
+			emailDeliveryFrequency,
 			sendNewCommentsByEmail,
 			sendNewPostsByEmail,
 			sendNewPostsByNotification,
 			isEmailBlocked,
+			subscriptionId,
 		} = this.props;
+
+		const availableFrequencies = this.getAvailableFrequencies();
+		const selectedFrequency = availableFrequencies.find(
+			( option ) => option.value === emailDeliveryFrequency
+		);
 
 		if ( ! this.props.siteId ) {
 			return null;
@@ -115,14 +151,23 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__button"
 					onClick={ this.togglePopoverVisibility }
 					ref={ this.spanRef }
+					aria-label={ translate( 'Notification settings' ) }
 				>
-					<Gridicon icon="cog" size={ 24 } ref={ this.iconRef } />
-					<span
-						className="reader-site-notification-settings__button-label"
-						title={ translate( 'Notification settings' ) }
-					>
-						{ translate( 'Settings' ) }
-					</span>
+					<SVGIcon
+						classes="reader-following-feed"
+						name="settings"
+						size={ this.props.iconSize }
+						icon={ Settings }
+						ref={ this.iconRef }
+					/>
+					{ this.props.showLabel && (
+						<span
+							className="reader-site-notification-settings__button-label"
+							title={ translate( 'Notification settings' ) }
+						>
+							{ translate( 'Settings' ) }
+						</span>
+					) }
 				</button>
 
 				<ReaderPopover
@@ -178,27 +223,20 @@ class ReaderSiteNotificationSettings extends Component {
 					</div>
 
 					{ ! isEmailBlocked && sendNewPostsByEmail && (
-						<SegmentedControl>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'instantly' }
-								onClick={ this.setSelected( 'instantly' ) }
+						<div className="reader-site-notification-settings__popout-select">
+							<FormSelect
+								value={ selectedFrequency?.value }
+								onChange={ ( event ) => this.setSelected( event.target.value ) }
 							>
-								{ translate( 'Instantly' ) }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'daily' }
-								onClick={ this.setSelected( 'daily' ) }
-							>
-								{ translate( 'Daily' ) }
-							</SegmentedControl.Item>
-							<SegmentedControl.Item
-								selected={ this.props.emailDeliveryFrequency === 'weekly' }
-								onClick={ this.setSelected( 'weekly' ) }
-							>
-								{ translate( 'Weekly' ) }
-							</SegmentedControl.Item>
-						</SegmentedControl>
+								{ availableFrequencies.map( ( option ) => (
+									<option key={ option.value } value={ option.value }>
+										{ option.label }
+									</option>
+								) ) }
+							</FormSelect>
+						</div>
 					) }
+
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
 							<ToggleControl
@@ -208,6 +246,22 @@ class ReaderSiteNotificationSettings extends Component {
 								label={ translate( 'Email me new comments' ) }
 							/>
 						</div>
+					) }
+
+					{ subscriptionId && (
+						<Button
+							className="reader-site-notification-settings__manage-subscription-button"
+							icon={
+								<Icon
+									className="subscriptions-ellipsis-menu__item-icon"
+									size={ 20 }
+									icon={ settings }
+								/>
+							}
+							href={ `/read/subscriptions/${ subscriptionId }` }
+						>
+							{ translate( 'Manage subscription' ) }
+						</Button>
 					) }
 				</ReaderPopover>
 			</div>

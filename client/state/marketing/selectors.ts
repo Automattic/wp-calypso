@@ -1,4 +1,3 @@
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type { AppState } from 'calypso/types';
 import 'calypso/state/marketing/init';
 
@@ -7,11 +6,8 @@ export interface JetpackSaleCoupon {
 	start_date: string;
 	expiry_date: string;
 	sale_title: string;
+	sale_description: string;
 	final_discount: number;
-}
-
-export function isTreatmentPlansReorderTest( state: AppState ): boolean {
-	return 'treatment' === getCurrentUser( state )?.meta?.plans_reorder_abtest_variation;
 }
 
 export function getJetpackSaleCoupon( state: AppState ): JetpackSaleCoupon | null {

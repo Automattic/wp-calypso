@@ -14,8 +14,8 @@ export type RenderedComponent = string | ComponentType< RenderedComponentProps >
 export interface ProxiedImageProps {
 	query: string;
 	filePath: string;
-	siteSlug: string;
-	placeholder: ReactNode;
+	siteId: number | string;
+	placeholder?: ReactNode;
 	component: RenderedComponent;
 	maxSize: number | null;
 	onError?: ( err: Error ) => any;
@@ -40,10 +40,10 @@ const cacheResponse = ( requestId: string, blob: Blob, freshness = 60000 ) => {
 };
 
 const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
-	siteSlug,
+	siteId,
 	filePath,
 	query,
-	placeholder,
+	placeholder = null,
 	maxSize,
 	onError,
 	component: Component,
@@ -52,7 +52,7 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 	const [ imageObjectUrl, setImageObjectUrl ] = useState< string >( '' );
 
 	useEffect( () => {
-		const requestId = `media-library-proxied-image-${ siteSlug }${ filePath }${ query }`;
+		const requestId = `media-library-proxied-image-${ siteId }${ filePath }${ query }`;
 
 		if ( cache[ requestId ] ) {
 			const url = URL.createObjectURL( cache[ requestId ] );
@@ -61,7 +61,7 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 		} else {
 			debug( 'requesting image from API', { requestId, imageObjectUrl } );
 			const options = { query, ...( maxSize !== null ? { maxSize } : {} ) };
-			getAtomicSiteMediaViaProxyRetry( siteSlug, filePath, options )
+			getAtomicSiteMediaViaProxyRetry( siteId, filePath, options )
 				.then( ( data: Blob ) => {
 					cacheResponse( requestId, data );
 					setImageObjectUrl( URL.createObjectURL( data ) );
@@ -76,7 +76,7 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 				URL.revokeObjectURL( imageObjectUrl );
 			}
 		};
-	}, [ siteSlug, filePath, query ] );
+	}, [ siteId, filePath, query ] );
 
 	if ( ! imageObjectUrl ) {
 		return placeholder as ReactElement;
@@ -84,10 +84,6 @@ const ProxiedImage: FC< ProxiedImageProps > = function ProxiedImage( {
 
 	/* eslint-disable-next-line jsx-a11y/alt-text */
 	return <Component src={ imageObjectUrl } { ...rest } />;
-};
-
-ProxiedImage.defaultProps = {
-	placeholder: null,
 };
 
 export default ProxiedImage;

@@ -5,21 +5,22 @@ import {
 	FEATURE_SFTP,
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_BUSINESS,
-	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	PLAN_BUSINESS_MONTHLY,
+	getPlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
-import page from 'page';
 import { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
+import DataCenterPicker from 'calypso/blocks/data-center-picker';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
+import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getEligibility,
@@ -32,7 +33,6 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import DataCenterPicker from './data-center-picker';
 import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
@@ -43,15 +43,19 @@ import './style.scss';
 const noop = () => {};
 
 interface ExternalProps {
+	siteId?: number | null;
 	isEligible?: boolean;
-	backUrl: string;
+	backUrl?: string;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 	standaloneProceed: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
+	isOnboarding?: boolean;
 	showDataCenterPicker?: boolean;
+	disableContinueButton?: boolean;
+	showFreeTrial?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -79,24 +83,23 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
+	disableContinueButton,
+	showFreeTrial,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
 
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, siteId || undefined )
-	);
-
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	const showWarnings = warnings.length > 0 && ! hasBlockingHold( listHolds );
-	const classes = classNames(
+	const classes = clsx(
 		'eligibility-warnings',
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': context !== 'plugin-details',
+			'eligibility-warnings--without-title':
+				context !== 'plugin-details' && context !== 'hosting-features',
 		},
 		className
 	);
@@ -114,8 +117,18 @@ export const EligibilityWarnings = ( {
 		}
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
-			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
-			page.redirect( `/checkout/${ siteSlug }/${ planSlug }` );
+			const planSlug = PLAN_BUSINESS;
+			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
+			if ( context === 'plugins-upload' ) {
+				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
+					`/plugins/upload/${ siteSlug }?showUpgradeSuccessNotice=true`
+				) }`;
+			}
+			if ( showFreeTrial ) {
+				onProceed( options );
+				return;
+			}
+			page.redirect( redirectUrl );
 			return;
 		}
 		if ( siteRequiresLaunch( listHolds ) ) {
@@ -141,7 +154,7 @@ export const EligibilityWarnings = ( {
 
 	const monthlyCost = useSelector( ( state ) =>
 		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
-	);
+	) as string;
 
 	return (
 		<div className={ classes }>
@@ -170,8 +183,14 @@ export const EligibilityWarnings = ( {
 						<div className="eligibility-warnings__primary-text">
 							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
 								? translate(
-										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
-										{ args: { monthlyCost } }
+										// Translators: %(planName)s is the plan - Business or Creator, and %(monthlyCost)s is the monthly cost.
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the %(planName)s plan for %(monthlyCost)s/month.',
+										{
+											args: {
+												monthlyCost,
+												planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+											},
+										}
 								  )
 								: '' }
 						</div>
@@ -179,7 +198,17 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
+			{ context === 'hosting-features' && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						<div className="eligibility-warnings__title">
+							{ translate( 'Activate hosting features' ) }
+						</div>
+					</div>
+				</CompactCard>
+			) }
+
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && ! showFreeTrial && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -205,7 +234,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showDataCenterPicker && (
+			{ showDataCenterPicker && isEligible && ! hasBlockingHold( listHolds ) && (
 				<CompactCard className="eligibility-warnings__data-center-picker">
 					<TrackComponentView eventName="calypso_automated_transfer_datacenter_picker_display" />
 					<DataCenterPicker
@@ -231,16 +260,17 @@ export const EligibilityWarnings = ( {
 						} ) }
 					</div>
 					<Button
-						primary={ true }
+						primary
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
-							siteIsLaunching
+							siteIsLaunching ||
+							disableContinueButton
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings }
+						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, context ) }
+						{ getProceedButtonText( listHolds, translate, context, showFreeTrial ) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -266,11 +296,15 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
-	context: string | null
+	context: string | null,
+	showFreeTrial?: boolean
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
 		if ( context === 'plugin-details' || context === 'plugins' ) {
 			return translate( 'Upgrade and activate plugin' );
+		}
+		if ( showFreeTrial ) {
+			return translate( 'Start your free trial' );
 		}
 		return translate( 'Upgrade and continue' );
 	}
@@ -279,6 +313,9 @@ function getProceedButtonText(
 	}
 	if ( siteRequiresGoingPublic( holds ) ) {
 		return translate( 'Make your site public and continue' );
+	}
+	if ( context === 'hosting-features' ) {
+		return translate( 'Activate hosting features' );
 	}
 
 	return translate( 'Continue' );
@@ -312,7 +349,7 @@ EligibilityWarnings.defaultProps = {
 
 /**
  * processMarketplaceExceptions: Remove 'NO_BUSINESS_PLAN' holds if the
- * INSTALL_PURCHASED_PLUGINS feature is present.
+ * INSTALL_PURCHASED_PLUGINS feature is present or is onboarding flow.
  *
  * Starter plans do not have the ATOMIC feature, but they have the
  * INSTALL_PURCHASED_PLUGINS feature which allows them to buy marketplace
@@ -322,20 +359,27 @@ EligibilityWarnings.defaultProps = {
  * 'NO_BUSINESS_PLAN' hold on atomic transfer; however, if we're about to buy a
  * marketplace addon which provides the ATOMIC feature, then we can ignore this
  * hold.
+ *
+ * The Onboarding flow takes care of upgrading the Business plan so we can
+ * can ignore the 'NO_BUSINESS_PLAN' hold.
  */
 const processMarketplaceExceptions = (
 	state: Record< string, unknown >,
 	eligibilityData: EligibilityData,
-	isEligible: boolean
+	isEligible: boolean,
+	isOnboarding?: boolean
 ) => {
 	// If no eligibilityHolds are defined, skip.
 	if ( typeof eligibilityData.eligibilityHolds === 'undefined' ) {
 		return { eligibilityData, isEligible };
 	}
 
-	// If missing INSTALL_PURCHASED_PLUGINS feature, skip.
+	// If is not Onboarding flow and missing INSTALL_PURCHASED_PLUGINS feature, skip.
 	const siteId = getSelectedSiteId( state );
-	if ( ! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ) {
+	if (
+		! isOnboarding &&
+		! siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
+	) {
 		return { eligibilityData, isEligible };
 	}
 
@@ -349,7 +393,7 @@ const processMarketplaceExceptions = (
 };
 
 const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalProps ) => {
-	const siteId = getSelectedSiteId( state );
+	const siteId = getSelectedSiteId( state ) || ownProps.siteId || null;
 	const siteSlug = getSelectedSiteSlug( state );
 	let eligibilityData = ownProps.eligibilityData || getEligibility( state, siteId );
 	let isEligible = ownProps.isEligible || isEligibleForAutomatedTransfer( state, siteId );
@@ -359,7 +403,8 @@ const mapStateToProps = ( state: Record< string, unknown >, ownProps: ExternalPr
 		( { eligibilityData, isEligible } = processMarketplaceExceptions(
 			state,
 			eligibilityData,
-			isEligible
+			isEligible,
+			ownProps.isOnboarding
 		) );
 	}
 
@@ -411,8 +456,12 @@ function mergeProps(
 			? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
+	} else if ( ownProps.currentContext === 'hosting-features' ) {
+		context = ownProps.currentContext;
+		feature = FEATURE_SFTP;
+		ctaName = 'calypso-hosting-features-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
-		context = 'plugins';
+		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'themes' ) ) {

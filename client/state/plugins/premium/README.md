@@ -21,7 +21,7 @@ fetchInstallInstructions( 106093271 );
 Start the install process for a plugin.
 
 ```js
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { installPlugin } from 'calypso/state/plugins/premium/actions';
 

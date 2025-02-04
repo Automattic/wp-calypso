@@ -1,14 +1,20 @@
 import type { State } from './reducer';
 
 export const isHelpCenterShown = ( state: State ) => state.showHelpCenter;
-export const getSite = ( state: State ) => state.site;
+export const isMessagingLauncherShown = ( state: State ) => state.showMessagingLauncher;
+export const isMessagingWidgetShown = ( state: State ) => state.showMessagingWidget;
 export const getSubject = ( state: State ) => state.subject;
 export const getMessage = ( state: State ) => state.message;
-export const getChatTag = ( state: State ) => state.chatTag;
 export const getUserDeclaredSiteUrl = ( state: State ) => state.userDeclaredSiteUrl;
-export const getIframe = ( state: State ) => state.iframe;
 export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
-export const getRouterState = ( state: State ) => state.routerState;
+export const getIsChatLoaded = ( state: State ) => state.isChatLoaded;
+export const getAreSoundNotificationsEnabled = ( state: State ) =>
+	state.areSoundNotificationsEnabled;
+export const getZendeskClientId = ( state: State ) => state.zendeskClientId;
 export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
+export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
+export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
+export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
+export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;

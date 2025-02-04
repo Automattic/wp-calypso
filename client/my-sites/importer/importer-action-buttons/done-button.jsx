@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
@@ -31,6 +31,7 @@ export class DoneButton extends PureComponent {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
 			blog_id: siteId,
 			importer_id: type,
+			action: 'view-site',
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );

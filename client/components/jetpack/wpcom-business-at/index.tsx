@@ -1,10 +1,9 @@
+import page from '@automattic/calypso-router';
 import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
@@ -23,7 +22,9 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import SpinnerButton from 'calypso/components/spinner-button';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
@@ -33,7 +34,6 @@ import {
 	EligibilityData,
 } from 'calypso/state/automated-transfer/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
-import { requestSite } from 'calypso/state/sites/actions';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -46,7 +46,7 @@ interface BlockingHoldNoticeProps {
 }
 
 // This gets the values of the object transferStates.
-export type TransferStatus = typeof transferStates[ keyof typeof transferStates ];
+export type TransferStatus = ( typeof transferStates )[ keyof typeof transferStates ];
 
 interface TransferFailureNoticeProps {
 	transferStatus: TransferStatus | null;
@@ -145,7 +145,7 @@ export default function WPCOMBusinessAT() {
 	const dispatch = useDispatch();
 	const initiateAT = useCallback( () => {
 		setShowDialog( false );
-		dispatch( initiateThemeTransfer( siteId, null, '' ) );
+		dispatch( initiateThemeTransfer( siteId, null, '', '', 'jetpack_product_activation' ) );
 	}, [ dispatch, siteId ] );
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
@@ -165,8 +165,6 @@ export default function WPCOMBusinessAT() {
 		}
 		// Transfer is completed, check if it's already a Jetpack site
 		if ( ! isJetpack ) {
-			// Need to refresh the site data.
-			dispatch( requestSite( siteId ) );
 			return;
 		}
 
@@ -234,7 +232,7 @@ export default function WPCOMBusinessAT() {
 				</div>
 			</PromoCard>
 
-			<WhatIsJetpack className="wpcom-business-at__footer" />
+			{ ! isJetpackCloud() && <WhatIsJetpack className="wpcom-business-at__footer" /> }
 
 			<Dialog
 				isVisible={ showDialog }
@@ -248,7 +246,7 @@ export default function WPCOMBusinessAT() {
 						isPrimary: true,
 					},
 				] }
-				className={ classNames(
+				className={ clsx(
 					'wpcom-business-at__dialog',
 					'eligibility-warnings',
 					'eligibility-warnings--without-title',

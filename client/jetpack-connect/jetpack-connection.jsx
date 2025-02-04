@@ -1,15 +1,16 @@
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { flowRight, get, omit } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
-import { JETPACK_ADMIN_PATH } from 'calypso/jetpack-connect/constants';
+import { JETPACK_ADMIN_PATH, JPC_A4A_PATH } from 'calypso/jetpack-connect/constants';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/route';
+import { urlToSlug } from 'calypso/lib/url';
 import versionCompare from 'calypso/lib/version-compare';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
@@ -88,6 +89,8 @@ const jetpackConnection = ( WrappedComponent ) => {
 
 			this.setState( { url, status } );
 
+			const source = queryArgs?.source;
+
 			if (
 				( status === NOT_CONNECTED_JETPACK || status === NOT_CONNECTED_USER ) &&
 				this.isCurrentUrlFetched() &&
@@ -95,13 +98,22 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! this.state.redirecting
 			) {
 				debug( `Redirecting to remote_auth ${ this.props.siteHomeUrl }` );
-				this.redirect( 'remote_auth', this.props.siteHomeUrl );
+				this.redirect( 'remote_auth', this.props.siteHomeUrl, null, source ? { source } : null );
 			}
 
 			if ( status === ALREADY_CONNECTED && ! this.state.redirecting ) {
 				const currentPlan = retrievePlan();
 				clearPlan();
-				if ( currentPlan ) {
+				if ( source === 'jetpack-manage' ) {
+					this.setState( { status: ALREADY_CONNECTED } );
+				} else if ( source === 'a8c-for-agencies' ) {
+					const urlRedirect = addQueryArgs(
+						{ site_already_connected: urlToSlug( this.props.siteHomeUrl ) },
+						JPC_A4A_PATH
+					);
+					navigate( urlRedirect );
+					return;
+				} else if ( currentPlan ) {
 					if ( currentPlan === PLAN_JETPACK_FREE ) {
 						debug( `Redirecting to wpadmin` );
 						return navigate( this.props.siteHomeUrl + JETPACK_ADMIN_PATH );

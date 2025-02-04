@@ -11,7 +11,6 @@ import 'calypso/state/posts/init';
  * Returns an action thunk which, when dispatched, triggers a network request
  * to delete the specified post. The post should already have a status of trash
  * when dispatching this action, else you should use `trashPost`.
- *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
  * @param  {boolean}  silent Whether to stop related notices from appearing

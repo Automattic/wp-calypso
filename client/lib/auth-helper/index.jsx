@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import './style.scss';
 
@@ -40,4 +40,4 @@ function AuthHelper() {
 	);
 }
 
-export default ( element ) => ReactDom.render( <AuthHelper />, element );
+export default ( element ) => createRoot( element ).render( <AuthHelper /> );

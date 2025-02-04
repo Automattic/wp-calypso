@@ -1,11 +1,11 @@
+import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import SearchRestyled from '@automattic/search';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { flow } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReactDom from 'react-dom';
@@ -26,6 +26,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import JetpackAgencyAddSite from '../jetpack/add-new-site-button';
 import SiteSelectorAddSite from './add-site';
 import SitesList from './sites-list';
 import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
@@ -39,8 +40,10 @@ const debug = debugFactory( 'calypso:site-selector' );
 export class SiteSelector extends Component {
 	static propTypes = {
 		isPlaceholder: PropTypes.bool,
+		isJetpackAgencyDashboard: PropTypes.bool,
 		sites: PropTypes.array,
 		siteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		wpcomSiteBasePath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		showAddNewSite: PropTypes.bool,
 		showAllSites: PropTypes.bool,
 		indicator: PropTypes.bool,
@@ -61,6 +64,7 @@ export class SiteSelector extends Component {
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
 		hasSiteWithPlugins: PropTypes.bool,
+		showListBottomAdornment: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -70,6 +74,7 @@ export class SiteSelector extends Component {
 		showAllSites: false,
 		showHiddenSites: false,
 		siteBasePath: false,
+		wpcomSiteBasePath: false,
 		indicator: false,
 		hideSelected: false,
 		selected: null,
@@ -77,6 +82,7 @@ export class SiteSelector extends Component {
 		onSiteSelect: noop,
 		groups: false,
 		autoFocus: false,
+		showListBottomAdornment: true,
 	};
 
 	state = {
@@ -211,7 +217,8 @@ export class SiteSelector extends Component {
 			} );
 		}
 
-		const handledByHost = this.props.onSiteSelect( siteId );
+		const selectedSite = this.props.sites.find( ( site ) => site.ID === siteId );
+		const handledByHost = this.props.onSiteSelect( siteId, selectedSite );
 		this.props.onClose( event, siteId );
 
 		if ( ! this.siteSelectorRef ) {
@@ -279,7 +286,8 @@ export class SiteSelector extends Component {
 			( site === ALL_SITES && selectedSite === null ) ||
 			selectedSite === site.ID ||
 			selectedSite === site.domain ||
-			selectedSite === site.slug
+			selectedSite === site.slug ||
+			selectedSite?.ID === site.ID
 		);
 	};
 
@@ -309,6 +317,12 @@ export class SiteSelector extends Component {
 		if ( this.props.hideSelected && this.props.selected ) {
 			sites = sites.filter( ( site ) => site.slug !== this.props.selected );
 		}
+
+		// Bulk transfers of many domains get attached to a single domain-only site.
+		// Because of this, it doesn't make sense to show domain-only sites in the site selector.
+
+		// Eventually, we'll want to filter out domain-only sites at the API boundary instead.
+		sites = sites.filter( ( site ) => ! site?.options?.is_domain_only );
 
 		return sites;
 	}
@@ -365,7 +379,7 @@ export class SiteSelector extends Component {
 				showIcon={ !! multiSiteContext?.icon }
 				icon={
 					multiSiteContext?.icon && (
-						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden />
 					)
 				}
 			/>
@@ -402,7 +416,7 @@ export class SiteSelector extends Component {
 
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
-		const selectorClass = classNames( 'site-selector', 'sites-list', this.props.className, {
+		const selectorClass = clsx( 'site-selector', 'sites-list', this.props.className, {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
 			'is-single': this.props.visibleSiteCount === 1,
 			'is-hover-enabled': ! this.state.isKeyboardEngaged,
@@ -416,6 +430,7 @@ export class SiteSelector extends Component {
 
 		return (
 			<div
+				ref={ this.props.forwardRef }
 				className={ selectorClass }
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }
@@ -433,30 +448,33 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
-					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
-						<span className="site-selector__list-bottom-adornment">
-							{ this.props.translate(
-								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
-								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
-								{
-									count: hiddenSitesCount,
-									args: {
-										hiddenSitesCount: hiddenSitesCount,
-									},
-									components: {
-										br: <br />,
-										a: (
-											<a
-												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
-							) }
-						</span>
-					) }
+					{ this.props.showListBottomAdornment &&
+						! this.props.showHiddenSites &&
+						hiddenSitesCount > 0 &&
+						! this.state.searchTerm && (
+							<span className="site-selector__list-bottom-adornment">
+								{ this.props.translate(
+									'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+									'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+									{
+										count: hiddenSitesCount,
+										args: {
+											hiddenSitesCount: hiddenSitesCount,
+										},
+										components: {
+											br: <br />,
+											a: (
+												<a
+													href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+													target="_blank"
+													rel="noopener noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</span>
+						) }
 				</div>
 				{ ( this.props.showManageSitesButton || this.props.showAddNewSite ) && (
 					<div className="site-selector__actions">
@@ -472,7 +490,33 @@ export class SiteSelector extends Component {
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>
 						) }
-						{ this.props.showAddNewSite && <SiteSelectorAddSite /> }
+						{ this.props.showAddNewSite &&
+							( this.props.isJetpackAgencyDashboard ? (
+								<JetpackAgencyAddSite
+									onClickAddNewSite={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_add_new_site_click'
+										)
+									}
+									onClickWpcomMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_create_wpcom_site_click'
+										)
+									}
+									onClickJetpackMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_connect_jetpack_site_click'
+										)
+									}
+									onClickBluehostMenuItem={ () =>
+										this.props.recordTracksEvent(
+											'calypso_jetpack_agency_dashboard_sidebar_create_bluehost_site_click'
+										)
+									}
+								/>
+							) : (
+								<SiteSelectorAddSite />
+							) ) }
 					</div>
 				) }
 			</div>
@@ -481,13 +525,19 @@ export class SiteSelector extends Component {
 }
 
 const navigateToSite =
-	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath } ) =>
+	( siteId, { allSitesPath, allSitesSingleUser, siteBasePath, wpcomSiteBasePath } ) =>
 	( dispatch, getState ) => {
 		const state = getState();
 		const site = getSite( state, siteId );
-		const pathname = getPathnameForSite();
-		if ( pathname ) {
-			page( pathname );
+
+		// We will need to open a new tab if we have wpcomSiteBasePath prop and current site is an Atomic site.
+		if ( site?.is_wpcom_atomic && wpcomSiteBasePath ) {
+			window.open( getCompleteSiteURL( wpcomSiteBasePath ) );
+		} else {
+			const pathname = getPathnameForSite();
+			if ( pathname ) {
+				page( pathname );
+			}
 		}
 
 		function getPathnameForSite() {
@@ -504,35 +554,13 @@ const navigateToSite =
 				}
 
 				// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-				if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+				if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 					return '/backup';
 				}
 
 				return path;
 			} else if ( siteBasePath ) {
-				const base = getSiteBasePath();
-
-				// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
-				const urlType = determineUrlType( base );
-
-				// Get URL parts and modify the path.
-				const { origin, pathname: urlPathname, search } = getUrlParts( base );
-				const newPathname = `${ urlPathname }/${ site.slug }`;
-
-				try {
-					// Get an absolute URL from the original URL, the modified path, and some defaults.
-					const absoluteUrl = getUrlFromParts( {
-						origin: origin || window.location.origin,
-						pathname: newPathname,
-						search,
-					} );
-
-					// Format the absolute URL down to the original URL type.
-					return format( absoluteUrl, urlType );
-				} catch {
-					// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
-					return null;
-				}
+				return getCompleteSiteURL( getSiteBasePath() );
 			}
 		}
 
@@ -563,12 +591,41 @@ const navigateToSite =
 				}
 			}
 
+			// Defaults to /advertising/campaigns when switching sites in the 3rd level
+			if ( path.match( /^\/advertising\/campaigns\/\d+/ ) ) {
+				path = '/advertising/campaigns';
+			}
+
 			// Jetpack Cloud: default to /backups/ when in the details of a particular backup
-			if ( path.match( /^\/backup\/.*\/(download|restore|detail)/ ) ) {
+			if ( path.match( /^\/backup\/.*\/(download|restore|contents|granular-restore)/ ) ) {
 				path = '/backup';
 			}
 
 			return path;
+		}
+
+		function getCompleteSiteURL( base ) {
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { origin, pathname: urlPathname, search } = getUrlParts( base );
+			const newPathname = `${ urlPathname }/${ site.slug }`;
+
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					origin: origin || window.location.origin,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	};
 

@@ -1,4 +1,5 @@
 import { PRODUCT_JETPACK_SCAN } from '@automattic/calypso-products';
+import { FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products/src/constants/features';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -16,10 +17,7 @@ import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getPurchaseURLCallback } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
@@ -65,12 +63,6 @@ function ScanVPActiveBody() {
 
 function ScanUpsellBody() {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
-		// For the Scan upsell in Jetpack Cloud, we want to redirect back here to the Scan page after checkout.
-		redirect_to: window.location.href,
-	} );
 	const dispatch = useDispatch();
 
 	const onClick = useCallback(
@@ -85,10 +77,9 @@ function ScanUpsellBody() {
 			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
 			<UpsellProductCard
-				productSlug={ PRODUCT_JETPACK_SCAN }
+				featureType={ FEATURE_TYPE_JETPACK_SCAN }
+				nonManageProductSlug={ PRODUCT_JETPACK_SCAN }
 				siteId={ siteId }
-				currencyCode={ currencyCode }
-				getButtonURL={ createCheckoutURL }
 				onCtaButtonClick={ onClick }
 			/>
 		</>

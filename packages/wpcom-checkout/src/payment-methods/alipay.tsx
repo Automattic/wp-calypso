@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,21 +14,16 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:alipay-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'alipay';
 type NounsInStore = 'customerName';
 type AlipayStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -50,7 +44,7 @@ export function createAlipayPaymentMethodStore(): AlipayStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -63,14 +57,32 @@ export function createAlipayPaymentMethodStore(): AlipayStore {
 	} );
 }
 
-export function createAlipayMethod( { store }: { store: AlipayStore } ): PaymentMethod {
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'alipay' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
+export function createAlipayMethod( {
+	store,
+	submitButtonContent,
+}: {
+	store: AlipayStore;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'alipay',
+		hasRequiredFields: true,
 		paymentProcessorId: 'alipay',
 		label: <AlipayLabel />,
 		activeContent: <AlipayFields />,
 		inactiveContent: <AlipaySummary />,
-		submitButton: <AlipayPayButton store={ store } />,
+		submitButton: <AlipayPayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		getAriaLabel: () => 'Alipay',
 	};
 }
@@ -78,7 +90,7 @@ export function createAlipayMethod( { store }: { store: AlipayStore } ): Payment
 function AlipayFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'alipay' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -133,14 +145,15 @@ function AlipayPayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: AlipayStore;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -166,21 +179,9 @@ function AlipayPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isFormValid( store: AlipayStore ) {
@@ -256,7 +257,7 @@ function AlipayLogo() {
 }
 
 function AlipaySummary() {
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

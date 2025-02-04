@@ -1,0 +1,73 @@
+.next-steps {
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 16px;
+
+		h2 {
+			@include a4a-font-heading-md;
+			color: var(--color-neutral-100);
+		}
+		.circular__progress-bar {
+			margin-right: 8px;
+
+			.circular__progress-bar-text {
+				@include a4a-font-label-button($font-size: rem(10px));
+				color: var(--color-neutral-100);
+			}
+
+			.circular__progress-bar-fill-circle {
+				stroke: var(--color-jetpack);
+			}
+		}
+	}
+
+	p,
+	button {
+		@include a4a-font-body-md;
+		color: var(--color-neutral-80);
+	}
+
+	button.dismiss {
+		cursor: pointer;
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--color-jetpack);
+		}
+	}
+
+	.checklist-item__task {
+
+		.checklist-item__text {
+			@include a4a-font-body-md;
+			color: var(--color-neutral-80);
+		}
+
+		&.completed .checklist-item__text {
+			text-decoration: line-through;
+		}
+
+		&.completed.enabled:hover,
+		&.pending:hover,
+		&.completed.enabled > a:focus,
+		&.pending > a:focus {
+			.checklist-item__text {
+				color: var(--color-primary);
+			}
+
+			.checklist-item__chevron,
+			.checklist-item__checkmark {
+				fill: var(--color-primary);
+			}
+		}
+	}
+
+}
+
+.card:has(.next-steps) {
+	padding: 16px 24px;
+	border-radius: 4px;
+}

@@ -2,7 +2,7 @@ import { withStorageKey } from '@automattic/state-utils';
 import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/state/action-types';
 import { combineReducers, keyedReducer } from 'calypso/state/utils';
 import { activationRequesting } from './activation/reducer';
-import { backupRequest, backupProgress } from './backup/reducer';
+import { backupRequest, backupProgress, granularBackupDownloadRequested } from './backup/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';
 
 export const emptyFilter = {
@@ -29,6 +29,7 @@ const combinedReducer = combineReducers( {
 	restoreRequest,
 	backupProgress,
 	backupRequest,
+	granularBackupDownloadRequested,
 } );
 
 export default withStorageKey( 'activityLog', combinedReducer );

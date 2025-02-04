@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { select as d3Select } from 'd3-selection';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -48,8 +48,6 @@ export default class D3Base extends Component {
 	};
 
 	render() {
-		return (
-			<div className={ classNames( 'd3-base', this.props.className ) } ref={ this.setNodeRef } />
-		);
+		return <div className={ clsx( 'd3-base', this.props.className ) } ref={ this.setNodeRef } />;
 	}
 }

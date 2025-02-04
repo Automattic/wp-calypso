@@ -1,10 +1,9 @@
-import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { Button, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment } from 'react';
+import { Fragment, ReactNode } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -15,22 +14,17 @@ import type {
 	StoreActions,
 	StoreState,
 } from '../payment-method-store';
-import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 const debug = debugFactory( 'wpcom-checkout:p24-payment-method' );
 
-type StoreKey = 'p24';
 type NounsInStore = 'customerName' | 'customerEmail';
 
 type P24Store = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -58,7 +52,7 @@ export function createP24PaymentMethodStore(): P24Store {
 				customerName: { value: '', isTouched: false },
 				customerEmail: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -75,14 +69,36 @@ export function createP24PaymentMethodStore(): P24Store {
 	return store;
 }
 
-export function createP24Method( { store }: { store: P24Store } ): PaymentMethod {
+function useCustomerData() {
+	const { customerName, customerEmail } = useSelect( ( select ) => {
+		const store = select( 'p24' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+			customerEmail: store.getCustomerEmail(),
+		};
+	}, [] );
+
+	return {
+		customerName,
+		customerEmail,
+	};
+}
+
+export function createP24Method( {
+	store,
+	submitButtonContent,
+}: {
+	store: P24Store;
+	submitButtonContent: ReactNode;
+} ): PaymentMethod {
 	return {
 		id: 'p24',
+		hasRequiredFields: true,
 		paymentProcessorId: 'p24',
 		label: <P24Label />,
 		activeContent: <P24Fields />,
 		inactiveContent: <P24Summary />,
-		submitButton: <P24PayButton store={ store } />,
+		submitButton: <P24PayButton store={ store } submitButtonContent={ submitButtonContent } />,
 		getAriaLabel: () => 'Przelewy24',
 	};
 }
@@ -90,8 +106,7 @@ export function createP24Method( { store }: { store: P24Store } ): PaymentMethod
 function P24Fields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 	const { changeCustomerName, changeCustomerEmail } = useDispatch( 'p24' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -157,15 +172,15 @@ function P24PayButton( {
 	disabled,
 	onClick,
 	store,
+	submitButtonContent,
 }: {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 	store: P24Store;
+	submitButtonContent: ReactNode;
 } ) {
-	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -192,21 +207,9 @@ function P24PayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			{ submitButtonContent }
 		</Button>
 	);
-}
-
-function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total: LineItem } ) {
-	const { __ } = useI18n();
-	if ( formStatus === FormStatus.SUBMITTING ) {
-		return <>{ __( 'Processing…' ) }</>;
-	}
-	if ( formStatus === FormStatus.READY ) {
-		/* translators: %s is the total to be paid in localized currency */
-		return <>{ sprintf( __( 'Pay %s' ), total.amount.displayValue ) }</>;
-	}
-	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function isFormValid( store: P24Store ): boolean {
@@ -337,8 +340,7 @@ function P24Logo() {
 }
 
 function P24Summary() {
-	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
-	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
+	const { customerName, customerEmail } = useCustomerData();
 
 	return (
 		<SummaryDetails>

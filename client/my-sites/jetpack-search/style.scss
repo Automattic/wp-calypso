@@ -82,3 +82,40 @@
 		text-align: left;
 	}
 }
+
+.jetpack-search__wpcom-upsell {
+	.action-panel__figure img {
+		height: 120px;
+	}
+
+	.jetpack-search__wpcom-ctas {
+		margin: 16px 0;
+	}
+
+	.jetpack-search__wpcom-cta {
+		margin-top: 8px;
+	}
+
+	.jetpack-search__wpcom-realtime-cta {
+		margin-right: 16px;
+	}
+
+	.jetpack-search__subheader {
+		margin: 20px 16px 8px;
+
+		@extend .wp-brand-font;
+		font-size: $font-title-small;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			margin: 36px 0 4px;
+		}
+	}
+
+	.promo-section__promos {
+		.promo-card {
+			@include breakpoint-deprecated( ">1280px" ) {
+				flex: 1 1 calc(50% - 1em);
+			}
+		}
+	}
+}

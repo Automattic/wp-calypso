@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import { stringify } from 'qs';
-import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
 import type {
@@ -8,60 +8,63 @@ import type {
 	DesignRecipe,
 	SoftwareSet,
 	StyleVariation,
+	PreviewData,
+	DesignType,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
-	vertical_id: string;
-	intent: string;
 	seed?: string;
+	goals?: string[];
 	_locale: string;
-	include_virtual_designs?: boolean;
 }
 
-interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
+interface Options extends QueryOptions< StarterDesignsResponse > {
 	enabled?: boolean;
 	select?: ( response: StarterDesigns ) => StarterDesigns;
 }
 
 interface StarterDesignsResponse {
-	generated: { designs: GeneratedDesign[] };
-	static: { designs: StaticDesign[] };
+	filters: { subject: Record< string, Category > };
+	static: { designs: StarterDesign[] };
 }
 
-interface StaticDesign {
+export type ThemeTier = {
+	slug: string;
+	feature: string;
+	platform: string;
+};
+
+interface StarterDesign {
 	slug: string;
 	title: string;
 	description: string;
 	recipe: DesignRecipe;
-	verticalizable: boolean;
 	categories: Category[];
 	price?: string;
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
-	style_variation_slug: string | null;
-}
-
-interface GeneratedDesign {
-	slug: string;
-	title: string;
-	recipe: DesignRecipe;
-	verticalizable: boolean;
+	preview_data: PreviewData | null;
+	design_type?: DesignType;
+	theme_type?: string;
+	screenshot?: string;
+	theme_tier: ThemeTier;
+	demo_uri?: string;
 }
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
-	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
+	return useQuery( {
+		queryKey: [ 'starter-designs', queryParams ],
+		queryFn: () => fetchStarterDesigns( queryParams ),
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
-				generated: {
-					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
+				filters: {
+					subject: response.filters?.subject || {},
 				},
-				static: {
-					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
-				},
+				designs: response.static?.designs?.map( apiStarterDesignsToDesign ),
 			};
 
 			return select ? select( allDesigns ) : allDesigns;
@@ -82,65 +85,45 @@ function fetchStarterDesigns(
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
+function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 	const {
 		slug,
 		title,
 		description,
 		recipe,
-		verticalizable,
 		categories,
 		price,
 		style_variations,
 		software_sets,
-		is_virtual,
-		style_variation_slug,
+		preview_data,
+		design_type,
+		screenshot,
+		theme_tier,
+		demo_uri,
 	} = design;
-	const is_premium =
-		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
-	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+	const is_externally_managed = design.theme_type === 'managed-external';
+	const is_bundled_with_woo = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
-
-	const style_variation =
-		style_variations?.find( ( { slug } ) => slug === style_variation_slug ) ?? null;
 
 	return {
 		slug,
 		title,
 		description,
 		recipe,
-		verticalizable,
 		categories,
-		is_premium,
-		is_bundled_with_woo_commerce,
+		is_externally_managed,
+		is_bundled_with_woo,
 		price,
 		software_sets,
-		design_type: is_premium ? 'premium' : 'standard',
+		design_type: design_type ?? ( theme_tier?.slug === 'free' ? 'standard' : 'premium' ),
 		style_variations,
-		is_virtual,
-		style_variation,
-		// Deprecated; used for /start flow
-		features: [],
-		template: '',
+		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
+		...( preview_data && { preview_data } ),
 		theme: '',
-	};
-}
-
-function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe, verticalizable } = design;
-
-	return {
-		slug,
-		title,
-		recipe,
-		verticalizable,
-		is_premium: false,
-		categories: [],
-		features: [],
-		template: '',
-		theme: '',
-		design_type: 'vertical',
+		screenshot,
+		design_tier: theme_tier?.slug,
+		demo_uri,
 	};
 }

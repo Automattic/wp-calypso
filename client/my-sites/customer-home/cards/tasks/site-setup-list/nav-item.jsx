@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -25,7 +25,7 @@ const NavItem = ( {
 
 	return (
 		<button
-			className={ classnames( 'nav-item', {
+			className={ clsx( 'nav-item', {
 				'is-current': isCurrent,
 			} ) }
 			onClick={ () => {

@@ -1,5 +1,28 @@
 # Changelog
 
+## v2.1.0
+
+- Added Threads and Bluesky preview
+- Fixed media image URL for Tumblr and Instagram previews
+- Removed the learn more link for link previews
+
+## v2.0.1 (2024-06-10)
+
+- Added Mastodon, Instagram and Nextdoor previews.
+- Fixed hyperlinks for Facebook.
+- Fixed multiple empty lines issue in preview text.
+- Fixed video previews for Instagram and Tumblr.
+- Fixed empty Twitter preview when no text/description is provided.
+- Changed Twitter text and icon to X.
+- Switch dependency from `classnames` to `clsx`.
+
+## v2.0.0 (2023-05-24)
+
+- Converted the package to TypeScript.
+- Added LinkedIn and Tumblr previews.
+- Updated Google Search, Facebook and Twitter previews to match their latest designs.
+- Created separate components for each of the Social Media previews e.g. `TumblrLinkPreview`, `TumblrPostPreview` and `TumblrPreviews`.
+
 ## v1.1.5 (2022-08-24)
 
 - Declare an optional peer dependency on `@babel/runtime`, for CommonJS environments. This dependency already existed previously, it just wasn't declared.

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { useSendEmailVerification } from './use-send-email-verification';
 

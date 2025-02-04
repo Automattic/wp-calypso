@@ -123,12 +123,17 @@ describe( 'reducer', () => {
 		expect( state ).toEqual( {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: null,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		} );
 	} );
@@ -137,12 +142,17 @@ describe( 'reducer', () => {
 		const previousState = {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: null,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		};
 		const state = reducer( previousState, {
@@ -154,21 +164,31 @@ describe( 'reducer', () => {
 		expect( state ).toEqual( {
 			12345678: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: null,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 			9876543: {
 				lastCacheClearTimestamp: null,
+				lastEdgeCacheClearTimestamp: null,
 				geoAffinity: null,
 				isFetchingGeoAffinity: null,
 				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
 				sshAccess: null,
 				staticFile404: null,
+				isLoadingSftpUsers: false,
+				isLoadingSshAccess: null,
+				isFetchingWpVersion: false,
+				wpVersion: null,
 			},
 		} );
 	} );

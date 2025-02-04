@@ -1,5 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+.is-section-reader .search-stream__fixed-area {
+	.navigation-header {
+		@include break-medium {
+			padding: 0;
+		}
+	}
+}
+
+// .has-header-section only applies for logged out views
+.layout.has-header-section.is-section-reader .search-stream__fixed-area .navigation-header h1 {
+	@extend .wp-brand-font;
+	font-weight: 600;
+	font-size: 2.25rem;
+	line-height: 48px;
+	margin-bottom: 4px;
+}
+
+.layout.has-header-section.is-section-reader {
+
+	.layout__content {
+		background: var(--studio-white);
+	}
+}
+
+
 .is-reader-page .main.search-stream {
 	max-width: 905px;
+	margin: 0 auto;
+	padding-inline: 24px;
 }
 
 .search-stream__intro {
@@ -10,13 +41,13 @@
 
 .search-stream .search {
 	margin-bottom: 0;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 6px;
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 	.search__icon-navigation {
 		/* stylelint-disable-next-line scales/radii */
-		border-bottom-left-radius: 6px;
-		/* stylelint-disable-next-line scales/radii */
-		border-top-left-radius: 6px;
+		border-radius: 6px;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
 	}
 	.search__input.form-text-input[type="search"],
 	.search__close-icon {
@@ -35,24 +66,54 @@
 }
 
 .is-reader-page .search-stream__fixed-area {
-	background-color: var(--color-surface);
-	position: fixed;
+	background: var(--studio-white);
+	position: sticky;
 	top: 0;
-	margin-top: var(--masterbar-height);
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 
-	@include breakpoint-deprecated( ">660px" ) {
-		padding-top: 30px;
+	@media only screen and (min-width: 601px) and (max-width: 660px) {
+		width: calc(100% - 96px);
 	}
+}
+
+.layout.has-header-section .search-stream__fixed-area {
+	position: static;
+	padding-top: 0;
+	margin-top: 0;
 }
 
 .search-stream__fixed-area .section-nav-tabs.is-dropdown {
 	margin: 0;
 }
 
+.search-stream__fixed-area .formatted-header.is-left-align.has-screen-options {
+	@media only screen and (max-width: 660px) {
+		display: none;
+	}
+}
+
 .search-stream .search-stream__input-card.card {
-	margin-bottom: 0;
+	margin-inline: 16px;
+	border-radius: 4px;
+
+	@include break-small {
+		margin-inline: 0;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		.search__icon-navigation {
+			border-radius: 4px;
+		}
+	}
+}
+
+.reader-blank-suggestions {
+	padding: 0 16px;
+
+	@include break-small {
+		padding: 0;
+	}
 }
 
 .search-stream__input-card.card {
@@ -79,7 +140,7 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		flex-flow: row wrap;
-		padding: 15px 5px 15px 15px;
+		padding-top: 30px;
 	}
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -103,33 +164,21 @@
 	box-sizing: border-box;
 	border-bottom: 1px solid var(--color-neutral-10);
 	display: flex;
-	flex-basis: calc(50% - 15px);
-	margin: 0 0 0 15px;
+	margin: 0;
 	padding: 20px 0;
+	width: 100%;
 
-	@include breakpoint-deprecated( "<960px" ) {
-		margin: 0;
-	}
+	&.is-placeholder {
+		padding: 0;
+		border-bottom: 1px solid #e9e9ea;
+		margin-bottom: 16px;
 
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 0 0 15px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		margin: 0 5px 0 0;
-	}
-
-	&:nth-child(2n) {
-		margin: 0 15px 0 0;
-
-		@include breakpoint-deprecated( "<960px" ) {
-			margin: 0;
-		}
-
-		@include breakpoint-deprecated( "<660px" ) {
-			margin: 0 5px 0 0;
+		.reader-related-card.is-placeholder {
+			padding: 16px;
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
 	}
+
 
 	.reader-related-card__post {
 		max-height: 16px * 1.6 * 11;
@@ -215,6 +264,11 @@
 	padding-bottom: 15px;
 }
 
+.search-stream__headers-logged-out .search-stream__post-header,
+.search-stream__headers-logged-out .search-stream__site-header {
+	border-bottom: none;
+}
+
 .search-stream .search-stream__post-header,
 .search-stream .search-stream__site-header {
 	flex: 1 1 auto;
@@ -292,6 +346,11 @@
 	.reader-infinite-stream__row-wrapper {
 		border: 0;
 	}
+}
+
+// Site results and Popular sites
+.search-stream .search-stream__site-results,
+.search-stream .reader-two-column .reader-tag-sidebar-recommended-sites {
 
 	.reader-subscription-list-item .follow-button__label,
 	.reader-subscription-list-item__settings-label {
@@ -303,9 +362,24 @@
 	}
 }
 
-.search-stream__results.is-two-columns .reader-subscription-list-item__byline {
-	min-width: 180px;
-	max-width: 180px;
+// For popular sites list on single column view.
+.search-stream .following:not(.reader-two-column) .reader-subscription-list-item {
+	border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.search-stream__results.is-two-columns .reader-subscription-list-item__byline,
+.search-stream .reader-two-column .reader-subscription-list-item__byline {
+	min-width: 185px;
+	max-width: 185px;
+}
+
+.search-stream__single-column-results .reader-infinite-stream__row-wrapper {
+	margin-top: 20px;
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 20px 16px 0;
+		width: calc(100% - 32px) !important;
+	}
 }
 
 .search-stream__single-column-results .reader-subscription-list-item__options {
@@ -321,11 +395,6 @@
 	}
 }
 
-// Hide the last updated date for the moment - see https://github.com/Automattic/wp-calypso/issues/15121
-.search-stream__single-column-results .reader-subscription-list-item__timestamp {
-	display: none;
-}
-
 // Custom styling for cards in post results
 .search-stream__results.is-two-columns {
 	display: flex;
@@ -337,7 +406,7 @@
 
 .search-stream__results.is-two-columns .search-stream__post-results {
 	max-width: 660px;
-	width: calc(100% - 300px);
+	width: calc(100% - 304px);
 
 	.reader-post-card__post {
 		@include breakpoint-deprecated( "<960px" ) {
@@ -357,20 +426,10 @@
 		white-space: normal;
 	}
 
-	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-		@include breakpoint-deprecated( "<960px" ) {
-			display: block;
-		}
-	}
-
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
 		@include hide-content-accessibly();
-	}
-
-	.reader-share__button {
-		top: 2px;
 	}
 }
 
@@ -395,16 +454,42 @@
 	position: relative;
 	z-index: z-index("root", ".following-manage__url-follow");
 
+	p {
+		color: var(--color-neutral-60);
+		font-size: $font-body-small;
+		margin: 5px 0;
+
+		.gridicon {
+			vertical-align: text-bottom;
+		}
+
+		strong {
+			padding-left: 5px;
+			color: var(--color-neutral-70);
+		}
+	}
+
 	.follow-button {
 		.gridicon {
 			fill: var(--color-primary);
 		}
 
 		.follow-button__label {
-			color: var(--color-primary);
+			color: var(--color-link);
+			text-decoration: underline;
 
 			@include breakpoint-deprecated( "<660px" ) {
 				display: inline;
+			}
+		}
+
+		&:hover {
+			svg.reader-follow-feed path {
+				fill: var(--color-link);
+			}
+
+			.follow-button__label {
+				color: var(--color-link);
 			}
 		}
 
@@ -417,5 +502,15 @@
 				color: var(--color-success);
 			}
 		}
+	}
+}
+
+.search-stream__site-results-none {
+	color: var(--color-neutral-50);
+	margin-top: 1em;
+	text-align: center;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 2em;
 	}
 }

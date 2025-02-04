@@ -1,9 +1,10 @@
 @use "sass:math";
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
 @import "@automattic/components/src/styles/typography";
 @import "@automattic/components/src/styles/mixins";
-@import "./variables.scss";
+@import "./variables";
 
 $header-margin-bottom: math.div($vertical-margin, 2);
 
@@ -53,6 +54,8 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	@include stats-section-header;
 
 	margin-bottom: $header-margin-bottom;
+	display: flex;
+	align-items: center;
 
 	small {
 		font-family: $highlight-card-heading-font;
@@ -60,22 +63,16 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+		margin-left: 12px;
 
-		@media ( max-width: $break-mobile ) {
+		@media (max-width: $break-mobile) {
 			display: block;
 		}
 	}
 
 	svg {
-		fill: var(--studio-gray-50);
+		fill: var(--studio-gray-30);
 	}
-}
-
-.highlight-cards-heading-icon {
-	display: inline-flex;
-	width: 24px;
-	height: 24px;
-	cursor: pointer;
 }
 
 .highlight-cards-list {
@@ -95,20 +92,19 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	.highlight-card {
 		border-color: var(--studio-gray-5);
 		border-radius: 5px; // stylelint-disable-line scales/radii
-		width: 100%;
-		min-width: 180px; // Minimum mobile width
 		padding: 16px 24px;
 		margin-bottom: 0;
+		flex-grow: 1;
+		flex-shrink: 0;
+
+		// Ensure minimum of ~1:1 aspect ratio.
+		min-width: 120px;
 
 		margin-right: 24px;
 		&:last-child {
 			margin-right: 0;
 		}
 	}
-}
-
-.highlight-card-icon {
-	margin-bottom: 24px;
 }
 
 .highlight-card-heading {
@@ -121,8 +117,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-count {
 	align-items: flex-end;
 	display: flex;
-	flex-wrap: wrap;
-	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-size: 2.25rem;
 	font-weight: 400;
 	line-height: 40px;
 
@@ -161,6 +156,14 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
 }
+
+// Remove the border and background from the compact highlight cards
+.highlight-card.is-compact {
+	box-shadow: 0 0 0 0;
+	background: none;
+}
+
+
 .highlight-year-navigation {
 	display: flex;
 	justify-content: space-between;
@@ -171,55 +174,146 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 		margin-bottom: $header-margin-bottom;
 	}
 }
-.tooltip.popover.highlight-card-tooltip { // overload tooltip's styles
-	.popover__inner {
-		padding: 16px 24px;
-		width: 244px;
-		box-sizing: border-box;
-		border-radius: 5px; // stylelint-disable-line scales/radii
+.tooltip.popover {
+	// @TODO: Refactor styling into the Popover component for more extensive usage. E.g., tooltip and popover in StatsNavigation.
+	&.highlight-card-tooltip,
+	&.highlight-card-popover { // overload tooltip's styles
+		.popover__inner {
+			padding: 16px 24px;
+			box-sizing: border-box;
+			border-radius: 5px; // stylelint-disable-line scales/radii
+		}
+		button:focus {
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
+	}
+
+	// Modules settings popover
+	&.page-modules-settings-popover {
+		// Make the popover under `#header.masterbar` of z-index: 180.
+		z-index: z-index("root", ".tooltip.popover.page-modules-settings-popover");
+		.popover__inner {
+			padding: 14px 16px;
+			width: 244px;
+		}
+	}
+
+	&.highlight-card__settings-tooltip {
+		// Make the popover under `.page-modules-settings-popover` of z-index: 175.
+		z-index: z-index("root", ".tooltip.popover.highlight-card__settings-tooltip");
+	}
+
+	// @TODO: Introduce the support for the border of white background arrows in the popover component.
+	// Set the border of the white background bottom arrows.
+	&.highlight-card-popover {
+		&.is-bottom,
+		&.is-bottom-left,
+		&.is-bottom-right {
+			.popover__arrow {
+				border-bottom-color: var(--studio-white);
+
+				&::before {
+					display: block;
+					position: absolute;
+					content: "";
+					border: 6px solid var(--studio-gray-5);
+					border-top: 0;
+					border-left-color: transparent;
+					border-right-color: transparent;
+					left: 4px;
+					top: 0;
+				}
+
+				&::after {
+					display: block;
+					position: absolute;
+					content: "";
+					border: 6px solid var(--studio-white);
+					border-top: 0;
+					border-left-color: transparent;
+					border-right-color: transparent;
+					left: -6px;
+					top: 1px;
+				}
+			}
+		}
+
+		.popover__inner {
+			background-color: var(--studio-white);
+			color: var(--studio-gray-50);
+			border: 1px solid var(--studio-gray-5);
+			box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08);
+			font-family: $font-sf-pro-text;
+			font-weight: 500;
+			font-size: $font-body-small;
+			line-height: 24px;
+			letter-spacing: -0.02em;
+
+			// Modules settings controls
+			.page-modules-settings-toggle-wrapper {
+				color: var(--studio-gray-80);
+				margin-top: 10px;
+
+				.page-modules-settings-toggle {
+					display: flex;
+					align-items: center;
+					justify-content: flex-start;
+
+					&:not(:first-child) {
+						margin-top: 12px;
+					}
+
+					svg {
+						margin-right: 14px;
+					}
+				}
+
+				.page-modules-settings-toggle-control {
+					line-height: 18px;
+					margin-left: auto;
+				}
+			}
+
+			// Highlights settings controls
+			& > button {
+				width: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				cursor: pointer;
+				color: var(--studio-gray-80);
+				font-family: $font-sf-pro-text;
+				font-weight: 500;
+				font-size: $font-body-small;
+				line-height: 24px;
+				letter-spacing: -0.02em;
+
+				svg {
+					fill: var(--studio-gray-30);
+				}
+
+				&:not(:first-child) {
+					margin-top: 12px;
+				}
+			}
+		}
 	}
 }
+
 .highlight-card-tooltip-content {
-	display: flex;
+	display: block;
 	align-items: center;
 	justify-content: space-between;
 	font-size: $font-body-small;
 	font-weight: 500;
 	line-height: 20px;
 	font-family: $highlight-card-tooltip-font;
-
-	&.comparing-info {
-		display: block;
-
-		& > p {
-			margin-bottom: 10px;
-		}
-
-		& > div {
-			height: 66px;
-			text-align: center;
-		}
-
-		.comparing-info-chart {
-			& > small {
-				display: block;
-				font-family: $font-sf-pro-text;
-				font-weight: 400;
-				color: var(--studio-gray-0);
-				margin-bottom: -8px;
-				letter-spacing: -0.02em;
-
-				& > span {
-					color: var(--studio-gray-30);
-					margin: 0 6px;
-				}
-			}
-		}
-	}
+	letter-spacing: -0.24px;
 
 	.highlight-card-tooltip-label {
 		display: flex;
 		align-items: center;
+		margin-right: 1.5em;
 	}
 	.highlight-card-tooltip-icon {
 		fill: var(--studio-white);
@@ -228,13 +322,64 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-@media ( max-width: $custom-mobile-breakpoint ) {
+.highlight-card-tooltip-count-difference {
+	color: var(--studio-gray-10);
+}
+
+.highlight-card-tooltip-count-difference-positive {
+	color: var(--studio-green-10);
+}
+
+.highlight-card-tooltip-count-difference-negative {
+	color: var(--studio-red-10);
+}
+
+.highlight-card-tooltip-count-difference-positive svg,
+.highlight-card-tooltip-count-difference-negative svg {
+	fill: currentColor;
+	margin-left: 16px;
+	vertical-align: text-bottom;
+}
+
+.highlight-card-tooltip-note {
+	color: var(--studio-gray-30);
+	font-size: $font-body-small;
+}
+.highlight-card__settings-tooltip {
+	.highlight-card-tooltip-content {
+		flex-direction: column;
+		align-items: flex-end;
+
+		p {
+			margin-bottom: 24px;
+		}
+
+		button {
+			font-family: $font-sf-pro-text;
+			font-weight: 600;
+			font-size: $font-body-extra-small;
+			line-height: 20px;
+			color: var(--studio-black);
+			padding: 4px 8px;
+			background-color: var(--studio-white);
+			border-radius: 4px;
+			cursor: pointer;
+		}
+	}
+}
+
+@media (max-width: $custom-mobile-breakpoint) {
 	.highlight-cards-heading {
 		margin-left: $font-body-small;
 		margin-right: $font-body-small;
 	}
 
 	.highlight-cards-list {
+		padding-left: $font-body-small;
+		padding-right: $font-body-small;
+	}
+
+	.highlight-cards-heading__update-frequency {
 		padding-left: $font-body-small;
 		padding-right: $font-body-small;
 	}
@@ -246,7 +391,7 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 }
 
-@media ( max-width: $break-small ) {
+@media (max-width: $break-small) {
 	.highlight-cards {
 		overflow-y: auto;
 	}
@@ -257,5 +402,62 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	.highlight-card-icon {
 		display: none;
+	}
+}
+
+.mobile-highlight-cards-listing {
+	display: flex;
+	flex-direction: column;
+	row-gap: 8px;
+	margin: 16px;
+
+	.mobile-highlight-cards__item {
+		display: flex;
+		align-items: center;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 5px; /* stylelint-disable-line scales/radii */
+		background: var(--color-surface);
+		padding: 12px;
+	}
+
+	.mobile-highlight-cards__item-heading {
+		font-weight: 500;
+		font-size: 0.875rem;
+		line-height: 20px;
+	}
+	.mobile-highlight-cards__item-count {
+		margin-left: auto;
+		font-size: 1.5rem;
+		line-height: 32px;
+
+		font-family: $highlight-card-count-font;
+	}
+	.mobile-highlight-cards__item-icon {
+		padding-right: 12px;
+
+		svg {
+			vertical-align: middle;
+		}
+	}
+	.mobile-highlight-cards__item-trend {
+		padding-left: 8px;
+	}
+}
+
+.highlight-cards-heading__wrapper {
+	margin-bottom: $header-margin-bottom;
+
+	.highlight-cards-heading {
+		margin-bottom: 0;
+	}
+
+	.highlight-cards-heading__update-frequency {
+		line-height: 16px;
+
+		span {
+			color: var(--color-text-subtle);
+			display: inline-block;
+			font-size: $font-body-small;
+		}
 	}
 }

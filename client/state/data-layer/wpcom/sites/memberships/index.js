@@ -7,6 +7,8 @@ import {
 	MEMBERSHIPS_SUBSCRIBERS_LIST,
 	MEMBERSHIPS_SETTINGS,
 	MEMBERSHIPS_SETTINGS_RECEIVE,
+	MEMBERSHIPS_COUPONS_LIST,
+	MEMBERSHIPS_COUPONS_RECEIVE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -18,15 +20,38 @@ export const membershipProductFromApi = ( product ) => ( {
 	ID: parseInt( product.id || product.connected_account_product_id ),
 	currency: product.currency,
 	formatted_price: product.price,
-	price: product.price,
+	price: parseFloat( product.price ),
 	title: product.title,
-	stripe_account: product.connected_destination_account_id,
 	renewal_schedule: product.interval,
 	buyer_can_change_amount: product.buyer_can_change_amount,
 	multiple_per_user: product.multiple_per_user,
 	subscribe_as_site_subscriber: product.subscribe_as_site_subscriber,
 	welcome_email_content: product.welcome_email_content,
 	type: product.type,
+	tier: product.tier,
+} );
+
+export const membershipCouponFromApi = ( coupon ) => ( {
+	ID: parseInt( coupon.id ),
+	coupon_code: coupon.coupon_code,
+	discount_type: coupon.discount_type,
+	discount_value: parseFloat( coupon.discount_value ),
+	discount_percentage: parseFloat( coupon.discount_percentage ),
+	discount_currency: coupon.discount_currency,
+	start_date: coupon.start_date,
+	end_date: coupon.end_date,
+	plan_ids_allow_list: coupon.plan_ids_allow_list.map( ( productId ) => parseInt( productId ) ),
+	cannot_be_combined: ! coupon.can_be_combined,
+	can_be_combined: coupon.can_be_combined, // TODO: remove after backend migrates to 'cannot_be_combined'
+	first_time_purchase_only: coupon.first_time_purchase_only ? true : false,
+	duration: coupon.duration,
+	email_allow_list: coupon.email_allow_list ?? [],
+} );
+
+export const membershipGiftFromApi = ( gift ) => ( {
+	gift_id: parseInt( gift.gift_id ),
+	user_id: parseInt( gift.user_id ),
+	plan_id: parseInt( gift.plan_id ),
 } );
 
 export const handleMembershipProductsList = dispatchRequest( {
@@ -35,6 +60,7 @@ export const handleMembershipProductsList = dispatchRequest( {
 			{
 				method: 'GET',
 				path: `/sites/${ action.siteId }/memberships/products?type=all&is_editable=true`,
+				apiNamespace: 'wpcom/v2',
 			},
 			action
 		),
@@ -46,6 +72,28 @@ export const handleMembershipProductsList = dispatchRequest( {
 		type: MEMBERSHIPS_PRODUCTS_RECEIVE,
 		siteId,
 		products,
+	} ),
+	onError: noop,
+} );
+
+export const handleMembershipCouponsList = dispatchRequest( {
+	fetch: ( action ) =>
+		http(
+			{
+				method: 'GET',
+				path: `/sites/${ action.siteId }/memberships/coupons?type=all&is_editable=true`,
+				apiNamespace: 'wpcom/v2',
+			},
+			action
+		),
+	fromApi: function ( endpointResponse ) {
+		const coupons = endpointResponse.map( membershipCouponFromApi );
+		return coupons;
+	},
+	onSuccess: ( { siteId }, coupons ) => ( {
+		type: MEMBERSHIPS_COUPONS_RECEIVE,
+		siteId,
+		coupons,
 	} ),
 	onError: noop,
 } );
@@ -91,7 +139,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 		http(
 			{
 				method: 'GET',
-				path: `/sites/${ action.siteId }/memberships/status?source=calypso`,
+				path: `/sites/${ action.siteId }/memberships/status?source=${ action.source ?? 'calypso' }`,
 				apiNamespace: 'wpcom/v2',
 			},
 			action
@@ -106,6 +154,7 @@ export const handleMembershipGetSettings = dispatchRequest( {
 
 registerHandlers( 'state/data-layer/wpcom/sites/memberships/index.js', {
 	[ MEMBERSHIPS_PRODUCTS_LIST ]: [ handleMembershipProductsList ],
+	[ MEMBERSHIPS_COUPONS_LIST ]: [ handleMembershipCouponsList ],
 	[ MEMBERSHIPS_EARNINGS_GET ]: [ handleMembershipGetEarnings ],
 	[ MEMBERSHIPS_SUBSCRIBERS_LIST ]: [ handleMembershipGetSubscribers ],
 	[ MEMBERSHIPS_SETTINGS ]: [ handleMembershipGetSettings ],

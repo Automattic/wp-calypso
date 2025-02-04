@@ -1,11 +1,11 @@
 import {
-	JETPACK_BACKUP_T1_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
-	JETPACK_SOCIAL_PRODUCTS,
+	JETPACK_SOCIAL_ADVANCED_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { isNumber } from 'lodash';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import {
 	getProductBySlug,
 	getProductSaleCouponDiscount,
@@ -13,6 +13,7 @@ import {
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getProductPriceTierList } from 'calypso/state/products-list/selectors/get-product-price-tiers';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors/is-products-list-fetching';
+import getIntroOfferEligibility from 'calypso/state/selectors/get-intro-offer-eligibility';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import isRequestingIntroOffers from 'calypso/state/selectors/get-is-requesting-into-offers';
 import {
@@ -25,9 +26,12 @@ import type { PriceTierEntry } from '@automattic/calypso-products';
 interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
+	originalPriceTotal?: number;
 	discountedPrice?: number;
+	discountedPriceTotal?: number | null;
 	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
+	saleCouponDiscount?: number | null;
 }
 
 interface ItemRawPrices {
@@ -105,10 +109,19 @@ const useIntroductoryOfferPrices = (
 
 	const isFetching =
 		useSelector( ( state ) => !! isRequestingIntroOffers( state, siteId ?? undefined ) ) || null;
-	const introOfferCost =
-		useSelector(
-			( state ) => product && getIntroOfferPrice( state, product.product_id, siteId ?? 'none' )
-		) || null;
+	const introOfferCost = useSelector( ( state ) => {
+		if ( ! product ) {
+			return null;
+		}
+
+		const introOfferPrice = getIntroOfferPrice( state, product.product_id, siteId ?? 'none' );
+		const isEligibleForIntroPrice = getIntroOfferEligibility(
+			state,
+			product.product_id,
+			siteId ?? 'none'
+		);
+		return isNumber( introOfferPrice ) && isEligibleForIntroPrice ? introOfferPrice : null;
+	} );
 
 	return {
 		isFetching,
@@ -156,28 +169,31 @@ const useItemPrice = (
 	}
 
 	let originalPrice = 0;
-	let discountedPrice = undefined;
-	let discountedPriceDuration = undefined;
+	let originalPriceTotal;
+	let discountedPrice;
+	let discountedPriceDuration;
+	let discountedPriceTotal;
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
 		if ( item.term !== TERM_MONTHLY ) {
 			originalPrice = getMonthlyPrice( itemCost ); // monthlyItemCost - See comment above.
-			discountedPrice = introductoryOfferPrices.introOfferCost
+			originalPriceTotal = itemCost;
+			discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
+			discountedPriceTotal = introductoryOfferPrices.introOfferCost;
 
-			// Override Jetpack Social Basic, Jetpack Social Advanced and Jetpack Backup Tier 1 price by hard-coding it for now
+			// Override Jetpack Social Advanced price by hard-coding it for now
 			if (
-				[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
-					item?.productSlug as
-						| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
-						| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
+				JETPACK_SOCIAL_ADVANCED_PRODUCTS.includes(
+					item?.productSlug as ( typeof JETPACK_SOCIAL_ADVANCED_PRODUCTS )[ number ]
 				)
 			) {
-				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
-
-				if ( discountedPrice ) {
+				discountedPrice = isNumber( introductoryOfferPrices.introOfferCost )
+					? introductoryOfferPrices.introOfferCost
+					: undefined;
+				if ( isNumber( discountedPrice ) ) {
 					discountedPriceDuration = 1;
 				}
 			}
@@ -191,7 +207,7 @@ const useItemPrice = (
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 	if (
 		item &&
-		JETPACK_CRM_PRODUCTS.includes( item.productSlug as typeof JETPACK_CRM_PRODUCTS[ number ] )
+		JETPACK_CRM_PRODUCTS.includes( item.productSlug as ( typeof JETPACK_CRM_PRODUCTS )[ number ] )
 	) {
 		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;
@@ -200,9 +216,12 @@ const useItemPrice = (
 	return {
 		isFetching,
 		originalPrice,
+		originalPriceTotal,
 		discountedPrice,
 		discountedPriceDuration,
+		discountedPriceTotal,
 		priceTierList,
+		saleCouponDiscount,
 	};
 };
 

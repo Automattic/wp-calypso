@@ -14,7 +14,7 @@ const CelebrateSiteMigration = () => {
 			noticeId={ NOTICE_CELEBRATE_SITE_MIGRATION }
 			title={ translate( 'Your site has been imported!' ) }
 			illustration={ migrationIllustration }
-			showSkip={ true }
+			showSkip
 			skipText={ translate( 'Dismiss' ) }
 		/>
 	);

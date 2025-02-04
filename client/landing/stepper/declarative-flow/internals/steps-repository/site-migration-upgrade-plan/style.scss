@@ -1,0 +1,149 @@
+.is-step-site-migration-upgrade-plan-with-variants {
+	padding-bottom: 5rem;
+
+	@media ( min-width: 1040px ) {
+		padding-bottom: 3rem;
+	}
+
+	&.step-container .step-container__header {
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 1rem;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		@media ( min-width: 720px ) {
+			max-width: 720px;
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+	.import-upgrade-plan-skeleton {
+		&.import-upgrade-plan-skeleton--light-highlight {
+			background-color: var(--studio-gray-10);
+			opacity: 0.2;
+		}
+
+		&.import-upgrade-plan-skeleton--dark-highlight {
+			background-color: var(--studio-gray-20);
+			opacity: 0.5;
+		}
+	}
+	.import__upgrade-plan-variants-badge {
+		background-color: var(--studio-gray-100);
+		color: var(--color-text-inverted);
+		border-radius: 4px;
+		font-size: 0.75rem;
+		margin-bottom: 1rem;
+	}
+	.import__upgrade-plan-price-badge {
+		display: none;
+	}
+	.import__upgrade-plan .import__upgrade-plan-cta button.button {
+		box-shadow: none;
+	}
+	.import__upgrade-plan .import__upgrade-plan-cta button.button.is-primary {
+		background-color: var(--studio-wordpress-blue-50) !important;
+		border: 1px solid var(--studio-wordpress-blue-50) !important;
+		color: var(--color-text-inverted);
+		height: 42px;
+	}
+	.import__upgrade-plan .import__upgrade-plan-cta button.button:focus {
+		box-shadow: 0 0 0 2px var(--studio-white),
+			0 0 0 4px var(--studio-wordpress-blue-50) !important;
+	}
+	.import__upgrade-plan .import__upgrade-plan-refund-sub-text,
+	.import__upgrade-plan .import__upgrade-plan-features-list .import__upgrade-plan-feature-more button {
+		color: var(--color-text-subtle);
+	}
+
+	.import__upgrade-plan .import__upgrade-plan-details {
+		margin-bottom: 0;
+
+		.import__details-list li {
+			margin-bottom: 8px;
+		}
+
+		@media ( min-width: 1040px ) {
+			display: flex;
+			flex-direction: row;
+			gap: 0;
+			justify-content: center;
+
+			.import__upgrade-plan-container {
+				padding-top: 1.5rem;
+				padding-bottom: 1.5rem;
+				gap: 0;
+
+				.import__upgrade-plan-cta {
+					margin-bottom: 0.5rem;
+				}
+
+				&:first-of-type .import__upgrade-plan-features-container {
+					border-right: 0;
+					border-top-right-radius: 0;
+					border-bottom-right-radius: 0;
+				}
+
+				&:last-of-type .import__upgrade-plan-features-container {
+					border-left: 0;
+					border-top-left-radius: 0;
+					border-bottom-left-radius: 0;
+				}
+
+				.import__upgrade-plan-features-container {
+					padding-top: 1.5rem;
+					padding-bottom: 1.5rem;
+					margin-bottom: 0;
+					margin-top: 0;
+					gap: 1rem;
+				}
+
+				&:first-of-type .import__upgrade-plan-features-container,
+				&:last-of-type .import__upgrade-plan-features-container {
+					margin-bottom: 1.5rem;
+					margin-top: 41px;
+				}
+			}
+		}
+	}
+
+	.import__upgrade-plan-features-list {
+		flex-direction: column;
+
+		.import__details-list {
+			list-style: none;
+			margin: 0;
+
+			li {
+				display: list-item;
+				&:first-child {
+					font-weight: normal;
+				}
+			}
+		}
+		.import__upgrade-plan-feature.logo {
+			margin-top: .75rem;
+
+			svg {
+				fill: var(--studio-jetpack-green-40);
+			}
+		}
+	}
+
+	.import__upgrade-plan-refund-sub-text {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.3rem;
+		font-size: 0.75rem;
+		margin-top: 1rem;
+
+		svg {
+			fill: var(--color-text-subtle);
+		}
+
+		@media ( min-width: 720px ) {
+			margin-top: 0;
+		}
+	}
+}

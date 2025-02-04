@@ -14,6 +14,11 @@
 		-webkit-overflow-scrolling: touch;
 	}
 
+	.editor-diff-viewer__fieldname {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
 	.editor-diff-viewer__title {
 		font-family: $serif;
 		font-size: $font-title-large;

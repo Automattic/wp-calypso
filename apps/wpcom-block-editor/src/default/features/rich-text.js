@@ -1,42 +1,9 @@
 /* global wpcomGutenberg */
 import { RichTextToolbarButton } from '@wordpress/block-editor';
 import { compose, ifCondition } from '@wordpress/compose';
-import { withSelect, withDispatch, select, subscribe } from '@wordpress/data';
-import { toggleFormat, registerFormatType, unregisterFormatType } from '@wordpress/rich-text';
+import { withSelect, withDispatch } from '@wordpress/data';
+import { registerFormatType } from '@wordpress/rich-text';
 import { get } from 'lodash';
-
-const unsubscribe = subscribe( () => {
-	const underlineFormat = select( 'core/rich-text' ).getFormatType( 'core/underline' );
-	if ( ! underlineFormat ) {
-		return;
-	}
-	unsubscribe();
-	const settings = unregisterFormatType( 'core/underline' );
-	registerFormatType( 'wpcom/underline', {
-		...settings,
-		name: 'wpcom/underline',
-		edit( { isActive, value, onChange } ) {
-			const onToggle = () =>
-				onChange(
-					toggleFormat( value, {
-						type: 'wpcom/underline',
-						attributes: {
-							style: 'text-decoration: underline;',
-						},
-					} )
-				);
-
-			return (
-				<RichTextToolbarButton
-					icon="editor-underline"
-					title={ settings.title }
-					onClick={ onToggle }
-					isActive={ isActive }
-				/>
-			);
-		},
-	} );
-} );
 
 const RichTextJustifyButton = ( { blockId, isBlockJustified, updateBlockAttributes } ) => {
 	const onToggle = () =>

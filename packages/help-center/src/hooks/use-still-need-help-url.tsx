@@ -1,15 +1,16 @@
 /* eslint-disable no-restricted-imports */
-import { useSupportAvailability } from '@automattic/data-stores';
+
+import { useSupportStatus } from '../data/use-support-status';
+import { useShouldUseWapuu } from './use-should-use-wapuu';
 
 export function useStillNeedHelpURL() {
-	const { data: supportAvailability, isLoading } = useSupportAvailability( 'OTHER' );
+	const { data: supportStatus, isLoading } = useSupportStatus();
+	const shouldUseWapuu = useShouldUseWapuu();
+	const isEligibleForSupport = Boolean( supportStatus?.eligibility?.is_user_eligible );
 
-	// email support is available for all non-free users, let's use it as a proxy for free users
-	// TODO: check purchases instead
-	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
-
-	if ( ! isFreeUser ) {
-		return { url: '/contact-options', isLoading };
+	if ( isEligibleForSupport || shouldUseWapuu ) {
+		const url = shouldUseWapuu ? '/odie' : '/contact-options';
+		return { url, isLoading: false };
 	}
 
 	return { url: '/contact-form?mode=FORUM', isLoading };

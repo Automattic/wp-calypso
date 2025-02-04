@@ -1,10 +1,10 @@
 import { FEATURE_WP_SUBDOMAIN } from '@automattic/calypso-products';
-import * as redux from 'react-redux';
+import * as calypsoState from 'calypso/state';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
 import { useSelectedSiteSelector } from '../';
 import { isJetpackSite } from '../../selectors';
 
-const useSelector = jest.spyOn( redux, 'useSelector' );
+const useSelector = jest.spyOn( calypsoState, 'useSelector' );
 
 describe( 'useSelectedSiteSelector()', () => {
 	test( 'executes selector with selected site id passed in', () => {

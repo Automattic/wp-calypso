@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import { size, map } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,11 +11,12 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
-import * as DiscoverHelper from 'calypso/reader/discover/helper';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import * as stats from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -37,7 +38,9 @@ class ReaderPostEllipsisMenu extends Component {
 	static propTypes = {
 		post: PropTypes.object,
 		feed: PropTypes.object,
+		followSource: PropTypes.string,
 		onBlock: PropTypes.func,
+		openSuggestedFollows: PropTypes.func,
 		showFollow: PropTypes.bool,
 		showVisitPost: PropTypes.bool,
 		showEditPost: PropTypes.bool,
@@ -51,6 +54,8 @@ class ReaderPostEllipsisMenu extends Component {
 
 	static defaultProps = {
 		onBlock: noop,
+		followSource: READER_POST_OPTIONS_MENU,
+		openSuggestedFollows: noop,
 		position: 'top left',
 		showFollow: true,
 		showVisitPost: true,
@@ -59,6 +64,12 @@ class ReaderPostEllipsisMenu extends Component {
 		showReportPost: true,
 		showReportSite: false,
 		posts: [],
+	};
+
+	openSuggestedFollowsModal = ( shouldOpen ) => {
+		if ( shouldOpen ) {
+			this.props.openSuggestedFollows( shouldOpen );
+		}
 	};
 
 	blockSite = () => {
@@ -157,7 +168,7 @@ class ReaderPostEllipsisMenu extends Component {
 			return;
 		}
 
-		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_seen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
@@ -202,7 +213,7 @@ class ReaderPostEllipsisMenu extends Component {
 			return;
 		}
 
-		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_mark_as_unseen_clicked', {}, { post } );
 
 		const feedId = post.feed_ID;
 		let postIds = [ post.ID ];
@@ -240,6 +251,8 @@ class ReaderPostEllipsisMenu extends Component {
 		event.preventDefault();
 	};
 
+	stopPropagation = ( event ) => event.stopPropagation();
+
 	render() {
 		const {
 			post,
@@ -251,22 +264,22 @@ class ReaderPostEllipsisMenu extends Component {
 			isWPForTeamsItem,
 			currentRoute,
 			hasOrganization,
+			isLoggedIn,
+			followSource,
 		} = this.props;
 
 		const { ID: postId, site_ID: siteId } = post;
 
 		const isEditPossible = PostUtils.userCan( 'edit_post', post );
-		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		let isBlockPossible = false;
 
+		if ( ! isLoggedIn ) {
+			return null;
+		}
+
 		// Should we show the 'block' option?
-		if (
-			post.site_ID &&
-			( ! post.is_external || post.is_jetpack ) &&
-			! isEditPossible &&
-			! isDiscoverPost
-		) {
+		if ( post.site_ID && ( ! post.is_external || post.is_jetpack ) && ! isEditPossible ) {
 			isBlockPossible = true;
 		}
 
@@ -280,6 +293,7 @@ class ReaderPostEllipsisMenu extends Component {
 				popoverClassName="reader-post-options-menu__popover ignore-click"
 				onToggle={ this.onMenuToggle }
 				position={ position }
+				onClick={ this.stopPropagation }
 			>
 				{ showConversationFollowButton && (
 					<ConversationFollowButton
@@ -287,7 +301,7 @@ class ReaderPostEllipsisMenu extends Component {
 						siteId={ siteId }
 						postId={ postId }
 						post={ post }
-						followSource={ READER_POST_OPTIONS_MENU }
+						followSource={ followSource }
 						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
 						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
 					/>
@@ -326,11 +340,24 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
+				{ this.props.showFollow && (
+					<ReaderFollowButton
+						tagName={ PopoverMenuItem }
+						siteUrl={ post.feed_URL || post.site_URL }
+						followSource={ followSource }
+						iconSize={ 20 }
+						followLabel={ translate( 'Subscribe' ) }
+						followingLabel={ translate( 'Unsubscribe' ) }
+						onFollowToggle={ this.openSuggestedFollowsModal }
+					/>
+				) }
+
 				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
 				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
 
-				{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="popover__menu-separator" /> }
+				{ ( this.props.showFollow || isEditPossible || post.URL ) && isBlockPossible && (
+					<hr className="popover__menu-separator" />
+				) }
 
 				{ isBlockPossible && (
 					<PopoverMenuItem onClick={ this.blockSite }>
@@ -338,7 +365,7 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
-				{ ( ( this.props.showReportPost && isBlockPossible ) || isDiscoverPost ) && (
+				{ this.props.showReportPost && isBlockPossible && (
 					<PopoverMenuItem onClick={ this.reportPost }>
 						{ translate( 'Report this post' ) }
 					</PopoverMenuItem>
@@ -360,6 +387,7 @@ export default connect(
 		return Object.assign(
 			{ currentRoute: getCurrentRoute( state ) },
 			{ isWPForTeamsItem: isSiteWPForTeams( state, siteId ) || isFeedWPForTeams( state, feedId ) },
+			{ isLoggedIn: isUserLoggedIn( state ) },
 			{
 				hasOrganization: hasReaderFollowOrganization( state, feedId, siteId ),
 			}

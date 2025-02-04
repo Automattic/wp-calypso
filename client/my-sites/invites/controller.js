@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import debugModule from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import store from 'store';
 import DocumentHead from 'calypso/components/data/document-head';
 import { navigate } from 'calypso/lib/navigate';
@@ -33,9 +33,10 @@ export function acceptInvite( context, next ) {
 			context.store.dispatch( setUserEmailVerified( true ) );
 		}
 		store.remove( 'invite_accepted' );
+		const emailVerificationSecret = context.query.email_verification_secret;
 
 		context.store
-			.dispatch( acceptInviteAction( acceptedInvite ) )
+			.dispatch( acceptInviteAction( acceptedInvite, emailVerificationSecret ) )
 			.then( () => {
 				const redirect = getRedirectAfterAccept( acceptedInvite );
 				debug( 'Accepted invite and redirecting to:  ' + redirect );

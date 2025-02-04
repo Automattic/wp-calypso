@@ -49,7 +49,7 @@ const ReaderFullPostUnavailable = ( { post, onBackClick, translate } ) => {
 									} ) }
 								</p>
 								<p>
-									<ExternalLink href={ postPermalink } icon={ true }>
+									<ExternalLink href={ postPermalink } icon>
 										{ postPermalink }
 									</ExternalLink>
 								</p>

@@ -34,7 +34,7 @@
 
 				svg {
 					fill: var(--studio-gray-50);
-					margin: 0 8px 0 3px;
+					margin: 0 3px 0 0;
 				}
 			}
 		}
@@ -47,6 +47,10 @@
 				padding: 7px 12px;
 				box-shadow: none;
 
+				&.is-primary:hover {
+					color: var(--color-text-inverted);
+				}
+
 				&:hover {
 					color: var(--color-text-subtle);
 				}
@@ -55,6 +59,7 @@
 
 		.domain-delete-info-card {
 			margin-top: 0;
+			border: 1px solid var(--color-neutral-10);
 
 			svg {
 				display: none;

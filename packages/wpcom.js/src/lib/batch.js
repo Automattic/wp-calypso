@@ -1,7 +1,6 @@
 class Batch {
 	/**
 	 * Create a `Batch` instance
-	 *
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {null} null
 	 */
@@ -16,7 +15,6 @@ class Batch {
 
 	/**
 	 * Add url to batch requests
-	 *
 	 * @param {string} url - endpoint url
 	 * @returns {Batch} batch instance
 	 */
@@ -27,7 +25,6 @@ class Batch {
 
 	/**
 	 * Run the batch request
-	 *
 	 * @param {Object} [query] - optional query parameter
 	 * @param {Function} fn - callback
 	 * @returns {Promise} Promise

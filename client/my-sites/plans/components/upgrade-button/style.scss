@@ -1,0 +1,13 @@
+.plans-upgrade-button__button {
+	&.blue {
+		background-color: var(--studio-blue-60);
+		color: var(--studio-blue-0);
+		border: unset;
+
+		&:hover {
+			background-color: var(--studio-blue-60);
+			opacity: 0.85;
+			transition: 0.7s;
+		}
+	}
+}

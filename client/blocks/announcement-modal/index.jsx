@@ -1,6 +1,6 @@
+import pageRouter from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Guide } from '@wordpress/components';
-import { default as pageRouter } from 'page';
 import { useSelector, useDispatch } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -36,7 +36,7 @@ const Page = ( { headline, heading, content, image, cta, handleClick } ) => {
 
 const Modal = ( { announcementId, pages, finishButtonText } ) => {
 	const dispatch = useDispatch();
-	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
+	const userId = useSelector( getCurrentUserId );
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const dismissPreference = `announcement-modal-${ announcementId }-${ userId }`;
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );

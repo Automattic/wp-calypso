@@ -1,9 +1,10 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { createElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import AppsComponent from 'calypso/me/get-apps';
 import SidebarComponent from 'calypso/me/sidebar';
+import EmailVerificationBanner from './email-verification-banner';
 
 export function sidebar( context, next ) {
 	context.secondary = createElement( SidebarComponent, {
@@ -23,6 +24,7 @@ export function profile( context, next ) {
 
 	context.primary = (
 		<>
+			<EmailVerificationBanner />
 			<ProfileTitle />
 			<ProfileComponent path={ context.path } />
 		</>

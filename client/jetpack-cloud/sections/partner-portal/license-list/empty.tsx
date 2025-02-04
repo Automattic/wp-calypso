@@ -1,10 +1,11 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getLicenseCounts } from 'calypso/state/partner-portal/licenses/selectors';
 import './style.scss';
+import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selectors';
 
 interface Props {
 	filter: LicenseFilter;
@@ -15,12 +16,15 @@ export default function LicenseListEmpty( { filter }: Props ) {
 	const translate = useTranslate();
 	const counts = useSelector( getLicenseCounts );
 	const hasAssignedLicenses = counts[ LicenseFilter.Attached ] > 0;
+	const partner = useSelector( getCurrentPartner );
+	const partnerCanIssueLicense = Boolean( partner?.can_issue_licenses );
 
 	const licenseFilterStatusTitleMap = {
 		[ LicenseFilter.NotRevoked ]: translate( 'No active licenses' ),
 		[ LicenseFilter.Attached ]: translate( 'No assigned licenses.' ),
 		[ LicenseFilter.Detached ]: translate( 'No unassigned licenses.' ),
 		[ LicenseFilter.Revoked ]: translate( 'No revoked licenses.' ),
+		[ LicenseFilter.Standard ]: translate( 'No standard licenses.' ),
 	};
 
 	const licenseFilterStatusTitle = licenseFilterStatusTitleMap[ filter ] as string;
@@ -59,7 +63,11 @@ export default function LicenseListEmpty( { filter }: Props ) {
 				<p>{ translate( 'Every license you own is currently attached to a site.' ) }</p>
 			) }
 
-			<Button href="/partner-portal/issue-license" onClick={ onIssueNewLicense }>
+			<Button
+				disabled={ ! partnerCanIssueLicense }
+				href={ partnerCanIssueLicense ? '/partner-portal/issue-license' : undefined }
+				onClick={ onIssueNewLicense }
+			>
 				{ translate( 'Issue New License' ) }
 			</Button>
 		</div>

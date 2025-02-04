@@ -1,7 +1,20 @@
+#analytics {
+	button {
+		float: unset;
+		margin-top: 10px;
+	}
+
+	.form-fieldset {
+		margin-top: 16px;
+	}
+}
+
 .site-settings__analytics {
 	display: flex;
 	flex-direction: row;
 	align-items: flex-start;
+	margin-bottom: 12px;
+	margin-top: 16px;
 	.support-info {
 		position: absolute;
 		right: 24px;
@@ -11,16 +24,10 @@
 .site-settings__analytics-text {
 	margin-left: 20px;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 2rem;
+	line-height: 1rem;
 }
 .site-settings__analytics-text p {
 	margin: 0;
-}
-
-.site-settings__analytics-title {
-	font-weight: 600;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	line-height: 1rem;
 }
 
 .site-settings__analytics-illustration {

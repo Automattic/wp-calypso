@@ -1,20 +1,18 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useCallback, useMemo, FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
-import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import siteHasBackups from 'calypso/state/rewind/selectors/site-has-backups';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useDatesWithNoSuccessfulBackups } from '../status/hooks';
 import DateButton from './date-button';
 import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
-
 import './style.scss';
 
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
@@ -43,24 +41,14 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const oldestDateAvailable = useDateWithOffset(
 		firstKnownBackupAttempt.backupAttempt?.activityTs
 	);
-	// Get the oldest visible backup date.
-	// This is added into the state via QueryRewindPolicies
-	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
-	// If the number of visible days is falsy, then use the oldest date as the first visible backup date.
-	const firstVisibleBackupDate = visibleDays
-		? today.clone().subtract( visibleDays, 'days' )
-		: oldestDateAvailable;
 
-	const hasNoBackups = useSelector( ( state ) => {
-		const backups = getRewindBackups( state, siteId ) || [];
-		// in-progress backups should not be counted as backups, yet.
-		return ! backups.filter( ( backup ) => backup.status !== 'started' ).length;
-	} );
+	const hasNoBackups = useSelector( ( state ) => ! siteHasBackups( state, siteId ) );
 
 	const canGoToDate = useCanGoToDate( siteId, selectedDate, oldestDateAvailable, hasNoBackups );
+
 	const datesWithNoBackups = useDatesWithNoSuccessfulBackups(
 		siteId,
-		firstVisibleBackupDate,
+		oldestDateAvailable,
 		today.clone()
 	);
 
@@ -139,7 +127,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
 	const goToCalendarDate = useCallback(
-		( selectedDate ) => {
+		( selectedDate: Moment ) => {
 			if ( ! canGoToDate( selectedDate ) ) {
 				return false;
 			}
@@ -174,7 +162,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 						</Button>
 
 						<span
-							className={ classNames( 'backup-date-picker__display-date', {
+							className={ clsx( 'backup-date-picker__display-date', {
 								disabled: ! canGoToPreviousDate,
 							} ) }
 						>
@@ -195,7 +183,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 					>
 						<div className="backup-date-picker__next-date-link">
 							<span
-								className={ classNames( 'backup-date-picker__display-date', {
+								className={ clsx( 'backup-date-picker__display-date', {
 									disabled: ! canGoToNextDate,
 								} ) }
 							>
@@ -221,8 +209,9 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 			<DateButton
 				onDateSelected={ goToCalendarDate }
 				selectedDate={ selectedDate }
-				firstBackupDate={ firstVisibleBackupDate }
+				firstBackupDate={ oldestDateAvailable }
 				disabledDates={ datesWithNoBackups.dates }
+				{ ...( hasNoBackups ? { disabled: true } : {} ) }
 			/>
 		</div>
 	);

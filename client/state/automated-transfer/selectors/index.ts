@@ -1,4 +1,4 @@
-import { flowRight as compose, get } from 'lodash';
+import { get } from 'lodash';
 import { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 import type { AppState } from 'calypso/types';
 
@@ -34,7 +34,6 @@ export interface EligibilityData {
 
 /**
  * Helper to get eligibility state from local transfer state sub-tree
- *
  * @param state automated transfer state sub-tree for a site
  * @returns eligibility information for site
  */
@@ -43,16 +42,15 @@ export const getEligibilityData = ( state: AppState ): EligibilityData =>
 
 /**
  * Returns eligibility info for transfer
- *
  * @param state global app state
  * @param siteId requested site for transfer info
  * @returns eligibility data if available else empty info
  */
-export const getEligibility = compose( getEligibilityData, getAutomatedTransfer );
+export const getEligibility = ( state: AppState, siteId: number | null ) =>
+	getEligibilityData( getAutomatedTransfer( state, siteId ) );
 
 /**
  * Helper to infer eligibility status from local transfer state sub-tree
- *
  * @param {Object} state global app state
  * @returns {boolean} eligibility status for site
  */
@@ -61,9 +59,9 @@ export const getEligibilityStatus = ( state: AppState ): boolean =>
 
 /**
  * Returns eligibility status for transfer
- *
  * @param {Object} state global app state
  * @param {number} siteId requested site for transfer info
  * @returns {boolean} True if current site is eligible for transfer, otherwise false
  */
-export const isEligibleForAutomatedTransfer = compose( getEligibilityStatus, getEligibility );
+export const isEligibleForAutomatedTransfer = ( state: AppState, siteId: number | null ) =>
+	getEligibilityStatus( getEligibility( state, siteId ) );

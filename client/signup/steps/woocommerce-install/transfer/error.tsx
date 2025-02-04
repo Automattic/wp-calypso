@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SupportCard from '../components/support-card';

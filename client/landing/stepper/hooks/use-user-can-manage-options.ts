@@ -1,26 +1,15 @@
-import { useSelect } from '@wordpress/data';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import isRequestingSites from 'calypso/state/sites/selectors/is-requesting-sites';
-import { SITE_STORE } from '../stores';
-import { useSiteSlugParam } from './use-site-slug-param';
+import { useSiteData } from './use-site-data';
 
 export function useCanUserManageOptions() {
-	const siteSlug = useSiteSlugParam();
-	const siteId = useSelect(
-		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug ),
-		undefined
-	);
-	const isRequesting = useSelector( ( state ) => isRequestingSites( state ) );
-	const hasManageOptionsCap = useSelector( ( state ) =>
-		canCurrentUser( state, siteId as number, 'manage_options' )
+	const { site, siteSlugOrId } = useSiteData();
+	const canManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, site?.ID, 'manage_options' )
 	);
 
-	if ( isRequesting ) {
-		return 'requesting';
-	}
-
-	if ( siteId ) {
-		return hasManageOptionsCap ?? false;
-	}
+	return {
+		canManageOptions,
+		isLoading: siteSlugOrId && ! site,
+	};
 }

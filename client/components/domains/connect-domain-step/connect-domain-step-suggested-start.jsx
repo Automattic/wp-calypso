@@ -1,8 +1,8 @@
-import { Button } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Button, FoldableCard, MaterialIcon } from '@automattic/components';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -11,9 +11,6 @@ import {
 	stepsHeading,
 	stepSlug,
 } from 'calypso/components/domains/connect-domain-step/constants';
-import FoldableCard from 'calypso/components/foldable-card';
-import MaterialIcon from 'calypso/components/material-icon';
-import { isSubdomain } from 'calypso/lib/domains';
 import { domainManagementDns } from 'calypso/my-sites/domains/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
@@ -28,16 +25,18 @@ export default function ConnectDomainStepSuggestedStart( {
 	onNextStep,
 	progressStepList,
 	setPage,
+	domainSetupInfo,
 } ) {
 	const { __ } = useI18n();
+	const { data } = domainSetupInfo;
 	const selectedSite = useSelector( getSelectedSite );
 	const goToDnsRecordsPage = () => page( domainManagementDns( selectedSite?.slug, domain ) );
-	const firstStep = isSubdomain( domain )
+	const firstStep = data?.is_subdomain
 		? stepSlug.SUBDOMAIN_ADVANCED_START
 		: stepSlug.ADVANCED_START;
 	const switchToAdvancedSetup = () => setPage( firstStep );
 
-	const message = isSubdomain( domain )
+	const message = data?.is_subdomain
 		? __(
 				'The easiest way to connect your subdomain is by changing NS records. But if you are unable to do this, then switch to our <a>advanced setup</a>, using A & CNAME records.'
 		  )
@@ -132,4 +131,5 @@ ConnectDomainStepSuggestedStart.propTypes = {
 	onNextStep: PropTypes.func.isRequired,
 	progressStepList: PropTypes.object.isRequired,
 	setPage: PropTypes.func.isRequired,
+	domainSetupInfo: PropTypes.object.isRequired,
 };

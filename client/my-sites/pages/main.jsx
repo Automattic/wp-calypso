@@ -6,17 +6,19 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { Experiment } from 'calypso/lib/explat';
 import { mapPostStatus } from 'calypso/lib/route';
 import urlSearch from 'calypso/lib/url-search';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageList from './page-list';
 
@@ -60,7 +62,16 @@ class PagesMain extends Component {
 	}
 
 	render() {
-		const { siteId, search, status, translate, queryType, author } = this.props;
+		const {
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
+			siteId,
+			search,
+			status,
+			translate,
+			queryType,
+			author,
+		} = this.props;
 		const postStatus = mapPostStatus( status );
 		/* Check if All Sites Mode */
 		const isAllSites = siteId ? 1 : 0;
@@ -83,15 +94,17 @@ class PagesMain extends Component {
 
 		return (
 			<Main wideLayout classname="pages">
-				<ScreenOptionsTab wpAdminPath="edit.php?post_type=page" />
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Pages' ) } />
 				<SitePreview />
-				<FormattedHeader
-					brandFont
-					className="pages__page-heading"
-					headerText={ translate( 'Pages' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="edit.php?post_type=page"
+					navigationItems={ [] }
+					title={ translate( 'Pages' ) }
+					subtitle={ translate(
 						'Create, edit, and manage the pages on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the pages on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
@@ -101,8 +114,6 @@ class PagesMain extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList
@@ -159,7 +170,10 @@ const mapState = ( state ) => {
 		searchPagesPlaceholder,
 		queryType,
 		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 };
 
-export default connect( mapState )( localize( urlSearch( PagesMain ) ) );
+export default connect( mapState )(
+	localize( withJetpackConnectionProblem( urlSearch( PagesMain ) ) )
+);

@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import type { PropsWithChildren } from 'react';
 import './style.scss';
 
@@ -16,7 +16,7 @@ export default function LicenseListItem( {
 	return (
 		<CompactCard className={ className }>
 			<div
-				className={ classnames( {
+				className={ clsx( {
 					'license-list-item': true,
 					'license-list-item--header': header,
 				} ) }

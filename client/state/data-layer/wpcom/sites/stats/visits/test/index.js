@@ -61,7 +61,10 @@ describe( 'onSuccess', () => {
 				],
 			},
 		};
-		const output = onSuccess( { siteId: 1, period: 'year' }, data );
-		expect( output ).toEqual( receiveChartCounts( 1, 'year', data ) );
+		const output = onSuccess(
+			{ siteId: 1, date: '2018-09-20', period: 'year', quantity: 1 },
+			data
+		);
+		expect( output ).toEqual( receiveChartCounts( 1, '2018-09-20', 'year', 1, data ) );
 	} );
 } );

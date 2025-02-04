@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/calypso-package-generator",
 	"version": "1.0.0",
-	"description": "Generate a sub-package under the Calypso monorepo",
+	"description": "Generate a sub-package under the Calypso monorepo.",
 	"main": "index.js",
 	"repository": {
 		"type": "git",
@@ -16,10 +16,6 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/generators#readme",
 	"type": "module",
-	"engines": {
-		"node": "^16.17.0",
-		"yarn": "^3.1.1"
-	},
 	"scripts": {
 		"generate": "generate-calypso-package"
 	},

@@ -1,90 +1,48 @@
 import { Button } from '@automattic/components';
 import { Icon, arrowRight } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useCallback } from 'react';
 import { UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
-import { getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import getSites from 'calypso/state/selectors/get-sites';
+import { useSelector } from 'calypso/state';
+import { PluginActions } from '../../hooks/types';
+import useShowPluginActionDialog from '../../hooks/use-show-plugin-action-dialog';
+import usePluginVersionInfo from '../hooks/use-plugin-version-info';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
-	plugin: Plugin;
+	plugin: PluginComponentProps;
 	selectedSite?: SiteDetails;
 	className?: string;
-	updatePlugin?: ( plugin: Plugin ) => void;
+	updatePlugin?: ( plugin: PluginComponentProps ) => void;
+	siteCount?: number;
 }
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
-	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
+	const showPluginActionDialog = useShowPluginActionDialog();
 
-	const getPluginSites = ( plugin: Plugin ) => {
-		return Object.keys( plugin.sites ).map( ( siteId ) => {
-			const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
-			return {
-				...site,
-				...plugin.sites[ siteId ],
-			};
-		} );
-	};
+	const onShowUpdateConfirmationModal = useCallback( () => {
+		if ( selectedSite ) {
+			showPluginActionDialog( PluginActions.UPDATE, [ plugin ], [ selectedSite ], ( accepted ) => {
+				if ( accepted ) {
+					updatePlugin?.( plugin );
+				}
+			} );
+		}
+	}, [ plugin, selectedSite, updatePlugin, showPluginActionDialog ] );
 
-	const sites = getPluginSites( plugin );
-	const siteIds = siteObjectsToSiteIds( sites );
-	const pluginsOnSites: any = getPluginOnSites( state, siteIds, plugin?.slug );
-
-	const currentVersions = sites
-		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
-			return sitePlugin?.version;
-		} )
-		.filter( ( version ) => version );
-
-	const updatedVersions = sites
-		.map( ( site ) => {
-			const siteId = selectedSite ? selectedSite.ID : site.ID;
-			const sitePlugin = pluginsOnSites?.sites[ siteId ];
-			return sitePlugin?.update?.new_version;
-		} )
-		.filter( ( version ) => version );
-
-	const currentVersionsRange = useMemo( () => {
-		const versions = [
-			// We want to remove the duplicated versions in the array, because if multiple sites have
-			// the same plugin version, we don't want to display the range.
-			...new Set(
-				// Sort the plugin versions, respecting semantic version convention.
-				currentVersions.sort( ( a: string, b: string ): number =>
-					a.localeCompare( b, undefined, {
-						numeric: true,
-						sensitivity: 'case',
-						caseFirst: 'upper',
-					} )
-				)
-			),
-		];
-
-		return {
-			min: versions[ 0 ],
-			max: versions.length > 1 ? versions[ versions.length - 1 ] : null,
-		};
-	}, [ currentVersions ] );
-
-	const hasUpdate = sites.some( ( site ) => {
-		const siteId = selectedSite ? selectedSite.ID : site.ID;
-		const sitePlugin = pluginsOnSites?.sites[ siteId ];
-		return sitePlugin?.update?.new_version && site.canUpdateFiles;
-	} );
+	const { currentVersionsRange, updatedVersions, hasUpdate } = usePluginVersionInfo(
+		plugin,
+		selectedSite?.ID
+	);
 
 	const allowedActions = getAllowedPluginActions( plugin, state, selectedSite );
 
@@ -100,29 +58,31 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			( selectedSite ? parseInt( status.siteId ) === selectedSite.ID : true )
 	);
 
+	const onUpdatePlugin = useCallback( () => {
+		updatePlugin && updatePlugin( plugin );
+	}, [ plugin, updatePlugin ] );
+
 	if ( ! allowedActions?.autoupdate ) {
 		content = <div>{ translate( 'Auto-managed on this site' ) }</div>;
 	} else if ( updateStatuses.length > 0 ) {
 		content = (
-			<>
-				<div className="update-plugin__plugin-action-status">
-					<PluginActionStatus
-						showMultipleStatuses={ false }
-						currentSiteStatuses={ updateStatuses }
-						selectedSite={ selectedSite }
-						retryButton={
-							<Button
-								onClick={ () => updatePlugin && updatePlugin( plugin ) }
-								className="update-plugin__retry-button"
-								borderless
-								compact
-							>
-								{ translate( 'Retry' ) }
-							</Button>
-						}
-					/>
-				</div>
-			</>
+			<div className="update-plugin__plugin-action-status">
+				<PluginActionStatus
+					showMultipleStatuses={ false }
+					currentSiteStatuses={ updateStatuses }
+					selectedSite={ selectedSite }
+					retryButton={
+						<Button
+							onClick={ onUpdatePlugin }
+							className="update-plugin__retry-button"
+							borderless
+							compact
+						>
+							{ translate( 'Retry' ) }
+						</Button>
+					}
+				/>
+			</div>
 		);
 	} else if ( hasUpdate ) {
 		content = (
@@ -136,12 +96,11 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 				</span>
 				<Button
 					primary
-					onClick={ () => updatePlugin && updatePlugin( plugin ) }
+					onClick={ onShowUpdateConfirmationModal }
 					className="update-plugin__new-version"
-					borderless
 					compact
 				>
-					{ translate( '{{span}}Update to {{/span}} %s', {
+					{ translate( '{{span}}Update to {{/span}}%s', {
 						components: {
 							span: <span />,
 						},
@@ -151,5 +110,6 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			</div>
 		);
 	}
-	return content ? <div className={ classNames( className ) }>{ content }</div> : null;
+
+	return content ? <div className={ clsx( className ) }>{ content }</div> : null;
 }

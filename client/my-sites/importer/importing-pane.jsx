@@ -1,16 +1,17 @@
 import { ProgressBar, Spinner } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, localize } from 'i18n-calypso';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import BusyImportingButton from 'calypso/my-sites/importer/importer-action-buttons/busy-importing-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
 import ImporterDoneButton from 'calypso/my-sites/importer/importer-action-buttons/done-button';
-import { loadTrackingTool } from 'calypso/state/analytics/actions';
-import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import AuthorMappingPane from './author-mapping-pane';
 
@@ -163,28 +164,19 @@ export class ImportingPane extends PureComponent {
 		return this.isInState( appStates.MAP_AUTHORS );
 	};
 
-	maybeLoadHotJar = () => {
-		if ( this.hjLoaded || ! this.isImporting() ) {
-			return;
-		}
-
-		this.hjLoaded = true;
-
-		this.props.loadTrackingTool( 'HotJar' );
-	};
-
-	componentDidMount() {
-		this.maybeLoadHotJar();
-	}
-
-	componentDidUpdate() {
-		this.maybeLoadHotJar();
-	}
-
 	handleOnMap = ( source, target ) =>
 		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
 
-	renderActionButtons = () => {
+	onClickSubstackDone = ( action ) => {
+		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
+			importer_id: this.props.importerStatus.type,
+			action,
+		} );
+
+		this.props.resetImport( this.props.site.ID, this.props.importerStatus.importerId );
+	};
+
+	renderActionButtons = ( sourceType ) => {
 		if ( this.isProcessing() || this.isMapping() ) {
 			// We either don't want to show buttons while processing
 			// or, in the case of `isMapping`, we let another component (author-mapping-pane)
@@ -198,6 +190,28 @@ export class ImportingPane extends PureComponent {
 		const isError = this.isError();
 		const showFallbackButton = isError || ( ! isImporting && ! isFinished );
 
+		// After Substack importer we nudge to view posts or
+		if ( sourceType === 'Substack' && isFinished ) {
+			return (
+				<ImporterActionButtonContainer justifyContentCenter>
+					<ImporterActionButton
+						href={ `/subscribers/${ this.props.site.slug || '' }#add-subscribers` }
+						onClick={ () => this.onClickSubstackDone( 'add-subscribers' ) }
+						primary
+					>
+						{ this.props.translate( 'Import Substack subscribers' ) }
+					</ImporterActionButton>
+					<ImporterActionButton
+						href={ `/posts/${ this.props.site.slug || '' }` }
+						onClick={ () => this.onClickSubstackDone( 'view-posts' ) }
+					>
+						{ this.props.translate( 'View imported content' ) }
+					</ImporterActionButton>
+				</ImporterActionButtonContainer>
+			);
+		}
+
+		// Other importers nudge to view the site
 		return (
 			<ImporterActionButtonContainer>
 				{ isImporting && <BusyImportingButton /> }
@@ -212,12 +226,12 @@ export class ImportingPane extends PureComponent {
 	render() {
 		const {
 			importerStatus,
-			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
+			site: { ID: siteId, name: siteName },
 			sourceType,
 			site,
 		} = this.props;
 		const { customData } = importerStatus;
-		const progressClasses = classNames( 'importer__import-progress', {
+		const progressClasses = clsx( 'importer__import-progress', {
 			'is-complete': this.isFinished(),
 		} );
 
@@ -250,7 +264,6 @@ export class ImportingPane extends PureComponent {
 				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
-						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
 						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
 						siteId={ siteId }
@@ -277,14 +290,15 @@ export class ImportingPane extends PureComponent {
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>
 				</div>
-				{ this.renderActionButtons() }
+				{ this.renderActionButtons( sourceType ) }
 			</div>
 		);
 	}
 }
 
 export default connect( null, {
-	loadTrackingTool,
 	mapAuthor,
+	recordTracksEvent,
+	resetImport,
 	startImporting,
 } )( localize( ImportingPane ) );

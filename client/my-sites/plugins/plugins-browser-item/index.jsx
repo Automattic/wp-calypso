@@ -1,25 +1,30 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
-import { Gridicon } from '@automattic/components';
+import page from '@automattic/calypso-router';
+import { Badge, Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { useMemo, useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
+import { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import { PluginPrice } from 'calypso/my-sites/plugins/plugin-price';
+import useAtomicSiteHasEquivalentFeatureToPlugin from 'calypso/my-sites/plugins/use-atomic-site-has-equivalent-feature-to-plugin';
 import { useLocalizedPlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { setLastVisitedPlugin } from 'calypso/state/plugins/last-visited/actions';
+import { isLastVisitedPlugin as getIsLastVisitedPlugin } from 'calypso/state/plugins/last-visited/selectors';
+import {
+	isMarketplaceProduct as isMarketplaceProductSelector,
+	isSaasProduct as isSaasProductSelector,
+} from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -40,9 +45,11 @@ const PluginsBrowserListElement = ( props ) => {
 		currentSites,
 	} = props;
 
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	const { localizePath } = useLocalizedPlugins();
+	const cardRef = useRef( null );
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
@@ -104,6 +111,12 @@ const PluginsBrowserListElement = ( props ) => {
 		}
 	}, [ site, plugin, selectedSite, props.listName ] );
 
+	const onClickItem = useCallback( () => {
+		dispatch( setLastVisitedPlugin( plugin.slug, props.listName ) );
+
+		trackPluginLinkClick();
+	}, [ trackPluginLinkClick, dispatch, plugin.slug, props.listName ] );
+
 	const isWpcomPreinstalled = useMemo( () => {
 		if ( plugin.isPreinstalled ) {
 			return true;
@@ -116,14 +129,28 @@ const PluginsBrowserListElement = ( props ) => {
 		return ! isJetpack && PREINSTALLED_PLUGINS.includes( plugin.slug );
 	}, [ isJetpack, site, plugin ] );
 
+	// Atomic sites already include features such as Jetpack backup, scan, videopress, publicize, and search. So
+	// therefore we should prevent users from installing these standalone plugin equivalents.
+	const atomicSiteHasEquivalentFeatureToPlugin = useAtomicSiteHasEquivalentFeatureToPlugin(
+		plugin.slug
+	);
+
 	const isPluginInstalledOnSite = useMemo(
 		() =>
 			selectedSite?.ID &&
 			( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
 				isWpcomPreinstalled ||
-				isPreinstalledPremiumPluginUpgraded ),
-		[ selectedSite?.ID, sitesWithPlugin, isWpcomPreinstalled, isPreinstalledPremiumPluginUpgraded ]
+				isPreinstalledPremiumPluginUpgraded ||
+				atomicSiteHasEquivalentFeatureToPlugin ),
+		[
+			selectedSite?.ID,
+			sitesWithPlugin,
+			isWpcomPreinstalled,
+			isPreinstalledPremiumPluginUpgraded,
+			atomicSiteHasEquivalentFeatureToPlugin,
+		]
 	);
+
 	const isUntestedVersion = useMemo( () => {
 		const wpVersion = selectedSite?.options?.software_version;
 		const pluginTestedVersion = plugin?.tested;
@@ -135,14 +162,28 @@ const PluginsBrowserListElement = ( props ) => {
 		return version_compare( wpVersion, pluginTestedVersion, '>' );
 	}, [ selectedSite, plugin ] );
 
+	const isLastVisitedPlugin = useSelector( ( state ) =>
+		getIsLastVisitedPlugin( state, plugin.slug, props.listName )
+	);
+
+	useEffect( () => {
+		if ( isLastVisitedPlugin && cardRef.current ) {
+			cardRef.current.scrollIntoView( { behavior: 'auto', block: 'center' } );
+		}
+	}, [ isLastVisitedPlugin ] );
+
 	const jetpackNonAtomic = useSelector(
 		( state ) =>
 			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
 	);
 
-	const isPluginIncompatible = useMemo( () => {
+	const isIncompatiblePlugin = useMemo( () => {
 		return ! isCompatiblePlugin( plugin.slug ) && ! jetpackNonAtomic;
-	} );
+	}, [ jetpackNonAtomic, plugin.slug ] );
+
+	const isIncompatibleBackupPlugin = useMemo( () => {
+		return 'vaultpress' === plugin.slug && ! jetpackNonAtomic;
+	}, [ jetpackNonAtomic, plugin.slug ] );
 
 	const shouldUpgrade = useSelector( ( state ) => shouldUpgradeCheck( state, selectedSite?.ID ) );
 
@@ -155,14 +196,20 @@ const PluginsBrowserListElement = ( props ) => {
 		return <Placeholder variant={ variant } />;
 	}
 
-	const classNames = classnames( 'plugins-browser-item', variant, {
-		incompatible: isPluginIncompatible,
+	const classNames = clsx( 'plugins-browser-item', variant, {
+		incompatible: isIncompatiblePlugin || isIncompatibleBackupPlugin,
 	} );
 
-	const onClick = ( e ) => {
+	const onClickIncompatiblePlugin = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
 		window.location.href = localizeUrl( 'https://wordpress.com/support/incompatible-plugins/' );
+	};
+
+	const onClickIncompatibleBackup = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+		page( `/backup/${ site }` );
 	};
 
 	return (
@@ -170,19 +217,21 @@ const PluginsBrowserListElement = ( props ) => {
 			<a
 				href={ localizePath( pluginLink ) }
 				className="plugins-browser-item__link"
-				onClick={ trackPluginLinkClick }
+				onClick={ onClickItem }
 			>
-				<div className="plugins-browser-item__info">
-					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">{ plugin.name }</div>
-					{ variant === PluginsBrowserElementVariant.Extended && (
-						<>
-							<div className="plugins-browser-item__author">
-								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
-							</div>
-						</>
-					) }
+				<div className="plugins-browser-item__info" ref={ isLastVisitedPlugin ? cardRef : null }>
+					<div className="plugins-browser-item__header">
+						<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+						<div className="plugins-browser-item__title">{ plugin.name }</div>
+						{ variant === PluginsBrowserElementVariant.Extended && (
+							<>
+								<div className="plugins-browser-item__author">
+									{ translate( 'by ' ) }
+									<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
+								</div>
+							</>
+						) }
+					</div>
 					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
 				{ isUntestedVersion && (
@@ -193,15 +242,26 @@ const PluginsBrowserListElement = ( props ) => {
 						</span>
 					</div>
 				) }
-				{ isPluginIncompatible && (
+				{ isIncompatiblePlugin && ! isIncompatibleBackupPlugin && (
 					<span
 						role="link"
 						tabIndex="-1"
-						onClick={ onClick }
-						onKeyPress={ onClick }
+						onClick={ onClickIncompatiblePlugin }
+						onKeyPress={ onClickIncompatiblePlugin }
 						className="plugins-browser-item__incompatible"
 					>
 						{ translate( 'Why is this plugin not compatible with WordPress.com?' ) }
+					</span>
+				) }
+				{ isIncompatibleBackupPlugin && (
+					<span
+						role="link"
+						tabIndex="-1"
+						onClick={ onClickIncompatibleBackup }
+						onKeyPress={ onClickIncompatibleBackup }
+						className="plugins-browser-item__incompatible"
+					>
+						{ translate( 'Your site plan already includes Jetpack VaultPress Backup.' ) }
 					</span>
 				) }
 				<div className="plugins-browser-item__footer">
@@ -209,6 +269,7 @@ const PluginsBrowserListElement = ( props ) => {
 						<InstalledInOrPricing
 							sitesWithPlugin={ sitesWithPlugin }
 							isWpcomPreinstalled={ isWpcomPreinstalled }
+							atomicSiteHasEquivalentFeatureToPlugin={ atomicSiteHasEquivalentFeatureToPlugin }
 							plugin={ plugin }
 							shouldUpgrade={ shouldUpgrade }
 							canInstallPlugins={ canInstallPlugins }
@@ -251,13 +312,14 @@ const PluginsBrowserListElement = ( props ) => {
 function InstalledInOrPricing( {
 	sitesWithPlugin,
 	isWpcomPreinstalled,
+	atomicSiteHasEquivalentFeatureToPlugin,
 	plugin,
 	shouldUpgrade,
 	canInstallPlugins,
 	currentSites,
 } ) {
 	const translate = useTranslate();
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
@@ -265,37 +327,49 @@ function InstalledInOrPricing( {
 	const isPluginActive = useSelector( ( state ) =>
 		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
-	const active = isWpcomPreinstalled || isPluginActive;
-	const isPluginActiveOnsiteWithSubscription =
-		active && ! isMarketplaceProduct
-			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	if ( isPreinstalledPremiumPlugin ) {
+	const active = isWpcomPreinstalled || isPluginActive || atomicSiteHasEquivalentFeatureToPlugin;
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin.slug ) );
+
+	// is plugin item an already active feature on the site?
+	// is atomicSite and is plugin one of the keys of atomicFeaturesIncludedInPluginsMap?
+	// return does the site have the feature?
+
+	if ( isPreinstalledPremiumPlugin && ! atomicSiteHasEquivalentFeatureToPlugin ) {
 		return <PreinstalledPremiumPluginBrowserItemPricing plugin={ plugin } />;
 	}
 
-	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
+	if (
+		( sitesWithPlugin && sitesWithPlugin.length > 0 ) ||
+		isWpcomPreinstalled ||
+		atomicSiteHasEquivalentFeatureToPlugin
+	) {
+		let installedText = '';
+		if ( isWpcomPreinstalled || currentSites?.length === 1 ) {
+			installedText = translate( 'Installed' );
+		} else {
+			installedText = translate( 'Installed on %d site', 'Installed on %d sites', {
+				args: [ sitesWithPlugin.length ],
+				count: sitesWithPlugin.length,
+				comment: '%d is the number of sites the user has the plugin installed on.',
+			} );
+		}
+		if ( atomicSiteHasEquivalentFeatureToPlugin ) {
+			installedText = translate( 'Included with your plan' );
+		}
+
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
 					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
-					{ isWpcomPreinstalled || currentSites?.length === 1
-						? translate( 'Installed' )
-						: translate( 'Installed on %d site', 'Installed on %d sites', {
-								args: [ sitesWithPlugin.length ],
-								count: sitesWithPlugin.length,
-						  } ) }
+					{ installedText }
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ isPluginActiveOnsiteWithSubscription ? 'success' : 'info' }>
-							{ isPluginActiveOnsiteWithSubscription
-								? translate( 'Active' )
-								: translate( 'Inactive' ) }
+						<Badge type={ active ? 'success' : 'info' }>
+							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }
@@ -307,14 +381,15 @@ function InstalledInOrPricing( {
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 				{ ( { isFetching, price, period } ) => {
-					if ( plugin.isSaasProduct ) {
-						// SaaS products do not display a price
+					if ( isSaasProduct ) {
+						// SaaS products displays `Start for free`
 						return (
 							<>
+								{ translate( 'Start for free' ) }
 								{ ! canInstallPlugins && isLoggedIn && (
-									<span className="plugins-browser-item__requires-plan-upgrade">
+									<div className="plugins-browser-item__period">
 										{ translate( 'Requires a plan upgrade' ) }
-									</span>
+									</div>
 								) }
 							</>
 						);
@@ -325,8 +400,12 @@ function InstalledInOrPricing( {
 					if ( price ) {
 						return (
 							<>
-								{ price + ' ' }
-								<span className="plugins-browser-item__period">{ period }</span>
+								{ translate( '%(price)s {{span}}%(period)s{{/span}}', {
+									args: { price, period },
+									components: { span: <span className="plugins-browser-item__period" /> },
+									comment:
+										'Price and period for a plugin, using a span to style the period differently',
+								} ) }
 								{ shouldUpgrade && (
 									<div className="plugins-browser-item__period">
 										{ translate( 'Requires a plan upgrade' ) }
@@ -354,12 +433,14 @@ function InstalledInOrPricing( {
 
 function Placeholder( { variant } ) {
 	return (
-		<li className={ classnames( 'plugins-browser-item is-placeholder', variant ) }>
+		<li className={ clsx( 'plugins-browser-item is-placeholder', variant ) }>
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon isPlaceholder={ true } />
-					<div className="plugins-browser-item__title">…</div>
-					<div className="plugins-browser-item__author">…</div>
+					<div className="plugins-browser-item__header">
+						<PluginIcon isPlaceholder />
+						<div className="plugins-browser-item__title">…</div>
+						<div className="plugins-browser-item__author">…</div>
+					</div>
 					<div className="plugins-browser-item__description">…</div>
 				</div>
 			</span>

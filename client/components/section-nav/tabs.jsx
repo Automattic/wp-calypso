@@ -1,10 +1,10 @@
+import { SelectDropdown } from '@automattic/components';
 import { getWindowInnerWidth } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component } from 'react';
 import ReactDom from 'react-dom';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 
@@ -15,32 +15,64 @@ import './tabs.scss';
  */
 const MOBILE_PANEL_THRESHOLD = 480;
 
+/**
+ * The NavTabs is a responsive components that provides multiple layout to fit both the container and the window.
+ * 1. Horizontal Tabs - On desktop (viewport width > 480px).
+ * 2. Expandable Vertical Tabs - On mobile (viewport width <= 480px).
+ * 3. Dropdown - On desktop but the container width is smaller than the content width.
+ */
 class NavTabs extends Component {
 	static propTypes = {
 		selectedText: TranslatableString,
 		selectedCount: PropTypes.number,
 		label: PropTypes.string,
 		hasSiblingControls: PropTypes.bool,
+		hasHorizontalScroll: PropTypes.bool,
+		enforceTabsView: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		hasSiblingControls: false,
+		enforceTabsView: false,
 	};
 
 	state = {
 		isDropdown: false,
+		isFirstOverflow: false,
+		isLastOverflow: false,
 	};
 
 	navGroupRef = createRef();
+	tabListRef = createRef();
 	tabRefMap = new Map();
+	observer = null;
 
 	componentDidMount() {
 		this.setDropdownAfterLayoutFlush();
-		window.addEventListener( 'resize', this.setDropdownDebounced );
+		if ( ! this.props.enforceTabsView ) {
+			window.addEventListener( 'resize', this.setDropdownDebounced );
+		}
+
+		this.observe();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps, prevState ) {
+		const { enforceTabsView } = this.props;
+		const { isDropdown } = this.state;
+
 		this.setDropdownAfterLayoutFlush();
+
+		if ( ! prevProps.enforceTabsView && enforceTabsView ) {
+			window.removeEventListener( 'resize', this.setDropdownDebounced );
+		} else if ( prevProps.enforceTabsView && ! enforceTabsView ) {
+			window.addEventListener( 'resize', this.setDropdownDebounced );
+		}
+
+		if ( prevState.isDropdown && ! isDropdown ) {
+			this.observe();
+		} else if ( ! prevState.isDropdown && isDropdown ) {
+			this.unobserve();
+		}
 	}
 
 	componentWillUnmount() {
@@ -49,6 +81,7 @@ class NavTabs extends Component {
 		// see https://lodash.com/docs/4.17.4#debounce to learn about the `cancel` method.
 		this.setDropdownDebounced.cancel();
 		this.setDropdownAfterLayoutFlush.cancel();
+		this.unobserve();
 	}
 
 	/* Ref that stores the given tab element */
@@ -63,12 +96,15 @@ class NavTabs extends Component {
 	}
 
 	render() {
+		const { isFirstOverflow, isLastOverflow } = this.state;
 		const tabs = Children.map( this.props.children, ( child, index ) => {
 			return child && cloneElement( child, { ref: this.storeTabRefs( index ) } );
 		} );
 
-		const tabsClassName = classNames( 'section-nav-tabs', {
-			'is-dropdown': this.state.isDropdown,
+		const isDropdownEnabled = this.isDropdownEnabled();
+
+		const tabsClassName = clsx( 'section-nav-tabs', {
+			'is-dropdown': isDropdownEnabled,
 			'has-siblings': this.props.hasSiblingControls,
 		} );
 
@@ -76,14 +112,31 @@ class NavTabs extends Component {
 
 		return (
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			<div className="section-nav-group" ref={ this.navGroupRef }>
+			<div
+				className={ clsx( {
+					'section-nav-group': true,
+					'has-horizontal-scroll':
+						this.props.hasHorizontalScroll &&
+						( innerWidth > MOBILE_PANEL_THRESHOLD || this.props.enforceTabsView ),
+					'enforce-tabs-view': this.props.enforceTabsView,
+				} ) }
+				ref={ this.navGroupRef }
+			>
 				<div className={ tabsClassName }>
 					{ this.props.label && <h6 className="section-nav-group__label">{ this.props.label }</h6> }
-					<ul className="section-nav-tabs__list" role="menu" onKeyDown={ this.keyHandler }>
+					<ul
+						className={ clsx( 'section-nav-tabs__list', {
+							'is-overflowing-first': isFirstOverflow,
+							'is-overflowing-last': isLastOverflow,
+						} ) }
+						role="menu"
+						ref={ this.tabListRef }
+						onKeyDown={ this.keyHandler }
+					>
 						{ tabs }
 					</ul>
 
-					{ this.state.isDropdown && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
+					{ isDropdownEnabled && innerWidth > MOBILE_PANEL_THRESHOLD && this.getDropdown() }
 				</div>
 			</div>
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -100,6 +153,10 @@ class NavTabs extends Component {
 
 		this.tabsWidth = Math.max( totalWidth, this.tabsWidth || 0 );
 	}
+
+	isDropdownEnabled = () => {
+		return ! this.props.enforceTabsView && this.state.isDropdown;
+	};
 
 	getDropdown() {
 		const dropdownOptions = Children.map( this.props.children, ( child, index ) => {
@@ -133,10 +190,13 @@ class NavTabs extends Component {
 			}
 
 			const navGroupWidth = this.navGroupRef.current.offsetWidth;
-
 			this.getTabWidths();
 
-			if ( navGroupWidth <= this.tabsWidth && ! this.state.isDropdown ) {
+			if (
+				navGroupWidth <= this.tabsWidth &&
+				! this.state.isDropdown &&
+				! this.props.hasHorizontalScroll
+			) {
 				this.setState( {
 					isDropdown: true,
 				} );
@@ -168,6 +228,48 @@ class NavTabs extends Component {
 				document.activeElement.click();
 				break;
 		}
+	};
+
+	observe = () => {
+		this.observer = new IntersectionObserver( this.checkIfOverflow, {
+			threshold: 0.1,
+		} );
+
+		const { firstChild, lastChild } = this.tabListRef.current;
+		if ( firstChild ) {
+			this.observer?.observe( firstChild );
+		}
+
+		if ( lastChild ) {
+			this.observer?.observe( lastChild );
+		}
+	};
+
+	unobserve = () => {
+		const { firstChild, lastChild } = this.tabListRef.current;
+		if ( firstChild ) {
+			this.observer?.unobserve( firstChild );
+		}
+
+		if ( lastChild ) {
+			this.observer?.unobserve( lastChild );
+		}
+
+		this.observer?.disconnect();
+		this.observer = null;
+	};
+
+	checkIfOverflow = ( entries ) => {
+		const { firstChild, lastChild } = this.tabListRef.current;
+
+		entries.forEach( ( entry ) => {
+			if ( entry.target === firstChild ) {
+				this.setState( { isFirstOverflow: ! entry.isIntersecting } );
+			}
+			if ( entry.target === lastChild ) {
+				this.setState( { isLastOverflow: ! entry.isIntersecting } );
+			}
+		} );
 	};
 }
 

@@ -5,7 +5,7 @@ Renders a ListTile component.
 ## How to use
 
 ```jsx
-import ListTile from '@automattic/components';
+import { ListTile } from '@automattic/components';
 
 function render() {
 	return <ListTile title="Title" />;

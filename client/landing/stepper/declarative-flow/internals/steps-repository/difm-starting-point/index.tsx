@@ -1,47 +1,48 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
+import type { AppState } from 'calypso/types';
 
-import './style.scss';
 const STEP_NAME = 'difmStartingPoint';
-const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
+const DIFMStartingPoint: Step = function ( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
 	const translate = useTranslate();
-
-	const onSubmit = () => {
-		submit?.();
-	};
-
-	const onSkip = () => {
-		recordTracksEvent( 'calypso_signup_skip_step', {
-			flow,
-			step: STEP_NAME,
-		} );
-
-		goNext?.();
-	};
-
+	const existingSiteCount = useSelector( ( state: AppState ) => getCurrentUserSiteCount( state ) );
 	const siteId = useSite()?.ID;
+	const showNewOrExistingSiteChoice = ! siteId && !! existingSiteCount && existingSiteCount > 0;
+
+	const onSubmit = ( value: string ) => {
+		submit?.( {
+			newOrExistingSiteChoice: value,
+		} );
+	};
+
 	return (
 		<>
-			<DocumentHead title={ translate( 'Hire a professional' ) } />
+			<DocumentHead title={ translate( 'Let us build your site' ) } />
 			<StepContainer
 				stepName={ STEP_NAME }
 				goBack={ goBack }
 				goNext={ goNext }
-				isHorizontalLayout={ true }
-				isWideLayout={ true }
+				isHorizontalLayout
+				isWideLayout
 				isLargeSkipLayout={ false }
+				skipLabelText={ translate( 'No Thanks, I’ll Build It' ) }
 				stepContent={
 					<DIFMLanding
-						onSubmit={ onSubmit }
-						onSkip={ onSkip }
-						isInOnboarding={ true }
+						onPrimarySubmit={ () =>
+							showNewOrExistingSiteChoice ? onSubmit( 'existing-site' ) : onSubmit( 'new-site' )
+						}
+						onSecondarySubmit={ () => onSubmit( 'new-site' ) }
+						showNewOrExistingSiteChoice={ showNewOrExistingSiteChoice }
 						siteId={ siteId }
+						isStoreFlow={ false }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

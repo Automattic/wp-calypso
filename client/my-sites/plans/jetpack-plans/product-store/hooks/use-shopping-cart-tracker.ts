@@ -1,8 +1,8 @@
 import { ResponseCartProduct, useShoppingCart } from '@automattic/shopping-cart';
 import { useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -16,6 +16,7 @@ type EventData = {
 type EventDataOptions = {
 	productSlug?: string;
 	addProducts?: boolean;
+	quantity?: number | null;
 };
 
 // Record tracks are not allowing objects inside track events
@@ -33,7 +34,7 @@ export const useShoppingCartTracker = () => {
 	const dispatch = useDispatch();
 
 	return useCallback(
-		( eventName: string, { productSlug, addProducts }: EventDataOptions ) => {
+		( eventName: string, { productSlug, addProducts, quantity }: EventDataOptions ) => {
 			// We do need this only for Jetpack cloud
 			// If we want to use it everywhere we could move it as a parameter in event
 			if ( ! isJetpackCloud() ) {
@@ -48,11 +49,18 @@ export const useShoppingCartTracker = () => {
 				eventData[ 'selected_product' ] = productSlug;
 			}
 
+			if ( quantity ) {
+				eventData[ 'quantity' ] = quantity;
+			}
+
 			if ( addProducts ) {
 				eventData = {
 					...eventData,
 					...reduceProducts( responseCart.products ),
-					product_slugs_concatenated: responseCart.products.sort().join( '-' ),
+					product_slugs_concatenated: responseCart.products
+						.map( ( product ) => product.product_slug )
+						.sort()
+						.join( ',' ),
 					number_of_products: responseCart.products.length,
 				};
 			}

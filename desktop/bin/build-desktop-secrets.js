@@ -14,7 +14,6 @@ const REPO_DIR = path.resolve( PROJECT_DIR, '../' );
 
 const secrets = [
 	path.resolve( PROJECT_DIR, 'resource', 'calypso', 'secrets.json' ),
-	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'mac.p12' ),
 	path.resolve( PROJECT_DIR, 'resource', 'certificates', 'win.p12' ),
 ];
 
@@ -35,10 +34,10 @@ for ( let i = 0; i < secrets.length; i++ ) {
 		decryptFlags = '-md md5 -d';
 	}
 
+	const cmd = `openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`;
+
 	try {
-		execSync(
-			`openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`
-		);
+		execSync( cmd );
 	} catch ( e ) {
 		console.error( `Failed to decrypt ${ path.basename( encrypted ) }: `, e );
 		process.exit( 1 );

@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Icon, currencyDollar } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { findIndex, find } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ElementChart from 'calypso/components/chart';
@@ -117,7 +117,7 @@ class StoreStatsChart extends Component {
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const { activeCharts } = this.state;
-		const className = classNames( item.classNames.join( ' ' ), {
+		const className = clsx( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		const nestedValue = item[ activeCharts[ 0 ] ];
@@ -154,7 +154,7 @@ class StoreStatsChart extends Component {
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
 
-		const classes = classNames( 'is-chart-tabs', className, {
+		const classes = clsx( 'is-chart-tabs', className, {
 			'is-loading': isLoading,
 		} );
 
@@ -167,7 +167,7 @@ class StoreStatsChart extends Component {
 					barClick={ this.barClick }
 					minBarWidth={ 35 }
 				>
-					<StatsEmptyState stateType={ selectedTab.label } />
+					<StatsEmptyState />
 				</ElementChart>
 				{ ! isLoading &&
 					renderTabs( {

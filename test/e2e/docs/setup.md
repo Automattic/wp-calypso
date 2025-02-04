@@ -65,24 +65,11 @@ arch -x86_64 npm install yarn
 7. install all dependencies from repo root:
 
 ```
-arch -x86_64 yarn install --frozen-lockfile
+arch -x86_64 yarn install --immutable
 ```
 
 At any point, run `arch` to verify whether shell is running with Rosetta 2 emulation.
 
 ## Apple Silicon (arm64)
 
-Steps in the [Setup](../README.md#quick-start) will get users up and running.
-However, between Step 7 and Step 8, this additional step may be required:
-
-7. set the following environment variables:
-
-```
-PUPPETEER_SKIP_DOWNLOAD=true
-```
-
-8. install dependencies:
-
-```
-yarn install
-```
+Steps in the [Setup](../README.md#quick-start) should be enough to get the user up and running.

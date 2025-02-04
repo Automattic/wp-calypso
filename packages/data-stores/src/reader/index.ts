@@ -1,36 +1,70 @@
-import { plugins, registerStore, use } from '@wordpress/data';
-import persistOptions from '../one-week-persistence-config';
-import { controls } from '../wpcom-request-controls';
-import * as actions from './actions';
-import { STORE_KEY } from './constants';
-import reducer, { State } from './reducer';
-import * as resolvers from './resolvers';
-import * as selectors from './selectors';
-import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
+import { SiteSubscriptionsQueryPropsProvider, useSiteSubscriptionsQueryProps } from './contexts';
+import { useCacheKey, useIsLoggedIn, useSubscriberEmailAddress } from './hooks';
+import {
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
+	usePostNotifyMeOfNewCommentsMutation,
+	usePostUnsubscribeMutation,
+	useSiteDeliveryFrequencyMutation,
+	useSiteEmailMeNewCommentsMutation,
+	useSiteEmailMeNewPostsMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteSubscribeMutation,
+	useSiteUnsubscribeMutation,
+	useUserSettingsMutation,
+} from './mutations';
+import {
+	siteSubscriptionsQueryKeyPrefix,
+	usePendingPostSubscriptionsQuery,
+	usePendingSiteSubscriptionsQuery,
+	usePostSubscriptionsQuery,
+	useSiteSubscriptionDetailsQuery,
+	useSiteSubscriptionsQuery,
+	useSubscriptionsCountQuery,
+	useUserSettingsQuery,
+} from './queries';
 
-export type { State };
-export { STORE_KEY };
+export const SubscriptionManager = {
+	SiteSubscriptionsQueryPropsProvider,
+	siteSubscriptionsQueryKeyPrefix,
+	useCacheKey,
+	useIsLoggedIn,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
+	usePendingPostSubscriptionsQuery,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
+	usePendingSiteSubscriptionsQuery,
+	usePostNotifyMeOfNewCommentsMutation,
+	usePostSubscriptionsQuery,
+	usePostUnsubscribeMutation,
+	useSiteDeliveryFrequencyMutation,
+	useSiteEmailMeNewCommentsMutation,
+	useSiteEmailMeNewPostsMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteSubscribeMutation,
+	useSiteSubscriptionDetailsQuery,
+	useSiteSubscriptionsQuery,
+	useSiteSubscriptionsQueryProps,
+	useSiteUnsubscribeMutation,
+	useSubscriberEmailAddress,
+	useSubscriptionsCountQuery,
+	useUserSettingsMutation,
+	useUserSettingsQuery,
+};
 
-use( plugins.persistence, persistOptions );
+export { useIsLoggedIn };
+export {
+	EmailDeliveryFrequency,
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsFilterBy,
+	SiteSubscriptionsSortBy,
+} from './constants';
+export { callApi, isErrorResponse, isSiteSubscriptionDetails, isValidId } from './helpers';
+export { UnsubscribedFeedsSearchProvider, useUnsubscribedFeedsSearch } from './contexts';
+export { useReadFeedSearchQuery, useReadFeedSiteQuery, useReadFeedQuery } from './queries';
 
-let isRegistered = false;
-
-export function register(): typeof STORE_KEY {
-	if ( ! isRegistered ) {
-		isRegistered = true;
-		registerStore< State >( STORE_KEY, {
-			actions,
-			controls: controls as any,
-			reducer: reducer as any,
-			resolvers,
-			selectors,
-			persist: [ 'teams' ],
-		} );
-	}
-	return STORE_KEY;
-}
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
-}
+export * from './types';
+export type { FeedItem } from './queries';

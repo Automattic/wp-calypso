@@ -1,12 +1,12 @@
 import { ThemeProvider, Global, css } from '@emotion/react';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import checkCircleImage from 'calypso/assets/images/marketplace/check-circle-gray.svg';
 import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
 import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
 import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
+import { useSelector } from 'calypso/state';
 import { getCurrentUserDisplayName } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import MasterbarLogo from '../../components/masterbar-logo';
@@ -66,7 +66,10 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'Learn More' ) }</h2>
 								<p>{ translate( 'Read more about selling on the WordPress.com marketplace.' ) }</p>
 							</div>
-							<Button isSecondary href="https://developer.wordpress.com/wordpress-com-marketplace/">
+							<Button
+								variant="secondary"
+								href="https://developer.wordpress.com/wordpress-com-marketplace/"
+							>
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>
@@ -79,7 +82,7 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'View the marketplace' ) }</h2>
 								<p>{ translate( 'Sign in to see what the marketplace has to offer.' ) }</p>
 							</div>
-							<Button isSecondary href="/plugins">
+							<Button variant="secondary" href="/plugins">
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>
@@ -92,7 +95,7 @@ const SignupSuccess = () => {
 								<h2>{ translate( 'Developer Page' ) }</h2>
 								<p>{ translate( 'Learn more about building a WordPress.com integration.' ) }</p>
 							</div>
-							<Button isSecondary href="https://developer.wordpress.com">
+							<Button variant="secondary" href="https://developer.wordpress.com">
 								{ translate( 'Continue' ) }
 							</Button>
 						</div>

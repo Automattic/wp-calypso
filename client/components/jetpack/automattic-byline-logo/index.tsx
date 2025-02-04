@@ -1,11 +1,10 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { AutomatticBylineLogoProps } from './types';
 
 /**
  * Automattic "By line" Logo component.
- *
  * @param {AutomatticBylineLogoProps} props - Component properties.
  * @returns {React.ReactNode} AutomatticBylineLogo component.
  */
@@ -26,7 +25,7 @@ const AutomatticBylineLogo: React.FC< AutomatticBylineLogoProps > = ( {
 			enableBackground="new 0 0 935 38.2"
 			aria-labelledby="jp-automattic-byline-logo-title"
 			height={ height }
-			className={ classnames( 'jp-automattic-byline-logo', className ) }
+			className={ clsx( 'jp-automattic-byline-logo', className ) }
 			{ ...otherProps }
 		>
 			<desc id="jp-automattic-byline-logo-title">{ title }</desc>

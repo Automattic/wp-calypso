@@ -42,6 +42,7 @@
 		align-items: flex-end;
 		margin-top: 24px;
 		flex: 1;
+		flex-wrap: wrap;
 	}
 
 	&__button {
@@ -50,6 +51,12 @@
 			padding: 8px 32px;
 			width: 100%;
 			@include break-medium {
+				width: auto;
+			}
+			@include break-large {
+				width: 100%;
+			}
+			@include break-wide {
 				width: auto;
 			}
 			.is-placeholder & {
@@ -72,7 +79,6 @@
 
 	&__footer-image {
 		width: 100%;
-		padding-left: 15px;
 		@include break-large {
 			padding-left: 0;
 		}
@@ -107,5 +113,39 @@
 		margin: 25px 65px 25px 25px;
 		padding-bottom: 85%;
 		@include placeholder( --studio-gray-5 );
+	}
+
+	&__secondary-cta {
+		text-align: center;
+		margin: 25px auto 0;
+
+		a,
+		a:visited {
+			color: var(--studio-gray-80);
+		}
+
+		a:hover,
+		a:focus,
+		a:active,
+		a.is_active {
+			color: var(--studio-jetpack-green-50);
+		}
+
+		@include break-medium {
+			text-align: left;
+			align-self: center;
+			margin: 0 0 0 28px;
+		}
+
+		@include break-large {
+			text-align: center;
+			margin: 25px auto 0;
+		}
+
+		@include break-wide {
+			text-align: left;
+			align-self: center;
+			margin: 0 0 0 28px;
+		}
 	}
 }

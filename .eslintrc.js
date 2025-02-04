@@ -16,6 +16,7 @@ module.exports = {
 		'plugin:jsx-a11y/recommended',
 		'plugin:jest/recommended',
 		'plugin:prettier/recommended',
+		'plugin:@tanstack/eslint-plugin-query/recommended',
 		'plugin:md/prettier',
 		'plugin:@wordpress/eslint-plugin/i18n',
 	],
@@ -116,7 +117,31 @@ module.exports = {
 					'return-await': 'off',
 					semi: 'off',
 					'space-before-function-paren': 'off',
-
+					'@typescript-eslint/ban-types': [
+						'error',
+						{
+							types: {
+								ReactText: {
+									message:
+										"It's deprecated, so we don't want new uses. Inline the required type (such as string or number) instead.",
+								},
+								[ 'React.ReactText' ]: {
+									message:
+										"It's deprecated, so we don't want new uses. Inline the required type (such as string or number) instead.",
+								},
+								ReactChild: {
+									message:
+										"It's deprecated, so we don't want new uses. Prefer types like ReactElement, string, or number instead. If the type should be nullable, use ReactNode.",
+								},
+								[ 'React.ReactChild' ]: {
+									message:
+										"It's deprecated, so we don't want new uses. Prefer types like ReactElement, string, or number instead. If the type should be nullable, use ReactNode.",
+								},
+							},
+							extendDefaults: true,
+						},
+					],
+					'@typescript-eslint/no-explicit-any': 'warn',
 					'@typescript-eslint/explicit-function-return-type': 'off',
 					'@typescript-eslint/explicit-member-accessibility': 'off',
 					'@typescript-eslint/no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
@@ -217,8 +242,6 @@ module.exports = {
 						'./packages/i18n-calypso/package.json',
 						'./packages/i18n-utils/package.json',
 						'./packages/photon/package.json',
-						'./packages/spec-junit-reporter/package.json',
-						'./packages/spec-xunit-reporter/package.json',
 					],
 					rules: {
 						'@automattic/json/valid-values-name-scope': 'off',
@@ -263,8 +286,6 @@ module.exports = {
 	],
 	env: {
 		jest: true,
-		// mocha is only still on because we have not finished porting all of our tests to jest's syntax
-		mocha: true,
 		node: true,
 	},
 	globals: {
@@ -281,7 +302,7 @@ module.exports = {
 		// this is when Webpack last built the bundle
 		BUILD_TIMESTAMP: true,
 	},
-	plugins: [ 'import', 'you-dont-need-lodash-underscore' ],
+	plugins: [ 'import', 'you-dont-need-lodash-underscore', '@tanstack/query' ],
 	settings: {
 		react: {
 			version: reactVersion,
@@ -396,6 +417,7 @@ module.exports = {
 
 		'react/forbid-foreign-prop-types': 'error',
 		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
+		'react/jsx-boolean-value': 'error',
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': 'error',
 
@@ -453,7 +475,7 @@ module.exports = {
 		],
 
 		'wpcalypso/no-unsafe-wp-apis': [
-			'error',
+			'warn',
 			{
 				'@wordpress/block-editor': [
 					'__experimentalBlock',
@@ -465,7 +487,24 @@ module.exports = {
 				'@wordpress/compose': [ '__experimentalUseFocusOutside' ],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
-				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
+				'@wordpress/components': [
+					'__experimentalDivider',
+					'__experimentalHStack',
+					'__experimentalVStack',
+					'__experimentalSpacer',
+					'__experimentalItem',
+					'__experimentalItemGroup',
+					'__experimentalNavigationBackButton',
+					'__experimentalNavigatorBackButton',
+					'__experimentalNavigatorToParentButton',
+					'__experimentalNavigatorButton',
+					'__experimentalNavigatorProvider',
+					'__experimentalNavigatorScreen',
+					'__experimentalUseNavigator',
+					'__unstableComposite',
+					'__unstableCompositeItem',
+					'__unstableUseCompositeState',
+				],
 			},
 		],
 
@@ -519,5 +558,11 @@ module.exports = {
 		'you-dont-need-lodash-underscore/to-pairs': 'error',
 		'you-dont-need-lodash-underscore/to-upper': 'error',
 		'you-dont-need-lodash-underscore/uniq': 'error',
+
+		// @TODO remove these lines once we fixed the warnings so
+		// they'll become errors for new code added to the codebase
+		'@tanstack/query/exhaustive-deps': 'warn',
+		'@wordpress/i18n-no-flanking-whitespace': 'warn',
+		'@wordpress/i18n-hyphenated-range': 'warn',
 	},
 };

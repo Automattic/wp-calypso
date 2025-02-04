@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	MediaHelper,
 	ElementHelper,
 	EditorPage,
@@ -18,13 +17,18 @@ import { TEST_IMAGE_PATH } from '../constants';
 
 declare const browser: Browser;
 
-const features = envToFeatureKey( {
-	...envVariables,
-	// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
-	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
-} );
+const features = envToFeatureKey( envVariables );
+// For this spec, all Atomic testing is always edge.
+// See https://github.com/Automattic/wp-calypso/pull/73052
+if ( envVariables.TEST_ON_ATOMIC ) {
+	features.coblocks = 'edge';
+}
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Replace Image', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
@@ -37,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -52,16 +56,16 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Replace Image' ), 
 			ImageBlock.blockName,
 			ImageBlock.blockEditorSelector
 		);
-		imageBlock = new ImageBlock( blockHandle );
+		imageBlock = new ImageBlock( page, blockHandle );
 		const uploadedImage = await imageBlock.upload( imageFile.fullpath );
 		uploadedImageURL = ( await uploadedImage.getAttribute( 'src' ) ) as string;
 		uploadedImageURL = uploadedImageURL.split( '?' )[ 0 ];
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		await editorWindowLocator.locator( 'button:text("Replace")' ).click();
-		await editorWindowLocator
+		const editorParent = await editorPage.getEditorParent();
+		await editorParent.locator( 'button:text("Replace")' ).click();
+		await editorParent
 			.locator( '.components-form-file-upload input[type="file"]' )
 			.setInputFiles( imageFile.fullpath );
 

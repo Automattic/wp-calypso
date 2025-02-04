@@ -6,11 +6,14 @@ export type PluginQueryOptions = {
 	locale: string;
 	tag?: string;
 	author?: string;
+	slugs?: string[];
 };
 
 export type Plugin = {
 	name?: string;
 	slug: string;
+	software_slug?: string;
+	org_slug?: string;
 	version?: string;
 	author?: string;
 	author_name?: string;
@@ -56,6 +59,8 @@ export type ESIndexResult = {
 	plugin: {
 		store_product_monthly_id?: number;
 		store_product_yearly_id?: number;
+		software_slug?: string;
+		org_slug?: string;
 		author: string;
 		title: string;
 		excerpt: string;
@@ -85,8 +90,46 @@ export type SearchParams = {
 	pageHandle: string | undefined;
 	pageSize: number;
 	locale: string;
+	slugs?: string[] | undefined;
 };
 
 export type ReinstallPluginsResponse = {
 	message: string;
+};
+
+export type ESRelatedPluginsResult = {
+	fields: ESRelatedPlugin;
+};
+
+export type ESRelatedPlugin = {
+	categories: Array< string >;
+	short_description?: string;
+	icons?: string;
+	software_slug?: string;
+	product_slug?: string;
+	slug?: string;
+	name?: string;
+	rating?: number;
+	variations: PluginPeriodVariations;
+};
+
+export type RelatedPlugin = {
+	categories: Array< string >;
+	short_description?: string;
+	icon?: string;
+	software_slug?: string;
+	productSlug?: string;
+	slug?: string;
+	name?: string;
+	rating?: number;
+	variations?: PluginPeriodVariations;
+};
+
+export type AddPluginUpgrade = {
+	success: true;
+};
+
+export type PluginPeriodVariations = {
+	monthly: { product_slug?: string; product_id?: number };
+	yearly: { product_slug?: string; product_id?: number };
 };

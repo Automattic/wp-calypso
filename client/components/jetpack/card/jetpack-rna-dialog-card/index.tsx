@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ReactNode } from 'react';
 import DefaultBackgroundImage from 'calypso/assets/images/jetpack/rna-card-bg.png';
 
@@ -23,12 +23,12 @@ const JetpackRnaDialogCard: React.FC< RnaDialogCardProps > = ( {
 			: cardImage ?? DefaultBackgroundImage;
 	return (
 		<div
-			className={ classNames( 'jetpack-rna-dialog-card', {
+			className={ clsx( 'jetpack-rna-dialog-card', {
 				'is-placeholder': isPlaceholder,
 			} ) }
 		>
 			<div className="jetpack-rna-dialog-card__body">
-				<div className="jetpack-rna-dialog-card__content">{ children && children }</div>
+				<div className="jetpack-rna-dialog-card__content">{ children }</div>
 			</div>
 			<div
 				className="jetpack-rna-dialog-card__footer"

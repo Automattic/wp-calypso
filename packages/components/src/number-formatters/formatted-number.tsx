@@ -1,4 +1,6 @@
-const FORMATTER = new Intl.NumberFormat();
+import formatNumber, { DEFAULT_LOCALE } from './lib/format-number';
+
+// TODO: Replace with formatNumber export. This function is a noop wrapper.
 export default function formattedNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
+	return formatNumber( number, DEFAULT_LOCALE, {} );
 }

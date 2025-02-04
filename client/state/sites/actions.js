@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { omit } from 'lodash';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
 import {
@@ -27,7 +28,6 @@ import { getSiteDomain } from 'calypso/state/sites/selectors';
 /**
  * Returns a thunk that dispatches an action object to be used in signalling that a site has been
  * deleted. It also re-fetches the current user.
- *
  * @param  {number} siteId  ID of deleted site
  * @returns {Function}        Action thunk
  */
@@ -44,7 +44,6 @@ export function receiveDeletedSite( siteId ) {
 /**
  * Returns an action object to be used in signalling that a site object has
  * been received.
- *
  * @param  {Object} site Site received
  * @returns {Object}      Action object
  */
@@ -58,7 +57,6 @@ export function receiveSite( site ) {
 /**
  * Returns an action object to be used in signalling that site objects have
  * been received.
- *
  * @param  {Object[]} sites Sites received
  * @returns {Object}         Action object
  */
@@ -71,7 +69,6 @@ export function receiveSites( sites ) {
 
 /**
  * Triggers a network request to request all visible sites
- *
  * @returns {Function}        Action thunk
  */
 export function requestSites() {
@@ -93,7 +90,20 @@ export function requestSites() {
 				filters: siteFilter.length > 0 ? siteFilter.join( ',' ) : undefined,
 			} )
 			.then( ( response ) => {
-				dispatch( receiveSites( response.sites ) );
+				const jetpackCloudSites = response.sites.filter( ( site ) => {
+					const isJetpack =
+						site?.jetpack || Boolean( site?.options?.jetpack_connection_active_plugins?.length );
+
+					// Filter Jetpack Cloud sites to exclude P2 and Simple non-Classic sites by default.
+					const isP2 = site?.options?.is_wpforteams_site;
+					const isSimpleClassic =
+						! isJetpack &&
+						! site?.is_wpcom_atomic &&
+						site?.options?.wpcom_admin_interface !== 'wp-admin';
+
+					return ! isP2 && ! isSimpleClassic;
+				} );
+				dispatch( receiveSites( isJetpackCloud() ? jetpackCloudSites : response.sites ) );
 				dispatch( {
 					type: SITES_REQUEST_SUCCESS,
 				} );
@@ -110,9 +120,8 @@ export function requestSites() {
 /**
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
- *
  * @param {number|string} siteFragment Site ID or slug
- * @returns {Function}              Action thunk
+ * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
 export function requestSite( siteFragment ) {
 	function doRequest( forceWpcom ) {
@@ -129,7 +138,7 @@ export function requestSite( siteFragment ) {
 		return wpcom.site( siteFragment ).get( query );
 	}
 
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( { type: SITE_REQUEST, siteId: siteFragment } );
 
 		const result = doRequest( false ).catch( ( error ) => {
@@ -149,7 +158,26 @@ export function requestSite( siteFragment ) {
 			.then( ( site ) => {
 				// If we can't manage the site, don't add it to state.
 				if ( site && site.capabilities ) {
-					dispatch( receiveSite( omit( site, '_headers' ) ) );
+					const state = getState();
+
+					const wasAtomic = state?.sites?.items?.[ siteFragment ]?.options?.is_wpcom_atomic;
+					const isAtomic = site?.options?.is_wpcom_atomic;
+					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
+
+					const wasAdmin = state?.currentUser?.capabilities?.[ siteFragment ]?.manage_options;
+					const isAdmin = site?.capabilities?.manage_options;
+					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
+
+					/*
+					 * Capabilities are not immediately propagated to the Atomic site
+					 * after transfer, so let's hold off updating the state until the
+					 * endpoint returns accurate data.
+					 */
+					if ( hasSiteTransferredToAtomic && hasMismatchingCapabilities ) {
+						setTimeout( () => dispatch( requestSite( siteFragment ) ), 2000 );
+					} else {
+						dispatch( receiveSite( omit( site, '_headers' ) ) );
+					}
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
@@ -171,7 +199,6 @@ const siteDeletionNoticeOptions = {
 /**
  * Returns a function which, when invoked, triggers a network request to delete
  * a site.
- *
  * @param  {number}   siteId Site ID
  * @returns {Function}        Action thunk
  */
@@ -242,7 +269,6 @@ export const sitePluginUpdated = ( siteId ) => ( {
 
 /**
  * Returns an action object to be used to update the site front page options.
- *
  * @param  {number} siteId Site ID
  * @param  {Object} frontPageOptions Object containing the three optional front page options.
  * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
@@ -258,15 +284,13 @@ export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispa
 			page_for_posts_id: frontPageOptions.page_for_posts,
 		} );
 
-		dispatch( {
-			type: SITE_FRONT_PAGE_UPDATE,
-			siteId,
-			frontPageOptions: {
+		dispatch(
+			receiveSiteFrontPage( siteId, {
 				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-				page_on_front: parseInt( response.page_on_front_id, 10 ),
-				page_for_posts: parseInt( response.page_for_posts_id, 10 ),
-			},
-		} );
+				page_on_front: response.page_on_front_id,
+				page_for_posts: response.page_for_posts_id,
+			} )
+		);
 	} catch {}
 };
 
@@ -281,17 +305,35 @@ function isPageOnFront( showOnFront ) {
 	}
 }
 
+export function receiveSiteFrontPage( siteId, { show_on_front, page_on_front, page_for_posts } ) {
+	return {
+		type: SITE_FRONT_PAGE_UPDATE,
+		siteId,
+		frontPageOptions: {
+			show_on_front,
+			page_on_front: parseInt( page_on_front, 10 ),
+			page_for_posts: parseInt( page_for_posts, 10 ),
+		},
+	};
+}
+
 /**
  * Returns an action object to be used to update the site migration status.
- *
- * @param  {number} siteId Site ID
- * @param  {string} migrationStatus The status of the migration.
+ * @param {number} siteId Site ID
+ * @param {string} migrationStatus The status of the migration.
+ * @param {string} migrationErrorStatus The status error of the migration.
  * @param {string} lastModified Optional timestamp from the migration DB record
  * @returns {Object} Action object
  */
-export const updateSiteMigrationMeta = ( siteId, migrationStatus, lastModified = null ) => ( {
+export const updateSiteMigrationMeta = (
+	siteId,
+	migrationStatus,
+	migrationErrorStatus,
+	lastModified = null
+) => ( {
 	siteId,
 	type: SITE_MIGRATION_STATUS_UPDATE,
 	migrationStatus,
+	migrationErrorStatus,
 	lastModified,
 } );

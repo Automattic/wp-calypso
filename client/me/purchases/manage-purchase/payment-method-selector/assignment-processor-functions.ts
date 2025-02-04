@@ -1,13 +1,14 @@
-import { createStripeSetupIntent } from '@automattic/calypso-stripe';
+import { confirmStripeSetupIntentAndAttachCard } from '@automattic/calypso-stripe';
 import {
 	makeRedirectResponse,
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
+import { CartKey } from '@automattic/shopping-cart';
+import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
-import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
-import { getTaxValidationResult } from 'calypso/my-sites/checkout/composite-checkout/lib/contact-validation';
+import { getTaxValidationResult } from 'calypso/my-sites/checkout/src/lib/contact-validation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { updateCreditCard, saveCreditCard } from './stored-payment-method-api';
 import type {
@@ -19,6 +20,37 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
+import type { LocalizeProps } from 'i18n-calypso';
+
+/**
+ * Call our endpoint to create the Stripe Setup Intent to later be confirmed by
+ * `confirmStripeSetupIntentAndAttachCard()`.
+ *
+ * NOTE: if countryCode is not provided, geolocation will be used to determine
+ * which Stripe account to use to create the Payment Method.
+ * The cartKey is optional and is only used in the Checkout flow to create
+ * the SetupIntent using information from the cart - for special cases like
+ * Indian Payments Methods with e-mandates.
+ */
+async function createStripeSetupIntent(
+	countryCode?: string,
+	cartKey?: CartKey
+): Promise< StripeSetupIntentId > {
+	const configuration = await wp.req.post( '/me/stripe-setup-intent', {
+		country: countryCode,
+		cart_key: cartKey,
+	} );
+	const intentId: string | undefined =
+		configuration?.setup_intent_id && typeof configuration.setup_intent_id === 'string'
+			? configuration.setup_intent_id
+			: undefined;
+	if ( ! intentId ) {
+		throw new Error(
+			'Error loading new payment method intent. Received invalid data from the server.'
+		);
+	}
+	return intentId;
+}
 
 const wpcomAssignPaymentMethod = (
 	subscriptionId: string,
@@ -35,11 +67,25 @@ const wpcomCreatePayPalAgreement = (
 	success_url: string,
 	cancel_url: string,
 	tax_country_code: string,
-	tax_postal_code: string
+	tax_postal_code: string,
+	tax_address: string,
+	tax_organization: string,
+	tax_city: string,
+	tax_subdivision_code: string
 ): Promise< string > =>
 	wp.req.post( {
 		path: '/payment-methods/create-paypal-agreement',
-		body: { subscription_id, success_url, cancel_url, tax_postal_code, tax_country_code },
+		body: {
+			subscription_id,
+			success_url,
+			cancel_url,
+			tax_postal_code,
+			tax_country_code,
+			tax_address,
+			tax_organization,
+			tax_city,
+			tax_subdivision_code,
+		},
 		apiVersion: '1',
 	} );
 
@@ -49,19 +95,19 @@ export async function assignNewCardProcessor(
 		translate,
 		stripe,
 		stripeConfiguration,
-		stripeSetupIntentId,
 		cardNumberElement,
 		reduxDispatch,
 		eventSource,
+		cartKey,
 	}: {
 		purchase: Purchase | undefined;
-		translate: ReturnType< typeof useTranslate >;
+		translate: LocalizeProps[ 'translate' ];
 		stripe: Stripe | null;
 		stripeConfiguration: StripeConfiguration | null;
-		stripeSetupIntentId: StripeSetupIntentId | undefined;
 		cardNumberElement: StripeCardNumberElement | undefined;
 		reduxDispatch: CalypsoDispatch;
 		eventSource?: string;
+		cartKey?: CartKey;
 	},
 	submitData: unknown
 ): Promise< PaymentProcessorResponse > {
@@ -69,16 +115,25 @@ export async function assignNewCardProcessor(
 		if ( ! isNewCardDataValid( submitData ) ) {
 			throw new Error( 'Credit Card data is invalid' );
 		}
-		if ( ! stripe || ! stripeConfiguration || ! stripeSetupIntentId ) {
+		if ( ! stripe || ! stripeConfiguration ) {
 			throw new Error( 'Cannot assign payment method if Stripe is not loaded' );
 		}
 		if ( ! cardNumberElement ) {
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+		const {
+			name,
+			countryCode,
+			postalCode,
+			state,
+			city,
+			organization,
+			address,
+			useForAllSubscriptions,
+		} = submitData;
 
-		const contactValidationResponse = await getTaxValidationResult( {
+		const contactInfo: ManagedContactDetails = {
 			countryCode: {
 				value: countryCode,
 				isTouched: true,
@@ -89,7 +144,36 @@ export async function assignNewCardProcessor(
 				isTouched: true,
 				errors: [],
 			},
-		} );
+		};
+		if ( state ) {
+			contactInfo.state = {
+				value: state,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( city ) {
+			contactInfo.city = {
+				value: city,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( organization ) {
+			contactInfo.organization = {
+				value: organization,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( address ) {
+			contactInfo.address1 = {
+				value: address,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		const contactValidationResponse = await getTaxValidationResult( contactInfo );
 		if ( ! contactValidationResponse.success ) {
 			const errorMessage =
 				contactValidationResponse.messages_simple.length > 0
@@ -100,48 +184,59 @@ export async function assignNewCardProcessor(
 
 		reduxDispatch( recordFormSubmitEvent( { purchase, useForAllSubscriptions } ) );
 
+		// @todo: we should pass the countryCode to createStripeSetupIntent,
+		// but since `prepareAndConfirmStripeSetupIntent()` uses the `stripe`
+		// object created by `StripeHookProvider`, that object must also be
+		// created with the same countryCode, and right now it is not.
+		const stripeSetupIntentId = await createStripeSetupIntent( undefined, cartKey );
 		const formFieldValues = {
 			country: countryCode,
 			postal_code: postalCode ?? '',
 			name: name ?? '',
 		};
-		const tokenResponse = await createStripeSetupIntentAsync(
+		const tokenResponse = await prepareAndConfirmStripeSetupIntent(
 			formFieldValues,
 			stripe,
 			cardNumberElement,
 			stripeSetupIntentId
 		);
 		const token = tokenResponse.payment_method;
+		const setupKey = tokenResponse.id;
 		if ( ! token ) {
 			throw new Error( String( translate( 'Failed to add card.' ) ) );
 		}
 
-		// If we've reached this point in the code and anything after this fails,
-		// we must regenerate the payment intent, which is done by calling `reload`
-		// as returned by `useStripeSetupIntentId` from
-		// `@automattic/calypso-stripe`.
-
 		if ( purchase ) {
 			const result = await updateCreditCard( {
 				purchase,
-				token,
+				token: String( token ),
 				stripeConfiguration,
 				useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 				eventSource,
 				postalCode,
 				countryCode,
+				state,
+				city,
+				organization,
+				address,
+				setupKey,
 			} );
 
 			return makeSuccessResponse( result );
 		}
 
 		const result = await saveCreditCard( {
-			token,
+			token: String( token ),
 			stripeConfiguration,
 			useForAllSubscriptions: Boolean( useForAllSubscriptions ),
 			eventSource,
 			postalCode,
 			countryCode,
+			state,
+			city,
+			organization,
+			address,
+			setupKey,
 		} );
 
 		return makeSuccessResponse( result );
@@ -150,7 +245,7 @@ export async function assignNewCardProcessor(
 	}
 }
 
-async function createStripeSetupIntentAsync(
+async function prepareAndConfirmStripeSetupIntent(
 	{
 		name,
 		country,
@@ -171,7 +266,7 @@ async function createStripeSetupIntentAsync(
 			postal_code,
 		},
 	};
-	return createStripeSetupIntent(
+	return confirmStripeSetupIntentAndAttachCard(
 		stripe,
 		cardNumberElement,
 		setupIntentId,
@@ -188,6 +283,10 @@ interface NewCardSubmitData {
 	name?: string;
 	countryCode: string;
 	postalCode?: string;
+	state?: string;
+	city?: string;
+	organization?: string;
+	address?: string;
 	useForAllSubscriptions: boolean;
 }
 
@@ -224,6 +323,10 @@ interface ExistingCardSubmitData {
 interface PayPalSubmitData {
 	postalCode?: string;
 	countryCode: string;
+	address?: string;
+	organization?: string;
+	city?: string;
+	state?: string;
 }
 
 function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
@@ -249,7 +352,11 @@ export async function assignPayPalProcessor(
 			addQueryArgs( window.location.href, { success: 'true' } ),
 			window.location.href,
 			submitData.countryCode,
-			submitData.postalCode ?? ''
+			submitData.postalCode ?? '',
+			submitData.address ?? '',
+			submitData.organization ?? '',
+			submitData.city ?? '',
+			submitData.state ?? ''
 		);
 		return makeRedirectResponse( data );
 	} catch ( error ) {

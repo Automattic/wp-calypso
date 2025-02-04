@@ -25,12 +25,14 @@ export const sendLoginEmail = ( action ) => {
 		lang_id,
 		locale,
 		redirect_to,
+		blog_id,
 		showGlobalNotices,
 		loginFormFlow,
 		requestLoginEmailFormFlow,
 		isMobileAppLogin,
 		flow,
 		createAccount,
+		source,
 	} = action;
 	const noticeAction = showGlobalNotices
 		? infoNotice( translate( 'Sending email' ), { duration: 4000 } )
@@ -67,9 +69,13 @@ export const sendLoginEmail = ( action ) => {
 					lang_id: lang_id,
 					email: email,
 					...( redirect_to && { redirect_to } ),
+					...( blog_id && { blog_id } ),
 					...( flow && { flow } ),
 					create_account: createAccount,
 					tos: getToSAcceptancePayload(),
+					source,
+					calypso_env:
+						window?.location?.host === 'wordpress.com' ? 'production' : config( 'env_id' ),
 				},
 			},
 			{ ...action, infoNoticeId: noticeAction ? noticeAction.notice.noticeId : null }

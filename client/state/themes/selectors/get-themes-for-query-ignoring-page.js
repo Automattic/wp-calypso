@@ -1,5 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import { flatMap } from 'lodash';
+import { isSiteOnWooExpress, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import {
 	getActiveTheme,
 	getCanonicalTheme,
@@ -13,7 +14,6 @@ import 'calypso/state/themes/init';
 /**
  * Returns an array of normalized themes for the themes query, including all
  * known queried pages, or null if the themes for the query are not known.
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @param  {Object}  query  Theme query object
@@ -39,7 +39,11 @@ export const getThemesForQueryIgnoringPage = createSelector(
 			// If the premium themes is not enabled, the default tier is 'free'
 			( query.tier && premiumThemesEnabled )
 		);
-
+		const isWooExpressDefaultQuery = ! (
+			query.search ||
+			query.filter !== 'store' ||
+			( query.tier && premiumThemesEnabled )
+		);
 		// If query is default, filter out recommended themes.
 		if ( isDefaultQuery ) {
 			const recommendedThemes = state.themes.recommendedThemes.themes;
@@ -64,6 +68,14 @@ export const getThemesForQueryIgnoringPage = createSelector(
 				// If activated theme is retired or a 3rd party theme, we have to show it
 				// if query is default
 				themesForQueryIgnoringPage.unshift( currentTheme );
+			} else if (
+				( isSiteOnWooExpress( state, selectedSiteId ) ||
+					isSiteOnECommerceTrial( state, selectedSiteId ) ) &&
+				isWooExpressDefaultQuery &&
+				currentTheme
+			) {
+				// Show active theme if query is default and site is on WooExpress or eCommerce trial.
+				themesForQueryIgnoringPage.unshift( currentTheme );
 			}
 		}
 
@@ -71,6 +83,6 @@ export const getThemesForQueryIgnoringPage = createSelector(
 		// over different pages) which we need to remove manually here for now.
 		return [ ...new Set( themesForQueryIgnoringPage ) ];
 	},
-	( state ) => state.themes.queries,
+	( state ) => [ state.themes.queries, state.sites?.plans ],
 	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
 );

@@ -1,6 +1,6 @@
-import { Button, Dialog } from '@automattic/components';
+import { Dialog } from '@automattic/components';
 import { Icon, warning } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
@@ -79,15 +79,14 @@ class StatsActionSpam extends Component {
 					context: 'Stats: Action to mark an item as spam',
 			  } );
 
-		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', 'is-link', {
+		const wrapperClass = clsx( 'module-content-list-item-action-wrapper', 'is-link', {
 			spam: ! this.state.spammed,
 			unspam: this.state.spammed,
 		} );
 
 		return (
 			<li className="stats-list__spam-action module-content-list-item-action">
-				<Button
-					href="#"
+				<button
 					onClick={ this.clickHandler }
 					className={ wrapperClass }
 					title={ title }
@@ -97,7 +96,7 @@ class StatsActionSpam extends Component {
 					<span className="stats-list__spam-label module-content-list-item-action-label">
 						{ label }
 					</span>
-				</Button>
+				</button>
 				{ this.props.inHorizontalBarList && (
 					<Dialog
 						isVisible={ this.state.showConfirmDialog }

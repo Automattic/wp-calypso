@@ -1,24 +1,20 @@
-import { Gridicon } from '@automattic/components';
-import classnames from 'classnames';
+import page from '@automattic/calypso-router';
+import { SegmentedControl } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
-import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
-import cssSafeUrl from 'calypso/lib/css-safe-url';
-import { decodeEntities } from 'calypso/lib/formatting';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
+import BloganuaryHeader from 'calypso/components/bloganuary-header';
+import NavigationHeader from 'calypso/components/navigation-header';
+import { addQueryArgs } from 'calypso/lib/url';
 import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
 import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
-import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
+import { recordAction } from 'calypso/reader/stats';
 
-const TAG_HEADER_WIDTH = 800;
-const TAG_HEADER_HEIGHT = 140;
-
-function sample( array ) {
-	return array[ Math.floor( Math.random() * array.length ) ];
-}
+const updateQueryArg = ( params ) =>
+	page.replace( addQueryArgs( params, window.location.pathname + window.location.search ) );
 
 class TagStreamHeader extends Component {
 	static propTypes = {
@@ -26,109 +22,107 @@ class TagStreamHeader extends Component {
 		showFollow: PropTypes.bool,
 		following: PropTypes.bool,
 		onFollowToggle: PropTypes.func,
-		tagImages: PropTypes.array,
 		showBack: PropTypes.bool,
+		showSort: PropTypes.bool,
+		sort: PropTypes.string,
 	};
 
-	static defaultProps = {
-		tagImages: [],
-	};
-
-	state = {
-		tagImages: this.props.tagImages,
-		chosenTagImage: sample( this.props.tagImages ),
-	};
-
-	static getDerivedStateFromProps( nextProps, prevState ) {
-		if ( nextProps.tagImages === prevState.tagImages ) {
-			return null;
+	useRelevanceSort = () => {
+		const sort = 'relevance';
+		recordAction( 'tag_page_clicked_relevance_sort' );
+		if ( this.props.recordReaderTracksEvent ) {
+			this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
+				tag: this.props.encodedTagSlug,
+				sort,
+			} );
 		}
+		updateQueryArg( { sort } );
+	};
 
-		return {
-			tagImages: nextProps.tagImages,
-			chosenTagImage: sample( nextProps.tagImages ),
-		};
-	}
+	useDateSort = () => {
+		const sort = 'date';
+		recordAction( 'tag_page_clicked_date_sort' );
+		if ( this.props.recordReaderTracksEvent ) {
+			this.props.recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
+				tag: this.props.encodedTagSlug,
+				sort,
+			} );
+		}
+		updateQueryArg( { sort } );
+	};
 
 	render() {
 		const {
 			title,
+			description,
 			isPlaceholder,
 			showFollow,
 			following,
 			onFollowToggle,
-			translate,
 			showBack,
-			imageSearchString,
+			showSort,
+			translate,
 		} = this.props;
-		const classes = classnames( {
+		const sortOrder = this.props.sort || 'date';
+
+		// A bit of a hack: check for a prompt tag (which always have a description) from the slug before waiting for tag info to load,
+		// so we can set a smaller title size and prevent it from resizing as the page loads. Should be refactored if tag descriptions
+		// end up getting used for other things besides prompt tags.
+		const isPromptTag = new RegExp( /^dailyprompt-\d+$/ ).test( title );
+
+		// Display the tag description as the title if there is one.
+		const titleText = description ?? title;
+		const subtitleText = description ? title : null;
+
+		const classes = clsx( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
+			'has-description': isPromptTag || description,
 			'has-back-button': showBack,
 		} );
-		const imageStyle = {};
-		const tagImage = this.state.chosenTagImage;
-
-		let sourceWrapper;
-		let authorLink;
-		if ( tagImage ) {
-			const imageUrl = resizeImageUrl( 'https://' + tagImage.url, {
-				resize: `${ TAG_HEADER_WIDTH },${ TAG_HEADER_HEIGHT }`,
-			} );
-			const safeCssUrl = cssSafeUrl( imageUrl );
-			imageStyle.backgroundImage = 'url(' + safeCssUrl + ')';
-
-			sourceWrapper = <span className="tag-stream__header-image-byline-label" />;
-			authorLink = (
-				<a
-					href={ `/read/blogs/${ tagImage.blog_id }/posts/${ tagImage.post_id }` }
-					className="tag-stream__header-image-byline-link"
-					rel="author"
-				>
-					{ decodeEntities( tagImage.author ) }
-				</a>
-			);
-		}
 
 		return (
 			<div className={ classes }>
-				<QueryReaderTagImages tag={ imageSearchString } />
-				<div className="tag-stream__header-follow">
-					{ showFollow && (
-						<FollowButton
-							followLabel={ translate( 'Follow Tag' ) }
-							followingLabel={ translate( 'Following tag' ) }
-							iconSize={ 24 }
-							following={ following }
-							onFollowToggle={ onFollowToggle }
-							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-						/>
-					) }
-				</div>
-				<div className="tag-stream__header-image" style={ imageStyle }>
-					<h1 className="tag-stream__header-image-title">
-						<Gridicon icon="tag" size={ 24 } />
-						{ title }
-					</h1>
-					{ tagImage && (
-						<div className="tag-stream__header-image-byline">
-							{ translate( '{{sourceWrapper}}Photo from{{/sourceWrapper}} {{authorLink/}}', {
-								components: {
-									sourceWrapper,
-									authorLink,
-								},
-							} ) }
+				<BloganuaryHeader />
+				<NavigationHeader title={ titleText } subtitle={ subtitleText } />
+				{ ( showSort || showFollow ) && (
+					<div className="tag-stream__header-controls">
+						<div className="tag-stream__header-sort-picker">
+							{ showSort && (
+								<SegmentedControl compact>
+									<SegmentedControl.Item
+										selected={ sortOrder !== 'relevance' }
+										onClick={ this.useDateSort }
+									>
+										{ translate( 'Recent' ) }
+									</SegmentedControl.Item>
+									<SegmentedControl.Item
+										selected={ sortOrder === 'relevance' }
+										onClick={ this.useRelevanceSort }
+									>
+										{ translate( 'Popular' ) }
+									</SegmentedControl.Item>
+								</SegmentedControl>
+							) }
 						</div>
-					) }
-				</div>
+						<div className="tag-stream__header-follow">
+							{ showFollow && (
+								<FollowButton
+									followLabel={ translate( 'Follow tag' ) }
+									followingLabel={ translate( 'Following tag' ) }
+									iconSize={ 24 }
+									following={ following }
+									onFollowToggle={ onFollowToggle }
+									followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+									followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+								/>
+							) }
+						</div>
+					</div>
+				) }
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	return {
-		tagImages: getTagImages( state, ownProps.imageSearchString ),
-	};
-} )( localize( TagStreamHeader ) );
+export default connect( null, null )( localize( TagStreamHeader ) );

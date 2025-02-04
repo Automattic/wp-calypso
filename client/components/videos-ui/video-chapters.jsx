@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import moment from 'moment';
 
 const VideoChapters = ( {
@@ -18,7 +18,7 @@ const VideoChapters = ( {
 				return (
 					<div
 						key={ i }
-						className={ classNames( 'videos-ui__chapter', {
+						className={ clsx( 'videos-ui__chapter', {
 							selected: isChapterSelected( i ),
 							preload: isPreloadAnimationState,
 						} ) }
@@ -54,7 +54,7 @@ const VideoChapters = ( {
 							<div>
 								<p>{ videoInfo.description } </p>
 								<Button
-									className={ classNames( 'videos-ui__button', {
+									className={ clsx( 'videos-ui__button', {
 										'videos-ui__video-completed': isVideoCompleted,
 									} ) }
 									onClick={ () => onVideoPlayClick( videoSlug, videoInfo ) }

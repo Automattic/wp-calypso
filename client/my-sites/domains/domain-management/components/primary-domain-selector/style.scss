@@ -1,0 +1,33 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.domains-set-primary-address {
+	&__title {
+		margin-top: 0;
+	}
+	&__subtitle {
+		color: var(--color-text-subtle);
+		margin-bottom: 0;
+		font-size: 0.875rem;
+	}
+	&__fieldset.form-fieldset {
+		margin-top: 0.875rem;
+		margin-bottom: 0;
+	}
+	&__select.form-select {
+		max-width: 100%;
+		width: 100%;
+		@media (min-width: $break-large) {
+			width: auto;
+		}
+	}
+	&__submit {
+		margin-right: 0;
+		margin-top: 12px;
+		display: block;
+		@media (min-width: $break-large) {
+			display: inline-block;
+			margin-top: 0;
+			margin-left: 12px;
+		}
+	}
+}

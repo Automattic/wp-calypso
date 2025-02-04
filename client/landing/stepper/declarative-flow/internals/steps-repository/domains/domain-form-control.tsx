@@ -1,8 +1,14 @@
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import {
+	DOMAIN_UPSELL_FLOW,
+	HUNDRED_YEAR_DOMAIN_FLOW,
+	HUNDRED_YEAR_PLAN_FLOW,
+	isDomainUpsellFlow,
+	LINK_IN_BIO_TLD_FLOW,
+	isSiteAssemblerFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -17,21 +23,24 @@ import {
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
+import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
 	analyticsSection: string;
 	flow: string | null;
-	onAddDomain: ( suggestion: DomainSuggestion ) => void;
+	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
-	onUseYourDomainClick: () => void;
+	onUseYourDomainClick: ( domain?: string ) => void;
 	showUseYourDomain: boolean;
+	isCartPendingUpdate: boolean;
+	isCartPendingUpdateDomain: DomainSuggestion | undefined;
 }
 
 export function DomainFormControl( {
@@ -43,18 +52,19 @@ export function DomainFormControl( {
 	onSkip,
 	onUseYourDomainClick,
 	showUseYourDomain,
+	isCartPendingUpdate,
+	isCartPendingUpdateDomain,
 }: DomainFormControlProps ) {
-	const { selectedSite, productsList } = useSelector( ( state ) => {
-		return {
-			selectedSite: getSelectedSite( state ),
-			productsList: getAvailableProductsList( state ),
-		};
-	} );
+	const selectedSite = useSelector( getSelectedSite );
+	const productsList = useSelector( getAvailableProductsList );
 
-	const { domainForm, siteTitle } = useSelect( ( select ) => ( {
-		domainForm: select( ONBOARD_STORE ).getDomainForm(),
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-	} ) );
+	const { domainForm, siteTitle } = useSelect(
+		( select ) => ( {
+			domainForm: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainForm(),
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
 
 	const { setDomainForm } = useDispatch( ONBOARD_STORE );
 
@@ -64,6 +74,7 @@ export function DomainFormControl( {
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
+	let shouldQuerySubdomains: boolean = true;
 
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
@@ -86,6 +97,20 @@ export function DomainFormControl( {
 		includeWordPressDotCom = false;
 	}
 
+	if ( flow === DOMAIN_UPSELL_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
+	if ( flow === HUNDRED_YEAR_PLAN_FLOW ) {
+		includeWordPressDotCom = false;
+		shouldQuerySubdomains = false;
+	}
+
+	if ( flow === HUNDRED_YEAR_DOMAIN_FLOW ) {
+		includeWordPressDotCom = false;
+		shouldQuerySubdomains = false;
+	}
+
 	const domainsWithPlansOnly = true;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	const domainSearchInQuery = useQuery().get( 'new' ); // following the convention of /start/domains
@@ -101,6 +126,10 @@ export function DomainFormControl( {
 	};
 
 	const getSideContent = () => {
+		if ( HUNDRED_YEAR_PLAN_FLOW === flow ) {
+			return null;
+		}
+
 		const useYourDomain = (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
@@ -121,12 +150,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const getUseYourDomainUrl = () => {
-		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
-		//it always throws window.AppBoot is not a function
-		return '/setup/domains?flow=link-in-bio&section=use-your-domain';
-	};
-
 	const getOtherManagedSubdomains = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
 			return [ 'link' ];
@@ -135,7 +158,7 @@ export function DomainFormControl( {
 
 	const getOtherManagedSubdomainsCountOverride = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 2;
+			return 1;
 		}
 	};
 
@@ -153,11 +176,6 @@ export function DomainFormControl( {
 
 		// newsletter users should get free .blog domain
 		if ( flow === 'newsletter' ) {
-			return true;
-		}
-
-		// 'blog' flow, starting with blog themes
-		if ( flow === 'blog' ) {
 			return true;
 		}
 
@@ -184,6 +202,14 @@ export function DomainFormControl( {
 		);
 	};
 
+	const isReskinnedSupportedFlow = () => {
+		if ( ! flow ) {
+			return false;
+		}
+
+		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
+	};
+
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -204,8 +230,6 @@ export function DomainFormControl( {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				// when it's provided via the query arg, follow the convention of /start/domains to show it
-				initialState.hideInitialQuery = ! domainSearchInQuery;
 			}
 		}
 
@@ -216,6 +240,8 @@ export function DomainFormControl( {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					isCartPendingUpdate={ isCartPendingUpdate }
+					isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
 					analyticsSection={ analyticsSection }
 					basePath={ path }
 					deemphasiseTlds={ flow === 'ecommerce' ? [ 'blog' ] : [] }
@@ -225,11 +251,10 @@ export function DomainFormControl( {
 					includeWordPressDotCom={ includeWordPressDotCom ?? true }
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
-					isReskinned={ true }
+					isReskinned
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
-					mapDomainUrl={ getUseYourDomainUrl() }
 					offerUnavailableOption
 					otherManagedSubdomains={ getOtherManagedSubdomains() }
 					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
@@ -243,8 +268,8 @@ export function DomainFormControl( {
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
+					shouldQuerySubdomains={ shouldQuerySubdomains }
 					suggestion={ initialQuery }
-					transferDomainUrl={ getUseYourDomainUrl() }
 					handleClickUseYourDomain={ onUseYourDomainClick }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
@@ -257,27 +282,23 @@ export function DomainFormControl( {
 	};
 
 	let content;
+	let sideContent;
 	if ( showUseYourDomain ) {
 		content = renderYourDomainForm();
 	} else {
 		content = renderDomainForm();
 	}
 
-	// if ( 'invalid' === this.props.step.status ) {
-	// 	content = (
-	// 		<div className="domains__step-section-wrapper">
-	// 			<Notice status="is-error" showDismiss={ false }>
-	// 				{ this.props.step.errors.message }
-	// 			</Notice>
-	// 			{ content }
-	// 		</div>
-	// 	);
-	// }
+	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+		sideContent = getSideContent();
+	}
 
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
-			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
+			<div className="domains__step-content domains__step-content-domain-step">
+				{ content } { sideContent }
+			</div>
 		</>
 	);
 }

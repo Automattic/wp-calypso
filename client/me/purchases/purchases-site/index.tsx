@@ -4,15 +4,14 @@ import {
 	JETPACK_PLANS,
 	JETPACK_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QuerySites from 'calypso/components/data/query-sites';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { managePurchase } from '../paths';
 import PurchaseItem from '../purchase-item';
-import { isJetpackTemporarySitePurchase } from '../utils';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
 
 import './style.scss';
 
@@ -23,13 +22,13 @@ export default function PurchasesSite(
 				siteId?: number;
 		  }
 		| {
-				getManagePurchaseUrlFor: ( slug: string, purchaseId: number ) => string;
+				getManagePurchaseUrlFor?: ( slug: string, purchaseId: number ) => string;
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
 				name: string | undefined;
 				slug: string;
-				cards: StoredCard[];
+				cards: StoredPaymentMethod[];
 				showSite?: boolean;
 		  }
 ) {
@@ -62,9 +61,7 @@ export default function PurchasesSite(
 
 			{ purchases.map( ( purchase ) => {
 				const isBackupMethodAvailable = cards.some(
-					( card ) =>
-						card.stored_details_id !== purchase.payment.storedDetailsId &&
-						card.meta?.find( ( meta ) => meta.meta_key === 'is_backup' )?.meta_value
+					( card ) => card.stored_details_id !== purchase.payment.storedDetailsId && card.is_backup
 				);
 
 				return (
@@ -75,7 +72,6 @@ export default function PurchasesSite(
 						isDisconnectedSite={ ! site }
 						purchase={ purchase }
 						isJetpack={ isJetpackPlan( purchase ) || isJetpackProduct( purchase ) }
-						isJetpackTemporarySite={ isJetpackTemporarySitePurchase( purchase.domain ) }
 						site={ site }
 						showSite={ showSite }
 						name={ name }

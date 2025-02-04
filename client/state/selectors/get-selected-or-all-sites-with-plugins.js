@@ -8,7 +8,6 @@ import 'calypso/state/ui/init';
 
 /**
  * Return an array with the selected site or all sites able to have plugins
- *
  * @param {Object} state  Global state tree
  * @returns {Array}        Array of Sites objects with the result
  */

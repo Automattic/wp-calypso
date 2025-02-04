@@ -1,5 +1,5 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -10,27 +10,21 @@ import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.sv
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import WebPreview from 'calypso/components/web-preview';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-} from 'calypso/state/sites/selectors';
+import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PostDetailHighlightsSection from '../post-detail-highlights-section';
 import PostDetailTableSection from '../post-detail-table-section';
-import PostMonths from '../stats-detail-months';
-import PostWeeks from '../stats-detail-weeks';
 import StatsPlaceholder from '../stats-module/placeholder';
-import PostLikes from '../stats-post-likes';
+import PageViewTracker from '../stats-page-view-tracker';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
@@ -74,6 +68,11 @@ class StatsPostDetail extends Component {
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
+
+		if ( ! title ) {
+			title = <em>{ this.props.translate( 'Untitled' ) }</em>;
+		}
+
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
@@ -95,9 +94,9 @@ class StatsPostDetail extends Component {
 	};
 
 	getTitle() {
-		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+		const { isPostHomepage, post, postFallback, translate } = this.props;
 
-		if ( isLatestPostsHomepage ) {
+		if ( isPostHomepage ) {
 			return translate( 'Home page / Archives' );
 		}
 
@@ -112,22 +111,66 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
+	hasDontSendEmailPostToSubs( metadata ) {
+		return metadata?.some( ( { key } ) => key === '_jetpack_dont_email_post_to_subs' );
+	}
+
+	getPost() {
+		const { isPostHomepage, post, postFallback, countLikes } = this.props;
+
+		const postBase = {
+			title: this.getTitle(),
+			type: isPostHomepage ? 'page' : 'post',
+			like_count: countLikes || 0,
+		};
+
+		// Check if post is valid.
+		if ( typeof post === 'object' && post?.title?.length ) {
+			return {
+				...postBase,
+				date: post?.date,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
+				post_thumbnail: post?.post_thumbnail,
+				comment_count: post?.discussion?.comment_count,
+				type: post?.type,
+			};
+		}
+
+		// Check if postFallback is valid.
+		if ( typeof postFallback === 'object' && postFallback?.post_title?.length ) {
+			return {
+				...postBase,
+				date: postFallback?.post_date_gmt,
+				dont_email_post_to_subs: this.hasDontSendEmailPostToSubs( post?.metadata ),
+				post_thumbnail: null,
+				comment_count: parseInt( postFallback?.comment_count, 10 ),
+				type: postFallback?.post_type,
+			};
+		}
+
+		return postBase;
+	}
+
 	render() {
 		const {
-			isLatestPostsHomepage,
+			isPostHomepage,
 			isRequestingStats,
 			countViews,
-			post,
 			postId,
 			siteId,
 			translate,
 			siteSlug,
 			showViewLink,
 			previewUrl,
+			supportsUTMStats,
 		} = this.props;
+
 		const isLoading = isRequestingStats && ! countViews;
 
-		const postType = post && post.type !== null ? post.type : 'post';
+		// Prepare post details to PostStatsCard from post or postFallback.
+		const passedPost = this.getPost();
+
+		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;
 		let noViewsLabel;
 
@@ -139,29 +182,25 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
-		const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
-
-		return isFeatured ? (
+		return (
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				<div className="stats has-fixed-nav">
-					<FixedNavigationHeader
-						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-					>
+					<NavigationHeader navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }>
 						{ showViewLink && (
 							<Button onClick={ this.openPreview }>
 								<span>{ actionLabel }</span>
 							</Button>
 						) }
-					</FixedNavigationHeader>
+					</NavigationHeader>
 
-					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ post } />
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
 
 					<StatsPlaceholder isLoading={ isLoading } />
 
@@ -170,7 +209,9 @@ class StatsPostDetail extends Component {
 							title={ noViewsLabel }
 							line={ translate( 'Learn some tips to attract more visitors' ) }
 							action={ translate( 'Get more traffic!' ) }
-							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
+							actionURL={ localizeUrl(
+								'https://wordpress.com/support/getting-more-views-and-traffic/'
+							) }
 							actionTarget="blank"
 							illustration={ IllustrationStats }
 							illustrationWidth={ 150 }
@@ -179,80 +220,17 @@ class StatsPostDetail extends Component {
 
 					{ ! isLoading && countViews > 0 && (
 						<>
-							<PostSummary siteId={ siteId } postId={ postId } />
+							<PostSummary
+								siteId={ siteId }
+								postId={ postId }
+								supportsUTMStats={ supportsUTMStats }
+							/>
 							<PostDetailTableSection siteId={ siteId } postId={ postId } />
 						</>
 					) }
 
 					<JetpackColophon />
 				</div>
-
-				<WebPreview
-					showPreview={ this.state.showPreview }
-					defaultViewportDevice="tablet"
-					previewUrl={ `${ previewUrl }?demo=true&iframe=true&theme_preview=true` }
-					externalUrl={ previewUrl }
-					onClose={ this.closePreview }
-				>
-					<Button href={ `/post/${ siteSlug }/${ postId }` }>{ translate( 'Edit' ) }</Button>
-				</WebPreview>
-			</Main>
-		) : (
-			<Main className="has-fixed-nav" wideLayout>
-				<PageViewTracker
-					path={ `/stats/${ postType }/:post_id/:site` }
-					title={ `Stats > Single ${ titlecase( postType ) }` }
-				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
-				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
-
-				<FixedNavigationHeader
-					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
-					) }
-				</FixedNavigationHeader>
-
-				<StatsPlaceholder isLoading={ isLoading } />
-
-				{ ! isLoading && countViews === 0 && (
-					<EmptyContent
-						title={ noViewsLabel }
-						line={ translate( 'Learn some tips to attract more visitors' ) }
-						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
-						actionTarget="blank"
-						illustration={ IllustrationStats }
-						illustrationWidth={ 150 }
-					/>
-				) }
-
-				{ ! isLoading && countViews > 0 && (
-					<div>
-						<PostSummary siteId={ siteId } postId={ postId } />
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-						<PostWeeks siteId={ siteId } postId={ postId } />
-					</div>
-				) }
-
-				<JetpackColophon />
 
 				<WebPreview
 					showPreview={ this.state.showPreview }
@@ -272,20 +250,23 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
-	const isLatestPostsHomepage =
-		getSiteOption( state, siteId, 'show_on_front' ) === 'posts' && postId === 0;
+	const isPostHomepage = postId === 0;
+	const countLikes = countPostLikes( state, siteId, postId ) || 0;
+	const { supportsUTMStats } = getEnvStatsFeatureSupportChecks( state, siteId );
 
 	return {
 		post: getSitePost( state, siteId, postId ),
+		countLikes,
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
-		isLatestPostsHomepage,
+		isPostHomepage,
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
+		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
+		supportsUTMStats,
 	};
 } );
 

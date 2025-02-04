@@ -1,0 +1,13 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.stored-credit-card-delete-dialog {
+	.dialog__content {
+		max-width: 628px;
+
+		&,
+		& p {
+			font-size: 1rem;
+		}
+	}
+}

@@ -6,7 +6,6 @@ const root = '/sites';
 class SiteDomain {
 	/**
 	 * `SiteDomain` constructor.
-	 *
 	 * @param {number|string} id - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
 	 * @returns {undefined} undefined
@@ -22,7 +21,6 @@ class SiteDomain {
 
 	/**
 	 * Get the primary domain for a site
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
@@ -33,7 +31,6 @@ class SiteDomain {
 
 	/**
 	 * Set the primary domain for a site
-	 *
 	 * @param {string} domain - domain to set
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
@@ -44,7 +41,6 @@ class SiteDomain {
 
 	/**
 	 * Get the redirect status for a site
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler
@@ -55,7 +51,6 @@ class SiteDomain {
 
 	/**
 	 * Set the redirect location for a site
-	 *
 	 * @param {string | Object} location - location to set
 	 * @param {Function} [fn] - callback function
 	 * @returns {Function} request handler

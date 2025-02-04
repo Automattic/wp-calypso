@@ -1,43 +1,40 @@
-import { isFreePlan } from '@automattic/calypso-products';
-import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import { PLAN_100_YEARS, domainProductSlugs, isFreePlan } from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import customerHomeIllustrationTaskFindDomain from 'calypso/assets/images/domains/free-domain.svg';
-import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useSelector } from 'calypso/state';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { EmptyDomainsListCardSkeleton } from './empty-domains-list-card-skeleton';
 
-import './style.scss';
+import './empty-domains-list-card-styles.scss';
 
-function EmptyDomainsListCard( {
-	selectedSite,
-	hasDomainCredit,
-	isCompact,
-	dispatchRecordTracksEvent,
-	hasNonWpcomDomains,
-} ) {
+function EmptyDomainsListCard( { selectedSite, hasDomainCredit, isCompact, hasNonWpcomDomains } ) {
 	const translate = useTranslate();
-
-	const getActionClickHandler = ( type, buttonURL, sourceCardType ) => () => {
-		dispatchRecordTracksEvent( 'calypso_empty_domain_list_card_action', {
-			button_type: type,
-			button_url: buttonURL,
-			source_card_type: sourceCardType,
-		} );
-	};
+	const hasEnTranslation = useHasEnTranslation();
 
 	const siteHasPaidPlan =
 		selectedSite?.plan?.product_slug && ! isFreePlan( selectedSite.plan.product_slug );
 
-	let title = translate( 'Get your domain' );
-	let line = translate( 'Get a free one-year domain registration or transfer with any paid plan.' );
+	const siteHasHundredYearPlan = selectedSite?.plan?.product_slug === PLAN_100_YEARS;
+
+	let title = translate( 'Get your free domain' );
+	let line = translate(
+		'Get a free one-year domain registration or transfer with any annual paid plan.'
+	);
+	let secondLine;
 	let action = translate( 'Upgrade to a plan' );
-	let actionURL = `/plans/${ selectedSite.slug }`;
+	let actionURL = `/plans/${ selectedSite?.slug }`;
 	let secondaryAction = translate( 'Just search for a domain' );
-	let secondaryActionURL = domainAddNew( selectedSite.slug );
+	let secondaryActionURL = domainAddNew( selectedSite?.slug );
 	let contentType = 'no_plan';
+
+	const domainRegistrationProduct = useSelector( ( state ) =>
+		getProductBySlug( state, domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION )
+	);
+	const domainProductCost = domainRegistrationProduct?.combined_cost_display;
 
 	if ( siteHasPaidPlan && ! hasDomainCredit ) {
 		if ( hasNonWpcomDomains ) {
@@ -47,67 +44,61 @@ function EmptyDomainsListCard( {
 		line = translate( 'You have no domains added to this site.' );
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
-		secondaryAction = translate( 'I have a domain' );
+		secondaryAction = translate( 'Use a domain I own' );
 		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
 		contentType = 'paid_plan_with_no_free_domain_credits';
 	}
 
 	if ( siteHasPaidPlan && hasDomainCredit ) {
 		title = translate( 'Claim your free domain' );
-		line = translate(
-			'You have a free one-year domain registration or transfer included with your plan.'
-		);
+		if ( siteHasHundredYearPlan ) {
+			line = translate(
+				'You have a free domain registration or transfer included with your plan.'
+			);
+		} else {
+			line = translate(
+				'You have a free one-year domain registration or transfer included with your plan.'
+			);
+			secondLine = hasEnTranslation
+				? translate(
+						'Don’t worry about expensive domain renewals—.com, .net, and .org start at just %(domainPrice)s.',
+						{
+							args: {
+								domainPrice: domainProductCost,
+							},
+						}
+				  )
+				: null;
+		}
 		action = translate( 'Search for a domain' );
 		actionURL = domainAddNew( selectedSite.slug );
-		secondaryAction = translate( 'I have a domain' );
-		secondaryActionURL = domainUseMyDomain( selectedSite.slug );
+		secondaryAction = translate( 'Use a domain I own' );
+		secondaryActionURL = domainUseMyDomain( selectedSite.slug, {
+			redirectTo: `/domains/manage/${ selectedSite.slug }`,
+		} );
 		contentType = 'free_domain_credit';
 	}
 
-	const illustration = customerHomeIllustrationTaskFindDomain && (
-		<img src={ customerHomeIllustrationTaskFindDomain } alt="" width={ 150 } />
-	);
+	const className = clsx( {
+		'has-non-wpcom-domains': hasNonWpcomDomains,
+	} );
 
 	return (
-		<Card
-			className={ classNames( 'empty-domains-list-card', {
-				'has-non-wpcom-domains': hasNonWpcomDomains,
-			} ) }
-		>
-			<div
-				className={ classNames( 'empty-domains-list-card__wrapper', {
-					'is-compact': isCompact,
-					'has-title-only': title && ! line,
-				} ) }
-			>
-				<div className="empty-domains-list-card__illustration">{ illustration }</div>
-				<div className="empty-domains-list-card__content">
-					<div className="empty-domains-list-card__text">
-						{ title ? <h2>{ title }</h2> : null }
-						{ line ? <h3>{ line }</h3> : null }
-					</div>
-					<div className="empty-domains-list-card__actions">
-						<Button
-							primary
-							onClick={ getActionClickHandler( 'primary', actionURL, contentType ) }
-							href={ actionURL }
-						>
-							{ action }
-						</Button>
-						<Button
-							onClick={ getActionClickHandler( 'secondary', secondaryActionURL, contentType ) }
-							href={ secondaryActionURL }
-						>
-							{ secondaryAction }
-						</Button>
-					</div>
-				</div>
-			</div>
-			<TrackComponentView
-				eventName="calypso_get_your_domain_empty_impression"
-				eventProperties={ { content_type: contentType } }
+		<>
+			{ siteHasPaidPlan && hasDomainCredit && ! siteHasHundredYearPlan && <QueryProductsList /> }
+			<EmptyDomainsListCardSkeleton
+				className={ className }
+				isCompact={ isCompact }
+				title={ title }
+				line={ line }
+				secondLine={ secondLine }
+				contentType={ contentType }
+				action={ action }
+				actionURL={ actionURL }
+				secondaryAction={ secondaryAction }
+				secondaryActionURL={ secondaryActionURL }
 			/>
-		</Card>
+		</>
 	);
 }
 
@@ -120,6 +111,4 @@ EmptyDomainsListCard.propTypes = {
 	hasNonWpcomDomains: PropTypes.bool,
 };
 
-export default connect( null, { dispatchRecordTracksEvent: recordTracksEvent } )(
-	EmptyDomainsListCard
-);
+export default EmptyDomainsListCard;

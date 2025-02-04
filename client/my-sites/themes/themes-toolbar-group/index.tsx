@@ -14,14 +14,11 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 	selectedKey,
 	onSelect,
 } ) => {
-	const activeIndex = useMemo(
-		() =>
-			Math.max(
-				items.findIndex( ( { key } ) => key === selectedKey ),
-				0
-			),
-		[ items, selectedKey ]
-	);
+	const activeIndex = useMemo( () => {
+		const index = items.findIndex( ( { key } ) => key === selectedKey );
+		// If the selected key is not found, return undefined to disable the active state.
+		return index >= 0 ? index : undefined;
+	}, [ items, selectedKey ] );
 
 	return (
 		<ResponsiveToolbarGroup
@@ -29,6 +26,7 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 			initialActiveIndex={ activeIndex }
 			forceSwipe={ 'undefined' === typeof window }
 			onClick={ ( index: number ) => onSelect( items[ index ]?.key ) }
+			swipeEnabled={ false }
 		>
 			{ items.map( ( item ) => (
 				<span key={ `themes-toolbar-group-item-${ item.key }` }>{ item.text }</span>

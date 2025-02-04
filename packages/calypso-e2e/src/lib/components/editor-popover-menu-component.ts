@@ -1,25 +1,20 @@
-import { Page, Locator } from 'playwright';
-
-const popoverParentSelector = '.popover-slot .components-popover';
-
-const selectors = {
-	menuButton: ( name: string ) => `${ popoverParentSelector } :text-is("${ name }")`,
-};
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 /**
  * Represents the popover menu that can be launched from multiple different places.
  */
 export class EditorPopoverMenuComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -28,7 +23,10 @@ export class EditorPopoverMenuComponent {
 	 * Click menu button by name.
 	 */
 	async clickMenuButton( name: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.menuButton( name ) );
+		const editorParent = await this.editor.parent();
+
+		const locator = editorParent.getByRole( 'menuitem', { name: name } );
+		await locator.waitFor();
 		await locator.click();
 	}
 }

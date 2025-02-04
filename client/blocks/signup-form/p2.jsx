@@ -18,7 +18,7 @@ class P2SignupForm extends Component {
 		return (
 			<div className="signup-form">
 				{ shouldShowEmailSignupForm && (
-					<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
+					<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate>
 						{ this.props.formFields }
 						{ this.props.formFooter }
 					</LoggedOutForm>
@@ -37,10 +37,8 @@ class P2SignupForm extends Component {
 				{ this.props.isSocialSignupEnabled && (
 					<SocialSignupForm
 						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
-						isReskinned={ this.props.isReskinned }
-						compact={ true }
+						compact
 					/>
 				) }
 

@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { includes } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';

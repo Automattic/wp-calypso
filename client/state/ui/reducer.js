@@ -3,6 +3,7 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_LOADING_SET,
 	NOTIFICATIONS_PANEL_TOGGLE,
+	MOST_RECENTLY_SELECTED_SITE_SET,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
@@ -19,7 +20,6 @@ import section from './section/reducer';
 
 /**
  * Tracks the currently selected site ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -30,6 +30,22 @@ export const selectedSiteId = withSchemaValidation(
 		switch ( action.type ) {
 			case SELECTED_SITE_SET:
 				return action.siteId || null;
+		}
+
+		return state;
+	}
+);
+
+export const mostRecentlySelectedSiteId = withSchemaValidation(
+	{ type: [ 'number', 'null' ] },
+	( state = null, action ) => {
+		switch ( action.type ) {
+			case MOST_RECENTLY_SELECTED_SITE_SET:
+				// Don't set nullish values for this. No selection is not a valid previous selection.
+				if ( action.siteId ) {
+					return action.siteId;
+				}
+				return state;
 		}
 
 		return state;
@@ -58,7 +74,6 @@ export function isSectionLoading( state = false, action ) {
 
 /**
  * Tracks if the notifications panel is open
- *
  * @param   {Object} state       Current state
  * @param   {Object} action      Action payload
  * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
@@ -84,6 +99,7 @@ const reducer = combineReducers( {
 	mediaModal,
 	postTypeList,
 	preview,
+	mostRecentlySelectedSiteId,
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,

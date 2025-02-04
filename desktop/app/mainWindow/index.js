@@ -35,7 +35,7 @@ function showAppWindow() {
 	windowConfig.webPreferences.nativeWindowOpen = true;
 
 	const bounds = {
-		...{ width: 800, height: 600 },
+		...{ width: 1200, height: 800 },
 		...Settings.getSettingGroup( {}, 'window', [ 'x', 'y', 'width', 'height' ] ),
 	};
 
@@ -45,7 +45,7 @@ function showAppWindow() {
 	}
 
 	if ( process.platform === 'linux' ) {
-		windowConfig.icon = getPath( 'app-logo.png' );
+		windowConfig.icon = getPath( 'linux-icon.png' );
 	}
 
 	mainWindow = new BrowserWindow( {
@@ -166,6 +166,7 @@ function showAppWindow() {
 	require( '../window-handlers/spellcheck' )( appWindow );
 	require( '../window-handlers/navigation' )( appWindow );
 	require( '../window-handlers/clipboard' )( appWindow );
+	require( '../window-handlers/unsaved-changes' )( appWindow );
 
 	platform.setMainWindow( appWindow );
 

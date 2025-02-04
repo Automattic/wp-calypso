@@ -1,6 +1,7 @@
 /**
  * @group calypso-pr
  * @group gutenberg
+ * @group jetpack-wpcom-integration
  */
 
 import {
@@ -10,6 +11,7 @@ import {
 	ImageBlock,
 	AudioBlock,
 	FileBlock,
+	VideoPressBlock,
 	TestFile,
 	TestAccount,
 	envVariables,
@@ -17,45 +19,63 @@ import {
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
-import { TEST_IMAGE_PATH, TEST_AUDIO_PATH } from '../constants';
+import { TEST_IMAGE_PATH, TEST_AUDIO_PATH, TEST_VIDEO_PATH } from '../constants';
 
 declare const browser: Browser;
 
+/**
+ * Tests the media-related blocks.
+ *
+ * Keywords: Media, Video, VideoPress, Image, Audio, File
+ */
 describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	const features = envToFeatureKey( envVariables );
-	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
-	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
+
+	// Default to `defaultUser` as it has WordPress.com Premium enabled, which is required
+	// for VideoPress block testing.
 	const accountName = getTestAccountByFeature( features, [
 		{
 			gutenberg: 'stable',
 			siteType: 'simple',
-			accountName: 'simpleSitePersonalPlanUser',
+			accountName: 'defaultUser',
+		},
+		{
+			gutenberg: 'edge',
+			siteType: 'simple',
+			accountName: 'defaultUser',
 		},
 	] );
 
-	let editorPage: EditorPage;
 	let page: Page;
+	let testAccount: TestAccount;
+	let editorPage: EditorPage;
 	let testFiles: {
 		image: TestFile;
 		imageReservedName: TestFile;
 		audio: TestFile;
+		video: TestFile;
 	};
 
 	beforeAll( async () => {
 		page = await browser.newPage();
+
 		testFiles = {
 			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
 			imageReservedName: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
 				postfix: 'filewith#?#?reservedurlchars',
 			} ),
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
+			video: await MediaHelper.createTestFile( TEST_VIDEO_PATH ),
 		};
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
+	} );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
-		await editorPage.visit( 'post' );
+	it( 'Start new post', async function () {
+		editorPage = new EditorPage( page );
+
+		await editorPage.visit( 'post', { siteSlug: testAccount.getSiteURL( { protocol: false } ) } );
 		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
 
@@ -63,25 +83,28 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ ImageBlock.blockName } block: upload image file with reserved URL characters`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
 		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				ImageBlock.blockName,
-				ImageBlock.blockEditorSelector
+				ImageBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
-			const imageBlock = new ImageBlock( blockHandle );
+			const imageBlock = new ImageBlock( page, blockHandle );
 			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
 		} );
 
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				AudioBlock.blockName,
-				AudioBlock.blockEditorSelector
+				AudioBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
 			const audioBlock = new AudioBlock( blockHandle );
 			await audioBlock.upload( testFiles.audio.fullpath );
@@ -90,10 +113,24 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		it( `${ FileBlock.blockName } block: upload audio file`, async function () {
 			const blockHandle = await editorPage.addBlockFromSidebar(
 				FileBlock.blockName,
-				FileBlock.blockEditorSelector
+				FileBlock.blockEditorSelector,
+				{ noSearch: true }
 			);
-			const fileBlock = new FileBlock( blockHandle );
+			const fileBlock = new FileBlock( page, blockHandle );
 			await fileBlock.upload( testFiles.audio.fullpath );
+		} );
+
+		// If this starts failing, check whether Premium or higher plan is enabled.
+		// 2024-09-16: Skipping. This has been failing all year, seems to be a problem with the backend and the way the test sites get cleaned up. p1707923887553869-slack-C034JEXD1RD
+		it.skip( `${ VideoPressBlock.blockName } block: upload video file`, async function () {
+			await editorPage.addBlockFromSidebar(
+				VideoPressBlock.blockName,
+				VideoPressBlock.blockEditorSelector,
+				{ noSearch: true }
+			);
+
+			const videoPressBlock = new VideoPressBlock( page );
+			await videoPressBlock.upload( testFiles.video.fullpath );
 		} );
 
 		it( 'Publish and visit post', async function () {
@@ -104,8 +141,13 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 	describe( 'Validate published post', function () {
 		it( `Image with reserved characters in filename is visible`, async function () {
-			await ImageBlock.validatePublishedContent( page, [
-				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+			await Promise.any( [
+				// WP < 6.6
+				ImageBlock.validatePublishedContent( page, [
+					testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
+				] ),
+				// WP 6.6+, see https://github.com/WordPress/wordpress-develop/commit/2358de1767168232ff0e7c17e550b8a99f96002e
+				ImageBlock.validatePublishedContent( page, [ testFiles.imageReservedName.filename ] ),
 			] );
 		} );
 
@@ -119,6 +161,11 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 
 		it( `File block is visible`, async function () {
 			await FileBlock.validatePublishedContent( page, [ testFiles.audio.filename ] );
+		} );
+
+		// Skipped above.
+		it.skip( `VideoPress block is visible`, async function () {
+			await VideoPressBlock.validatePublishedContent( page );
 		} );
 	} );
 } );

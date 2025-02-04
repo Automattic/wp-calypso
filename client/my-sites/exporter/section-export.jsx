@@ -3,9 +3,9 @@ import { Fragment } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import ExporterContainer from 'calypso/my-sites/exporter/container';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -35,18 +35,17 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 				title={ translate( 'Want to export your site?' ) }
 				line={ translate( "Visit your site's wp-admin for all your import and export needs." ) }
 				action={ translate( 'Export %(siteTitle)s', { args: { siteTitle: site.title } } ) }
-				actionURL={ site.options.admin_url + 'export.php' }
+				actionURL={ site.options?.admin_url + 'export.php' }
 				actionTarget="_blank"
 			/>
 		);
 	} else {
 		sectionContent = (
 			<Fragment>
-				<FormattedHeader
-					brandFont
-					className="exporter__section-header"
-					headerText={ translate( 'Export Content' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Export Content' ) }
+					subtitle={ translate(
 						'Back up or move your content to another site or platform. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -54,8 +53,6 @@ const SectionExport = ( { isJetpack, canUserExport, site, translate } ) => {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
 				<ExporterContainer />
 			</Fragment>

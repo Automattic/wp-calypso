@@ -1,4 +1,4 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import Spotlight from 'calypso/components/spotlight';
 
 export default function SpotlightTemplate( props ) {

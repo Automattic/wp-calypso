@@ -1,95 +1,103 @@
-import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
-import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+	PRODUCT_1GB_SPACE,
+} from '@automattic/calypso-products';
+import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
+import { useMemo } from '@wordpress/element';
+import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { STEPPER_TRACKS_EVENT_SIGNUP_START } from '../constants';
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import CheckPlan from './internals/steps-repository/check-plan';
-import DesignCarousel from './internals/steps-repository/design-carousel';
-import DomainsStep from './internals/steps-repository/domains';
-import ProcessingStep from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreProfiler from './internals/steps-repository/store-profiler';
-import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
+import getQuantityFromStorageType from '../utils/get-quantity-from-storage-slug';
+import { STEPS } from './internals/steps';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
-import type { SiteDetailsPlan } from '@automattic/data-stores';
+import type {
+	OnboardSelect,
+	SiteDetailsPlan,
+	SiteSelect,
+	UserSelect,
+} from '@automattic/data-stores';
+
+function getPlanFromRecurType( recurType: string ) {
+	switch ( recurType ) {
+		case ecommerceFlowRecurTypes.YEARLY:
+			return PLAN_ECOMMERCE;
+		case ecommerceFlowRecurTypes.MONTHLY:
+			return PLAN_ECOMMERCE_MONTHLY;
+		case ecommerceFlowRecurTypes[ '2Y' ]:
+			return PLAN_ECOMMERCE_2_YEARS;
+		case ecommerceFlowRecurTypes[ '3Y' ]:
+			return PLAN_ECOMMERCE_3_YEARS;
+		default:
+			return PLAN_ECOMMERCE;
+	}
+}
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
-	useSteps() {
-		const recurType = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getEcommerceFlowRecurType()
+	isSignupFlow: true,
+	useTracksEventProps() {
+		const recur = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
 		);
 
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
-			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
-		}, [] );
-
-		return [
-			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'designCarousel', component: DesignCarousel },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: ProcessingStep },
-			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'checkPlan', component: CheckPlan },
+		return useMemo(
+			() => ( { eventsProperties: { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: { recur } } } ),
+			[ recur ]
+		);
+	},
+	useSteps() {
+		const steps = [
+			{
+				slug: 'storeProfiler',
+				asyncComponent: () => import( './internals/steps-repository/store-profiler' ),
+			},
+			STEPS.DOMAINS,
+			{
+				slug: 'designCarousel',
+				asyncComponent: () => import( './internals/steps-repository/design-carousel' ),
+			},
+			{
+				// Note: the slug for STEPS.SITE_CREATION_STEP is 'create-site'
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
+			},
+			STEPS.PROCESSING,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL,
+			STEPS.WAIT_FOR_ATOMIC,
+			{
+				slug: 'checkPlan',
+				asyncComponent: () => import( './internals/steps-repository/check-plan' ),
+			},
 		];
+
+		return stepsWithRequiredLogin( steps );
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
-		const flowName = this.name;
-		const locale = useLocale();
-
-		const { recurType } = useSelect( ( select ) => ( {
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
-
-		const getStartUrl = () => {
-			let hasFlowParams = false;
-			const flowParams = new URLSearchParams();
-
-			if ( recurType !== ecommerceFlowRecurTypes.YEARLY ) {
-				flowParams.set( 'recur', recurType );
-				hasFlowParams = true;
-			}
-			if ( locale && locale !== 'en' ) {
-				flowParams.set( 'locale', locale );
-				hasFlowParams = true;
-			}
-
-			const redirectTarget =
-				`/setup/ecommerce/storeProfiler` +
-				( hasFlowParams ? encodeURIComponent( '?' + flowParams.toString() ) : '' );
-			const url =
-				locale && locale !== 'en'
-					? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=${ redirectTarget }`
-					: `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-
-			return url + ( flags ? `&flags=${ flags }` : '' );
-		};
-
 		if ( ! userIsLoggedIn ) {
-			const logInUrl = getStartUrl();
-			window.location.assign( logInUrl );
 			result = {
 				state: AssertConditionState.FAILURE,
-				message: 'store-setup requires a logged in user',
+				message: 'ecommerce requires a logged in user',
 			};
 		}
 
@@ -98,22 +106,39 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
-		setStepProgress( flowProgress );
-		const { selectedDesign, recurType } = useSelect( ( select ) => ( {
-			selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
-		const selectedPlan =
-			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
+		const {
+			setPlanCartItem,
+			setProductCartItems,
+			setPluginsToVerify,
+			resetCouponCode,
+			resetStorageAddonSlug,
+		} = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
+		);
+		const couponCode = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getCouponCode(),
+			[]
+		);
+		const storageAddonSlug = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStorageAddonSlug(),
+			[]
+		);
+		const selectedPlan = getPlanFromRecurType( recurType );
 
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
+			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( _currentStepName ) {
 				case 'domains':
@@ -126,13 +151,29 @@ const ecommerceFlow: Flow = {
 						product_slug: selectedPlan,
 						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
 					} );
-					return navigate( 'siteCreationStep' );
 
-				case 'siteCreationStep':
+					if ( storageAddonSlug && recurType !== ecommerceFlowRecurTypes.MONTHLY ) {
+						setProductCartItems( [
+							{
+								product_slug: PRODUCT_1GB_SPACE,
+								quantity: getQuantityFromStorageType( storageAddonSlug ),
+								volume: 1,
+								extra: { feature_slug: storageAddonSlug },
+							},
+						] );
+						resetStorageAddonSlug();
+					}
+					return navigate( 'createSite' );
+
+				case 'createSite':
 					return navigate( 'processing' );
 
 				case 'processing':
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
 						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
@@ -150,11 +191,13 @@ const ecommerceFlow: Flow = {
 						} );
 
 						const returnUrl = encodeURIComponent( `/setup/${ flowName }/checkPlan?${ urlParams }` );
+						const couponCodeParam = couponCode ? `coupon=${ couponCode }` : '';
+						resetCouponCode();
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ returnUrl }&signup=1`
+							) }?redirect_to=${ returnUrl }&signup=1&${ couponCodeParam }`
 						);
 					}
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );
@@ -168,12 +211,18 @@ const ecommerceFlow: Flow = {
 				case 'waitForAtomic':
 					return navigate( 'processing' );
 
+				case 'waitForPluginInstall':
+					return navigate( 'processing' );
+
 				case 'checkPlan':
 					// eCommerce Plan
 					if (
-						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
-							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
-						)
+						[
+							PLAN_ECOMMERCE,
+							PLAN_ECOMMERCE_MONTHLY,
+							PLAN_ECOMMERCE_2_YEARS,
+							PLAN_ECOMMERCE_3_YEARS,
+						].includes( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
 					) {
 						return navigate( 'waitForAtomic' );
 					}

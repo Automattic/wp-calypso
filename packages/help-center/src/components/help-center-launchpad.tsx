@@ -2,13 +2,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CircularProgressBar } from '@automattic/components';
+import { useLaunchpad } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useSelector } from 'react-redux';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { SITE_STORE } from '../stores';
+import { useHelpCenterContext } from '../contexts/HelpCenterContext';
+import { useSiteSlug } from '../hooks/use-site-slug';
 
 const getEnvironmentHostname = () => {
 	try {
@@ -28,13 +27,16 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
-	const siteIntent = site && site?.options?.site_intent;
-	const siteSlug = site && new URL( site.URL ).host;
-	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
-	const sectionName = useSelector( ( state ) => getSectionName( state ) );
+	const { sectionName, site } = useHelpCenterContext();
+	const siteIntent = site?.options.site_intent;
+	const siteSlug = useSiteSlug();
 
+	const { data } = useLaunchpad( siteSlug, siteIntent );
+	const totalLaunchpadSteps = data?.checklist?.length || 4;
+	const completeLaunchpadSteps =
+		data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
+
+	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const handleLaunchpadHelpLinkClick = () => {
 		recordTracksEvent( 'calypso_help_launchpad_click', {
 			link: launchpadURL,
@@ -44,9 +46,6 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug ) {
-		return null;
-	}
 	return (
 		<div className="inline-help__launchpad-container">
 			<a
@@ -59,7 +58,11 @@ export const HelpCenterLaunchpad = () => {
 					handleLaunchpadHelpLinkClick();
 				} }
 			>
-				<CircularProgressBar size={ 32 } currentStep={ 1 } numberOfSteps={ 4 } />
+				<CircularProgressBar
+					size={ 32 }
+					currentStep={ completeLaunchpadSteps }
+					numberOfSteps={ totalLaunchpadSteps }
+				/>
 				<span className="inline-help-launchpad-link-text">
 					{ __( 'Continue setting up your site with these next steps.' ) }
 				</span>

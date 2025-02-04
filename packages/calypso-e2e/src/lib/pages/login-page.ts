@@ -104,7 +104,10 @@ export class LoginPage {
 	 * @returns {Promise<Page>} Handler to the popup page.
 	 */
 	async clickLoginWithGoogle(): Promise< Page > {
-		const locator = await this.page.locator( ':text-is("Continue with Google")' );
+		const locator = this.page.getByRole( 'button', { name: 'Continue with Google' } );
+
+		await locator.waitFor();
+
 		// Intercept the popup that appears when Login with Google button
 		// is clicked.
 		const [ page ] = await Promise.all( [ this.page.waitForEvent( 'popup' ), locator.click() ] );
@@ -123,10 +126,11 @@ export class LoginPage {
 	}
 
 	/**
-	 * Clicks the "Create a new account" link.
+	 * Clicks the "Create an account" link.
 	 */
 	async clickCreateNewAccount(): Promise< Locator > {
-		const locator = await this.page.locator( ':text-is("Create a new account")' );
+		const locator = this.page.getByRole( 'link', { name: 'Create an account' } );
+		await locator.waitFor();
 		await locator.click();
 
 		return locator;

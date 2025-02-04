@@ -50,7 +50,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestWordAdsApproval( 2916284 )( spy );
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: WORDADS_SITE_APPROVE_REQUEST,
 				siteId: 2916284,
 			} );
@@ -58,7 +58,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch success action when request completes', () => {
 			return requestWordAdsApproval( 2916284 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 					approved: true,
 					siteId: 2916284,
@@ -68,7 +68,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			return requestWordAdsApproval( 77203074 )( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 					siteId: 77203074,
 					error: expect.stringMatching( 'An active access token must be used to approve wordads.' ),

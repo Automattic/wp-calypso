@@ -5,7 +5,7 @@ import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
 
-function makePrivacyLink( privacyLink, link ) {
+function makePrivacyLink( privacyLink = true, link = '' ) {
 	if ( privacyLink ) {
 		if ( typeof privacyLink === 'string' ) {
 			return privacyLink;
@@ -17,14 +17,27 @@ function makePrivacyLink( privacyLink, link ) {
 	return null;
 }
 
-function SupportInfo( { text, link, position, privacyLink } ) {
+function SupportInfo( {
+	children,
+	text,
+	link,
+	position = 'left',
+	privacyLink,
+	popoverClassName = '',
+} ) {
 	const translate = useTranslate();
 	const filteredPrivacyLink = makePrivacyLink( privacyLink, link );
 
 	return (
 		<div className="support-info">
-			<InfoPopover position={ position || 'left' } screenReaderText={ translate( 'Learn more' ) }>
-				{ text + ' ' }
+			<InfoPopover
+				className={ popoverClassName }
+				position={ position }
+				screenReaderText={ translate( 'Learn more' ) }
+			>
+				{ text }
+				{ children }
+				{ link || filteredPrivacyLink ? ' ' : null }
 				{ link && (
 					<span className="support-info__learn-more">
 						<ExternalLink href={ link } target="_blank" rel="noopener noreferrer">
@@ -44,13 +57,8 @@ function SupportInfo( { text, link, position, privacyLink } ) {
 	);
 }
 
-SupportInfo.defaultProps = {
-	text: '',
-	link: '',
-	privacyLink: true,
-};
-
 SupportInfo.propTypes = {
+	children: PropTypes.node,
 	text: PropTypes.string,
 	link: PropTypes.string,
 	position: PropTypes.string,

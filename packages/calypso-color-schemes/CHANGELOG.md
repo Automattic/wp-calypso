@@ -1,14 +1,35 @@
 # Release Notes
 
-## trunk
+## Unreleased
+
+## 3.1.3
+
+- Add a new color for Threads.
+
+## 3.1.2
+
+- Added a new color for X.
+- Added a new color for Bluesky.
+
+## 3.1.1
+
+- Republish unbuilt version.
+
+## 3.1.0
+
+- Updated colors for checkout.
+- Added a new color for Nextdoor.
+- Added `root-only` entry point.
+
+## 3.0.0
 
 - Added a new color for Mastodon.
 - Switched from `node-sass` to `sass` (Dart Sass) for processing Sass files.
   - Removed dependency `node-sass`
   - Added dependency `sass ^1.32.13`
 - Updated dependencies:
-  - postcss to ^8.2.15
-  - node-sass to ^6.0.0
+  - postcss to `^8.2.15`
+  - node-sass to `^6.0.0`
 
 ## 2.1.1
 

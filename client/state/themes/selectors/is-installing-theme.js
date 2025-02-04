@@ -6,7 +6,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Whether the theme is currently being installed on the (Jetpack) site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID for which we check installing state
  * @param  {number}  siteId  Site ID

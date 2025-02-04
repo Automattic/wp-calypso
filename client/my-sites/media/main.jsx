@@ -1,5 +1,5 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -7,24 +7,28 @@ import ImageEditor from 'calypso/blocks/image-editor';
 import VideoEditor from 'calypso/blocks/video-editor';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMedia from 'calypso/components/data/query-media';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
 import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
 import { EditorMediaModalDetail } from 'calypso/post-editor/media-modal/detail';
 import EditorMediaModalDialog from 'calypso/post-editor/media-modal/dialog';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { selectMediaItems, changeMediaSource, clearSite } from 'calypso/state/media/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
 import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -55,6 +59,12 @@ class Media extends Component {
 		this.setState( {
 			containerWidth: this.containerRef.current.clientWidth,
 		} );
+
+		const params = new URLSearchParams( window.location.search );
+		const upgradeStatus = params.get( 'upgrade' );
+		if ( upgradeStatus ) {
+			this.showUpgradeStatusNotice( upgradeStatus );
+		}
 	}
 
 	onFilterChange = ( filter ) => {
@@ -95,6 +105,8 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
+
+		recordTracksEvent( 'calypso_media_editor_close' );
 		this.maybeRedirectToAll();
 	};
 
@@ -111,16 +123,23 @@ class Media extends Component {
 
 	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'image' } );
 	};
 
 	editVideo = () => {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'video' } );
+	};
+
+	onImageEditorReset = () => {
+		recordTracksEvent( 'calypso_media_image_editor_reset' );
 	};
 
 	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
-		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
+		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
+		recordTracksEvent( 'calypso_media_image_editor_cancel' );
 		resetAllImageEditorState();
 	};
 
@@ -144,7 +163,9 @@ class Media extends Component {
 
 		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
+
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_image_editor_done' );
 		this.maybeRedirectToAll();
 	};
 
@@ -177,10 +198,13 @@ class Media extends Component {
 
 	onVideoEditorCancel = () => {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
+		recordTracksEvent( 'calypso_media_video_editor_cancel' );
 	};
 
 	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_video_editor_update_poster_update' );
+
 		this.maybeRedirectToAll();
 	};
 
@@ -221,7 +245,6 @@ class Media extends Component {
 	 * Start the process to delete media items.
 	 * `callback` is an optional parameter which will execute once the confirm dialog is accepted.
 	 * It's used especially when the item is attempting to be removed using the item detail dialog.
-	 *
 	 * @param  {Function} [callback] - callback function
 	 */
 	deleteMedia( callback ) {
@@ -278,6 +301,7 @@ class Media extends Component {
 
 	deleteMediaByItemDetail = () => {
 		this.deleteMedia( () => this.closeDetailsModal() );
+		recordTracksEvent( 'calypso_media_editor_delete' );
 	};
 
 	confirmDeleteMedia = () => {
@@ -350,20 +374,43 @@ class Media extends Component {
 		);
 	};
 
+	showUpgradeStatusNotice = ( status ) => {
+		const { translate, filter, successNotice: showSuccessNotice } = this.props;
+		let message = '';
+		if ( filter === 'audio' ) {
+			message = translate( 'Audio upload has been enabled.' );
+		} else if ( filter === 'videos' ) {
+			message = translate( 'Video upload has been enabled.' );
+		}
+
+		if ( status === 'success' && message ) {
+			showSuccessNotice( message );
+		}
+	};
+
 	render() {
-		const { selectedSite: site, mediaId, previousRoute, translate } = this.props;
+		const {
+			selectedSite: site,
+			mediaId,
+			previousRoute,
+			translate,
+			siteId,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
+		} = this.props;
 
 		return (
 			<div ref={ this.containerRef } className="main main-column media" role="main">
-				<ScreenOptionsTab wpAdminPath="upload.php" />
 				{ mediaId && site && site.ID && <QueryMedia siteId={ site.ID } mediaId={ mediaId } /> }
 				<PageViewTracker path={ this.getAnalyticsPath() } title="Media" />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
 				<DocumentHead title={ translate( 'Media' ) } />
-				<FormattedHeader
-					brandFont
-					className="media__page-heading"
-					headerText={ translate( 'Media' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="upload.php?preferred-view=classic"
+					title={ translate( 'Media' ) }
+					subtitle={ translate(
 						'Manage all the media on your site, including images, video, and more. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
 							components: {
@@ -371,9 +418,8 @@ class Media extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
+
 				{ this.props.selectedSite.is_private && this.props.selectedSite.is_wpcom_atomic && (
 					<Notice
 						showDismiss={ false }
@@ -416,6 +462,7 @@ class Media extends Component {
 								siteId={ site && site.ID }
 								media={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
+								onReset={ this.onImageEditorReset }
 								onCancel={ this.onImageEditorCancel }
 							/>
 						) }
@@ -453,14 +500,19 @@ const mapStateToProps = ( state, { mediaId } ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
+		siteId,
 		selectedSite: getSelectedSite( state ),
 		previousRoute: getPreviousRoute( state ),
 		currentRoute: getCurrentRoute( state ),
+		isJetpack: isJetpackSite( state, siteId ),
 		media: getMediaItem( state, siteId, mediaId ),
 		selectedItems: getMediaLibrarySelectedItems( state, siteId ),
 	};
 };
 
-export default connect( mapStateToProps, { selectMediaItems, changeMediaSource, clearSite } )(
-	localize( withDeleteMedia( withEditMedia( Media ) ) )
-);
+export default connect( mapStateToProps, {
+	selectMediaItems,
+	changeMediaSource,
+	clearSite,
+	successNotice,
+} )( localize( withJetpackConnectionProblem( withDeleteMedia( withEditMedia( Media ) ) ) ) );

@@ -1,7 +1,6 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -18,10 +17,11 @@ import {
 } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import {
-	emailManagementPurchaseNewEmailAccount,
-	emailManagement,
+	getPurchaseNewEmailAccountPath,
+	getEmailManagementPath,
 } from 'calypso/my-sites/email/paths';
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
+import { useSelector } from 'calypso/state';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
@@ -58,12 +58,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 	useEffect( () => {
 		if ( selectedDomain && ! hasTitanSubscription ) {
 			page.redirect(
-				emailManagementPurchaseNewEmailAccount(
-					selectedSiteSlug ?? '',
-					selectedDomainName,
-					currentRoute,
-					source
-				)
+				getPurchaseNewEmailAccountPath( selectedSiteSlug, selectedDomainName, currentRoute, source )
 			);
 		}
 
@@ -72,7 +67,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 			const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
 
 			if ( configuredMailboxCount === maxMailboxCount ) {
-				page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
+				page.redirect( getEmailManagementPath( selectedSiteSlug, selectedDomainName ) );
 			}
 		}
 	}, [
@@ -90,7 +85,7 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 		<>
 			{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<DocumentHead title={ titleCase( title ) } />
 
 				<EmailHeader />

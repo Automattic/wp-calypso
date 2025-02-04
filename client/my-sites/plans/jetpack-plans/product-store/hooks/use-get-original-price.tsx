@@ -1,6 +1,6 @@
 import { TERM_MONTHLY, JETPACK_CRM_PRODUCTS } from '@automattic/calypso-products';
 import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getProductCost } from 'calypso/state/products-list/selectors';
 import { getSiteAvailableProductCost } from 'calypso/state/sites/products/selectors';
 import { SelectorProduct } from '../../types';
@@ -15,7 +15,7 @@ export const useGetOriginalPrice = ( siteId: number | null ) => {
 			// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 			if (
 				JETPACK_CRM_PRODUCTS.includes(
-					product.productSlug as typeof JETPACK_CRM_PRODUCTS[ number ]
+					product.productSlug as ( typeof JETPACK_CRM_PRODUCTS )[ number ]
 				)
 			) {
 				return product.displayPrice || -1;

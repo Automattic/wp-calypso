@@ -1,0 +1,15 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscription-manager-sort-controls {
+	.subscription-manager-sort-controls__button {
+		align-self: stretch;
+		flex-direction: row-reverse;
+		gap: 8px;
+		white-space: nowrap;
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+	}
+}

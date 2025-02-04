@@ -1,9 +1,8 @@
-import { Button } from '@automattic/components';
-import classNames from 'classnames';
+import { Button, FoldableCard } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
 import ConnectedApplicationIcon from 'calypso/me/connected-application-icon';
@@ -191,7 +190,7 @@ class ConnectedApplicationItem extends Component {
 	}
 
 	render() {
-		const classes = classNames( {
+		const classes = clsx( {
 			'connected-application-item': true,
 			'is-placeholder': this.props.isPlaceholder,
 		} );

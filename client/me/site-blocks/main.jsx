@@ -6,9 +6,10 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InfiniteList from 'calypso/components/infinite-list';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import {
@@ -56,16 +57,18 @@ class SiteBlockList extends Component {
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
-				<FormattedHeader brandFont headerText={ translate( 'Blocked Sites' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Blocked Sites' ) } />
 
 				<Card className="site-blocks__intro">
 					<p>
 						{ translate(
 							'Blocked sites will not appear in your Reader and will not be recommended to you.'
 						) }{ ' ' }
-						<a href={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }>
-							{ translate( 'Learn more' ) }
-						</a>
+						<InlineSupportLink
+							showIcon={ false }
+							supportPostId={ 32011 }
+							supportLink={ localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites' ) }
+						/>
 					</p>
 
 					{ hasNoBlocks && (

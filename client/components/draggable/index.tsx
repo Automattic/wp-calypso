@@ -40,7 +40,6 @@ interface HasPageCoords {
 
 /**
  * Discriminate between Mouse and Touch types of events.
- *
  * @param event Event (Mouse or Touch)
  * @returns      True if the event has touches
  */

@@ -1,0 +1,67 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.subscriptions-add-sites__form--container {
+	min-width: 515px;
+
+	.components-base-control.is-error input {
+		border-color: var(--color-error);
+
+		&:focus {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
+	}
+
+	.components-base-control__field {
+		margin-bottom: 16px;
+	}
+
+	.is-error .components-base-control__field {
+		margin-bottom: 6px;
+	}
+
+	.components-text-control__input {
+		border-color: var(--studio-gray-10);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		padding: rem(10px) rem(16px);
+		/* We need to allow space for the SVG checkmark */
+		padding-right: calc(0.5rem + 24px);
+
+		&::placeholder {
+			color: var(--studio-gray-20);
+		}
+
+		&[disabled] {
+			background: var(--studio-gray-5);
+		}
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
+	}
+
+	.components-base-control {
+		position: relative;
+	}
+
+	.components-base-control__help {
+		position: absolute;
+		top: 0;
+		right: 0.5rem;
+
+		svg {
+			fill: var(--color-success-50);
+		}
+	}
+
+	.subscriptions-add-sites__save-button {
+		float: right;
+	}
+
+	@media (max-width: $break-small) {
+		min-width: initial;
+	}
+}

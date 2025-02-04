@@ -9,14 +9,12 @@ import wpcom from 'calypso/lib/wp';
 /**
  * Interval for error reports so we don't flood te endpoint. More frequent
  * reports get throttled.
- *
  * @type {number}
  */
 const REPORT_INTERVAL = 60000;
 
 /**
  * Debug logger
- *
  * @type {Function}
  */
 const log = debug( 'calypso:error-logger' );

@@ -7,8 +7,8 @@
 Render the component, passing `domainName`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
-import { useSelector } from 'react-redux';
 import QueryDomainInfo from 'calypso/components/data/query-domain-info';
+import { useSelector } from 'calypso/state';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 export default function MyDomainInfo( { domainName } ) {

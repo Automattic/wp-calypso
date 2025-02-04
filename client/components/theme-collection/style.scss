@@ -1,0 +1,143 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.theme-collection__container {
+	margin-top: 48px;
+
+	.theme-collection__list-wrapper.swiper-wrapper {
+		overflow-y: clip;
+	}
+
+	.theme-card__info-options {
+		display: none;
+
+		@include break-small {
+			display: inherit;
+		}
+	}
+
+	.theme-card__image-container {
+		border-radius: 4px;
+		box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.15);
+		border-color: var(--studio-gray-5);
+	}
+}
+
+.theme-collection__meta {
+	display: flex;
+	justify-content: space-between;
+}
+
+.theme-collection__headings {
+	align-self: flex-end;
+	flex-basis: 80%;
+
+	@include break-small {
+		flex-basis: 60%;
+	}
+}
+
+.theme-collection__title {
+	color: var(--studio-gray-100);
+	font-size: $font-body-large;
+	font-weight: 400;
+	line-height: 1.4;
+
+	@include break-small {
+		font-size: rem(28px);
+		line-height: 1.2;
+	}
+}
+
+.theme-collection__description {
+	color: var(--studio-gray-60);
+	font-size: $font-body-small;
+	line-height: 1.4;
+
+	& > * {
+		margin-bottom: 0;
+	}
+
+	@include break-small {
+		font-size: $font-body;
+		line-height: 1.5;
+	}
+}
+
+.theme-collection__list-item.swiper-slide {
+	box-sizing: border-box;
+	padding: 0 16px;
+	transition: margin-right 0.1s linear;
+	margin-top: 24px;
+
+	.card.theme-card {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+.theme-collection__list-wrapper {
+	display: flex;
+}
+
+.theme-collection__carousel-controls {
+	display: flex;
+	justify-content: flex-end;
+	align-self: end;
+	align-items: center;
+
+	.theme-collection__see-all {
+		color: var(--studio-gray-100);
+		font-size: $font-body-small;
+		font-style: normal;
+		font-weight: 400;
+		height: auto;
+		line-height: 1.4;
+		letter-spacing: -0.15px;
+		padding: 0;
+		margin-right: 0;
+		align-items: flex-end;
+		text-decoration: underline;
+
+		@include break-small {
+			text-decoration: none;
+			align-items: inherit;
+			margin-right: 24px;
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	.theme-collection__carousel-nav-button {
+		display: none;
+
+		@include break-small {
+			padding: 0;
+			width: 32px;
+			height: 32px;
+			background-color: var(--studio-white);
+			border: 1px solid var(--studio-gray-5);
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			margin: 0 8px;
+			transition: background-color 0.1s linear;
+			pointer-events: all;
+		}
+
+		&:last-child {
+			margin-right: 0;
+		}
+
+		&:hover {
+			background-color: var(--studio-gray-0);
+		}
+
+		.rtl & {
+			transform: scaleX(-1);
+		}
+	}
+}

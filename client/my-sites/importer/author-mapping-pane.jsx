@@ -15,7 +15,6 @@ class AuthorMappingPane extends PureComponent {
 	static displayName = 'AuthorMappingPane';
 
 	static propTypes = {
-		hasSingleAuthor: PropTypes.bool.isRequired,
 		onMap: PropTypes.func,
 		onStartImport: PropTypes.func,
 		siteId: PropTypes.number.isRequired,
@@ -49,7 +48,7 @@ class AuthorMappingPane extends PureComponent {
 				'There is one author on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
 					'all imported content will be assigned to you. ' +
-					'Click Start import to proceed.',
+					'Click {{em}}Import{{/em}} to proceed.',
 				{
 					args: {
 						sourceType: sourceType,
@@ -57,6 +56,7 @@ class AuthorMappingPane extends PureComponent {
 					},
 					components: {
 						b: <strong />,
+						em: <em />,
 					},
 				}
 			);
@@ -65,7 +65,7 @@ class AuthorMappingPane extends PureComponent {
 				'There are multiple authors on your %(sourceType)s site. ' +
 					"Because you're the only author on {{b}}%(destinationSiteTitle)s{{/b}}, " +
 					'all imported content will be assigned to you. ' +
-					'Click {{em}}Start import{{/em}} to proceed.',
+					'Click {{em}}Import{{/em}} to proceed.',
 				{
 					args: {
 						sourceType: sourceType,
@@ -81,7 +81,7 @@ class AuthorMappingPane extends PureComponent {
 			return this.props.translate(
 				'There are multiple authors on your site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Start import{{/em}}.',
+					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
@@ -97,7 +97,7 @@ class AuthorMappingPane extends PureComponent {
 			return this.props.translate(
 				'There are multiple authors on your %(sourceType)s site. ' +
 					'Please reassign the authors of the imported items to an existing ' +
-					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Start import{{/em}}.',
+					'user on {{b}}%(destinationSiteTitle)s{{/b}}, then click {{em}}Import{{/em}}.',
 				{
 					args: {
 						sourceType: 'WordPress',
@@ -118,7 +118,6 @@ class AuthorMappingPane extends PureComponent {
 
 	render() {
 		const {
-			hasSingleAuthor,
 			sourceAuthors,
 			sourceTitle,
 			targetTitle,
@@ -130,6 +129,8 @@ class AuthorMappingPane extends PureComponent {
 			site,
 			totalUsers,
 		} = this.props;
+
+		const hasSingleAuthor = totalUsers === 1;
 		const canStartImport = hasSingleAuthor || sourceAuthors.every( ( author ) => author.mappedTo );
 		const mappingDescription = this.getMappingDescription(
 			sourceAuthors.length,
@@ -158,7 +159,7 @@ class AuthorMappingPane extends PureComponent {
 				} ) }
 				<ImporterActionButtonContainer>
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
-						{ this.props.translate( 'Start import' ) }
+						{ this.props.translate( 'Import' ) }
 					</ImporterActionButton>
 					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
@@ -170,7 +171,9 @@ class AuthorMappingPane extends PureComponent {
 const withTotalUsers = createHigherOrderComponent(
 	( Component ) => ( props ) => {
 		const { siteId } = props;
-		const { data } = useUsersQuery( siteId );
+		const { data } = useUsersQuery( siteId, {
+			authors_only: 1,
+		} );
 
 		const totalUsers = data?.total ?? 0;
 

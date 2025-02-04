@@ -1,0 +1,134 @@
+/* Post carousel block styles */
+
+.wp-block-newspack-blocks-carousel {
+	position: relative;
+	margin-top: 0;
+	margin-bottom: 1.5em;
+
+	.carousel-slide {
+		padding: 0;
+		position: relative;
+		margin-bottom: 0;
+		word-break: break-word;
+		overflow-wrap: break-word;
+		height: auto;
+		max-width: 100%;
+		max-height: 75vh;
+
+		a {
+			color: var(--studio-white);
+
+			&:active,
+			&:focus,
+			&:hover {
+				color: var(--studio-white);
+			}
+		}
+
+		.entry-title {
+			font-size: $font-title-small;
+			margin: 0 0 0.25em;
+
+			a {
+				-webkit-box-orient: vertical;
+				display: -webkit-box;
+				-webkit-line-clamp: 3;
+				max-height: 3.5625em;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				color: var(--studio-white);
+				text-decoration: none;
+			}
+		}
+
+		.avatar {
+			border-radius: 100%;
+			display: block;
+			margin-right: 0.5em;
+			height: 1.8em;
+			width: 1.8em;
+		}
+
+		.entry-wrapper {
+			bottom: 0;
+			background-color: rgba(var(--color-text-rgb), 0.5);
+			color: var(--studio-white);
+			left: 0;
+			padding: 1.5em;
+			position: absolute;
+			right: 0;
+		}
+
+		figcaption {
+			font-size: $font-body-small;
+		}
+
+		.entry-meta {
+			color: var(--studio-white);
+			margin-top: 0.5em;
+			margin-bottom: 0;
+			font-size: $font-body-small;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+
+			.byline:not(:last-child) {
+				margin-right: 1.5em;
+			}
+
+			a {
+				color: var(--studio-white);
+				font-weight: bold;
+				text-decoration: none;
+
+				&:active,
+				&:focus,
+				&:hover {
+					color: rgba(var(--studio-white), 0.75);
+				}
+			}
+		}
+
+		.cat-links {
+			color: var(--studio-white);
+			font-size: $font-body-small;
+			font-weight: bold;
+			margin: 0 0 0.5em;
+
+			&.sponsor-label {
+				align-items: center;
+
+				.flag + a {
+					margin-left: 0.5em;
+				}
+			}
+
+			a {
+				text-decoration: none;
+			}
+		}
+	}
+	.post-thumbnail {
+		margin: 0;
+		height: 100%;
+		width: 100%;
+		padding: 0;
+		position: relative;
+		a,
+		img {
+			display: block;
+			height: 100%;
+			object-fit: cover;
+			width: 100%;
+
+			&.image-fit-contain {
+				object-fit: contain;
+			}
+		}
+	}
+
+	.wp-block-newspack-blocks-carousel__placeholder {
+		height: 420px;
+		background: var(--color-neutral-10);
+	}
+}

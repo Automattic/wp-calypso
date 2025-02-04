@@ -1,3 +1,4 @@
+import { eye } from '@automattic/components/src/icons';
 import {
 	Icon,
 	people,
@@ -6,21 +7,38 @@ import {
 	chevronRight,
 	postContent,
 } from '@wordpress/icons';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { numberFormat, translate } from 'i18n-calypso';
 import { capitalize } from 'lodash';
 import moment from 'moment';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { rangeOfPeriod } from 'calypso/state/stats/lists/utils';
 
-export function formatDate( date, period ) {
+export function formatDate( date, period, chartStart = null, chartEnd = null ) {
 	// NOTE: Consider localizing the dates, especially for the 'week' case.
 	const momentizedDate = moment( date );
+	const endDate = momentizedDate.clone().add( 6, 'days' );
+
 	switch ( period ) {
+		case 'hour':
+			// TODO: align the time format with email stats.
+			return momentizedDate.format( 'MMM D HH:00' );
 		case 'day':
 			return momentizedDate.format( 'LL' );
 		case 'week':
-			return momentizedDate.format( 'L' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'L' );
+			// Make partial period display with correct start and end dates.
+			if ( chartStart && momentizedDate.isBefore( chartStart ) ) {
+				return (
+					moment( chartStart ).format( 'LL' ) +
+					' - ' +
+					momentizedDate.add( 6, 'days' ).format( 'LL' )
+				);
+			}
+			if ( chartEnd && endDate.isAfter( chartEnd ) ) {
+				return momentizedDate.format( 'LL' ) + ' - ' + moment( chartEnd ).format( 'LL' );
+			}
+
+			return momentizedDate.format( 'LL' ) + ' - ' + momentizedDate.add( 6, 'days' ).format( 'LL' );
 		case 'month':
 			return momentizedDate.format( 'MMMM YYYY' );
 		case 'year':
@@ -43,39 +61,42 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 }
 
 const EMPTY_RESULT = [];
-export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
-	if ( ! data ) {
-		return EMPTY_RESULT;
-	}
-	return data.map( ( record ) => {
-		const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
+export const buildChartData = memoizeLast(
+	( activeLegend, chartTab, data, period, queryDate, customRange ) => {
+		if ( ! data ) {
+			return EMPTY_RESULT;
+		}
+		return data.map( ( record ) => {
+			const nestedValue = activeLegend.length ? record[ activeLegend[ 0 ] ] : null;
 
-		const recordClassName =
-			record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
-		const className = classNames( recordClassName, {
-			'is-selected': record.period === queryDate,
+			const recordClassName =
+				record.classNames && record.classNames.length ? record.classNames.join( ' ' ) : null;
+			const className = clsx( recordClassName, {
+				'is-selected': record.period === queryDate,
+			} );
+
+			const item = addTooltipData(
+				chartTab,
+				{
+					label: record[ `label${ capitalize( period ) }` ],
+					value: record[ chartTab ],
+					data: record,
+					nestedValue,
+					className,
+				},
+				period,
+				customRange
+			);
+
+			return item;
 		} );
+	}
+);
 
-		const item = addTooltipData(
-			chartTab,
-			{
-				label: record[ `label${ capitalize( period ) }` ],
-				value: record[ chartTab ],
-				data: record,
-				nestedValue,
-				className,
-			},
-			period
-		);
-
-		return item;
-	} );
-} );
-
-function addTooltipData( chartTab, item, period ) {
+function addTooltipData( chartTab, item, period, customRange = {} ) {
 	const tooltipData = [];
 	tooltipData.push( {
-		label: formatDate( item.data.period, period ),
+		label: formatDate( item.data.period, period, customRange.chartStart, customRange.chartEnd ),
 		className: 'is-date-label',
 		value: null,
 	} );
@@ -104,35 +125,23 @@ function addTooltipData( chartTab, item, period ) {
 				label: translate( 'Views' ),
 				value: numberFormat( item.data.views ),
 				className: 'is-views',
-				icon: (
-					<svg
-						className="gridicon"
-						width="24"
-						height="24"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="m4 13 .67.336.003-.005a2.42 2.42 0 0 1 .094-.17c.071-.122.18-.302.329-.52.298-.435.749-1.017 1.359-1.598C7.673 9.883 9.498 8.75 12 8.75s4.326 1.132 5.545 2.293c.61.581 1.061 1.163 1.36 1.599a8.29 8.29 0 0 1 .422.689l.002.005L20 13l.67-.336v-.003l-.003-.005-.008-.015-.028-.052a9.752 9.752 0 0 0-.489-.794 11.6 11.6 0 0 0-1.562-1.838C17.174 8.617 14.998 7.25 12 7.25S6.827 8.618 5.42 9.957c-.702.669-1.22 1.337-1.563 1.839a9.77 9.77 0 0 0-.516.845l-.008.015-.002.005-.001.002v.001L4 13Zm8 3a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-							fill="#fff"
-						/>
-					</svg>
-				),
+				icon: <Icon className="gridicon" icon={ eye } />,
 			} );
-			tooltipData.push( {
-				label: translate( 'Visitors' ),
-				value: numberFormat( item.data.visitors ),
-				className: 'is-visitors',
-				icon: <Icon className="gridicon" icon={ people } />,
-			} );
-			tooltipData.push( {
-				label: translate( 'Views Per Visitor' ),
-				value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
-				className: 'is-views-per-visitor',
-				icon: <Icon className="gridicon" icon={ chevronRight } />,
-			} );
+
+			if ( Number.isFinite( item.data.visitors ) ) {
+				tooltipData.push( {
+					label: translate( 'Visitors' ),
+					value: numberFormat( item.data.visitors ),
+					className: 'is-visitors',
+					icon: <Icon className="gridicon" icon={ people } />,
+				} );
+				tooltipData.push( {
+					label: translate( 'Views Per Visitor' ),
+					value: numberFormat( item.data.views / item.data.visitors, { decimals: 2 } ),
+					className: 'is-views-per-visitor',
+					icon: <Icon className="gridicon" icon={ chevronRight } />,
+				} );
+			}
 
 			if ( item.data.post_titles && item.data.post_titles.length ) {
 				// only show two post titles

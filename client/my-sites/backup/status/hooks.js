@@ -40,13 +40,13 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, {
+	const { data, isInitialLoading } = useRewindableActivityLogQuery( siteId, filter, {
 		enabled: isValidRequest && enabled,
 		refetchOnWindowFocus: false,
 	} );
 
 	return {
-		isLoading,
+		isInitialLoading,
 		deltas: getDeltaActivitiesByType( data ?? [] ),
 	};
 };
@@ -87,7 +87,7 @@ export const useDatesWithNoSuccessfulBackups = ( siteId, startDate, endDate ) =>
 				// Remove dates from the dates array that have backups
 				// This should leave only dates that have no backups in the array
 				const backupDate = adjustDate( item.activityDate ).format( 'MM-DD-YYYY' );
-				if ( dates.indexOf( backupDate ) > -1 ) {
+				if ( dates.indexOf( backupDate ) > -1 && item.activityIsRewindable ) {
 					dates.splice( dates.indexOf( backupDate ), 1 );
 				}
 			} );
@@ -142,7 +142,9 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 
 	return {
 		isLoading:
-			lastBackupBeforeDate.isLoading || lastAttemptOnDate.isLoading || backupDeltas.isLoading,
+			lastBackupBeforeDate.isLoading ||
+			lastAttemptOnDate.isLoading ||
+			backupDeltas.isInitialLoading,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttemptOnDate: lastAttemptOnDate.backupAttempt,
 		deltas: backupDeltas.deltas,
@@ -193,5 +195,6 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		lastBackupAttemptOnDate,
 		lastSuccessfulBackupOnDate,
 		backupAttemptsOnDate,
+		refetch: activityLog.refetch,
 	};
 };

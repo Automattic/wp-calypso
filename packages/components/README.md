@@ -28,6 +28,10 @@ const CallToAction = () => (
 );
 ```
 
+Some components require CSS styles from `@wordpress/components`, which you will need to load in order for them to appear correctly. Within WordPress, add the `wp-components` stylesheet as a dependency of your plugin's stylesheet. See [wp_enqueue_style documentation](https://developer.wordpress.org/reference/functions/wp_enqueue_style/#parameters) for how to specify dependencies.
+
+In non-WordPress projects, import the `build-style/style.css` file directly, located at `node_modules/@wordpress/components/build-style/style.css`.
+
 ## Development Workflow
 
 This package is developed as part of the Calypso monorepo. Run `yarn`
@@ -41,4 +45,4 @@ in the root of the repository to get the required `devDependencies`.
 
 ### Using [Storybook](https://storybook.js.org/)
 
-`yarn workspace @automattic/components run storybook`
+To see stories within this package, run `yarn workspace @automattic/components run storybook`.

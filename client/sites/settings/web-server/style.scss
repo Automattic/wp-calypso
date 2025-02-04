@@ -1,0 +1,30 @@
+@import 'node_modules/@wordpress/base-styles/breakpoints';
+@import 'node_modules/@wordpress/base-styles/mixins';
+
+.settings-web-server {
+	select {
+		width: unset;
+		max-width: 250px;
+
+		@include break-small {
+			max-width: unset;
+		}
+	}
+
+	.defensive-mode__heading {
+		font-size: 1rem;
+		font-weight: 500;
+		line-height: 24px;
+		margin-bottom: 10px;
+	}
+
+	.defensive-mode__description {
+		font-size: rem(14px);
+		font-weight: 400;
+		line-height: 20px;
+	}
+
+	> .defensive-mode__description {
+		margin-bottom: 16px;
+	}
+}

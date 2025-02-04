@@ -1,4 +1,3 @@
-import { Locator } from 'playwright';
 import { OpenInlineInserter } from '../../pages';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
@@ -47,7 +46,8 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const twoColumnButtonLocator = context.editorLocator.locator( selectors.twoColumnButton );
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+		const twoColumnButtonLocator = editorCanvas.locator( selectors.twoColumnButton );
 		await twoColumnButtonLocator.click();
 
 		/**
@@ -87,14 +87,20 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	): Promise< void > {
 		// The inline inserter can be opened in a lot of ways.
 		// We have to define our own function to do so, and make sure we're clicking the right button.
-		const openInlineInserter: OpenInlineInserter = async ( editor: Locator ) => {
-			const addBlockButtonLocator = editor.locator(
+		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
+			const addBlockButtonLocator = editorCanvas.locator(
 				selectors.addBlockButton( columnDetails.columnNumber )
 			);
 			// On mobile, a lot of clicks are eaten en route to the button. This doesn't play well with Playwright and can cause fragility.
 			// A more stable, viewport-safe approach is to focus and press enter (which is also a real workflow for keyboard users).
 			await addBlockButtonLocator.focus();
 			await addBlockButtonLocator.press( 'Enter' );
+
+			// Sometimes the inserter popover doesn't come-up after the `Enter` press.
+			// We use the `aria-expanded` attribute to further send the missing click event
+			if ( ( await addBlockButtonLocator.getAttribute( 'aria-expanded' ) ) === 'false' ) {
+				await addBlockButtonLocator.click();
+			}
 		};
 
 		await context.editorPage.addBlockInline(
@@ -103,7 +109,8 @@ export class LayoutGridBlockFlow implements BlockFlow {
 			openInlineInserter
 		);
 
-		const addedParagraphLocator = context.editorLocator.locator(
+		const editorCanvas = await context.editorPage.getEditorCanvas();
+		const addedParagraphLocator = editorCanvas.locator(
 			selectors.paragraphBlock( columnDetails.columnNumber )
 		);
 		await addedParagraphLocator.fill( columnDetails.textToAdd );
@@ -115,14 +122,12 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedLeftColumnTextLocator = context.page.locator(
-			`text=${ this.configurationData.leftColumnText }`
-		);
-		await expectedLeftColumnTextLocator.waitFor();
+		await context.page
+			.locator( `:text("${ this.configurationData.leftColumnText }"):visible` )
+			.waitFor();
 
-		const expectedRightColumnTextLocator = context.page.locator(
-			`text=${ this.configurationData.rightColumnText }`
-		);
-		await expectedRightColumnTextLocator.waitFor();
+		await context.page
+			.locator( `:text("${ this.configurationData.rightColumnText }"):visible` )
+			.waitFor();
 	}
 }

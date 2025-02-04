@@ -24,6 +24,7 @@ export class RevisionsPage {
 	 */
 	async selectRevision( index: number ): Promise< void > {
 		const sliderTickmarks = this.page.locator( '.revisions-tickmarks > div' );
+		await sliderTickmarks.nth( 0 ).waitFor( { state: 'attached' } );
 		const revisionCount = ( await sliderTickmarks.count() ) + 1;
 
 		if ( index > revisionCount ) {
@@ -32,7 +33,7 @@ export class RevisionsPage {
 			);
 		}
 
-		const slider = this.page.locator( '.revisions-controls > .wp-slider' );
+		const slider = this.page.locator( '.wp-slider' );
 		const sliderWidth = ( await slider.boundingBox() )?.width as number;
 		// Calculate click position on the horizontal slider. For example, if
 		// there are 4 revisions, the second one should be at 25% of the total
@@ -51,8 +52,12 @@ export class RevisionsPage {
 	}
 
 	/**
-	 * Clicks the "Restore This Revision" button. Throws if the current revision
-	 * is already loaded.
+	 * Clicks the "Restore This Revision" button, then checks
+	 * that the editor screen is loaded again.
+	 *
+	 * Throws if the current revision is already loaded.
+	 *
+	 * @throws {Error} if the current revision is already loaded.
 	 */
 	async loadSelectedRevision() {
 		const restoreButton = this.page.locator( 'input[value="Restore This Revision"]' );
@@ -60,9 +65,10 @@ export class RevisionsPage {
 			throw new Error( 'Revision already loaded.' );
 		}
 
-		await Promise.all( [
-			this.page.waitForNavigation( { waitUntil: 'networkidle' } ),
-			restoreButton.click(),
-		] );
+		await restoreButton.click();
+
+		// If the spec is using RevisionsPage, this implies the
+		// account is using WP-Admin.
+		await this.page.waitForURL( /wp-admin\/post.php/, { timeout: 20 * 1000 } );
 	}
 }

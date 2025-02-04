@@ -44,6 +44,30 @@
 		font-weight: 600;
 	}
 
+	.status-card__scheduled-backup {
+		margin-left: auto;
+
+		a, span {
+			font-size: 0.875rem;
+			font-weight: normal;
+		}
+
+		&.placeholder {
+			min-width: 300px;
+		}
+	}
+
+	.status-card__toolbar {
+		margin-left: auto;
+
+		.activity-card__toolbar--reverse {
+			margin-left: 0;
+			border-top: 0;
+			position: initial;
+			padding-top: 0;
+		}
+	}
+
 	@include breakpoint-deprecated( ">660px" ) {
 		display: flex;
 		font-weight: 600;
@@ -75,10 +99,6 @@
 
 	color: var(--studio-gray-80);
 	text-align: left;
-
-	@include breakpoint-deprecated( ">660px" ) {
-		max-width: 500px;
-	}
 }
 
 .status-card__meta {
@@ -254,3 +274,22 @@
 	margin-bottom: 0;
 }
 
+.backup-last-failed__wrapper {
+	border-top: 1px solid var(--color-neutral-5);
+	padding-top: 22px;
+	padding-bottom: 22px;
+	margin-top: 1.5rem;
+}
+
+.backup-last-failed__info {
+	height: 24px;
+	a {
+		color: #101517;
+		text-decoration: underline;
+	}
+	.icon {
+		vertical-align: middle;
+		margin-right: 8px;
+		fill: #7d5600;
+	}
+}

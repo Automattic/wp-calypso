@@ -129,7 +129,6 @@ module.exports = {
 		'jsdoc/check-values': 'error',
 		'jsdoc/empty-tags': 'error',
 		'jsdoc/implements-on-classes': 'error',
-		'jsdoc/newline-after-description': 'error',
 		'jsdoc/no-undefined-types': 'error',
 		'jsdoc/require-jsdoc': 'off',
 		'jsdoc/require-param': 'error',
@@ -150,14 +149,24 @@ module.exports = {
 		'wpcalypso/i18n-no-this-translate': 'error',
 		'wpcalypso/i18n-mismatched-placeholders': 'error',
 		'wpcalypso/i18n-named-placeholders': 'error',
+		'wpcalypso/i18n-translate-identifier': 'error',
+		'wpcalypso/i18n-unlocalized-url': 'error',
 		'wpcalypso/jsx-gridicon-size': 'error',
 		'wpcalypso/jsx-classname-namespace': 'error',
 		'wpcalypso/redux-no-bound-selectors': 'error',
-		'wpcalypso/no-unsafe-wp-apis': 'error',
+		'wpcalypso/no-unsafe-wp-apis': 'warn',
 
 		yoda: 'off',
 
 		// Ensure our codebases use inclusive language
 		'inclusive-language/use-inclusive-words': 'error',
 	},
+	overrides: [
+		{
+			files: [ '**/test/*', '*.json', '*.md' ],
+			rules: {
+				'wpcalypso/i18n-unlocalized-url': 'off',
+			},
+		},
+	],
 };

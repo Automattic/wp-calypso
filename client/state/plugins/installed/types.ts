@@ -1,3 +1,4 @@
+import { CurrentSiteStatus } from 'calypso/my-sites/plugins/plugin-management-v2/types';
 import type { MomentInput } from 'moment';
 
 // The installed plugins found in the Redux store
@@ -6,10 +7,8 @@ export type InstalledPlugins = {
 };
 
 export type InstalledPluginData = {
-	active: boolean;
 	author: string;
 	author_url: string;
-	autoupdate: boolean;
 	description: string;
 	id: string;
 	name: string;
@@ -17,9 +16,7 @@ export type InstalledPluginData = {
 	plugin_url: string;
 	slug: string;
 	uninstallable: boolean;
-	update?: PluginUpdate;
-	version: string;
-};
+} & PluginSite;
 
 // This is the plugin as it is exposed by the selectors
 export type Plugin = {
@@ -34,15 +31,19 @@ export type Plugin = {
 	statusRecentlyChanged?: boolean;
 	update?: PluginUpdate;
 	wporg?: boolean;
+	status?: Array< number >;
+	allStatuses?: Array< CurrentSiteStatus >;
+};
+
+export type PluginSite = {
+	active: boolean;
+	autoupdate: boolean;
+	update?: PluginUpdate;
+	version: string;
 };
 
 export type PluginSites = {
-	[ key: string ]: {
-		active: boolean;
-		autoupdate: boolean;
-		update?: PluginUpdate;
-		version: string;
-	};
+	[ siteId: string ]: PluginSite;
 };
 
 export type PluginUpdate = {
@@ -62,4 +63,5 @@ export type PluginStatus = {
 	pluginId: string;
 	siteId: number;
 	status: string;
+	error: string;
 };

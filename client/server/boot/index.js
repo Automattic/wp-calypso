@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import userAgent from 'express-useragent';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import api from 'calypso/server/api';
 import config from 'calypso/server/config';
 import analytics from 'calypso/server/lib/analytics';
@@ -12,7 +13,6 @@ import pwa from 'calypso/server/pwa';
 
 /**
  * Returns the server HTTP request handler "app".
- *
  * @returns {Object} The express app
  */
 export default function setup() {
@@ -26,11 +26,25 @@ export default function setup() {
 	app.use( loggerMiddleware() );
 
 	if ( process.env.USE_SERVER_PROFILER === 'true' ) {
-		app.use( require( 'calypso/server/middleware/profiler' )() );
+		// TODO: Re-enable this middleware once `v8-profiler-next` adds support for Node.js 22
+		// app.use( require( 'calypso/server/middleware/profiler' )() );
+		console.warn(
+			'Server profiling is temporarily disabled until `v8-profiler-next` adds support for Node.js 22.'
+		);
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		require( 'calypso/server/bundler' )( app );
+
+		// When mocking WordPress.com to point locally, wordpress.com/wp-login.php will hit Calypso creating an infinite loop.
+		// redirect traffic to de.wordpress.com to hit the real backend and prevent a loop.
+		// `de.wordpress.com` accepts POST requests to `/wp-login.php` exactly like `wordpress.com`.
+		if ( process.env.MOCK_WORDPRESSDOTCOM === '1' ) {
+			app.use(
+				'/wp-login.php',
+				createProxyMiddleware( { target: 'https://de.wordpress.com/wp-login.php' } )
+			);
+		}
 
 		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 			if ( config( 'wordpress_logged_in_cookie' ) ) {

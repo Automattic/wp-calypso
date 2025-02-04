@@ -7,6 +7,8 @@ import {
 	SET_LAYOUT,
 	UNDO_ACTION,
 	VIEW_SETTINGS,
+	CLOSE_SHORTCUTS_POPOVER,
+	TOGGLE_SHORTCUTS_POPOVER,
 	SET_FILTER,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
@@ -46,6 +48,13 @@ export const viewSettings = () => ( {
 	type: VIEW_SETTINGS,
 } );
 
+export const closeShortcutsPopover = () => ( {
+	type: CLOSE_SHORTCUTS_POPOVER,
+} );
+export const toggleShortcutsPopover = () => ( {
+	type: TOGGLE_SHORTCUTS_POPOVER,
+} );
+
 export const setFilter = ( filterName ) => ( {
 	type: SET_FILTER,
 	filterName,
@@ -78,6 +87,8 @@ export default {
 	undoAction,
 	unselectNote,
 	viewSettings,
+	closeShortcutsPopover,
+	toggleShortcutsPopover,
 	setFilter,
 	editComment,
 	enableKeyboardShortcuts,

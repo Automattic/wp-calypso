@@ -1,6 +1,5 @@
 /**
  * Return a Webpack loader configuration object containing for JavaScript transpilation.
- *
  * @param {Object} _                   Options
  * @param {number} _.workerCount       Number of workers that are being used by the thread-loader
  * @param {string} _.configFile        Babel config file
@@ -10,6 +9,7 @@
  * @param {RegExp|Function} _.exclude  Directories to exclude when looking for files to transpile
  * @param {RegExp|Function} _.include  Directories to inclued when looking for files to transpile
  * @param {string[]} _.presets         Babel presets
+ * @param {string[]} _.plugins         Babel plugins (optional)
  * @returns {Object} Webpack loader object
  */
 module.exports.loader = ( {
@@ -21,6 +21,7 @@ module.exports.loader = ( {
 	exclude,
 	include,
 	presets,
+	plugins,
 } ) => ( {
 	test: /\.[jt]sx?$/,
 	include,
@@ -41,6 +42,7 @@ module.exports.loader = ( {
 				cacheIdentifier,
 				cacheCompression,
 				presets,
+				plugins,
 			},
 		},
 	],

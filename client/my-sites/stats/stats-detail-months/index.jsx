@@ -1,36 +1,19 @@
-import config from '@automattic/calypso-config';
-import { Card, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailMonths = ( props ) => {
-	const {
-		dataKey,
-		isRequesting,
-		opened,
-		postId,
-		numberFormat,
-		siteId,
-		stats,
-		title,
-		toggle,
-		total,
-		translate,
-	} = props;
+	const { dataKey, isRequesting, postId, numberFormat, siteId, stats, total, translate } = props;
 	const noData = ! stats;
-	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = isRequesting && noData;
 	const classes = {
 		'is-loading': isLoading,
-		'is-showing-info': opened,
 		'has-no-data': noData,
 	};
 
@@ -74,7 +57,7 @@ const StatsPostDetailMonths = ( props ) => {
 			for ( let j = 1; j <= 12; j++ ) {
 				const hasData = year.months[ j ] || 0 === year.months[ j ];
 
-				const cellClass = classNames( {
+				const cellClass = clsx( {
 					'highest-count': 0 !== highest && year.months[ j ] === highest,
 					'has-no-data': ! hasData,
 				} );
@@ -102,62 +85,16 @@ const StatsPostDetailMonths = ( props ) => {
 		tableBody = <tbody>{ tableRows }</tbody>;
 	}
 
-	const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
-	const tableWrapperClasses = classNames( {
-		'module-content-table': ! isFeatured,
-	} );
-
 	return (
-		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-post-months', classes ) }>
+		<div className={ clsx( 'is-detail-months', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
-			<div className="module-header">
-				<h4 className="module-header-title">{ title }</h4>
-				<ul className="module-header-actions">
-					<li className="module-header-action toggle-info">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-						<a
-							href="#"
-							className="module-header-action-link"
-							aria-label={ translate( 'Show or hide panel information', {
-								context: 'Stats panel action',
-							} ) }
-							title={ translate( 'Show or hide panel information', {
-								context: 'Stats panel action',
-							} ) }
-							onClick={ toggle }
-						>
-							{ infoIcon ? <Gridicon icon={ infoIcon } /> : null }
-						</a>
-					</li>
-				</ul>
-			</div>
-			<StatsModuleContent className="module-content-text-info">
-				<p>
-					{ translate(
-						'This table gives you an overview of how many views your post or page has received.',
-						{
-							context: 'Info box description for post stats page in Stats',
-						}
-					) }
-				</p>
-				<span className="legend achievement">
-					{ translate( '%(value)s = The all-time highest value', {
-						args: { value: numberFormat( highest ) },
-						context: 'Legend for post stats page in Stats',
-					} ) }
-				</span>
-			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
-			<div className={ tableWrapperClasses }>
-				<div className="module-content-table-scroll">
-					<table cellPadding="0" cellSpacing="0">
-						{ tableHeader }
-						{ tableBody }
-					</table>
-				</div>
-			</div>
-		</Card>
+			<table cellPadding="0" cellSpacing="0">
+				{ tableHeader }
+				{ tableBody }
+			</table>
+		</div>
 	);
 };
 

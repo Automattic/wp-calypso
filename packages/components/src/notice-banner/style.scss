@@ -1,9 +1,14 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+
+$banner-title-height: 22px;
+
 :root {
-	--font-body: 16px;
+	--font-title-small: 20px;
 	--jp-black: #000;
 	--jp-gray-5: #dcdcde;
-	--jp-red: #d63639;
-	--jp-yellow-20: #f0c930;
+	--jp-red-50: #d63638;
+	--jp-yellow-30: #deb100;
 	--jp-green: #069e08;
 	--spacing-base: 8px;
 }
@@ -11,7 +16,7 @@
 	display: flex;
 	align-items: flex-start;
 
-	font-size: var(--font-body);
+	font-size: $font-body;
 
 	background-color: var(--studio-white);
 
@@ -20,13 +25,64 @@
 	border-color: var(--jp-gray-5);
 	border-left-width: 6px;
 
-	padding: 24px 31px 27px 18px;
+	padding: 24px;
+
+	&.is-info {
+		border-left-color: var(--jp-black);
+
+		.notice-banner__icon {
+			fill: var(--jp-black);
+		}
+	}
+
+	// TODO: Move out these two classes to StatsNotices since they are defined and passed there.
+	.notice-banner__action-button,
+	.notice-banner__action-link {
+		font-family: inherit;
+		font-size: $font-body;
+		font-weight: 600;
+		line-height: 24px;
+		cursor: pointer;
+		margin-top: 20px;
+	}
+
+	.notice-banner__action-link {
+		color: var(--jp-black);
+		font-weight: 600;
+		margin-left: 24px;
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+
+		&.notice-banner__action-link--inline {
+			margin-left: 0;
+		}
+
+		& > span {
+			border-bottom: 1.5px solid var(--jp-black);
+		}
+
+		& > svg {
+			margin-left: 4px;
+		}
+	}
+
+	.notice-banner__action-button {
+		background-color: var(--jp-black);
+		color: var(--studio-white);
+		border-radius: 4px;
+		padding: 8px 24px;
+	}
 }
 
 .notice-banner__icon-wrapper {
-	margin-right: 20px;
 	width: calc(var(--spacing-base) * 3);
 	height: calc(var(--spacing-base) * 3);
+	margin-right: 20px;
+	// Align the icon vertically in the middle compared to the title.
+	margin-top: calc(($banner-title-height - var(--spacing-base) * 3) / 2);
 }
 
 .notice-banner__close-button {
@@ -61,11 +117,15 @@
 }
 
 .notice-banner__main-content {
+	font-family: $font-sf-pro-text;
 	flex-grow: 1;
 }
 
 .notice-banner__title {
+	font-family: $font-sf-pro-text;
 	font-weight: 600;
+	font-size: $font-body;
+	line-height: $banner-title-height;
 	margin-bottom: 8px;
 }
 
@@ -89,51 +149,20 @@
 }
 
 .notice-banner.is-error {
-	border-left-color: var(--jp-red);
+	border-color: var(--jp-red-50);
 
 	.notice-banner__icon {
-		fill: var(--jp-red);
+		fill: var(--jp-red-50);
 	}
 }
 
 .notice-banner.is-warning {
-	border-left-color: var(--jp-yellow-20);
+	border-color: var(--jp-yellow-30);
 
 	.notice-banner__icon {
-		fill: var(--jp-yellow-20);
+		fill: var(--jp-yellow-30);
 	}
 }
-
-.notice-banner.is-info {
-	border-left-color: var(--jp-black);
-
-	.notice-banner__icon {
-		fill: var(--jp-black);
-	}
-
-	.notice-banner__action-button,
-	.notice-banner__action-link {
-		cursor: pointer;
-
-		margin-top: 16px;
-		margin-right: 8px;
-	}
-
-	.notice-banner__action-button {
-		background-color: var(--jp-black);
-		border-radius: 4px;
-		color: var(--studio-white);
-		padding: 8px;
-	}
-
-	.notice-banner__action-link {
-		color: var(--jp-black);
-		text-decoration: underline;
-		font-weight: 600;
-		margin-left: 16px;
-	}
-}
-
 
 .notice-banner.is-success {
 	border-left-color: var(--jp-green);
@@ -141,4 +170,11 @@
 	.notice-banner__icon {
 		fill: var(--jp-green);
 	}
+
+	.notice-banner__action-link {
+		color: var(--jp-green);
+		text-decoration: underline;
+	}
+
+
 }

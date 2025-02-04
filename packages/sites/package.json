@@ -22,18 +22,21 @@
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"dependencies": {
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/search": "workspace:^"
+	},
 	"peerDependencies": {
-		"@wordpress/data": "^6.1.5",
-		"react": "^17.0.2",
-		"react-dom": "^17.0.2",
-		"reakit-utils": "^0.15.1",
-		"redux": "^4.1.2"
+		"@wordpress/data": "^10.16.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"redux": "^5.0.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/jest-dom": "^5.16.2",
-		"@testing-library/react": "^12.1.3",
-		"typescript": "^4.7.4"
+		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/react": "^15.0.7",
+		"typescript": "^5.3.3"
 	},
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",

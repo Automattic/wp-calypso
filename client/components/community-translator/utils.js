@@ -8,7 +8,6 @@ import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 
 /**
  * Prepares and triggers a request to get GP string
- *
  * @param {Object} locale and item from `languages` array in config/_shared.json
  * @param {Object} originalStringData GP string information { singular, context, plural }
  * @param {string} apiBaseUrl Base API url to get translations
@@ -38,7 +37,6 @@ export function getSingleTranslationData(
 
 /**
  * Prepares and triggers a request to get GP string
- *
  * @param {string} originalId GP original string id
  * @param {Object} translationObject GP string information { singular, context, plural }
  * @param {Object} locale and item from `languages` array in config/_shared.json
@@ -74,7 +72,6 @@ export function submitTranslation(
 
 /**
  * Normalizes raw data from GP API
- *
  * @param {Object} glotPressData raw API response
  * @returns {Object} normalized data
  */
@@ -94,7 +91,6 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
 
 /**
  * Normalizes raw data from GP API
- *
  * @param {string} originalId GP original string id
  * @param {Object} locale and item from `languages` array in config/_shared.json
  * @param {string} project GP project

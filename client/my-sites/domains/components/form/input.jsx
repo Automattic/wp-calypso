@@ -1,7 +1,6 @@
-import { FormInputValidation } from '@automattic/components';
-import classNames from 'classnames';
+import { FormInputValidation, FormLabel } from '@automattic/components';
+import clsx from 'clsx';
 import { Component } from 'react';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -79,7 +78,7 @@ export default class Input extends Component {
 	};
 
 	render() {
-		const classes = classNames(
+		const classes = clsx(
 			this.props.additionalClasses,
 			this.props.name,
 			this.props.labelClass,

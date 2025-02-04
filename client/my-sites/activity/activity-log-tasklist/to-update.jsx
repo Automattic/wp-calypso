@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';
@@ -31,15 +31,14 @@ export default function ( WrappedComponent ) {
 				: pluginsWithUpdates;
 		plugins.current = { siteId, mergedPlugins };
 
-		const siteAlertsQuery = useQuery(
-			[ 'site-alerts', siteId ],
-			() => wpcom.req.get( { path: `/sites/${ siteId }/alerts`, apiNamespace: 'wpcom/v2' } ),
-			{
-				staleTime: Infinity,
-				refetchOnMount: 'always',
-				refetchInterval: 5 * 60 * 1000,
-			}
-		);
+		const siteAlertsQuery = useQuery( {
+			queryKey: [ 'site-alerts', siteId ],
+			queryFn: () =>
+				wpcom.req.get( { path: `/sites/${ siteId }/alerts`, apiNamespace: 'wpcom/v2' } ),
+			staleTime: Infinity,
+			refetchOnMount: 'always',
+			refetchInterval: 5 * 60 * 1000,
+		} );
 
 		const themes = siteAlertsQuery.data?.updates?.themes ?? EMPTY_LIST;
 		const core = siteAlertsQuery.data?.updates?.core ?? EMPTY_LIST;

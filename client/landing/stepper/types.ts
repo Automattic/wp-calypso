@@ -1,5 +1,4 @@
 /** Step */
-
 export type StepOptions = Record< string, unknown >;
 
 export interface Step {

@@ -11,7 +11,7 @@ import { items as itemSchemas } from './schema';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,
-	tasks: state.tasks?.map( ( task ) =>
+	tasks: state?.tasks?.map( ( task ) =>
 		task.id === taskId ? { ...task, isCompleted: completed } : task
 	),
 } );
@@ -26,7 +26,7 @@ const moduleTaskMap = {
 	videopress: CHECKLIST_KNOWN_TASKS.JETPACK_VIDEO_HOSTING,
 };
 
-const items = withSchemaValidation( itemSchemas, ( state = {}, action ) => {
+const items = withSchemaValidation( itemSchemas, ( state = null, action ) => {
 	switch ( action.type ) {
 		case SITE_CHECKLIST_RECEIVE:
 			return action.checklist;

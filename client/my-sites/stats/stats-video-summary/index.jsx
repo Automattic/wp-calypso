@@ -53,6 +53,9 @@ class StatsVideoSummary extends Component {
 		if ( 'watch_time' === query.statType ) {
 			tabLabel = translate( 'Hours Watched' );
 		}
+		if ( 'retention_rate' === query.statType ) {
+			tabLabel = translate( 'Retention Rate' );
+		}
 
 		return (
 			<div>
@@ -68,6 +71,7 @@ class StatsVideoSummary extends Component {
 					selected={ selectedBar }
 					onClick={ this.selectBar }
 					tabLabel={ tabLabel }
+					type="video"
 				/>
 			</div>
 		);

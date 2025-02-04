@@ -1,34 +1,23 @@
-import config from '@automattic/calypso-config';
-import {
-	isJetpackPlanSlug,
-	JetpackTag,
-	JETPACK_RELATED_PRODUCTS_MAP,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
-	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-} from '@automattic/calypso-products';
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
-import Modal from 'react-modal';
-import { useDispatch } from 'react-redux';
-import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import { useCallback, useEffect, type FC } from 'react';
+import JetpackLightbox, {
+	JetpackLightboxAside,
+	JetpackLightboxMain,
+} from 'calypso/components/jetpack/jetpack-lightbox';
+import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
+import JetpackProductInfo from 'calypso/components/jetpack/jetpack-product-info';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { PricingBreakdown } from '../product-store/pricing-breakdown';
 import { ProductStoreBaseProps } from '../product-store/types';
-import getProductIcon from '../product-store/utils/get-product-icon';
-import slugToSelectorProduct from '../slug-to-selector-product';
-import { Duration, SelectorProduct } from '../types';
-import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER } from './constants';
-import { Icons } from './icons/icons';
-import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
-import ProductDetails from './product-details';
-
 import './style.scss';
+import ProductSelect from './product-select';
+import QuantityDropdown from './quantity-dropdown';
+import type { Duration, SelectorProduct } from '../types';
 
 type Props = ProductStoreBaseProps & {
 	product: SelectorProduct;
@@ -39,18 +28,7 @@ type Props = ProductStoreBaseProps & {
 	siteId: number | null;
 };
 
-const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
-	<ul className="product-lightbox__detail-tags-list">
-		{ tags.map( ( tag ) => (
-			<li className="product-lightbox__detail-tags-tag" key={ tag.tag }>
-				<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
-				<p>{ tag.label }</p>
-			</li>
-		) ) }
-	</ul>
-);
-
-const ProductLightbox: React.FC< Props > = ( {
+const ProductLightbox: FC< Props > = ( {
 	product,
 	isVisible,
 	onClose,
@@ -59,22 +37,6 @@ const ProductLightbox: React.FC< Props > = ( {
 } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const onChangeOption = useCallback(
-		( productSlug: string ) => {
-			onChangeProduct( slugToSelectorProduct( productSlug ) );
-
-			// Tracking when variant selected inside the lightbox
-			dispatch(
-				recordTracksEvent( 'calypso_product_lightbox_variant_select', {
-					site_id: siteId,
-					product_slug: productSlug,
-				} )
-			);
-		},
-		[ onChangeProduct, dispatch, siteId ]
-	);
 
 	const {
 		getCheckoutURL,
@@ -93,6 +55,7 @@ const ProductLightbox: React.FC< Props > = ( {
 			recordTracksEvent( 'calypso_product_lightbox_checkout_click', {
 				site_id: siteId,
 				product_slug: product.productSlug,
+				quantity: product.quantity,
 			} )
 		);
 	}, [ dispatch, getOnClickPurchase, product, siteId ] );
@@ -106,24 +69,7 @@ const ProductLightbox: React.FC< Props > = ( {
 		);
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
-	const variantOptions = useMemo( () => {
-		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
-		return variants.map( ( itemSlug ) => ( {
-			id: itemSlug,
-			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
-		} ) );
-	}, [ product.productSlug ] );
-
-	const isSocialProduct = [
-		PRODUCT_JETPACK_SOCIAL_ADVANCED,
-		PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
-		PRODUCT_JETPACK_SOCIAL_BASIC,
-		PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-	].includes( product.productSlug );
-
-	const shouldShowOptions = ! isSocialProduct
-		? variantOptions.length > 1
-		: variantOptions.length > 1 && config.isEnabled( 'jetpack-social/advanced-plan' );
+	const { sidebarRef, mainRef, initMobileSidebar } = useMobileSidebar();
 
 	const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( product );
 
@@ -131,7 +77,7 @@ const ProductLightbox: React.FC< Props > = ( {
 
 	const isLargeScreen = useBreakpoint( '>782px' );
 
-	const showPricingBreakdown = includedProductSlugs?.length;
+	const showPricingBreakdown = !! includedProductSlugs?.length;
 
 	const isProductInCart =
 		! isJetpackPlanSlug( product.productSlug ) && getIsProductInCart( product );
@@ -139,101 +85,64 @@ const ProductLightbox: React.FC< Props > = ( {
 	const isOwned = getIsOwned( product );
 
 	return (
-		<Modal
-			className="product-lightbox__modal"
-			overlayClassName="product-lightbox__modal-overlay"
+		<JetpackLightbox
+			className="product-lightbox"
 			isOpen={ isVisible }
-			onRequestClose={ close }
-			htmlOpenClassName="ReactModal__Html--open lightbox-mode"
+			onClose={ close }
+			onAfterOpen={ initMobileSidebar }
 		>
-			<div className="product-lightbox__content-wrapper">
-				<Button
-					className="product-lightbox__close-button"
-					plain
-					onClick={ close }
-					aria-label={
-						translate( 'Close', {
-							comment:
-								'Text read by screen readers when the close button of the lightbox gets focus.',
-						} ) as string
-					}
-				>
-					{ Icons.close }
-				</Button>
-				<div className="product-lightbox__detail">
-					<div className="product-lightbox__detail-header">
-						<div className="product-lightbox__product-icon">
-							<img alt="" src={ getProductIcon( { productSlug: product.productSlug } ) } />
-						</div>
-						<h2>{ product.displayName }</h2>
-					</div>
-					<div className="product-lightbox__detail-desc">{ product.lightboxDescription }</div>
+			<JetpackLightboxMain ref={ mainRef }>
+				<JetpackProductInfo
+					title={ product.displayName }
+					product={ product }
+					full={ isLargeScreen }
+					showPricingBreakdown={ showPricingBreakdown && ! isLargeScreen }
+				/>
+			</JetpackLightboxMain>
 
-					{ showPricingBreakdown && ! isLargeScreen ? (
-						<PricingBreakdown
-							includedProductSlugs={ includedProductSlugs }
+			<JetpackLightboxAside ref={ sidebarRef }>
+				<div className="product-lightbox__variants">
+					<div className="product-lightbox__variants-content">
+						<ProductSelect
 							product={ product }
-							showBreakdownHeading
 							siteId={ siteId }
+							onChangeProduct={ onChangeProduct }
 						/>
-					) : null }
-
-					{ ( ( includedProductSlugs?.length && isLargeScreen ) ||
-						! includedProductSlugs?.length ) && (
-						<div className="product-lightbox__detail-tags">
-							<span className="product-lightbox__detail-tags-label">
-								{ translate( 'Great for:' ) }
-							</span>
-							{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
-						</div>
-					) }
-
-					<ProductDetails product={ product } />
-				</div>
-				<div className="product-lightbox__sidebar">
-					<div className="product-lightbox__variants">
-						<div className="product-lightbox__variants-content">
-							{ shouldShowOptions && (
-								<div>
-									<div className="product-lightbox__variants-options">
-										<MultipleChoiceQuestion
-											question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-											answers={ variantOptions }
-											selectedAnswerId={ product?.productSlug }
-											onAnswerChange={ onChangeOption }
-											shouldShuffleAnswers={ false }
-										/>
-									</div>
-								</div>
-							) }
-							{ ! isOwned && (
+						{ ! isOwned && (
+							<>
+								<QuantityDropdown
+									product={ product }
+									siteId={ siteId }
+									onChangeProduct={ onChangeProduct }
+								/>
 								<PaymentPlan
 									isMultiSiteIncompatible={ isMultiSiteIncompatible }
 									siteId={ siteId }
 									product={ product }
+									quantity={ product.quantity }
 								/>
-							) }
-							<Button
-								primary={ ! isProductInCart }
-								onClick={ onCheckoutClick }
-								className="jetpack-product-card__button product-lightbox__checkout-button"
-								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
-								disabled={ isMultiSiteIncompatible }
-							>
-								{ getLightBoxCtaLabel( product ) }
-							</Button>
-						</div>
+							</>
+						) }
+						<Button
+							primary={ ! isProductInCart }
+							onClick={ onCheckoutClick }
+							className="jetpack-product-card__button product-lightbox__checkout-button"
+							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
+							disabled={ isMultiSiteIncompatible }
+						>
+							{ getLightBoxCtaLabel( product ) }
+						</Button>
 					</div>
-					{ showPricingBreakdown && isLargeScreen ? (
-						<PricingBreakdown
-							includedProductSlugs={ includedProductSlugs }
-							product={ product }
-							siteId={ siteId }
-						/>
-					) : null }
 				</div>
-			</div>
-		</Modal>
+				{ showPricingBreakdown && isLargeScreen ? (
+					<PricingBreakdown
+						includedProductSlugs={ includedProductSlugs }
+						product={ product }
+						siteId={ siteId }
+					/>
+				) : null }
+			</JetpackLightboxAside>
+		</JetpackLightbox>
 	);
 };
 

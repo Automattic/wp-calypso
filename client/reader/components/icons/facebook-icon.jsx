@@ -10,7 +10,7 @@ export default function ReaderFacebookIcon( { iconSize } ) {
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<linearGradient
-				id="a"
+				id="facebook-icon-a"
 				gradientUnits="userSpaceOnUse"
 				x1="11.9961"
 				x2="11.9961"

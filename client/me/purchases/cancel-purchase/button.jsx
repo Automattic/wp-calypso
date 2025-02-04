@@ -4,10 +4,11 @@ import {
 	getPlan,
 	isJetpackPlan,
 	isJetpackProduct,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -18,6 +19,7 @@ import {
 	getSubscriptionEndDate,
 	hasAmountAvailableToRefund,
 	isOneTimePurchase,
+	isRefundable,
 	isSubscription,
 } from 'calypso/lib/purchases';
 import {
@@ -273,40 +275,54 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, translate, cancelBundledDomain, includedDomainPurchase } = this.props;
-		let text;
-		let onClick;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			onClick = this.handleCancelPurchaseClick;
+		const isValidForRefund =
+			isDomainRegistration( purchase ) ||
+			isSubscription( purchase ) ||
+			isOneTimePurchase( purchase );
+
+		const isValidForCancel = isDomainRegistration( purchase ) && isRefundable( purchase );
+
+		const onClick = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) && isValidForRefund ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isValidForCancel ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			if ( ! hasAmountAvailableToRefund( purchase ) && isSubscription( purchase ) ) {
+				return this.handleCancelPurchaseClick;
+			}
+
+			return () => this.cancelPurchase( purchase );
+		} )();
+
+		const text = ( () => {
+			if ( hasAmountAvailableToRefund( purchase ) ) {
+				if ( isDomainRegistration( purchase ) ) {
+					return translate( 'Cancel domain and refund' );
+				}
+				if ( isSubscription( purchase ) ) {
+					return translate( 'Cancel subscription' );
+				}
+				if ( isOneTimePurchase( purchase ) ) {
+					return translate( 'Cancel and refund' );
+				}
+			}
 
 			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+				return translate( 'Cancel domain' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
+				return translate( 'Cancel subscription' );
 			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
-			}
-		} else {
-			onClick = () => {
-				this.cancelPurchase( purchase );
-			};
-
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				onClick = this.handleCancelPurchaseClick;
-				text = translate( 'Cancel Subscription' );
-			}
-		}
+		} )();
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const { isJetpack, purchaseListUrl, activeSubscriptions } = this.props;
+		const { isJetpack, isAkismet, purchaseListUrl, activeSubscriptions } = this.props;
 		const closeDialogAndProceed = () => {
 			this.closeDialog();
 			return onClick();
@@ -315,7 +331,7 @@ class CancelPurchaseButton extends Component {
 		const planName = getName( purchase );
 
 		return (
-			<div>
+			<div className="cancel-purchase__button-wrapper">
 				<Button
 					className="cancel-purchase__button"
 					disabled={ disableButtons }
@@ -342,7 +358,7 @@ class CancelPurchaseButton extends Component {
 					/>
 				) }
 
-				{ isJetpack && (
+				{ ( isJetpack || isAkismet ) && (
 					<CancelJetpackForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
@@ -351,6 +367,7 @@ class CancelPurchaseButton extends Component {
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }
 						flowType={ getPurchaseCancellationFlowType( purchase ) }
+						isAkismet={ isAkismet }
 					/>
 				) }
 
@@ -383,6 +400,7 @@ class CancelPurchaseButton extends Component {
 export default connect(
 	( state, { purchase } ) => ( {
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+		isAkismet: purchase && isAkismetProduct( purchase ),
 	} ),
 	{
 		clearPurchases,

@@ -1,10 +1,10 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GithubLoginButton from 'calypso/components/social-buttons/github';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
@@ -20,11 +20,11 @@ class SocialLoginActionButton extends Component {
 		connectSocialUser: PropTypes.func.isRequired,
 		disconnectSocialUser: PropTypes.func.isRequired,
 		socialServiceResponse: PropTypes.object,
-		redirectUri: PropTypes.string,
 	};
 
 	state = {
 		fetchingUser: false,
+		userHasDisconnected: false,
 	};
 
 	refreshUser = async () => {
@@ -100,18 +100,30 @@ class SocialLoginActionButton extends Component {
 			};
 		}
 
+		if ( service === 'github' ) {
+			this.recordLoginSuccess( service );
+
+			socialInfo = {
+				...socialInfo,
+				access_token: response.access_token,
+			};
+		}
+
 		return this.props.connectSocialUser( socialInfo ).then( this.refreshUser );
 	};
 
 	disconnectFromSocialService = () => {
 		const { service } = this.props;
-		return this.props.disconnectSocialUser( service ).then( this.refreshUser );
+		return this.props.disconnectSocialUser( service ).then( () => {
+			this.refreshUser();
+			this.setState( { userHasDisconnected: true } );
+		} );
 	};
 
 	render() {
-		const { service, isConnected, isUpdatingSocialConnection, redirectUri, translate } = this.props;
+		const { service, isConnected, isUpdatingSocialConnection, translate } = this.props;
 
-		const { fetchingUser } = this.state;
+		const { fetchingUser, userHasDisconnected } = this.state;
 
 		const buttonLabel = isConnected ? translate( 'Disconnect' ) : translate( 'Connect' );
 		const disabled = isUpdatingSocialConnection || fetchingUser;
@@ -120,7 +132,7 @@ class SocialLoginActionButton extends Component {
 			<FormButton
 				className="social-login__button button"
 				disabled={ disabled }
-				compact={ true }
+				compact
 				isPrimary={ ! isConnected }
 				onClick={ this.handleButtonClick }
 			>
@@ -135,7 +147,6 @@ class SocialLoginActionButton extends Component {
 		if ( service === 'google' ) {
 			return (
 				<GoogleSocialButton
-					clientId={ config( 'google_oauth_client_id' ) }
 					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
 					startingPoint="account-social-connect"
@@ -146,18 +157,27 @@ class SocialLoginActionButton extends Component {
 		}
 
 		if ( service === 'apple' ) {
-			const uxMode = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : 'popup';
 			return (
 				<AppleLoginButton
-					clientId={ config( 'apple_oauth_client_id' ) }
-					uxMode={ uxMode }
 					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
-					redirectUri={ redirectUri }
 					socialServiceResponse={ this.props.socialServiceResponse }
 				>
 					{ actionButton }
 				</AppleLoginButton>
+			);
+		}
+
+		if ( service === 'github' ) {
+			return (
+				<GithubLoginButton
+					onClick={ this.handleButtonClick }
+					responseHandler={ this.handleSocialServiceResponse }
+					socialServiceResponse={ this.props.socialServiceResponse }
+					userHasDisconnected={ userHasDisconnected }
+				>
+					{ actionButton }
+				</GithubLoginButton>
 			);
 		}
 

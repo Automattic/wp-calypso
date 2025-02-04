@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,7 +10,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate } ) {
 	const isFormPending = isRequestingSettings || isSavingSettings;
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	return (
 		<>
@@ -40,7 +41,7 @@ function Widgets( { isSavingSettings, isRequestingSettings, isAtomic, translate 
 						) }
 						link={
 							isAtomic
-								? 'https://wordpress.com/support/widgets/#widget-visibility'
+								? localizeUrl( 'https://wordpress.com/support/widgets/#widget-visibility' )
 								: 'https://jetpack.com/support/widget-visibility'
 						}
 						privacyLink={ ! isAtomic }

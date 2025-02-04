@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=18.13.0
+ARG node_version=22.9.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
@@ -20,6 +20,9 @@ ENV GENERATE_CACHE_IMAGE $generate_cache_image
 ###################
 FROM builder-cache-${use_cache} as builder
 
+# Make sure shell options, like pipefail, are set for the build.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 # Information for Sentry Releases.
 ARG manual_sentry_release=false
 ARG is_default_branch=false
@@ -37,10 +40,10 @@ ENV COMMIT_SHA $commit_sha
 ENV CALYPSO_ENV production
 ENV WORKERS $workers
 ENV BUILD_TRANSLATION_CHUNKS true
-ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD true
 ENV SKIP_TSC true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
+ENV IS_CI=true
 WORKDIR /calypso
 
 # Build a "base" layer
@@ -61,7 +64,8 @@ RUN bash /tmp/env-config.sh
 # This layer is populated with up-to-date files from
 # Calypso development.
 COPY . /calypso/
-RUN yarn install --immutable --check-cache
+RUN yarn install --immutable --check-cache --inline-builds
+RUN node --version && yarn --version && npm --version
 
 # Build the final layer
 #

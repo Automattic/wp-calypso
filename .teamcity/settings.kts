@@ -42,12 +42,11 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2022.04"
+version = "2023.05"
 
 project {
 
 	vcsRoot(WpCalypso)
-	subProject(_self.projects.DesktopApp)
 	subProject(_self.projects.WPComPlugins)
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
@@ -55,13 +54,14 @@ project {
 	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
-	buildType(ValidateRenovateConfig)
 	buildType(SmartBuildLauncher)
 
 	params {
-		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("JEST_E2E_WORKERS", "100%", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
-		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
+		// Force color support in chalk. For some reason it doesn't detect TeamCity
+		// as supported (even though both TeamCity and chalk support that.)
+		param("env.FORCE_COLOR", "1")
+		param("env.NODE_OPTIONS", "--max-old-space-size=16384")
+		text("JEST_E2E_WORKERS", "50%", label = "Jest max workers", description = "Number or percent of cores to use when running E2E tests.", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/base:latest", label = "Docker image", description = "Default Docker image used to run builds", allowEmpty = true)
@@ -78,9 +78,9 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23", "credentialsJSON:873582a4-c421-4647-b901-56c86abf09c8", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_24_25" , "credentialsJSON:cb25e38d-c322-4b5a-83f9-4cf6741456d3", display = ParameterDisplay.HIDDEN)
+		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_24_25%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
@@ -88,6 +88,12 @@ project {
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
+		// TeamCity Rich Notificaion App.
+		password("TEAMCITY_SLACK_RICH_NOTIFICATION_APP_OAUTH_TOKEN", "credentialsJSON:1ade13b3-4f88-4b2a-a71a-9c6f95698d00", display=ParameterDisplay.HIDDEN)
+
+		// Values related to the WPCOM VCS
+		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
+		password("WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH", "credentialsJSON:81683f57-784e-4535-9af0-26212c9e599b", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
@@ -155,7 +161,7 @@ object BuildBaseImages : BuildType({
 					registry.a8c.com/calypso/base:%image_tag%
 					registry.a8c.com/calypso/base:%build.number%
 				""".trimIndent()
-				commandArgs = "--no-cache --target base"
+				commandArgs = "--no-cache --target base --build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}"
 			}
 			param("dockerImage.platform", "linux")
 		}
@@ -327,62 +333,6 @@ object CheckCodeStyle : BuildType({
 	}
 })
 
-object ValidateRenovateConfig : BuildType({
-	name = "Validate Renovate Configuration"
-	description = "Validates the renovate configuration file"
-
-	vcs {
-		root(WpCalypso)
-		cleanCheckout = true
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Run renovate config validator"
-			scriptContent = """
-				# Run renovate-config-validator from the latest version of renovate
-				# in a temporary environment (to avoid installing every package.)
-				# We use the latest version because the managed renovate service
-				# controls the renovate version we use.
-				yarn dlx -p renovate renovate-config-validator
-			"""
-		}
-	}
-
-	triggers {
-		vcs {
-			// Only trigger on changes to the renovate configuration file.
-			triggerRules = "+:root=${Settings.WpCalypso.id}:renovate.json"
-			branchFilter = """
-				+:*
-				-:pull*
-			""".trimIndent()
-		}
-	}
-
-	features {
-		pullRequests {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			provider = github {
-				authType = token {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
-			}
-		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
-	}
-})
-
-
 object SmartBuildLauncher : BuildType({
 	name = "Smart Build Launcher"
 	description = "Launches TeamCity builds based on which files were modified in VCS."
@@ -442,4 +392,3 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "matticbot"
 	}
 })
-

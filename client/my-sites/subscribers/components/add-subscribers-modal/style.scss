@@ -1,0 +1,135 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.add-subscribers-modal {
+	.components-modal__frame {
+		width: 560px;
+
+		@media (max-width: $break-small) {
+			width: auto;
+		}
+	}
+
+	.add-subscriber__form--container {
+		p.add-subscriber__form--disclaimer {
+			margin-top: 16px;
+			margin-bottom: 24px;
+		}
+
+		.components-base-control__help {
+			top: 7px !important;
+			margin-top: 0;
+		}
+
+		.form-input-validation {
+			padding-left: 0 !important;
+
+			svg {
+				position: static !important;
+				margin-left: 0 !important;
+				margin-right: 5px;
+			}
+		}
+
+		.is-error .components-base-control__field {
+			margin-bottom: 6px !important;
+		}
+
+		.components-base-control__field {
+			margin-top: 0 !important;
+			margin-bottom: 8px !important;
+		}
+
+		.components-text-control__input {
+			border-radius: 2px;
+			padding: 10px 16px !important;
+		}
+	}
+
+	.add-subscribers-modal__label {
+		display: block;
+		margin-bottom: 6px;
+		font-size: $font-body-small;
+		font-weight: 500;
+		line-height: rem(20px);
+	}
+
+	.add-subscribers-modal__notice {
+		margin-bottom: 24px !important;
+
+		.notice__content {
+			padding-right: 13px;
+		}
+
+		.add-subscribers-modal__notice-text {
+			margin-right: 6px;
+		}
+	}
+
+	.add-subscriber__form-submit-btn {
+		float: right;
+		min-width: auto;
+	}
+
+	.add-subscribers-modal__form--hidden {
+		opacity: 0;
+		height: 0;
+		overflow: hidden;
+	}
+
+	.loading-bar {
+		height: 4px;
+		margin-bottom: 24px;
+		margin-top: 0;
+
+		&::before {
+			background-color: $studio-gray-70;
+		}
+	}
+
+	.add-subscribers-modal__loading-text {
+		color: $studio-gray-50;
+		font-size: $font-body;
+		font-weight: 400;
+		line-height: rem(20px);
+	}
+
+	.subscriber-upload-form__dropzone {
+		cursor: pointer;
+		position: relative;
+		height: 190px;
+		margin-bottom: 1.5em;
+		background-color: var(--color-neutral-0);
+		border: 2px dashed var(--color-neutral-light);
+		transition: all 200ms ease-out, color 100ms ease-out;
+		fill: var(--color-neutral-20);
+		font-size: 1rem;
+		color: var(--color-neutral-70);
+		text-align: center;
+		p {
+			margin-bottom: 12px;
+		}
+		.components-form-file-upload {
+			position: absolute;
+			height: 100%;
+			top: 50%;
+			left: 0;
+			right: 0;
+			transform: translateY(-50%);
+			button {
+				height: 100%;
+				width: 100%;
+				border: 0;
+				justify-content: center;
+				border-radius: 0;
+			}
+			svg {
+				width: 48px;
+				height: 48px;
+				text-align: center;
+				fill: var(--studio-gray-20);
+			}
+		}
+	}
+}

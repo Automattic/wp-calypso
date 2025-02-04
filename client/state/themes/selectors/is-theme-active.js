@@ -4,7 +4,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Returns whether the theme is currently active on the given site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID

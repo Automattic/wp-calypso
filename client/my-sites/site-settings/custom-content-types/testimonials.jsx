@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
@@ -26,7 +27,7 @@ function Testimonials( {
 				link={
 					siteIsJetpack && ! isAtomic
 						? 'https://jetpack.com/support/custom-content-types/'
-						: 'https://wordpress.com/support/testimonials/'
+						: localizeUrl( 'https://wordpress.com/support/testimonials/' )
 				}
 				privacyLink={ siteIsJetpack && ! isAtomic }
 			/>
@@ -67,7 +68,7 @@ function Testimonials( {
 				<FormSettingExplanation isIndented>
 					{ translate(
 						'Add, organize, and display {{link}}testimonials{{/link}}. If your theme doesn’t support testimonials yet, ' +
-							'you can display them using the shortcode [testimonials].',
+							'you can display them using the shortcode [testimonials]. If your theme does support testimonials, these will remain active regardless of toggle state.',
 						{
 							components: {
 								link: <InlineSupportLink supportContext="testimonials" />,

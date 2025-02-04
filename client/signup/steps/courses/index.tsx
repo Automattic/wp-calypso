@@ -1,10 +1,10 @@
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import VideosUi from 'calypso/components/videos-ui';
 import { COURSE_SLUGS, useCourseData } from 'calypso/data/courses';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { useDispatch } from 'calypso/state';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import CoursesFooter from './footer';
 import CoursesHeader from './header';

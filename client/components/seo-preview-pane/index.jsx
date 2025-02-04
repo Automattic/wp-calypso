@@ -1,5 +1,12 @@
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
-import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
+import {
+	FacebookLinkPreview,
+	FacebookPostPreview,
+	TwitterLinkPreview,
+	GoogleSearchPreview,
+	TYPE_WEBSITE,
+	TYPE_ARTICLE,
+} from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
 import { PureComponent } from 'react';
@@ -104,44 +111,46 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 };
 
 const GoogleSite = ( site, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const FacebookSite = ( site, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookLinkPreview
 		title={ site.name }
 		url={ site.URL }
-		type="website"
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
+		type={ TYPE_WEBSITE }
 	/>
 );
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookPostPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		type="article"
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		author={ get( post, 'author.name', '' ) }
+		user={ { displayName: get( post, 'author.name', '' ) } }
+		type={ TYPE_ARTICLE }
 	/>
 );
 
 const TwitterSite = ( site, frontPageMetaDescription ) => (
-	<TwitterPreview
+	<TwitterLinkPreview
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
@@ -151,7 +160,7 @@ const TwitterSite = ( site, frontPageMetaDescription ) => (
 );
 
 const TwitterPost = ( site, post, frontPageMetaDescription ) => (
-	<TwitterPreview
+	<TwitterLinkPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		type="large_image_summary"
@@ -191,7 +200,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
-		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'twitter' ] );
+		const services = compact( [ post && 'wordpress', 'google', 'facebook', 'x' ] );
 
 		if ( showNudge ) {
 			return <SeoPreviewUpgradeNudge { ...{ site } } />;
@@ -213,7 +222,7 @@ export class SeoPreviewPane extends PureComponent {
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
 						{ services.map( ( service ) => (
-							<SocialItem { ...{ key: service, service } } />
+							<SocialItem key={ service } service={ service } />
 						) ) }
 					</VerticalMenu>
 				</div>
@@ -225,7 +234,7 @@ export class SeoPreviewPane extends PureComponent {
 									wordpress: ReaderPost( site, post, frontPageMetaDescription ),
 									facebook: FacebookPost( site, post, frontPageMetaDescription ),
 									google: GooglePost( site, post, frontPageMetaDescription ),
-									twitter: TwitterPost( site, post, frontPageMetaDescription ),
+									x: TwitterPost( site, post, frontPageMetaDescription ),
 								},
 								selectedService,
 								ComingSoonMessage( translate )
@@ -235,7 +244,7 @@ export class SeoPreviewPane extends PureComponent {
 								{
 									facebook: FacebookSite( site, frontPageMetaDescription ),
 									google: GoogleSite( site, frontPageMetaDescription ),
-									twitter: TwitterSite( site, frontPageMetaDescription ),
+									x: TwitterSite( site, frontPageMetaDescription ),
 								},
 								selectedService,
 								ComingSoonMessage( translate )

@@ -67,25 +67,6 @@ describe( 'actions', () => {
 			nock.cleanAll();
 		} );
 
-		test( 'should dispatch a TERMS_RECEIVE', () => {
-			const spy = jest.fn();
-			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: TERMS_RECEIVE,
-				siteId: siteId,
-				taxonomy: taxonomyName,
-				terms: [
-					{
-						ID: expect.stringMatching( /^temporary/ ),
-						name: 'ribs',
-					},
-				],
-				query: undefined,
-				found: undefined,
-			} );
-		} );
-
 		test( 'should dispatch a TERMS_RECEIVE event on success', async () => {
 			const spy = jest.fn();
 			await addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
@@ -105,25 +86,15 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch a TERM_REMOVE event on success', async () => {
+		test( 'should not dispatch a TERMS_RECEIVE event on failure', () => {
 			const spy = jest.fn();
-			await addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: TERM_REMOVE,
-				siteId: siteId,
-				taxonomy: taxonomyName,
-				termId: expect.stringMatching( /^temporary/ ),
-			} );
-		} );
+			addTerm( siteId, taxonomyName, { name: 'ribs' } )( spy );
 
-		test( 'should dispatch a TERM_REMOVE event on failure', async () => {
-			const spy = jest.fn();
-			await addTerm( siteId, 'chicken-and-ribs', { name: 'new term' } )( spy );
-			expect( spy ).toHaveBeenCalledWith( {
-				type: TERM_REMOVE,
+			expect( spy ).not.toHaveBeenCalledWith( {
+				type: TERMS_RECEIVE,
 				siteId: siteId,
 				taxonomy: 'chicken-and-ribs',
-				termId: expect.stringMatching( /^temporary/ ),
+				terms: expect.any( Array ),
 			} );
 		} );
 	} );

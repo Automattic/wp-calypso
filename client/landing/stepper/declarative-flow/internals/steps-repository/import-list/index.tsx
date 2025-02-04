@@ -1,17 +1,27 @@
-import React from 'react';
+import { type FC } from 'react';
 import ListStep from 'calypso/blocks/import/list';
-import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { type StepProps } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { ImportWrapper } from '../import';
-import { generateStepPath } from '../import/helper';
-import './style.scss';
+import { getFinalImporterUrl } from '../import/helper';
 
-const ImportList: Step = function ImportStep( props ) {
+interface ImportListProps extends StepProps {
+	title?: string;
+	subTitle?: string;
+	skipTracking?: boolean;
+}
+
+const ImportList: FC< ImportListProps > = function ImportStep( props ) {
+	const siteSlug = useSiteSlug();
 	const { navigation } = props;
 
 	return (
 		<ImportWrapper { ...props }>
 			<ListStep
-				goToStep={ ( step, section ) => navigation.goToStep?.( generateStepPath( step, section ) ) }
+				siteSlug={ siteSlug }
+				submit={ navigation?.submit }
+				getFinalImporterUrl={ getFinalImporterUrl }
+				{ ...props }
 			/>
 		</ImportWrapper>
 	);

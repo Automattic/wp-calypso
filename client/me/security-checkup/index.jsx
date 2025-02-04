@@ -4,8 +4,8 @@ import { Component } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import VerticalNav from 'calypso/components/vertical-nav';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -42,7 +42,7 @@ class SecurityCheckupComponent extends Component {
 
 				<DocumentHead title={ translate( 'Security' ) } />
 
-				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
+				<NavigationHeader navigationItems={ [] } title={ translate( 'Security' ) } />
 
 				<SectionHeader label={ translate( 'Security Checklist' ) } />
 

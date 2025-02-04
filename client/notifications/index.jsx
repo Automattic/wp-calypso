@@ -6,35 +6,35 @@
  *  - keyboard hotkeys
  *  - window/pane scrolling
  *  - service worker
- *
- *
  * @module notifications
  */
 
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import NotificationsPanel, {
 	refreshNotes,
 } from '@automattic/notifications/src/panel/Notifications';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugFactory from 'debug';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import localStorageHelper from 'store';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { requestAdminMenu as requestAdminMenuAction } from 'calypso/state/admin-menu/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { setUnseenCount } from 'calypso/state/notifications/actions';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
-import { setUnseenCount } from 'calypso/state/notifications/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 import './style.scss';
 
 /**
  * Returns whether or not the browser session
  * is currently visible to the user
- *
  * @returns {boolean} is the browser session visible
  */
 const getIsVisible = () => {
@@ -59,10 +59,107 @@ export class Notifications extends Component {
 		isVisible: isDesktop ? true : getIsVisible(),
 	};
 
+	focusedElementBeforeOpen = null;
+
+	actionHandlers = {
+		APP_RENDER_NOTES: [
+			( store, { newNoteCount } ) => {
+				localStorageHelper.set( 'wpnotes_unseen_count', newNoteCount );
+				this.props.setUnseenCount( newNoteCount );
+			},
+		],
+		OPEN_LINK: [
+			( store, { href, tracksEvent } ) => {
+				if ( tracksEvent ) {
+					this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
+						link: href,
+					} );
+				}
+				window.open( href, '_blank' );
+			},
+		],
+		OPEN_POST: [
+			( store, { siteId, postId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
+					site_id: siteId,
+					post_id: postId,
+				} );
+				page( `/read/blogs/${ siteId }/posts/${ postId }` );
+			},
+		],
+		OPEN_COMMENT: [
+			( store, { siteId, postId, commentId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
+					site_id: siteId,
+					post_id: postId,
+					comment_id: commentId,
+				} );
+				page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+			},
+		],
+		OPEN_SITE: [
+			( store, { siteId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
+					site_id: siteId,
+				} );
+				page( `/read/blogs/${ siteId }` );
+			},
+		],
+		VIEW_SETTINGS: [
+			() => {
+				this.props.checkToggle();
+				page( '/me/notifications' );
+			},
+		],
+		EDIT_COMMENT: [
+			( store, { siteId, postId, commentId } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
+					site_id: siteId,
+					post_id: postId,
+					comment_id: commentId,
+				} );
+				page( `/comment/${ siteId }/${ commentId }?action=edit` );
+			},
+		],
+		ANSWER_PROMPT: [
+			( store, { siteId, href } ) => {
+				this.props.checkToggle();
+				this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
+					site_id: siteId,
+				} );
+				window.open( href, '_blank' );
+			},
+		],
+		CLOSE_PANEL: [
+			() => {
+				this.props.checkToggle();
+			},
+		],
+		APPROVE_NOTE: [
+			() => {
+				this.props.requestAdminMenu( this.props.selectedSiteId );
+			},
+		],
+		NOTES_REMOVE: [
+			( _, { isComment } ) => {
+				if ( isComment ) {
+					this.props.requestAdminMenu( this.props.selectedSiteId );
+				}
+			},
+		],
+	};
+
 	componentDidMount() {
-		window.addEventListener( 'mousedown', this.props.checkToggle );
-		window.addEventListener( 'touchstart', this.props.checkToggle );
-		window.addEventListener( 'keydown', this.handleKeyPress );
+		document.addEventListener( 'click', this.props.checkToggle );
+		document.addEventListener( 'keydown', this.handleKeyPress );
+
+		if ( this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		}
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -80,10 +177,21 @@ export class Notifications extends Component {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.isShowing === this.props.isShowing ) {
+			return;
+		}
+
+		if ( ! prevProps.isShowing && this.props.isShowing ) {
+			this.focusedElementBeforeOpen = document.activeElement;
+		} else {
+			this.focusedElementBeforeOpen?.focus();
+		}
+	}
+
 	componentWillUnmount() {
-		window.removeEventListener( 'mousedown', this.props.checkToggle );
-		window.removeEventListener( 'touchstart', this.props.checkToggle );
-		window.removeEventListener( 'keydown', this.handleKeyPress );
+		document.removeEventListener( 'click', this.props.checkToggle );
+		document.removeEventListener( 'keydown', this.handleKeyPress );
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
@@ -141,10 +249,8 @@ export class Notifications extends Component {
 
 		switch ( event.data.action ) {
 			case 'openPanel':
-				// checktoggle closes panel with no parameters
-				this.props.checkToggle();
-				// ... and toggles when the 2nd parameter is true
-				this.props.checkToggle( null, true );
+				// Ensure panel is opened.
+				this.props.checkToggle( null, true, true );
 				return refreshNotes();
 
 			case 'trackClick':
@@ -176,91 +282,16 @@ export class Notifications extends Component {
 			this.props.didForceRefresh();
 		}
 
-		const customMiddleware = {
-			APP_RENDER_NOTES: [
-				( store, { newNoteCount } ) => {
-					this.props.setIndicator( newNoteCount );
-					this.props.setUnseenCount( newNoteCount );
-				},
-			],
-			OPEN_LINK: [
-				( store, { href, tracksEvent } ) => {
-					if ( tracksEvent ) {
-						this.props.recordTracksEventAction( 'calypso_notifications_' + tracksEvent, {
-							link: href,
-						} );
-					}
-					window.open( href, '_blank' );
-				},
-			],
-			OPEN_POST: [
-				( store, { siteId, postId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
-						site_id: siteId,
-						post_id: postId,
-					} );
-					page( `/read/blogs/${ siteId }/posts/${ postId }` );
-				},
-			],
-			OPEN_COMMENT: [
-				( store, { siteId, postId, commentId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
-						site_id: siteId,
-						post_id: postId,
-						comment_id: commentId,
-					} );
-					page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
-				},
-			],
-			OPEN_SITE: [
-				( store, { siteId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
-						site_id: siteId,
-					} );
-					page( `/read/blogs/${ siteId }` );
-				},
-			],
-			VIEW_SETTINGS: [
-				() => {
-					this.props.checkToggle();
-					page( '/me/notifications' );
-				},
-			],
-			EDIT_COMMENT: [
-				( store, { siteId, postId, commentId } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
-						site_id: siteId,
-						post_id: postId,
-						comment_id: commentId,
-					} );
-					page( `/comment/${ siteId }/${ commentId }?action=edit` );
-				},
-			],
-			ANSWER_PROMPT: [
-				( store, { siteId, href } ) => {
-					this.props.checkToggle();
-					this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
-						site_id: siteId,
-					} );
-					window.open( href, '_blank' );
-				},
-			],
-		};
-
 		return (
 			<div
 				id="wpnc-panel"
-				className={ classNames( 'wide', 'wpnc__main', {
+				className={ clsx( 'wide', 'wpnc__main', {
 					'wpnt-open': this.props.isShowing,
 					'wpnt-closed': ! this.props.isShowing,
 				} ) }
 			>
 				<NotificationsPanel
-					customMiddleware={ customMiddleware }
+					actionHandlers={ this.actionHandlers }
 					isShowing={ this.props.isShowing }
 					isVisible={ this.state.isVisible }
 					locale={ localeSlug }
@@ -275,10 +306,13 @@ export default connect(
 	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
 		forceRefresh: shouldForceRefresh( state ),
+		selectedSiteId: getSelectedSiteId( state ),
 	} ),
-	{
-		recordTracksEventAction,
-		setUnseenCount,
-		didForceRefresh,
-	}
+	( dispatch ) => ( {
+		recordTracksEventAction: ( name, properties ) =>
+			dispatch( recordTracksEventAction( name, properties ) ),
+		setUnseenCount: ( count ) => dispatch( setUnseenCount( count ) ),
+		didForceRefresh: () => dispatch( didForceRefresh() ),
+		requestAdminMenu: ( siteId ) => dispatch( requestAdminMenuAction( siteId ) ),
+	} )
 )( Notifications );

@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INSTALL_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -9,7 +8,9 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
@@ -18,7 +19,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
 import type { MouseEventHandler, PropsWithChildren } from 'react';
@@ -26,12 +27,13 @@ import type { MouseEventHandler, PropsWithChildren } from 'react';
 import './style.scss';
 
 interface Props {
-	item: Plugin;
+	item: PluginComponentProps;
 	columnKey: string;
 	selectedSite?: SiteDetails;
 	isSmallScreen?: boolean;
 	className?: string;
-	updatePlugin?: ( plugin: Plugin ) => void;
+	updatePlugin?: ( plugin: PluginComponentProps ) => void;
+	siteCount?: number;
 }
 
 export default function PluginRowFormatter( {
@@ -44,6 +46,9 @@ export default function PluginRowFormatter( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const billingPeriod = useSelector( getBillingInterval );
+	const pluginId = item.id || item.slug; // Plugin ID only available on Site plugin item object
 
 	const PluginDetailsButton = (
 		props: PropsWithChildren< { className: string; onClick?: MouseEventHandler } >
@@ -73,7 +78,6 @@ export default function PluginRowFormatter( {
 		};
 
 	const moment = useLocalizedMoment();
-	const state = useSelector( ( state ) => state );
 
 	const ago = ( date: MomentInput ) => {
 		return moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -84,11 +88,14 @@ export default function PluginRowFormatter( {
 
 	const installInProgress = useSelector(
 		( state ) =>
-			selectedSite && isPluginActionInProgress( state, selectedSite.ID, item.id, INSTALL_PLUGIN )
+			selectedSite && isPluginActionInProgress( state, selectedSite.ID, pluginId, INSTALL_PLUGIN )
+	);
+
+	const { activation, autoupdate } = useSelector( ( state ) =>
+		getAllowedPluginActions( item, state, selectedSite )
 	);
 
 	if ( selectedSite ) {
-		const { activation, autoupdate } = getAllowedPluginActions( item, state, selectedSite );
 		canActivate = activation;
 		canUpdate = autoupdate;
 	}
@@ -99,11 +106,18 @@ export default function PluginRowFormatter( {
 
 	const siteCount = item?.sites && Object.keys( item.sites ).length;
 
-	const allStatuses = getPluginActionStatuses( state );
+	const isFromMarketplace = useSelector( ( state ) => isMarketplaceProduct( state, item?.slug ) );
+	const allStatuses = useSelector( ( state ) => getPluginActionStatuses( state ) );
 
-	const currentSiteStatuses = allStatuses.filter(
-		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
+	let currentSiteStatuses = allStatuses.filter(
+		( status ) => status.pluginId === pluginId && status.action !== UPDATE_PLUGIN
 	);
+
+	if ( 'site-name' === columnKey ) {
+		currentSiteStatuses = currentSiteStatuses.filter(
+			( status ) => parseInt( status.siteId ) === selectedSite?.ID
+		);
+	}
 
 	const pluginActionStatus =
 		currentSiteStatuses.length > 0 ? (
@@ -120,6 +134,9 @@ export default function PluginRowFormatter( {
 					<span className="plugin-row-formatter__site-name">{ selectedSite?.domain }</span>
 					{ /* Overlay for small screen is added in the card component */ }
 					{ ! isSmallScreen && <span className="plugin-row-formatter__overlay"></span> }
+					{ pluginActionStatus && (
+						<div className="plugin-row-formatter__action-status">{ pluginActionStatus }</div>
+					) }
 				</span>
 			);
 		case 'plugin':
@@ -142,7 +159,7 @@ export default function PluginRowFormatter( {
 								id={ item.slug }
 								onClick={ item.onClick }
 								checked={ item.isSelected }
-								readOnly={ true }
+								readOnly
 							/>
 						) }
 						{ item.icon ? (
@@ -196,7 +213,6 @@ export default function PluginRowFormatter( {
 				<div className="plugin-row-formatter__toggle">
 					<PluginActivateToggle
 						isJetpackCloud
-						hideLabel={ ! isSmallScreen }
 						plugin={ pluginOnSite }
 						site={ selectedSite }
 						disabled={ !! item?.isSelectable }
@@ -210,7 +226,7 @@ export default function PluginRowFormatter( {
 						plugin={ pluginOnSite }
 						site={ selectedSite }
 						wporg={ !! item.wporg }
-						isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
+						isMarketplaceProduct={ isFromMarketplace }
 						disabled={ !! item?.isSelectable }
 					/>
 				</div>
@@ -246,6 +262,7 @@ export default function PluginRowFormatter( {
 						selectedSite={ selectedSite }
 						plugin={ item }
 						isInstalling={ installInProgress }
+						billingPeriod={ billingPeriod }
 					/>
 				</div>
 			);

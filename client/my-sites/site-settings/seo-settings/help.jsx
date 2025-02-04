@@ -1,11 +1,10 @@
 import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import { connect } from 'react-redux';
-import SupportInfo from 'calypso/components/support-info';
+import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -19,14 +18,14 @@ export const SeoSettingsHelpCard = ( {
 	translate,
 } ) => {
 	const seoHelpLink = siteIsJetpack
-		? 'https://jetpack.com/support/seo-tools/'
+		? localizeUrl( 'https://jetpack.com/support/seo-tools/' )
 		: 'https://wpbizseo.wordpress.com/';
 
 	return (
-		<div id="seo">
-			<SettingsSectionHeader title={ translate( 'Search engine optimization' ) } />
+		<PanelCard>
+			<PanelCardHeading>{ translate( 'Search engine optimization' ) }</PanelCardHeading>
 			{ hasAdvancedSEOFeature && (
-				<Card className="seo-settings__help">
+				<>
 					<p>
 						{ translate(
 							'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
@@ -43,16 +42,6 @@ export const SeoSettingsHelpCard = ( {
 					</p>
 
 					{ siteIsJetpack && (
-						<SupportInfo
-							text={ translate(
-								'To help improve your search page ranking, you can customize how the content titles' +
-									' appear for your site. You can reorder items such as ‘Site Name’ and ‘Tagline’,' +
-									' and also add custom separators between the items.'
-							) }
-							link="https://jetpack.com/support/seo-tools/"
-						/>
-					) }
-					{ siteIsJetpack && (
 						<JetpackModuleToggle
 							siteId={ siteId }
 							moduleSlug="seo-tools"
@@ -60,9 +49,9 @@ export const SeoSettingsHelpCard = ( {
 							disabled={ disabled }
 						/>
 					) }
-				</Card>
+				</>
 			) }
-		</div>
+		</PanelCard>
 	);
 };
 

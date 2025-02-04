@@ -2,14 +2,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getManageConnectionHref } from 'calypso/lib/plugins/utils';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import '../style.scss';
 
 interface Props {
 	site: SiteDetails;
-	plugin: Plugin;
+	plugin: PluginComponentProps;
 }
 
 export default function PluginManageConnection( { site, plugin }: Props ) {

@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Gravatar from 'calypso/components/gravatar';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
+import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';

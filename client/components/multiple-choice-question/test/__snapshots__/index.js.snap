@@ -3,6 +3,7 @@
 exports[`MultipleChoiceQuestion should render with the minimum required properties ( plus extra prop to guarantee order ) 1`] = `
 <fieldset
   className="multiple-choice-question form-fieldset"
+  onClick={[Function]}
   role="group"
 >
   <legend
@@ -20,6 +21,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-1"
@@ -37,6 +39,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-2"
@@ -54,6 +57,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-3"
@@ -71,6 +75,7 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
         checked={false}
         className="form-radio"
         disabled={false}
+        name="test-question"
         onChange={[Function]}
         type="radio"
         value="test-answer-4"

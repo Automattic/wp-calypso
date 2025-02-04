@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { updateQueryParams } from '../../import/util';
 

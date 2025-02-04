@@ -8,7 +8,6 @@ import 'calypso/state/reader-ui/init';
 
 /**
  * Request unseen status for any section
- *
  * @returns {{type: string}} redux action
  */
 export const requestUnseenStatus = () => ( {

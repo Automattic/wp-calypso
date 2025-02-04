@@ -5,7 +5,6 @@ import {
 	PaymentProcessorResponseData,
 	PaymentProcessorSuccess,
 	PaymentProcessorRedirect,
-	PaymentProcessorManual,
 	PaymentProcessorError,
 	PaymentProcessorResponseType,
 } from '../types';
@@ -23,8 +22,18 @@ export function usePaymentProcessors(): Record< string, PaymentProcessorFunction
 	return paymentProcessors;
 }
 
-export function makeErrorResponse( url: string ): PaymentProcessorError {
-	return { type: PaymentProcessorResponseType.ERROR, payload: url };
+export function makeErrorResponse( errorMessage: string ): PaymentProcessorError {
+	return { type: PaymentProcessorResponseType.ERROR, payload: errorMessage };
+}
+
+export function isErrorResponse( value: unknown ): boolean {
+	return (
+		!! value &&
+		typeof value === 'object' &&
+		'type' in value &&
+		value.type === PaymentProcessorResponseType.ERROR &&
+		'payload' in value
+	);
 }
 
 export function makeSuccessResponse(
@@ -35,8 +44,4 @@ export function makeSuccessResponse(
 
 export function makeRedirectResponse( url: string ): PaymentProcessorRedirect {
 	return { type: PaymentProcessorResponseType.REDIRECT, payload: url };
-}
-
-export function makeManualResponse( payload: unknown ): PaymentProcessorManual {
-	return { type: PaymentProcessorResponseType.MANUAL, payload };
 }

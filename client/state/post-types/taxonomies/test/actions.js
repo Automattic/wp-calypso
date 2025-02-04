@@ -51,7 +51,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestPostTypeTaxonomies( 2916284, 'post' )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: POST_TYPES_TAXONOMIES_REQUEST,
 				siteId: 2916284,
 				postType: 'post',
@@ -63,7 +63,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					receivePostTypeTaxonomies( 2916284, 'post', [
 						{ name: 'category', label: 'Categories' },
 						{ name: 'post_tag', label: 'Tags' },
@@ -77,7 +77,7 @@ describe( 'actions', () => {
 				2916284,
 				'post'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_SUCCESS,
 					siteId: 2916284,
 					postType: 'post',
@@ -90,7 +90,7 @@ describe( 'actions', () => {
 				2916284,
 				'foo'
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: POST_TYPES_TAXONOMIES_REQUEST_FAILURE,
 					siteId: 2916284,
 					postType: 'foo',

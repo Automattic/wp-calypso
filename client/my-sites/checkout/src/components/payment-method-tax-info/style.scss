@@ -1,0 +1,30 @@
+.payment-method-edit-dialog .dialog__content .notice.is-error.is-compact {
+	margin-bottom: 10px;
+}
+
+button.payment-method-tax-info__edit-button {
+	text-decoration: underline;
+	padding: 0;
+}
+
+button.button.payment-method-tax-info__edit-button svg.gridicon {
+	margin-right: 4px;
+	width: 16px;
+	height: 16px;
+	vertical-align: top;
+	filter: grayscale(0%);
+}
+
+.payment-method-tax-info__address {
+	margin-right: 0.5em;
+}
+
+.payment-method-tax-info {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	@include breakpoint-deprecated( ">960px" ) {
+		display: inline-flex;
+	}
+}

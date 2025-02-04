@@ -1,22 +1,56 @@
-import { ProgressBar } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { isWooExpressFlow } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
+import React, { lazy, useEffect } from 'react';
 import Modal from 'react-modal';
-import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import { generatePath, useParams } from 'react-router';
+import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
-import { recordPageView } from 'calypso/lib/analytics/page-view';
-import SignupHeader from 'calypso/signup/signup-header';
-import { ONBOARD_STORE } from '../../stores';
-import recordStepStart from './analytics/record-step-start';
-import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
-import { AssertConditionState, Flow, StepperStep } from './types';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { useFirstStep } from '../../hooks/use-first-step';
+import { useSaveQueryParams } from '../../hooks/use-save-query-params';
+import { useSiteData } from '../../hooks/use-site-data';
+import useSyncRoute from '../../hooks/use-sync-route';
+import { useStartStepperPerformanceTracking } from '../../utils/performance-tracking';
+import { StepperLoader, StepRoute } from './components';
+import { Boot } from './components/boot';
+import { RedirectToStep } from './components/redirect-to-step';
+import { useFlowAnalytics } from './hooks/use-flow-analytics';
+import { useFlowNavigation } from './hooks/use-flow-navigation';
+import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
+import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
+import { PRIVATE_STEPS } from './steps';
+import { AssertConditionState, type Flow, type StepperStep, type StepProps } from './types';
+import type { StepperInternalSelect } from '@automattic/data-stores';
 import './global.scss';
 
-const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
+const lazyCache = new WeakMap<
+	() => Promise< {
+		default: React.ComponentType< StepProps >;
+	} >,
+	React.ComponentType< StepProps >
+>();
+
+function flowStepComponent( flowStep: StepperStep | undefined ) {
+	if ( ! flowStep ) {
+		return null;
+	}
+
+	if ( 'asyncComponent' in flowStep ) {
+		let lazyComponent = lazyCache.get( flowStep.asyncComponent );
+		if ( ! lazyComponent ) {
+			lazyComponent = lazy( flowStep.asyncComponent );
+			lazyCache.set( flowStep.asyncComponent, lazyComponent );
+		}
+		return lazyComponent;
+	}
+
+	return flowStep.component;
+}
 
 /**
  * This component accepts a single flow property. It does the following:
@@ -24,89 +58,165 @@ const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-
  * 1. It renders a react-router route for every step in the flow.
  * 2. It gives every step the ability to navigate back and forth within the flow
  * 3. It's responsive to the dynamic changes in side the flow's hooks (useSteps and useStepsNavigation)
- *
  * @param props
  * @param props.flow the flow you want to render
+ * @param props.steps the steps of the flow.
  * @returns A React router switch will all the routes
  */
-export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
+export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[] | null } > = ( {
+	flow,
+	steps,
+} ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-	const flowSteps = flow.useSteps();
+	const deprecatedFlowSteps = 'useSteps' in flow ? flow.useSteps() : null;
+	const flowSteps = steps ?? deprecatedFlowSteps ?? [];
+
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
-	const location = useLocation();
-	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
-	const history = useHistory();
-	const { search } = useLocation();
-	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const firstStepSlug = useFirstStep( stepPaths );
+	const { navigate, params } = useFlowNavigation( flow );
+	const currentStepRoute = params.step || '';
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { lang = null } = useParams();
+	const isValidStep = params.step != null && stepPaths.includes( params.step );
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-	const [ previousProgress, setPreviousProgress ] = useState(
-		stepProgress ? stepProgress.progress : 0
+	// Start tracking performance for this step.
+	useStartStepperPerformanceTracking( params.flow || '', currentStepRoute );
+	useFlowAnalytics(
+		{ flow: params.flow, step: params.step, variant: flow.variantSlug },
+		{ enabled: isValidStep }
 	);
-	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
-	const stepNavigation = flow.useStepNavigation(
-		currentStepRoute,
-		async ( path, extraData = null ) => {
-			// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
-			setStepData( {
-				path: path,
-				intent: intent,
-				...extraData,
-			} );
+	const { __ } = useI18n();
+	useSaveQueryParams();
 
-			const _path = path.includes( '?' ) // does path contain search params
-				? generatePath( `/${ flow.name }/${ path }` )
-				: generatePath( `/${ flow.name }/${ path }${ search }` );
+	const { site, siteSlugOrId } = useSiteData();
 
-			history.push( _path, stepPaths );
-			setPreviousProgress( stepProgress?.progress ?? 0 );
+	// Ensure that the selected site is fetched, if available. This is used for event tracking purposes.
+	// See https://github.com/Automattic/wp-calypso/pull/82981.
+	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
+
+	// this pre-loads the next step in the flow.
+	useEffect( () => {
+		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
+		const nextStep = flowSteps[ nextStepIndex ];
+
+		// 0 implies the findIndex returned -1.
+		if ( nextStepIndex === 0 || ! nextStep ) {
+			return;
 		}
-	);
-	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
-	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
 
-	flow.useSideEffect?.();
+		if ( siteSlugOrId && ! selectedSite ) {
+			// If this step depends on a selected site, only preload after we have the data.
+			// Otherwise, we're still waiting to render something meaningful, and we don't want to
+			// potentially slow that down by having the CPU busy initialising future steps.
+			return;
+		}
+		if (
+			// Don't load anything on user step because the user step will hard-navigate anyways.
+			currentStepRoute !== 'user' &&
+			'asyncComponent' in nextStep
+		) {
+			nextStep.asyncComponent();
+		}
+		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
+		// which means that we don't want to depend on `flowSteps` here, or this would end up
+		// running on every render. We thus depend on `flow` instead.
+		//
+		// This should be safe, because flows shouldn't return different lists of steps at
+		// different points. But even if they do, worst case scenario we only fail to preload
+		// some steps, and they'll simply be loaded later.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
+
+	const stepNavigation = useStepNavigationWithTracking( {
+		flow,
+		currentStepRoute,
+		navigate,
+	} );
+
+	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
+
+	flow.useSideEffect?.( currentStepRoute, navigate );
+
+	useSyncRoute();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
-	}, [ location ] );
+	}, [ currentStepRoute ] );
 
-	useEffect( () => {
-		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentStepRoute ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-
-			// Also record page view for data and analytics
-			const pathname = window.location.pathname || '';
-			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
-			recordPageView( pathname, pageTitle );
-		}
-
-		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
-		// This causes the intent to become empty, and thus this event being fired again.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ flow.name, currentStepRoute ] );
-
-	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
+	const assertCondition = flow.useAssertConditions?.( navigate ) ?? {
+		state: AssertConditionState.SUCCESS,
+	};
 
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				/* eslint-disable wpcalypso/jsx-classname-namespace */
-				return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
-			/* eslint-enable wpcalypso/jsx-classname-namespace */
+				return <StepperLoader />;
 			case AssertConditionState.FAILURE:
-				throw new Error( assertCondition.message ?? 'An error has occurred.' );
+				return null;
+		}
+
+		const StepComponent = flowStepComponent( flowSteps.find( ( { slug } ) => slug === step.slug ) );
+
+		if ( ! StepComponent ) {
+			return null;
+		}
+
+		// The `nextStep` is available only when logged-out users go to the step that requires auth
+		// and are redirected to the user step.
+		const postAuthStepSlug = stepData?.nextStep ?? '';
+		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
+			const previousAuthStepSlug = stepData?.previousStep;
+			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: postAuthStepSlug,
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+
+			const signupUrl = generatePath( '/setup/:flow/:step/:lang?', {
+				flow: flow.name,
+				step: 'user',
+				lang: lang === 'en' || isLoggedIn ? null : lang,
+			} );
+
+			return (
+				<StepComponent
+					navigation={ {
+						submit() {
+							navigate( postAuthStepSlug, undefined, true );
+						},
+						...( previousAuthStepSlug && {
+							goBack() {
+								navigate( previousAuthStepSlug, undefined, true );
+							},
+						} ),
+					} }
+					flow={ flow.name }
+					variantSlug={ flow.variantSlug }
+					stepName="user"
+					redirectTo={ postAuthStepPath }
+					signupUrl={ signupUrl }
+				/>
+			);
+		}
+
+		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
+			// eslint-disable-next-line no-console
+			console.warn(
+				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
+			);
 		}
 
 		return (
-			<step.component
+			<StepComponent
 				navigation={ stepNavigation }
 				flow={ flow.name }
+				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
 			/>
@@ -114,56 +224,42 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	};
 
 	const getDocumentHeadTitle = () => {
-		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
-			return flow.title;
-		}
+		return flow.title ?? __( 'Create a site' );
 	};
 
-	const getShowWooLogo = () => {
-		if ( isWooExpressFlow( flow.name ) ) {
-			return true;
-		}
-
-		return false;
-	};
-
-	let progressBarExtraStyle: React.CSSProperties = {};
-	if ( 'videopress' === flow.name ) {
-		progressBarExtraStyle = {
-			'--previous-progress': Math.min( 100, Math.ceil( previousProgressValue * 100 ) ) + '%',
-			'--current-progress': Math.min( 100, Math.ceil( progressValue * 100 ) ) + '%',
-		} as React.CSSProperties;
-	}
+	useSignUpStartTracking( { flow } );
 
 	return (
-		<>
+		<Boot fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
-			<Switch>
-				{ flowSteps.map( ( step ) => {
-					return (
-						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
-							<div className={ classnames( flow.name, flow.classnames, kebabCase( step.slug ) ) }>
-								{ 'videopress' === flow.name && 'intro' === step.slug && (
-									<VideoPressIntroBackground />
-								) }
-								<ProgressBar
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									className="flow-progress"
-									value={ progressValue * 100 }
-									total={ 100 }
-									style={ progressBarExtraStyle }
-								/>
 
-								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
-								{ renderStep( step ) }
-							</div>
-						</Route>
-					);
-				} ) }
-				<Route>
-					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
-				</Route>
-			</Switch>
-		</>
+			<Routes>
+				{ flowSteps.map( ( step ) => (
+					<Route
+						key={ step.slug }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }/:lang?` }
+						element={
+							<StepRoute
+								key={ step.slug }
+								step={ step }
+								flow={ flow }
+								showWooLogo={ isWooExpressFlow( flow.name ) }
+								renderStep={ renderStep }
+								navigate={ navigate }
+							/>
+						}
+					/>
+				) ) }
+				<Route
+					path="/:flow/:lang?"
+					element={
+						<RedirectToStep
+							slug={ flow.__experimentalUseBuiltinAuth ? firstStepSlug : stepPaths[ 0 ] }
+						/>
+					}
+				/>
+			</Routes>
+			<AsyncCheckoutModal siteId={ site?.ID } />
+		</Boot>
 	);
 };

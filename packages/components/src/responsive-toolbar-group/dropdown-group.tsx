@@ -1,8 +1,16 @@
-import { ToolbarGroup, ToolbarButton, Dropdown, MenuItem, MenuGroup } from '@wordpress/components';
+import {
+	ToolbarGroup,
+	ToolbarButton,
+	Dropdown,
+	MenuItem,
+	MenuGroup,
+	SlotFillProvider,
+	Popover,
+} from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 
 import './style.scss';
 
@@ -18,23 +26,53 @@ export default function DropdownGroup( {
 	rootMargin = '0px',
 	onClick = () => null,
 	initialActiveIndex = -1,
+	initialActiveIndexes,
+	isMultiSelection,
 }: {
-	children: ReactChild[];
+	children: ReactNode[];
 	className?: string;
 	hideRatio?: number;
 	showRatio?: number;
 	rootMargin?: string;
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
+	initialActiveIndexes?: number[];
+	isMultiSelection?: boolean;
 } ) {
-	const classes = classnames( 'responsive-toolbar-group__dropdown', className );
+	const classes = clsx( 'responsive-toolbar-group__dropdown', className );
+
+	const defaultActiveIndexes = useMemo( () => {
+		if ( isMultiSelection ) {
+			return initialActiveIndexes || [];
+		}
+
+		return initialActiveIndex !== -1 ? [ initialActiveIndex ] : [];
+	}, [ isMultiSelection, initialActiveIndex, initialActiveIndexes ] );
 
 	const containerRef = useRef< HTMLDivElement >( null );
 	const [ calculatedOnce, setCalculatedOnce ] = useState< boolean >( false );
-	const [ activeIndex, setActiveIndex ] = useState< number >( initialActiveIndex );
+	const [ activeIndexes, setActiveIndexes ] = useState< Set< number > >(
+		new Set( defaultActiveIndexes )
+	);
 	const [ groupedIndexes, setGroupedIndexes ] = useState< GroupedIndexStore >( {} );
 	const { current: shadowListItems } = useRef< HTMLButtonElement[] >( [] );
 	const translate = useTranslate();
+
+	const onSelect = ( index: number ) => {
+		setActiveIndexes( ( currentActiveIndexes: Set< number > ) => {
+			if ( ! isMultiSelection ) {
+				return new Set( [ index ] );
+			}
+
+			if ( ! currentActiveIndexes.has( index ) ) {
+				currentActiveIndexes.add( index );
+			} else if ( currentActiveIndexes.size > 1 ) {
+				currentActiveIndexes.delete( index );
+			}
+
+			return currentActiveIndexes;
+		} );
+	};
 
 	const assignRef = ( index: number, element: HTMLButtonElement ) => {
 		shadowListItems[ index ] = element;
@@ -65,9 +103,9 @@ export default function DropdownGroup( {
 			.map( ( { index, child } ) => (
 				<ToolbarButton
 					key={ `button-item-${ index }` }
-					isActive={ activeIndex === parseInt( index ) }
+					isActive={ activeIndexes.has( parseInt( index ) ) }
 					onClick={ () => {
-						setActiveIndex( parseInt( index ) );
+						onSelect( parseInt( index ) );
 						onClick( parseInt( index ) );
 					} }
 					className="responsive-toolbar-group__button-item"
@@ -82,45 +120,51 @@ export default function DropdownGroup( {
 
 		if ( containGroupedIndexes || always ) {
 			return (
-				<Dropdown
-					renderToggle={ ( { onToggle } ) => (
-						<ToolbarButton
-							className={ classnames(
-								'responsive-toolbar-group__more-item',
-								'responsive-toolbar-group__button-item'
-							) }
-							isActive={ groupedIndexes[ activeIndex ] }
-							onClick={ () => {
-								onToggle();
-							} }
-						>
-							{ translate( 'More' ) }
-							<Icon icon={ chevronDown } />
-						</ToolbarButton>
-					) }
-					renderContent={ ( { onClose } ) => (
-						<MenuGroup>
-							{ getChildrenToRender()
-								.filter( ( { grouped } ) => grouped )
-								.map( ( { index, child } ) => (
-									<MenuItem
-										key={ `menu-item-${ index }` }
-										onClick={ () => {
-											setActiveIndex( parseInt( index ) );
-											onClick( parseInt( index ) );
-											onClose();
-										} }
-										className={ classnames(
-											'responsive-toolbar-group__menu-item',
-											activeIndex === parseInt( index ) ? 'is-selected' : ''
-										) }
-									>
-										{ child }
-									</MenuItem>
-								) ) }
-						</MenuGroup>
-					) }
-				/>
+				<SlotFillProvider>
+					{ /* @ts-expect-error-ignore  */ }
+					<Popover.Slot />
+					<Dropdown
+						renderToggle={ ( { onToggle } ) => (
+							<ToolbarButton
+								className={ clsx(
+									'responsive-toolbar-group__more-item',
+									'responsive-toolbar-group__button-item'
+								) }
+								isActive={ Array.from( activeIndexes ).some(
+									( index ) => groupedIndexes[ index ]
+								) }
+								onClick={ () => {
+									onToggle();
+								} }
+							>
+								{ translate( 'More' ) }
+								<Icon icon={ chevronDown } />
+							</ToolbarButton>
+						) }
+						renderContent={ ( { onClose } ) => (
+							<MenuGroup>
+								{ getChildrenToRender()
+									.filter( ( { grouped } ) => grouped )
+									.map( ( { index, child } ) => (
+										<MenuItem
+											key={ `menu-item-${ index }` }
+											onClick={ () => {
+												onSelect( parseInt( index ) );
+												onClick( parseInt( index ) );
+												onClose();
+											} }
+											className={ clsx(
+												'responsive-toolbar-group__menu-item',
+												activeIndexes.has( parseInt( index ) ) ? 'is-selected' : ''
+											) }
+										>
+											{ child }
+										</MenuItem>
+									) ) }
+							</MenuGroup>
+						) }
+					/>
+				</SlotFillProvider>
 			);
 		}
 
@@ -199,8 +243,8 @@ export default function DropdownGroup( {
 
 	// Reset active on prop change from above
 	useEffect( () => {
-		setActiveIndex( initialActiveIndex );
-	}, [ initialActiveIndex ] );
+		setActiveIndexes( new Set( defaultActiveIndexes ) );
+	}, [ defaultActiveIndexes ] );
 
 	return (
 		<div className={ classes } ref={ containerRef }>
@@ -209,10 +253,10 @@ export default function DropdownGroup( {
 				{ maybeRenderMore( true ) }
 			</ToolbarGroup>
 			<ToolbarGroup
-				className={ classnames(
-					'responsive-toolbar-group__grouped-list',
-					calculatedOnce ? 'is-visible' : ''
-				) }
+				className={ clsx( 'responsive-toolbar-group__grouped-list', {
+					'is-visible': calculatedOnce,
+					'is-multi': isMultiSelection,
+				} ) }
 			>
 				{ renderChildren() }
 				{ maybeRenderMore() }

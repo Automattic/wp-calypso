@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import ChartBarTooltip from './bar-tooltip';
@@ -56,8 +56,10 @@ export default class ChartBar extends PureComponent {
 		} );
 	}
 
-	getPercentage() {
-		return Math.ceil( ( this.props.data.value / this.props.max ) * 10000 ) / 100;
+	getScaleY() {
+		const scaleY = this.props.data.value / this.props.max;
+		// Hack: We use an invisible but non-zero value here, becaue zero scaleY-ed bars grows to max and then disappear when combined with container animation on initialization in Chrome.
+		return scaleY < 1e-4 ? '0.0001' : scaleY.toFixed( 4 );
 	}
 
 	getNestedPercentage() {
@@ -86,13 +88,12 @@ export default class ChartBar extends PureComponent {
 	}
 
 	renderBar() {
-		const percentage = this.getPercentage();
 		return (
 			<div
 				ref={ this.setRef }
 				key="value"
 				className="chart__bar-section is-bar"
-				style={ { transform: `scaleY( ${ percentage / 100 } )` } }
+				style={ { transform: `scaleY( ${ this.getScaleY() } )` } }
 			>
 				{ this.renderNestedBar() }
 			</div>
@@ -107,7 +108,7 @@ export default class ChartBar extends PureComponent {
 				onClick={ this.clickHandler }
 				onMouseEnter={ this.mouseEnter }
 				onMouseLeave={ this.mouseLeave }
-				className={ classNames( 'chart__bar', this.props.className ) }
+				className={ clsx( 'chart__bar', this.props.className ) }
 			>
 				{ this.renderBar() }
 				<div key="label" className="chart__bar-label">

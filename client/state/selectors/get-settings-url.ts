@@ -1,3 +1,4 @@
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import type { AppState } from 'calypso/types';
@@ -14,7 +15,7 @@ function getSettingsUrl(
 	}
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloud() || isA8CForAgencies() ) {
 		if ( section === 'general' ) {
 			return `${ siteAdminUrl }options-general.php`;
 		}

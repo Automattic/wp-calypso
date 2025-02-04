@@ -15,6 +15,8 @@ function ConnectDomainSteps( {
 	onSetPage,
 	stepsDefinition,
 	selectedSite,
+	queryError,
+	queryErrorDescription,
 	...stepProps
 } ) {
 	const [ mode, setMode ] = useState( stepsDefinition[ initialPageSlug ].mode );
@@ -62,6 +64,8 @@ function ConnectDomainSteps( {
 			pageSlug={ pageSlug }
 			setPage={ setPage }
 			selectedSite={ selectedSite }
+			queryError={ queryError }
+			queryErrorDescription={ queryErrorDescription }
 			{ ...stepProps }
 		/>
 	);
@@ -74,6 +78,8 @@ ConnectDomainSteps.propTypes = {
 	onSetPage: PropTypes.func,
 	stepsDefinition: PropTypes.object.isRequired,
 	selectedSite: PropTypes.object,
+	queryError: PropTypes.string,
+	queryErrorDescription: PropTypes.string,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(

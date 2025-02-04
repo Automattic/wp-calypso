@@ -8,7 +8,6 @@ import 'calypso/state/ui/init';
 
 /**
  * Return true if is user is able to use plugins on any of their sites.
- *
  * @param state Global state tree
  */
 

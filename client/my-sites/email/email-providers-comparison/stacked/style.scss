@@ -45,13 +45,24 @@
 
 	.billing-interval-toggle {
 		margin: 15px auto;
-		padding: 10px 0;
-		box-sizing: border-box;
-		background: var(--color-surface);
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
 
 	.billing-interval-toggle > .segmented-control.is-compact {
 		margin: 10px auto;
+	}
+}
+
+.email-providers-stacked-comparison__notice {
+	margin-top: 24px;
+}
+
+.context-all-domain-management {
+
+	.card.action-panel {
+		border-radius: 4px;
+	}
+
+	.form-text-input-with-affixes input {
+		border-radius: 2px 0 0 2px !important;
 	}
 }

@@ -5,7 +5,6 @@ import 'calypso/state/sharing/init';
 
 /**
  * Returns an array of keyring connection objects.
- *
  * @param  {Object} state Global state tree
  * @returns {Array}        Keyring connections, if known.
  */
@@ -15,7 +14,6 @@ export function getKeyringConnections( state ) {
 
 /**
  * Returns a keyring connection object with a specified ID.
- *
  * @param  {Object} state               Global state tree
  * @param  {number} keyringConnectionId Keyring connection ID.
  * @returns {?Object}                    Keyring connections, if known.
@@ -26,7 +24,6 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
 
 /**
  * Returns an array of keyring connection objects for a specified service.
- *
  * @param  {Object} state   Global state tree
  * @param  {string} service Service slug.
  * @returns {Array}         Keyring connections, if known.
@@ -38,7 +35,6 @@ export const getKeyringConnectionsByName = createSelector(
 
 /**
  * Returns an array of broken keyring connection objects for a specified service.
- *
  * @param  {Object} state   Global state tree
  * @param  {string} service Service slug.
  * @returns {Array}         Keyring connections, if known.
@@ -52,7 +48,6 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
 /**
  * Returns an array of keyring connection objects for a specified service that
  * need to be manually refreshed/reconnected.
- *
  * @param  {Object} state   Global state tree
  * @param  {string} service Service slug.
  * @returns {Array}         Keyring connections, if any.
@@ -66,7 +61,6 @@ export function getRefreshableKeyringConnections( state, service ) {
 
 /**
  * Returns an array of keyring connection objects for a specific user.
- *
  * @param  {Object} state  Global state tree
  * @param  {number} userId User ID.
  * @returns {Array}         Site connections, if known.
@@ -81,7 +75,6 @@ export function getUserConnections( state, userId ) {
 /**
  * Returns true if a request is in progress to retrieve keyring services,
  * or false otherwise.
- *
  * @param  {Object}  state Global state tree
  * @returns {boolean}       Whether a request is in progress
  */

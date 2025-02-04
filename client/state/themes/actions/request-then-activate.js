@@ -12,22 +12,14 @@ import { requestTheme, activate } from 'calypso/state/themes/actions';
  * user before activating).
  * Generally it's not needed if you're already on the theme showcase, but if you're
  * somewhere else on the site, the data might not be available.
- *
  * @param  {string}   themeId   Theme ID
  * @param  {number}   siteId    Site ID
  * @param  {string}   source    The source that is requesting theme activation, e.g. 'showcase'
  * @param  {boolean}  purchased Whether the theme has been purchased prior to activation
- * @param  {boolean}  keepCurrentHomepage Prevent theme from switching homepage content if this is what it'd normally do when activated
  * @returns {Function}          Action thunk
  */
 
-export function requestThenActivate(
-	themeId,
-	siteId,
-	source = 'unknown',
-	purchased = false,
-	keepCurrentHomepage = false
-) {
+export function requestThenActivate( themeId, siteId, source = 'unknown', purchased = false ) {
 	return ( dispatch, getState ) => {
 		// Request the theme, then when that's done, activate it.
 
@@ -53,7 +45,7 @@ export function requestThenActivate(
 			requests.push( dispatch( requestTheme( themeId, siteId ) ) );
 		}
 		return Promise.all( requests ).then( () => {
-			dispatch( activate( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+			dispatch( activate( themeId, siteId, { source, purchased } ) );
 		} );
 	};
 }

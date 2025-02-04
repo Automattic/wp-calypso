@@ -8,19 +8,19 @@ import {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
 } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, PlanPrice } from '@automattic/components';
 import { isMobile } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
+import DOMPurify from 'dompurify';
 import { size } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, isValidElement } from 'react';
 import { connect } from 'react-redux';
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
-import PlanPrice from 'calypso/my-sites/plan-price';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -32,10 +32,11 @@ const noop = () => {};
 
 export class Banner extends Component {
 	static propTypes = {
-		callToAction: PropTypes.string,
+		callToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
+		secondaryCallToAction: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		className: PropTypes.string,
 		compactButton: PropTypes.bool,
-		description: PropTypes.node,
+		description: PropTypes.oneOfType( [ PropTypes.node, PropTypes.symbol ] ),
 		forceHref: PropTypes.bool,
 		disableCircle: PropTypes.bool,
 		disableHref: PropTypes.bool,
@@ -43,10 +44,11 @@ export class Banner extends Component {
 		dismissTemporary: PropTypes.bool,
 		dismissWithoutSavingPreference: PropTypes.bool,
 		event: PropTypes.string,
+		secondaryEvent: PropTypes.string,
 		feature: PropTypes.string,
 		horizontal: PropTypes.bool,
 		href: PropTypes.string,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
 		iconPath: PropTypes.string,
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
@@ -57,6 +59,7 @@ export class Banner extends Component {
 		] ),
 		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
+		secondaryOnClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
 		price: PropTypes.oneOfType( [ PropTypes.number, PropTypes.arrayOf( PropTypes.number ) ] ),
@@ -74,6 +77,9 @@ export class Banner extends Component {
 		customerType: PropTypes.string,
 		isSiteWPForTeams: PropTypes.bool,
 		displayAsLink: PropTypes.bool,
+		showLinkIcon: PropTypes.bool,
+		extraContent: PropTypes.node,
+		isBusy: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -87,6 +93,7 @@ export class Banner extends Component {
 		jetpack: false,
 		isAtomic: false,
 		onClick: noop,
+		secondaryOnClick: noop,
 		onDismiss: noop,
 		primaryButton: true,
 		showIcon: true,
@@ -94,6 +101,7 @@ export class Banner extends Component {
 		tracksClickName: 'calypso_banner_cta_click',
 		tracksDismissName: 'calypso_banner_dismiss',
 		isSiteWPForTeams: false,
+		isBusy: false,
 	};
 
 	getHref() {
@@ -133,6 +141,28 @@ export class Banner extends Component {
 		onClick( e );
 	};
 
+	handleSecondaryClick = ( e ) => {
+		const {
+			secondaryEvent,
+			secondaryOnClick,
+			feature,
+			compact,
+			tracksClickName,
+			tracksClickProperties,
+		} = this.props;
+
+		if ( secondaryEvent && tracksClickName ) {
+			this.props.recordTracksEvent?.( tracksClickName, {
+				cta_name: secondaryEvent,
+				cta_feature: feature,
+				cta_size: compact ? 'compact' : 'regular',
+				...tracksClickProperties,
+			} );
+		}
+
+		secondaryOnClick( e );
+	};
+
 	handleDismiss = ( e ) => {
 		const { event, feature, onDismiss, tracksDismissName, tracksDismissProperties } = this.props;
 
@@ -165,6 +195,8 @@ export class Banner extends Component {
 		let iconComponent;
 		if ( iconPath ) {
 			iconComponent = <img src={ iconPath } alt="" />;
+		} else if ( isValidElement( icon ) ) {
+			iconComponent = icon;
 		} else {
 			iconComponent = <Gridicon icon={ icon || 'star' } size={ isMobile() ? 24 : 18 } />;
 		}
@@ -173,17 +205,42 @@ export class Banner extends Component {
 			<div className="banner__icons">
 				<div className="banner__icon">{ iconComponent }</div>
 				{ ! disableCircle && <div className="banner__icon-circle">{ iconComponent }</div> }
-				{ disableCircle && iconPath && (
+				{ disableCircle && iconComponent && (
 					<div className="banner__icon-no-circle">{ iconComponent }</div>
 				) }
 			</div>
 		);
 	}
 
+	sanitize( html ) {
+		// Getting an instance of DOMPurify this way is needed to fix a related JEST test.
+		return DOMPurify.sanitize( html, {
+			ALLOWED_TAGS: [ 'a' ],
+			ALLOWED_ATTR: [ 'href', 'target' ],
+		} );
+	}
+
+	renderDescription( description ) {
+		if ( ! description ) {
+			return null;
+		}
+		if ( typeof description === 'string' ) {
+			return (
+				<div
+					className="banner__description"
+					dangerouslySetInnerHTML={ { __html: this.sanitize( description ) } } // eslint-disable-line react/no-danger
+				></div>
+			);
+		}
+		return <div className="banner__description">{ description }</div>;
+	}
+
 	getContent() {
 		const {
 			callToAction,
+			secondaryCallToAction,
 			forceHref,
+			secondaryHref,
 			description,
 			event,
 			feature,
@@ -197,6 +254,8 @@ export class Banner extends Component {
 			target,
 			tracksImpressionName,
 			tracksImpressionProperties,
+			extraContent,
+			isBusy,
 		} = this.props;
 
 		const prices = Array.isArray( price ) ? price : [ price ];
@@ -216,7 +275,7 @@ export class Banner extends Component {
 				) }
 				<div className="banner__info">
 					<div className="banner__title">{ title }</div>
-					{ description && <div className="banner__description">{ description }</div> }
+					{ this.renderDescription( description ) }
 					{ size( list ) > 0 && (
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
@@ -231,6 +290,7 @@ export class Banner extends Component {
 							) ) }
 						</ul>
 					) }
+					{ extraContent }
 				</div>
 				{ ( callToAction || price ) && (
 					<div className="banner__action">
@@ -243,7 +303,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
+								<Button
+									compact={ compactButton }
+									primary={ primaryButton }
+									target={ target }
+									busy={ isBusy }
+								>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
@@ -253,10 +318,22 @@ export class Banner extends Component {
 									onClick={ this.handleClick }
 									primary={ primaryButton }
 									target={ target }
+									busy={ isBusy }
 								>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) ) }
+
+						{ secondaryCallToAction && (
+							<Button
+								compact={ compactButton }
+								href={ secondaryHref }
+								onClick={ this.handleSecondaryClick }
+								primary={ false }
+							>
+								{ preventWidows( secondaryCallToAction ) }
+							</Button>
+						) }
 					</div>
 				) }
 			</div>
@@ -278,6 +355,7 @@ export class Banner extends Component {
 			isAtomic,
 			plan,
 			displayAsLink,
+			showLinkIcon,
 		} = this.props;
 
 		// For P2 sites, only show banners if they have the 'p2-banner' class.
@@ -287,7 +365,7 @@ export class Banner extends Component {
 			}
 		}
 
-		const classes = classNames(
+		const classes = clsx(
 			'banner',
 			className,
 			{ 'has-call-to-action': callToAction },
@@ -304,7 +382,7 @@ export class Banner extends Component {
 			{ 'is-jetpack': jetpack },
 			{ 'is-atomic': isAtomic }
 		);
-
+		const href = ( disableHref || callToAction ) && ! forceHref ? null : this.getHref();
 		if ( dismissPreferenceName ) {
 			return (
 				<DismissibleCard
@@ -312,6 +390,7 @@ export class Banner extends Component {
 					preferenceName={ dismissPreferenceName }
 					temporary={ dismissTemporary }
 					onClick={ this.handleDismiss }
+					href={ href }
 				>
 					{ this.getIcon() }
 					{ this.getContent() }
@@ -322,9 +401,10 @@ export class Banner extends Component {
 		return (
 			<Card
 				className={ classes }
-				href={ ( disableHref || callToAction ) && ! forceHref ? null : this.getHref() }
+				href={ href }
 				onClick={ callToAction && ! forceHref ? null : this.handleClick }
 				displayAsLink={ displayAsLink }
+				showLinkIcon={ showLinkIcon }
 			>
 				{ dismissWithoutSavingPreference && (
 					<Gridicon icon="cross" className="banner__close-icon" onClick={ this.handleDismiss } />

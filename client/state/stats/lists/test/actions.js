@@ -65,7 +65,7 @@ describe( 'actions', () => {
 		test( 'should dispatch a SITE_STATS_REQUEST', () => {
 			requestSiteStats( SITE_ID, STAT_TYPE, STREAK_QUERY )( spy );
 
-			expect( spy ).toBeCalledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_STATS_REQUEST,
 				siteId: SITE_ID,
 				statType: STAT_TYPE,
@@ -79,7 +79,7 @@ describe( 'actions', () => {
 				STAT_TYPE,
 				STREAK_QUERY
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: SITE_STATS_RECEIVE,
 						siteId: SITE_ID,
@@ -93,7 +93,7 @@ describe( 'actions', () => {
 
 		test( 'should dispatch SITE_STATS_RECEIVE action when video stats request succeeds', () => {
 			return requestSiteStats( SITE_ID, STAT_TYPE_VIDEO, { postId: 31533 } )( spy ).then( () => {
-				expect( spy ).toBeCalledWith(
+				expect( spy ).toHaveBeenCalledWith(
 					expect.objectContaining( {
 						type: SITE_STATS_RECEIVE,
 						siteId: SITE_ID,
@@ -111,7 +111,7 @@ describe( 'actions', () => {
 				'statsCountryViews',
 				{}
 			)( spy ).then( () => {
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: SITE_STATS_REQUEST_FAILURE,
 					siteId: SITE_ID,
 					statType: 'statsCountryViews',

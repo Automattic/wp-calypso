@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, MaterialIcon } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useCallback, useState } from 'react';
@@ -8,7 +8,6 @@ import {
 	stepsHeading,
 	domainLockStatusType,
 } from 'calypso/components/domains/connect-domain-step/constants';
-import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import wpcom from 'calypso/lib/wp';
 

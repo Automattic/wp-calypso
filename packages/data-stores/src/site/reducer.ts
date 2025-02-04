@@ -1,5 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import {
+	CurrentTheme,
 	NewSiteBlogDetails,
 	NewSiteErrorResponse,
 	SiteDetails,
@@ -165,6 +166,16 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 	return state;
 };
 
+export const siteTheme: Reducer< { [ key: number ]: CurrentTheme }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_THEME' ) {
+		return { ...state, [ action.siteId ]: action.theme };
+	}
+	return state;
+};
+
 export const sitesGlobalStyles: Reducer< { [ key: number ]: GlobalStyles }, Action > = (
 	state = {},
 	action
@@ -247,6 +258,7 @@ export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferSta
 			[ action.siteId ]: {
 				status: AtomicTransferStatus.IN_PROGRESS,
 				softwareSet: action.softwareSet,
+				transferIntent: action.transferIntent,
 				errorCode: undefined,
 			},
 		};
@@ -257,6 +269,7 @@ export const atomicTransferStatus: Reducer< { [ key: number ]: AtomicTransferSta
 			[ action.siteId ]: {
 				status: AtomicTransferStatus.SUCCESS,
 				softwareSet: action.softwareSet,
+				transferIntent: action.transferIntent,
 				errorCode: undefined,
 			},
 		};
@@ -421,6 +434,7 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	siteTheme,
 	sitesGlobalStyles,
 	siteSetupErrors,
 	atomicTransferStatus,

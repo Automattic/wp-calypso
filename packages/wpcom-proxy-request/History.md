@@ -1,6 +1,21 @@
 # History
 
-## Next / TBD
+## 7.0.6 / 2024-10-16
+
+- Update dependencies
+- Linting cleanup
+- Add additional allowed origins
+
+## 7.0.5 / 2023-10-18
+
+- Don't reference `window` from module initialization code.
+- Trigger request error when proxy iframe is not present and loaded.
+- Updates to linting rules.
+
+## 7.0.4 / 2023-07-11
+
+- Remove dependendy `progress-event`. This polyfill is no longer needed due to ProgressEvent being widely supported now.
+- Don't modify a falsy boolean JSON response body by defaulting it.
 
 ## 6.0.0 / 2021-03-19
 

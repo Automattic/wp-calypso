@@ -1,9 +1,8 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { MouseEvent, PropsWithChildren, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -19,6 +18,12 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import {
+	domainManagementAllEmailRoot,
+	domainSiteContextRoot,
+	isUnderDomainManagementAll,
+	isUnderDomainSiteContext,
+} from 'calypso/my-sites/domains/paths';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
 import {
@@ -39,13 +44,14 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
+import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
-	emailManagement,
-	emailManagementInbox,
-	emailManagementTitanSetUpMailbox,
+	getEmailManagementPath,
+	getMailboxesPath,
+	getTitanSetUpMailboxPath,
 } from 'calypso/my-sites/email/paths';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { useSelector } from 'calypso/state';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -62,6 +68,9 @@ interface AddMailboxesProps {
 	provider?: EmailProvider;
 	selectedDomainName: string;
 	source?: string;
+	showPageHeader?: boolean;
+	showFormHeader?: boolean;
+	customFormHeader?: boolean;
 }
 
 interface AddMailboxesAdditionalProps {
@@ -75,6 +84,9 @@ interface AddMailboxesAdditionalProps {
 	selectedSiteId: number | undefined | null;
 	source: string;
 	translate: typeof translate;
+	showPageHeader?: boolean;
+	showFormHeader?: boolean;
+	customFormHeader?: boolean;
 }
 
 const isTitan = ( provider: EmailProvider ): boolean => provider === EmailProvider.Titan;
@@ -83,6 +95,9 @@ const useAdditionalProps = ( {
 	provider = EmailProvider.Titan,
 	selectedDomainName,
 	source = '',
+	showPageHeader = true,
+	showFormHeader = true,
+	customFormHeader,
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID;
@@ -117,6 +132,9 @@ const useAdditionalProps = ( {
 		selectedSiteId,
 		source,
 		translate,
+		showPageHeader,
+		showFormHeader,
+		customFormHeader,
 	};
 };
 
@@ -199,7 +217,7 @@ const MailboxNotices = ( {
 			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
 		}
 
-		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
+		page( getTitanSetUpMailboxPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
 
 	return (
@@ -231,22 +249,25 @@ const MailboxesForm = ( {
 	selectedSite,
 	source,
 	translate,
+	showFormHeader,
+	customFormHeader,
+	currentRoute,
 }: AddMailboxesAdditionalProps & {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
-	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
 
-	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isPasswordResetEmailValid ) {
-		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
-	}
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] =
-		useState< HiddenFieldNames[] >( defaultHiddenFields );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
@@ -304,10 +325,22 @@ const MailboxesForm = ( {
 		recordContinueEvent( { canContinue: true } );
 		setIsAddingToCart( true );
 
+		const selectedSiteSlug = selectedSite?.slug ?? '';
+		let checkoutPath = '/checkout/' + selectedSiteSlug;
+
+		if ( isUnderDomainManagementAll( currentRoute ) ) {
+			const newEmail = mailboxOperations.mailboxes[ 0 ].getAsCartItem().email;
+			const redirectTo = isUnderDomainSiteContext( currentRoute )
+				? `${ domainSiteContextRoot() }/email/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`
+				: `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`;
+
+			checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
+		}
+
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite?.slug ?? '' );
+				page( checkoutPath );
 			} )
 			.finally( () => setIsAddingToCart( false ) )
 			.catch( () => {
@@ -315,19 +348,22 @@ const MailboxesForm = ( {
 			} );
 	};
 
-	const passwordResetEmailDefaultValue = {
-		[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
-	};
-
 	return (
 		<>
-			<SectionHeader label={ translate( 'Add New Mailboxes' ) } />
+			{ showFormHeader && <SectionHeader label={ translate( 'Add New Mailboxes' ) } /> }
 
-			<Card>
+			<Card className="new-mailbox">
+				{ !! customFormHeader && (
+					<div className="section-header__label">
+						<span className="section-header__label-text">{ customFormHeader }</span>
+					</div>
+				) }
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ passwordResetEmailDefaultValue }
+					initialFieldValues={ {
+						[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+					} }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -356,6 +392,7 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		selectedSite,
 		source,
 		translate,
+		showPageHeader,
 	} = additionalProps;
 
 	const emailProduct = useSelector( ( state ) =>
@@ -369,15 +406,15 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 		: getGoogleMailServiceFamily( emailProduct?.product_slug );
 
 	const goToEmail = (): void => {
-		let url = emailManagement(
+		let url = getEmailManagementPath(
 			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
 			{ source }
 		);
 
-		if ( source === INBOX_SOURCE ) {
-			url = emailManagementInbox( selectedSite?.slug );
+		if ( source === MAILBOXES_SOURCE ) {
+			url = getMailboxesPath( selectedSite?.slug );
 		}
 
 		page( url );
@@ -395,12 +432,17 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 			{ selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
 
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<DocumentHead title={ translate( 'Add New Mailboxes' ) } />
 
-				<EmailHeader />
-
-				<HeaderCake onClick={ goToEmail }>{ productName + ': ' + selectedDomainName }</HeaderCake>
+				{ showPageHeader && (
+					<>
+						<EmailHeader />
+						<HeaderCake onClick={ goToEmail }>
+							{ productName + ': ' + selectedDomainName }
+						</HeaderCake>
+					</>
+				) }
 
 				<WithVerificationGate productFamily={ productName } provider={ provider }>
 					<MailboxNotices { ...additionalProps } emailProduct={ emailProduct } />

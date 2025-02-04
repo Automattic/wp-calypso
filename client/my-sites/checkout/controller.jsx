@@ -1,12 +1,14 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs } from 'calypso/lib/url';
+import LicensingPendingAsyncActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-pending-async-activation';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
@@ -17,6 +19,7 @@ import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
 	getCurrentUser,
 	getCurrentUserVisibleSiteCount,
@@ -30,7 +33,11 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
+import DomainTransferToAnyUser from './checkout-thank-you/domain-transfer-to-any-user';
+import { FailedPurchasePage } from './checkout-thank-you/failed-purchase-page';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
+import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -43,10 +50,44 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
+export function checkoutFailedPurchases( context, next ) {
+	context.primary = <FailedPurchasePage />;
+
+	next();
+}
+
 export function checkoutJetpackSiteless( context, next ) {
+	const connectAfterCheckout = context.query?.connect_after_checkout === 'true';
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+	const adminUrl = context.query?.admin_url;
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'jetpack',
+		connectAfterCheckout,
+		...( fromSiteSlug && { fromSiteSlug } ),
+		...( adminUrl && { adminUrl } ),
+	} );
+}
+
+export function checkoutAkismetSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
+}
+
+export function checkoutMarketplaceSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'marketplace' } );
+}
+
+function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -64,15 +105,16 @@ export function checkoutJetpackSiteless( context, next ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
 				isComingFromUpsell={ !! context.query.upgrade }
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOut }
-				isNoSiteCart={ true }
-				isJetpackCheckout={ true }
+				isNoSiteCart
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+				{ ...extraProps }
 			/>
 		</>
 	);
@@ -82,7 +124,6 @@ export function checkoutJetpackSiteless( context, next ) {
 
 export function checkout( context, next ) {
 	const { feature, plan, purchaseId } = context.params;
-
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const selectedSite = getSelectedSite( state );
@@ -94,10 +135,15 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	// TODO: The only thing that we really need to check for here is whether or not the user is logged out.
+	// A siteless Jetpack purchase (logged in or out) will be handled by checkoutJetpackSiteless
+	// Additionally, the isJetpackCheckout variable would be more aptly named isJetpackSitelessCheckout
+	// isContextJetpackSitelessCheckout is really checking for whether this is a logged-out purchase, but this is uncelar at first
 	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	const isGiftPurchase = context.pathname.includes( '/gift/' );
+	const isRenewal = context.pathname.includes( '/renew/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -113,6 +159,11 @@ export function checkout( context, next ) {
 			return true;
 		}
 		if ( isGiftPurchase ) {
+			return true;
+		}
+		// We allow renewals without a site through because we want to show these
+		// users an error message on the checkout page.
+		if ( isRenewal ) {
 			return true;
 		}
 		return false;
@@ -150,12 +201,9 @@ export function checkout( context, next ) {
 			context.pathname.includes( '/checkout/no-site' ) &&
 			'no-user' === context.query.cart );
 
-	const searchParams = new URLSearchParams( window.location.search );
-	const isSignupCheckout = searchParams.get( 'signup' ) === '1';
-
 	// Tracks if checkout page was unloaded before purchase completion,
 	// to prevent browser back duplicate sites. Check pau2Xa-1Io-p2#comment-6759.
-	if ( isSignupCheckout && ! isDomainOnlyFlow ) {
+	if ( ! isDomainOnlyFlow ) {
 		window.addEventListener( 'beforeunload', function () {
 			const signupDestinationCookieExists = retrieveSignupDestination();
 			signupDestinationCookieExists && setSignupCheckoutPageUnloaded( true );
@@ -178,7 +226,10 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
-				isJetpackCheckout={ isJetpackCheckout }
+				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
+				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
+				// This is creating some mixed use cases for the sitelessCheckoutType prop
+				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
@@ -192,10 +243,11 @@ export function checkout( context, next ) {
 
 export function redirectJetpackLegacyPlans( context, next ) {
 	const product = getProductSlugFromContext( context );
+	const state = context.store.getState();
+	const selectedSite = getSelectedSite( state );
+	const upgradeFrom = getQueryArgs()?.upgrade_from;
 
-	if ( isJetpackLegacyItem( product ) ) {
-		const state = context.store.getState();
-		const selectedSite = getSelectedSite( state );
+	if ( isJetpackLegacyItem( product ) && ! isJetpackLegacyTermUpgrade( product, upgradeFrom ) ) {
 		const recommendedItems = LEGACY_TO_RECOMMENDED_MAP[ product ].join( ',' );
 
 		page(
@@ -229,6 +281,16 @@ export function checkoutPending( context, next ) {
 		? Number( context.query.receiptId )
 		: undefined;
 
+	/**
+	 * `fromSiteSlug` is the Jetpack site slug passed from the site via url query arg (into
+	 * checkout), for use cases when the site slug cannot be retrieved from state, ie- when there
+	 * is not a site in context, such as siteless checkout. As opposed to `siteSlug` which is the
+	 * site slug present when the site is in context (ie- when site is connected and user is
+	 * logged in).
+	 * @type {string|undefined}
+	 */
+	const fromSiteSlug = context.query?.from_site_slug;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
@@ -237,6 +299,7 @@ export function checkoutPending( context, next ) {
 			siteSlug={ siteSlug }
 			redirectTo={ redirectTo }
 			receiptId={ receiptId }
+			fromSiteSlug={ fromSiteSlug }
 		/>
 	);
 
@@ -283,7 +346,6 @@ export function checkoutThankYou( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				selectedFeature={ context.params.feature }
 				selectedSite={ selectedSite }
-				siteUnlaunchedBeforeUpgrade={ context.query.site_unlaunched_before_upgrade === 'true' }
 				upgradeIntent={ context.query.intent }
 			/>
 		</>
@@ -385,6 +447,33 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
+export function licensingPendingAsyncActivation( context, next ) {
+	const { product: productSlug } = context.params;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
+
+	if ( ! fromSiteSlug ) {
+		page.redirect(
+			addQueryArgs(
+				{ receiptId },
+				`/checkout/jetpack/thank-you/licensing-manual-activate/${ productSlug }`
+			)
+		);
+	} else {
+		context.primary = (
+			<LicensingPendingAsyncActivation
+				productSlug={ productSlug }
+				receiptId={ receiptId }
+				source={ source }
+				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
+			/>
+		);
+	}
+
+	next();
+}
+
 export function licensingThankYouManualActivationInstructions( context, next ) {
 	const { product } = context.params;
 	const { receiptId } = context.query;
@@ -416,7 +505,7 @@ export function licensingThankYouAutoActivation( context, next ) {
 	const userHasJetpackSites = currentUser && currentUser.jetpack_visible_site_count >= 1;
 
 	const { product } = context.params;
-	const { receiptId, source, siteId } = context.query;
+	const { receiptId, source, siteId, fromSiteSlug, redirect_to } = context.query;
 
 	if ( ! userHasJetpackSites ) {
 		page.redirect(
@@ -433,6 +522,8 @@ export function licensingThankYouAutoActivation( context, next ) {
 				receiptId={ receiptId }
 				source={ source }
 				jetpackTemporarySiteId={ siteId }
+				fromSiteSlug={ fromSiteSlug }
+				redirectTo={ redirect_to }
 			/>
 		);
 	}
@@ -441,15 +532,23 @@ export function licensingThankYouAutoActivation( context, next ) {
 }
 
 export function licensingThankYouAutoActivationCompleted( context, next ) {
-	const { destinationSiteId } = context.query;
+	const { destinationSiteId, redirect_to } = context.query;
 
 	context.primary = (
 		<LicensingThankYouAutoActivationCompleted
 			productSlug={ context.params.product }
 			destinationSiteId={ destinationSiteId }
+			redirectTo={ redirect_to }
 		/>
 	);
 
+	next();
+}
+
+export function hundredYearCheckoutThankYou( context, next ) {
+	context.primary = (
+		<HundredYearThankYou siteSlug={ context.params.site } receiptId={ context.params.receiptId } />
+	);
 	next();
 }
 
@@ -467,11 +566,30 @@ export function jetpackCheckoutThankYou( context, next ) {
 	next();
 }
 
+export function akismetCheckoutThankYou( context, next ) {
+	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
+
+	next();
+}
+
 export function giftThankYou( context, next ) {
 	// Overriding section name here in order to apply a top level
 	// background via .is-section-checkout-gift-thank-you
 	context.section.name = 'checkout-gift-thank-you';
 	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
+}
+
+export function transferDomainToAnyUser( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-thank-you
+	context.section.name = 'checkout-thank-you';
+	context.primary = <DomainTransferToAnyUser domain={ context.params.domain } />;
+	next( context );
+}
+
+export async function refreshUserSession( context, next ) {
+	await context.store.dispatch( fetchCurrentUser() );
 	next( context );
 }
 
@@ -502,6 +620,7 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
+		'WC',
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

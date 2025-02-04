@@ -6,6 +6,7 @@ export const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 export const JETPACK_MINIMUM_WORDPRESS_VERSION = '4.7';
 export const JPC_PATH_BASE = '/jetpack/connect';
 export const JPC_PATH_PLANS = '/jetpack/connect/plans';
+export const JPC_PATH_PLANS_COMPLETE = '/jetpack/connect/plans/complete';
 export const JPC_PATH_REMOTE_INSTALL = '/jetpack/connect/install';
 export const MINIMUM_JETPACK_VERSION = '3.9.6';
 export const REMOTE_PATH_ACTIVATE = '/wp-admin/plugins.php';
@@ -25,3 +26,5 @@ export const JETPACK_COUPON_PRESET_MAPPING = {
 	RDCA: 'jetpack_backup_daily',
 	HMOA: 'jetpack_backup_daily',
 };
+export const JPC_JETPACK_MANAGE_PATH = 'https://cloud.jetpack.com/dashboard';
+export const JPC_A4A_PATH = 'https://agencies.automattic.com/sites';

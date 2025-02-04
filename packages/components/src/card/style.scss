@@ -10,6 +10,8 @@
 	box-sizing: border-box;
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	// Card class name is too generic. Which results and this component randomly getting borders.
+	border: none;
 
 	@include a8c-clear-fix;
 

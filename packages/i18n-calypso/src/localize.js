@@ -11,7 +11,6 @@ function bindI18nProps( i18n ) {
 
 /**
  * Localize a React component
- *
  * @param  {import('react').Component} ComposedComponent React component to localize
  * @returns {import('react').Component} The localized component
  */

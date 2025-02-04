@@ -24,4 +24,4 @@ export default function MyBillingTransactions( { billingTransactions } ) {
 
 ## Props
 
-This component does not support any additional props.
+- `transactionType?: 'past' | 'upcoming'`: Optionally limit the type of billing transactions returned.

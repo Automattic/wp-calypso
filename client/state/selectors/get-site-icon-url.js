@@ -5,7 +5,6 @@ import getSiteIconId from 'calypso/state/selectors/get-site-icon-id';
 /**
  * Returns a URL to the site's current site icon, or null if no icon exists or
  * if site is not known
- *
  * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?string}        URL of site icon, if known and exists

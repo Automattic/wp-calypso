@@ -1,9 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
+import version_compare from 'calypso/lib/version-compare';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
@@ -11,18 +12,20 @@ import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 interface ExternalProps {
 	siteId: number;
 	minJetpackVersion: string;
+	warningRequirement?: string;
 }
 
 /**
  * Show a warning Notice if the current site has a Jetpack version prior to `minJetpackVersion`.
- *
  * @param {Object} props - the id of the current site
  * @param {number} props.siteId – the ID of the current site
  * @param {string} props.minJetpackVersion – the minimum accepted Jetpack version
+ * @param {string?} props.warningRequirement – the requirement that triggered the warning
  */
 export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	siteId,
 	minJetpackVersion,
+	warningRequirement,
 }: ExternalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -36,7 +39,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	);
 
 	const hideWarning = useMemo(
-		() => siteJetpackVersion >= minJetpackVersion || ! pluginUpgradeUrl,
+		() => version_compare( siteJetpackVersion, minJetpackVersion, '>=' ) || ! pluginUpgradeUrl,
 		[ minJetpackVersion, pluginUpgradeUrl, siteJetpackVersion ]
 	);
 
@@ -59,8 +62,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 			{ preventWidows(
 				translate(
 					'Your Jetpack plugin is out of date. ' +
-						'To make sure it will work with our recommended' +
-						' plans, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
+						'{{WarningRequirement/}}, {{JetpackUpdateLink}}update Jetpack{{/JetpackUpdateLink}}.',
 					{
 						components: {
 							JetpackUpdateLink: (
@@ -69,6 +71,12 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 									onClick={ updatePluginClick }
 									target="_blank"
 								/>
+							),
+							WarningRequirement: (
+								<>
+									{ warningRequirement ??
+										translate( 'To make sure it will work with our recommended plans' ) }
+								</>
 							),
 						},
 					}

@@ -1,6 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Card, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -96,12 +96,22 @@ class MainComponent extends Component {
 			return this.props.translate( 'Research' );
 		} else if ( 'community' === category ) {
 			return this.props.translate( 'Community' );
+		} else if ( 'affiliates' === category ) {
+			return this.props.translate( 'Affiliates' );
 		} else if ( 'digest' === category ) {
 			return this.props.translate( 'Digests' );
 		} else if ( 'news' === category ) {
 			return this.props.translate( 'Newsletter' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate( 'Promotions' );
+		} else if ( 'reports' === category ) {
+			return this.props.translate( 'Reports' );
+		} else if ( 'news_developer' === category ) {
+			return this.props.translate( 'Developer Newsletter' );
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Scheduled Updates' );
+		} else if ( 'learn' === category ) {
+			return this.props.translate( 'Learn Faster to Grow Faster' );
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Jetpack Suggestions' );
 		} else if ( 'jetpack_research' === category ) {
@@ -112,10 +122,14 @@ class MainComponent extends Component {
 			return this.props.translate( 'Jetpack Newsletter' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack Reports' );
+		} else if ( 'jetpack_manage_onboarding' === category ) {
+			return this.props.translate( 'Jetpack Manage Onboarding' );
 		} else if ( 'akismet_marketing' === category ) {
 			return this.props.translate( 'Akismet Marketing' );
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'WooPay Marketing' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate( 'Gravatar Onboarding' );
 		}
 
 		return category;
@@ -133,15 +147,31 @@ class MainComponent extends Component {
 			return this.props.translate(
 				'Information on WordPress.com courses and events (online and in-person).'
 			);
-		} else if ( 'digest' === category ) {
+		} else if ( 'affiliates' === category ) {
 			return this.props.translate(
-				'Popular content from the blogs you follow, and reports on your own site and its performance.'
+				'Communications regarding the refer.wordpress.com affiliate program.'
 			);
+		} else if ( 'digest' === category ) {
+			return this.props.translate( 'Popular content from the blogs you follow.' );
 		} else if ( 'news' === category ) {
 			return this.props.translate( 'WordPress.com news, announcements, and product spotlights.' );
 		} else if ( 'promotion' === category ) {
 			return this.props.translate(
 				'Sales and promotions for WordPress.com products and services.'
+			);
+		} else if ( 'reports' === category ) {
+			return this.props.translate(
+				'Complimentary reports and updates regarding site performance and traffic.'
+			);
+		} else if ( 'news_developer' === category ) {
+			return this.props.translate(
+				'A once-monthly roundup of notable news for WordPress developers.'
+			);
+		} else if ( 'scheduled_updates' === category ) {
+			return this.props.translate( 'Complimentary reports regarding scheduled plugin updates.' );
+		} else if ( 'learn' === category ) {
+			return this.props.translate(
+				'Take your WordPress.com site to new heights with expert webinars, courses, and community forums.'
 			);
 		} else if ( 'jetpack_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of Jetpack.' );
@@ -155,12 +185,18 @@ class MainComponent extends Component {
 			return this.props.translate( 'Jetpack news, announcements, and product spotlights.' );
 		} else if ( 'jetpack_reports' === category ) {
 			return this.props.translate( 'Jetpack security and performance reports.' );
+		} else if ( 'jetpack_manage_onboarding' === category ) {
+			return this.props.translate( 'Jetpack Manage program setup and onboarding.' );
 		} else if ( 'akismet_marketing' === category ) {
 			return this.props.translate(
 				'Relevant tips and new features to get the most out of Akismet'
 			);
 		} else if ( 'woopay_marketing' === category ) {
 			return this.props.translate( 'Tips for getting the most out of WooPay.' );
+		} else if ( 'gravatar_onboarding' === category ) {
+			return this.props.translate(
+				'Get tips and reminders to optimize your Gravatar profile setup.'
+			);
 		}
 
 		return null;
@@ -262,14 +298,19 @@ class MainComponent extends Component {
 					) }
 				</Card>
 
-				<p className="mailing-lists__manage-link">
-					<button
-						className="mailing-lists__manage-button button is-link"
-						onClick={ this.onManageUpdatesClick }
-					>
-						{ translate( 'Manage all your email subscriptions' ) }
-					</button>
-				</p>
+				{
+					// Don't show the manage link for Gravatar-related categories.
+					! this.getCategoryFromMessageTypeId()?.startsWith( 'gravatar_' ) && (
+						<p className="mailing-lists__manage-link">
+							<button
+								className="mailing-lists__manage-button button is-link"
+								onClick={ this.onManageUpdatesClick }
+							>
+								{ translate( 'Manage all your email subscriptions' ) }
+							</button>
+						</p>
+					)
+				}
 			</div>
 		);
 	}

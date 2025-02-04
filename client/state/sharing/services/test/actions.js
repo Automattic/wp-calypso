@@ -32,14 +32,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringServices()( spy, getState );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_SERVICES_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring services receive action when request completes', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_SERVICES_RECEIVE,
 						services: {
 							facebook: { ID: 'facebook' },
@@ -51,7 +51,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch keyring services request success action when request completes', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_SERVICES_REQUEST_SUCCESS,
 					} );
 				} );
@@ -72,14 +72,14 @@ describe( 'actions', () => {
 			test( 'should dispatch fetch action when thunk triggered', () => {
 				requestKeyringServices()( spy, getState );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: KEYRING_SERVICES_REQUEST,
 				} );
 			} );
 
 			test( 'should dispatch keyring services request fail action when request fails', () => {
 				return requestKeyringServices()( spy, getState ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: KEYRING_SERVICES_REQUEST_FAILURE,
 						error: expect.objectContaining( { message: 'A server error occurred' } ),
 					} );

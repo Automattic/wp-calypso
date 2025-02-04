@@ -1,14 +1,14 @@
 import { Button } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
-import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
 import {
 	getThreatPayloadDescription,
 	getThreatFix,
 } from 'calypso/components/jetpack/threat-item/utils';
+import ThreatItemHeader from 'calypso/components/jetpack/threat-item-header';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import LogItem from '../log-item';
@@ -20,15 +20,16 @@ import './style.scss';
 interface Props {
 	threat: Threat;
 	isPlaceholder: boolean;
-	onFixThreat?: ( threat: Threat ) => void;
+	onFixThreat?: () => void;
 	onIgnoreThreat?: () => void;
+	onUnignoreThreat?: () => void;
 	isFixing: boolean;
 	contactSupportUrl?: string;
 }
 
 export const ThreatItemPlaceholder: React.FC = () => (
 	<LogItem
-		className={ classnames( 'threat-item', 'is-placeholder' ) }
+		className={ clsx( 'threat-item', 'is-placeholder' ) }
 		header="Placeholder threat"
 		subheader="Placeholder sub header"
 	/>
@@ -39,6 +40,7 @@ const ThreatItem: React.FC< Props > = ( {
 	isPlaceholder,
 	onFixThreat,
 	onIgnoreThreat,
+	onUnignoreThreat,
 	isFixing,
 } ) => {
 	const dispatch = useDispatch();
@@ -47,7 +49,6 @@ const ThreatItem: React.FC< Props > = ( {
 	 * Render a CTA button. Currently, this button is rendered three
 	 * times: in the details section, and in the `summary` and `extendSummary`
 	 * sections of the header.
-	 *
 	 * @param {string} className A class for the button
 	 */
 	const renderFixThreatButton = React.useCallback(
@@ -56,12 +57,12 @@ const ThreatItem: React.FC< Props > = ( {
 			// entire ThreatItem element as well
 			const onClickHandler = ( e: React.MouseEvent< HTMLElement > ) => {
 				e.stopPropagation();
-				onFixThreat && onFixThreat( threat );
+				onFixThreat && onFixThreat();
 			};
 			return (
 				<Button
 					primary
-					className={ classnames( 'threat-item__fix-button', className ) }
+					className={ clsx( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
 				>
@@ -69,7 +70,7 @@ const ThreatItem: React.FC< Props > = ( {
 				</Button>
 			);
 		},
-		[ isFixing, onFixThreat, threat ]
+		[ isFixing, onFixThreat ]
 	);
 
 	const getFix = React.useCallback( (): TranslateResult | undefined => {
@@ -131,7 +132,7 @@ const ThreatItem: React.FC< Props > = ( {
 	}, [ threat ] );
 
 	const isFixable = React.useMemo(
-		() => threat.fixable && ( threat.status === 'current' || threat.status === 'ignored' ),
+		() => threat.fixable && threat.status === 'current',
 		[ threat ]
 	);
 
@@ -160,13 +161,13 @@ const ThreatItem: React.FC< Props > = ( {
 	return (
 		<LogItem
 			key={ threat.id }
-			className={ classnames( 'threat-item', {
+			className={ clsx( 'threat-item', {
 				'is-fixed': threat.status === 'fixed',
 				'is-ignored': threat.status === 'ignored',
 				'is-current': threat.status === 'current',
 			} ) }
-			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
-			clickableHeader={ true }
+			header={ <ThreatItemHeader threat={ threat } isStyled /> }
+			clickableHeader
 			onClick={ onOpenTrackEvent }
 		>
 			<ThreatDescription
@@ -192,6 +193,16 @@ const ThreatItem: React.FC< Props > = ( {
 						disabled={ isFixing }
 					>
 						{ translate( 'Ignore threat' ) }
+					</Button>
+				) }
+				{ threat.status === 'ignored' && (
+					<Button
+						scary
+						className="threat-item__unignore-button"
+						onClick={ onUnignoreThreat }
+						disabled={ isFixing }
+					>
+						{ translate( 'Unignore threat' ) }
 					</Button>
 				) }
 				{ ! threat.fixable && 'current' === threat.status && (

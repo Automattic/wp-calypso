@@ -1,9 +1,14 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { useSelector } from 'react-redux';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey } from './use-get-email-accounts-query';
-import type { QueryClient, QueryKey, UseMutationOptions, UseMutationResult } from 'react-query';
+import type {
+	QueryClient,
+	QueryKey,
+	UseMutationOptions,
+	UseMutationResult,
+} from '@tanstack/react-query';
 
 const invalidationDelayTimeout = 5000;
 
@@ -18,7 +23,6 @@ type MutationContext = {
 
 /**
  * Deletes a mailbox from a Professional Email (Titan) account
- *
  * @param domainName The domain name of the mailbox
  * @param mailboxName The mailbox name
  * @param mutationOptions Mutation options passed on to `useMutation`
@@ -27,7 +31,10 @@ type MutationContext = {
 export function useRemoveTitanMailboxMutation(
 	domainName: string,
 	mailboxName: string,
-	mutationOptions: UseMutationOptions< unknown, unknown, void, MutationContext > = {}
+	mutationOptions: Omit<
+		UseMutationOptions< unknown, unknown, void, MutationContext >,
+		'mutationFn'
+	> = {}
 ): UseMutationResult< unknown, unknown, void, unknown > {
 	const queryClient = useQueryClient();
 
@@ -40,7 +47,7 @@ export function useRemoveTitanMailboxMutation(
 
 	// Setup actions to happen before the mutation
 	mutationOptions.onMutate = async () => {
-		await queryClient.cancelQueries( queryKey );
+		await queryClient.cancelQueries( { queryKey } );
 
 		const previousNumberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
@@ -54,7 +61,7 @@ export function useRemoveTitanMailboxMutation(
 		suppliedOnSettled?.( data, error, variables, context );
 
 		// Always invalidate attendant queries
-		queryClient.invalidateQueries( queryKey ).then( () => {
+		queryClient.invalidateQueries( { queryKey } ).then( () => {
 			const numberOfMailboxes = getNumberOfMailboxes( queryClient, queryKey );
 
 			// Determine if we already have updated data, since the removal job is not synchronous
@@ -63,13 +70,13 @@ export function useRemoveTitanMailboxMutation(
 			}
 
 			setTimeout( () => {
-				queryClient.invalidateQueries( queryKey );
+				queryClient.invalidateQueries( { queryKey } );
 			}, invalidationDelayTimeout );
 		} );
 	};
 
-	return useMutation(
-		() =>
+	return useMutation( {
+		mutationFn: () =>
 			wp.req.get( {
 				path: `/emails/titan/${ encodeURIComponent( domainName ) }/mailbox/${ encodeURIComponent(
 					mailboxName
@@ -77,6 +84,6 @@ export function useRemoveTitanMailboxMutation(
 				method: 'DELETE',
 				apiNamespace: 'wpcom/v2',
 			} ),
-		mutationOptions
-	);
+		...mutationOptions,
+	} );
 }

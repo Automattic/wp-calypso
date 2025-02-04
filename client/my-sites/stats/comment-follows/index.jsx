@@ -1,16 +1,16 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Followers from '../stats-comment-followers-page';
+import PageViewTracker from '../stats-page-view-tracker';
 
 class StatsCommentFollows extends Component {
 	static propTypes = {

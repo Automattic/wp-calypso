@@ -1,6 +1,7 @@
 import { useEffect, useRef } from '@wordpress/element';
-import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
+import { usePresalesChat } from 'calypso/lib/presales-chat';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import OpenSourceSection from '../open-source';
 import PlanUpgradeSection from '../plan-upgrade';
@@ -13,7 +14,6 @@ import { NeedMoreInfo } from './need-more-info';
 import { PricingBanner } from './pricing-banner';
 import { Recommendations } from './recommendations';
 import { UserLicensesDialog } from './user-licenses-dialog';
-import { ZendeskPreSalesChat } from './zendesk-presales-chat-widget';
 import type { ProductStoreProps } from './types';
 
 import './wpcom-styles.scss';
@@ -40,6 +40,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 
 	const showJetpackFree = useShowJetpackFree();
 
+	usePresalesChat( 'jpGeneral' );
+
 	useEffect( () => {
 		if ( ! didMount.current ) {
 			didMount.current = true;
@@ -63,18 +65,17 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 				/>
 			) }
 
-			<PricingBanner />
-
 			<StoreItemInfoContext.Provider value={ storeItemInfo }>
 				<ItemsList duration={ duration } siteId={ siteId } />
 			</StoreItemInfoContext.Provider>
+
+			<PricingBanner />
 
 			<NeedMoreInfo />
 
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
-			<ZendeskPreSalesChat />
 			<OpenSourceSection />
 
 			<StoreFooter />

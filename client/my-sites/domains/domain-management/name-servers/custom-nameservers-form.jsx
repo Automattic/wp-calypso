@@ -1,11 +1,11 @@
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
-import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -42,6 +42,7 @@ class CustomNameserversForm extends PureComponent {
 		onSubmit: PropTypes.func.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		submitDisabled: PropTypes.bool.isRequired,
+		isSaving: PropTypes.bool,
 		notice: PropTypes.element,
 		redesign: PropTypes.bool,
 	};
@@ -69,7 +70,7 @@ class CustomNameserversForm extends PureComponent {
 	};
 
 	rows() {
-		const { translate } = this.props;
+		const { translate, isSaving } = this.props;
 
 		// Remove the empty values from the end, and add one empty one
 		const nameservers = dropRightWhileEmpty( this.props.nameservers );
@@ -102,6 +103,7 @@ class CustomNameserversForm extends PureComponent {
 					selectedDomainName={ this.props.selectedDomainName }
 					onChange={ this.handleChange }
 					onRemove={ this.handleRemove }
+					isSaving={ isSaving }
 				/>
 			);
 		} );
@@ -167,17 +169,29 @@ class CustomNameserversForm extends PureComponent {
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
-							disabled={ this.props.submitDisabled }
+							disabled={ this.props.submitDisabled || this.props.isSaving }
 						>
 							{ translate( 'Save custom name servers' ) }
 						</FormButton>
 
 						{ ! redesign ? (
-							<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
+							<FormButton
+								type="button"
+								isPrimary={ false }
+								onClick={ this.handleReset }
+								busy={ this.props.isSaving }
+								disabled={ this.props.isSaving }
+							>
 								{ translate( 'Reset to defaults' ) }
 							</FormButton>
 						) : (
-							<FormButton type="button" isPrimary={ false } onClick={ this.handleCancel }>
+							<FormButton
+								type="button"
+								isPrimary={ false }
+								onClick={ this.handleCancel }
+								busy={ this.props.isSaving }
+								disabled={ this.props.isSaving }
+							>
 								{ translate( 'Cancel' ) }
 							</FormButton>
 						) }

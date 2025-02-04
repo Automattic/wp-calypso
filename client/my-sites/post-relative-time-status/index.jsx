@@ -13,11 +13,13 @@ class PostRelativeTime extends PureComponent {
 		link: PropTypes.string,
 		target: PropTypes.string,
 		gridiconSize: PropTypes.number,
+		showGridIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		link: null,
 		target: null,
+		showGridIcon: true,
 	};
 
 	/**
@@ -50,21 +52,26 @@ class PostRelativeTime extends PureComponent {
 			displayedTime = timestamp.calendar( null, {
 				nextDay: this.props.translate( '[tomorrow at] LT', {
 					comment: 'LT refers to time (eg. 18:00)',
+					textOnly: true,
 				} ),
-				sameElse: this.props.translate( 'll [at] LT', {
-					comment:
-						'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
-				} ),
+				sameElse:
+					this.props.translate( 'll [at] LT', {
+						comment:
+							'll refers to date (eg. 21 Apr) for when the post will be published & LT refers to time (eg. 18:00) - "at" is translated',
+						textOnly: true,
+					} ) ?? 'll [at] LT',
 			} );
 		} else {
 			if ( Math.abs( now.diff( this.getTimestamp(), 'days' ) ) < 7 ) {
 				return timestamp.fromNow();
 			}
 
-			const sameElse = this.props.translate( 'll [at] LT', {
-				comment:
-					'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
-			} );
+			const sameElse =
+				this.props.translate( 'll [at] LT', {
+					comment:
+						'll refers to date (eg. 21 Apr) & LT refers to time (eg. 18:00) - "at" is translated',
+					textOnly: true,
+				} ) ?? 'll [at] LT';
 
 			displayedTime = timestamp.calendar( null, {
 				sameElse,
@@ -83,7 +90,9 @@ class PostRelativeTime extends PureComponent {
 			<span className="post-relative-time-status__time">
 				{ time && (
 					<>
-						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						{ this.props.showGridIcon && (
+							<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						) }
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
 							{ this.getDisplayedTimeForLabel() }
 						</time>
@@ -181,6 +190,33 @@ class PostRelativeTime extends PureComponent {
 	}
 
 	/**
+	 * Get Newsletter status label
+	 * @param {string} status Newsletter tatus
+	 */
+	getNewsletterStatus( status ) {
+		if ( ! status ) {
+			return;
+		}
+
+		let statusText;
+		let extraStatusClassName;
+
+		if ( status === 'everybody' ) {
+			extraStatusClassName = 'is-newsletter-everybody';
+			statusText = this.props.translate( 'Everybody' );
+		} else if ( status === 'subscribers' ) {
+			extraStatusClassName = 'is-newsletter-subscribers';
+			statusText = this.props.translate( 'Subscribers' );
+		} else if ( status === 'paid_subscribers' ) {
+			extraStatusClassName = 'is-newsletter-paid-subcribers';
+			statusText = this.props.translate( 'Paid Subscribers' );
+		}
+
+		const statusIcon = 'mail';
+		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
 	 * Get "private" label
 	 */
 	getPrivateLabel() {
@@ -203,10 +239,9 @@ class PostRelativeTime extends PureComponent {
 
 	/**
 	 * Get Label for the status
-	 *
 	 * @param {string} statusText text status
 	 * @param {string} extraStatusClassName extra CSS class to be added to the label
-	 * @param {string} [statusIcon="aside"] icon for the label
+	 * @param {string} [statusIcon] icon for the label
 	 */
 	getLabel( statusText, extraStatusClassName, statusIcon = 'aside' ) {
 		if ( statusText ) {
@@ -224,9 +259,15 @@ class PostRelativeTime extends PureComponent {
 	render() {
 		const { showPublishedStatus, post } = this.props;
 		const timeText = this.getTimeText();
+
+		const newletterStatus = post?.metadata?.find(
+			( { key } ) => key === '_jetpack_newsletter_access'
+		)?.value;
+
 		let innerText = (
 			<>
 				{ showPublishedStatus ? this.getStatus() : timeText }
+				{ this.getNewsletterStatus( newletterStatus ) }
 				{ post.status === 'pending' && this.getPendingLabel() }
 				{ post.status === 'private' && this.getPrivateLabel() }
 				{ post.sticky && this.getStickyLabel() }

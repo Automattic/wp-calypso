@@ -183,6 +183,42 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'foo' ) ).toBe( 42 );
 	} );
 
+	it( 'uses state and metadata when invoking extra collectors', () => {
+		const report = {
+			data: new Map(),
+		};
+
+		const extraCollectors = [
+			( state ) => {
+				return ( rep ) => {
+					rep.data.set( 'stateFoo', state.foo );
+				};
+			},
+			( _, metadata ) => ( rep ) => {
+				rep.data.set( 'metadataBar', metadata.bar );
+			},
+		];
+
+		// Run the default collector
+		stopPerformanceTracking( 'pageName', {
+			state: {
+				foo: 42,
+			},
+			metadata: {
+				bar: 42,
+			},
+			extraCollectors,
+		} );
+
+		const extraCollector1 = stop.mock.calls[ 0 ][ 1 ].collectors[ 2 ];
+		extraCollector1( report );
+		const extraCollector2 = stop.mock.calls[ 0 ][ 1 ].collectors[ 3 ];
+		extraCollector2( report );
+
+		expect( report.data.get( 'stateFoo' ) ).toBe( 42 );
+		expect( report.data.get( 'metadataBar' ) ).toBe( 42 );
+	} );
+
 	it( 'detects performance of translation chunks', () => {
 		collectTranslationTimings.mockImplementation( () => ( {
 			count: 1,

@@ -9,6 +9,8 @@ declare global {
 	// See https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-4.html#type-checking-for-globalthis
 	// eslint-disable-next-line no-var
 	var browser: Browser;
+	// eslint-disable-next-line no-var
+	var testFileName: string;
 
 	interface Window {
 		_e2eEventsStack: TracksEvent[];

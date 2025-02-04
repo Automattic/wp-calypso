@@ -32,6 +32,11 @@
 			font-size: $font-body;
 		}
 	}
+
+	&__remember-credentials-info-popover {
+		vertical-align: middle;
+		margin-inline-start: 2px;
+	}
 }
 
 .credentials-form__buttons .credentials-form__buttons-flex {
@@ -75,7 +80,6 @@
 	}
 }
 
-
 .credentials-form__row {
 	display: flex;
 	flex-wrap: wrap;
@@ -86,18 +90,18 @@
 }
 
 @include breakpoint-deprecated( ">960px" ) {
-	.credentials-form__server-address,
-	.credentials-form__username,
-	.credentials-form__password {
+	.credentials-form__server-address.form-fieldset,
+	.credentials-form__username.form-fieldset,
+	.credentials-form__password.form-fieldset {
 		flex: 1 0 240px;
 	}
 
-	.credentials-form__server-address,
-	.credentials-form__username {
+	.credentials-form__server-address.form-fieldset,
+	.credentials-form__username.form-fieldset {
 		margin-right: 16px;
 	}
 
-	.credentials-form__port-number {
+	.credentials-form__port-number.form-fieldset {
 		flex: 0 0 160px;
 	}
 }

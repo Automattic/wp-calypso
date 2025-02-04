@@ -1,0 +1,37 @@
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-hosting-popover {
+	z-index: 100000;
+	border-radius: 4px;
+
+	.popover__inner {
+		display: flex;
+		gap: 16px;
+		padding: 16px;
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
+.wpcom-hosting-popover__heading {
+	font-size: rem(14px);
+	line-height: 1.5;
+}
+
+.wpcom-hosting-popover__description {
+	color: var(--studio-gray-80);
+	font-size: rem(12px);
+	line-height: 1.5;
+	max-width: 220px;
+	text-align: left;
+	margin-block-end: 0;
+}
+
+.wpcom-hosting-popover__button {
+	padding: 4px 8px;
+	font-size: rem(12px);
+}
+
+.wpcom-hosting-popover__icon {
+	margin-inline-start: 4px;
+}

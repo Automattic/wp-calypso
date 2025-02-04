@@ -3,7 +3,6 @@ const root = '/me/connections/';
 export default class KeyringConnection {
 	/**
 	 * `KeyringConnection` constructor.
-	 *
 	 * @param {string} keyId - the connection ID to take action on.
 	 * @param {Object} wpcom - wpcom instance
 	 * @returns {null} null
@@ -18,7 +17,6 @@ export default class KeyringConnection {
 
 	/**
 	 * Get a single Keyring connection that the current user has setup.
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
@@ -37,7 +35,6 @@ export default class KeyringConnection {
 	/**
 	 * Delete the Keyring connection (and associated token) with the
 	 * provided ID. Also deletes all associated publicize connections.
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler

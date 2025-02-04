@@ -2,14 +2,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-body .customer-home__layout .domain-upsell__card {
-	background-color: #f6f7f7;
-	padding: 16px 16px 20px;
-	@include break-small {
-		padding: 40px 46px;
-	}
-}
-
 .domain-upsell__card {
 	h3 {
 		font-family: $brand-serif;
@@ -24,47 +16,69 @@ body .customer-home__layout .domain-upsell__card {
 		margin-top: 8px;
 	}
 
-	.suggested-domain-name {
-		span {
-			font-size: rem(14px);
-			color: var(--studio-gray-80);
-			line-height: 20px;
-			word-break: break-all;
-			flex-direction: column;
-			display: flex;
-			flex: 1;
+	&-dismiss {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		top: 16px;
+		right: 16px;
+		color: var(--color-text-subtle);
+		button {
+			cursor: pointer;
+			height: 18px;
 		}
 
-		.badge {
-			border-radius: 4px;
-			font-size: rem(12px);
-			color: var(--studio-gray-80);
-			font-weight: 500;
-			flex-direction: column;
-			display: flex;
-		}
+	}
 
-		.card {
-			margin-bottom: 5px;
-			box-shadow: none;
-			padding: 8px 16px;
-			min-height: 40px;
-			overflow-x: auto;
-			flex-direction: row;
-			display: flex;
-			align-items: center;
-		}
+	.domain-upsell-subtitle {
+		margin-bottom: 12px;
+		font-size: $font-body;
+		color: var(--color-text-subtle);
+	}
 
-		.badge--success {
-			background-color: var(--studio-green-5);
-		}
+	.domain-upsell-description {
+		font-size: rem(14px);
+		font-style: italic;
+		color: var(--color-text-subtle);
 	}
 
 	.domain-upsell-actions {
 		display: flex;
-		flex-direction: row;
-		justify-content: right;
-		padding: 28px 0 0;
+		flex-direction: column;
+		justify-content: left;
+		padding: 24px 0 0;
 		gap: 16px;
+		@media (min-width: ($break-large + 1)) {
+			flex-direction: row;
+		}
+	}
+
+	.domain-upsell-illustration {
+		position: relative;
+
+		width: 100%;
+		padding: 0;
+
+		img {
+			width: 100%;
+		}
+
+		svg {
+			position: absolute;
+			top: 27%;
+			left: 15%;
+			height: 30%;
+			width: 70%;
+		}
+	}
+
+}
+
+html[dir="rtl"] {
+	.domain-upsell-illustration {
+		&,
+		text {
+			transform: scale(-1, 1);
+		}
 	}
 }

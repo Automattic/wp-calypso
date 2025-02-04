@@ -4,9 +4,9 @@ import {
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 
 const noop = () => {};
 

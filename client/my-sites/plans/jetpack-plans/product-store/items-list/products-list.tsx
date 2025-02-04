@@ -24,14 +24,13 @@ export const ProductsList: React.FC< ProductsListProps > = ( {
 	return (
 		<div className="jetpack-product-store__products-list">
 			<MostPopular
-				heading={ translate( 'Most popular bundles' ) }
 				items={ popularBundles }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				siteId={ siteId }
 			/>
 
 			<AllItems
-				heading={ translate( 'All products' ) }
+				heading={ translate( 'Individual products' ) }
 				items={ allItems }
 				onClickMoreInfoFactory={ onClickMoreInfoFactory }
 				siteId={ siteId }

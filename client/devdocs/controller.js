@@ -1,13 +1,15 @@
+import page from '@automattic/calypso-router';
 import { debounce } from 'lodash';
-import page from 'page';
 import { stringify } from 'qs';
 import { createElement } from 'react';
+import noSitesIllustration from 'calypso/assets/images/illustrations/illustration-nosites.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import { login } from 'calypso/lib/paths';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import AsyncLoad from './devdocs-async-load';
 import SingleDocComponent from './doc';
 import DocsComponent from './main';
@@ -25,6 +27,7 @@ const devdocs = {
 			path: context.path,
 		} );
 
+		context.store.dispatch( setSelectedSiteId( null ) );
 		next();
 	},
 
@@ -139,7 +142,7 @@ const devdocs = {
 				actionURL: login( { redirectTo } ),
 				secondaryAction: 'Register',
 				secondaryActionURL: '/start/account',
-				illustration: '/calypso/images/illustrations/illustration-nosites.svg',
+				illustration: noSitesIllustration,
 			} );
 			next();
 		} else {

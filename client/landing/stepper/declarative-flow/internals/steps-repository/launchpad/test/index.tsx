@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { Site } from '@automattic/data-stores';
-import { render } from '@testing-library/react';
+import { Site, useLaunchpad } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -12,8 +12,9 @@ import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Launchpad from '../index';
-import { buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
+import { buildSiteDetails, defaultSiteDetails, MOCK_USE_QUERY_RESULT } from './lib/fixtures';
 
 jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
@@ -31,10 +32,17 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
-	usePremiumGlobalStyles: () => ( {
+jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
+	} ),
+} ) );
+
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: jest.fn( () => {
+		return jest.requireActual( '@automattic/data-stores' ).useLaunchpad();
 	} ),
 } ) );
 
@@ -46,11 +54,6 @@ declare global {
 		initialReduxState: object;
 	}
 }
-const savedWindow = window;
-global.window = Object.create( window );
-Object.defineProperty( window, 'location', {
-	value: { replace: replaceMock },
-} );
 
 const siteSlug = `testlinkinbio.wordpress.com`;
 const user = {
@@ -63,7 +66,7 @@ function renderLaunchpad(
 	props = {},
 	siteDetails = defaultSiteDetails,
 	initialReduxState = {},
-	siteSlug = ''
+	route = '/setup/link-in-bio/launchpad?siteSlug=testlinkinbio.wordpress.com'
 ): void {
 	function TestLaunchpad( props ) {
 		window.initialReduxState = initialReduxState;
@@ -82,19 +85,19 @@ function renderLaunchpad(
 
 		return (
 			<Provider store={ reduxStore }>
-				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
+				<MemoryRouter initialEntries={ [ route ] }>
 					<Launchpad { ...props } />
 				</MemoryRouter>
 			</Provider>
 		);
 	}
 
-	render( <TestLaunchpad { ...props } /> );
+	renderWithProvider( <TestLaunchpad { ...props } /> );
 }
 
 describe( 'Launchpad', () => {
+	let savedLocation;
 	const props = {
-		siteSlug,
 		/* eslint-disable @typescript-eslint/no-empty-function */
 		navigation: {
 			submit: () => {},
@@ -104,25 +107,74 @@ describe( 'Launchpad', () => {
 		/* eslint-enable @typescript-eslint/no-empty-function */
 	};
 
+	beforeAll( () => {
+		savedLocation = window.location;
+		Object.defineProperty( window, 'location', {
+			value: { replace: replaceMock },
+		} );
+	} );
+
 	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
 		jest.clearAllMocks();
 	} );
 
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	afterAll( () => {
-		global.window = savedWindow;
+		Object.defineProperty( window, 'location', {
+			value: savedLocation,
+		} );
 	} );
 
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
+				( useLaunchpad as jest.Mock ).mockReturnValue( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'full' },
+				} );
 				const initialReduxState = { currentUser: { id: user.ID } };
-				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
-				expect( replaceMock ).not.toBeCalled();
+				renderLaunchpad(
+					props,
+					defaultSiteDetails,
+					initialReduxState,
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
+				);
+				expect( replaceMock ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not redirect when site id is used', () => {
+				( useLaunchpad as jest.Mock ).mockReturnValue( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'full' },
+				} );
+				const initialReduxState = { currentUser: { id: user.ID } };
+				renderLaunchpad(
+					props,
+					defaultSiteDetails,
+					initialReduxState,
+					`/setup/link-in-bio/launchpad?siteId=${ defaultSiteDetails.ID }`
+				);
+				expect( replaceMock ).not.toHaveBeenCalled();
 			} );
 		} );
 
 		describe( 'and the site is not launchpad enabled', () => {
 			it( 'redirects to Calypso My Home', () => {
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					...MOCK_USE_QUERY_RESULT,
+					data: { launchpad_screen: 'off' },
+				} );
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad(
 					props,
@@ -133,10 +185,12 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					siteSlug
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
-				expect( replaceMock ).toBeCalledTimes( 1 );
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledTimes( 1 );
+				expect( replaceMock ).toHaveBeenCalledWith(
+					expect.stringMatching( `/home/${ siteSlug }` )
+				);
 			} );
 		} );
 
@@ -151,9 +205,11 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					{},
-					siteSlug
+					`/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }`
 				);
-				expect( replaceMock ).toBeCalledWith( `/home/${ siteSlug }` );
+				expect( replaceMock ).toHaveBeenCalledWith(
+					expect.stringMatching( `/home/${ siteSlug }` )
+				);
 			} );
 		} );
 
@@ -169,9 +225,9 @@ describe( 'Launchpad', () => {
 						},
 					} ),
 					initialReduxState,
-					''
+					'/setup/link-in-bio/launchpad'
 				);
-				expect( replaceMock ).toBeCalledWith( `/home` );
+				expect( replaceMock ).toHaveBeenCalledWith( `/home` );
 			} );
 		} );
 	} );

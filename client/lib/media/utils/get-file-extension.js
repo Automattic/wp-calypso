@@ -4,7 +4,6 @@ import { isUri } from 'valid-url';
 
 /**
  * Given a media string, File, or object, returns the file extension.
- *
  * @example
  * getFileExtension( 'example.gif' );
  * getFileExtension( { URL: 'https://wordpress.com/example.gif' } );

@@ -10,7 +10,6 @@ const chooseKeyForPlatform = ( key: string ): string =>
 /**
  * Returns the number of sites of the current user, for the platform being
  * visited (e.g. Calypso, or Jetpack cloud)
- *
  * @param {UserData} user Authenticated user
  * @returns {number} Site count
  */
@@ -21,7 +20,6 @@ export function getUserSiteCountForPlatform( user: UserData ): number {
 /**
  * Returns the number of visible sites of the current user, for the platform being
  * visited (e.g. Calypso, or Jetpack cloud)
- *
  * @param {UserData} user Authenticated user
  * @returns {number} Visible site count
  */

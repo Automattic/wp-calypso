@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import ConnectDomainStepClipboardButton from './connect-domain-step-clipboard-button';
 import ConnectDomainStepVerificationNotice from './connect-domain-step-verification-error-notice';
@@ -46,9 +46,9 @@ export default function ConnectSubdomainStepSuggestedRecords( {
 	};
 
 	const itemClassNames = {
-		type: classNames( itemClasses.type ),
-		name: classNames( itemClasses.name ),
-		value: classNames( itemClasses.value ),
+		type: clsx( itemClasses.type ),
+		name: clsx( itemClasses.name ),
+		value: clsx( itemClasses.value ),
 	};
 
 	const recordsListHeader = (
@@ -56,10 +56,7 @@ export default function ConnectSubdomainStepSuggestedRecords( {
 			{ Object.entries( recordLabels ).map( ( [ key, value ] ) => (
 				<div
 					key={ key }
-					className={ classNames(
-						className + '__records-list-record-label',
-						...itemClasses[ key ]
-					) }
+					className={ clsx( className + '__records-list-record-label', ...itemClasses[ key ] ) }
 				>
 					{ value }
 				</div>

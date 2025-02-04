@@ -5,27 +5,27 @@ import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices
 import 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
 
-export const requestSettings = ( siteId ) => ( {
+export const requestSettings = ( siteId, source ) => ( {
 	siteId,
+	source,
 	type: MEMBERSHIPS_SETTINGS,
 } );
 
 const requestDisconnectStripeAccountByUrl = (
 	url,
 	siteId,
-	connectedAccountId,
 	noticeTextOnProcessing,
 	noticeTextOnSuccess
 ) => {
 	return ( dispatch ) => {
 		dispatch(
 			warningNotice( noticeTextOnProcessing, {
-				duration: 10000,
+				duration: 5000,
 			} )
 		);
 
 		return wpcom.req
-			.get( `/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect` )
+			.get( `/sites/${ siteId }/connected_account/stripe/disconnect` )
 			.then( () => {
 				dispatch( requestSettings( siteId ) );
 				dispatch(
@@ -46,29 +46,12 @@ const requestDisconnectStripeAccountByUrl = (
 
 export const requestDisconnectSiteStripeAccount = (
 	siteId,
-	connectedAccountId,
 	noticeTextOnProcessing,
 	noticeTextOnSuccess
 ) => {
 	return requestDisconnectStripeAccountByUrl(
-		`/sites/${ siteId }/connected_account/stripe/${ connectedAccountId }/disconnect`,
+		`/sites/${ siteId }/connected_account/stripe/disconnect`,
 		siteId,
-		connectedAccountId,
-		noticeTextOnProcessing,
-		noticeTextOnSuccess
-	);
-};
-
-export const requestDisconnectStripeAccount = (
-	siteId,
-	connectedAccountId,
-	noticeTextOnProcessing,
-	noticeTextOnSuccess
-) => {
-	return requestDisconnectStripeAccountByUrl(
-		`/me/connected_account/stripe/${ connectedAccountId }/disconnect`,
-		siteId,
-		connectedAccountId,
 		noticeTextOnProcessing,
 		noticeTextOnSuccess
 	);

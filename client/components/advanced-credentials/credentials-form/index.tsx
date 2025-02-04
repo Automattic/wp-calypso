@@ -1,16 +1,21 @@
-import { Button, FormInputValidation, Gridicon } from '@automattic/components';
+import {
+	Button,
+	FormInputValidation,
+	FormLabel,
+	Gridicon,
+	SegmentedControl,
+} from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, FormEventHandler } from 'react';
-import { useDispatch } from 'react-redux';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextArea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
-import SegmentedControl from 'calypso/components/segmented-control';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { FormState, FormMode, FormErrors, INITIAL_FORM_INTERACTION } from '../form';
 import { getHostInfoFromId } from '../host-info';
@@ -20,11 +25,16 @@ import './style.scss';
 interface Props {
 	formErrors: FormErrors;
 	formMode: FormMode;
+	formModeSwitcher?: 'segmented' | 'simple';
 	disabled?: boolean;
 	formState: FormState;
 	onFormStateChange: ( newFormState: FormState ) => void;
 	onModeChange: ( fromMode: FormMode ) => void;
 	host: string;
+	role: string;
+	withHeader?: boolean;
+	children?: React.ReactNode;
+	allowFtp?: boolean;
 }
 
 const ServerCredentialsForm: FunctionComponent< Props > = ( {
@@ -33,14 +43,20 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	formState,
 	formErrors,
 	formMode,
+	formModeSwitcher = 'segmented',
 	onFormStateChange,
 	onModeChange,
 	host,
+	role = 'main',
+	withHeader = true,
+	allowFtp = true,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ interactions, setFormInteractions ] = useState( INITIAL_FORM_INTERACTION );
 	const hostInfo = getHostInfoFromId( host );
+	const isAlternate = role === 'alternate';
+	formState.role = role;
 
 	const handleFormChange: FormEventHandler< HTMLInputElement | HTMLSelectElement > = ( {
 		currentTarget,
@@ -51,7 +67,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					...formState,
 					protocol: currentTarget.value as 'ftp' | 'ssh' | 'dynamic-ssh',
 					port: ( () => {
-						let port = parseInt( String( formState.port ) );
+						let port = parseInt( String( formState.port ) ) || 22;
 
 						if ( formState.port === 22 && currentTarget.value === 'ftp' ) {
 							port = 21;
@@ -67,6 +83,10 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			case 'host':
 				setFormInteractions( { ...interactions, host: true } );
 				onFormStateChange( { ...formState, host: currentTarget.value } );
+				break;
+			case 'site_url':
+				setFormInteractions( { ...interactions, site_url: true } );
+				onFormStateChange( { ...formState, site_url: currentTarget.value } );
 				break;
 			case 'port':
 				setFormInteractions( { ...interactions, port: true } );
@@ -91,13 +111,20 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				setFormInteractions( { ...interactions, kpri: true } );
 				onFormStateChange( { ...formState, kpri: currentTarget.value } );
 				break;
+			case 'save_as_staging':
+				setFormInteractions( { ...interactions, save_as_staging: true } );
+				onFormStateChange( {
+					...formState,
+					save_as_staging: ( currentTarget as HTMLInputElement ).checked,
+				} );
+				break;
 		}
 	};
 
 	const renderServerUsernameForm = () => (
 		<FormFieldset className="credentials-form__username">
 			<div className="credentials-form__support-info">
-				<FormLabel htmlFor="server-username">{ translate( 'Server username' ) }</FormLabel>
+				<FormLabel htmlFor="server-username">{ translate( 'Username' ) }</FormLabel>
 				{ hostInfo?.inline?.user && (
 					<InfoPopover>
 						<InlineInfo
@@ -121,7 +148,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				data-lpignore="true"
 			/>
 			{ formErrors.user && ( interactions.user || ! formErrors.user.waitForInteraction ) && (
-				<FormInputValidation isError={ true } text={ formErrors.user.message } />
+				<FormInputValidation isError text={ formErrors.user.message } />
 			) }
 		</FormFieldset>
 	);
@@ -131,7 +158,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ renderServerUsernameForm() }
 			<FormFieldset className="credentials-form__password">
 				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="server-password">{ translate( 'Server password' ) }</FormLabel>
+					<FormLabel htmlFor="server-password">{ translate( 'Password' ) }</FormLabel>
 					{ hostInfo?.inline?.pass && (
 						<InfoPopover>
 							<InlineInfo
@@ -157,7 +184,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					data-lpignore="true"
 				/>
 				{ formErrors.pass && ( interactions.pass || ! formErrors.pass.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.pass.message } />
+					<FormInputValidation isError text={ formErrors.pass.message } />
 				) }
 			</FormFieldset>
 		</div>
@@ -191,18 +218,43 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction )
 					}
 				/>
-				<FormSettingExplanation>
-					{ translate( 'Only non-encrypted private keys are supported.' ) }
-				</FormSettingExplanation>
+				{ formModeSwitcher === 'segmented' && (
+					<FormSettingExplanation>
+						{ translate( 'Only non-encrypted private keys are supported.' ) }
+					</FormSettingExplanation>
+				) }
 				{ formErrors.kpri && ( interactions.kpri || ! formErrors.kpri.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.kpri.message } />
+					<FormInputValidation isError text={ formErrors.kpri.message } />
 				) }
 			</FormFieldset>
 		</>
 	);
 
 	const getSubHeaderText = () => {
-		if ( hostInfo !== null && hostInfo.inline !== undefined ) {
+		if ( isAlternate && hostInfo !== null && hostInfo.supportLink !== undefined ) {
+			return translate(
+				'Enter the server credentials from your hosting provider. {{a}}Learn how to find and enter your credentials{{/a}}',
+				{
+					components: {
+						a: (
+							<a
+								target="_blank"
+								rel="noopener noreferrer"
+								href={ hostInfo.supportLink }
+								onClick={ () =>
+									dispatch(
+										recordTracksEvent(
+											'calypso_jetpack_advanced_credentials_flow_support_link_click',
+											{ host }
+										)
+									)
+								}
+							/>
+						),
+					},
+				}
+			);
+		} else if ( hostInfo !== null && hostInfo.inline !== undefined ) {
 			return translate( 'Check the information icons for details on %(hostName)s', {
 				args: {
 					hostName: hostInfo?.name,
@@ -259,6 +311,13 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 				  );
 		}
 		return translate( 'Your hosting provider will be able to supply this information to you.' );
+	};
+
+	const getFormHeaderText = () => {
+		if ( ! allowFtp ) {
+			return translate( 'Provide your SSH, SFTP server credentials' );
+		}
+		return translate( 'Provide your SSH, SFTP or FTP server credentials' );
 	};
 
 	const renderCredentialLinks = () => {
@@ -321,35 +380,60 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 
 	return (
 		<div className="credentials-form">
-			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
-			{ renderCredentialLinks() }
-			<FormFieldset className="credentials-form__protocol-type">
-				<div className="credentials-form__support-info">
-					<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
-					{ hostInfo?.inline?.protocol && (
-						<InfoPopover>
-							<InlineInfo
-								field="protocol"
-								host={ host }
-								info={ hostInfo.inline.protocol }
-								protocol={ formState.protocol }
-							/>
-						</InfoPopover>
-					) }
-				</div>
-				<FormSelect
-					name="protocol"
-					id="protocol-type"
-					value={ formState.protocol }
-					onChange={ handleFormChange }
-					disabled={ disabled }
-				>
-					<option value="ftp">{ translate( 'FTP' ) }</option>
-					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
-				</FormSelect>
-			</FormFieldset>
-
+			{ isAlternate && (
+				<FormFieldset className="credentials-form__site-url">
+					<div className="credentials-form__support-info">
+						<FormLabel htmlFor="destination-url">{ translate( 'Destination URL' ) }</FormLabel>
+					</div>
+					<FormTextInput
+						name="site_url"
+						id="site-url"
+						placeholder="https://example.com/"
+						value={ formState.site_url }
+						onChange={ handleFormChange }
+						disabled={ disabled }
+						isError={
+							formErrors.site_url &&
+							( interactions.site_url || ! formErrors.site_url.waitForInteraction )
+						}
+					/>
+					{ formErrors.site_url &&
+						( interactions.site_url || ! formErrors.site_url.waitForInteraction ) && (
+							<FormInputValidation isError text={ formErrors.site_url.message } />
+						) }
+				</FormFieldset>
+			) }
+			{ ! isAlternate && withHeader && <h3>{ getFormHeaderText() }</h3> }
+			{ withHeader && <p className="credentials-form__intro-text">{ getSubHeaderText() }</p> }
+			{ withHeader && renderCredentialLinks() }
+			{ ! allowFtp && <input type="hidden" name="protocol" value="ssh" /> }
+			{ allowFtp && (
+				<FormFieldset className="credentials-form__protocol-type">
+					<div className="credentials-form__support-info">
+						<FormLabel htmlFor="protocol-type">{ translate( 'Credential type' ) }</FormLabel>
+						{ hostInfo?.inline?.protocol && (
+							<InfoPopover>
+								<InlineInfo
+									field="protocol"
+									host={ host }
+									info={ hostInfo.inline.protocol }
+									protocol={ formState.protocol }
+								/>
+							</InfoPopover>
+						) }
+					</div>
+					<FormSelect
+						name="protocol"
+						id="protocol-type"
+						value={ formState.protocol }
+						onChange={ handleFormChange }
+						disabled={ disabled }
+					>
+						<option value="ftp">{ translate( 'FTP' ) }</option>
+						<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
+					</FormSelect>
+				</FormFieldset>
+			) }
 			<div className="credentials-form__row">
 				<FormFieldset className="credentials-form__server-address">
 					<div className="credentials-form__support-info">
@@ -377,7 +461,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						}
 					/>
 					{ formErrors.host && ( interactions.host || ! formErrors.host.waitForInteraction ) && (
-						<FormInputValidation isError={ true } text={ formErrors.host.message } />
+						<FormInputValidation isError text={ formErrors.host.message } />
 					) }
 				</FormFieldset>
 
@@ -407,11 +491,10 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						}
 					/>
 					{ formErrors.port && ( interactions.port || ! formErrors.port.waitForInteraction ) && (
-						<FormInputValidation isError={ true } text={ formErrors.port.message } />
+						<FormInputValidation isError text={ formErrors.port.message } />
 					) }
 				</FormFieldset>
 			</div>
-
 			<FormFieldset className="credentials-form__path">
 				<div className="credentials-form__support-info">
 					<FormLabel htmlFor="wordpress-path">
@@ -439,13 +522,11 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 						formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction )
 					}
 				/>
-
 				{ formErrors.path && ( interactions.path || ! formErrors.path.waitForInteraction ) && (
-					<FormInputValidation isError={ true } text={ formErrors.path.message } />
+					<FormInputValidation isError text={ formErrors.path.message } />
 				) }
 			</FormFieldset>
-
-			{ 'ftp' !== formState.protocol && (
+			{ formModeSwitcher === 'segmented' && 'ftp' !== formState.protocol && (
 				<div className="credentials-form__mode-control">
 					<div className="credentials-form__support-info">
 						<SegmentedControl disabled={ disabled }>
@@ -475,9 +556,61 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					</div>
 				</div>
 			) }
-
+			{ formModeSwitcher === 'simple' && (
+				<FormFieldset>
+					<FormLabel>{ translate( 'SSH credentials' ) }</FormLabel>
+					<FormSettingExplanation>
+						{ translate(
+							'Your credentials will be used only to migrate the site and won’t be stored anywhere.'
+						) }
+					</FormSettingExplanation>
+				</FormFieldset>
+			) }
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
-
+			{ formModeSwitcher === 'simple' && (
+				<>
+					{ formMode === FormMode.Password && (
+						<p>
+							<Button plain onClick={ () => onModeChange( FormMode.PrivateKey ) }>
+								{ translate( 'Use private key instead' ) }
+							</Button>
+						</p>
+					) }
+					{ formMode === FormMode.PrivateKey && (
+						<p>
+							<span>{ translate( 'Only non-encrypted private keys are supported.' ) }</span>{ ' ' }
+							<Button plain onClick={ () => onModeChange( FormMode.Password ) }>
+								{ translate( 'Use a password instead' ) }
+							</Button>
+						</p>
+					) }
+				</>
+			) }
+			{ isAlternate && (
+				<FormFieldset className="credentials-form__save-for-later">
+					<FormLabel htmlFor="save-for-later">
+						<FormInputCheckbox
+							checked={ formState.save_as_staging }
+							id="save-for-later"
+							name="save_as_staging"
+							onChange={ handleFormChange }
+							value="true"
+						/>
+						<span>
+							{ translate( 'Remember credentials' ) }
+							<InfoPopover
+								className="credentials-form__remember-credentials-info-popover"
+								position="right"
+								showOnHover
+							>
+								{ translate(
+									'Save this configuration so you can easily access it the next time you copy a site to staging.'
+								) }
+							</InfoPopover>
+						</span>
+					</FormLabel>
+				</FormFieldset>
+			) }
 			<FormFieldset className="credentials-form__buttons">
 				<div className="credentials-form__buttons-flex">{ children }</div>
 			</FormFieldset>

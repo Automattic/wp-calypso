@@ -14,6 +14,7 @@ export function checkDomainAvailability( params, onComplete ) {
 			blog_id: blogId,
 			apiVersion: '1.3',
 			is_cart_pre_check: isCartPreCheck,
+			vendor: params.vendor ?? null,
 		} )
 		.then( ( data ) => {
 			onComplete( null, data );

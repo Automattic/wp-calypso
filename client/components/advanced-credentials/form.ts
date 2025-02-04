@@ -1,5 +1,6 @@
 import { TranslateResult, translate } from 'i18n-calypso';
 import { filePathValidator } from 'calypso/lib/validation';
+import { checkHostInput } from './utils';
 
 export enum FormMode {
 	Password,
@@ -8,20 +9,25 @@ export enum FormMode {
 
 export interface Credentials {
 	type: 'ssh' | 'ftp' | 'dynamic-ssh';
+	site_url: string;
 	host: string;
 	port: number | '';
 	user: string;
 	path: string;
+	role: string;
 }
 
 export interface FormState {
 	protocol: 'ssh' | 'ftp' | 'dynamic-ssh';
 	host: string;
+	site_url: string;
 	port: number | '';
 	user: string;
 	pass: string;
 	path: string;
 	kpri: string;
+	role: string;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_STATE: FormState = {
@@ -32,6 +38,9 @@ export const INITIAL_FORM_STATE: FormState = {
 	pass: '',
 	path: '',
 	kpri: '',
+	site_url: '',
+	role: 'main',
+	save_as_staging: false,
 };
 
 export interface FormInteractions {
@@ -41,6 +50,9 @@ export interface FormInteractions {
 	pass: boolean;
 	path: boolean;
 	kpri: boolean;
+	site_url: boolean;
+	role: boolean;
+	save_as_staging: boolean;
 }
 
 export const INITIAL_FORM_INTERACTION: FormInteractions = {
@@ -50,6 +62,9 @@ export const INITIAL_FORM_INTERACTION: FormInteractions = {
 	pass: false,
 	path: false,
 	kpri: false,
+	site_url: false,
+	role: false,
+	save_as_staging: false,
 };
 
 interface Error {
@@ -59,6 +74,7 @@ interface Error {
 export interface FormErrors {
 	protocol?: Error;
 	host?: Error;
+	site_url?: Error;
 	port?: Error;
 	user?: Error;
 	pass?: Error;
@@ -85,8 +101,15 @@ export const validate = ( formState: FormState, mode: FormMode ): FormErrors => 
 			waitForInteraction: true,
 		};
 	}
+	// base url checking for alternate credentials
+	if ( formState.role === 'alternate' && ! formState.site_url ) {
+		formErrors.site_url = {
+			message: translate( 'Please enter a valid destination site url.' ),
+			waitForInteraction: true,
+		};
+	}
 	// host checking
-	if ( ! formState.host ) {
+	if ( ! formState.host || ! checkHostInput( formState.host ) ) {
 		formErrors.host = {
 			message: translate( 'Please enter a valid server address.' ),
 			waitForInteraction: true,

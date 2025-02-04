@@ -1,0 +1,19 @@
+.help-center .help-center-gpt__container {
+	.help-center-gpt-response__content,
+	.help-center-gpt-response__continue_quote {
+		border-left: 1px solid var(--color-neutral-5);
+		margin-left: 5px;
+		padding-left: 10px;
+	}
+
+	.help-center-gpt-response__actions {
+		display: flex;
+		justify-content: start;
+		gap: 8px;
+
+		> button.components-button {
+			width: auto;
+			padding: 2px;
+		}
+	}
+}

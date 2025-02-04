@@ -1,11 +1,11 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState } from 'react';
-import { useSelector } from 'react-redux';
 import useAddEmailForwardMutation from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import EmailForwardingAddNewCompact from 'calypso/my-sites/email/email-forwarding/email-forwarding-add-new-compact';
+import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { FormEvent } from 'react';
 
@@ -13,12 +13,14 @@ type Props = {
 	onBeforeAddEmailForwards?: () => void;
 	onAddedEmailForwards: () => void;
 	selectedDomainName: string;
+	showFormHeader?: boolean;
 };
 
 const EmailForwardingAddNewCompactList = ( {
 	onAddedEmailForwards,
 	onBeforeAddEmailForwards,
 	selectedDomainName,
+	showFormHeader,
 }: Props ) => {
 	const translate = useTranslate();
 
@@ -34,7 +36,7 @@ const EmailForwardingAddNewCompactList = ( {
 	);
 	const existingEmailForwards = emailAccounts[ 0 ]?.emails ?? [];
 
-	const { mutate: addEmailForward, isLoading: isAddingEmailForward } =
+	const { mutate: addEmailForward, isPending: isAddingEmailForward } =
 		useAddEmailForwardMutation( selectedDomainName );
 
 	const hasValidEmailForwards = () => {
@@ -100,6 +102,7 @@ const EmailForwardingAddNewCompactList = ( {
 							onRemoveEmailForward={ onRemoveEmailForward }
 							onUpdateEmailForward={ onUpdateEmailForward }
 							selectedDomainName={ selectedDomainName }
+							showFormHeader={ showFormHeader }
 						/>
 					</div>
 				</Fragment>

@@ -8,22 +8,38 @@
 .sidebar .profile-gravatar {
 	flex-shrink: 0;
 	margin-top: 16px;
-}
 
-// Hide Support Chat link, the item intentionally only exists for mobile users, and is accessible from the footer
-.is-group-me .sidebar__menu-happychat {
-	display: none;
+	.profile-gravatar__user-secondary-info {
+		color: var(--color-sidebar-text-alternative);
+	}
 }
 
 .sidebar {
-	.sidebar__menu-icon {
-		height: 20px;
-		width: 20px;
-	}
 	.sidebar__me-signout-button {
 		.gridicons-popout {
 			display: none;
 		}
+	}
+
+	.sidebar__menu-link {
+		svg.sidebar__menu-icon {
+			fill: var(--color-sidebar-text);
+
+			&.gridicons-plans {
+				height: 20px;
+			}
+		}
+
+		&:hover,
+		&:focus {
+			svg.sidebar__menu-icon {
+				fill: var(--color-sidebar-gridicon-fill);
+			}
+		}
+	}
+
+	.selected .sidebar__menu-link svg.sidebar__menu-icon {
+		fill: var(--color-sidebar-menu-selected-text);
 	}
 }
 

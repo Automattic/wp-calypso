@@ -25,7 +25,7 @@ const AuthorSelector = ( {
 		}
 	}
 
-	const fetchOptions = { number: 50 };
+	const fetchOptions = { number: 50, authors_only: 1 };
 	const trimmedSearch = search.trim?.();
 
 	if ( trimmedSearch ) {

@@ -5,6 +5,7 @@ This component renders a box with a title, description, button, and icon, based 
 ## Usage
 
 ```js
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 
@@ -14,7 +15,7 @@ const MyComponent = ( { translate } ) => (
 		title={ translate( 'Important!' ) }
 		description={ translate( "Your domain mapping won't work until you update the DNS settings." ) }
 		buttonText={ translate( 'Learn More' ) }
-		href="https://wordpress.com/support"
+		href={ localizeUrl( 'https://wordpress.com/support' ) }
 		target="_blank"
 	/>
 );

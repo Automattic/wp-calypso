@@ -11,11 +11,12 @@ export const settingLabels = {
 
 	new_comment: () => i18n.translate( 'Comments on my site' ),
 	post_like: () => i18n.translate( 'Likes on my posts' ),
-	follow: () => i18n.translate( 'Site follows' ),
+	follow: () => i18n.translate( 'Subscriptions' ),
 	achievement: () => i18n.translate( 'Site achievements' ),
 	mentions: () => i18n.translate( 'Username mentions' ),
 	scheduled_publicize: () => i18n.translate( 'Post Publicized' ),
-	blogging_prompt: () => i18n.translate( 'Daily Writing Prompts' ),
+	blogging_prompt: () => i18n.translate( 'Daily writing prompts' ),
+	draft_post_prompt: () => i18n.translate( 'Draft post reminders' ),
 	store_order: () => i18n.translate( 'New order' ),
 };
 

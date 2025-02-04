@@ -1,0 +1,27 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.shopping-cart {
+	@include break-large {
+		margin-inline-end: 32px;
+	}
+}
+
+.badge.shopping-cart__button-badge {
+	display: flex;
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.3;
+	width: 18px;
+	height: 18px;
+	padding: 0;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	margin-block-start: -12px;
+	margin-inline-start: 26px;
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}

@@ -1,6 +1,6 @@
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
-import AnchorFmDesignPicker from './anchor-fm-design-picker';
 import UnifiedDesignPicker from './unified-design-picker';
 import type { Step } from '../../types';
 
@@ -9,17 +9,12 @@ import type { Step } from '../../types';
  */
 const DesignSetup: Step = ( props ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
-	const headerText = translate( 'Pick a design' );
+	const headerText = hasEnTranslation( 'Pick a theme' )
+		? translate( 'Pick a theme' )
+		: translate( 'Pick a design' );
 
-	if ( 'anchor-fm' === props.flow ) {
-		return (
-			<>
-				<DocumentHead title={ headerText } />
-				<AnchorFmDesignPicker { ...props } />
-			</>
-		);
-	}
 	return (
 		<>
 			<DocumentHead title={ headerText } />

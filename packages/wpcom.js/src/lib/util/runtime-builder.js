@@ -7,7 +7,6 @@ const debug = debugFactory( 'wpcom:runtime' );
 
 /**
  * Build a generic method
- *
  * @param {Object} methodParams - method methodParams
  * @param {Function} buildPath - function called to build method path
  * @returns {string} method path
@@ -22,7 +21,6 @@ const methodBuilder = ( methodParams, buildPath ) => {
 /**
  * Add methods to the given Class in the
  * runtime process.
- *
  * @param {*} Class - class to extend
  * @param {Array} list - methods list
  * @param {Function} buildPath - function to build the method endpoint path

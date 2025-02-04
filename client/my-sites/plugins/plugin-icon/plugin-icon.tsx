@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import './style.scss';
 
@@ -7,10 +7,11 @@ interface PluginIconProps {
 	className?: string;
 	image?: string;
 	isPlaceholder?: boolean;
+	size?: number;
 }
 
-const PluginIcon = ( { className, image, isPlaceholder }: PluginIconProps ) => {
-	const classes = classNames(
+const PluginIcon = ( { className, image, isPlaceholder, size = 48 }: PluginIconProps ) => {
+	const classes = clsx(
 		{
 			'plugin-icon': true,
 			'is-placeholder': isPlaceholder,
@@ -19,12 +20,17 @@ const PluginIcon = ( { className, image, isPlaceholder }: PluginIconProps ) => {
 		className
 	);
 
+	const style = {
+		maxWidth: size,
+		maxHeight: size,
+	};
+
 	return (
-		<div className={ classes }>
+		<div className={ classes } style={ style }>
 			{ isPlaceholder || ! image ? (
-				<Gridicon icon="plugins" />
+				<Gridicon icon="plugins" size={ size } />
 			) : (
-				<img className="plugin-icon__img" src={ image } alt="plugin-icon" />
+				<img className="plugin-icon__img" src={ image } alt="plugin-icon" style={ style } />
 			) }
 		</div>
 	);

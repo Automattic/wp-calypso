@@ -1,0 +1,18 @@
+.billing-dashboard .hosting-dashboard-layout__body {
+	padding-block-start: 32px;
+}
+
+.a4a-billing__header-actions {
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+
+		a {
+			width: 100%;
+			margin-block-end: 1rem;
+		}
+	}
+
+	.button {
+		font-weight: 500;
+	}
+}

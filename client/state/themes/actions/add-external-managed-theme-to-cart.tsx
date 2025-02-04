@@ -1,20 +1,18 @@
 import {
-	PLAN_BUSINESS_MONTHLY,
-	isWpComMonthlyPlan,
 	PLAN_BUSINESS,
+	TERM_ANNUALLY,
+	findFirstSimilarPlanKey,
+	getPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import { addQueryArgs } from '@wordpress/url';
-import page from 'page';
 import 'calypso/state/themes/init';
 import { marketplaceThemeProduct } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import { getProductsByBillingSlug } from 'calypso/state/products-list/selectors';
-import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getProductBillingSlugByThemeId } from 'calypso/state/products-list/selectors/get-product-billing-slug-by-theme-id';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -23,6 +21,7 @@ import {
 import { CalypsoDispatch } from 'calypso/state/types';
 import { AppState } from 'calypso/types';
 import { THEMES_LOADING_CART } from '../action-types';
+import { getPreferredBillingCycleProductSlug } from '../theme-utils';
 
 const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) => {
 	dispatch( {
@@ -32,35 +31,9 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
 };
 
 /**
- * Get the preferred product slug from the products list.
- *
- * @param products list of products
- * @returns string
- */
-function getPreferredBillingCycleProductSlug(
-	products: Array< ProductListItem >,
-	currentPlan?: SitePlanData | any
-): string {
-	if ( products.length === 0 ) {
-		throw new Error( 'No products available' );
-	}
-	let preferredBillingCycle = 'month';
-
-	if ( currentPlan && ! isWpComMonthlyPlan( currentPlan.productSlug ) ) {
-		preferredBillingCycle = 'year';
-	}
-
-	const preferredProduct = products.find(
-		( product ) => product.product_term === preferredBillingCycle
-	);
-	return preferredProduct?.product_slug ?? products[ 0 ].product_slug;
-}
-
-/**
  * Add the business plan and/or the external theme to the cart and redirect to checkout.
  * This action also manages the loading state of the cart. We'll use it to lock the CTA
  * button while the cart is being updated.
- *
  * @param themeId Theme ID to add to cart
  * @param siteId
  * @returns
@@ -88,15 +61,22 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		const products = getProductsByBillingSlug(
 			state,
-			marketplaceThemeBillingProductSlug( themeId )
+			getProductBillingSlugByThemeId( state, themeId )
 		);
 
 		if ( undefined === products || products.length === 0 ) {
 			throw new Error( 'No products available' );
 		}
 
-		const currentPlan = getCurrentPlan( state, siteId );
-		const productSlug = getPreferredBillingCycleProductSlug( products, currentPlan );
+		const currentPlanSlug = getSitePlanSlug( state, siteId );
+		let requiredTerm = TERM_ANNUALLY;
+		if ( currentPlanSlug && ! isFreePlan( currentPlanSlug ) ) {
+			requiredTerm = getPlan( currentPlanSlug )?.term || TERM_ANNUALLY;
+		}
+		const requiredPlanSlug =
+			findFirstSimilarPlanKey( PLAN_BUSINESS, { term: requiredTerm } ) || PLAN_BUSINESS;
+
+		const productSlug = getPreferredBillingCycleProductSlug( products, requiredPlanSlug );
 
 		const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
 
@@ -117,19 +97,9 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
 			cartItems.push( {
-				product_slug:
-					currentPlan && ! isWpComMonthlyPlan( currentPlan.productSlug )
-						? PLAN_BUSINESS
-						: PLAN_BUSINESS_MONTHLY,
+				product_slug: requiredPlanSlug,
 			} );
 		}
-
-		const { origin = 'https://wordpress.com' } =
-			typeof window !== 'undefined' ? window.location : {};
-
-		const redirectUrl = addQueryArgs( `/checkout/${ siteSlug }`, {
-			redirect_to: `${ origin }/theme/${ themeId }/${ siteSlug }`,
-		} );
 
 		dispatch( isLoadingCart( true ) );
 		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
@@ -137,7 +107,7 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			.forCartKey( cartKey )
 			.actions.addProductsToCart( cartItems )
 			.then( () => {
-				page( redirectUrl );
+				page( `/checkout/${ siteSlug }` );
 			} )
 			.finally( () => {
 				dispatch( isLoadingCart( false ) );

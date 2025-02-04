@@ -1,36 +1,52 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Button } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, FormLabel } from '@automattic/components';
 import { NextButton } from '@automattic/onboarding';
 import { createElement, createInterpolateElement } from '@wordpress/element';
-import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import classnames from 'classnames';
-import { localize, translate } from 'i18n-calypso';
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
+import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import { bulb } from 'calypso/signup/icons';
+import getValidationMessage from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
 
 interface Props {
-	translate: typeof translate;
-	onInputEnter: OnInputEnter;
-	onInputChange?: OnInputChange;
-	onDontHaveSiteAddressClick?: () => void;
+	dontHaveSiteAddressLabel?: string;
 	hasError?: boolean;
+	hideImporterListLink?: boolean;
+	label?: ReactNode;
+	nextLabelText?: string;
+	onDontHaveSiteAddressClick?: () => void;
+	onInputChange?: OnInputChange;
+	onInputEnter: OnInputEnter;
+	placeholder?: string;
+	skipInitialChecking?: boolean;
 }
 const CaptureInput: FunctionComponent< Props > = ( props ) => {
-	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
+	const {
+		onInputEnter,
+		onInputChange,
+		onDontHaveSiteAddressClick,
+		hasError,
+		skipInitialChecking,
+		label,
+		placeholder = 'artfulbaker.blog',
+		dontHaveSiteAddressLabel,
+		hideImporterListLink = false,
+		nextLabelText,
+	} = props;
 
+	const translate = useTranslate();
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ isValid, setIsValid ] = useState( false );
 	const [ submitted, setSubmitted ] = useState( false );
-	const exampleInputWebsite = 'www.artfulbaker.blog';
+	const [ validationMessage, setValidationMessage ] = useState( '' );
+	const lastInvalidValue = useRef< string | undefined >();
 	const showValidationMsg = hasError || ( submitted && ! isValid );
 	const { search } = useLocation();
 
@@ -38,9 +54,15 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function checkInitSubmissionState() {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
+		if ( skipInitialChecking ) {
+			setUrlValue( urlValue );
+			validateUrl( urlValue );
+			return;
+		}
+
 		if ( urlValue ) {
 			const isValid = CAPTURE_URL_RGX.test( urlValue );
-			if ( isValid ) {
+			if ( isValid && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
 			} else {
@@ -52,75 +74,83 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );
 		setIsValid( isValid );
+		const tempValidationMessage = isValid ? '' : getValidationMessage( url, translate );
+		setValidationMessage( tempValidationMessage );
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
-		setUrlValue( e.target.value );
-		validateUrl( e.target.value );
-		onInputChange?.( e.target.value );
+		const trimmedValue = e.target.value.trim();
+		setSubmitted( false );
+		setUrlValue( trimmedValue );
+		validateUrl( trimmedValue );
+		onInputChange?.( trimmedValue );
 	}
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
 		isValid && onInputEnter( urlValue );
 		setSubmitted( true );
+
+		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+			lastInvalidValue.current = urlValue;
+			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
+				url: urlValue,
+			} );
+		}
 	}
 
 	return (
-		<form className={ classnames( 'import-light__capture' ) } onSubmit={ onFormSubmit }>
+		<form className="import__capture" onSubmit={ onFormSubmit }>
 			<FormFieldset>
-				<FormLabel>
-					{ createInterpolateElement( translate( 'Existing site address' ).toString(), {
-						span: createElement( 'span' ),
-					} ) }
+				<FormLabel htmlFor="capture-site-url">
+					{ label ?? translate( 'Enter the URL of the site:' ) }
 				</FormLabel>
 				<FormTextInput
+					id="capture-site-url"
 					type="text"
-					className={ classnames( { 'is-error': showValidationMsg } ) }
+					className={ clsx( { 'is-error': showValidationMsg } ) }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
 					autoFocus
 					autoComplete="off"
 					autoCorrect="off"
 					spellCheck="false"
 					value={ urlValue }
-					placeholder={ sprintf(
-						/* translators: the exampleSite is a URL, eg: www.artfulbaker.blog */
-						translate( 'Ex. %(exampleSite)s' ).toString(),
-						{
-							exampleSite: exampleInputWebsite,
-						}
-					) }
+					placeholder={ placeholder }
 					onChange={ onChange }
 				/>
-				<Button
-					borderless={ true }
-					className="action-buttons__importer-list"
-					onClick={ onDontHaveSiteAddressClick }
-				>
-					{ translate( "Don't have a site address?" ) }
-				</Button>
+
 				<FormSettingExplanation>
-					<span className={ classnames( { 'is-error': showValidationMsg } ) }>
-						{ ! showValidationMsg && (
-							<>
-								<Icon icon={ bulb } size={ 20 } /> { translate( 'You must own this website.' ) }
-							</>
-						) }
+					<span className={ clsx( { 'is-error': showValidationMsg } ) }>
 						{ showValidationMsg && (
 							<>
 								<Icon icon={ info } size={ 20 } />{ ' ' }
-								{ translate( 'Please enter a valid website address. You can copy and paste.' ) }
+								{ validationMessage
+									? validationMessage
+									: translate( 'Please enter a valid website address. You can copy and paste.' ) }
 							</>
 						) }
 					</span>
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit" size={ 0 }>
-				{ translate( 'Continue' ) }
-			</NextButton>
+			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>
+
+			<div className="action-buttons__importer-list">
+				{ ! hideImporterListLink &&
+					onDontHaveSiteAddressClick &&
+					createInterpolateElement(
+						dontHaveSiteAddressLabel ??
+							translate( 'Or <button>choose a content platform</button>' ),
+						{
+							button: createElement( Button, {
+								borderless: true,
+								onClick: onDontHaveSiteAddressClick,
+							} ),
+						}
+					) }
+			</div>
 		</form>
 	);
 };
 
-export default localize( CaptureInput );
+export default CaptureInput;

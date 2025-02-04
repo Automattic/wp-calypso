@@ -1,6 +1,6 @@
 import { WebsiteContentCollectionState } from './types';
 
-export const LOGO_SECTION_ID = 'logo_section';
+export const SITE_INFORMATION_SECTION_ID = 'site_information_section';
 
 export const MEDIA_UPLOAD_STATES = {
 	UPLOAD_STARTED: 'UPLOAD_STARTED',
@@ -13,7 +13,7 @@ export const initialState: WebsiteContentCollectionState = {
 	currentIndex: 0,
 	websiteContent: {
 		pages: [],
-		siteLogoSection: { siteLogoUrl: '' },
+		siteInformationSection: { siteLogoUrl: '', searchTerms: '' },
 		feedbackSection: { genericFeedback: '' },
 	},
 	mediaUploadStates: {},

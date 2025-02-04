@@ -1,20 +1,22 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
+import { isOnboardingFlow } from '@automattic/onboarding';
 import { isEmpty } from 'lodash';
-import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
+import { notFound } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { setCurrentFlowName, setPreviousFlowName } from 'calypso/state/signup/flow/actions';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -23,6 +25,7 @@ import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
 	retrieveSignupDestination,
+	getDomainsDependencies,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
@@ -36,9 +39,7 @@ import {
 	getValidPath,
 	getFlowPageTitle,
 	shouldForceLogin,
-	isReskinnedFlow,
 } from './utils';
-
 /**
  * Constants
  */
@@ -50,13 +51,21 @@ const basePageTitle = 'Signup'; // used for analytics, doesn't require translati
 let initialContext;
 let previousFlowName;
 
-const removeWhiteBackground = function () {
-	if ( ! document ) {
-		return;
-	}
+function setReferrerPolicy() {
+	try {
+		// Remove existing <meta> tags with name="referrer"
+		const existingMetaTags = document.querySelectorAll( 'meta[name="referrer"]' );
+		existingMetaTags.forEach( ( tag ) => tag.remove() );
 
-	document.body.classList.remove( 'is-white-signup' );
-};
+		// Create a new <meta> element
+		const metaReferrer = document.createElement( 'meta' );
+		metaReferrer.name = 'referrer';
+		metaReferrer.content = 'strict-origin-when-cross-origin';
+
+		// Append the new <meta> element to the <head> section
+		document.head.appendChild( metaReferrer );
+	} catch ( e ) {}
+}
 
 export const addVideoPressSignupClassName = () => {
 	if ( ! document ) {
@@ -84,35 +93,11 @@ export const removeP2SignupClassName = function () {
 
 export default {
 	redirectTests( context, next ) {
-		const isLoggedIn = isUserLoggedIn( context.store.getState() );
-		const currentFlowName = getFlowName( context.params, isLoggedIn );
-		if ( isReskinnedFlow( currentFlowName ) ) {
-			next();
-		} else if (
-			context.pathname.indexOf( 'domain' ) >= 0 ||
-			context.pathname.indexOf( 'plan' ) >= 0 ||
-			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
-			context.pathname.indexOf( 'wpcc' ) >= 0 ||
-			context.pathname.indexOf( 'launch-only' ) >= 0 ||
-			context.params.flowName === 'account' ||
-			context.params.flowName === 'crowdsignal' ||
-			context.params.flowName === 'pressable-nux' ||
-			context.params.flowName === 'clone-site'
-		) {
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'p2' ) ) {
-			addP2SignupClassName();
-			removeWhiteBackground();
-			next();
-		} else if ( context.pathname.includes( 'videopress' ) ) {
+		if ( context.pathname.includes( 'videopress' ) ) {
 			addVideoPressSignupClassName();
-			removeWhiteBackground();
-			next();
-		} else {
-			next();
-			return;
 		}
+
+		next();
 	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
@@ -149,7 +134,7 @@ export default {
 		next();
 	},
 
-	redirectToFlow( context, next ) {
+	async redirectToFlow( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		const flowName = getFlowName( context.params, userLoggedIn );
 		const localeFromParams = context.params.lang;
@@ -213,14 +198,51 @@ export default {
 			return;
 		}
 
+		store.set( 'signup-locale', localeFromParams );
+
+		if ( isOnboardingFlow( flowName ) ) {
+			setReferrerPolicy();
+			let url =
+				getStepUrl(
+					flowName,
+					getStepName( context.params ),
+					getStepSectionName( context.params ),
+					localeFromParams ?? localeFromStore,
+					null,
+					'/setup'
+				) +
+				( context.querystring ? '?' + context.querystring : '' ) +
+				( context.hashstring ? '#' + context.hashstring : '' );
+
+			if ( document.referrer ) {
+				url = addQueryArgs( { start_ref: document.referrer }, url );
+			}
+
+			window.location.replace( url );
+			// skip the rest to avoid the `page.redirect` call below.
+			// Don't call next() here, we don't need the subsequent middlewares to run.
+			// next();
+			return;
+		}
+
+		// const isOnboardingFlow = flowName === 'onboarding';
+		// // See: 1113-gh-Automattic/experimentation-platform for details.
+		// if ( isOnboardingFlow || isOnboardingGuidedFlow( flowName ) ) {
+		// 	// `isTokenLoaded` covers users who just logged in.
+		// 	if ( wpcom.isTokenLoaded() || userLoggedIn ) {
+		// 		const trailMapExperimentAssignment = await loadExperimentAssignment(
+		// 			'calypso_signup_onboarding_trailmap_guided_flow'
+		// 		);
+		// 		initialContext.trailMapExperimentVariant = trailMapExperimentAssignment.variationName;
+		// 	}
+		// }
+
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
 					( context.querystring ? '?' + context.querystring : '' )
 			);
 		}
-
-		store.set( 'signup-locale', localeFromParams );
 
 		next();
 	},
@@ -251,9 +273,17 @@ export default {
 		// wait for the step component module to load
 		const stepComponent = await getStepComponent( stepName );
 
-		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, {
+		const params = {
 			flow: flowName,
-		} );
+		};
+
+		// Clean me up after the experiment is over (see: pdDR7T-1xi-p2)
+		// This is kept for documentation purposes.
+		// if ( isOnboardingGuidedFlow( flowName ) ) {
+		// 	params.trailmap_variant = initialContext.trailMapExperimentVariant || 'control';
+		// }
+
+		recordPageView( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName, params );
 
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 		context.store.dispatch( setCurrentFlowName( flowName ) );
@@ -275,6 +305,21 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
+		// Hydrate the store with domains dependencies from session storage,
+		// only in the onboarding flow.
+		const domainsDependencies = getDomainsDependencies();
+		if (
+			domainsDependencies &&
+			isManageSiteFlow &&
+			flowName === 'onboarding' &&
+			stepName !== 'domains'
+		) {
+			const { step, dependencies } = JSON.parse( domainsDependencies );
+			if ( step && dependencies ) {
+				context.store.dispatch( submitSignupStep( step, dependencies ) );
+			}
+		}
+
 		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
@@ -286,12 +331,31 @@ export default {
 
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
-		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		// Set design parameters in signup depencency store so we can retrieve it in getChecklistThemeDestination().
 		const themeParameter = query && query.theme;
+		const themeType = query && query.theme_type;
+		const styleVariation = query && query.style_variation;
+		const headerPatternId = query && query.header_pattern_id;
+		const footerPatternId = query && query.footer_pattern_id;
+		const sectionPatternIds = query && query.pattern_ids;
+		const screen = query && query.screen;
+		const screenParameter = query && query.screen_parameter;
+		// Set plugin parameter in signup dependency store so we can retrieve it in getWithPluginDestination().
+		const pluginParameter = query && query.plugin;
+		const pluginBillingPeriod = query && query.billing_period;
 
 		const additionalDependencies = {
 			...( refParameter && { refParameter } ),
 			...( themeParameter && { themeParameter } ),
+			...( themeType && { themeType } ),
+			...( styleVariation && { styleVariation } ),
+			...( headerPatternId && { headerPatternId } ),
+			...( footerPatternId && { footerPatternId } ),
+			...( sectionPatternIds && { sectionPatternIds } ),
+			...( screen && { screen } ),
+			...( screenParameter && { screenParameter } ),
+			...( pluginParameter && { pluginParameter } ),
+			...( pluginBillingPeriod && { pluginBillingPeriod } ),
 		};
 		if ( ! isEmpty( additionalDependencies ) ) {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
@@ -345,7 +409,7 @@ export default {
 			// Fetch the site by siteIdOrSlug and then try to select again
 			dispatch( requestSite( siteIdOrSlug ) )
 				.catch( () => {
-					next();
+					notFound( context, next );
 					return null;
 				} )
 				.then( () => {
@@ -366,15 +430,5 @@ export default {
 					next();
 				} );
 		}
-	},
-	importSiteInfoFromQuery( { store: signupStore, query }, next ) {
-		const state = signupStore.getState();
-		const siteType = getSiteType( state );
-
-		if ( ! siteType && query.site_type ) {
-			signupStore.dispatch( setSiteType( query.site_type ) );
-		}
-
-		next();
 	},
 };

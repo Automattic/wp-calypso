@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { find, size } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -36,7 +36,7 @@ class NotificationSettingsFormStream extends PureComponent {
 		const { stream, settings } = this.getStreamSettings();
 
 		return (
-			<div className={ classNames( 'notification-settings-form-stream', this.props.className ) }>
+			<div className={ clsx( 'notification-settings-form-stream', this.props.className ) }>
 				{ ( () => {
 					if ( this.props.devices ) {
 						return (

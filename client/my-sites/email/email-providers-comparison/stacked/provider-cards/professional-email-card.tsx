@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate, useTranslate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanProductName } from 'calypso/lib/titan';
@@ -22,7 +21,8 @@ import {
 	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
@@ -91,13 +91,15 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const dispatch = useDispatch();
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const [ addingToCart, setAddingToCart ] = useState( false );
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_NAME,
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+			defaultHiddenFields,
+		} );
 
-	const userEmail = useSelector( getCurrentUserEmail );
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
@@ -127,7 +129,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
-			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+			initialFieldValues={ {
+				[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+			} }
 			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }

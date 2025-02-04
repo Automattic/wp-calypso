@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch } from 'calypso/state';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
 import { isFetchingStoredCards } from 'calypso/state/partner-portal/stored-cards/selectors';
 import type { CalypsoDispatch } from 'calypso/state/types';

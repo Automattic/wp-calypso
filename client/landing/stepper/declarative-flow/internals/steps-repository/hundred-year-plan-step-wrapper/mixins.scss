@@ -1,0 +1,19 @@
+@mixin primary-button-black-theme {
+	background: var(--studio-gray-100);
+	border: none;
+	&.disabled {
+		background-color: var(--studio-gray-50);
+	}
+	&:hover {
+		background-color: var(--studio-gray-70);
+	}
+	&:focus {
+		box-shadow: none;
+		background-color: var(--studio-gray-70);
+		outline: 2px solid var(--studio-gray-70);
+		border-color: var(--studio-gray-70);
+	}
+	&.is-busy {
+		background-image: linear-gradient(-45deg, var(--studio-gray-100) 28%, var(--studio-gray-70) 28%, var(--studio-gray-70) 72%, var(--studio-gray-100) 72%);
+	}
+}

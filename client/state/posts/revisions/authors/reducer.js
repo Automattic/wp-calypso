@@ -4,7 +4,6 @@ import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks all known user objects, indexed by user ID.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state

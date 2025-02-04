@@ -1,21 +1,23 @@
 import { Button, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { CALYPSO_CONTACT } from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -197,7 +199,7 @@ class GoogleMyBusinessStats extends Component {
 			<Main fullWidthLayout>
 				<PageViewTracker
 					path="/google-my-business/stats/:site"
-					title="Google My Business > Stats"
+					title="Google Business Profile > Stats"
 				/>
 
 				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -207,18 +209,18 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
+					<NavigationHeader
 						className="stats__section-header modernized-header"
-						headerText={ translate( 'Google My Business' ) }
-						align="left"
-						subHeaderText={ translate(
+						title={ translate( 'Jetpack Stats' ) }
+						subtitle={ translate(
 							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{
 								components: {
 									learnMoreLink: (
 										<a
-											href="https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection"
+											href={ localizeUrl(
+												'https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection'
+											) }
 											target="_blank"
 											rel="noreferrer noopener"
 										/>
@@ -226,7 +228,8 @@ class GoogleMyBusinessStats extends Component {
 								},
 							}
 						) }
-					/>
+						screenReader={ navItems.googleMyBusiness?.label }
+					></NavigationHeader>
 
 					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 
@@ -234,7 +237,7 @@ class GoogleMyBusinessStats extends Component {
 						<Notice
 							status="is-error"
 							showDismiss={ false }
-							text={ translate( 'There is an error with your Google My Business account.' ) }
+							text={ translate( 'There is an error with your Google Business Profile account.' ) }
 						>
 							<NoticeAction href={ CALYPSO_CONTACT }>
 								{ translate( 'Contact Support' ) }

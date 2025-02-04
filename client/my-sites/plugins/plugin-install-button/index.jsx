@@ -1,15 +1,18 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
-import { WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS } from '@automattic/calypso-products';
+import {
+	WPCOM_FEATURES_INSTALL_PLUGINS,
+	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+} from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, useRef } from 'react';
 import { connect } from 'react-redux';
-import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import {
@@ -17,7 +20,7 @@ import {
 	getProductSlugByPeriodVariation,
 	getSaasRedirectUrl,
 } from 'calypso/lib/plugins/utils';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
@@ -26,6 +29,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
 
@@ -35,10 +39,10 @@ const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
 	const disabledInfoLabel = useRef();
 	const infoPopover = useRef();
 	const togglePopover = ( event ) => {
-		infoPopover.current._onClick( event );
+		infoPopover.current.handleClick( event );
 	};
 	return (
-		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+		<div className={ clsx( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
 			<span
 				onClick={ togglePopover }
 				ref={ disabledInfoLabel }
@@ -64,8 +68,11 @@ export class PluginInstallButton extends Component {
 		const {
 			isEmbed,
 			siteId,
+			selectedSite,
 			isInstalling,
 			plugin,
+			canInstallPlugins,
+			siteIsWpcomAtomic,
 			recordGoogleEvent: recordGAEvent,
 			recordTracksEvent: recordEvent,
 		} = this.props;
@@ -74,8 +81,12 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
-		this.props.installPlugin( siteId, plugin );
+		if ( canInstallPlugins && siteIsWpcomAtomic ) {
+			this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
+			this.props.installPlugin( siteId, plugin );
+		} else {
+			return page( `/plugins/${ plugin.slug }/${ selectedSite.slug }` );
+		}
 
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
@@ -117,12 +128,6 @@ export class PluginInstallButton extends Component {
 					args: { site: selectedSite.title },
 				}
 			);
-		}
-
-		if ( ! isMainNetworkSite( selectedSite ) ) {
-			return translate( 'Only the main site on a multi-site installation can install plugins.', {
-				args: { site: selectedSite.title },
-			} );
 		}
 
 		if ( ! selectedSite.canUpdateFiles && selectedSite.options.file_mod_disabled ) {
@@ -198,19 +203,21 @@ export class PluginInstallButton extends Component {
 		}
 
 		const buttonLink = canInstallPurchasedPlugins
-			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
+			? `/checkout/${ selectedSite.slug }/${ product_slug }`
 			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-			  }#step2`;
+			  ) },${ product_slug }#step2`;
 
 		return (
 			<span className="plugin-install-button__install embed">
 				<Button href={ buttonLink }>
 					<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-					<Gridicon icon="plugins" size={ 18 } />
+					{ canInstallPurchasedPlugins ? (
+						<Gridicon icon="cart" size={ 18 } />
+					) : (
+						<Gridicon icon="plugins" size={ 18 } />
+					) }
 					{ canInstallPurchasedPlugins
 						? translate( 'Purchase and activate' )
 						: translate( 'Upgrade and activate' ) }
@@ -220,7 +227,15 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
+		const {
+			translate,
+			isInstalling,
+			isEmbed,
+			disabled,
+			isJetpackCloud,
+			canInstallPlugins,
+			siteIsWpcomAtomic,
+		} = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -229,14 +244,16 @@ export class PluginInstallButton extends Component {
 					{ isInstalling ? (
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
-						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
+						<Button compact onClick={ this.installAction } disabled={ disabled }>
 							{ ! isJetpackCloud && (
 								<>
 									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
 									<Gridicon icon="plugins" size={ 18 } />
 								</>
 							) }
-							{ translate( 'Install' ) }
+							{ canInstallPlugins && siteIsWpcomAtomic
+								? translate( 'Install' )
+								: translate( 'Go to plugin page' ) }
 						</Button>
 					) }
 				</span>
@@ -245,11 +262,7 @@ export class PluginInstallButton extends Component {
 
 		return (
 			<span className="plugin-install-button__install">
-				<Button
-					onClick={ this.installAction }
-					primary={ true }
-					disabled={ isInstalling || disabled }
-				>
+				<Button onClick={ this.installAction } primary disabled={ isInstalling || disabled }>
 					{ label }
 				</Button>
 			</span>
@@ -257,8 +270,16 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderNoticeOrButton() {
-		const { plugin, isEmbed, selectedSite, siteIsConnected, siteIsWpcomAtomic, translate } =
-			this.props;
+		const {
+			plugin,
+			isEmbed,
+			selectedSite,
+			siteIsConnected,
+			siteIsJetpackSite,
+			siteIsWpcomAtomic,
+			translate,
+			canInstallPurchasedPlugins,
+		} = this.props;
 
 		if ( siteIsConnected === false ) {
 			return (
@@ -295,13 +316,30 @@ export class PluginInstallButton extends Component {
 			);
 		}
 
-		if ( ! selectedSite.canUpdateFiles ) {
-			const disabledInfo = this.getDisabledInfo();
+		const disabledInfo = this.getDisabledInfo();
+		if ( ! selectedSite.canUpdateFiles && disabledInfo ) {
 			return disabledInfo ? (
 				<PluginInstallNotice warningText={ translate( 'Install Disabled' ) } isEmbed={ isEmbed }>
 					{ disabledInfo }
 				</PluginInstallNotice>
 			) : null;
+		}
+
+		if ( siteIsJetpackSite && ! siteIsWpcomAtomic && plugin.isMarketplaceProduct ) {
+			return (
+				<PluginInstallNotice
+					warningText={
+						canInstallPurchasedPlugins
+							? translate( 'Purchase disabled' )
+							: translate( 'Upgrade disabled' )
+					}
+					isEmbed={ isEmbed }
+				>
+					<div>
+						<p>{ translate( 'Paid plugins are not yet available for Jetpack Sites.' ) }</p>
+					</div>
+				</PluginInstallNotice>
+			);
 		}
 
 		if ( ! plugin.isMarketplaceProduct ) {
@@ -312,14 +350,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	render() {
-		const { siteId } = this.props;
-
-		return (
-			<div>
-				<QuerySiteConnectionStatus siteId={ siteId } />
-				{ this.renderNoticeOrButton() }
-			</div>
-		);
+		return <div>{ this.renderNoticeOrButton() }</div>;
 	}
 }
 
@@ -340,11 +371,13 @@ export default connect(
 			userId: getCurrentUserId( state ),
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
+			siteIsJetpackSite: isJetpackSite( state, siteId ),
 			canInstallPurchasedPlugins: siteHasFeature(
 				state,
 				siteId,
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
+			canInstallPlugins: siteHasFeature( state, siteId, WPCOM_FEATURES_INSTALL_PLUGINS ),
 			productsList: getProductsList( state ),
 		};
 	},

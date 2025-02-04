@@ -1,5 +1,5 @@
 import { Popover } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import { connect } from 'react-redux';
 import { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
@@ -48,14 +48,14 @@ function PostLikesPopover( props ) {
 		'onMouseEnter',
 		'onMouseLeave'
 	);
-	const classes = classnames( 'post-likes-popover', className );
+	const classes = clsx( 'post-likes-popover', className );
 	const postLikesProps = { siteId, postId, showDisplayNames, onMouseEnter, onMouseLeave };
 
 	return (
 		<Popover
 			{ ...popoverProps }
 			className={ classes }
-			isVisible={ true }
+			isVisible
 			context={ context }
 			onClose={ onClose }
 			key={ popoverKey }

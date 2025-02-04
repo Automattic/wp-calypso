@@ -6,7 +6,6 @@ const PLANS_LIST = getPlans();
 
 /**
  * Given a route (path) fragment used to indicate a plan, return the corresponding plan slug.
- *
  * @param  {Object}   state      Global state tree
  * @param  {number}   siteId     The site we're interested in upgrading
  * @param  {string}   path       The path fragment indicating the plan we want to upgrade to

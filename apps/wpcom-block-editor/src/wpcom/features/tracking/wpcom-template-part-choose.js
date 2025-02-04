@@ -12,7 +12,6 @@ const clearReplaceData = () => {
  * This runs earlier than bubble handlers below, and captures
  * info, before changes, that is stored in replaceData and later
  * used to determine type of Tracks event to record.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomTemplatePartChooseCapture = () => ( {
@@ -38,7 +37,6 @@ export const wpcomTemplatePartChooseCapture = () => ( {
 /**
  * Return the event definition object to track
  * `wpcom_block_editor_template_part_choose_existing`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomTemplatePartChooseBubble = () => ( {
@@ -70,7 +68,6 @@ export const wpcomTemplatePartChooseBubble = () => ( {
 /**
  * Return the event definition object to track
  * `wpcom_block_editor_template_part_replace`.
- *
  * @returns {import('./types').DelegateEventHandler} event object definition.
  */
 export const wpcomTemplatePartReplaceBubble = () => ( {

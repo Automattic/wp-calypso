@@ -20,7 +20,6 @@ export type ConfigData = Record< string, any > & {
  * to the console instead of halting the execution thread.
  *
  * The config files are loaded in sequence: _shared.json, {env}.json, {env}.local.json
- *
  * @see server/config/parser.js
  * @param data Configurat data.
  * @throws {ReferenceError} when key not defined in the config (NODE_ENV=development only)
@@ -64,18 +63,30 @@ const config =
 
 /**
  * Checks whether a specific feature is enabled.
- *
  * @param data the json environment configuration to use for getting config values
  * @returns A function that takes a feature name and returns true when the feature is enabled.
  */
 const isEnabled =
 	( data: ConfigData ) =>
-	( feature: string ): boolean =>
-		( data.features && !! data.features[ feature ] ) || false;
+	( feature: string ): boolean => {
+		// Feature flags activated from environment variables.
+		if (
+			typeof process !== 'undefined' &&
+			process?.env?.ACTIVE_FEATURE_FLAGS &&
+			typeof process.env.ACTIVE_FEATURE_FLAGS === 'string'
+		) {
+			const env_active_feature_flags = process.env.ACTIVE_FEATURE_FLAGS?.split( ',' );
+
+			if ( env_active_feature_flags.includes( feature ) ) {
+				return true;
+			}
+		}
+
+		return ( data.features && !! data.features[ feature ] ) || false;
+	};
 
 /**
  * Gets a list of all enabled features.
- *
  * @param data A set of config data (Not used by general users, is pre-filled via currying).
  * @returns List of enabled features (strings).
  */
@@ -91,7 +102,6 @@ const enabledFeatures = ( data: ConfigData ) => (): string[] => {
 
 /**
  * Enables a specific feature.
- *
  * @param data the json environment configuration to use for getting config values
  */
 const enable = ( data: ConfigData ) => ( feature: string ) => {
@@ -102,7 +112,6 @@ const enable = ( data: ConfigData ) => ( feature: string ) => {
 
 /**
  * Disables a specific feature.
- *
  * @param data the json environment configuration to use for getting config values
  */
 

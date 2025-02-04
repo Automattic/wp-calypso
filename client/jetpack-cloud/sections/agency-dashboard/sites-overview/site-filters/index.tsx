@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux';
 import { FilterbarWithoutDispatch as Filterbar } from 'calypso/my-sites/activity/filterbar';
+import { useDispatch } from 'calypso/state';
 import { updateFilter } from 'calypso/state/jetpack-agency-dashboard/actions';
 import type { AgencyDashboardFilter, AgencyDashboardFilterOption } from '../types';
 
@@ -23,7 +23,7 @@ export default function SiteFilters( {
 			selectorTypes={ { issueType: true } }
 			filter={ filter }
 			isLoading={ isLoading }
-			isVisible={ true }
+			isVisible
 			selectActionType={ selectIssueTypes }
 			resetFilters={ resetIssueTypes }
 		/>

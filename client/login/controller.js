@@ -1,9 +1,14 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
-import page from 'page';
+import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import MagicLogin from './magic-login';
 import HandleEmailedLinkForm from './magic-login/handle-emailed-link-form';
 import HandleEmailedLinkFormJetpackConnect from './magic-login/handle-emailed-link-form-jetpack-connect';
@@ -47,11 +52,17 @@ const enhanceContextWithLogin = ( context ) => {
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const isP2Login = query && query.from === 'p2';
+	const clientId = query?.client_id;
+	const oauth2ClientId = query?.oauth2_client_id;
+	const oauth2Client =
+		getOAuth2Client( context.store.getState(), Number( clientId || oauth2ClientId ) ) || {};
+	const isGravPoweredClient = isGravPoweredOAuth2Client( oauth2Client );
 	const isWhiteLogin =
-		! isJetpackLogin &&
-		! isP2Login &&
-		Boolean( query?.client_id ) === false &&
-		Boolean( query?.oauth2_client_id ) === false;
+		( ! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false ) ||
+		isGravPoweredClient;
 
 	context.primary = (
 		<WPLogin
@@ -59,6 +70,7 @@ const enhanceContextWithLogin = ( context ) => {
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
 			isP2Login={ isP2Login }
+			isGravPoweredClient={ isGravPoweredClient }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
@@ -92,8 +104,14 @@ export async function login( context, next ) {
 		}
 
 		const { searchParams: redirectParams } = getUrlParts( redirect_to );
+		const back = redirectParams.get( 'back' );
 
-		if ( client_id !== redirectParams.get( 'client_id' ) ) {
+		const redirectClientId =
+			redirectParams.get( 'client_id' ) ||
+			// If the client_id is not in the redirect_to URL, check the back URL. This is for the case where the client_id is passed in the back parameter of remote login link when proxy is enabled. See: https://github.com/Automattic/wp-calypso/issues/52940
+			( back ? getUrlParts( back ).searchParams.get( 'client_id' ) : null );
+
+		if ( client_id !== redirectClientId ) {
 			const error = new Error(
 				'The `redirect_to` query parameter is invalid with the given `client_id`.'
 			);
@@ -101,10 +119,14 @@ export async function login( context, next ) {
 			return next( error );
 		}
 
-		try {
-			await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
-		} catch ( error ) {
-			return next( error );
+		const OAuth2Client = getOAuth2Client( context.store.getState(), client_id );
+		if ( ! OAuth2Client ) {
+			// Only fetch the OAuth2 client data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
 		}
 	}
 
@@ -113,8 +135,40 @@ export async function login( context, next ) {
 	next();
 }
 
-export function magicLogin( context, next ) {
-	const { path } = context;
+export async function magicLogin( context, next ) {
+	const {
+		path,
+		query: { gravatar_flow, client_id, redirect_to },
+	} = context;
+
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return login( context, next );
+	}
+
+	// For Gravatar-related OAuth2 clients, check the necessary URL parameters and fetch the client data if needed.
+	if ( gravatar_flow ) {
+		if ( ! client_id ) {
+			const error = new Error( 'The `client_id` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		if ( ! redirect_to ) {
+			const error = new Error( 'The `redirect_to` query parameter is missing.' );
+			error.status = 401;
+			return next( error );
+		}
+
+		const oauth2Client = getOAuth2Client( context.store.getState(), client_id );
+		// Only fetch the data if it's not already in the store. This is to avoid unnecessary requests and re-renders.
+		if ( ! oauth2Client ) {
+			try {
+				await context.store.dispatch( fetchOAuth2ClientData( client_id ) );
+			} catch ( error ) {
+				return next( error );
+			}
+		}
+	}
 
 	context.primary = <MagicLogin path={ path } />;
 
@@ -148,14 +202,30 @@ export function magicLoginUse( context, next ) {
 
 	const previousQuery = context.state || {};
 
-	const { client_id, email, redirect_to, token } = previousQuery;
+	const { client_id, email, redirect_to, token, transition: isTransition } = previousQuery;
+
+	let activate = '';
+	try {
+		const params = new URLSearchParams( new URL( redirect_to ).search );
+		activate = params.get( 'activate' );
+	} catch ( e ) {
+		// redirect_to isn't always given, the URL constructor will throw in this case
+	}
+	const transition = isTransition === 'true';
 
 	const flow = redirect_to?.includes( 'jetpack/connect' ) ? 'jetpack' : null;
 
 	const PrimaryComponent = getHandleEmailedLinkFormComponent( flow );
 
 	context.primary = (
-		<PrimaryComponent clientId={ client_id } emailAddress={ email } token={ token } />
+		<PrimaryComponent
+			clientId={ client_id }
+			emailAddress={ email }
+			token={ token }
+			redirectTo={ redirect_to }
+			transition={ transition }
+			activate={ activate }
+		/>
 	);
 
 	next();
@@ -231,5 +301,32 @@ export function redirectJetpack( context, next ) {
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}
+	next();
+}
+
+/**
+ * Redirect clients to use PHP lost password. Excludes WooCommerce and Tumblr Blaze Pro.
+ * @param {Object} context - The context object containing request parameters and query strings.
+ * @param {Function} next - The next middleware function to call if conditions are met.
+ * @returns {void} Either redirects the user or invokes the `next()` middleware function.
+ */
+export function redirectLostPassword( context, next ) {
+	const { action } = context.params;
+
+	if ( action !== 'lostpassword' ) {
+		next();
+		return;
+	}
+
+	const state = context.store.getState();
+	const oauth2Client = getCurrentOAuth2Client( state );
+
+	const shouldRedirectToLostPassword = () =>
+		! getIsBlazePro( state ) && ! isWooOAuth2Client( oauth2Client ) && ! isWooJPCFlow( state );
+
+	if ( shouldRedirectToLostPassword() ) {
+		return context.redirect( 301, '/wp-login.php?action=lostpassword' );
+	}
+
 	next();
 }

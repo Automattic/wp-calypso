@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { AnyAction } from 'redux';
+import { formatLicenseMeta } from 'calypso/a8c-for-agencies/data/purchases/lib/format-licenses';
 import {
 	JETPACK_PARTNER_PORTAL_LICENSES_REQUEST,
 	JETPACK_PARTNER_PORTAL_LICENSE_COUNTS_REQUEST,
@@ -19,6 +20,8 @@ import {
 	LicenseCounts,
 	PaginatedItems,
 } from 'calypso/state/partner-portal/types';
+import type { APILicenseMeta } from 'calypso/a8c-for-agencies/data/purchases/lib/format-licenses';
+import type { ReferralAPIResponse } from 'calypso/a8c-for-agencies/sections/referrals/types';
 
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
@@ -32,9 +35,15 @@ interface APILicense {
 	username: string | null;
 	blog_id: number | null;
 	siteurl: string | null;
+	has_downloads: boolean;
 	issued_at: string;
 	attached_at: string | null;
 	revoked_at: string | null;
+	owner_type: string | null;
+	quantity: number | null;
+	parent_license_id: number | null;
+	meta: APILicenseMeta | null;
+	referral: ReferralAPIResponse | null;
 }
 
 interface APIPaginatedItems< T > {
@@ -94,7 +103,7 @@ export function receiveLicensesErrorHandler(): NoticeAction {
 	return errorNotice( translate( 'Failed to retrieve your licenses. Please try again later.' ) );
 }
 
-function formatLicenses( items: APILicense[] ): License[] {
+export function formatLicenses( items: APILicense[] ): License[] {
 	return items.map( ( item ) => ( {
 		licenseId: item.license_id,
 		licenseKey: item.license_key,
@@ -104,9 +113,15 @@ function formatLicenses( items: APILicense[] ): License[] {
 		username: item.username,
 		blogId: item.blog_id,
 		siteUrl: item.siteurl,
+		hasDownloads: item.has_downloads,
 		issuedAt: item.issued_at,
 		attachedAt: item.attached_at,
 		revokedAt: item.revoked_at,
+		ownerType: item.owner_type,
+		quantity: item.quantity,
+		parentLicenseId: item.parent_license_id,
+		meta: formatLicenseMeta( item.meta ),
+		referral: item.referral,
 	} ) );
 }
 

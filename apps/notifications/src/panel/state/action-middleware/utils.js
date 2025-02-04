@@ -7,7 +7,6 @@
  * Combines an array of action types and handler methods into one larger object,
  * containing one key for each action type and an associated array that
  * contains all that type's handler methods.
- *
  * @param  {Array.<ActionHandler>} handlers An array of ActionHandlers.
  * @returns {ActionHandler} A combined representation of the inputs in one object.
  */

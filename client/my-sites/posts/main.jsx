@@ -1,17 +1,21 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { mapPostStatus } from 'calypso/lib/route';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import PostTypeList from 'calypso/my-sites/post-type-list';
+import { withJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class PostsMain extends Component {
@@ -45,7 +49,17 @@ class PostsMain extends Component {
 	}
 
 	render() {
-		const { author, category, search, siteId, statusSlug, tag, translate } = this.props;
+		const {
+			author,
+			category,
+			search,
+			siteId,
+			statusSlug,
+			tag,
+			translate,
+			isJetpack,
+			isPossibleJetpackConnectionProblem,
+		} = this.props;
 		const status = mapPostStatus( statusSlug );
 		/* Check if All Sites Mode */
 		const isAllSites = siteId ? 1 : 0;
@@ -70,14 +84,24 @@ class PostsMain extends Component {
 
 		return (
 			<Main wideLayout className="posts">
-				<ScreenOptionsTab wpAdminPath="edit.php" />
+				{ isJetpack && isPossibleJetpackConnectionProblem && (
+					<JetpackConnectionHealthBanner siteId={ siteId } />
+				) }
+				{ isEnabled( 'jitms' ) && (
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						template="notice"
+						placeholder={ null }
+						messagePath="wp:edit-post:admin_notices"
+					/>
+				) }
 				<PageViewTracker path={ this.getAnalyticsPath() } title={ this.getAnalyticsTitle() } />
 				<DocumentHead title={ translate( 'Posts' ) } />
-				<FormattedHeader
-					brandFont
-					className="posts__page-heading"
-					headerText={ translate( 'Posts' ) }
-					subHeaderText={ translate(
+				<NavigationHeader
+					screenOptionsTab="edit.php"
+					navigationItems={ [] }
+					title={ translate( 'Posts' ) }
+					subtitle={ translate(
 						'Create, edit, and manage the posts on your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						'Create, edit, and manage the posts on your sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 						{
@@ -87,9 +111,8 @@ class PostsMain extends Component {
 							},
 						}
 					) }
-					align="left"
-					hasScreenOptions
 				/>
+
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
 				<PostTypeList
 					query={ query }
@@ -101,6 +124,10 @@ class PostsMain extends Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	siteId: getSelectedSiteId( state ),
-} ) )( localize( PostsMain ) );
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	return {
+		siteId,
+		isJetpack: isJetpackSite( state, siteId ),
+	};
+} )( localize( withJetpackConnectionProblem( PostsMain ) ) );

@@ -1,9 +1,5 @@
-import { TERM_MONTHLY } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
-import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
 import {
-	getPlanPrice,
 	getProductDisplayCost,
 	isProductsListFetching,
 	getProductsByBillingSlug,
@@ -23,75 +19,13 @@ jest.mock( 'calypso/state/products-list/selectors/get-product-price-tiers', () =
 	getProductPriceTierList: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getPlanDiscountedRawPrice: jest.fn(),
-	isIntroductoryOfferAppliedToPlanPrice: jest.fn(),
-} ) );
-
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	applyTestFiltersToPlansList: jest.fn( ( x ) => x ),
 	getPlan: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/plans/selectors', () => ( {
-	getPlanRawPrice: jest.fn(),
-} ) );
-
 describe( 'selectors', () => {
-	describe( '#getPlanPrice()', () => {
-		beforeEach( () => {
-			getPlanDiscountedRawPrice.mockReset();
-			getPlanDiscountedRawPrice.mockImplementation( () => 12 );
-
-			getPlanRawPrice.mockReset();
-			getPlanRawPrice.mockImplementation( () => 50 );
-		} );
-
-		test( 'Should return discounted price if available', () => {
-			const plan = { getStoreSlug: () => 'abc' };
-			expect( getPlanPrice( {}, 1, plan ) ).toBe( 12 );
-		} );
-
-		test( 'Should pass correct arguments to getPlanDiscountedRawPrice', () => {
-			const plan = { getStoreSlug: () => 'abc' };
-			getPlanPrice( { state: 1 }, 1, plan, false );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ] ).toEqual( [
-				{ state: 1 },
-				1,
-				'abc',
-				{ isMonthly: false },
-			] );
-		} );
-
-		test( 'Should return raw price if no discount available', () => {
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
-
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			expect( getPlanPrice( {}, 1, plan, false ) ).toBe( 50 );
-		} );
-
-		test( 'Should pass correct arguments to getPlanRawPrice', () => {
-			getPlanDiscountedRawPrice.mockImplementation( () => null );
-
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getPlanPrice( { state: 1 }, 1, plan, false );
-			expect( getPlanRawPrice.mock.calls[ 0 ] ).toEqual( [ { state: 1 }, 'def', false ] );
-		} );
-
-		test( 'Should pass correct isMonthly value', () => {
-			const plan = { getStoreSlug: () => 'abc', getProductId: () => 'def' };
-			getPlanPrice( {}, 1, plan, false );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 0 ][ 3 ] ).toEqual( { isMonthly: false } );
-
-			getPlanPrice( {}, 1, plan, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 1 ][ 3 ] ).toEqual( { isMonthly: true } );
-
-			getPlanPrice( {}, 1, { ...plan, term: TERM_MONTHLY }, true );
-			expect( getPlanDiscountedRawPrice.mock.calls[ 2 ][ 3 ] ).toEqual( { isMonthly: true } );
-		} );
-	} );
-
 	describe( '#getProductDisplayCost()', () => {
 		test( 'should return null when the products list has not been fetched', () => {
 			const state = deepFreeze( { productsList: { items: {} } } );

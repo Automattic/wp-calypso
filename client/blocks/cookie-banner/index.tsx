@@ -1,14 +1,17 @@
+import { getTrackingPrefs, setTrackingPrefs } from '@automattic/calypso-analytics';
 import { CookieBanner } from '@automattic/privacy-toolset';
 import cookie from 'cookie';
 import { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { loadTrackingScripts } from 'calypso/lib/analytics/ad-tracking/load-tracking-scripts';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	refreshCountryCodeCookieGdpr,
-	setTrackingPrefs,
 	shouldSeeCookieBanner,
-	getTrackingPrefs,
+	useDoNotSell,
 } from 'calypso/lib/analytics/utils';
+import { useSelector, useDispatch } from 'calypso/state';
 import { bumpStat } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useCookieBannerContent } from './use-cookie-banner-content';
 import type { CookieBannerProps } from '@automattic/privacy-toolset';
 
@@ -18,10 +21,28 @@ const noop = () => undefined;
 const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 	const content = useCookieBannerContent();
 	const dispatch = useDispatch();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { setUserAdvertisingOptOut } = useDoNotSell();
 
 	const handleAccept = useCallback< CookieBannerProps[ 'onAccept' ] >(
 		( buckets ) => {
+			recordTracksEvent( 'a8c_cookie_banner_ok', {
+				site: document.location.host,
+				path: document.location.pathname,
+				essential: buckets.essential,
+				analytics: buckets.analytics,
+				advertising: buckets.advertising,
+			} );
+
 			setTrackingPrefs( { ok: true, buckets } );
+			// If the user is logged in, update their advertising opt-out setting
+			if ( isLoggedIn ) {
+				setUserAdvertisingOptOut( ! buckets.advertising );
+			}
+
+			// Reload tracking scripts once the user consent changed
+			loadTrackingScripts( true );
+
 			onClose();
 		},
 		[ onClose ]
@@ -35,6 +56,13 @@ const CookieBannerInner = ( { onClose }: { onClose: () => void } ) => {
 			)
 		);
 	}, [ dispatch ] );
+
+	useEffect( () => {
+		recordTracksEvent( 'a8c_cookie_banner_view', {
+			site: document.location.host,
+			path: document.location.pathname,
+		} );
+	}, [] );
 
 	return <CookieBanner content={ content } onAccept={ handleAccept } />;
 };

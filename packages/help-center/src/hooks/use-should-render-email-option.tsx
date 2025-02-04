@@ -1,13 +1,10 @@
-import { useSupportAvailability } from '@automattic/data-stores';
+import { useSupportStatus } from '../data/use-support-status';
 
 export function useShouldRenderEmailOption() {
-	const { data: supportAvailability, isFetching } = useSupportAvailability( 'OTHER' );
+	const { data: supportStatus, isFetching } = useSupportStatus();
 
 	return {
 		isLoading: isFetching,
-		render:
-			( supportAvailability?.is_user_eligible_for_tickets ||
-				supportAvailability?.is_user_eligible_for_upwork ) ??
-			false,
+		render: Boolean( supportStatus?.availability.force_email_support ),
 	};
 }

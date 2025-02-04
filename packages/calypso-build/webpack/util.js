@@ -2,7 +2,6 @@ const webpack = require( 'webpack' );
 
 /**
  * Transform webpack output.filename and output.chunkFilename to CSS variants
- *
  * @param {string|undefined} name filename, chunkFilename or undefined
  * @returns {string|undefined}     Transformed name or undefined
  */
@@ -98,7 +97,6 @@ const nodeModulesToTranspile = [
 
 /**
  * Check to see if we should transpile certain files in node_modules
- *
  * @param {string} filepath the path of the file to check
  * @returns {boolean} True if we should transpile it, false if not
  *

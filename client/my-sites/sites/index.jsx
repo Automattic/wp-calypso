@@ -1,5 +1,5 @@
 import { Card, Button } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
+import { hasJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 
 /**
  * In order to decide whether to show the site in site selector,
@@ -29,10 +29,16 @@ class Sites extends Component {
 	static propTypes = {
 		siteBasePath: PropTypes.string.isRequired,
 		clearPageTitle: PropTypes.bool,
+		isPostShare: PropTypes.bool,
 	};
 
 	componentDidMount() {
 		const path = this.getPath();
+		recordTracksEvent( 'calypso_site_selector_view', {
+			path,
+			is_post_share: this.props.isPostShare,
+		} );
+
 		if ( this.props.fromSite && path ) {
 			recordTracksEvent( 'calypso_site_selector_site_missing', {
 				path,
@@ -44,18 +50,29 @@ class Sites extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
+		if ( hasJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
+
+		if ( site.is_deleted ) {
+			return false;
+		}
+
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
 		if ( /^\/domains/.test( path ) ) {
-			return ! site.jetpack || site.options.is_automated_transfer;
+			if ( site?.is_wpcom_staging_site ) {
+				return false;
+			}
+			return ! site.jetpack || site.options?.is_automated_transfer;
 		}
 
 		// If a site is Jetpack, plans are available only when it is upgradeable.
 		if ( /^\/plans/.test( path ) ) {
+			if ( site?.is_wpcom_staging_site ) {
+				return false;
+			}
 			return ! site.jetpack || site.capabilities.manage_options;
 		}
 
@@ -78,7 +95,6 @@ class Sites extends Component {
 
 	/**
 	 * Get the site path the user is trying to access.
-	 *
 	 * @returns {string} The path.
 	 */
 	getPath() {
@@ -96,6 +112,7 @@ class Sites extends Component {
 		}
 
 		let path = this.getPath();
+		const initialPath = path;
 
 		const { translate } = this.props;
 
@@ -110,7 +127,7 @@ class Sites extends Component {
 				path = translate( 'Activity' );
 				break;
 			case 'stats':
-				path = translate( 'Insights' );
+				path = translate( 'Stats' );
 				break;
 			case 'plans':
 				path = translate( 'Plans' );
@@ -136,15 +153,68 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'hosting-overview':
+				path = translate( 'Hosting Overview' );
+				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
+			case 'site-monitoring':
+				path = translate( 'Site Monitoring' );
+				break;
+			case 'github-deployments':
+				path = translate( 'GitHub Deployments' );
+				break;
+			case 'earn':
+				path = translate( 'Monetize' );
+				break;
+			case 'subscribers':
+				path = translate( 'Subscribers' );
+				break;
+			case 'themes':
+				path = translate( 'Themes' );
+				break;
+			case 'marketing':
+				path = translate( 'Marketing' );
+				break;
+			case 'import':
+				path = translate( 'Import' );
+				break;
+			case 'export':
+				path = translate( 'Export' );
+				break;
+			case 'email':
+				path = translate( 'Emails' );
+				break;
+			case 'purchases':
+				path = translate( 'Purchases' );
+				break;
+			case 'customize':
+				path = translate( 'Customizer' );
+				break;
+			case 'google-my-business':
+				path = translate( 'Google Business Profile' );
+				break;
+			case 'view':
+				path = translate( 'Preview' );
+				break;
+			case 'woocommerce-installation':
+				path = 'WooCommerce';
+				break;
+			case 'store':
+				path = translate( 'Store' );
+				break;
+			case 'add-ons':
+				path = translate( 'Add-ons' );
+				break;
 		}
+		// We don't have a translated path, capitalize the provided path.
+		const capitalize = initialPath === path;
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
 			args: { path },
 			components: {
-				strong: <strong />,
+				strong: <strong className={ clsx( { 'strong--capitalize': capitalize } ) } />,
 			},
 		} );
 	}
@@ -160,7 +230,7 @@ class Sites extends Component {
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className={ classNames( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
+				<Main className={ clsx( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
 					{ showEmptyContent ? (
 						<div className="sites__empty-state">
 							<h1 className="card-heading-36">{ translate( 'Add a site' ) }</h1>

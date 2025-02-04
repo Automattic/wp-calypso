@@ -1,0 +1,103 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.billing-details__row {
+	display: grid;
+	grid-template-columns: calc(66% - 12px) calc(34% - 12px);
+	grid-template-areas:
+		"product assigned"
+		"subtotal unassigned";
+	align-items: center;
+	grid-gap: 24px;
+	font-size: 1.25rem;
+
+	> :nth-child(even) {
+		text-align: right;
+
+		@include break-xlarge() {
+			text-align: left;
+		}
+	}
+
+	@include break-xlarge() {
+		grid-template-columns: 1fr 150px 150px 150px;
+		grid-template-areas: "product assigned unassigned subtotal";
+	}
+}
+
+.billing-details--summary {
+	grid-template-areas: none;
+	grid-gap: 8px 24px;
+}
+
+.billing-details__header {
+	display: none;
+
+	* {
+		font-weight: 400;
+		font-size: 0.875rem;
+		color: var(--color-accent-70);
+	}
+
+	@include break-xlarge() {
+		display: block;
+	}
+}
+
+.billing-details__product {
+	grid-area: product;
+}
+
+.billing-details__assigned {
+	grid-area: assigned;
+}
+
+.billing-details__unassigned {
+	grid-area: unassigned;
+}
+
+.billing-details__subtotal {
+	grid-area: subtotal;
+}
+
+.billing-details__total-label {
+	text-align: right;
+
+	@include break-xlarge() {
+		grid-column: 1 / span 3;
+	}
+}
+
+.billing-details__cost-label {
+	margin-block-end: 8px;
+	font-size: 1rem;
+}
+
+.billing-details__cost-amount {
+	margin-block-end: 8px;
+	font-size: 1.25rem;
+
+	@media (min-width: 661px) and (max-width: 781px) {
+		// Accounts for unbreakable long cost numbers breaking the layout due to the sidebar taking up
+		// a lot of the available space.
+		font-size: 1rem;
+	}
+}
+
+.billing-details__line-item-meta {
+	display: block;
+	font-size: 0.875rem;
+	color: var(--color-neutral-70);
+
+	&--is-mobile {
+		@include break-xlarge() {
+			display: none;
+		}
+	}
+}
+
+.billing-details__placeholder {
+	@include placeholder( --color-neutral-10 );
+
+	display: block;
+}

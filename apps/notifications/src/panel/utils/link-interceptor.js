@@ -1,5 +1,3 @@
-import { store } from '../state';
-
 const openLink = ( href, tracksEvent ) => ( { type: 'OPEN_LINK', href, tracksEvent } );
 const openSite = ( { siteId, href } ) => ( { type: 'OPEN_SITE', siteId, href } );
 const openPost = ( siteId, postId, href ) => ( { type: 'OPEN_POST', siteId, postId, href } );
@@ -11,11 +9,11 @@ const openComment = ( { siteId, postId, href, commentId } ) => ( {
 	commentId,
 } );
 
-export const interceptLinks = ( event ) => {
+export const interceptLinks = ( event ) => ( dispatch ) => {
 	const { target } = event;
 
 	if ( 'A' !== target.tagName && 'A' !== target.parentNode.tagName ) {
-		return true;
+		return;
 	}
 
 	const node = 'A' === target.tagName ? target : target.parentNode;
@@ -23,7 +21,7 @@ export const interceptLinks = ( event ) => {
 	const { linkType, postId, siteId, commentId, tracksEvent } = dataset;
 
 	if ( ! linkType ) {
-		return true;
+		return;
 	}
 
 	// we don't want to interfere with the click
@@ -31,23 +29,19 @@ export const interceptLinks = ( event ) => {
 	// normal behavior already by holding down
 	// one of the modifier keys.
 	if ( event.ctrlKey || event.metaKey ) {
-		return true;
+		return;
 	}
 
 	event.stopPropagation();
 	event.preventDefault();
 
 	if ( 'post' === linkType ) {
-		store.dispatch( openPost( siteId, postId, href ) );
+		dispatch( openPost( siteId, postId, href ) );
 	} else if ( 'comment' === linkType ) {
-		store.dispatch( openComment( { siteId, postId, href, commentId } ) );
+		dispatch( openComment( { siteId, postId, href, commentId } ) );
 	} else if ( 'site' === linkType ) {
-		store.dispatch( openSite( { siteId, href } ) );
+		dispatch( openSite( { siteId, href } ) );
 	} else {
-		store.dispatch( openLink( href, tracksEvent ) );
+		dispatch( openLink( href, tracksEvent ) );
 	}
-
-	return false;
 };
-
-export default interceptLinks;

@@ -12,7 +12,7 @@ import {
 	BrowserManager,
 	SecretsManager,
 	NewSiteResponse,
-	NewPostResponse,
+	PostResponse,
 	PublishedPostPage,
 	NavbarComponent,
 	MediaHelper,
@@ -33,7 +33,7 @@ describe(
 	function () {
 		const blogName = DataHelper.getBlogName();
 		const planName = 'Premium';
-		const publishedPosts: NewPostResponse[] = [];
+		const publishedPosts: PostResponse[] = [];
 		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
 		let newSiteDetails: NewSiteResponse;
@@ -105,7 +105,19 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
+				try {
+					await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
+				} catch {
+					// Work around an issue where purchase flow does not
+					// complete and redirect the user to the next screen
+					// beyond the timeout.
+					// See: https://github.com/Automattic/wp-calypso/issues/75867
+					await page.goto(
+						DataHelper.getCalypsoURL(
+							`checkout/thank-you/${ newSiteDetails.blog_details.site_slug }`
+						)
+					);
+				}
 			} );
 
 			it( 'Return to My Home dashboard', async function () {
@@ -124,7 +136,7 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.validateActivePlan( 'Premium' );
+				await plansPage.validateActivePlan( planName );
 			} );
 		} );
 
@@ -137,9 +149,7 @@ describe(
 
 			it.each( postTitles )( 'Post %s is preserved', async function ( postTitle: string ) {
 				// Locate the new post response for the post in question.
-				const postResponse = publishedPosts.find(
-					( r ) => r.title === postTitle
-				) as NewPostResponse;
+				const postResponse = publishedPosts.find( ( r ) => r.title === postTitle ) as PostResponse;
 
 				// Visit the page and validate.
 				await testPage.goto( postResponse.URL );

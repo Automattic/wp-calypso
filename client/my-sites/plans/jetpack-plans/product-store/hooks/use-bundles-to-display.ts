@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'calypso/state';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { MOST_POPULAR_BUNDLES } from '../../constants';
 import { getPlansToDisplay } from '../../product-grid/utils';

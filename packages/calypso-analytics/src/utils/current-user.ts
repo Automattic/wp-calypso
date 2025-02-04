@@ -9,6 +9,7 @@ export interface SetCurrentUserParams {
 	ID: string;
 	username: string;
 	email: string;
+	localeSlug: string;
 }
 
 export interface CurrentUserHashedPii {
@@ -22,11 +23,11 @@ export interface CurrentUser {
 	username: string;
 	email: string;
 	hashedPii: CurrentUserHashedPii;
+	localeSlug: string;
 }
 
 /**
  * Gets current user.
- *
  * @returns Current user.
  */
 export function getCurrentUser(): CurrentUser {
@@ -35,7 +36,6 @@ export function getCurrentUser(): CurrentUser {
 
 /**
  * Sets current user, (stored in javascript memory).
- *
  * @param currentUser the user data for the current user
  * @returns Current user.
  */
@@ -53,6 +53,7 @@ export function setCurrentUser( currentUser: SetCurrentUserParams ): CurrentUser
 		ID: parseInt( currentUser.ID, 10 ),
 		username: currentUser.username,
 		email: currentUser.email,
+		localeSlug: currentUser.localeSlug,
 		hashedPii: {
 			ID: hashPii( currentUser.ID ),
 			username: hashPii( currentUser.username.toLowerCase().replace( /\s/g, '' ) ),

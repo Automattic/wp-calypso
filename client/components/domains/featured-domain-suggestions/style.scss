@@ -5,6 +5,15 @@
 	display: flex;
 	flex-direction: column;
 	flex-wrap: wrap;
+	border-top: 1px solid rgba(220, 220, 222, 0.64);
+
+	@include break-small {
+		border-top: none;
+		margin: 0 20px;
+	}
+	@include break-large {
+		margin: 0;
+	}
 
 	&.featured-domain-suggestions--has-match-reasons .featured-domain-suggestion {
 		.domain-registration-suggestion__match-reasons {
@@ -44,10 +53,13 @@
 		}
 	}
 
+	.domain-registration-suggestion__title-info {
+		max-width: unset;
+	}
+
 	.button.domain-suggestion__action {
 		flex-grow: 0;
 		text-align: center;
-		transition: all 0.1s linear;
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
@@ -64,9 +76,15 @@
 		display: flex;
 		flex-basis: auto;
 		flex-direction: column;
-		justify-content: center;
 		flex-grow: 1;
 		margin-top: 0;
+		flex-wrap: wrap;
+		.domain-registration-suggestion__title-info {
+			width: 100%;
+		}
+		@media (min-width: 660px) {
+			flex-direction: row;
+		}
 	}
 
 	.domain-registration-suggestion__title,
@@ -75,7 +93,6 @@
 	.domain-registration-suggestion__match-reasons {
 		flex: 0 0 auto;
 		align-self: flex-start;
-		width: 100%;
 	}
 
 	.domain-registration-suggestion__title {
@@ -109,24 +126,32 @@
 	// .card used to increase specificity
 	&.card .domain-product-price {
 		margin: 0;
-		justify-content: flex-start;
-
+		flex-grow: 1;
+		align-items: baseline;
 		body.is-section-signup.is-white-signup & {
 			align-items: flex-start;
 			margin-top: 12px;
 		}
+		.is-section-domains & {
+			padding-left: 0;
+		}
+		&.is-free-domain {
+			padding-left: 0;
+			margin-top: 12px;
+			display: flex;
+			flex-direction: column-reverse;
+			@include break-mobile {
+				flex-direction: column;
+			}
+		}
 	}
 
 	.domain-registration-suggestion__badges {
-		align-self: flex-start;
+		align-self: center;
 		align-items: center;
 		display: flex;
 		font-size: $font-body-extra-small;
 		order: 2;
-
-		@include break-mobile {
-			align-self: center;
-		}
 
 		.progress-bar {
 			width: 25%;
@@ -171,6 +196,7 @@
 	}
 }
 
+body.is-section-stepper .step-container .featured-domain-suggestion.card,
 body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
 	border-radius: 0;
@@ -179,7 +205,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	background: #fff;
 	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 	padding: 16px 20px;
-
+	flex-direction: column-reverse;
 	@include break-mobile {
 		border-radius: 4px;
 		margin-bottom: 12px;
@@ -198,16 +224,19 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	}
 
 	.button.domain-suggestion__action {
-		font-weight: 500;
 		padding: 0.57em 1.17em;
 		border-radius: 4px;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		font-size: 0.875rem;
 		height: auto;
 
 		@include break-mobile {
 			margin-top: 0;
 			padding: 0.65em 2.8em;
+		}
+
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
 	}
 
@@ -226,7 +255,9 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 		margin-bottom: initial;
 
 		@include break-wide {
-			flex-direction: row;
+			&:not(.domain-registration-suggestion__larger-domain) {
+				flex-direction: row;
+			}
 		}
 	}
 
@@ -262,7 +293,7 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
 	border-top: 1px solid rgba(220, 220, 222, 0.64);
 
-	@include break-mobile {
+	@include break-small {
 		margin: 0 20px;
 		border-top: none;
 	}

@@ -2,7 +2,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { TextControl, TextareaControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SVG, Rect, Path } from '@wordpress/primitives';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import * as createIssueUrl from 'new-github-issue-url';
 
 import './editor.scss';
@@ -26,7 +26,7 @@ const icon = (
 
 const Shell = ( { as: El = 'div', className, title, subtitle, body, ...elementProps } ) => {
 	return (
-		<El { ...elementProps } className={ classNames( 'wp-block-a8c-github-template', className ) }>
+		<El { ...elementProps } className={ clsx( 'wp-block-a8c-github-template', className ) }>
 			<div className="wp-block-a8c-github-template__icon" />
 			<div className="wp-block-a8c-github-template__title">{ title }</div>
 			<div className="wp-block-a8c-github-template__sub-title">{ subtitle }</div>

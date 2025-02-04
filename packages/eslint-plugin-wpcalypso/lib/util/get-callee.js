@@ -7,7 +7,6 @@
 
 /**
  * Returns the callee identifier node from a CallExpression.
- *
  * @param  {Object} node CallExpression node
  * @returns {Object}      First non-sequence callee
  */

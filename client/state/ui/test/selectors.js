@@ -7,6 +7,7 @@ import {
 	getSectionName,
 	getSectionGroup,
 	isSiteSection,
+	getMostRecentlySelectedSiteId,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -69,6 +70,29 @@ describe( 'selectors', () => {
 			const selected = getSelectedSiteId( {
 				ui: {
 					selectedSiteId: 2916284,
+				},
+			} );
+
+			expect( selected ).toEqual( 2916284 );
+		} );
+	} );
+
+	describe( '#getMostRecentlySelectedSiteId()', () => {
+		test( 'should return null if no site was previously selected', () => {
+			const selected = getMostRecentlySelectedSiteId( {
+				...userState,
+				ui: {
+					mostRecentlySelectedSiteId: null,
+				},
+			} );
+
+			expect( selected ).toBeNull();
+		} );
+
+		test( 'should return ID for the previously selected site', () => {
+			const selected = getMostRecentlySelectedSiteId( {
+				ui: {
+					mostRecentlySelectedSiteId: 2916284,
 				},
 			} );
 

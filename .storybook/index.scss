@@ -1,0 +1,9 @@
+@import "@automattic/calypso-color-schemes";
+
+// Calypso style needs these variables
+@import "@automattic/typography/styles/variables";
+// stylelint-disable-next-line scss/at-import-no-partial-leading-underscore
+@import "../client/assets/stylesheets/shared/mixins/_breakpoints.scss";
+
+// Calypso style
+@import "../client/assets/stylesheets/style.scss";

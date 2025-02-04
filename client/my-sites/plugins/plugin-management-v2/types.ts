@@ -5,15 +5,16 @@ import {
 	ENABLE_AUTOUPDATE_PLUGIN,
 	REMOVE_PLUGIN,
 	UPDATE_PLUGIN,
+	INSTALL_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
+	PLUGIN_INSTALLATION_INCOMPLETED,
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
-	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { MomentInput } from 'moment';
+import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactNode } from 'react';
 
 export type Columns = Array< {
@@ -22,20 +23,6 @@ export type Columns = Array< {
 	smallColumn?: boolean;
 	colSpan?: number;
 } >;
-
-export type PluginSite = { [ key: string ]: { ID: number; canUpdateFiles: boolean } };
-
-export interface Plugin {
-	id: string;
-	last_updated: MomentInput;
-	sites: PluginSite;
-	icon: string;
-	name: string;
-	pluginsOnSites: Array< any >;
-	slug: string;
-	wporg: boolean;
-	[ key: string ]: any;
-}
 
 export type SiteWithPlugin = { site: SiteDetails; secondarySites: Array< object > | null };
 
@@ -47,7 +34,7 @@ export interface RowFormatterArgs {
 	selectedSite?: SiteDetails;
 }
 export interface PluginRowFormatterArgs extends RowFormatterArgs {
-	item: Plugin;
+	item: PluginComponentProps;
 }
 export interface SiteRowFormatterArgs extends RowFormatterArgs {
 	item: SiteDetails;
@@ -59,12 +46,14 @@ export type PluginActionTypes =
 	| typeof DISABLE_AUTOUPDATE_PLUGIN
 	| typeof ENABLE_AUTOUPDATE_PLUGIN
 	| typeof REMOVE_PLUGIN
-	| typeof UPDATE_PLUGIN;
+	| typeof UPDATE_PLUGIN
+	| typeof INSTALL_PLUGIN;
 
 export type PluginActionStatus =
 	| typeof PLUGIN_INSTALLATION_IN_PROGRESS
 	| typeof PLUGIN_INSTALLATION_COMPLETED
-	| typeof PLUGIN_INSTALLATION_ERROR;
+	| typeof PLUGIN_INSTALLATION_ERROR
+	| typeof PLUGIN_INSTALLATION_INCOMPLETED;
 
 export type CurrentSiteStatus = {
 	action: PluginActionTypes;
@@ -73,11 +62,11 @@ export type CurrentSiteStatus = {
 	status: PluginActionStatus;
 };
 
-export type PluginActionStatusMessage = {
-	[ key in PluginActionTypes ]: {
-		[ PLUGIN_INSTALLATION_IN_PROGRESS ]: ReactNode;
-		[ PLUGIN_INSTALLATION_COMPLETED ]?: ReactNode;
-		[ PLUGIN_INSTALLATION_ERROR ]: ReactNode;
-		[ PLUGIN_INSTALLATION_UP_TO_DATE ]?: ReactNode;
-	};
+// Some component code adds properties onto the plugin objects and then passes that to other components.
+// This type is used to account for that behavior.
+export type PluginComponentProps = Plugin & {
+	isSelectable?: boolean;
+	isSelected?: boolean;
+	isMarketplaceProduct?: boolean;
+	onClick?: () => void;
 };

@@ -1,38 +1,42 @@
-import { Locator, Page } from 'playwright';
-import { envVariables } from '../..';
+import { Page } from 'playwright';
+import { EditorComponent, envVariables } from '../..';
 
-type TemplateCategory = 'About';
+export type TemplateCategory = 'About';
 
 /**
  * Represents the page template selection modal when first loading a new page in the editor.
  */
-export class PageTemplateModalComponent {
+export class EditorTemplateModalComponent {
 	private page: Page;
-	private editorWindow: Locator;
+	private editor: EditorComponent;
 
 	/**
-	 * Creates an instance of the page.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editorWindow Locator to the editor window.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
 	 * Select a template category from the sidebar of options.
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
+	 * @param {number} timeout Timeout for the action.
 	 */
-	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
+	async selectTemplateCategory( category: TemplateCategory, timeout: number ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.editorWindow
+			await editorParent
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
-				.selectOption( category.toLowerCase() );
+				.selectOption( category.toLowerCase(), { timeout: timeout } );
 		} else {
-			await this.editorWindow.getByRole( 'menuitem', { name: category, exact: true } ).click();
+			await editorParent
+				.getByRole( 'menuitem', { name: category, exact: true } )
+				.click( { timeout: timeout } );
 		}
 	}
 
@@ -40,15 +44,22 @@ export class PageTemplateModalComponent {
 	 * Select a template from the grid of options.
 	 *
 	 * @param {string} label Label for the template (the string underneath the preview).
+	 * @param {number} timeout Timeout for the action.
 	 */
-	async selectTemplate( label: string ): Promise< void > {
-		await this.editorWindow.getByRole( 'option', { name: label, exact: true } ).click();
+	async selectTemplate( label: string, timeout: number ): Promise< void > {
+		const editorParent = await this.editor.parent();
+		await editorParent
+			.getByRole( 'listbox', { name: 'Block patterns' } )
+			.getByRole( 'option', { name: label, exact: true } )
+			.first()
+			.click( { timeout: timeout } );
 	}
 
 	/**
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		await this.editorWindow.getByRole( 'button', { name: 'Blank page' } ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }

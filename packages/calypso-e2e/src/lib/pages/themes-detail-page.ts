@@ -1,16 +1,17 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 import { PreviewComponent } from '../components';
 
 const selectors = {
 	// Preview
-	demoPane: '.theme__sheet-screenshot',
+	demoButton: 'button:text("Demo site")',
 
 	// Main body
 	activateDesignButton: 'button:text("Activate this design")',
 	customizeDesignButton: 'span:text("Customize site")',
 
 	// Activate modal
-	activateModal: '.themes__auto-loading-homepage-modal',
+	activateModal: '.themes__activation-modal',
 	activateModalButton: '.dialog__action-buttons button:has-text("Activate")',
 
 	// Thanks modal
@@ -38,7 +39,7 @@ export class ThemesDetailPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async preview(): Promise< void > {
-		await this.page.click( selectors.demoPane );
+		await this.page.click( selectors.demoButton );
 		const previewComponent = new PreviewComponent( this.page );
 		await previewComponent.previewReady();
 	}
@@ -59,6 +60,34 @@ export class ThemesDetailPage {
 		if ( ! keepModal ) {
 			await this.page.keyboard.press( 'Escape' );
 		}
+	}
+
+	/**
+	 * Click on the Pick this design button displayed in Logged out theme details.
+	 */
+	async pickThisDesign(): Promise< void > {
+		await this.page.getByRole( 'link', { name: 'Pick this design' } ).click();
+	}
+
+	/**
+	 * Visit the theme details page.
+	 *
+	 * @param themeSlug
+	 * @param siteSlug
+	 */
+	async visitTheme( themeSlug: string, siteSlug: string | null = null ) {
+		const targetUrl = `theme/${ themeSlug }/${ siteSlug ?? '' }`;
+
+		// We are getting a pending status for https://wordpress.com/cspreport intermittently
+		// which causes the login to hang on networkidle when running the tests locally.
+		// This fulfill's the route request with status 200.
+		// See https://github.com/Automattic/wp-calypso/issues/69294
+		await this.page.route( '**/cspreport', ( route ) => {
+			route.fulfill( {
+				status: 200,
+			} );
+		} );
+		return await this.page.goto( getCalypsoURL( targetUrl ) );
 	}
 
 	/**

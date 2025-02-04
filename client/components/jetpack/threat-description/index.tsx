@@ -40,7 +40,6 @@ class ThreatDescription extends PureComponent< Props > {
 					return translate( 'How will we fix it?' );
 				}
 				return translate( 'How to resolve or handle this detection?' );
-
 				break;
 
 			default:
@@ -103,7 +102,7 @@ class ThreatDescription extends PureComponent< Props > {
 				{ source &&
 					this.renderTextOrNode(
 						<p className="threat-description__section-text">
-							<ExternalLink href={ source } rel="noopener noreferrer" target="_blank">
+							<ExternalLink href={ source } rel="noopener noreferrer">
 								{ translate( 'Learn more about this vulnerability' ) }
 							</ExternalLink>
 						</p>

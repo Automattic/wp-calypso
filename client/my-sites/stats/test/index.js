@@ -1,4 +1,4 @@
-jest.mock( 'page', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '../controller', () => ( {
 	overview: jest.fn(),
 	insights: jest.fn(),
@@ -22,7 +22,7 @@ jest.mock( 'calypso/controller', () => ( {
 	render: jest.fn(),
 } ) );
 
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -45,15 +45,19 @@ const validModules = [
 	'referrers',
 	'clicks',
 	'countryviews',
+	'locations',
 	'authors',
 	'videoplays',
 	'videodetails',
 	'filedownloads',
 	'searchterms',
 	'annualstats',
+	'utm',
+	'devices',
 ].join( '|' );
 
 const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
+const validTrafficPagePeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join( '|' );
 
 const routes = {
 	[ `/stats/:period(${ validPeriods })` ]: [
@@ -65,7 +69,7 @@ const routes = {
 	],
 	'/stats/insights': [ siteSelection, navigation, sites, makeLayout, clientRender ],
 	'/stats/insights/:site': [ siteSelection, navigation, insights, makeLayout, clientRender ],
-	[ `/stats/:period(${ validPeriods })/:site` ]: [
+	[ `/stats/:period(${ validTrafficPagePeriods })/:site` ]: [
 		siteSelection,
 		navigation,
 		site,
@@ -81,7 +85,6 @@ const routes = {
 		clientRender,
 	],
 	'/stats/post/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
-
 	'/stats/page/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
 	'/stats/follows/comment/:site': [ siteSelection, navigation, follows, makeLayout, clientRender ],
 	'/stats/follows/comment/:page_num/:site': [

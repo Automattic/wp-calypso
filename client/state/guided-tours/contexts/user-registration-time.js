@@ -4,7 +4,6 @@ export const WEEK_IN_MILLISECONDS = 7 * 1000 * 3600 * 24;
 
 /**
  * Returns a selector that tests if the user is newer than a given time
- *
  * @param {number} age Number of milliseconds
  * @returns {Function} Selector function
  */

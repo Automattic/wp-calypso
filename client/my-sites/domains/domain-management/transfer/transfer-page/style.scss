@@ -3,19 +3,6 @@
 @import "@wordpress/base-styles/colors";
 
 .transfer-page {
-	header.formatted-header {
-		margin-bottom: 24px;
-
-		h1.formatted-header__title {
-			color: $gray-900;
-			font-size: $font-title-medium;
-
-			@include break-mobile {
-				font-size: $font-title-large;
-			}
-		}
-	}
-
 	.card {
 		color: var(--studio-gray-50);
 		padding: 16px;
@@ -114,7 +101,7 @@
 		color: var(--studio-gray-80);
 
 		svg {
-			margin-right: 8px;
+			margin-right: 3px;
 		}
 	}
 
@@ -131,6 +118,11 @@
 
 		.search-card {
 			padding: 0;
+		}
+
+		/* only used when there's a free Gravatar domain notice */
+		.card-heading + .info-notice {
+			margin: 8px 0;
 		}
 	}
 

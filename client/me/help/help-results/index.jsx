@@ -1,5 +1,5 @@
 import { CompactCard } from '@automattic/components';
-import HelpResult from './item';
+import HelpResultItem from './help-result-item';
 
 import './style.scss';
 
@@ -11,6 +11,7 @@ export default function HelpResults( {
 	iconTypeDescription,
 	onClick,
 	searchLink,
+	openInHelpCenter,
 } ) {
 	if ( ! helpLinks.length ) {
 		return null;
@@ -22,16 +23,17 @@ export default function HelpResults( {
 			<h2 className="help__section-title">{ header }</h2>
 			<div className="help-results">
 				{ helpLinks.map( ( helpLink ) => (
-					<HelpResult
+					<HelpResultItem
 						key={ helpLink.link }
 						helpLink={ helpLink }
 						iconTypeDescription={ iconTypeDescription }
 						onClick={ onClick }
 						compact={ compact }
+						openInHelpCenter={ openInHelpCenter }
 					/>
 				) ) }
 				{ footer && (
-					<a href={ searchLink } target="__blank">
+					<a href={ searchLink } target="_blank" rel="noreferrer noopener">
 						<CompactCard className="help-results__footer">
 							<span className="help-results__footer-text">{ footer }</span>
 						</CompactCard>

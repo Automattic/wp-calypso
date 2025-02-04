@@ -6,7 +6,6 @@ import 'calypso/state/purchases/init';
 
 /**
  * Returns a list of Purchases associated with a Site from the state using its siteId
- *
  * @param   {AppState} state global state
  * @param   {number|null|undefined} siteId the site id
  * @returns {Purchase[]} the matching purchases if there are some

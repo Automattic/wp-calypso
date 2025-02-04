@@ -1,18 +1,24 @@
-import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import wpcom from 'calypso/lib/wp';
+import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
+import {
+	clearSignupDestinationCookie,
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
+import { useExitFlow } from '../hooks/use-exit-flow';
+import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
-import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import Intro from './internals/steps-repository/intro';
-import Launchpad from './internals/steps-repository/launchpad';
-import NewsletterSetup from './internals/steps-repository/newsletter-setup';
-import Subscribers from './internals/steps-repository/subscribers';
+import { ONBOARD_STORE } from '../stores';
+import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
 
@@ -21,73 +27,140 @@ const newsletter: Flow = {
 	get title() {
 		return translate( 'Newsletter' );
 	},
+	isSignupFlow: true,
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
-		}, [] );
+		const query = useQuery();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
 
-		return [
-			{ slug: 'intro', component: Intro },
-			{ slug: 'newsletterSetup', component: NewsletterSetup },
-			{ slug: 'subscribers', component: Subscribers },
-			{ slug: 'launchpad', component: Launchpad },
+		const publicSteps = [
+			...( ! isComingFromMarketingPage
+				? [
+						{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+				  ]
+				: [] ),
 		];
-	},
 
-	useStepNavigation( _currentStep, navigate ) {
-		const flowName = this.name;
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const siteSlug = useSiteSlug();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( {
-			stepName: _currentStep,
-			flowName,
-		} );
-		setStepProgress( flowProgress );
-		const locale = useLocale();
-
-		const getStartUrl = () => {
-			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/${ flowName }/newsletterSetup`;
-		};
-
-		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post(
-			'guides/trigger',
+		const privateSteps = stepsWithRequiredLogin( [
 			{
-				apiNamespace: 'wpcom/v2/',
+				slug: 'newsletterSetup',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-setup' ),
 			},
 			{
-				flow: flowName,
-				step: _currentStep,
+				slug: 'newsletterGoals',
+				asyncComponent: () => import( './internals/steps-repository/newsletter-goals' ),
+			},
+			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
+			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'subscribers',
+				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
+			},
+			{
+				slug: 'createSite',
+				asyncComponent: () => import( './internals/steps-repository/create-site' ),
+			},
+			{
+				slug: 'launchpad',
+				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+			},
+		] );
+
+		return [ ...publicSteps, ...privateSteps ];
+	},
+	useSideEffect() {
+		const { setHidePlansFeatureComparison, setIntent } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setHidePlansFeatureComparison( true );
+			clearSignupDestinationCookie();
+			setIntent( Onboard.SiteIntent.Newsletter );
+		}, [] );
+	},
+	useStepNavigation( _currentStep, navigate ) {
+		const flowName = this.name;
+		const siteId = useSiteIdParam();
+		const siteSlug = useSiteSlug();
+		const query = useQuery();
+		const { exitFlow } = useExitFlow();
+		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+
+		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
+			exitFlow,
+			navigate,
+		} );
+
+		const completeSubscribersTask = async () => {
+			if ( siteSlug ) {
+				await updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { subscribers_added: true },
+				} );
 			}
-		);
+		};
+
+		triggerGuidesForStep( flowName, _currentStep );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
-			const logInUrl = getStartUrl();
+			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
 				case 'intro':
-					if ( userIsLoggedIn ) {
-						return navigate( 'newsletterSetup' );
-					}
-					return window.location.assign( logInUrl );
+					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
+					return navigate( 'newsletterGoals' );
+
+				case 'newsletterGoals':
+					return navigate( 'domains' );
+
+				case 'domains':
+					return navigate( 'plans' );
+
+				case 'plans':
+					return navigate( 'createSite' );
+
+				case 'createSite':
+					return navigate( 'processing' );
+
+				case 'processing':
+					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+						return window.location.replace(
+							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
+						);
+					}
+
+					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
+						persistSignupDestination( launchpadUrl );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+
+						return window.location.assign(
+							`/checkout/${ encodeURIComponent(
+								providedDependencies?.siteSlug as string
+							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
+						);
+					}
+
+					initializeLaunchpadState( {
+						siteId: providedDependencies?.siteId as number,
+						siteSlug: providedDependencies?.siteSlug as string,
+					} );
+
 					return window.location.assign(
-						`/start/${ flowName }/domains?new=${ encodeURIComponent(
-							providedDependencies.siteTitle as string
-						) }&search=yes&hide_initial_query=yes` +
-							( typeof providedDependencies.siteAccentColor === 'string' &&
-							providedDependencies.siteAccentColor !== ''
-								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
-								: '' )
+						getPostFlowUrl( {
+							flow: flowName,
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} )
 					);
 
 				case 'subscribers':
+					completeSubscribersTask();
 					return navigate( 'launchpad' );
 			}
 		}
@@ -96,13 +169,17 @@ const newsletter: Flow = {
 			return;
 		};
 
-		const goNext = () => {
+		const goNext = async () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.assign( `/view/${ siteSlug }` );
+					skipLaunchpad( {
+						siteId,
+						siteSlug,
+					} );
+					return;
 
 				default:
-					return navigate( 'intro' );
+					return navigate( isComingFromMarketingPage ? 'newsletterSetup' : 'intro' );
 			}
 		};
 

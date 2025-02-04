@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 /**
@@ -17,7 +17,7 @@ export const SSH_KEY_FORMATS = [
 export interface SSHKeyData {
 	name: string;
 	key: string;
-	type: typeof SSH_KEY_FORMATS[ number ];
+	type: ( typeof SSH_KEY_FORMATS )[ number ];
 	sha256: string;
 	created_at: string;
 }
@@ -25,15 +25,13 @@ export interface SSHKeyData {
 export const SSH_KEY_QUERY_KEY = [ 'me', 'ssh-keys' ];
 
 export const useSSHKeyQuery = () =>
-	useQuery(
-		SSH_KEY_QUERY_KEY,
-		(): SSHKeyData[] =>
+	useQuery( {
+		queryKey: SSH_KEY_QUERY_KEY,
+		queryFn: (): SSHKeyData[] =>
 			wp.req.get( '/me/ssh-keys', {
 				apiNamespace: 'wpcom/v2',
 			} ),
-		{
-			meta: {
-				persist: false,
-			},
-		}
-	);
+		meta: {
+			persist: false,
+		},
+	} );

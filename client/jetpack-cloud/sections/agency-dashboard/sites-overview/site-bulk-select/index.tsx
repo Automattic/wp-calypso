@@ -1,6 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useContext } from 'react';
 import BulkSelect from 'calypso/components/bulk-select';
+import { useFetchTestConnections } from 'calypso/data/agency-dashboard/use-fetch-test-connection';
+import { useSelector } from 'calypso/state';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import DashboardBulkActions from '../../dashboard-bulk-actions';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
 import SitesOverviewContext from '../context';
@@ -29,9 +32,19 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 		);
 	};
 
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
+	const connectionTests = useFetchTestConnections(
+		isPartnerOAuthTokenLoaded,
+		sites.map( ( { site } ) => site.value )
+	);
+
 	const handleToggleSelect = () => {
-		// Filter sites with site error as they are not selectable.
-		const filteredSites = sites.filter( ( { site: { error } } ) => ! error );
+		// Filter sites with site error or monitor error or is an Atomic sites as they are not selectable
+		const filteredSites = sites.filter( ( { site, monitor } ) => {
+			const isConnected = connectionTests.find( ( { ID } ) => ID === site.value.blog_id )
+				?.connected;
+			return isConnected && ! monitor.error && ! site.value.is_atomic;
+		} );
 		const isChecked = isAllChecked( filteredSites );
 
 		const allSelectedSites = isChecked
@@ -82,7 +95,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 			</div>
 			<DashboardBulkActions
 				selectedSites={ selectedSites }
-				monitorUserEmails={ sites[ 0 ].monitor.settings?.monitor_user_emails ?? [] }
+				bulkUpdateSettings={ sites?.[ 0 ]?.monitor?.settings }
 				isLargeScreen={ isLargeScreen }
 			/>
 		</div>

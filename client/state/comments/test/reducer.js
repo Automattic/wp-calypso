@@ -12,6 +12,8 @@ import {
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
 	COMMENTS_CHANGE_STATUS,
+	COMMENTS_EMPTY_SUCCESS,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 } from '../../action-types';
 import { expandComments, setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
@@ -24,6 +26,7 @@ import {
 	fetchStatus,
 	fetchStatusInitialState,
 	activeReplies,
+	inlineExpansion,
 } from '../reducer';
 
 const commentsNestedTree = [
@@ -190,6 +193,21 @@ describe( 'reducer', () => {
 				],
 			} );
 			expect( result[ '1-1' ] ).toHaveLength( 1 );
+		} );
+
+		test( 'should empty comments', () => {
+			const state = deepFreeze( {
+				'1-1': commentsNestedTree,
+				'1-2': [ { ID: 12 }, { ID: 13 }, { ID: 14 } ],
+			} );
+			const result = items( state, {
+				type: COMMENTS_EMPTY_SUCCESS,
+				siteId: 1,
+				commentIds: [ 12, 13 ],
+			} );
+
+			expect( result[ '1-1' ] ).toHaveLength( commentsNestedTree.length );
+			expect( result[ '1-2' ] ).toHaveLength( 1 );
 		} );
 	} );
 
@@ -905,6 +923,143 @@ describe( 'reducer', () => {
 						spam: 1,
 						totalComments: 7,
 						trash: 4,
+					},
+				},
+			} );
+		} );
+
+		test( 'updates site counts when spam comments are emptied', () => {
+			const action = {
+				type: COMMENTS_EMPTY_SUCCESS,
+				siteId: 2916284,
+				status: 'spam',
+				commentIds: [ 2, 3 ],
+			};
+			const state = deepFreeze( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 12,
+						trash: 10,
+					},
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+			const nextState = counts( state, action );
+			expect( nextState ).toEqual( {
+				2916284: {
+					site: {
+						all: 11,
+						approved: 5,
+						pending: 6,
+						postTrashed: 0,
+						spam: 0,
+						totalComments: 11, // this does not include spam or trash
+						trash: 10,
+					},
+					// Post counts not updated because we don't have post ID
+					234: {
+						all: 5,
+						approved: 2,
+						pending: 3,
+						postTrashed: 0,
+						spam: 2,
+						totalComments: 6,
+						trash: 4,
+					},
+				},
+			} );
+		} );
+	} );
+	describe( '#inlineExpansion', () => {
+		test( 'toggle saves new values as true', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'abc',
+					siteId: 1234,
+					postId: 5678,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				abc: {
+					1234: {
+						5678: true,
+					},
+				},
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			} );
+		} );
+		test( 'toggle saves existing true values as false', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'def',
+					siteId: 123,
+					postId: 456,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: true,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			} );
+		} );
+		test( 'toggle saves existing false values as true', () => {
+			const action = {
+				type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+				payload: {
+					streamKey: 'def',
+					siteId: 123,
+					postId: 456,
+				},
+			};
+			const state = {
+				def: {
+					123: {
+						456: false,
+					},
+				},
+			};
+			const returnedState = inlineExpansion( state, action );
+			expect( returnedState ).toStrictEqual( {
+				def: {
+					123: {
+						456: true,
 					},
 				},
 			} );

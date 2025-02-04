@@ -1,7 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import googleWorkspaceIcon from 'calypso/assets/images/email-providers/google-workspace/icon.svg';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { hasGSuiteSupportedDomain, getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
@@ -23,7 +22,8 @@ import {
 import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import { FIELD_PASSWORD_RESET_EMAIL } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
-import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
+import { useDispatch, useSelector } from 'calypso/state';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -78,8 +78,6 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	const dispatch = useDispatch();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
-	const userEmail = useSelector( getCurrentUserEmail );
-
 	const provider = EmailProvider.Google;
 	const gSuiteProduct = useSelector( ( state ) =>
 		getProductByProviderAndInterval( state, provider, intervalLength )
@@ -89,9 +87,12 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 
 	const [ addingToCart, setAddingToCart ] = useState( false );
 
-	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
-		FIELD_PASSWORD_RESET_EMAIL,
-	] );
+	const { hiddenFields, initialValue: passwordResetEmailFieldInitialValue } =
+		usePasswordResetEmailField( {
+			selectedDomainName,
+		} );
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( hiddenFields );
 
 	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
@@ -128,7 +129,9 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	googleWorkspace.formFields = ! isGSuiteSupported ? undefined : (
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
-			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
+			initialFieldValues={ {
+				[ FIELD_PASSWORD_RESET_EMAIL ]: passwordResetEmailFieldInitialValue,
+			} }
 			isInitialMailboxPurchase
 			hiddenFieldNames={ hiddenFieldNames }
 			onSubmit={ handleSubmit }

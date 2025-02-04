@@ -1,0 +1,46 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "./variables";
+
+%site-subscriptions-list-site-row {
+	border-block-end: 1px solid $site-subscriptions-list-row-divider-color;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+%site-subscriptions-list-site-title {
+	font-weight: 600;
+	font-size: $font-code;
+	line-height: 22px;
+	color: $studio-gray-100;
+	letter-spacing: -0.24px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	padding-right: 10px;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+%site-subscriptions-list-site-url {
+	font-weight: 400;
+	font-size: $font-body-extra-small;
+	line-height: 18px;
+	color: $studio-gray-40;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+%site-subscriptions-list-default-text {
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 20px;
+	letter-spacing: -0.15px;
+	color: $studio-gray-60;
+}

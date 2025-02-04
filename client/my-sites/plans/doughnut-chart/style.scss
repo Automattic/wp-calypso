@@ -10,6 +10,10 @@
 	--line-width: 9px;
 	--main-color: var(--color-accent-rgb);
 
+	&.blue {
+		--main-color: var(--studio-blue-60-rgb);
+	}
+
 	background-color: var(--color-surface);
 	width: var(--width);
 	aspect-ratio: 1;
@@ -43,5 +47,9 @@
 		inset: calc(50% - var(--line-width) / 2);
 		background: rgb(var(--main-color));
 		transform: rotate(calc(var(--percentage) * 3.6deg)) translateY(calc(50% - var(--width) / 2));
+
+		.rtl & {
+			transform: rotate(calc(var(--percentage) * 3.6deg * -1)) translateY(calc(50% - var(--width) / 2));
+		}
 	}
 }

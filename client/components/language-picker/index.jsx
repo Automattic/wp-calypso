@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -112,7 +112,7 @@ export class LanguagePicker extends PureComponent {
 	handleClose = () => this.setState( { open: false } );
 
 	renderPlaceholder() {
-		const classes = classNames( 'language-picker', 'is-loading' );
+		const classes = clsx( 'language-picker', 'is-loading' );
 
 		return (
 			<div className={ classes }>

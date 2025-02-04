@@ -95,6 +95,11 @@ export class MediaLibraryFilterBar extends Component {
 		return enabledFilters && ( ! filter.length || ! includes( enabledFilters, filter ) );
 	}
 
+	shouldSkipFilters() {
+		const { source, photosPickerApiEnabled } = this.props;
+		return photosPickerApiEnabled && source === 'google_photos';
+	}
+
 	changeFilter = ( filter ) => () => {
 		this.props.onFilterChange( filter );
 	};
@@ -112,6 +117,10 @@ export class MediaLibraryFilterBar extends Component {
 	}
 
 	renderTabItems() {
+		if ( this.shouldSkipFilters() ) {
+			return null;
+		}
+
 		let tabs = this.getFiltersForSource( this.props.source );
 
 		if ( ! this.props.post ) {
@@ -163,7 +172,7 @@ export class MediaLibraryFilterBar extends Component {
 				onSearch={ onSearch }
 				initialValue={ search }
 				placeholder={ this.getSearchPlaceholderText() }
-				delaySearch={ true }
+				delaySearch
 			/>
 		);
 	}
@@ -199,7 +208,7 @@ export class MediaLibraryFilterBar extends Component {
 
 				<SectionNav
 					selectedText={ this.getFilterLabel( this.props.filter ) }
-					hasSearch={ true }
+					hasSearch
 					allowDropdown={ ! this.props.source }
 				>
 					{ this.renderTabItems() }

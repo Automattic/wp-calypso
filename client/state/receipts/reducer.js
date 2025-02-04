@@ -9,7 +9,6 @@ import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Returns a new state with the given attributes for the given receipt ID.
- *
  * @param {Object} state current state
  * @param {number} receiptId identifier of the site
  * @param {Object} attributes list of attributes and their values

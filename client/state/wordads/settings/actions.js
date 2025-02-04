@@ -12,7 +12,6 @@ import 'calypso/state/wordads/init';
 
 /**
  * Returns an action object, signalling that WordAds settings for a site have been requested.
- *
  * @param   {number} siteId Site ID
  * @returns {Object}        Action object
  */
@@ -25,7 +24,6 @@ export function requestWordadsSettings( siteId ) {
 
 /**
  * Returns an action object, signalling that WordAds settings for a site have been received.
- *
  * @param   {number} siteId   Site ID
  * @param   {Object} settings The received WordAds settings
  * @returns {Object}          Action object
@@ -40,7 +38,6 @@ export function receiveWordadsSettings( siteId, settings ) {
 
 /**
  * Returns an action object, signalling that WordAds settings for a site are being saved.
- *
  * @param   {number} siteId   Site ID
  * @param   {Object} settings The new WordAds settings
  * @returns {Object}          Action object
@@ -55,7 +52,6 @@ export function saveWordadsSettings( siteId, settings ) {
 
 /**
  * Returns an action object, signalling that WordAds settings for a site were successfully saved.
- *
  * @param   {number} siteId   Site ID
  * @returns {Object}          Action object
  */
@@ -68,7 +64,6 @@ export function saveWordadsSettingsSuccess( siteId ) {
 
 /**
  * Returns an action object, signalling that WordAds settings for a site failed to save.
- *
  * @param   {number} siteId   Site ID
  * @returns {Object}          Action object
  */
@@ -81,7 +76,6 @@ export function saveWordadsSettingsFailure( siteId ) {
 
 /**
  * Returns an action object, signalling that WordAds settings for a site have been updated.
- *
  * @param   {number} siteId   Site ID
  * @param   {Object} settings The updated WordAds settings
  * @returns {Object}          Action object

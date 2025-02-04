@@ -6,6 +6,7 @@ import { getEditCommentLink } from '../helpers/notes';
 import { editComment } from '../state/ui/actions';
 import ActionButton from './action-button';
 
+// eslint-disable-next-line no-shadow
 const EditButton = ( { editComment, note, translate } ) => {
 	const { site: siteId, post: postId, comment: commentId } = note?.meta?.ids ?? {};
 	return (

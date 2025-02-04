@@ -106,27 +106,27 @@
 
 /* (2560x1440) 2K resolution */
 @mixin onboarding-break-2k() {
-	@media ( min-width: 2560px ) {
+	@media (min-width: 2560px) {
 		@content;
 	}
 }
 
 /* (1920x1080) Full HD Display */
 @mixin onboarding-break-full-hd() {
-	@media ( min-width: 1920px ) {
+	@media (min-width: 1920px) {
 		@content;
 	}
 }
 
 @mixin onboarding-break-mobile-tall() {
-	@media ( min-height: 750px ) {
+	@media (min-height: 750px) {
 		@content;
 	}
 }
 
 @mixin onboarding-break-mobile-landscape() {
 	// very narrow wide screens (mobile landscape)
-	@media screen and ( max-height: 512px ) {
+	@media screen and (max-height: 512px) {
 		@content;
 	}
 }

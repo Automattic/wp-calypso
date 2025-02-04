@@ -1,5 +1,5 @@
-import classNames from 'classnames';
-import page from 'page';
+import page from '@automattic/calypso-router';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -60,7 +60,6 @@ class MediaLibraryUploadButton extends Component {
 	 * of type `file`. This is a non-standard use of the `accept` attribute,
 	 * but is supported in Internet Explorer and Chrome browsers. Further input
 	 * validation will occur when attempting to upload the file.
-	 *
 	 * @returns {string} Supported file extensions, as comma-separated string
 	 */
 	getInputAccept = () => {
@@ -75,9 +74,7 @@ class MediaLibraryUploadButton extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-button', 'button', this.props.className, {
-			'is-primary': this.props.sectionName === 'media',
-		} );
+		const classes = clsx( 'media-library__upload-button', 'button', this.props.className );
 
 		return (
 			<form ref={ this.formRef } className={ classes }>

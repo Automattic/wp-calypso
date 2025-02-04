@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
@@ -16,9 +16,11 @@ import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -123,7 +125,10 @@ class Followers extends Component {
 
 		let emptyTitle;
 		const site = this.props.site;
-		const isSiteOnFreePlan = site && site.plan.is_free;
+		const hasUnlimitedSubscribers = this.props.siteHasUnlimitedSubscribers;
+		const isFreeSite = site?.plan?.is_free ?? false;
+		const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
+		const hasSubscriberLimit = ( isFreeSite || isBusinessTrial ) && ! hasUnlimitedSubscribers;
 
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
@@ -138,11 +143,11 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
-									isSiteOnFreePlan={ isSiteOnFreePlan }
+									hasSubscriberLimit={ hasSubscriberLimit }
 									flowName="people"
-									showSubtitle={ true }
-									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
-									showFormManualListLabel={ true }
+									showSubtitle
+									showCsvUpload
+									showFormManualListLabel
 									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
 										this.props?.refetch?.();
@@ -267,9 +272,14 @@ class Followers extends Component {
 	}
 }
 
-const mapStateToProps = ( state ) => {
+const mapStateToProps = ( state, ownProps ) => {
 	return {
 		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
+		siteHasUnlimitedSubscribers: siteHasFeature(
+			state,
+			ownProps?.site?.ID,
+			FEATURE_UNLIMITED_SUBSCRIBERS
+		),
 	};
 };
 

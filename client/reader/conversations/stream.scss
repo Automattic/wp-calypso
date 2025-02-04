@@ -1,5 +1,9 @@
-.conversations__stream .card.is-compact {
-	padding: 0;
+.is-section-reader .conversations__header.navigation-header {
+	margin: 0 auto;
+
+	@media only screen and (max-width: 660px) {
+		padding: 0 24px;
+	}
 }
 
 .conversations__stream .reader-post-card.card.is-compact .reader-post-options-menu {
@@ -12,7 +16,6 @@
 	.reader-post-card__post-details {
 		margin-top: -2px;
 		min-width: 0;
-		white-space: nowrap;
 	}
 
 	.reader-post-card__byline-details {
@@ -20,22 +23,18 @@
 		max-height: none;
 	}
 
-	.reader-post-card__byline-author-site {
+	.reader-post-card__byline-site {
 		font-weight: 600;
 		margin-right: 5px;
 	}
 
-	.reader-post-card__timestamp-and-tag {
+	.reader-post-card__author-and-timestamp {
 		margin-left: 0;
 	}
 
 	.reader-post-card__title {
-		line-height: 1.25;
-		max-height: 16px * 1.6;
 		margin-top: 2px;
-		overflow: hidden;
 		position: relative;
-		white-space: nowrap;
 
 		&::after {
 			@include long-content-fade( $size: 35px );
@@ -45,11 +44,7 @@
 	.reader-post-card__title-link {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 17px;
-	}
-
-	.reader-excerpt__content {
-		margin-top: 2px;
-		width: 100%;
+		line-height: 1.5;
 	}
 
 	.comments__comment-author .gravatar {
@@ -58,10 +53,6 @@
 
 	&:not(:first-child) {
 		margin-top: 16px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0 16px 16px;
 	}
 
 	// Hides Follow button and tags in Conversations stream

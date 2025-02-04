@@ -68,6 +68,7 @@ class StatsModuleHeader extends Component {
 		return (
 			<ul className="module-header-actions">
 				<li className="module-header-action toggle-info">
+					{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 					<a
 						href="#"
 						className="module-header-action-link"
@@ -90,6 +91,7 @@ class StatsModuleHeader extends Component {
 	renderChevron = () => {
 		return (
 			<li className="module-header-action toggle-services">
+				{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
 				<a
 					href="#"
 					className="module-header-action-link"

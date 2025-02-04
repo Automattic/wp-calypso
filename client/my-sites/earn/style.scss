@@ -1,5 +1,108 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/styles/typography";
 @import "@wordpress/base-styles/mixins";
+
+#earn-navigation {
+	margin-bottom: 30px;
+}
+
+// Small override for card component headers
+.is-section-earn .section-header__label {
+	font-weight: 600;
+}
+
+.theme-jetpack-cloud {
+	.components-form-toggle.is-checked .components-form-toggle__track {
+		background-color: var(--studio-jetpack-green-50);
+	}
+
+	h2.formatted-header__title {
+		margin: 0 0 12px;
+		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-family: "SF Pro Display", $sans;
+	}
+	.highlight-cards-heading {
+		font-family: "SF Pro Display", $sans;
+	}
+
+	.earn__launchpad-title {
+		font-size: $font-size-header-small;
+	}
+
+	.promo-section {
+		.action-panel__body {
+			p {
+				font-size: $font-body-small;
+			}
+		}
+	}
+	.highlight-card-tooltip-content {
+		p {
+			font-size: $font-body-small;
+			font-weight: normal;
+		}
+	}
+	.earn__cancel-dialog {
+		h1 {
+			font-size: $font-title-small;
+		}
+		p {
+			font-size: $font-body;
+		}
+	}
+
+}
+
+.earn__launchpad {
+	padding: 4px 20px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	margin-bottom: 16px;
+	display: flex;
+	gap: 30px;
+	background: #fff;
+
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.earn__launchpad-header {
+		padding: 20px 0;
+
+		@media (max-width: $break-xlarge) {
+			padding-bottom: 0;
+		}
+		.earn__launchpad-progress-bar-container {
+			margin: 0 0 10px 6px;
+		}
+		.earn__launchpad-title {
+			font-weight: 600;
+		}
+		.earn__launchpad-description {
+			margin-bottom: 0;
+			color: var(--color-neutral-60);
+			font-size: $font-body-small;
+		}
+	}
+	.launchpad__checklist-wrapper {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		.checklist__tasks {
+			flex: 1;
+			.checklist-item__task-content {
+				padding: 12px 0;
+				&.is-placeholder:nth-of-type(3),
+				&.is-placeholder:nth-of-type(4) {
+					display: none;
+				}
+				.checklist-item__text {
+					font-weight: 400;
+				}
+			}
+		}
+	}
+}
 
 .earn .promo-section__promos img {
 	width: 48px;
@@ -19,15 +122,120 @@
 	}
 }
 
-.earn .promo-section__promos .gridicon {
-	fill: var(--color-primary-10);
-	position: relative;
-	top: -8px;
+.earn .promo-section__promos .promo-card {
+	@include breakpoint-deprecated( ">1280px" ) {
+		width: calc(100%/3 - 1em);
+	}
+}
+
+.earn__ads-header {
+	margin: 20px 0;
+
+	h2.formatted-header__title {
+		margin: 0 0 12px;
+		font-size: $font-size-header-small;
+	}
+
+	.section-nav {
+		box-shadow: none;
+		background: none;
+	}
+
+	.section-nav-tab {
+		&:hover:not(.is-selected) {
+			border-bottom-color: transparent;
+		}
+		&.is-selected {
+			border-bottom: none;
+			.section-nav-tab__link {
+				color: var(--color-text);
+			}
+		}
+	}
+	.section-nav-tab__link {
+		padding: 0 20px 10px 0;
+		color: var(--color-link);
+		&:hover {
+			background-color: transparent;
+			color: var(--color-link);
+		}
+	}
 }
 
 @include break-wide {
 	.earn .promo-card.is-primary {
 		padding-left: 72px;
 		padding-right: 72px;
+	}
+}
+
+/* Adds a one-off link underline for accessibility.
+See https://dequeuniversity.com/rules/axe/4.6/link-in-text-block?application=AxeChrome */
+.earn .promo-card a,
+.earn .formatted-header__subtitle a {
+	text-decoration: underline;
+}
+.earn .promo-card a.button {
+	text-decoration: none;
+}
+
+.earn__notes {
+	clear: both;
+	padding-bottom: 12px;
+	padding-top: 24px;
+	font-size: $font-body-small;
+	line-height: 1.6;
+	font-style: italic;
+	em {
+		font-weight: 600;
+	}
+}
+
+h3.highlight-cards-heading,
+h3.ads__table-header-title {
+	font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+}
+body:not(.theme-jetpack-cloud) {
+	.earn__ads-header {
+		margin: 20px 0;
+
+		h2.formatted-header__title {
+			margin: 0 0 12px;
+			font-size: $font-size-header-small;
+		}
+
+		.section-nav {
+			box-shadow: none;
+		}
+
+		.section-nav-tab {
+			&:hover:not(.is-selected) {
+				border-bottom-color: transparent;
+			}
+			&.is-selected {
+				border-bottom: none;
+			}
+			.section-nav-tab__link {
+				padding: 0 20px 10px 0;
+				&:hover {
+					background-color: transparent;
+				}
+			}
+		}
+	}
+}
+
+.earn__cancel-dialog {
+	width: 580px;
+	max-width: 98%;
+	h1 {
+		margin-bottom: 1em;
+	}
+}
+
+/* Media Queries */
+@media (max-width: $break-large) {
+	.earn.main {
+		padding: 20px;
 	}
 }

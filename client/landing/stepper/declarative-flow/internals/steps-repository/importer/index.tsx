@@ -1,24 +1,31 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { MigrationStatus } from '@automattic/data-stores';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import NotAuthorized from 'calypso/blocks/importer/components/not-authorized';
 import NotFound from 'calypso/blocks/importer/components/not-found';
-import { Importer, ImportJob } from 'calypso/blocks/importer/types';
 import { getImporterTypeForEngine } from 'calypso/blocks/importer/util';
+import { retrieveMigrationStatus } from 'calypso/blocks/importer/wordpress/utils';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySites from 'calypso/components/data/query-sites';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSaveHostingFlowPathStep } from 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import { fetchImporterState, resetImport } from 'calypso/state/imports/actions';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	fetchImporterState,
+	resetImport,
+	resetImportReceived,
+} from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
 	getImporterStatusForSiteId,
@@ -27,48 +34,72 @@ import {
 import { analyzeUrl } from 'calypso/state/imports/url-analyzer/actions';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSite } from 'calypso/state/sites/selectors';
+import { requestSites } from 'calypso/state/sites/actions';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
 import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
 import type { ImporterCompType } from './types';
+import type { OnboardSelect } from '@automattic/data-stores';
+import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
+
+type StepContainerProps = React.ComponentProps< typeof StepContainer >;
 
 interface Props {
 	importer: Importer;
+	customizedActionButtons?: StepContainerProps[ 'customizedActionButtons' ];
 }
 
 export function withImporterWrapper( Importer: ImporterCompType ) {
 	const ImporterWrapper = ( props: Props & StepProps ) => {
 		const { __ } = useI18n();
 		const dispatch = useDispatch();
-		const { importer, navigation, flow } = props;
+		const { importer, customizedActionButtons, navigation, flow } = props;
 		const currentSearchParams = useQuery();
-
 		/**
 	 	↓ Fields
 		 */
+		const currentUser = useSelector( getCurrentUser );
 		const site = useSite();
 		const siteSlug = useSiteSlugParam();
 		const [ siteId, setSiteId ] = useState( site?.ID );
-		! siteId && site?.ID && setSiteId( site?.ID );
 		const runImportInitially = useInitialQueryRun( siteId );
 		const canImport = useSelector( ( state ) => canCurrentUser( state, siteId, 'manage_options' ) );
-		const siteItem = useSelector( ( state ) => getSite( state, siteId ) );
 		const siteImports = useSelector( ( state ) => getImporterStatusForSiteId( state, siteId ) );
+		const hasAllSitesFetched = useSelector( hasAllSitesList );
 		const isImporterStatusHydrated = useSelector( isImporterStatusHydratedSelector );
-		const isMigrateFromWp = useSelect( ( select ) => select( ONBOARD_STORE ).getIsMigrateFromWp() );
-
+		const isMigrateFromWp = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIsMigrateFromWp(),
+			[]
+		);
 		const fromSite = currentSearchParams.get( 'from' ) || '';
 		const fromSiteData = useSelector( getUrlData );
 		const stepNavigator = useStepNavigator( flow, navigation, siteId, siteSlug, fromSite );
+		const migrationStatus = retrieveMigrationStatus();
+		const isMigrationInProgress =
+			migrationStatus === MigrationStatus.BACKING_UP ||
+			migrationStatus === MigrationStatus.BACKING_UP_QUEUED ||
+			migrationStatus === MigrationStatus.RESTORING;
+		const currentPath = window.location.pathname + window.location.search;
+
+		useSaveHostingFlowPathStep( flow, currentPath );
 
 		/**
 	 	↓ Effects
 		 */
+		useEffect( () => {
+			dispatch( requestSites() );
+		}, [ dispatch ] );
+
+		useEffect( () => {
+			! siteId && site?.ID && setSiteId( site.ID );
+		}, [ siteId, site ] );
 		useAtomicTransferQueryParamUpdate( siteId );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
+		useEffect( () => onComponentUnmount, [] );
+
 		if ( ! importer ) {
 			stepNavigator.goToImportCapturePage?.();
 			return null;
@@ -80,6 +111,10 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		function onGoBack() {
 			resetImportJob( getImportJob( importer ) );
 			navigation.goBack?.();
+		}
+
+		function onComponentUnmount() {
+			dispatch( resetImportReceived() );
 		}
 
 		function fetchImporters() {
@@ -109,11 +144,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		}
 
 		function hasPermission(): boolean {
+			if ( site?.site_owner === currentUser?.ID ) {
+				return true;
+			}
 			return canImport;
 		}
 
 		function isLoading(): boolean {
-			return ! isImporterStatusHydrated;
+			return ! isImporterStatusHydrated || ! hasAllSitesFetched;
 		}
 
 		function checkFromSiteData(): void {
@@ -129,10 +167,14 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		const renderStepContent = () => {
 			if ( isLoading() ) {
-				return <LoadingEllipsis />;
-			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
+				return (
+					<div className="import-layout__center">
+						<LoadingEllipsis />
+					</div>
+				);
+			} else if ( ! siteSlug || ! site || ! siteId ) {
 				return <NotFound />;
 			} else if ( ! hasPermission() ) {
 				return (
@@ -148,15 +190,15 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					job={ getImportJob( importer ) }
 					run={ runImportInitially }
 					siteId={ siteId }
-					site={ siteItem }
+					site={ site }
 					siteSlug={ siteSlug }
 					fromSite={ fromSite }
-					urlData={ fromSiteData }
+					urlData={ fromSiteData ?? undefined }
 					stepNavigator={ stepNavigator }
 					showConfirmDialog={ ! isMigrateFromWp }
 				/>
 			);
-		}
+		};
 
 		return (
 			<>
@@ -165,17 +207,21 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 				<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
 
 				<StepContainer
-					className={ classnames(
+					className={ clsx(
 						'import__onboarding-page',
-						'import-layout__center',
 						'importer-wrapper',
-						{ [ `importer-wrapper__${ importer }` ]: !! importer }
+						'import__onboarding-page--redesign',
+						{
+							[ `importer-wrapper__${ importer }` ]: !! importer,
+						}
 					) }
 					stepName="importer-step"
-					hideSkip={ true }
-					hideFormattedHeader={ true }
+					customizedActionButtons={ customizedActionButtons }
+					hideSkip
+					hideBack={ isMigrationInProgress }
+					hideFormattedHeader
 					goBack={ onGoBack }
-					isWideLayout={ true }
+					isWideLayout
 					stepContent={ renderStepContent() }
 					recordTracksEvent={ recordTracksEvent }
 				/>

@@ -1,0 +1,62 @@
+.site-settings {
+	.setting-item {
+		&.email-me-new-posts-toggle {
+			&.is-enabled {
+				margin-bottom: 16px;
+			}
+		}
+	}
+}
+
+.site-settings-popover {
+	max-width: 300px;
+
+	.site-settings {
+		.setting-item {
+			margin-bottom: 20px;
+		}
+
+		.delivery-frequency-input:not(.is-logged-in) {
+			margin-bottom: 24px;
+		}
+
+		.setting-item.email-me-new-comments-toggle {
+			margin-bottom: 24px;
+		}
+	}
+
+	.subscriptions__separator {
+		margin-bottom: 24px;
+	}
+
+	button {
+		&:hover,
+		&:focus {
+			color: var(--color-primary);
+			background: rgba(var(--color-primary-light-rgb), 1);
+
+			.reader-export-button__label {
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+
+	&__unsubscribe-button.components-button.has-icon,
+	&__view-feed-button.components-button.has-icon,
+	&__manage-subscription-button.components-button.has-icon {
+		display: flex;
+		width: 100%;
+		height: auto;
+		padding: 0;
+		font-size: $font-body-small;
+		line-height: $font-title-small;
+
+		&:visited {
+			color: inherit;
+		}
+
+		&:not(:last-child) {
+			margin-bottom: 24px;
+		}
+	}
+}

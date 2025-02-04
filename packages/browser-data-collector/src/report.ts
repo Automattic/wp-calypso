@@ -9,14 +9,22 @@ import {
 	pageVisibilityStop,
 	blockingResources,
 } from './collectors';
+import type { Collector, Report, ReportData, ReportPayload } from './types';
 
 export class ReportImpl implements Report {
 	id: string;
+	url: string;
 	beginning!: number;
 	end?: number;
 	data: ReportData = new Map();
 	startCollectors!: Collector[];
 	stopCollectors!: Collector[];
+
+	// Stubs that are necessary to implement but are not used.
+	body = null;
+	type = 'intervention';
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
+	toJSON() {}
 
 	static async fromNow( id: string, collectors: Collector[] = [] ): Promise< Report > {
 		const report = new ReportImpl( id, false );
@@ -32,6 +40,7 @@ export class ReportImpl implements Report {
 
 	private constructor( id: string, isInitial: boolean ) {
 		this.id = id;
+		this.url = document.location.href;
 		const commonStartCollectors = [ pageVisibilityStart ];
 		const commonStopCollectors = [
 			deviceMemory,

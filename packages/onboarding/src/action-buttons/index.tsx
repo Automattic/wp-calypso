@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
-import { Icon, chevronRight, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 
 import './style.scss';
@@ -9,6 +8,7 @@ import './style.scss';
 interface ActionButtonsProps {
 	className?: string;
 	sticky?: boolean | null;
+	children?: React.ReactNode;
 }
 
 const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
@@ -27,14 +27,12 @@ const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 		stickyClass = 'no-sticky';
 	}
 
-	return (
-		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>
-	);
+	return <div className={ clsx( 'action-buttons', className, stickyClass ) }>{ children }</div>;
 };
 
 export default ActionButtons;
 
-export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const BackButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -43,8 +41,8 @@ export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__back', className ) }
-			isLink
+			className={ clsx( 'action_buttons__button action-buttons__back', className ) }
+			variant="link"
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -54,7 +52,7 @@ export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	);
 };
 
-export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const NextButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -63,8 +61,8 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( 'button action_buttons__button action-buttons__next', className ) }
-			isPrimary
+			className={ clsx( 'button action_buttons__button action-buttons__next', className ) }
+			variant="primary"
 			{ ...buttonProps }
 		>
 			{ children ||
@@ -74,7 +72,7 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	);
 };
 
-export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
+export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
 	className,
 	children,
 	...buttonProps
@@ -83,37 +81,12 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 
 	return (
 		<Button
-			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
+			className={ clsx( 'action_buttons__button action-buttons__skip', className ) }
 			{ ...buttonProps }
 		>
 			{ children ||
 				/* translators: Button label for skipping a step in onboarding */
 				__( 'Skip for now', __i18n_text_domain__ ) }
-		</Button>
-	);
-};
-
-interface ArrowButtonProps extends Button.ButtonProps {
-	arrow: 'left' | 'right';
-}
-
-export const ArrowButton: React.FunctionComponent< ArrowButtonProps > = ( {
-	className,
-	children,
-	arrow = 'right',
-	...buttonProps
-} ) => {
-	return (
-		<Button
-			className={ classnames(
-				`action_buttons__button action-buttons__arrow action-buttons__arrow--${ arrow }`,
-				className
-			) }
-			{ ...buttonProps }
-		>
-			{ arrow === 'left' && <Icon icon={ chevronLeft } /> }
-			{ children }
-			{ arrow === 'right' && <Icon icon={ chevronRight } /> }
 		</Button>
 	);
 };

@@ -1,13 +1,11 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, FoldableCard } from '@automattic/components';
 import { withDesktopBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import FoldableCard from 'calypso/components/foldable-card';
-import HappychatButton from 'calypso/components/happychat/button';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import scrollTo from 'calypso/lib/scroll-to';
@@ -140,6 +138,7 @@ class ActivityLogItem extends Component {
 		const {
 			activity: {
 				activityTitle,
+				activityDescription,
 				actorAvatarUrl,
 				actorName,
 				actorRole,
@@ -147,16 +146,34 @@ class ActivityLogItem extends Component {
 				activityMedia,
 				isBreakpointActive: isDesktop,
 			},
+			moment,
+			translate,
 		} = this.props;
 
 		const rewindAction = this.renderRewindAction();
+
+		const renderPublishedDate = () => {
+			const published = activityDescription?.[ 0 ]?.published;
+
+			if ( published ) {
+				const publishedFormattedDate = moment( published ).format( 'll' );
+				return (
+					<span className="activity-card__activity-post-published-date">
+						{ ' · ' }
+						{ translate( 'Published:' ) } { publishedFormattedDate }
+					</span>
+				);
+			}
+
+			return null;
+		};
 
 		return (
 			<div className="activity-log-item__card-header">
 				<ActivityActor { ...{ actorAvatarUrl, actorName, actorRole, actorType } } />
 				{ activityMedia && isDesktop && (
 					<ActivityMedia
-						className={ classNames( {
+						className={ clsx( {
 							'activity-log-item__activity-media': true,
 							'is-desktop': true,
 							'has-gridicon': ! activityMedia.available,
@@ -175,7 +192,10 @@ class ActivityLogItem extends Component {
 								rewindIsActive={ this.props.rewindIsActive }
 							/>
 						</div>
-						<div className="activity-log-item__description-summary">{ activityTitle }</div>
+						<div className="activity-log-item__description-summary">
+							{ activityTitle }
+							{ renderPublishedDate() }
+						</div>
 					</div>
 					{ rewindAction && (
 						<div className="activity-log-item__description-actions">{ rewindAction }</div>
@@ -200,13 +220,11 @@ class ActivityLogItem extends Component {
 		} = this.props;
 
 		switch ( activityName ) {
-			case 'rewind__scan_result_found':
-				return this.renderHelpAction();
 			case 'rewind__backup_error':
-				return 'bad_credentials' === activityMeta.errorCode
-					? this.renderFixCredsAction()
-					: this.renderHelpAction();
+				return 'bad_credentials' === activityMeta.errorCode && this.renderFixCredsAction();
 		}
+
+		return null;
 	}
 
 	renderCloneAction = () => {
@@ -285,26 +303,7 @@ class ActivityLogItem extends Component {
 	};
 
 	/**
-	 * Displays a button for users to get help. Tracks button click.
-	 *
-	 * @returns {Object} Get help button.
-	 */
-	renderHelpAction = () => (
-		<HappychatButton
-			className="activity-log-item__help-action"
-			borderless={ false }
-			onClick={ this.handleTrackHelp }
-		>
-			<Gridicon icon="chat" size={ 18 } />
-			{ this.props.translate( 'Get help' ) }
-		</HappychatButton>
-	);
-
-	handleTrackHelp = () => this.props.trackHelp( this.props.activity.activityName );
-
-	/**
 	 * Displays a button to take users to enter credentials.
-	 *
 	 * @returns {Object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
@@ -343,7 +342,7 @@ class ActivityLogItem extends Component {
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
-		const classes = classNames( 'activity-log-item', className );
+		const classes = clsx( 'activity-log-item', className );
 
 		const adjustedTime = applySiteOffset( moment( activityTs ), { timezone, gmtOffset } );
 
@@ -485,10 +484,6 @@ const mapDispatchToProps = ( dispatch, { activity: { activityId }, siteId } ) =>
 			)
 		)
 	),
-	trackHelp: ( activityName ) =>
-		dispatch(
-			recordTracksEvent( 'calypso_activitylog_event_get_help', { activity_name: activityName } )
-		),
 	trackAddCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_add_credentials' ) ),
 	trackFixCreds: () => dispatch( recordTracksEvent( 'calypso_activitylog_event_fix_credentials' ) ),
 } );

@@ -1,7 +1,7 @@
+import page from '@automattic/calypso-router';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import debugModule from 'debug';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { v4 as uuid } from 'uuid';
@@ -308,16 +308,18 @@ export default class WebPreviewContent extends Component {
 
 			// To prevent iframe firing the onload event before the embedded page sends the
 			// partially-loaded message, we add a waiting period here.
-			this.loadingTimeoutTimer = setTimeout( () => {
-				debug( 'preview loading timeout' );
+			if ( ! this.props.disableTimeoutRedirect ) {
+				this.loadingTimeoutTimer = setTimeout( () => {
+					debug( 'preview loading timeout' );
 
-				if ( this.props.showClose ) {
-					window.open( this.state.iframeUrl, '_blank' );
-					this.props.onClose();
-				} else {
-					window.location.replace( this.state.iframeUrl );
-				}
-			}, loadingTimeout );
+					if ( this.props.showClose ) {
+						window.open( this.state.iframeUrl, '_blank' );
+						this.props.onClose();
+					} else {
+						window.location.replace( this.state.iframeUrl );
+					}
+				}, loadingTimeout );
+			}
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
 			if ( this.loadingTimeoutTimer ) {
@@ -359,7 +361,7 @@ export default class WebPreviewContent extends Component {
 		} = this.props;
 		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
-		const className = classNames( this.props.className, 'web-preview__inner', {
+		const className = clsx( this.props.className, 'web-preview__inner', {
 			'is-touch': hasTouch(),
 			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
@@ -411,17 +413,7 @@ export default class WebPreviewContent extends Component {
 					) }
 					{ 'seo' !== this.state.device && (
 						<div
-							onMouseEnter={ () => {
-								if ( this.props.enableEditOverlay ) {
-									this.setState( { showIFrameOverlay: true } );
-								}
-							} }
-							onMouseLeave={ () => {
-								if ( this.props.enableEditOverlay ) {
-									this.setState( { showIFrameOverlay: false } );
-								}
-							} }
-							className={ classNames( 'web-preview__frame-wrapper', {
+							className={ clsx( 'web-preview__frame-wrapper', {
 								'is-resizable': ! this.props.isModalWindow,
 							} ) }
 						>
@@ -431,7 +423,7 @@ export default class WebPreviewContent extends Component {
 								style={ {
 									...this.state.iframeStyle,
 									height: this.state.viewport?.height,
-									pointerEvents: this.props.enableEditOverlay ? 'auto' : 'all',
+									pointerEvents: 'all',
 								} }
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
@@ -439,38 +431,9 @@ export default class WebPreviewContent extends Component {
 								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 								tabIndex={ disableTabbing ? -1 : 0 }
+								/* See https://help.hotjar.com/hc/en-us/articles/115011624347-Can-I-Track-iframes-Inside-Heatmaps-and-Recordings- */
+								data-hj-allow-iframe
 							/>
-							{ this.props.enableEditOverlay && (
-								<div
-									className="web-preview__frame-edit-overlay"
-									style={ {
-										opacity: this.state.showIFrameOverlay ? '1' : '0',
-										background: this.state.showIFrameOverlay
-											? `rgba(16, 21, 23, 0.5)`
-											: 'rgba(16, 21, 23, 0)',
-										transition: 'background 0.2s ease',
-										pointerEvents: 'none',
-									} }
-								>
-									<button
-										style={ {
-											position: 'relative',
-											top: this.state.showIFrameOverlay ? '0' : '15px',
-											transition: 'all 0.2s ease',
-											pointerEvents: 'all',
-										} }
-										aria-label="Edit your new site"
-										className="web-preview__frame-edit-button"
-										onClick={ () => {
-											window.location.assign( `/site-editor/${ this.props.externalUrl }` );
-										} }
-										onFocus={ () => this.setState( { showIFrameOverlay: true } ) }
-										onBlur={ () => this.setState( { showIFrameOverlay: false } ) }
-									>
-										{ translate( 'Edit' ) }
-									</button>
-								</div>
-							) }
 						</div>
 					) }
 					{ 'seo' === this.state.device && (
@@ -539,8 +502,6 @@ WebPreviewContent.propTypes = {
 	isModalWindow: PropTypes.bool,
 	// The site/post description passed to the SeoPreviewPane
 	frontPageMetaDescription: PropTypes.string,
-	// Whether the inline help popup is open
-	isInlineHelpPopoverVisible: PropTypes.bool,
 	// A post object used to override the selected post in the SEO preview
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
@@ -557,8 +518,8 @@ WebPreviewContent.propTypes = {
 	inlineCss: PropTypes.string,
 	// Uses the CSS selector to scroll to it
 	scrollToSelector: PropTypes.string,
-	// Edit overlay that redirects to the Site Editor
-	enableEditOverlay: PropTypes.bool,
+	// disable the redirection due to the timeout
+	disableTimeoutRedirect: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -584,5 +545,5 @@ WebPreviewContent.defaultProps = {
 	autoHeight: false,
 	inlineCss: null,
 	scrollToSelector: null,
-	enableEditOverlay: false,
+	disableTimeoutRedirect: false,
 };

@@ -1,7 +1,6 @@
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
 
 import { forEach } from 'lodash';
-import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
@@ -105,59 +104,6 @@ describe( 'normalization-rules', () => {
 				],
 			};
 			expect( isFeaturedImageInContent( post ) ).toBeFalsy();
-		} );
-	} );
-
-	describe( 'addDiscoverProperties', () => {
-		const discoverSiteId = 53424024;
-		describe( 'is_discover', () => {
-			test( 'should always add is_discover properity to the post', () => {
-				expect( addDiscoverProperties( {} ).hasOwnProperty( 'is_discover' ) ).toBeTruthy();
-			} );
-
-			test( 'should set is_discover to false if the post is not from discover', () => {
-				const nonDiscoverPost = addDiscoverProperties( { site_ID: 1 } );
-				expect( nonDiscoverPost.is_discover ).toBe( false );
-			} );
-
-			test( 'should set is_discover to true if the post has discover_metadata', () => {
-				const discoverPost = addDiscoverProperties( { site_ID: 1, discover_metadata: {} } );
-				expect( discoverPost.is_discover ).toBe( true );
-			} );
-
-			test( 'should set is_discover to true if the post is from discover', () => {
-				const discoverPost = addDiscoverProperties( { site_ID: discoverSiteId } );
-				expect( discoverPost.is_discover ).toBe( true );
-			} );
-		} );
-
-		describe( 'discover_format', () => {
-			test( 'should set the discover_format from the discover_metadata if present', () => {
-				const discoverPost = {
-					discover_metadata: {
-						discover_fp_post_formats: [
-							{
-								name: 'Pick',
-								slug: 'pick',
-								id: 346750,
-							},
-							{
-								name: 'Standard Pick',
-								slug: 'standard-pick',
-								id: 337879995,
-							},
-						],
-					},
-				};
-
-				addDiscoverProperties( discoverPost );
-				expect( discoverPost.discover_format ).toEqual( 'standard-pick' );
-			} );
-
-			test( 'should set the discover_format to "feature" if its from discover but discover_metadata is not present', () => {
-				const discoverFeature = addDiscoverProperties( { site_ID: discoverSiteId } );
-				expect( discoverFeature.discover_format ).toEqual( 'feature' );
-			} );
 		} );
 	} );
 } );

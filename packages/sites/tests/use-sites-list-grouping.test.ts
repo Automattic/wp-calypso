@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useSitesListGrouping } from '../src';
 import { createMockSite } from './create-mock-site';
 
@@ -56,10 +56,28 @@ describe( 'useSitesListGrouping', () => {
 		const redirect2 = createMockSite( {
 			options: { is_redirect: true, unmapped_url: 'http://redirect2.com' },
 		} );
+		const deleted1 = createMockSite( { is_deleted: true } );
+		const migrationPending = createMockSite( {
+			site_migration: { migration_status: 'migration-pending-diy' },
+		} );
+		const migrationStarted = createMockSite( {
+			site_migration: { migration_status: 'migration-started-diy' },
+		} );
 
 		const { result } = renderHook( () =>
 			useSitesListGrouping(
-				[ public1, public2, private1, private2, comingSoon, redirect1, redirect2 ],
+				[
+					public1,
+					public2,
+					private1,
+					private2,
+					comingSoon,
+					redirect1,
+					redirect2,
+					deleted1,
+					migrationPending,
+					migrationStarted,
+				],
 				{
 					status,
 				}
@@ -69,7 +87,7 @@ describe( 'useSitesListGrouping', () => {
 		expect( result.current.statuses ).toEqual( [
 			{
 				name: 'all',
-				count: 6, // hidden site not included in count
+				count: 9, // hidden site not included in count
 				title: expect.any( String ),
 				hiddenCount: 1,
 			},
@@ -97,6 +115,24 @@ describe( 'useSitesListGrouping', () => {
 				title: expect.any( String ),
 				hiddenCount: 0,
 			},
+			{
+				name: 'deleted',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'migration-pending',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'migration-started',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
 		] );
 	} );
 
@@ -106,18 +142,37 @@ describe( 'useSitesListGrouping', () => {
 		const private1 = createMockSite( { is_private: true } );
 		const private2 = createMockSite( { is_private: true, visible: false } );
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
+		const deleted1 = createMockSite( { is_deleted: true } );
+		const migrationPending = createMockSite( {
+			site_migration: { migration_status: 'migration-pending-diy' },
+		} );
+		const migrationStarted = createMockSite( {
+			site_migration: { migration_status: 'migration-started-diy' },
+		} );
 
 		const { result } = renderHook( () =>
-			useSitesListGrouping( [ public1, public2, private1, private2, comingSoon ], {
-				showHidden: true,
-				status,
-			} )
+			useSitesListGrouping(
+				[
+					public1,
+					public2,
+					private1,
+					private2,
+					comingSoon,
+					deleted1,
+					migrationPending,
+					migrationStarted,
+				],
+				{
+					showHidden: true,
+					status,
+				}
+			)
 		);
 
 		expect( result.current.statuses ).toEqual( [
 			{
 				name: 'all',
-				count: 5,
+				count: 8,
 				title: expect.any( String ),
 				hiddenCount: 0,
 			},
@@ -142,6 +197,24 @@ describe( 'useSitesListGrouping', () => {
 			{
 				name: 'redirect',
 				count: 0,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'deleted',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'migration-pending',
+				count: 1,
+				title: expect.any( String ),
+				hiddenCount: 0,
+			},
+			{
+				name: 'migration-started',
+				count: 1,
 				title: expect.any( String ),
 				hiddenCount: 0,
 			},

@@ -34,7 +34,6 @@ const noop = () => {};
  * Generates actions to save the domain IPS tag at OpenSRS
  * and notify the front end save is in progress (for dialog
  * submit button management).
- *
  * @param 	{string} action saveDomainIpsTag action
  * @returns {Array} array of further actions
  */

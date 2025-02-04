@@ -198,7 +198,9 @@ describe( 'formatValue', () => {
 		jest.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-ZA' ] );
 		const response = formatValue( 12.34, 'currency', 'ZAR' );
 		expect( typeof response ).toBe( 'string' );
-		expect( response ).toBe( 'R 12,34' );
+		// see https://unicode-org.atlassian.net/browse/CLDR-14707
+		// newer versions of ICU may use a dot instead of a comma as decimal separator for `en-ZA`
+		expect( [ 'R 12,34', 'R 12.34' ] ).toContain( response );
 	} );
 	test( 'should return a correctly formatted USD currency for unknown code', () => {
 		const response = formatValue( 12.34, 'currency', 'XXX' );

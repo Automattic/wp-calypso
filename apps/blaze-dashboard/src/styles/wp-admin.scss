@@ -1,0 +1,80 @@
+
+// Overrides layout for WP Admin.
+.wp-admin {
+	// CSS variable overrides.
+	--sidebar-width-max: 160px;
+	--sidebar-width-min: 36px;
+
+	& #wpcom .layout__content,
+	&.theme-default .focus-content .layout__content {
+		padding-top: 32px;
+		padding-left: 1px;
+	}
+
+	// Offset margin of menu items set in Calypso.
+	ul.wp-submenu,
+	ul.wp-submenu-wrap {
+		margin-left: 0;
+	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+
+	.site__info {
+		width: inherit;
+	}
+}
+
+.card {
+	background: var(--studio-white);
+	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
+	box-sizing: border-box;
+}
+
+.components-popover .components-popover__content .components-button:focus:not(:disabled) {
+	box-shadow: none;
+}
+
+// Since the component `Notice` styles affect the WP Admin notice styles,
+// we need to restore by overriding them except for `.wpcomsh-notice` on Atomic sites.
+.notice:not(.wpcomsh-notice, .promote-post-notice) {
+	display: block;
+	width: auto;
+	background: var(--studio-white);
+	color: var(--color-text);
+	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	margin-left: 20px;
+	margin-bottom: 2px;
+
+	// Avoid overriding hidden notices.
+	&[aria-hidden="true"],
+	&.hidden {
+		display: none;
+	}
+
+	&.inline {
+		display: inline-block;
+	}
+
+	h2,
+	h3 {
+		color: var(--studio-gray-90);
+		font-size: 1.3em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		margin: 1em 0;
+		font-weight: 600;
+	}
+
+	p {
+		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		line-height: 1.5;
+		margin: 0.5em 0;
+		padding: 2px;
+		color: var(--studio-gray-70);
+	}
+
+	code {
+		padding: 3px 5px 2px;
+		margin: 0 1px;
+	}
+}

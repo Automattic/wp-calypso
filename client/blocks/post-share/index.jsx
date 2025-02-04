@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_REPUBLICIZE } from '@automattic/calypso-products';
+import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, includes, map, concat } from 'lodash';
-import { current as currentPage } from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -135,8 +136,8 @@ class PostShare extends Component {
 		this.setState( { scheduledDate: date } );
 	};
 
-	skipConnection( { keyring_connection_ID } ) {
-		return this.state.skipped.indexOf( keyring_connection_ID ) === -1;
+	skipConnection( { ID } ) {
+		return this.state.skipped.indexOf( ID ) === -1;
 	}
 
 	isConnectionActive = ( connection ) =>
@@ -172,7 +173,7 @@ class PostShare extends Component {
 	sharePost = () => {
 		const { postId, siteId, connections, isJetpack } = this.props;
 		const servicesToPublish = connections.filter(
-			( connection ) => this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1
+			( connection ) => this.state.skipped.indexOf( connection.ID ) === -1
 		);
 		//Let's prepare array of service stats for tracks.
 		const numberOfAccountsPerService = servicesToPublish.reduce(
@@ -187,7 +188,7 @@ class PostShare extends Component {
 			{ service_all: 0 }
 		);
 		const additionalProperties = {
-			context_path: sectionify( currentPage ),
+			context_path: sectionify( page.current ),
 			is_jetpack: isJetpack,
 			blog_id: siteId,
 		};
@@ -375,7 +376,7 @@ class PostShare extends Component {
 			<div>
 				{ brokenConnections.map( ( connection ) => (
 					<Notice
-						key={ connection.keyring_connection_ID }
+						key={ connection.ID }
 						status="is-warning"
 						showDismiss={ false }
 						text={ translate( 'There is an issue connecting to %s.', { args: connection.label } ) }
@@ -387,19 +388,22 @@ class PostShare extends Component {
 				) ) }
 				{ invalidConnections.map( ( connection ) => (
 					<Notice
-						key={ connection.keyring_connection_ID }
+						key={ connection.ID }
 						status="is-error"
 						showDismiss={ false }
 						text={
 							connection.service === 'facebook'
 								? translate( 'Connections to Facebook profiles ceased to work on August 1st.' )
-								: translate( 'Connections to %s have a permenant issue which prevents sharing.', {
+								: translate( 'Connections to %s have a permanent issue which prevents sharing.', {
 										args: connection.label,
 								  } )
 						}
 					>
 						{ connection.service === 'facebook' && (
-							<NoticeAction href="https://wordpress.com/support/publicize/#facebook-pages" external>
+							<NoticeAction
+								href={ localizeUrl( 'https://wordpress.com/support/publicize/#facebook-pages' ) }
+								external
+							>
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }
@@ -498,7 +502,7 @@ class PostShare extends Component {
 	}
 
 	renderPrimarySection() {
-		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug } = this.props;
+		const { hasFetchedConnections, hasRepublicizeFeature, siteSlug, siteId } = this.props;
 
 		if ( ! hasFetchedConnections ) {
 			return null;
@@ -511,7 +515,7 @@ class PostShare extends Component {
 		if ( ! hasRepublicizeFeature ) {
 			return (
 				<div>
-					<UpgradeToPremiumNudge { ...this.props } />
+					<UpgradeToPremiumNudge siteId={ siteId } />
 					<ActionsList { ...this.props } />
 				</div>
 			);
@@ -554,7 +558,7 @@ class PostShare extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'post-share__wrapper', {
+		const classes = clsx( 'post-share__wrapper', {
 			'is-placeholder': ! hasFetchedConnections || isRequestingSitePlans,
 			'has-connections': this.hasConnections(),
 			'has-republicize-scheduling-feature': hasRepublicizeFeature,

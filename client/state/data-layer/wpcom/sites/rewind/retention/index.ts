@@ -38,6 +38,7 @@ const onSuccess = ( { siteId, retentionDays }: UpdateRequestActionType ) => [
 		} ),
 		{
 			duration: 5000,
+			isPersistent: true,
 		}
 	),
 ];

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 
 import './style.scss';
 
@@ -18,6 +18,7 @@ class LegendItem extends Component {
 		percent: PropTypes.string,
 		seriesIndex: PropTypes.number,
 		value: PropTypes.string,
+		svgElement: PropTypes.element,
 	};
 
 	static defaultProps = {
@@ -37,13 +38,12 @@ class LegendItem extends Component {
 		const { percent, value } = this.props;
 
 		let valueString = '';
-
 		if ( value && percent ) {
 			valueString = `${ value } (${ percent }%)`;
 		} else if ( value ) {
 			valueString = value;
 		} else if ( percent ) {
-			valueString = `${ percent }%`;
+			valueString = percent === '0' ? '-' : `${ percent }%`;
 		}
 
 		return valueString.length > 0 ? (
@@ -52,27 +52,32 @@ class LegendItem extends Component {
 	}
 
 	render() {
-		const { circleClassName, description, name } = this.props;
+		const { circleClassName, description, name, svgElement } = this.props;
 
 		return (
-			// eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
 			<div
 				className="legend-item"
+				/* eslint-disable jsx-a11y/mouse-events-have-key-events */
 				onMouseOver={ this.handleMouseOver }
 				onMouseOut={ this.handleMouseOut }
+				/* eslint-enable jsx-a11y/mouse-events-have-key-events */
 			>
 				<div className="legend-item__title">
-					<svg
-						className="legend-item__title-sample-drawing"
-						viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
-					>
-						<circle
-							className={ circleClassName }
-							cx={ SVG_SIZE / 2 }
-							cy={ SVG_SIZE / 2 }
-							r={ SVG_SIZE / 2 }
-						/>
-					</svg>
+					{ svgElement ? (
+						cloneElement( svgElement, { className: circleClassName } )
+					) : (
+						<svg
+							className="legend-item__title-sample-drawing"
+							viewBox={ `0 0 ${ SVG_SIZE } ${ SVG_SIZE }` }
+						>
+							<circle
+								className={ circleClassName }
+								cx={ SVG_SIZE / 2 }
+								cy={ SVG_SIZE / 2 }
+								r={ SVG_SIZE / 2 }
+							/>
+						</svg>
+					) }
 
 					<div className="legend-item__title-name">{ name }</div>
 				</div>

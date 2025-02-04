@@ -1,57 +1,7 @@
-import type { Font } from './types';
+import type { Design } from './types';
 
-export const FONT_TITLES: Partial< Record< Font, string > > = {
-	'Playfair Display': 'Playfair',
-};
-
+export const DEFAULT_GLOBAL_STYLES_VARIATION_SLUG = 'default';
 export const SHOW_ALL_SLUG = 'CLIENT_ONLY_SHOW_ALL_SLUG';
-export const SHOW_GENERATED_DESIGNS_SLUG = 'CLIENT_ONLY_SHOW_GENERATED_DESIGNS_SLUG';
-
-/**
- * Pairings of fontFamilies
- *
- * To get the name of the font for display, use `getFontTitle( fontName )`
- * (defined in the utils/ folder).
- */
-export const FONT_PAIRINGS = [
-	{
-		headings: 'Cabin',
-		base: 'Raleway',
-	},
-	{
-		headings: 'Chivo',
-		base: 'Open Sans',
-	},
-	{
-		headings: 'Playfair Display',
-		base: 'Fira Sans',
-	},
-	{
-		headings: 'Arvo',
-		base: 'Montserrat',
-	},
-	{
-		headings: 'Space Mono',
-		base: 'Roboto',
-	},
-] as const;
-
-/**
- * Pairings of fontFamilies for AnchorFM onboarding
- *
- * To get the name of the font for display, use `getFontTitle( fontName )`.
- * (defined in the utils/ folder).
- */
-export const ANCHORFM_FONT_PAIRINGS = [
-	{
-		headings: 'Roboto',
-		base: 'Roboto',
-	},
-	{
-		headings: 'Raleway',
-		base: 'Cabin',
-	},
-] as const;
 
 /**
  * mShot options
@@ -68,11 +18,46 @@ export const STICKY_OFFSET_TOP = 109;
 /**
  * Hard-coded design
  */
-export const BLANK_CANVAS_DESIGN = {
-	slug: 'blank-canvas-3',
-	title: 'Blank Canvas',
+export const ASSEMBLER_V2_DESIGN = {
+	slug: 'assembler',
+	title: 'Assembler',
 	recipe: {
-		stylesheet: 'pub/blank-canvas-3',
+		stylesheet: 'pub/assembler',
 	},
 	design_type: 'assembler',
+} as Design;
+
+export const FREE_THEME = 'free';
+export const PERSONAL_THEME = 'personal';
+export const PREMIUM_THEME = 'premium';
+export const DOT_ORG_THEME = 'dot-org';
+export const BUNDLED_THEME = 'bundled';
+export const MARKETPLACE_THEME = 'marketplace';
+
+/**
+ * Categories
+ */
+export const FEATURE_CATEGORIES = {
+	BLOG: 'blog',
+	NEWSLETTER: 'newsletter',
+	PORTFOLIO: 'portfolio',
+	STORE: 'store',
+};
+
+export const DESIGN_TIER_CATEGORIES = {
+	FREE: FREE_THEME,
+};
+
+export const SUBJECT_CATEGORIES = {
+	BUSINESS: 'business',
+	COMMUNITY_NON_PROFIT: 'community-non-profit',
+	AUTHORS_WRITERS: 'authors-writers',
+	EDUCATION: 'education',
+	ENTERTAINMENT: 'entertainment',
+	EVENTS: 'events',
+};
+
+export const CATEGORIES = {
+	...FEATURE_CATEGORIES,
+	...SUBJECT_CATEGORIES,
 };

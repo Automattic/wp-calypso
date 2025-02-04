@@ -1,0 +1,38 @@
+<svg
+	width="427"
+	height="326"
+	viewBox="0 0 427 326"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<g clip-path="url(#clip0_10586_12021)">
+		<rect x="8" y="8" width="411" height="310" rx="4" fill="#022836" />
+		<rect
+			x="39"
+			y="-47.3337"
+			width="411.137"
+			height="411.137"
+			fill="url(#pattern0_10586_12021)"
+		/>
+		<path
+			d="M313.693 226.42V114.746L169.557 35.6492V147.323L313.693 226.42Z"
+			stroke="white"
+			stroke-width="1.71386"
+		/>
+		<path d="M294.327 150.07L113 50.4832V191.866L294.327 291.452V150.07Z" fill="#5AB7E8" />
+	</g>
+	<defs>
+		<pattern
+			id="pattern0_10586_12021"
+			patternContentUnits="objectBoundingBox"
+			width="1"
+			height="1"
+		>
+			<use transform="scale(0.000625)" />
+		</pattern>
+		<clipPath id="clip0_10586_12021">
+			<rect x="8" y="8" width="411" height="310" rx="4" fill="white" />
+		</clipPath>
+		<image id="image0_10586_12021" width="1600" height="1600" />
+	</defs>
+</svg>

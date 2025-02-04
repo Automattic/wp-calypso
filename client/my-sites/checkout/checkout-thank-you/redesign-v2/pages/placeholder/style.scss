@@ -1,0 +1,126 @@
+@import "@wordpress/base-styles/breakpoints";
+
+@mixin congrats-placeholder-title {
+	@include placeholder(--color-neutral-20);
+	height: 17px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+}
+
+@mixin congrats-placeholder-text {
+	@include placeholder(--color-neutral-5);
+	height: 14px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+}
+
+.congrats-placeholder {
+	max-width: 650px;
+	margin: 0 auto;
+	padding: 40px 24px;
+}
+
+.congrats-placeholder__title {
+	@include congrats-placeholder-title;
+	width: 70%;
+	margin: 60px auto 20px auto;
+}
+
+.congrats-placeholder__description {
+	@include congrats-placeholder-text;
+	width: 47%;
+	margin: 0 auto;
+	margin-bottom: 40px;
+	height: 17px;
+}
+
+.congrats-placeholder__items {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	padding-bottom: 40px;
+}
+
+.congrats-placeholder__item {
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 2px;
+	padding: 20px 25px;
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.congrats-placeholder__item-body {
+	margin-right: auto;
+}
+
+.congrats-placeholder__item-title {
+	@include congrats-placeholder-title;
+	margin-bottom: 12px;
+	width: 200px;
+}
+
+.congrats-placeholder__item-description {
+	@include congrats-placeholder-text;
+	width: 154px;
+}
+
+.congrats-placeholder__item-buttons {
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
+	padding: 10.5px 23px;
+	flex: none;
+}
+
+.congrats-placeholder__item-buttons::after {
+	content: "";
+	display: block;
+	@include placeholder(--color-neutral-5);
+	width: 68px;
+	height: 17px;
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+}
+
+.congrats-placeholder__footer {
+	display: flex;
+	gap: 40px;
+	padding: 0 25px;
+}
+
+.congrats-placeholder__footer-item {
+	flex: 1;
+}
+
+.congrats-placeholder__footer-item-title {
+	@include congrats-placeholder-title;
+	width: 200px;
+	margin-bottom: 12px;
+}
+
+.congrats-placeholder__footer-item-description {
+	@include congrats-placeholder-text;
+	width: 154px;
+	margin-bottom: 12px;
+}
+
+.congrats-placeholder__footer-item-description:last-child {
+	margin-top: 12px;
+	margin-bottom: 0;
+}
+
+.congrats-placeholder__footer-item-description--s {
+	width: 120px;
+}
+
+.congrats-placeholder__footer-item-description--m {
+	width: 154px;
+}
+
+.congrats-placeholder__footer-item-description--l {
+	width: 200px;
+}
+
+@media (max-width: $break-medium) {
+	.congrats-placeholder__footer,
+	.congrats-placeholder__item {
+		flex-direction: column;
+	}
+}

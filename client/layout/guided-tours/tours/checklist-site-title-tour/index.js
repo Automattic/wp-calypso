@@ -21,6 +21,7 @@ export const ChecklistSiteTitleTour = makeTour(
 			placement="below"
 			style={ {
 				animationDelay: '0.7s',
+				zIndex: 100190,
 			} }
 		>
 			{ ( { translate } ) => (
@@ -46,7 +47,15 @@ export const ChecklistSiteTitleTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="click-save" target="settings-site-profile-save" arrow="top-right" placement="below">
+		<Step
+			name="click-save"
+			target="settings-site-profile-save"
+			arrow="top-right"
+			placement="below"
+			style={ {
+				zIndex: 100190,
+			} }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<Continue target="settings-site-profile-save" step="finish" click>
@@ -59,7 +68,13 @@ export const ChecklistSiteTitleTour = makeTour(
 			) }
 		</Step>
 
-		<Step name="finish" placement="right">
+		<Step
+			name="finish"
+			placement="right"
+			style={ {
+				zIndex: 100190,
+			} }
+		>
 			{ ( { translate } ) => (
 				<Fragment>
 					<h1 className="tours__title">

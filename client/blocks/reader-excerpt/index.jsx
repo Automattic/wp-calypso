@@ -1,6 +1,7 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
 import { domForHtml } from 'calypso/lib/post-normalizer/utils';
 
@@ -42,7 +43,6 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 
 /**
  * Removes double spaces and also &nbsp; characters which may be present in the excerpt.
- *
  * @param {string} str the string to normalize
  * @returns a string with single space characters.
  */
@@ -52,7 +52,6 @@ const normalizeWhitespace = ( str ) => {
 
 /**
  * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
- *
  * @param {Object} post the post object
  * @returns writing prompt text
  */
@@ -69,7 +68,7 @@ const getDailyPromptText = ( post ) => {
 
 const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
-	if ( post.excerpt.length > 0 ) {
+	if ( post.excerpt?.length > 0 ) {
 		// If the post is a dailyprompt, attempt to replace the prompt text with a pullquote.
 		if ( post.tags && post.tags.hasOwnProperty( 'dailyprompt' ) ) {
 			const promptText = getDailyPromptText( post );
@@ -117,16 +116,25 @@ const chooseExcerpt = ( post ) => {
 	return null;
 };
 
-const ReaderExcerpt = ( { post } ) => {
+const ReaderExcerpt = ( { post, hasExcerpt, showExcerpt, setHasExcerpt } ) => {
 	const isDailyPrompt = !! getDailyPromptText( post );
+	const excerpt = chooseExcerpt( post );
+
+	useEffect( () => {
+		setHasExcerpt?.( excerpt !== '' && excerpt !== null && showExcerpt );
+	}, [ excerpt ] );
+
+	if ( hasExcerpt === false || showExcerpt === false ) {
+		return null;
+	}
 
 	return (
 		<AutoDirection>
 			<div
-				className={ classNames( 'reader-excerpt__content reader-excerpt', {
+				className={ clsx( 'reader-excerpt__content reader-excerpt', {
 					'reader-excerpt__daily-prompt': isDailyPrompt,
 				} ) }
-				dangerouslySetInnerHTML={ { __html: chooseExcerpt( post ) } } // eslint-disable-line react/no-danger
+				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
 			/>
 		</AutoDirection>
 	);
@@ -134,7 +142,6 @@ const ReaderExcerpt = ( { post } ) => {
 
 ReaderExcerpt.propTypes = {
 	post: PropTypes.object.isRequired,
-	isDiscover: PropTypes.bool,
 };
 
 export default ReaderExcerpt;

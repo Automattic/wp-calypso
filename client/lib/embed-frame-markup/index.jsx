@@ -2,7 +2,7 @@
 /* eslint-disable react/no-danger */
 
 import { flatMap, map } from 'lodash';
-import { renderToStaticMarkup } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server.browser';
 
 /**
  * Constants
@@ -15,6 +15,7 @@ export default function generateEmbedFrameMarkup( { body, scripts, styles } = {}
 	}
 
 	return renderToStaticMarkup(
+		// eslint-disable-next-line jsx-a11y/html-has-lang -- this is an embed frame, not the main document.
 		<html>
 			<head>
 				{ map( styles, ( { media, src }, key ) => (

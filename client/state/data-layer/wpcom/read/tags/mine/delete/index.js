@@ -18,7 +18,6 @@ export function requestUnfollow( action ) {
 
 /**
  * Normalize response from the api. The only thing we care about is the removed_tag so only keep that.
- *
  * @param  {Object} apiResponse api response from the unfollow
  * @returns {number} the ID of the tag that was removed
  */

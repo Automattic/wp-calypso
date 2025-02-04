@@ -1,11 +1,11 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
 import ThreatItem, { ThreatItemPlaceholder } from 'calypso/components/jetpack/threat-item';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 import { useThreats } from 'calypso/lib/jetpack/use-threats';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getSelectedSite,
@@ -15,7 +15,7 @@ import {
 import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
 const trackOpenThreatDialog = ( siteId: number, threatSignature: string ) =>
-	recordTracksEvent( 'calypso_jetpack_scan_fixthreat_dialogopen', {
+	recordTracksEvent( 'calypso_jetpack_scan_unignorethreat_dialogopen', {
 		site_id: siteId,
 		threat_signature: threatSignature,
 	} );
@@ -33,19 +33,21 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 	const [ showThreatDialog, setShowThreatDialog ] = useState( false );
 
 	const openDialog = useCallback(
-		( threat ) => {
+		( threat: Threat ) => {
 			dispatch( trackOpenThreatDialog( siteId ?? 0, threat.signature ) );
 			setSelectedThreat( threat );
 			setShowThreatDialog( true );
 		},
 		[ dispatch, setSelectedThreat, siteId ]
 	);
+
 	const closeDialog = useCallback( () => {
 		setShowThreatDialog( false );
 	}, [ setShowThreatDialog ] );
-	const fixThreat = useCallback( () => {
+
+	const unignoreThreat = useCallback( () => {
 		closeDialog();
-		updateThreat( 'fix' );
+		updateThreat( 'unignore' );
 	}, [ closeDialog, updateThreat ] );
 
 	return (
@@ -55,7 +57,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					key={ threat.id }
 					isPlaceholder={ false }
 					threat={ threat }
-					onFixThreat={ openDialog }
+					onUnignoreThreat={ () => openDialog( threat ) }
 					isFixing={ !! updatingThreats.find( ( threatId ) => threatId === threat.id ) }
 					contactSupportUrl={ contactSupportUrl( siteSlug ) }
 				/>
@@ -64,10 +66,10 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 				<ThreatDialog
 					showDialog={ showThreatDialog }
 					onCloseDialog={ closeDialog }
-					onConfirmation={ fixThreat }
+					onConfirmation={ unignoreThreat }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action="fix"
+					action="unignore"
 				/>
 			) }
 		</>
@@ -90,7 +92,7 @@ export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPa
 		<>
 			{ showPagination && (
 				<div
-					className={ classNames( 'threat-history-list__pagination--top', 'is-placeholder', {
+					className={ clsx( 'threat-history-list__pagination--top', 'is-placeholder', {
 						'is-compact': isMobile,
 					} ) }
 				/>
@@ -98,7 +100,7 @@ export const ListItemsPlaceholder = ( { count, perPage }: { count: number; perPa
 			{ fakeItems }
 			{ showPagination && (
 				<div
-					className={ classNames( 'threat-history-list__pagination--bottom', 'is-placeholder', {
+					className={ clsx( 'threat-history-list__pagination--bottom', 'is-placeholder', {
 						'is-compact': isMobile,
 					} ) }
 				/>

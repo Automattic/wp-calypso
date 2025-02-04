@@ -50,6 +50,8 @@ describe( DataHelper.createSuiteTitle( 'P2: Post' ), function () {
 
 	it( 'Submit post', async function () {
 		await isolatedBlockEditorComponent.submitPost();
+		// Click twice since the first "Publish" click will open the publish confirmation sidebar
+		await isolatedBlockEditorComponent.submitPost();
 	} );
 
 	it( 'Validate post submission was successful', async function () {

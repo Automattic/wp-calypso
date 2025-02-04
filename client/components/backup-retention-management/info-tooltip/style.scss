@@ -4,7 +4,7 @@
 .retention-setting-info-tooltip {
 	line-height: normal;
 
-	&__tooltip.popover {
+	&__tooltip.tooltip.popover {
 		&.is-right .popover__arrow {
 			border-right-color: #fff;
 		}
@@ -37,7 +37,6 @@
 
 			a {
 				font-size: 0.875rem;
-				text-decoration: underline;
 			}
 		}
 

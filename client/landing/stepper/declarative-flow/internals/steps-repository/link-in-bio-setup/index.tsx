@@ -9,6 +9,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -30,7 +31,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
-	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
@@ -75,8 +76,8 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="link-in-bio-setup"
-			isWideLayout={ true }
-			hideBack={ true }
+			isWideLayout
+			hideBack
 			flowName="linkInBio"
 			formattedHeader={
 				<FormattedHeader

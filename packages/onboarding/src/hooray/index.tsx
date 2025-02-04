@@ -1,4 +1,4 @@
-import classnames from 'classnames';
+import clsx from 'clsx';
 import * as React from 'react';
 import Confetti from '../confetti';
 
@@ -7,6 +7,7 @@ import './style.scss';
 interface Props {
 	animate?: boolean;
 	className?: string;
+	children: React.ReactNode;
 }
 
 const Hooray: React.FunctionComponent< Props > = ( {
@@ -17,7 +18,7 @@ const Hooray: React.FunctionComponent< Props > = ( {
 } ) => {
 	return (
 		<div
-			className={ classnames(
+			className={ clsx(
 				`onboarding-hooray`,
 				{ 'onboarding-hooray__animate': animate },
 				className

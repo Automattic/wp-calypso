@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { filter, find, includes, isEmpty, pick, sortBy } from 'lodash';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -43,17 +42,29 @@ function isStepSectionName( pathFragment ) {
 	return ! isStepName( pathFragment );
 }
 
-export function getStepUrl( flowName, stepName, stepSectionName, localeSlug, params = {} ) {
+export function getStepUrl(
+	flowName,
+	stepName,
+	stepSectionName,
+	localeSlug,
+	params = {},
+	frameworkParam = null
+) {
 	const flow = flowName ? `/${ flowName }` : '';
 	const step = stepName ? `/${ stepName }` : '';
 	const section = stepSectionName ? `/${ stepSectionName }` : '';
 	const locale = localeSlug ? `/${ localeSlug }` : '';
+	const framework =
+		frameworkParam ||
+		( typeof window !== 'undefined' && window.location.pathname.startsWith( '/setup' )
+			? '/setup'
+			: '/start' );
 
 	const url =
-		flowName === defaultFlowName
-			? // we don't include the default flow name in the route
-			  '/start' + step + section + locale
-			: '/start' + flow + step + section + locale;
+		flowName === defaultFlowName && framework === '/start'
+			? // we don't include the default flow name in the route in /start
+			  framework + step + section + locale
+			: framework + flow + step + section + locale;
 	return addQueryArgs( params, url );
 }
 
@@ -89,6 +100,19 @@ export function getFlowSteps( flowName, isUserLoggedIn ) {
 export function getFlowPageTitle( flowName, isUserLoggedIn ) {
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
 	return flow.pageTitle || translate( 'Create a site' );
+}
+
+export function getFlowDestination(
+	flowName,
+	isUserLoggedIn,
+	dependencies,
+	localeSlug,
+	goesThroughCheckout
+) {
+	const flow = flows.getFlow( flowName, isUserLoggedIn );
+	return typeof flow?.destination === 'function'
+		? flow.destination( { flowName, ...dependencies }, localeSlug, goesThroughCheckout )
+		: flow?.destination;
 }
 
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
@@ -168,26 +192,9 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 	return !! flow && flow.forceLogin;
 };
 
-export const isReskinnedFlow = ( flowName ) => {
-	return config( 'reskinned_flows' ).includes( flowName );
-};
-
-export const isP2Flow = ( flowName ) => {
-	return flowName === 'p2' || flowName === 'p2v1';
-};
-
-export const isVideoPressFlow = ( flowName ) => {
-	return flowName === 'videopress' || flowName === 'videopress-account';
-};
-
-export const isWpccFlow = ( flowName ) => {
-	return flowName === 'wpcc';
-};
-
 /**
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
  * i.e. Check "launch-site" flow while having a purchased paid plan
- *
  * @param  {Object} flowSteps steps in the current flow
  * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
  */
@@ -197,8 +204,8 @@ export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	 * i.e. Check flow "domain"
 	 */
 
-	const plansIndex = flowSteps.findIndex(
-		( stepName ) => getStepModuleName( stepName ) === 'plans'
+	const plansIndex = flowSteps.findIndex( ( stepName ) =>
+		[ 'plans', 'plans-pm' ].includes( getStepModuleName( stepName ) )
 	);
 	const domainsIndex = flowSteps.findIndex(
 		( stepName ) => getStepModuleName( stepName ) === 'domains'

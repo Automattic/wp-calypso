@@ -1,22 +1,44 @@
 import { useSelect } from '@wordpress/data';
+import { useEffect } from 'react';
+import { useDispatch } from 'calypso/state';
+import { requestSite } from 'calypso/state/sites/actions';
+import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
 import { SITE_STORE } from '../stores';
 import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
+import type { SiteSelect } from '@automattic/data-stores';
 
-export function useSite() {
+export function useSite( siteFragment?: number | string ) {
+	const dispatch = useDispatch();
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
-	const siteId = useSelect(
-		( select ) => siteSlug && select( SITE_STORE ).getSiteIdBySlug( siteSlug )
-	);
+	const siteIdOrSlug = siteFragment ?? siteIdParam ?? siteSlug;
+
 	const site = useSelect(
-		( select ) =>
-			( siteId || siteIdParam ) &&
-			select( SITE_STORE ).getSite( ( siteId ?? siteIdParam ) as string | number )
+		( select ) => {
+			const siteStore = select( SITE_STORE ) as SiteSelect;
+
+			return siteIdOrSlug ? siteStore.getSite( siteIdOrSlug ) : null;
+		},
+		[ siteIdOrSlug ]
 	);
 
-	if ( ( siteSlug || siteIdParam ) && site ) {
+	// Request the site for the redux store
+	useEffect( () => {
+		if ( siteIdOrSlug ) {
+			dispatch( ( d, getState ) => {
+				const state = getState();
+				if ( getSite( state, siteIdOrSlug ) || isRequestingSite( state, siteIdOrSlug ) ) {
+					return;
+				}
+				d( requestSite( siteIdOrSlug ) );
+			} );
+		}
+	}, [ dispatch, siteIdOrSlug ] );
+
+	if ( siteIdOrSlug && site ) {
 		return site;
 	}
+
 	return null;
 }

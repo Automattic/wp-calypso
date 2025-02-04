@@ -1,7 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.signup__step.is-design-setup-site,
 .signup__step.is-difm-design-setup-site {
 	.step-wrapper {
 		padding-left: 24px;
@@ -53,6 +52,17 @@
 		.formatted-header__subtitle {
 			// Overrides some very specific selectors in /client/signup/style.scss
 			margin: 12px 0 48px !important;
+		}
+
+		@supports ( display: grid ) {
+			.design-picker__grid {
+				@include break-medium {
+					grid-template-columns: 1fr 1fr;
+				}
+				@include break-large {
+					grid-template-columns: 1fr 1fr 1fr;
+				}
+			}
 		}
 	}
 
@@ -111,7 +121,7 @@
 }
 
 /* Hide categories from the sell intent */
-.design-picker__sell-intent {
+.design-picker__hide-category-column {
 	.design-picker-category-filter__sidebar,
 	.design-picker-category-filter__dropdown,
 	.design-picker__category-heading-0 {

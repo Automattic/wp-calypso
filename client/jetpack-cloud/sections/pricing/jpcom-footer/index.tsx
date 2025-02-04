@@ -1,5 +1,5 @@
 import { Gridicon } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
 import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
@@ -132,6 +132,11 @@ const JetpackComFooter: React.FC = () => {
 						href: 'https://jetpack.com/for/agencies/',
 						trackId: 'become_an_agency',
 					},
+					{
+						label: translate( 'For Affiliates' ),
+						href: 'https://jetpack.com/affiliates/',
+						trackId: 'become_an_affiliate',
+					},
 				],
 			},
 			{
@@ -159,12 +164,12 @@ const JetpackComFooter: React.FC = () => {
 				items: [
 					{
 						label: translate( 'Terms of Service' ),
-						href: addQueryArgs( utmParams, 'https://wordpress.com/tos/' ),
+						href: addQueryArgs( utmParams, localizeUrl( 'https://wordpress.com/tos/' ) ),
 						trackId: 'terms_of_service',
 					},
 					{
 						label: translate( 'Privacy Policy' ),
-						href: addQueryArgs( utmParams, 'https://automattic.com/privacy/' ),
+						href: addQueryArgs( utmParams, localizeUrl( 'https://automattic.com/privacy/' ) ),
 						trackId: 'privacy_policy',
 					},
 					{
@@ -181,6 +186,7 @@ const JetpackComFooter: React.FC = () => {
 								label: translate( 'Privacy Notice for California Users' ),
 								href: addQueryArgs(
 									utmParams,
+									// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 									'https://automattic.com/privacy/#california-consumer-privacy-act-ccpa'
 								),
 								trackId: 'privacy_policy_california',
@@ -207,6 +213,16 @@ const JetpackComFooter: React.FC = () => {
 						trackId: 'forums',
 					},
 					{
+						label: translate( 'Webinars' ),
+						href: 'https://jetpack.com/webinars/',
+						trackId: 'webinars',
+					},
+					{
+						label: translate( 'Reviews and Testimonials' ),
+						href: 'https://jetpack.com/testimonials/',
+						trackId: 'testimonials',
+					},
+					{
 						label: translate( 'Security Library' ),
 						href: 'https://jetpack.com/features/security/library',
 						trackId: 'security_library',
@@ -218,7 +234,7 @@ const JetpackComFooter: React.FC = () => {
 					},
 					{
 						label: translate( 'Press' ),
-						href: addQueryArgs( utmParams, 'https://automattic.com/press/' ),
+						href: 'https://jetpack.com/newsroom/',
 						trackId: 'press',
 					},
 				],
@@ -350,7 +366,7 @@ const JetpackComFooter: React.FC = () => {
 												<span className="social-properties__accessible-name">
 													{ accessibleName }
 												</span>
-												<SocialLogo icon={ icon } aria-hidden={ true } />
+												<SocialLogo icon={ icon } aria-hidden />
 											</ExternalLink>
 										</li>
 									) ) }

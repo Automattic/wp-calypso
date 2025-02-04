@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, reduce } from 'lodash';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SectionHeader from 'calypso/components/section-header';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -13,8 +12,6 @@ import {
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsTabs from '../stats-tabs';
-import StatsTab from '../stats-tabs/tab';
 
 export const StatsReach = ( props ) => {
 	const {
@@ -25,6 +22,8 @@ export const StatsReach = ( props ) => {
 		isLoadingPublicize,
 		siteSlug,
 		isOdysseyStats,
+		isJetpack,
+		isAtomic,
 	} = props;
 
 	const isLoadingFollowData = ! followData;
@@ -38,107 +37,70 @@ export const StatsReach = ( props ) => {
 		0
 	);
 
-	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
+	const wpData = {
+		value: wpcomFollowCount,
+		label: translate( 'WordPress.com' ),
+	};
 
-	let data = [];
+	const emailData = {
+		value: emailFollowCount,
+		label: translate( 'Email' ),
+	};
 
-	if ( isInsightsPageGridEnabled ) {
-		const wpData = {
-			value: wpcomFollowCount,
-			label: translate( 'WordPress.com' ),
-		};
+	const data = [ wpData, emailData ];
 
-		const emailData = {
-			value: emailFollowCount,
-			label: translate( 'Email' ),
-		};
+	if ( ! isOdysseyStats ) {
+		const subscribersUrl =
+			isAtomic || isJetpack
+				? `https://cloud.jetpack.com/subscribers/${ siteSlug }`
+				: `/people/subscribers/${ siteSlug }`;
 
-		const socialData = {
-			value: publicizeFollowCount,
-			label: translate( 'Social' ),
-		};
+		wpData.actions = [
+			{
+				type: 'link',
+				data: subscribersUrl,
+			},
+		];
 
-		if ( ! isOdysseyStats ) {
-			wpData.actions = [
-				{
-					type: 'link',
-					data: `/people/followers/${ siteSlug }`,
-				},
-			];
-
-			emailData.actions = [
-				{
-					type: 'link',
-					data: `/people/email-followers/${ siteSlug }`,
-				},
-			];
-		}
-
-		if ( publicizeFollowCount > 0 ) {
-			socialData.children = publicizeData;
-		}
-
-		data = [ wpData, emailData, socialData ];
-
-		// sort descending
-		data.sort( ( a, b ) => b.value - a.value );
+		emailData.actions = [
+			{
+				type: 'link',
+				// default to subscribers because `/people/email-followers/${ siteSlug }`, is not available at the moment
+				data: subscribersUrl,
+			},
+		];
 	}
+
+	if ( publicizeFollowCount > 0 ) {
+		data.push( ...publicizeData ); // Spread the publicizeData into the data array if there are any publicize followers
+	}
+
+	// sort descending
+	data.sort( ( a, b ) => b.value - a.value );
 
 	return (
 		<>
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsFollowers" /> }
 			{ siteId && <QuerySiteStats siteId={ siteId } statType="statsPublicize" /> }
-			{ isInsightsPageGridEnabled && (
-				<StatsListCard
-					moduleType="publicize"
-					data={ data }
-					title={ translate( 'Social subscribers' ) }
-					emptyMessage={ translate( 'No subscribers recorded' ) }
-					mainItemLabel={ translate( 'Service' ) }
-					metricLabel={ translate( 'Total subscribers' ) }
-					splitHeader
-					useShortNumber
-					// Shares don't have a summary page yet.
-					// TODO: limit to 5 items after summary page is added.
-					// showMore={ ... }
-					// TODO: add error state once it's implemented
-					loader={
-						isLoadingFollowData && <StatsModulePlaceholder isLoading={ isLoadingFollowData } />
-					}
-				/>
-			) }
-			{ ! isInsightsPageGridEnabled && (
-				<div className="list-total-followers">
-					<SectionHeader label={ translate( 'Subscriber totals' ) } />
-					<Card className="stats-module stats-reach__card">
-						<StatsTabs borderless>
-							<StatsTab
-								gridicon="my-sites"
-								label={ translate( 'WordPress.com' ) }
-								loading={ isLoadingFollowData }
-								href={ ! isOdysseyStats ? `/people/followers/${ siteSlug }` : null }
-								value={ wpcomFollowCount }
-								compact
-							/>
-							<StatsTab
-								gridicon="mail"
-								label={ translate( 'Email' ) }
-								loading={ isLoadingFollowData }
-								href={ ! isOdysseyStats ? `/people/email-followers/${ siteSlug }` : null }
-								value={ emailFollowCount }
-								compact
-							/>
-							<StatsTab
-								gridicon="share"
-								label={ translate( 'Social' ) }
-								loading={ isLoadingPublicize }
-								value={ publicizeFollowCount }
-								compact
-							/>
-						</StatsTabs>
-					</Card>
-				</div>
-			) }
+			<StatsListCard
+				moduleType="publicize"
+				data={ data }
+				title={ translate( 'Number of Subscribers' ) }
+				emptyMessage={ translate( 'No subscribers recorded' ) }
+				mainItemLabel=""
+				metricLabel=""
+				splitHeader
+				useShortNumber
+				// Shares don't have a summary page yet.
+				// TODO: limit to 5 items after summary page is added.
+				// showMore={ ... }
+				// TODO: add error state once it's implemented
+				loader={
+					( isLoadingFollowData || isLoadingPublicize ) && (
+						<StatsModulePlaceholder isLoading={ isLoadingFollowData } />
+					)
+				}
+			/>
 		</>
 	);
 };
@@ -158,5 +120,7 @@ export default connect( ( state ) => {
 		isLoadingPublicize,
 		siteSlug,
 		isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
+		isAtomic: isAtomicSite( state, siteId ),
+		isJetpack: isJetpackSite( state, siteId ),
 	};
 } )( localize( StatsReach ) );

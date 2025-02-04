@@ -6,7 +6,6 @@ const root = '/sites';
 class SitePlugin {
 	/**
 	 * `SitePlugin` constructor.
-	 *
 	 * @param {string} [slug] - the plugin slug
 	 * @param {number|string} sid - site identifier
 	 * @param {WPCOM} wpcom - wpcom instance
@@ -31,7 +30,6 @@ class SitePlugin {
 
 	/**
 	 * Get informtion about the plugin
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -42,7 +40,6 @@ class SitePlugin {
 
 	/**
 	 * Update the plugin configuration
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Object} body - plugin body object
 	 * @param {Function} [fn] - callback function
@@ -54,7 +51,6 @@ class SitePlugin {
 
 	/**
 	 * Update the plugin version
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -65,7 +61,6 @@ class SitePlugin {
 
 	/**
 	 * Install the plugin
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -79,7 +74,6 @@ class SitePlugin {
 
 	/**
 	 * Delete the plugin
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -91,7 +85,6 @@ class SitePlugin {
 	/**
 	 * Activate the plugin
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -103,7 +96,6 @@ class SitePlugin {
 	/**
 	 * Deactivate the plugin
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -115,7 +107,6 @@ class SitePlugin {
 	/**
 	 * Enable plugin autoupdate
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
@@ -127,7 +118,6 @@ class SitePlugin {
 	/**
 	 * Disable plugin autoupdate
 	 * This method is a shorthand of update()
-	 *
 	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise

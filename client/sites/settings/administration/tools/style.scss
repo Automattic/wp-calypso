@@ -1,0 +1,59 @@
+/**
+ * Delete Site Options
+ */
+
+.site-tools__section-title {
+	margin-bottom: 4px;
+	font-size: $font-body-small;
+	line-height: 18px;
+	color: var(--color-neutral-70);
+
+	&.is-warning {
+		color: var(--color-error);
+	}
+}
+
+.site-tools__section-desc {
+	margin-bottom: 0;
+	font-size: $font-body-small;
+	color: var(--color-text-subtle);
+	font-style: italic;
+}
+
+.site-tools__container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+
+	&::after {
+		display: none;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		&.is-compact {
+			padding: 24px;
+		}
+	}
+}
+
+.site-tools__content {
+	flex: 0 1 auto;
+}
+
+.site-tools__link,
+.site-tools__link:hover,
+.site-tools__link:active,
+.site-tools__link:visited {
+	color: inherit;
+}
+
+.site-tools__link:focus {
+	box-shadow: 0 0 0 2px var(--color-primary-light);
+	z-index: 1;
+}
+
+.site-tools__option-marker {
+	flex: 0 0 auto;
+	padding-left: 24px;
+}

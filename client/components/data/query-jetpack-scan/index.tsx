@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'calypso/state';
 import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 

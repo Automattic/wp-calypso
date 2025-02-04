@@ -1,7 +1,7 @@
-import classNames from 'classnames';
+import { Badge } from '@automattic/components';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import Badge from 'calypso/components/badge';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
@@ -28,7 +28,7 @@ class PremiumBadge extends Component {
 	render() {
 		const { restrictedPremium } = this.props;
 		const { text, description } = this.getPopoverText( restrictedPremium );
-		const badgeClassNames = classNames( 'premium-badge', {
+		const badgeClassNames = clsx( 'premium-badge', {
 			'restricted-premium': restrictedPremium,
 		} );
 		return (

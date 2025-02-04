@@ -10,7 +10,6 @@ export type DIFMPriceTierProduct = Pick< Product, 'price_tier_list' > & {
  * Returns null if this is not a DIFM purchase or the proper related price tier information is not available.
  * Returns just the price details if noOfPages is not passed.
  * Returns the price details alongwith calculated values of extraPageCount and extraPagesPrice is noOfPages is passed.
- *
  * @param { Product | any } product  product to get details from
  * @param { number } noOfPages  the number of pages required
  * @returns {Object} with the relevent tier details

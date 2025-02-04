@@ -10,6 +10,7 @@ module.exports = {
 	plugins: [ 'react', 'react-hooks' ],
 	rules: {
 		'react/jsx-curly-spacing': [ 2, 'always' ],
+		'react/jsx-key': 1,
 		'react/jsx-no-duplicate-props': 2,
 		'react/jsx-no-target-blank': 2,
 		'react/jsx-no-undef': 2,
@@ -20,6 +21,7 @@ module.exports = {
 		'react/no-deprecated': 2,
 		'react/no-did-mount-set-state': 2,
 		'react/no-did-update-set-state': 2,
+		'react/no-find-dom-node': 1,
 		'react/no-is-mounted': 2,
 		'react/no-string-refs': 2,
 		'react/prefer-es6-class': 2,

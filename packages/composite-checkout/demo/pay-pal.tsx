@@ -2,7 +2,6 @@ import {
 	FormStatus,
 	TransactionStatus,
 	useTransactionStatus,
-	useLineItems,
 	useFormStatus,
 	Button,
 } from '@automattic/composite-checkout';
@@ -18,6 +17,7 @@ const ButtonPayPalIcon = styled( PaypalLogo )`
 export function createPayPalMethod(): PaymentMethod {
 	return {
 		id: 'paypal',
+		paymentProcessorId: 'paypal',
 		label: <PaypalLabel />,
 		submitButton: <PaypalSubmitButton />,
 		inactiveContent: <PaypalSummary />,
@@ -42,7 +42,6 @@ function PaypalSubmitButton( {
 } ) {
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
-	const [ items ] = useLineItems();
 
 	const handleButtonPress = () => {
 		if ( ! onClick ) {
@@ -50,9 +49,7 @@ function PaypalSubmitButton( {
 				'Missing onClick prop; PaypalSubmitButton must be used as a payment button in CheckoutSubmitButton'
 			);
 		}
-		onClick( 'paypal', {
-			items,
-		} );
+		onClick( 'paypal' );
 	};
 	return (
 		<Button

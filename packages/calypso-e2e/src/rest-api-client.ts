@@ -9,6 +9,10 @@ import {
 	PluginParams,
 	AllDomainsResponse,
 	DomainData,
+	PublicizeConnectionDeletedResponse,
+	PublicizeConnection,
+	SubscriberDeletedResponse,
+	PostCountsResponse,
 } from './types';
 import type { Roles } from './lib';
 import type {
@@ -28,12 +32,18 @@ import type {
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
-	NewPostResponse,
+	PostResponse,
 	ReaderResponse,
 	Invite,
 	AllPluginsResponse,
 	PluginResponse,
 	PluginRemovalResponse,
+	AllWidgetsResponse,
+	CommentLikeResponse,
+	JetpackSearchResponse,
+	JetpackSearchParams,
+	Subscriber,
+	SitePostState,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -43,7 +53,7 @@ import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
  * Specifies the version of WordPress.com REST API.
  */
 type EndpointVersions = '1' | '1.1' | '1.2' | '1.3' | '2';
-type EndpointNamespace = 'rest' | 'wpcom';
+type EndpointNamespace = 'rest' | 'wpcom' | 'wp';
 
 /**
  * Interface defining the request structure to be sent to the API.
@@ -184,8 +194,8 @@ export class RestAPIClient {
 	 * This method returns an array of DomainData objects, where
 	 * each object exposes a few key pieces of data from
 	 * the response JSON:
-	 * 	- domain
-	 * 	- blog id
+	 * - domain
+	 * - blog id
 	 *
 	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
@@ -352,15 +362,20 @@ export class RestAPIClient {
 			params
 		);
 
+		// This handles API errors such as `unauthorized`.
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
-		if ( response.errors === [] ) {
-			console.log( response );
-			throw new Error( `Failed to create invite: ${ response.errors }` );
+		// This handles "errors" relating to the invite itself and can be an array.
+		// For instance, if a user tries to invite itself, or invite an already added user.
+		if ( response.errors.length ) {
+			for ( const err of response.errors ) {
+				console.error( `${ err.code }: ${ err.message }` );
+			}
+			throw new Error( `Failed to create invite due to ${ response.errors.length } errors.` );
 		}
 
 		return response;
@@ -623,12 +638,39 @@ export class RestAPIClient {
 	/* Posts */
 
 	/**
+	 * Given a siteID, checks whether any posts exists of a given state.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param param1 Keyed object parameter.
+	 * @param {SitePostState} param1.state State of the published post.
+	 */
+	async siteHasPost(
+		siteID: number,
+		{ state = 'publish' }: { state: SitePostState }
+	): Promise< boolean > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response: PostCountsResponse = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/post-counts/post` ),
+			params
+		);
+
+		return response.counts.all[ state ] !== undefined && response.counts.all[ state ] > 0;
+	}
+
+	/**
 	 * Creates a post on the site.
 	 *
 	 * @param {number} siteID Target site ID.
 	 * @param {NewPostParams} details Details of the new post.
 	 */
-	async createPost( siteID: number, details: NewPostParams ): Promise< NewPostResponse > {
+	async createPost( siteID: number, details: NewPostParams ): Promise< PostResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -640,6 +682,35 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a post denoted by postID from the site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 */
+	async deletePost( siteID: number, postID: number ): Promise< PostResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/delete` ),
 			params
 		);
 
@@ -719,6 +790,56 @@ export class RestAPIClient {
 			);
 		}
 
+		return response;
+	}
+
+	/**
+	 * Method to perform two similar operations - like and unlike a comment.
+	 *
+	 * @param {'like'|'unlike'} action Action to perform on the comment.
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async commentAction(
+		action: 'like' | 'unlike',
+		siteID: number,
+		commentID: number
+	): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		let endpoint: URL;
+		if ( action === 'like' ) {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+			);
+		} else {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+			);
+		}
+
+		const response = await this.sendRequest( endpoint, params );
+
+		// Tried to like the comment, but failed to do so
+		// and the user still has not liked the comment.
+		if ( action === 'like' && response.like_count !== 1 ) {
+			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
+		}
+		// Tried to unlike the comment, but failed to do so
+		// and the user still likes the comment.
+		if ( action === 'unlike' && response.like_count !== 0 ) {
+			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
+		}
+
+		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -918,5 +1039,272 @@ export class RestAPIClient {
 
 		// If nothing matches, return that no action was performed.
 		return null;
+	}
+
+	/* Widgets */
+
+	/**
+	 * This method either deactivates or deletes the widget from the site.
+	 *
+	 * As noted in the comments, this method is quite overloaded as its outcome
+	 * differs depending on the current state of the widget (activate/deactivated).
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @param {string} widgetID ID of the target widget.
+	 */
+	async deleteWidget( siteID: number, widgetID: string ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets/widget:${ widgetID }/delete` ),
+			params
+		);
+
+		// This API call is quite overloaded in what it can do.
+		// If the `widgetId` does not exist for any reason, then an 'error' is returned.
+		// We can safely ignore this 'error'.
+		// If the widget is active, the call will first deactivate the widget.
+		// If the widget is deactivated, the call will remoe the widget.
+		// For all other unexpected errors, throw an error.
+		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
+			console.info( `Widget ${ widgetID } not found.` );
+			return;
+		} else if ( response.length === 0 ) {
+			console.info( `Deleted widget ${ widgetID }.` );
+		} else if ( response.id === widgetID ) {
+			console.info( `Deactivated widget ${ widgetID }` );
+		} else {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+	}
+
+	/**
+	 * Returns the list of widgets for a siteID.
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @returns {AllWidgetsResponse} Array of Widgets object describing the list of widgets on the site.
+	 */
+	async getAllWidgets( siteID: number ): Promise< AllWidgetsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.widgets;
+	}
+
+	/**
+	 * Deletes or deactivates all widgets for a given site.
+	 *
+	 * @param {number} siteID ID of the target site.
+	 */
+	async deleteAllWidgets( siteID: number ): Promise< void > {
+		const widgets = await this.getAllWidgets( siteID );
+
+		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+	}
+
+	/* Search */
+
+	/**
+	 * Execute a primitive Jetpack site search request.
+	 * Useful for checking if something has been indexed yet.
+	 *
+	 * @param {number} siteId ID of the target site.
+	 * @param {JetpackSearchParams} searchParams The search parameters.
+	 */
+	async jetpackSearch(
+		siteId: number,
+		searchParams: JetpackSearchParams
+	): Promise< JetpackSearchResponse > {
+		// Private sites require auth, so always auth!
+		const requestParams: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const requestUrl = this.getRequestURL( '1.3', `/sites/${ siteId }/search` );
+
+		const { query, size } = searchParams;
+		requestUrl.searchParams.append( 'query', query );
+		if ( size ) {
+			requestUrl.searchParams.append( 'size', size.toString() );
+		}
+
+		const response = await this.sendRequest( requestUrl, requestParams );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Publicize */
+
+	/**
+	 * Returns an array of existing publicize (social) connections.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @returns {Promise<Array<PublicizeConnection>>} Array of Publicize connections.
+	 */
+	async getAllPublicizeConnections( siteID: number ): Promise< Array< PublicizeConnection > > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/publicize-connections` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response[ 'connections' ];
+	}
+
+	/**
+	 * Given siteID and connectionID, deletes the connection.
+	 *
+	 * @param {number} siteID Site ID.
+	 * @param {number} connectionID Publicize connection ID.
+	 * @returns {Promise<PublicizeConnectionDeletedResponse>} Confirmation of connection being deleted.
+	 */
+	async deletePublicizeConnection(
+		siteID: number,
+		connectionID: number
+	): Promise< PublicizeConnectionDeletedResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		return await this.sendRequest(
+			this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/publicize-connections/${ connectionID }/delete`
+			),
+			params
+		);
+	}
+
+	/* Subscribers/Email Followers/Newsletters */
+
+	/**
+	 * Given a site ID, returns the list of newsletter subscribers.
+	 *
+	 * @param {number} siteID Site ID to return list of users for.
+	 */
+	async getAllSubscribers( siteID: number ): Promise< Subscriber[] > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		// This is a V2 API call.
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/subscribers`, 'wpcom' ),
+			params
+		);
+
+		return response[ 'subscribers' ];
+	}
+
+	/**
+	 * Given a siteID and email address of the subscribed user to delete,
+	 * removes the subscribed user.
+	 *
+	 * @param {number} siteID Site ID where the user is subscribed.
+	 * @param {string} email Email address of the subscriber to delete.
+	 */
+	async deleteSubscriber(
+		siteID: number,
+		email: string
+	): Promise< SubscriberDeletedResponse | null > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const subscribers = await this.getAllSubscribers( siteID );
+
+		for ( const subscriber of subscribers ) {
+			if ( subscriber.email_address.trim() === email.trim() ) {
+				return await this.sendRequest(
+					this.getRequestURL(
+						'1.1',
+						`/sites/${ siteID }/email-followers/${ subscriber.subscription_id }/delete`
+					),
+					params
+				);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the active theme for a given site.
+	 *
+	 * @param siteID
+	 */
+	async getActiveTheme( siteID: number ): Promise< string > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		// This is a V2 API call.
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/themes?status=active`, 'wp' ),
+			params
+		);
+
+		return response[ 0 ].stylesheet;
 	}
 }

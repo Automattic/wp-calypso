@@ -21,6 +21,12 @@ class StatsActionLink extends PureComponent {
 
 	render() {
 		const { href, translate } = this.props;
+
+		// Don't draw the link UI if the href value is empty.
+		if ( href === null ) {
+			return '';
+		}
+
 		return (
 			<li className="stats-list__item-action module-content-list-item-action">
 				<a

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Dialog from '.';
 
-export default { title: 'Dialog' };
+export default { title: 'packages/components/Dialog' };
 
 export const Default = () => {
 	const [ isVisible, setVisible ] = useState( false );
@@ -10,7 +10,7 @@ export const Default = () => {
 	return (
 		<>
 			<button onClick={ handleShowDialog }>Open Dialog</button>
-			<Dialog isVisible={ isVisible } onClose={ handleHideDialog } shouldCloseOnEsc={ true }>
+			<Dialog isVisible={ isVisible } onClose={ handleHideDialog } shouldCloseOnEsc>
 				Hello World!
 			</Dialog>
 		</>

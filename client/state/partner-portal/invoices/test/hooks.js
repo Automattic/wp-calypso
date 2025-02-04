@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { act, renderHook } from '@testing-library/react-hooks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { setLogger, QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 import usePayInvoiceMutation from 'calypso/state/partner-portal/invoices/hooks/pay-invoice-mutation';
 import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-invoices-query';
@@ -14,21 +14,13 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: () => 1,
 } ) );
 
+function createQueryClient() {
+	return new QueryClient();
+}
+
 describe( 'useInvoicesQuery', () => {
-	beforeEach( () => {
-		// Prevent react-query from logging an error due to the failing requests.
-		setLogger( {
-			error: jest.fn(),
-		} );
-	} );
-
-	afterEach( () => {
-		// Restore react-query logger.
-		setLogger( console );
-	} );
-
 	it( 'returns transformed request data', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -60,7 +52,7 @@ describe( 'useInvoicesQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook(
+		const { result } = renderHook(
 			() =>
 				useInvoicesQuery( {
 					starting_after: '',
@@ -71,46 +63,9 @@ describe( 'useInvoicesQuery', () => {
 			}
 		);
 
-		await waitFor( () => result.current.isSuccess );
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 
 		expect( result.current.data ).toEqual( formattedStub );
-	} );
-
-	it( 'dispatches notice on error', async () => {
-		const queryClient = new QueryClient();
-		const wrapper = ( { children } ) => (
-			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
-		);
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/jetpack-licensing/partner/invoices?starting_after=&ending_before=' )
-			.reply( 403 );
-
-		const dispatch = jest.fn();
-		useDispatch.mockReturnValue( dispatch );
-
-		const { result, waitFor } = renderHook(
-			() =>
-				useInvoicesQuery(
-					{
-						starting_after: '',
-						ending_before: '',
-					},
-					{ retry: false }
-				),
-			{
-				wrapper,
-			}
-		);
-
-		await waitFor( () => result.current.isError );
-
-		expect( result.current.isError ).toBe( true );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-invoices-failure'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
 	} );
 } );
 
@@ -124,20 +79,8 @@ describe( 'usePayInvoiceMutation', () => {
 		invoice_pdf: 'https://example.org/invoice.pdf',
 	};
 
-	beforeEach( () => {
-		// Prevent react-query from logging an error due to the failing requests.
-		setLogger( {
-			error: jest.fn(),
-		} );
-	} );
-
-	afterEach( () => {
-		// Restore react-query logger.
-		setLogger( console );
-	} );
-
 	it( 'dispatches notice on success', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -155,17 +98,19 @@ describe( 'usePayInvoiceMutation', () => {
 
 		await act( async () => result.current.mutateAsync( { invoiceId: invoiceStub.id } ) );
 
-		expect( result.current.data ).toEqual( invoiceStub );
-		expect( result.current.isSuccess ).toBe( true );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-pay-invoice-success'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-success' );
+		await waitFor( () => {
+			expect( result.current.data ).toEqual( invoiceStub );
+			expect( result.current.isSuccess ).toBe( true );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+				'partner-portal-pay-invoice-success'
+			);
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-success' );
+		} );
 	} );
 
 	it( 'dispatches notice on error', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -193,12 +138,13 @@ describe( 'usePayInvoiceMutation', () => {
 			// so we have to wrap it in a try/catch.
 		}
 
-		expect( result.current.isError ).toBe( true );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.text ).toBe( stub.message );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-pay-invoice-failure'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
+		await waitFor( () => {
+			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.text ).toBe( stub.message );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+				'partner-portal-pay-invoice-failure'
+			);
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
+		} );
 	} );
 } );

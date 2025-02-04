@@ -1,0 +1,4 @@
+.global-notifications {
+	position: relative;
+	z-index: z-index("root", ".layout__secondary") + 1;
+}

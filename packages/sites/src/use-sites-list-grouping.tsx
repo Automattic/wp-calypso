@@ -15,10 +15,10 @@ export const siteLaunchStatusGroupValues = [
 	...siteLaunchStatuses,
 ] as const;
 
-export type GroupableSiteLaunchStatuses = typeof siteLaunchStatusGroupValues[ number ];
+export type GroupableSiteLaunchStatuses = ( typeof siteLaunchStatusGroupValues )[ number ];
 
 export interface Status {
-	title: React.ReactChild;
+	title: string;
 	name: GroupableSiteLaunchStatuses;
 	count: number;
 	hiddenCount: number;
@@ -59,6 +59,9 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 			public: 0,
 			private: 0,
 			redirect: 0,
+			deleted: 0,
+			'migration-pending': 0,
+			'migration-started': 0,
 		};
 
 		const groupedByStatus = allSites.reduce< { [ K in Status[ 'name' ] ]: T[] } >(
@@ -78,7 +81,16 @@ export const useSitesListGrouping = < T extends SiteForGrouping >(
 
 				return groups;
 			},
-			{ all: showHidden ? allSites : [], 'coming-soon': [], public: [], private: [], redirect: [] }
+			{
+				all: showHidden ? allSites : [],
+				'coming-soon': [],
+				public: [],
+				private: [],
+				redirect: [],
+				deleted: [],
+				'migration-pending': [],
+				'migration-started': [],
+			}
 		);
 
 		for ( const status of statuses ) {

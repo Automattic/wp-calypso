@@ -13,7 +13,11 @@ class ConversationPost extends Component {
 		return (
 			<div className="reader-post-card__conversation-post">
 				<CompactPostCard { ...this.props } />
-				<ConversationPostList post={ this.props.post } commentIds={ this.props.commentIds } />
+				<ConversationPostList
+					post={ this.props.post }
+					commentIds={ this.props.commentIds }
+					filterParents={ false }
+				/>
 			</div>
 		);
 	}

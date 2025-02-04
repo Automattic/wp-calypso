@@ -29,7 +29,6 @@ const mergeDeep = ( left, right, key ) => {
 
 /**
  * Filter translations from POT data object by reference lines.
- *
  * @param   {Object} potData POT data object
  * @param   {string} linesFilterFile File path to JSON file with files and line numbers.
  * @returns {void}

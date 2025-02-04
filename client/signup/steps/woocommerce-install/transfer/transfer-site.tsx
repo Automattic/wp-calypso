@@ -1,7 +1,6 @@
-import page from 'page';
 import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
+import { useSelector, useDispatch } from 'calypso/state';
 import { requestAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
 import { getAtomicSoftwareStatus } from 'calypso/state/atomic/software/selectors';
 import {
@@ -34,7 +33,7 @@ export default function TransferSite( {
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
-	const wcAdmin = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
+	const wcAdminUrl = useSelector( ( state ) => getSiteWooCommerceUrl( state, siteId ) ) ?? '/';
 
 	const { transfer, error: transferError } = useSelector( ( state ) =>
 		getLatestAtomicTransfer( state, siteId )
@@ -56,7 +55,9 @@ export default function TransferSite( {
 		if ( ! siteId ) {
 			return;
 		}
-		dispatch( initiateAtomicTransfer( siteId, { softwareSet: 'woo-on-plans' } ) );
+		dispatch(
+			initiateAtomicTransfer( siteId, { softwareSet: 'woo-on-plans', context: 'woo-on-plans' } )
+		);
 	}, [ dispatch, siteId ] );
 
 	// Poll for transfer status
@@ -135,10 +136,10 @@ export default function TransferSite( {
 			setProgress( 1 );
 			// Allow progress bar to complete
 			setTimeout( () => {
-				page( wcAdmin );
+				window.location.assign( wcAdminUrl );
 			}, 500 );
 		}
-	}, [ siteId, softwareApplied, wcAdmin, trackRedirect ] );
+	}, [ siteId, softwareApplied, wcAdminUrl, trackRedirect ] );
 
 	// Timeout threshold for the install to complete.
 	useEffect( () => {
@@ -156,14 +157,9 @@ export default function TransferSite( {
 		}, 1000 * 180 );
 
 		return () => {
-			window?.clearTimeout( timeId );
+			clearTimeout( timeId );
 		};
 	}, [ onFailure, transferFailed ] );
 
-	return (
-		<>
-			{ transferFailed && <Error /> }
-			{ ! transferFailed && <Progress progress={ progress } /> }
-		</>
-	);
+	return transferFailed ? <Error /> : <Progress progress={ progress } />;
 }

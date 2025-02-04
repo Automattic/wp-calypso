@@ -3,7 +3,6 @@ export default {
 	 * Given a media filter, returns a partial mime type that can be used to
 	 * find only media of a certain type. Returns a blank mime if no filter,
 	 * or an unrecognized filter, is provided.
-	 *
 	 * @param {string} filter - The filter to get a mime from
 	 * @returns {string} Mime type
 	 */
@@ -37,7 +36,6 @@ export default {
 
 	/**
 	 * Return's a media query suitable for Google Photos.
-	 *
 	 * @param {Object} query The existing query object
 	 * @param {Object} props Media library request props
 	 * @returns {Object} Modified query for Google Photos
@@ -63,7 +61,6 @@ export default {
 
 	/**
 	 * Return a file type filter suitable for Google Photos
-	 *
 	 * @param {string} wpMimeFilter Calypso MIME filter
 	 * @returns {string} Converted MIME filter, or null if unsupported type
 	 */

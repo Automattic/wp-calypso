@@ -7,8 +7,9 @@
  */
 
 import { createActions } from '../actions';
-import { sites, launchStatus, siteSetupErrors } from '../reducer';
+import { sites, siteTheme, launchStatus, siteSetupErrors } from '../reducer';
 import {
+	CurrentTheme,
 	SiteLaunchError,
 	SiteLaunchState,
 	SiteLaunchStatus,
@@ -170,6 +171,23 @@ describe( 'Site', () => {
 			const expected = {};
 
 			expect( siteSetupErrors( originalState, action ) ).toEqual( expected );
+		} );
+	} );
+} );
+
+describe( 'Site Theme', () => {
+	const siteThemeResponse: CurrentTheme = {
+		id: 'tazza',
+	};
+
+	it( 'returns site data keyed by id', () => {
+		const state = siteTheme( undefined, {
+			type: 'RECEIVE_SITE_THEME',
+			siteId: 12345,
+			theme: siteThemeResponse,
+		} );
+		expect( state ).toEqual( {
+			12345: siteThemeResponse,
 		} );
 	} );
 } );

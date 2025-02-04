@@ -13,6 +13,7 @@ import {
 	JETPACK_MODULES_REQUEST_FAILURE,
 	JETPACK_MODULES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
+import { setJetpackConnectionMaybeUnhealthy } from 'calypso/state/jetpack-connection-health/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/jetpack/init';
@@ -120,7 +121,6 @@ export const deactivateModule = ( siteId, moduleSlug, silent = false ) => {
 /**
  * Returns an action object used in signalling that the available modules
  * in a Jetpack site were received.
- *
  * @param  {number}   siteId    Site ID
  * @param  {Object[]} modules Object of modules indexed by slug
  * @returns {Object}             Action object
@@ -157,6 +157,7 @@ export const fetchModuleList = ( siteId ) => {
 				} );
 			} )
 			.catch( ( error ) => {
+				dispatch( setJetpackConnectionMaybeUnhealthy( siteId ) );
 				dispatch( {
 					type: JETPACK_MODULES_REQUEST_FAILURE,
 					siteId,

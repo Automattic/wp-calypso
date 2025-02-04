@@ -219,6 +219,7 @@ export function getTosUploadDestination(): string {
  * Examples:
  * 	e2eflowtestingpaid1600000@inboxID.mailosaur.net
  *
+ * @deprecated Use EmailClient.getTestEmailAddress instead.
  * @param param0 Keyed parameter object.
  * @param {string} param0.inboxId Existing inbox ID on mailosaur.
  * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
@@ -320,6 +321,10 @@ export function getRandomPhrase(): string {
 export function createSuiteTitle( title: string ): string {
 	const parts = [ `${ toTitleCase( title ) }` ];
 
+	if ( envVariables.RUN_ID ) {
+		parts.push( `(${ envVariables.RUN_ID })` );
+	}
+
 	return parts.join( ' ' );
 }
 
@@ -335,7 +340,6 @@ export function getMag16Locales(): string[] {
 		'pt-br',
 		'de',
 		'fr',
-		'he',
 		'ja',
 		'it',
 		'nl',
@@ -345,8 +349,9 @@ export function getMag16Locales(): string[] {
 		'zh-cn',
 		'zh-tw',
 		'ko',
-		'ar',
 		'sv',
+		'ar',
+		'he',
 	];
 }
 

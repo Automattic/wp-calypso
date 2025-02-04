@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 
 const parentSelector = '[aria-label="Template parts list - Content"]';
 
@@ -12,13 +13,19 @@ const selectors = {
  * Represents the list of template parts in the full site editor.
  */
 export class TemplatePartListComponent {
+	private page: Page;
+	private editor: EditorComponent;
+
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( private page: Page, private editor: Locator ) {}
+	constructor( page: Page, editor: EditorComponent ) {
+		this.page = page;
+		this.editor = editor;
+	}
 
 	/**
 	 * Delete a template part from the list.
@@ -26,10 +33,11 @@ export class TemplatePartListComponent {
 	 * @param {string} name The name of the template part to delete.
 	 */
 	async deleteTemplatePart( name: string ): Promise< void > {
-		const actionsButtonLocator = this.editor.locator( selectors.actionsButtonForPart( name ) );
+		const editorParent = await this.editor.parent();
+		const actionsButtonLocator = editorParent.locator( selectors.actionsButtonForPart( name ) );
 		await actionsButtonLocator.click();
 
-		const deleteButtonLocator = this.editor.locator( selectors.deleteButton );
+		const deleteButtonLocator = editorParent.locator( selectors.deleteButton );
 		await deleteButtonLocator.click();
 	}
 
@@ -39,7 +47,8 @@ export class TemplatePartListComponent {
 	 * @returns True if the template part list component is open and visible, false otherwise.
 	 */
 	async isOpen(): Promise< boolean > {
-		const shellLocator = this.editor.locator( parentSelector );
+		const editorParent = await this.editor.parent();
+		const shellLocator = editorParent.locator( parentSelector );
 		return ( await shellLocator.count() ) > 0;
 	}
 }

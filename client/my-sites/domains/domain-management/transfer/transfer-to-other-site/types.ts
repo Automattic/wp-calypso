@@ -1,7 +1,8 @@
-import { DefaultRootState } from 'react-redux';
+import React from 'react';
 import { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
+import { IAppState } from 'calypso/state/types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -13,7 +14,7 @@ type SiteDataExtraInfo = SiteDetails & {
 		is_domain_only: boolean;
 	};
 	title: string;
-	capabilities: Record< string, boolean >;
+	capabilities?: Record< string, boolean >;
 };
 
 // props passed to the component
@@ -22,6 +23,10 @@ export type TransferDomainToOtherSitePassedProps = {
 	isRequestingSiteDomains: boolean;
 	selectedDomainName: string;
 	selectedSite: SiteDataExtraInfo;
+	children?: React.ReactNode;
+	context?: {
+		params?: { [ key: string ]: any };
+	};
 };
 
 // state props
@@ -34,10 +39,11 @@ export type TransferDomainToOtherSiteStateProps = {
 	isDomainOnly: Maybe< boolean >;
 	isMapping: boolean;
 	sites: SiteDetails[];
+	showHeader?: boolean;
 };
 // state props added by redux connect
 export type TransferDomainToOtherSiteStateToProps = (
-	state: DefaultRootState,
+	state: IAppState,
 	ownProps: TransferDomainToOtherSitePassedProps
 ) => TransferDomainToOtherSiteStateProps;
 

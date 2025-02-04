@@ -2,7 +2,6 @@ import { getMimeType } from 'calypso/lib/media/utils/get-mime-type';
 
 /**
  * Given a media string or object, returns the MIME type prefix.
- *
  * @example
  * getMimeType( 'example.gif' );
  * getMimeType( { URL: 'https://wordpress.com/example.gif' } );

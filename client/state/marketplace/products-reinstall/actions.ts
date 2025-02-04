@@ -11,7 +11,6 @@ import 'calypso/state/marketplace/init';
 
 /**
  * Reinstall products on a site.
- *
  * @param siteId the site id
  * @returns Promise
  */

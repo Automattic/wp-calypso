@@ -1,7 +1,8 @@
+import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { SITE_REDIRECT } from '@automattic/urls';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -9,7 +10,6 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { withoutHttp } from 'calypso/lib/url';
-import { SITE_REDIRECT } from 'calypso/lib/url/support';
 import { domainManagementSiteRedirect } from 'calypso/my-sites/domains/paths';
 import {
 	composeAnalytics,
@@ -47,7 +47,9 @@ class SiteRedirectCard extends Component {
 	};
 
 	componentDidMount() {
-		this.props.fetchSiteRedirect( this.props.selectedSite.domain );
+		if ( this.props.selectedSite ) {
+			this.props.fetchSiteRedirect( this.props.selectedSite.domain );
+		}
 	}
 
 	componentWillUnmount() {
@@ -55,7 +57,9 @@ class SiteRedirectCard extends Component {
 	}
 
 	closeRedirectNotice = () => {
-		this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
+		if ( this.props.selectedSite ) {
+			this.props.closeSiteRedirectNotice( this.props.selectedSite.domain );
+		}
 	};
 
 	handleChange = ( event ) => {
@@ -65,35 +69,37 @@ class SiteRedirectCard extends Component {
 	};
 
 	handleClick = () => {
-		this.props
-			.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
-			.then( ( success ) => {
-				this.props.recordUpdateSiteRedirectClick(
-					this.props.selectedDomainName,
-					this.state.redirectUrl,
-					success
-				);
-
-				if ( success ) {
-					this.props.fetchSiteDomains( this.props.selectedSite.ID );
-					this.props.fetchSiteRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
-
-					page(
-						domainManagementSiteRedirect(
-							this.props.selectedSite.slug,
-							this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
-							this.props.currentRoute
-						)
+		if ( this.props.selectedSite ) {
+			this.props
+				.updateSiteRedirect( this.props.selectedSite.domain, this.state.redirectUrl )
+				.then( ( success ) => {
+					this.props.recordUpdateSiteRedirectClick(
+						this.props.selectedDomainName,
+						this.state.redirectUrl,
+						success
 					);
 
-					this.props.successNotice(
-						this.props.translate( 'Site redirect updated successfully.' ),
-						noticeOptions
-					);
-				} else {
-					this.props.errorNotice( this.props.location.notice.text );
-				}
-			} );
+					if ( success ) {
+						this.props.fetchSiteDomains( this.props.selectedSite.ID );
+						this.props.fetchSiteRedirect( this.state.redirectUrl.replace( /\/+$/, '' ).trim() );
+
+						page(
+							domainManagementSiteRedirect(
+								this.props.selectedSite.slug,
+								this.state.redirectUrl.replace( /\/+$/, '' ).trim(),
+								this.props.currentRoute
+							)
+						);
+
+						this.props.successNotice(
+							this.props.translate( 'Site redirect updated successfully.' ),
+							noticeOptions
+						);
+					} else {
+						this.props.errorNotice( this.props.location.notice.text );
+					}
+				} );
+		}
 	};
 
 	handleFocus = () => {

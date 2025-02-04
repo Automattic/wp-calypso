@@ -1,5 +1,6 @@
-import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import { Icon } from '@wordpress/components';
+import { seen, unseen } from '@wordpress/icons';
+import clsx from 'clsx';
 import { omit } from 'lodash';
 import { createRef, Component } from 'react';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -32,7 +33,7 @@ class FormPasswordInput extends Component {
 	};
 
 	render() {
-		const toggleVisibilityClasses = classNames( {
+		const toggleVisibilityClasses = clsx( {
 			'form-password-input__toggle': true,
 			'form-password-input__toggle-visibility': ! this.props.hideToggle,
 		} );
@@ -48,7 +49,7 @@ class FormPasswordInput extends Component {
 				/>
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>
-					{ this.hidden() ? <Gridicon icon="not-visible" /> : <Gridicon icon="visible" /> }
+					{ this.hidden() ? <Icon icon={ unseen } /> : <Icon icon={ seen } /> }
 				</span>
 			</div>
 		);

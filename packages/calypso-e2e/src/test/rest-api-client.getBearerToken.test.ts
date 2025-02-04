@@ -78,8 +78,6 @@ describe( 'RestAPIClient: getBearerToken', function () {
 			password: 'fake_password',
 		} );
 
-		await expect( restAPIClient.getBearerToken() ).rejects.toThrowError(
-			`${ code }: ${ message }`
-		);
+		await expect( restAPIClient.getBearerToken() ).rejects.toThrow( `${ code }: ${ message }` );
 	} );
 } );

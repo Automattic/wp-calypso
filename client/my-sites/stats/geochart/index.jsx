@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle, map } from 'lodash';
 import PropTypes from 'prop-types';
@@ -25,12 +25,19 @@ class StatsGeochart extends Component {
 		statType: PropTypes.string,
 		query: PropTypes.object,
 		data: PropTypes.array,
+		geoMode: PropTypes.string,
 		kind: PropTypes.string,
 		postId: PropTypes.number,
+		skipQuery: PropTypes.bool,
+		isLoading: PropTypes.bool,
+		numberLabel: PropTypes.string,
+		customHeight: PropTypes.number,
 	};
 
 	static defaultProps = {
+		geoMode: 'country',
 		kind: 'site',
+		numberLabel: '',
 	};
 
 	state = {
@@ -99,24 +106,30 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, translate } = this.props;
+		const { currentUserCountryCode, data, geoMode, translate, numberLabel, customHeight } =
+			this.props;
 		if ( ! data || ! data.length ) {
 			return;
 		}
 
-		const mapData = map( data, ( country ) => {
+		const mapData = map( data, ( location ) => {
+			let code = location.countryCode;
+			if ( geoMode !== 'country' ) {
+				code = `${ location.countryCode } ${ location.label }`;
+			}
+
 			return [
 				{
-					v: country.countryCode,
-					f: country.label,
+					v: code,
+					f: location.label,
 				},
-				country.value,
+				location.value,
 			];
 		} );
 
 		const chartData = new window.google.visualization.DataTable();
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
-		chartData.addColumn( 'number', translate( 'Views' ).toString() );
+		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
 
 		// Note that using raw hex values here is an exception due to
@@ -136,6 +149,14 @@ class StatsGeochart extends Component {
 			colorAxis: { colors: [ chartColorLight, chartColorDark ] },
 			domain: currentUserCountryCode,
 		};
+
+		if ( geoMode !== 'country' ) {
+			options.displayMode = 'markers';
+		}
+
+		if ( customHeight ) {
+			options.height = customHeight;
+		}
 
 		const regions = [ ...new Set( map( data, 'region' ) ) ];
 
@@ -165,23 +186,24 @@ class StatsGeochart extends Component {
 	};
 
 	render() {
-		const { siteId, statType, query, data, kind } = this.props;
-		const isLoading = ! data || ! this.state.visualizationsLoaded;
-		const classes = classNames( 'stats-geochart', {
-			'is-loading': isLoading,
+		const { siteId, statType, query, data, kind, skipQuery, isLoading } = this.props;
+		// Only pass isLoading when kind is email.
+		const isGeoLoading = kind === 'email' ? isLoading : ! data || ! this.state.visualizationsLoaded;
+		const classes = clsx( 'stats-geochart', {
+			'is-loading': isGeoLoading,
 			'has-no-data': data && ! data.length,
 		} );
 
 		return (
 			<>
-				{ siteId && kind === 'site' && (
+				{ ! skipQuery && siteId && kind === 'site' && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 
 				<div ref={ this.chartRef } className={ classes } />
 				<StatsModulePlaceholder
-					className={ classNames( classes, 'is-block' ) }
-					isLoading={ isLoading }
+					className={ clsx( classes, 'is-block' ) }
+					isLoading={ isGeoLoading }
 				/>
 			</>
 		);
@@ -191,7 +213,18 @@ class StatsGeochart extends Component {
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const statType = ownProps.statType ?? 'statsCountryViews';
+	const currentUserCountryCode = getCurrentUserCountryCode( state );
 	const { postId, query, kind } = ownProps;
+
+	// Skip data fetching if it was explicitly passed as a prop
+	if ( ownProps.data ) {
+		return {
+			currentUserCountryCode,
+			data: ownProps.data,
+			siteId,
+			statType,
+		};
+	}
 
 	const data =
 		kind === 'email'
@@ -207,7 +240,7 @@ export default connect( ( state, ownProps ) => {
 			: getSiteStatsNormalizedData( state, siteId, statType, query );
 
 	return {
-		currentUserCountryCode: getCurrentUserCountryCode( state ),
+		currentUserCountryCode,
 		data,
 		siteId,
 		statType,

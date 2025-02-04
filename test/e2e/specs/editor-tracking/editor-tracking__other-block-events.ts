@@ -34,7 +34,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {
@@ -65,9 +65,8 @@ describe(
 			} );
 
 			it( '"wpcom_block_moved_down" event fires', async function () {
-				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_moved_down'
-				);
+				const eventDidFire =
+					await editorTracksEventManager.didEventFire( 'wpcom_block_moved_down' );
 				expect( eventDidFire ).toBe( true );
 			} );
 
@@ -91,11 +90,11 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Go to the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 

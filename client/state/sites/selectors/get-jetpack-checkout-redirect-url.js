@@ -2,7 +2,6 @@ import getSiteOption from './get-site-option';
 
 /**
  * Returns a jetpack plugin admin page depending on which plugin is active.
- *
  * @param  {Object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @returns {string}        Jetpack or standalone plugin checkout redirect page
@@ -17,12 +16,14 @@ export default function getJetpackCheckoutRedirectUrl( state, siteId ) {
 	const redirectMap = {
 		jetpack: 'admin.php?page=jetpack#/recommendations',
 		'jetpack-backup': 'admin.php?page=jetpack-backup',
+		'jetpack-social': 'admin.php?page=jetpack-social',
 	};
 
 	// Higher values are prioritized
 	const priority = {
 		jetpack: 1,
 		'jetpack-backup': 0,
+		'jetpack-social': 0,
 	};
 
 	let bestMatchingPlugin = null;

@@ -1,0 +1,27 @@
+.select-card-checkbox__container {
+	border: 1px solid var(--color-surface-backdrop);
+	background: var(--color-surface-backdrop);
+	border-radius: 4px;
+	padding: 16px;
+	font-size: 0.875rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+
+	.components-checkbox-control {
+		--checkbox-input-margin: 16px;
+	}
+
+	.select-card-checkbox__label {
+		pointer-events: none;
+		user-select: none;
+		display: flex;
+		align-items: center;
+	}
+
+	&:hover,
+	&:has(:checked) {
+		background: var(--color-accent-5);
+		border-color: var(--color-accent);
+	}
+}

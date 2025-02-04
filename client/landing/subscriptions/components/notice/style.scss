@@ -1,0 +1,37 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscription-management {
+	&__notice {
+		position: relative;
+		display: flex;
+		flex-direction: row;
+		align-items: flex-start;
+		padding: 16px 20px;
+		gap: 16px;
+		margin-bottom: 20px;
+		background: $studio-gray-0;
+
+		&-icon {
+			height: 20px;
+		}
+
+		&-content {
+			font-size: $font-body-small;
+			line-height: $font-title-small;
+			letter-spacing: -0.15px;
+			color: $studio-gray-80;
+			margin-right: 16px;
+		}
+
+		&-action {
+			align-self: center;
+		}
+
+		&-close {
+			position: absolute;
+			right: 20px;
+			top: 16px;
+		}
+	}
+}

@@ -13,7 +13,6 @@ const getPublishedActions = ( state, siteId, postId ) =>
 
 /**
  * Return a share-published-actions array propagaring data from publicize connections.
- *
  * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @param {number} postId Post ID

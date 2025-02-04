@@ -1,87 +1,116 @@
-.masterbar__woo {
-	background: transparent;
-	border-bottom: none;
-	position: absolute;
-	height: 72px;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	padding: 28px 24px;
+@import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap );
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/woo-commerce";
 
-	.masterbar__woo-nav {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		margin: 0;
-		list-style-type: none;
-		width: 100%;
+$breakpoint-mobile: 660px;
 
-		.masterbar__login-back-link {
-			margin-top: -10px;
-			font-weight: 500;
+@mixin button-primary {
+	background-color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
 
-			@media screen and ( max-width: 660px ) {
-				display: none;
-			}
-		}
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
 	}
 }
 
-.masterbar__woo-nav-item a.masterbar__login-back-link {
-	color: var(--studio-gray-100);
-	text-decoration: none;
-	display: flex;
+@mixin button-secondary {
+	border: 2px solid var(--woo-purple-40);
+	background-color: transparent;
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-70);
+	}
+
+	&:disabled {
+		background-color: var(--studio-gray-5);
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-tertiary {
+	background-color: transparent;
+	color: var(--woo-purple-40);
+	border-radius: 8px; /* stylelint-disable-line scales/radii */
+
+	&:hover,
+	&:focus {
+		background-color: var(--woo-purple-0);
+		color: var(--woo-purple-60);
+	}
+
+	&:disabled {
+		background-color: transparent;
+		color: var(--studio-gray-50);
+	}
+}
+
+@mixin button-size-small {
+	padding: 5.5px 16px;
 	font-weight: 500;
+	font-size: rem(14px);
+	line-height: 21px;
 }
 
-.masterbar__woo-mobile-nav {
-	display: none;
-	flex-direction: row;
-	align-items: center;
-	margin: 0;
-	list-style-type: none;
-	width: 100%;
-	position: fixed;
-	bottom: 0;
-	padding: 24px 0;
-	box-shadow: inset 0 1px 0 #e2e4e7;
-	background-color: #fff;
-	z-index: 999;
+@mixin button-size-base {
+	padding: 12px 24px;
+	font-weight: 500;
+	font-size: rem(16px);
+	line-height: 24px;
+}
 
-	@media screen and ( max-width: 660px ) {
-		display: flex;
-	}
+@mixin button-size-large {
+	padding: 14.5px 24px;
+	font-weight: 500;
+	font-size: rem(18px);
+	line-height: 27px;
+}
 
-	.masterbar__login-back-link {
-		@media screen and ( max-width: 660px ) {
-			display: block;
-		}
+@mixin link-woo {
+	color: var(--woo-purple-40);
+	text-decoration: underline;
+	text-underline-offset: 4px;
+	font-weight: 400;
+
+	&:hover,
+	&:focus {
+		color: var(--woo-purple-60);
 	}
 }
 
 .woo {
-	$woo-purple-50: #7f54b3;
-	$woo-purple-60: #674399;
-	$woo-purple-70: #533582;
+	--woo-purple-40: #966ccf;
+	--woo-purple-50: #7f54b3;
+	--woo-purple-60: #674399;
+	--woo-purple-70: #533582;
+	--woo-font-family-header: proxima-nova, sans-serif;
 	$woo-label-color: #50575e;
 	$woo-gray-100: #101517;
 	$woo-gray-40: #787c82;
 	$woo-font-size-small: $font-body-extra-small;
 	$woo-font-size-base: $font-body-small;
 	$woo-font-size-input: $font-body-small;
+	$woo-inter-font:  "Inter", -apple-system, system-ui, sans-serif;
 	$woo-radius-input: 4px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
 	$woo-form-divider-border: 1px solid #e6e6e6;
 	$gray-60: #50575e;
 	$gray-50: #646970;
+	$woo-sfpro-display-font:  "SF Pro Display", -apple-system, system-ui, sans-serif;
+	$woo-sfpro-text-font:  "SF Pro Text", -apple-system, system-ui, sans-serif;
 
-	background: #fdfdfd;
+	background: #fff;
 	min-height: 100%;
-
-	* {
-		font-family: proxima-nova, sans-serif;
-	}
 
 	&.layout.is-section-login {
 		min-height: 100%;
@@ -109,7 +138,7 @@
 		&:focus,
 		&:hover,
 		&:focus:hover {
-			border-color: $woo-purple-50;
+			border-color: var(--woo-purple-50);
 			outline: none;
 			box-shadow: 0 0 0 2px #e5cfe8;
 		}
@@ -121,22 +150,26 @@
 	}
 
 	a,
-	a:visited,
-	a:hover,
-	.wp-login__links a:hover,
-	.wp-login__links button:hover,
-	.button:not(.social-buttons__button) {
+	.wp-login__links a,
+	.wp-login__links button,
+	.button:not(.social-buttons__button),
+	.magic-login__footer a {
 		font-size: $woo-font-size-base;
 		line-height: 28px;
 		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
 		letter-spacing: 0;
+
+		&:hover,
+		&:visited {
+			color: $gray-50;
+		}
 	}
 
 	.button:not(.social-buttons__button) {
-		border-radius: 4px;
-		border: 2px solid $woo-purple-60;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+		border: 2px solid var(--woo-purple-60);
 		text-decoration: none;
 		width: auto;
 		padding: 10px 24px;
@@ -144,15 +177,25 @@
 	}
 
 	.button.is-primary,
-	.button.is-primary[disabled],
-	.login .button.is-primary {
-		background: $woo-purple-60;
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		background-color: var(--woo-purple-60);
 		border: none;
 		color: #fff;
 		width: 100%;
 
+		&.is-busy {
+			background-image: none;
+		}
+
+		&:hover {
+			background-color: var(--woo-purple-40);
+			color: #fff;
+		}
+
 		&:disabled {
-			opacity: 0.5;
+			background-color: var(--studio-gray-0);
+			color: var(--studio-gray-20);
 		}
 	}
 
@@ -160,11 +203,141 @@
 		background-color: initial;
 	}
 
+	.login__form-user-exists-notice.notice {
+		border-radius: 8px; // stylelint-disable-line scales/radii
+		overflow: auto;
+		padding: 16px 20px;
+		background-color: #f6f7f7;
+
+		.notice__icon-wrapper {
+			background-color: #f6f7f7;
+			color: #2c3338;
+			width: auto;
+			padding: 0;
+			align-items: flex-start;
+		}
+
+		.notice__dismiss {
+			padding: 0;
+			background-color: #f6f7f7;
+			color: #a7aaad;
+		}
+
+		.notice__content {
+			padding: 0 16px;
+			background-color: #f6f7f7;
+			color: #2c3338;
+		}
+
+		.notice__text {
+			color: #2c3338;
+			font-size: rem(14px);
+			font-style: normal;
+			font-weight: 400;
+			line-height: 20px; /* 142.857% */
+			letter-spacing: -0.24px;
+
+
+			a,
+			a:visited, {
+				color: var(--woo-purple-60);
+				font-size: rem(14px);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+				letter-spacing: -0.24px;
+				text-decoration: none;
+			}
+
+			a:hover {
+				color: var(--woo-purple-40);
+			}
+		}
+	}
+
+	.masterbar__progress-bar {
+		background-color: transparent;
+		height: 8px;
+		top: 0;
+		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+			background-color: var(--color-primary);
+		}
+	}
+
+	// masterbar styles
+	.masterbar__woo {
+		background: transparent;
+		border-bottom: none;
+		position: absolute;
+		height: 72px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		padding: 28px 24px;
+
+		.masterbar__woo-nav {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			margin: 0;
+			list-style-type: none;
+			width: 100%;
+
+			.masterbar__login-back-link {
+				margin-top: -10px;
+				font-weight: 500;
+
+				@media (max-width: $break-mobile) {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.masterbar__woo-nav-wrapper {
+		width: 100%;
+	}
+
+	.masterbar__woo-nav-item button.masterbar__login-back-link {
+		color: var(--studio-gray-100);
+		display: flex;
+		font-weight: 500;
+		padding: 0;
+	}
+
+	.masterbar__woo-mobile-nav {
+		display: none;
+		flex-direction: row;
+		align-items: center;
+		margin: 0;
+		list-style-type: none;
+		width: 100%;
+		position: fixed;
+		bottom: 0;
+		padding: 24px 0;
+		box-shadow: inset 0 1px 0 #e2e4e7;
+		background-color: #fff;
+		z-index: 999;
+
+		@media (max-width: $break-mobile) {
+			display: flex;
+		}
+
+		.masterbar__login-back-link {
+			@media (max-width: $break-mobile) {
+				display: block;
+			}
+		}
+	}
+
 	&.is-section-signup .layout__content,
 	.layout__content {
 		padding-top: 85px;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-top: 50px;
 			padding-bottom: 80px;
 		}
@@ -188,7 +361,7 @@
 		flex-direction: column;
 		padding: 54px 24px 32px;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding: 32px 16px 28px;
 		}
 	}
@@ -197,7 +370,7 @@
 		margin-top: 0;
 		margin-bottom: 8px;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			margin-bottom: 16px;
 		}
 	}
@@ -211,19 +384,21 @@
 	}
 
 
+	.jetpack-connect__logged-in-form .formatted-header,
+	.jetpack-connect__authorize-form .formatted-header,
 	.login__form-header-wrapper,
 	.signup-form__woo-wrapper {
 		text-align: center;
 		margin: 0 auto;
 		line-height: 28px;
 
+		h1,
 		h3 {
 			font-weight: 600;
 			font-size: 2.75rem;
 			line-height: 52px;
 
-
-			@media screen and ( max-width: 660px ) {
+			@media (max-width: $break-mobile) {
 				text-align: left;
 			}
 		}
@@ -236,15 +411,27 @@
 		padding-bottom: 0;
 		margin: 0;
 		line-height: 24px;
+		-webkit-font-smoothing: subpixel-antialiased;
 
 		a {
-			color: var(--studio-gray-100);
+			color: var(--woo-purple-70);
 			font-weight: 400;
 			font-size: 1rem;
+			text-decoration: none;
+
+			&:hover {
+				color: var(--woo-purple-40);
+			}
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			text-align: left;
+		}
+
+		@media (min-width: $break-large) {
+			br.hide-on-desktop {
+				display: none;
+			}
 		}
 	}
 
@@ -253,24 +440,20 @@
 		margin-top: 25px;
 	}
 
-	.login__social-buttons {
+	.auth-form__social-buttons {
 		align-items: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			align-items: flex-start;
 		}
 
-		.login__social-buttons-container {
-			display: flex;
-			flex-direction: column;
-		}
-
-		.social-buttons__button {
+		button.social-buttons__button.button {
 			border: 0;
-			text-align: left;
+			text-align: center;
 			padding-bottom: 0;
 			padding-left: 0;
 			padding-right: 0;
+			width: 196px;
 
 			svg {
 				border: 1px solid var(--studio-gray-10);
@@ -301,7 +484,7 @@
 	.magic-login.main {
 		max-width: 96%;
 
-		@media screen and ( min-width: 617px ) {
+		@media screen and (min-width: 617px) {
 			max-width: 617px;
 		}
 	}
@@ -319,12 +502,13 @@
 
 	.wp-login__container,
 	.magic-login,
-	.step-wrapper {
+	.step-wrapper,
+	.jetpack-connect__main-logo {
 		box-sizing: border-box;
 		padding: 60px 0 0;
 		width: 100%;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-top: 30px;
 		}
 	}
@@ -354,14 +538,14 @@
 	.login__two-factor-footer {
 		padding-left: $woo-form-whitespace;
 		padding-right: $woo-form-whitespace;
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
 	.login__form-header-wrapper {
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
@@ -396,8 +580,18 @@
 		max-width: 472px;
 		margin: 54px auto 0;
 		height: unset;
+		min-height: 238px;
 
-		.continue-as-user__gravatar-link {
+		~ .auth-form__separator {
+			margin: -10px auto;
+			max-width: 472px;
+		}
+
+		~ .card.auth-form__social.is-login {
+			max-width: 472px;
+		}
+
+		.continue-as-user__gravatar-content {
 			pointer-events: auto;
 			display: grid;
 			grid-template-columns: 56px 1fr;
@@ -424,13 +618,9 @@
 				font-size: 1rem;
 				font-weight: 600;
 				line-height: 24px;
-				color: var(--color-gray-100);
+				color: var(--color-text);
 				grid-area: username;
 				margin-top: 0;
-
-				&:hover {
-					color: var(--color-gray-100);
-				}
 			}
 
 			.continue-as-user__email {
@@ -486,26 +676,29 @@
 		display: none;
 	}
 
-	.login__social,
+	.login__form-password {
+		margin-top: 8px;
+	}
+
+	.auth-form__separator::before,
+	.auth-form__separator::after {
+		border-block-start: $woo-form-divider-border;
+	}
+
+	.auth-form__separator + .auth-form__social.card {
+		clip-path: unset; // unset the rule applied in ./client/blocks/authentication/form-divider/style.scss
+		max-width: 100%;
+	}
+
+	.auth-form__social,
 	.two-factor-authentication__actions {
 		background: initial;
-		border-top: $woo-form-divider-border;
 		padding-top: 40px;
 		padding-bottom: 40px;
 		text-align: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-top: 28px;
-		}
-	}
-
-	.two-factor-authentication__actions.card {
-		.button {
-			border: 1px solid #c3c4c7;
-			color: var(--color-gray-100);
-			font-weight: 500;
-			line-height: 20px;
-			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		}
 	}
 
@@ -524,11 +717,12 @@
 		}
 
 		a {
-			color: var(--color-gray-100);
+			color: var(--woo-purple-70);
 			font-size: $font-body;
+			text-decoration: none;
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			align-items: flex-start;
 		}
 	}
@@ -537,16 +731,56 @@
 		display: none;
 	}
 
-	.login__divider span {
+	.signup-form {
+		padding-top: 32px;
+
+		.auth-form__separator {
+			width: 100%;
+			margin-left: 0;
+			margin-right: 0;
+
+			@media (min-width: 782px) {
+				width: 100%;
+			}
+
+			&::before,
+			&::after {
+				position: absolute;
+				border-inline-start: 0;
+				border-block-start: $woo-form-divider-border;
+				inset-block-start: 50%;
+				inset-inline-start: 0;
+				width: 42%;
+			}
+
+			&::after {
+				left: 58%;
+			}
+		}
+	}
+
+	.signup-form,
+	.login {
+		.auth-form__separator-text {
+			background: #fff;
+			padding: 0 27px !important;
+		}
+	}
+
+	.auth-form__separator .auth-form__separator-text {
 		padding: 0 27px;
-		background-color: #fdfdfd;
+		background: #fff;
 	}
 
 	.wp-login__footer--oauth {
 		display: none;
 	}
 
-	.login-form__social-buttons-tos {
+	.app-promo.magic-link-app-promo {
+		padding: 24px;
+	}
+
+	.auth-form__social-buttons-tos {
 		margin-top: 24px;
 		font-size: $woo-font-size-small;
 		line-height: 18px;
@@ -556,6 +790,15 @@
 		a {
 			color: $gray-50;
 			font-size: inherit;
+		}
+	}
+
+	.login__lost-password-form-wrapper {
+		// Loading lost password form module is very fast, so we don't need to show a visual placeholder, just need to have the space reserved. Otherwise we will see a flash of content.
+		.async-load__placeholder {
+			visibility: hidden;
+			height: 185px;
+			margin: 48px auto 0;
 		}
 	}
 
@@ -605,25 +848,21 @@
 		margin: 0 0 8px;
 		padding: 0;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
 	.formatted-header__subtitle {
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			width: 250px;
 		}
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			padding-left: $woo-form-whitespace-660;
 			padding-right: $woo-form-whitespace-660;
 		}
-	}
-
-	.signup-form {
-		padding-top: 32px;
 	}
 
 	&.is-section-signup::before,
@@ -646,15 +885,15 @@
 		color: var(--color-primary);
 	}
 
-	.signup-form__social {
+	.auth-form__social {
 		max-width: 100%;
-		border-top: 1px solid #e6e6e6;
-		padding: 44px 0 14px;
+		padding: 40px 0 14px;
+		border-top: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 
-		@media screen and ( max-width: 660px ) {
+		@media (max-width: $break-mobile) {
 			align-items: flex-start;
 		}
 
@@ -671,7 +910,7 @@
 			padding: 0;
 		}
 
-		.signup-form__social-buttons-tos {
+		.auth-form__social-buttons-tos {
 			text-align: left;
 			color: $gray-50;
 
@@ -681,7 +920,7 @@
 		}
 	}
 
-	.signup-form__social-buttons button {
+	.auth-form__social-buttons button {
 		text-align: start;
 		box-shadow: none;
 		border: 0;
@@ -691,6 +930,1422 @@
 			border-radius: 24px; /* stylelint-disable-line scales/radii */
 			padding: 12px;
 			margin-top: 0;
+		}
+	}
+
+	&.is-woocommerce-core-profiler-flow {
+		background: #fff;
+
+		* {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		}
+
+		input[type="text"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="tel"].form-text-input,
+		textarea.form-text-input {
+			&:focus,
+			&:hover,
+			&:focus:hover {
+				border-color: var(--wp-admin-theme-color);
+				outline: none;
+				box-shadow: none;
+			}
+		}
+
+		.masterbar {
+			display: flex;
+		}
+
+		.masterbar__woo-nav-item:first-child {
+			margin-right: auto;
+		}
+
+		.masterbar__no-thanks-button {
+			color: var(--wp-admin-theme-color);
+			font-size: $woo-font-body-extra-small;
+			text-decoration: none;
+		}
+
+		.masterbar__woo-link {
+			display: flex;
+		}
+
+		.wp-login__container,
+		.magic-login,
+		.step-wrapper {
+			@media (max-width: $break-mobile) {
+				padding-top: 40px;
+			}
+		}
+
+		.login form,
+		.signup-form {
+			max-width: 405px;
+			margin: 0 auto;
+
+			input.form-text-input {
+				border-color: #bbb;
+
+				&.is-valid {
+					border-color: #bbb;
+				}
+			}
+		}
+
+		&.feature-flag-woocommerce-core-profiler-passwordless-auth {
+			.login form,
+			.signup-form {
+				max-width: 327px;
+				margin: 48px auto;
+			}
+		}
+
+		.login__form-userdata label.form-label {
+			line-height: 16px;
+		}
+
+		.login__form .login__form-userdata input.form-text-input,
+		.login__form .login__form-userdata input {
+			margin-bottom: 16px;
+		}
+
+		.login__form-header h3,
+		.formatted-header .formatted-header__title {
+			margin-bottom: 12px;
+			font-size: $woo-font-title-large;
+			line-height: 32px;
+			font-weight: 500;
+
+			@media (max-width: $break-mobile) {
+				font-size: rem(28px);
+			}
+		}
+
+		.login__form-header-wrapper h3 {
+			font-weight: 500;
+		}
+
+		form.two-factor-authentication__verification-code-form-wrapper {
+			@media (max-width: $break-mobile) {
+				margin: 0;
+				max-width: 660px;
+			}
+		}
+
+		.login__header-subtitle,
+		.formatted-header__subtitle {
+			color: $gray-700;
+
+			@media (max-width: $break-mobile) {
+				width: auto;
+			}
+		}
+
+		.login__form-userdata label.form-label,
+		.logged-out-form label.form-label {
+			font-weight: 500;
+			text-transform: uppercase;
+			font-size: rem(11px);
+			color: $gray-900;
+		}
+
+		.jetpack-connect__action-disclaimer .button.is-primary,
+		.form-button.is-primary {
+			border-radius: 2px;
+			height: 48px;
+			padding: 10px 16px;
+			font-weight: 500;
+			background-color: var(--color-primary);
+		}
+
+		.two-factor-authentication__actions.card button.button {
+			border-radius: 2px;
+			height: 48px;
+			padding: 10px 16px;
+			font-weight: 500;
+			background-color: transparent;
+			color: var(--wp-admin-theme-color);
+			border: 1px solid var(--wp-admin-theme-color);
+			width: 100%;
+		}
+
+		.two-factor-authentication__verification-code-form.card {
+			padding-top: 0;
+			margin-bottom: 36px;
+
+			.verification-code-form__help-text {
+				color: $gray-700;
+			}
+
+			.security-key-form__help-text {
+				color: $gray-700;
+				margin-bottom: 24px;
+
+				p strong {
+					color: $gray-700;
+					font-weight: 400;
+				}
+
+				p:nth-child(2) {
+					@media screen and (min-width: 660px) {
+						// css to allow for this element to exceed parent's width
+						width: 152%; // 152% * 405px gets us to 615px which is the design spec
+						position: relative;
+						left: -26%; // shift position back by half of that so that it remains centered
+					}
+				}
+			}
+
+			fieldset.form-fieldset label.form-label {
+				font-weight: 500;
+				text-transform: uppercase;
+				font-size: rem(11px);
+				color: $gray-900;
+			}
+		}
+
+		div.login__two-factor-footer {
+			margin-top: 16px;
+			p {
+				margin-bottom: 0;
+				color: $woo-label-color;
+				font-size: rem(14px);
+				line-height: 24px;
+				letter-spacing: -0.1px;
+
+				a {
+					color: var(--wp-admin-theme-color);
+					font-size: rem(14px);
+					line-height: 24px;
+					letter-spacing: -0.1px;
+				}
+			}
+		}
+
+		span.social-buttons__service-name {
+			font-weight: 600;
+		}
+
+		.auth-form__social-buttons-tos {
+			text-align: center;
+			line-height: 16px;
+
+			@media (max-width: $break-mobile) {
+				text-align: start;
+			}
+
+			a {
+				line-height: 16px;
+			}
+		}
+
+		.jetpack-connect__logged-in-content {
+			@media (max-width: $break-mobile) {
+				padding-left: $woo-form-whitespace-660;
+				padding-right: $woo-form-whitespace-660;
+			}
+		}
+
+		.jetpack-connect__features_wrapper {
+			@media (max-width: $break-mobile) {
+				display: none !important;
+			}
+		}
+
+		.signup-form {
+			padding-top: 24px;
+		}
+
+		.auth-form__social-buttons {
+			width: 100%;
+			.auth-form__social-buttons-container {
+				width: 100%;
+			}
+		}
+
+		.wp-login__container .is-jetpack .auth-form__social,
+		.signup-form .auth-form__social {
+			padding-left: 0;
+			padding-right: 0;
+			padding-top: 40px;
+
+			button.social-buttons__button.button {
+				width: 100%;
+				border: 1px solid var(--studio-gray-50, #646970);
+				border-radius: 2px;
+				border-color: #ccc;
+				padding: 4px 16px;
+				display: flex;
+				justify-content: stretch;
+				align-items: center;
+				align-self: center;
+				margin: 0;
+				svg {
+					margin-right: auto;
+					border: 0;
+				}
+				span {
+					text-align: center;
+					margin-left: -44px;
+					margin-right: auto;
+					font-weight: 400;
+				}
+				&:last-child {
+					margin-bottom: 16px;
+				}
+			}
+		}
+
+		// Log in link on signup page
+		.login__header-subtitle a,
+		.formatted-header__subtitle a {
+			color: var(--wp-admin-theme-color);
+			line-height: inherit;
+		}
+
+		.form-input-validation {
+			padding: 8px 0 11px;
+
+			p,
+			a {
+				line-height: 16px;
+			}
+
+			// Hide form validation icon
+			svg {
+				display: none;
+			}
+		}
+
+		// Lost password
+		.login__lostpassword-form {
+			display: flex;
+			flex-direction: column;
+			padding: 48px 24px 32px;
+
+			@media (max-width: $break-mobile) {
+				padding: 32px 16px 28px;
+			}
+
+			.login__form-action {
+				margin-top: 24px;
+			}
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+			.form-input-validation {
+				padding-bottom: 0;
+			}
+		}
+
+		.login__lostpassword-subtitle a {
+			line-height: inherit;
+		}
+
+		.auth-form__social-buttons-container {
+			width: 100%;
+		}
+
+		.jetpack-connect__authorize-form .jetpack-connect__logged-in-content {
+			.jetpack-connect__logged-in-bottom {
+				@media (max-width: $break-mobile) {
+					position: initial;
+					max-width: 100%;
+					padding-right: 0;
+				}
+			}
+		}
+
+		&.two-factor-auth-enabled {
+			.two-factor-authentication__verification-code-form-wrapper {
+				fieldset,
+				button,
+				.auth-form__separator,
+				.two-factor-authentication__actions,
+				.login__two-factor-footer {
+					max-width: 327px;
+				}
+			}
+		}
+	}
+
+	&.is-woo-passwordless {
+		$max-width: 327px;
+		$woo-font-size-input: $font-body;
+		$woo-radius-input: 8px;
+
+		* {
+			font-family: $woo-inter-font;
+		}
+
+		h1,
+		h2,
+		h3 {
+			font-family: var(--woo-font-family-header);
+			font-feature-settings: "ss01" on, "salt" on;
+		}
+
+		h1,
+		h3 {
+			color: var(--studio-gray-100);
+			text-align: center;
+			font-size: 2.25rem;
+			font-weight: 700;
+			line-height: 39.6px;
+			letter-spacing: -0.72px;
+
+			@media (max-width: $break-mobile) {
+				text-align: left;
+			}
+		}
+
+		input[type="text"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="tel"].form-text-input,
+		textarea.form-text-input {
+			border: 2px solid var(--studio-gray-10);
+			height: 48px;
+			padding: 8px 16px;
+			font-size: $woo-font-size-input;
+			font-style: normal;
+			line-height: 24px;
+			border-radius: $woo-radius-input;
+
+			&:focus,
+			&:hover,
+			&:focus:hover {
+				border: 2px solid var(--woo-purple-50);
+				box-shadow: none;
+			}
+
+			&:disabled {
+				border: 2px solid var(--studio-gray-5);
+				background: var(--studio-gray-0);
+			}
+		}
+
+		// Remove autofill styles.
+		input:-webkit-autofill,
+		input:-webkit-autofill:hover,
+		input:-webkit-autofill:focus,
+		input:-webkit-autofill:active,
+		input[data-com-onepassword-filled="light"] {
+			-webkit-background-clip: text;
+			-webkit-box-shadow: 0 0 0 1000px #fff inset;
+			transition: background-color 5000s ease-in-out 0s;
+		}
+
+		.button.is-primary,
+		.login .button.is-primary,
+		.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+			background-color: var(--woo-purple-50);
+			font-family: $woo-inter-font;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 500;
+			line-height: 28px;
+
+			&.is-busy {
+				background-image: none;
+			}
+
+			&:hover {
+				background-color: var(--woo-purple-70);
+				color: #fff;
+			}
+
+			&:disabled {
+				background-color: var(--studio-gray-0);
+				color: var(--studio-gray-20);
+			}
+		}
+
+		.form-input-validation.is-error {
+			color: #8a2424;
+			font-size: rem(14px);
+			font-style: normal;
+			font-weight: 400;
+			line-height: 21px;
+			padding: 0;
+			margin-top: 8px;
+
+			a {
+				line-height: 21px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+
+		.validation-fieldset {
+			&:has(.is-error) {
+				input {
+					border: 2px solid  #e26f56;
+				}
+			}
+		}
+
+		.layout__content {
+			padding-top: 80px;
+		}
+
+		.wp-login__container,
+		.magic-login,
+		.step-wrapper,
+		.jetpack-connect__main-logo {
+			padding: 48px 0 0;
+		}
+
+		.login__form-header,
+		.formatted-header__title {
+			margin-bottom: 12px;
+
+			@media (max-width: $break-mobile) {
+				padding: 0;
+				max-width: $max-width;
+				margin: 0 auto 16px;
+			}
+		}
+
+		.login__header-subtitle,
+		.formatted-header__subtitle,
+		.verification-code-form__help-text,
+		.security-key-form__help-text {
+			font-size: $font-body-large;
+			font-weight: 400;
+			line-height: 27px;
+			letter-spacing: -0.025px;
+			color: var(--studio-gray-60);
+			-webkit-font-smoothing: initial;
+			text-align: center;
+
+			a {
+				color: var(--woo-purple-50);
+				font-size: rem(18px);
+				font-style: normal;
+				font-weight: 500;
+				line-height: 27px;
+				letter-spacing: -0.025px;
+
+				&:hover {
+					color: var(--woo-purple-40);
+				}
+			}
+
+			@media (max-width: $break-mobile) {
+				padding: 0;
+				max-width: $max-width;
+				margin: 0 auto;
+				width: 100%;
+				text-align: left;
+			}
+		}
+
+		.signup-form,
+		.login__body--continue-as-user,
+		.login__lostpassword-form {
+			width: 100%;
+			margin: 48px auto 0;
+			padding: 0;
+			max-width: 327px;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.wp-login__main.main {
+			max-width: 758px;
+		}
+
+		.login form.is-woo-passwordless {
+			display: flex;
+			flex-direction: row;
+			margin-top: 48px;
+			padding: 0;
+			justify-content: center;
+			max-width: 758px;
+
+			@media (max-width: $break-medium) {
+				flex-direction: column;
+			}
+
+			.card.login__form {
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				width: 100%;
+				max-width: $max-width;
+				margin: 0;
+
+				~ .auth-form__social.card {
+					width: 100%;
+					max-width: $max-width;
+					margin: 0;
+				}
+			}
+
+			.auth-form__separator {
+				@media screen and (min-width: $break-medium) {
+					margin-block: 0;
+				}
+			}
+		}
+
+		label.form-label,
+		.logged-out-form label.form-label,
+		.magic-login__form label.form-label {
+			color: var(--studio-gray-100);
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 24px;
+			margin-bottom: 10px;
+		}
+
+		.wp-login__main-footer {
+			display: flex;
+			align-items: center;
+			width: 100%;
+			flex-direction: column;
+			margin: 12px auto 0;
+
+			@media (max-width: $break-mobile) {
+				max-width: $max-width;
+				margin-bottom: 40px;
+			}
+
+			.auth-form__social-buttons-tos {
+				margin: 24px 0 0 0;
+
+				@media (max-width: $break-medium) {
+					max-width: $max-width;
+				}
+			}
+
+			.login__lost-password-link {
+				color: var(--woo-purple-50);
+				text-align: center;
+				font-weight: 500;
+				line-height: 20px;
+				margin-block-start: 24px;
+				text-decoration: none;
+			}
+		}
+
+		.signup-form {
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+
+			.signup-form__passwordless-form-wrapper .logged-out-form__footer {
+				padding: 0;
+				margin: 24px 0 0 0;
+			}
+		}
+
+		.auth-form__social {
+			max-width: 100%;
+			padding: 40px 0 14px;
+			border-top: 0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			.auth-form__social-buttons {
+				width: 100%;
+
+				.auth-form__social-buttons-container {
+					gap: 16px;
+				}
+
+				.social-buttons__button.button {
+					display: flex;
+					height: 48px;
+					padding: 8px 16px;
+					align-items: center;
+					align-self: stretch;
+					border-radius: 8px; // stylelint-disable-line scales/radii
+					border: 2px solid var(--studio-gray-10) !important;
+					width: 100%;
+					margin: 0;
+					text-decoration: none;
+
+					&:hover {
+						background: var(--studio-gray-0, #f6f7f7);
+					}
+				}
+
+
+				.social-buttons__service-name {
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 24px;
+					color: var(--studio-gray-100);
+					font-family: $woo-inter-font;
+				}
+
+				.social-icons {
+					border: 0;
+					padding: 0;
+				}
+
+				.login__social-tos {
+					margin: 0 auto 2.5em;
+					max-width: 100%;
+					order: -1;
+
+					a {
+						font-size: inherit;
+						line-height: inherit;
+					}
+				}
+			}
+
+			.auth-form__social-buttons-tos {
+				margin-top: 32px;
+				font-size: $woo-font-size-small;
+				line-height: 18px;
+				color: $gray-50;
+				text-align: center;
+
+				a {
+					color: $gray-50;
+					line-height: 18px;
+					font-size: inherit;
+				}
+			}
+		}
+
+		div.auth-form__separator {
+			max-width: $max-width;
+
+			&::before,
+			&::after {
+				border-block-start-color: #e0e0e1;
+			}
+
+			+ .auth-form__social.card {
+				border: 0;
+				padding: 0;
+			}
+		}
+
+		.continue-as-user {
+			margin: 0;
+			max-width: initial;
+
+			~ .auth-form__separator {
+				margin: 32px auto;
+			}
+
+			.continue-as-user__user-info {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				align-self: stretch;
+				border-radius: 8px; // stylelint-disable-line scales/radii
+				border: 1px solid #dcdcde;
+				height: 221px;
+				box-sizing: border-box;
+				padding: 32px 24px 16px 24px;
+			}
+
+			~ .card.auth-form__social.is-login {
+				margin: 0;
+				padding: 0;
+				max-width: initial;
+			}
+
+
+			.continue-as-user__gravatar-content {
+				display: flex;
+				flex-direction: column;
+				margin: 0 0 8px;
+				padding: 0;
+				border: 0;
+				border-radius: 0;
+				width: 100%;
+			}
+
+			.gravatar.continue-as-user__gravatar {
+				width: 80px;
+				height: 80px;
+				box-sizing: border-box;
+			}
+
+			.continue-as-user__username {
+				font-style: normal;
+				margin-top: 8px;
+
+			}
+
+			.continue-as-user__email {
+				font-size: 0.875rem;
+				line-height: 21px;
+				color: $gray-50;
+				text-align: center;
+				margin: 0;
+			}
+
+			.continue-as-user__not-you {
+				margin-bottom: 0;
+				display: flex;
+				height: 32px;
+				padding: 4px 16px;
+				justify-content: center;
+				align-items: center;
+				gap: 4px;
+			}
+
+			.continue-as-user__change-user-link {
+				text-decoration: none;
+				color: var(--woo-purple-50);
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 21px;
+
+				&:hover {
+					color: var(--woo-purple-70);
+				}
+			}
+
+			.continue-as-user__continue-button {
+				margin-top: 24px;
+			}
+		}
+
+		.magic-login {
+			margin-top: 0;
+
+			h1.magic-login__form-header {
+				font-family: var(--woo-font-family-header);
+				color: var(--studio-gray-100);
+				text-align: center;
+				font-size: 2.25rem;
+				font-weight: 700;
+				line-height: 39.6px;
+				letter-spacing: -0.72px;
+				margin: 0;
+
+				@media (max-width: $break-mobile) {
+					text-align: center;
+					max-width: $max-width;
+					margin: 0 auto;
+				}
+			}
+
+			.magic-login__form-action {
+				margin-top: 8px;
+			}
+
+			.magic-login__form {
+				border: none;
+				padding: 0;
+
+				p {
+					text-align: center;
+				}
+
+				.logged-out-form {
+					max-width: 100%;
+					padding: 0;
+					box-shadow: none;
+
+					form {
+						max-width: $max-width;
+					}
+				}
+			}
+
+			.magic-login__form p.magic-login__form-sub-header,
+			.magic-login__form-text {
+				color: var(--studio-gray-60);
+				text-align: center;
+				font-size: rem(18px);
+				font-style: normal;
+				font-weight: 400;
+				line-height: 27px;
+				letter-spacing: -0.025px;
+				margin: 12px auto 48px;
+
+				strong {
+					font-weight: 600;
+					display: inline-block;
+				}
+			}
+
+			.magic-login__emails-list {
+				max-width: $max-width;
+				margin-inline: auto;
+
+				li {
+					border-radius: 8px; // stylelint-disable-line scales/radii
+					border: 2px solid var(--studio-gray-10);
+				}
+
+				a {
+					color: var(--studio-gray-100);
+					text-decoration: none;
+					font-size: 1rem;
+					font-style: normal;
+					font-weight: 500;
+					line-height: 24px;
+				}
+			}
+
+			.magic-login__footer {
+				margin: 0;
+				max-width: $max-width;
+				margin-inline: auto;
+
+				p {
+					color: var(--studio-gray-60);
+					text-align: center;
+					font-size: rem(14px);
+					font-style: normal;
+					font-weight: 400;
+					line-height: 20px;
+				}
+
+				a {
+					text-decoration: none;
+					color: var(--woo-purple-50);
+					font-size: rem(14px);
+					font-style: normal;
+					font-weight: 500;
+					line-height: 20px;
+				}
+			}
+		}
+
+		.logged-out-form {
+			padding: 0;
+			margin: 0;
+		}
+
+		.login__lostpassword-form {
+			margin-bottom: 44px;
+
+			.login__form-action {
+				margin: 24px 0 0;
+				width: 100%;
+			}
+
+			.login__form-userdata {
+				width: 100%;
+			}
+
+			input[type="email"].form-text-input {
+				margin-bottom: 0;
+			}
+		}
+
+		.login__lost-password-footer {
+			@media (max-width: $break-mobile) {
+				margin-bottom: 32px;
+				align-items: center;
+			}
+		}
+
+		.two-factor-authentication__verification-code-form-wrapper {
+			padding: 0;
+
+			.button,
+			.form-fieldset,
+			.auth-form__separator {
+				max-width: $max-width !important;
+			}
+
+			.two-factor-authentication__verification-code-form {
+				margin-bottom: 32px;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+
+				.form-fieldset {
+					margin: 48px auto 8px;
+					width: 100%;
+				}
+
+				.verification-code-form__help-text {
+					@media screen and (max-width: 660px) {
+						max-width: 450px;
+					}
+
+					@media (max-width: $break-mobile) {
+						max-width: $max-width;
+					}
+				}
+
+				.security-key-form__help-text,
+				.security-key-form__add-wait-for-key {
+					margin-bottom: 48px;
+
+					p:first-child {
+						margin-bottom: 12px;
+					}
+
+					@media screen and (max-width: 660px) {
+						text-align: center;
+						max-width: 450px;
+					}
+
+					@media (max-width: $break-mobile) {
+						text-align: left;
+						max-width: $max-width;
+					}
+				}
+			}
+
+			.two-factor-authentication__small-print {
+				max-width: $max-width;
+				color: $gray-50;
+				text-align: center;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 18px;
+			}
+
+			.two-factor-authentication__actions.card {
+				padding: 0;
+				border: 0;
+				margin: 32px auto;
+				clip-path: none;
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+
+				.button {
+					min-height: 48px;
+					font-style: normal;
+					font-weight: 500;
+					color: var(--studio-gray-100);
+					margin: 0 auto;
+					max-width: $max-width !important;
+				}
+			}
+		}
+
+		.login__two-factor-footer {
+			p {
+				max-width: $max-width;
+				text-align: center;
+			}
+
+			@media (max-width: $break-mobile) {
+				align-items: center;
+			}
+		}
+		// /log-in/jetpack/link styles
+		.magic-login__main-content-woo-core-profiler {
+			display: flex;
+			align-items: center;
+			flex-direction: column;
+			max-width: 327px;
+			margin: auto;
+			h1.magic-login__form-header {
+				font-size: rem(32px);
+				margin-bottom: 15px;
+			}
+
+			p.email-sent {
+				text-align: center;
+				font-size: rem(16px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 24px; /* 150% */
+			}
+
+			p.email-resend {
+				text-align: center;
+				font-size: rem(13px);
+				color: #757575;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 20px; /* 153.846% */
+				button {
+					color: var(--wp-admin-theme-color);
+					cursor: pointer;
+					&:disabled {
+						opacity: 0.5; // Reduce intensity
+						cursor: not-allowed; // Optional: change the cursor to indicate it's disabled
+					}
+				}
+			}
+
+			.magic-login__emails-list {
+				display: contents;
+				ul {
+					width: 100%;
+					li {
+						border-radius: 2px;
+						border: 1px solid #a7aaad;
+					}
+				}
+			}
+
+			svg {
+				margin: 48px 0 48px 0;
+			}
+		}
+
+	}
+
+	// Core Profiler + Passwordless
+	&.is-woocommerce-core-profiler-flow.is-woo-passwordless {
+		* {
+			font-family: $woo-sfpro-text-font;
+			font-weight: 400;
+		}
+
+		h3,
+		h1.formatted-header__title,
+		h1.magic-login__form-header {
+			font-family: $woo-sfpro-display-font;
+			font-weight: 500;
+			margin-bottom: 15px;
+		}
+
+		.login__lost-password-link {
+			color: var(--wp-admin-theme-color);
+
+			&:hover {
+				color: var(--wp-admin-theme-color);
+			}
+		}
+
+		.login__form-forgot-password {
+			font-size: rem(12px);
+			text-underline-offset: 2px;
+			margin-bottom: 24px;
+		}
+
+		.login__form-account-tip {
+			display: none;
+		}
+
+		button.button.is-primary {
+			background-color: var(--color-primary);
+			font-family: inherit;
+			border-radius: 2px;
+			&:hover:not(:disabled) {
+				background-color: var(--color-primary);
+			}
+
+			&:disabled {
+				background-color: var(--studio-gray-0);
+				color: var(--studio-gray-20);
+			}
+		}
+
+		.signup-form {
+			max-width: 327px;
+			margin-top: 48px;
+			label.form-label {
+				font-size: rem(11px);
+			}
+			input {
+				font-size: rem(13px);
+			}
+		}
+
+		.login__form-header-wrapper {
+			max-width: 615px;
+			text-align: center;
+		}
+
+		.jetpack-connect__main-logo {
+			@media (max-width: $break-mobile) {
+				padding-top: 0;
+			}
+		}
+
+		.formatted-header__subtitle,
+		.login__header-subtitle {
+			color: #757575;
+			text-align: center;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 400;
+			line-height: 24px; /* 150% */
+			a {
+				font-weight: inherit;
+				font-size: inherit;
+				color: var(--wp-admin-theme-color);
+				line-height: inherit;
+				text-decoration: none;
+				text-underline-offset: 0;
+
+				&:hover {
+					color: var(--wp-admin-theme-color);
+				}
+			}
+
+			@media (max-width: $break-mobile) {
+				text-align: start;
+				br {
+					display: none;
+				}
+			}
+		}
+
+		input[type="text"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="tel"].form-text-input {
+			border-radius: 2px;
+			border: 1px solid var(--Gutenberg-Gray-500, #bbb);
+			background: var(--Gutenberg-White, #fff);
+			&:hover,
+			&:focus,
+			&:focus:hover {
+				border: 2px solid var(--Gutenberg-Gray-500, #bbb);
+			}
+		}
+
+		.verification-code-form__help-text,
+		.security-key-form__help-text {
+			font-size: 1rem;
+		}
+
+		.wp-login__main-footer {
+			.login__lost-password-link {
+				font-weight: inherit;
+				font-size: rem(13px);
+			}
+		}
+
+		.login form.two-factor-authentication__verification-code-form-wrapper {
+			margin-top: 15px;
+			margin-bottom: 0;
+			.two-factor-authentication__actions {
+				padding-bottom: 8px;
+				margin-bottom: 0;
+			}
+		}
+
+		.two-factor-authentication__verification-code-form-wrapper {
+			button.is-primary {
+				font-size: rem(14px);
+			}
+
+			.two-factor-authentication__actions.card {
+				padding: 36px 0 40px;
+				button {
+					color: var(--wp-admin-theme-color);
+				}
+
+				@media screen and (max-width: $break-mobile) {
+					margin-bottom: 40px;
+				}
+			}
+
+			.security-key-form__help-text {
+				p {
+					line-height: 24px;
+
+					&:first-child {
+						margin-bottom: 0;
+					}
+				}
+			}
+		}
+
+		.auth-form__social-buttons-tos {
+			color: #757575;
+			a {
+				color: var(--wp-admin-theme-color);
+				font-family: inherit;
+				line-height: 18px;
+				text-underline-offset: 2px;
+			}
+		}
+
+		.main {
+			.auth-form__social {
+				.auth-form__social-buttons .social-buttons__button.button {
+					border-radius: 2px;
+					border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
+					background: var(--black-white-white, #fff);
+					span {
+						font-size: 0.875rem;
+						letter-spacing: 0.32px;
+						font-family: $woo-sfpro-display-font;
+						font-weight: 500;
+						margin-left: 0;
+					}
+				}
+			}
+		}
+
+		.login__form-action,
+		.logged-out-form {
+			button.is-primary {
+				font-size: rem(14px);
+			}
+		}
+
+		.wp-login__container {
+			@media screen and (max-width: $break-mobile) {
+				padding-top: 24px;
+			}
+		}
+
+		.magic-login__main-content-woo-core-profiler {
+			h1 {
+				@media screen and (max-width: $break-mobile) {
+					font-weight: 500;
+				}
+			}
+			.magic-login__emails-list {
+				ul li a p {
+					font-size: rem(14px);
+				}
+			}
+		}
+
+		.login__two-factor-footer {
+			@media screen and (max-width: $break-mobile) {
+				max-width: 327px;
+				padding-left: 0;
+				padding-right: 0;
+				margin: 0 auto 0 auto;
+				align-items: baseline;
+			}
+		}
+
+		.auth-form__social {
+			.auth-form__social-buttons-container {
+				width: 100%;
+			}
+
+			.auth-form__social-buttons .social-buttons__button.button {
+				border-radius: 2px;
+				border: 1px solid var(--Gray-Gray-20, #a7aaad) !important;
+				background: var(--black-white-white, #fff);
+				span {
+					font-size: 0.875rem;
+					letter-spacing: 0.32px;
+				}
+			}
+		}
+	}
+}
+
+.woo.is-woo-com-oauth.feature-flag-woocommerce-rebrand-2-0,
+.layout.is-jetpack-woo-dna-flow.feature-flag-woocommerce-rebrand-2-0 {
+	--woo-purple-0: #F2EDFF;
+	--woo-purple-40: #873EFF;
+	--woo-purple-50: #720EEC;
+	--woo-purple-60: #6108CE;
+	--woo-purple-70: #5007AA;
+	--woo-font-family-header: proxima-vara, 'Proxima Fallback', sans-serif;
+
+	* {
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-rendering: optimizeLegibility;
+	}
+
+	h1,
+	h2,
+	h3 {
+		font-feature-settings: "ss04";
+	}
+
+	.masterbar__woo {
+		.masterbar__woo-nav {
+			.masterbar__login-back-link {
+				margin-left: 15px;
+				font-weight: 400;
+			}
+		}
+	}
+
+	input[type="text"].form-text-input,
+	input[type="email"].form-text-input,
+	input[type="password"].form-text-input,
+	input[type="tel"].form-text-input,
+	textarea.form-text-input {
+		border: 1px solid var(--studio-gray-30);
+
+		&:focus,
+		&:focus-visible,
+		&:hover,
+		&:active {
+			border: 1px solid transparent;
+			box-shadow: inset 0 0 0 2px var(--woo-purple-40);
+			outline: none;
+		}
+	}
+
+	.button.is-primary,
+	.login .button.is-primary,
+	.magic-login.is-white-login .magic-login__form-action .button.is-primary:not([disabled]) {
+		@include button-primary;
+	}
+
+	.notice__text a,
+	.notice__text a:visited {
+		@include link-woo;
+	}
+
+	.login__header-subtitle a {
+		@include link-woo;
+		font-weight: 500;
+	}
+
+	.continue-as-user__change-user-link {
+		@include button-tertiary;
+		@include button-size-small;
+	}
+
+	.magic-login__footer a {
+		@include link-woo;
+	}
+
+	.auth-form__social-buttons-tos {
+		color: var(--studio-gray-50) !important;
+
+		a {
+			text-underline-offset: 2px;
+		}
+	}
+
+	.login__lost-password-no-account a {
+		@include link-woo;
+	}
+
+	.login__lost-password-link {
+		@include link-woo;
+	}
+
+	.login__two-factor-footer,
+	.security-key-form__help-text,
+	.formatted-header__subtitle {
+		a {
+			@include link-woo;
+		}
+	}
+
+	// Woo DNA Flow
+	.jetpack-connect__main {
+		--studio-woocommerce-purple: var(--woo-purple-40);
+		--studio-woocommerce-purple-60: var(--woo-purple-40);
+		--color-accent: var(--woo-purple-40);
+
+		.login__social-tos a {
+			@include link-woo;
 		}
 	}
 }

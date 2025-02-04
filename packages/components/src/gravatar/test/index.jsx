@@ -9,7 +9,6 @@ describe( 'Gravatar', () => {
 	/**
 	 * Gravatar URLs use email hashes
 	 * Here we're hashing MyEmailAddress@example.com
-	 *
 	 * @see https://en.gravatar.com/site/implement/hash/
 	 */
 	const gravatarHash = 'f9879d71855b5ff21e4963273a886bfc';

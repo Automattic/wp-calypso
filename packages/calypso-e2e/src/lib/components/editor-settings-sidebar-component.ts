@@ -1,27 +1,16 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
-import type {
-	ArticlePublishSchedule,
-	EditorSidebarTab,
-	ArticleSections,
-	ArticlePrivacyOptions,
-} from './types';
+import { EditorComponent } from './editor-component';
+import type { ArticlePublishSchedule, EditorSidebarTab, ArticlePrivacyOptions } from './types';
 
 const panel = '[aria-label="Editor settings"]';
 
 const selectors = {
-	// Close button for mobile
-	mobileCloseSidebarButton: `${ panel } [aria-label="Close settings"]:visible`,
-
-	// Tab
-	tabButton: ( tabName: EditorSidebarTab ) => `${ panel } button[data-label="${ tabName }"]`,
-	activeTabButton: ( tabName: EditorSidebarTab ) =>
-		`${ panel } button.is-active:has-text("${ tabName }")`,
-
-	// General section-related
-	section: ( name: ArticleSections ) =>
+	section: ( name: string ) =>
 		`${ panel } .components-panel__body-title button:has-text("${ name }")`,
-	showRevisionButton: '.edit-post-last-revision__panel', // Revision is a link, not a panel.
+
+	// Revisions (after 18.7.0)
+	showRevisionButton: '.editor-private-post-last-revision__button',
 
 	// Status & Visibility
 	visibilityButton: '.edit-post-post-visibility__toggle',
@@ -30,10 +19,12 @@ const selectors = {
 	postPasswordInput: '.editor-post-visibility__password-input',
 
 	// Schedule
-	scheduleButton: `button.edit-post-post-schedule__toggle`,
-	scheduleInput: ( name: string ) => `.edit-post-post-schedule__dialog label:has-text("${ name }")`,
-	scheduleMeridianButton: ( meridian: 'am' | 'pm' ) => `role=button[name="${ meridian }"i]`,
-
+	scheduleButton: `button.editor-post-schedule__dialog-toggle`,
+	schedulePopoverCloseButton:
+		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
+	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
+	scheduleMeridianButton: ( meridian: 'AM' | 'PM' ) =>
+		`button[role=radio]:has-text("${ meridian }")`,
 	// Category
 	categoryCheckbox: ( categoryName: string ) =>
 		`${ panel } div[aria-label=Categories] label:text("${ categoryName }")`,
@@ -49,43 +40,99 @@ const selectors = {
  */
 export class EditorSettingsSidebarComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
 
+	//#region Generic methods
+
 	/**
-	 * Closes the sidebar only for Mobile viewport.
+	 * Returns the root element of the sidebar.
+	 */
+	async getRoot() {
+		const editorParent = await this.editor.parent();
+
+		return editorParent.getByRole( 'region', { name: 'Editor settings' } );
+	}
+
+	/**
+	 * Returns the root element (panel body) of the section.
+	 */
+	async getSection( name: string ) {
+		const sidebar = await this.getRoot();
+
+		return sidebar.locator( '.components-panel__body' ).filter( {
+			has: this.page.locator( `h2.components-panel__body-title button:has-text("${ name }")` ),
+		} );
+	}
+
+	/**
+	 * Clicks a button matching the accessible name.
+	 *
+	 * @param {string} name Accessible name of the button.
+	 */
+	async clickButton( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		await editorParent.getByRole( 'button', { name: name } ).click();
+	}
+
+	/**
+	 * Enters the specified text to an input field, specified by a label.
+	 *
+	 * In the future, this method may support other methods of locating a
+	 * text box.
+	 *
+	 * @param {string} text Text to enter.
+	 * @param param1 Keyed object parametr.
+	 * @param {string} param1.label Locate text field by label.
+	 */
+	async enterText( text: string, { label }: { label: string } ): Promise< void > {
+		const editorParent = await this.editor.parent();
+
+		if ( label ) {
+			return await editorParent.getByLabel( label ).fill( text );
+		}
+
+		throw new Error( `Must specify a method to locate the text field.` );
+	}
+
+	//#endregion
+
+	/**
+	 * Closes the sidebar for mobile viewport.
+	 *
+	 * This method can close both the post/page settings as well as the Jetpack
+	 * sidebar.
 	 */
 	async closeSidebarForMobile(): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			return;
 		}
-
-		const locator = this.editor.locator( selectors.mobileCloseSidebarButton );
-		await locator.click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'button', { name: /Close Settings|Close plugin/ } ).click();
 	}
 
 	/**
-	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar. Ensures that tab becomes active.
+	 * Clicks on one of the top tabs (e.g. 'Post' or 'Block') in the sidebar.
 	 *
 	 * @param {EditorSidebarTab} tabName Name of tab to click.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
-		const locator = this.editor.locator( selectors.tabButton( tabName ) );
-		await locator.click();
+		const editorParent = await this.editor.parent();
+		const settingsPanel = editorParent.locator( panel );
 
-		const activeTabLocator = this.editor.locator( `${ selectors.tabButton( tabName ) }.is-active` );
-		await activeTabLocator.waitFor();
+		await settingsPanel.getByRole( 'tab', { name: tabName } ).click();
 	}
 
 	/**
@@ -93,24 +140,48 @@ export class EditorSettingsSidebarComponent {
 	 *
 	 * If the section is already open, this method will pass.
 	 *
-	 * @param {ArticleSections} name Name of section to be expanded.
-	 * @returns {Promise<void>} No return value.
+	 * @param {string} name Name of section to be expanded.
+	 *
+	 * @returns The section element.
 	 */
-	async expandSection( name: ArticleSections ): Promise< void > {
+	async expandSection( name: string ) {
+		const section = await this.getSection( name );
 		if ( await this.targetIsOpen( selectors.section( name ) ) ) {
-			return;
+			return section;
 		}
 
-		// Avoid the wpcalypso/staging banner.
-		await this.scrollToBottomOfSidebar();
+		const editorParent = await this.editor.parent();
+		const sectionLocator = editorParent.locator( selectors.section( name ) );
+		await sectionLocator.click( { position: { x: 5, y: 5 } } );
 
-		const sectionLocator = this.editor.locator( selectors.section( name ) );
-		await sectionLocator.click();
-
-		const expandedLocator = this.editor.locator(
+		const expandedLocator = editorParent.locator(
 			`${ selectors.section( name ) }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
+
+		return section;
+	}
+
+	/**
+	 * Expands a collapsed `Summary` section of the sidebar if it exists.
+	 * The `Summary` section is no longer collapsible in recent GB iterations
+	 * @see https://github.com/WordPress/gutenberg/commit/201099408131e2abe3cd094f7a1e7e539a350c12
+	 * @deprecated To discourage the adoption of this function
+	 * @todo Remove when all platforms have eventually been migrated
+	 *
+	 * If the section is already open, this method will pass.
+	 *
+	 * @param {string} name Name of section to be expanded.
+	 */
+	async expandSummary( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
+		const sectionLocator = editorParent.locator( selectors.section( name ) );
+
+		if ( ! ( await sectionLocator.isVisible() ) ) {
+			return;
+		}
+
+		this.expandSection( name );
 	}
 
 	/**
@@ -124,7 +195,8 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const locator = this.editor.locator( selector );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selector );
 		const state = await locator.getAttribute( 'aria-expanded' );
 
 		return state === 'true';
@@ -144,10 +216,11 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.visibilityButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const expandedLocator = this.editor.locator(
+		const expandedLocator = editorParent.locator(
 			`${ selectors.visibilityButton }[aria-expanded="true"]`
 		);
 		await expandedLocator.waitFor();
@@ -165,10 +238,11 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.visibilityButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
-		const closedLocator = this.editor.locator(
+		const closedLocator = editorParent.locator(
 			`${ selectors.visibilityButton }[aria-expanded="false"]`
 		);
 		await closedLocator.waitFor();
@@ -186,14 +260,15 @@ export class EditorSettingsSidebarComponent {
 		visibility: ArticlePrivacyOptions,
 		{ password }: { password?: string } = {}
 	): Promise< void > {
-		const optionLocator = this.editor.locator( selectors.visibilityOption( visibility ) );
+		const editorParent = await this.editor.parent();
+		const optionLocator = editorParent.locator( selectors.visibilityOption( visibility ) );
 		await optionLocator.click();
 
 		if ( visibility === 'Private' ) {
 			// Private articles are posted immediately and thus we must break the
 			// single responsibility principle for this case.
 			// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-			const dialogConfirmLocator = this.editor.locator(
+			const dialogConfirmLocator = editorParent.locator(
 				`div[role="dialog"] button:has-text("OK")`
 			);
 			await dialogConfirmLocator.click();
@@ -214,7 +289,8 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} password Password to be used.
 	 */
 	private async setPostPassword( password: string ): Promise< void > {
-		const inputLocator = this.editor.locator( selectors.postPasswordInput );
+		const editorParent = await this.editor.parent();
+		const inputLocator = editorParent.locator( selectors.postPasswordInput );
 		await inputLocator.fill( password );
 	}
 
@@ -228,7 +304,8 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.scheduleButton );
+		const editorParent = await this.editor.parent();
+		const buttonLocator = editorParent.locator( selectors.scheduleButton );
 		await buttonLocator.click();
 	}
 
@@ -245,8 +322,15 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const buttonLocator = this.editor.locator( selectors.scheduleButton );
-		await buttonLocator.click();
+		const editorParent = await this.editor.parent();
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			const buttonLocator = editorParent.locator( selectors.schedulePopoverCloseButton );
+			await buttonLocator.click();
+		} else {
+			const buttonLocator = editorParent.locator( selectors.scheduleButton );
+			await buttonLocator.click();
+		}
 	}
 
 	/**
@@ -255,12 +339,13 @@ export class EditorSettingsSidebarComponent {
 	 * @param {ArticlePublishSchedule} date Date of the article to be scheduled.
 	 */
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
 			if ( key === 'meridian' ) {
 				// am/pm is a button.
-				const meridianButtonLocator = this.editor.locator(
+				const meridianButtonLocator = editorParent.locator(
 					selectors.scheduleMeridianButton( date[ key ] )
 				);
 				await meridianButtonLocator.click();
@@ -269,29 +354,30 @@ export class EditorSettingsSidebarComponent {
 			if ( key === 'month' ) {
 				// For month numbers less than 10, pad the digit to be
 				// 2 digits as required by the select.
-				const monthSelectLocator = this.editor.locator( selectors.scheduleInput( 'month' ) );
+				const monthSelectLocator = editorParent.locator( selectors.scheduleInput( 'month' ) );
 				await monthSelectLocator.selectOption( ( date[ key ] + 1 ).toString().padStart( 2, '0' ) );
 				continue;
 			}
 			if ( key === 'date' ) {
-				const daySelector = this.editor.locator( selectors.scheduleInput( 'day' ) );
+				const daySelector = editorParent.locator( selectors.scheduleInput( 'day' ) );
 				await daySelector.fill( date[ key ].toString() );
 				continue;
 			}
 
 			// Regular input fields.
-			const inputLocator = this.editor.locator( selectors.scheduleInput( key ) );
+			const inputLocator = editorParent.locator( selectors.scheduleInput( key ) );
 			await inputLocator.fill( date[ key ].toString() );
 		}
 	}
 
-	/* Revisions */
-
 	/**
-	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
+	 * Opens the Revisions modal
+	 * via summary button for Gutenberg 18.7.0
 	 */
 	async showRevisions(): Promise< void > {
-		const locator = this.editor.locator( selectors.showRevisionButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.showRevisionButton );
+
 		await locator.click();
 	}
 
@@ -302,8 +388,9 @@ export class EditorSettingsSidebarComponent {
 	 * @throws {Error} If requested cateogry is not found.
 	 */
 	async checkCategory( name: string ): Promise< void > {
+		const editorParent = await this.editor.parent();
 		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
-		const locator = this.editor.locator( selectors.categoryCheckbox( name ) );
+		const locator = editorParent.locator( selectors.categoryCheckbox( name ) );
 
 		try {
 			await locator.click( { timeout: 60 * 1000 } );
@@ -322,11 +409,12 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} name Tag name to enter.
 	 */
 	async enterTag( name: string ): Promise< void > {
-		const inputLocator = this.editor.locator( selectors.tagInput );
+		const editorParent = await this.editor.parent();
+		const inputLocator = editorParent.locator( selectors.tagInput );
 		await inputLocator.fill( name );
 		await this.page.keyboard.press( 'Enter' );
 
-		const addedTagLocator = this.editor.locator( selectors.addedTag( name ) );
+		const addedTagLocator = editorParent.locator( selectors.addedTag( name ) );
 		await addedTagLocator.waitFor();
 	}
 
@@ -336,18 +424,10 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		await this.editor.getByRole( 'button', { name: /Change URL:/ } ).click();
-		await this.editor.getByLabel( 'Permalink' ).fill( slug );
-		await this.editor.getByRole( 'button', { name: 'Close', exact: true } ).click();
-	}
-
-	/**
-	 * Scroll to the bottom of the sidebar.
-	 *
-	 * Useful to work around the wpcalypso/staging banner (for proxied users).
-	 */
-	private async scrollToBottomOfSidebar(): Promise< void > {
-		const locator = this.editor.locator( selectors.section( 'Discussion' ) );
-		await locator.scrollIntoViewIfNeeded();
+		const editorParent = await this.editor.parent();
+		// TODO: Once WordPress/gutenberg#63669 is everywhere, remove the alternation.
+		await editorParent.getByRole( 'button', { name: /Change link:/ } ).click();
+		await editorParent.getByRole( 'textbox', { name: /^(Link|Slug)$/ } ).fill( slug );
+		await editorParent.getByRole( 'button', { name: 'Close', exact: true } ).click();
 	}
 }

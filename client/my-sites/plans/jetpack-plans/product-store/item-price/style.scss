@@ -4,6 +4,13 @@
 .item-price .display-price {
 	display: block;
 
+	.display-price__prices {
+		flex: 0 1 auto;
+	}
+	.display-price__details {
+		flex: 1;
+	}
+
 	.plan-price__currency-symbol,
 	.plan-price__integer,
 	.plan-price__fraction {
@@ -43,7 +50,10 @@
 	&__expiration-date {
 		color: var(--studio-gray-50);
 		font-size: 0.75rem;
-		line-height: 24px;
+		@include break-mobile {
+			//Mimic line-height: 24px, but with padding instead, so that the text can wrap to a new line correctly.
+			padding: 0.301rem 0 0.3rem;
+		}
 	}
 
 	@include break-mobile {
@@ -54,12 +64,31 @@
 }
 
 .item-price .display-price:not(.is-placeholder) {
-	max-height: 24px;
+	@include break-mobile {
+		max-height: 24px;
+	}
+
+	.plan-price {
+		font-weight: 700;
+	}
 
 	.plan-price.is-original {
 		color: var(--studio-gray-50);
-		text-decoration: line-through;
 		font-weight: 600;
+		position: relative;
+		white-space: nowrap;
+	}
+
+	// Price strike-through:
+	// (`text-decoration: line-through;` is misaligned in Firefox, so using
+	// pseudo-element is more compatible with all browsers.)
+	.plan-price.is-original::after {
+		border-top: 2px solid var(--studio-gray-50);
+		position: absolute;
+		content: "";
+		right: 0;
+		top: 44%;
+		left: 0;
 	}
 
 	.plan-price.is-discounted {
@@ -72,7 +101,13 @@
 	}
 
 	.display-price__billing-time-frame {
-		margin-top: 3px;
+		display: flex;
+		align-items: center;
+		margin: 0;
+	}
+
+	&.is-free .display-price__billing-time-frame {
+		margin-left: 4px;
 	}
 }
 
@@ -88,16 +123,6 @@
 	.display-price__billing-time-frame {
 		max-height: 40px;
 		margin-top: 0;
-	}
-}
-
-/*
-Hack to fix line-through not showing in the middle of the text in firefox browser.
-*/
-@-moz-document url-prefix() {
-	.plan-price {
-		/* stylelint-disable-next-line scales/font-sizes */
-		font-size: 1.4rem;
 	}
 }
 

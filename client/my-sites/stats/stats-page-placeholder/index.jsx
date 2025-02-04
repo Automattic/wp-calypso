@@ -1,12 +1,12 @@
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 const StatsPagePlaceholder = ( props ) => (
-	<div className={ classnames( 'main is-wide-layout', props.className ) }>
+	<div className={ clsx( 'main is-wide-layout', props.className ) }>
 		<Card className="stats-module stats-page-placeholder__header is-loading">
 			<div className="module-header">
 				<h3 className="module-header-title" />

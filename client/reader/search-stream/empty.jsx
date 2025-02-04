@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class SearchEmptyContent extends Component {
 	static propTypes = {
@@ -43,10 +43,9 @@ class SearchEmptyContent extends Component {
 		return (
 			<EmptyContent
 				title={ this.props.translate( 'No results' ) }
-				line={ message }
+				line={ <p> { message } </p> }
 				action={ action }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -55,4 +54,4 @@ class SearchEmptyContent extends Component {
 
 export default connect( null, {
 	recordReaderTracksEvent,
-} )( withPerformanceTrackerStop( localize( SearchEmptyContent ) ) );
+} )( withReaderPerformanceTrackerStop( localize( SearchEmptyContent ) ) );

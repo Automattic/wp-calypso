@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/mixins";
 
 .payment-method-add {
+	&__wrapper {
+		margin-inline: 0;
+	}
+
 	&__wrapper .card-heading {
 		display: inline-block;
 		margin-top: 1rem;
@@ -39,6 +43,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: column-reverse;
+		margin-top: 1.5rem;
+		gap: 16px;
 
 		@include break-large {
 			flex-direction: row;
@@ -53,22 +59,15 @@
 	&__back-button {
 		width: 100%;
 		font-size: 1rem;
-		margin-top: 1.5rem;
 
 		@include break-large {
 			width: auto;
-			margin-right: 1rem;
 		}
 	}
 
 	&__submit-button {
-		width: 100%;
-		font-size: 1rem;
-		margin-top: 1.5rem;
-
-		@include break-large {
-			width: auto;
-			display: inline;
+		.checkout-steps__submit-button-wrapper {
+			padding: 0;
 		}
 
 		button {

@@ -1,3 +1,133 @@
-@import "./styles/theme.scss";
-@import "./styles/wp-admin.scss";
-@import "./styles/typography.scss";
+@import "./styles/theme";
+@import "./styles/layout";
+@import "./styles/wp-admin";
+@import "./styles/typography";
+
+.wp-admin {
+	.card {
+		border: 0;
+		max-width: initial;
+		min-width: initial;
+	}
+
+	.subscribers-count {
+		display: none;
+	}
+
+	.form-checkbox:checked::before {
+		// Increase Calypso styles specificity.
+		content: url(calypso/assets/images/checkbox-icons/checkmark-primary.svg);
+		width: 12px;
+		height: 12px;
+		margin: 3px auto;
+		display: inline-block;
+
+		// Override WP-Admin styles.
+		float: none;
+	}
+
+	// Jetpack custom styles.
+	.stats > .jp-dashboard-footer {
+		padding-top: 32px;
+		padding-bottom: 32px;
+	}
+
+	.stats .jetpack-header {
+		padding-bottom: 12px;
+
+		// Align with navigation.
+		@media (max-width: 660px) {
+			padding-left: 16px;
+		}
+	}
+
+	.stats-navigation.stats-navigation--modernized .section-nav__panel {
+
+		// align with header
+		@media (min-width: 661px) {
+			padding: 0;
+		}
+	}
+
+	.stats-navigation.stats-navigation--modernized .section-nav-tab .section-nav-tab__link {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.stats-navigation.stats-navigation--modernized .section-nav-tab:not(:first-child) {
+
+		// No need for dropdown nav to have margins.
+		@media (min-width: 480px) {
+			margin-left: 32px;
+		}
+	}
+
+	// Black segmented controls.
+	.is-section-stats ul.segmented-control li.segmented-control__item {
+		.segmented-control__link:hover {
+			background-color: var(--color-neutral-0);
+		}
+
+		&.is-selected .segmented-control__link,
+		&.is-selected .segmented-control__link:hover {
+			background-color: var(--studio-black);
+			border-color: var(--studio-black);
+		}
+
+		&.is-selected + .segmented-control__item .segmented-control__link {
+			border-left-color: var(--studio-black);
+		}
+	}
+
+	// Use base component styling of `@automattic/components/Button`
+	.inner-notice-container .banner__action a.button,
+	.button.jetpack-emerald-button {
+		padding: 0.5em 1.5em;
+		font-size: 1rem;
+		line-height: 1.375;
+		align-content: center;
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&.is-primary {
+			color: var(--studio-white);
+			background: var(--studio-black);
+		}
+
+		// Use `transparent` styling as secondary styles
+		&.is-transparent {
+			color: var(--studio-black);
+			background: inset 0 0 0 1.5px var(--studio-white);
+
+			&:hover:not(.is-busy) {
+				color: var(--studio-black);
+				background: var(--studio-gray-0);
+			}
+
+			&.is-busy {
+				background: #dcdcde;
+				color: var(--studio-gray-20);
+				border: 1px solid transparent;
+			}
+		}
+	}
+
+	.inner-notice-container .banner__action a.button.is-compact {
+		font-size: 12px; // stylelint-disable-line declaration-property-unit-allowed-list
+		line-height: 1;
+		padding: 7px;
+	}
+}
+
+.inner-notice-container .card.banner.is-jetpack {
+	border-left: 3px solid var(--color-jetpack);
+}
+
+// Force any JITM from Jetpack to be hidden and it is removed in https://github.com/Automattic/jetpack/pull/39714.
+// We manage our own CTAs, including JITM, across Stats pages.
+.jetpack-jitm-message,
+.jitm-card.jitm-banner {
+	display: none;
+}

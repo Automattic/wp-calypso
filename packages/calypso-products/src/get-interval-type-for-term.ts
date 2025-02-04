@@ -1,4 +1,10 @@
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY, TERM_TRIENNIALLY } from './constants';
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_CENTENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
+} from './constants';
 
 export function getIntervalTypeForTerm( term: string ): string | null {
 	switch ( term ) {
@@ -10,6 +16,8 @@ export function getIntervalTypeForTerm( term: string ): string | null {
 			return '2yearly';
 		case TERM_TRIENNIALLY:
 			return '3yearly';
+		case TERM_CENTENNIALLY:
+			return '100yearly';
 	}
 	return null;
 }

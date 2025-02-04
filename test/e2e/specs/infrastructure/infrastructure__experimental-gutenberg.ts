@@ -23,14 +23,13 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
 	it( 'Go to the new post page', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.visit( 'post' );
 	} );
 
@@ -42,9 +41,9 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	] )(
 		'Experimental package %s and feature %s are available',
 		async function ( packageName, feature, featureType ) {
-			const editorWindowLocator = editorPage.getEditorWindowLocator();
+			const editorParent = await editorPage.getEditorParent();
 
-			const packageAvailable = await editorWindowLocator.evaluate(
+			const packageAvailable = await editorParent.evaluate(
 				`typeof window[ "wp" ]["${ packageName }"]`
 			);
 
@@ -52,7 +51,7 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 			// It should always be an object.
 			expect( packageAvailable ).toStrictEqual( 'object' );
 
-			const featureAvailable = await editorWindowLocator.evaluate(
+			const featureAvailable = await editorParent.evaluate(
 				`typeof window[ "wp" ]["${ packageName }"]["${ feature }"]`
 			);
 			expect( featureAvailable ).not.toStrictEqual( 'undefined' );
@@ -62,8 +61,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 	);
 
 	it( 'Experimental data is available', async function () {
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		const blockPatterns = await editorWindowLocator.evaluate(
+		const editorParent = await editorPage.getEditorParent();
+		const blockPatterns = await editorParent.evaluate(
 			`Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 		);
 		// If this test fails, please contact #team-ganon to update premium pattern highlighting.
@@ -82,8 +81,8 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		// patterns will be added than removed. This also means if we see a dramatic
 		// change in the number to the lower end, then something is probably wrong.
 		const expectedBlockPatternCount = 50;
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		const actualBlockPatternCount = await editorWindowLocator.evaluate(
+		const editorParent = await editorPage.getEditorParent();
+		const actualBlockPatternCount = await editorParent.evaluate(
 			() =>
 				/* eslint-disable @typescript-eslint/ban-ts-comment */
 				new Promise( ( resolve ) => {

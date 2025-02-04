@@ -1,3 +1,7 @@
+export type BlockRendererSettings = {
+	[ key: string ]: any;
+};
+
 export type RenderedStyle = {
 	css: string;
 	isGlobalStyles: boolean;
@@ -9,6 +13,13 @@ export type RenderedPattern = {
 	title: string;
 	html: string;
 	styles: RenderedStyle[];
+	scripts: string;
+};
+
+export type RenderedContent = {
+	html: string;
+	styles: RenderedStyle[];
+	scripts: string;
 };
 
 export type RenderedPatterns = {

@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
+import pageSpy from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import pageSpy from 'page';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -16,7 +16,7 @@ import { MapDomain } from '..';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
-jest.mock( 'page', () => {
+jest.mock( '@automattic/calypso-router', () => {
 	const pageMock = jest.fn();
 	pageMock.redirect = jest.fn();
 	return pageMock;
@@ -49,15 +49,15 @@ describe( 'MapDomain component', () => {
 
 	test( 'redirects if site cannot be upgraded at mounting', () => {
 		render( <MapDomain { ...defaultProps } isSiteUpgradeable={ false } /> );
-		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
+		expect( pageSpy.redirect ).toHaveBeenCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'redirects if site cannot be upgraded at new props', () => {
-		const { rerender } = render( <MapDomain { ...defaultProps } isSiteUpgradeable={ true } /> );
+		const { rerender } = render( <MapDomain { ...defaultProps } isSiteUpgradeable /> );
 		rerender(
 			<MapDomain { ...defaultProps } isSiteUpgradeable={ false } selectedSiteId={ 501 } />
 		);
-		expect( pageSpy.redirect ).toBeCalledWith( '/domains/add/mapping' );
+		expect( pageSpy.redirect ).toHaveBeenCalledWith( '/domains/add/mapping' );
 	} );
 
 	test( 'renders a MapDomainStep', () => {
@@ -76,7 +76,7 @@ describe( 'MapDomain component', () => {
 		render( <MapDomain { ...defaultProps } selectedSite={ null } /> );
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( '/domains/add' );
+		expect( pageSpy ).toHaveBeenCalledWith( '/domains/add' );
 	} );
 
 	test( 'goes back to domain management for VIP sites', async () => {
@@ -89,14 +89,14 @@ describe( 'MapDomain component', () => {
 		);
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( domainManagementList( 'baba' ) );
+		expect( pageSpy ).toHaveBeenCalledWith( domainManagementList( 'baba' ) );
 	} );
 
 	test( 'goes back to domain add page if non-VIP site', async () => {
 		render( <MapDomain { ...defaultProps } selectedSiteSlug="baba" /> );
 		const [ backBtn ] = screen.getAllByRole( 'button', { name: /back/i } );
 		await userEvent.click( backBtn );
-		expect( pageSpy ).toBeCalledWith( '/domains/add/baba' );
+		expect( pageSpy ).toHaveBeenCalledWith( '/domains/add/baba' );
 	} );
 
 	test( 'does not render a notice by default', () => {

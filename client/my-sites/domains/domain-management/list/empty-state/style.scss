@@ -1,0 +1,15 @@
+.domains-empty-state {
+	text-align: left;
+
+	p {
+		color: var(--studio-gray-100);
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		line-height: 1.625;
+		margin: 1.5rem auto;
+	}
+}
+
+.domains-empty-state-actions {
+	display: flex;
+	gap: 8px;
+}

@@ -12,6 +12,7 @@ export const transferStatus = {
 	CANCELLED: 'CANCELLED',
 	COMPLETED: 'COMPLETED',
 	PENDING_START: 'PENDING_START',
+	PENDING_ASYNC: 'PENDING_ASYNC',
 };
 
 export const registrar = {
@@ -28,6 +29,7 @@ export const domainAvailability = {
 	AVAILABILITY_CHECK_ERROR: 'availability_check_error',
 	CONFLICTING_CNAME_EXISTS: 'conflicting_cname_exists',
 	DISALLOWED: 'blacklisted_domain',
+	DOMAIN_AVAILABILITY_THROTTLED: 'domain_availability_throttle',
 	DOMAIN_SUGGESTIONS_THROTTLED: 'domain_suggestions_throttled',
 	DOTBLOG_SUBDOMAIN: 'dotblog_subdomain',
 	EMPTY_QUERY: 'empty_query',
@@ -42,8 +44,10 @@ export const domainAvailability = {
 	MAPPABLE: 'mappable',
 	MAPPED: 'mapped_domain',
 	MAPPED_OTHER_SITE_SAME_USER: 'mapped_to_other_site_same_user',
+	MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE: 'mapped_to_other_site_same_user_registrable',
 	MAPPED_SAME_SITE_NOT_TRANSFERRABLE: 'mapped_to_same_site_not_transferrable',
 	MAPPED_SAME_SITE_TRANSFERRABLE: 'mapped_to_same_site_transferrable',
+	MAPPED_SAME_SITE_REGISTRABLE: 'mapped_to_same_site_registrable',
 	NOT_AVAILABLE: 'not_available',
 	NOT_REGISTRABLE: 'available_but_not_registrable',
 	PURCHASES_DISABLED: 'domain_registration_unavailable',
@@ -80,6 +84,10 @@ export const dnsTemplates = {
 		PROVIDER: 'g-suite',
 		SERVICE: 'G-Suite',
 	},
+	ICLOUD_MAIL: {
+		PROVIDER: 'apple-icloud-mail',
+		SERVICE: 'icloud-mail',
+	},
 	MICROSOFT_OFFICE365: {
 		PROVIDER: 'microsoft-office365',
 		SERVICE: 'O365',
@@ -115,6 +123,7 @@ export const sslStatuses = {
 	SSL_DISABLED: 'disabled',
 	SSL_PENDING: 'pending',
 	SSL_ACTIVE: 'active',
+	SSL_NEWLY_REGISTERED: 'newly_registered',
 };
 
 export const domainInfoContext = {

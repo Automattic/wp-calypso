@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Notice from 'calypso/components/notice';
@@ -149,7 +149,7 @@ const VideosUi = ( {
 				</div>
 			</div>
 			<div
-				className={ classNames( 'videos-ui__body', {
+				className={ clsx( 'videos-ui__body', {
 					'is-loading': ! course,
 				} ) }
 			>

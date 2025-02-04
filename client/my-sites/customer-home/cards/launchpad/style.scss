@@ -1,0 +1,56 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.customer-home-launchpad {
+	padding: 24px;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	margin-bottom: 16px;
+
+	@include break-small {
+		border-radius: 3px;
+	}
+
+	.customer-home-launchpad__header {
+		display: flex;
+		align-items: center;
+
+		&.is-placeholder {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			background-color: var(--color-neutral-light);
+			color: transparent;
+			min-height: 52px;
+		}
+
+		.customer-home-launchpad__progress-bar-container {
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+		}
+
+		.customer-home-launchpad__title {
+			flex: 1;
+			font-size: $font-body-large;
+			font-weight: 500;
+			font-family: $font-sf-pro-display;
+		}
+
+		.customer-home-launchpad__dismiss-button {
+			button {
+				align-items: center;
+				display: flex;
+				padding: 0;
+				height: 24px;
+
+				div {
+					padding-right: 4px;
+				}
+
+				svg {
+					top: 2px;
+				}
+			}
+		}
+	}
+}

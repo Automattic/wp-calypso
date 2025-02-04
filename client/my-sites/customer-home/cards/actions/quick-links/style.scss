@@ -2,13 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .quick-links.foldable-card.card {
-	box-shadow: none;
 	@include breakpoint-deprecated( ">660px" ) {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-	}
-
-	&:not(.is-expanded) {
-		box-shadow: 0 0 0 1px var(--color-border-subtle);
+		border-radius: 3px;
 	}
 
 	.foldable-card__header {
@@ -33,6 +28,11 @@
 		border: 0;
 		padding-bottom: 0;
 		padding-top: 0;
+	}
+
+	// Fix for alignment issue in Safari.
+	.foldable-card__expand .gridicon {
+		width: auto;
 	}
 }
 
@@ -66,6 +66,15 @@
 		height: 24px;
 		fill: var(--color-neutral-60);
 		transition: all 0.1s;
+
+		&.dashicons {
+			color: var(--color-neutral-80);
+
+			&.dashicons-admin-appearance {
+				color: var(--color-neutral-60);
+				line-height: 24px;
+			}
+		}
 	}
 
 	.quick-links__action-box-text {
@@ -103,6 +112,10 @@
 
 		.quick-links__action-box-icon {
 			fill: var(--color-neutral-80);
+
+			&.dashicons {
+				color: var(--color-neutral-80);
+			}
 		}
 	}
 
@@ -118,4 +131,10 @@
 
 .quick-links__action-box-label {
 	font-size: $font-body-small;
+}
+
+.quick-links__boxes .jetpack-logo {
+	width: 16px;
+	height: 16px;
+	margin-left: 2px;
 }

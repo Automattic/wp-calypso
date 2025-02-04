@@ -1,24 +1,27 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { getLocaleSlug } from 'i18n-calypso';
 import { useCallback, ComponentType } from 'react';
-import { useLocale } from './locale-context';
+import { useLocale, getWpI18nLocaleSlug } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithGoBlog,
+	localesWithWpcomDeveloperSite,
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
+	localesWithLearn,
 	supportSiteLocales,
 	forumLocales,
 	magnificentNonEnLocales,
+	localesForPricePlans,
 	jetpackComLocales,
+	wpLoginLocales,
 	Locale,
 } from './locales';
 
 const INVALID_URL = `http://__domain__.invalid`;
 
 function getDefaultLocale(): Locale {
-	return getLocaleSlug?.() ?? 'en';
+	return getWpI18nLocaleSlug() ?? 'en';
 }
 
 const setLocalizedUrlHost =
@@ -115,14 +118,25 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
-	'wordpress.com/go/': prefixLocalizedUrlPath( localesWithGoBlog, /^\/go\/?$/ ),
+	'wordpress.com/go/': ( url: URL, localeSlug: Locale ): URL => {
+		// Rewrite non-home URLs (e.g. posts) only for Spanish, because that's
+		// the only language into which we're currently translating content.
+		const isHome = [ '/go/', '/go' ].includes( url.pathname );
+		if ( ! isHome && 'es' !== localeSlug ) {
+			return url;
+		}
+		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
+	},
+	'wordpress.com/pricing/': prefixLocalizedUrlPath( localesForPricePlans ),
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
-	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', jetpackComLocales ),
+	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
+	'jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
+	'cloud.jetpack.com': prefixLocalizedUrlPath( jetpackComLocales ),
 	'en.support.wordpress.com': setLocalizedWpComPath( '/support', supportSiteLocales ),
 	'en.blog.wordpress.com': setLocalizedWpComPath( '/blog', localesWithBlog, /^\/$/ ),
 	'apps.wordpress.com': prefixLocalizedUrlPath( magnificentNonEnLocales ),
+	'developer.wordpress.com': prefixLocalizedUrlPath( localesWithWpcomDeveloperSite ),
 	'en.forums.wordpress.com': setLocalizedWpComPath( '/forums', forumLocales ),
 	'automattic.com/privacy/': prefixLocalizedUrlPath( localesWithPrivacyPolicy ),
 	'automattic.com/cookies/': prefixLocalizedUrlPath( localesWithCookiePolicy ),
@@ -159,12 +173,39 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/start/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
+	'wordpress.com/learn/': ( url: URL, localeSlug: Locale ) => {
+		const webinars = url.pathname.includes( '/learn/webinars/' );
+		if ( webinars && 'es' === localeSlug ) {
+			url.pathname = url.pathname.replace( '/learn/webinars/', '/learn/es/webinars/' );
+			return url;
+		}
+		return suffixLocalizedUrlPath( localesWithLearn )( url, localeSlug );
+	},
+	'wordpress.com/plans/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		// if logged in, or url.pathname contains characters after `/plans/`, don't rewrite
+		return isLoggedIn || url.pathname !== '/plans/'
+			? url
+			: prefixLocalizedUrlPath( localesForPricePlans )( url, localeSlug );
+	},
+	'wordpress.com/setup/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
 };
+
+function hasTrailingSlash( urlString: string ) {
+	try {
+		const url = new URL( String( urlString ), INVALID_URL );
+		return url.pathname.endsWith( '/' );
+	} catch ( e ) {
+		return false;
+	}
+}
 
 export function localizeUrl(
 	fullUrl: string,
 	locale: Locale = getDefaultLocale(),
-	isLoggedIn = true
+	isLoggedIn = true,
+	preserveTrailingSlashVariation = false
 ): string {
 	let url;
 	try {
@@ -183,6 +224,10 @@ export function localizeUrl(
 
 	if ( ! url.pathname.endsWith( '.php' ) ) {
 		// Essentially a trailingslashit.
+		// We need to do this because the matching list is standardised to use
+		// trailing slashes everywhere.
+		// However, if the `preserveTrailingSlashVariation` option is enabled, we
+		// remove the trailing slash at the end again, when appropriate.
 		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
@@ -201,7 +246,21 @@ export function localizeUrl(
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
+			const mapped = urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
+
+			if ( ! preserveTrailingSlashVariation ) {
+				return mapped;
+			}
+
+			try {
+				const mappedUrl = new URL( mapped );
+				if ( ! hasTrailingSlash( fullUrl ) ) {
+					mappedUrl.pathname = mappedUrl.pathname.replace( /\/+$/, '' );
+				}
+				return mappedUrl.href;
+			} catch {
+				return mapped;
+			}
 		}
 	}
 
@@ -213,11 +272,16 @@ export function useLocalizeUrl() {
 	const providerLocale = useLocale();
 
 	return useCallback(
-		( fullUrl: string, locale?: Locale, isLoggedIn?: boolean ) => {
+		(
+			fullUrl: string,
+			locale?: Locale,
+			isLoggedIn?: boolean,
+			preserveTrailingSlashVariation?: boolean
+		) => {
 			if ( locale ) {
-				return localizeUrl( fullUrl, locale, isLoggedIn );
+				return localizeUrl( fullUrl, locale, isLoggedIn, preserveTrailingSlashVariation );
 			}
-			return localizeUrl( fullUrl, providerLocale, isLoggedIn );
+			return localizeUrl( fullUrl, providerLocale, isLoggedIn, preserveTrailingSlashVariation );
 		},
 		[ providerLocale ]
 	);

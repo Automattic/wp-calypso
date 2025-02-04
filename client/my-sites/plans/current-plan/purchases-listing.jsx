@@ -2,7 +2,6 @@ import {
 	isFreeJetpackPlan,
 	isFreePlan,
 	isJetpackProduct,
-	getJetpackProductDisplayName,
 	getJetpackProductTagline,
 	isJetpackBackup,
 	isJetpackScan,
@@ -30,12 +29,12 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import ProductExpiration from 'calypso/components/product-expiration';
 import {
 	isExpiring,
+	getDisplayName,
 	isPartnerPurchase,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
@@ -109,7 +108,7 @@ class PurchasesListing extends Component {
 		const { currentPlan, translate } = this.props;
 
 		if ( isJetpackProduct( purchase ) ) {
-			return getJetpackProductDisplayName( purchase );
+			return getDisplayName( purchase );
 		}
 
 		if ( currentPlan ) {
@@ -175,7 +174,7 @@ class PurchasesListing extends Component {
 	}
 
 	getActionButton( purchase ) {
-		const { selectedSiteSlug, translate, currentUserId, eligibleForProPlan } = this.props;
+		const { selectedSiteSlug, translate, currentUserId } = this.props;
 
 		// No action button if there's no site selected.
 		if ( ! selectedSiteSlug || ! purchase ) {
@@ -229,7 +228,7 @@ class PurchasesListing extends Component {
 						: '#'
 				}
 				disabled={ ! userIsPurchaseOwner }
-				compact={ ! eligibleForProPlan }
+				compact
 			>
 				{ label }
 				&nbsp;
@@ -335,15 +334,13 @@ class PurchasesListing extends Component {
 	}
 
 	renderPlan() {
-		const { currentPlan, isPlanExpiring, translate, eligibleForProPlan } = this.props;
+		const { currentPlan, isPlanExpiring, translate } = this.props;
 
 		return (
 			<Fragment>
-				{ ! eligibleForProPlan && (
-					<Card compact>
-						<strong>{ translate( 'My Plan' ) }</strong>
-					</Card>
-				) }
+				<Card compact>
+					<strong>{ translate( 'My Plan' ) }</strong>
+				</Card>
 				{ this.isLoading() ? (
 					<MyPlanCard isPlaceholder />
 				) : (
@@ -453,6 +450,5 @@ export default connect( ( state ) => {
 		selectedSiteSlug: getSelectedSiteSlug( state ),
 		isCloudEligible: isJetpackCloudEligible( state, selectedSiteId ),
 		currentUserId: getCurrentUserId( state ),
-		eligibleForProPlan: isEligibleForProPlan( state, selectedSiteId ),
 	};
 } )( localize( withLocalizedMoment( PurchasesListing ) ) );

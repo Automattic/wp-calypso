@@ -2,10 +2,10 @@ import { Gridicon, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import React, { useState, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
 import DatePicker from 'calypso/components/date-picker';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const DATE_PICKER_OPEN = recordTracksEvent( 'calypso_jetpack_backup_date_picker_open' );
@@ -15,6 +15,7 @@ const DateButton: React.FC< Props > = ( {
 	onDateSelected,
 	firstBackupDate,
 	disabledDates,
+	disabled = false,
 } ) => {
 	const dispatch = useDispatch();
 
@@ -25,7 +26,6 @@ const DateButton: React.FC< Props > = ( {
 
 	/**
 	 * A date has been picked from the calendar.
-	 *
 	 * @param date { Moment } - a moment date object that has been selected on the calendar
 	 */
 	const handleDatePicked = ( date: Moment ) => {
@@ -41,7 +41,7 @@ const DateButton: React.FC< Props > = ( {
 					return new Date( momentDate.year(), momentDate.month(), momentDate.date() );
 			  } )
 			: [];
-	}, [ disabledDates ] );
+	}, [ disabledDates, moment ] );
 
 	const renderPicker = () => {
 		if ( pickerVisible ) {
@@ -92,7 +92,11 @@ const DateButton: React.FC< Props > = ( {
 
 	return (
 		<div className="backup-date-picker__date-button-container">
-			<Button className="backup-date-picker__date-button-button" onClick={ handlePickerToggle }>
+			<Button
+				className="backup-date-picker__date-button-button"
+				onClick={ handlePickerToggle }
+				disabled={ disabled }
+			>
 				<Gridicon icon="calendar" />
 				{ translate( 'Select Date' ) }
 			</Button>
@@ -106,6 +110,7 @@ type Props = {
 	firstBackupDate: Moment | undefined;
 	onDateSelected: ( m: Moment ) => void;
 	disabledDates: Array< string >;
+	disabled?: boolean;
 };
 
 export default DateButton;

@@ -4,7 +4,6 @@ import 'calypso/state/ui/init';
 
 /**
  * Sets ui state to toggle the notifications panel
- *
  * @returns {Object} An action object
  */
 export const toggleNotificationsPanel = () => {

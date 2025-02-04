@@ -35,3 +35,9 @@ export function filterFollowsByQuery(
 		);
 	} );
 }
+
+export function filterFollowsByIsFollowed( follows: Array< Follow > ): Array< Follow > {
+	return follows.filter( ( follow ) => {
+		return follow.is_following;
+	} );
+}

@@ -1,9 +1,8 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, FormLabel } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import { localize, LocalizeProps } from 'i18n-calypso';
-import React, { ReactChild, useState } from 'react';
+import React, { useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { tip } from '../../icons';
@@ -14,11 +13,14 @@ import './site-options.scss';
 interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
-	siteTitleLabel: ReactChild;
-	siteTitleExplanation?: ReactChild;
-	taglineExplanation?: ReactChild;
+	defaultSearchTerms?: string;
+	siteTitleLabel: TranslateResult;
+	siteTitleExplanation?: TranslateResult;
+	taglineExplanation?: TranslateResult;
+	searchTermsExplanation?: TranslateResult;
 	isSiteTitleRequired?: boolean;
 	isTaglineRequired?: boolean;
+	acceptSearchTerms?: boolean;
 	onSubmit: ( siteOptionsFormValues: SiteOptionsFormValues ) => void;
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -26,17 +28,21 @@ interface Props {
 const SiteOptions: React.FC< Props > = ( {
 	defaultSiteTitle = '',
 	defaultTagline = '',
+	defaultSearchTerms = '',
 	siteTitleLabel,
 	siteTitleExplanation,
+	searchTermsExplanation,
 	taglineExplanation,
 	isSiteTitleRequired,
 	isTaglineRequired,
+	acceptSearchTerms,
 	onSubmit,
 	translate,
 } ) => {
 	const [ formValues, setFormValues ] = React.useState( {
 		siteTitle: defaultSiteTitle,
 		tagline: defaultTagline,
+		searchTerms: defaultSearchTerms,
 	} );
 
 	const [ siteTitleError, setSiteTitleError ] = useState< TranslateResult | null >( null );
@@ -104,6 +110,25 @@ const SiteOptions: React.FC< Props > = ( {
 					</FormSettingExplanation>
 				) }
 			</FormFieldset>
+			{ acceptSearchTerms && (
+				<FormFieldset className="site-options__form-fieldset">
+					<FormLabel htmlFor="searchTerms" optional>
+						{ translate( 'Search terms' ) }
+					</FormLabel>
+					<FormInput
+						name="searchTerms"
+						id="searchTerms"
+						value={ formValues.searchTerms }
+						onChange={ onChange }
+					/>
+					{ searchTermsExplanation && (
+						<FormSettingExplanation>
+							<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+							{ searchTermsExplanation }
+						</FormSettingExplanation>
+					) }
+				</FormFieldset>
+			) }
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>

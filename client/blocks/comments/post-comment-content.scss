@@ -1,5 +1,5 @@
-/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
-@import "calypso/assets/stylesheets/shared/_rendered-blocks.scss";
+/* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
+@import "calypso/assets/stylesheets/shared/_rendered-blocks";
 
 // Post comments line-clamping
 .comments__comment-content-wrapper {
@@ -39,5 +39,6 @@
 
 .comments__comment-content {
 	@extend %rendered-block-content;
+	font-family: $sans;
 	line-height: 1.56;
 }

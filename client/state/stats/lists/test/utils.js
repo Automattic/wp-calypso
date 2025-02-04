@@ -383,7 +383,7 @@ describe( 'utils', () => {
 					normalizers.statsFollowers( {
 						page: 1,
 						pages: 1,
-						total: 1,
+						total: 125,
 						total_email: 5,
 						total_wpcom: 120,
 						subscribers: [
@@ -400,6 +400,7 @@ describe( 'utils', () => {
 				).toEqual( {
 					total_email: 5,
 					total_wpcom: 120,
+					total: 125,
 					subscribers: [
 						{
 							label: 'wapuu@wordpress.org',
@@ -1347,6 +1348,11 @@ describe( 'utils', () => {
 													url: 'https://wordpress.com/support/',
 													views: 5,
 												},
+												{
+													name: 'wordpress.com/support/hello',
+													url: 'https://wordpress.com/support/hello',
+													views: 5,
+												},
 											],
 										},
 										{
@@ -1370,9 +1376,16 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'wordpress.com/support',
+								label: '/',
 								labelIcon: 'external',
 								link: 'https://wordpress.com/support/',
+								value: 5,
+							},
+							{
+								children: null,
+								label: '/hello',
+								labelIcon: 'external',
+								link: 'https://wordpress.com/support/hello',
 								value: 5,
 							},
 						],
@@ -1434,7 +1447,7 @@ describe( 'utils', () => {
 						children: [
 							{
 								children: null,
-								label: 'wordpress.com/support',
+								label: '/',
 								labelIcon: 'external',
 								link: 'https://wordpress.com/support/',
 								value: 50,
@@ -1495,6 +1508,11 @@ describe( 'utils', () => {
 										results: [
 											{ name: 'homepage', url: 'https://wordpress.com/support/', views: 200 },
 											{ name: 'start', url: 'https://wordpress.com/support/start/', views: 100 },
+											{
+												name: 'wordpress.com/support/hello',
+												url: 'https://wordpress.com/support/hello/',
+												views: 100,
+											},
 										],
 										total: 300,
 									},
@@ -1544,6 +1562,13 @@ describe( 'utils', () => {
 								label: 'start',
 								labelIcon: 'external',
 								link: 'https://wordpress.com/support/start/',
+								value: 100,
+							},
+							{
+								children: undefined,
+								label: '/hello',
+								labelIcon: 'external',
+								link: 'https://wordpress.com/support/hello/',
 								value: 100,
 							},
 						],

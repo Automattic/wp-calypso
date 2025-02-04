@@ -13,7 +13,8 @@ export const filterStateToApiQuery = ( filter, addAggregate = true ) => {
 		filter.notGroup && { not_group: filter.notGroup },
 		filter.name && { name: filter.name },
 		{ number: filter.number > 0 ? filter.number : 1000 },
-		filter.sortOrder && { sort_order: filter.sortOrder }
+		filter.sortOrder && { sort_order: filter.sortOrder },
+		filter.textSearch && { text_search: filter.textSearch }
 	);
 };
 
@@ -31,7 +32,8 @@ export const filterStateToQuery = ( filter ) =>
 		filter.group && { group: filter.group.join( ',' ) },
 		filter.notGroup && { not_group: filter.notGroup.join( ',' ) },
 		filter.name && { name: filter.name.join( ',' ) },
-		filter.page > 1 && { page: filter.page }
+		filter.page > 1 && { page: filter.page },
+		filter.textSearch && { text_search: filter.textSearch }
 	);
 
 export const queryToFilterState = ( query ) =>
@@ -48,5 +50,6 @@ export const queryToFilterState = ( query ) =>
 		query.group && { group: decodeURI( query.group ).split( ',' ) },
 		query.not_group && { notGroup: decodeURI( query.not_group ).split( ',' ) },
 		query.page && query.page > 0 && { page: query.page },
-		query.back_button && { backButton: true }
+		query.back_button && { backButton: true },
+		query.text_search && { textSearch: query.text_search }
 	);

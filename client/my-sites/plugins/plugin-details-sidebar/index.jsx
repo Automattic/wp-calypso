@@ -3,12 +3,12 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { formatNumberMetric } from 'calypso/lib/format-number-compact';
 import { PlanUSPS, USPS } from 'calypso/my-sites/plugins/plugin-details-CTA/usps';
 import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sidebar-usp';
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
@@ -53,10 +53,13 @@ const PluginDetailsSidebar = ( {
 
 	const supportLinks = [
 		{
-			href: 'https://wordpress.com/support/help-support-options/#live-chat-support',
+			href: localizeUrl( 'https://wordpress.com/support/help-support-options' ),
 			label: translate( 'How to get help!' ),
 		},
-		{ href: 'https://automattic.com/privacy/', label: translate( 'See privacy policy' ) },
+		{
+			href: localizeUrl( 'https://automattic.com/privacy/' ),
+			label: translate( 'See privacy policy' ),
+		},
 	];
 	documentation_url &&
 		supportLinks.unshift( {
@@ -157,7 +160,7 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Active installations' ) }
 					</div>
 					<div className="plugin-details-sidebar__active-installs-value value">
-						{ formatNumberMetric( active_installs, 0 ) }
+						{ numberFormat( active_installs, { numberFormatOptions: { notation: 'compact' } } ) }
 					</div>
 				</div>
 			) }

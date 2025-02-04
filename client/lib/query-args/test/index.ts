@@ -1,8 +1,8 @@
-import page from 'page';
+import page from '@automattic/calypso-router';
 import { setQueryArgs, updateQueryArgs, getQueryArgs } from '../index';
 
 jest.mock( 'react' );
-jest.mock( 'page' );
+jest.mock( '@automattic/calypso-router' );
 
 describe( '#setQueryArgs', () => {
 	global.window = { location: { href: '' } } as typeof global.window;
@@ -12,14 +12,14 @@ describe( '#setQueryArgs', () => {
 		const expectedResult = '/read/search';
 		setQueryArgs( {} );
 
-		expect( page ).toBeCalledWith( expectedResult );
+		expect( page ).toHaveBeenCalledWith( expectedResult );
 	} );
 
 	test( 'should navigate to original url if there is no search', () => {
 		global.window.location.href = 'https://wordpress.com/plugins';
 		setQueryArgs( {} );
 
-		expect( page ).toBeCalledWith( '/plugins' );
+		expect( page ).toHaveBeenCalledWith( '/plugins' );
 	} );
 
 	test( 'should replace current query with new one even when using custom query key', () => {
@@ -37,7 +37,7 @@ describe( '#setQueryArgs', () => {
 		global.window.location.href = 'https://wordpress.com';
 		setQueryArgs( {} );
 
-		expect( page ).toBeCalledWith( '/' );
+		expect( page ).toHaveBeenCalledWith( '/' );
 	} );
 
 	test( 'should replace page url on a query search', () => {

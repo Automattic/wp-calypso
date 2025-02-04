@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { APIError, APIPartner, CompanyDetailsPayload } from 'calypso/state/partner-portal/types';
 
@@ -11,6 +11,8 @@ function updateCompanyDetails( details: CompanyDetailsPayload ): Promise< APIPar
 			name: details.name,
 			contact_person: details.contactPerson,
 			company_website: details.companyWebsite,
+			company_type: details.companyType,
+			managed_sites: details.managedSites,
 			city: details.city,
 			line1: details.line1,
 			line2: details.line2,
@@ -24,8 +26,8 @@ function updateCompanyDetails( details: CompanyDetailsPayload ): Promise< APIPar
 export default function useUpdateCompanyDetailsMutation< TContext = unknown >(
 	options?: UseMutationOptions< APIPartner, APIError, CompanyDetailsPayload, TContext >
 ): UseMutationResult< APIPartner, APIError, CompanyDetailsPayload, TContext > {
-	return useMutation< APIPartner, APIError, CompanyDetailsPayload, TContext >(
-		updateCompanyDetails,
-		options
-	);
+	return useMutation< APIPartner, APIError, CompanyDetailsPayload, TContext >( {
+		...options,
+		mutationFn: updateCompanyDetails,
+	} );
 }

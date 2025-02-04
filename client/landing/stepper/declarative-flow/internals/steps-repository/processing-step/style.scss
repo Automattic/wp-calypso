@@ -1,8 +1,10 @@
-/* stylelint-disable-next-line scss/at-import-no-partial-leading-underscore */
+/* stylelint-disable-next-line scss/load-no-partial-leading-underscore */
 @import "calypso/assets/stylesheets/shared/_loading";
 @import "@automattic/onboarding/styles/mixins";
 
 .processing-step {
+	--wp-components-color-foreground: #3858E9;
+
 	padding: 1em;
 	max-width: 540px;
 	text-align: center;
@@ -17,6 +19,10 @@
 		vertical-align: middle;
 		margin: 0;
 	}
+
+	.processing-step__progress-bar {
+		margin: 46px auto 0 auto;
+	}
 }
 
 .processing-step__step-wrapper {
@@ -29,31 +35,8 @@
 }
 
 .import-focused .step-container__content,
-.site-setup.processing .step-container__content,
-.anchor-fm.processing .step-container__content {
+.site-setup.processing .step-container__content {
 	width: 100%;
-}
-
-.is-videopress-stepper.is-processing-step {
-	padding: 0;
-	color: #fff;
-
-	.processing-step__progress-bar {
-		background-color: #fff3;
-		border-radius: 4px;
-		&::before {
-			background-color: #ffe61c;
-		}
-	}
-
-	@include break-medium {
-		background-size: auto 50%, auto 50%;
-	}
-
-	@include break-large {
-		background-position-y: 50%, 100%;
-		background-position-x: 0, 100%;
-	}
 }
 
 .processing-step__subtitle {
@@ -80,4 +63,18 @@
 		max-width: 540px;
 		margin: 0 auto;
 	}
+}
+
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
+	}
+
 }

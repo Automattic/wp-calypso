@@ -1,5 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 
 import './email-upsell-navigation.scss';
@@ -14,7 +14,7 @@ const EmailUpsellNavigation = ( { backUrl, skipUrl }: Props ) => {
 
 	return (
 		<div
-			className={ classNames( 'email-upsell-navigation', {
+			className={ clsx( 'email-upsell-navigation', {
 				'is-hiding-skip': ! skipUrl,
 			} ) }
 		>

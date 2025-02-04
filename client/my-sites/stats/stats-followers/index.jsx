@@ -1,73 +1,57 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
-import classNames from 'classnames';
+import config, { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SectionHeader from 'calypso/components/section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 	hasSiteStatsQueryFailed,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { SUBSCRIBERS_SUPPORT_URL } from '../const';
 import ErrorPanel from '../stats-error';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
+import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
+
+import './style.scss';
+
+const MAX_FOLLOWERS_TO_SHOW = 10;
 
 class StatModuleFollowers extends Component {
 	state = {
 		activeFilter: 'wpcom-followers',
 	};
 
-	changeFilter = ( selection ) => {
-		const filter = selection.value;
-		let gaEvent;
-		if ( filter !== this.state.activeFilter ) {
-			switch ( filter ) {
-				case 'wpcom-followers':
-					gaEvent = 'Clicked By WordPress.com Followers Toggle';
-					break;
-				case 'email-followers':
-					gaEvent = 'Clicked Email Followers Toggle';
-					break;
-			}
-			if ( gaEvent ) {
-				this.props.recordGoogleEvent( 'Stats', gaEvent );
-			}
+	calculateOffset( pastValue ) {
+		const { translate } = this.props;
 
-			this.setState( {
-				activeFilter: filter,
-			} );
-		}
-	};
+		const now = new Date();
+		const value = new Date( pastValue );
+		const difference = now.getTime() - value.getTime();
 
-	filterSelect() {
-		const { emailData, wpcomData } = this.props;
-		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
-		const hasWpcomFollowers = !! get( wpcomData, 'subscribers', [] ).length;
-		if ( ! hasWpcomFollowers || ! hasEmailFollowers ) {
-			return null;
+		const seconds = Math.floor( difference / 1000 );
+		const minutes = Math.floor( seconds / 60 );
+		const hours = Math.floor( minutes / 60 );
+		const days = Math.floor( hours / 24 );
+
+		let result = '';
+
+		if ( days > 0 ) {
+			result = translate( '%d days', { args: days } );
+		} else if ( hours > 0 ) {
+			result = translate( '%d hours', { args: hours } );
+		} else if ( minutes > 0 ) {
+			result = translate( '%d minutes', { args: minutes } );
 		}
 
-		const options = [
-			{
-				value: 'wpcom-followers',
-				label: this.props.translate( 'WordPress.com subscribers' ),
-			},
-			{
-				value: 'email-followers',
-				label: this.props.translate( 'Email subscribers' ),
-			},
-		];
-
-		return <StatsModuleSelectDropdown options={ options } onSelect={ this.changeFilter } />;
+		return result;
 	}
 
 	render() {
@@ -81,112 +65,91 @@ class StatModuleFollowers extends Component {
 			hasEmailQueryFailed,
 			hasWpcomQueryFailed,
 			translate,
-			numberFormat,
 			emailQuery,
 			wpcomQuery,
-			isOdysseyStats,
+			isAtomic,
+			isJetpack,
+			className,
+			isAdminInterface,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
 		const hasWpcomFollowers = !! get( wpcomData, 'subscribers', [] ).length;
 		const noData = ! hasWpcomFollowers && ! hasEmailFollowers;
-		const activeFilter = ! hasWpcomFollowers ? 'email-followers' : this.state.activeFilter;
-		const activeFilterClass = 'tab-' + activeFilter;
 		const hasError = hasEmailQueryFailed || hasWpcomQueryFailed;
-		const classes = [
-			'stats-module',
-			'is-followers',
-			activeFilterClass,
-			{
-				'is-loading': isLoading,
-				'has-no-data': noData,
-				'is-showing-error': hasError || noData,
-			},
-		];
 
 		const summaryPageSlug = siteSlug || '';
-		let summaryPageLink =
-			'email-followers' === activeFilter
-				? '/people/email-followers/' + summaryPageSlug
-				: '/people/followers/' + summaryPageSlug;
+		// email-followers is no longer available, so fallback to the new subscribers URL.
+		// Old, non-functional path: '/people/email-followers/' + summaryPageSlug.
+		// If the site is Atomic, Simple Classic or Jetpack self-hosted, it links to Jetpack Cloud.
+		// jetpack/manage-simple-sites is the feature flag for allowing Simple sites in Jetpack Cloud.
+		const useJetpackCloudLinks =
+			isAtomic || isJetpack || ( isEnabled( 'jetpack/manage-simple-sites' ) && isAdminInterface );
+		const subscriberManagementUrl = useJetpackCloudLinks
+			? `https://cloud.jetpack.com/subscribers/${ summaryPageSlug }`
+			: `https://wordpress.com/subscribers/${ summaryPageSlug }`;
 
-		// Limit scope for Odyssey stats, as the Followers page is not yet available.
-		summaryPageLink = ! isOdysseyStats ? summaryPageLink : null;
+		// Combine data sets, sort by recency, and limit to 10.
+		const data = [ ...( wpcomData?.subscribers ?? [] ), ...( emailData?.subscribers ?? [] ) ]
+			.sort( ( a, b ) => {
+				// If value is undefined, send zero to ensure they sort to the bottom.
+				// Otherwise they stick to the top of the list which is not helpful.
+				return new Date( b.value?.value || 0 ) - new Date( a.value?.value || 0 );
+			} )
+			.slice( 0, MAX_FOLLOWERS_TO_SHOW );
 
 		return (
-			<div className="list-followers">
+			<>
 				{ siteId && (
 					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ wpcomQuery } />
 				) }
 				{ siteId && (
 					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
 				) }
-				<SectionHeader label={ translate( 'Subscribers' ) } href={ summaryPageLink } />
-				<Card className={ classNames( ...classes ) }>
-					<div className="followers">
-						<div className="module-content">
-							{ noData && ! hasError && ! isLoading && (
-								<ErrorPanel
-									className="is-empty-message"
-									message={ translate( 'No subscribers' ) }
-								/>
-							) }
-
-							{ this.filterSelect() }
-
-							<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
-								<div className="module-content-text module-content-text-stat">
-									{ wpcomData && !! wpcomData.total_wpcom && (
-										<p>
-											{ translate( 'Total WordPress.com subscribers' ) }:{ ' ' }
-											{ numberFormat( wpcomData.total_wpcom ) }
-										</p>
-									) }
-								</div>
-								<StatsListLegend
-									value={ translate( 'Since' ) }
-									label={ translate( 'Subscriber' ) }
-								/>
-								{ hasWpcomFollowers && (
-									<StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } />
-								) }
-								{ hasWpcomQueryFailed && <ErrorPanel className="is-error" /> }
-							</div>
-
-							<div className="tab-content email-followers stats-async-metabox-wrapper">
-								<div className="module-content-text module-content-text-stat">
-									{ emailData && !! emailData.total_email && (
-										<p>
-											{ translate( 'Total Email Subscribers' ) }:{ ' ' }
-											{ numberFormat( emailData.total_email ) }
-										</p>
-									) }
-								</div>
-
-								<StatsListLegend
-									value={ translate( 'Since' ) }
-									label={ translate( 'Subscriber' ) }
-								/>
-								{ hasEmailFollowers && (
-									<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
-								) }
-								{ hasEmailQueryFailed && <ErrorPanel className="network-error" /> }
-							</div>
-
-							<StatsModulePlaceholder isLoading={ isLoading } />
-						</div>
-						{ ( ( wpcomData && wpcomData.subscribers.length !== wpcomData.total_wpcom ) ||
-							( emailData && emailData.subscribers.length !== emailData.total_email ) ) && (
-							<div key="view-all" className="module-expand">
-								<a href={ summaryPageLink }>
-									{ translate( 'View all', { context: 'Stats: Button label to expand a panel' } ) }
-									<span className="right" />
-								</a>
-							</div>
-						) }
-					</div>
-				</Card>
-			</div>
+				<StatsListCard
+					moduleType="followers"
+					data={ data.map( ( dataPoint ) => ( {
+						...dataPoint,
+						value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
+					} ) ) }
+					usePlainCard
+					hasNoBackground
+					title={ translate( 'Subscribers' ) }
+					emptyMessage={ translate(
+						'Once you get a few, {{link}}your subscribers{{/link}} will appear here.',
+						{
+							comment: '{{link}} links to support documentation.',
+							components: {
+								link: (
+									<a
+										target="_blank"
+										rel="noreferrer"
+										href={ localizeUrl( `${ SUBSCRIBERS_SUPPORT_URL }#subscriber-stats` ) }
+									/>
+								),
+							},
+							context: 'Stats: Info box label when the Subscribers module is empty',
+						}
+					) }
+					mainItemLabel={ translate( 'Subscriber' ) }
+					metricLabel={ translate( 'Since' ) }
+					splitHeader
+					showMore={ {
+						url: subscriberManagementUrl,
+						label: this.props.translate( 'Manage subscribers' ),
+					} }
+					error={
+						noData &&
+						! hasError &&
+						! isLoading && (
+							<ErrorPanel className="is-empty-message" message={ translate( 'No subscribers' ) } />
+						)
+					}
+					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					className={ clsx( 'stats__modernised-followers', className ) }
+					showLeftIcon
+				/>
+			</>
 		);
 	}
 }
@@ -220,6 +183,9 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
+			isAtomic: isAtomicSite( state, siteId ),
+			isJetpack: isJetpackSite( state, siteId ),
+			isAdminInterface: isAdminInterfaceWPAdmin( state, siteId ),
 		};
 	},
 	{ recordGoogleEvent }

@@ -101,7 +101,7 @@
 	}
 
 	.banner__icon-no-circle {
-		display: flex;
+		display: none;
 		padding: 3px 4px 4px 3px;
 		margin-right: 16px;
 		align-items: center;
@@ -115,6 +115,9 @@
 			display: none;
 		}
 		.banner__icon-circle {
+			display: flex;
+		}
+		.banner__icon-no-circle {
 			display: flex;
 		}
 	}
@@ -264,8 +267,7 @@
 .banner.is-compact .dismissible-card__close-button {
 	width: 16px;
 	height: 16px;
-	top: 50%;
-	margin-top: -8px;
+	margin-top: -10px;
 }
 
 .is-horizontal .dismissible-card__close-button,

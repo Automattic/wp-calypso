@@ -6,13 +6,13 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for the general support forum for a free theme.
  * or the WordPress.org theme forum for a WordPress.org theme.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @returns {?string}         Theme forum URL
  */
 export function getThemeForumUrl( state, themeId ) {
 	if ( isWpcomTheme( state, themeId ) ) {
+		// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 		return '//wordpress.com/forums/';
 	}
 	if ( isWporgTheme( state, themeId ) ) {

@@ -1,21 +1,24 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { JetpackConnectionHealthBanner } from 'calypso/components/jetpack/connection-health';
 import Main from 'calypso/components/main';
-import ScreenOptionsTab from 'calypso/components/screen-options-tab';
+import NavigationHeader from 'calypso/components/navigation-header';
 import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useSelector } from 'calypso/state';
+import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
+import { useIsJetpackConnectionProblem } from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-problem.js';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
 import TeamInvites from '../team-invites';
 import TeamMembers from '../team-members';
 import type { FollowersQuery } from '../subscribers/types';
-import type { UsersQuery } from '../team-members/types';
+import type { UsersQuery } from '@automattic/data-stores';
 
 interface Props {
 	filter: string;
@@ -24,7 +27,12 @@ interface Props {
 function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
-	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const site = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, site?.ID ) );
+	const isPossibleJetpackConnectionProblem = useIsJetpackConnectionProblem( site?.ID as number );
+	const pendingInvites = useSelector( ( state ) =>
+		getPendingInvitesForSite( state, site?.ID as number )
+	);
 
 	// fetching data config
 	const followersFetchOptions = { search };
@@ -46,13 +54,15 @@ function SubscribersTeam( props: Props ) {
 
 	return (
 		<Main>
-			<ScreenOptionsTab wpAdminPath="users.php" />
-			<FormattedHeader
-				brandFont
-				className="people__page-heading"
-				headerText={ translate( 'Users' ) }
-				subHeaderText={ translate(
-					'Invite subscribers and team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}.',
+			{ isJetpack && isPossibleJetpackConnectionProblem && site?.ID && (
+				<JetpackConnectionHealthBanner siteId={ site.ID } />
+			) }
+			<NavigationHeader
+				screenOptionsTab="users.php"
+				navigationItems={ [] }
+				title={ translate( 'Users' ) }
+				subtitle={ translate(
+					'Invite team members to your site and manage their access settings. {{learnMore}}Learn more{{/learnMore}}',
 					{
 						components: {
 							learnMore: (
@@ -64,8 +74,6 @@ function SubscribersTeam( props: Props ) {
 						},
 					}
 				) }
-				align="left"
-				hasScreenOptions
 			/>
 			<div>
 				<SectionNav>
@@ -102,8 +110,12 @@ function SubscribersTeam( props: Props ) {
 										title="People > Team Members / Invites"
 									/>
 
-									<TeamMembers search={ search } usersQuery={ usersQuery } />
-									<TeamInvites />
+									<TeamInvites singleInviteView />
+									<TeamMembers
+										search={ search }
+										usersQuery={ usersQuery }
+										showAddTeamMembersBtn={ ! pendingInvites?.length }
+									/>
 								</>
 							);
 					}

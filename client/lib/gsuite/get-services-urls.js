@@ -1,6 +1,5 @@
 /**
  * Generates an url pointing to the Google Account Chooser page for the specified service.
- *
  * @param {string} emailOrDomain - email or domain name
  * @param {string} service - identifier of the service
  * @param {string} url - url of the service
@@ -28,7 +27,6 @@ function getAccountChooserUrl( emailOrDomain, service, url, template ) {
 
 /**
  * Generates an url pointing to Gmail.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -38,7 +36,6 @@ export function getGmailUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Admin.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -48,7 +45,6 @@ export function getGoogleAdminUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Admin and its Reseller ToS page for the specified user.
- *
  * @param {string} domainName - domain name
  * @returns {string} - the corresponding url
  */
@@ -62,7 +58,6 @@ export function getGoogleAdminWithTosUrl( domainName ) {
 
 /**
  * Generates an url pointing to Google Calendar.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -72,7 +67,6 @@ export function getGoogleCalendarUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Docs.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -82,7 +76,6 @@ export function getGoogleDocsUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Drive.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -92,7 +85,6 @@ export function getGoogleDriveUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Sheet.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */
@@ -107,7 +99,6 @@ export function getGoogleSheetsUrl( emailOrDomain ) {
 
 /**
  * Generates an url pointing to Google Slides.
- *
  * @param {string} emailOrDomain - email or domain name
  * @returns {string} - the corresponding url
  */

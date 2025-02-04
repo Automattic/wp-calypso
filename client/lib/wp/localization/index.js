@@ -4,7 +4,6 @@ import { parse, stringify } from 'qs';
 /**
  * Given a WPCOM parameter set, modifies the query such that a non-default
  * locale is added to the query parameter.
- *
  * @param  {Object} params Original parameters
  * @returns {Object}        Revised parameters, if non-default locale
  */
@@ -34,7 +33,6 @@ export function addLocaleQueryParam( params ) {
  * Modifies a WPCOM instance, returning an updated instance with included
  * localization helpers. Specifically, this adds a locale query parameter
  * by default.
- *
  * @param {Object} wpcom Original WPCOM instance
  * @returns {Object} Modified WPCOM instance with localization helpers
  */

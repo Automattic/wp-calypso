@@ -7,7 +7,6 @@ import 'calypso/state/themes/init';
  * Install of any theme hosted as a zip on wpcom must
  * be suffixed with -wpcom. Themes on AT sites are not
  * installed via downloaded zip.
- *
  * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @param {string} themeId Theme ID

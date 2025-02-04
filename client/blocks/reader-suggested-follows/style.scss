@@ -1,0 +1,147 @@
+.reader-recommended-follows-dialog {
+	border-radius: 6px; /* stylelint-disable scales/radii */
+
+	.dialog__action-buttons-close {
+		padding: 28px 28px 5px 5px;
+	}
+	.dialog__content {
+		padding: 24px 32px 8px;
+	}
+}
+
+.reader-recommended-follows-dialog__content {
+	width: 534px;
+
+	.reader-recommended-follows-dialog__header {
+		margin-bottom: 30px;
+
+		h2 {
+			color: var(--color-neutral-70);
+			font-size: $font-title-large;
+			font-weight: 600;
+			margin-bottom: 9px;
+		}
+	}
+
+	.reader-recommended-follows-dialog__description {
+		color: var(--color-neutral-50);
+		font-size: $font-body;
+		font-weight: 400;
+	}
+
+	.reader-recommended-follows-dialog__follow-list {
+		ul {
+			margin: 0;
+			width: 100%;
+			list-style: none;
+		}
+
+		.reader-suggested-follow-item {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		.reader-suggested-follow-item_link {
+			align-items: flex-start;
+			display: flex;
+			flex-wrap: nowrap;
+			gap: 11px;
+			justify-content: flex-start;
+			margin-bottom: 24px;
+
+			.count {
+				position: relative;
+				top: 2px;
+			}
+
+			img {
+				border-radius: 100%;
+			}
+		}
+
+		.reader-suggested-follow-item_siteicon {
+			height: 48px;
+			width: 48px;
+			min-width: 48px;
+		}
+
+		.reader-suggested-follow-item_sitename {
+			color: var(--color-neutral-100);
+			font-weight: 600;
+			font-size: $font-body;
+			display: flex;
+			flex-direction: column;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
+		}
+
+		.reader-suggested-follow-item_description {
+			color: var(--color-text-subtle);
+			font-weight: 400;
+			font-size: $font-body-small;
+			line-height: 18px;
+			overflow: hidden;
+			width: auto;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			display: -webkit-box;
+		}
+
+		.reader-suggested-follow-item_nameurl {
+			margin-bottom: 3px;
+		}
+		.reader-suggested-follow-item_nameurl::after {
+			content: "";
+			background-image: url("data:image/svg+xml,%3Csvg fill='none' height='20' viewBox='0 0 20 20' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='%23101517' stroke-linecap='square' stroke-width='1.5'%3E%3Cpath d='m5.8335 14.1666 7.3333-7.33335' stroke-linejoin='round'/%3E%3Cpath d='m6.8335 5.83325h7.3333v7.33335'/%3E%3C/g%3E%3C/svg%3E"); /* stylelint-disable function-url-quotes */
+			background-repeat: no-repeat;
+			background-size: 20px 20px;
+			display: inline-block;
+			height: 20px;
+			margin-left: 3px;
+			position: relative;
+			top: 5px;
+			width: 20px;
+		}
+	}
+
+	.reader-recommended-follows-dialog__follow-item {
+		margin: 20px 0;
+		border-bottom: 1px solid var(--color-neutral-5);
+
+		.reader-related-card__meta {
+			display: flex;
+			gap: 20px;
+			flex-direction: row;
+			overflow: hidden;
+			margin-bottom: 20px;
+		}
+
+		//last child has no border
+		&:last-child {
+			border-bottom: none;
+			margin-bottom: 0;
+
+			.reader-related-card__meta {
+				margin-bottom: 0;
+			}
+		}
+
+		&.is-placeholder {
+			@include placeholder();
+			margin: 20px 0;
+		}
+	}
+}
+@media only screen and (max-width: 600px) {
+	.reader-recommended-follows-dialog__content {
+		width: 100%;
+	}
+}
+
+.dialog__backdrop,
+.dialog__backdrop.card {
+	background-color: rgba(var(--color-neutral-70-rgb), 0.8) !important;
+}

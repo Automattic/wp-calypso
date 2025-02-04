@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
-import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteLaunchNagProps {
 	site: SiteExcerptData;
@@ -25,6 +25,7 @@ const SiteLaunchDonutContainer = styled.div( {
 	position: 'relative',
 	flexShrink: 0,
 	height: '25px',
+	zIndex: 0,
 } );
 
 const SiteLaunchNagLink = styled.a( {
@@ -33,11 +34,9 @@ const SiteLaunchNagLink = styled.a( {
 	gap: '25px',
 	marginLeft: '-5px',
 	fontSize: '12px',
-	lineHeight: '20px',
+	lineHeight: '16px',
 	whiteSpace: 'nowrap',
-	'&:hover span': {
-		textDecoration: 'underline',
-	},
+	color: 'var(--color-link) !important',
 } );
 
 const SiteLaunchNagText = styled.span( {
@@ -85,7 +84,9 @@ const recordNagView = () => {
 
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
-	const ref = useInView< HTMLAnchorElement >( recordNagView );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && recordNagView(),
+	} );
 
 	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
 	// That's because sites that have been previously launched before going back to
@@ -95,8 +96,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	}
 
 	const validSiteIntent =
-		site.options.launchpad_screen === 'full' &&
-		site.options.site_intent &&
+		site.options?.launchpad_screen === 'full' &&
+		site.options?.site_intent &&
 		[ 'link-in-bio' ].includes( site.options.site_intent )
 			? site.options.site_intent
 			: false;
@@ -104,7 +105,8 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const link = validSiteIntent
 		? getLaunchpadUrl( site.slug, validSiteIntent )
 		: getDashboardUrl( site.slug );
-	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Launch checklist' );
+
+	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Checklist' );
 
 	return (
 		<SiteLaunchNagLink

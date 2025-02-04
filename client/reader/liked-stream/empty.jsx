@@ -2,9 +2,9 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
-import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class TagEmptyContent extends Component {
 	shouldComponentUpdate() {
@@ -34,8 +34,7 @@ class TagEmptyContent extends Component {
 				title={ this.props.translate( 'No likes yet' ) }
 				line={ this.props.translate( 'Posts that you like will appear here.' ) }
 				action={ action }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -44,4 +43,4 @@ class TagEmptyContent extends Component {
 
 export default connect( null, {
 	recordReaderTracksEvent,
-} )( withPerformanceTrackerStop( localize( TagEmptyContent ) ) );
+} )( withReaderPerformanceTrackerStop( localize( TagEmptyContent ) ) );

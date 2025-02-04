@@ -1,0 +1,42 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.byline-preview {
+	display: inline-flex;
+	align-items: center;
+	flex-flow: row;
+	margin-bottom: 24px;
+	padding: 16px;
+	background-color: var(--studio-gray-0);
+}
+
+.byline-preview__label {
+	height: 24px;
+	line-height: 24px;
+	margin-right: 8px;
+}
+
+
+.byline-preview__gravatar {
+	border-radius: 50%;
+	width: 24px;
+	height: 24px;
+	margin: 0 8px 0 0;
+}
+
+.byline-settings__gravatar-preview {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+	margin-top: -12px;
+}
+
+.byline-settings__gravatar {
+	margin-right: 16px;
+}
+
+@media screen and (min-width: $break-small) {
+	.byline-settings__show-date,
+	.byline-settings__gravatar-preview {
+		margin-left: 60px;
+	}
+}

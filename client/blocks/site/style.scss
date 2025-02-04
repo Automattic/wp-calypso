@@ -43,13 +43,6 @@
 				display: none;
 			}
 		}
-
-		.notouch .sites-popover &:hover {
-			.site__title,
-			.site__domain {
-				color: transparent;
-			}
-		}
 	}
 
 	&.is-compact {
@@ -78,6 +71,25 @@
 
 		.site__home .gridicon {
 			margin-top: 0;
+		}
+	}
+
+	&.inline-badges .site__domain-and-badges {
+		display: flex;
+		align-items: flex-start;
+
+		.site__badge {
+			margin: -2px 0 0 3px;
+			padding: 0;
+			background: inherit;
+			color: var(--studio-blue-40);
+			text-wrap: nowrap;
+
+			&::before {
+				content: "•";
+				color: var(--studio-white);
+				padding-right: 3px;
+			}
 		}
 	}
 }
@@ -122,6 +134,7 @@
 	width: 0; // Firefox needs explicit width (even 0)
 	flex: 1 0 auto;
 	text-align: initial;
+	margin-top: -2px;
 }
 
 .site__title {
@@ -138,16 +151,32 @@
 	max-width: 95%;
 	font-size: $font-body-extra-small;
 	line-height: 1.4;
-	margin-top: 2px;
+	margin-top: -1px;
+}
+
+.site__title-with-chevron-icon {
+	display: flex;
+	align-items: center;
+
+	.site__title {
+		position: relative;
+	}
+
+	.site__title-chevron-icon {
+		color: var(--color-text);
+		margin-inline-start: 12px;
+		display: inline-flex;
+	}
 }
 
 .site__title,
 .site__domain {
 	overflow: hidden;
 	white-space: nowrap;
+	text-overflow: ellipsis;
 
 	&::after {
-		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		@include long-content-fade();
 	}
 }
 

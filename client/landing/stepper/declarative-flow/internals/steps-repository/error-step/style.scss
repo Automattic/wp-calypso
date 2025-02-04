@@ -39,4 +39,7 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	&.components-button.is-link:active:not(:disabled) {
 		color: var(--studio-gray-60);
 	}
+	&.error-step__contact-suport {
+		float: right;
+	}
 }

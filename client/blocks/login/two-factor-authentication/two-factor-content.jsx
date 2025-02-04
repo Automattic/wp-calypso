@@ -1,16 +1,18 @@
+import { localize } from 'i18n-calypso';
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
 import SecurityKeyForm from './security-key-form';
 import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
-export default function TwoFactorContent( {
+function TwoFactorContent( {
 	handleValid2FACode,
 	isBrowserSupported,
 	switchTwoFactorAuthType,
 	twoFactorAuthType,
 	twoFactorNotificationSent,
 	rebootAfterLogin,
-	isWoo,
+	isGravPoweredClient,
+	translate,
 } ) {
 	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
 		return (
@@ -18,7 +20,6 @@ export default function TwoFactorContent( {
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
-					isWoo={ isWoo }
 				/>
 			</div>
 		);
@@ -30,6 +31,15 @@ export default function TwoFactorContent( {
 	}
 
 	if ( [ 'authenticator', 'sms', 'backup' ].includes( twoFactorAuthType ) ) {
+		let verificationCodeInputPlaceholder = '';
+
+		if ( isGravPoweredClient ) {
+			verificationCodeInputPlaceholder =
+				twoFactorAuthType === 'backup'
+					? translate( 'Enter your backup code' )
+					: translate( 'Enter your verification code' );
+		}
+
 		return (
 			<div>
 				{ poller }
@@ -38,6 +48,7 @@ export default function TwoFactorContent( {
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+					verificationCodeInputPlaceholder={ verificationCodeInputPlaceholder }
 				/>
 			</div>
 		);
@@ -54,3 +65,5 @@ export default function TwoFactorContent( {
 
 	return null;
 }
+
+export default localize( TwoFactorContent );

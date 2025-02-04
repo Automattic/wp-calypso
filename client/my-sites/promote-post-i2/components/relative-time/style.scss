@@ -1,0 +1,56 @@
+.relative-time-tooltip__container {
+	align-items: center;
+	display: inline-flex;
+
+	button.relative-time-tooltip {
+		margin-left: 4px;
+		margin-top: -1px;
+
+		&,
+		svg.gridicons-info-outline {
+			fill: var(--studio-gray-40);
+			height: 16px;
+			width: 16px;
+		}
+	}
+
+	&__short-date {
+		font-size: 0.875rem;
+		font-weight: 400;
+		line-height: 20px;
+		height: 20px;
+	}
+}
+
+.popover.info-popover__tooltip.relative-time-tooltip {
+	.gridicons-info-outline {
+		fill: #a2aab2;
+	}
+
+	.popover__arrow {
+		display: none;
+	}
+
+	.popover__inner {
+		border: 1px solid #cdcdcc;
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+		padding: 8px 12px;
+
+		.relative-time-tooltip {
+			&__title {
+				color: var(--studio-gray-30);
+				font-size: 0.75rem;
+				font-weight: 500;
+				line-height: 1.66;
+			}
+
+			&__date {
+				color: var(--studio-gray-100);
+				font-size: 0.875rem;
+				font-weight: 400;
+				line-height: 1.42;
+			}
+		}
+	}
+}

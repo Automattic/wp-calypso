@@ -6,6 +6,9 @@
 
 ## Server Request Profiling
 
+> [!NOTE]
+> The profiler is temporarily disabled due to non-compatibility with the current Node version.
+
 We've included [`v8-profiler-next`](https://www.npmjs.com/package/v8-profiler-next) which allows you to generate CPU profiles (including flamegraphs) for requests to the Calypso NodeJS server. This is helpful for finding functions which impact performance the most on a given route.
 
 To use the profiler:

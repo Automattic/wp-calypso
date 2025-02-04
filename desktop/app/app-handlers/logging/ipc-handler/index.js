@@ -11,7 +11,6 @@ module.exports = {
 	 * Gets the logging object for the provided `namespace` (and creates a logger
 	 * if one doesn't exist). Logger references are tracked in the `loggers`
 	 * object and keyed by `namespace`.
-	 *
 	 * @param {string} namespace Namespace of the logger to be used or initialized.
 	 * @param {Object} options Logger configuration.
 	 * @returns {Object} Logger instance.

@@ -20,7 +20,9 @@ export const getAutomatedTransferEligibility = (
 export const getEligibilityHolds = createRegistrySelector(
 	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityError[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility(
+				siteId
+			) as TransferEligibility | null;
 
 			if ( ! transferEligibility ) {
 				return null;
@@ -41,7 +43,9 @@ export const getEligibilityHolds = createRegistrySelector(
 export const getEligibilityWarnings = createRegistrySelector(
 	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility(
+				siteId
+			) as TransferEligibility | null;
 
 			if ( ! transferEligibility ) {
 				return null;
@@ -68,8 +72,6 @@ export const getEligibilityWarnings = createRegistrySelector(
 export const getNonSubdomainWarnings = createRegistrySelector(
 	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 
 			if ( ! eligibilityWarnings ) {
@@ -85,8 +87,6 @@ export const getNonSubdomainWarnings = createRegistrySelector(
 export const getWpcomSubdomainWarning = createRegistrySelector(
 	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning | null => {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore Until createRegistrySelector is typed correctly
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 			// @ts-ignore Until createRegistrySelector is typed correctly

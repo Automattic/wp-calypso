@@ -4,6 +4,11 @@ import { useI18n } from '@wordpress/react-i18n';
 
 const LoadingContentWrapper = styled.div`
 	display: flex;
+	padding: 25px 24px 0;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 25px 0 0;
+	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
@@ -18,8 +23,6 @@ const LoadingContentInnerWrapper = styled.div`
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 556px;
 		margin: 0 auto;
 	}
 
@@ -28,24 +31,8 @@ const LoadingContentInnerWrapper = styled.div`
 	}
 `;
 
-const LoadingSidebar = styled.div`
-	display: none;
-	width: 100%;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
-		display: block;
-		padding: 24px;
-		box-sizing: border-box;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 328px;
-		background: ${ ( props ) => props.theme.colors.surface };
-		margin-left: 24px;
-	}
-`;
-
 const LoadingCard = styled.div`
-	padding: 24px;
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+	padding: 24px 0;
 
 	:first-of-type {
 		border-top: 0;
@@ -66,28 +53,34 @@ const pulse = keyframes`
   }
 `;
 
-const LoadingTitle = styled.h1`
+interface LoadingContainerProps {
+	width?: string;
+	height?: string;
+}
+
+const LoadingTitle = styled.h1< LoadingContainerProps >`
 	font-size: 14px;
 	content: '';
 	font-weight: ${ ( props ) => props.theme.weights.normal };
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	width: 40%;
-	margin: 3px 0 0 35px;
+	width: ${ ( props ) => props.width ?? '40%' };
+	margin: 3px 0 0 40px;
 	padding: 0;
 	position: relative;
 	animation: ${ pulse } 2s ease-in-out infinite;
 	height: 20px;
+	width: 125px;
 
 	.rtl & {
-		margin: 3px 35px 0 0;
+		margin: 3px 40px 0 0;
 	}
 
 	::before {
 		content: '';
 		display: block;
 		position: absolute;
-		left: -35px;
+		left: -40px;
 		top: -3px;
 		width: 27px;
 		height: 27px;
@@ -95,51 +88,31 @@ const LoadingTitle = styled.h1`
 		border-radius: 100%;
 
 		.rtl & {
-			right: -35px;
+			right: -40px;
 			left: auto;
 		}
 	}
 `;
-const LoadingCopy = styled.p`
+
+const LoadingRow = styled.div`
+	display: flex;
+	justify-content: space-between;
+`;
+
+const LoadingCopy = styled.p< LoadingContainerProps >`
 	font-size: 14px;
-	height: 16px;
+	height: ${ ( props ) => props.height ?? '16px' };
 	content: '';
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 35px;
+	margin: 8px 0 0 40px;
 	padding: 0;
 	animation: ${ pulse } 2s ease-in-out infinite;
+	width: ${ ( props ) => props.width ?? 'inherit' };
+	box-sizing: border-box;
 
 	.rtl & {
-		margin: 8px 35px 0 0;
-	}
-`;
-
-const SideBarLoadingCopy = styled.p`
-	font-size: 14px;
-	height: 16px;
-	content: '';
-	background: ${ ( props ) => props.theme.colors.borderColorLight };
-	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 0;
-	padding: 0;
-	animation: ${ pulse } 2s ease-in-out infinite;
-`;
-
-const LoadingFooter = styled.div`
-	background: ${ ( props ) => props.theme.colors.background };
-	content: '';
-	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 24px;
-
-	::before {
-		content: '';
-		display: block;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		border-radius: 3px;
-		font-size: 14px;
-		width: 100%;
-		height: 40px;
+		margin: 8px 40px 0 0;
 	}
 `;
 
@@ -151,28 +124,33 @@ export default function LoadingContent() {
 			<LoadingContentInnerWrapper>
 				<LoadingCard>
 					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
-					<LoadingCopy />
-					<LoadingCopy />
+					<LoadingCopy width="225px" />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingRow>
+						<LoadingCopy width="150px" />
+						<LoadingCopy width="45px" />
+					</LoadingRow>
+					<LoadingCopy height="35px" width="225px" />
+					<LoadingCopy width="100px" />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingRow>
+						<LoadingCopy width="150px" />
+						<LoadingCopy width="45px" />
+					</LoadingRow>
+					<LoadingCopy height="35px" width="225px" />
+					<LoadingCopy width="100px" />
 				</LoadingCard>
 				<LoadingCard>
 					<LoadingTitle />
-					<LoadingCopy />
-					<LoadingCopy />
+					<LoadingCopy width="300px" />
 				</LoadingCard>
 				<LoadingCard>
 					<LoadingTitle />
+					<LoadingCopy width="300px" />
 				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-				</LoadingCard>
-				<LoadingFooter />
 			</LoadingContentInnerWrapper>
-
-			<LoadingSidebar>
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-			</LoadingSidebar>
 		</LoadingContentWrapper>
 	);
 }

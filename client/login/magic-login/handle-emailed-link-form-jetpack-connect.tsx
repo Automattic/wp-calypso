@@ -1,10 +1,11 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
 import { FC, useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EmptyContent from 'calypso/components/empty-content';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { login } from 'calypso/lib/paths';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
 import {
@@ -22,6 +23,8 @@ import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-cu
 import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import isWooDnaFlow from 'calypso/state/selectors/is-woo-dna-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 
 interface Props {
@@ -35,19 +38,21 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const [ hasSubmitted, setHasSubmitted ] = useState( false );
 
 	const redirectToOriginal = useSelector( ( state ) => getRedirectToOriginal( state ) || '' );
-	const redirectToSanitized = useSelector( ( state ) => getRedirectToSanitized( state ) );
-	const authError = useSelector( ( state ) => getMagicLoginRequestAuthError( state ) );
-	const isAuthenticated = useSelector( ( state ) =>
-		getMagicLoginRequestedAuthSuccessfully( state )
-	);
+	const redirectToSanitized = useSelector( getRedirectToSanitized );
+	const authError = useSelector( getMagicLoginRequestAuthError );
+	const isAuthenticated = useSelector( getMagicLoginRequestedAuthSuccessfully );
 	const isExpired = useSelector(
 		( state ) => getMagicLoginCurrentView( state ) === LINK_EXPIRED_PAGE
 	);
-	const isFetching = useSelector( ( state ) => isFetchingMagicLoginAuth( state ) );
-	const twoFactorEnabled = useSelector( ( state ) => isTwoFactorEnabled( state ) );
-	const twoFactorNotificationSent = useSelector( ( state ) =>
-		getTwoFactorNotificationSent( state )
-	);
+	const isWooCoreFlow = useSelector( isWooJPCFlow );
+	const isWooDnaService = useSelector( isWooDnaFlow );
+	const isWooFlow = isWooCoreFlow || isWooDnaService;
+	const isFetching = useSelector( isFetchingMagicLoginAuth );
+	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
+	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const isFromAutomatticForAgenciesPlugin =
+		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
+		'automattic-for-agencies-client';
 
 	useEffect( () => {
 		if ( ! emailAddress || ! token ) {
@@ -66,13 +71,14 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		} else {
 			page(
 				login( {
+					isJetpack: true,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
 					redirectTo: redirectToSanitized ?? undefined,
 				} )
 			);
 		}
-	}, [ dispatch ] );
+	}, [ dispatch, redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent ] );
 
 	useEffect( () => {
 		if ( ! hasSubmitted || isFetching ) {
@@ -97,7 +103,8 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 
 	return (
 		<EmptyContent className="magic-login__handle-link jetpack" title={ null } illustration={ null }>
-			<JetpackLogo size={ 74 } full />
+			{ ! isWooFlow && ! isFromAutomatticForAgenciesPlugin && <JetpackLogo size={ 74 } full /> }
+			{ isFromAutomatticForAgenciesPlugin && <A4ALogo fullA4A size={ 58 } /> }
 
 			<h2 className="magic-login__title empty-content__title">
 				{ translate( 'Email confirmed!' ) }

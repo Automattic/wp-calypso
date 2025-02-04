@@ -1,7 +1,6 @@
-import { CompactCard } from '@automattic/components';
-import classNames from 'classnames';
+import { CompactCard, Count } from '@automattic/components';
+import clsx from 'clsx';
 import { PureComponent } from 'react';
-import Count from 'calypso/components/count';
 
 import './style.scss';
 
@@ -15,7 +14,7 @@ export default class SectionHeader extends PureComponent {
 	render() {
 		const hasCount = 'number' === typeof this.props.count;
 		const isEmpty = ! ( this.props.label || hasCount || this.props.children );
-		const classes = classNames( this.props.className, 'section-header', {
+		const classes = clsx( this.props.className, 'section-header', {
 			'is-empty': isEmpty,
 			'is-placeholder': this.props.isPlaceholder,
 		} );

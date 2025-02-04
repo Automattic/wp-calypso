@@ -1,5 +1,20 @@
-/**
- */
+const placeSitePropsOnSiteObject = ( pluginObject ) => {
+	const { active, version, autoupdate, update, ...rest } = pluginObject;
+
+	const siteObject = {};
+	[ 'active', 'version', 'autoupdate', 'update' ].forEach( ( propName ) => {
+		if ( pluginObject[ propName ] ) {
+			siteObject[ propName ] = pluginObject[ propName ];
+		}
+	} );
+
+	return {
+		sites: {
+			[ 2916284 ]: siteObject,
+		},
+		...rest,
+	};
+};
 
 export const akismet = {
 	id: 'akismet/akismet',
@@ -15,6 +30,7 @@ export const akismet = {
 	network: false,
 	autoupdate: true,
 };
+export const akismetWithSites = placeSitePropsOnSiteObject( akismet );
 
 export const helloDolly = {
 	id: 'hello-dolly/hello',
@@ -59,6 +75,7 @@ export const jetpack = {
 		},
 	},
 };
+export const jetpackWithSites = placeSitePropsOnSiteObject( jetpack );
 
 export const jetpackUpdated = {
 	id: 'jetpack/jetpack',

@@ -1,14 +1,15 @@
+import { FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import useDropdownPagesQuery, {
 	DropdownPagesResponse,
 	PageNode,
 } from 'calypso/data/dropdown-pages/use-dropdown-pages';
+import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PAGE_TITLE_DEPTH_PADDING = '—'; // em dash
@@ -80,8 +81,8 @@ const YourHomepageDisplaysSetting = ( {
 	const handlePageOnFrontChange: React.FormEventHandler = ( { target } ) => {
 		const selectedPageId: string = ( target as HTMLSelectElement ).value;
 		if ( selectedPageId === '' ) {
-			// Default was selected, so we need to set show_on_front to 'posts' and unset page_for_posts.
-			onChange?.( { show_on_front: 'posts', page_on_front: '', page_for_posts: '' } );
+			// Default was selected, so we need to set show_on_front to 'posts'
+			onChange?.( { show_on_front: 'posts', page_on_front: '' } );
 		} else {
 			onChange?.( { show_on_front: 'page', page_on_front: selectedPageId } );
 		}
@@ -126,7 +127,7 @@ const YourHomepageDisplaysSetting = ( {
 				<FormSelect
 					id="posts-page-select"
 					name="page_for_posts"
-					disabled={ disabled || isLoading || ! pages?.length || page_on_front === '' }
+					disabled={ disabled || isLoading || ! pages?.length }
 					value={ page_for_posts }
 					onChange={ handlePageForPostsChange }
 				>
@@ -166,7 +167,7 @@ const YourHomepageDisplaysSetting = ( {
 	);
 };
 
-export default connect( ( state ) => {
+export default connect( ( state: IAppState ) => {
 	const siteId = getSelectedSiteId( state );
 	return { ...( siteId && { siteId } ) };
 } )( YourHomepageDisplaysSetting );

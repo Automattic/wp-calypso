@@ -1,5 +1,5 @@
 import { ScreenReaderText, Gridicon } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -72,7 +72,7 @@ class MediaLibraryUploadUrl extends Component {
 	};
 
 	render() {
-		const classes = classNames( 'media-library__upload-url', this.props.className );
+		const classes = clsx( 'media-library__upload-url', this.props.className );
 		const { onClose, translate } = this.props;
 
 		return (

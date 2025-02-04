@@ -26,9 +26,9 @@ export default function SidebarBannerTemplate( {
 				callToAction={ CTA.message }
 				compact
 				forceHref={ forceHref }
-				forceDisplay={ true }
+				forceDisplay
 				dismissPreferenceName={ dismissPreferenceName }
-				dismissTemporary={ true }
+				dismissTemporary
 				href={ CTA.link }
 				onClick={ onClick }
 				onDismissClick={ onDismiss }

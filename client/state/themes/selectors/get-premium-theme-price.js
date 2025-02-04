@@ -8,7 +8,6 @@ import 'calypso/state/themes/init';
 
 /**
  * Returns the price string to display for a given theme on a given site.
- *
  * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID

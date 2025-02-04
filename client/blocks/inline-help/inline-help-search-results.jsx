@@ -1,19 +1,20 @@
+import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { getContextResults } from '@automattic/data-stores';
+import { useHelpSearchQuery } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { speak } from '@wordpress/a11y';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { Icon, page as pageIcon, arrowRight } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import { useHelpSearchQuery } from 'calypso/data/help/use-help-search-query';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
+import getAdminHelpResults from 'calypso/state/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
@@ -23,6 +24,8 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
+
+import './style.scss';
 
 const noop = () => {};
 
@@ -65,6 +68,7 @@ function HelpSearchResults( {
 		() => getContextResults( sectionName, siteIntent ),
 		[ sectionName, siteIntent ]
 	);
+
 	const adminResults = useSelector( ( state ) => getAdminHelpResults( state, searchQuery, 3 ) );
 
 	const contextualResults = rawContextualResults.filter(
@@ -72,9 +76,14 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
-	const searchResults = searchData?.wordpress_support_links ?? [];
+	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery(
+		searchQuery,
+		getLocaleSlug(),
+		sectionName
+	);
+
+	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
 
 	useEffect( () => {
@@ -97,31 +106,39 @@ function HelpSearchResults( {
 		}
 	}, [ isSearching, hasAPIResults, searchQuery ] );
 
+	const { setShowSupportDoc } = useDataStoreDispatch( 'automattic/help-center' );
+
 	const onLinkClickHandler = ( event, result, type ) => {
-		const { link } = result;
-		// check and catch admin section links.
-		if ( type === SUPPORT_TYPE_ADMIN_SECTION && link ) {
-			// record track-event.
-			dispatch(
-				recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
-					link: link,
-					search_term: searchQuery,
-					location,
-					section: sectionName,
-				} )
-			);
-
-			// push state only if it's internal link.
-			if ( ! /^http/.test( link ) ) {
-				event.preventDefault();
-				openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
-				onAdminSectionSelect( event );
-			}
-
+		const { link, post_id: postId, blog_id: blogId } = result;
+		if ( ! link ) {
+			onSelect( event, result );
 			return;
 		}
 
-		onSelect( event, result );
+		if ( type !== SUPPORT_TYPE_ADMIN_SECTION ) {
+			if ( type === SUPPORT_TYPE_API_HELP ) {
+				event.preventDefault();
+
+				setShowSupportDoc( link, postId, blogId );
+			}
+			onSelect( event, result );
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_inlinehelp_admin_section_visit', {
+				link: link,
+				search_term: searchQuery,
+				location,
+				section: sectionName,
+			} )
+		);
+
+		if ( ! /^http/.test( link ) ) {
+			event.preventDefault();
+			openAdminInNewTab ? window.open( 'https://wordpress.com' + link, '_blank' ) : page( link );
+			onAdminSectionSelect( event );
+		}
 	};
 
 	const renderHelpLink = ( result, type ) => {
@@ -142,7 +159,7 @@ function HelpSearchResults( {
 		};
 
 		return (
-			<Fragment key={ link ?? title }>
+			<Fragment key={ title ?? link }>
 				<li className="inline-help__results-item">
 					<div className="inline-help__results-cell">
 						<a
@@ -190,13 +207,13 @@ function HelpSearchResults( {
 		const sections = [
 			{
 				type: SUPPORT_TYPE_API_HELP,
-				title: translate( 'Recommended resources' ),
+				title: translate( 'Recommended Resources' ),
 				results: searchResults.slice( 0, 5 ),
 				condition: ! isSearching && searchResults.length > 0,
 			},
 			{
 				type: SUPPORT_TYPE_CONTEXTUAL_HELP,
-				title: ! searchQuery.length ? translate( 'Recommended resources' ) : '',
+				title: ! searchQuery.length ? translate( 'Recommended Resources' ) : '',
 				results: contextualResults.slice( 0, 6 ),
 				condition: ! isSearching && ! searchResults.length && contextualResults.length > 0,
 			},

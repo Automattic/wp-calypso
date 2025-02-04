@@ -1,6 +1,12 @@
-import { isWpComBusinessPlan, isWpComEcommercePlan } from '@automattic/calypso-products';
-import { Button, CompactCard, Gridicon } from '@automattic/components';
+import {
+	isWpComBusinessPlan,
+	isWpComEcommercePlan,
+	getPlan,
+	PLAN_BUSINESS,
+} from '@automattic/calypso-products';
+import { CompactCard, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Icon, external } from '@wordpress/icons';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
 import { PureComponent } from 'react';
@@ -12,13 +18,15 @@ import helpPlugins from 'calypso/assets/images/illustrations/help-plugins.svg';
 import helpPrivacy from 'calypso/assets/images/illustrations/help-privacy.svg';
 import helpWebsite from 'calypso/assets/images/illustrations/help-website.svg';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
-import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import NavigationHeader from 'calypso/components/navigation-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
-import HelpResult from './help-results/item';
+import HelpContactUsFooter from './help-contact-us-footer';
+import HelpContactUsHeader from './help-contact-us-header';
+import HelpResultItem from './help-results/help-result-item';
 import HelpSearch from './help-search';
 import HelpUnverifiedWarning from './help-unverified-warning';
 
@@ -41,7 +49,9 @@ class Help extends PureComponent {
 	getHelpfulArticles = () => {
 		const helpfulResults = [
 			{
-				link: 'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/',
+				link: localizeUrl(
+					'https://wordpress.com/support/do-i-need-a-website-a-blog-or-a-website-with-a-blog/'
+				),
 				title: this.props.translate( 'Do I Need a Website, a Blog, or a Website with a Blog?' ),
 				description: this.props.translate(
 					'If you’re building a brand new site, you might be wondering if you need a website, a blog, or a website with a blog. At WordPress.com, you can create all of these options easily, right in your dashboard.'
@@ -49,15 +59,20 @@ class Help extends PureComponent {
 				image: helpWebsite,
 			},
 			{
-				link: 'https://wordpress.com/support/business-plan/',
+				link: localizeUrl( 'https://wordpress.com/support/plan-features/creator-plan/' ),
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Business plan.'
+					'Learn more about installing a custom theme or plugin using the %(businessPlanName)s plan.',
+					{
+						args: {
+							businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '',
+						},
+					}
 				),
 				image: helpPlugins,
 			},
 			{
-				link: 'https://wordpress.com/support/domains/',
+				link: localizeUrl( 'https://wordpress.com/support/domains/' ),
 				title: this.props.translate( 'All About Domains' ),
 				description: this.props.translate(
 					'Set up your domain whether it’s registered with WordPress.com or elsewhere.'
@@ -65,7 +80,7 @@ class Help extends PureComponent {
 				image: helpDomains,
 			},
 			{
-				link: 'https://wordpress.com/support/start/',
+				link: localizeUrl( 'https://wordpress.com/support/getting-started-with-wordpress-com/' ),
 				title: this.props.translate( 'Get Started' ),
 				description: this.props.translate(
 					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
@@ -73,15 +88,15 @@ class Help extends PureComponent {
 				image: helpGetStarted,
 			},
 			{
-				link: 'https://wordpress.com/support/settings/privacy-settings/',
-				title: this.props.translate( 'Privacy Settings' ),
+				link: localizeUrl( 'https://wordpress.com/support/privacy-settings/' ),
+				title: this.props.translate( 'Privacy Settings', { context: 'Site visibility settings' } ),
 				description: this.props.translate(
 					'Limit your site’s visibility or make it completely private.'
 				),
 				image: helpPrivacy,
 			},
 			{
-				link: 'https://wordpress.com/support/manage-purchases/',
+				link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
 				title: this.props.translate( 'Managing Purchases, Renewals, and Cancellations' ),
 				description: this.props.translate(
 					'Have a question or need to change something about a purchase you have made? Learn how.'
@@ -104,12 +119,12 @@ class Help extends PureComponent {
 						};
 
 						return (
-							<HelpResult
+							<HelpResultItem
 								key={ result.link }
 								helpLink={ result }
 								iconTypeDescription="book"
 								onClick={ trackClick }
-								localizedReadArticle={ this.props.translate( 'Read article' ) }
+								openInHelpCenter
 							/>
 						);
 					} ) }
@@ -125,13 +140,18 @@ class Help extends PureComponent {
 				{ this.getCoursesTeaser() }
 				<CompactCard
 					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-					target="__blank"
+					href="https://www.youtube.com/@WordPressdotcom"
+					target="_blank"
 				>
 					<Gridicon icon="video" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Video tutorials' ) }
+							{ this.props.translate( 'Video tutorials' ) }{ ' ' }
+							<Icon
+								icon={ external }
+								size={ 16 }
+								className="help__support-link-title__external-icon"
+							/>
 						</h2>
 						<p className="help__support-link-content">
 							{ this.props.translate(
@@ -142,23 +162,21 @@ class Help extends PureComponent {
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
-					href="https://wpcourses.com/?ref=wpcom-help-more-resources"
-					target="__blank"
+					href="https://wordpress.com/learn/courses?ref=wpcom-help-more-resources"
+					showLinkIcon={ false }
 				>
 					<Gridicon icon="mail" size={ 36 } />
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.props.translate( 'Courses' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Enroll in a course taught by WordPress experts, and become a part of its community.'
-							) }
+							{ this.props.translate( 'Enroll in a course taught by WordPress experts.' ) }
 						</p>
 					</div>
 				</CompactCard>
 				<CompactCard
 					className="help__support-link"
 					href="https://learn.wordpress.com"
-					target="__blank"
+					showLinkIcon={ false }
 				>
 					<Gridicon icon="list-ordered" size={ 36 } />
 					<div className="help__support-link-section">
@@ -174,33 +192,13 @@ class Help extends PureComponent {
 		</>
 	);
 
-	getContactUs = () => (
-		<>
-			<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
-			<CompactCard className="help__contact-us-card" href="/help/contact/">
-				<Gridicon icon="help" size={ 36 } />
-				<div className="help__contact-us-section">
-					<h3 className="help__contact-us-title">{ this.props.translate( 'Contact support' ) }</h3>
-					<p className="help__contact-us-content">
-						{ this.props.translate(
-							"Can't find the answer? Drop us a line and we'll lend a hand."
-						) }
-					</p>
-				</div>
-				<Button className="help__contact-us-button">
-					{ this.props.translate( 'Contact support' ) }
-				</Button>
-			</CompactCard>
-		</>
-	);
-
 	getCoursesTeaser = () => {
 		return (
 			<CompactCard
 				className="help__support-link"
 				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
-				target="__blank"
+				showLinkIcon={ false }
 			>
 				<Gridicon icon="chat" size={ 36 } />
 				<div className="help__support-link-section">
@@ -220,14 +218,9 @@ class Help extends PureComponent {
 		} );
 	};
 
-	trackContactUsClick = () => {
-		recordTracksEvent( 'calypso_help_header_button_click' );
-	};
-
 	getPlaceholders = () => (
 		<Main className="help" wideLayout>
 			<div className="help-search is-placeholder" />
-			<div className="help__help-teaser-button is-placeholder" />
 			<div className="help-results is-placeholder" />
 			<div className="help__support-links is-placeholder" />
 		</Main>
@@ -250,19 +243,14 @@ class Help extends PureComponent {
 			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 
-				<div className="help__heading">
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Support' ) }
-						subHeaderText={ translate( 'Get help with your WordPress.com site' ) }
-						align="left"
-					/>
-					<div className="help__contact-us-header-button">
-						<Button onClick={ this.trackContactUsClick } href="/help/contact/">
-							{ translate( 'Contact support' ) }
-						</Button>
-					</div>
-				</div>
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ translate( 'Support' ) }
+					subtitle={ translate( 'Get help with your WordPress.com site.' ) }
+				>
+					<HelpContactUsHeader />
+				</NavigationHeader>
+
 				<HelpSearch onSearch={ this.setIsSearching } />
 				{ ! this.state.isSearching && (
 					<div className="help__inner-wrapper">
@@ -271,7 +259,7 @@ class Help extends PureComponent {
 						{ this.getSupportLinks() }
 					</div>
 				) }
-				{ this.getContactUs() }
+				<HelpContactUsFooter />
 				<QueryUserPurchases />
 			</Main>
 		);

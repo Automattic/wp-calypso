@@ -17,7 +17,6 @@ import { countsSchema } from './schema';
  * Returns the updated post types requesting state after an action has been
  * dispatched. The state reflects a mapping of site ID, post type pairing to a
  * boolean reflecting whether a request for the post types is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -41,7 +40,6 @@ export function requesting( state = {}, action ) {
  * Returns the updated post count state after an action has been dispatched.
  * The state reflects a mapping of site ID, post type, [all/mine], post status
  * to the number of posts.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -52,7 +50,6 @@ export const counts = ( () => {
 
 	/**
 	 * Returns a serialized key to be used in tracking post status properties
-	 *
 	 * @param  {number} siteId Site ID
 	 * @param  {number} postId Post ID
 	 * @returns {string}        Serialized key
@@ -64,7 +61,6 @@ export const counts = ( () => {
 	/**
 	 * Returns the updated post count state after transitioning a post to a new
 	 * status.
-	 *
 	 * @param  {Object} state  Current state
 	 * @param  {number} siteId Site ID
 	 * @param  {number} postId Post ID

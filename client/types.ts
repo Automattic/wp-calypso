@@ -1,3 +1,4 @@
+import { StyleVariation } from '@automattic/design-picker';
 import type { NonUndefined } from 'utility-types';
 
 // Web stuff
@@ -23,6 +24,7 @@ export interface Theme {
 	author: string;
 	author_uri: string;
 	cost: ThemeCost;
+	block_theme?: boolean;
 	date_launched: string;
 	date_updated: string;
 	demo_uri?: string;
@@ -41,6 +43,7 @@ export interface Theme {
 	preview_url: string;
 	screenshot: string;
 	screenshots: string[];
+	style_variations: StyleVariation[];
 	stylesheet: string;
 	supportDocumentation: string;
 	tags: string[];
@@ -51,6 +54,12 @@ export interface Theme {
 	};
 	template: string;
 	theme_uri: string;
+	theme_tier: {
+		slug: string;
+		feature?: string;
+		featureList?: string[];
+		platform: string;
+	};
 	trending_rank: number;
 	version: string;
 }
@@ -58,6 +67,7 @@ export interface Theme {
 interface MarketplaceThemeProductDetails {
 	product_id: number;
 	product_slug: string;
+	billing_product_slug: string;
 }
 
 interface ThemeCost {
@@ -72,7 +82,7 @@ interface ThemeFeature {
 	term_id: string;
 }
 
-interface ThemeSoftwareSet {
+export interface ThemeSoftwareSet {
 	name: string;
 	slug: string;
 	term_id: string;
@@ -120,7 +130,10 @@ export type __TodoAny__ = any; /* eslint-disable-line @typescript-eslint/no-expl
 // Properties added to the `window` object:
 declare global {
 	interface Window {
-		AppBoot: () => void;
 		COMMIT_SHA: string; // Added by an inline script in <head> via SSR context + webpack.
+		app?: {
+			isDebug?: boolean;
+		};
+		__REDUX_DEVTOOLS_EXTENSION__?: () => void;
 	}
 }

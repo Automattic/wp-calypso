@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { urlToSlug } from 'calypso/lib/url/http-utils';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
@@ -17,11 +18,7 @@ export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
 				<Gridicon size={ 18 } icon="notice-outline" />
 			</span>
 			<span className="sites-overview__error-message sites-overview__error-message-large-screen">
-				{ translate( 'Jetpack is unable to connect to %(siteUrl)s', {
-					args: {
-						siteUrl,
-					},
-				} ) }
+				{ translate( 'Jetpack is unable to connect to this site' ) }
 			</span>
 			<span className="sites-overview__error-message sites-overview__error-message-small-screen">
 				{ translate( 'Jetpack is unable to connect' ) }
@@ -29,7 +26,7 @@ export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
 			<a
 				onClick={ handleClickFixNow }
 				className="sites-overview__error-message-link"
-				href={ `/settings/disconnect-site/${ siteUrl }?type=down` }
+				href={ `/settings/disconnect-site/${ urlToSlug( siteUrl ) }?type=down` }
 			>
 				{ translate( 'Fix now' ) }
 			</a>

@@ -48,7 +48,7 @@ describe( 'actions', () => {
 			test( 'should dispatch a request connection status action when thunk triggered', () => {
 				requestJetpackConnectionStatus( siteId )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_CONNECTION_STATUS_REQUEST,
 					siteId,
 				} );
@@ -56,13 +56,13 @@ describe( 'actions', () => {
 
 			test( 'should dispatch success and receive actions when request successfully completes', () => {
 				return requestJetpackConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECTION_STATUS_RECEIVE,
 						siteId,
 						status,
 					} );
 
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECTION_STATUS_REQUEST_SUCCESS,
 						siteId,
 					} );
@@ -91,7 +91,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch a failure action when request completes unsuccessfully', () => {
 				return requestJetpackConnectionStatus( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_CONNECTION_STATUS_REQUEST_FAILURE,
 						siteId,
 						error: 'Invalid request.',
@@ -128,7 +128,7 @@ describe( 'actions', () => {
 			test( 'should dispatch a request user connection data action when thunk triggered', () => {
 				requestJetpackUserConnectionData( siteId )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST,
 					siteId,
 				} );
@@ -137,7 +137,7 @@ describe( 'actions', () => {
 			test( 'should dispatch success and receive actions when request successfully completes', async () => {
 				await requestJetpackUserConnectionData( siteId )( spy );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_USER_CONNECTION_DATA_RECEIVE,
 					siteId,
 					data: {
@@ -145,7 +145,7 @@ describe( 'actions', () => {
 					},
 				} );
 
-				expect( spy ).toBeCalledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: JETPACK_USER_CONNECTION_DATA_REQUEST_SUCCESS,
 					siteId,
 				} );
@@ -173,7 +173,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch a failure action when request completes unsuccessfully', () => {
 				return requestJetpackUserConnectionData( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_USER_CONNECTION_DATA_REQUEST_FAILURE,
 						siteId,
 						error: 'Invalid request.',
@@ -201,7 +201,7 @@ describe( 'actions', () => {
 
 			test( 'should dispatch a receive action when disconnect request successfully completes', () => {
 				return disconnect( siteId )( spy ).then( () => {
-					expect( spy ).toBeCalledWith( {
+					expect( spy ).toHaveBeenCalledWith( {
 						type: JETPACK_DISCONNECT_RECEIVE,
 						siteId,
 						status,

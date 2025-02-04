@@ -13,4 +13,10 @@
 			flex-basis: 50%;
 		}
 	}
+
+	.step-wrapper.is-horizontal-layout {
+		@include break-small {
+			margin-top: 15vh;
+		}
+	}
 }

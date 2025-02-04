@@ -1,15 +1,15 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores';
-import { useHappychatAvailable } from '@automattic/happychat-connection';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
+import { useFocusReturn, useMergeRefs } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import clsx from 'clsx';
+import { useRef, useEffect, useCallback, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter, Redirect } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -19,10 +19,11 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import { HistoryRecorder } from './history-recorder';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
+	children?: React.ReactNode;
 }
 
 const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props } ) => {
@@ -32,55 +33,59 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 	return <Draggable { ...props } />;
 };
 
-const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const { show, isMinimized } = useSelect( ( select ) => ( {
-		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
-	} ) );
+const HelpCenterContainer: React.FC< Container > = ( {
+	handleClose,
+	hidden,
+	currentRoute,
+	openingCoordinates,
+} ) => {
+	const { show, isMinimized } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			show: store.isHelpCenterShown(),
+			isMinimized: store.getIsMinimized(),
+		};
+	}, [] );
 
+	const nodeRef = useRef< HTMLDivElement >( null );
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
-
-	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
-	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
+	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
-	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
-	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
-	const { history, index } = useSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).getRouterState()
-	);
 
-	const onDismiss = () => {
-		setIsVisible( false );
-	};
+	const onDismiss = useCallback( () => {
+		handleClose();
+		recordTracksEvent( `calypso_inlinehelp_close` );
+	}, [ handleClose ] );
 
-	const toggleVisible = () => {
-		if ( ! isVisible ) {
-			handleClose();
-			// after calling handleClose, reset the visibility state to default
-			setIsVisible( true );
-		}
-	};
+	const focusReturnRef = useFocusReturn();
 
-	const animationProps = {
-		style: {
-			animation: `${ isVisible ? 'fadeIn' : 'fadeOut' } .5s`,
-		},
-		onAnimationEnd: toggleVisible,
-	};
-	// This is a workaround for an issue with Draggable in StrictMode
-	// https://github.com/react-grid-layout/react-draggable/blob/781ef77c86be9486400da9837f43b96186166e38/README.md
-	const nodeRef = useRef( null );
+	const cardMergeRefs = useMergeRefs( [ nodeRef, focusReturnRef ] );
+
+	const shouldCloseOnEscapeRef = useRef( false );
+
+	shouldCloseOnEscapeRef.current = !! show && ! hidden && ! isMinimized;
+
+	useEffect( () => {
+		const handleKeydown = ( e: KeyboardEvent ) => {
+			if ( e.key === 'Escape' && shouldCloseOnEscapeRef.current ) {
+				onDismiss();
+			}
+		};
+
+		document.addEventListener( 'keydown', handleKeydown );
+		return () => {
+			document.removeEventListener( 'keydown', handleKeydown );
+		};
+	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
 	if ( ! show || hidden ) {
 		return null;
 	}
 
 	return (
-		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
-			<HistoryRecorder />
+		<MemoryRouter>
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
@@ -88,14 +93,14 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 					handle=".help-center__container-header"
 					bounds="body"
 				>
-					<Card className={ classNames } { ...animationProps } ref={ nodeRef }>
+					<Card className={ classNames } style={ { ...openingCoordinates } } ref={ cardMergeRefs }>
 						<HelpCenterHeader
 							isMinimized={ isMinimized }
 							onMinimize={ () => setIsMinimized( true ) }
 							onMaximize={ () => setIsMinimized( false ) }
 							onDismiss={ onDismiss }
 						/>
-						<HelpCenterContent />
+						<HelpCenterContent currentRoute={ currentRoute } />
 						{ ! isMinimized && <HelpCenterFooter /> }
 					</Card>
 				</OptionalDraggable>

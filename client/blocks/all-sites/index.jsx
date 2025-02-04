@@ -1,12 +1,17 @@
 import config from '@automattic/calypso-config';
+import { Count } from '@automattic/components';
 import styled from '@emotion/styled';
-import classNames from 'classnames';
+import { Icon, chevronDown } from '@wordpress/icons';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Count from 'calypso/components/count';
-import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import {
+	getCurrentUserJetpackVisibleSiteCount,
+	getCurrentUserVisibleSiteCount,
+} from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 
 import './style.scss';
@@ -34,6 +39,7 @@ class AllSites extends Component {
 		isHighlighted: false,
 		showCount: true,
 		showIcon: false,
+		showChevronDownIcon: false,
 		domain: '',
 	};
 
@@ -44,6 +50,7 @@ class AllSites extends Component {
 		isHighlighted: PropTypes.bool,
 		showCount: PropTypes.bool,
 		showIcon: PropTypes.bool,
+		showChevronDownIcon: PropTypes.bool,
 		count: PropTypes.number,
 		icon: PropTypes.node,
 		title: PropTypes.string,
@@ -60,7 +67,8 @@ class AllSites extends Component {
 		if ( ! this.props.icon ) {
 			return null;
 		}
-		return <IconContainer>{ this.props.icon }</IconContainer>;
+
+		return <IconContainer className="all-sites__icon-container">{ this.props.icon }</IconContainer>;
 	}
 
 	renderSiteCount() {
@@ -68,11 +76,20 @@ class AllSites extends Component {
 	}
 
 	render() {
-		const { title, href, domain, translate, isHighlighted, isSelected, showCount, showIcon } =
-			this.props;
+		const {
+			title,
+			href,
+			domain,
+			translate,
+			isHighlighted,
+			isSelected,
+			showCount,
+			showIcon,
+			showChevronDownIcon,
+		} = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
-		const allSitesClass = classNames( {
+		const allSitesClass = clsx( {
 			'all-sites': true,
 			'is-selected': isSelected,
 			'is-highlighted': isHighlighted,
@@ -91,7 +108,10 @@ class AllSites extends Component {
 					{ showIcon && this.renderIcon() }
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
-							{ title || translate( 'All My Sites' ) }
+							{ title || translate( 'All sites' ) }
+							{ showChevronDownIcon && (
+								<Icon icon={ chevronDown } className="all-sites__title-chevron-icon" size={ 24 } />
+							) }
 						</span>
 						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
 					</div>
@@ -105,10 +125,28 @@ class AllSites extends Component {
 const isSiteVisible = ( { visible = true } ) => visible;
 
 export default connect( ( state, props ) => {
-	const visibleSites = getSites( state )?.filter( isSiteVisible );
-	const userSitesCount = props.count ?? getCurrentUserVisibleSiteCount( state );
+	// An explicit `count` prop overrides everything,
+	// but only if it's present and valid.
+	//
+	// (NOTE: As of 2023-06-07, `count` is not explicitly defined
+	// in any usage of AllSites.)
+	if ( Number.isInteger( props.count ) && props.count >= 0 ) {
+		return { count: props.count };
+	}
 
-	return {
-		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
-	};
+	// If the "realtime-site-count" feature flag is enabled,
+	// filter the full list of sites by their visibility at runtime.
+	if ( config.isEnabled( 'realtime-site-count' ) ) {
+		const visibleSites = getSites( state )?.filter( isSiteVisible );
+		return { count: visibleSites.length };
+	}
+
+	// Jetpack Cloud only ever accounts for Jetpack sites
+	if ( isJetpackCloud() ) {
+		return { count: getCurrentUserJetpackVisibleSiteCount( state ) };
+	}
+
+	// Under any other condition, return the value of the current user's
+	// `visible_site_count` property
+	return { count: getCurrentUserVisibleSiteCount( state ) };
 } )( localize( AllSites ) );

@@ -1,3 +1,6 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "@automattic/typography/styles/variables";
+
 .section-nav {
 	position: relative;
 	width: 100%;
@@ -30,6 +33,10 @@
 			padding-right: 50px;
 		}
 	}
+	&.minimal {
+		background: transparent;
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
 }
 
 .section-nav__mobile-header {
@@ -43,6 +50,10 @@
 	color: var(--color-neutral-70);
 	font-weight: 600;
 	cursor: pointer;
+
+	.minimal & {
+		background: var(--color-surface);
+	}
 
 	.gridicons-chevron-down {
 		fill: var(--color-neutral-50);
@@ -64,8 +75,16 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		display: none;
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 
@@ -97,7 +116,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		display: flex;
 		align-items: center;
 
@@ -105,6 +124,14 @@
 			width: 0;
 			flex: 1 0 auto;
 		}
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 
@@ -127,7 +154,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">480px" ) {
+	@mixin tabs-view-styles {
 		margin-top: 0;
 		padding-top: 0;
 		border-top: none;
@@ -137,6 +164,28 @@
 			width: 0;
 			flex: 1 0 auto;
 		}
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
+	}
+}
+
+.section-nav-group.has-horizontal-scroll {
+	@mixin tabs-view-styles {
+		overflow-x: auto;
+	}
+
+	.enforce-tabs-view & {
+		@include tabs-view-styles;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		@include tabs-view-styles;
 	}
 }
 

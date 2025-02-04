@@ -1,6 +1,8 @@
-import { Page, ElementHandle, Locator } from 'playwright';
+import { Page, ElementHandle } from 'playwright';
+import { envVariables } from '../..';
+import { CookieBannerComponent } from './cookie-banner-component';
+import { EditorComponent } from './editor-component';
 
-const editorPane = 'div.edit-post-visual-editor__content-area';
 const selectors = {
 	// Title
 	title: '.editor-post-title__input',
@@ -19,19 +21,18 @@ const selectors = {
  */
 export class EditorGutenbergComponent {
 	private page: Page;
-	private editor: Locator;
-	private editorCanvas: Locator;
+	private editor: EditorComponent;
+	private cookieBannerComponent: CookieBannerComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator, editorCanvas: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
-		this.editorCanvas = editorCanvas;
+		this.cookieBannerComponent = new CookieBannerComponent( page, editor );
 	}
 
 	/**
@@ -46,8 +47,16 @@ export class EditorGutenbergComponent {
 	 * permitted to be inserted within the parent Contact Form block.
 	 */
 	async resetSelectedBlock(): Promise< void > {
-		const locator = this.editorCanvas.locator( selectors.title );
-		await locator.click();
+		const editorCanvas = await this.editor.canvas();
+		const locator = editorCanvas.locator( selectors.title );
+
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.cookieBannerComponent.acceptCookie();
+		}
+
+		// Every now and then, a block toolbar can cover the title, so we "force" using click events and the direct focus method.
+		await locator.dispatchEvent( 'click' );
+		await locator.focus();
 	}
 
 	/* Title block */
@@ -58,8 +67,9 @@ export class EditorGutenbergComponent {
 	 * @param {string} title Text to be used as the title.
 	 */
 	async enterTitle( title: string ): Promise< void > {
+		const editorCanvas = await this.editor.canvas();
 		const sanitizedTitle = title.trim();
-		const locator = this.editorCanvas.locator( selectors.title );
+		const locator = editorCanvas.locator( selectors.title );
 		await locator.fill( sanitizedTitle, { timeout: 20 * 1000 } );
 	}
 
@@ -69,7 +79,8 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<string>} String containing contents of the title.
 	 */
 	async getTitle(): Promise< string > {
-		const locator = this.editorCanvas.locator( selectors.title );
+		const editorCanvas = await this.editor.canvas();
+		const locator = editorCanvas.locator( selectors.title );
 		return await locator.innerText();
 	}
 
@@ -85,11 +96,12 @@ export class EditorGutenbergComponent {
 	 * @param {string} text Text to be entered.
 	 */
 	async enterText( text: string ): Promise< void > {
+		const editorCanvas = await this.editor.canvas();
 		const lines = text.split( '\n' );
 		// Depending on what is focused in the editor, either one of the
 		// following elements can be clicked to initiate text entry.
-		const emptyBlockLocator = this.editorCanvas.locator( selectors.emptyBlock );
-		const emptyParagraphLocator = this.editorCanvas.locator(
+		const emptyBlockLocator = editorCanvas.locator( selectors.emptyBlock );
+		const emptyParagraphLocator = editorCanvas.locator(
 			selectors.paragraphBlock( { empty: true } )
 		);
 
@@ -101,9 +113,7 @@ export class EditorGutenbergComponent {
 
 		for ( const line of lines ) {
 			// Select the last Paragraph block which is empty.
-			const locator = this.editorCanvas
-				.locator( selectors.paragraphBlock( { empty: true } ) )
-				.last();
+			const locator = editorCanvas.locator( selectors.paragraphBlock( { empty: true } ) ).last();
 
 			await locator.fill( line );
 			await this.page.keyboard.press( 'Enter' );
@@ -116,8 +126,9 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<string>} Text for all paragraph blocks, joined with a newline.
 	 */
 	async getText(): Promise< string > {
+		const editorCanvas = await this.editor.canvas();
 		// Locate all non-empty Paragraph blocks.
-		const locator = this.editorCanvas.locator( selectors.paragraphBlock( { empty: false } ) );
+		const locator = editorCanvas.locator( selectors.paragraphBlock( { empty: false } ) );
 		const enteredText = await locator.allInnerTexts();
 
 		// Extract the textContent of each paragraph block into a list.
@@ -145,9 +156,10 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
+		const editorCanvas = await this.editor.canvas();
 		// Note the :is() selector. This is to support both the block API v1 and V2.
-		const locator = this.editorCanvas.locator(
-			`:is(${ editorPane } ${ blockEditorSelector }.is-selected, ${ editorPane } ${ blockEditorSelector }.has-child-selected)`
+		const locator = editorCanvas.locator(
+			`:is(${ blockEditorSelector }.is-selected, ${ blockEditorSelector }.has-child-selected)`
 		);
 		await locator.waitFor();
 		return ( await locator.elementHandle() ) as ElementHandle;
@@ -171,7 +183,8 @@ export class EditorGutenbergComponent {
 	 * False otherwise.
 	 */
 	async editorHasBlockWarning(): Promise< boolean > {
-		const locator = this.editorCanvas.locator( selectors.blockWarning );
+		const editorCanvas = await this.editor.canvas();
+		const locator = editorCanvas.locator( selectors.blockWarning );
 		return !! ( await locator.count() );
 	}
 }

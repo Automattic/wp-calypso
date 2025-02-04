@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import HotkeyContainer from './container-hotkey';
 import Gridicon from './gridicons';
@@ -6,12 +6,16 @@ import Gridicon from './gridicons';
 const ActionButton = ( { isActive, hotkey, icon, onToggle, text, title } ) => (
 	<HotkeyContainer shortcuts={ hotkey ? [ { hotkey, action: onToggle } ] : null }>
 		<button
-			className={ classNames( 'wpnc__action-link', {
+			className={ clsx( 'wpnc__action-link', {
 				'active-action': isActive,
 				'inactive-action': ! isActive,
 			} ) }
 			title={ title }
-			onClick={ onToggle }
+			onClick={ ( event ) => {
+				// Prevent the notification panel from being closed.
+				event.stopPropagation();
+				onToggle();
+			} }
 		>
 			<Gridicon icon={ icon } size={ 24 } />
 			<p>{ text }</p>

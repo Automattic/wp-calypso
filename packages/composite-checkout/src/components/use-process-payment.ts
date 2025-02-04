@@ -1,11 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useCallback, useMemo, useState } from 'react';
-import {
-	usePaymentProcessors,
-	useTransactionStatus,
-	InvalidPaymentProcessorResponseError,
-} from '../public-api';
+import InvalidPaymentProcessorResponseError from '../lib/invalid-payment-processor-response-error';
+import { usePaymentProcessor, useTransactionStatus } from '../public-api';
 import {
 	PaymentProcessorResponse,
 	PaymentProcessorResponseType,
@@ -15,29 +12,26 @@ import {
 	SetTransactionError,
 } from '../types';
 
-const debug = debugFactory( 'composite-checkout:use-create-payment-processor-on-click' );
+const debug = debugFactory( 'composite-checkout:use-process-payment' );
 
 export default function useProcessPayment( paymentProcessorId: string ): ProcessPayment {
-	const paymentProcessors = usePaymentProcessors();
 	const { setTransactionPending } = useTransactionStatus();
 	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();
+	const processor = usePaymentProcessor( paymentProcessorId );
 
 	return useCallback(
 		async ( submitData ) => {
 			debug( 'beginning payment processor onClick handler' );
-			if ( ! paymentProcessors[ paymentProcessorId ] ) {
-				throw new Error( `No payment processor found with key: ${ paymentProcessorId }` );
-			}
 			setTransactionPending();
 			debug( 'calling payment processor function', paymentProcessorId );
-			const response = paymentProcessors[ paymentProcessorId ]( submitData );
+			const response = processor( submitData );
 			return handlePaymentProcessorPromise( paymentProcessorId, response );
 		},
-		[ paymentProcessorId, handlePaymentProcessorPromise, paymentProcessors, setTransactionPending ]
+		[ paymentProcessorId, handlePaymentProcessorPromise, processor, setTransactionPending ]
 	);
 }
 
-function useHandlePaymentProcessorResponse() {
+export function useHandlePaymentProcessorResponse() {
 	const { __ } = useI18n();
 	const redirectErrorMessage = useMemo(
 		() =>
@@ -120,9 +114,6 @@ async function handlePaymentProcessorResponse(
 	}
 	if ( processorResponse.type === PaymentProcessorResponseType.SUCCESS ) {
 		setTransactionComplete( processorResponse.payload );
-		return processorResponse;
-	}
-	if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
 		return processorResponse;
 	}
 	throw new InvalidPaymentProcessorResponseError( paymentProcessorId );

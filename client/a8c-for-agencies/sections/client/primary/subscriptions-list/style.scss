@@ -1,0 +1,27 @@
+.subscriptions-list__layout {
+	&.main.hosting-dashboard-layout.is-with-border .hosting-dashboard-layout__top-wrapper:not(.has-navigation) {
+		padding-block-start: 24px;
+		padding-block-end: 0;
+	}
+
+	&.is-mobile-view {
+		.hosting-dashboard-layout__top-wrapper {
+			display: none;
+		}
+
+		.hosting-dashboard-layout__body-wrapper {
+			padding-inline: 16px;
+			padding-block-end: 48px;
+
+			@include breakpoint-deprecated( ">660px" ) {
+				padding-inline: 64px;
+			}
+		}
+	}
+}
+
+.subscription-purchase {
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+}

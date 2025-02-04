@@ -4,7 +4,6 @@ import { some } from 'lodash';
 /**
  * Determines if an iframe is from a source we trust. We allow these to be the featured media and also give
  * them a freer sandbox
- *
  * @param  {Object} iframe the iframe to check
  * @returns {boolean} true if allowed
  */
@@ -42,6 +41,7 @@ export function iframeIsAllowed( iframe ) {
 		'icloud.com',
 		'read.amazon.com',
 		'loom.com',
+		'pca.st',
 	];
 	const hostName = iframe.src && getUrlParts( iframe.src ).hostname;
 	const iframeSrc = hostName && hostName.toLowerCase();

@@ -109,6 +109,20 @@ const recorder = withEnhancer( recordPageView, [ enhancer1, enhancer2, enhancer3
 - `site_main_product` is captured by default when tracking calls are handled by [`<PageViewTracker>`](https://github.com/Automattic/wp-calypso/blob/6ee89756f49d5e44551075aedfb2868e8fd144eb/client/lib/analytics/page-view-tracker/index.jsx#L117)
 - To include the `site_main_product` property in any other tracking calls, the respective analytics Redux action must be accompanied by [`enhanceWithSiteMainProduct`](https://github.com/Automattic/wp-calypso/blob/6ee89756f49d5e44551075aedfb2868e8fd144eb/client/my-sites/email/inbox/mailbox-selection-list/index.jsx#L226)
 
+#### enhanceWithUserIsDevAccount
+
+- Enhances any analytics Redux action
+- Adds the property `user_is_dev_account` (`0` or `1`) to specify whether the user has the `is_dev_account` ("I am a developer") setting enabled.
+- `user_is_dev_account` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
+- To include the `user_is_dev_account` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithUserIsDevAccount`
+
+#### enhanceWithGlobalSiteViewEnabled
+
+- Enhances any analytics Redux action
+- Adds the property `global_site_view_enabled` (`1` or `0`) to specify whether the site has the nav redesign global site view enabled.
+- `global_site_view_enabled` is captured by default when tracking calls are handled by [`<PageViewTracker>`]
+- To include the `global_site_view_enabled` property in any other tracking calls, the respective analytics Redux action must be accompanied by `enhanceWithGlobalSiteViewEnabled`
+
 ### Internal Helpers
 
 These can be used in client code but are intended to be used internally within the middleware library to create service-specific handlers for tracking analytics.

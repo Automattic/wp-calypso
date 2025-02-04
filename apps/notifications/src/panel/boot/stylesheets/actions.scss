@@ -1,6 +1,10 @@
 .wpnc__note-actions {
 	.wpnc__note-actions__buttons {
 		padding-bottom: 16px;
+
+		button:focus {
+			outline: var(--color-primary-light) solid 2px;
+		}
 	}
 
 	.wpnc__reply-box {
@@ -103,7 +107,7 @@
 		}
 	}
 
-	@media screen and ( max-width: 370px ) {
+	@media screen and (max-width: 370px) {
 		padding: 0 12px;
 	}
 

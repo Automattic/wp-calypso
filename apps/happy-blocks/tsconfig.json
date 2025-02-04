@@ -1,7 +1,11 @@
 {
 	"extends": "@automattic/calypso-build/tsconfig",
-	"exclude": [ "node_modules" ],
 	"compilerOptions": {
-		"allowJs": true
-	}
+		"declarationDir": "dist/types",
+		"outDir": "dist/esm",
+		"rootDir": "block-library"
+	},
+	"include": [ "block-library" ],
+	"exclude": [ "node_modules" ],
+	"references": [ { "path": "../../packages/wpcom-template-parts" } ]
 }

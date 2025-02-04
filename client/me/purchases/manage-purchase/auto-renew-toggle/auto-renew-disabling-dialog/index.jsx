@@ -11,8 +11,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import CancelAutoRenewalForm from 'calypso/components/marketing-survey/cancel-auto-renewal-form';
+import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
-import { getSite } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const DIALOG = {
@@ -52,6 +52,10 @@ class AutoRenewDisablingDialog extends Component {
 
 		if ( isGSuiteOrGoogleWorkspace( purchase ) || isTitanMail( purchase ) ) {
 			return 'email';
+		}
+
+		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+			return 'siteless';
 		}
 
 		return null;
@@ -129,6 +133,21 @@ class AutoRenewDisablingDialog extends Component {
 						comment:
 							'%(emailProductName)s is the name of an email product, e.g. Email, Titan Mail, Google Workspace. ' +
 							'%(domainName)s is a domain name, e.g. example.com. ' +
+							'%(expiryDate)s is a date string, e.g. May 14, 2020',
+					}
+				);
+			case 'siteless':
+				return translate(
+					'By canceling auto-renewal, your %(productName)s subscription will expire on %(expiryDate)s. ' +
+						"When it does, you'll lose access to key features you may be using on your site. " +
+						'To avoid that, turn auto-renewal back on or manually renew your subscription before the expiration date.',
+					{
+						args: {
+							productName: purchase.productName,
+							expiryDate,
+						},
+						comment:
+							'%(productName)s is the name of an Akismet plan/ product. ' +
 							'%(expiryDate)s is a date string, e.g. May 14, 2020',
 					}
 				);
@@ -259,12 +278,12 @@ class AutoRenewDisablingDialog extends Component {
 	};
 
 	renderSurvey = () => {
-		const { purchase, isVisible, selectedSite } = this.props;
+		const { purchase, isVisible } = this.props;
 
 		return (
 			<CancelAutoRenewalForm
 				purchase={ purchase }
-				selectedSite={ selectedSite }
+				selectedSiteId={ purchase.siteId }
 				isVisible={ isVisible }
 				onClose={ this.closeAndCleanup }
 			/>
@@ -285,5 +304,4 @@ class AutoRenewDisablingDialog extends Component {
 
 export default connect( ( state, { purchase } ) => ( {
 	isAtomicSite: isSiteAtomic( state, purchase.siteId ),
-	selectedSite: getSite( state, purchase.siteId ),
 } ) )( localize( withLocalizedMoment( AutoRenewDisablingDialog ) ) );

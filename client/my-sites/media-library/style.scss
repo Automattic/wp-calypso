@@ -271,6 +271,10 @@
 	right: 0;
 	left: 0;
 	margin: 0;
+
+	.empty-content {
+		padding: 20px 0;
+	}
 }
 
 .editor-media-modal .media-library__videopress-nudge-container {
@@ -282,12 +286,4 @@
 		margin-right: 20px;
 		margin-left: 20px;
 	}
-}
-
-.empty-content .media-library__videopress-nudge-regular.card.upsell-nudge {
-	margin-left: auto;
-	margin-right: auto;
-	text-align: left;
-	width: 70%;
-	text-decoration: none;
 }

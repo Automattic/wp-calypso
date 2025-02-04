@@ -1,0 +1,35 @@
+.migration-survey {
+	.migration-survey__popup-head {
+		background: var( --color-accent );
+	}
+
+	.migration-survey__popup-img {
+		background: var( --color-accent );
+		
+		img {
+			width: 100%;
+			display: block;
+		}
+	}
+
+	.migration-survey__popup-content {
+		padding: 18px 24px 30px;
+		background: var(--studio-white);
+
+		.migration-survey__popup-content-title {
+			font-weight: 500;
+			padding-bottom: 8px;
+		}
+
+		.migration-survey__popup-content-description {
+			font-size: rem(14px);
+			line-height: 20px;
+			padding-bottom: 18px;
+		}
+
+		.migration-survey__popup-content-buttons {
+			display: flex;
+			justify-content: flex-end;
+		}
+	}
+}

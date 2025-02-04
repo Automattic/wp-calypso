@@ -1,6 +1,7 @@
-@import "calypso/components/text-control/style.scss";
+@import "calypso/components/text-control/style";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 .signup-form .signup-form__input.form-text-input {
 	margin-bottom: 20px;
@@ -25,16 +26,16 @@
 .signup-form__terms-of-service-link {
 	font-size: $font-body-extra-small;
 	margin: 0 0 20px;
-	text-align: center;
+	text-align: left;
 
 	a {
-		@include breakpoint-deprecated( ">480px" ) {
+		@include breakpoint-deprecated(">480px") {
 			white-space: pre;
 		}
 	}
 }
 
-.signup-form__social {
+.auth-form__social {
 	max-width: 400px;
 	margin: 0 auto;
 	padding: 16px;
@@ -52,7 +53,7 @@
 	}
 }
 
-.signup-form__social-buttons {
+.auth-form__social-buttons {
 	button {
 		display: block;
 		margin: 0 auto 15px;
@@ -63,7 +64,7 @@
 	}
 }
 
-.signup-form__social-buttons-tos a {
+.auth-form__social-buttons-tos a {
 	text-decoration: underline;
 }
 
@@ -99,9 +100,25 @@
 	}
 }
 
+// Uses the width of the columns to calculate how wide an element that spans all columns needs to be
+// The width variable is set in signup/style.scss and changes according to break points
+.signup-form__span-columns {
+	box-sizing: border-box;
+	margin-left: 16px;
+	margin-right: 16px;
+
+	// 32px is the column margins
+	width: calc(var(--signup-form-column-max-width) - 32px);
+
+	@include break-medium {
+		// 2 columns + the 60px wide "or" element
+		width: calc(var(--signup-form-column-max-width) * 2 + 60px - 32px);
+	}
+}
+
 // Replace recaptcha badge with ToS text and space
 // everything out a little more.
-@media ( max-width: 660px ) {
+@media (max-width: 660px) {
 	.signup-form__recaptcha-tos {
 		display: block;
 	}
@@ -111,7 +128,7 @@
 	}
 
 	.signup-form.is-showing-recaptcha-tos {
-		.signup-form__social {
+		.auth-form__social {
 			padding-bottom: 28px;
 		}
 
@@ -119,4 +136,393 @@
 			margin-bottom: 16px;
 		}
 	}
+}
+
+body.is-section-signup,
+body.is-section-accept-invite {
+	.signup__step.is-user-social,
+	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
+	// This selector is part of an experiment which is supposed to be cleaned up
+	// https://github.com/Automattic/wp-calypso/pull/83886
+	.is-onboarding-pm .signup__step.is-user.is-passwordless-experiment {
+		.signup-form-social-first {
+			width: 327px;
+			margin: 0 auto;
+
+			.signup-form__notice {
+				width: 327px;
+				margin-left: 0;
+				margin-right: 0;
+
+				&.is-transparent-info {
+					color: var(--studio-gray-80, #2c3338);
+				}
+			}
+
+			.auth-form__social {
+				padding: 0 !important;
+			}
+
+			.signup-form-social-first__tos-link,
+			.signup-form-social-first__email-tos-link {
+				color: var(--studio-gray-50, #646970);
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.75rem;
+				font-style: normal;
+				font-weight: 400;
+				line-height: 18px;
+				margin-top: 24px;
+				margin-bottom: 12px;
+
+				a {
+					color: var(--studio-gray-50, #646970);
+					text-decoration-line: underline;
+				}
+			}
+
+			.signup-form-social-first__tos-link {
+				margin-top: 32px;
+				text-align: center;
+			}
+		}
+
+		.signup-form-social-first-email {
+			.card {
+				box-shadow: none;
+				padding-left: 0;
+				padding-right: 0;
+
+				button:not(.is-borderless, .signup-form__domain-suggestion-confirmation) {
+					display: block;
+					max-width: 327px;
+					margin: 0 auto;
+				}
+
+				button.signup-form__domain-suggestion-confirmation {
+					color: var(--color-link);
+					cursor: pointer;
+					text-decoration: none;
+
+					&:hover {
+						color: var(--color-link-dark);
+					}
+				}
+
+				button.is-borderless {
+					color: var(--color-link);
+					padding: 0;
+
+					&:hover {
+						color: var(--color-link-dark);
+					}
+				}
+			}
+
+			.form-label {
+				color: var(--studio-gray-60, #50575e);
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+			}
+
+			.logged-out-form__footer {
+				margin-top: 12px;
+				padding-top: 0;
+			}
+
+			button.back-button {
+				color: #1d2327;
+				text-align: center;
+				font-family: "SF Pro Text", sans-serif;
+				font-size: 0.875rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 20px;
+				display: block;
+				margin: 0 auto;
+				text-underline-offset: 5px;
+
+				&:hover {
+					color: var(--studio-blue-50, #0675c4);
+				}
+
+				&:focus {
+					outline: 1px dashed var(--studio-blue-50, #0675c4);
+					outline-offset: 3px;
+					box-shadow: none;
+					border-radius: 0;
+				}
+			}
+
+			button.button:not(.is-borderless) {
+				border-radius: 4px;
+
+				&:focus {
+					box-shadow: none;
+					outline: 2px solid var(--studio-blue-60, #055d9c);
+					outline-offset: 1px;
+				}
+			}
+		}
+	}
+
+}
+
+.card.auth-form__social.is-signup {
+	background: inherit;
+	margin-bottom: 0;
+
+	.auth-form__social-buttons-container {
+		gap: 10px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/**
+	* Social First Signups
+	*/
+	&.is-social-first {
+		box-shadow: none;
+		padding: 0 0 0 1px;
+
+		.auth-form__social-buttons {
+			display: flex;
+			flex-direction: column;
+
+			.auth-form__social-buttons-container {
+				gap: 16px;
+				display: flex;
+				flex-direction: column;
+				width: 100%;
+
+				.social-buttons__button {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					align-self: stretch;
+					background: var(--black-white-white, #fff);
+					border: 1px solid #ccc;
+					border-radius: 4px;
+					box-shadow: none;
+					height: 40px;
+					margin-bottom: 0;
+					padding: 4px 16px;
+
+					& > svg {
+						border: 0;
+						border-radius: 0;
+						margin-right: auto;
+					}
+
+					span {
+						font-feature-settings: "clig" off, "liga" off;
+						color: var(--studio-gray-80, #2c3338);
+						font-family: "SF Pro Text", sans-serif;
+						font-size: 0.875rem;
+						font-style: normal;
+						font-weight: 500;
+						letter-spacing: 0.32px;
+						line-height: normal;
+						margin-left: -20px;
+						margin-right: auto;
+						max-width: 240px;
+						text-align: center;
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	* P2 Signup
+	*/
+	@at-root .is-p2-login & .auth-form__social-buttons-container .social-buttons__button {
+		align-items: center;
+		background-color: var(--p2-color-button);
+		border: none;
+		/* stylelint-disable-next-line scales/radii */
+		border-radius: 50px;
+		color: var(--p2-color-text);
+		display: flex;
+		font-family: var(--p2-font-inter);
+		font-size: var(--p2-font-size-form-xs);
+		height: auto;
+		justify-content: center;
+		letter-spacing: -0.01em;
+		line-height: 1.5;
+		padding: 1em 2em;
+		transition: 0.2s ease-in-out;
+		width: 100%;
+
+		> svg {
+			margin-right: 0;
+		}
+
+		span {
+			margin-left: 9px;
+			margin-right: 0;
+			font-family: inherit;
+			font-size: inherit;
+			font-style: inherit;
+			font-weight: inherit;
+			letter-spacing: -0.01em;
+			line-height: 1.5;
+		}
+	}
+
+
+	/**
+	* Jetpack Signup
+	*/
+	@at-root .is-jetpack-login & {
+		padding: 16px;
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			border-radius: 2px;
+
+			> svg {
+				margin-right: 0;
+			}
+
+			span {
+				font-weight: 400;
+				font-family: inherit;
+				letter-spacing: normal;
+				line-height: 22px;
+				margin-left: 9px;
+				margin-right: 0;
+			}
+		}
+
+		@include break-mobile {
+			padding: 24px;
+		}
+	}
+
+	/**
+	* Crowdsignal Signup
+	*/
+	@at-root .crowdsignal & {
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			display: none;
+
+			&.google {
+				display: block;
+				background-color: #fff;
+				margin-bottom: 20px;
+				box-shadow: none;
+				border: solid var(--color-neutral-10);
+				border-width: 1px 1px 2px;
+				border-radius: 2px;
+				box-sizing: border-box;
+				height: 45px;
+				padding: 13px 40px 12px;
+
+				span {
+					margin-left: 15px;
+					font-family: inherit;
+					font-style: inherit;
+					line-height: normal;
+					letter-spacing: normal;
+					font-weight: 600;
+					font-size: 0.875rem;
+				}
+
+				@include break-medium {
+					margin-bottom: 40px;
+				}
+			}
+		}
+	}
+
+	/**
+	* Jetpack Cloud
+	*/
+	@at-root .jetpack-cloud & {
+		max-width: 375px;
+		width: 100%;
+		padding: 16px;
+		margin-bottom: 0;
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			> svg {
+				margin-right: 0;
+			}
+
+			span {
+				font-weight: 400;
+				font-family: inherit;
+				letter-spacing: normal;
+				line-height: 22px;
+				margin-left: 9px;
+				margin-right: 0;
+			}
+		}
+
+		@include break-mobile {
+			padding: 24px;
+		}
+	}
+
+	/**
+	* WooCommerce Signup
+	*/
+	@at-root .is-woo-passwordless & {
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			height: 48px;
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 8px;
+
+			> svg {
+				margin-right: auto;
+			}
+
+			span {
+				color: var(--studio-gray-100);
+				font-family: Inter, -apple-system, system-ui, sans-serif;
+				font-size: 1rem;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 24px;
+				letter-spacing: 0.32px;
+				margin-left: -20px;
+				margin-right: auto;
+			}
+		}
+	}
+
+	/**
+	* Videopress Signup
+	*/
+	@at-root .is-videopress-account & {
+		.auth-form__social-buttons-container {
+			gap: 0;
+		}
+
+		.auth-form__social-buttons .auth-form__social-buttons-container .social-buttons__button {
+			margin: 0 auto 15px;
+			padding-bottom: 0;
+			padding-left: 0;
+			text-align: start;
+
+			span {
+				color: var(--videopress-color-text);
+				margin-left: 8px;
+				letter-spacing: normal;
+				line-height: 22px;
+			}
+		}
+	}
+}
+
+.is-woo-passwordless .signup-form .auth-form__separator {
+	margin: 32px 0;
+}
+
+.signup-form.is-horizontal .notice.signup-form__notice {
+	width: 100%;
+	margin: auto;
+	margin-bottom: 16px;
 }

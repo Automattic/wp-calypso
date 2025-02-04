@@ -2,17 +2,34 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { siteColumns } from '../../utils';
 import SiteTableRow from '../index';
 import type { SiteData } from '../../types';
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
 describe( '<SiteTableRow>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
@@ -41,12 +58,28 @@ describe( '<SiteTableRow>', () => {
 			value: siteObj,
 			error: false,
 			type: 'site',
-			status: '',
+			status: 'active',
+		},
+		stats: {
+			type: 'stats',
+			status: 'active',
+			value: {
+				views: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
+				visitors: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
+			},
 		},
 		backup: {
 			type: 'backup',
 			value: translate( 'Failed' ),
-			status: 'failed',
+			status: 'critical',
 		},
 		monitor: {
 			error: false,
@@ -78,7 +111,12 @@ describe( '<SiteTableRow>', () => {
 	};
 	const props = {
 		item,
-		columns: siteColumns,
+		columns: [],
+		setExpanded: function (): void {
+			throw new Error( 'Function not implemented.' );
+		},
+		isExpanded: false,
+		index: 0,
 	};
 	const initialState = {
 		partnerPortal: {
@@ -86,26 +124,34 @@ describe( '<SiteTableRow>', () => {
 				isPartnerOAuthTokenLoaded: true,
 			},
 		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
+			},
+		},
+		a8cForAgencies: {
+			agencies: {},
+		},
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
-	const { getByText } = render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<table>
-					<tbody>
-						<SiteTableRow { ...props } />
-					</tbody>
-				</table>
-			</QueryClientProvider>
-		</Provider>
-	);
-
 	test( 'should render correctly and have the error message and the link to fix the issue', async () => {
+		const { getByText } = render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<table>
+						<tbody>
+							<SiteTableRow { ...props } />
+						</tbody>
+					</table>
+				</QueryClientProvider>
+			</Provider>
+		);
+
 		await waitFor( () => {
-			expect( getByText( 'Jetpack is unable to connect to test.jurassic.ninja' ) ).toBeVisible();
+			expect( getByText( 'Jetpack is unable to connect to this site' ) ).toBeVisible();
 			expect( getByText( /fix now/i ) ).toBeVisible();
 		} );
 	} );

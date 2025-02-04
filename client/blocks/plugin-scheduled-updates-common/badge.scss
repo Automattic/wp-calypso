@@ -1,0 +1,38 @@
+.badge-component {
+	border-radius: 4px;
+	padding: 3px 10px;
+	margin-inline-end: 0.5rem;
+
+	&--success {
+		color: var(--studio-green-80);
+		background-color: var(--studio-green-5);
+	}
+
+	&--failed {
+		color: var(--studio-red-80);
+		background-color: var(--studio-red-5);
+	}
+
+	&--in-progress {
+		color: var(--studio-blue-80);
+		background-color: var(--studio-blue-5);
+
+		svg {
+			animation: scheduled-updates-rotate 2s linear infinite;
+		}
+	}
+
+	svg {
+		position: relative;
+		top: 4px;
+	}
+}
+
+@keyframes scheduled-updates-rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

@@ -1,8 +1,8 @@
 import { Button } from '@automattic/components';
 import { useState } from '@wordpress/element';
-import classNames from 'classnames';
+import clsx from 'clsx';
+import { PropsWithChildren } from 'react';
 import CloseIcon from './icons/close-icon';
-import type { WPElement } from '@wordpress/element';
 
 interface Props {
 	onSubmit: () => void;
@@ -10,13 +10,15 @@ interface Props {
 }
 
 export interface IntroContent {
-	title: WPElement | string;
-	text?: WPElement | string;
+	title: React.ReactElement | string;
+	text?: React.ReactElement | string;
+	secondaryText?: React.ReactElement | string;
 	buttonText: string;
+	secondaryButtonText?: string;
 	modal?: IntroModal;
 }
 
-export interface IntroModalContentProps {
+export interface IntroModalContentProps extends PropsWithChildren {
 	onSubmit?: () => void;
 }
 
@@ -28,9 +30,9 @@ export interface IntroModal {
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	const [ showModal, setShowModal ] = useState( false );
-	const { title, text, buttonText, modal } = introContent;
+	const { title, text, buttonText, modal, secondaryButtonText, secondaryText } = introContent;
 
-	const modalClasses = classNames( 'intro__more-modal', {
+	const modalClasses = clsx( 'intro__more-modal', {
 		show: showModal,
 	} );
 
@@ -56,12 +58,22 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 					<Button className="intro__button" primary onClick={ onSubmit }>
 						{ buttonText }
 					</Button>
+					{ secondaryButtonText && (
+						<Button
+							className="intro__button-more"
+							href="https://wordpress.com/create-a-course/"
+							transparent
+						>
+							{ secondaryButtonText }
+						</Button>
+					) }
 					{ modal && (
 						<Button className="intro__button-more" transparent onClick={ handleMoreClick }>
 							{ modal.buttonText }
 						</Button>
 					) }
 				</div>
+				{ secondaryText && <div className="intro__secondary-text">{ secondaryText }</div> }
 			</div>
 			{ modal && (
 				<div className={ modalClasses }>

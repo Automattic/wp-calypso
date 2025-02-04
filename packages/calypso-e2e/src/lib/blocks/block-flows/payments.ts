@@ -33,7 +33,8 @@ export class PaymentsBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const buttonTextLocator = context.editorLocator.locator( selectors.buttonText );
+		const editorParent = await context.editorPage.getEditorParent();
+		const buttonTextLocator = editorParent.locator( selectors.buttonText );
 		await buttonTextLocator.fill( this.configurationData.buttonText );
 	}
 

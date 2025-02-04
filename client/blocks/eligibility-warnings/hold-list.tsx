@@ -1,56 +1,88 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import classNames from 'classnames';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
-import { useSelector } from 'react-redux';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
+import { useSelector } from 'calypso/state';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
-function getHoldMessages(
-	context: string | null,
-	translate: LocalizeProps[ 'translate' ],
-	billingPeriod?: string,
-	isMarketplace?: boolean
-) {
+function getHoldMessages( {
+	context,
+	translate,
+	billingPeriod,
+	isMarketplace,
+	hasEnTranslation,
+}: {
+	context: string | null;
+	translate: LocalizeProps[ 'translate' ];
+	billingPeriod?: string;
+	isMarketplace?: boolean;
+	hasEnTranslation: ( arg: string ) => boolean;
+} ) {
 	return {
 		NO_BUSINESS_PLAN: {
 			title: ( function () {
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
-					return translate( 'Upgrade to a Personal plan' );
+					return translate( 'Upgrade to a %(personalPlanName)s plan', {
+						args: { personalPlanName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+					} );
 				}
 
-				return translate( 'Upgrade to a Business plan' );
+				return translate( 'Upgrade to a %(businessPlanName)s plan', {
+					args: { businessPlanName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+				} );
 			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
-					return translate(
-						"You'll also get to install custom plugins, have more storage, and access live support."
-					);
+					return hasEnTranslation(
+						"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
+					)
+						? translate(
+								"You'll also get to install custom plugins, have more storage, and access priority 24/7 support."
+						  )
+						: translate(
+								"You'll also get to install custom plugins, have more storage, and access live support."
+						  );
 				}
 
 				if ( isMarketplace && isEnabled( 'marketplace-personal-premium' ) ) {
-					return translate(
-						"You'll also get a free domain for one year, and access email support."
-					);
+					return hasEnTranslation(
+						"You'll also get a free domain for one year, and access fast support."
+					)
+						? translate( "You'll also get a free domain for one year, and access fast support." )
+						: translate( "You'll also get a free domain for one year, and access email support." );
 				}
 
 				if ( billingPeriod === IntervalLength.MONTHLY ) {
-					return translate(
-						"You'll also get to install custom themes, have more storage, and access email support."
-					);
+					return hasEnTranslation(
+						"You'll also get to install custom themes, have more storage, and access fast support."
+					)
+						? translate(
+								"You'll also get to install custom themes, have more storage, and access fast support."
+						  )
+						: translate(
+								"You'll also get to install custom themes, have more storage, and access email support."
+						  );
 				}
 
-				return translate(
-					"You'll also get to install custom themes, have more storage, and access live support."
-				);
+				return hasEnTranslation(
+					"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+				)
+					? translate(
+							"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
+					  )
+					: translate(
+							"You'll also get to install custom themes, have more storage, and access live support."
+					  );
 			} )(),
 			supportUrl: null,
 		},
@@ -102,6 +134,13 @@ function getHoldMessages(
 			description: <ExcessiveDiskSpace />,
 			supportUrl: localizeUrl( 'https://wordpress.com/help/contact' ),
 		},
+		IS_STAGING_SITE: {
+			title: translate( 'Create a new staging site' ),
+			description: translate(
+				'Hosting features cannot be activated for a staging site. Create a new staging site to continue.'
+			),
+			supportUrl: null,
+		},
 	};
 }
 
@@ -109,7 +148,6 @@ function getHoldMessages(
  * This function defines how we should communicate each type of blocking hold the public-api returns.
  * Blocking holds are "hard stops" - if we detect any, we know the Atomic Transfer won't be possible and so we
  * should short-circuit any eligibility checks and just communicate the problem.
- *
  * @param {Function} translate Translate fn
  * @returns {Object} Dictionary of blocking holds and their corresponding messages
  */
@@ -214,8 +252,16 @@ export const HardBlockingNotice = ( {
 };
 
 export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+	const hasEnTranslation = useHasEnTranslation();
+
 	const billingPeriod = useSelector( getBillingInterval );
-	const holdMessages = getHoldMessages( context, translate, billingPeriod, isMarketplace );
+	const holdMessages = getHoldMessages( {
+		context,
+		translate,
+		billingPeriod,
+		isMarketplace,
+		hasEnTranslation,
+	} );
 	const blockingMessages = getBlockingMessages( translate );
 
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
@@ -231,7 +277,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				/>
 			) }
 			<div
-				className={ classNames( 'eligibility-warnings__hold-list', {
+				className={ clsx( 'eligibility-warnings__hold-list', {
 					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"
@@ -311,7 +357,6 @@ function isKnownHoldType(
  * This checks if hold coming from API is blocking (@see getBlockingMessages);
  * For example, if we detect BLOCKED_ATOMIC_TRANSFER, we should block the path forward and direct the user
  * to our support.
- *
  * @param {string} hold Specific hold we want to check
  * @param {Object} blockingMessages List of all holds we consider blocking
  * @returns {boolean} Is {hold} blocking or not

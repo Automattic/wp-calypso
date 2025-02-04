@@ -81,7 +81,6 @@ export const sharePostStatus = ( state = {}, action ) => {
  * fetching status for that site. Assigns `true` for currently fetching,
  * `false` for done or failed fetching, or `undefined` if no fetch attempt
  * has been made for the site.
- *
  * @param {Object} state Redux state
  * @param {Object} action Redux action
  */

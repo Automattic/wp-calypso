@@ -60,18 +60,13 @@ body {
 	}
 
 	/* stylelint-disable-next-line unit-allowed-list */
-	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
+	@media (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi) {
 		&.font-smoothing-antialiased {
 			text-rendering: optimizeLegibility;
 			-moz-osx-font-smoothing: grayscale;
 			-webkit-font-smoothing: antialiased;
 		}
 	}
-}
-
-::selection {
-	background: rgba(var(--color-primary-light-rgb), 0.7);
-	color: var(--color-text);
 }
 
 button {
@@ -145,6 +140,11 @@ h4,
 h5,
 h6 {
 	clear: both;
+	text-wrap: balance;
+}
+caption,
+figcaption {
+	text-wrap: balance;
 }
 hr {
 	background: var(--color-neutral-10);
@@ -154,6 +154,12 @@ hr {
 }
 
 /* Text elements */
+p,
+ul,
+ol,
+blockquote {
+	text-wrap: pretty;
+}
 p {
 	margin-bottom: 1.5em;
 }

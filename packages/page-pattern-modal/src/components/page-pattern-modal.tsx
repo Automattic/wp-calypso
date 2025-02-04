@@ -1,9 +1,15 @@
 import { parse as parseBlocks } from '@wordpress/blocks';
-import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
+import {
+	Button,
+	MenuItem as _MenuItem,
+	Modal,
+	NavigableMenu,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import classnames from 'classnames';
+import clsx from 'clsx';
 import { memoize } from 'lodash';
 import containsMissingBlock from '../utils/contains-missing-block';
 import { sortGroupNames } from '../utils/group-utils';
@@ -12,7 +18,7 @@ import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
 import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
-import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
+import type { ComponentProps, ComponentType } from 'react';
 
 interface PagePatternModalProps {
 	areTipsEnabled?: boolean;
@@ -21,7 +27,7 @@ interface PagePatternModalProps {
 	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	savePatternChoice: ( name: string ) => void;
+	savePatternChoice: ( name: string, selectedCategory: string | null ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
@@ -33,7 +39,14 @@ interface PagePatternModalState {
 	selectedCategory: string | null;
 }
 
-type CloseModalEvent = KeyboardEvent | MouseEvent | FocusEvent;
+// TODO: Remove this wrapper when MenuItem adds back button prop types
+type MenuItemProps = ComponentProps< typeof _MenuItem >;
+const MenuItem = _MenuItem as ComponentType<
+	MenuItemProps & {
+		variant?: ComponentProps< typeof Button >[ 'variant' ];
+		isPressed?: boolean;
+	}
+>;
 
 class PagePatternModal extends Component< PagePatternModalProps, PagePatternModalState > {
 	constructor( props: PagePatternModalProps ) {
@@ -46,16 +59,16 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	// Parse patterns blocks and memoize them.
 	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
 		const blocksByPatternSlugs = patterns.reduce(
-			( prev, { name, description = '', html, pattern_meta } ) => {
-				// The default value is from https://github.com/Automattic/wp-calypso/blob/d22976d8250fb4479d5677f5434742878fbd0ef3/apps/editing-toolkit/editing-toolkit-plugin/block-patterns/class-block-patterns-from-api.php#L115
+			( prev, { name, title = '', description = '', html, pattern_meta } ) => {
+				// 1280px is the default value because it's also used when registering patterns from the block-patterns feature in jetpack-mu-wpcom
 				const viewportWidth = pattern_meta?.viewport_width
 					? Number( pattern_meta.viewport_width )
 					: 1280;
 
 				prev[ name ] = {
 					name,
-					// Keep showing the description as before instead of the title
-					title: description,
+					// A lot of patterns don't have a description, so we fallback to the title if it's blank
+					title: description || title,
 					blocks: html
 						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
 						: [],
@@ -71,19 +84,22 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	} );
 
 	filterPatternsWithMissingBlocks( patterns: Record< string, FormattedPattern > ) {
-		return Object.entries( patterns ).reduce( ( acc, [ name, pattern ] ) => {
-			// Does the pattern contain any missing blocks?
-			const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
+		return Object.entries( patterns ).reduce(
+			( acc, [ name, pattern ] ) => {
+				// Does the pattern contain any missing blocks?
+				const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
 
-			// Only retain the pattern in the collection if:
-			// 1. It does not contain any missing blocks
-			// 2. There are no blocks at all (likely the "blank" pattern placeholder)
-			if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
-				acc[ name ] = pattern;
-			}
+				// Only retain the pattern in the collection if:
+				// 1. It does not contain any missing blocks
+				// 2. There are no blocks at all (likely the "blank" pattern placeholder)
+				if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
+					acc[ name ] = pattern;
+				}
 
-			return acc;
-		}, {} as Record< string, FormattedPattern > );
+				return acc;
+			},
+			{} as Record< string, FormattedPattern >
+		);
 	}
 
 	getBlocksForSelection = ( selectedPattern: string ) => {
@@ -134,7 +150,8 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	setPattern = ( name: string ) => {
 		// Track selection and mark post as using a pattern in its postmeta.
 		trackSelection( name );
-		this.props.savePatternChoice( name );
+		const { selectedCategory } = this.state;
+		this.props.savePatternChoice( name, selectedCategory );
 
 		// Check to see if this is a blank pattern selection
 		// and reset the pattern if so.
@@ -168,7 +185,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		this.setState( { selectedCategory } );
 	};
 
-	closeModal = ( event: CloseModalEvent ) => {
+	closeModal = (
+		event?: React.KeyboardEvent< HTMLDivElement > | React.SyntheticEvent< Element, Event >
+	) => {
 		// As of Gutenberg 13.1, the editor will auto-focus on the title block
 		// automatically. See: https://github.com/WordPress/gutenberg/pull/40195.
 		// This ends up triggering a `blur` event on the Modal that causes it
@@ -180,7 +199,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// check what element triggered the `blur` (which doesn't work when the
 		// theme is block-based, as the title block DOM element is not directly
 		// accessible as it's inside the `editor-canvas` iframe).
-		if ( event.type === 'blur' ) {
+		if ( event?.type === 'blur' ) {
 			event.stopPropagation();
 			return;
 		}
@@ -326,11 +345,6 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<Modal
 				title="" // We're providing the title with the `aria.labelledby` prop
 				className="page-pattern-modal"
-				// @ts-expect-error `onRequestClose`'s type is () => void but ideally but
-				// in reality, it might receive an event object that might be one of multiple
-				// types (see the `CloseModalEvent` type above for more info). We ignore the
-				// error for now until the type is updated in DefinitelyTyped.
-				// DT PR: https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60127.
 				onRequestClose={ this.closeModal }
 				aria={ {
 					labelledby: `page-pattern-modal__heading-${ instanceId }`,
@@ -341,7 +355,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 					<div className="page-pattern-modal__sidebar">
 						<h1
 							id={ `page-pattern-modal__heading-${ instanceId }` }
-							className={ classnames( 'page-pattern-modal__heading', {
+							className={ clsx( 'page-pattern-modal__heading', {
 								'page-pattern-modal__heading--default': ! this.props.title,
 							} ) }
 						>
@@ -359,7 +373,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 						</p>
 						<div className="page-pattern-modal__button-container">
 							<Button
-								isSecondary
+								variant="secondary"
 								onClick={ () => this.setPattern( 'blank' ) }
 								className="page-pattern-modal__blank-button"
 							>
@@ -391,7 +405,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 							{ this.getPatternCategories()?.map( ( { slug, name } ) => (
 								<MenuItem
 									key={ slug }
-									isTertiary
+									variant="tertiary"
 									aria-selected={ slug === selectedCategory }
 									data-slug={ slug }
 									onClick={ () => this.handleCategorySelection( slug ) }

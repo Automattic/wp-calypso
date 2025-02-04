@@ -5,6 +5,7 @@ import {
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
 	COMMENTS_EDIT,
+	COMMENTS_EMPTY,
 	COMMENTS_LIKE,
 	COMMENTS_LIST_REQUEST,
 	COMMENTS_RECEIVE,
@@ -12,6 +13,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_REQUEST,
 	COMMENTS_SET_ACTIVE_REPLY,
+	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
 } from 'calypso/state/action-types';
@@ -28,7 +30,6 @@ import 'calypso/state/comments/init';
 
 /**
  * Creates an action that requests a single comment for a given site.
- *
  * @param {Object} options options object.
  * @param {number} options.siteId Site identifier
  * @param {number} options.commentId Comment identifier
@@ -44,7 +45,6 @@ export const requestComment = ( { siteId, commentId, query = {} } ) => ( {
 
 /**
  * Creates an action for receiving comments for a specific post on a site.
- *
  * @param {Object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
@@ -62,7 +62,6 @@ export const receiveComments = ( { siteId, postId, comments, commentById = false
 
 /**
  * Creates an action for receiving comment errors.
- *
  * @param {Object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.commentId comment identifier
@@ -76,7 +75,6 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
 
 /**
  * Creates an action that requests comments for a given post
- *
  * @param {Object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
@@ -106,6 +104,7 @@ export function requestPostComments( {
 			order: direction === 'before' ? 'DESC' : 'ASC',
 			number: NUMBER_OF_COMMENTS_PER_FETCH,
 			status,
+			author_wpcom_data: true, // For self hosted Jetpack sites include wpcom author data if available.
 		},
 	};
 }
@@ -114,7 +113,6 @@ export function requestPostComments( {
  * Creates an action that request a list of comments for a given query.
  * Except the two query properties descibed here, this function accepts all query parameters
  * listed in the API docs:
- *
  * @see https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/comments/
  * @param {Object} query API call parameters
  * @param {string} query.listType Type of list to return (required as 'site')
@@ -128,7 +126,6 @@ export const requestCommentsList = ( query ) => ( {
 
 /**
  * Creates an action that requests comment counts for a given site.
- *
  * @param {number} siteId Site identifier
  * @param {number} [postId] Post identifier
  * @returns {Object} Action that requests comment counts by site.
@@ -142,7 +139,6 @@ export const requestCommentCounts = ( siteId, postId ) => ( {
 /**
  * Creates an action that permanently deletes a comment
  * or removes a comment placeholder from the state
- *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number|string} commentId comment or comment placeholder identifier
@@ -182,8 +178,35 @@ export const deleteComment =
 	};
 
 /**
+ * Creates an action that permanently empties all comments
+ * of a specified status
+ * @param {number} siteId site identifier
+ * @param {string} status Status of comments to delete (spam or trash)
+ * @param {Object} options Action options
+ * @param {boolean} options.showSuccessNotice Announce the delete success with a notice (default: true)
+ * @param {Object} refreshCommentListQuery Forces requesting a fresh copy of a comments page with these query parameters.
+ * @returns {Object} action that empties comments
+ */
+export const emptyComments = (
+	siteId,
+	status,
+	options = { showSuccessNotice: true },
+	refreshCommentListQuery = null
+) => ( {
+	type: COMMENTS_EMPTY,
+	siteId,
+	status,
+	options,
+	refreshCommentListQuery,
+	meta: {
+		dataLayer: {
+			trackRequest: true,
+		},
+	},
+} );
+
+/**
  * Creates a write comment action for a siteId and postId
- *
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -198,7 +221,6 @@ export const writeComment = ( commentText, siteId, postId ) => ( {
 
 /**
  * Creates a reply to comment action for a siteId, postId and commentId
- *
  * @param {string} commentText text of the comment
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
@@ -223,7 +245,6 @@ export const replyComment = (
 
 /**
  * Creates a thunk that likes a comment
- *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number} commentId comment identifier
@@ -238,7 +259,6 @@ export const likeComment = ( siteId, postId, commentId ) => ( {
 
 /**
  * Creates an action that unlikes a comment
- *
  * @param {number} siteId site identifier
  * @param {number} postId post identifier
  * @param {number} commentId comment identifier
@@ -253,7 +273,6 @@ export const unlikeComment = ( siteId, postId, commentId ) => ( {
 
 /**
  * Creates an action that changes a comment status.
- *
  * @param {number} siteId Site identifier
  * @param {number} postId Post identifier
  * @param {number} commentId Comment identifier
@@ -302,7 +321,6 @@ export const changeCommentStatus =
 
 /**
  * Creates an action that edits a comment.
- *
  * @param {number} siteId Site identifier
  * @param {number} postId Post identifier
  * @param {number} commentId Comment identifier
@@ -321,7 +339,6 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
  * Expand selected comments to the level of displayType. It's important to note that a comment will
  * only get expanded and cannot unexpand from this action.
  * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
- *
  * @param {Object} options options object.
  * @param {number} options.siteId siteId for the comments to expand.
  * @param {Array<number>} options.commentIds list of commentIds to expand.
@@ -337,7 +354,6 @@ export const expandComments = ( { siteId, commentIds, postId, displayType } ) =>
 /**
  * Creates an action that sets the active reply for a given site ID and post ID
  * This is used on the front end to show a reply box under the specified comment.
- *
  * @param {Object} options options object.
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
@@ -350,5 +366,14 @@ export const setActiveReply = ( { siteId, postId, commentId } ) => ( {
 		siteId,
 		postId,
 		commentId,
+	},
+} );
+
+export const toggleInlineCommentsExpanded = ( { siteId, postId, streamKey } ) => ( {
+	type: COMMENTS_TOGGLE_INLINE_EXPANDED,
+	payload: {
+		siteId,
+		postId,
+		streamKey,
 	},
 } );

@@ -6,7 +6,6 @@ import { resemblesUrl } from 'calypso/lib/url';
  *
  * If the clipboard contains a URL and some text is selected, pasting will wrap the selected text
  * in an <a> element with the href set to the URL in the clipboard.
- *
  * @example withPasteToLink( Component )
  * @param {Object} WrappedComponent - React component to wrap
  * @returns {Object} Enhanced component

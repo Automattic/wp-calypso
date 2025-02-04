@@ -1,5 +1,4 @@
 import { withStorageKey } from '@automattic/state-utils';
-import { includes } from 'lodash';
 import {
 	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
@@ -17,7 +16,6 @@ import { items as itemSchemas } from './schema';
 /**
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID to whether a request is in progress.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -44,7 +42,6 @@ export const requesting = ( state = {}, action ) => {
 /**
  * Returns the save Request status after an action has been dispatched. The
  * state maps site ID to the request status
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -83,7 +80,6 @@ export const saveRequests = ( state = {}, action ) => {
 /**
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID to the site settings object.
- *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
  * @returns {Object}        Updated state
@@ -112,7 +108,10 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 		case MEDIA_DELETE: {
 			const { siteId, mediaIds } = action;
 			const settings = state[ siteId ];
-			if ( ! settings || ! includes( mediaIds, settings.site_icon ) ) {
+			if (
+				! settings ||
+				! ( Array.isArray( mediaIds ) && mediaIds.includes( settings.site_icon ) )
+			) {
 				return state;
 			}
 

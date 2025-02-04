@@ -1,5 +1,5 @@
 import { ProgressBar } from '@automattic/components';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -64,7 +64,6 @@ class VideoEditor extends Component {
 
 	/**
 	 * Updates the poster by selecting a particular frame of the video.
-	 *
 	 * @param {number} currentTime - Time at which to capture the frame
 	 * @param {boolean} isMillisec - Whether the time is in milliseconds
 	 */
@@ -108,7 +107,6 @@ class VideoEditor extends Component {
 
 	/**
 	 * Uploads an image to use as the poster for the video.
-	 *
 	 * @param {Object} file - Uploaded image
 	 */
 	uploadImage = ( file ) => {
@@ -142,7 +140,7 @@ class VideoEditor extends Component {
 			<Notice
 				className="video-editor__notice"
 				status="is-error"
-				showDismiss={ true }
+				showDismiss
 				text={ translate( 'We are unable to edit this video.' ) }
 				isCompact={ false }
 				onDismissClick={ onCancel }
@@ -154,7 +152,7 @@ class VideoEditor extends Component {
 		const { className, media, onCancel, uploadProgress, translate, shouldShowError } = this.props;
 		const { error, isLoading, isSelectingFrame, pauseVideo } = this.state;
 
-		const classes = classNames( 'video-editor', className );
+		const classes = clsx( 'video-editor', className );
 
 		return (
 			<div className={ classes }>
@@ -175,13 +173,13 @@ class VideoEditor extends Component {
 						{ uploadProgress && ! error && (
 							<ProgressBar
 								className="video-editor__progress-bar"
-								isPulsing={ true }
+								isPulsing
 								total={ 100 }
 								value={ uploadProgress }
 							/>
 						) }
 						<span className="video-editor__text">
-							{ translate( 'Select a frame to use as the thumbnail image or upload your own.' ) }
+							{ translate( 'Select a frame to use as the poster image or upload your own.' ) }
 						</span>
 						<VideoEditorControls
 							isPosterUpdating={ isSelectingFrame || ( uploadProgress && ! error ) }
