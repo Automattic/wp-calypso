@@ -324,6 +324,7 @@
 	},
 	"resolutions": {
 		"@types/react": "^18.2.6",
+		"@types/react-dom": "^18.2.6",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
