@@ -308,7 +308,7 @@ class Layout extends Component {
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
 			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-			'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
+			'feature-flag-woocommerce-rebrand-2-0': true,
 		} );
 
 		const optionalBodyProps = () => {

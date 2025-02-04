@@ -20,9 +20,9 @@ import {
 	MARKETPLACE_TYPE_REFERRAL,
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -152,7 +152,7 @@ export default function LayoutBodyContent( {
 			{ isAutomatedReferral && (
 				<div className="referrals-overview__section-icons">
 					<JetpackLogo className="jetpack-logo" size={ 24 } />
-					<WooCommerceLogo className="woocommerce-logo" size={ 40 } />
+					<img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" />
 					<img className="pressable-icon" src={ pressableIcon } alt="Pressable" />
 					<WordPressLogo className="a4a-overview-hosting__wp-logo" size={ 24 } />
 				</div>

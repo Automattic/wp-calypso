@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
@@ -15,6 +14,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
+import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import bigSkyBg from './big-sky-bg.png';
 import bigSkyFg from './big-sky-fg.png';
 import hiBigSky from './big-sky-no-text-small.png';
@@ -28,8 +28,8 @@ import './style.scss';
  * The design choices step
  */
 const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
-	const isGoalsFirstVariation =
-		isOnboardingFlow( flow ) && isEnabled( 'onboarding/big-sky-before-plans' );
+	const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans(); // If the experiment hasn't loaded yet, then it must mean we're ineligible anyway
+	const isGoalsFirstVariation = isOnboardingFlow( flow ) && isBigSkyBeforePlansExperiment;
 
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
@@ -98,13 +98,23 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 		return translate( 'Create with AI (BETA)' );
 	};
 
-	const bigSkyBadgeLabel =
-		! isLoading && isEligible && personalProduct?.cost_per_month_display && isGoalsFirstVariation
-			? translate( 'Starting at %(price)s a month', {
+	const bigSkyBadgeLabel = () => {
+		if ( ! isLoading && isEligible && personalProduct?.cost_per_month_display ) {
+			if ( hasEnTranslation( 'Starting at %(price)s/month' ) ) {
+				return translate( 'Starting at %(price)s/month', {
 					args: { price: personalProduct.cost_per_month_display },
 					comment: 'Translators: "price" is a per month price and includes a currency symbol',
-			  } )
-			: undefined;
+				} );
+			}
+
+			return translate( 'Starting at %(price)s a month', {
+				args: { price: personalProduct.cost_per_month_display },
+				comment: 'Translators: "price" is a per month price and includes a currency symbol',
+			} );
+		}
+
+		return undefined;
+	};
 
 	return (
 		<>
@@ -151,7 +161,6 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									) }
 									imageSrc={ hiBigSky }
 									destination="launch-big-sky"
-									badgeLabel={ bigSkyBadgeLabel }
 									footer={ preventWidows(
 										translate(
 											'To learn more about AI, you can review our {{a}}AI guidelines{{/a}}.',
@@ -185,10 +194,18 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 								<GoalsFirstDesignChoice
 									title={ getCreateWithAILabel() }
 									ariaLabel={ translate( 'Create with AI (BETA)' ) }
-									description={ translate(
-										'Use our AI website builder to easily and quickly build the site of your dreams.'
-									) }
-									badgeLabel={ bigSkyBadgeLabel }
+									description={
+										hasEnTranslation(
+											'Use our AI Website Builder to quickly and easily create the site of your dreams.'
+										)
+											? translate(
+													'Use our AI Website Builder to quickly and easily create the site of your dreams.'
+											  )
+											: translate(
+													'Use our AI website builder to easily and quickly build the site of your dreams.'
+											  )
+									}
+									badgeLabel={ bigSkyBadgeLabel() }
 									bgImageSrc={ bigSkyBg }
 									fgImageSrc={ bigSkyFg }
 									destination="launch-big-sky"

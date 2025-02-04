@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getSelectedFeedId } from 'calypso/state/reader-ui/sidebar/selectors';
 import { withReaderPerformanceTrackerStop } from '../reader-performance-tracker';
 
 class FollowingEmptyContent extends Component {
@@ -11,39 +12,47 @@ class FollowingEmptyContent extends Component {
 		return false;
 	}
 
-	recordAction = () => {
-		recordAction( 'clicked_search_on_empty' );
-		recordGaEvent( 'Clicked Search on EmptyContent' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_search_on_empty_stream_clicked' );
+	recordAction = ( isFullSiteFeed = false ) => {
+		if ( isFullSiteFeed ) {
+			recordAction( 'clicked_visit_full_site_feed_on_empty' );
+			recordGaEvent( 'Clicked Visit Full Site Feed on EmptyContent' );
+			this.props.recordReaderTracksEvent(
+				'calypso_reader_visit_full_site_feed_on_empty_stream_clicked'
+			);
+		} else {
+			recordAction( 'clicked_discover_on_empty' );
+			recordGaEvent( 'Clicked Discover on EmptyContent' );
+			this.props.recordReaderTracksEvent( 'calypso_reader_discover_on_empty_stream_clicked' );
+		}
 	};
 
 	render() {
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const action = (
-			<a
-				className="empty-content__action button is-primary"
-				onClick={ this.recordAction }
-				href="/read/search"
-			>
-				{ this.props.translate( 'Find sites to follow' ) }
-			</a>
-		);
-		const secondaryAction = null;
+		const { selectedFeedId, translate } = this.props;
+		const isFullSiteFeed = !! selectedFeedId;
 
 		return (
 			<EmptyContent
 				className="stream__empty"
-				title={ this.props.translate( 'Welcome to Reader' ) }
-				line={ this.props.translate( 'Recent posts from sites you follow will appear here.' ) }
-				action={ action }
-				secondaryAction={ secondaryAction }
+				title={ translate( "You're all caught up." ) }
+				line={ translate( 'No new posts in the last 60 days.' ) }
+				action={
+					isFullSiteFeed
+						? translate( 'Visit the Full Site Feed' )
+						: translate( 'Discover New Sites' )
+				}
+				actionURL={ isFullSiteFeed ? `/read/feeds/${ selectedFeedId }` : '/discover' }
+				actionCallback={ () => this.recordAction( isFullSiteFeed ) }
 				illustration=""
 			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
-export default connect( null, {
-	recordReaderTracksEvent,
-} )( withReaderPerformanceTrackerStop( localize( FollowingEmptyContent ) ) );
+export default connect(
+	( state ) => ( {
+		selectedFeedId: getSelectedFeedId( state ),
+	} ),
+	{
+		recordReaderTracksEvent,
+	}
+)( withReaderPerformanceTrackerStop( localize( FollowingEmptyContent ) ) );
