@@ -1,6 +1,6 @@
 import CloudLogo from '../cloud-logo';
 import CNNLogo from '../cnn-logo';
-import JetpackLogo from '../jetpack-logo';
+import { JetpackLogo } from '../jetpack-logo';
 import SalesforceLogo from '../salesforce-logo';
 import SlackLogo from '../slack-logo';
 import VIPLogo from '../vip-logo';
