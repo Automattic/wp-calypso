@@ -4,7 +4,7 @@ import { Button, Card, FormInputValidation, FormLabel, Gridicon } from '@automat
 import { alert } from '@automattic/components/src/icons';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
-import { Spinner, TextControl } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import cookie from 'cookie';
@@ -22,6 +22,7 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import { LastUsedSocialButton } from 'calypso/components/social-buttons';
+import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import {
 	getSignupUrl,
@@ -490,8 +491,6 @@ export class LoginForm extends Component {
 									usernameOrEmail: value,
 								} );
 							} }
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
 						/>
 
 						{ requestError && requestError.field === 'usernameOrEmail' && (
@@ -516,8 +515,6 @@ export class LoginForm extends Component {
 										password: value,
 									} );
 								} }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
 							/>
 
 							{ requestError && requestError.field === 'password' && (
