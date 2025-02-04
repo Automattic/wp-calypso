@@ -36,7 +36,6 @@ const targetDeviceOptions = getTargetDeviceOptions();
 const launchOptions: LaunchOptions = {
 	headless: envVariables.HEADLESS,
 	slowMo: envVariables.SLOW_MO,
-	args: [ '--disable-quic' ],
 };
 
 // Options for the BrowserContext level.

@@ -49,6 +49,16 @@
 					line-height: 3.25;
 				}
 			}
+			.formatted-header__title:has(+ p) {
+				@include break-small {
+					line-height: 1.9;
+				}
+			}
+			.formatted-header__subtitle {
+				@include break-small {
+					padding-bottom: 1em;
+				}
+			}
 		}
 	}
 

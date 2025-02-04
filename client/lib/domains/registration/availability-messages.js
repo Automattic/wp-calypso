@@ -648,7 +648,9 @@ function getAvailabilityNotice(
 			break;
 
 		case 'hundred_year_domain_tld_restriction':
-			message = translate( 'Only .com, .net and .org domains can be registered for 100 years.' );
+			message = translate(
+				'Only .com, .net, .org and .blog domains can be registered for 100 years.'
+			);
 			severity = 'info';
 			break;
 

@@ -75,7 +75,7 @@ const StatsHeroCard = ( {
 					{ toggleControl }
 				</div>
 			</div>
-			<div className={ `${ BASE_CLASS_NAME }__content` }>
+			<div className={ `${ BASE_CLASS_NAME }__content ${ BASE_CLASS_NAME }__content--hero` }>
 				<div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div>
 				<div className={ `${ BASE_CLASS_NAME }--header-and-body` }>
 					<div
@@ -101,8 +101,12 @@ const StatsHeroCard = ( {
 						</a>
 					) }
 				</div>
+				{ overlay && (
+					<div className={ `${ BASE_CLASS_NAME }__overlay ${ BASE_CLASS_NAME }__overlay--hero` }>
+						{ overlay }
+					</div>
+				) }
 			</div>
-			{ overlay && <div className={ `${ BASE_CLASS_NAME }__overlay` }>{ overlay }</div> }
 		</div>
 	);
 };

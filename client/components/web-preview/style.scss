@@ -70,6 +70,9 @@
 	border-bottom: 1px solid var(--color-neutral-10);
 	border-radius: 2px 2px 0 0;
 	display: flex;
+	gap: 24px;
+	padding: 0 12px;
+	align-items: center;
 }
 
 .web-preview__close.button {
@@ -103,15 +106,12 @@
 	}
 }
 
-.web-preview__external,
-.web-preview__launch-site {
-	margin: 3px 0;
+.web-preview__external {
 	min-width: 120px;
 	text-align: center;
 }
 
 .web-preview__edit.button {
-	margin: 3px 0;
 	min-width: 100px;
 	text-align: center;
 }
@@ -120,13 +120,8 @@
 	margin-left: auto;
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
 	gap: 8px;
-
-	@include break-large {
-		// Matches __device-switcher width + margin
-		// and allows the center area to flex equally
-		min-width: 212px;
-	}
 }
 
 .web-preview__device-switcher {
@@ -134,13 +129,11 @@
 
 	@include break-small {
 		display: flex;
-		margin: 6px 12px 0;
 	}
 }
 
 .web-preview__url-clipboard-input {
 	flex-grow: 1;
-	margin: 6px 10px;
 	width: auto;
 
 	.form-text-input {
@@ -204,17 +197,6 @@
 
 	@include break-small {
 		display: none;
-	}
-}
-
-.web-preview__toolbar-tray {
-	.button {
-		margin: 4px;
-		&:not(:last-child) {
-			@include breakpoint-deprecated( "<660px" ) {
-				display: none;
-			}
-		}
 	}
 }
 

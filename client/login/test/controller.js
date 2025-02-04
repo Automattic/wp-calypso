@@ -3,7 +3,7 @@ import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { redirectJetpack, redirectLostPassword, login } from '../controller';
 
 jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
@@ -31,12 +31,7 @@ jest.mock( 'calypso/state/selectors/get-is-blaze-pro', () => ( {
 	default: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-is-woo-passwordless', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state/selectors/is-woo-passwordless-jpc-flow', () => ( {
+jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 } ) );
@@ -180,7 +175,7 @@ describe( 'redirectLostPassword', () => {
 		context.store.getState.mockReturnValueOnce( {} );
 		getIsBlazePro.mockReturnValueOnce( false );
 		isWooOAuth2Client.mockReturnValueOnce( false );
-		isWooPasswordlessJPCFlow.mockReturnValueOnce( false );
+		isWooJPCFlow.mockReturnValueOnce( false );
 
 		redirectLostPassword( context, next );
 

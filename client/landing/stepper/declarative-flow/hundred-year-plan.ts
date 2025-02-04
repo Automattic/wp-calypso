@@ -156,7 +156,11 @@ const HundredYearPlanFlow: Flow = {
 			}
 		}
 
-		return { submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { submit, exitFlow };
 	},
 };
 

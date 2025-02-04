@@ -83,7 +83,7 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
-window.AppBoot = async () => {
+async function main() {
 	const { pathname, search } = window.location;
 
 	// Before proceeding we redirect the user if necessary.
@@ -193,4 +193,6 @@ window.AppBoot = async () => {
 			</Provider>
 		</CalypsoI18nProvider>
 	);
-};
+}
+
+main();

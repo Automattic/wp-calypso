@@ -3,6 +3,8 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .processing-step {
+	--wp-components-color-foreground: #3858E9;
+
 	padding: 1em;
 	max-width: 540px;
 	text-align: center;
@@ -16,6 +18,10 @@
 		text-align: center;
 		vertical-align: middle;
 		margin: 0;
+	}
+
+	.processing-step__progress-bar {
+		margin: 46px auto 0 auto;
 	}
 }
 

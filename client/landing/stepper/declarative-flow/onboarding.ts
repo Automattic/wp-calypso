@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
-import { OnboardSelect, Onboard, UserSelect } from '@automattic/data-stores';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
+import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs, removeQueryArgs } from '@wordpress/url';
@@ -23,14 +24,22 @@ import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
+import { useIsBigSkyEligible } from '../hooks/use-is-site-big-sky-eligible';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useBigSkyBeforePlans } from './helpers/use-bigsky-before-plans-experiment';
 import { useGoalsFirstExperiment } from './helpers/use-goals-first-experiment';
 import { recordStepNavigation } from './internals/analytics/record-step-navigation';
 import { STEPS } from './internals/steps';
 import { AssertConditionState, Flow, ProvidedDependencies } from './internals/types';
+
+declare global {
+	interface Window {
+		__a8cBigSkyOnboarding?: boolean;
+	}
+}
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -114,7 +123,12 @@ const onboarding: Flow = {
 
 		if ( isGoalsAtFrontExperiment ) {
 			// Note: these steps are not wrapped in `stepsWithRequiredLogin`
-			steps.unshift( STEPS.GOALS, STEPS.DESIGN_SETUP, STEPS.DIFM_STARTING_POINT );
+			steps.unshift(
+				STEPS.GOALS,
+				STEPS.DESIGN_CHOICES,
+				STEPS.DESIGN_SETUP,
+				STEPS.DIFM_STARTING_POINT
+			);
 		}
 
 		return steps;
@@ -130,15 +144,17 @@ const onboarding: Flow = {
 			setProductCartItems,
 			setSiteUrl,
 			setSignupDomainOrigin,
+			setCreateWithBigSky,
 		} = useDispatch( ONBOARD_STORE );
 		const locale = useFlowLocale();
 
-		const { planCartItem, signupDomainOrigin, isUserLoggedIn } = useSelect(
+		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
 			( select ) => ( {
 				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+				createWithBigSky: ( select( ONBOARD_STORE ) as OnboardSelect ).getCreateWithBigSky(),
 			} ),
 			[]
 		);
@@ -149,6 +165,46 @@ const onboarding: Flow = {
 		const [ useMyDomainTracksEventProps, setUseMyDomainTracksEventProps ] = useState( {} );
 
 		const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+		const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
+		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
+		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
+
+		if ( typeof window !== 'undefined' && createWithBigSky ) {
+			window.__a8cBigSkyOnboarding = true;
+		} else if ( typeof window !== 'undefined' ) {
+			window.__a8cBigSkyOnboarding = false;
+		}
+		/**
+		 * Returns [destination, backDestination] for the post-checkout destination.
+		 */
+		const getPostCheckoutDestination = (
+			providedDependencies: ProvidedDependencies
+		): [ string, string ] => {
+			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
+				const destination = addQueryArgs( '/setup/site-setup/launch-big-sky', {
+					siteSlug: providedDependencies.siteSlug,
+					flags: 'onboarding/force-big-sky-before-plan',
+				} );
+
+				return [
+					destination,
+					addQueryArgs( '/setup/onboarding/plans', {
+						skippedCheckout: 1,
+						flags: 'onboarding/force-big-sky-before-plan',
+					} ),
+				];
+			}
+
+			const destination = addQueryArgs( '/setup/site-setup', {
+				siteSlug: providedDependencies.siteSlug,
+				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
+				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
+					flags: 'onboarding/newsletter-goal',
+				} ),
+			} );
+
+			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];
+		};
 
 		clearUseMyDomainsQueryParams( currentStepSlug );
 
@@ -179,6 +235,9 @@ const onboarding: Flow = {
 							return navigate( 'difmStartingPoint' );
 
 						default: {
+							if ( isDesignChoicesStepEnabled ) {
+								return navigate( 'design-choices' );
+							}
 							return navigate( 'designSetup' );
 						}
 					}
@@ -186,6 +245,18 @@ const onboarding: Flow = {
 
 				case 'designSetup': {
 					return navigate( 'domains' );
+				}
+
+				case 'design-choices': {
+					// __a8cBigSkyOnboarding is set as a hack so that the @automattic/calypso-products can know what the users
+					// selection was. Accessing the data store is tricky from there.
+					// See is-big-sky-onboarding.ts
+					if ( providedDependencies.destination === 'launch-big-sky' ) {
+						setCreateWithBigSky( true );
+						return navigate( 'domains' );
+					}
+					setCreateWithBigSky( false );
+					return navigate( providedDependencies.destination as string );
 				}
 
 				case 'difmStartingPoint': {
@@ -300,13 +371,8 @@ const onboarding: Flow = {
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
 				case 'processing': {
-					const destination = addQueryArgs( '/setup/site-setup', {
-						siteSlug: providedDependencies.siteSlug,
-						...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-						...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
-							flags: 'onboarding/newsletter-goal',
-						} ),
-					} );
+					const [ destination, backDestination ] =
+						getPostCheckoutDestination( providedDependencies );
 
 					persistSignupDestination( destination );
 					setSignupCompleteFlowName( flowName );
@@ -320,8 +386,11 @@ const onboarding: Flow = {
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
 								redirect_to: destination,
 								signup: 1,
-								checkoutBackUrl: pathToUrl( addQueryArgs( destination, { skippedCheckout: 1 } ) ),
+								checkoutBackUrl: pathToUrl( backDestination ),
 								coupon,
+								...( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment
+									? { [ 'big-sky-checkout' ]: 1 }
+									: {} ),
 							} )
 						);
 					} else {
@@ -362,13 +431,21 @@ const onboarding: Flow = {
 					return navigate( 'domains' );
 				case 'domains':
 					if ( isGoalsAtFrontExperiment ) {
+						if ( isBigSkyBeforePlansExperiment && createWithBigSky ) {
+							return navigate( 'design-choices' );
+						}
 						return navigate( 'designSetup' );
 					}
 				case 'designSetup':
+					if ( isDesignChoicesStepEnabled ) {
+						return navigate( 'design-choices' );
+					}
 					if ( isGoalsAtFrontExperiment ) {
 						return navigate( 'goals' );
 					}
 				case 'difmStartingPoint':
+					return navigate( 'goals' );
+				case 'design-choices':
 					return navigate( 'goals' );
 				default:
 					return;
@@ -401,8 +478,25 @@ const onboarding: Flow = {
 				clearSignupDestinationCookie();
 				clearSignupCompleteFlowName();
 				clearSignupCompleteSlug();
+
+				if ( typeof window !== 'undefined' ) {
+					delete window.__a8cBigSkyOnboarding;
+				}
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		const [ isGoalsFirstExperimentLoading, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
+		// The personal plan price appears on the design choice step under these conditions. Pre-load it so it doesn't flash into existence
+		// Preload even before we know whether use is in the big-sky-before-plans experiment. By the time we know it will be too late.
+		const preloadPersonalProduct = ! isGoalsFirstExperimentLoading && isGoalsFirstExperiment;
+
+		useSelect(
+			( select ) =>
+				preloadPersonalProduct
+					? select( ProductsList.store ).getProductBySlug( PLAN_PERSONAL )
+					: undefined,
+			[ preloadPersonalProduct ]
+		);
 	},
 };
 

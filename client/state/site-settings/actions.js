@@ -10,6 +10,7 @@ import {
 	SITE_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import { requestSite, receiveSiteFrontPage } from 'calypso/state/sites/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { requestAdminMenu } from '../admin-menu/actions';
 import { normalizeSettings } from './utils';
 import 'calypso/state/site-settings/init';
@@ -40,6 +41,34 @@ export function updateSiteSettings( siteId, settings ) {
 		type: SITE_SETTINGS_UPDATE,
 		siteId,
 		settings,
+	};
+}
+
+/**
+ * Formats subscription_options to match the expected server format
+ * @param {Object} settings The settings object
+ * @param {number} siteId The site ID
+ * @param {Object} state The Redux state
+ * @returns {Object} The formatted settings object
+ */
+function formatSubscriptionOptions( settings, siteId, state ) {
+	if ( ! settings?.subscription_options || ! isJetpackSite( state, siteId ) ) {
+		return settings;
+	}
+
+	const allowedKeys = [ 'invitation', 'comment_follow', 'welcome' ];
+	const formattedOptions = [];
+	Object.entries( settings.subscription_options ).forEach( ( [ key, value ] ) => {
+		if ( allowedKeys.includes( key ) ) {
+			// Create an array-like object with numeric indices
+			formattedOptions.push( value );
+			formattedOptions[ key ] = value; // Also keep the key-value pairs
+		}
+	} );
+
+	return {
+		...settings,
+		subscription_options: formattedOptions,
 	};
 }
 
@@ -83,14 +112,16 @@ export function requestSiteSettings( siteId ) {
 }
 
 export function saveSiteSettings( siteId, settings = {} ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		dispatch( {
 			type: SITE_SETTINGS_SAVE,
 			siteId,
 		} );
 
+		const formattedSettings = formatSubscriptionOptions( settings, siteId, getState() );
+
 		return wpcom.req
-			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, settings )
+			.post( '/sites/' + siteId + '/settings', { apiVersion: '1.4' }, formattedSettings )
 			.then( ( body ) => {
 				dispatch( updateSiteSettings( siteId, normalizeSettings( body.updated ) ) );
 				dispatch( {

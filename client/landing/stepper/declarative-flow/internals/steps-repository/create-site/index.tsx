@@ -115,7 +115,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -201,6 +201,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
 
+			if ( productCartItems?.length && slug ) {
+				await addProductsToCart( slug, flow, productCartItems );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: shouldGoToCheckout,
@@ -275,9 +279,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}
 
 	useEffect( () => {
-		if ( ! isFreeFlow( flow ) ) {
-			setProgress( 0.1 );
-		}
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
