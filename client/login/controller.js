@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import DesktopLogin from 'calypso/login/desktop-login';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
@@ -132,6 +133,16 @@ export async function login( context, next ) {
 
 	enhanceContextWithLogin( context );
 
+	next();
+}
+
+export async function desktopLogin( context, next ) {
+	context.primary = <DesktopLogin action="start" />;
+	next();
+}
+
+export async function desktopLoginFinalize( context, next ) {
+	context.primary = <DesktopLogin action="finalize" />;
 	next();
 }
 
