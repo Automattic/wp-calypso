@@ -8,7 +8,7 @@ exports[`<GlobalNotices /> should render notices with the expected structure 1`]
   >
     <div
       aria-label="Notice"
-      class="notice is-success is-dismissable"
+      class="notice is-reskinned is-success is-dismissable"
       role="status"
     >
       <span
