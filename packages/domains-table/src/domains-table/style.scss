@@ -459,4 +459,8 @@ main.domains-overview main.domains-overview__list .hosting-dashboard-layout-colu
 		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
 		color: var(--theme-base-color);
 	}
+
+	.domains-table__row:has(a.domains-table__domain-name) {
+		cursor: pointer;
+	}
 }
