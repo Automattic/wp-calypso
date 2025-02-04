@@ -38,6 +38,10 @@ $blueberry-blue: #3858e9;
 	overscroll-behavior: contain;
 	padding-top: 16px;
 
+	&:has(.odie-notice) {
+		margin-bottom: 135px;
+	}
+
 	.odie-chatbox-bottom-edge {
 		min-height: 8px;
 		width: 100%;

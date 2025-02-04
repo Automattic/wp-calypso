@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { FormInputValidation, FormLabel } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Spinner } from '@wordpress/components';
+import { Spinner, TextControl } from '@wordpress/components';
 import clsx from 'clsx';
 import debugModule from 'debug';
 import { localize } from 'i18n-calypso';
@@ -32,12 +32,10 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Notice from 'calypso/components/notice';
-import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
@@ -725,7 +723,7 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooJPC )
+							{ this.props.isWoo && ! this.props.isWooJPC
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -810,7 +808,7 @@ class SignupForm extends Component {
 
 	renderWooCommerce() {
 		return (
-			<div>
+			<div className="signup-form__woocommerce-inputs-wrapper">
 				<TextControl
 					label={ this.props.translate( 'Your email address' ) }
 					disabled={
@@ -827,6 +825,8 @@ class SignupForm extends Component {
 							value,
 						} );
 					} }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
 				/>
 				{ this.emailDisableExplanation() }
 
@@ -849,6 +849,8 @@ class SignupForm extends Component {
 									value,
 								} );
 							} }
+							__next40pxDefaultSize
+							__nextHasNoMarginBottom
 						/>
 
 						{ formState.isFieldInvalid( this.state.form, 'username' ) && (
@@ -871,6 +873,8 @@ class SignupForm extends Component {
 							value,
 						} );
 					} }
+					__next40pxDefaultSize
+					__nextHasNoMarginBottom
 				/>
 
 				{ this.passwordValidationExplanation() }
@@ -1058,7 +1062,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo, isBlazePro } = this.props;
+		const { isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1090,25 +1094,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		return (
-			<>
-				{ ! this.props.isReskinned && (
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
-								? translate( 'Log in to create a site for your existing account.' )
-								: translate( 'Already have a WordPress.com account?' ) }
-						</LoggedOutFormLinkItem>
-						{ this.props.oauth2Client && (
-							<LoggedOutFormBackLink
-								oauth2Client={ this.props.oauth2Client }
-								recordClick={ this.recordBackLinkClick }
-							/>
-						) }
-					</LoggedOutFormLinks>
-				) }
-			</>
-		);
+		return null;
 	}
 
 	handleOnChangeAccount = () => {
