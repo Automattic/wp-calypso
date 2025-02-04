@@ -1,7 +1,9 @@
+import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { transferStatus, type as domainType } from 'calypso/lib/domains/constants';
 import { isCancelable, isRemovable } from 'calypso/lib/purchases';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
 import RemovePurchase from 'calypso/me/purchases/remove-purchase';
 import { getCancelPurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import {
@@ -79,7 +81,11 @@ const DomainDeleteInfoCard = ( {
 	if ( ! isCancelable( purchase ) ) {
 		return null;
 	}
-	const link = getCancelPurchaseUrlFor( selectedSite.slug, purchase.id );
+
+	const link = config.isEnabled( 'calypso/all-domain-management' )
+		? cancelPurchase( selectedSite.slug, purchase.id )
+		: getCancelPurchaseUrlFor( selectedSite.slug, purchase.id );
+
 	return (
 		<DomainInfoCard
 			type="href"
