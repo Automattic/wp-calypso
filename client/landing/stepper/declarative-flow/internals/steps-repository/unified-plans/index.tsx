@@ -68,6 +68,12 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		theme ? getThemeType( state, theme.id ) : ''
 	);
 	const isLoadingSelectedTheme = selectedDesign && ! theme;
+	const { siteUrl } = useSelect(
+		( select ) => ( {
+			siteUrl: ( select( ONBOARD_STORE ) as OnboardSelect ).getSiteUrl(),
+		} ),
+		[]
+	);
 
 	const signupDependencies = {
 		siteSlug,
@@ -77,6 +83,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 		domainItem,
 		domainCart: domainItems,
 		selectedThemeType,
+		siteUrl,
 	};
 
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
