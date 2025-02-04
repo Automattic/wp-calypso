@@ -570,14 +570,14 @@ export function setupReadRoutes() {
 			getRedirect: ( params ) => `/tag/${ params.tag_name }`,
 		},
 		{
-			path: '/read/users/:user_id',
-			regex: /^\/read\/users\/([0-9]+)$/i,
-			getRedirect: ( params ) => `/reader/users/${ params.user_id }`,
+			path: '/read/users/:user_login',
+			regex: /^\/read\/users\/([^/]+)$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_login }`,
 		},
 		{
-			path: '/read/users/:user_id/lists',
-			regex: /^\/read\/users\/([0-9]+)\/lists$/i,
-			getRedirect: ( params ) => `/reader/users/${ params.user_id }/lists`,
+			path: '/read/users/:user_login/lists',
+			regex: /^\/read\/users\/([^/]+)\/lists$/i,
+			getRedirect: ( params ) => `/reader/users/${ params.user_login }/lists`,
 		},
 	];
 
