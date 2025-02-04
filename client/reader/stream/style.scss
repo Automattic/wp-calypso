@@ -646,7 +646,8 @@
 			}
 
 			@include breakpoint-deprecated( "<660px" ) {
-				margin: 0 16px;
+				margin-left: 16px;
+				margin-right: 16px;
 			}
 
 			@include break-medium {
