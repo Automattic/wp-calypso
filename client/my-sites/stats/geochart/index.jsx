@@ -115,10 +115,10 @@ class StatsGeochart extends Component {
 		const { geoMode, numberLabel, translate } = this.props;
 		const chartData = new window.google.visualization.DataTable();
 
-		if ( geoMode === 'city' ) {
+		if ( geoMode === 'city' || geoMode === 'region' ) {
 			chartData.addColumn( 'number', 'Latitude' );
 			chartData.addColumn( 'number', 'Longitude' );
-			chartData.addColumn( 'string', translate( 'Country' ).toString() );
+			chartData.addColumn( 'string', 'Location' );
 			chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 
 			chartData.addRows(
@@ -135,6 +135,7 @@ class StatsGeochart extends Component {
 			return chartData;
 		}
 
+		// Default to country
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 		chartData.addRows(
@@ -177,7 +178,7 @@ class StatsGeochart extends Component {
 			domain: currentUserCountryCode,
 		};
 
-		if ( geoMode === 'city' ) {
+		if ( geoMode === 'city' || geoMode === 'region' ) {
 			options.displayMode = 'markers';
 		}
 
