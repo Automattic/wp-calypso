@@ -169,6 +169,11 @@ const onboarding: Flow = {
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
 
+		if ( typeof window !== 'undefined' && createWithBigSky ) {
+			window.__a8cBigSkyOnboarding = true;
+		} else if ( typeof window !== 'undefined' ) {
+			window.__a8cBigSkyOnboarding = false;
+		}
 		/**
 		 * Returns [destination, backDestination] for the post-checkout destination.
 		 */
@@ -248,15 +253,9 @@ const onboarding: Flow = {
 					// See is-big-sky-onboarding.ts
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						setCreateWithBigSky( true );
-						if ( typeof window !== 'undefined' ) {
-							window.__a8cBigSkyOnboarding = true;
-						}
 						return navigate( 'domains' );
 					}
 					setCreateWithBigSky( false );
-					if ( typeof window !== 'undefined' ) {
-						window.__a8cBigSkyOnboarding = false;
-					}
 					return navigate( providedDependencies.destination as string );
 				}
 
