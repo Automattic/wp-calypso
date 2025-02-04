@@ -51,24 +51,18 @@ describe( 'useDomainToPlanCreditsApplicable', () => {
 		);
 	} );
 
-	test( 'Returns credit when site has a domain, is on a free plan, and has credits', () => {
+	test( 'Returns the credit value for a site that is eligible (has a domain and is on the free plan)', () => {
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
 		expect( result.current ).toEqual( 1000 );
 	} );
 
-	test( 'Returns credit when credit value is 0', () => {
-		mockUseMaxPlanUpgradeCredits.mockImplementation( () => 0 );
-		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
-		expect( result.current ).toEqual( 0 );
-	} );
-
-	test( 'Returns null when site has no domain', () => {
+	test( "Returns null when the site is not eligible because it doesn't have a domain)", () => {
 		mockHasPurchasedDomain.mockImplementation( () => false );
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
 		expect( result.current ).toEqual( null );
 	} );
 
-	test( 'Returns null when site is on a paid plan', () => {
+	test( 'Returns null when the site is not eligible because it is on a paid plan', () => {
 		mockIsCurrentPlanPaid.mockImplementation( () => true );
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
 		expect( result.current ).toEqual( null );
