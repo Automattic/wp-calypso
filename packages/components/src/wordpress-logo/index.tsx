@@ -2,10 +2,14 @@ import './style.scss';
 
 type Props = {
 	className?: string;
+	/**
+	 * The size of the logo in pixels.
+	 * @default 72
+	 */
 	size?: number;
 };
 
-const WordPressLogo: React.FunctionComponent< Props > = ( {
+export const WordPressLogo: React.FunctionComponent< Props > = ( {
 	className = 'wordpress-logo',
 	size = 72,
 } ) => {
@@ -15,5 +19,3 @@ const WordPressLogo: React.FunctionComponent< Props > = ( {
 		</svg>
 	);
 };
-
-export default WordPressLogo;

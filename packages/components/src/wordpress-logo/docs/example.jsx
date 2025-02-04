@@ -1,4 +1,4 @@
-import WordPressLogo from '../index';
+import { WordPressLogo } from '../index';
 
 function WordPressLogoExample() {
 	return (
