@@ -6,7 +6,7 @@ import {
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
@@ -15,11 +15,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
-import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import type { StepProps } from '../../types';
 import './style.scss';
 
@@ -40,9 +38,8 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	flow,
 	...props
 } ) => {
-	const showVariants = useMigrationExperiment( flow );
+	const showVariants = SITE_MIGRATION_FLOW === flow;
 	const { onSkip, skipLabelText, skipPosition } = props;
-	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();

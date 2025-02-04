@@ -165,11 +165,16 @@ describe( 'SiteMigrationIdentify', () => {
 		render( { navigation: { submit } } );
 
 		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-		expect( screen.getByText( /Unmatched Reliability and Uptime/ ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				/Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure./
+				/Blazing fast speeds with lightning-fast load times for a seamless experience/
 			)
+		).toBeVisible();
+		expect(
+			screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
+		).toBeVisible();
+		expect(
+			screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
 		).toBeVisible();
 	} );
 } );

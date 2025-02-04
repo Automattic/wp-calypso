@@ -10,16 +10,11 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from 'calypso/signup/steps/initial-intent/constants';
-import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import type { Step } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
 import './style.scss';
-
-interface HostingDetailsProps {
-	items: { title: string; description: string }[];
-}
 
 interface HostingDetailsWithIconsProps {
 	items: {
@@ -54,28 +49,6 @@ const HostingDetailsWithIcons: FC< HostingDetailsWithIconsProps > = ( { items } 
 	);
 };
 
-const HostingDetails: FC< HostingDetailsProps > = ( { items } ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="import__site-identify-hosting-details">
-			<p className="import__site-identify-hosting-details--title">
-				{ translate( 'Why should you host with us?' ) }
-			</p>
-			<div className="import__site-identify-hosting-details--list">
-				{ items.map( ( item, index ) => (
-					<div key={ index } className="import__site-identify-hosting-details--list-item">
-						<p className="import__site-identify-hosting-details--list-item-title">{ item.title }</p>
-						<p className="import__site-identify-hosting-details--list-item-description">
-							{ item.description }
-						</p>
-					</div>
-				) ) }
-			</div>
-		</div>
-	);
-};
-
 interface Props {
 	hasError?: boolean;
 	onComplete: ( siteInfo: UrlData ) => void;
@@ -84,12 +57,7 @@ interface Props {
 	flowName: string;
 }
 
-export const Analyzer: FC< Props > = ( {
-	onComplete,
-	onSkip,
-	hideImporterListLink = false,
-	flowName,
-} ) => {
+export const Analyzer: FC< Props > = ( { onComplete, onSkip, hideImporterListLink = false } ) => {
 	const translate = useTranslate();
 	const [ siteURL, setSiteURL ] = useState< string >( '' );
 	const {
@@ -98,8 +66,6 @@ export const Analyzer: FC< Props > = ( {
 		isFetching,
 		isFetched,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' );
-
-	const isMigrationExperimentEnabled = useMigrationExperiment( flowName );
 
 	useEffect( () => {
 		if ( siteInfo ) {
@@ -111,49 +77,22 @@ export const Analyzer: FC< Props > = ( {
 		return <ScanningStep />;
 	}
 
-	let hostingDetailItems;
-
-	if ( isMigrationExperimentEnabled ) {
-		hostingDetailItems = {
-			'blazing-fast-speed': {
-				icon: next,
-				description: translate(
-					'Blazing fast speeds with lightning-fast load times for a seamless experience.'
-				),
-			},
-			'unmatched-uptime': {
-				icon: published,
-				description: translate(
-					'Unmatched reliability with 99.999% uptime and unmetered traffic.'
-				),
-			},
-			security: {
-				icon: shield,
-				description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
-			},
-		};
-	} else {
-		hostingDetailItems = {
-			'unmatched-uptime': {
-				title: translate( 'Unmatched Reliability and Uptime' ),
-				description: translate(
-					"Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure."
-				),
-			},
-			'effortless-customization': {
-				title: translate( 'Effortless Customization' ),
-				description: translate(
-					'Our tools and options let you easily design a website to meet your needs, whether you’re a beginner or an expert.'
-				),
-			},
-			'blazing-fast-speed': {
-				title: translate( 'Blazing Fast Page Speed' ),
-				description: translate(
-					'Our global CDN with 28+ locations delivers lightning-fast load times for a seamless visitor experience.'
-				),
-			},
-		};
-	}
+	const hostingDetailItems = {
+		'blazing-fast-speed': {
+			icon: next,
+			description: translate(
+				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
+			),
+		},
+		'unmatched-uptime': {
+			icon: published,
+			description: translate( 'Unmatched reliability with 99.999% uptime and unmetered traffic.' ),
+		},
+		security: {
+			icon: shield,
+			description: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
+		},
+	};
 
 	return (
 		<div className="import__capture-wrapper">
@@ -181,11 +120,7 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ translate( 'Check my site' ) }
 				/>
 			</div>
-			{ isMigrationExperimentEnabled ? (
-				<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
-			) : (
-				<HostingDetails items={ Object.values( hostingDetailItems ) } />
-			) }
+			<HostingDetailsWithIcons items={ Object.values( hostingDetailItems ) } />
 		</div>
 	);
 };
