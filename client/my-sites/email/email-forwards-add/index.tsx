@@ -35,9 +35,6 @@ type EmailForwardsAddProps = {
 	showPageHeader?: boolean;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = (): void => {};
-
 const EmailForwardsAdd = ( {
 	selectedDomainName,
 	source,
@@ -102,7 +99,6 @@ const EmailForwardsAdd = ( {
 			{ ! areDomainsLoading && (
 				<EmailForwardingAddNewCompactList
 					onAddedEmailForwards={ onAddedEmailForwards }
-					onBeforeAddEmailForwards={ noop }
 					selectedDomainName={ selectedDomainName }
 					showFormHeader={ showFormHeader }
 				/>

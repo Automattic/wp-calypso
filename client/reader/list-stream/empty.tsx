@@ -8,11 +8,11 @@ export default function ListEmptyContent(): JSX.Element {
 	const previousRoute: string = useSelector( getPreviousRoute );
 
 	function previousRouteIsUserProfileLists(): boolean {
-		return /^\/read\/users\/[a-z0-9]+\/lists\??$/.test( previousRoute );
+		return /^\/reader\/users\/[a-z0-9]+\/lists\??$/.test( previousRoute );
 	}
 
 	function getActionBtnLink(): string {
-		return previousRouteIsUserProfileLists() ? previousRoute : '/read';
+		return previousRouteIsUserProfileLists() ? previousRoute : '/reader';
 	}
 
 	function getActionBtnText(): string {

@@ -45,7 +45,7 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 				title={ translate( 'Uh oh. User not found.' ) }
 				line={ translate( 'Sorry, the user you were looking for could not be found.' ) }
 				action={ translate( 'Return to Reader' ) }
-				actionURL="/read"
+				actionURL="/reader"
 				className="user-profile__404"
 			/>
 		);

@@ -13,7 +13,7 @@ describe( 'pathToSection', () => {
 	} );
 
 	test( 'should handle cases where path and section have different names', () => {
-		expect( pathToSection( '/read' ) ).toBe( 'reader' );
+		expect( pathToSection( '/reader' ) ).toBe( 'reader' );
 	} );
 
 	test( 'should correctly associate paths that start with the same string', () => {

@@ -37,7 +37,7 @@ export class ReaderSidebarListsListItem extends Component {
 
 	render() {
 		const { list, translate } = this.props;
-		const listRelativeUrl = `/read/list/${ list.owner }/${ list.slug }`;
+		const listRelativeUrl = `/reader/list/${ list.owner }/${ list.slug }`;
 		const listManagementUrls = [
 			listRelativeUrl + '/items',
 			listRelativeUrl + '/edit',

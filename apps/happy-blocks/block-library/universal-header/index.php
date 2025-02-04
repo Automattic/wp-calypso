@@ -288,7 +288,7 @@ if ( isset( $args['website'] ) ) {
 						</li>
 						<li>
 							<a role="menuitem" class="x-dropdown-link x-link"
-								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+								href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/reader/search/' ) ); ?>"
 								tabindex="-1">
 							<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
 							</a>
@@ -556,7 +556,7 @@ if ( isset( $args['website'] ) ) {
 							</li>
 							<li class="x-menu-grid-item">
 								<a role="menuitem" class="x-menu-link x-link"
-									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/read/search/' ) ); ?>"
+									href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/reader/search/' ) ); ?>"
 									tabindex="-1">
 								<?php esc_html_e( 'Blog Search', 'happy-blocks' ); ?>
 								</a>

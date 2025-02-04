@@ -1,5 +1,4 @@
 import { Badge, MaterialIcon } from '@automattic/components';
-import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
@@ -8,10 +7,8 @@ import { EMAIL_ACCOUNT_TYPE_FORWARD } from 'calypso/lib/emails/email-provider-co
 import { getGSuiteSubscriptionStatus, hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import EmailMailboxActionMenu from 'calypso/my-sites/email/email-management/home/email-mailbox-action-menu';
-import EmailMailboxWarnings from 'calypso/my-sites/email/email-management/home/email-mailbox-warnings';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
-import EmailForwardHeader from './email-plan-mailboxes/email-forward-header';
-import EmailForwardSecondaryDetails from './email-plan-mailboxes/email-forward-secondary-details';
+import { EmailForwardsList } from '../../email-forwarding/email-forwards-list';
 import EmailUpgradeNotice from './email-plan-mailboxes/email-upgrade-notice';
 import MailboxListHeader from './email-plan-mailboxes/list-header';
 import MailboxListItem from './email-plan-mailboxes/list-item';
@@ -31,6 +28,7 @@ type Props = {
 	purchaseNewEmailAccountPath?: string;
 	isLoadingEmails: boolean;
 };
+
 function EmailPlanMailboxesList( {
 	context,
 	domain,
@@ -43,7 +41,6 @@ function EmailPlanMailboxesList( {
 	const translate = useTranslate();
 	const accountType = account?.account_type;
 
-	const isDesktopResolution = useDesktopBreakpoint();
 	const isNoMailboxes = ! mailboxes || mailboxes.length < 1;
 	const isAccountWarningPresent = !! account?.warnings.length;
 	const isGoogleConfiguring =
@@ -87,37 +84,16 @@ function EmailPlanMailboxesList( {
 
 	function MailboxItems() {
 		return mailboxes.map( ( mailbox ) => {
-			const mailboxHasWarnings = Boolean( mailbox?.warnings?.length );
-			const showErrorStyling = context === 'email' && mailboxHasWarnings;
-
 			return (
 				<>
-					<MailboxListItem key={ mailbox.mailbox } isError={ showErrorStyling }>
+					<MailboxListItem key={ mailbox.mailbox }>
 						<div className="email-plan-mailboxes-list__mailbox-list-item-main">
 							<MailboxLink
 								account={ account }
 								mailbox={ mailbox }
 								readonly={ isGoogleConfiguring }
 							/>
-							{ context === 'email' && <EmailForwardSecondaryDetails mailbox={ mailbox } /> }
 						</div>
-						{ ( context === 'domains' || context === 'hosting-overview' ) && (
-							<div className="email-plan-mailboxes-list__mailbox-list-item-main">
-								<EmailForwardSecondaryDetails
-									mailbox={ mailbox }
-									hideIcon={ isDesktopResolution }
-								/>
-								{ mailboxHasWarnings && (
-									<div className="email-mailbox-warnings">
-										<EmailMailboxWarnings
-											account={ account }
-											mailbox={ mailbox }
-											ctaProps={ { primary: true, borderless: true, compact: false } }
-										/>
-									</div>
-								) }
-							</div>
-						) }
 						{ isEmailUserAdmin( mailbox ) && (
 							<Badge type="info">
 								{ translate( 'Admin', {
@@ -126,9 +102,6 @@ function EmailPlanMailboxesList( {
 							</Badge>
 						) }
 
-						{ context === 'email' && (
-							<EmailMailboxWarnings account={ account } mailbox={ mailbox } />
-						) }
 						{ ! mailbox.temporary && ! isGoogleConfiguring && (
 							<EmailMailboxActionMenu account={ account } domain={ domain } mailbox={ mailbox } />
 						) }
@@ -157,6 +130,7 @@ function EmailPlanMailboxesList( {
 	switch ( context ) {
 		case 'domains':
 		case 'hosting-overview':
+		case 'email':
 			return (
 				<>
 					{ ( isGoogleConfiguring || isAccountWarningPresent ) && (
@@ -181,12 +155,10 @@ function EmailPlanMailboxesList( {
 
 					{ accountType === EMAIL_ACCOUNT_TYPE_FORWARD && (
 						<>
-							<EmailForwardHeader
-								className="email-plan-mailboxes-list__mailbox-list"
+							<EmailForwardsList
 								actionPath={ ( ! actionPathProps?.disabled && actionPathProps?.path ) || undefined }
-							>
-								<MailboxItems />
-							</EmailForwardHeader>
+								mailboxes={ mailboxes }
+							/>
 							{ ! hasGSuiteWithUs( domain ) && ! hasTitanMailWithUs( domain ) && (
 								<EmailUpgradeNotice path={ purchaseNewEmailAccountPath } />
 							) }
@@ -210,7 +182,6 @@ function EmailPlanMailboxesList( {
 				</>
 			);
 
-		case 'email':
 		default: {
 			if ( isGoogleConfiguring ) {
 				return <MailboxContentInfo type="configuring" />;

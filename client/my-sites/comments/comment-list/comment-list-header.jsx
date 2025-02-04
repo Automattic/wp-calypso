@@ -93,7 +93,7 @@ const mapStateToProps = ( state, { postId } ) => {
 	return {
 		postDate,
 		postTitle,
-		postUrl: isJetpack ? get( post, 'URL' ) : `/read/blogs/${ siteId }/posts/${ postId }`,
+		postUrl: isJetpack ? get( post, 'URL' ) : `/reader/blogs/${ siteId }/posts/${ postId }`,
 		site,
 		siteId,
 		siteSlug,
