@@ -113,3 +113,10 @@ export function getAvailableUpsells() {
 		},
 	] as Product[];
 }
+
+// TODO: Reconfigure this to separate const data and translate calls.
+// Currently we end up calling getAvailableUpsells() twice per render.
+export function getUpsellFeatureSlugs(): string[] {
+	const upsells = getAvailableUpsells();
+	return upsells.flatMap( ( upsell ) => upsell.features );
+}
