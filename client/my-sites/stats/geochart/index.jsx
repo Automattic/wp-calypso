@@ -32,7 +32,6 @@ class StatsGeochart extends Component {
 		isLoading: PropTypes.bool,
 		numberLabel: PropTypes.string,
 		customHeight: PropTypes.number,
-		region: PropTypes.string,
 	};
 
 	static defaultProps = {
