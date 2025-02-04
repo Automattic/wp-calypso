@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export const NEWSLETTER_CATEGORIES_MODAL_HIDDEN_ENABLED_OPTION =
-	'wpcom_newsletter_categories_modal_hidden_enabled';
+	'wpcom_newsletter_categories_modal_hidden';
 
 type NewsletterCategoriesHideModalToggleProps = {
 	disabled?: boolean;
