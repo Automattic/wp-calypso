@@ -8,8 +8,8 @@ import {
 	PRODUCT_BRAND_FILTER_JETPACK,
 	PRODUCT_BRAND_FILTER_WOOCOMMERCE,
 } from 'calypso/a8c-for-agencies/sections/marketplace/constants';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 import './style.scss';
@@ -59,7 +59,7 @@ const OverviewBodyProducts = () => {
 	const woo: OfferingItemProps = {
 		//translators: Title for the action card
 		title: translate( 'WooCommerce' ),
-		titleIcon: <WooCommerceLogo className="a4a-overview-products__woocommerce-logo" size={ 40 } />,
+		titleIcon: <img width={ 40 } src={ WooLogoRebrand2 } alt="WooCommerce" />,
 		description: translate(
 			'WooCommerce is the platform that offers unlimited potential to build the perfect ecommerce experiences for your clients. No matter what success looks like, you can do it with WooCommerce. Purchase Woo extensions in bulk to save big.'
 		),

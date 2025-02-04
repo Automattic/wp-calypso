@@ -1,4 +1,5 @@
-import { WooLogo, WordPressLogo, JetpackLogo } from '@automattic/components';
+import { WordPressLogo, JetpackLogo } from '@automattic/components';
+import WooLogoRebrand2 from 'calypso/assets/images/icons/Woo_logo_color.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 
@@ -33,7 +34,7 @@ export const getBrandMeta = ( brand: string, agency?: Agency | null ): BrandMeta
 		case 'WooCommerce.com':
 			return {
 				brand: brand,
-				icon: <WooLogo />,
+				icon: <img width={ 45 } src={ WooLogoRebrand2 } alt="WooCommerce" />,
 				className: 'partner-directory-dashboard__woo-icon',
 				url: 'https://woocommerce.com/development-services/',
 				urlProfile: `https://woocommerce.com/development-services/${ agencySlug }/${ agencyId }`,
