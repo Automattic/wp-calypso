@@ -181,6 +181,7 @@ export class ActivationModal extends Component {
 					{ ! isCurrentThemeAllowedOnSite && (
 						<CheckboxControl
 							className="activation-modal__lower-tier-warning"
+							checked={ this.state.checkboxChecked }
 							onChange={ this.onCheckboxChange }
 							label={ translate(
 								'I understand I will not be able to switch back to %(themeName)s without upgrading my plan.',
