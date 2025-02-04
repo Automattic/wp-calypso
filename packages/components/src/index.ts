@@ -71,15 +71,10 @@ export type { RenderThumbFunction } from './pricing-slider/types';
 // Logos
 export { default as ClientLogoList } from './client-logo-list';
 export { default as JetpackLogo } from './logos/jetpack-logo';
-export { default as BloombergLogo } from './logos/bloomberg-logo';
 export { default as CloudLogo } from './logos/cloud-logo';
 export { default as CNNLogo } from './logos/cnn-logo';
-export { default as CondenastLogo } from './logos/condenast-logo';
-export { default as DisneyLogo } from './logos/disney-logo';
-export { default as FacebookLogo } from './logos/facebook-logo';
 export { default as SalesforceLogo } from './logos/salesforce-logo';
 export { default as SlackLogo } from './logos/slack-logo';
-export { default as TimeLogo } from './logos/time-logo';
 export { default as VIPLogo } from './logos/vip-logo';
 export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';

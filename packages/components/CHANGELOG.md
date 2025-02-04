@@ -1,6 +1,7 @@
 ## Next
 
 - Add FlowQuestion component
+- Remove unused corporate logos (#99229)
 
 ## 2.1.1
 
