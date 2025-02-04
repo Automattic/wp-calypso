@@ -55,20 +55,26 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 					mailbox.warnings?.length
 						? [
 								{
-									title: 'Resend',
+									title: translate( 'Resend', {
+										comment: 'Resend verification email',
+									} ) as string,
 									icon: rotateLeft,
 									onClick: () =>
 										resend( mailbox.mailbox, mailbox.domain, getEmailForwardAddress( mailbox ) ),
 								},
 								{
-									title: 'Remove',
+									title: translate( 'Remove', {
+										comment: 'Remove email forward',
+									} ) as string,
 									icon: trash,
 									onClick: () => setIsOpen( true ),
 								},
 						  ]
 						: [
 								{
-									title: 'Remove',
+									title: translate( 'Remove', {
+										comment: 'Remove email forward',
+									} ) as string,
 									icon: trash,
 									onClick: () => setIsOpen( true ),
 								},
