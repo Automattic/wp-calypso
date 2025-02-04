@@ -4,7 +4,11 @@ import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
-import { getAvailableUpsells, Product } from './upsell-card/available-upsells';
+import {
+	getAvailableUpsells,
+	getUpsellFeatureSlugs,
+	Product,
+} from './upsell-card/available-upsells';
 
 // TODO: Delete use-purchased-products.tsx
 // TODO: Check usage of hasBusinessPlan, hasCompletePlan, hasSecurityPlan or delete
@@ -20,8 +24,7 @@ const QUERY_VALUES = {
 };
 
 function useSiteFeatures( siteId: number | null ) {
-	// TODO: Add full list of upsell features to check.
-	const upsellFeatures = [ 'videopress', 'videopress-1tb-storage' ];
+	const upsellFeatures = getUpsellFeatureSlugs();
 	const activeFeatures = useSelector( ( state ) =>
 		upsellFeatures.filter( ( feature ) => siteHasFeature( state, siteId, feature ) )
 	);
