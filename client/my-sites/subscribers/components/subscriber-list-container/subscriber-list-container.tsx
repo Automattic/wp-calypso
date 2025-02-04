@@ -1,5 +1,4 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { getLocaleSlug, translate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useEffect } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -43,6 +42,7 @@ const SubscriberListContainer = ( {
 	} = useSubscribersPage();
 	useRecordSearch();
 
+	const translate = useTranslate();
 	const isSimple = useSelector( isSimpleSite );
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
@@ -72,7 +72,7 @@ const SubscriberListContainer = ( {
 								isLoading ? 'loading-placeholder' : ''
 							}` }
 						>
-							{ formatNumber( total, getLocaleSlug() || undefined, { notation: 'standard' } ) }
+							{ numberFormat( total ) }
 						</span>
 					</div>
 
