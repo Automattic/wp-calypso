@@ -77,7 +77,7 @@ export { default as SalesforceLogo } from './logos/salesforce-logo';
 export { default as SlackLogo } from './logos/slack-logo';
 export { default as VIPLogo } from './logos/vip-logo';
 export { default as WooLogo } from './logos/woo-logo';
-export { WordPressLogo } from './wordpress-logo';
+export { WordPressLogo } from './logos/wordpress-logo';
 export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
