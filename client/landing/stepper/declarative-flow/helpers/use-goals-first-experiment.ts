@@ -9,9 +9,9 @@ export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_flow_holdo
 /**
  * Check whether the user should have the "goals first" onboarding experience.
  *
- * Returns [ isLoading, isGoalsAtFrontExperiment ]
+ * Returns [ isLoading, isGoalsAtFrontExperiment, variationName ]
  */
-export function useGoalsFirstExperiment(): [ boolean, boolean ] {
+export function useGoalsFirstExperiment(): [ boolean, boolean, string ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
 
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
@@ -19,7 +19,7 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 	} );
 
 	if ( isEnabled( 'onboarding/force-goals-first' ) ) {
-		return [ false, true ];
+		return [ false, true, 'control' ];
 	}
 
 	/**
@@ -37,5 +37,5 @@ export function useGoalsFirstExperiment(): [ boolean, boolean ] {
 		variationName
 	);
 
-	return [ isLoading, isGoalsAtFrontExperiment ];
+	return [ isLoading, isGoalsAtFrontExperiment, variationName ];
 }

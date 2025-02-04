@@ -68,7 +68,7 @@ export default function PlanUpsellModal( props: ModalContainerProps ) {
 			case PAID_PLAN_PAID_DOMAIN_DIALOG:
 			case PAID_PLAN_IS_REQUIRED_DIALOG:
 			default:
-				return '639px';
+				return '700px';
 		}
 	};
 	return (
