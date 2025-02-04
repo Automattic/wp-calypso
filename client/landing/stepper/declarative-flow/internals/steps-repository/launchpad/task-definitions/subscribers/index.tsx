@@ -18,17 +18,21 @@ const getSubscribersTask: TaskAction = ( task, flow, context ) => {
 };
 
 const addFirstSubscribersTask: TaskAction = ( task, flow, context ) => {
-	const { siteSlug, isEmailVerified } = context;
+	const { siteSlug, goToStep, isEmailVerified } = context;
 
 	const mustVerifyEmailBeforePosting = ! isEmailVerified;
 	return {
 		...task,
 		disabled: mustVerifyEmailBeforePosting || false,
-		useCalypsoPath: true,
 		actionDispatch: () => {
-			updateLaunchpadSettings( siteSlug, {
-				checklist_statuses: { add_first_subscribers: true },
-			} );
+			if ( goToStep ) {
+				// Mark this task completed on first use, as we don't want it to feel like a
+				// requirement for this flow and more of a nudge / discoverability.
+				updateLaunchpadSettings( siteSlug, {
+					checklist_statuses: { add_first_subscribers: true },
+				} );
+				goToStep( 'subscribers' );
+			}
 		},
 	};
 };
