@@ -23,6 +23,7 @@ import {
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
@@ -81,6 +82,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	const provider = EmailProvider.Titan;
 	const emailProduct = useSelector( ( state ) =>
@@ -123,6 +125,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		setAddingToCart,
 		shoppingCartManager,
 		siteSlug,
+		currentRoute,
 	} );
 
 	professionalEmail.formFields = (
