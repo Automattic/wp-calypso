@@ -1,17 +1,4 @@
-.invite-form-header__title {
-	color: var(--color-neutral-60);
-	font-family: $sans;
-	font-size: $font-title-small;
-	line-height: 24px;
-	margin-bottom: 16px;
-	word-break: break-word;
-}
-
+.invite-form-header__title,
 .invite-form-header__explanation {
-	color: var(--color-neutral-70);
-	font-family: $sans;
-	font-size: $font-body-small;
-	line-height: 21px;
-	margin-bottom: 16px;
 	word-break: break-word;
 }
