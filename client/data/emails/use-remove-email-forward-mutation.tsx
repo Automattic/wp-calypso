@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getCacheKey as getEmailAccountsQueryKey } from './use-get-email-accounts-query';
-import type { EmailAccountEmail, AlterDestinationParams, Mailbox } from './types';
+import type { EmailAccountEmail } from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
 type Context = {
@@ -26,7 +26,7 @@ const MUTATION_KEY = 'removeEmailForward';
 export default function useRemoveEmailForwardMutation(
 	domainName: string,
 	mutationOptions: Omit<
-		UseMutationOptions< any, unknown, AlterDestinationParams, Context >,
+		UseMutationOptions< any, unknown, EmailAccountEmail, Context >,
 		'mutationFn'
 	> = {}
 ) {
@@ -70,11 +70,7 @@ export default function useRemoveEmailForwardMutation(
 					{
 						...previousEmailAccountsQueryData.accounts[ 0 ],
 						emails: emailForwards.filter(
-							( forward: EmailAccountEmail ) =>
-								! (
-									forward.mailbox === emailForward.mailbox &&
-									forward.target === emailForward.destination
-								)
+							( forward: EmailAccountEmail ) => forward.mailbox !== emailForward.mailbox
 						),
 					},
 				],
@@ -144,14 +140,13 @@ export default function useRemoveEmailForwardMutation(
 		dispatch( errorMessage );
 	};
 
-	return useMutation< Mailbox, unknown, AlterDestinationParams, Context >( {
-		mutationFn: ( { mailbox, destination } ) => {
-			return wp.req.post(
+	return useMutation< any, unknown, EmailAccountEmail, Context >( {
+		mutationFn: ( { mailbox } ) =>
+			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 					mailbox
-				) }/${ encodeURIComponent( destination ) }/delete`
-			);
-		},
+				) }/delete`
+			),
 		...mutationOptions,
 	} );
 }

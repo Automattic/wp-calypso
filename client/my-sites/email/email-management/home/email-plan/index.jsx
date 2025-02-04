@@ -93,6 +93,7 @@ function getEmailForwardLimit( data ) {
 
 function getMailboxes( data ) {
 	const account = getAccount( data );
+
 	return account?.emails ?? [];
 }
 
