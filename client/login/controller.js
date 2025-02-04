@@ -142,8 +142,11 @@ export async function desktopLogin( context, next ) {
 }
 
 export async function desktopLoginFinalize( context, next ) {
-	context.primary = <DesktopLogin action="finalize" />;
-	next();
+	const { hash } = context;
+	context.primary = (
+		<DesktopLogin action="finalize" error={ hash?.error } accessToken={ hash?.access_token } />
+	);
+	return next();
 }
 
 export async function magicLogin( context, next ) {
