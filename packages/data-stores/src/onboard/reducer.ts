@@ -649,6 +649,9 @@ const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
 	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
 		return action.createWithBigSky;
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
 
 	return state;
 };
