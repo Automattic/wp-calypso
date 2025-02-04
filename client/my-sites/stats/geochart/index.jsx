@@ -122,14 +122,18 @@ class StatsGeochart extends Component {
 			chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
 
 			chartData.addRows(
-				map( data, ( location ) => {
-					return [
-						Number( location.coordinates.latitude ),
-						Number( location.coordinates.longitude ),
-						location.label,
-						location.value,
-					];
-				} )
+				data.reduce( ( filteredLocations, location ) => {
+					if ( location.coordinates ) {
+						filteredLocations.push( [
+							Number( location.coordinates.latitude ),
+							Number( location.coordinates.longitude ),
+							location.label,
+							location.value,
+						] );
+					}
+
+					return filteredLocations;
+				}, [] )
 			);
 
 			return chartData;
