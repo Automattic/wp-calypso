@@ -2,6 +2,9 @@
  * @jest-environment jsdom
  */
 
+import { SitePlan, useSitePlans } from '@automattic/data-stores/src/plans';
+import { COST_OVERRIDE_REASONS } from '@automattic/data-stores/src/plans/constants';
+import { UseQueryResult } from '@tanstack/react-query';
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purchased-domain';
@@ -20,6 +23,8 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isCurrentPlanPaid: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/data-stores/src/plans/queries/use-site-plans', () => jest.fn() );
+
 const mockUseMaxPlanUpgradeCredits = useMaxPlanUpgradeCredits as jest.MockedFunction<
 	typeof useMaxPlanUpgradeCredits
 >;
@@ -27,7 +32,9 @@ const mockHasPurchasedDomain = hasPurchasedDomain as jest.MockedFunction<
 	typeof hasPurchasedDomain
 >;
 const mockIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCurrentPlanPaid >;
+const mockUseSitePlans = useSitePlans as jest.MockedFunction< typeof useSitePlans >;
 const siteId = 1;
+const overrideCode = COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION;
 
 describe( 'useDomainToPlanCreditsApplicable', () => {
 	beforeEach( () => {
@@ -36,6 +43,12 @@ describe( 'useDomainToPlanCreditsApplicable', () => {
 		mockUseMaxPlanUpgradeCredits.mockImplementation( () => 1000 );
 		mockHasPurchasedDomain.mockImplementation( () => true );
 		mockIsCurrentPlanPaid.mockImplementation( () => false );
+		mockUseSitePlans.mockImplementation(
+			() =>
+				( {
+					data: { free_plan: { pricing: { costOverrides: [ { overrideCode } ] } } },
+				} ) as unknown as UseQueryResult< { [ planSlug: string ]: SitePlan } >
+		);
 	} );
 
 	test( 'Returns credit when site has a domain, is on a free plan, and has credits', () => {
@@ -59,5 +72,23 @@ describe( 'useDomainToPlanCreditsApplicable', () => {
 		mockIsCurrentPlanPaid.mockImplementation( () => true );
 		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
 		expect( result.current ).toEqual( null );
+	} );
+
+	test( 'Returns null when the site is not eligible because the upgrade credit is not for domain proration', () => {
+		mockUseSitePlans.mockImplementation(
+			() =>
+				( {
+					data: { free_plan: { pricing: { costOverrides: [] } } },
+				} ) as unknown as UseQueryResult< { [ planSlug: string ]: SitePlan } >
+		);
+		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
+		expect( result.current ).toEqual( null );
+	} );
+
+	test( 'Returns 0 (rather than null) for for a site that is eligible and has a credit value of 0', () => {
+		// ie. distinguishes between a site having zero credits, and a site being ineligible for credits (returning null)
+		mockUseMaxPlanUpgradeCredits.mockImplementation( () => 0 );
+		const { result } = renderHookWithProvider( () => useDomainToPlanCreditsApplicable( siteId ) );
+		expect( result.current ).toEqual( 0 );
 	} );
 } );
