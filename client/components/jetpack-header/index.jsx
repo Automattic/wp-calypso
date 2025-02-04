@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -45,11 +44,7 @@ export class JetpackHeader extends PureComponent {
 					viewBox="0 0 1270 170"
 					partnerName="WooCommerce"
 				>
-					<g
-						transform={
-							config.isEnabled( 'woocommerce/rebrand-2-0' ) ? 'translate(360 25)' : 'translate(360)'
-						}
-					>
+					<g transform="translate(360 25)">
 						<AsyncLoad
 							require="calypso/components/jetpack-header/woocommerce"
 							darkColorScheme={ darkColorScheme }
@@ -65,13 +60,7 @@ export class JetpackHeader extends PureComponent {
 				<svg width={ width } viewBox="0 0 1270 170">
 					<title>{ translate( 'WooCommerce logo' ) }</title>
 					<g fill="none" fillRule="evenodd">
-						<g
-							transform={
-								config.isEnabled( 'woocommerce/rebrand-2-0' )
-									? 'translate(125 25)'
-									: 'translate(240)'
-							}
-						>
+						<g transform="translate(125 25)">
 							<AsyncLoad
 								require="calypso/components/jetpack-header/woocommerce"
 								darkColorScheme={ darkColorScheme }

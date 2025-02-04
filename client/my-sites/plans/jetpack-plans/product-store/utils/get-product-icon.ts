@@ -44,7 +44,7 @@ import JetpackProductIconStatsLight from 'calypso/assets/images/jetpack/jetpack-
 import JetpackProductIconStats from 'calypso/assets/images/jetpack/jetpack-product-icon-stats.svg';
 import JetpackProductIconVideopressLight from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress-light.svg';
 import JetpackProductIconVideopress from 'calypso/assets/images/jetpack/jetpack-product-icon-videopress.svg';
-import WooCommerceProductIcon from 'calypso/assets/images/jetpack/woo-icon.svg';
+import WooCommerceLogo from 'calypso/assets/images/woocommerce/product-icon.svg';
 import { productIconProps } from '../types';
 
 const setProductsIcon = ( slugs: ReadonlyArray< string >, resource: IconResource ) =>
@@ -125,8 +125,8 @@ const PRODUCT_ICON_MAP: Record< string, IconResource > = {
 		light: '',
 	} ),
 	...setProductsIcon( WOOCOMMERCE_PRODUCTS, {
-		regular: WooCommerceProductIcon,
-		light: WooCommerceProductIcon,
+		regular: WooCommerceLogo,
+		light: WooCommerceLogo,
 	} ),
 };
 
