@@ -1021,6 +1021,14 @@ $colophon-height: 50px;
 			padding-top: 8px;
 		}
 
+
+		.signup-form__woocommerce-inputs-wrapper {
+			padding: 12px 0;
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+		}
+
 		.form-input-validation {
 			padding-bottom: 0;
 			padding-top: 0;

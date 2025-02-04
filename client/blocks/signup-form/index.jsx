@@ -808,13 +808,9 @@ class SignupForm extends Component {
 	};
 
 	renderWooCommerce() {
-		// As we migrate more inputs to @wordpress/components' <TextControl />,
-		// we should extend this classname and realted styles for better coherency.
-		const inputClassName = 'signup-form__woo-input';
 		return (
-			<div>
+			<div className="signup-form__woocommerce-inputs-wrapper">
 				<TextControl
-					className={ inputClassName }
 					label={ this.props.translate( 'Your email address' ) }
 					disabled={
 						this.state.submitting || !! this.props.disabled || !! this.props.disableEmailInput
@@ -842,7 +838,6 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<TextControl
-							className={ inputClassName }
 							label={ this.props.translate( 'Choose a username' ) }
 							disabled={ this.state.submitting || this.props.disabled }
 							id="username"
@@ -866,7 +861,6 @@ class SignupForm extends Component {
 				) }
 
 				<TextControl
-					className={ inputClassName }
 					label={ this.props.translate( 'Choose a password' ) }
 					disabled={ this.state.submitting || this.props.disabled }
 					id="password"
