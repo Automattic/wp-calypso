@@ -230,7 +230,7 @@ const usePricingMetaForGridPlans = ( {
 						full: getTotalPrice( sitePlan?.pricing.originalPrice.full, storageAddOnPriceYearly ),
 					};
 
-					// Do not return discounted prices if discount is due to plan proration
+					// Do not return discounted prices if discount is due to plan or domain proration.
 					// If there is, however, a sale coupon, show the discounted price
 					// without proration. This isn't ideal, but is intentional. Because of
 					// this, the price will differ between the plans grid and checkout screen.
