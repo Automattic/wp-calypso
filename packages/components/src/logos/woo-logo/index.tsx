@@ -9,7 +9,6 @@ const WooLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		width="30"
 		height="19"
 		viewBox="0 0 183.6 47.5"
-		// style={ { enableBackground: 'new 0 0 183.6 47.5' } }
 		{ ...props }
 	>
 		<style type="text/css">
