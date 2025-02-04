@@ -1,0 +1,18 @@
+.stats-line-chart {
+	position: relative;
+	margin: 32px 0;
+
+	.line-chart {
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+	}
+
+	.stats__empty-state {
+		max-width: 75%;
+		position: absolute;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, 0);
+	}
+}

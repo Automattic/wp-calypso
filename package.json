@@ -149,6 +149,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-razorpay": "workspace:^",
 		"@automattic/calypso-router": "workspace:^",
+		"@automattic/charts": "^0.8.1",
 		"@automattic/color-studio": "^3.0.1",
 		"@automattic/command-palette": "workspace:^",
 		"@automattic/components": "workspace:^",
@@ -323,6 +324,7 @@
 	},
 	"resolutions": {
 		"@types/react": "^18.2.6",
+		"@types/react-dom": "^18.2.6",
 		"@types/wordpress__block-editor": "npm:noop-package@1.0.0",
 		"@types/wordpress__editor": "npm:noop-package@1.0.0",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",

@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -12,7 +13,10 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
 import statsStrings from '../../stats-strings';
+import PageLoading from '../shared/page-loading';
 import StatsModuleListing from '../shared/stats-module-listing';
+
+import './style.scss';
 
 function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -53,7 +57,11 @@ function StatsRealtime() {
 				></NavigationHeader>
 				<StatsNavigation selectedItem="realtime" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
-
+				<AsyncLoad
+					require="calypso/my-sites/stats/components/line-chart"
+					height={ 425 }
+					placeholder={ PageLoading }
+				/>
 				<StatsModuleListing className="stats__module-list--insights" siteId={ siteId }>
 					<StatsModuleTopPosts
 						moduleStrings={ moduleStrings.posts }
