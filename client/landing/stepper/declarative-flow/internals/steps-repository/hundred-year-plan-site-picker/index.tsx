@@ -140,7 +140,10 @@ const ConfirmationModal = ( {
 
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
-		setNavigateToRoute( '/odie?provider=zendesk' );
+		setNavigateToRoute(
+			'/odie?provider=zendesk&userFieldMessage=' +
+				encodeURIComponent( 'This is a user looking to purchase the 100-Year Plan' )
+		);
 		setShowHelpCenter( true );
 		closeModal();
 	};
