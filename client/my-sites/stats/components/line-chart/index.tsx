@@ -69,7 +69,7 @@ function StatsLineChart( {
 					withGradientFill
 					height={ height }
 					/** naturalCurve sometime goes off the grid :( */
-					margin={ { left: 15, top: 30 } }
+					margin={ { left: 15, top: 20, bottom: 20 } }
 					options={ { axis: { x: { tickFormat: formatTime }, y: { orientation: 'right' } } } }
 				/>
 			</ThemeProvider>
