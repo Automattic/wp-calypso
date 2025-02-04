@@ -9,6 +9,7 @@ import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
+
 import './style.scss';
 
 type FormData = {
@@ -115,12 +116,6 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 
 				<FormField label={ translate( 'Phone number' ) } showOptionalLabel>
 					<FormPhoneInput
-						countrySelectProps={ {
-							'data-testid': 'a4a-signup-country-code-select',
-						} }
-						phoneInputProps={ {
-							'data-testid': 'a4a-signup-phone-number-input',
-						} }
 						isDisabled={ noCountryList }
 						countriesList={ countriesList }
 						onChange={ handlePhoneInputChange }

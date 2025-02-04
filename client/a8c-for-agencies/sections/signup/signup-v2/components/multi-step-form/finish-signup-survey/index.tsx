@@ -11,18 +11,13 @@ const FinishSignupSurvey: React.FC< Props > = ( { onContinue } ) => {
 
 	return (
 		<Form
-			className="finish-signup-survey-form"
 			title={ translate( 'Thank you!' ) }
 			description={ translate(
 				'We have sent you an email with more details about the program and instructions for logging in. You will also receive your blueprint in the coming days; keep an eye out for it!'
 			) }
 		>
 			<div>
-				<Button
-					className="finish-signup-survey-form__button"
-					variant="primary"
-					onClick={ onContinue }
-				>
+				<Button variant="primary" onClick={ onContinue }>
 					{ translate( 'Close survey' ) }
 				</Button>
 			</div>
