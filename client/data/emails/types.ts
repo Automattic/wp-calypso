@@ -9,6 +9,36 @@ export type EmailAccountEmail = {
 	warnings: Warning[];
 };
 
+export type ResponseError = {
+	error:
+		| 'destination_failed'
+		| 'invalid_input'
+		| 'not_valid_destination'
+		| 'destination_failed'
+		| 'too_many_destinations'
+		| 'exceeded_mailbox_forwards'
+		| 'mailbox_too_long'
+		| 'not_valid_mailbox'
+		| 'empty_destination'
+		| 'same_destination_domain'
+		| 'forward_exists';
+	message:
+		| string
+		| {
+				error_message: string;
+				/**
+				 * The index of the faulty email address in the `destinations` array
+				 */
+				index: number;
+		  };
+};
+
+export type AlterDestinationParams = {
+	mailbox: string;
+	destination: string;
+	domain: string;
+};
+
 type EmailAccountDomain = {
 	domain: string;
 	is_primary: boolean;
@@ -45,4 +75,5 @@ export type Mailbox = {
 	mailbox: string;
 	warnings?: Warning[];
 	temporary?: boolean;
+	target: string;
 };

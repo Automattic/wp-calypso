@@ -1,0 +1,68 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.email-forwards-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 0;
+
+    margin: 0 10px;
+
+    @include break-large {
+        margin: 0;
+    }
+
+    h2 {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+
+}
+
+.email-forward-list {
+    border: 1px solid #E0E0E0;
+    background: var(--color-surface);
+    margin: 0 10px;
+    width: calc(100% - 20px);
+
+    @include break-large {
+        margin: 0;
+        width: 100%;
+    }
+
+    td,
+    th {
+        padding: 8px 16px;
+        font-weight: normal;
+        font-size: $font-body-small;
+        vertical-align: middle;
+    }
+
+    thead th {
+        padding: 16px;
+    }
+
+
+    tbody>tr:first-child>td {
+        border-top: 1px solid #E0E0E0;
+        padding-top: 16px;
+    }
+
+    tbody>tr:last-child>td {
+        padding-bottom: 16px;
+    }
+
+    .info-popover {
+        svg.gridicon.gridicons-info-outline {
+            color: var(--studio-orange-50);
+        }
+    }
+}
+
+div.email-forward-list__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+}
