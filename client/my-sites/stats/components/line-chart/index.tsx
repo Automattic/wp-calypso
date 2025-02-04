@@ -1,4 +1,4 @@
-import { LineChart, ThemeProvider } from '@automattic/charts';
+import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { useEffect, useState } from 'react';
@@ -50,7 +50,7 @@ function StatsLineChart( {
 			const date = new Date();
 			fixtureData[ 0 ].data.unshift( { date, value: Math.round( Math.random() * 60 ) } );
 			setData( [ ...fixtureData ] );
-		}, 60 * 1000 );
+		}, 1000 );
 		return () => clearInterval( intervalId );
 	}, [] );
 
@@ -62,22 +62,7 @@ function StatsLineChart( {
 					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
 				/>
 			) }
-			<ThemeProvider
-				theme={ {
-					backgroundColor: '#FFFFFF', // chart background color
-					labelBackgroundColor: '#FFFFFF', // label background color
-					colors: [ '#069E08', '#E68B28', '#98C8DF', '#006DAB', '#A6DC80', '#1F9828', '#FF8C8F' ], //colors for series
-					gridStyles: {
-						stroke: '#DCDCDE',
-						strokeWidth: 1,
-					},
-					tickLength: 4,
-					gridColor: '',
-					gridColorDark: '',
-					xTickLineStyles: { stroke: 'black' },
-					xAxisLineStyles: { stroke: '#DCDCDE', strokeWidth: 1 },
-				} }
-			>
+			<ThemeProvider theme={ jetpackTheme }>
 				<LineChart
 					data={ data }
 					withTooltips
