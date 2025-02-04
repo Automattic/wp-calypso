@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/icons';
-import ShortenedNumber from '../number-formatters';
+import { numberFormat } from 'i18n-calypso';
 import { TrendComparison } from './count-comparison-card';
 import './style.scss';
 
@@ -47,7 +47,20 @@ function MobileHighlightCard( {
 				</span>
 			) }
 			<span className="mobile-highlight-cards__item-count">
-				{ preformattedValue ? preformattedValue : <ShortenedNumber value={ count } /> }
+				{ preformattedValue ? (
+					preformattedValue
+				) : (
+					<span className="shortened-number">
+						{ count !== null
+							? numberFormat( count, {
+									numberFormatOptions: {
+										notation: 'compact',
+										maximumFractionDigits: 1,
+									},
+							  } )
+							: '-' }
+					</span>
+				) }
 			</span>
 		</div>
 	);

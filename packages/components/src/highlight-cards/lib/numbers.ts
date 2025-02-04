@@ -1,18 +1,15 @@
-import importedFormatNumber, {
-	DEFAULT_LOCALE,
-	STANDARD_FORMATTING_OPTIONS,
-	COMPACT_FORMATTING_OPTIONS,
-	PERCENTAGE_FORMATTING_OPTIONS,
-} from '../../number-formatters/lib/format-number';
+import { numberFormat } from 'i18n-calypso';
 
 export function formatNumber( number: number | null, isShortened = true, showSign = false ) {
-	const option = isShortened
-		? { ...COMPACT_FORMATTING_OPTIONS }
-		: { ...STANDARD_FORMATTING_OPTIONS };
-	if ( showSign ) {
-		option.signDisplay = 'exceptZero';
-	}
-	return importedFormatNumber( number, DEFAULT_LOCALE, option );
+	const numberFormatOptions: Intl.NumberFormatOptions = isShortened
+		? {
+				notation: 'compact',
+				maximumFractionDigits: 1,
+				...( showSign && { signDisplay: 'exceptZero' } ),
+		  }
+		: { notation: 'standard', ...( showSign && { signDisplay: 'exceptZero' } ) };
+
+	return number !== null ? numberFormat( number, { numberFormatOptions } ) : '-';
 }
 
 export function formatPercentage(
@@ -21,11 +18,11 @@ export function formatPercentage(
 ) {
 	// If the number is < 1%, then use 2 significant digits and maximumFractionDigits of 2.
 	// Otherwise, use the default percentage formatting options.
-	const option =
+	const numberFormatOptions: Intl.NumberFormatOptions =
 		usePreciseSmallPercentages && number && number < 0.01
-			? { ...PERCENTAGE_FORMATTING_OPTIONS, maximumFractionDigits: 2, maximumSignificantDigits: 2 }
-			: PERCENTAGE_FORMATTING_OPTIONS;
-	return importedFormatNumber( number, DEFAULT_LOCALE, option );
+			? { style: 'percent', maximumFractionDigits: 2, maximumSignificantDigits: 2 }
+			: { style: 'percent' };
+	return number !== null ? numberFormat( number, { numberFormatOptions } ) : '-';
 }
 
 export function subtract( a: number | null, b: number | null | undefined ): number | null {
