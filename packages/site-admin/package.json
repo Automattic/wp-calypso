@@ -39,6 +39,16 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
 	"dependencies": {
+		"@wordpress/base-styles": "^5.17.0",
+		"@wordpress/commands": "^1.17.0",
+		"@wordpress/components": "^29.3.0",
+		"@wordpress/data": "^10.17.0",
+		"@wordpress/dom": "^4.17.0",
+		"@wordpress/edit-site": "^6.17.0",
+		"@wordpress/element": "^6.17.0",
+		"@wordpress/i18n": "^5.17.0",
+		"@wordpress/icons": "^10.17.0",
+		"@wordpress/url": "^4.17.0",
 		"clsx": "^2.1.1",
 		"photon": "workspace:^"
 	},

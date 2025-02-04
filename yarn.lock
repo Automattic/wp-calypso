@@ -1838,6 +1838,16 @@ __metadata:
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@wordpress/base-styles": "npm:^5.17.0"
+    "@wordpress/commands": "npm:^1.17.0"
+    "@wordpress/components": "npm:^29.3.0"
+    "@wordpress/data": "npm:^10.17.0"
+    "@wordpress/dom": "npm:^4.17.0"
+    "@wordpress/edit-site": "npm:^6.17.0"
+    "@wordpress/element": "npm:^6.17.0"
+    "@wordpress/i18n": "npm:^5.17.0"
+    "@wordpress/icons": "npm:^10.17.0"
+    "@wordpress/url": "npm:^4.17.0"
     clsx: "npm:^2.1.1"
     photon: "workspace:^"
     typescript: "npm:^5.3.3"
@@ -10668,6 +10678,27 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: 70fb4cbf59d0f80479d54fcc6c7d0d328f36aecab85de89335f59053e4ab3071b3638909b8f31f3577f4bcb099c9a57b1c3fa17db482a6903e995f88758427d5
+  languageName: node
+  linkType: hard
+
+"@wordpress/commands@npm:^1.17.0":
+  version: 1.17.0
+  resolution: "@wordpress/commands@npm:1.17.0"
+  dependencies:
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/components": "npm:^29.3.0"
+    "@wordpress/data": "npm:^10.17.0"
+    "@wordpress/element": "npm:^6.17.0"
+    "@wordpress/i18n": "npm:^5.17.0"
+    "@wordpress/icons": "npm:^10.17.0"
+    "@wordpress/keyboard-shortcuts": "npm:^5.17.0"
+    "@wordpress/private-apis": "npm:^1.17.0"
+    clsx: "npm:^2.1.1"
+    cmdk: "npm:^1.0.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: e5c50a7b535d80fa50c24bdabef1c4e70d3fcd6a5f2705feadd72e78cb969d5efaa6f31df2ab1006cc8cf77cb14468d626e27e8c96ad6608381aef3d9fcea7f7
   languageName: node
   linkType: hard
 
