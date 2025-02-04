@@ -21,7 +21,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/delete/index.js', {
 					action
 				),
 			onSuccess: () => [
-				() => page( `/read` ),
+				() => page( `/reader` ),
 				successNotice( translate( 'List deleted successfully.' ), {
 					duration: DEFAULT_NOTICE_DURATION,
 				} ),

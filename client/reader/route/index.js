@@ -1,5 +1,5 @@
-const FEED_URL_BASE = '/read/feeds/';
-const SITE_URL_BASE = '/read/blogs/';
+const FEED_URL_BASE = '/reader/feeds/';
+const SITE_URL_BASE = '/reader/blogs/';
 
 export function getSiteUrl( siteID ) {
 	return SITE_URL_BASE + siteID;
@@ -31,9 +31,9 @@ export function getTagStreamUrl( tag ) {
 
 export function getPostUrl( post ) {
 	if ( post.feed_ID && post.feed_item_ID ) {
-		return `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }`;
+		return `/reader/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }`;
 	} else if ( post.is_external ) {
-		return `/read/feeds/${ post.feed_ID }/posts/${ post.ID }`;
+		return `/reader/feeds/${ post.feed_ID }/posts/${ post.ID }`;
 	}
-	return `/read/blogs/${ post.site_ID }/posts/${ post.ID }`;
+	return `/reader/blogs/${ post.site_ID }/posts/${ post.ID }`;
 }

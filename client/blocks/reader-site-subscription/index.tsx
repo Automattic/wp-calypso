@@ -42,7 +42,7 @@ const useHandleSubscriptionNotFoundError = ( transition?: boolean ) => {
 				} )
 			);
 
-			page.show( '/read/subscriptions/' );
+			page.show( '/reader/subscriptions/' );
 		}
 	}
 };

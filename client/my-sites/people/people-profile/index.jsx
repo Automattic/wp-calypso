@@ -122,7 +122,7 @@ const PeopleProfile = ( { siteId, type, user, invite, showDate, showRole = true 
 		}
 
 		event.preventDefault();
-		page( `/read/blogs/${ blogId }` );
+		page( `/reader/blogs/${ blogId }` );
 	};
 
 	const renderNameOrEmail = () => {

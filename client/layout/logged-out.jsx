@@ -105,7 +105,7 @@ const LayoutLoggedOut = ( {
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
 
 	const isReaderSearchPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/reader/search' );
 
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =

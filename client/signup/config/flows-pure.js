@@ -366,10 +366,10 @@ export function generateFlows( {
 		{
 			name: 'reader',
 			steps: [ userSocialStep ],
-			destination: '/read',
+			destination: '/reader',
 			description:
 				'Signup for an account from a Reader interaction (like, comment) or page (/discover) and land on Reader.',
-			lastModified: '2025-01-20',
+			lastModified: '2025-01-28',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
 		},

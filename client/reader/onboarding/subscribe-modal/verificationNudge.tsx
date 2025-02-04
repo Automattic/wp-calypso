@@ -5,7 +5,7 @@ import EmailVerificationBanner from 'calypso/me/email-verification-banner';
 const SubscribeVerificationNudge: React.FC = () => {
 	const translate = useTranslate();
 
-	const reloadLink = addQueryArgs( '/read', { reloadSubscriptionOnboarding: 'true' } );
+	const reloadLink = addQueryArgs( '/reader', { reloadSubscriptionOnboarding: 'true' } );
 
 	return (
 		<EmailVerificationBanner

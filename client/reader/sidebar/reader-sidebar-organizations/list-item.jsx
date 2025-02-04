@@ -34,13 +34,13 @@ export class ReaderSidebarOrganizationsListItem extends Component {
 		return (
 			<li
 				key={ this.props.title }
-				className={ ReaderSidebarHelper.itemLinkClass( '/read/feeds/' + site.feed_ID, path, {
+				className={ ReaderSidebarHelper.itemLinkClass( '/reader/feeds/' + site.feed_ID, path, {
 					'sidebar-dynamic-menu__blog': true,
 				} ) }
 			>
 				<a
 					className="sidebar__menu-link sidebar__menu-link-reader"
-					href={ `/read/feeds/${ site.feed_ID }` }
+					href={ `/reader/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
 					<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />

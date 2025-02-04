@@ -90,7 +90,7 @@ export class ReaderSidebar extends Component {
 			}
 		}
 
-		if ( startsWith( this.props.path, '/read/list/' ) ) {
+		if ( startsWith( this.props.path, '/reader/list/' ) ) {
 			const listOwner = pathParts[ 3 ];
 			const listSlug = pathParts[ 4 ];
 			if ( listOwner && listSlug ) {
@@ -176,8 +176,8 @@ export class ReaderSidebar extends Component {
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
 					customIcon={ <ReaderSearchIcon viewBox="-3 0 24 24" /> }
-					link="/read/search"
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
+					link="/reader/search"
+					className={ ReaderSidebarHelper.itemLinkClass( '/reader/search', path, {
 						'sidebar-streams__search': true,
 					} ) }
 				/>
@@ -213,13 +213,13 @@ export class ReaderSidebar extends Component {
 				/>
 
 				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
+					className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations', path, {
 						'sidebar-streams__conversations': true,
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
 					customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="-3 0 24 24" /> }
-					link="/read/conversations"
+					link="/reader/conversations"
 				/>
 
 				<ReaderSidebarLists
@@ -248,34 +248,34 @@ export class ReaderSidebar extends Component {
 
 				{ isAutomatticTeamMember( teams ) && (
 					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+						className={ ReaderSidebarHelper.itemLinkClass( '/reader/conversations/a8c', path, {
 							'sidebar-streams__conversations': true,
 						} ) }
 						label="A8C Conversations"
 						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-						link="/read/conversations/a8c"
+						link="/reader/conversations/a8c"
 						customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-5 0 24 24" /> }
 					/>
 				) }
 
 				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+					className={ ReaderSidebarHelper.itemLinkClass( '/reader/notifications', path, {
 						'sidebar-streams__notifications': true,
 					} ) }
 					label={ translate( 'Notifications' ) }
 					onNavigate={ this.handleReaderSidebarNotificationsClicked }
 					customIcon={ <ReaderNotificationsIcon size={ 24 } viewBox="-5 -2 24 24" /> }
-					link="/read/notifications"
+					link="/reader/notifications"
 				/>
 
 				<SidebarItem
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/subscriptions', path, {
+					className={ ReaderSidebarHelper.itemLinkClass( '/reader/subscriptions', path, {
 						'sidebar-streams__manage-subscriptions': true,
 					} ) }
 					label={ translate( 'Manage subscriptions' ) }
 					onNavigate={ this.handleReaderSidebarManageSubscriptionsClicked }
 					customIcon={ <ReaderManageSubscriptionsIcon size={ 24 } viewBox="-3 0 24 24" /> }
-					link="/read/subscriptions"
+					link="/reader/subscriptions"
 				/>
 			</SidebarMenu>
 		);

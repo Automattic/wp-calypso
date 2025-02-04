@@ -57,7 +57,7 @@ describe( 'Site Settings', () => {
 		await waitFor( () => {
 			expect( screen.getByRole( 'link', { name: 'View feed' } ) ).toHaveAttribute(
 				'href',
-				'/read/feeds/123456789'
+				'/reader/feeds/123456789'
 			);
 		} );
 	} );

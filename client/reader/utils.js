@@ -83,9 +83,9 @@ export function showFullPost( { post, comments } ) {
 	}
 
 	if ( post.feed_ID && post.feed_item_ID ) {
-		page( `/read/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
+		page( `/reader/feeds/${ post.feed_ID }/posts/${ post.feed_item_ID }${ hashtag }${ query }` );
 	} else {
-		page( `/read/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
+		page( `/reader/blogs/${ post.site_ID }/posts/${ post.ID }${ hashtag }${ query }` );
 	}
 }
 

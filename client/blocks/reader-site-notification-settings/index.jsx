@@ -258,7 +258,7 @@ class ReaderSiteNotificationSettings extends Component {
 									icon={ settings }
 								/>
 							}
-							href={ `/read/subscriptions/${ subscriptionId }` }
+							href={ `/reader/subscriptions/${ subscriptionId }` }
 						>
 							{ translate( 'Manage subscription' ) }
 						</Button>

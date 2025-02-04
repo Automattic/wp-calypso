@@ -15,7 +15,7 @@ const SiteEmptyContent = ( { translate } ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const action = (
-		<a className="empty-content__action button" onClick={ recordAction } href="/read/search">
+		<a className="empty-content__action button" onClick={ recordAction } href="/reader/search">
 			{ translate( 'Find sites to follow' ) }
 		</a>
 	);

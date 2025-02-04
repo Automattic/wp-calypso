@@ -97,7 +97,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
 
 	if ( useReaderAsLandingPage ) {
-		return '/read';
+		return '/reader';
 	}
 
 	// determine the primary site ID (it's a property of "current user" object) and then
@@ -108,7 +108,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
-			return '/read';
+			return '/reader';
 		}
 		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
 		return '/sites';

@@ -141,7 +141,7 @@ const DesktopListeners = {
 	onShowReader: function () {
 		debug( 'Showing reader' );
 
-		this.navigate( '/read' );
+		this.navigate( '/reader' );
 	},
 
 	onShowProfile: function () {

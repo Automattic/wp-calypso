@@ -21,17 +21,17 @@ function getRelativeUrlWithParameters(
 /**
  * Sets URL parameters, removing the existing ones
  * 1. {
- *     uri: 'https://wordpress.com/read/search',
+ *     uri: 'https://wordpress.com/reader/search',
  *     queryArgs: '{ q: "reader is super awesome" }'
- *    } --> '/read/search?q=reader+is+super+awesome'
+ *    } --> '/reader/search?q=reader+is+super+awesome'
  * 2. {
- *     uri: 'https://wordpress.com/read/search?s=seo',
+ *     uri: 'https://wordpress.com/reader/search?s=seo',
  *     queryArgs: '{ c: "category" }'
- *    } --> '/read/search?c=category'
+ *    } --> '/reader/search?c=category'
  * 3. {
- *     uri: 'https://wordpress.com/read/search?s=seo',
+ *     uri: 'https://wordpress.com/reader/search?s=seo',
  *     queryArgs: '{}'
- *    } --> '/read/search'
+ *    } --> '/reader/search'
  * @param queryArgs search object
  * @param redirect boolean if set to true, the history will be replaced instead of pushed
  * Every object key will be created in the URL
@@ -49,13 +49,13 @@ export function setQueryArgs( queryArgs: object, redirect = false ) {
 /**
  * Adds or Updates URL parameters, maitaining the existing ones
  * 1. {
- *     uri: 'https://wordpress.com/read/search',
+ *     uri: 'https://wordpress.com/reader/search',
  *     queryArgs: '{ q: "reader is super awesome" }'
- *    } --> '/read/search?q=reader+is+super+awesome'
+ *    } --> '/reader/search?q=reader+is+super+awesome'
  * 2. {
- *     uri: 'https://wordpress.com/read/search',
+ *     uri: 'https://wordpress.com/reader/search',
  *     queryArgs: '{ s: seo, c: "category" }'
- *    } --> '/read/search?s=seo&c=category'
+ *    } --> '/reader/search?s=seo&c=category'
  * @param queryArgs search object
  * Every object key found in the URL will be replaced
  */

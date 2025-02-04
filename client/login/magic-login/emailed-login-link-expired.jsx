@@ -24,7 +24,7 @@ const EmailType = {
 };
 
 const getEmailType = ( redirectTo ) => {
-	if ( redirectTo && redirectTo.includes( '/read/subscriptions' ) ) {
+	if ( redirectTo && redirectTo.includes( '/reader/subscriptions' ) ) {
 		return EmailType.ManageSubscription;
 	}
 

@@ -6,7 +6,7 @@ import { blogPost, feedPost } from './controller';
 export default function () {
 	// Feed full post
 	page(
-		'/read/feeds/:feed/posts/:post',
+		'/reader/feeds/:feed/posts/:post',
 		blogDiscoveryByFeedId,
 		redirectLoggedOutToSignup,
 		updateLastRoute,
@@ -17,7 +17,7 @@ export default function () {
 
 	// Blog full post
 	page(
-		'/read/blogs/:blog/posts/:post',
+		'/reader/blogs/:blog/posts/:post',
 		redirectLoggedOutToSignup,
 		updateLastRoute,
 		blogPost,

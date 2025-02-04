@@ -105,14 +105,14 @@ const SubscriptionsManagerWrapper = ( {
 						<NavItem
 							count={ counts?.blogs }
 							selected={ selectedTab === 'sites' }
-							path="/read/subscriptions"
+							path="/reader/subscriptions"
 						>
 							{ translate( 'Sites' ) }
 						</NavItem>
 						<NavItem
 							count={ counts?.comments }
 							selected={ selectedTab === 'comments' }
-							path="/read/subscriptions/comments"
+							path="/reader/subscriptions/comments"
 						>
 							{ translate( 'Comments' ) }
 						</NavItem>
@@ -120,7 +120,7 @@ const SubscriptionsManagerWrapper = ( {
 							<NavItem
 								count={ counts?.pending }
 								selected={ selectedTab === 'pending' }
-								path="/read/subscriptions/pending"
+								path="/reader/subscriptions/pending"
 							>
 								{ translate( 'Pending' ) }
 							</NavItem>

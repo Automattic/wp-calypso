@@ -24,7 +24,7 @@ const SubscriptionManagementPage = () => {
 	const startUrl = addQueryArgs(
 		localizeUrl( '//wordpress.com/start/account/user', locale, isLoggedIn ),
 		{
-			redirect_to: '/read',
+			redirect_to: '/reader',
 			ref: 'reader-lp',
 			...( emailAddress ? { email_address: emailAddress } : {} ),
 		}

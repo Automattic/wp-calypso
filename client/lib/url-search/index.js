@@ -8,7 +8,7 @@ const debug = debugFactory( 'calypso:url-search' );
  * Function for constructing the url to page to. Here are some examples:
  * 1. { uri: 'google.com', search:'hello' } --> 'https://google.com/?s=hello'
  * 2. {
- * uri: 'wordpress.com/read/search?q=reader+is+awesome',
+ * uri: 'wordpress.com/reader/search?q=reader+is+awesome',
  * search: 'reader is super awesome'
  * queryKey: 'q',
  * } --> result.searchParams.get( 'q' ) === 'reader is super awesome'

@@ -1,6 +1,6 @@
 # Reader Site Stream Link
 
-A link to a Reader site stream (e.g. /read/feeds/123 or /read/blogs/123).
+A link to a Reader site stream (e.g. /reader/feeds/123 or /reader/blogs/123).
 
 This component does not dictate the content of the link, only the href and click behavior.
 

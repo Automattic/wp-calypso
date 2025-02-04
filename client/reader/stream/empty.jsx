@@ -40,7 +40,7 @@ class FollowingEmptyContent extends Component {
 						? translate( 'Visit the Full Site Feed' )
 						: translate( 'Discover New Sites' )
 				}
-				actionURL={ isFullSiteFeed ? `/read/feeds/${ selectedFeedId }` : '/discover' }
+				actionURL={ isFullSiteFeed ? `/reader/feeds/${ selectedFeedId }` : '/discover' }
 				actionCallback={ () => this.recordAction( isFullSiteFeed ) }
 				illustration=""
 			/>

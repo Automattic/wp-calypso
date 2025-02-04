@@ -59,7 +59,10 @@ export default function TagItem( props: {
 	) : (
 		<Card className="list-manage__site-card">
 			<div className="tag-item list-item">
-				<a className="list-item__content" href={ `/read/tag/${ encodeURIComponent( tag.slug ) }` }>
+				<a
+					className="list-item__content"
+					href={ `/reader/tag/${ encodeURIComponent( tag.slug ) }` }
+				>
 					<div className="list-item__icon">
 						<Gridicon icon="tag" size={ 36 } />
 					</div>

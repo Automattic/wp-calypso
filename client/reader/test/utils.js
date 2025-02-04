@@ -37,7 +37,7 @@ describe( 'reader utils', () => {
 				dispatch,
 				getState
 			);
-			expect( page ).toHaveBeenCalledWith( '/read/feeds/1/posts/5#comments' );
+			expect( page ).toHaveBeenCalledWith( '/reader/feeds/1/posts/5#comments' );
 		} );
 	} );
 } );

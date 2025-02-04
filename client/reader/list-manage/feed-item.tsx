@@ -24,7 +24,7 @@ function FeedTitle( { feed: { name, URL, feed_URL } }: { feed: Feed } ) {
 function renderFeed( feed: Feed ) {
 	return (
 		<div className="feed-item list-item">
-			<a className="list-item__content" href={ `/read/feeds/${ feed.feed_ID }` }>
+			<a className="list-item__content" href={ `/reader/feeds/${ feed.feed_ID }` }>
 				<div className="list-item__icon">
 					{ feed.image && <img src={ feed.image } className="list-item__img image" alt="" /> }
 					{ ! feed.image && <Gridicon icon="site" size={ 36 } /> }

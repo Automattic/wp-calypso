@@ -153,7 +153,7 @@ export function getRedirectAfterAccept( invite ) {
 		return `https://${ invite.site.domain }`;
 	}
 
-	const readerPath = '/read';
+	const readerPath = '/reader';
 	const postsListPath = '/posts/' + invite.site.ID;
 	const myHomePath = '/home/' + invite.site.domain;
 	const getDestinationUrl = ( redirect ) => {

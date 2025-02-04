@@ -95,7 +95,7 @@ describe( 'ReaderSiteSubscription', () => {
 
 		expect( screen.getAllByTitle( 'View feed' )[ 0 ] ).toHaveAttribute(
 			'href',
-			'/read/feeds/123456789'
+			'/reader/feeds/123456789'
 		);
 	} );
 } );

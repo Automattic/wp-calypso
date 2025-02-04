@@ -28,7 +28,7 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/' ) ).toBe( true );
 		expect( shouldReportOmitBlogId( '/me' ) ).toBe( true );
 		expect( shouldReportOmitBlogId( '/help' ) ).toBe( true );
-		expect( shouldReportOmitBlogId( '/read' ) ).toBe( true );
+		expect( shouldReportOmitBlogId( '/reader' ) ).toBe( true );
 		expect( shouldReportOmitBlogId( '/following' ) ).toBe( true );
 		expect( shouldReportOmitBlogId( '/discover' ) ).toBe( true );
 		expect( shouldReportOmitBlogId( '/activities' ) ).toBe( true );
@@ -54,12 +54,12 @@ describe( '#shouldReportOmitBlogId', () => {
 		expect( shouldReportOmitBlogId( '/jetpack/sso/:siteid' ) ).toBe( false );
 	} );
 	test( 'always returns false when :blog_id is in the path', () => {
-		expect( shouldReportOmitBlogId( '/read/blogs/:blog_id' ) ).toBe( false );
-		expect( shouldReportOmitBlogId( '/read/blogs/:blog_id/posts' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/reader/blogs/:blog_id' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/reader/blogs/:blog_id/posts' ) ).toBe( false );
 	} );
 	test( 'always returns false when :blogId is in the path', () => {
-		expect( shouldReportOmitBlogId( '/read/blogs/:blogId' ) ).toBe( false );
-		expect( shouldReportOmitBlogId( '/read/blogs/:blogid/posts' ) ).toBe( false );
-		expect( shouldReportOmitBlogId( '/read/blogs/:blogId/posts' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/reader/blogs/:blogId' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/reader/blogs/:blogid/posts' ) ).toBe( false );
+		expect( shouldReportOmitBlogId( '/reader/blogs/:blogId/posts' ) ).toBe( false );
 	} );
 } );

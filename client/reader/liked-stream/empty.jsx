@@ -23,7 +23,7 @@ class TagEmptyContent extends Component {
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read"
+				href="/reader"
 			>
 				{ this.props.translate( 'Back to Following' ) }
 			</a>

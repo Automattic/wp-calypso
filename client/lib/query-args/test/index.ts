@@ -8,8 +8,8 @@ describe( '#setQueryArgs', () => {
 	global.window = { location: { href: '' } } as typeof global.window;
 
 	test( 'should remove the query if search is empty', () => {
-		global.window.location.href = 'https://wordpress.com/read/search?q=test';
-		const expectedResult = '/read/search';
+		global.window.location.href = 'https://wordpress.com/reader/search?q=test';
+		const expectedResult = '/reader/search';
 		setQueryArgs( {} );
 
 		expect( page ).toHaveBeenCalledWith( expectedResult );
@@ -23,8 +23,8 @@ describe( '#setQueryArgs', () => {
 	} );
 
 	test( 'should replace current query with new one even when using custom query key', () => {
-		global.window.location.href = 'https://wordpress.com/read/search?q=test';
-		const expectedResult = '/read/search?q=reader+is+super+awesome';
+		global.window.location.href = 'https://wordpress.com/reader/search?q=test';
+		const expectedResult = '/reader/search?q=reader+is+super+awesome';
 		const newSearchTerm = 'reader is super awesome';
 
 		setQueryArgs( { q: newSearchTerm } );

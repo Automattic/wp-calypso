@@ -56,7 +56,7 @@ export const Post = ( { content, children } ) => {
 			titleContent = <a href={ `/posts/${ content.siteId }/trash` }>{ children }</a>;
 		} else {
 			titleContent = (
-				<a href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }` }>{ children }</a>
+				<a href={ `/reader/blogs/${ content.siteId }/posts/${ content.postId }` }>{ children }</a>
 			);
 		}
 	}
@@ -72,7 +72,7 @@ export const Comment = ( { content, children } ) => {
 
 	return (
 		<a
-			href={ `/read/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }` }
+			href={ `/reader/blogs/${ content.siteId }/posts/${ content.postId }#comment-${ content.commentId }` }
 		>
 			{ children }
 		</a>

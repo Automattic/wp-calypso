@@ -23,12 +23,12 @@ export default function () {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 	// Old recommendations page
-	page( '/recommendations', '/read/search' );
+	page( '/recommendations', '/reader/search' );
 	// Invalid language
-	page( `/${ anyLangParam }/read/search/`, redirectInvalidLanguage );
+	page( `/${ anyLangParam }/reader/search/`, redirectInvalidLanguage );
 
 	page(
-		[ '/read/search', `/${ langParam }/read/search` ],
+		[ '/reader/search', `/${ langParam }/reader/search` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
 		fetchTrendingTagsIfLoggedOut,

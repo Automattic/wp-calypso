@@ -19,7 +19,7 @@ export function blogPost( context, next ) {
 	const state = context.store.getState();
 	const blogId = context.params.blog;
 	const postId = context.params.post;
-	const basePath = '/read/blogs/:blog_id/posts/:post_id';
+	const basePath = '/reader/blogs/:blog_id/posts/:post_id';
 	const fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
 	let referral;
@@ -69,7 +69,7 @@ export function feedPost( context, next ) {
 	const state = context.store.getState();
 	const feedId = context.params.feed;
 	const postId = context.params.post;
-	const basePath = '/read/feeds/:feed_id/posts/:feed_item_id';
+	const basePath = '/reader/feeds/:feed_id/posts/:feed_item_id';
 	const fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );

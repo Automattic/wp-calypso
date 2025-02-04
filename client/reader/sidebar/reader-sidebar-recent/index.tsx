@@ -38,7 +38,7 @@ type Props = {
 };
 
 const SITE_DISPLAY_CUTOFF = 8;
-const RECENT_PATH_REGEX = /^\/read\/?(?:\?|$)/;
+const RECENT_PATH_REGEX = /^\/reader\/?(?:\?|$)/;
 
 const ReaderSidebarRecent = ( {
 	translate,
@@ -76,7 +76,7 @@ const ReaderSidebarRecent = ( {
 	const selectSite = ( feedId: number | null ) => {
 		dispatch( selectSidebarRecentSite( { feedId } ) );
 		if ( ! RECENT_PATH_REGEX.test( path ) ) {
-			page( '/read' );
+			page( '/reader' );
 		}
 
 		// Analytics.

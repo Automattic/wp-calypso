@@ -152,27 +152,27 @@ function ReaderListEdit( props ) {
 							<NavTabs>
 								<NavItem
 									selected={ selectedSection === 'details' }
-									path={ `/read/list/${ props.owner }/${ props.slug }/edit` }
+									path={ `/reader/list/${ props.owner }/${ props.slug }/edit` }
 								>
 									{ translate( 'Details' ) }
 								</NavItem>
 								<NavItem
 									selected={ selectedSection === 'items' }
 									count={ listItems?.length }
-									path={ `/read/list/${ props.owner }/${ props.slug }/edit/items` }
+									path={ `/reader/list/${ props.owner }/${ props.slug }/edit/items` }
 								>
 									{ translate( 'Sites' ) }
 								</NavItem>
 
 								<NavItem
 									selected={ selectedSection === 'export' }
-									path={ `/read/list/${ props.owner }/${ props.slug }/export` }
+									path={ `/reader/list/${ props.owner }/${ props.slug }/export` }
 								>
 									{ translate( 'Export' ) }
 								</NavItem>
 								<NavItem
 									selected={ selectedSection === 'delete' }
-									path={ `/read/list/${ props.owner }/${ props.slug }/delete` }
+									path={ `/reader/list/${ props.owner }/${ props.slug }/delete` }
 								>
 									{ translate( 'Delete' ) }
 								</NavItem>

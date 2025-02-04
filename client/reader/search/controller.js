@@ -15,7 +15,7 @@ const analyticsPageTitle = 'Reader';
 
 // TODO: delete this after launching sites in search
 function replaceSearchUrl( newValue, sort ) {
-	let searchUrl = '/read/search';
+	let searchUrl = '/reader/search';
 	if ( newValue ) {
 		searchUrl += '?' + stringify( { q: newValue, sort } );
 	}
@@ -24,7 +24,7 @@ function replaceSearchUrl( newValue, sort ) {
 
 const exported = {
 	search: function ( context, next ) {
-		const basePath = '/read/search';
+		const basePath = '/reader/search';
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Search';
 		const mcKey = 'search';
 		const state = context.store.getState();

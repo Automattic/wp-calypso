@@ -173,7 +173,7 @@ const SiteSubscriptionRow = ( {
 
 	const siteTitleUrl = useMemo( () => {
 		if ( isReaderPortal ) {
-			const feedUrl = `/read/feeds/${ feed_id }`;
+			const feedUrl = `/reader/feeds/${ feed_id }`;
 
 			if ( ! blog_id ) {
 				// The site subscription page does not support non-wpcom feeds yet
@@ -182,16 +182,16 @@ const SiteSubscriptionRow = ( {
 
 			if ( resubscribed ) {
 				// If the site was resubscribed, the id of the optmistic update is not the same as the id of the new subscription
-				return `/read/site/subscription/${ blog_id }`;
+				return `/reader/site/subscription/${ blog_id }`;
 			}
 
-			return `/read/subscriptions/${ subscriptionId }`;
+			return `/reader/subscriptions/${ subscriptionId }`;
 		}
 
 		if ( isSubscriptionsPortal ) {
 			if ( ! Reader.isValidId( blog_id ) ) {
 				// If it is a non-wpcom feed item, we want to open the reader's page for that feed
-				return `/read/feeds/${ feed_id }`;
+				return `/reader/feeds/${ feed_id }`;
 			}
 			return `/subscriptions/site/${ blog_id }`;
 		}

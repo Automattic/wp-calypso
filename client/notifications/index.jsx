@@ -85,7 +85,7 @@ export class Notifications extends Component {
 					site_id: siteId,
 					post_id: postId,
 				} );
-				page( `/read/blogs/${ siteId }/posts/${ postId }` );
+				page( `/reader/blogs/${ siteId }/posts/${ postId }` );
 			},
 		],
 		OPEN_COMMENT: [
@@ -96,7 +96,7 @@ export class Notifications extends Component {
 					post_id: postId,
 					comment_id: commentId,
 				} );
-				page( `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
+				page( `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` );
 			},
 		],
 		OPEN_SITE: [
@@ -105,7 +105,7 @@ export class Notifications extends Component {
 				this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
 					site_id: siteId,
 				} );
-				page( `/read/blogs/${ siteId }` );
+				page( `/reader/blogs/${ siteId }` );
 			},
 		],
 		VIEW_SETTINGS: [

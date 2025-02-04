@@ -231,7 +231,7 @@ export const PureUniversalNavbarFooter = ( {
 									</a>
 								</li>
 								<li>
-									<a href={ localizeUrl( 'https://wordpress.com/read/search/' ) } target="_self">
+									<a href={ localizeUrl( 'https://wordpress.com/reader/search/' ) } target="_self">
 										{ __( 'Blog Search', __i18n_text_domain__ ) }
 									</a>
 								</li>

@@ -10,7 +10,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 const analyticsPageTitle = 'Reader';
 
 export const createList = ( context, next ) => {
-	const basePath = '/read/list/new';
+	const basePath = '/reader/list/new';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > Create`;
 	const mcKey = 'list';
 
@@ -24,7 +24,7 @@ export const createList = ( context, next ) => {
 };
 
 export const listListing = ( context, next ) => {
-	const basePath = '/read/list/:owner/:slug';
+	const basePath = '/reader/list/:owner/:slug';
 	const fullAnalyticsPageTitle =
 		analyticsPageTitle + ' > List > ' + context.params.user + ' - ' + context.params.list;
 	const mcKey = 'list';
@@ -63,7 +63,7 @@ export const listListing = ( context, next ) => {
 };
 
 export const editList = ( context, next ) => {
-	const basePath = '/read/list/:owner/:slug/edit';
+	const basePath = '/reader/list/:owner/:slug/edit';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit`;
 	const mcKey = 'list';
 
@@ -86,7 +86,7 @@ export const editList = ( context, next ) => {
 };
 
 export const editListItems = ( context, next ) => {
-	const basePath = '/read/list/:owner/:slug/edit/items';
+	const basePath = '/reader/list/:owner/:slug/edit/items';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Items`;
 	const mcKey = 'list';
 
@@ -109,7 +109,7 @@ export const editListItems = ( context, next ) => {
 };
 
 export const exportList = ( context, next ) => {
-	const basePath = '/read/list/:owner/:slug/export';
+	const basePath = '/reader/list/:owner/:slug/export';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Export`;
 	const mcKey = 'list';
 
@@ -132,7 +132,7 @@ export const exportList = ( context, next ) => {
 };
 
 export const deleteList = ( context, next ) => {
-	const basePath = '/read/list/:owner/:slug/delete';
+	const basePath = '/reader/list/:owner/:slug/delete';
 	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Delete`;
 	const mcKey = 'list';
 
