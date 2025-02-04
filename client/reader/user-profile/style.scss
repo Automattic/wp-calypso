@@ -3,6 +3,7 @@
 .is-section-reader {
 
 	.user-profile {
+		position: relative;
 
 		.back-button {
 			position: absolute;
@@ -15,10 +16,6 @@
 				padding-left: 5px;
 			}
 		}
-
-		&__content-wrapper {
-			position: relative;
-		}
 	}
 
 	.user-profile__404.empty-content {
@@ -28,7 +25,7 @@
 	}
 
 	div.user-profile__content {
-		padding-top: 24px;
+		padding-top: 17px;
 
 		main.main.is-user-profile {
 			padding: 0;
