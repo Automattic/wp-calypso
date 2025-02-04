@@ -11,6 +11,7 @@
 			left: 0;
 			right: unset;
 			padding-top: 3px;
+			background: transparent;
 
 			@include breakpoint-deprecated( '<660px' ) {
 				padding-left: 5px;
