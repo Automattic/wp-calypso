@@ -406,17 +406,6 @@ button {
 	}
 }
 
-.wooexpress,
-.copy-site,
-.ecommerce {
-	.step-container.processing-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 25vh;
-	}
-}
-
 .assign-trial-plan,
 .processing {
 	&.wooexpress,
@@ -454,6 +443,12 @@ button {
 }
 
 .wooexpress {
+	.step-container.processing-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 9vh;
+	}
 	.step-container .step-container__content h1 {
 		font-family: proxima-nova, sans-serif;
 		font-weight: 600;

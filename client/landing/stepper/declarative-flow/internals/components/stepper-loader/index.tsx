@@ -15,7 +15,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( { title, subtitle, progr
 		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
 			return (
 				<LoadingBar
-					progress={ progress !== undefined ? progress * 100 : -1 }
+					progress={ progress !== undefined && progress >= 0 ? progress : -1 }
 					className="processing-step__content woocommerce-install__content"
 				/>
 			);
