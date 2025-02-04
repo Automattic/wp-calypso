@@ -1,0 +1,93 @@
+@import "@wordpress/base-styles/variables"; // @todo: different from core: not imported
+@import "@wordpress/base-styles/mixins"; // @todo: different from core: not imported
+
+.edit-site-site-hub {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $grid-unit-10;
+	margin-right: $grid-unit-15;
+	height: $header-height;
+}
+
+.edit-site-site-hub__actions {
+	flex-shrink: 0;
+}
+
+.edit-site-site-hub__view-mode-toggle-container {
+	height: $header-height;
+	width: $header-height;
+	flex-shrink: 0;
+
+	&.has-transparent-background .edit-site-layout__view-mode-toggle-icon {
+		background: transparent;
+	}
+}
+
+.edit-site-site-hub__title .components-button {
+	color: $gray-200;
+	display: block;
+	flex-grow: 1;
+	font-size: $font-size-large; // @unstable: different from core: 15px;
+	font-weight: 500;
+	overflow: hidden;
+	// Add space for the ↗ to render.
+	padding-right: $grid-unit-20;
+
+	// Create 12px gap between site icon and site title
+	margin-left: - $grid-unit-05;
+	position: relative;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $gray-200;
+	}
+
+	&:focus {
+		// Defer to :focus-visible below.
+		box-shadow: none;
+		outline: none;
+	}
+
+	&:focus-visible {
+		// Push the shadow away from the title.
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) $gray-900, 0 0 0 calc(2 * var(--wp-admin-border-width-focus)) var(--wp-admin-theme-color);
+
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+
+	&::after {
+		content: "\2197";
+		font-weight: 400;
+		opacity: 0;
+		position: absolute;
+		right: 0;
+
+		@media not (prefers-reduced-motion) {
+			transition: opacity 0.1s linear;
+		}
+	}
+
+	&:hover::after,
+	&:focus::after,
+	&:active::after {
+		opacity: 1;
+	}
+}
+
+.edit-site-site-hub_toggle-command-center {
+	color: $gray-200;
+
+	&:hover,
+	&:active {
+		svg {
+			fill: $gray-100;
+		}
+	}
+}
