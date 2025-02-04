@@ -433,6 +433,11 @@ export function setupReadRoutes() {
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
 		},
 		{
+			path: '/read/blogs/:blog_id/posts',
+			regex: /^\/read\/blogs\/([0-9]+)\/posts$/i,
+			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }`,
+		},
+		{
 			path: '/read/blogs/:blog_id/posts/:post_id',
 			regex: /^\/read\/blogs\/([0-9]+)\/posts\/([0-9]+)$/i,
 			getRedirect: ( params ) => `/reader/blogs/${ params.blog_id }/posts/${ params.post_id }`,
