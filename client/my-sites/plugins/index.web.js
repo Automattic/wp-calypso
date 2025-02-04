@@ -140,6 +140,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
+		noSite,
 		renderPluginsSidebar,
 		renderPluginsDashboard,
 		makeLayout,
