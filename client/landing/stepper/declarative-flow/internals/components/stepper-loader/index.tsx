@@ -7,15 +7,20 @@ interface StepperLoaderProps {
 	title?: string;
 	subtitle?: React.ReactNode;
 	progress?: number;
-	flow: string;
+	flow?: string;
 }
 
-const StepperLoader: React.FC< StepperLoaderProps > = ( { title, subtitle, progress, flow } ) => {
+const StepperLoader: React.FC< StepperLoaderProps > = ( {
+	title,
+	subtitle,
+	progress = -1,
+	flow = null,
+} ) => {
 	const renderProgressComponent = () => {
 		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
 			return (
 				<LoadingBar
-					progress={ progress !== undefined && progress >= 0 ? progress : -1 }
+					progress={ progress >= 0 ? progress : -1 }
 					className="processing-step__content woocommerce-install__content"
 				/>
 			);
@@ -23,7 +28,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( { title, subtitle, progr
 
 		return (
 			<ProgressBar
-				value={ progress && progress >= 0 ? progress * 100 : undefined }
+				value={ progress >= 0 ? progress * 100 : undefined }
 				className="stepper-loader__progress-bar processing-step__progress-bar"
 			/>
 		);
