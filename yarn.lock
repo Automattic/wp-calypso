@@ -1838,6 +1838,7 @@ __metadata:
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    clsx: "npm:^2.1.1"
     photon: "workspace:^"
     typescript: "npm:^5.3.3"
   languageName: unknown

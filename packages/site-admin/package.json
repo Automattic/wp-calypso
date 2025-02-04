@@ -39,6 +39,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
 	"dependencies": {
+		"clsx": "^2.1.1",
 		"photon": "workspace:^"
 	},
 	"devDependencies": {
