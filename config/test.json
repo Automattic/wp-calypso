@@ -42,6 +42,7 @@
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
 		"difm/allow-extra-pages": false,
+		"domain-to-plan-credit": false,
 		"cookie-banner": false,
 		"google-my-business": false,
 		"global-styles/on-personal-plan": true,
