@@ -1,14 +1,9 @@
 .is-section-reader {
-	.user-profile {
-		.empty-content {
-			margin-top: 150px;
-		}
-	}
 
 	.user-profile__404.empty-content {
 		max-width: initial;
 		margin: initial;
-		padding-top: initial;
+		padding-top: 150px;
 	}
 
 	div.user-profile__content {
