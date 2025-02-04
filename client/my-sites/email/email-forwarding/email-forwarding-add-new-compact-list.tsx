@@ -1,12 +1,12 @@
 import useAddEmailForwardMutation from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { NewForwardForm } from '../email-forwards-add/add-new-form';
 import type { FormEvent } from 'react';
 
 type Props = {
-	onBeforeAddEmailForwards?: () => void;
 	onAddedEmailForwards: () => void;
 	selectedDomainName: string;
 	showFormHeader?: boolean;
@@ -14,7 +14,6 @@ type Props = {
 
 const EmailForwardingAddNewCompactList = ( {
 	onAddedEmailForwards,
-	onBeforeAddEmailForwards,
 	selectedDomainName,
 }: Props ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -36,11 +35,15 @@ const EmailForwardingAddNewCompactList = ( {
 			return;
 		}
 
-		onBeforeAddEmailForwards?.();
-
 		const data = new FormData( event.currentTarget );
 		const mailbox = data.get( 'mailbox' ) as string;
 		const destinations = data.getAll( 'destinations' );
+
+		recordTracksEvent( 'calypso_email_management_email_forwarding_add', {
+			destinations_count: destinations.length,
+			mailbox: mailbox,
+			domain: selectedDomainName,
+		} );
 
 		addEmailForward( { mailbox, destinations } );
 
