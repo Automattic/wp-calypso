@@ -13,8 +13,8 @@ import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import PlanNoticeCreditUpgrade from './plan-notice-credit-upgrade';
 import PlanNoticeDomainToPlanCredit from './plan-notice-domain-to-plan-credit';
+import PlanNoticePlanToHigherPlanCredit from './plan-notice-plan-to-higher-plan-credit';
 
 export type PlanNoticeProps = {
 	siteId: number;
@@ -170,7 +170,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			);
 		case PLAN_UPGRADE_CREDIT_NOTICE:
 			return (
-				<PlanNoticeCreditUpgrade
+				<PlanNoticePlanToHigherPlanCredit
 					className="plan-features-main__notice"
 					onDismissClick={ handleDismissNotice }
 					siteId={ siteId }

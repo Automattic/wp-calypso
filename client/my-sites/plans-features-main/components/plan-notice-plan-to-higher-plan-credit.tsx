@@ -16,7 +16,12 @@ type Props = {
 	visiblePlans?: PlanSlug[];
 };
 
-const PlanNoticeCreditUpgrade = ( { className, onDismissClick, siteId, visiblePlans }: Props ) => {
+const PlanNoticePlanToHigherPlanCredit = ( {
+	className,
+	onDismissClick,
+	siteId,
+	visiblePlans,
+}: Props ) => {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 
@@ -67,4 +72,4 @@ const PlanNoticeCreditUpgrade = ( { className, onDismissClick, siteId, visiblePl
 	);
 };
 
-export default PlanNoticeCreditUpgrade;
+export default PlanNoticePlanToHigherPlanCredit;
