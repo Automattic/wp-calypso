@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class DomainProductPrice extends Component {
+export class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,
