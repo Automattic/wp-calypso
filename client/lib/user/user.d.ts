@@ -43,6 +43,7 @@ export type OptionalUserData = {
 	user_ip_country_code: string;
 	user_URL: string;
 	username: string;
+	profile_URL: string;
 	visible_site_count: number;
 	jetpack_visible_site_count?: number;
 	atomic_visible_site_count?: number;

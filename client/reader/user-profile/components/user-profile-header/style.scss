@@ -90,12 +90,20 @@
 
 		&__bio-desc {
 			margin: 0;
-			display: -webkit-box;
-			-webkit-line-clamp: 3;
-			line-clamp: 3;
-			-webkit-box-orient: vertical;
-			overflow: hidden;
-			text-overflow: ellipsis;
+
+			&-text {
+				-webkit-line-clamp: 3;
+				line-clamp: 3;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+
+			&-link {
+				display: inline-flex;
+				gap: 4px;
+				align-items: center;
+			}
 		}
 
 		.section-nav {
