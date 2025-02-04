@@ -1833,6 +1833,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-admin@workspace:packages/site-admin":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-admin@workspace:packages/site-admin"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    photon: "workspace:^"
+    typescript: "npm:^5.3.3"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
