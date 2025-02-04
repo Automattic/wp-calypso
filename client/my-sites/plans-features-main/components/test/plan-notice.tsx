@@ -1,5 +1,6 @@
 /** @jest-environment jsdom */
 
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
@@ -67,6 +68,7 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-cred
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
+jest.mock( '@automattic/calypso-config' );
 
 const mGetDiscountByName = getDiscountByName as jest.MockedFunction< typeof getDiscountByName >;
 const mUseMarketingMessage = useMarketingMessage as jest.MockedFunction<
@@ -90,6 +92,7 @@ const mGetCurrentUserCurrencyCode = getCurrentUserCurrencyCode as jest.MockedFun
 >;
 const mGetByPurchaseId = getByPurchaseId as jest.MockedFunction< typeof getByPurchaseId >;
 const mIsProPlan = isProPlan as jest.MockedFunction< typeof isProPlan >;
+const mIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
 
 const plansList: PlanSlug[] = [
 	PLAN_FREE,
@@ -119,6 +122,7 @@ describe( '<PlanNotice /> Tests', () => {
 		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 100 );
 		mGetByPurchaseId.mockImplementation( () => ( { isInAppPurchase: false } ) as Purchase );
 		mIsProPlan.mockImplementation( () => false );
+		mIsEnabled.mockImplementation( ( key ) => key !== 'domain-to-plan-credit' );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
@@ -179,6 +183,7 @@ describe( '<PlanNotice /> Tests', () => {
 	test( 'A domain-to-plan credit <PlanNotice /> should be shown in a site where a domain has been purchased without a paid plan', () => {
 		mUsePlanUpgradeCreditsApplicable.mockImplementation( () => null );
 		mUseDomainToPlanCreditsApplicable.mockImplementation( () => 1000 );
+		mIsEnabled.mockImplementation( ( key ) => key === 'domain-to-plan-credit' );
 
 		renderWithProvider(
 			<PlanNotice

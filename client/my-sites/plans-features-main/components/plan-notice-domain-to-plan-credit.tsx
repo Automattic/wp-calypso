@@ -28,7 +28,6 @@ const PlanNoticeDomainToPlanCredit = ( {
 	const upgradeCreditDocsUrl = localizeUrl(
 		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
 	);
-
 	const showNotice =
 		visiblePlans &&
 		visiblePlans.length > 0 &&

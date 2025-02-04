@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PlanSlug, isProPlan, isStarterPlan } from '@automattic/calypso-products';
 import { Site, SiteMediaStorage } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
@@ -206,12 +207,14 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 			);
 		case DOMAIN_TO_PLAN_CREDIT_NOTICE:
 			return (
-				<PlanNoticeDomainToPlanCredit
-					className="plan-features-main__notice"
-					onDismissClick={ handleDismissNotice }
-					siteId={ siteId }
-					visiblePlans={ visiblePlans }
-				/>
+				isEnabled( 'domain-to-plan-credit' ) && (
+					<PlanNoticeDomainToPlanCredit
+						className="plan-features-main__notice"
+						onDismissClick={ handleDismissNotice }
+						siteId={ siteId }
+						visiblePlans={ visiblePlans }
+					/>
+				)
 			);
 		case MARKETING_NOTICE:
 		default:
