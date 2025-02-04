@@ -6,14 +6,14 @@ const WooCommerceLogo = ( { height = 32, width = 120 } ) => {
 			version="1.1"
 			id="Layer_1"
 			xmlns="http://www.w3.org/2000/svg"
-			xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlnsXlink="http://www.w3.org/1999/xlink"
 			x="0px"
 			y="0px"
 			viewBox="0 0 509.4 47.5"
 			className="woocommerce-logo"
 			height={ height }
 			width={ width }
-			xml:space="preserve"
+			xmlSpace="preserve"
 		>
 			<style type="text/css">
 				{ `
