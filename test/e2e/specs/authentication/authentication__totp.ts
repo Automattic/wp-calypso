@@ -23,7 +23,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 			// Test redirect to full URL.
 			await page.goto(
 				DataHelper.getCalypsoURL(
-					`log-in?site=${ credentials.primarySite }&redirect_to=%2Fsettings%2Fgeneral%2F${ credentials.primarySite }`
+					`log-in?site=${ credentials.primarySite }&redirect_to=%2Fplans%2F${ credentials.primarySite }`
 				)
 			);
 		} );
@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 		} );
 
 		it( 'User is redirected to Settings > General Settings', async function () {
-			const redirectedURL = DataHelper.getCalypsoURL( '/settings/general' );
+			const redirectedURL = DataHelper.getCalypsoURL( '/plans' );
 			await page.waitForURL( `${ redirectedURL }/${ credentials.primarySite }` );
 		} );
 
@@ -62,8 +62,6 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 	describe( 'WooCommerce', function () {
 		beforeAll( async () => {
 			page = await browser.newPage();
-			// Wait 30s to avoid OTP code reuse error.
-			await page.waitForTimeout( 30000 );
 		} );
 
 		it( 'Navigate to Login page', async function () {
@@ -71,6 +69,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: TOTP' ), function () {
 			await loginPage.visit( {
 				path: SecretsManager.secrets.wooLoginPath,
 			} );
+			// Wait 30s to avoid OTP code reuse error.
+			await page.waitForTimeout( 30000 );
 		} );
 
 		it( 'Enter username', async function () {
