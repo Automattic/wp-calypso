@@ -146,7 +146,7 @@ const LayoutLoggedOut = ( {
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-		'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
+		'feature-flag-woocommerce-rebrand-2-0': true,
 	};
 
 	let masterbar = null;
