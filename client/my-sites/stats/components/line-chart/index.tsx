@@ -50,7 +50,7 @@ function StatsLineChart( {
 			const date = new Date();
 			fixtureData[ 0 ].data.unshift( { date, value: Math.round( Math.random() * 60 ) } );
 			setData( [ ...fixtureData ] );
-		}, 1000 );
+		}, 60 * 1000 );
 		return () => clearInterval( intervalId );
 	}, [] );
 
