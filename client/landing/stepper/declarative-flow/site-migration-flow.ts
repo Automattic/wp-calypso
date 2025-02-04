@@ -136,7 +136,9 @@ const siteMigration: Flow = {
 							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
 							// We need to make sure there's a site to import into.
 							if ( ! siteSlugParam ) {
-								return navigate( STEPS.SITE_CREATION_STEP.slug );
+								return navigate(
+									addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
+								);
 							}
 						}
 						return exitFlow(
@@ -211,7 +213,7 @@ const siteMigration: Flow = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.siteCreated ) {
-						if ( ! fromQueryParam ) {
+						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
 							// pick your current platform link. That's why we navigate to the importList step.
 							return exitFlow(
@@ -221,6 +223,7 @@ const siteMigration: Flow = {
 										siteSlug,
 										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+										...( fromQueryParam && { from: fromQueryParam } ),
 									},
 									'/setup/site-setup/importList'
 								)
