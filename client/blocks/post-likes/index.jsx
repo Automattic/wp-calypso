@@ -24,7 +24,7 @@ class PostLikes extends PureComponent {
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.site_ID && like.site_visible ? '/read/blogs/' + like.site_ID : null;
+		const likeUrl = like.site_ID && like.site_visible ? '/reader/blogs/' + like.site_ID : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (

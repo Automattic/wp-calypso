@@ -17,7 +17,7 @@ describe( '#buildSearchUrl', () => {
 
 	test( 'should replace current query with new one even when using custom query key', () => {
 		const params = {
-			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			uri: 'wordpress.com/reader/search?q=reader+is+awesome',
 			search: 'reader is super awesome',
 			queryKey: 'q',
 		};
@@ -27,7 +27,7 @@ describe( '#buildSearchUrl', () => {
 
 	test( 'should stringify to convert spaces to +', () => {
 		const params = {
-			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			uri: 'wordpress.com/reader/search?q=reader+is+awesome',
 			search: 'hello there',
 			queryKey: 'q',
 		};
@@ -37,7 +37,7 @@ describe( '#buildSearchUrl', () => {
 
 	test( 'should remove the query if search is empty', () => {
 		const params = {
-			uri: 'wordpress.com/read/search?q=reader+is+awesome',
+			uri: 'wordpress.com/reader/search?q=reader+is+awesome',
 			queryKey: 'q',
 		};
 		const url = buildSearchUrl( params );

@@ -173,7 +173,7 @@ describe( 'Logged In Landing Page', () => {
 
 		page( '/' );
 
-		await waitFor( () => expect( page.current ).toBe( '/read' ) );
+		await waitFor( () => expect( page.current ).toBe( '/reader' ) );
 	} );
 
 	test( 'user with a selected site goes to My Home for Default Style interface', async () => {
