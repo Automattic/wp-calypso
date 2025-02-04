@@ -85,13 +85,6 @@ body.is-reader-full-post {
 			width: 24px;
 		}
 
-		.dataviews-view-list {
-			height: $feed-list-height;
-			overflow-y: auto;
-			@include custom-scrollbars-on-hover( transparent, $gray-600 );
-			scrollbar-gutter: auto;
-		}
-
 		.dataviews__view-actions {
 			box-sizing: border-box;
 			padding: 16px $recent-feed-spacing;
@@ -101,11 +94,15 @@ body.is-reader-full-post {
 			padding: $recent-feed-spacing;
 		}
 
-		ul {
+		.dataviews-view-list {
+			height: $feed-list-height;
+			overflow-y: auto;
+			@include custom-scrollbars-on-hover( transparent, $gray-600 );
+			scrollbar-gutter: auto;
 			list-style: none;
 			margin: 0;
 
-			li {
+			div[role="row"] {
 				border-top: 1px solid var( --studio-gray-0 );
 
 				&.is-selected + li {

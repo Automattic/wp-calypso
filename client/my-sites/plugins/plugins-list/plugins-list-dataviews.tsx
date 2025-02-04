@@ -12,6 +12,7 @@ import {
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import QueryDotorgPlugins from 'calypso/components/data/query-dotorg-plugins';
 import { DataViews } from 'calypso/components/dataviews';
+import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { PLUGINS_STATUS } from 'calypso/state/plugins/installed/status/constants';
 import { Plugin } from 'calypso/state/plugins/installed/types';
@@ -29,8 +30,6 @@ interface Props {
 }
 
 const defaultLayouts = { table: {} };
-
-const pluginsFields = [ 'plugins', 'sites', 'update' ];
 
 const openPluginSitesPane = ( plugin: Plugin ) => {
 	recordTracksEvent( 'calypso_plugins_list_open_plugin_sites_pane', {
@@ -55,8 +54,6 @@ export default function PluginsListDataViews( {
 	).length;
 
 	const fields = useFields( bulkActionDialog, openPluginSitesPane, shouldUseListView );
-	const visibleFields = ( shouldUseListView: boolean ) =>
-		shouldUseListView ? [ 'icon', ...pluginsFields ] : pluginsFields;
 	const actions = useActions( bulkActionDialog );
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( () => {
@@ -64,11 +61,11 @@ export default function PluginsListDataViews( {
 			...initialDataViewsState,
 			perPage: 15,
 			search: initialSearch,
-			fields: visibleFields( shouldUseListView ),
+			fields: [ 'sites', 'update' ],
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
+			titleField: 'plugins',
+			mediaField: 'icon',
 			layout: {
-				primaryField: 'plugins',
-				mediaField: 'icon',
 				styles: {
 					plugins: {
 						width: '60%',
@@ -94,7 +91,6 @@ export default function PluginsListDataViews( {
 		// Sets the correct fields when route changes or viewport changes
 		setDataViewsState( {
 			...dataViewsState,
-			fields: visibleFields( shouldUseListView ),
 			type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 		} );
 
@@ -103,7 +99,6 @@ export default function PluginsListDataViews( {
 			const shouldUseListView = pluginSlug !== undefined || ! matches;
 			setDataViewsState( {
 				...dataViewsState,
-				fields: visibleFields( shouldUseListView ),
 				type: shouldUseListView ? DATAVIEWS_LIST : DATAVIEWS_TABLE,
 			} );
 		} );
@@ -184,6 +179,26 @@ export default function PluginsListDataViews( {
 		[ dataViewsState.type ]
 	);
 
+	const dispatch = useDispatch();
+	const trackPluginNameClick = useCallback(
+		( item: Plugin ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_manage_list_plugin_name_click', {
+					plugin_slug: item.slug,
+				} )
+			);
+		},
+		[ dispatch ]
+	);
+
+	const onClickItem = useCallback(
+		( item: Plugin ) => {
+			trackPluginNameClick( item );
+			openPluginSitesPane( item );
+		},
+		[ trackPluginNameClick ]
+	);
+
 	return (
 		<>
 			<QueryDotorgPlugins pluginSlugList={ data.map( ( plugin ) => plugin.slug ) } />
@@ -192,6 +207,7 @@ export default function PluginsListDataViews( {
 				view={ dataViewsState }
 				onChangeView={ setDataViewsState }
 				onChangeSelection={ updatePluginOnChangeSelection }
+				onClickItem={ onClickItem }
 				fields={ fields }
 				search
 				searchLabel={ translate( 'Search' ) }

@@ -130,45 +130,6 @@
 	}
 }
 
-// TODO: remove when updating to dataviews@4.3.0.
-//
-// This is a hotfix to hiding the properties section in the view config menu
-// when no field is hidable.
-// This has been fixed upstream as of
-// https://github.com/WordPress/gutenberg/pull/64711
-.dataviews-settings-section:has( .dataviews-settings-section__content:empty ) {
-	display: none;
-}
-
-// TODO: remove when updating to dataviews@4.3.0
-//
-// This is a hotfix for the sort direction control within the view config.
-// It shouldn't be visible when there are no sortable fields.
-// Fixed at https://github.com/WordPress/gutenberg/issues/64816
-.is-section-a8c-for-agencies-team .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-sites.modal-open
-	.dataviews-settings-section__content
-	.is-divided-in-two,
-.is-section-a8c-for-agencies-referrals .dataviews-settings-section__content .is-divided-in-two,
-.is-section-a8c-for-agencies-client .dataviews-settings-section__content .is-divided-in-two {
-	display: none !important;
-}
-
-// TODO: remove when updating dataviews to have this built-in.
-//
-// https://github.com/WordPress/gutenberg/issues/64927
-.dataviews-filters-toggle__count {
-	padding: revert !important;
-}
-
-// TODO: remove when this is fixed upstream.
-//
-// https://github.com/WordPress/gutenberg/issues/64925
-.dataviews-filters__summary-chip span,
-.dataviews-filters__summary-chip {
-	font-size: 0.875rem;
-}
-
 // TODO: remove when this is implemented upstream.
 //
 // https://github.com/WordPress/gutenberg/pull/65086

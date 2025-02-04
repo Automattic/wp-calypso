@@ -135,6 +135,7 @@ const webpackConfig = {
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
 		alias: {
 			'@automattic/calypso-config': 'calypso/server/config',
+			'@wordpress/upload-media': false,
 		},
 	},
 	node: {

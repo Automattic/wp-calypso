@@ -1,6 +1,6 @@
 import {
 	__experimentalNavigatorScreen as NavigatorScreen,
-	__experimentalNavigatorToParentButton as NavigatorToParentButton,
+	__experimentalNavigatorBackButton as NavigatorBackButton,
 	__experimentalVStack as VStack,
 	Card,
 	CardBody,
@@ -36,7 +36,7 @@ export const SidebarNavigatorMenu = ( {
 							{ ( backButtonProps || title ) && (
 								<li className="sidebar-v2__navigator-sub-menu-header">
 									{ backButtonProps && (
-										<NavigatorToParentButton
+										<NavigatorBackButton
 											icon={ backButtonProps.icon }
 											onClick={ backButtonProps.onClick }
 											label={ backButtonProps.label }

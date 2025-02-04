@@ -21,6 +21,7 @@ export function TeamInviteTable( { members, onRefresh }: Props ) {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
+		fields: [ 'user', 'status', 'actions' ],
 		layout: {
 			styles: {
 				actions: {

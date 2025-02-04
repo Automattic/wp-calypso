@@ -2,6 +2,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { useMemo, useState, useEffect } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { SiteItem } from './wpcom-sites-table';
 import type { Field } from '@wordpress/dataviews';
 
@@ -11,7 +12,10 @@ interface Props {
 }
 
 export default function WPCOMSitesTableContent( { items, fields }: Props ) {
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		fields: [ 'site', 'date', 'type' ],
+	} );
 
 	const { data, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( items, dataViewsState, fields );

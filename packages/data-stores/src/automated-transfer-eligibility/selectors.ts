@@ -5,7 +5,6 @@ import {
 	TransferEligibilityWarning,
 	TransferEligibilityError,
 	TransferEligibility,
-	TransferSelectFn,
 } from './types';
 
 export const getAutomatedTransferEligibility = (
@@ -19,9 +18,11 @@ export const getAutomatedTransferEligibility = (
 };
 
 export const getEligibilityHolds = createRegistrySelector(
-	( select: TransferSelectFn ) =>
+	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityError[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility(
+				siteId
+			) as TransferEligibility | null;
 
 			if ( ! transferEligibility ) {
 				return null;
@@ -40,9 +41,11 @@ export const getEligibilityHolds = createRegistrySelector(
 );
 
 export const getEligibilityWarnings = createRegistrySelector(
-	( select: TransferSelectFn ) =>
+	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
-			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility( siteId );
+			const transferEligibility = select( STORE_KEY ).getAutomatedTransferEligibility(
+				siteId
+			) as TransferEligibility | null;
 
 			if ( ! transferEligibility ) {
 				return null;
@@ -67,7 +70,7 @@ export const getEligibilityWarnings = createRegistrySelector(
 );
 
 export const getNonSubdomainWarnings = createRegistrySelector(
-	( select: TransferSelectFn ) =>
+	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning[] | null => {
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 
@@ -82,7 +85,7 @@ export const getNonSubdomainWarnings = createRegistrySelector(
 );
 
 export const getWpcomSubdomainWarning = createRegistrySelector(
-	( select: TransferSelectFn ) =>
+	( select ) =>
 		( state: State, siteId: number | null ): TransferEligibilityWarning | null => {
 			const eligibilityWarnings = select( STORE_KEY ).getEligibilityWarnings( siteId );
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment

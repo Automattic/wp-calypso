@@ -32,7 +32,7 @@
 	"dependencies": {
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^4.8.0",
+		"@wordpress/url": "^4.16.0",
 		"i18n-calypso": "workspace:^",
 		"social-logos": "^3.1.16"
 	},
@@ -41,7 +41,7 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.8.0",
+		"@wordpress/data": "^10.16.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}
