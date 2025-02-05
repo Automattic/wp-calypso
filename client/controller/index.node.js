@@ -97,3 +97,4 @@ export const setSelectedSiteIdByOrigin = () => {};
 export const redirectIfDuplicatedView = ( wpAdminPath ) => () => {};
 
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = () => {};
+export const redirectDuplicateViewsSiteSettings = () => {};

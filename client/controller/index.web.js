@@ -460,3 +460,14 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
 
 	next();
 };
+
+export const redirectDuplicateViewsSiteSettings = async () => {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+
+	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+		return page.redirect( `/sites/settings/site` );
+	}
+
+	return page.redirect( '/settings/general' );
+};

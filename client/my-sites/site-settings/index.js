@@ -1,6 +1,11 @@
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+	redirectDuplicateViewsSiteSettings,
+} from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
@@ -25,10 +30,8 @@ import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
-import { redirectToolsIfRemoveDuplicateViewsExperimentEnabled } from '../../controller/index.web';
-
 export default function () {
-	page( '/settings', '/settings/general' );
+	page( '/settings', redirectDuplicateViewsSiteSettings );
 
 	page(
 		'/settings/general/:site_id',
