@@ -171,21 +171,18 @@ const MarketplaceProductInstall = ( {
 	} );
 
 	const purchaseFlowState = useSelector( getPurchaseFlowState );
-	const hasCompletedInstallation =
-		purchaseFlowState.pluginInstallationStatus === MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-		purchaseFlowState.primaryDomain === selectedSiteSlug;
+	const isDifferentFromPurchaseSite = purchaseFlowState.primaryDomain !== selectedSiteSlug;
 
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! marketplaceInstallationInProgress && ! hasCompletedInstallation ) {
-			// Only show error if we haven't completed installation and there's no installation in progress
+		if ( isDifferentFromPurchaseSite ) {
 			waitFor( 2 ).then( () => {
-				if ( ! marketplaceInstallationInProgress && ! hasCompletedInstallation ) {
+				if ( isDifferentFromPurchaseSite ) {
 					setNoDirectAccessError( true );
 				}
 			} );
 		}
-	}, [ marketplaceInstallationInProgress, hasCompletedInstallation ] );
+	}, [ isDifferentFromPurchaseSite ] );
 
 	// Upload flow startup
 	useEffect( () => {
