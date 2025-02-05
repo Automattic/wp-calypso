@@ -3,6 +3,7 @@ import {
 	isDomainTransfer,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_CENTENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
@@ -92,6 +93,8 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 				return translate( 'year' );
 			case PLAN_MONTHLY_PERIOD:
 				return translate( 'month' );
+			case PLAN_CENTENNIAL_PERIOD:
+				return translate( '100 years' );
 			case 7:
 				// Note: does this period ever happen? I don't think it does but it
 				// was added in https://github.com/Automattic/wp-calypso/pull/65006

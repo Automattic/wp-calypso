@@ -105,6 +105,7 @@ describe( 'selectors', () => {
 				isDomain: false,
 				isDomainRegistration: false,
 				isLocked: false,
+				isHundredYearDomain: false,
 				isInAppPurchase: false,
 				isRechargeable: true,
 				isRefundable: false,
