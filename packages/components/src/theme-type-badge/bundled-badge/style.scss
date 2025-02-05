@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .bundled-badge {
 	display: inline-flex;
 	align-items: center;
@@ -14,8 +16,8 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		font-size: 0.875rem;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-size: $font-body-small;
+		font-family: $sans;
 	}
 
 	.bundled-badge__icon {
