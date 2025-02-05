@@ -91,12 +91,15 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 									maximumFractionDigits: 1,
 								},
 							} ),
-							numberOfLimit: numberFormat( limit, {
-								numberFormatOptions: {
-									notation: 'compact',
-									maximumFractionDigits: 1,
-								},
-							} ),
+							numberOfLimit:
+								typeof limit === 'number'
+									? numberFormat( limit, {
+											numberFormatOptions: {
+												notation: 'compact',
+												maximumFractionDigits: 1,
+											},
+									  } )
+									: '-',
 						},
 					} ) }
 				</div>
