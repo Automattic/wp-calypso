@@ -11,6 +11,7 @@ import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
@@ -95,7 +96,7 @@ export const SubscribersPageProvider = ( {
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
-
+	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
 	useEffect( () => {
 		if ( hasManySubscribers ) {
 			setDataViewFilterOption( SubscribersFilterBy.WPCOM );
@@ -201,11 +202,29 @@ export const SubscribersPageProvider = ( {
 				);
 			}
 		} else {
-			const errorMessage =
-				'message' in importError && typeof importError.message === 'string'
-					? importError.message
-					: translate( 'An unknown error has occurred. Please try again in a second.' );
-			dispatch( errorNotice( errorMessage ) );
+			let notice = translate( 'An unknown error has occurred. Please try again in a second.' );
+			const noticeArgs = { isPersistent: true };
+
+			if (
+				'error' in importError &&
+				typeof importError.error === 'object' &&
+				importError.error &&
+				'code' in importError.error &&
+				'message' in importError.error
+			) {
+				const { code, message } = importError.error;
+				if ( code === 'subscriber_import_limit_reached' && typeof message === 'string' ) {
+					notice = message;
+					noticeArgs.button = translate( 'Upgrade' );
+					const siteSlug = selectedSiteSlug || ''; // Use a default if siteSlug is not available
+
+					noticeArgs.href = isSimple
+						? `https://wordpress.com/plans/${ siteSlug }`
+						: `https://cloud.jetpack.com/pricing/${ siteSlug }`;
+				}
+			}
+
+			dispatch( errorNotice( notice, noticeArgs ) );
 		}
 	};
 
