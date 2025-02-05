@@ -34,6 +34,7 @@ import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
 import useFields from './hooks/use-fields';
+import { default as useView, getSortField, getVisibleFields } from './hooks/use-view';
 import type { View, ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
@@ -307,15 +308,6 @@ const useDataLogs = ( {
 	};
 };
 
-const getVisibleFieldsForLogType = ( logType: LogType ) => {
-	if ( logType === 'php' ) {
-		return [ 'severity', 'timestamp', 'message' ];
-	}
-	return [ 'request_type', 'date', 'status', 'request_url' ];
-};
-
-const getSortFieldForLogType = ( logType: LogType ) => ( logType === 'php' ? 'timestamp' : 'date' );
-
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
@@ -369,35 +361,8 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 		updateDateRangeQueryParam( { startTime, endTime } );
 	};
 
-	const [ view, setView ] = useState< View >( () => {
-		return {
-			type: 'table' as const,
-			page: 1,
-			perPage: 50,
-			sort: {
-				field: getSortFieldForLogType( logType ),
-				direction: 'desc',
-			},
-			fields: getVisibleFieldsForLogType( logType ),
-			layout: {
-				styles: {
-					request_url: {
-						maxWidth: '300px',
-					},
-					http_referer: {
-						maxWidth: '300px',
-					},
-					message: {
-						maxWidth: '300px',
-					},
-					file: {
-						maxWidth: '300px',
-					},
-				},
-			},
-		};
-	} );
 	const fields = useFields( { logType } );
+	const [ view, setView ] = useView( { logType } );
 	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType, dateRange } );
 	const onChangeView = ( newView: View ) =>
 		setView(
@@ -413,12 +378,12 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 		setView( ( view: View ) => ( {
 			...view,
 			sort: {
-				field: getSortFieldForLogType( logType ),
+				field: getSortField( logType ),
 				direction: view?.sort?.direction || 'desc',
 			},
-			fields: getVisibleFieldsForLogType( logType ),
+			fields: getVisibleFields( logType ),
 		} ) );
-	}, [ logType ] );
+	}, [ logType, setView ] );
 
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
