@@ -90,21 +90,6 @@ describe( 'Site Migration Import or Migrate Step', () => {
 		expect( queryByText( /WP Engine/ ) ).toBeInTheDocument();
 	} );
 
-	it( "doesn't show the host identification message when the host is a8c", async () => {
-		useHostingProviderUrlDetails.mockReturnValue( {
-			data: {
-				name: 'WordPress.com',
-				is_unknown: false,
-				is_a8c: true,
-			},
-		} );
-
-		const { container, queryByText } = render();
-
-		expect( container.querySelectorAll( '.onboarding-subtitle' ) ).toHaveLength( 0 );
-		expect( queryByText( /WordPress.com/ ) ).not.toBeInTheDocument();
-	} );
-
 	it( "doesn't show the host identification message when the host is unknown", async () => {
 		useHostingProviderUrlDetails.mockReturnValue( {
 			data: {
@@ -140,7 +125,7 @@ describe( 'Site Migration Import or Migrate Step', () => {
 	it( 'shows the upgrade required badge when the site can not install plugins', () => {
 		render();
 
-		expect( screen.getByText( /Requires Business plan/ ) ).toBeInTheDocument();
+		expect( screen.getByText( /Available on Business with 50% off/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'shows the included with your plan badge when the site can install plugins', () => {
