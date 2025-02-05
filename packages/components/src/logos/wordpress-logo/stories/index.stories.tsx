@@ -8,15 +8,7 @@ const meta: Meta< typeof WordPressLogo > = {
 		( Story ) => (
 			// TODO: Default styles for this component are too opinionated,
 			// rendering as a white logo with outer margin. Should fix.
-			<div
-				style={ {
-					background:
-						'linear-gradient(45deg, #909090 25%, transparent 25%), linear-gradient(-45deg, #909090 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #909090 75%), linear-gradient(-45deg, transparent 75%, #909090 75%)',
-					backgroundSize: '20px 20px',
-					backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-					backgroundColor: '#fff',
-				} }
-			>
+			<div style={ { background: '#2c3338', padding: '10px' } }>
 				<Story />
 			</div>
 		),
