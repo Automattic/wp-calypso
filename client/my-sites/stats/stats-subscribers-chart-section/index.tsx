@@ -75,6 +75,7 @@ export default function SubscribersChartSection( {
 	period?: PeriodType;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
 		week: 12,
@@ -163,6 +164,7 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
+			{ isChartLibraryEnabled && <div>chart library is enabled</div> }
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
