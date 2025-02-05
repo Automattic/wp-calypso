@@ -2,8 +2,13 @@
 @import '@wordpress/base-styles/mixins';
 
 .subscriber-totals {
-	padding: 16px 48px;
+	padding: 0 48px;
 	margin-bottom: 8px;
+
+	// 430px is the DataViews padding breakpoint.
+	@media ( max-width: 430px ) {
+		padding: 0 24px;
+	}
 	
 	&.is-loading {
 		min-height: 24px;
