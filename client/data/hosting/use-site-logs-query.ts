@@ -18,14 +18,14 @@ export type SiteLogsData = {
 	has_more: boolean;
 };
 
-export type SiteLogsTab = 'php' | 'web';
+export type LogType = 'php' | 'web';
 
 export interface FilterType {
 	[ key: string ]: Array< string >;
 }
 
 export interface SiteLogsParams {
-	logType: SiteLogsTab;
+	logType: LogType;
 	start: number;
 	end: number;
 	filter: FilterType;
