@@ -1,5 +1,6 @@
 import { ProgressBar, WooCommerceWooLogo } from '@automattic/components';
 import { useFlowProgress } from '@automattic/onboarding';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import './style.scss';
@@ -12,6 +13,7 @@ interface ProgressBarData {
 interface Props {
 	progressBar?: ProgressBarData;
 	shouldShowLoadingScreen?: boolean;
+	isReskinned?: boolean;
 	rightComponent?: React.ReactNode;
 	pageTitle?: string;
 	showWooLogo?: boolean;
@@ -19,6 +21,7 @@ interface Props {
 
 const SignupHeader = ( {
 	shouldShowLoadingScreen,
+	isReskinned,
 	rightComponent,
 	progressBar = {},
 	pageTitle,
@@ -37,7 +40,9 @@ const SignupHeader = ( {
 		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
 
-	const logoClasses = 'wordpress-logo';
+	const logoClasses = clsx( 'wordpress-logo', {
+		'is-large': shouldShowLoadingScreen && ! isReskinned,
+	} );
 
 	return (
 		<>

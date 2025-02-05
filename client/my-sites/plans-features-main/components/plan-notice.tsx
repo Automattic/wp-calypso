@@ -119,6 +119,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
+					isReskinned
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
@@ -133,6 +134,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-warning"
+					isReskinned
 				>
 					{ translate(
 						'Your plan currently has a legacy feature that provides 200GB of space. ' +
@@ -159,6 +161,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
+					isReskinned
 				>
 					{ activeDiscount.plansPageNoticeTextTitle && (
 						<strong>
@@ -183,6 +186,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
@@ -198,6 +202,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
+					isReskinned
 					icon="info-outline"
 					status="is-error"
 					text={ translate(

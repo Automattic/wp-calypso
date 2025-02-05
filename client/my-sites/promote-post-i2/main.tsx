@@ -324,6 +324,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
+					isReskinned
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"
@@ -349,6 +350,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ shouldDisplayDebtAndPaymentLinks && (
 				<>
 					<Notice
+						isReskinned
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
