@@ -1,8 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component, isValidElement } from 'react';
+import { Component, isValidElement, ReactNode } from 'react';
 // @todo: Convert to import from `components/gridicon`
 // which makes Calypso mysteriously crash at the moment.
 //
@@ -10,9 +9,6 @@ import { Component, isValidElement } from 'react';
 
 import './style.scss';
 
-/**
- * Module constants
- */
 const GRIDICONS_WITH_DROP = [
 	'add',
 	'cross-circle',
@@ -23,10 +19,34 @@ const GRIDICONS_WITH_DROP = [
 	'pause',
 	'play',
 	'spam',
-];
+] as const;
+
 const noop = () => {};
 
-export class Notice extends Component {
+type NoticeStatus =
+	| 'is-error'
+	| 'is-info'
+	| 'is-success'
+	| 'is-warning'
+	| 'is-plain'
+	| 'is-transparent-info';
+
+interface NoticeProps {
+	className?: string;
+	duration?: number;
+	icon?: string | ReactNode;
+	isCompact?: boolean;
+	isLoading?: boolean;
+	onDismissClick?: () => void;
+	showDismiss?: boolean;
+	status?: NoticeStatus;
+	theme?: 'light' | 'dark';
+	text?: ReactNode;
+	translate: ( text: string ) => string;
+	children?: ReactNode;
+}
+
+export class Notice extends Component< NoticeProps > {
 	static defaultProps = {
 		className: '',
 		duration: 0,
@@ -38,50 +58,32 @@ export class Notice extends Component {
 		text: null,
 	};
 
-	static propTypes = {
-		className: PropTypes.string,
-		duration: PropTypes.number,
-		icon: PropTypes.oneOfType( [ PropTypes.string, PropTypes.element ] ),
-		isCompact: PropTypes.bool,
-		isLoading: PropTypes.bool,
-		onDismissClick: PropTypes.func,
-		showDismiss: PropTypes.bool,
-		status: PropTypes.oneOf( [
-			'is-error',
-			'is-info',
-			'is-success',
-			'is-warning',
-			'is-plain',
-			'is-transparent-info',
-		] ),
-		text: PropTypes.node,
-		translate: PropTypes.func.isRequired,
-	};
+	private dismissTimeout: ReturnType< typeof setTimeout > | null = null;
 
-	dismissTimeout = null;
-
-	componentDidMount() {
-		if ( this.props.duration > 0 ) {
-			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+	componentDidMount(): void {
+		if ( this.props.duration! > 0 ) {
+			this.dismissTimeout = setTimeout( this.props.onDismissClick!, this.props.duration! );
 		}
 	}
 
-	componentWillUnmount() {
+	componentWillUnmount(): void {
 		if ( this.dismissTimeout ) {
 			clearTimeout( this.dismissTimeout );
 		}
 	}
 
-	componentDidUpdate() {
-		clearTimeout( this.dismissTimeout );
+	componentDidUpdate(): void {
+		if ( this.dismissTimeout ) {
+			clearTimeout( this.dismissTimeout );
+		}
 
-		if ( this.props.duration > 0 ) {
-			this.dismissTimeout = setTimeout( this.props.onDismissClick, this.props.duration );
+		if ( this.props.duration! > 0 ) {
+			this.dismissTimeout = setTimeout( this.props.onDismissClick!, this.props.duration! );
 		}
 	}
 
-	getIcon() {
-		let icon;
+	getIcon(): string {
+		let icon: string;
 
 		switch ( this.props.status ) {
 			case 'is-info':
@@ -105,7 +107,7 @@ export class Notice extends Component {
 		return icon;
 	}
 
-	render() {
+	render(): ReactNode {
 		const {
 			children,
 			className,
@@ -113,25 +115,32 @@ export class Notice extends Component {
 			isCompact,
 			isLoading,
 			onDismissClick,
-			showDismiss = ! isCompact, // by default, show on normal notices, don't show on compact ones
+			showDismiss = ! isCompact,
 			status,
 			text,
 			translate,
+			theme = 'dark',
 		} = this.props;
-		const classes = clsx( 'notice is-reskinned', status, className, {
+		console.log( { theme } );
+
+		const classes = clsx( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
+			'is-light': theme === 'light',
 		} );
 
 		let iconNeedsDrop = false;
-		let renderedIcon = null;
+		let renderedIcon: ReactNode = null;
+
 		if ( icon && isValidElement( icon ) ) {
 			renderedIcon = icon;
 		} else {
 			const iconName = icon || this.getIcon();
 			renderedIcon = <Gridicon className="notice__icon" icon={ iconName } size={ 24 } />;
-			iconNeedsDrop = GRIDICONS_WITH_DROP.includes( iconName );
+			iconNeedsDrop = GRIDICONS_WITH_DROP.includes(
+				iconName as ( typeof GRIDICONS_WITH_DROP )[ number ]
+			);
 		}
 
 		return (

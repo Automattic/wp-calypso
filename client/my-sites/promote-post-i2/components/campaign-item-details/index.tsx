@@ -748,6 +748,7 @@ export default function CampaignItemDetails( props: Props ) {
 						status="is-error"
 						icon="notice-outline"
 						className="promote-post-notice campaign-item-details__notice"
+						theme="light"
 					>
 						{ translate(
 							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',

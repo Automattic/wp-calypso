@@ -119,6 +119,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
+					theme="light"
 				>
 					{ translate(
 						'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
@@ -133,6 +134,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-warning"
+					theme="light"
 				>
 					{ translate(
 						'Your plan currently has a legacy feature that provides 200GB of space. ' +

@@ -324,6 +324,7 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
+					theme="light"
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"

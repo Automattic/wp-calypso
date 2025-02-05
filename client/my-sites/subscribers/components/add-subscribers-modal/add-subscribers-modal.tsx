@@ -268,6 +268,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							isCompact
 							status="is-info"
 							showDismiss={ false }
+							theme="light"
 						>
 							<span className="add-subscribers-modal__notice-text">
 								{ translate(
@@ -283,6 +284,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							isCompact
 							status="is-warning"
 							showDismiss={ false }
+							theme="light"
 						>
 							<span className="add-subscribers-modal__notice-text">
 								{ translate(
