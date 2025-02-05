@@ -46,13 +46,14 @@ const defaultView: View = {
 	mediaField: 'media',
 	showTitle: true,
 	showMedia: true,
-	fields: [ 'plan', 'date_subscribed' ],
+	fields: [ 'plan', 'is_email_subscriber', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
 			name: { width: '55%', minWidth: '195px' },
-			plan: { width: '25%' },
-			date_subscribed: { width: '25%' },
+			plan: { width: '15%' },
+			is_email_subscriber: { width: '15%' },
+			date_subscribed: { width: '15%' },
 		},
 	},
 };
@@ -189,19 +190,39 @@ const SubscriberDataViews = ( {
 			},
 			{
 				id: 'plan',
-				label: translate( 'Subscription type' ),
+				label: translate( 'Plan' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				elements: [
-					{ label: 'Paid', value: SubscribersFilterBy.Paid },
-					{ label: 'Free', value: SubscribersFilterBy.Free },
+					{ label: translate( 'Paid' ), value: SubscribersFilterBy.Paid },
+					{ label: translate( 'Free' ), value: SubscribersFilterBy.Free },
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],
 				},
-				enableSorting: true,
 				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'is_email_subscriber',
+				label: translate( 'Email subscriber' ),
+				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
+				render: ( { item }: { item: Subscriber } ) => (
+					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
+				),
+				elements: [
+					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
+					{
+						label: translate( 'Not subscribed' ),
+						value: SubscribersFilterBy.ReaderSubscriber,
+					},
+				],
+				filterBy: {
+					operators: [ 'is' as Operator ],
+				},
+				enableHiding: false,
+				enableSorting: true,
 			},
 			{
 				id: 'date_subscribed',
