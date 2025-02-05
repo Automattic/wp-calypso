@@ -43,7 +43,7 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	const dismissClick = () => dispatch( savePreference( dismissPreference, 1 ) );
 
 	return (
-		<Notice status={ status } onDismissClick={ dismissClick }>
+		<Notice status={ status } onDismissClick={ dismissClick } theme="light">
 			{ preventWidows(
 				translate(
 					'This page reflects the time zone set on your site. ' +

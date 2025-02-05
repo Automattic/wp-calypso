@@ -269,7 +269,9 @@ export class JetpackConnectNotices extends Component {
 		if ( noticeValues ) {
 			return (
 				<div className="jetpack-connect__notices-container">
-					<Notice { ...noticeValues }>{ this.renderNoticeAction() }</Notice>
+					<Notice { ...noticeValues } theme="light">
+						{ this.renderNoticeAction() }
+					</Notice>
 				</div>
 			);
 		}
