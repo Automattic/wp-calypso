@@ -202,7 +202,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
 		supportsDevicesStats: supportsDevicesStatsFeature,
-		supportsLocationsStats: supportsLocationsStatsFeature,
 		isOldJetpack,
 		supportUserFeedback,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
@@ -253,7 +252,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 	const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
-	const supportsLocationsStats = supportsLocationsStatsFeature || isInternal;
 	const getAvailableLegend = () => {
 		const activeTab = getActiveTab( chartTab );
 		// TODO: remove this when we support hourly visitors.
@@ -635,7 +633,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								className={ halfWidthModuleClasses }
 							/>
 
-							{ config.isEnabled( 'stats/locations' ) && supportsLocationsStats ? (
+							{ config.isEnabled( 'stats/locations' ) ? (
 								<>
 									<StatsModuleLocations
 										moduleStrings={ moduleStrings.locations }

@@ -15,6 +15,8 @@ import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
@@ -25,6 +27,7 @@ import {
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
 } from '../../../constants';
 import Geochart from '../../../geochart';
+import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
 import CountryFilter from './country-filter';
@@ -98,14 +101,26 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const geoMode = GEO_MODES[ selectedOption ];
 	const title = optionLabels[ selectedOption ]?.selectLabel;
 
+	const { supportsLocationsStats: supportsLocationsStatsFeature } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
 	// Main location data query
 	const {
-		data = [],
+		data: locationsViewsData = [],
 		isLoading: isRequestingData,
 		isError,
 	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
-		enabled: ! shouldGate,
+		enabled: ! shouldGate && supportsLocationsStatsFeature,
 	} );
+
+	// The legacy endpoint that only supports countries (not regions or cities)
+	// will be used when the new Locations Stats feature is not available.
+	const legacyCountriesViewsData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, statType, query )
+	) as [ id: number, label: string ];
+
+	const data = supportsLocationsStatsFeature ? locationsViewsData : legacyCountriesViewsData;
 
 	// Only fetch separate countries list if we're not already in country tab
 	// This is to avoid fetching the same data twice.
@@ -115,7 +130,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		query,
 		null,
 		{
-			enabled: ! shouldGate && geoMode !== 'country',
+			enabled: ! shouldGate && supportsLocationsStatsFeature && geoMode !== 'country',
 		}
 	);
 
@@ -219,9 +234,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		</StatsInfoArea>
 	);
 
-	const hasLocationData = Array.isArray( data ) && data.length > 0;
+	const showJetpackUpgradePrompt = geoMode !== 'country' && ! supportsLocationsStatsFeature;
 
-	const locationData = shouldGate ? sampleLocations : data;
+	const showUpsell = shouldGate || showJetpackUpgradePrompt;
+
+	const locationData = showUpsell ? sampleLocations : data;
+
+	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
 
 	const heroElement = (
 		<>
@@ -237,6 +256,22 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			) }
 		</>
 	);
+
+	const getModuleOverlay = () => {
+		if ( shouldGate ) {
+			return (
+				<StatsCardUpsell siteId={ siteId } statType={ optionLabels[ selectedOption ].feature } />
+			);
+		}
+
+		if ( showJetpackUpgradePrompt ) {
+			return <StatsCardUpdateJetpackVersion siteId={ siteId } statType="locations" />;
+		}
+
+		return null;
+	};
+
+	const moduleOverlay = getModuleOverlay();
 
 	return (
 		<>
@@ -289,14 +324,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								: undefined
 						}
 						onShowMoreClick={ onShowMoreClick }
-						overlay={
-							shouldGate && (
-								<StatsCardUpsell
-									siteId={ siteId }
-									statType={ optionLabels[ selectedOption ].feature }
-								/>
-							)
-						}
+						overlay={ moduleOverlay }
 					/>
 				</>
 			) }
