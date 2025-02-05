@@ -96,7 +96,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	const geoMode = GEO_MODES[ selectedOption ];
-	const title = optionLabels[ selectedOption ]?.selectLabel;
+	const title = translate( 'Locations' );
 
 	// Main location data query
 	const {
@@ -303,7 +303,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ ! isRequestingData && ! hasLocationData && ! shouldGate && (
 				// show empty state
 				<StatsCard
-					title={ translate( 'Locations' ) }
+					title={ title }
 					isEmpty
 					emptyMessage={ emptyMessage }
 					footerAction={
