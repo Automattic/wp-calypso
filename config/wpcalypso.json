@@ -140,6 +140,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/user-profile": true,
+		"reader/discovery-v2": false,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,

@@ -168,6 +168,7 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/user-profile": true,
+		"reader/discovery-v2": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,

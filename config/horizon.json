@@ -105,6 +105,7 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/user-profile": true,
+		"reader/discovery-v2": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
