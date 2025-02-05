@@ -1,4 +1,4 @@
-import { readFile, stat } from 'fs/promises';
+import { open } from 'fs/promises';
 import path from 'path';
 import asyncHandler from 'express-async-handler';
 import { defaults, groupBy } from 'lodash';
@@ -25,11 +25,13 @@ export default () => {
 	let assetsFileModified = 0;
 
 	async function readAssets() {
-		const stats = await stat( ASSETS_FILE );
+		const fd = await open( ASSETS_FILE );
+		const stats = await fd.stat();
 		if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
-			assetsFile = JSON.parse( await readFile( ASSETS_FILE, 'utf8' ) );
+			assetsFile = JSON.parse( await fd.readFile( 'utf8' ) );
 			assetsFileModified = stats.mtimeMs;
 		}
+		await fd.close();
 		return assetsFile;
 	}
 
