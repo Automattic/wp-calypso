@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { readFile, stat } from 'fs/promises';
 import path from 'path';
 import asyncHandler from 'express-async-handler';
 import { defaults, groupBy } from 'lodash';
@@ -22,9 +22,13 @@ const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType 
 
 export default () => {
 	let assetsFile;
+	let assetsFileModified = 0;
+
 	async function readAssets() {
-		if ( ! assetsFile ) {
+		const stats = await stat( ASSETS_FILE );
+		if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
 			assetsFile = JSON.parse( await readFile( ASSETS_FILE, 'utf8' ) );
+			assetsFileModified = stats.mtimeMs;
 		}
 		return assetsFile;
 	}
