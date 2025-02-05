@@ -11,7 +11,7 @@ export const purchasesDataView = {
 		field: 'product_id',
 		direction: 'desc',
 	},
-	titleField: 'domain',
-	fields: [ 'blog_id', 'product_id', 'domain' ],
+	titleField: 'site',
+	fields: [ 'site' ],
 	layout: {},
 } as Object;

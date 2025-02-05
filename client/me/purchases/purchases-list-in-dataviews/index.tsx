@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CompactCard } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
@@ -42,10 +43,12 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
-import { purchasesDataFields } from './purchases-data-field'; // This is the temporary data
+import { purchasesDataFields } from './purchases-data-field';
 import { purchasesDataView } from './purchases-data-view'; // This is the temporary data
 import PurchasesListHeader from './purchases-list-header';
 import { testoctorPurchases } from './tests/testoctor-flat-data'; // This is the temporary data
+
+const useDataViewPurchasesList = config.isEnabled( 'purchases/purchase-list-dataview' );
 
 export interface PurchasesListProps {
 	noticeType?: string | undefined;
@@ -106,26 +109,44 @@ class PurchasesListDataView extends Component<
 			content = <PurchasesSite isPlaceholder />;
 		}
 
+		const onChangeView = () => {
+			alert( 'You clicked something!!' );
+		};
+
 		if ( purchases && purchases.length ) {
-			content = (
-				<>
-					{ this.renderConciergeBanner() }
+			if ( useDataViewPurchasesList ) {
+				content = (
+					<DataViews
+						data={ purchases }
+						fields={ purchasesDataFields }
+						view={ purchasesDataView }
+						onChangeView={ onChangeView }
+						defaultLayouts={ { table: {} } }
+						actions={ undefined }
+						paginationInfo={ { totalItems: 100, totalPages: 10 } }
+					/>
+				);
+			} else {
+				content = (
+					<>
+						{ this.renderConciergeBanner() }
 
-					<PurchasesListHeader showSite />
+						<PurchasesListHeader showSite />
 
-					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
-						<PurchasesSite
-							key={ site.id }
-							siteId={ site.id }
-							name={ site.name }
-							slug={ site.slug }
-							purchases={ site.purchases }
-							showSite
-							cards={ this.props.paymentMethodsState.paymentMethods }
-						/>
-					) ) }
-				</>
-			);
+						{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
+							<PurchasesSite
+								key={ site.id }
+								siteId={ site.id }
+								name={ site.name }
+								slug={ site.slug }
+								purchases={ site.purchases }
+								showSite
+								cards={ this.props.paymentMethodsState.paymentMethods }
+							/>
+						) ) }
+					</>
+				);
+			}
 		}
 
 		if ( purchases && ! purchases.length && ! subscriptions.length ) {
@@ -139,77 +160,33 @@ class PurchasesListDataView extends Component<
 					</Main>
 				);
 			}
-			content = (
-				<>
-					{ this.renderConciergeBanner() }
-					<CompactCard className="purchases-list__no-content">
-						<>
-							<TrackComponentView
-								eventName="calypso_no_purchases_upgrade_nudge_impression"
-								eventProperties={ commonEventProps }
-							/>
-							<EmptyContent
-								title={ translate( 'Looking to upgrade?' ) }
-								line={ translate(
-									'Our plans give your site the power to thrive. ' +
-										'Find the plan that works for you.'
-								) }
-								action={ translate( 'Upgrade now' ) }
-								actionURL="/plans"
-								illustration={ noSitesIllustration }
-								actionCallback={ () => {
-									recordTracksEvent( 'calypso_no_purchases_upgrade_nudge_click', commonEventProps );
-								} }
-							/>
-						</>
-					</CompactCard>
-				</>
-			);
 		}
 
-		const onChangeView = () => {
-			alert( 'You clicked something!!' );
-		};
+		
 
 		return (
-			<div>
-				{ testoctorPurchases ? (
-					<DataViews
-						data={ testoctorPurchases }
-						fields={ purchasesDataFields }
-						view={ purchasesDataView }
-						onChangeView={ onChangeView }
-						defaultLayouts={ { table: {} } }
-						actions={ undefined }
-						paginationInfo={ { totalItems: 100, totalPages: 10 } }
-					/>
-				) : (
-					<Main wideLayout className="purchases-list">
-						<QueryUserPurchases />
-						<QueryMembershipsSubscriptions />
-						<PageViewTracker path="/me/purchases" title="Purchases" />
+			<Main wideLayout className="purchases-list">
+				<QueryUserPurchases />
+				<QueryMembershipsSubscriptions />
+				<PageViewTracker path="/me/purchases" title="Purchases" />
 
-						<NavigationHeader
-							navigationItems={ [] }
-							title={ titles.sectionTitle }
-							subtitle={ translate(
-								'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-								{
-									components: {
-										learnMoreLink: (
-											<InlineSupportLink supportContext="purchases" showIcon={ false } />
-										),
-									},
-								}
-							) }
-						/>
-						<PurchasesNavigation section="activeUpgrades" />
-						{ content }
-						{ this.renderMembershipSubscriptions() }
-						<QueryConciergeInitial />
-					</Main>
-				) }
-			</div>
+				<NavigationHeader
+					navigationItems={ [] }
+					title={ titles.sectionTitle }
+					subtitle={ translate(
+						'View, manage, or cancel your plan and other purchases. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="purchases" showIcon={ false } />,
+							},
+						}
+					) }
+				/>
+				<PurchasesNavigation section="activeUpgrades" />
+				{ content }
+				{ this.renderMembershipSubscriptions() }
+				<QueryConciergeInitial />
+			</Main>
 		);
 	}
 }
