@@ -49,7 +49,7 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'backup',
 			title: translate( 'Backup' ),
-			features: [ 'backups', 'restore' ],
+			features: [ 'backups', 'full-activity-log', 'real-time-backups', 'priority_support' ],
 			checkoutSlug: PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 		},
 		{
