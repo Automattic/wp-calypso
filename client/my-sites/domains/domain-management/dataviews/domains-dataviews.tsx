@@ -1,9 +1,11 @@
 import { PartialDomainData } from '@automattic/data-stores';
+import { domainManagementLink as getDomainManagementLink } from '@automattic/domains-table/src/utils/paths';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
 import { navigate } from 'calypso/lib/navigate';
+import { addQueryArgs } from 'calypso/lib/url';
 import { BulkUpdateNotice } from './components/bulk-update-notice';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
@@ -32,7 +34,7 @@ export const DomainsDataViews = ( {
 	selectedDomainName,
 }: Props ) => {
 	const translate = useTranslate();
-	const { isDesktop } = useDomainsDataViewsContext();
+	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
 	const queryParams = useQueryParams();
 
 	const [ view, setView ] = useState( () =>
@@ -78,6 +80,23 @@ export const DomainsDataViews = ( {
 	}, [ view.search, view.page, view.perPage, view.sort?.field, view.sort?.direction ] );
 
 	const layout = sidebarMode ? { list: {} } : { table: {} };
+
+	const onClickDomain = ( item: PartialDomainData ) => {
+		const siteSlug = getSiteSlug( item );
+		const domainManagementLink = ! item.wpcom_domain
+			? addQueryArgs(
+					queryParams,
+					getDomainManagementLink( item, siteSlug, true, selectedFeature )
+			  )
+			: '';
+
+		if ( ! domainManagementLink ) {
+			return;
+		}
+
+		navigate( domainManagementLink );
+	};
+
 	return (
 		<>
 			{ ! sidebarMode && <BulkUpdateNotice /> }
@@ -86,6 +105,7 @@ export const DomainsDataViews = ( {
 					data={ domainsToDisplay }
 					fields={ fields }
 					onChangeView={ ( newView ) => setView( () => newView ) }
+					onClickItem={ onClickDomain }
 					view={ view }
 					actions={ actions }
 					search

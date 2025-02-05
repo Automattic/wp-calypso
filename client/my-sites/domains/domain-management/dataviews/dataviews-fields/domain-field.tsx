@@ -2,13 +2,8 @@ import { PartialDomainData } from '@automattic/data-stores';
 import { PrimaryDomainLabel } from '@automattic/domains-table';
 import { domainInfoContext } from '@automattic/domains-table/src/utils/constants';
 import { getDomainTypeText } from '@automattic/domains-table/src/utils/get-domain-type-text';
-import { domainManagementLink as getDomainManagementLink } from '@automattic/domains-table/src/utils/paths';
-import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { navigate } from 'calypso/lib/navigate';
-import { addQueryArgs } from 'calypso/lib/url';
 import { useDomainsDataViewsContext } from '../use-context';
-import useQueryParams from '../use-query-params';
 
 interface Props {
 	domain: PartialDomainData;
@@ -16,57 +11,24 @@ interface Props {
 	selectedFeature?: string;
 }
 
-const DomainField = ( { domain: partialDomain, isAllSitesView, selectedFeature }: Props ) => {
+const DomainField = ( { domain: partialDomain, isAllSitesView }: Props ) => {
 	const { __ } = useI18n();
-	const queryParams = useQueryParams();
-
-	const { getFullDomain, getSiteSlug } = useDomainsDataViewsContext();
-
+	const { getFullDomain } = useDomainsDataViewsContext();
 	const domain = getFullDomain( partialDomain );
-	const siteSlug = getSiteSlug( partialDomain );
-
-	const domainManagementLink = ! partialDomain.wpcom_domain
-		? addQueryArgs(
-				queryParams,
-				getDomainManagementLink( partialDomain, siteSlug, true, selectedFeature )
-		  )
-		: '';
-
 	const domainTypeText = domain
 		? getDomainTypeText( domain, __, domainInfoContext.DOMAIN_ROW )
 		: '';
 	const showPrimaryDomainLabel = ! isAllSitesView && domain && domain.isPrimary;
 
-	const onDomainClick = ( event: React.MouseEvent ) => {
-		event.preventDefault();
-
-		if ( ! domainManagementLink ) {
-			return;
-		}
-
-		let openInNewTab = false;
-
-		if ( event.ctrlKey || event.metaKey ) {
-			openInNewTab = true;
-		}
-
-		// Support middle click to open in new tab
-		if ( event.button === 1 ) {
-			openInNewTab = true;
-		}
-
-		navigate( domainManagementLink, openInNewTab );
-	};
-
 	return (
-		<Button className="domains-dataviews__domain-name-button" onClick={ onDomainClick }>
+		<>
 			{ showPrimaryDomainLabel && <PrimaryDomainLabel /> }
 			<div className="domains-dataviews__domain-name">{ partialDomain.domain }</div>
 
 			{ domainTypeText && (
 				<div className="domains-table-row__domain-type-text">{ domainTypeText }</div>
 			) }
-		</Button>
+		</>
 	);
 };
 

@@ -17,7 +17,6 @@ export function useFields() {
 		domainsRequiringAttention,
 		sites,
 		isLoadingSites,
-		selectedFeature,
 		getSiteSlug,
 		getFullDomain,
 		hasConnectableSites,
@@ -33,11 +32,7 @@ export function useFields() {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: PartialDomainData } ) => item.domain,
 				render: ( { item }: { item: PartialDomainData } ) => (
-					<DomainField
-						domain={ item }
-						isAllSitesView={ isAllSitesView }
-						selectedFeature={ selectedFeature }
-					/>
+					<DomainField domain={ item } isAllSitesView={ isAllSitesView } />
 				),
 			},
 			{
@@ -140,7 +135,6 @@ export function useFields() {
 			translate,
 			getFullDomain,
 			getSiteSlug,
-			selectedFeature,
 			isLoadingSites,
 			hasConnectableSites,
 		]
