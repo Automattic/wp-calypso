@@ -125,10 +125,11 @@
 .manage-purchase__header,
 .manage-purchase__content {
 	padding: 16px 24px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 16px;
-		overflow-wrap: break-word;
 		flex-direction: column;
 	}
 }
@@ -138,9 +139,14 @@
 }
 
 .manage-purchase__header {
-	overflow: auto;
 	border-bottom: 2px solid var(--color-accent);
 	display: flex;
+	gap: .75rem;
+
+	&-content {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
 
 	.is-personal & {
 		border-bottom: 2px solid var(--color-plan-personal);
@@ -160,10 +166,8 @@
 }
 
 .manage-purchase__plan-icon {
-	margin: 0 12px 0 0;
 	max-width: 56px;
 	width: 56px;
-	float: left;
 
 	.gridicon {
 		box-sizing: border-box;
@@ -202,7 +206,6 @@
 
 	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-small;
-		padding-right: 100px;
 	}
 }
 
@@ -395,21 +398,16 @@
 }
 
 .manage-purchase__renew-upgrade-buttons {
-	display: none;
+	display: flex; /* Ensures button expands */
+	flex-shrink: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
-		display: initial;
-		position: absolute;
-		right: 24px;
-		top: 16px;
+        align-self: flex-start;
+        margin-inline-start: auto;
 
-		> a,
 		> button {
-			margin-inline-end: 8px;
-
-			&:last-child {
-				margin-inline-end: initial;
-			}
+			flex-grow: 1; /* Ensures button expands based on its text */
+			white-space: nowrap;
 		}
 	}
 }
