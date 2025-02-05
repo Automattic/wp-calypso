@@ -43,7 +43,6 @@ module.exports = function storybookDefaultConfig( {
 			'@storybook/addon-controls',
 			'@storybook/addon-docs',
 			'@storybook/addon-viewport',
-			'@storybook/preset-scss',
 		],
 		typescript: {
 			check: false,
