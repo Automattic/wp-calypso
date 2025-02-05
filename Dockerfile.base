@@ -62,6 +62,7 @@ RUN apt-get update \
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
+COPY --from=cache --chown=$UID /calypso/node_modules /calypso/node_modules
 
 ENTRYPOINT [ "/bin/bash" ]
 
