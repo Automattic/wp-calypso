@@ -102,6 +102,7 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import type { AnyAction } from 'redux';
 import type { ThunkAction } from 'redux-thunk';
+import './style.scss';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -171,6 +172,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
 		[ site ]
 	);
+
+	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
+
 	useEffect( () => {
 		if ( isAtomic ) {
 			// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
@@ -501,7 +505,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			? addQueryArgs( `/marketplace/thank-you/${ wpcomSiteSlug ?? siteSlug }?onboarding`, {
 					themes: selectedDesign?.slug,
 			  } )
-			: window.location.href.replace( window.location.origin, '' );
+			: addQueryArgs( window.location.href.replace( window.location.origin, '' ), {
+					continue: 1,
+			  } );
 
 		goToCheckout( {
 			flowName: flow,
@@ -771,10 +777,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		);
 	}
 
+	useEffect( () => {
+		if ( isComingFromTheUpgradeScreen ) {
+			pickDesign();
+		}
+	}, [ isComingFromTheUpgradeScreen ] );
+
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ( ! site && isSiteRequired ) || isLoadingDesigns || isGoalsAtFrontExperimentLoading ) {
+	const isSiteLoading = ! site && isSiteRequired;
+	const isDesignsLoading = isLoadingDesigns || isGoalsAtFrontExperimentLoading;
+	const isLoading = isSiteLoading || isDesignsLoading;
+
+	if ( isLoading || isComingFromTheUpgradeScreen ) {
 		return <StepperLoader />;
 	}
 
@@ -804,6 +820,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					<UpgradeModal
 						slug={ selectedDesign.slug }
 						isOpen={ showUpgradeModal }
+						//TODO: Fix NEEED typo
 						isMarketplacePlanSubscriptionNeeeded={ ! isExternallyManagedThemeAvailable }
 						isMarketplaceThemeSubscriptionNeeded={ isMarketplaceThemeSubscriptionNeeded }
 						marketplaceProduct={ selectedMarketplaceProduct }
