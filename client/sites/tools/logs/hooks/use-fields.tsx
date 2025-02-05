@@ -9,7 +9,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { useCurrentSiteGmtOffset } from './use-current-site-gmt-offset';
 import type { Field, Operator } from '@wordpress/dataviews';
 
-const useFields = ( { logType }: { logType: LogType } ) => {
+const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPLog >[] => {
 	const { __ } = useI18n();
 	const locale = useSelector( getCurrentUserLocale );
 	const siteGmtOffset = useCurrentSiteGmtOffset();
@@ -40,7 +40,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				filterBy: {
 					operators: [ 'is' as Operator ],
 				},
-				render: ( { item } ) => {
+				render: ( { item }: { item: PHPLog } ) => {
 					const severity = item.severity;
 					return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
 				},
@@ -51,13 +51,13 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				type: 'date',
 				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
-				render: ( { item } ) => getFormattedDate( item.timestamp ),
+				render: ( { item }: { item: PHPLog } ) => getFormattedDate( item.timestamp ),
 			},
 			{
 				id: 'message',
 				type: 'text',
 				label: __( 'Message' ),
-				render: ( { item } ) => {
+				render: ( { item }: { item: PHPLog } ) => {
 					return <span className="site-logs-table__message">{ item.message }</span>;
 				},
 				enableSorting: false,
@@ -68,13 +68,13 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				id: 'file',
 				type: 'text',
 				label: __( 'File' ),
-				render: ( { item } ) => {
+				render: ( { item }: { item: PHPLog } ) => {
 					return <span className="site-logs-table__file">{ item.file }</span>;
 				},
 				enableSorting: false,
 			},
 			{ id: 'line', type: 'integer', label: __( 'Line' ), enableSorting: false },
-		] as Field< PHPLog >[];
+		] as Field< PHPLog | ServerLog >[];
 	}
 
 	return [
@@ -91,7 +91,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 				{ value: 'DELETE', label: translate( 'DELETE' ) },
 			],
 			filterBy: { operators: [ 'is' as Operator ] },
-			render: ( { item } ) => {
+			render: ( { item }: { item: ServerLog } ) => {
 				const requestType = item.request_type;
 				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
 			},
@@ -128,7 +128,7 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			id: 'request_url',
 			type: 'text',
 			label: __( 'Request URL' ),
-			render: ( { item } ) => {
+			render: ( { item }: { item: ServerLog } ) => {
 				return <span className="site-logs-table__request-url">{ item.request_url }</span>;
 			},
 			enableSorting: false,
@@ -146,12 +146,12 @@ const useFields = ( { logType }: { logType: LogType } ) => {
 			id: 'http_referer',
 			type: 'text',
 			label: __( 'Referrer' ),
-			render: ( { item } ) => {
+			render: ( { item }: { item: ServerLog } ) => {
 				return <span className="site-logs-table__http-referer">{ item.request_url }</span>;
 			},
 			enableSorting: false,
 		},
-	] as Field< ServerLog >[];
+	] as Field< PHPLog | ServerLog >[];
 };
 
 export default useFields;
