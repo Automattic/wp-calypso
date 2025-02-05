@@ -425,7 +425,6 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 			<QuerySitePhpVersion siteId={ siteId } />
 			<QuerySiteWpVersion siteId={ siteId } />
 			<QuerySiteStaticFile404 siteId={ siteId } />
-
 			<PanelCardHeading id="web-server-settings">
 				{ isUntangled ? translate( 'Server configuration' ) : translate( 'Web server settings' ) }
 			</PanelCardHeading>

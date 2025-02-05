@@ -58,7 +58,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 		if ( isEnabled( 'untangling/hosting-menu' ) ) {
 			redirectUrl = `/sites/tools/${ siteId }`;
 		} else {
-			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteId }` : `/overview/${ siteId }`;
+			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
 		}
 	}
 

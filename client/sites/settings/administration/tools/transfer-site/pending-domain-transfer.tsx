@@ -5,7 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { isHostingMenuUntangled } from '../../../utils';
+import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -13,7 +13,7 @@ const Strong = styled( 'strong' )( {
 
 const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 	const translate = useTranslate();
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useIsSiteSettingsUntangled();
 	return (
 		<>
 			<>

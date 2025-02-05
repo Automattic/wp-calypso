@@ -20,7 +20,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { isSiteSettingsUntangled } from '../../utils';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
 
@@ -33,10 +33,22 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
+	state = {
+		isUntangled: false,
+	};
+
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
 		}
+	}
+
+	componentDidMount() {
+		isSiteSettingsUntangled().then( ( isUntangled ) => {
+			if ( this.state.isUntangled !== isUntangled ) {
+				this.setState( { isUntangled } );
+			}
+		} );
 	}
 
 	render() {
@@ -59,12 +71,12 @@ class SiteTools extends Component {
 			source,
 		} = this.props;
 
-		const isUntangled = isHostingMenuUntangled();
+		const { isUntangled } = this.state;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
 		const startOverLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/reset-site`
+			? `/sites/settings/site/${ siteSlug }/reset-site`
 			: `/settings/start-over/${ siteSlug }?source=${ source }`;
 
 		const restorePlanSoftwareTitle = translate( 'Restore plugins and themes' );
@@ -73,11 +85,11 @@ class SiteTools extends Component {
 		);
 
 		const startSiteTransferLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/transfer-site`
+			? `/sites/settings/site/${ siteSlug }/transfer-site`
 			: `/settings/start-site-transfer/${ siteSlug }?source=${ source }`;
 
 		const deleteSiteLink = isUntangled
-			? `/sites/settings/administration/${ siteSlug }/delete-site`
+			? `/sites/settings/site/${ siteSlug }/delete-site`
 			: `/settings/delete-site/${ siteSlug }?source=${ source }`;
 
 		const manageConnectionLink = `/settings/manage-connection/${ siteSlug }?source=${ source }`;

@@ -1,14 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel } from 'calypso/components/panel';
+import { SOURCE_SETTINGS_ADMINISTRATION } from 'calypso/my-sites/site-settings/site-tools/utils';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import AdministrationTools from 'calypso/sites/settings/administration/tools';
 import { useSelector } from 'calypso/state';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSiteOption, isJetpackSite, isWpcomSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import SiteSettingsForm from './form';
 
 import './style.scss';
@@ -17,6 +20,7 @@ import './style.scss';
 export function SiteSettings( props: any ) {
 	const translate = useTranslate();
 	const site = useSelector( getSelectedSite );
+	const siteId = useSelector( getSelectedSiteId );
 	const siteIsJetpack = useSelectedSiteSelector( isJetpackSite );
 	const isUnlaunchedSite = useSelectedSiteSelector( getIsUnlaunchedSite );
 	const editingToolkitIsActive = useSelectedSiteSelector(
@@ -40,10 +44,16 @@ export function SiteSettings( props: any ) {
 	return (
 		<Panel className="settings-site">
 			<NavigationHeader
-				title={ translate( 'Site' ) }
+				title={ translate( 'General settings' ) }
 				subtitle={ translate( 'Manage your site settings, including site visibility, and more.' ) }
 			/>
 			<SiteSettingsForm { ...props } { ...additionalProps } />
+			{ ! isWpcomStagingSite && (
+				<>
+					<QuerySitePurchases siteId={ siteId } />
+					<AdministrationTools source={ SOURCE_SETTINGS_ADMINISTRATION } />
+				</>
+			) }
 		</Panel>
 	);
 }

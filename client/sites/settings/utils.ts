@@ -1,8 +1,10 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 
-export function isHostingMenuUntangled() {
+export async function isSiteSettingsUntangled() {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
 	return (
-		isEnabled( 'untangling/hosting-menu' ) &&
+		isRemoveDuplicateViewsExperimentEnabled &&
 		window?.location?.pathname?.startsWith( '/sites/settings' )
 	);
 }

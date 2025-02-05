@@ -3,11 +3,11 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { isHostingMenuUntangled } from '../../../utils';
+import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 
 function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useIsSiteSettingsUntangled();
 
 	const getButtons = () => {
 		if ( isAtomicRemovalInProgress ) {

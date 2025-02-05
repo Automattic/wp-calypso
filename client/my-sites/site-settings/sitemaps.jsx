@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -10,6 +9,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
@@ -33,6 +33,23 @@ class Sitemaps extends Component {
 		isRequestingSettings: PropTypes.bool,
 		fields: PropTypes.object,
 	};
+
+	state = {
+		isRemoveDuplicateViewsExperimentEnabled: false,
+	};
+
+	componentDidMount() {
+		getIsRemoveDuplicateViewsExperimentEnabled().then(
+			( isRemoveDuplicateViewsExperimentEnabled ) => {
+				if (
+					this.state.isRemoveDuplicateViewsExperimentEnabled !==
+					isRemoveDuplicateViewsExperimentEnabled
+				) {
+					this.setState( { isRemoveDuplicateViewsExperimentEnabled } );
+				}
+			}
+		);
+	}
 
 	isSitePublic() {
 		const { fields } = this.props;
@@ -82,7 +99,7 @@ class Sitemaps extends Component {
 
 	renderNonPublicExplanation() {
 		const { siteSlug, translate } = this.props;
-
+		const { isRemoveDuplicateViewsExperimentEnabled } = this.state;
 		return (
 			<FormSettingExplanation>
 				{ translate(
@@ -93,7 +110,7 @@ class Sitemaps extends Component {
 							a: (
 								<a
 									href={
-										isEnabled( 'untangling/hosting-menu' )
+										isRemoveDuplicateViewsExperimentEnabled
 											? '/sites/settings/site/' + siteSlug
 											: '/settings/general/' + siteSlug
 									}

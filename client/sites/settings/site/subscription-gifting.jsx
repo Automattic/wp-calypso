@@ -9,7 +9,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { isHostingMenuUntangled } from '../utils';
+import { useIsSiteSettingsUntangled } from '../hooks/use-is-site-settings-untangled';
 
 export default function SubscriptionGiftingForm( {
 	fields,
@@ -24,12 +24,11 @@ export default function SubscriptionGiftingForm( {
 		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
+	const isUntangled = useIsSiteSettingsUntangled();
 
 	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
 		return;
 	}
-
-	const isUntangled = isHostingMenuUntangled();
 
 	const renderForm = () => {
 		return (

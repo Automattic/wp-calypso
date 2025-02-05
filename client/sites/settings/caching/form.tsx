@@ -12,6 +12,7 @@ import {
 	useSetEdgeCacheMutation,
 	useClearEdgeCacheMutation,
 } from 'calypso/data/hosting/use-cache';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useDispatch, useSelector } from 'calypso/state';
 import { clearEdgeCacheSuccess, clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
@@ -109,14 +110,15 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 		dispatch( clearWordPressCache( siteId, 'Manually clearing again.' ) );
 	};
 
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 	const edgeCacheToggleDescription = isEdgeCacheEligible
 		? translate( 'Enable global edge caching for faster content delivery.' )
 		: translate(
 				'Global edge cache can only be enabled for public sites. {{a}}Review privacy settings{{/a}}',
 				{
 					components: {
-						a: config.isEnabled( 'untangling/hosting-menu' ) ? (
-							<a href={ '/sites/settings/site/' + siteSlug } />
+						a: isRemoveDuplicateViewsExperimentEnabled ? (
+							<a href={ '/sites/settings/site/' + siteSlug + '#site-privacy-settings' } />
 						) : (
 							<a href={ '/settings/general/' + siteSlug + '#site-privacy-settings' } />
 						),
