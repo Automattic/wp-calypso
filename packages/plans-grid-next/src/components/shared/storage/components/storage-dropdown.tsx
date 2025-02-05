@@ -1,4 +1,4 @@
-import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
+import { type AddOnMeta, AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { CustomSelectControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useMemo } from '@wordpress/element';
@@ -9,7 +9,7 @@ import DropdownOption from '../../../dropdown-option';
 import useDefaultStorageOption from '../hooks/use-default-storage-option';
 import usePlanStorage from '../hooks/use-plan-storage';
 import useStorageString from '../hooks/use-storage-string';
-import type { PlanSlug } from '@automattic/calypso-products';
+import type { PlanSlug, WPComPlanStorageFeatureSlug } from '@automattic/calypso-products';
 
 type StorageDropdownProps = {
 	planSlug: PlanSlug;
@@ -116,10 +116,20 @@ const StorageDropdown = ( {
 
 	const selectControlOptions = useMemo( () => {
 		// Get the default storage add-on meta or the storage included with the plan
-		const defaultStorageAddOnMeta = getSelectedStorageAddOn(
-			storageAddOns,
-			defaultStorageOptionSlug || ''
-		) || { addOnSlug: defaultStorageOptionSlug, prices: null, quantity: 0 };
+		let defaultStorageAddOnMeta:
+			| AddOnMeta
+			| {
+					addOnSlug: AddOns.StorageAddOnSlug | WPComPlanStorageFeatureSlug;
+					prices: AddOnMeta[ 'prices' ] | null;
+					quantity: AddOnMeta[ 'quantity' ];
+			  }
+			| undefined
+			| null = getSelectedStorageAddOn( storageAddOns, defaultStorageOptionSlug || '' );
+
+		// If the default storage add-on is not available, create a new object with the default storage option slug
+		if ( ! defaultStorageAddOnMeta && defaultStorageOptionSlug ) {
+			defaultStorageAddOnMeta = { addOnSlug: defaultStorageOptionSlug, prices: null, quantity: 0 };
+		}
 
 		return [ defaultStorageAddOnMeta, ...availableStorageAddOns ]?.map( ( addOn ) => {
 			const addOnStorage = addOn?.quantity ?? 0;
