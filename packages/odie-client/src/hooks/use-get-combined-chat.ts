@@ -55,11 +55,11 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			} );
 		} else if ( conversationId && canConnectToZendesk ) {
 			if ( isChatLoaded ) {
-				getZendeskConversation( {
-					chatId: odieChat?.odieId,
-					conversationId: conversationId.toString(),
-				} )
-					?.then( ( conversation ) => {
+				try {
+					getZendeskConversation( {
+						chatId: odieChat?.odieId,
+						conversationId: conversationId.toString(),
+					} )?.then( ( conversation ) => {
 						if ( conversation ) {
 							setMainChatState( {
 								...( odieChat ? odieChat : {} ),
@@ -74,19 +74,19 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
 							} );
 						}
-					} )
-					.catch( () => {
-						// Conversation id was passed but the conversion was not found. Something went wrong.
-						trackEvent( 'zendesk_conversation_not_found', {
-							conversationId,
-							odieId,
-						} );
-
-						startNewInteraction( {
-							event_source: 'help-center',
-							event_external_id: uuidv4(),
-						} );
 					} );
+				} catch ( error ) {
+					// Conversation id was passed but the conversion was not found. Something went wrong.
+					trackEvent( 'zendesk_conversation_not_found', {
+						conversationId,
+						odieId,
+					} );
+
+					startNewInteraction( {
+						event_source: 'help-center',
+						event_external_id: uuidv4(),
+					} );
+				}
 			}
 		} else if ( currentSupportInteraction ) {
 			setMainChatState( ( prevChat ) => ( {
