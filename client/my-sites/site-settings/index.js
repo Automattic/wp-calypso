@@ -1,12 +1,6 @@
 import page from '@automattic/calypso-router';
 import { get } from 'lodash';
-import {
-	makeLayout,
-	render as clientRender,
-	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
-	rediorectSettingsIfDuplciatedViewsEnabled,
-	redirectGeneralSettingsIfDuplicatedViewsEnabled,
-} from 'calypso/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	acceptSiteTransfer,
@@ -22,7 +16,13 @@ import {
 	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 } from 'calypso/my-sites/site-settings/controller';
-import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import {
+	setScroll,
+	siteSettings,
+	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
+	rediorectSettingsIfDuplciatedViewsEnabled,
+	redirectGeneralSettingsIfDuplicatedViewsEnabled,
+} from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,

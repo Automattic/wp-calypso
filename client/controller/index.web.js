@@ -36,11 +36,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
 
@@ -434,69 +430,3 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 	}
 	next();
 };
-
-/**
- * Redirects to the general settings page when Remove Duplicate Views experiment is enabled.
- * Example: /settings/start-site-transfer/:site -> /sites/settings/site/${ context.params.site }/transfer-site
- * @param {*} context
- * @param {*} next
- * @returns
- */
-export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
-		const slug = context.path.split( '/' )[ 2 ];
-		if ( ! slug ) {
-			return next();
-		}
-		const URL_MAP = {
-			'delete-site': 'delete-site',
-			'start-over': 'reset-site',
-			'start-site-transfer': 'transfer-site',
-		};
-		if ( ! URL_MAP[ slug ] ) {
-			return next();
-		}
-		return page.redirect( `/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }` );
-	}
-
-	next();
-};
-
-/**
- * Redirect /settings to /sites/settings/site when the Remove Duplicate Views experiment is enabled.
- *
- * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
- */
-export const rediorectSettingsIfDuplciatedViewsEnabled = async () => {
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
-		return page.redirect( `/sites/settings/site` );
-	}
-
-	return page.redirect( '/settings/general' );
-};
-
-/**
- * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
- * if the Remove Duplicate Views experiment is enabled.
- */
-export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-	const hasClassicAdminInterfaceStyle =
-		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
-		return page.redirect( `/sites/settings/site/${ siteSlug }` );
-	}
-
-	next();
-}
