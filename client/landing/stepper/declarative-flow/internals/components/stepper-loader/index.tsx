@@ -1,5 +1,6 @@
 import { isWooExpressFlow, isTransferringHostedSiteCreationFlow } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
+import clsx from 'clsx';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import './style.scss';
 
@@ -8,6 +9,7 @@ interface StepperLoaderProps {
 	subtitle?: React.ReactNode;
 	progress?: number;
 	flow?: string;
+	className?: string;
 }
 
 const StepperLoader: React.FC< StepperLoaderProps > = ( {
@@ -15,6 +17,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( {
 	subtitle,
 	progress = -1,
 	flow = null,
+	className,
 } ) => {
 	const renderProgressComponent = () => {
 		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
@@ -35,7 +38,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( {
 	};
 
 	return (
-		<div className="stepper-loader">
+		<div className={ clsx( 'stepper-loader', className ) }>
 			<h1 className="stepper-loader__title processing-step__progress-step">{ title }</h1>
 			{ renderProgressComponent() }
 			{ subtitle && <p className="stepper-loader__subtitle">{ subtitle }</p> }

@@ -9,6 +9,10 @@
 	text-align: center;
 	margin: 32vh auto 0;
 
+	&.stepper-loader__boot {
+		margin-top: calc(32vh + 60px);
+	}
+
 	.stepper-loader__title {
 		@include onboarding-font-recoleta;
 		font-weight: 400;

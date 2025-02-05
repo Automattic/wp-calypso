@@ -234,7 +234,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <StepperLoader /> }>
+		<Boot fallback={ <StepperLoader className="stepper-loader__boot" /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Routes>
