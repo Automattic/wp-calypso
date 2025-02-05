@@ -411,7 +411,7 @@ export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next
 
 	const overrideAssignment = getPreference(
 		context.store.getState(),
-		'remove_duplicate_views_experiment_assignment'
+		'remove_duplicate_views_experiment_assignment_160125'
 	);
 
 	if ( 'control' === overrideAssignment ) {
