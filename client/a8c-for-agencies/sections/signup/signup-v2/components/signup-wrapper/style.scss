@@ -9,7 +9,7 @@
     margin: 16px;
     border-radius: 16px; //stylelint-disable-line scales/radii
 
-  &__left {
+  .signup-wrapper__left {
     display: none;
     position: relative;
     background: var(--color-neutral-0);
@@ -27,11 +27,11 @@
     }
   }
 
-  &__logo {
+  .signup-wrapper__logo {
     margin-block-start: 1rem;
   }
 
-  &__sidebar-image {
+  .signup-wrapper__sidebar-image {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -39,12 +39,12 @@
     max-width: 100%;
     height: auto;
 
-    circle {
-      stroke: var(--color-neutral-0);
+    rect {
+      fill: var(--color-neutral-0);
     }
   }
 
-  &__testimonial {
+  .signup-wrapper-testimonial {
     color: var(--color-text);
     padding: 24px;
     background: var(--color-surface);
@@ -53,111 +53,143 @@
     position: relative;
     top: -1rem;
 
-    &-text {
+    .signup-wrapper-testimonial-text {
       font-size: 1rem;
       line-height: 1.5;
       margin-bottom: 24px;
       color: var(--color-text);
     }
 
-    &-author {
+    .signup-wrapper-testimonial-author {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    &-avatar {
+    .signup-wrapper-testimonial-avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       background: var(--color-neutral-5);
     }
 
-    &-info {
+    .signup-wrapper-testimonial-info {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    &-name {
+    .signup-wrapper-testimonial-name {
       font-weight: 600;
       font-size: 1rem;
       color: var(--color-text);
     }
 
-    &-title {
-        font-weight: 600;
-        font-size: 1rem;
-        color: var(--color-text);
+    .signup-wrapper-testimonial-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--color-text);
     }
 
-    &-url {
+    .signup-wrapper-testimonial-url {
       font-size: 0.875rem;
-      color: var(--color-text-subtle);;
+      color: var(--color-text-subtle);
       text-decoration: underline;
 
-      &:visited {
-        color: var(--color-text-subtle);;
+      .signup-wrapper-testimonial-url:visited {
+        color: var(--color-text-subtle);
       }
     }
   }
 
-  &__right {
+  .signup-wrapper__right {
     flex: 1;
     padding: 32px;
     background: inherit;
     border-radius: 4px;
-    overflow: hidden;
+    overflow-y: auto;
+    max-height: 100%;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+
+    /* Custom scrollbar styling for webkit browsers */
+    &::-webkit-scrollbar {
+      width: 8px;
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-neutral-10);
+      border-radius: 4px;
+      
+      &:hover {
+        background-color: var(--color-neutral-20);
+      }
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
 
     @include break-medium {
-      padding: 48px;
+      padding: 48px 48px 48px 32px;
     }
   }
 
   @media (prefers-color-scheme: dark) {
     background-color: #021B24;
 
-    &__left {
+    .signup-wrapper__left {
       background: #022836;
     }
 
-    &__logo {
-      fill: var(--studio-white);
+    .signup-wrapper__logo {
+      fill: var(--color-surface);
     }
 
-    &__sidebar-image {
-      circle {
-        stroke: #022836;
+    .signup-wrapper__sidebar-image {
+      rect {
+        fill: #022836;
       }
     }
 
-    &__testimonial {
-      color: var(--studio-white);
+    .signup-wrapper-testimonial {
+      color: var(--color-surface);
       background: #02506E;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(8px);
 
-      &-text {
-        color: var(--studio-gray-0, #f6f7f7);
+      .signup-wrapper-testimonial-text {
+        color: var(--color-neutral-0);
       }
 
-      &-avatar {
-        background: var(--studio-gray-50, #646970);
+      .signup-wrapper-testimonial-avatar {
+        background: var(--color-neutral-50);
       }
 
-      &-name {
-        color: var(--studio-white);
+      .signup-wrapper-testimonial-name {
+        color: var(--color-surface);
       }
 
-      &-title {
-        color: var(--studio-white);
+      .signup-wrapper-testimonial-title {
+        color: var(--color-surface);
       }
 
-      &-url {
-        color: var(--studio-white);
+      .signup-wrapper-testimonial-url {
+        color: var(--color-surface);
 
         &:visited {
-          color: var(--studio-white);
+          color: var(--color-surface);
+        }
+      }
+    }
+
+    .signup-wrapper__right {
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+        
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.3);
         }
       }
     }

@@ -1,15 +1,10 @@
+import MultiStepForm from './components/multi-step-form';
 import SignupWrapper from './components/signup-wrapper';
 
-type Flow = 'regular' | 'wc-asia';
-
-type Props = {
-	flow?: Flow;
-};
-
-const AgencySignupV2 = ( { flow }: Props ) => {
+const AgencySignupV2 = () => {
 	return (
 		<SignupWrapper>
-			<div>Agency Signup V2: { flow }</div>
+			<MultiStepForm />
 		</SignupWrapper>
 	);
 };
