@@ -137,16 +137,16 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 
 				switch ( transferStatus ) {
 					case transferStates.PENDING:
-						setProgress( 0.2 );
+						setProgress( 20 );
 						break;
 					case transferStates.ACTIVE:
-						setProgress( 0.4 );
+						setProgress( 40 );
 						break;
 					case transferStates.PROVISIONED:
-						setProgress( 0.5 );
+						setProgress( 50 );
 						break;
 					case transferStates.COMPLETED:
-						setProgress( 0.7 );
+						setProgress( 70 );
 						break;
 				}
 
@@ -208,7 +208,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 					await wait( 3000 );
 				}
 			}
-			setProgress( 1 );
+			setProgress( 100 );
 		} );
 
 		submit?.();

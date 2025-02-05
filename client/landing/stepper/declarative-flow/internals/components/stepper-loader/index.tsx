@@ -19,7 +19,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( {
 		<div className={ clsx( 'stepper-loader', className ) }>
 			<h1 className="stepper-loader__title">{ title }</h1>
 			<ProgressBar
-				value={ progress >= 0 ? progress * 100 : undefined }
+				value={ progress >= 0 ? progress : undefined }
 				className="stepper-loader__progress-bar"
 			/>
 			{ subtitle && <p className="stepper-loader__subtitle">{ subtitle }</p> }
