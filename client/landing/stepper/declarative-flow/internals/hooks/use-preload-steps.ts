@@ -3,7 +3,7 @@ import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { Flow, StepperStep } from '../types';
 
-const debug = debugFactory( 'calypso:stepper:flow-initialization' );
+const debug = debugFactory( 'calypso:stepper:preloading' );
 
 async function tryPreload( step?: StepperStep, followingStep?: StepperStep ) {
 	if ( step && 'asyncComponent' in step ) {
