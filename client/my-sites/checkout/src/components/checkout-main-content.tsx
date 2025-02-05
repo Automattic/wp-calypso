@@ -88,7 +88,10 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import BeforeSubmitCheckoutHeader from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
-import { WPCheckoutOrderSummary } from './wp-checkout-order-summary';
+import {
+	LoadingCheckoutSummaryFeaturesList,
+	WPCheckoutOrderSummary,
+} from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -115,38 +118,42 @@ const LoadingSidebar = styled.div`
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
-		padding: 24px;
 		box-sizing: border-box;
-		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-		max-width: 328px;
-		background: ${ ( props ) => props.theme.colors.surface };
+		max-width: 288px;
 		margin-top: 46px;
 	}
 `;
 
 const pulse = keyframes`
-	0% {
-		opacity: 1;
-	}
+	0% { opacity: 1; }
 
-	70% {
-		opacity: 0.5;
-	}
+	70% { opacity: 0.25; }
 
-	100% {
-		opacity: 1;
-	}
+	100% { opacity: 1; }
 `;
 
-const SideBarLoadingCopy = styled.p`
+const LoadingFooter = styled.div`
+	margin-top: 20px;
+	padding-top: 20px;
+	display: flex;
+	justify-content: space-between;
+	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+`;
+
+interface LoadingContainerProps {
+	width?: string;
+	height?: string;
+}
+
+const SideBarLoadingCopy = styled.div< LoadingContainerProps >`
 	font-size: 14px;
-	height: 16px;
 	content: '';
 	background: ${ ( props ) => props.theme.colors.borderColorLight };
 	color: ${ ( props ) => props.theme.colors.borderColorLight };
-	margin: 8px 0 0 0;
 	padding: 0;
-	animation: ${ pulse } 2s ease-in-out infinite;
+	animation: ${ pulse } 1.5s ease-in-out infinite;
+	width: ${ ( props ) => props.width ?? 'inherit' };
+	height: ${ ( props ) => props.height ?? '16px' };
 `;
 
 const ContactDetailsFormDescription = styled.p`
@@ -174,8 +181,15 @@ function LoadingSidebarContent() {
 	return (
 		<LoadingSidebar>
 			<SideBarLoadingCopy />
-			<SideBarLoadingCopy />
-			<SideBarLoadingCopy />
+			<LoadingCheckoutSummaryFeaturesList />
+			<LoadingFooter>
+				<SideBarLoadingCopy width="50px" />
+				<SideBarLoadingCopy width="75px" />
+			</LoadingFooter>
+			<LoadingFooter>
+				<SideBarLoadingCopy height="30px" width="75px" />
+				<SideBarLoadingCopy height="30px" width="125px" />
+			</LoadingFooter>
 		</LoadingSidebar>
 	);
 }

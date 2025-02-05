@@ -44,7 +44,7 @@ export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { contr
 						isError={ !! errors?.from_url }
 						placeholder={ placeholder }
 						type="text"
-						{ ...{ ...field, ...{ value: field.value.replace( /\/$/, '' ) } } }
+						{ ...field }
 					/>
 				) }
 			/>

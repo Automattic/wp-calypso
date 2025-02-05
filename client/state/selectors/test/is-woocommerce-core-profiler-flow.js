@@ -1,8 +1,8 @@
 import isWooCommerceCoreProfilerFlow from 'calypso/state/selectors/is-woocommerce-core-profiler-flow';
 
 describe( 'isWooCommerceCoreProfilerFlow', () => {
-	test( 'should return false when no argument', () => {
-		expect( isWooCommerceCoreProfilerFlow() ).toBe( false );
+	test( 'should return false when state is empty', () => {
+		expect( isWooCommerceCoreProfilerFlow( {} ) ).toBe( false );
 	} );
 
 	test( 'should return false if no query present', () => {

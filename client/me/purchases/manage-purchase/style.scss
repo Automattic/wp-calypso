@@ -138,6 +138,7 @@
 .manage-purchase__header {
 	overflow: auto;
 	border-bottom: 2px solid var(--color-accent);
+	display: flex;
 
 	.is-personal & {
 		border-bottom: 2px solid var(--color-plan-personal);
@@ -182,6 +183,11 @@
 	.gridicons-themes {
 		/* stylelint-disable-next-line  scales/radii */
 		border-radius: 8px; /* stylelint-disable-line scales/radii */
+	}
+
+	.hundred-year-plan-logo {
+		filter: invert(1);
+		padding-top: 6px;
 	}
 }
 

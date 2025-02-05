@@ -1,6 +1,6 @@
+import { withFocusOutside } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import CloseOnEscape from 'calypso/components/close-on-escape';
 import SiteSelector from 'calypso/components/site-selector';
@@ -85,7 +85,7 @@ class SitePicker extends Component {
 		}
 	};
 
-	handleClickOutside = () => {
+	handleFocusOutside = () => {
 		this.closePicker( null );
 	};
 
@@ -127,5 +127,5 @@ function mapStateToProps( state ) {
 }
 
 export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus } )(
-	wrapWithClickOutside( SitePicker )
+	withFocusOutside( SitePicker )
 );

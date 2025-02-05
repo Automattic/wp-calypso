@@ -8,9 +8,9 @@ export const DEFAULT_LOCALE =
 // Preset Options
 export const COMPACT_FORMATTING_OPTIONS = {
 	notation: 'compact',
-	maximumSignificantDigits: 3,
+	maximumSignificantDigits: 3, // TODO clk numberFormat deleted below?
 	maximumFractionDigits: 1,
-	compactDisplay: 'short',
+	compactDisplay: 'short', // TODO clk numberFormat already the default
 } as Intl.NumberFormatOptions;
 export const STANDARD_FORMATTING_OPTIONS = {
 	notation: 'standard',

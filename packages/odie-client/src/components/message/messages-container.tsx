@@ -11,6 +11,7 @@ import {
 	useZendeskMessageListener,
 } from '../../hooks';
 import { getOdieInitialMessage } from '../../utils';
+import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
 import { JumpToRecent } from './jump-to-recent';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -40,6 +41,7 @@ const ChatDate = ( { chat }: { chat: Chat } ) => {
 	const currentDate = getShortDateString( chatDate as number );
 	return <div className="odie-chat__date">{ currentDate }</div>;
 };
+
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
@@ -54,6 +56,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
+
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
 
@@ -140,6 +143,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							/>
 						) ) }
 						<JumpToRecent containerReference={ messagesContainerRef } />
+						{ chat.provider === 'odie' && <ViewMostRecentOpenConversationNotice /> }
 						{ chat.status === 'dislike' && ! removeDislikeStatus && <DislikeThumb /> }
 						{ availableStatusWithFeedback.includes( chat.status ) && (
 							<div className="odie-chatbox__action-message">

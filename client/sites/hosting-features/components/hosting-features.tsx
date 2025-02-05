@@ -58,7 +58,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 		if ( isEnabled( 'untangling/hosting-menu' ) ) {
 			redirectUrl = `/sites/tools/${ siteId }`;
 		} else {
-			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteId }` : `/overview/${ siteId }`;
+			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
 		}
 	}
 
@@ -114,6 +114,13 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 				"Access your site's database and tailor your server settings to your specific needs."
 			),
 			supportContext: 'hosting-configuration',
+		},
+		{
+			title: translate( 'SFTP & SSH Access' ),
+			text: translate(
+				'Securely access and edit your site via SFTP, or use SSH for file management and WP-CLI commands.'
+			),
+			supportContext: 'hosting-sftp',
 		},
 	];
 

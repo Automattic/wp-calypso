@@ -82,12 +82,13 @@ describe( 'iOS deep link fragments', () => {
 	} );
 
 	test( 'returns a valid Reader URI for the root of the Reader section', () => {
-		expect( buildDeepLinkFragment( '/read', READER ) ).toBe( '%2Fread' );
+		expect( buildDeepLinkFragment( '/reader', READER ) ).toBe( '%2Fread' );
 	} );
 
 	test( 'passes through a non-root Reader path', () => {
-		const path = '/read/feeds/12345/posts/6789';
-		expect( buildDeepLinkFragment( path, READER ) ).toBe( encodeURIComponent( path ) );
+		expect( buildDeepLinkFragment( '/reader/feeds/12345/posts/6789', READER ) ).toBe(
+			encodeURIComponent( '/read/feeds/12345/posts/6789' )
+		);
 	} );
 
 	test( 'passes through a Stats path', () => {

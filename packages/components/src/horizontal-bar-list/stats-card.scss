@@ -116,6 +116,11 @@
 			grid-row: 1;
 		}
 
+		.stats-card__content--hero {
+			grid-column: auto;
+			grid-row: auto;
+		}
+
 		.stats-card__content .stats-card--header-and-body .stats-card--body,
 		.stats-card__content .stats-card-header--split .stats-card--column-header,
 		.stats-card__content .stats-card--hero,
@@ -128,6 +133,14 @@
 		.stats-card__overlay {
 			z-index: 1;
 		}
+
+		.stats-card__overlay--hero {
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			top: 0;
+		}
 	}
 
 	.stats-card__content {
@@ -136,6 +149,7 @@
 		flex-direction: column;
 		justify-content: space-between;
 		height: 100%;
+		position: relative;
 	}
 }
 

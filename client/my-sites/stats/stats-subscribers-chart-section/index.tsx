@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
-import UplotChart from '@automattic/components/src/chart-uplot';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -75,6 +75,7 @@ export default function SubscribersChartSection( {
 	period?: PeriodType;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
+	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
 		day: 30,
 		week: 12,
@@ -163,6 +164,7 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
+			{ isChartLibraryEnabled && <div>chart library is enabled</div> }
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">

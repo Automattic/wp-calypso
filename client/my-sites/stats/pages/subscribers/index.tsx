@@ -11,7 +11,7 @@ import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSelector } from 'calypso/state';
-import { isJetpackSite, getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isSimpleSite } from 'calypso/state/sites/selectors';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import useSubscribersTotalsQueries from '../../hooks/use-subscribers-totals-query';
@@ -20,6 +20,7 @@ import StatsModulePlaceholder from '../../stats-module/placeholder';
 import PageViewTracker from '../../stats-page-view-tracker';
 import SubscribersChartSection, { PeriodType } from '../../stats-subscribers-chart-section';
 import SubscribersHighlightSection from '../../stats-subscribers-highlight-section';
+import StatsModuleListing from '../shared/stats-module-listing';
 import type { Moment } from 'moment';
 
 function StatsSubscribersPageError() {
@@ -66,23 +67,15 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const { supportsEmailStats, supportsSubscriberChart } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
 	const today = new Date().toISOString().slice( 0, 10 );
 	const moduleStrings = statsStrings().emails as TranslationStringType;
 
-	const statsModuleListClass = clsx(
-		'stats__module-list stats__module--unified',
-		'stats__module-list',
-		'stats__flexible-grid-container',
-		{
-			'is-email-stats-unavailable': ! supportsEmailStats,
-			'is-jetpack': isJetpack,
-		},
-		'subscribers-page'
-	);
+	const className = clsx( 'subscribers-page', {
+		'is-email-stats-unavailable': ! supportsEmailStats,
+	} );
 
 	// TODO: Pass subscribersTotals as props to SubscribersHighlightSection to avoid duplicate queries.
 	const { data: subscribersTotals, isLoading, isError } = useSubscribersTotalsQueries( siteId );
@@ -137,7 +130,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 									/>
 								</>
 							) }
-							<div className={ statsModuleListClass }>
+							<StatsModuleListing className={ className } siteId={ siteId }>
 								<Followers
 									path="followers"
 									className={ clsx(
@@ -160,7 +153,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 										) }
 									/>
 								) }
-							</div>
+							</StatsModuleListing>
 						</>
 					) ) }
 				<JetpackColophon />

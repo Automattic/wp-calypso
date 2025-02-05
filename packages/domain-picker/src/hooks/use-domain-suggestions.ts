@@ -1,8 +1,18 @@
 import { DomainSuggestions } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDebounce } from 'use-debounce';
-import { DOMAIN_SEARCH_DEBOUNCE_INTERVAL, DOMAIN_QUERY_MINIMUM_LENGTH } from '../constants';
 import type { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+
+const DOMAIN_QUERY_MINIMUM_LENGTH = 2;
+
+/**
+ * Debounce our input + HTTP dependent select changes
+ *
+ * Rapidly changing input generates excessive HTTP requests.
+ * It also leads to jarring UI changes.
+ * @see https://stackoverflow.com/a/44755058/1432801
+ */
+const DOMAIN_SEARCH_DEBOUNCE_INTERVAL = 300;
 
 type DomainSuggestionsResult = {
 	allDomainSuggestions: DomainSuggestions.DomainSuggestion[] | undefined;

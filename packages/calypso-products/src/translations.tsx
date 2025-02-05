@@ -2002,7 +2002,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	const woocommerceAutomatewooReferAFriendBenefits = [
 		translate( 'Boost word-of-mouth sales with a customer referral program' ),
 		translate( 'Run coupon-based or link-based referral campaigns' ),
-		translate( 'Allow advocates to share referrals via email, Facebook, Twitter, and WhatsApp' ),
+		translate( 'Allow advocates to share referrals via email, Facebook, X, and WhatsApp' ),
 		translate( 'Reward advocates with store credit for successful referrals' ),
 		translate( 'Include post-purchase share widgets on order confirmation pages and emails' ),
 		translate( 'Implement fraud prevention measures to protect the referral program' ),
@@ -2124,7 +2124,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	const woocommerceStorefrontExtensionsBundleBenefits = [
 		translate( 'Enhance Storefront theme functionality' ),
 		translate( 'Add various design and layout improvements' ),
-		translate( 'Includes multiple Storefront-specific plugins' ),
+		translate( 'Include multiple Storefront-specific plugins' ),
 		translate( 'Improve site performance with optimized extensions' ),
 	];
 	const woocommerceTableRateShippingBenefits = [

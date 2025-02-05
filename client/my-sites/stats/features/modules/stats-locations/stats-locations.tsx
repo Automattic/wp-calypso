@@ -28,6 +28,7 @@ import Geochart from '../../../geochart';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
 import CountryFilter from './country-filter';
+import sampleLocations from './sample-locations';
 
 import './style.scss';
 
@@ -145,14 +146,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				// @ts-expect-error TODO: missing TS type
 				onSelect={ changeViewButton }
 			/>
-			{ geoMode !== 'country' && ! summaryUrl && (
-				<CountryFilter
-					countries={ countriesList }
-					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-					selectedCountry={ countryFilter }
-					onCountryChange={ onCountryChange }
-				/>
-			) }
 		</>
 	);
 
@@ -178,21 +171,63 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
-	const fakeData = [
-		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
-		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
-		{ label: 'United Kingdom', countryCode: 'GB', value: 1200, region: '154' },
-		{ label: 'Canada', countryCode: 'CA', value: 1000, region: '021' },
-		{ label: 'Germany', countryCode: 'DE', value: 900, region: '155' },
-		{ label: 'Indonesia', countryCode: 'ID', value: 800, region: '035' },
-		{ label: 'Japan', countryCode: 'JP', value: 700, region: '030' },
-		{ label: 'France', countryCode: 'FR', value: 600, region: '155' },
-		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
-		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
-	];
+	const divisionsTooltip = (
+		<StatsInfoArea>
+			{ translate(
+				'Countries and their subdivisions are based on {{link}}ISO 3166{{/link}} standards.',
+				{
+					comment: '{{link}} links to ISO standards.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href="https://www.iso.org/maintenance_agencies.html#72482"
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Regions/Cities module when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
+	const titleTooltip = (
+		<StatsInfoArea>
+			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ supportUrl }#countries` ) }
+						/>
+					),
+				},
+				context: 'Stats: Link in a popover for Countries module when the module has data',
+			} ) }
+		</StatsInfoArea>
+	);
+
 	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
-	const locationData = shouldGate ? fakeData : data;
+	const locationData = shouldGate ? sampleLocations : data;
+
+	const heroElement = (
+		<>
+			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+			{ geoMode !== 'country' && ! summaryUrl && (
+				<CountryFilter
+					countries={ countriesList }
+					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+					selectedCountry={ countryFilter }
+					onCountryChange={ onCountryChange }
+					tooltip={ divisionsTooltip }
+				/>
+			) }
+		</>
+	);
 
 	return (
 		<>
@@ -200,7 +235,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
-				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
+				<StatsCardSkeleton
+					className="locations-skeleton"
+					isLoading={ isRequestingData }
+					title={ title }
+					type={ 3 }
+					withHero
+					withSplitHeader
+					toggleControl={ toggleControlComponent }
+					mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+					metricLabel={ translate( 'Views' ) }
+					titleNodes={ titleTooltip }
+				/>
 			) }
 			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
 				// show data or an overlay
@@ -208,32 +254,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
 						title={ title }
-						titleNodes={
-							<StatsInfoArea>
-								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#countries` ) }
-											/>
-										),
-									},
-									context: 'Stats: Link in a popover for Countries module when the module has data',
-								} ) }
-							</StatsInfoArea>
-						}
-						moduleType="countryviews"
+						titleNodes={ titleTooltip }
+						moduleType="locations"
 						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={
-							<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
-						}
+						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={

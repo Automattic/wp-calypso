@@ -15,9 +15,11 @@ export const SitesAddNewSitePopover = ( { showCompact }: Props ) => {
 	const translate = useTranslate();
 
 	const toggleMenu = useCallback( () => {
-		recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+		if ( ! isOpen ) {
+			recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_open' );
+		}
 		setIsOpen( ( open ) => ! open );
-	}, [] );
+	}, [ isOpen ] );
 
 	return (
 		<AddNewSiteButton

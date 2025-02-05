@@ -22,10 +22,9 @@ class ListMissing extends Component {
 					title={ this.props.translate( 'List not found' ) }
 					line={ this.props.translate( "Sorry, we couldn't find that list." ) }
 					action={ this.props.translate( 'Back to Followed Sites' ) }
-					actionURL="/read"
+					actionURL="/reader"
 					actionCallback={ this.recordAction }
-					illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-					illustrationWidth={ 500 }
+					illustration=""
 				/>
 			</ReaderMain>
 		);

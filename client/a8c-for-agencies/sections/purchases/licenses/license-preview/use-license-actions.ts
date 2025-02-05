@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import getLicenseState from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-license-state';
 import {
 	LicenseState,
@@ -18,7 +19,8 @@ export default function useLicenseActions(
 	attachedAt: string | null,
 	revokedAt: string | null,
 	licenseType: LicenseType,
-	isChildLicense?: boolean
+	isChildLicense?: boolean,
+	isClientLicense?: boolean
 ): LicenseAction[] {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -83,6 +85,13 @@ export default function useLicenseActions(
 				isEnabled: licenseState === LicenseState.Attached,
 			},
 			{
+				name: translate( 'Upgrade' ),
+				href: A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+				onClick: () => handleClickMenuItem( 'calypso_a4a_licenses_upgrade_click' ),
+				isExternalLink: false,
+				isEnabled: ! isClientLicense,
+			},
+			{
 				name: translate( 'Revoke' ),
 				href: `https://wordpress.com/purchases/subscriptions/${ siteSlug }`,
 				isExternalLink: true,
@@ -102,6 +111,7 @@ export default function useLicenseActions(
 		canRevoke,
 		dispatch,
 		isChildLicense,
+		isClientLicense,
 		isDevSite,
 		licenseType,
 		revokedAt,

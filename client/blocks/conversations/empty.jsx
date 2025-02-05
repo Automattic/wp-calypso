@@ -1,7 +1,6 @@
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import { withReaderPerformanceTrackerStop } from 'calypso/reader/reader-performance-tracker';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -24,7 +23,7 @@ class ConversationsEmptyContent extends Component {
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read/search"
+				href="/reader/search"
 			>
 				{ this.props.translate( 'Find posts to follow' ) }
 			</a>
@@ -41,8 +40,7 @@ class ConversationsEmptyContent extends Component {
 				) }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ charactersImage }
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 	}

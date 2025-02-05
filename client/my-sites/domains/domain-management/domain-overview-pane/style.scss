@@ -208,8 +208,22 @@
 		flex-wrap: wrap;
 	}
 
-	.hosting-dashboard-item-view__content div {
+	.hosting-dashboard-item-view__content > div {
 		flex-grow: 1;
+
+		.domain-forwarding-card__fields:last-child {
+			margin-bottom: 0;
+		}
+
+		.domain-forwarding-card__accordion .foldable-card__content {
+		   > :not(:last-child):not(.domain-forwarding-card-notice) {
+			  margin-bottom: 1.5rem;
+		   }
+		}
+
+		.domain-forwarding-card__accordion .link-button {
+			color: var(--color-link);
+		}
 	}
 
 	.domain-settings-page {
