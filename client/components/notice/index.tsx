@@ -40,6 +40,10 @@ interface NoticeProps {
 	onDismissClick?: () => void;
 	showDismiss?: boolean;
 	status?: NoticeStatus;
+	/**
+	 * The default scss styling of this component is of theme dark
+	 * and we only have 1 override theme which is the light theme
+	 */
 	theme?: 'light' | 'dark';
 	text?: ReactNode;
 	translate: ( text: string ) => string;
@@ -121,12 +125,15 @@ export class Notice extends Component< NoticeProps > {
 			translate,
 			theme = 'dark',
 		} = this.props;
-		console.log( { theme } );
 
 		const classes = clsx( 'notice', status, className, {
 			'is-compact': isCompact,
 			'is-loading': isLoading,
 			'is-dismissable': showDismiss,
+			/**
+			 * The default scss styling of this component is of theme dark
+			 * and we only have 1 override theme which is the light theme
+			 */
 			'is-light': theme === 'light',
 		} );
 
