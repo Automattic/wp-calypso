@@ -285,14 +285,14 @@ Note:
 	Once this issue is resolved, we can remove the declarations below.
 */
 #bbpress-forums {
-	a.components-button.is-primary.hb-pricing-plans-embed__detail-cta {
+	a.hb-pricing-plans-embed__detail-cta {
 		&:link,
 		&:visited {
 			color: $studio-blue-0;
 			font-family: $brand-display;
 			font-size: 0.875rem;
 			font-weight: 500;
-			background: $dark-blueberry-color;
+			background: $studio-blue-50;
 			text-decoration: none;
 			width: 100%;
 			border-radius: 4px;
