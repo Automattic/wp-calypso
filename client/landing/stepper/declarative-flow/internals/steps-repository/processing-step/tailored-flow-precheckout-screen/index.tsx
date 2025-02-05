@@ -72,10 +72,12 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 		};
 	}, [] );
 	/**
-	 * Completion progress: 0 <= progress <= 1
+	 * Completion progress: 0 <= progress <= 100
 	 */
-	const progress = ! hasStarted ? /* initial 10% progress */ 0.1 : ( currentStep + 1 ) / totalSteps;
-	const isComplete = progress >= 1;
+	const progress = ! hasStarted
+		? /* initial 10% progress */ 10
+		: ( ( currentStep + 1 ) * 100 ) / totalSteps;
+	const isComplete = progress >= 100;
 
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
@@ -85,10 +87,7 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 
 	return (
 		<>
-			<StepperLoader
-				title={ steps.current[ currentStep ]?.title }
-				progress={ ! hasStarted ? /* initial 10% progress */ 0.1 : progress }
-			/>
+			<StepperLoader title={ steps.current[ currentStep ]?.title } progress={ progress } />
 			{ flowName === NEWSLETTER_FLOW && (
 				<div className="processing-step__jetpack-powered">
 					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
