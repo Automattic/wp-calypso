@@ -344,8 +344,7 @@
 }
 
 .stepper-loader {
-	h1.stepper-loader__title,
-	h1.processing-step__progress-step {
+	h1.stepper-loader__title {
 		font-size: $font-title-medium;
 
 		@include break-medium {

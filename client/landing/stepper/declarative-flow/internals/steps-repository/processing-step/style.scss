@@ -18,8 +18,7 @@
 		margin: 0;
 	}
 
-	.stepper-loader__progress-bar,
-	.processing-step__progress-bar {
+	.stepper-loader__progress-bar {
 		margin: 46px auto 0 auto;
 	}
 }
@@ -45,7 +44,7 @@
 		max-width: 660px;
 	}
 
-	.processing-step__progress-step, .stepper-loader__title {
+	.stepper-loader__title {
 		font-size: 3rem;
 		margin-bottom: 24px;
 	}
