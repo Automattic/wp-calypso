@@ -12,16 +12,13 @@ interface StepperLoaderProps {
 const StepperLoader: React.FC< StepperLoaderProps > = ( {
 	title,
 	subtitle,
-	progress = -1,
+	progress,
 	className,
 } ) => {
 	return (
 		<div className={ clsx( 'stepper-loader', className ) }>
 			<h1 className="stepper-loader__title">{ title }</h1>
-			<ProgressBar
-				value={ progress >= 0 ? progress : undefined }
-				className="stepper-loader__progress-bar"
-			/>
+			<ProgressBar value={ progress } className="stepper-loader__progress-bar" />
 			{ subtitle && <p className="stepper-loader__subtitle">{ subtitle }</p> }
 		</div>
 	);
