@@ -254,12 +254,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 										className="highlight-card-info-item-count"
 										title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 									>
-										{ numberFormat( info.count, {
-											numberFormatOptions: {
-												notation: 'compact',
-												maximumFractionDigits: 1,
-											},
-										} ) }
+										{ numberFormat( info.count ) }
 									</span>
 								</div>
 							);

@@ -65,12 +65,7 @@ const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
 			<span>
 				{ translate( '%(views)s Views', {
 					args: {
-						views: numberFormat( item.views, {
-							numberFormatOptions: {
-								notation: 'compact',
-								maximumFractionDigits: 1,
-							},
-						} ),
+						views: numberFormat( item.views ),
 					},
 				} ) }
 			</span>

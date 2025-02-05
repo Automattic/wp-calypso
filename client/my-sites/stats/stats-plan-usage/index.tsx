@@ -85,21 +85,8 @@ const PlanUsage: React.FC< PlanUsageProps > = ( {
 				<div key="usage">
 					{ translate( '%(numberOfUsage)s / %(numberOfLimit)s views', {
 						args: {
-							numberOfUsage: numberFormat( usage, {
-								numberFormatOptions: {
-									notation: 'compact',
-									maximumFractionDigits: 1,
-								},
-							} ),
-							numberOfLimit:
-								typeof limit === 'number'
-									? numberFormat( limit, {
-											numberFormatOptions: {
-												notation: 'compact',
-												maximumFractionDigits: 1,
-											},
-									  } )
-									: '-',
+							numberOfUsage: numberFormat( usage ),
+							numberOfLimit: typeof limit === 'number' ? numberFormat( limit ) : '-',
 						},
 					} ) }
 				</div>
