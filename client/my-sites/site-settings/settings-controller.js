@@ -1,18 +1,12 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
-import { redirectIfDuplicatedView as _redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteOption, getSiteUrl } from 'calypso/state/sites/selectors';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	const state = context.store.getState();
@@ -29,26 +23,6 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	}
 
 	next();
-}
-
-/**
- * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
- * if the Remove Duplicate Views experiment is enabled.
- */
-export async function redirectIfDuplicatedView( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-	const hasClassicAdminInterfaceStyle =
-		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
-		return page.redirect( `/sites/settings/site/${ siteSlug }` );
-	}
-
-	_redirectIfDuplicatedView( 'options-general.php' )( context, next );
 }
 
 export async function siteSettings( context, next ) {

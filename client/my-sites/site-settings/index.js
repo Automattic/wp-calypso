@@ -4,7 +4,8 @@ import {
 	makeLayout,
 	render as clientRender,
 	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
-	redirectDuplicateViewsSiteSettings,
+	rediorectSettingsIfDuplciatedViewsEnabled,
+	redirectGeneralSettingsIfDuplicatedViewsEnabled,
 } from 'calypso/controller';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
@@ -21,22 +22,18 @@ import {
 	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 } from 'calypso/my-sites/site-settings/controller';
-import {
-	setScroll,
-	siteSettings,
-	redirectIfDuplicatedView,
-} from 'calypso/my-sites/site-settings/settings-controller';
+import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
 export default function () {
-	page( '/settings', redirectDuplicateViewsSiteSettings );
+	page( '/settings', rediorectSettingsIfDuplciatedViewsEnabled );
 
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
-		redirectIfDuplicatedView,
+		redirectGeneralSettingsIfDuplicatedViewsEnabled,
 		navigation,
 		setScroll,
 		siteSettings,

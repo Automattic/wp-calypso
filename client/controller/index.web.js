@@ -36,7 +36,11 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { makeLayoutMiddleware } from './shared.js';
 import { hydrate, render } from './web-util.js';
 
@@ -461,7 +465,12 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
 	next();
 };
 
-export const redirectDuplicateViewsSiteSettings = async () => {
+/**
+ * Redirect /settings to /sites/settings/site when the Remove Duplicate Views experiment is enabled.
+ *
+ * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
+ */
+export const rediorectSettingsIfDuplciatedViewsEnabled = async () => {
 	const isRemoveDuplicateViewsExperimentEnabled =
 		await getIsRemoveDuplicateViewsExperimentEnabled();
 
@@ -471,3 +480,23 @@ export const redirectDuplicateViewsSiteSettings = async () => {
 
 	return page.redirect( '/settings/general' );
 };
+
+/**
+ * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
+ * if the Remove Duplicate Views experiment is enabled.
+ */
+export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, next ) {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	const siteSlug = getSelectedSiteSlug( state );
+
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+	const hasClassicAdminInterfaceStyle =
+		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
+	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
+		return page.redirect( `/sites/settings/site/${ siteSlug }` );
+	}
+
+	next();
+}
