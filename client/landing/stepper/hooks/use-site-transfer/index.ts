@@ -4,7 +4,7 @@ import { useSiteTransferMutation } from './mutation';
 import { useSiteTransferStatusQuery } from './query';
 
 type Status = 'idle' | 'pending' | 'success' | 'error';
-type Options = Pick< UseQueryOptions, 'retry' >;
+type Options = Pick< UseQueryOptions, 'retry' > & { from?: string };
 
 /**
  * Hook to initiate a site transfer and monitor its progress
