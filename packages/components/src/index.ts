@@ -71,7 +71,7 @@ export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
 export { default as ClientLogoList } from './client-logo-list';
-export { default as JetpackLogo } from './logos/jetpack-logo';
+export { JetpackLogo } from './logos/jetpack-logo';
 export { default as CloudLogo } from './logos/cloud-logo';
 export { default as CNNLogo } from './logos/cnn-logo';
 export { default as SalesforceLogo } from './logos/salesforce-logo';
