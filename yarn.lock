@@ -1838,7 +1838,11 @@ __metadata:
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^7.6.19"
+    "@storybook/cli": "npm:^7.6.19"
+    "@storybook/react": "npm:^7.6.19"
     "@wordpress/base-styles": "npm:^5.17.0"
     "@wordpress/commands": "npm:^1.17.0"
     "@wordpress/components": "npm:^29.3.0"
