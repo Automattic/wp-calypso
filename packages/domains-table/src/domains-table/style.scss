@@ -107,10 +107,8 @@
 
 	.domains-table__row {
 		&:has(a.domains-table__domain-name) {
-			cursor: pointer;
-
 			&:hover td {
-				background-color: #f7faff;
+				background-color: var(--color-print);
 			}
 		}
 	}
@@ -460,5 +458,9 @@ main.domains-overview main.domains-overview__list .hosting-dashboard-layout-colu
 	.domains-table__row.is-selected > td {
 		background-color: rgba(var(--wp-admin-theme-color--rgb), 0.04);
 		color: var(--theme-base-color);
+	}
+
+	.domains-table__row:has(a.domains-table__domain-name) {
+		cursor: pointer;
 	}
 }
