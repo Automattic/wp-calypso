@@ -21,10 +21,9 @@ const getAssetType = ( asset ) => {
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 export default () => {
-	let assetsFile;
+	let assetsFile = null;
 	let assetsFileModified = 0;
-
-	async function readAssets() {
+	async function doReadAssets() {
 		const fd = await open( ASSETS_FILE );
 		const stats = await fd.stat();
 		if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
@@ -33,6 +32,17 @@ export default () => {
 		}
 		await fd.close();
 		return assetsFile;
+	}
+
+	let checking = null;
+	function readAssets() {
+		if ( ! checking ) {
+			checking = doReadAssets().finally( () => {
+				checking = null;
+			} );
+		}
+
+		return checking;
 	}
 
 	return asyncHandler( async ( req, res, next ) => {
