@@ -6,6 +6,8 @@
 
 $brand-text: "SF Pro Text", $sans;
 $brand-display: "SF Pro Display", $sans;
+$blueberry-color: #3858e9;
+$dark-blueberry-color: #2145e6;
 
 @keyframes hb-pricing-plans-embed__skeleton__animation {
 	0% {
@@ -236,6 +238,7 @@ $brand-display: "SF Pro Display", $sans;
 		margin: 0;
 		height: 20px;
 		width: 20px;
+		accent-color: $blueberry-color;
 	}
 
 	&__billing-option-label {
@@ -257,18 +260,22 @@ $brand-display: "SF Pro Display", $sans;
 		flex-direction: column;
 		justify-content: space-between;
 
-		&-cta {
+		&-cta.components-button.is-primary {
 			color: $studio-blue-0;
 			font-family: $brand-display;
 			font-size: 0.875rem;
 			font-weight: 500;
-			background: $studio-blue-50;
+			background: $blueberry-color;
 			text-decoration: none;
 			width: 100%;
 			border-radius: 4px;
 			display: flex;
 			justify-content: center;
 			padding: 10px 0;
+
+			&:hover:not(:disabled) {
+				background: $dark-blueberry-color;
+			}
 		}
 	}
 }
