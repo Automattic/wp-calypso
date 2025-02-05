@@ -36,7 +36,7 @@
 		@include break-large {
 			margin-bottom: 64px;
 		}
-		
+
 		.design-picker__design-card-title {
 			position: sticky;
 			top: 0;
@@ -66,7 +66,9 @@
 
 		.theme-card__info {
 			margin-top: 8px;
-			height: auto;
+			&:not(:has(.theme-card__info-badge-container)) {
+				height: auto;
+			}
 
 			@include break-small {
 				margin-top: 12px;
