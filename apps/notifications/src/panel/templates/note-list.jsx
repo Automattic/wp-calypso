@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
@@ -37,6 +37,8 @@ export class NoteList extends Component {
 
 	noteElements = {};
 
+	listElementInternalRef = createRef();
+
 	constructor( props ) {
 		super( props );
 
@@ -52,10 +54,37 @@ export class NoteList extends Component {
 
 	componentDidMount() {
 		this.scrollableContainer.addEventListener( 'scroll', this.onScroll );
+
+		// Prevent wheel events from propagating to the parent container, since they would
+		// otherwise be disabled (ie. default prevented); scrolling on this element won't
+		// cause the page to scroll because of the `overscroll-behaviour` CSS property.
+		this.scrollableContainer?.addEventListener( 'wheel', this.handleWheelScrollingContainer, {
+			passive: false,
+		} );
+		// Disable (ie. prevent default) wheel event on the container, so that the underlying
+		// page doesn't get scrolled when the wheel is activated on the notifications panel.
+		this.listElementInternalRef.current?.addEventListener(
+			'wheel',
+			this.handleWheelParentContainer,
+			{
+				passive: false,
+			}
+		);
 	}
 
 	componentWillUnmount() {
 		this.scrollableContainer.removeEventListener( 'scroll', this.onScroll );
+
+		this.scrollableContainer?.removeEventListener( 'wheel', this.handleWheelScrollingContainer, {
+			passive: false,
+		} );
+		this.listElementInternalRef.current?.removeEventListener(
+			'wheel',
+			this.handleWheelParentContainer,
+			{
+				passive: false,
+			}
+		);
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -80,6 +109,32 @@ export class NoteList extends Component {
 		if ( prevProps.selectedNoteId !== this.props.selectedNoteId ) {
 			this.ensureSelectedNoteVisibility();
 		}
+	}
+
+	mergeListElementRefs = ( node ) => {
+		// Set the internal ref.
+		this.listElementInternalRef.current = node;
+
+		// If listElementRef was provided via props, set it as well.
+		const { listElementRef } = this.props;
+		if ( listElementRef ) {
+			if ( typeof listElementRef === 'function' ) {
+				listElementRef( node );
+			} else {
+				// If it's a ref object, set its current property.
+				listElementRef.current = node;
+			}
+		}
+	};
+
+	handleWheelScrollingContainer( e ) {
+		// Don't bubble wheel events up so that they don't get disabled.
+		e.stopImmediatePropagation();
+	}
+
+	handleWheelParentContainer( e ) {
+		// Disable wheel events so that they don't cause the underlying page to scroll.
+		e.preventDefault();
 	}
 
 	onScroll = () => {
@@ -351,7 +406,7 @@ export class NoteList extends Component {
 
 		return (
 			<>
-				<div className={ classes } id="wpnc__note-list" ref={ this.props.listElementRef }>
+				<div className={ classes } id="wpnc__note-list" ref={ this.mergeListElementRefs }>
 					<FilterBar
 						controller={ this.props.filterController }
 						isPanelOpen={ this.props.isPanelOpen }
