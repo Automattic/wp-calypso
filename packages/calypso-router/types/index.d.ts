@@ -21,11 +21,12 @@ interface Page {
 	 *      page('/', user.list)
 	 *      page('/user/:id', user.load, user.show)
 	 *      page('/user/:id/edit', user.load, user.edit)
+	 *      page([ '/user/:id/delete', '/user/:id/remove' ], user.load, user.edit)
 	 *      page('*', notfound)
 	 *
 	 *  Links that are not of the same origin are disregarded and will not be dispatched.
 	 */
-	( path: string | RegExp, ...callbacks: Callback[] ): void;
+	( path: string | string[] | RegExp, ...callbacks: Callback[] ): void;
 	/**
 	 * This is equivalent to page('*', callback) for generic "middleware".
 	 */

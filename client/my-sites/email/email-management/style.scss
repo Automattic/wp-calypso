@@ -1,6 +1,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.email-management-main {
+	margin: 50px;
+}
+
 .email-management {
 	.empty-content__illustration {
 		width: 250px;
@@ -14,12 +18,12 @@
  */
 
 .email-list-active {
-	> .card {
+	>.card {
 		color: var(--color-text);
 		display: flex;
 	}
 
-	> .card.is-card-link:hover {
+	>.card.is-card-link:hover {
 		background-color: var(--color-neutral-0);
 	}
 }
@@ -27,7 +31,7 @@
 .email-list-active__item-icon {
 	align-self: center;
 
-	> img,
+	>img,
 	svg {
 		display: block;
 		height: 36px;
@@ -41,7 +45,7 @@
 		}
 	}
 
-	> .gridicon.gridicons-my-sites {
+	>.gridicon.gridicons-my-sites {
 		fill: var(--color-wordpress-com);
 	}
 }
@@ -61,7 +65,7 @@
 	font-size: $font-body-small;
 	margin-left: 14px;
 
-	> span {
+	>span {
 		display: none;
 		vertical-align: middle;
 
@@ -78,7 +82,7 @@
 		}
 	}
 
-	> svg {
+	>svg {
 		height: 18px;
 		margin-right: 6px;
 		/* Push the icon down when there is no warning text */
@@ -100,21 +104,21 @@
 	}
 
 	&.error {
-		> span {
+		>span {
 			color: var(--color-error);
 		}
 
-		> svg {
+		>svg {
 			fill: var(--color-error);
 		}
 	}
 
 	&.warning {
-		> span {
+		>span {
 			color: var(--color-warning);
 		}
 
-		> svg {
+		>svg {
 			fill: var(--color-warning);
 		}
 	}
@@ -128,7 +132,7 @@
 	align-items: center;
 	display: flex;
 
-	> span {
+	>span {
 		flex: 1;
 	}
 
@@ -159,13 +163,13 @@
 	}
 }
 
-@mixin email_plan_header_status_color( $color ) {
+@mixin email_plan_header_status_color($color ) {
 	border-top: 5px solid $color;
 
 	.email-plan-header__status {
 		color: $color;
 
-		> svg {
+		>svg {
 			fill: $color;
 		}
 	}
@@ -175,7 +179,7 @@
 	display: flex;
 	align-items: center;
 
-	> svg {
+	>svg {
 		margin-right: 5px;
 	}
 }
@@ -191,33 +195,30 @@
 	}
 
 	&.success {
-		@include email_plan_header_status_color( var( --color-success ) );
+		@include email_plan_header_status_color(var(--color-success));
 	}
 
 	&.warning {
-		@include email_plan_header_status_color( var( --color-warning ) );
+		@include email_plan_header_status_color(var(--color-warning));
 	}
 
 	&.error {
-		@include email_plan_header_status_color( var( --color-error ) );
+		@include email_plan_header_status_color(var(--color-error));
 	}
 }
 
 .email-plan-header__icon {
-	> img,
+
+	>img,
 	svg {
 		height: 36px;
 		width: 36px;
 		margin-right: 20px;
 	}
 
-	> .gridicon.gridicons-my-sites {
+	>.gridicon.gridicons-my-sites {
 		fill: var(--color-wordpress-com);
 	}
-}
-
-.email-plan-mailboxes-list__mailbox-list {
-	margin-top: 15px;
 }
 
 .email-mailbox-action-menu__main {
@@ -229,7 +230,7 @@
 		right: 24px;
 	}
 
-	> .button.is-borderless {
+	>.button.is-borderless {
 		padding: 0;
 	}
 }
@@ -247,28 +248,28 @@
 	display: flex;
 	line-height: 24px;
 
-	> img,
-	> svg {
+	>img,
+	>svg {
 		margin-right: 8px;
 	}
 
 	&.is-selected,
 	&:not(:disabled):hover,
 	&:focus {
-		> img {
+		>img {
 			filter: grayscale(100%) brightness(0.2) invert(1);
 		}
 
-		> svg {
+		>svg {
 			fill: var(--studio-white);
 		}
 	}
 
-	&:disabled > svg {
+	&:disabled>svg {
 		fill: currentColor;
 	}
 
-	&.external-link > .gridicons-external {
+	&.external-link>.gridicons-external {
 		display: none;
 	}
 }
@@ -316,38 +317,24 @@
 		}
 	}
 
-	&.is-placeholder > span,
+	&.is-placeholder>span,
 	&.is-placeholder .email-plan-mailboxes-list__mailbox-list-item-main {
-		@include placeholder( --color-neutral-5 );
+		@include placeholder(--color-neutral-5);
 		width: 50%;
 	}
 
-	&.no-emails > span {
+	&.no-emails>span {
 		color: var(--color-text-subtle);
 		font-style: italic;
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-link {
-		display: inline-flex;
-		gap: 10px;
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-item-main svg {
-		fill: var(--studio-gray-40);
-		margin: 0;
-	}
-
-	.email-plan-mailboxes-list__mailbox-list-item-main span {
-		vertical-align: middle;
-		word-break: break-all;
 	}
 
 	.email-plan-mailboxes-list__mailbox-secondary-details {
 		display: flex;
 		gap: 10px;
+		flex-grow: unset;
 	}
 
-	> .badge {
+	>.badge {
 		align-self: center;
 		/* Hide admin badge in mobile layouts */
 		display: none;
@@ -355,47 +342,6 @@
 		@include break-xlarge {
 			display: unset;
 			margin-left: 10px;
-		}
-	}
-
-	.email-mailbox-warnings__warning {
-		border-top: 1px solid var(--color-neutral-5);
-		color: var(--color-error);
-		font-size: $font-body-small;
-		line-height: 24px;
-		margin-top: 18px;
-		padding-top: 18px;
-
-		@include break-xlarge {
-			border-top: none;
-			margin-left: 16px;
-			margin-right: 16px;
-			margin-top: 0;
-			padding-top: 0;
-		}
-
-		> svg {
-			margin-right: 6px;
-			vertical-align: middle;
-		}
-
-		> span {
-			vertical-align: middle;
-		}
-	}
-
-	.email-mailbox-warnings__action {
-		margin-top: 12px;
-
-		@include break-xlarge {
-			flex: 0.75;
-			margin-top: 0;
-			margin-left: auto;
-			text-align: right;
-		}
-
-		> .button > .gridicons-external {
-			margin-left: 6px;
 		}
 	}
 }
@@ -449,7 +395,9 @@
 /**
  * Context: All Domain Management
  */
-.wpcom-site .hosting-dashboard-layout.sites-dashboard  .hosting-dashboard-item-view__content .context-all-domain-management, /* For Domain and Email related pages under site context. */
+.wpcom-site .hosting-dashboard-layout.sites-dashboard .hosting-dashboard-item-view__content .context-all-domain-management,
+.is-section-email,
+/* For Domain and Email related pages under site context. */
 .context-all-domain-management {
 	&.main {
 		margin: 0 auto;
@@ -480,7 +428,6 @@
 	/* Mailboxes */
 	.email-plan-mailboxes-list {
 		&__mailbox-list {
-			margin-top: 0;
 			padding-bottom: 1.875rem;
 
 			@include break-medium {
@@ -496,6 +443,7 @@
 			.card.section-header {
 				margin: 0 1.5rem;
 				padding: 1.75rem 0 1.25em 0;
+				align-items: center;
 			}
 
 			.section-header__label-text {
@@ -525,10 +473,6 @@
 				&:last-child {
 					padding-bottom: 0;
 				}
-			}
-
-			&-item > div {
-				flex-grow: initial;
 			}
 
 			.email-mailbox-action-menu__main {
@@ -575,8 +519,6 @@
 				}
 
 				.email-plan-warnings__message {
-					flex-grow: 1;
-
 					span {
 						display: inline-block;
 						max-width: 700px;
@@ -603,7 +545,7 @@
 		}
 	}
 
-	.email-plan-mailboxes-list__mailbox-list-item > .badge {
+	.email-plan-mailboxes-list__mailbox-list-item>.badge {
 		flex: none;
 	}
 
@@ -611,76 +553,6 @@
 	.section-header__actions button[disabled] {
 		color: var(--theme-highlight-color-50);
 		opacity: 0.5;
-	}
-
-	.email-plan-mailboxes-list__email-forward {
-		.section-header__label,
-		.email-plan-mailboxes-list__mailbox-list-item-main {
-			flex: 1 1 0;
-		}
-
-		.section-header__actions,
-		.email-mailbox-action-menu__main {
-			min-width: 80px;
-			flex: 0 0 auto;
-		}
-
-		.email-mailbox-action-menu__main {
-			text-align: end;
-
-			@include break-xlarge {
-				position: static;
-			}
-		}
-
-		.section-header__label {
-			font-weight: 500;
-
-			&.destination {
-				display: none;
-
-				@include break-xlarge {
-					display: block;
-				}
-			}
-		}
-
-		.email-plan-mailboxes-list__mailbox-list-item-main {
-			font-size: 0.875rem;
-
-			span {
-				align-self: center;
-			}
-		}
-
-		.email-plan-mailboxes-list__mailbox-secondary-details svg {
-			width: 1rem;
-		}
-
-		.email-mailbox-warnings {
-			.email-mailbox-warnings__warning,
-			.email-mailbox-warnings__action {
-				display: inline-block;
-				border: none;
-				padding: 0;
-				margin: 0;
-			}
-
-			.email-mailbox-warnings__action {
-				button {
-					padding: 0;
-				}
-			}
-
-			.email-mailbox-warnings__warning {
-				margin-left: 0;
-				margin-right: 0.75rem;
-
-				svg {
-					fill: var(--color-error);
-				}
-			}
-		}
 	}
 }
 

@@ -6,6 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import A4ATablePlaceholder from 'calypso/a8c-for-agencies/components/a4a-table-placeholder';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useFetchAllManagedSites } from '../hooks/use-fetch-all-managed-sites';
@@ -42,7 +43,10 @@ export default function MigrationsAddSitesTable( {
 		return items.filter( ( item ) => ! taggedSitesIds.includes( item.id ) );
 	}, [ items, taggedSitesIds ] );
 
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		fields: [ 'site', 'date' ],
+	} );
 
 	const onSelectAllSites = useCallback( () => {
 		const isAllSitesSelected = selectedSites.length === availableSites.length;

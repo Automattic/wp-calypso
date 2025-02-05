@@ -42,9 +42,9 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
-		"@wordpress/components": "^28.8.0",
-		"@wordpress/element": "^6.8.0",
-		"@wordpress/i18n": "^5.8.0",
+		"@wordpress/components": "^29.2.0",
+		"@wordpress/element": "^6.16.0",
+		"@wordpress/i18n": "^5.16.0",
 		"clsx": "^2.1.1",
 		"prop-types": "^15.7.2",
 		"tslib": "^2.3.0"

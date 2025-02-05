@@ -288,40 +288,6 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 		display: none;
 	}
 
-	.signup-form__woocommerce-wrapper {
-		text-align: center;
-		border-bottom: 1px solid var(--color-neutral-50);
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 56px;
-
-		svg > g {
-			transform: translateX(50%);
-		}
-	}
-
-	.signup-form__woocommerce-logo {
-		margin: 0;
-		text-align: center;
-		margin-right: auto;
-		margin-left: auto;
-		padding-left: 0;
-		display: block;
-		height: 56px;
-		border-bottom: 1px solid var(--color-woocommerce-header-border);
-		background: var(--color-text-inverted);
-
-		svg {
-			margin-top: 15px;
-		}
-	}
-
-	.signup-form__woocommerce-heading {
-		margin-top: 32px;
-	}
-
 	.formatted-header {
 		max-width: 476px;
 		margin-right: auto;

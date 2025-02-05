@@ -278,7 +278,7 @@ class StatsListItem extends Component {
 						}
 
 						event.preventDefault();
-						page( `/read/blogs/${ siteId }` );
+						page( `/reader/blogs/${ siteId }` );
 					};
 				}
 

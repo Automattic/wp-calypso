@@ -28,6 +28,14 @@
 			}
 		}
 
+		&.step-route.hundred-year-domain-transfer.processing {
+			gap: 0;
+			width: 100%;
+			margin: 0;
+			max-width: none;
+			padding: 0;
+		}
+
 		.domains {
 			.step-container__header {
 				@media (max-width: $break-wide) {

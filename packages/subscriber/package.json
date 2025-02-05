@@ -34,14 +34,14 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@popperjs/core": "^2.11.8",
-		"@wordpress/base-styles": "^5.8.0",
-		"@wordpress/components": "^28.8.0",
-		"@wordpress/dom": "^4.8.0",
-		"@wordpress/element": "^6.8.0",
-		"@wordpress/i18n": "^5.8.0",
-		"@wordpress/icons": "^10.8.0",
-		"@wordpress/primitives": "^4.8.0",
-		"@wordpress/react-i18n": "^4.8.0",
+		"@wordpress/base-styles": "^5.16.0",
+		"@wordpress/components": "^29.2.0",
+		"@wordpress/dom": "^4.16.0",
+		"@wordpress/element": "^6.16.0",
+		"@wordpress/i18n": "^5.16.0",
+		"@wordpress/icons": "^10.16.0",
+		"@wordpress/primitives": "^4.16.0",
+		"@wordpress/react-i18n": "^4.16.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.3.4",
 		"react-popper": "^2.3.0"
@@ -52,7 +52,7 @@
 		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.8.0",
+		"@wordpress/data": "^10.16.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1"

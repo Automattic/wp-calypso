@@ -48,7 +48,7 @@ const expectedCommandsResults = {
 	openPHPmyAdmin: [ '/hosting-config/:site#database-access', siteFilters.adminAtomic ],
 	openProfile: [ '/me' ],
 	viewDeveloperFeatures: [ '/me/developer' ],
-	openReader: [ '/read' ],
+	openReader: [ '/reader' ],
 	openJetpackSettings: [ '/wp-admin/admin.php?page=jetpack#/dashboard', siteFilters.adminJetpack ],
 	addJetpack: [ '/jetpack/connect?cta_from=command-palette' ],
 	manageJetpackModules: [ '/wp-admin/admin.php?page=jetpack_modules', siteFilters.adminJetpack ],

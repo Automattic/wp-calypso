@@ -6,7 +6,7 @@ interface OdieNoticeProps {
 	children: React.ReactNode;
 }
 
-const OdieNotice: React.FC< OdieNoticeProps > = ( props ) => {
+export const OdieNotice: React.FC< OdieNoticeProps > = ( props ) => {
 	const [ isNoticeVisible, setIsNoticeVisible ] = useState( true );
 
 	return (
@@ -25,5 +25,3 @@ const OdieNotice: React.FC< OdieNoticeProps > = ( props ) => {
 		)
 	);
 };
-
-export default OdieNotice;

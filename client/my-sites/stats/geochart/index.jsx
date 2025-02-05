@@ -105,33 +105,64 @@ class StatsGeochart extends Component {
 		}
 	};
 
+	/**
+	 * Prepare data for Google GeoChart.
+	 * @param {Array} data - The data to prepare.
+	 * @returns {Object} chartData - The prepared data.
+	 */
+	prepareChartData = ( data ) => {
+		const { geoMode, numberLabel, translate } = this.props;
+		const chartData = new window.google.visualization.DataTable();
+
+		if ( geoMode !== 'country' ) {
+			chartData.addColumn( 'number', 'Latitude' );
+			chartData.addColumn( 'number', 'Longitude' );
+			chartData.addColumn( 'string', 'Location' );
+			chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
+
+			chartData.addRows(
+				data.reduce( ( filteredLocations, location ) => {
+					if ( location.coordinates ) {
+						filteredLocations.push( [
+							Number( location.coordinates.latitude ),
+							Number( location.coordinates.longitude ),
+							location.label,
+							location.value,
+						] );
+					}
+
+					return filteredLocations;
+				}, [] )
+			);
+
+			return chartData;
+		}
+
+		// Default to country
+		chartData.addColumn( 'string', translate( 'Country' ).toString() );
+		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
+		chartData.addRows(
+			map( data, ( location ) => {
+				return [
+					{
+						v: location.countryCode,
+						f: location.label,
+					},
+					location.value,
+				];
+			} )
+		);
+
+		return chartData;
+	};
+
 	drawData = () => {
-		const { currentUserCountryCode, data, geoMode, translate, numberLabel, customHeight } =
-			this.props;
+		const { currentUserCountryCode, data, geoMode, customHeight } = this.props;
 		if ( ! data || ! data.length ) {
 			return;
 		}
 
-		const mapData = map( data, ( location ) => {
-			let code = location.countryCode;
-			if ( geoMode !== 'country' ) {
-				code = `${ location.countryCode } ${ location.label }`;
-			}
-
-			return [
-				{
-					v: code,
-					f: location.label,
-				},
-				location.value,
-			];
-		} );
-
-		const chartData = new window.google.visualization.DataTable();
-		chartData.addColumn( 'string', translate( 'Country' ).toString() );
-		chartData.addColumn( 'number', numberLabel || translate( 'Views' ).toString() );
-		chartData.addRows( mapData );
-
+		const chartData = this.prepareChartData( data );
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
 		// We have to set values to Google GeoChart via JS. We don't

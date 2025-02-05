@@ -35,7 +35,7 @@ const SiteStream = ( props ) => {
 	// check for redirect
 	useEffect( () => {
 		if ( site && site.prefer_feed && site.feed_ID ) {
-			page.replace( '/read/feeds/' + site.feed_ID );
+			page.replace( '/reader/feeds/' + site.feed_ID );
 		}
 	}, [ site ] );
 

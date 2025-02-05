@@ -7,7 +7,11 @@ import { registerBlockType, unregisterBlockType } from '@wordpress/blocks';
 import * as React from 'react';
 import PagePatternModal from '../page-pattern-modal';
 
-jest.mock( '@wordpress/block-editor/build/components/block-preview', () => () => null );
+jest.mock( '@wordpress/block-editor/build/components/block-preview', () => {
+	const BlockPreview = () => null;
+	BlockPreview.Async = () => null;
+	return BlockPreview;
+} );
 
 const noop = () => undefined;
 
