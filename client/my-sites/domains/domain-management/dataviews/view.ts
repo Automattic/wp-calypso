@@ -9,10 +9,10 @@ import {
 
 export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean ) {
 	if ( isDesktop && ! sidebarMode ) {
-		return [ 'domain_name', 'owner', 'site', 'ssl_status', 'expiry', 'domain_status' ];
+		return [ 'owner', 'site', 'ssl_status', 'expiry', 'domain_status' ];
 	}
 
-	return [ 'domain_name' ];
+	return [];
 }
 
 export function initializeViewState(
@@ -30,10 +30,8 @@ export function initializeViewState(
 		perPage: perPage || DEFAULT_PER_PAGE,
 		search: search || '',
 		type: sidebarMode ? 'list' : 'table',
+		titleField: 'domain_name',
 		fields: getFieldsByBreakpoint( isDesktop, sidebarMode ),
-		layout: {
-			primaryField: 'domain_name',
-		},
 	};
 
 	if ( initialViewState.type === 'table' && initialViewState.layout ) {
