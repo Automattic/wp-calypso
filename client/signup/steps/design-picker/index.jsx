@@ -30,7 +30,6 @@ export default function DesignPickerStep( props ) {
 	const {
 		flowName,
 		stepName,
-		isReskinned,
 		showDesignPickerCategories,
 		showLetUsChoose,
 		hideFullScreenPreview,
@@ -179,7 +178,7 @@ export default function DesignPickerStep( props ) {
 			<>
 				<DesignPicker
 					designs={ designs }
-					theme={ isReskinned ? 'light' : 'dark' }
+					theme="light"
 					locale={ translate.localeSlug }
 					onSelect={ pickDesign }
 					onUpgrade={ upgradePlanFromDesignPicker }
@@ -291,8 +290,8 @@ export default function DesignPickerStep( props ) {
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
-			align={ isReskinned ? 'left' : 'center' }
-			skipButtonAlign={ isReskinned ? 'top' : 'bottom' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ skipLabelText() }
 		/>
 	);
