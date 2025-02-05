@@ -39,3 +39,19 @@
 		gap: 0.5rem;
 	}
 }
+
+.service-example__screenshot {
+	img {
+		width: 100%;
+		max-width: 550px;
+		margin-bottom: 1rem;
+	}
+
+	&-label {
+		margin-bottom: 1rem;
+	}
+}
+
+.connections__sharing-service-tip {
+	margin: 1rem 0;
+}

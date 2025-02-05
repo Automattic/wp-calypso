@@ -142,7 +142,7 @@ describe( DataHelper.createSuiteTitle( `Invite: New User` ), function () {
 			const loginPage = new LoginPage( page );
 			await loginPage.visit();
 			await Promise.all( [
-				page.waitForNavigation( { url: '**/read' } ),
+				page.waitForNavigation( { url: '**/reader' } ),
 				loginPage.logInWithCredentials( testUser.email, testUser.password ),
 			] );
 		} );

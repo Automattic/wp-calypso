@@ -159,9 +159,9 @@ class ReaderPostCard extends Component {
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isConversations = currentRoute.startsWith( '/read/conversations' );
+		const isConversations = currentRoute.startsWith( '/reader/conversations' );
 
-		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/read/search` ).test(
+		const isReaderSearchPage = new RegExp( `^(/${ localeRegexString })?/reader/search` ).test(
 			currentRoute
 		);
 

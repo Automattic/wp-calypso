@@ -5,7 +5,7 @@ import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isHostingMenuUntangled } from '../../../utils';
+import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 import { useConfirmTransfer } from './use-confirm-transfer';
 
 type SiteTransferResponse = {
@@ -51,7 +51,7 @@ export function ConfirmationTransfer( {
 		confirmTransfer( confirmationHash );
 	}, [ confirmTransfer, confirmationHash ] );
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useIsSiteSettingsUntangled();
 
 	if ( isEmailSent ) {
 		const notice = (

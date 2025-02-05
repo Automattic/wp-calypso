@@ -42,6 +42,11 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 
 const defaultView: View = {
 	type: 'table',
+	titleField: 'name',
+	mediaField: 'media',
+	showTitle: true,
+	showMedia: true,
+	fields: [ 'plan', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
@@ -50,10 +55,7 @@ const defaultView: View = {
 			date_subscribed: { width: '25%' },
 		},
 	},
-	fields: [ 'name', 'plan', 'date_subscribed' ],
 };
-
-const getSubscriberId = ( subscriber: Subscriber ) => subscriber.subscription_id.toString();
 
 const SubscriberDataViews = ( {
 	siteId = undefined,
@@ -146,10 +148,23 @@ const SubscriberDataViews = ( {
 		[ subscribers ]
 	);
 
+	const getSubscriberId = useCallback(
+		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
+		[]
+	);
+
+	const handleSubscriberOnClick = useCallback(
+		( subscriber: Subscriber ) => {
+			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
+		},
+		[ getSubscriberId, handleSubscriberSelect ]
+	);
+
 	const fields = useMemo(
 		() => [
 			{
 				id: 'media',
+				label: translate( 'Media' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.avatar,
 				render: ( { item }: { item: Subscriber } ) => (
 					<Gravatar
@@ -167,26 +182,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'Name' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
-					<button
-						type="button"
-						onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
-					>
-						{ selectedSubscriber ? (
-							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-						) : (
-							<div className="subscriber-data-views__list-item">
-								<div className="subscriber-data-views__list-item-avatar">
-									<Gravatar
-										user={ { avatar_URL: item.avatar, name: item.display_name } }
-										size={ 52 }
-										imgSize={ 80 }
-										className="subscriber-data-views__square-avatar"
-									/>
-								</div>
-								<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-							</div>
-						) }
-					</button>
+					<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 				),
 				enableHiding: false,
 				enableSorting: true,
@@ -216,7 +212,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ handleSubscriberSelect, selectedSubscriber ]
+		[]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -264,6 +260,7 @@ const SubscriberDataViews = ( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
+		getSubscriberId,
 	] );
 
 	useEffect( () => {
@@ -271,24 +268,24 @@ const SubscriberDataViews = ( {
 		if ( isMobile ) {
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
-				fields: [ 'name' ],
+				showMedia: false,
+				fields: [],
 			} ) );
 		} else if ( selectedSubscriber ) {
-			// If we're on subscribers page, we want to show the list view.
+			// If we're on subscribers page, we want to show the list view (name & media).
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				type: 'list',
-				fields: [ 'media', 'name' ],
-				layout: {
-					primaryField: 'name',
-					mediaField: 'media',
-				},
+				showTitle: true,
+				showMedia: true,
+				fields: [],
 			} ) );
 		} else {
 			// Otherwise, we want to show the table view.
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				...defaultView,
+				layout: defaultView.layout,
 			} ) );
 		}
 	}, [ isMobile, selectedSubscriber ] );
@@ -331,6 +328,7 @@ const SubscriberDataViews = ( {
 						data={ data }
 						fields={ fields }
 						view={ currentView }
+						onClickItem={ handleSubscriberOnClick }
 						onChangeView={ setCurrentView }
 						selection={
 							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined

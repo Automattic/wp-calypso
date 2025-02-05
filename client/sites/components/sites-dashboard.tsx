@@ -10,7 +10,6 @@ import {
 import { GroupableSiteLaunchStatuses } from '@automattic/sites/src/use-sites-list-grouping';
 import { DESKTOP_BREAKPOINT, WIDE_BREAKPOINT } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
-import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -80,9 +79,9 @@ const siteSortingKeys = [
 const DEFAULT_PER_PAGE = 50;
 const DEFAULT_SITE_TYPE = 'non-p2';
 
-const desktopFields = [ 'site', 'plan', 'status', 'last-publish', 'stats' ];
-const mobileFields = [ 'site' ];
-const listViewFields = [ 'site-title' ];
+const desktopFields = [ 'plan', 'status', 'last-publish', 'stats' ];
+const mobileFields: string[] = [];
+const listViewFields: string[] = [];
 
 const getFieldsByBreakpoint = ( selectedSite: boolean, isDesktop: boolean ) => {
 	if ( selectedSite ) {
@@ -199,23 +198,18 @@ const SitesDashboard = ( {
 		...( selectedSite
 			? {
 					type: 'list',
-					layout: {
-						primaryField: 'site-title',
-						mediaField: 'icon',
-					},
+					titleField: 'site-title',
+					showTitle: true,
+					mediaField: 'icon',
+					showMedia: true,
 			  }
 			: {
 					type: 'table',
+					titleField: 'site-title',
+					showTitle: true,
+					mediaField: 'icon',
+					showMedia: true,
 					layout: {
-						primaryField: 'site',
-						combinedFields: [
-							{
-								id: 'site',
-								label: __( 'Site' ),
-								children: [ 'icon', 'site-title' ],
-								direction: 'horizontal',
-							},
-						],
 						styles: {
 							site: {
 								width: '40%',

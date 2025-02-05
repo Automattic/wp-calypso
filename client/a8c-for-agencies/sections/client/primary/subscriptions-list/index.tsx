@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, ReactNode, useState, useCallback } from 'react';
 import { initialDataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
@@ -28,7 +29,10 @@ export default function SubscriptionsList() {
 
 	const isDesktop = useDesktopBreakpoint();
 
-	const [ dataViewsState, setDataViewsState ] = useState( initialDataViewsState );
+	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
+		...initialDataViewsState,
+		fields: [ 'purchase', 'price', 'subscription-status', 'actions' ],
+	} );
 
 	const { data, isFetching, refetch } = useFetchClientSubscriptions();
 	const { data: products, isFetching: isFetchingProducts } = useFetchClientProducts();

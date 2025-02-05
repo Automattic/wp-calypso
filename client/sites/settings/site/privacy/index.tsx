@@ -13,9 +13,10 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { useIsSiteSettingsUntangled } from '../../hooks/use-is-site-settings-untangled';
 import SiteSettingPrivacyForm from './form';
 import type { AppState } from 'calypso/types';
+
 import './style.scss';
 
 export interface Fields {
@@ -53,6 +54,7 @@ const PrivacyForm = ( {
 		( state ) => !! getSiteOption( state, siteId, 'editing_toolkit_is_active' )
 	);
 	const isAtomicAndEditingToolkitDeactivated = !! siteIsAtomic && ! isEditingToolkitActive;
+	const isUntangled = useIsSiteSettingsUntangled();
 
 	if ( isP2HubSite ) {
 		return <></>;
@@ -100,7 +102,7 @@ const PrivacyForm = ( {
 		);
 	};
 
-	if ( ! isHostingMenuUntangled() ) {
+	if ( ! isUntangled ) {
 		return (
 			<>
 				{ renderSectionHeader() }

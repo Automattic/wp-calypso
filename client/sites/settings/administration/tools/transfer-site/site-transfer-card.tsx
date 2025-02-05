@@ -4,7 +4,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { isHostingMenuUntangled } from 'calypso/sites/settings/utils';
+import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 
 export function SiteTransferCard( {
 	children,
@@ -14,7 +14,8 @@ export function SiteTransferCard( {
 	onClick: () => void;
 } ) {
 	const translate = useTranslate();
-	const title = isHostingMenuUntangled()
+	const isSiteSettingsUntangled = useIsSiteSettingsUntangled();
+	const title = isSiteSettingsUntangled
 		? translate( 'Transfer site' )
 		: translate( 'Site Transfer' );
 	return (

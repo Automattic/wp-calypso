@@ -8,7 +8,7 @@ import { navigate as calypsoNavigate } from 'calypso/lib/navigate';
 const navigate = ( path: Path ) => {
 	switch ( path ) {
 		case Path.ManageAllSubscriptions:
-			calypsoNavigate( '/read/subscriptions/' );
+			calypsoNavigate( '/reader/subscriptions/' );
 			return;
 	}
 };
