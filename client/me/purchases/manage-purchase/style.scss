@@ -128,6 +128,8 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		padding: 16px;
+		overflow-wrap: break-word;
+		flex-direction: column;
 	}
 }
 
@@ -372,7 +374,7 @@
 }
 
 .manage-purchase__renewal-text {
-	display: inline-block;		
+	display: inline-block;
 }
 
 .manage-purchase__detail .user__name {
