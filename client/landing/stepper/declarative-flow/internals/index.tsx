@@ -112,11 +112,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			// potentially slow that down by having the CPU busy initialising future steps.
 			return;
 		}
-		if (
-			// Don't load anything on user step because the user step will hard-navigate anyways.
-			currentStepRoute !== 'user' &&
-			'asyncComponent' in nextStep
-		) {
+		if ( 'asyncComponent' in nextStep ) {
 			nextStep.asyncComponent();
 		}
 		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
