@@ -4,6 +4,7 @@
 .subscriber-totals {
 	padding: 0 48px;
 	margin-bottom: 8px;
+	font-size: $font-code;
 
 	// 430px is the DataViews padding breakpoint.
 	@media ( max-width: 430px ) {
@@ -12,11 +13,6 @@
 	
 	&.is-loading {
 		min-height: 24px;
-	}
-
-	&__counts {
-		font-size: 14;
-		color: var(--studio-gray-60);
 	}
 
 	&__filtered-count {
@@ -31,4 +27,4 @@
 	&__total-count {
 		font-weight: 600;
 	}
-} 
+}
