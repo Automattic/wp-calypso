@@ -1,7 +1,10 @@
-import { RouteProps } from '../types';
+/**
+ * Internal dependencies
+ */
+import { Route } from '../../../router/src';
 
 type StateProps = {
-	routes: RouteProps[];
+	routes: Route[];
 };
 
 export function getRoutes( state: StateProps ) {

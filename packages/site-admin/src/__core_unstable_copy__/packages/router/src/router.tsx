@@ -13,7 +13,7 @@ import { unstableResourceWarning } from '../../../debug';
 import type { ReactNode } from 'react';
 
 const history = createBrowserHistory();
-interface Route {
+export interface Route {
 	name: string;
 	path: string;
 	areas: Record< string, ReactNode >;

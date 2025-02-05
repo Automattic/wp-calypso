@@ -2,12 +2,15 @@
  * External dependencies
  */
 import { combineReducers } from '@wordpress/data';
-import { RouteProps } from '../types';
+import { Route } from '../../../router/src';
 
-function routes(
-	state: RouteProps[] = [],
-	action: { type: string; route: RouteProps; name: string }
-) {
+type Action = {
+	type: string;
+	route: Route;
+	name: string;
+};
+
+function routes( state: Route[] = [], action: Action ) {
 	switch ( action.type ) {
 		case 'REGISTER_ROUTE':
 			return [ ...state, action.route ];

@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-import { RouteProps } from '../types';
 
-export function registerRoute( route: RouteProps ) {
+import { Route } from '../../../router/src';
+
+export function registerRoute( route: Route ) {
 	return {
 		type: 'REGISTER_ROUTE',
 		route,
