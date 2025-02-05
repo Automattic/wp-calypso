@@ -1,6 +1,5 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -219,7 +218,9 @@ export default function PressablePlanSection( {
 							),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
-									count: formatNumber( selectedPlanInfo?.visits ?? 0 ),
+									count: numberFormat( selectedPlanInfo?.visits ?? 0, {
+										numberFormatOptions: { notation: 'compact' },
+									} ),
 								},
 								components: {
 									b: <b />,
