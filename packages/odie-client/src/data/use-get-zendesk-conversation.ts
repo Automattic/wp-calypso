@@ -32,7 +32,7 @@ export const useGetZendeskConversation = () => {
 			conversationId?: string | null | undefined;
 		} ) => {
 			if ( ! chatId && ! conversationId ) {
-				throw new Error();
+				return null;
 			}
 
 			const conversations = Smooch.getConversations();
