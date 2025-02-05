@@ -114,11 +114,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		enabled: ! shouldGate && supportsLocationsStatsFeature,
 	} );
 
-	const countriesViewsData = useSelector( ( state ) =>
+	// The legacy endpoint that only supports countries (not regions or cities)
+	// will be used when the new Locations Stats feature is not available.
+	const legacyCountriesViewsData = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ];
 
-	const data = supportsLocationsStatsFeature ? locationsViewsData : countriesViewsData;
+	const data = supportsLocationsStatsFeature ? locationsViewsData : legacyCountriesViewsData;
 
 	// Only fetch separate countries list if we're not already in country tab
 	// This is to avoid fetching the same data twice.
