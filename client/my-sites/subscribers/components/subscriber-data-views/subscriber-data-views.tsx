@@ -127,10 +127,12 @@ const SubscriberDataViews = ( {
 		subscribers,
 		is_owner_subscribed: isOwnerSubscribed,
 		pages,
+		total,
 	} = subscribersQueryResult || {
 		subscribers: [],
 		is_owner_subscribed: false,
 		pages: 0,
+		total: 0,
 	};
 
 	const {
@@ -381,7 +383,7 @@ const SubscriberDataViews = ( {
 					<>
 						<SubscriberTotals
 							totalSubscribers={ grandTotal }
-							filteredCount={ subscribers.length }
+							filteredCount={ total }
 							filterOption={ filterOption }
 							searchTerm={ searchTerm }
 							isLoading={ isLoading }
