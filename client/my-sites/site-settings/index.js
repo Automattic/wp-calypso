@@ -16,7 +16,11 @@ import {
 	startSiteOwnerTransfer,
 	renderSiteTransferredScreen,
 } from 'calypso/my-sites/site-settings/controller';
-import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import {
+	setScroll,
+	siteSettings,
+	redirectIfDuplicatedView,
+} from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
@@ -29,6 +33,7 @@ export default function () {
 	page(
 		'/settings/general/:site_id',
 		siteSelection,
+		redirectIfDuplicatedView,
 		navigation,
 		setScroll,
 		siteSettings,

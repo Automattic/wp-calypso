@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
-import { redirectIfDuplicatedView } from 'calypso/controller';
+import { redirectIfDuplicatedView as _redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
@@ -31,21 +31,14 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
 	next();
 }
 
-export async function siteSettings( context, next ) {
-	let analyticsPageTitle = 'Site Settings';
-	const basePath = sectionify( context.path );
-	const section = sectionify( context.path ).split( '/' )[ 2 ];
+/**
+ * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
+ * if the Remove Duplicate Views experiment is enabled.
+ */
+export async function redirectIfDuplicatedView( context, next ) {
 	const state = context.store.getState();
-	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
-	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
-
-	// if site loaded, but user cannot manage site, redirect
-	if ( site && ! canManageOptions ) {
-		page.redirect( '/stats' );
-		return;
-	}
 
 	const isRemoveDuplicateViewsExperimentEnabled =
 		await getIsRemoveDuplicateViewsExperimentEnabled();
@@ -55,13 +48,31 @@ export async function siteSettings( context, next ) {
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
+	_redirectIfDuplicatedView( 'options-general.php' )( context, next );
+}
+
+export async function siteSettings( context, next ) {
+	let analyticsPageTitle = 'Site Settings';
+	const basePath = sectionify( context.path );
+	const section = sectionify( context.path ).split( '/' )[ 2 ];
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
+	const canManageOptions = canCurrentUser( state, siteId, 'manage_options' );
+
+	// if site loaded, but user cannot manage site, redirect
+	if ( site && ! canManageOptions ) {
+		page.redirect( '/stats' );
+		return;
+	}
+
 	// analytics tracking
 	if ( 'undefined' !== typeof section ) {
 		analyticsPageTitle += ' > ' + titlecase( section );
 	}
 	recordPageView( basePath + '/:site', analyticsPageTitle );
 
-	redirectIfDuplicatedView( 'options-general.php' )( context, next );
+	next();
 }
 
 export function setScroll( context, next ) {
