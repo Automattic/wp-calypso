@@ -123,7 +123,7 @@ const LaunchBigSky: Step = function () {
 	function LaunchingBigSky() {
 		return (
 			<>
-				<StepperLoader title={ __( 'Launching the AI Website Builder' ) } />
+				{ ! isError && <StepperLoader title={ __( 'Launching the AI Website Builder' ) } /> }
 				{ isError && (
 					<p className="processing-step__error">
 						{ __( 'Something unexpected happened. Please go back and try again.' ) }
