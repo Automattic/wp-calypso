@@ -67,10 +67,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
-	const onCountryChange = ( value: string ) => {
-		setCountryFilter( value );
-	};
-
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
 			selectLabel: translate( 'Countries' ),
@@ -122,6 +118,15 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			enabled: ! shouldGate && geoMode !== 'country',
 		}
 	);
+
+	const onCountryChange = ( value: string ) => {
+		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
+			stat_type: optionLabels[ selectedOption ].feature,
+			country: value,
+		} );
+
+		setCountryFilter( value );
+	};
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
