@@ -16,6 +16,7 @@ const startTransfer = ( siteId: number ): Promise< InitiateAtomicTransferRespons
 		body: {
 			context: 'unknown',
 			transfer_intent: 'migrate',
+			plugin_slug: 'wpcom-migration',
 		},
 	} );
 

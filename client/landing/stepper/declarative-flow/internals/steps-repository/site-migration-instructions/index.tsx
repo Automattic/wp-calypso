@@ -18,12 +18,11 @@ import { Questions } from './questions';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
-import type { Status } from './provision-status';
 import type { Step } from '../../types';
 import './style.scss';
 
 interface PreparationEventsHookOptions {
-	migrationKeyStatus: Status;
+	migrationKeyStatus: string;
 	preparationCompleted: boolean;
 	preparationError: Error | null;
 	fromUrl: string;
@@ -106,7 +105,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		completed: preparationCompleted,
 		error: preparationError,
 		migrationKey,
-	} = usePrepareSiteForMigration( siteId );
+	} = usePrepareSiteForMigration( siteId, { retry: 10 } );
 
 	const migrationKeyStatus = detailedStatus.migrationKey;
 

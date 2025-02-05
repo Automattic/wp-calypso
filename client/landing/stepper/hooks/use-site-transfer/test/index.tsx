@@ -92,6 +92,7 @@ describe( 'useSiteTransfer', () => {
 			.post( `/wpcom/v2/sites/${ siteId }/atomic/transfers`, {
 				context: 'unknown',
 				transfer_intent: 'migrate',
+				plugin_slug: 'wpcom-migration',
 			} )
 			.reply( 200, TRANSFER_ACTIVE( siteId ) )
 			.get( `/wpcom/v2/sites/${ siteId }/atomic/transfers/latest` )
