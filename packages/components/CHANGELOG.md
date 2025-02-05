@@ -1,7 +1,13 @@
 ## Next
 
+### Breaking changes
+
+- Remove unused corporate logos ([#99229](https://github.com/Automattic/wp-calypso/pull/99229)).
+- Remove GMClosureNotice ([#99309](https://github.com/Automattic/wp-calypso/pull/99309)).
+
+### Enhancements
+
 - Add FlowQuestion component
-- Remove unused corporate logos (#99229)
 
 ## 2.1.1
 

@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
-import { Spinner, GMClosureNotice } from '@automattic/components';
+import { Spinner } from '@automattic/components';
 import { HelpCenterSite } from '@automattic/data-stores';
 import { getLanguage, useIsEnglishLocale, useLocale } from '@automattic/i18n-utils';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data';
@@ -24,6 +24,7 @@ import { EMAIL_SUPPORT_LOCALES } from '../constants';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus, useShouldRenderEmailOption, useStillNeedHelpURL } from '../hooks';
 import { Mail } from '../icons';
+import { HelpCenterClosureNotice } from './help-center-closure-notice';
 import HelpCenterContactSupportOption from './help-center-contact-support-option';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { generateContactOnClickEvent } from './utils';
@@ -155,7 +156,7 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 					<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				) }
 				{ supportActivity && <HelpCenterActiveTicketNotice tickets={ supportActivity } /> }
-				<GMClosureNotice
+				<HelpCenterClosureNotice
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"

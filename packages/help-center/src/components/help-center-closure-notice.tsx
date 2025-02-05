@@ -2,7 +2,7 @@ import { Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { format } from '@wordpress/date';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import './gm-closure-notice.scss';
+import './help-center-closure-notice.scss';
 
 const DATE_FORMAT_SHORT = 'F d';
 const DATE_FORMAT_LONG = 'l, F jS h:i A';
@@ -19,7 +19,7 @@ function inBetween( start: Date, end: Date ) {
 	return date >= start && date <= end;
 }
 
-export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Props ) {
+export function HelpCenterClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Props ) {
 	const { __ } = useI18n();
 
 	if ( ! enabled ) {
@@ -74,7 +74,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 	);
 
 	return (
-		<Panel className="a8c-components__gm-closure-notice">
+		<Panel className="help-center-closure-notice">
 			<PanelBody initialOpen={ period === 'during' } title={ heading }>
 				<PanelRow>{ MAIN_MESSAGES[ period ] }</PanelRow>
 			</PanelBody>
