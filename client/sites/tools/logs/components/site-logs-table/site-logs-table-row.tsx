@@ -6,10 +6,9 @@ import moment from 'moment';
 import { Fragment, useRef, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+import { SiteLogsData, LogType } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { LogType } from '../..';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
 import './style.scss';
 

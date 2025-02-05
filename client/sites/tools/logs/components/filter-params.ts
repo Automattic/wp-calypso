@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { LogType } from 'calypso/sites/tools/logs';
+import { LogType } from 'calypso/data/hosting/use-site-logs-query';
 import type { Moment } from 'moment';
 
 interface SiteLogsTabParamsType {

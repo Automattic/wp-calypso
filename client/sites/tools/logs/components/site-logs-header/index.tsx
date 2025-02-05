@@ -2,7 +2,8 @@ import { Button } from '@wordpress/components';
 import { translate, useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
-import { buildFilterParam, LogType } from 'calypso/sites/tools/logs';
+import { LogType } from 'calypso/data/hosting/use-site-logs-query';
+import { buildFilterParam } from 'calypso/sites/tools/logs';
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import type { Moment } from 'moment';
 

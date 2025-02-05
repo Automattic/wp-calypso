@@ -3,10 +3,10 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
+import { LogType, PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-query';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { useCurrentSiteGmtOffset } from './use-current-site-gmt-offset';
-import type { LogType, PHPLog, ServerLog } from '../types';
 import type { Field, Operator } from '@wordpress/dataviews';
 
 const useFields = ( { logType }: { logType: LogType } ) => {

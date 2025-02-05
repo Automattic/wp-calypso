@@ -14,7 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery, FilterType } from 'calypso/data/hosting/use-site-logs-query';
+import { useSiteLogsQuery, FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -34,7 +34,6 @@ import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
 import useFields from './hooks/use-fields';
-import type { LogType } from './types';
 import type { View, ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
