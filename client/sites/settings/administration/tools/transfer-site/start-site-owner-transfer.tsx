@@ -10,11 +10,11 @@ import Notice from 'calypso/components/notice';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../../utils';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
@@ -342,7 +342,7 @@ const StartSiteOwnerTransfer = ( {
 		</>
 	);
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useIsSiteSettingsUntangled();
 
 	return (
 		<>

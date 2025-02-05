@@ -1,8 +1,7 @@
 import { Gridicon, ShortenedNumber } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -68,7 +67,11 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 				>
 					{ trendIcon }
 					<div className="sites-overview__stats">
-						<span className="shortened-number">{ formatNumber( totalViews ) }</span>
+						<span className="shortened-number">
+							{ numberFormat( totalViews, {
+								numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+							} ) }
+						</span>
 					</div>
 				</button>
 			);

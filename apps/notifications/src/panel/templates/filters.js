@@ -17,7 +17,7 @@ const Filters = {
 			translate( 'Get active! Comment on posts from blogs you follow.', {
 				comment: 'Notifications all filter: no notifications',
 			} ),
-		emptyLink: 'https://wordpress.com/read/',
+		emptyLink: 'https://wordpress.com/reader/',
 		filter: () => true,
 	},
 	unread: {
@@ -53,7 +53,7 @@ const Filters = {
 			translate( 'Join a conversation: search for blogs that share your interests in the Reader.', {
 				comment: 'Notifications comments filter: no notifications',
 			} ),
-		emptyLink: 'https://wordpress.com/read/search/',
+		emptyLink: 'https://wordpress.com/reader/search/',
 		filter: ( { type } ) => 'comment' === type,
 	},
 	follows: {

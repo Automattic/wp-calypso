@@ -407,7 +407,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					const searchParam = req.query.s || req.query.q;
 					if ( searchParam ) {
 						res.redirect(
-							'https://wordpress.com/read/search?q=' + encodeURIComponent( searchParam )
+							'https://wordpress.com/reader/search?q=' + encodeURIComponent( searchParam )
 						);
 						return;
 					}
@@ -858,29 +858,29 @@ function wpcomPages( app ) {
 			return res.redirect( 'https://wordpress.com/email-subscriptions' );
 		}
 
-		const basePath = 'https://wordpress.com/read/subscriptions';
+		const basePath = 'https://wordpress.com/reader/subscriptions';
 
 		// If user enters /subscriptions/sites(.*),
-		// redirect to /read/subscriptions.
+		// redirect to /reader/subscriptions.
 		if ( req.path.match( '/subscriptions/sites' ) ) {
 			return res.redirect( basePath );
 		}
 
 		// If user enters /site/*,
-		// redirect to /read/site/subscription/*.
+		// redirect to /reader/site/subscription/*.
 		const siteFragment = req.path.match( /site\/(.*)/i );
 		if ( siteFragment && siteFragment[ 1 ] ) {
-			return res.redirect( 'https://wordpress.com/read/site/subscription/' + siteFragment[ 1 ] );
+			return res.redirect( 'https://wordpress.com/reader/site/subscription/' + siteFragment[ 1 ] );
 		}
 
 		// If user enters /subscriptions/comments(.*),
-		// redirect to /read/subscriptions/comments.
+		// redirect to /reader/subscriptions/comments.
 		if ( req.path.match( '/subscriptions/comments' ) ) {
 			return res.redirect( basePath + '/comments' );
 		}
 
 		// If user enters /subscriptions/pending(.*),
-		// redirect to /read/subscriptions/pending.
+		// redirect to /reader/subscriptions/pending.
 		if ( req.path.match( '/subscriptions/pending' ) ) {
 			return res.redirect( basePath + '/pending' );
 		}

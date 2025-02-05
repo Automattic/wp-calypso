@@ -25,7 +25,7 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../../utils';
+import { isSiteSettingsUntangled } from '../../../utils';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -46,6 +46,7 @@ class DeleteSite extends Component {
 	state = {
 		confirmDomain: '',
 		isDeletingSite: false,
+		isUntangled: false,
 	};
 
 	renderNotice() {
@@ -169,10 +170,9 @@ class DeleteSite extends Component {
 	};
 
 	_goBack = () => {
+		const { isUntangled } = this.state;
 		const { siteSlug } = this.props;
-		const source = isHostingMenuUntangled()
-			? '/sites/settings/administration'
-			: getSettingsSource();
+		const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};
@@ -190,6 +190,14 @@ class DeleteSite extends Component {
 		}
 	}
 
+	componentDidMount() {
+		isSiteSettingsUntangled().then( ( isUntangled ) => {
+			if ( this.state.isUntangled !== isUntangled ) {
+				this.setState( { isUntangled } );
+			}
+		} );
+	}
+
 	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
@@ -204,6 +212,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
+		const { isUntangled } = this.state;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -214,7 +223,6 @@ class DeleteSite extends Component {
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
-		const isUntangled = isHostingMenuUntangled();
 
 		return (
 			<Panel className="settings-administration__delete-site">

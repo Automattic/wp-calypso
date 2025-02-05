@@ -86,11 +86,11 @@ class InviteAcceptLoggedIn extends Component {
 	renderMatchEmailError = () => {
 		return (
 			<Card>
-				<InviteFormHeader { ...this.props.invite } user={ this.props.user } matchEmailError />
+				<InviteFormHeader { ...this.props.invite } user={ this.props.user } />
 				<div className="invite-accept-logged-in__button-bar">
 					<Button onClick={ this.signInLink } href={ this.props.signInLink }>
 						{ this.props.invite.knownUser
-							? this.props.translate( 'Sign In as %(email)s', {
+							? this.props.translate( 'Sign in as %(email)s', {
 									context: 'button',
 									args: { email: this.props.invite.sentTo },
 							  } )

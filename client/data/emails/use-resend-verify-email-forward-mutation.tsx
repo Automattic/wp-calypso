@@ -1,11 +1,10 @@
 import { CALYPSO_CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { getEmailForwardAddress } from 'calypso/lib/emails';
 import wp from 'calypso/lib/wp';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { EmailAccountEmail } from './types';
+import type { AlterDestinationParams } from './types';
 import type { UseMutationOptions } from '@tanstack/react-query';
 
 const MUTATION_KEY = 'reverifyEmailForward';
@@ -18,7 +17,10 @@ const MUTATION_KEY = 'reverifyEmailForward';
  */
 export default function useResendVerifyEmailForwardMutation(
 	domainName: string,
-	mutationOptions: Omit< UseMutationOptions< any, unknown, EmailAccountEmail >, 'mutationFn' > = {}
+	mutationOptions: Omit<
+		UseMutationOptions< any, unknown, AlterDestinationParams >,
+		'mutationFn'
+	> = {}
 ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -31,7 +33,7 @@ export default function useResendVerifyEmailForwardMutation(
 	mutationOptions.onSuccess = ( data, emailForward, context ) => {
 		suppliedOnSuccess?.( data, emailForward, context );
 
-		const destination = getEmailForwardAddress( emailForward );
+		const { destination } = emailForward;
 
 		const successMessage = translate(
 			'Successfully sent confirmation email for %(email)s to %(destination)s.',
@@ -69,12 +71,12 @@ export default function useResendVerifyEmailForwardMutation(
 		dispatch( errorNotice( failureMessage ) );
 	};
 
-	return useMutation< any, unknown, EmailAccountEmail >( {
-		mutationFn: ( { mailbox } ) =>
+	return useMutation< any, unknown, AlterDestinationParams >( {
+		mutationFn: ( { mailbox, destination } ) =>
 			wp.req.post(
 				`/domains/${ encodeURIComponent( domainName ) }/email/${ encodeURIComponent(
 					mailbox
-				) }/resend-verification`
+				) }/${ encodeURIComponent( destination ) }/resend-verification`
 			),
 		...mutationOptions,
 	} );

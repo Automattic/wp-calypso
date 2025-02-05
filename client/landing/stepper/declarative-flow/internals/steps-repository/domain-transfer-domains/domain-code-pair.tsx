@@ -130,7 +130,8 @@ export function DomainCodePair( {
 		onChange( id, { domain, auth, valid, rawPrice, saleCost, currencyCode } );
 	}, [ domain, id, onChange, auth, valid, loading, rawPrice, saleCost, currencyCode ] );
 
-	const shouldReportError = hasDuplicates || ( ! loading && domain && auth ? true : false );
+	const authCheck = ! isHundredYearDomainsTransferFlow ? Boolean( auth ) : message;
+	const shouldReportError = hasDuplicates || ( ! loading && domain && authCheck ? true : false );
 
 	useEffect( () => {
 		if ( shouldReportError && ! valid && message ) {
