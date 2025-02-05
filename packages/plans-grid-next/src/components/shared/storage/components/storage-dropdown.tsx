@@ -93,43 +93,39 @@ const StorageDropdown = ( {
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
 		[ planSlug, siteId ]
 	);
-	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
+	const defaultStorageOptionSlug = useDefaultStorageOption( { planSlug } );
 	const availableStorageAddOns = AddOns.useAvailableStorageAddOns( { siteId } );
 	const planStorage = usePlanStorage( planSlug );
 
 	useEffect( () => {
 		if ( ! selectedStorageOptionForPlan ) {
-			defaultStorageOption &&
+			defaultStorageOptionSlug &&
 				setSelectedStorageOptionForPlan( {
-					addOnSlug: defaultStorageOption,
+					addOnSlug: defaultStorageOptionSlug,
 					planSlug,
 					siteId,
 				} );
 		}
 	}, [
-		defaultStorageOption,
+		defaultStorageOptionSlug,
 		planSlug,
 		selectedStorageOptionForPlan,
 		setSelectedStorageOptionForPlan,
 		siteId,
 	] );
 
-	const defaultStorageItem = useMemo(
-		() => ( {
-			key: defaultStorageOption || '',
-			name: (
-				<StorageDropdownOption price="" totalStorage={ planStorage } />
-			 ) as unknown as string,
-		} ),
-		[ defaultStorageOption, planStorage ]
-	);
+	const selectControlOptions = useMemo( () => {
+		// Get the default storage add-on meta or the storage included with the plan
+		const defaultStorageAddOnMeta = getSelectedStorageAddOn(
+			storageAddOns,
+			defaultStorageOptionSlug || ''
+		) || { addOnSlug: defaultStorageOptionSlug, prices: null, quantity: 0 };
 
-	const selectControlOptions = [ defaultStorageItem ].concat(
-		availableStorageAddOns?.map( ( addOn ) => {
-			const addOnStorage = addOn.quantity ?? 0;
+		return [ defaultStorageAddOnMeta, ...availableStorageAddOns ]?.map( ( addOn ) => {
+			const addOnStorage = addOn?.quantity ?? 0;
 
 			return {
-				key: addOn.addOnSlug,
+				key: addOn?.addOnSlug || '',
 				name: (
 					<StorageDropdownOption
 						price={ addOn?.prices?.formattedMonthlyPrice }
@@ -137,8 +133,8 @@ const StorageDropdown = ( {
 					/>
 				 ) as unknown as string,
 			};
-		} )
-	);
+		} );
+	}, [ availableStorageAddOns, defaultStorageOptionSlug, planStorage, storageAddOns ] );
 
 	const selectedStorageAddOn = getSelectedStorageAddOn(
 		storageAddOns,
