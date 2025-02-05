@@ -128,7 +128,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		query,
 		null,
 		{
-			enabled: ! shouldGate && geoMode !== 'country',
+			enabled: ! shouldGate && supportsLocationsStatsFeature && geoMode !== 'country',
 		}
 	);
 
