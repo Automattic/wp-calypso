@@ -1,6 +1,13 @@
 import './style.scss';
 
 type Props = {
+	/**
+	 * The CSS class name applied to the SVG element.
+	 *
+	 * Note that passing a class name through this prop will override the default class,
+	 * rather than merging them together. We plan to fix this behavior.
+	 * @default 'wordpress-logo'
+	 */
 	className?: string;
 	/**
 	 * The size of the logo in pixels.
