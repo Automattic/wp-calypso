@@ -97,6 +97,16 @@ export const DomainsDataViews = ( {
 		navigate( domainManagementLink );
 	};
 
+	const onChangeSelection = ( items: string[] ) => {
+		setSelectedIds( items );
+		if ( items.length === 1 ) {
+			const selectedItem = domains?.find( ( d ) => getDomainId( d ) === items[ 0 ] );
+			if ( selectedItem ) {
+				onClickDomain( selectedItem );
+			}
+		}
+	};
+
 	return (
 		<>
 			{ ! sidebarMode && <BulkUpdateNotice /> }
@@ -113,7 +123,7 @@ export const DomainsDataViews = ( {
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
 					selection={ selectedDomain ? [ getDomainId( selectedDomain ) ] : selectedIds }
-					onChangeSelection={ setSelectedIds }
+					onChangeSelection={ onChangeSelection }
 					isLoading={ isLoading }
 					defaultLayouts={ layout }
 				/>
