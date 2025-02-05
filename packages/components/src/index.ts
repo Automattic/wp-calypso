@@ -30,7 +30,6 @@ export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
-export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressWordmark } from './wordpress-wordmark';
 export { default as MaterialIcon } from './material-icon';
 export { ListTile } from './list-tile';
