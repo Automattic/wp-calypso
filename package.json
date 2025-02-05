@@ -365,7 +365,6 @@
 		"@wordpress/e2e-test-utils": "11.16.0",
 		"@wordpress/e2e-tests": "8.16.0",
 		"@wordpress/edit-post": "8.16.0",
-		"@wordpress/edit-site": "6.16.0",
 		"@wordpress/edit-widgets": "6.16.0",
 		"@wordpress/editor": "14.16.0",
 		"@wordpress/element": "^6.16.0",

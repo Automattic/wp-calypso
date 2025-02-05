@@ -11,10 +11,6 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { store as editSiteStore } from '@wordpress/edit-site';
 import { useContext } from '@wordpress/element';
 import { isRTL, __ } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
@@ -47,6 +43,9 @@ type SidebarNavigationScreenProps = {
 	footer?: React.ReactNode;
 	description?: string;
 	backPath?: string;
+
+	navigationBackLabel?: string; // @unstable -> not in core
+	navigationBackPath?: string; // @unstable -> not in core
 };
 
 export default function SidebarNavigationScreen( {
@@ -58,28 +57,13 @@ export default function SidebarNavigationScreen( {
 	footer,
 	description,
 	backPath: backPathProp,
+	navigationBackLabel = __( 'Back' ), // @unstable -> not in core
+	navigationBackPath = '/', // @unstable -> not in core
 }: SidebarNavigationScreenProps ) {
 	unstableResourceWarning(
 		'<SidebarNavigationScreen />',
 		'https://github.com/WordPress/gutenberg/blob/56883338749aa23acc75481c3bbc605bf1cb5a81/packages/edit-site/src/components/sidebar-navigation-screen/index.js#L35'
 	);
-
-	// previewingThemeName
-	const { dashboardLink, dashboardLinkText } = useSelect( ( select ) => {
-		const { getSettings } = select( editSiteStore );
-		// const currentlyPreviewingThemeId = currentlyPreviewingTheme();
-		return {
-			dashboardLink: getSettings().__experimentalDashboardLink,
-			dashboardLinkText: getSettings().__experimentalDashboardLinkText,
-
-			// Do not call `getTheme` with null, it will cause a request to
-			// the server.
-			// previewingThemeName: currentlyPreviewingThemeId
-			// 	? select( coreStore ).getTheme( currentlyPreviewingThemeId )
-			// 			?.name?.rendered
-			// 	: undefined,
-		};
-	}, [] );
 
 	const location = useLocation();
 	const history = useHistory();
@@ -115,8 +99,8 @@ export default function SidebarNavigationScreen( {
 					{ isRoot && (
 						<SidebarButton
 							icon={ icon }
-							label={ dashboardLinkText || __( 'Go to the Dashboard' ) }
-							href={ dashboardLink }
+							label={ navigationBackLabel }
+							href={ navigationBackPath }
 						/>
 					) }
 					<Heading

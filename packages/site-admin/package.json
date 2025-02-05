@@ -49,7 +49,6 @@
 		"@wordpress/commands": "^1.17.0",
 		"@wordpress/components": "^29.3.0",
 		"@wordpress/dom": "^4.17.0",
-		"@wordpress/edit-site": "^6.17.0",
 		"@wordpress/element": "^6.17.0",
 		"@wordpress/i18n": "^5.17.0",
 		"@wordpress/icons": "^10.17.0",

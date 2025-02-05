@@ -13,9 +13,6 @@ import {
 } from '@wordpress/components';
 import { store as coreStore } from '@wordpress/core-data';
 import { useSelect, useDispatch } from '@wordpress/data';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { store as editSiteStore } from '@wordpress/edit-site';
 import { memo, forwardRef, useContext } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __ } from '@wordpress/i18n';
@@ -37,86 +34,94 @@ interface SiteData {
 	url: string;
 }
 
+interface SiteHubProps {
+	isTransparent: boolean;
+	goBackLabel: string; // @unstable: `goBackLabel` prop (not present in core)
+	goBackPath: string; // @unstable: `goBackPath` prop (not present in core)
+}
+
 const SiteHub = memo(
-	forwardRef( ( { isTransparent }: { isTransparent: boolean }, ref ) => {
-		unstableResourceWarning(
-			'<SiteHub />',
-			'https://github.com/WordPress/gutenberg/blob/9f7d7dc52bb1ac42043f93a1e8bd243eddd5aa97/packages/edit-site/src/components/site-hub/index.js#L34'
-		);
+	forwardRef(
+		(
+			{ isTransparent, goBackPath = '/', goBackLabel = __( 'Go to the Dashboard' ) }: SiteHubProps,
+			ref
+		) => {
+			unstableResourceWarning(
+				'<SiteHub />',
+				'https://github.com/WordPress/gutenberg/blob/9f7d7dc52bb1ac42043f93a1e8bd243eddd5aa97/packages/edit-site/src/components/site-hub/index.js#L34'
+			);
 
-		const { dashboardLink, homeUrl, siteTitle } = useSelect( ( select ) => {
-			const { getSettings } = select( editSiteStore );
+			const { homeUrl, siteTitle } = useSelect( ( select ) => {
+				const { getEntityRecord } = select( coreStore );
 
-			const { getEntityRecord } = select( coreStore );
+				// @todo: @unstable: TS fix -> SiteData should be defined
+				const _site = getEntityRecord( 'root', 'site' ) as SiteData;
 
-			// @todo: @unstable: TS fix -> SiteData should be defined
-			const _site = getEntityRecord( 'root', 'site' ) as SiteData;
+				// @todo: @unstable: TS fix -> home should be string
+				const home = select( coreStore ).getEntityRecord< {
+					home: string;
+				} >( 'root', '__unstableBase' )?.home;
 
-			// @todo: @unstable: TS fix -> home should be string
-			const home = select( coreStore ).getEntityRecord< {
-				home: string;
-			} >( 'root', '__unstableBase' )?.home;
+				return {
+					homeUrl: home,
+					siteTitle:
+						! _site?.title && !! _site?.url ? filterURLForDisplay( _site?.url ) : _site?.title,
+				};
+			}, [] );
+			const { open: openCommandCenter } = useDispatch( commandsStore );
 
-			return {
-				dashboardLink: getSettings().__experimentalDashboardLink,
-				homeUrl: home,
-				siteTitle:
-					! _site?.title && !! _site?.url ? filterURLForDisplay( _site?.url ) : _site?.title,
-			};
-		}, [] );
-		const { open: openCommandCenter } = useDispatch( commandsStore );
-
-		return (
-			<div className="edit-site-site-hub">
-				<HStack justify="flex-start" spacing="0">
-					<div
-						className={ clsx( 'edit-site-site-hub__view-mode-toggle-container', {
-							'has-transparent-background': isTransparent,
-						} ) }
-					>
-						<Button
-							__next40pxDefaultSize
-							ref={ ref }
-							href={ dashboardLink }
-							label={ __( 'Go to the Dashboard' ) }
-							className="edit-site-layout__view-mode-toggle"
-							style={ {
-								transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
-								borderRadius: 4,
-							} }
+			return (
+				<div className="edit-site-site-hub">
+					<HStack justify="flex-start" spacing="0">
+						<div
+							className={ clsx( 'edit-site-site-hub__view-mode-toggle-container', {
+								'has-transparent-background': isTransparent,
+							} ) }
 						>
-							<SiteIcon className="edit-site-layout__view-mode-toggle-icon" />
-						</Button>
-					</div>
-
-					<HStack>
-						<div className="edit-site-site-hub__title">
-							<Button __next40pxDefaultSize variant="link" href={ homeUrl } target="_blank">
-								{ decodeEntities( siteTitle ) }
-								<VisuallyHidden as="span">
-									{
-										/* translators: accessibility text */
-										__( '(opens in a new tab)' )
-									}
-								</VisuallyHidden>
+							<Button
+								__next40pxDefaultSize
+								ref={ ref }
+								href={ goBackPath }
+								label={ goBackLabel }
+								className="edit-site-layout__view-mode-toggle"
+								style={ {
+									transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
+									borderRadius: 4,
+								} }
+							>
+								<SiteIcon className="edit-site-layout__view-mode-toggle-icon" />
 							</Button>
 						</div>
-						<HStack spacing={ 0 } expanded={ false } className="edit-site-site-hub__actions">
-							<Button
-								size="compact"
-								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-								className="edit-site-site-hub_toggle-command-center"
-								icon={ search }
-								onClick={ () => openCommandCenter() }
-								label={ __( 'Open command palette' ) }
-								shortcut={ displayShortcut.primary( 'k' ) }
-							/>
+
+						<HStack>
+							<div className="edit-site-site-hub__title">
+								<Button __next40pxDefaultSize variant="link" href={ homeUrl } target="_blank">
+									{ decodeEntities( siteTitle ) }
+									<VisuallyHidden as="span">
+										{
+											/* translators: accessibility text */
+											__( '(opens in a new tab)' )
+										}
+									</VisuallyHidden>
+								</Button>
+							</div>
+							<HStack spacing={ 0 } expanded={ false } className="edit-site-site-hub__actions">
+								<Button
+									size="compact"
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									className="edit-site-site-hub_toggle-command-center"
+									icon={ search }
+									onClick={ () => openCommandCenter() }
+									label={ __( 'Open command palette' ) }
+									shortcut={ displayShortcut.primary( 'k' ) }
+								/>
+							</HStack>
 						</HStack>
 					</HStack>
-				</HStack>
-			</div>
-		);
-	} )
+				</div>
+			);
+		}
+	)
 );
 
 export default SiteHub;
@@ -124,11 +129,11 @@ export default SiteHub;
 // @unstable: declare SiteHubMobileProps type (not present in core)
 type SiteHubMobileProps = {
 	isTransparent: boolean;
-	backPath?: string; // @unstable: `backPath` prop (not present in core)
+	goBackPath?: string; // @unstable: `goBackPath` prop (not present in core)
 };
 
 export const SiteHubMobile = memo(
-	forwardRef( ( { isTransparent, backPath = '/' }: SiteHubMobileProps, ref ) => {
+	forwardRef( ( { isTransparent, goBackPath = '/' }: SiteHubMobileProps, ref ) => {
 		unstableResourceWarning(
 			'<SiteHubMobile />',
 			'https://github.com/WordPress/gutenberg/blob/c2d2d692e09c624bd693355822eaa23f670f84b7/packages/edit-site/src/components/site-hub/index.js#L118'
@@ -136,8 +141,7 @@ export const SiteHubMobile = memo(
 		const history = useHistory();
 		const { navigate } = useContext( SidebarNavigationContext );
 
-		const { dashboardLink, isBlockTheme, homeUrl, siteTitle } = useSelect( ( select ) => {
-			const { getSettings } = select( editSiteStore );
+		const { isBlockTheme, homeUrl, siteTitle } = useSelect( ( select ) => {
 			const { getEntityRecord, getCurrentTheme } = select( coreStore );
 
 			const _site = getEntityRecord( 'root', 'site' ) as SiteData;
@@ -148,7 +152,6 @@ export const SiteHubMobile = memo(
 			} >( 'root', '__unstableBase' )?.home;
 
 			return {
-				dashboardLink: getSettings().__experimentalDashboardLink,
 				isBlockTheme: getCurrentTheme()?.is_block_theme,
 				homeUrl: home,
 				siteTitle:
@@ -175,12 +178,12 @@ export const SiteHubMobile = memo(
 							} }
 							{ ...( ! isBlockTheme
 								? {
-										href: dashboardLink,
+										href: goBackPath,
 										label: __( 'Go to the Dashboard' ),
 								  }
 								: {
 										onClick: () => {
-											history.navigate( backPath ); // @unstable: `backPath` prop (not present in core)
+											history.navigate( goBackPath ); // @unstable: `goBackPath` prop (not present in core)
 											navigate( 'back' );
 										},
 										label: __( 'Go to Site Editor' ),
