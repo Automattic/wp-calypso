@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import UplotChart from 'calypso/components/chart-uplot';
+import LineChart from 'calypso/my-sites/stats/components/line-chart';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
