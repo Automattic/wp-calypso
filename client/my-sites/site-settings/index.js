@@ -20,7 +20,7 @@ import {
 	setScroll,
 	siteSettings,
 	redirectToolsIfRemoveDuplicateViewsExperimentEnabled,
-	rediorectSettingsIfDuplciatedViewsEnabled,
+	redirectSettingsIfDuplciatedViewsEnabled,
 	redirectGeneralSettingsIfDuplicatedViewsEnabled,
 } from 'calypso/my-sites/site-settings/settings-controller';
 import {
@@ -28,7 +28,7 @@ import {
 	redirectIfCantStartSiteOwnerTransfer,
 } from 'calypso/sites/settings/administration/controller';
 export default function () {
-	page( '/settings', rediorectSettingsIfDuplciatedViewsEnabled );
+	page( '/settings', redirectSettingsIfDuplciatedViewsEnabled );
 
 	page(
 		'/settings/general/:site_id',

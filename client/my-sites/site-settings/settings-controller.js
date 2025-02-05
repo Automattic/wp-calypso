@@ -65,7 +65,7 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  *
  * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
  */
-export const rediorectSettingsIfDuplciatedViewsEnabled = async () => {
+export const redirectSettingsIfDuplciatedViewsEnabled = async () => {
 	const isRemoveDuplicateViewsExperimentEnabled =
 		await getIsRemoveDuplicateViewsExperimentEnabled();
 
