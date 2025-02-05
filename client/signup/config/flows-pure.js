@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { saveReaderAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 
 const noop = () => {};
 
@@ -372,6 +373,9 @@ export function generateFlows( {
 			lastModified: '2025-01-28',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			postCompleteCallback: async ( { dispatch } ) => {
+				dispatch( saveReaderAsLandingPage() );
+			},
 		},
 		{
 			name: 'crowdsignal',
