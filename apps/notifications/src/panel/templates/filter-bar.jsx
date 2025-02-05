@@ -14,6 +14,10 @@ export class FilterBar extends Component {
 		if ( this.props.isPanelOpen ) {
 			this.focusOnSelectedTab();
 		}
+
+		this.filterListRef.current?.addEventListener( 'wheel', this.handleWheel, {
+			passive: false,
+		} );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -31,6 +35,15 @@ export class FilterBar extends Component {
 		if ( this.timerId ) {
 			window.clearTimeout( this.timerId );
 		}
+
+		this.filterListRef.current?.removeEventListener( 'wheel', this.handleWheel, {
+			passive: false,
+		} );
+	}
+
+	handleWheel( e ) {
+		// Using the wheel on the filter bar should not scroll the whole page.
+		e.preventDefault();
 	}
 
 	setFilterItems = () => {
