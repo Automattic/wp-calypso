@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Button, FormLabel } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { suggestEmailCorrection } from '@automattic/onboarding';
 import emailValidator from 'email-validator';
 import { localize } from 'i18n-calypso';
@@ -142,13 +143,34 @@ class PasswordlessSignupForm extends Component {
 		this.submitTracksEvent( false, { action_message: error.message, error_code: error.error } );
 
 		if ( ! isExistingAccountError( error.error ) ) {
-			this.setState( {
-				errorMessages: [
-					this.props.translate(
-						'Sorry, something went wrong when trying to create your account. Please try again.'
-					),
-				],
-			} );
+			if ( error.error === 'throttled' ) {
+				this.setState( {
+					errorMessages: [
+						this.props.translate(
+							'Too many attempts. Please try again later. If you think this is in error, {{a}}contact support{{/a}}.',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/support/contact/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										></a>
+									),
+								},
+							}
+						),
+					],
+				} );
+			} else {
+				this.setState( {
+					errorMessages: [
+						this.props.translate(
+							'Sorry, something went wrong when trying to create your account. Please try again.'
+						),
+					],
+				} );
+			}
 		}
 
 		this.setState( {
