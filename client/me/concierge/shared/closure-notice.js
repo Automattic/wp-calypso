@@ -3,6 +3,7 @@ import { CompactCard as Card } from '@automattic/components';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+
 const DATE_FORMAT = 'LLL';
 
 const ClosureNotice = ( { closesAt, displayAt, reopensAt, isGM } ) => {
@@ -16,6 +17,7 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt, isGM } ) => {
 		return null;
 	}
 
+	/** @type {Record<string, { before: string, during: string, reason?: string }>} */
 	const MESSAGES = {
 		default: {
 			before: translate(
@@ -85,13 +87,13 @@ const ClosureNotice = ( { closesAt, displayAt, reopensAt, isGM } ) => {
 		},
 	};
 
-	const messages = MESSAGES[ isGM ? 'gm' : 'default' ];
+	const variant = MESSAGES[ isGM ? 'gm' : 'default' ];
 
 	return (
 		<Card>
 			<VStack>
-				<div>{ currentDate.isBefore( closesAt ) ? messages.before : messages.during }</div>
-				{ messages.reason && <div>{ messages.reason }</div> }
+				<div>{ currentDate.isBefore( closesAt ) ? variant.before : variant.during }</div>
+				{ variant.reason && <div>{ variant.reason }</div> }
 			</VStack>
 		</Card>
 	);
