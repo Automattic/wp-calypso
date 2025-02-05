@@ -315,7 +315,7 @@ interface DesignPickerProps {
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onDesignWithAI,
+	//onDesignWithAI,
 	onPreview,
 	onChangeVariation,
 	designs,
@@ -398,7 +398,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					</DesignPickerFilterGroup>
 				) }
-				{ isBigSkyEligible && (
+				{ /* isBigSkyEligible && (
 					<DesignPickerFilterGroup>
 						<Button
 							className={ clsx(
@@ -412,7 +412,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							{ translate( 'Design with AI' ) }
 						</Button>
 					</DesignPickerFilterGroup>
-				) }
+				) */ }
 			</div>
 
 			{ isMultiFilterEnabled && selectedCategoriesWithoutDesignTier.length > 1 && (

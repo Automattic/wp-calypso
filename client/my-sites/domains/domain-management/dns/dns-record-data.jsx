@@ -1,13 +1,7 @@
-import {
-	DNS_RECORDS_DEFAULT,
-	DNS_RECORDS_DEFAULT_MX,
-	DNS_RECORDS_DEFAULT_A,
-	DNS_RECORDS_DEFAULT_CNAME,
-} from '@automattic/urls';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import DnsRecordsListItem from './dns-records-list-item';
 
 class DnsRecordData extends Component {
@@ -30,16 +24,16 @@ class DnsRecordData extends Component {
 
 		// TODO: Remove this once we stop displaying the protected records
 		if ( dnsRecord.protected_field ) {
-			let url = DNS_RECORDS_DEFAULT;
+			let supportContext = 'dns_default_records';
 			switch ( type ) {
 				case 'MX':
-					url = DNS_RECORDS_DEFAULT_MX;
+					supportContext = 'dns-default-mx-records';
 					break;
 				case 'A':
-					url = DNS_RECORDS_DEFAULT_A;
+					supportContext = 'dns-default-a-records';
 					break;
 				case 'CNAME':
-					url = DNS_RECORDS_DEFAULT_CNAME;
+					supportContext = 'dns-default-cname-records';
 					break;
 			}
 
@@ -48,7 +42,9 @@ class DnsRecordData extends Component {
 					'Mail handled by WordPress.com email forwarding. {{supportLink}}Learn more{{/supportLink}}.',
 					{
 						components: {
-							supportLink: <ExternalLink href={ url } target="_blank" icon={ false } />,
+							supportLink: (
+								<InlineSupportLink supportContext={ supportContext } showIcon={ false } />
+							),
 						},
 					}
 				);
@@ -56,7 +52,7 @@ class DnsRecordData extends Component {
 
 			return translate( 'Handled by WordPress.com. {{supportLink}}Learn more{{/supportLink}}.', {
 				components: {
-					supportLink: <ExternalLink href={ url } target="_blank" icon={ false } />,
+					supportLink: <InlineSupportLink supportContext={ supportContext } showIcon={ false } />,
 				},
 			} );
 		}

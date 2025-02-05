@@ -28,6 +28,7 @@ import Geochart from '../../../geochart';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
 import CountryFilter from './country-filter';
+import sampleLocations from './sample-locations';
 
 import './style.scss';
 
@@ -170,6 +171,27 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
+	const divisionsTooltip = (
+		<StatsInfoArea>
+			{ translate(
+				'Countries and their subdivisions are based on {{link}}ISO 3166{{/link}} standards.',
+				{
+					comment: '{{link}} links to ISO standards.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href="https://www.iso.org/maintenance_agencies.html#72482"
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Regions/Cities module when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
+
 	const titleTooltip = (
 		<StatsInfoArea>
 			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
@@ -188,21 +210,24 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		</StatsInfoArea>
 	);
 
-	const fakeData = [
-		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
-		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
-		{ label: 'United Kingdom', countryCode: 'GB', value: 1200, region: '154' },
-		{ label: 'Canada', countryCode: 'CA', value: 1000, region: '021' },
-		{ label: 'Germany', countryCode: 'DE', value: 900, region: '155' },
-		{ label: 'Indonesia', countryCode: 'ID', value: 800, region: '035' },
-		{ label: 'Japan', countryCode: 'JP', value: 700, region: '030' },
-		{ label: 'France', countryCode: 'FR', value: 600, region: '155' },
-		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
-		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
-	];
 	const hasLocationData = Array.isArray( data ) && data.length > 0;
 
-	const locationData = shouldGate ? fakeData : data;
+	const locationData = shouldGate ? sampleLocations : data;
+
+	const heroElement = (
+		<>
+			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+			{ geoMode !== 'country' && ! summaryUrl && (
+				<CountryFilter
+					countries={ countriesList }
+					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+					selectedCountry={ countryFilter }
+					onCountryChange={ onCountryChange }
+					tooltip={ divisionsTooltip }
+				/>
+			) }
+		</>
+	);
 
 	return (
 		<>
@@ -236,24 +261,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={
-							<>
-								<Geochart
-									data={ locationData }
-									geoMode={ geoMode }
-									skipQuery
-									customHeight={ 480 }
-								/>
-								{ geoMode !== 'country' && ! summaryUrl && (
-									<CountryFilter
-										countries={ countriesList }
-										defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
-										selectedCountry={ countryFilter }
-										onCountryChange={ onCountryChange }
-									/>
-								) }
-							</>
-						}
+						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={

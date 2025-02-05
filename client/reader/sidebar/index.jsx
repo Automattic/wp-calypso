@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
@@ -223,16 +222,14 @@ export class ReaderSidebar extends Component {
 					link="/read/conversations"
 				/>
 
-				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
-					<ReaderSidebarLists
-						lists={ this.props.subscribedLists }
-						path={ path }
-						isOpen={ this.props.isListsOpen }
-						onClick={ this.props.toggleListsVisibility }
-						currentListOwner={ this.state.currentListOwner }
-						currentListSlug={ this.state.currentListSlug }
-					/>
-				) }
+				<ReaderSidebarLists
+					lists={ this.props.subscribedLists }
+					path={ path }
+					isOpen={ this.props.isListsOpen }
+					onClick={ this.props.toggleListsVisibility }
+					currentListOwner={ this.state.currentListOwner }
+					currentListSlug={ this.state.currentListSlug }
+				/>
 
 				<ReaderSidebarTags
 					tags={ this.props.followedTags }

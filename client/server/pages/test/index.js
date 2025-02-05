@@ -198,41 +198,28 @@ const buildApp = ( environment ) => {
 					'/* webpack manifest for evergreen */',
 					'/* webpack runtime for evergreen */',
 				],
-				entrypoints: {
-					'entry-main': {
-						assets: [ ...assetsList ],
-					},
-					'entry-domains-landing': {
-						assets: [
-							...assetsList.map( ( asset ) =>
-								asset.replace( 'entry-main', 'entry-domains-landing' )
-							),
-						],
-					},
-					'entry-gutenboarding': {
-						assets: [
-							...assetsList.map( ( asset ) =>
-								asset.replace( 'entry-main', 'entry-gutenboarding' )
-							),
-						],
-					},
-					'entry-browsehappy': {
-						assets: [
-							...assetsList.map( ( asset ) => asset.replace( 'entry-main', 'entry-browsehappy' ) ),
-						],
-					},
+				assets: {
+					'entry-main': assetsList,
+					'entry-domains-landing': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-domains-landing' )
+					),
+					'entry-gutenboarding': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-gutenboarding' )
+					),
+					'entry-browsehappy': assetsList.map( ( asset ) =>
+						asset.replace( 'entry-main', 'entry-browsehappy' )
+					),
+					...Object.fromEntries(
+						sections.map( ( section ) => [
+							section.name,
+							[
+								`/calypso/evergreen/${ section.name }.js`,
+								`/calypso/evergreen/${ section.name }.css`,
+								`/calypso/evergreen/${ section.name }.rtl.css`,
+							],
+						] )
+					),
 				},
-				chunks: [
-					...sections.map( ( section ) => ( {
-						names: [ section.name ],
-						files: [
-							`/calypso/evergreen/${ section.name }.js`,
-							`/calypso/evergreen/${ section.name }.css`,
-							`/calypso/evergreen/${ section.name }.rtl.css`,
-						],
-						siblings: [],
-					} ) ),
-				],
 			};
 			mockFs( {
 				'./build/assets.json': JSON.stringify( assets ),

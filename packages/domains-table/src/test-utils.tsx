@@ -36,6 +36,7 @@ export function testDomain(
 		blog_id: 113,
 		type: 'mapping',
 		is_wpcom_staging_domain: false,
+		is_hundred_year_domain: false,
 		has_registration: true,
 		registration_date: '2020-03-11T22:23:58+00:00',
 		expiry: '2026-03-11T00:00:00+00:00',

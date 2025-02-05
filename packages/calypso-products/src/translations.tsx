@@ -2124,7 +2124,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	const woocommerceStorefrontExtensionsBundleBenefits = [
 		translate( 'Enhance Storefront theme functionality' ),
 		translate( 'Add various design and layout improvements' ),
-		translate( 'Includes multiple Storefront-specific plugins' ),
+		translate( 'Include multiple Storefront-specific plugins' ),
 		translate( 'Improve site performance with optimized extensions' ),
 	];
 	const woocommerceTableRateShippingBenefits = [

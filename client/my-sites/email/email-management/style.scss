@@ -550,6 +550,11 @@
 				height: 24px;
 				fill: var(--color-accent);
 			}
+
+			// The my-sites SVG has a bit of extra padding on the sides, so we need to adjust the position.
+			.gridicon.gridicons-my-sites {
+				margin-left: -3px;
+			}
 		}
 
 		&__notice {

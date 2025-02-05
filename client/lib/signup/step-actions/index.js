@@ -3,6 +3,8 @@ import config from '@automattic/calypso-config';
 import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE, isDomainTransfer } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
+import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
+import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { isOnboardingGuidedFlow } from '@automattic/onboarding';
@@ -1246,29 +1248,17 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	const state = store.getState();
 	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
 
-	switch ( selectedStorage ) {
-		case AddOns.ADD_ON_50GB_STORAGE:
-			cartItem.push( {
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 50,
-				volume: 1,
-				extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
-			} );
-			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-				add_on_slug: AddOns.ADD_ON_50GB_STORAGE,
-			} );
-			break;
-		case AddOns.ADD_ON_100GB_STORAGE:
-			cartItem.push( {
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 100,
-				volume: 1,
-				extra: { feature_slug: AddOns.ADD_ON_100GB_STORAGE },
-			} );
-			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-				add_on_slug: AddOns.ADD_ON_100GB_STORAGE,
-			} );
-			break;
+	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
+		const selectedAddOn = getAddOn( selectedStorage );
+		cartItem.push( {
+			product_slug: PRODUCT_1GB_SPACE,
+			quantity: selectedAddOn.quantity,
+			volume: 1,
+			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
+		} );
+		recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+			add_on_slug: selectedAddOn.addOnSlug,
+		} );
 	}
 
 	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
