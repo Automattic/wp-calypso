@@ -203,7 +203,12 @@ export const SubscribersPageProvider = ( {
 			}
 		} else {
 			let notice = translate( 'An unknown error has occurred. Please try again in a second.' );
-			const noticeArgs = { isPersistent: true };
+			interface NoticeArgs {
+				isPersistent: boolean;
+				button?: string;
+				href?: string;
+			}
+			const noticeArgs: NoticeArgs = { isPersistent: true };
 
 			if (
 				'error' in importError &&
