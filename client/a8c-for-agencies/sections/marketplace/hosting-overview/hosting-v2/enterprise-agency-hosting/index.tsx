@@ -1,4 +1,4 @@
-import { VIPLogo, SalesforceLogo, SlackLogo, CNNLogo } from '@automattic/components';
+import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -7,9 +7,12 @@ import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import ProfileAvatar1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.png';
 import ProfileAvatar2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.png';
 import CapeGeminiLogo from 'calypso/assets/images/logos/capgemini.svg';
+import CNNLogo from 'calypso/assets/images/logos/cnn.svg';
 import MetaLogo from 'calypso/assets/images/logos/meta.svg';
 import NewYorkPostLogo from 'calypso/assets/images/logos/new-york-post.svg';
 import NewsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
+import SalesforceLogo from 'calypso/assets/images/logos/salesforce.svg';
+import SlackLogo from 'calypso/assets/images/logos/slack.svg';
 import SpotifyLogo from 'calypso/assets/images/logos/spotify.svg';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -87,11 +90,11 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						} ) }
 					</div>
 					<div className="enterprise-agency-hosting__logos">
-						<SalesforceLogo />
+						<img src={ SalesforceLogo } alt="Salesforce" />
 						<img src={ MetaLogo } alt="Meta" />
-						<SlackLogo />
+						<img src={ SlackLogo } alt="Slack" />
 						<img src={ SpotifyLogo } alt="Spotify" />
-						<CNNLogo />
+						<img src={ CNNLogo } alt="CNN" />
 						<img src={ NewsCorpLogo } alt="News Corp" />
 						<img src={ CapeGeminiLogo } alt="Capgemini" />
 						<img src={ NewYorkPostLogo } alt="New York Post" />
