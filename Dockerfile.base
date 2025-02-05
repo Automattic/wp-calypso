@@ -1,7 +1,7 @@
 #### cache image
 #### This image is not pushed to any repository and it shouldn't be used as base image for any other docker build.
 #### Its main goal is to create a `/calypso/.cache` that can be copied over other images that can benefit from a warm cache.
-#### Note that yarn v3 cache lives in `/calypso/.yarn`
+
 FROM node:22.9.0-bullseye-slim as cache
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -21,6 +21,10 @@ ENV IS_CI=true
 ENV COMMIT_SHA $commit_sha
 
 COPY . .
+
+# Yarn v4 cache may live outside of the main dir, so we set it to a local one.
+RUN mkdir /calypso/.yarn/cache
+RUN yarn config set cacheFolder /calypso/.yarn/cache
 
 RUN yarn --inline-builds \
 	# Prime webpack caches, including sourcemaps.
