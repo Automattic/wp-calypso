@@ -106,6 +106,7 @@
 		"purchases/purchase-list-dataview": false,
 		"reader": true,
 		"reader/user-profile": true,
+		"reader/discovery-v2": false,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
