@@ -625,9 +625,8 @@ class Login extends Component {
 						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
-						isWoo
+						isWooOnboarding
 						width={ 200 }
-						lightColorScheme
 					/>
 				</div>
 			);
