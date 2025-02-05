@@ -2,7 +2,8 @@
 
 ### Breaking changes
 
-- Remove unused corporate logos ([#99229](https://github.com/Automattic/wp-calypso/pull/99229)).
+- Remove unused corporate logos for CNN, Salesforce, and Slack ([#99367](https://github.com/Automattic/wp-calypso/pull/99367)).
+- Remove unused corporate logos for Bloomberg, Conde Nast, Disney, Facebook, and Time ([#99229](https://github.com/Automattic/wp-calypso/pull/99229)).
 - Remove GMClosureNotice ([#99309](https://github.com/Automattic/wp-calypso/pull/99309)).
 
 ### Enhancements
