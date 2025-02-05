@@ -46,6 +46,7 @@
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 24px;
+		justify-items: center;
 
 		@include break-medium {
 			grid-template-columns: repeat(3, 1fr);
@@ -58,7 +59,7 @@
 		svg,
 		img {
 			width: 120px;
-			min-height: 40px;
+			height: 40px;
 
 			@include break-xlarge {
 				width: auto;

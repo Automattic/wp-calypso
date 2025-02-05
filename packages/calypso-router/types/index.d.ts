@@ -177,6 +177,11 @@ interface Page {
 	 * Current path
 	 */
 	current: string;
+
+	/**
+	 * Navigate back to the previous route
+	 */
+	back: ( path: string ) => void;
 }
 
 class Route {

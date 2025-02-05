@@ -30,7 +30,6 @@ export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
-export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressWordmark } from './wordpress-wordmark';
 export { default as MaterialIcon } from './material-icon';
 export { ListTile } from './list-tile';
@@ -71,11 +70,8 @@ export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
 export { default as ClientLogoList } from './client-logo-list';
-export { default as JetpackLogo } from './logos/jetpack-logo';
+export { JetpackLogo } from './logos/jetpack-logo';
 export { default as CloudLogo } from './logos/cloud-logo';
-export { default as CNNLogo } from './logos/cnn-logo';
-export { default as SalesforceLogo } from './logos/salesforce-logo';
-export { default as SlackLogo } from './logos/slack-logo';
 export { default as VIPLogo } from './logos/vip-logo';
 export { default as WooLogo } from './logos/woo-logo';
 export { default as WordPressLogo } from './wordpress-logo';

@@ -11,7 +11,7 @@ export type Status = 'idle' | 'pending' | 'success' | 'error';
 interface ProvisionStatusProps {
 	status: {
 		siteTransfer: Status;
-		migrationKey: Status;
+		migrationKey: string;
 		pluginInstallation?: Status;
 	};
 }

@@ -7,7 +7,7 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
   >
     <div
       aria-label="Notice"
-      class="notice is-reskinned is-warning"
+      class="notice is-warning"
       role="status"
     >
       <span
@@ -49,7 +49,7 @@ exports[`JetpackConnectNotices Should render notice 1`] = `
   >
     <div
       aria-label="Notice"
-      class="notice is-reskinned is-error"
+      class="notice is-error"
       role="status"
     >
       <span
