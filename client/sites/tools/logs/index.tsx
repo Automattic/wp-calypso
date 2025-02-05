@@ -1,4 +1,3 @@
-import { Badge } from '@automattic/components';
 import {
 	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -9,7 +8,6 @@ import { sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -31,16 +29,15 @@ import { SiteLogsToolbar } from 'calypso/sites/tools/logs/components/site-logs-t
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
-import type { Field, View, Operator, ViewTable } from '@wordpress/dataviews';
+import useFields from './hooks/use-fields';
+import type { LogType } from './types';
+import type { View, ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
-
-export type LogType = 'php' | 'web';
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -311,174 +308,6 @@ const useDataLogs = ( {
 	};
 };
 
-interface PHPLog {
-	atomic_site_id: number;
-	file: string;
-	kind: string;
-	line: number;
-	message: string;
-	name: string;
-	severity: 'User' | 'Warning' | 'Deprecated' | 'Fatal error';
-	timestamp: string;
-}
-
-interface ServerError {
-	body_bytes_sent: number;
-	cached: string;
-	date: string;
-	http_host: string;
-	http_referer: string;
-	request_type: 'GET' | 'HEAD' | 'POST' | 'PUT' | 'DELETE';
-	request_url: string;
-	status: '200' | '301' | '302' | '400' | '401' | '403' | '404' | '429' | '500';
-	timestamp: number;
-}
-
-const useFields = ( { logType }: { logType: LogType } ) => {
-	const { __ } = useI18n();
-	const locale = useSelector( getCurrentUserLocale );
-	const siteGmtOffset = useCurrentSiteGmtOffset();
-	const siteGsmOffsetDisplay =
-		siteGmtOffset === 0 ? 'UTC' : `UTC${ siteGmtOffset > 0 ? '+' : '' }${ siteGmtOffset }`;
-
-	const getFormattedDate = ( value: string ) => {
-		const dateFormat = locale === 'en' ? 'll [at] h:mm A' : 'h:mm A, ll';
-		const formattedDate = moment( value )
-			.utcOffset( siteGmtOffset * 60 )
-			.format( dateFormat );
-		return <span>{ formattedDate }</span>;
-	};
-
-	if ( logType === 'php' ) {
-		return [
-			{
-				id: 'severity',
-				type: 'text',
-				label: __( 'Severity' ),
-				elements: [
-					{ value: '', label: translate( 'All' ) },
-					{ value: 'User', label: translate( 'User' ) },
-					{ value: 'Warning', label: translate( 'Warning' ) },
-					{ value: 'Deprecated', label: translate( 'Deprecated' ) },
-					{ value: 'Fatal error', label: translate( 'Fatal error' ) },
-				],
-				filterBy: {
-					operators: [ 'is' as Operator ],
-				},
-				render: ( { item } ) => {
-					const severity = item.severity;
-					return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
-				},
-				enableSorting: false,
-			},
-			{
-				id: 'timestamp',
-				type: 'date',
-				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
-				render: ( { item } ) => getFormattedDate( item.timestamp ),
-			},
-			{
-				id: 'message',
-				type: 'text',
-				label: __( 'Message' ),
-				render: ( { item } ) => {
-					return <span className="site-logs-table__message">{ item.message }</span>;
-				},
-				enableSorting: false,
-			},
-			{ id: 'kind', type: 'text', label: __( 'Kind' ), enableSorting: false },
-			{ id: 'name', type: 'text', label: __( 'Name' ), enableSorting: false },
-			{
-				id: 'file',
-				type: 'text',
-				label: __( 'File' ),
-				render: ( { item } ) => {
-					return <span className="site-logs-table__file">{ item.file }</span>;
-				},
-				enableSorting: false,
-			},
-			{ id: 'line', type: 'integer', label: __( 'Line' ), enableSorting: false },
-		] as Field< PHPLog >[];
-	}
-
-	return [
-		{
-			id: 'request_type',
-			type: 'text',
-			label: __( 'Request type' ),
-			elements: [
-				{ value: '', label: translate( 'All' ) },
-				{ value: 'GET', label: translate( 'GET' ) },
-				{ value: 'HEAD', label: translate( 'HEAD' ) },
-				{ value: 'POST', label: translate( 'POST' ) },
-				{ value: 'PUT', label: translate( 'PUT' ) },
-				{ value: 'DELETE', label: translate( 'DELETE' ) },
-			],
-			filterBy: { operators: [ 'is' as Operator ] },
-			render: ( { item } ) => {
-				const requestType = item.request_type;
-				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
-			},
-			enableSorting: false,
-		},
-		{
-			id: 'date',
-			type: 'datetime',
-			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
-		},
-		{
-			id: 'status',
-			type: 'text',
-			label: __( 'Status' ),
-			elements: [
-				{ value: '', label: translate( 'All' ) },
-				{ value: '200', label: '200' },
-				{ value: '301', label: '301' },
-				{ value: '302', label: '302' },
-				{ value: '400', label: '400' },
-				{ value: '401', label: '401' },
-				{ value: '403', label: '403' },
-				{ value: '404', label: '404' },
-				{ value: '429', label: '429' },
-				{ value: '500', label: '500' },
-			],
-			filterBy: {
-				operators: [ 'is' as Operator ],
-			},
-			enableSorting: false,
-		},
-		{
-			id: 'request_url',
-			type: 'text',
-			label: __( 'Request URL' ),
-			render: ( { item } ) => {
-				return <span className="site-logs-table__request-url">{ item.request_url }</span>;
-			},
-			enableSorting: false,
-		},
-		{ id: 'timestamp', type: 'integer', label: __( 'Timestamp' ), enableSorting: false },
-		{
-			id: 'body_bytes_sent',
-			type: 'integer',
-			label: __( 'Body bytes sent' ),
-			enableSorting: false,
-		},
-		{ id: 'cached', type: 'text', label: __( 'Cached' ), enableSorting: false },
-		{ id: 'http_host', type: 'text', label: __( 'HTTP Host' ), enableSorting: false },
-		{
-			id: 'http_referer',
-			type: 'text',
-			label: __( 'Referrer' ),
-			render: ( { item } ) => {
-				return <span className="site-logs-table__http-referer">{ item.request_url }</span>;
-			},
-			enableSorting: false,
-		},
-	] as Field< ServerError >[];
-};
-
 const getVisibleFieldsForLogType = ( logType: LogType ) => {
 	if ( logType === 'php' ) {
 		return [ 'severity', 'timestamp', 'message' ];
@@ -496,7 +325,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
 	// - Endpoint
-	//   - Can filter by multiple values (e.g.: "severity is any: user, deprecated"
+	//   - Can filter by multiple values (e.g.: "severity is any: user, deprecated").
 	//   - What can have more filters? kind (core, plugins), name (WP version, plugin name).
 	// - Translations: translate vs __.
 	//   - __ for field elements https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-table/index.tsx#L54
