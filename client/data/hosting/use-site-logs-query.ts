@@ -36,7 +36,7 @@ export interface PHPLog {
 
 export type SiteLogsData = {
 	total_results: number;
-	logs: Record< string, ServerLog | PHPLog >[];
+	logs: ( ServerLog | PHPLog )[];
 	scroll_id: string | null;
 	has_more: boolean;
 };

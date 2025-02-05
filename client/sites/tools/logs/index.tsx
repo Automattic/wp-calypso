@@ -14,7 +14,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery, FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
+import { useSiteLogsQuery, LogType } from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -33,39 +33,20 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
+import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
-import { default as useView, getSortField, getVisibleFields } from './hooks/use-view';
+import {
+	default as useView,
+	buildFilter,
+	getSortField,
+	getVisibleFields,
+	getFilterValue,
+} from './hooks/use-view';
 import type { View, ViewTable } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
 const DEFAULT_PAGE_SIZE = 50;
-
-export function buildFilterParam(
-	logType: LogType,
-	severity: string,
-	requestType: string,
-	requestStatus: string
-): FilterType {
-	const filters: FilterType = {};
-
-	if ( logType === 'php' ) {
-		if ( severity ) {
-			filters.severity = [ severity ];
-		}
-	}
-
-	if ( logType === 'web' ) {
-		if ( requestType ) {
-			filters.request_type = [ requestType ];
-		}
-		if ( requestStatus ) {
-			filters.status = [ requestStatus ];
-		}
-	}
-
-	return filters;
-}
 
 export const SiteLogs = ( {
 	logType,
@@ -120,7 +101,7 @@ export const SiteLogs = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+		filter: buildFilter( logType, severity, requestType, requestStatus ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -267,47 +248,6 @@ export const SiteLogs = ( {
 	);
 };
 
-const getFilterValueFromView = ( view: View, fieldName: string ) =>
-	view.filters?.filter( ( filter ) => filter.field === fieldName )[ 0 ]?.value || '';
-
-const EMPTY_ARRAY: Array< any > = [];
-const useDataLogs = ( {
-	view,
-	logType,
-	dateRange,
-}: {
-	view: View;
-	logType: LogType;
-	dateRange: { startTime: Moment; endTime: Moment };
-} ) => {
-	const siteId = useSelector( getSelectedSiteId );
-	const severity = getFilterValueFromView( view, 'severity' );
-	const status = getFilterValueFromView( view, 'status' );
-	const requestType = getFilterValueFromView( view, 'request_type' );
-
-	const { data, isFetching } = useSiteLogsQuery( siteId, {
-		logType,
-		start: dateRange.startTime.unix(),
-		end: dateRange.endTime.unix(),
-		filter: buildFilterParam( logType, severity, requestType, status ),
-		sortOrder: view.sort?.direction,
-		pageSize: view.perPage,
-		pageIndex: view.page,
-	} );
-
-	return {
-		data: data?.logs ? data.logs : EMPTY_ARRAY,
-		paginationInfo: {
-			totalItems: data?.total_results || 0,
-			totalPages:
-				!! data?.total_results && !! view.perPage
-					? Math.ceil( data.total_results / view.perPage )
-					: 0,
-		},
-		isLoading: isFetching,
-	};
-};
-
 export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	// TODO:
 	// - DataViews:
@@ -363,7 +303,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 
 	const fields = useFields( { logType } );
 	const [ view, setView ] = useView( { logType } );
-	const { data, paginationInfo, isLoading } = useDataLogs( { view, logType, dateRange } );
+	const { data, paginationInfo, isLoading } = useData( { view, logType, dateRange } );
 	const onChangeView = ( newView: View ) =>
 		setView(
 			( oldView: View ) =>
@@ -393,11 +333,11 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 			logType,
 			startDateTime: dateRange.startTime,
 			endDateTime: dateRange.endTime,
-			filter: buildFilterParam(
+			filter: buildFilter(
 				logType,
-				getFilterValueFromView( view, 'severity' ),
-				getFilterValueFromView( view, 'request_type' ),
-				getFilterValueFromView( view, 'request_status' )
+				getFilterValue( view, 'severity' ),
+				getFilterValue( view, 'request_type' ),
+				getFilterValue( view, 'request_status' )
 			),
 		} );
 	}, [ downloadLogs, logType, dateRange, view ] );

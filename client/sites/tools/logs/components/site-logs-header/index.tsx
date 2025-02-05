@@ -3,8 +3,8 @@ import { translate, useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { LogType } from 'calypso/data/hosting/use-site-logs-query';
-import { buildFilterParam } from 'calypso/sites/tools/logs';
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
+import { buildFilter } from 'calypso/sites/tools/logs/hooks/use-view';
 import type { Moment } from 'moment';
 
 import './style.scss';
@@ -81,7 +81,7 @@ export function SiteLogsHeader( {
 							logType,
 							startDateTime,
 							endDateTime,
-							filter: buildFilterParam( logType, severity, requestType, requestStatus ),
+							filter: buildFilter( logType, severity, requestType, requestStatus ),
 						} )
 					}
 				>
