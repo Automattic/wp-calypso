@@ -8,7 +8,8 @@ import { sprintf } from '@wordpress/i18n';
 import { download } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { translate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
+import { v4 as uuid } from 'uuid';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -263,13 +264,15 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	//   - translate for field labels https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-toolbar/index.tsx#L82
 
 	const { __ } = useI18n();
-
 	const moment = useLocalizedMoment();
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
 		const endTime = moment();
 		return { startTime, endTime };
 	}, [ moment ] );
+
+	// Can we actually derive an unique ID from the data?
+	const getItemId = useMemo( () => () => uuid(), [] );
 
 	const [ dateRange, setDateRange ] = useState( () => {
 		const latest = getLatestDateRange();
@@ -426,6 +429,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					view={ view }
 					onChangeView={ onChangeView }
 					search={ false }
+					getItemId={ getItemId }
 					defaultLayouts={ { table: {} } }
 					header={
 						<Button
