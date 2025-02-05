@@ -79,7 +79,6 @@
 		"jetpack/sharing-buttons-block-enabled": false,
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack-social/advanced-plan": false,
-		"jetpack/offer-complete-after-activation": false,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
 		"lasagna": true,
