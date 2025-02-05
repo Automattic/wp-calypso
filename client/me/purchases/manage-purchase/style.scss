@@ -399,16 +399,23 @@
 
 .manage-purchase__renew-upgrade-buttons {
 	display: flex; /* Ensures button expands */
+	flex-direction: column;
 	flex-shrink: 0;
+	gap: .75rem;
+
+	> button {
+		flex-grow: 1; /* Ensures button expands based on its text */
+		white-space: nowrap;
+	}
+
+	@include breakpoint-deprecated( ">480px" ) {
+		margin-inline-end: auto;
+		flex-direction: row;
+	}
 
 	@include breakpoint-deprecated( ">660px" ) {
         align-self: flex-start;
         margin-inline-start: auto;
-
-		> button {
-			flex-grow: 1; /* Ensures button expands based on its text */
-			white-space: nowrap;
-		}
 	}
 }
 
