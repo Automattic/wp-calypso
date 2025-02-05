@@ -1,4 +1,4 @@
-import { Context } from '@automattic/calypso-router';
+import page, { Context } from '@automattic/calypso-router';
 import { ReactElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad, trackScrollPage } from 'calypso/reader/controller-helper';
@@ -22,6 +22,10 @@ export function userPosts( ctx: Context, next: () => void ): void {
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
+	function goBack() {
+		page.back( ctx.lastRoute );
+	}
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/user-profile"
@@ -34,6 +38,8 @@ export function userPosts( ctx: Context, next: () => void ): void {
 				analyticsPageTitle,
 				mcKey
 			) }
+			showBack={ !! ctx.lastRoute }
+			handleBack={ goBack }
 		/>
 	);
 	next();
