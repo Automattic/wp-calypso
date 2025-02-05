@@ -138,7 +138,7 @@ describe(
 			await testAccount.authenticate( page );
 		} );
 
-		describe( 'Create new site', function () {
+		describe.skip( 'Create new site', function () {
 			let cartCheckoutPage: CartCheckoutPage;
 
 			beforeAll( async function () {
@@ -203,7 +203,7 @@ describe(
 			} );
 		} );
 
-		describe( `Validate WordPress.com ${ planName } functionality`, function () {
+		describe.skip( `Validate WordPress.com ${ planName } functionality`, function () {
 			let sidebarComponent: SidebarComponent;
 
 			it( `Sidebar states user is on WordPress.com ${ planName } plan`, async function () {

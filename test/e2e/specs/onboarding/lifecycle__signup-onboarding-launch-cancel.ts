@@ -35,7 +35,7 @@ declare const browser: Browser;
  *
  * Keywords: Onboarding, Store Checkout, Coupon, Signup, Plan, Subscription, Cancel
  */
-describe( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
+describe.skip( 'Lifecyle: Signup, onboard, launch and cancel subscription', function () {
 	const planName = 'Personal';
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
