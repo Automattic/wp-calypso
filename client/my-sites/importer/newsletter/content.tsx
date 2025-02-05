@@ -77,6 +77,15 @@ export default function Content( {
 		importerStatus?.importerState !== appStates.IMPORTING &&
 		importerStatus?.importerState !== appStates.IMPORT_SUCCESS;
 
+	const normalizedFromSite = normalizeFromSite( fromSite );
+	const baseUrl = normalizedFromSite.startsWith( 'http' )
+		? normalizedFromSite
+		: `https://${ normalizedFromSite }`;
+
+	const settingsUrl = `${
+		baseUrl.endsWith( '/' ) ? baseUrl.slice( 0, -1 ) : baseUrl
+	}/publish/settings?search=export`;
+
 	return (
 		<Card>
 			<Interval onTick={ fetchImporters } period={ EVERY_FIVE_SECONDS } />
@@ -100,7 +109,7 @@ export default function Content( {
 						className="export-content"
 					/>
 					<Button
-						href={ `https://${ normalizeFromSite( fromSite ) }/publish/settings?search=export` }
+						href={ settingsUrl }
 						target="_blank"
 						rel="noreferrer noopener"
 						icon={ external }

@@ -185,6 +185,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
@@ -275,6 +276,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
+			skipMigration,
 		};
 	}
 
