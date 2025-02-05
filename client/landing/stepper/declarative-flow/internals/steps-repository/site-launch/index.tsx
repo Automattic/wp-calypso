@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
+import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
 import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
