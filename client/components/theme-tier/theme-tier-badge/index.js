@@ -48,7 +48,12 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( themeType === BUNDLED_THEME ) {
-			return <ThemeTierBundledBadge hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade } />;
+			return (
+				<ThemeTierBundledBadge
+					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
+					hideBundledBadge={ themeTier?.slug === 'woocommerce' }
+				/>
+			);
 		}
 
 		if ( isLockedStyleVariation ) {

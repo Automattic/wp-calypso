@@ -67,14 +67,5 @@ export default function ThemeTierPartnerBadge( { showPartnerPrice, hideBackgroun
 		translate,
 	] );
 
-	return (
-		<>
-			{ priceBadge }
-			<PremiumBadge
-				{ ...commonBadgeProps }
-				className="theme-tier-badge__content is-third-party"
-				labelText={ translate( 'Partner' ) }
-			/>
-		</>
-	);
+	return <>{ priceBadge }</>;
 }

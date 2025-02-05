@@ -8,7 +8,7 @@ import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierUpgradeBadge from './theme-tier-upgrade-badge';
 
-export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade } ) {
+export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade, hideBundledBadge } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
 
@@ -33,7 +33,7 @@ export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade } ) {
 
 			{ isThemeIncluded && <ThemeTierIncludedBadge /> }
 
-			{ ! isUpdatedBadgeDesign && (
+			{ ! isUpdatedBadgeDesign && ! hideBundledBadge && (
 				<BundledBadge
 					className="theme-tier-badge__content is-bundled-theme"
 					color={ color }

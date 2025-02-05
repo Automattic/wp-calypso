@@ -10,6 +10,14 @@
 	color: var(--studio-white);
 	z-index: 1;
 
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: $font-body-small;;
+		font-family: $sans;
+	}
+
 	.bundled-badge__icon {
 		display: inline-flex;
 		align-items: center;

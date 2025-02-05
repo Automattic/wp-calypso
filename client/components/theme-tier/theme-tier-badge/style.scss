@@ -23,15 +23,15 @@
 		}
 
 		&.is-bundled-theme {
-			margin-left: 10px;
+			margin-left: 5px;
 		}
-
 
 		.premium-badge__label {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			font-size: $font-body-small;;
+			font-family: $sans;
 		}
 	}
 
