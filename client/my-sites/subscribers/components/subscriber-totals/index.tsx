@@ -13,13 +13,13 @@ type SubscriberTotalsProps = {
 const getFilterLabel = ( filterOption: SubscribersFilterBy, count: number ): string => {
 	switch ( filterOption ) {
 		case SubscribersFilterBy.Paid:
-			return count === 1 ? translate( 'paid supporter' ) : translate( 'paid supporters' );
+			return count === 1 ? translate( 'paid subscriber' ) : translate( 'paid subscribers' );
 		case SubscribersFilterBy.Free:
 			return count === 1 ? translate( 'free subscriber' ) : translate( 'free subscribers' );
 		case SubscribersFilterBy.EmailSubscriber:
 			return count === 1 ? translate( 'email subscriber' ) : translate( 'email subscribers' );
 		case SubscribersFilterBy.ReaderSubscriber:
-			return count === 1 ? translate( 'Reader follower' ) : translate( 'Reader followers' );
+			return count === 1 ? translate( 'reader subscriber' ) : translate( 'reader subscribers' );
 		default:
 			return count === 1 ? translate( 'subscriber' ) : translate( 'subscribers' );
 	}
