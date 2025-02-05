@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { DomainField } from './dataviews-fields/domain-field';
 import { DomainStatusField } from './dataviews-fields/domain-status-field';
+import { DomainType } from './dataviews-fields/domain-type';
 import { SslStatusField } from './dataviews-fields/ssl-status-field';
 import { useDomainsDataViewsContext } from './use-context';
 
@@ -34,6 +35,13 @@ export function useFields() {
 				render: ( { item }: { item: PartialDomainData } ) => (
 					<DomainField domain={ item } isAllSitesView={ isAllSitesView } />
 				),
+			},
+			{
+				id: 'domain_type',
+				label: translate( 'Domain type' ),
+				enableHiding: false,
+				enableSorting: false,
+				render: ( { item }: { item: PartialDomainData } ) => <DomainType item={ item } />,
 			},
 			{
 				id: 'owner',

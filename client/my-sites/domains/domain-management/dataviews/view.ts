@@ -31,6 +31,7 @@ export function initializeViewState(
 		search: search || '',
 		type: sidebarMode ? 'list' : 'table',
 		titleField: 'domain_name',
+		descriptionField: 'domain_type',
 		fields: getFieldsByBreakpoint( isDesktop, sidebarMode ),
 	};
 
