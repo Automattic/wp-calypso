@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,6 +13,7 @@ import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
@@ -67,10 +67,6 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
-	const onCountryChange = ( value: string ) => {
-		setCountryFilter( value );
-	};
-
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
 			selectLabel: translate( 'Countries' ),
@@ -123,15 +119,28 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		}
 	);
 
+	const onCountryChange = ( value: string ) => {
+		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
+			stat_type: optionLabels[ selectedOption ].feature,
+			country: value,
+		} );
+
+		setCountryFilter( value );
+	};
+
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
-
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_locations_module_menu_clicked`, {
-			button: optionLabels[ filter ]?.analyticsId ?? filter,
+		trackStatsAnalyticsEvent( 'stats_locations_module_menu_clicked', {
+			stat_type: optionLabels[ filter ].feature,
 		} );
 
 		setSelectedOption( filter );
+	};
+
+	const onShowMoreClick = () => {
+		trackStatsAnalyticsEvent( 'stats_locations_module_show_more_clicked', {
+			stat_type: optionLabels[ selectedOption ].feature,
+		} );
 	};
 
 	const toggleControlComponent = (
@@ -279,6 +288,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								  }
 								: undefined
 						}
+						onShowMoreClick={ onShowMoreClick }
 						overlay={
 							shouldGate && (
 								<StatsCardUpsell

@@ -96,6 +96,7 @@ const StatsHeroCard = ( {
 									comment: '"View all posts & pages", "View all referrers", etc.',
 								} ) as string
 							}
+							onClick={ footerAction?.onClick }
 						>
 							{ footerAction.label || translate( 'View all' ) }
 						</a>
