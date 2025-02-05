@@ -6,8 +6,16 @@
 	margin-bottom: 24px;
 	padding: 20px 20px 5px 20px;
 
-	h2 {
-		font-weight: 600;
-		margin-top: 20px;
+	.reader-onboarding__intro-column {
+		h2 {
+			font-weight: 600;
+			clear: initial;
+			text-wrap: pretty;
+		}
+
+		.circular__progress-bar {
+			float: right;
+			margin: 5px 5px 5px 10px;
+		}
 	}
 }
