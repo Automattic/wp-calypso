@@ -29,6 +29,7 @@ describe( 'sortProductsByPriceDescending', () => {
 			stepName: 'stepName',
 			stepSectionName: 'sectionName',
 			selectedSite: {},
+			isReskinned: false,
 			signupDependencies: {
 				suggestedDomain: 'example.com',
 			},

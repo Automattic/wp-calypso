@@ -28,6 +28,7 @@ function MyNotice() {
 | `text`           | `string`   | null    | The message that shows in the notice.                                                 |
 | `showDismiss`    | `bool`     | true    | Whether to show a close action on the right of the notice.                            |
 | `isCompact`      | `bool`     | false   | Whether this is a compact notice (smaller and not full width).                        |
+| `isReskinned`    | `bool`     | false   | Whether to use the newer/updated version used for the plans pages.                    |
 | `duration`       | `integer`  | 0       | How long to show the notice for in milliseconds.                                      |
 | `onDismissClick` | `function` | null    | A function to call when the notice is dismissed.                                      |
 | `children`       | `string`   | null    | You can also pass the content on the notice within children.                          |
