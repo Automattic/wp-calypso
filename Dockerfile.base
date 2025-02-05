@@ -22,6 +22,8 @@ ENV COMMIT_SHA $commit_sha
 
 COPY . .
 
+RUN yarn config get cacheFolder
+
 # Yarn v4 cache may live outside of the main dir, so we set it to a local one.
 RUN mkdir /calypso/.yarn/cache
 RUN yarn config set cacheFolder /calypso/.yarn/cache
