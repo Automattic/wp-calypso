@@ -205,7 +205,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 						title={ getCurrentMessage() }
 						subtitle={ getSubtitle() }
 						progress={ progress }
-						flow={ flow }
 					/>
 				}
 				recordTracksEvent={ recordTracksEvent }

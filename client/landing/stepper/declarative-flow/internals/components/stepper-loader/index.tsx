@@ -1,14 +1,11 @@
-import { isWooExpressFlow, isTransferringHostedSiteCreationFlow } from '@automattic/onboarding';
 import { ProgressBar } from '@wordpress/components';
 import clsx from 'clsx';
-import { LoadingBar } from 'calypso/components/loading-bar';
 import './style.scss';
 
 interface StepperLoaderProps {
 	title?: string;
 	subtitle?: React.ReactNode;
 	progress?: number;
-	flow?: string;
 	className?: string;
 }
 
@@ -16,19 +13,9 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( {
 	title,
 	subtitle,
 	progress = -1,
-	flow = null,
 	className,
 } ) => {
 	const renderProgressComponent = () => {
-		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
-			return (
-				<LoadingBar
-					progress={ progress >= 0 ? progress : -1 }
-					className="processing-step__content woocommerce-install__content"
-				/>
-			);
-		}
-
 		return (
 			<ProgressBar
 				value={ progress >= 0 ? progress * 100 : undefined }

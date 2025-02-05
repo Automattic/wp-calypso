@@ -160,7 +160,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 				if ( isWooExpressFlow( flow.name ) ) {
 					return <WordPressLogo size={ 72 } className="wpcom-site__logo stepper-loader" />;
 				}
-				return <StepperLoader flow={ flow.name } />;
+				return <StepperLoader />;
 			case AssertConditionState.FAILURE:
 				return null;
 		}

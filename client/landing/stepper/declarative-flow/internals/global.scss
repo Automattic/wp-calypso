@@ -454,8 +454,10 @@ button {
 		font-weight: 600;
 		font-size: $font-title-large;
 	}
-	.loading-bar {
+	.stepper-loader__progress-bar {
+		--wp-components-color-foreground: var(--wooexpress-purple);
 		background-color: var(--studio-woocommerce-purple-5);
+		height: 6px;
 		width: 590px;
 		max-width: 100%;
 		margin-left: auto;

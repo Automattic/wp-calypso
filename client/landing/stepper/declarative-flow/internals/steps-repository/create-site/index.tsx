@@ -315,7 +315,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 						title={ getCurrentMessage() }
 						subtitle={ subTitle }
 						progress={ progress }
-						flow={ flow }
 					/>
 				}
 				showFooterWooCommercePowered={ false }

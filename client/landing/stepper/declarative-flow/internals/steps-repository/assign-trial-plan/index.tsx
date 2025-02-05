@@ -13,7 +13,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
+const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const progress = useSelect(
@@ -81,7 +81,6 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						title={ getCurrentMessage() }
 						subtitle={ getSubTitle() }
 						progress={ progress }
-						flow={ flow }
 					/>
 				}
 				showFooterWooCommercePowered={ false }
