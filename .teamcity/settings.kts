@@ -222,7 +222,7 @@ object BuildBaseImages : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 30
+		executionTimeoutMin = 40
 	}
 
 	features {
