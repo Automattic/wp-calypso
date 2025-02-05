@@ -21,6 +21,7 @@ import { Boot } from './components/boot';
 import { RedirectToStep } from './components/redirect-to-step';
 import { useFlowAnalytics } from './hooks/use-flow-analytics';
 import { useFlowNavigation } from './hooks/use-flow-navigation';
+import { usePreloadSteps } from './hooks/use-preload-steps';
 import { useSignUpStartTracking } from './hooks/use-sign-up-start-tracking';
 import { useStepNavigationWithTracking } from './hooks/use-step-navigation-with-tracking';
 import { PRIVATE_STEPS } from './steps';
@@ -97,33 +98,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const selectedSite = useSelector( ( state ) => site && getSite( state, siteSlugOrId ) );
 
 	// this pre-loads the next step in the flow.
-	useEffect( () => {
-		const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
-		const nextStep = flowSteps[ nextStepIndex ];
-
-		// 0 implies the findIndex returned -1.
-		if ( nextStepIndex === 0 || ! nextStep ) {
-			return;
-		}
-
-		if ( siteSlugOrId && ! selectedSite ) {
-			// If this step depends on a selected site, only preload after we have the data.
-			// Otherwise, we're still waiting to render something meaningful, and we don't want to
-			// potentially slow that down by having the CPU busy initialising future steps.
-			return;
-		}
-		if ( 'asyncComponent' in nextStep ) {
-			nextStep.asyncComponent();
-		}
-		// Most flows sadly instantiate a new steps array on every call to `flow.useSteps()`,
-		// which means that we don't want to depend on `flowSteps` here, or this would end up
-		// running on every render. We thus depend on `flow` instead.
-		//
-		// This should be safe, because flows shouldn't return different lists of steps at
-		// different points. But even if they do, worst case scenario we only fail to preload
-		// some steps, and they'll simply be loaded later.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ siteSlugOrId, selectedSite, currentStepRoute, flow ] );
+	usePreloadSteps( siteSlugOrId, selectedSite, currentStepRoute, flowSteps, flow );
 
 	const stepNavigation = useStepNavigationWithTracking( {
 		flow,
@@ -164,8 +139,8 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
-		// and are redirected to the user step.
-		const postAuthStepSlug = stepData?.nextStep ?? '';
+		// and are redirected to the user step. When it's not available, go to the first step.
+		const postAuthStepSlug = stepData?.nextStep ?? stepPaths[ 0 ];
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = generatePath( '/setup/:flow/:step/:lang?', {
@@ -198,13 +173,6 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 					redirectTo={ postAuthStepPath }
 					signupUrl={ signupUrl }
 				/>
-			);
-		}
-
-		if ( step.slug === PRIVATE_STEPS.USER.slug ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'Please define the next step after auth explicitly as we cannot find the user step automatically.'
 			);
 		}
 

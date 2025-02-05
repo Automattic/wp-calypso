@@ -9,8 +9,9 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 export const useFirstStep = ( stepPaths: string[] ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	if ( stepPaths[ 0 ] === 'user' && isLoggedIn ) {
-		return stepPaths[ 1 ];
+	// If the flow has the user step, which always falls in the end, and the user is not logged in, then the user step should be the first step.
+	if ( stepPaths[ stepPaths.length - 1 ] === 'user' && ! isLoggedIn ) {
+		return stepPaths[ stepPaths.length - 1 ];
 	}
 
 	return stepPaths[ 0 ];
