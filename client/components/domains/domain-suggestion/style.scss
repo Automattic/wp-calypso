@@ -254,11 +254,6 @@
 	margin-top: 10px;
 	margin-left: 0;
 
-	&:focus {
-		box-shadow: none !important;
-		border-color: #c3c4c7 !important;
-	}
-
 	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
@@ -280,11 +275,6 @@
 		padding: 0;
 		display: flex;
 		align-items: center;
-
-		&:focus {
-			box-shadow: none !important;
-			border-color: transparent !important;
-		}
 
 		/* Checkmark for selected domains */
 		svg {
@@ -512,11 +502,6 @@ body.is-section-signup.is-white-signup {
 				@include break-mobile {
 					padding: 0.65em 2.8em;
 					width: 100%;
-				}
-
-				&:focus {
-					border-color: var(--color-primary);
-					box-shadow: 0 0 0 2px var(--color-primary-light);
 				}
 			}
 
