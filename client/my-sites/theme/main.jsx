@@ -222,9 +222,9 @@ class ThemeSheet extends Component {
 				id: 'site-theme-activated',
 				duration: 10000,
 			};
-			this.props.completeLaunchpadTask(
-				'site_theme_selected',
-				this.props.translate( 'Congratulations! You’ve activated your theme!' ),
+			this.props.completeLaunchpadTasks(
+				[ 'site_theme_selected' ],
+				this.props.translate( "Congratulations! You've activated your theme!" ),
 				noticeSettings
 			);
 		}
@@ -1146,7 +1146,7 @@ class ThemeSheet extends Component {
 		const { defaultOption, isActive, isWpcomTheme, themeId, shouldLimitGlobalStyles, translate } =
 			this.props;
 		if ( isActive && defaultOption.getUrl ) {
-			return translate( 'Open the {{a}}site editor{{/a}} to change your site’s style.', {
+			return translate( "Open the {{a}}site editor{{/a}} to change your site's style.", {
 				components: {
 					a: (
 						<a href={ defaultOption.getUrl( themeId ) } target="_blank" rel="noopener noreferrer" />
@@ -1270,7 +1270,11 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal source="details" siteIntent={ this.props.siteIntent } />
+				<ActivationModal
+					source="details"
+					siteIntent={ this.props.siteIntent }
+					showSuccessNotice={ ! this.props.isThemeSelectedTask }
+				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
