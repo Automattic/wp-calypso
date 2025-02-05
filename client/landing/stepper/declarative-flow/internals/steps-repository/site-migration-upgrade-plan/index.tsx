@@ -15,6 +15,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MigrationAssistanceModal } from '../../components/migration-assistance-modal';
@@ -40,6 +41,7 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 } ) => {
 	const showVariants = SITE_MIGRATION_FLOW === flow;
 	const { onSkip, skipLabelText, skipPosition } = props;
+	const siteItem = useSite();
 	const siteSlug = useSiteSlug();
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
