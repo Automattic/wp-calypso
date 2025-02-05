@@ -19,11 +19,8 @@ const startTransfer = (
 		body: {
 			context: 'unknown',
 			transfer_intent: 'migrate',
-<<<<<<< HEAD
 			plugin_slug: 'wpcom-migration',
-=======
 			migration_source_site_domain: from,
->>>>>>> d49643294d4 (Pass fromUrl param through flow, pass to Atomic transfer API)
 		},
 	} );
 
