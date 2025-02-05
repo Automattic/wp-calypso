@@ -1,5 +1,4 @@
 @import "jetpack-connect/colors";
-@import "calypso/components/text-control/style";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -269,23 +268,6 @@ $image-height: 47px;
 
 	.wp-login__site-return-link::after {
 		background: none;
-	}
-
-	.woocommerce-muriel-text-control,
-	.muriel-input-text {
-		border-color: var(--color-neutral-20);
-
-		.text-control__label,
-		.components-base-control__label {
-			color: var(--color-neutral-50);
-			font-size: $font-body-extra-small;
-			font-weight: normal;
-		}
-
-		&.active {
-			box-shadow: 0 0 0 2px var(--studio-woocommerce-purple-60);
-			border-color: transparent;
-		}
 	}
 
 	.login__form-footer {

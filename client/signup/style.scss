@@ -263,23 +263,6 @@ body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-h
 	background-color: var(--color-woocommerce-onboarding-background);
 	height: 100%;
 
-	.woocommerce-muriel-text-control,
-	.muriel-input-text {
-		border-color: var(--color-neutral-20);
-
-		.text-control__label,
-		.components-base-control__label {
-			color: var(--color-neutral-50);
-			font-size: $font-body-extra-small;
-			font-weight: normal;
-		}
-
-		&.active {
-			box-shadow: 0 0 0 2px var(--studio-woocommerce-purple-60);
-			border-color: transparent;
-		}
-	}
-
 	.layout__content {
 		padding-top: 48px;
 	}
