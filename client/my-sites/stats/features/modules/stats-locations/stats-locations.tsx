@@ -255,14 +255,21 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		</>
 	);
 
-	let upsellOverlay = null;
-	if ( shouldGate ) {
-		upsellOverlay = (
-			<StatsCardUpsell siteId={ siteId } statType={ optionLabels[ selectedOption ].feature } />
-		);
-	} else if ( showJetpackUpgradePrompt ) {
-		upsellOverlay = <StatsCardUpdateJetpackVersion siteId={ siteId } statType="locations" />;
-	}
+	const getModuleOverlay = () => {
+		if ( shouldGate ) {
+			return (
+				<StatsCardUpsell siteId={ siteId } statType={ optionLabels[ selectedOption ].feature } />
+			);
+		}
+
+		if ( showJetpackUpgradePrompt ) {
+			return <StatsCardUpdateJetpackVersion siteId={ siteId } statType="locations" />;
+		}
+
+		return null;
+	};
+
+	const moduleOverlay = getModuleOverlay();
 
 	return (
 		<>
@@ -315,7 +322,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								: undefined
 						}
 						onShowMoreClick={ onShowMoreClick }
-						overlay={ upsellOverlay }
+						overlay={ moduleOverlay }
 					/>
 				</>
 			) }
