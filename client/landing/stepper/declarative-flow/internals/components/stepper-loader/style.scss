@@ -29,4 +29,12 @@
 	.stepper-loader__progress-bar {
 		margin: 46px auto 0 auto;
 	}
+
+	.stepper-loader__subtitle {
+		font-size: 1rem;
+		line-height: 21px;
+		letter-spacing: -0.02em;
+		color: var(--studio-gray-50);
+		margin-top: 24px;
+	}
 }

@@ -38,7 +38,7 @@ const StepperLoader: React.FC< StepperLoaderProps > = ( {
 		<div className="stepper-loader">
 			<h1 className="stepper-loader__title processing-step__progress-step">{ title }</h1>
 			{ renderProgressComponent() }
-			{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
+			{ subtitle && <p className="stepper-loader__subtitle">{ subtitle }</p> }
 		</div>
 	);
 };
