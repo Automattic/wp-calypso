@@ -78,7 +78,7 @@ const SiteHub = memo(
 							__next40pxDefaultSize
 							ref={ ref }
 							href={ dashboardLink }
-							label={ __( 'Go to the Dashboard', 'woocommerce-analytics' ) }
+							label={ __( 'Go to the Dashboard' ) }
 							className="edit-site-layout__view-mode-toggle"
 							style={ {
 								transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
@@ -96,7 +96,7 @@ const SiteHub = memo(
 								<VisuallyHidden as="span">
 									{
 										/* translators: accessibility text */
-										__( '(opens in a new tab)', 'woocommerce-analytics' )
+										__( '(opens in a new tab)' )
 									}
 								</VisuallyHidden>
 							</Button>
@@ -108,7 +108,7 @@ const SiteHub = memo(
 								className="edit-site-site-hub_toggle-command-center"
 								icon={ search }
 								onClick={ () => openCommandCenter() }
-								label={ __( 'Open command palette', 'woocommerce-analytics' ) }
+								label={ __( 'Open command palette' ) }
 								shortcut={ displayShortcut.primary( 'k' ) }
 							/>
 						</HStack>
@@ -176,14 +176,14 @@ export const SiteHubMobile = memo(
 							{ ...( ! isBlockTheme
 								? {
 										href: dashboardLink,
-										label: __( 'Go to the Dashboard', 'woocommerce-analytics' ),
+										label: __( 'Go to the Dashboard' ),
 								  }
 								: {
 										onClick: () => {
 											history.navigate( backPath ); // @unstable: `backPath` prop (not present in core)
 											navigate( 'back' );
 										},
-										label: __( 'Go to Site Editor', 'woocommerce-analytics' ),
+										label: __( 'Go to Site Editor' ),
 								  } ) }
 						>
 							<SiteIcon className="edit-site-layout__view-mode-toggle-icon" />
@@ -197,7 +197,7 @@ export const SiteHubMobile = memo(
 								variant="link"
 								href={ homeUrl }
 								target="_blank"
-								label={ __( 'View site (opens in a new tab)', 'woocommerce-analytics' ) }
+								label={ __( 'View site (opens in a new tab)' ) }
 							>
 								{ decodeEntities( siteTitle ) }
 							</Button>
@@ -209,7 +209,7 @@ export const SiteHubMobile = memo(
 								className="edit-site-site-hub_toggle-command-center"
 								icon={ search }
 								onClick={ () => openCommandCenter() }
-								label={ __( 'Open command palette', 'woocommerce-analytics' ) }
+								label={ __( 'Open command palette' ) }
 								shortcut={ displayShortcut.primary( 'k' ) }
 							/>
 						</HStack>

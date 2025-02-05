@@ -39,11 +39,7 @@ function SiteIcon( { className }: { className?: string } ): JSX.Element {
 	}
 
 	const icon = siteIconUrl ? (
-		<img
-			className="edit-site-site-icon__image"
-			alt={ __( 'Site Icon', 'woocommerce-analytics' ) }
-			src={ siteIconUrl }
-		/>
+		<img className="edit-site-site-icon__image" alt={ __( 'Site Icon' ) } src={ siteIconUrl } />
 	) : (
 		<Icon className="edit-site-site-icon__icon" icon={ wordpress } size={ 48 } />
 	);

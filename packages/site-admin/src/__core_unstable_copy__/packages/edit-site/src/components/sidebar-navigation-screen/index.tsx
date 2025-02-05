@@ -7,6 +7,7 @@ import {
 
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalHeading as Heading,
+
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -107,14 +108,14 @@ export default function SidebarNavigationScreen( {
 								navigate( 'back' );
 							} }
 							icon={ icon }
-							label={ __( 'Back', 'woocommerce-analytics' ) }
+							label={ __( 'Back' ) }
 							showTooltip={ false }
 						/>
 					) }
 					{ isRoot && (
 						<SidebarButton
 							icon={ icon }
-							label={ dashboardLinkText || __( 'Go to the Dashboard', 'woocommerce-analytics' ) }
+							label={ dashboardLinkText || __( 'Go to the Dashboard' ) }
 							href={ dashboardLink }
 						/>
 					) }
