@@ -107,7 +107,7 @@
 				background: linear-gradient(to right, transparent 0%, #fff 25%);
 				width: 140px;
 				height: 20px;
-				z-index: 1000;
+				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-fader");
 			}
 
 			&-link {
@@ -117,7 +117,7 @@
 				display: inline-flex;
 				gap: 4px;
 				align-items: center;
-				z-index: 2000;
+				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-link");
 				color: var(--color-text-subtle);
 				text-decoration: underline;
 			}
