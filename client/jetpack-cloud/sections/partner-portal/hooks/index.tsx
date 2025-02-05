@@ -422,6 +422,11 @@ export function useProductDescription( productSlug: string ): {
 					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
 				);
 				break;
+			case 'woocommerce-cool-extension':
+				description = translate(
+					'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
+				);
+				break;
 			case 'jetpack-stats':
 				description = translate( 'Powerful analytics to help you understand your audience.' );
 				break;

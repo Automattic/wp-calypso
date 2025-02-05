@@ -160,6 +160,7 @@ import {
 	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
 	PRODUCT_JETPACK_SOCIAL_V1_MONTHLY,
 	PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS,
+	PRODUCT_WOOCOMMERCE_COOL_EXTENSION,
 } from './constants';
 import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -1111,6 +1112,9 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 	const woocommercProductFiltersLightboxDescription = translate(
 		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
 	);
+	const woocommerceCoolExtensionLightboxDescription = translate(
+		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
+	);
 
 	return {
 		[ PRODUCT_JETPACK_AI_MONTHLY ]: aiAssistantLightboxDescription,
@@ -1228,6 +1232,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		[ PRODUCT_WOOCOMMERCE_TAX ]: woocommerceTaxLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_WOOPAYMENTS ]: woocommerceWoopaymentsLightboxDescription,
 		[ PRODUCT_WOOCOMMERCE_PRODUCT_FILTERS ]: woocommercProductFiltersLightboxDescription,
+		[ PRODUCT_WOOCOMMERCE_COOL_EXTENSION ]: woocommerceCoolExtensionLightboxDescription,
 	};
 };
 
