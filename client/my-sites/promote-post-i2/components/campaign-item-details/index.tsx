@@ -744,11 +744,11 @@ export default function CampaignItemDetails( props: Props ) {
 			<Main wideLayout className="campaign-item-details">
 				{ status === 'rejected' && (
 					<Notice
+						theme="light"
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
 						className="promote-post-notice campaign-item-details__notice"
-						theme="light"
 					>
 						{ translate(
 							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
@@ -777,6 +777,7 @@ export default function CampaignItemDetails( props: Props ) {
 				{ status === 'suspended' && payment_links && payment_links.length > 0 && (
 					<>
 						<Notice
+							theme="light"
 							showDismiss={ false }
 							status="is-error"
 							icon="notice-outline"

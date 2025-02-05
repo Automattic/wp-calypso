@@ -206,6 +206,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="info" /> }
 							isCompact
+							theme="light"
 							status="is-info"
 							showDismiss={ false }
 						>
@@ -221,6 +222,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="notice" /> }
 							isCompact
+							theme="light"
 							status="is-warning"
 							showDismiss={ false }
 						>
@@ -266,9 +268,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="info" /> }
 							isCompact
+							theme="light"
 							status="is-info"
 							showDismiss={ false }
-							theme="light"
 						>
 							<span className="add-subscribers-modal__notice-text">
 								{ translate(
@@ -282,9 +284,9 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="notice" /> }
 							isCompact
+							theme="light"
 							status="is-warning"
 							showDismiss={ false }
-							theme="light"
 						>
 							<span className="add-subscribers-modal__notice-text">
 								{ translate(

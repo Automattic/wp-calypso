@@ -161,6 +161,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 					onDismissClick={ handleDismissNotice }
 					icon="info-outline"
 					status="is-success"
+					theme="light"
 				>
 					{ activeDiscount.plansPageNoticeTextTitle && (
 						<strong>
@@ -185,6 +186,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
+					theme="light"
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
@@ -200,6 +202,7 @@ export default function PlanNotice( props: PlanNoticeProps ) {
 				<Notice
 					className="plan-features-main__notice"
 					showDismiss={ false }
+					theme="light"
 					icon="info-outline"
 					status="is-error"
 					text={ translate(
