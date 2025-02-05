@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/site-admin",
-	"version": "0.0.1-beta.1",
+	"version": "0.0.1-beta.2",
 	"description": "A modern UI framework for building WordPress administrative interfaces.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
