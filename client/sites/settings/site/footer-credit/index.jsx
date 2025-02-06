@@ -9,13 +9,13 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { preventWidows } from 'calypso/lib/formatting';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getCustomizerUrl } from 'calypso/state/sites/selectors';
-import { useIsSiteSettingsUntangled } from '../../hooks/use-is-site-settings-untangled';
 
 import './style.scss';
 
@@ -28,7 +28,7 @@ export default function FooterCredit( { site, siteIsJetpack } ) {
 		WPCOM_FEATURES_NO_WPCOM_BRANDING
 	);
 	const customizerUrl = useSelectedSiteSelector( getCustomizerUrl, 'identity' );
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const { data: activeThemeData } = useActiveThemeQuery( site?.ID ?? -1, !! site );
 	const hasBlockTheme = activeThemeData?.[ 0 ]?.is_block_theme ?? true;

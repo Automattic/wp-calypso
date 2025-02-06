@@ -8,8 +8,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { PanelCardHeading } from 'calypso/components/panel';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import TeamMembersSiteTransfer from 'calypso/my-sites/people/team-members-site-transfer';
-import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 import { useCheckSiteTransferEligibility } from './use-check-site-transfer-eligibility';
 import type { UsersQuery } from '@automattic/data-stores';
 
@@ -159,7 +159,7 @@ const SiteOwnerTransferEligibility = ( {
 		</form>
 	);
 
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	return (
 		<>
