@@ -218,7 +218,7 @@ export const SubscribersPageProvider = ( {
 				'message' in importError.error
 			) {
 				const { code, message } = importError.error;
-				notice = message;
+				notice = message as string;
 				if ( code === 'subscriber_import_limit_reached' && typeof message === 'string' ) {
 					noticeArgs.button = translate( 'Upgrade' );
 					const siteSlug = selectedSiteSlug || ''; // Use a default if siteSlug is not available
