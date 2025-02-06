@@ -198,6 +198,10 @@
 		align-items: flex-start;
 
 		.domains-table-search {
+			.components-base-control__field {
+				margin: 0;
+			}
+
 			.components-input-control__container {
 				background-color: var(--wp-components-color-background, #fff);
 				border-radius: 2px;
