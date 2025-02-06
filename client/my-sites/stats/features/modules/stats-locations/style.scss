@@ -8,19 +8,19 @@ $locations-horizontal-bar-width: 380px;
 .stats-card-skeleton.locations-skeleton {
 	@include segmented-controls;
 
+	.stats-card-header--main {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
 	.stats-card-header {
 		.segmented-control.stats-module-locations__tabs {
-			flex: 1;
-			max-width: 100%;
-			width: calc( $locations-horizontal-bar-width - 24px - 24px);
+			margin-top: 0;
+			width: 100%;
 		}
 
 		.segmented-control.stats-module-locations__tabs .segmented-control__item {
 			flex: 1 1 0;
-		}
-
-		.stats-card-header__title {
-			display: none;
 		}
 	}
 
@@ -117,14 +117,18 @@ $locations-horizontal-bar-width: 380px;
 }
 
 @include break-large {
+	.stats-card.list-locations, .stats-card-skeleton.locations-skeleton {
+		.stats-card-header--main {
+			align-items: center;
+			flex-direction: row;
+		}
+	}
+
 	.stats-card.list-locations .stats-card-header,
 	.stats-card-skeleton.locations-skeleton .stats-card-header {
 		.segmented-control.stats-module-locations__tabs {
+			width: calc( $locations-horizontal-bar-width - 24px - 24px);
 			flex: none;
-		}
-
-		.stats-card-header__title {
-			display: flex;
 		}
 	}
 }
@@ -135,6 +139,11 @@ $locations-horizontal-bar-width: 380px;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+
+		.stats-card--hero {
+			max-width: calc(100% - $locations-horizontal-bar-width);
+			overflow: hidden;
+		}
 	}
 
 	.stats-card.list-locations,
@@ -156,7 +165,7 @@ $locations-horizontal-bar-width: 380px;
 		}
 
 		.stats-card--header-and-body {
-			flex: 0 0 380px;
+			flex: 0 0 $locations-horizontal-bar-width;
 		}
 
 		.stats-card--footer {
