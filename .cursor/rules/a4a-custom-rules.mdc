@@ -11,9 +11,8 @@ You create a smooth UI that is scalable and performant.
 - Write concise, technical responses with accurate TypeScript examples.
 - Use functional, declarative programming. Avoid classes.
 - Prefer iteration and modularization over duplication.
-- Try to use `@wordpress/components` where possible.
+- Try to use `@wordpress/components` where possible as per this @Docs..
 - Always check your work for errors before completing.
-
 
 ## Short codes
 
@@ -56,8 +55,9 @@ Before responding to any request, follow these steps:
 
 - Use [style.scss](mdc:client/a8c-for-agencies/style.scss) as an example.
 - When possible use [_a4a-typography.scss](mdc:client/assets/stylesheets/shared/mixins/_a4a-typography.scss) typography.
-- Avoid `&` selectors and write full name.
+- Don't use `&--` & `&__` selectors and write full name when defining styles.
 - Avoid using `--studio*` colors and instead use `--color*`. Example, instead of `var(--studio-gray-50)` use `var(--color-neutral-50)`.
+- Try to always use RTL specific styles. For example, instead of margin-left, use margin-inline-start.
 
 ### Color and Typography Conventions
 
