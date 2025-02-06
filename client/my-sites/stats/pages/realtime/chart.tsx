@@ -17,9 +17,7 @@ interface QueryStatsVisitsParams {
 }
 
 interface chartMinuteDataTypes {
-	[ key: string ]: {
-		views: number;
-	};
+	[ key: string ]: number;
 }
 
 function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
@@ -32,7 +30,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const momentSiteZone = useSelector( ( state: object ) =>
 		getMomentSiteZone( state, siteId, 'YYYY-MM-DD HH' )
 	);
-	const [ chartData, setChartData ] = useState( {} as chartMinuteDataTypes );
+	const [ viewsData, setViewsData ] = useState( {} as chartMinuteDataTypes );
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
@@ -47,13 +45,12 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				stat_fields: 'views',
 			} ).then( ( response: any ) => {
 				const result = parseChartData( response );
-				// TODO: Handle data across hours because hourly data is not accumulated.
-				setChartData( ( prevChartData ) => {
+				const views = result[ 0 ].views || 0;
+
+				setViewsData( ( prevViewsData ) => {
 					return {
-						...prevChartData,
-						[ adjustedDatetime ]: {
-							views: result[ 0 ].views,
-						},
+						...prevViewsData,
+						[ adjustedDatetime ]: views,
 					};
 				} );
 			} );
@@ -63,10 +60,27 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	}, [ siteId, momentSiteZone ] );
 
 	// TODO: Push data and shift the array for the chart display.
-	const formatedChartData = Object.keys( chartData ).map( ( key ) => {
+	const formatedChartData = Object.keys( viewsData ).map( ( eachMinute ) => {
+		const lastMinute = moment( eachMinute ).subtract( 1, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
+		let diffViews: number = 0;
+
+		// First minute has no previous minute to compare to.
+		if ( viewsData[ lastMinute ] === undefined ) {
+			diffViews = 0;
+		} else if (
+			moment( lastMinute ).format( 'YYYY-MM-DD HH' ) !==
+			moment( eachMinute ).format( 'YYYY-MM-DD HH' )
+		) {
+			// If the previous minute is from a different hour, use the current minute's views.
+			diffViews = viewsData[ eachMinute ];
+		} else {
+			// Calculate the difference between the current minute and the previous minute.
+			diffViews = viewsData[ eachMinute ] - viewsData[ lastMinute ];
+		}
+
 		return {
-			date: new Date( key ),
-			value: chartData[ key ].views,
+			date: new Date( eachMinute ),
+			value: diffViews,
 		};
 	} );
 
