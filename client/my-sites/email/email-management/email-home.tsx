@@ -149,7 +149,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
 				<EmailProvidersStackedComparisonPage
-					className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+					className={ clsx( 'email-stacked-comparison-page', {
+						'context-all-domain-management': isAllDomainManagementContext,
+					} ) }
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }

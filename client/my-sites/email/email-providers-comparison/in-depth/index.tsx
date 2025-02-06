@@ -95,7 +95,7 @@ const EmailProvidersInDepthComparison = ( {
 	const ComparisonComponent = isMobile ? ComparisonList : ComparisonTable;
 
 	return (
-		<Main wideLayout>
+		<Main wideLayout className="email-providers-in-depth-comparison-page">
 			<QueryProductsList />
 			{ showBackButton && (
 				<EmailUpsellNavigation
