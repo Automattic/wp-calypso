@@ -4,11 +4,8 @@
 
 .processing-step {
 	--wp-components-color-foreground: #3858E9;
-
-	padding: 1em;
 	max-width: 540px;
 	text-align: center;
-	margin: 16vh auto 0;
 
 	&__progress-step {
 		@include onboarding-font-recoleta;
@@ -18,10 +15,6 @@
 		text-align: center;
 		vertical-align: middle;
 		margin: 0;
-	}
-
-	.processing-step__progress-bar {
-		margin: 46px auto 0 auto;
 	}
 }
 
@@ -39,27 +32,19 @@
 	width: 100%;
 }
 
-.processing-step__subtitle {
-	font-size: 1rem;
-	line-height: 21px;
-	letter-spacing: -0.02em;
-	color: var(--studio-gray-50);
-	margin-top: 24px;
-}
-
 // Processing Copy Site Styles
 .copy-site.processing-copy {
-	.processing-step {
+	.processing-step, .stepper-loader {
 		margin: 5vh auto 0;
 		max-width: 660px;
 	}
 
-	.processing-step__progress-step {
+	.stepper-loader__title {
 		font-size: 3rem;
 		margin-bottom: 24px;
 	}
 
-	.processing-step__progress-bar {
+	.stepper-loader__progress-bar {
 		max-width: 540px;
 		margin: 0 auto;
 	}

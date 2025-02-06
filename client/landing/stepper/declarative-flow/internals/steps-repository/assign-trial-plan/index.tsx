@@ -1,10 +1,9 @@
-import { isWooExpressFlow, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
@@ -14,7 +13,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
+const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const progress = useSelect(
@@ -76,24 +75,13 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="assign-trial-step"
-				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<>
-						<div className="assign-trial-step">
-							<h1 className="assign-trial-step__progress-step">{ getCurrentMessage() }</h1>
-							{ progress >= 0 || isWooExpressFlow( flow ) ? (
-								<LoadingBar progress={ progress } />
-							) : (
-								<LoadingEllipsis />
-							) }
-							{ isWooExpressFlow( flow ) ? (
-								<p className="processing-step__subtitle">{ getSubTitle() }</p>
-							) : (
-								<></>
-							) }
-						</div>
-					</>
+					<StepperLoader
+						title={ getCurrentMessage() }
+						subtitle={ getSubTitle() }
+						progress={ progress }
+					/>
 				}
 				showFooterWooCommercePowered={ false }
 			/>

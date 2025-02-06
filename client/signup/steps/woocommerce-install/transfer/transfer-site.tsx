@@ -92,21 +92,21 @@ export default function TransferSite( {
 
 		switch ( transferStatus ) {
 			case transferStates.PENDING:
-				setProgress( 0.2 );
+				setProgress( 20 );
 				break;
 			case transferStates.ACTIVE:
-				setProgress( 0.4 );
+				setProgress( 40 );
 				break;
 			case transferStates.PROVISIONED:
-				setProgress( 0.5 );
+				setProgress( 50 );
 				break;
 			case transferStates.COMPLETED:
-				setProgress( 0.7 );
+				setProgress( 70 );
 				break;
 		}
 
 		if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
-			setProgress( 1 );
+			setProgress( 100 );
 			setTransferFailed( true );
 
 			onFailure( {
@@ -133,7 +133,7 @@ export default function TransferSite( {
 
 		if ( softwareApplied ) {
 			trackRedirect();
-			setProgress( 1 );
+			setProgress( 100 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				window.location.assign( wcAdminUrl );

@@ -59,7 +59,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
-		expect( getProgress() ).toBe( 1 );
+		expect( getProgress() ).toBe( 100 );
 	} );
 
 	it( 'installs and activates the plugin when it is not installed', async () => {
@@ -85,7 +85,7 @@ describe( 'SiteMigrationPluginInstall', () => {
 		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
-		expect( getProgress() ).toBe( 1 );
+		expect( getProgress() ).toBe( 100 );
 	} );
 
 	it( 'polls the plugin endpoint until we have information about the plugins', async () => {
@@ -109,6 +109,6 @@ describe( 'SiteMigrationPluginInstall', () => {
 		expect( result.pluginInstalled ).toBe( true );
 
 		expect( nock.isDone() ).toBe( true );
-		expect( getProgress() ).toBe( 1 );
+		expect( getProgress() ).toBe( 100 );
 	} );
 } );

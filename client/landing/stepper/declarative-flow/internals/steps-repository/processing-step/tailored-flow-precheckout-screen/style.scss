@@ -18,10 +18,6 @@
 			}
 		}
 
-		.processing-step__progress-bar {
-			background-color: var(--studio-white);
-		}
-
 		.processing-step__container {
 			height: 100%;
 			width: 100%;
@@ -47,14 +43,6 @@
 			}
 		}
 
-		h1.processing-step__progress-step {
-			font-size: $font-title-medium;
-
-			@include break-medium {
-				font-size: $font-title-large;
-			}
-		}
-
 		.processing-step__jetpack-powered {
 			display: flex;
 			justify-content: center;
@@ -74,7 +62,7 @@
 			background-color: var(--studio-gray-0);
 		}
 
-		.loading-bar {
+		.stepper-loader__progress-bar {
 			background-color: var(--studio-gray-5);
 			&::before {
 				background: var(--studio-black);

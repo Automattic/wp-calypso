@@ -102,7 +102,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 			let status: AtomicSoftwareStatus | undefined;
 			let currentProgress = 0;
 			const expectedStepCount = 5;
-			const progressStep = 1 / expectedStepCount;
+			const progressStep = 100 / expectedStepCount;
 			while ( ! status?.applied ) {
 				if ( maxFinishTime < new Date().getTime() ) {
 					handleTransferFailure( {
@@ -137,7 +137,7 @@ const BundleInstallPlugins: Step = function BundleInstallPlugins( { navigation }
 				setProgress( currentProgress );
 			}
 
-			setProgress( 1 );
+			setProgress( 100 );
 		} );
 
 		submit?.();

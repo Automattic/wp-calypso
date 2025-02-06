@@ -6,6 +6,7 @@ import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
@@ -156,6 +157,9 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
+				if ( isWooExpressFlow( flow.name ) ) {
+					return <WordPressLogo size={ 72 } className="wpcom-site__logo stepper-loader" />;
+				}
 				return <StepperLoader />;
 			case AssertConditionState.FAILURE:
 				return null;
@@ -230,7 +234,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <StepperLoader /> }>
+		<Boot fallback={ <StepperLoader className="stepper-loader__boot" /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Routes>
