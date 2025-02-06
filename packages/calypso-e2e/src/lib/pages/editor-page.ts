@@ -142,9 +142,6 @@ export class EditorPage {
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 
-		// Dismiss the Welcome Guide.
-		await this.editorWelcomeGuideComponent.closeWelcomeGuideIfNeeded();
-
 		// Accept the Cookie banner.
 		await this.cookieBannerComponent.acceptCookie();
 	}
@@ -994,6 +991,13 @@ export class EditorPage {
 	 */
 	async openEditorOptionsMenu(): Promise< void > {
 		return this.editorToolbarComponent.openMoreOptionsMenu();
+	}
+
+	/**
+	 * Close the
+	 */
+	async closeWelcomeGuideIfNeeded(): Promise< void > {
+		return this.editorWelcomeGuideComponent.closeWelcomeGuideIfNeeded();
 	}
 
 	//#endregion

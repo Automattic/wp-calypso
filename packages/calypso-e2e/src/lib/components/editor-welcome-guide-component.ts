@@ -29,9 +29,8 @@ export class EditorWelcomeGuideComponent {
 	 */
 	async closeWelcomeGuideIfNeeded(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		if ( await this.page.isVisible( selectors.welcomeGuideCloseButton ) ) {
-			const locator = editorParent.locator( selectors.welcomeGuideCloseButton );
-			await locator.click();
-		}
+		// TODO: It would be better to check whether the element is visible or not. However, it may not be available at the beginning.
+		const locator = editorParent.locator( selectors.welcomeGuideCloseButton );
+		await locator.click();
 	}
 }
