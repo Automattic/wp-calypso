@@ -1,0 +1,24 @@
+.signup-multi-step-form {
+	.a4a-form {
+		padding: 48px 24px;
+		max-width: 600px;
+		width: 100%;
+		gap: 16px;
+	}
+
+	.a4a-form__heading {
+		.a4a-form__heading-title {
+			font-size: 2rem;
+			font-weight: 600;
+			margin-bottom: 16px;
+			color: var(--color-neutral-100);
+		}
+
+		.a4a-form__heading-description {
+			font-size: 1rem;
+			font-weight: 400;
+			color: var(--color-neutral-60);
+			max-width: 460px;
+		}
+	}
+}

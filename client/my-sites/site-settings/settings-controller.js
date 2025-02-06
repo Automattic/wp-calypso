@@ -54,7 +54,11 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
 		if ( ! URL_MAP[ slug ] ) {
 			return next();
 		}
-		return page.redirect( `/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }` );
+
+		const queryParams = context.querystring ? `?${ context.querystring }` : '';
+		return page.redirect(
+			`/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }${ queryParams }`
+		);
 	}
 
 	next();

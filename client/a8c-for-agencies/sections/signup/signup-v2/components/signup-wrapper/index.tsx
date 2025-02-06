@@ -5,6 +5,7 @@ import A4ALogo, {
 import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import SignupSidebarImage from './sidebar-image';
 import SignupTestimonial from './testimonial';
+
 import './style.scss';
 
 type Props = {
