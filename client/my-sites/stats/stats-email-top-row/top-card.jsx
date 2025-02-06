@@ -1,5 +1,5 @@
-import { Card, ShortenedNumber, Spinner } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { Card, Spinner } from '@automattic/components';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 
 /* This is a very stripped down version of HighlightCard
  * HighlightCard doesn't support non-numeric values
@@ -25,7 +25,12 @@ const TopCardValue = ( { value, isLoading } ) => {
 
 	return (
 		<span className="highlight-card-count-value" title={ String( value ) }>
-			<ShortenedNumber value={ value } />
+			{ numberFormat( value, {
+				numberFormatOptions: {
+					notation: 'compact',
+					maximumFractionDigits: 1,
+				},
+			} ) }
 		</span>
 	);
 };

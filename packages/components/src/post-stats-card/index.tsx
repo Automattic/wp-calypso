@@ -1,9 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Card, ShortenedNumber, Button } from '../';
+import { Card, Button } from '../';
 import { eye } from '../icons';
 import './style.scss';
 
@@ -78,21 +78,48 @@ export default function PostStatsCard( {
 					<Icon className="gridicon" icon={ eye } />
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ isLoading ? null : viewCount } />
+						<span>
+							{ ! isLoading && viewCount !== null
+								? numberFormat( viewCount, {
+										numberFormatOptions: {
+											notation: 'compact',
+											maximumFractionDigits: 1,
+										},
+								  } )
+								: '-' }
+						</span>
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--like">
 					<Icon className="gridicon" icon={ starEmpty } />
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ isLoading ? null : likeCount } />
+						<span>
+							{ ! isLoading && likeCount !== null
+								? numberFormat( likeCount, {
+										numberFormatOptions: {
+											notation: 'compact',
+											maximumFractionDigits: 1,
+										},
+								  } )
+								: '-' }
+						</span>
 					</div>
 				</div>
 				<div className="post-stats-card__count post-stats-card__count--comment">
 					<Icon className="gridicon" icon={ commentContent } />
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					<div className="post-stats-card__count-value">
-						<ShortenedNumber value={ isLoading ? null : commentCount } />
+						<span>
+							{ ! isLoading && commentCount !== null
+								? numberFormat( commentCount, {
+										numberFormatOptions: {
+											notation: 'compact',
+											maximumFractionDigits: 1,
+										},
+								  } )
+								: '-' }
+						</span>
 					</div>
 				</div>
 			</div>

@@ -1,4 +1,5 @@
-import { Card, ShortenedNumber, Spinner } from '@automattic/components';
+import { Card, Spinner } from '@automattic/components';
+import { numberFormat } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import '@automattic/components/src/highlight-cards/style.scss';
@@ -41,7 +42,14 @@ const SubscriberStatsCardValue = ( {
 			className="highlight-card-count-value subscriber-stats-card__value"
 			title={ String( value ) }
 		>
-			<ShortenedNumber value={ value as number } />
+			{ typeof value === 'number'
+				? numberFormat( value, {
+						numberFormatOptions: {
+							notation: 'compact',
+							maximumFractionDigits: 1,
+						},
+				  } )
+				: '-' }
 		</span>
 	);
 };
