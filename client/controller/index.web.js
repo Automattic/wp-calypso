@@ -17,7 +17,6 @@ import { RouteProvider } from 'calypso/components/route';
 import Layout from 'calypso/layout';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { isE2ETest } from 'calypso/lib/e2e';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -28,11 +27,11 @@ import {
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getIsRemoveDuplicateViewsExperimentOverridden } from 'calypso/state/explat-experiments/selectors.js';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
@@ -403,21 +402,13 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const aaTestName = 'calypso_post_onboarding_aa_150125';
-
-	loadExperimentAssignment( aaTestName );
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-
-	const overrideAssignment = getPreference(
-		context.store.getState(),
-		'remove_duplicate_views_experiment_assignment_160125'
-	);
-
-	if ( 'control' === overrideAssignment ) {
+	if ( getIsRemoveDuplicateViewsExperimentOverridden( context.store.getState() ) ) {
 		next();
 		return;
 	}
+
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
 
 	if ( isE2ETest() || isRemoveDuplicateViewsExperimentEnabled ) {
 		const state = context.store.getState();
