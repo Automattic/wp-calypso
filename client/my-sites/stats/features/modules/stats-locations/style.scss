@@ -15,6 +15,7 @@ $locations-horizontal-bar-width: 380px;
 
 	.stats-card-header {
 		.segmented-control.stats-module-locations__tabs {
+			margin-top: 0;
 			width: 100%;
 		}
 
@@ -118,6 +119,7 @@ $locations-horizontal-bar-width: 380px;
 @include break-large {
 	.stats-card.list-locations, .stats-card-skeleton.locations-skeleton {
 		.stats-card-header--main {
+			align-items: center;
 			flex-direction: row;
 		}
 	}
