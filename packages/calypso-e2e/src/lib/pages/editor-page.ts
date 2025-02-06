@@ -13,6 +13,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
 	EditorWelcomeTourComponent,
+	EditorWelcomeGuideComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
 	EditorPopoverMenuComponent,
@@ -57,6 +58,7 @@ export class EditorPage {
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorWelcomeGuideComponent: EditorWelcomeGuideComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
@@ -78,6 +80,7 @@ export class EditorPage {
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorWelcomeGuideComponent = new EditorWelcomeGuideComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
@@ -988,6 +991,13 @@ export class EditorPage {
 	 */
 	async openEditorOptionsMenu(): Promise< void > {
 		return this.editorToolbarComponent.openMoreOptionsMenu();
+	}
+
+	/**
+	 * Close the
+	 */
+	async closeWelcomeGuideIfNeeded(): Promise< void > {
+		return this.editorWelcomeGuideComponent.closeWelcomeGuideIfNeeded();
 	}
 
 	//#endregion
