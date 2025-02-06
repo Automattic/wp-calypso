@@ -62,6 +62,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		return () => clearInterval( intervalId );
 	}, [ siteId, momentSiteZone ] );
 
+	// TODO: Push data and shift the array for the chart display.
 	const formatedChartData = Object.keys( chartData ).map( ( key ) => {
 		return {
 			date: new Date( key ),
