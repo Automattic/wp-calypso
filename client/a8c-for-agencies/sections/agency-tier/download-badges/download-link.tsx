@@ -38,12 +38,12 @@ function DownloadLink( {
 		woocommerce: {
 			'agency-partner': {
 				name: translate( 'Woo Agency Partner' ),
-				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_woo_partner.zip',
+				href: 'https://automattic.com/wp-content/uploads/2025/02/agency_tier_woo_partner.zip',
 				icon: <img src={ WooLogo } alt="WooCommerce" />,
 			},
 			'pro-agency-partner': {
 				name: translate( 'Woo Pro Agency Partner' ),
-				href: 'https://automattic.com/wp-content/uploads/2024/10/agency_tier_woo_pro_partner.zip',
+				href: 'https://automattic.com/wp-content/uploads/2025/02/agency_tier_woo_pro_partner.zip',
 				icon: <img src={ WooLogo } alt="WooCommerce" />,
 			},
 		},
