@@ -13,6 +13,8 @@ import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { installTheme } from 'calypso/state/themes/actions';
+import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import { getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -51,7 +53,10 @@ class PreviewToolbar extends Component {
 		isUnlaunchedSite: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		launchSite: PropTypes.func,
-		themeId: PropTypes.string,
+		installTheme: PropTypes.func,
+		isAtomic: PropTypes.bool,
+		siteEditorUrl: PropTypes.string,
+		themeInstallId: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -77,11 +82,19 @@ class PreviewToolbar extends Component {
 		this.props.onEdit();
 	};
 
-	handleEditorWebPreviewEditHeader = ( event ) => {
+	handleEditorWebPreviewEditHeader = async ( event ) => {
 		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
-		window.location.href = this.props.siteEditorUrl;
+		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId } = this.props;
+
+		// For atomic sites, we need to install theme before navigating to site editor
+		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
+		if ( isAtomic ) {
+			await this.props.installTheme( themeInstallId, selectedSiteId );
+		}
+
+		window.location.href = siteEditorUrl;
 	};
 
 	render() {
@@ -213,9 +226,14 @@ export default connect(
 		const canUserEditThemeOptions = canCurrentUser( state, siteId, 'edit_theme_options' );
 		const theme = getTheme( state, 'wpcom', ownProps.themeId );
 		const isAtomic = isSiteAtomic( state, siteId );
+
 		const themePreviewId = isAtomic
 			? getThemeIdFromStylesheet( theme?.stylesheet )
 			: theme?.stylesheet;
+
+		const themeInstallId = isAtomic
+			? suffixThemeIdForInstall( state, selectedSiteId, ownProps.themeId )
+			: null;
 
 		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
 			wp_theme_preview: themePreviewId,
@@ -227,7 +245,9 @@ export default connect(
 			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 			selectedSiteId,
 			siteEditorUrl,
+			isAtomic,
+			themeInstallId,
 		};
 	},
-	{ recordTracksEvent, launchSite }
+	{ recordTracksEvent, launchSite, installTheme }
 )( localize( PreviewToolbar ) );
