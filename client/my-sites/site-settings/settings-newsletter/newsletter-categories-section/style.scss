@@ -26,6 +26,12 @@
 	}
 }
 
+.newsletter-categories-settings__hide-modal-toggle {
+	&.hidden {
+		display: none;
+	}
+}
+
 .newsletter-categories-settings__description {
 	&.form-setting-explanation {
 		margin-top: -12px;
