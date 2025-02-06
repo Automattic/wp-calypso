@@ -16,6 +16,7 @@ $theme-card-info-margin-top: 16px;
 		.theme-card__image-container {
 			box-shadow: 0 0 0 2px var(--color-primary);
 			border-radius: 4px;
+			z-index: 10;
 		}
 	}
 
@@ -64,7 +65,7 @@ $theme-card-info-margin-top: 16px;
 .theme-card--is-actionable {
 	.theme-card__image {
 		transition: transform 300ms ease-in-out;
-		
+
 		&:hover,
 		&:focus {
 			transform: scale(1.03);
