@@ -43,7 +43,7 @@ import {
 	getVisibleFields,
 	getFilterValue,
 } from './hooks/use-view';
-import type { View, ViewTable } from '@wordpress/dataviews';
+import type { View } from '@wordpress/dataviews';
 import type { Moment } from 'moment';
 import './style.scss';
 
@@ -265,6 +265,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 
 	const { __ } = useI18n();
 	const moment = useLocalizedMoment();
+	const siteGmtOffset = useCurrentSiteGmtOffset();
 	const getLatestDateRange = useCallback( () => {
 		const startTime = moment().subtract( 7, 'd' );
 		const endTime = moment();
@@ -307,16 +308,6 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const fields = useFields( { logType } );
 	const [ view, setView ] = useView( { logType } );
 	const { data, paginationInfo, isLoading } = useData( { view, logType, dateRange } );
-	const onChangeView = ( newView: View ) =>
-		setView(
-			( oldView: View ) =>
-				( {
-					...oldView,
-					...newView,
-					type: 'table' as const,
-					layout: ( oldView as ViewTable )?.layout,
-				} ) as ViewTable
-		);
 	useEffect( () => {
 		setView( ( view: View ) => ( {
 			...view,
@@ -327,8 +318,6 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 			fields: getVisibleFields( logType ),
 		} ) );
 	}, [ logType, setView ] );
-
-	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	const { downloadLogs } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const onDownloadLogs = useCallback( () => {
@@ -427,7 +416,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 					paginationInfo={ paginationInfo }
 					fields={ fields }
 					view={ view }
-					onChangeView={ onChangeView }
+					onChangeView={ setView }
 					search={ false }
 					getItemId={ getItemId }
 					defaultLayouts={ { table: {} } }
