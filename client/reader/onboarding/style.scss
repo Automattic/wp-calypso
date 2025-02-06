@@ -1,28 +1,17 @@
-@import "@wordpress/base-styles/breakpoints";
 .reader-onboarding {
-	display: flex;
-	flex-wrap: wrap;
-	background-color: var(--color-surface-1);
+	background-color: var( --color-surface-1 );
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 1px inset;
+	box-shadow: rgba( 0, 0, 0, 0.05 ) 0 0 0 1px inset;
 	margin-bottom: 24px;
-	padding: 10px;
-	gap: 20px;
+	padding: 20px 20px 5px 20px;
 
 	h2 {
 		font-weight: 600;
-		margin-top: 20px;
+		clear: initial;
 	}
 
-	&__steps-column {
-		flex-grow: 2;
-	}
-
-	@media ( min-width: $break-mobile ) {
-		padding: 20px;
-	}
-
-	@media ( min-width: $break-huge ) {
-		gap: 40px;
+	.circular__progress-bar {
+		float: right;
+		margin: 5px 5px 5px 10px;
 	}
 }
