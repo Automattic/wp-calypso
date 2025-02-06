@@ -186,7 +186,7 @@ const Settings = ( {
 		if (
 			! ( domain && selectedSite?.options?.is_domain_only ) ||
 			domain?.type === domainTypes.TRANSFER ||
-			domain?.isGravatarDomain
+			domain?.isGravatarRestrictedDomain
 		) {
 			return null;
 		}
@@ -324,7 +324,7 @@ const Settings = ( {
 	};
 
 	const renderNameServersSection = () => {
-		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarDomain ) {
+		if ( ! domain || domain.type !== domainTypes.REGISTERED || domain.isGravatarRestrictedDomain ) {
 			return null;
 		}
 
@@ -772,7 +772,7 @@ const Settings = ( {
 		}
 		return (
 			<>
-				{ ! domain.isGravatarDomain && (
+				{ ! domain.isGravatarRestrictedDomain && (
 					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
 				{ ! domain.isHundredYearDomain && (
