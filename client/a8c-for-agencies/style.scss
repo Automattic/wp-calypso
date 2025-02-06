@@ -166,7 +166,7 @@
 
 	.components-button.is-primary,
 	.button.is-primary {
-		&,
+		&:not( :disabled ),
 		&:focus:not(:disabled) {
 			background-color: var(--color-primary-50);
 			border-color: var(--color-primary-50);
