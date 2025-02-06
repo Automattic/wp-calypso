@@ -18,7 +18,7 @@ const FinishSignupSurvey: React.FC< Props > = ( { onContinue } ) => {
 			) }
 		>
 			<FormFooter>
-				<Button variant="primary" onClick={ onContinue }>
+				<Button variant="primary" onClick={ onContinue } __next40pxDefaultSize>
 					{ translate( 'Close survey' ) }
 				</Button>
 			</FormFooter>

@@ -5,8 +5,11 @@ import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { preventWidows } from 'calypso/lib/formatting';
+
+import './style.scss';
 
 type Props = {
 	onContinue: () => void;
@@ -17,6 +20,32 @@ type FormData = {
 	mainGoal2025: string;
 	workModel: string;
 	specificApproach: string;
+};
+
+const BluePrintFormRadio = ( {
+	label,
+	checked,
+	onChange,
+}: {
+	label: string;
+	checked: boolean;
+	onChange: () => void;
+} ) => {
+	return (
+		<div
+			className="blue-print-form__radio"
+			onClick={ onChange }
+			role="button"
+			tabIndex={ 0 }
+			onKeyDown={ ( e ) => {
+				if ( e.key === 'Enter' ) {
+					onChange();
+				}
+			} }
+		>
+			<FormRadio label={ label } checked={ checked } onChange={ onChange } />
+		</div>
+	);
 };
 
 const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
@@ -33,6 +62,52 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 		onContinue();
 	};
 
+	const topGoalOptions = [
+		{ label: translate( 'Access to cutting-edge technology' ), value: 'cutting_edge_tech' },
+		{
+			label: translate( 'Comprehensive support and troubleshooting' ),
+			value: 'comprehensive_support',
+		},
+		{
+			label: translate( 'Lead generation and new business opportunities' ),
+			value: 'lead_generation',
+		},
+		{ label: translate( 'Training and education for your team' ), value: 'training_education' },
+		{
+			label: translate( 'Exclusive discounts or revenue-sharing options' ),
+			value: 'exclusive_discounts',
+		},
+	];
+
+	const mainGoal2025Options = [
+		{ label: translate( 'Scaling the agency significantly' ), value: 'scaling_agency' },
+		{ label: translate( 'Diversifying offered services' ), value: 'diversifying_services' },
+		{
+			label: translate( 'Increasing the number of long-term clients' ),
+			value: 'increasing_clients',
+		},
+		{ label: translate( 'Expanding into new markets or territories' ), value: 'expanding_markets' },
+		{
+			label: translate( "Strengthening the agency's brand and reputation" ),
+			value: 'strengthening_brand',
+		},
+	];
+
+	const workModelOptions = [
+		{
+			label: translate(
+				'Refer customers to Automattic products/services to purchase on their own'
+			),
+			value: 'refer_customers',
+		},
+		{
+			label: translate( "Purchase on our clients' behalf and resell Automattic products/services" ),
+			value: 'purchase_resell',
+		},
+		{ label: translate( 'A combination of referring and reselling' ), value: 'combination' },
+		{ label: translate( 'Other models (please explain)' ), value: 'other' },
+	];
+
 	return (
 		<Form
 			className="blueprint-form"
@@ -46,31 +121,14 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
-					<FormRadio
-						label={ translate( 'Access to cutting-edge technology' ) }
-						checked={ formData.topGoal === 'cutting_edge_tech' }
-						onChange={ () => setFormData( { ...formData, topGoal: 'cutting_edge_tech' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Comprehensive support and troubleshooting' ) }
-						checked={ formData.topGoal === 'comprehensive_support' }
-						onChange={ () => setFormData( { ...formData, topGoal: 'comprehensive_support' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Lead generation and new business opportunities' ) }
-						checked={ formData.topGoal === 'lead_generation' }
-						onChange={ () => setFormData( { ...formData, topGoal: 'lead_generation' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Training and education for your team' ) }
-						checked={ formData.topGoal === 'training_education' }
-						onChange={ () => setFormData( { ...formData, topGoal: 'training_education' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Exclusive discounts or revenue-sharing options' ) }
-						checked={ formData.topGoal === 'exclusive_discounts' }
-						onChange={ () => setFormData( { ...formData, topGoal: 'exclusive_discounts' } ) }
-					/>
+					{ topGoalOptions.map( ( option ) => (
+						<BluePrintFormRadio
+							key={ `goal-option-${ option.value }` }
+							label={ option.label }
+							checked={ formData.topGoal === option.value }
+							onChange={ () => setFormData( { ...formData, topGoal: option.value } ) }
+						/>
+					) ) }
 				</div>
 			</FormField>
 
@@ -79,31 +137,14 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
-					<FormRadio
-						label={ translate( 'Scaling the agency significantly' ) }
-						checked={ formData.mainGoal2025 === 'scaling_agency' }
-						onChange={ () => setFormData( { ...formData, mainGoal2025: 'scaling_agency' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Diversifying offered services' ) }
-						checked={ formData.mainGoal2025 === 'diversifying_services' }
-						onChange={ () => setFormData( { ...formData, mainGoal2025: 'diversifying_services' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Increasing the number of long-term clients' ) }
-						checked={ formData.mainGoal2025 === 'increasing_clients' }
-						onChange={ () => setFormData( { ...formData, mainGoal2025: 'increasing_clients' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Expanding into new markets or territories' ) }
-						checked={ formData.mainGoal2025 === 'expanding_markets' }
-						onChange={ () => setFormData( { ...formData, mainGoal2025: 'expanding_markets' } ) }
-					/>
-					<FormRadio
-						label={ translate( "Strengthening the agency's brand and reputation" ) }
-						checked={ formData.mainGoal2025 === 'strengthening_brand' }
-						onChange={ () => setFormData( { ...formData, mainGoal2025: 'strengthening_brand' } ) }
-					/>
+					{ mainGoal2025Options.map( ( option ) => (
+						<BluePrintFormRadio
+							key={ `main-goal-2025-option-${ option.value }` }
+							label={ option.label }
+							checked={ formData.mainGoal2025 === option.value }
+							onChange={ () => setFormData( { ...formData, mainGoal2025: option.value } ) }
+						/>
+					) ) }
 				</div>
 			</FormField>
 
@@ -114,32 +155,16 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
-					<FormRadio
-						label={ translate(
-							'We refer customers to Automattic products/services to purchase on their own'
-						) }
-						checked={ formData.workModel === 'refer_customers' }
-						onChange={ () => setFormData( { ...formData, workModel: 'refer_customers' } ) }
-					/>
-					<FormRadio
-						label={ translate(
-							"We purchase on our clients' behalf and resell Automattic products/services"
-						) }
-						checked={ formData.workModel === 'purchase_resell' }
-						onChange={ () => setFormData( { ...formData, workModel: 'purchase_resell' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'A combination of referring and reselling' ) }
-						checked={ formData.workModel === 'combination' }
-						onChange={ () => setFormData( { ...formData, workModel: 'combination' } ) }
-					/>
-					<FormRadio
-						label={ translate( 'Other models (please explain)' ) }
-						checked={ formData.workModel === 'other' }
-						onChange={ () => setFormData( { ...formData, workModel: 'other' } ) }
-					/>
+					{ workModelOptions.map( ( option ) => (
+						<BluePrintFormRadio
+							key={ `work-model-option-${ option.value }` }
+							label={ option.label }
+							checked={ formData.workModel === option.value }
+							onChange={ () => setFormData( { ...formData, workModel: option.value } ) }
+						/>
+					) ) }
 					{ formData.workModel === 'other' && (
-						<FormTextarea
+						<FormTextInput
 							value={ formData.specificApproach }
 							onChange={ () => {
 								// TODO: form data
