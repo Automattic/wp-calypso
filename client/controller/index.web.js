@@ -20,7 +20,7 @@ import { isE2ETest } from 'calypso/lib/e2e';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment/index.js';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,

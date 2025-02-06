@@ -2,7 +2,7 @@ import { loadExperimentAssignment as _loadExperimentAssignment } from 'calypso/l
 import {
 	REMOVE_DUPLICATE_VIEWS_EXPERIMENT,
 	isRemoveDuplicateViewsExperimentEnabled,
-} from 'calypso/lib/remove-duplicate-views-experiment/index';
+} from 'calypso/lib/remove-duplicate-views-experiment';
 import { EXPERIMENT_ASSIGNMENT_RECEIVE } from 'calypso/state/action-types';
 import { AppState } from 'calypso/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
