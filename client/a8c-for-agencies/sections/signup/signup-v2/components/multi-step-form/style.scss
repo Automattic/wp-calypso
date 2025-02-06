@@ -31,4 +31,21 @@
 	.form-fieldset {
 		margin: 0;
 	}
+
+	.a4a-form__section-field-label,
+	.a4a-form__section-field-required {
+		@include a4a-font-heading-sm($font-size: rem(14px));
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.a4a-form__heading .a4a-form__heading-title,
+		.a4a-form__heading .a4a-form__heading-description,
+		.a4a-form__section-field-label,
+		.a4a-form__section-field-required,
+		.signup-personalization-form .multi-checkbox label,
+		.form-radio__label {
+			color: var(--color-text-inverted);
+		}
+	}
 }
+
