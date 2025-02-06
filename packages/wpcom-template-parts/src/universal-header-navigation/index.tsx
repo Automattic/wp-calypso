@@ -288,7 +288,7 @@ const UniversalNavbarHeader = ( {
 														<ClickableItem
 															titleValue=""
 															content={ __( 'Blog Search', __i18n_text_domain__ ) }
-															urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+															urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 															type="dropdown"
 															target="_self"
 														/>
@@ -609,7 +609,7 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue=""
 												content={ __( 'Blog Search', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/read/search/' ) }
+												urlValue={ localizeUrl( '//wordpress.com/reader/search/' ) }
 												type="menu"
 											/>
 											<ClickableItem

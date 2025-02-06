@@ -105,7 +105,7 @@ const LayoutLoggedOut = ( {
 		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/discover' );
 
 	const isReaderSearchPage =
-		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/read/search' );
+		sectionName === 'reader' && pathNameWithoutLocale.startsWith( '/reader/search' );
 
 	// It's used to add a class name for the login-related pages, except for `/log-in/link/use`.
 	const hasGravPoweredClientClass =
@@ -146,7 +146,7 @@ const LayoutLoggedOut = ( {
 		'two-factor-auth-enabled': twoFactorEnabled,
 		'is-woo-com-oauth': isWooOAuth2Client( oauth2Client ),
 		'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
-		'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
+		'feature-flag-woocommerce-rebrand-2-0': true,
 	};
 
 	let masterbar = null;

@@ -17,14 +17,6 @@ export function useFields(
 ) {
 	const dispatch = useDispatch();
 
-	const trackPluginNameClick = ( item: Plugin ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_plugins_manage_list_plugin_name_click', {
-				plugin_slug: item.slug,
-			} )
-		);
-	};
-
 	const fields = useMemo(
 		() => [
 			{
@@ -59,15 +51,7 @@ export function useFields(
 				id: 'icon',
 				label: translate( 'Icon' ),
 				render: ( { item }: { item: Plugin } ) => (
-					<Button
-						onClick={ () => {
-							trackPluginNameClick( item );
-							openPluginSitesPane( item );
-						} }
-						className="plugin-name-button"
-					>
-						<PluginIcon className="plugin-icon" image={ item.icon } size={ 52 } />
-					</Button>
+					<PluginIcon className="plugin-icon" image={ item.icon } size={ isListView ? 52 : 35 } />
 				),
 				enableHiding: false,
 				enableSorting: false,
@@ -82,35 +66,16 @@ export function useFields(
 
 					if ( item.allStatuses?.length ) {
 						pluginActionStatus = (
-							<Button
-								className="sites-manage-plugin-status-button"
-								onClick={ () => {
-									trackPluginNameClick( item );
-									openPluginSitesPane( item );
-								} }
-							>
-								<PluginActionStatus
-									currentSiteStatuses={ item.allStatuses }
-									selectedSite={ undefined }
-								/>
-							</Button>
+							<PluginActionStatus
+								currentSiteStatuses={ item.allStatuses }
+								selectedSite={ undefined }
+							/>
 						);
 					}
 
 					return (
 						<>
-							<Button
-								onClick={ () => {
-									trackPluginNameClick( item );
-									openPluginSitesPane( item );
-								} }
-								className="plugin-name-button"
-							>
-								{ ! isListView && (
-									<PluginIcon className="plugin-icon" image={ item.icon } size={ 35 } />
-								) }
-								{ item.name }
-							</Button>
+							{ item.name }
 							{ pluginActionStatus }
 						</>
 					);

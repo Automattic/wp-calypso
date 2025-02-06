@@ -28,9 +28,10 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
+import { useIsSiteSettingsUntangled } from '../../hooks/use-is-site-settings-untangled';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
+
 import './styles.scss';
 
 const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError = false ) => {
@@ -224,7 +225,7 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useIsSiteSettingsUntangled();
 	return (
 		<>
 			{ renderConfirmationModal() }

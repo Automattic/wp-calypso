@@ -22,7 +22,12 @@ import {
 	PERSONAL_THEME,
 } from '@automattic/design-picker';
 import { useLocale, useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer, DESIGN_FIRST_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import {
+	StepContainer,
+	DESIGN_FIRST_FLOW,
+	ONBOARDING_FLOW,
+	isSiteSetupFlow,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -943,7 +948,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				getOptionsMenu={ isUpdatedBadgeDesign ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-				showActiveThemeBadge={ intent !== 'build' }
+				showActiveThemeBadge={ intent !== SiteIntent.Build && ! isSiteSetupFlow( flow ) }
 				isMultiFilterEnabled
 				isBigSkyEligible={ isBigSkyEligible }
 			/>

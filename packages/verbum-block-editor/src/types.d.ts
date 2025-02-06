@@ -19,6 +19,12 @@ declare module '!!css-loader!sass-loader!./inline-iframe-style.scss' {
 	export default css;
 }
 
+declare module '!!css-loader!sass-loader!./inline-iframe-style-dark-mode.scss' {
+	const css: Array< [ string, string ] >;
+
+	export default css;
+}
+
 declare module '@wordpress/block-library/build-module/*' {
 	import { Block } from '@wordpress/blocks';
 

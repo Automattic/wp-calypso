@@ -91,7 +91,7 @@ To test notification rendering of Gutenberg posts, the easiest way is to follow 
 
 ![follow button](https://cdn-std.droplr.net/files/acc_1037067/sEftC1)
 
-Then navigate to <https://wordpress.com/following/manage> and enable "Notify me of new posts" for the blog in question:
+Then navigate to <https://wordpress.com/reader/subscriptions> and enable "Notify me of new posts" for the blog in question:
 
 ![enable notifications](https://user-images.githubusercontent.com/1233880/92739752-81101d80-f37d-11ea-955f-640b3e5f9092.png).
 

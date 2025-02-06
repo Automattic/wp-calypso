@@ -1,11 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getRenewalPrice, isExpiring } from 'calypso/lib/purchases';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { useSelector } from 'calypso/state';
@@ -143,11 +144,11 @@ const RegisteredDomainDetails = ( {
 		if ( ! domain.subscriptionId ) {
 			return null;
 		}
-		return (
-			<Button href={ getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId ) }>
-				{ translate( 'Payment details' ) }
-			</Button>
-		);
+		const managePurchaseLink = config.isEnabled( 'calypso/all-domain-management' )
+			? managePurchase( selectedSite.slug, domain.subscriptionId )
+			: getManagePurchaseUrlFor( selectedSite.slug, domain.subscriptionId );
+
+		return <Button href={ managePurchaseLink }>{ translate( 'Payment details' ) }</Button>;
 	};
 
 	return (

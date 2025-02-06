@@ -5,7 +5,6 @@ import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationHowToMigrate from '../';
-import { useMigrationExperiment } from '../../../hooks/use-migration-experiment';
 import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
@@ -27,18 +26,7 @@ jest.mock( 'calypso/lib/presales-chat', () => ( {
 	usePresalesChat: () => {},
 } ) );
 
-jest.mock(
-	'calypso/landing/stepper/declarative-flow/internals/hooks/use-migration-experiment/index.ts',
-	() => ( {
-		useMigrationExperiment: jest.fn( ( flowName: string ) => flowName === 'site-migration' ),
-	} )
-);
-
 describe( 'SiteMigrationHowToMigrate', () => {
-	beforeEach( () => {
-		( useMigrationExperiment as jest.Mock ).mockReturnValue( true );
-	} );
-
 	afterEach( () => {
 		jest.resetAllMocks();
 	} );

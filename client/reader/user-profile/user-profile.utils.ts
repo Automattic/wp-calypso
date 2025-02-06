@@ -10,10 +10,10 @@ export function isUserProfileEnabled(): boolean {
 /**
  * Return the URL of the user profile page for a given username.
  *
- * Example: `/read/users/user_login`
+ * Example: `/reader/users/user_login`
  */
 export function getUserProfileUrl( userLogin: string ): string {
-	return `/read/users/${ userLogin }`;
+	return `/reader/users/${ userLogin }`;
 }
 
 type UserProfileSubPage = '' | 'lists';
@@ -22,5 +22,5 @@ type UserProfileSubPage = '' | 'lists';
  * Return the base path of the user profile page.
  */
 export function getUserProfileBasePath( subPage: UserProfileSubPage = '' ): string {
-	return subPage ? `/read/users/:user_login/${ subPage }` : `/read/users/:user_login`;
+	return subPage ? `/reader/users/:user_login/${ subPage }` : `/reader/users/:user_login`;
 }

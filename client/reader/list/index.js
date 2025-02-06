@@ -12,7 +12,7 @@ import {
 
 export default function () {
 	page(
-		'/read/list/:user/:list/edit/items',
+		'/reader/list/:user/:list/edit/items',
 		updateLastRoute,
 		sidebar,
 		editListItems,
@@ -20,7 +20,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/read/list/:user/:list/edit',
+		'/reader/list/:user/:list/edit',
 		updateLastRoute,
 		sidebar,
 		editList,
@@ -28,10 +28,10 @@ export default function () {
 		clientRender
 	);
 
-	page( '/read/list/new', updateLastRoute, sidebar, createList, makeLayout, clientRender );
+	page( '/reader/list/new', updateLastRoute, sidebar, createList, makeLayout, clientRender );
 
 	page(
-		'/read/list/:user/:list/export',
+		'/reader/list/:user/:list/export',
 		updateLastRoute,
 		sidebar,
 		exportList,
@@ -40,7 +40,7 @@ export default function () {
 	);
 
 	page(
-		'/read/list/:user/:list/delete',
+		'/reader/list/:user/:list/delete',
 		updateLastRoute,
 		sidebar,
 		deleteList,
@@ -48,5 +48,12 @@ export default function () {
 		clientRender
 	);
 
-	page( '/read/list/:user/:list', updateLastRoute, sidebar, listListing, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list',
+		updateLastRoute,
+		sidebar,
+		listListing,
+		makeLayout,
+		clientRender
+	);
 }

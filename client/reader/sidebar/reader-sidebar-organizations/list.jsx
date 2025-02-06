@@ -46,10 +46,10 @@ export class ReaderSidebarOrganizationsList extends Component {
 		return (
 			<>
 				<SidebarItem
-					link={ '/read/' + organization.slug }
+					link={ '/reader/' + organization.slug }
 					key={ translate( 'All' ) }
 					label={ translate( 'All' ) }
-					className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
+					className={ ReaderSidebarHelper.itemLinkClass( '/reader/' + organization.slug, path, {
 						'sidebar-streams__all': true,
 					} ) }
 				>
@@ -82,8 +82,8 @@ export class ReaderSidebarOrganizationsList extends Component {
 				customIcon={ this.renderIcon() }
 				disableFlyout
 				className={
-					( '/read/' + organization.slug === path ||
-						sites.some( ( site ) => `/read/feeds/${ site.feed_ID }` === path ) ) &&
+					( '/reader/' + organization.slug === path ||
+						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ) ) &&
 					'sidebar__menu--selected'
 				}
 			>

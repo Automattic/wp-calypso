@@ -60,6 +60,7 @@
 		"dev/store-sandbox-helper": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
+		"domain-to-plan-credit": false,
 		"email-accounts/enabled": true,
 		"cookie-banner": false,
 		"google-drive": true,
@@ -167,6 +168,7 @@
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
 		"reader/user-profile": true,
+		"reader/discovery-v2": true,
 		"readymade-templates/showcase": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
@@ -186,6 +188,7 @@
 		"sites/dashboard-survey": true,
 		"sites/drive-migrations": true,
 		"ssr/prefetch-timebox": false,
+		"stats/chart-library": false,
 		"stats/empty-module-traffic": true,
 		"stats/empty-module-v2": true,
 		"stats/locations": true,
@@ -202,13 +205,11 @@
 		"titan/iframe-control-panel": false,
 		"two-factor/enhanced-security": true,
 		"upgrades/redirect-payments": true,
-		"upgrades/storage-add-on-v2": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"untangling/hosting-menu": false,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
-		"yolo/command-palette": true,
-		"woocommerce/rebrand-2-0": true
+		"yolo/command-palette": true
 	}
 }

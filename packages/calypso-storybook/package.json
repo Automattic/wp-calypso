@@ -29,7 +29,6 @@
 		"@storybook/addon-actions": "^7.6.19",
 		"@storybook/addon-controls": "^7.6.19",
 		"@storybook/addon-docs": "^7.6.19",
-		"@storybook/preset-scss": "^1.0.3",
 		"@storybook/react-webpack5": "^7.6.19",
 		"css-loader": "^6.11.0",
 		"react": "^18.3.1",

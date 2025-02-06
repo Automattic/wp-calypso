@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -5,6 +6,7 @@ import React from 'react';
 import TermTreeSelector from 'calypso/blocks/term-tree-selector';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import NewsletterCategoriesHideModalToggle from './newsletter-categories-hide-modal-toggle';
 import NewsletterCategoriesToggle from './newsletter-categories-toggle';
 import './style.scss';
 
@@ -12,6 +14,7 @@ type NewsletterCategoriesSectionProps = {
 	disabled?: boolean;
 	handleToggle: ( field: string ) => ( value: boolean ) => void;
 	newsletterCategoriesEnabled?: boolean;
+	newsletterCategoriesModalHiddenEnabled?: boolean;
 	newsletterCategoryIds: number[];
 	updateFields: ( fields: { [ key: string ]: unknown } ) => void;
 };
@@ -20,6 +23,7 @@ const NewsletterCategoriesSection = ( {
 	disabled,
 	handleToggle,
 	newsletterCategoriesEnabled,
+	newsletterCategoriesModalHiddenEnabled,
 	newsletterCategoryIds,
 	updateFields,
 }: NewsletterCategoriesSectionProps ) => {
@@ -78,6 +82,25 @@ const NewsletterCategoriesSection = ( {
 					) }
 				</FormSettingExplanation>
 			</Card>
+
+			{ config.isEnabled( 'newsletter-categories-section' ) && (
+				<Card
+					className={ clsx(
+						'newsletter-categories-settings__hide-modal-toggle',
+						'site-settings__card',
+						{
+							hidden: ! newsletterCategoriesEnabled,
+						}
+					) }
+					aria-hidden={ ! newsletterCategoriesEnabled }
+				>
+					<NewsletterCategoriesHideModalToggle
+						disabled={ disabled }
+						handleToggle={ handleToggle }
+						value={ newsletterCategoriesModalHiddenEnabled }
+					/>
+				</Card>
+			) }
 		</>
 	);
 };

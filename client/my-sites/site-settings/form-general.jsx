@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -15,6 +14,7 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -40,8 +40,22 @@ import SiteIconSetting from './site-icon-setting';
 import wrapSettingsForm from './wrap-settings-form';
 
 export class SiteSettingsFormGeneral extends Component {
+	state = {
+		isRemoveDuplicateViewsExperimentEnabled: false,
+	};
+
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+		getIsRemoveDuplicateViewsExperimentEnabled().then(
+			( isRemoveDuplicateViewsExperimentEnabled ) => {
+				if (
+					this.state.isRemoveDuplicateViewsExperimentEnabled !==
+					isRemoveDuplicateViewsExperimentEnabled
+				) {
+					this.setState( { isRemoveDuplicateViewsExperimentEnabled } );
+				}
+			}
+		);
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -382,6 +396,7 @@ export class SiteSettingsFormGeneral extends Component {
 			translate,
 			adminInterfaceIsWPAdmin,
 		} = this.props;
+		const { isRemoveDuplicateViewsExperimentEnabled } = this.state;
 		const classes = clsx( 'site-settings__general-settings', {
 			'is-loading': isRequestingSettings,
 		} );
@@ -418,7 +433,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-				{ ! isEnabled( 'untangling/hosting-menu' ) && <SiteSettingsForm { ...this.props } /> }
+				{ ! isRemoveDuplicateViewsExperimentEnabled && <SiteSettingsForm { ...this.props } /> }
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);

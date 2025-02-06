@@ -937,11 +937,6 @@ $colophon-height: 50px;
 			margin-right: auto;
 		}
 
-		.logged-out-form input:focus {
-			border: 0;
-			box-shadow: none;
-		}
-
 		.signup-form__terms-of-service-link,
 		.signup-form__terms-of-service-link a {
 			text-align: left;
@@ -1026,24 +1021,17 @@ $colophon-height: 50px;
 			padding-top: 8px;
 		}
 
+
+		.signup-form__woocommerce-inputs-wrapper {
+			padding: 12px 0;
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+		}
+
 		.form-input-validation {
 			padding-bottom: 0;
 			padding-top: 0;
-		}
-
-		.woocommerce-muriel-text-control,
-		.muriel-input-text {
-			border-color: var(--color-neutral-20);
-
-			.components-base-control__label,
-			.text-control__label {
-				color: var(--color-neutral-50);
-			}
-
-			&.active {
-				box-shadow: 0 0 0 2px var(--studio-woocommerce-purple-60);
-				border-color: transparent;
-			}
 		}
 
 		.jetpack-connect__magic-link-card {

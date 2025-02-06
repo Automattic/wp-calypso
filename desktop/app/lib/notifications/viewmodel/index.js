@@ -38,21 +38,21 @@ function parseNote( note ) {
 	switch ( type ) {
 		case 'automattcher':
 		case 'post':
-			navigate = `/read/blogs/${ siteId }/posts/${ postId }`;
+			navigate = `/reader/blogs/${ siteId }/posts/${ postId }`;
 			break;
 		case 'comment':
 			{
 				// If the note is approved, construct the URL to navigate to.
 				if ( isApproved ) {
-					navigate = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
+					navigate = `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
 				}
 			}
 			break;
 		case 'comment_like':
-			navigate = `/read/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
+			navigate = `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }`;
 			break;
 		case 'site':
-			navigate = `/read/blogs/${ siteId }`;
+			navigate = `/reader/blogs/${ siteId }`;
 			break;
 		default:
 			navigate = null;

@@ -42,18 +42,21 @@ const SubscriberName = ( { displayName, email }: { displayName: string; email: s
 
 const defaultView: View = {
 	type: 'table',
+	titleField: 'name',
+	mediaField: 'media',
+	showTitle: true,
+	showMedia: true,
+	fields: [ 'plan', 'is_email_subscriber', 'date_subscribed' ],
 	layout: {
 		styles: {
 			media: { width: '60px' },
 			name: { width: '55%', minWidth: '195px' },
-			plan: { width: '25%' },
-			date_subscribed: { width: '25%' },
+			plan: { width: '15%' },
+			is_email_subscriber: { width: '15%' },
+			date_subscribed: { width: '15%' },
 		},
 	},
-	fields: [ 'name', 'plan', 'date_subscribed' ],
 };
-
-const getSubscriberId = ( subscriber: Subscriber ) => subscriber.subscription_id.toString();
 
 const SubscriberDataViews = ( {
 	siteId = undefined,
@@ -146,10 +149,23 @@ const SubscriberDataViews = ( {
 		[ subscribers ]
 	);
 
+	const getSubscriberId = useCallback(
+		( subscriber: Subscriber ) => subscriber.subscription_id.toString(),
+		[]
+	);
+
+	const handleSubscriberOnClick = useCallback(
+		( subscriber: Subscriber ) => {
+			handleSubscriberSelect( [ getSubscriberId( subscriber ) ] );
+		},
+		[ getSubscriberId, handleSubscriberSelect ]
+	);
+
 	const fields = useMemo(
 		() => [
 			{
 				id: 'media',
+				label: translate( 'Media' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.avatar,
 				render: ( { item }: { item: Subscriber } ) => (
 					<Gravatar
@@ -167,45 +183,46 @@ const SubscriberDataViews = ( {
 				label: translate( 'Name' ),
 				getValue: ( { item }: { item: Subscriber } ) => item.display_name,
 				render: ( { item }: { item: Subscriber } ) => (
-					<button
-						type="button"
-						onClick={ () => handleSubscriberSelect( [ getSubscriberId( item ) ] ) }
-					>
-						{ selectedSubscriber ? (
-							<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-						) : (
-							<div className="subscriber-data-views__list-item">
-								<div className="subscriber-data-views__list-item-avatar">
-									<Gravatar
-										user={ { avatar_URL: item.avatar, name: item.display_name } }
-										size={ 52 }
-										imgSize={ 80 }
-										className="subscriber-data-views__square-avatar"
-									/>
-								</div>
-								<SubscriberName displayName={ item.display_name } email={ item.email_address } />
-							</div>
-						) }
-					</button>
+					<SubscriberName displayName={ item.display_name } email={ item.email_address } />
 				),
 				enableHiding: false,
 				enableSorting: true,
 			},
 			{
 				id: 'plan',
-				label: translate( 'Subscription type' ),
+				label: translate( 'Plan' ),
 				getValue: ( { item }: { item: Subscriber } ) =>
 					item.plans?.length ? SubscribersFilterBy.Paid : SubscribersFilterBy.Free,
 				render: ( { item }: { item: Subscriber } ) => <SubscriptionTypeCell subscriber={ item } />,
 				elements: [
-					{ label: 'Paid', value: SubscribersFilterBy.Paid },
-					{ label: 'Free', value: SubscribersFilterBy.Free },
+					{ label: translate( 'Paid' ), value: SubscribersFilterBy.Paid },
+					{ label: translate( 'Free' ), value: SubscribersFilterBy.Free },
 				],
 				filterBy: {
 					operators: [ 'is' as Operator ],
 				},
-				enableSorting: true,
 				enableHiding: false,
+				enableSorting: true,
+			},
+			{
+				id: 'is_email_subscriber',
+				label: translate( 'Email subscriber' ),
+				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
+				render: ( { item }: { item: Subscriber } ) => (
+					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
+				),
+				elements: [
+					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
+					{
+						label: translate( 'Not subscribed' ),
+						value: SubscribersFilterBy.ReaderSubscriber,
+					},
+				],
+				filterBy: {
+					operators: [ 'is' as Operator ],
+				},
+				enableHiding: false,
+				enableSorting: true,
 			},
 			{
 				id: 'date_subscribed',
@@ -216,7 +233,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[ handleSubscriberSelect, selectedSubscriber ]
+		[]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -264,6 +281,7 @@ const SubscriberDataViews = ( {
 		handleUnsubscribe,
 		onGiftSubscription,
 		couponsAndGiftsEnabled,
+		getSubscriberId,
 	] );
 
 	useEffect( () => {
@@ -271,24 +289,24 @@ const SubscriberDataViews = ( {
 		if ( isMobile ) {
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
-				fields: [ 'name' ],
+				showMedia: false,
+				fields: [],
 			} ) );
 		} else if ( selectedSubscriber ) {
-			// If we're on subscribers page, we want to show the list view.
+			// If we're on subscribers page, we want to show the list view (name & media).
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				type: 'list',
-				fields: [ 'media', 'name' ],
-				layout: {
-					primaryField: 'name',
-					mediaField: 'media',
-				},
+				showTitle: true,
+				showMedia: true,
+				fields: [],
 			} ) );
 		} else {
 			// Otherwise, we want to show the table view.
 			setCurrentView( ( prevView ) => ( {
 				...prevView,
 				...defaultView,
+				layout: defaultView.layout,
 			} ) );
 		}
 	}, [ isMobile, selectedSubscriber ] );
@@ -331,6 +349,7 @@ const SubscriberDataViews = ( {
 						data={ data }
 						fields={ fields }
 						view={ currentView }
+						onClickItem={ handleSubscriberOnClick }
 						onChangeView={ setCurrentView }
 						selection={
 							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined

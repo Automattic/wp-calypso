@@ -1,0 +1,22 @@
+.automattic-components-dialog {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08), 0 15px 27px rgba(0, 0, 0, 0.07), 0 30px 36px rgba(0, 0, 0, 0.04), 0 50px 43px rgba(0, 0, 0, 0.02);
+    border: none;
+    border-radius: 4px;
+    text-align: start;
+    padding: 30px;
+    box-sizing: border-box;
+    // mobile - 10px margins
+    max-width: calc(100% - 20px);
+}
+
+.automattic-components-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.automattic-components-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
