@@ -55,7 +55,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 									setCountry( value ?? '' );
 								} }
 								options={ countryOptions }
-								label={ translate( 'Select country' ) }
+								placeholder={ translate( 'Select country' ) }
 							/>
 						</FormField>
 					</FormFieldset>
