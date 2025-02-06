@@ -139,7 +139,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		}
 
 		// The `nextStep` is available only when logged-out users go to the step that requires auth
-		// and are redirected to the user step. When it's not available, go to the first step.
+		// and are redirected to the user step.
 		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const previousAuthStepSlug = stepData?.previousStep;
