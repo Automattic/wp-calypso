@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Dialog, MaterialIcon } from '@automattic/components';
+import { Icon, moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -312,7 +313,11 @@ const EmailMailboxActionMenu = ( { account, domain, mailbox } ) => {
 					visible={ removeTitanMailboxDialogVisible }
 				/>
 			) }
-			<EllipsisMenu position="bottom left" className="email-mailbox-action-menu__main">
+			<EllipsisMenu
+				position="bottom left"
+				className="email-mailbox-action-menu__main"
+				icon={ <Icon icon={ moreVertical } /> }
+			>
 				{ menuItems.map(
 					( {
 						href,
