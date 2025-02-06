@@ -1,5 +1,5 @@
-import { SiteDetails } from '@automattic/data-stores';
-import { DomainStepResult, PlansStepResult } from './types';
+import type { DomainStepResult, PlansStepResult } from './types';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * The manifest of the state of all available state fields in Stepper. Feel free to type and add all the fields you need.

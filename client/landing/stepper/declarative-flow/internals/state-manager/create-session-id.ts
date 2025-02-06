@@ -1,5 +1,4 @@
 const BASE62_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const SESSION_ID_SIGNATURE = '~';
 
 /**
  * Convert a base 10 integer to a base 62 string.
@@ -18,14 +17,20 @@ function base10ToBase62( num: number ) {
 }
 
 /**
- * Create a two-character long alphanumerical unique session ID preceded by `~` to distinguish it from locales.
+ * Create a two-character long alphanumerical unique session ID.
  * Two characters is short enough to not be ugly and create accidental offensive words, but long enough to contain 3782 enumerations.
  */
 export function createSessionId() {
 	const minNumberForTwoLettersBase62 = 62;
 	const maxNumberForTwoLettersBase62 = 3844;
-	const seed =
-		minNumberForTwoLettersBase62 + Math.floor( Math.random() * maxNumberForTwoLettersBase62 );
+	const [ rand ] = crypto.getRandomValues( new Uint16Array( 1 ) );
+	/**
+	 * Make it from 0...1.
+	 */
+	const scaledRand = rand / 0xffff;
 
-	return SESSION_ID_SIGNATURE + base10ToBase62( seed );
+	const seed =
+		minNumberForTwoLettersBase62 + Math.floor( scaledRand * maxNumberForTwoLettersBase62 );
+
+	return base10ToBase62( seed );
 }
