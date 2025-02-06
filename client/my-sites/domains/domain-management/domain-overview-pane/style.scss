@@ -257,6 +257,15 @@
 		.hosting-dashboard-layout-column__container {
 			height: 100%;
 		}
+
+		thead.email-forward-list__row th,
+		.dns-records-list-item__wrapper.is-header .dns-records-list-item__data {
+			font-weight: 500;
+			text-transform: uppercase;
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: .6875rem;
+			font-style: normal;
+		}
 	}
 
 	.domain__main-placeholder {
