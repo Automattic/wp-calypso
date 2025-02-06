@@ -212,10 +212,10 @@ const SubscriberDataViews = ( {
 				render: ( { item }: { item: Subscriber } ) => (
 					<div>
 						{ item.is_email_subscriber ? (
-							'Yes'
+							translate( 'Yes' )
 						) : (
 							<Tooltip text={ translate( 'Reader only subscriber' ) }>
-								<span className="subscriber-data-views__tooltip-text">No</span>
+								<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
 							</Tooltip>
 						) }
 					</div>
