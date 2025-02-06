@@ -144,7 +144,7 @@ export class Notice extends Component< NoticeProps > {
 			renderedIcon = icon;
 		} else {
 			const iconName = icon || this.getIcon();
-			renderedIcon = <Gridicon className="notice__icon" icon={ iconName } size={ 24 } />;
+			renderedIcon = <Gridicon className="notice__icon" icon={ iconName as string } size={ 24 } />;
 			iconNeedsDrop = GRIDICONS_WITH_DROP.includes(
 				iconName as ( typeof GRIDICONS_WITH_DROP )[ number ]
 			);
