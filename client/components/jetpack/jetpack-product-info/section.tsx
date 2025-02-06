@@ -40,6 +40,7 @@ const JetpackProductInfoSection: FunctionComponent< Props > = ( {
 					clickableHeader
 					smooth
 					contentExpandedStyle={ contentStyle }
+					expanded
 				>
 					<div ref={ ref }>{ children }</div>
 				</FoldableCard>

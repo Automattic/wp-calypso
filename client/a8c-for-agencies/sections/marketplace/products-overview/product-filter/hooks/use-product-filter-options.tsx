@@ -60,6 +60,11 @@ export default function useProductFilterOptions() {
 				  ]
 				: [] ),
 			{
+				key: PRODUCT_CATEGORY_PAYMENTS,
+				label: translate( 'Payments' ) as string,
+				icon: currencyDollar,
+			},
+			{
 				key: PRODUCT_CATEGORY_SECURITY,
 				label: translate( 'Security' ) as string,
 				icon: lock,
@@ -71,11 +76,6 @@ export default function useProductFilterOptions() {
 			},
 			{ key: PRODUCT_CATEGORY_SOCIAL, label: translate( 'Social' ) as string, icon: people },
 			{ key: PRODUCT_CATEGORY_GROWTH, label: translate( 'Growth' ) as string, icon: trendingUp },
-			{
-				key: PRODUCT_CATEGORY_PAYMENTS,
-				label: translate( 'Payments' ) as string,
-				icon: currencyDollar,
-			},
 			{
 				key: PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT,
 				label: translate( 'Shipping, Delivery, and Fulfillment' ) as string,
