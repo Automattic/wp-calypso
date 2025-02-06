@@ -252,6 +252,7 @@ export function summary( context, next ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
@@ -514,5 +515,6 @@ export function emailSummary( context, next ) {
 }
 
 export { default as insights } from './pages/insights/controller';
+export { default as realtime } from './pages/realtime/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';

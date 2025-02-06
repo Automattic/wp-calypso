@@ -394,6 +394,7 @@ export default {
 					selectedFeature={ feature }
 					siteSlug={ siteSlug }
 					site={ site }
+					inSiteContext={ pageContext.inSiteContext }
 				/>
 			);
 
@@ -412,12 +413,18 @@ export default {
 		};
 	},
 
+	domainManagementSiteContext( pageContext, next ) {
+		pageContext.inSiteContext = true;
+		next();
+	},
+
 	domainManagementSubpageView( pageContext, next ) {
 		pageContext.primary = (
 			<SubpageWrapper
 				subpageKey={ pageContext.params.subPageKey }
 				siteName={ pageContext.params.site }
 				domainName={ pageContext.params.domain }
+				inSiteContext={ pageContext.inSiteContext }
 			>
 				{ pageContext.primary }
 			</SubpageWrapper>

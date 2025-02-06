@@ -8,11 +8,12 @@ import { UnknownAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import AsyncLoad from 'calypso/components/async-load';
-import EmptyContent from 'calypso/components/empty-content';
 import NavigationHeader from 'calypso/components/navigation-header';
+import FollowingEmptyContent from 'calypso/reader/stream/empty';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { requestPaginatedStream } from 'calypso/state/reader/streams/actions';
 import { viewStream } from 'calypso/state/reader-ui/actions';
+import Skeleton from '../components/skeleton';
 import EngagementBar from './engagement-bar';
 import RecentPostField from './recent-post-field';
 import RecentPostSkeleton from './recent-post-skeleton';
@@ -23,6 +24,15 @@ import './style.scss';
 
 interface RecentProps {
 	viewToggle?: React.ReactNode;
+}
+
+interface PaddingItem {
+	isPadding: true;
+	postId: string;
+}
+
+function isPaddingItem( item: ReaderPost | PaddingItem ): item is PaddingItem {
+	return 'isPadding' in item;
 }
 
 const Recent = ( { viewToggle }: RecentProps ) => {
@@ -41,13 +51,12 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		search: '',
-		fields: [ 'icon', 'post' ],
+		fields: [],
 		perPage: 10,
 		page: 1,
-		layout: {
-			primaryField: 'post',
-			mediaField: 'icon',
-		},
+		titleField: 'post',
+		mediaField: 'icon',
+		showMedia: true,
 	} );
 
 	const selectedRecentSidebarFeedId = useSelector< AppState, number | null >(
@@ -65,7 +74,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			return {};
 		}
 
-		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost ) => {
+		return items.reduce( ( acc: Record< string, PostItem >, item: ReaderPost | PaddingItem ) => {
+			if ( isPaddingItem( item ) ) {
+				return acc;
+			}
 			const post = getPostByKey( state, {
 				feedId: item.feedId,
 				postId: item.postId,
@@ -90,7 +102,10 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'icon',
 				label: translate( 'Icon' ),
-				render: ( { item }: { item: ReaderPost } ) => {
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return <Skeleton height="24px" width="24px" shape="circle" />;
+					}
 					const post = getPostFromItem( item );
 					const iconUrl = post?.site_icon?.img || post?.author?.avatar_URL || '';
 					return iconUrl ? <ReaderAvatar siteIcon={ iconUrl } iconSize={ 24 } /> : null;
@@ -101,9 +116,19 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 			{
 				id: 'post',
 				label: translate( 'Post' ),
-				getValue: ( { item }: { item: ReaderPost } ) =>
-					`${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
-				render: ( { item }: { item: ReaderPost } ) => {
+				getValue: ( { item }: { item: ReaderPost | PaddingItem } ) =>
+					isPaddingItem( item )
+						? ''
+						: `${ getPostFromItem( item )?.title ?? '' } - ${ item?.site_name ?? '' }`,
+				render: ( { item }: { item: ReaderPost | PaddingItem } ) => {
+					if ( isPaddingItem( item ) ) {
+						return (
+							<>
+								<Skeleton height="10px" width="100%" style={ { marginBottom: '8px' } } />
+								<Skeleton height="8px" width="50%" />
+							</>
+						);
+					}
 					return (
 						<div onFocus={ () => handleItemFocus( item.postId?.toString() ) }>
 							<RecentPostField
@@ -120,7 +145,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				enableGlobalSearch: true,
 			},
 		],
-		[ getPostFromItem ]
+		[ getPostFromItem, handleItemFocus ]
 	);
 
 	const fetchData = useCallback( () => {
@@ -181,7 +206,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				const focusedItem = shownData.find(
 					( item ) => item.postId?.toString() === focusedIndexRef.current
 				);
-				if ( focusedItem ) {
+				if ( focusedItem && ! isPaddingItem( focusedItem ) ) {
 					setSelectedItem( focusedItem );
 					setTimeout( () => {
 						postColumnRef.current?.focus();
@@ -191,7 +216,6 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 		},
 		[ shownData ]
 	);
-
 	return (
 		/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */
 		<div className="recent-feed" onKeyDown={ handleKeyDown }>
@@ -200,21 +224,16 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 					<NavigationHeader title={ translate( 'Recent' ) }>{ viewToggle }</NavigationHeader>
 				</div>
 				<aside className="recent-feed__list-column-content">
-					<DataViews
-						getItemId={ ( item: ReaderPost, index = 0 ) =>
+					<DataViews< ReaderPost | PaddingItem >
+						getItemId={ ( item: ReaderPost | PaddingItem, index = 0 ) =>
 							item.postId?.toString() ?? `item-${ index }`
 						}
-						view={ view as View }
+						view={ view }
 						fields={ fields }
 						data={ shownData }
-						onChangeView={ ( newView: View ) =>
+						onChangeView={ ( newView ) =>
 							setView( {
-								type: newView.type,
-								fields: newView.fields ?? [],
-								layout: view.layout,
-								perPage: newView.perPage,
-								page: newView.page,
-								search: newView.search,
+								...newView,
 							} )
 						}
 						paginationInfo={ view.search === '' ? defaultPaginationInfo : paginationInfo }
@@ -243,14 +262,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 				{ ! ( selectedItem && getPostFromItem( selectedItem ) ) && isLoading && (
 					<RecentPostSkeleton />
 				) }
-				{ ! isLoading && data?.items.length === 0 && (
-					<EmptyContent
-						title={ translate( 'Nothing Posted Yet' ) }
-						line={ translate( 'This feed is currently empty.' ) }
-						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-						illustrationWidth={ 400 }
-					/>
-				) }
+				{ ! isLoading && data?.items.length === 0 && <FollowingEmptyContent /> }
 				{ data?.items.length > 0 && selectedItem && getPostFromItem( selectedItem ) && (
 					<>
 						<AsyncLoad

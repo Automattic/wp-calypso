@@ -67,6 +67,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/donations/',
 		post_id: 171110,
 	},
+	dns_default_records: {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/',
+		post_id: 386585,
+	},
 	earn: {
 		link: 'https://wordpress.com/support/monetize-your-site/',
 		post_id: 120172,
@@ -186,6 +190,10 @@ const contextLinks = {
 	menus: {
 		link: 'https://wordpress.com/support/menus/',
 		post_id: 59580,
+	},
+	nameservers: {
+		link: 'https://wordpress.com/support/domains/change-name-servers/#changing-name-servers-to-point-to-word-press-com',
+		post_id: 41383,
 	},
 	pages: {
 		link: 'https://wordpress.com/support/pages/',
@@ -391,6 +399,50 @@ const contextLinks = {
 	'site-performance': {
 		link: 'https://wordpress.com/support/check-your-sites-performance/',
 		post_id: 386816,
+	},
+	'manage-your-dns-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/',
+		post_id: 6595,
+	},
+	'dns-default-mx-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-mx-records',
+		post_id: 386585,
+	},
+	'dns-default-a-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-a-records',
+		post_id: 386585,
+	},
+	'dns-default-cname-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/view-or-restore-default-dns-records/#default-cname-record',
+		post_id: 386585,
+	},
+	'add-a-new-dns-record': {
+		link: 'https://wordpress.com/support/domains/custom-dns/add-a-new-dns-record/',
+		post_id: 386583,
+	},
+	'edit-or-delete-dns-record': {
+		link: 'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/',
+		post_id: 386584,
+	},
+	'domain-designated-agent': {
+		link: 'https://wordpress.com/support/domains/update-contact-information/#designated-agent',
+		post_id: 3441,
+	},
+	'transfer-domain-registration': {
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/#before-you-get-started',
+		post_id: 41298,
+	},
+	'public-vs-private-registration-and-gdpr': {
+		link: 'https://wordpress.com/support/domains/register-domain/#public-versus-private-registration-and-gdpr',
+		post_id: 2784,
+	},
+	'https-ssl': {
+		link: 'https://wordpress.com/support/domains/https-ssl/',
+		post_id: 2110,
+	},
+	'transfer-domain-to-another-registrar': {
+		link: 'https://wordpress.com/support/domains/transfer-domain-registration/',
+		post_id: 41298,
 	},
 };
 

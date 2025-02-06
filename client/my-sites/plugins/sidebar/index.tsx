@@ -59,7 +59,7 @@ const PluginsSidebar = ( { path, isCollapsed }: Props ) => {
 				{ isBulkPluginManagementEnabled && (
 					<SidebarItem
 						className="sidebar__menu-item--plugins"
-						link="/plugins/manage"
+						link="/plugins/manage/sites"
 						label={ translate( 'Manage Plugins' ) }
 						tooltip={ isCollapsed && translate( 'Manage Plugins' ) }
 						selected={ isManagedPluginSelected }

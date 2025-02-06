@@ -52,3 +52,11 @@ export const getHidePlanPropsBasedOnThemeType = ( themeType: string ) => {
 
 	return {};
 };
+
+export const getHidePlanPropsBasedOnCreateWithBigSky = () => {
+	return {
+		hideFreePlan: true,
+		hideEcommercePlan: true,
+		hideEnterprisePlan: true,
+	};
+};

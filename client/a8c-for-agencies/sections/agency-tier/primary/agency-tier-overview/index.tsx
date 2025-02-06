@@ -14,7 +14,6 @@ import { useSelector, useDispatch } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import DownloadBadges from '../../download-badges';
-import EarlyAccessBanner from '../../early-access-banner';
 import getAgencyTierInfo from '../../lib/get-agency-tier-info';
 import getTierBenefits from '../../lib/get-tier-benefits';
 import { AgencyTier } from '../../types';
@@ -35,15 +34,9 @@ export default function AgencyTierOverview() {
 
 	const ALL_TIERS: AgencyTier[] = [ 'emerging-partner', 'agency-partner', 'pro-agency-partner' ];
 
-	// todo: Restore this. We have to hide temporary the 'Download your badges' button until the WooCommerce ones are ready
-	// A4A GH issue: 1500
-	const temporaryHideDownloadBadges = true;
-
 	// Show download badges button for Agency Partner and Pro Agency Partner tiers
 	const showDownloadBadges =
-		! temporaryHideDownloadBadges &&
-		currentAgencyTier &&
-		[ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
+		currentAgencyTier && [ 'agency-partner', 'pro-agency-partner' ].includes( currentAgencyTier );
 
 	return (
 		<Layout className="agency-tier-overview" title={ title } wide>
@@ -58,8 +51,6 @@ export default function AgencyTierOverview() {
 			</LayoutTop>
 
 			<LayoutBody>
-				<EarlyAccessBanner />
-
 				{ currentAgencyTierInfo && (
 					<div className="agency-tier-overview__top-content">
 						<div className="agency-tier-overview__top-content-left">

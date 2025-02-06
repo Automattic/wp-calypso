@@ -19,6 +19,7 @@ export default function () {
 	page(
 		'/settings/writing/:site_id',
 		siteSelection,
+		_redirectIfDuplicatedView( 'options-writing.php' ),
 		navigation,
 		siteSettings,
 		writing,

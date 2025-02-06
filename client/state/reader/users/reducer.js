@@ -11,12 +11,12 @@ const items = ( state = {}, action ) => {
 		case READER_USER_REQUEST_SUCCESS:
 			return {
 				...state,
-				[ action.userId ]: action.userData,
+				[ action.userLogin ]: action.userData,
 			};
 		case READER_USER_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.userId ]: null,
+				[ action.userLogin ]: null,
 			};
 		default:
 			return state;
@@ -29,13 +29,13 @@ const requesting = ( state = {}, action ) => {
 		case READER_USER_REQUEST:
 			return {
 				...state,
-				[ action.userId ]: true,
+				[ action.userLogin ]: true,
 			};
 		case READER_USER_REQUEST_SUCCESS:
 		case READER_USER_REQUEST_FAILURE:
 			return {
 				...state,
-				[ action.userId ]: false,
+				[ action.userLogin ]: false,
 			};
 		default:
 			return state;

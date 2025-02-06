@@ -269,7 +269,6 @@
 			padding-right: 0;
 			overflow-y: initial;
 			max-height: initial;
-			max-width: 1400px;
 			width: 100%;
 		}
 
@@ -313,6 +312,14 @@
 	}
 }
 
+.wpcom-site .hosting-dashboard-layout.sites-dashboard:not(.domains-overview) .site-preview-pane {
+	.hosting-dashboard-item-view__content {
+		> * {
+			max-width: 1400px;
+		}
+	}
+}
+
 // Use flexbox to structure of fly-out panel.
 .wpcom-site .main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
 	&.hosting-dashboard-layout,
@@ -345,6 +352,12 @@
 
 		.sites-banner-container {
 			display: none;
+		}
+	}
+
+	&.domains-overview {
+		.hosting-dashboard-item-view__navigation {
+			border-radius: 8px 8px 0 0; /* stylelint-disable-line scales/radii */
 		}
 	}
 }

@@ -268,15 +268,18 @@
 	margin-bottom: 64px;
 	border: 1px solid #e0e0e0;
 	/* stylelint-disable-next-line scales/radii */
-	border-radius: 0 0 5px 5px;
+	border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+
+	div.spotlight-plan__buttons  {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
 	div.plan-features-2023-grid__table-item {
 		border: none;
-		&.is-top-buttons {
-			position: absolute;
-			top: 46px;
-			right: 0;
-			border-left: 0;
-		}
 
 		&.plan-features-2023-grid__header-billing-info {
 			padding-bottom: 16px;
@@ -288,6 +291,10 @@
 
 		&.popular-plan-parent-class .plan-features-2023-grid__popular-badge {
 			padding-bottom: 23px;
+			@include plans-grid-medium-large {
+				position: unset;
+				border: none;
+			}
 		}
 
 		.plan-features-2023-grid__header-title {

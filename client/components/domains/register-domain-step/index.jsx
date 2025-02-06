@@ -543,6 +543,10 @@ class RegisterDomainStep extends Component {
 			( Array.isArray( this.state.availableTlds ) && this.state.availableTlds.length > 0 ) ||
 			this.state.loadingResults;
 
+		if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( this.props.flowName ) ) {
+			return null;
+		}
+
 		return (
 			showFilters && (
 				<DropdownFilters

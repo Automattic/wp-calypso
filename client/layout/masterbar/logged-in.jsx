@@ -28,7 +28,9 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 import { isTrialExpired } from 'calypso/state/sites/plans/selectors/trials/trials-expiration';
 import {
 	getSiteSlug,
@@ -412,6 +414,26 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
+	renderLaunchButton() {
+		const { isUnlaunchedSite, siteId, translate } = this.props;
+
+		if ( ! isUnlaunchedSite ) {
+			return null;
+		}
+
+		return (
+			<Item
+				className="masterbar__item-launch-site"
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_masterbar_launch_site' );
+					this.props.launchSiteOrRedirectToLaunchSignupFlow( siteId );
+				} }
+			>
+				{ translate( 'Launch site' ) }
+			</Item>
+		);
+	}
+
 	renderProfileMenu() {
 		const { translate, user } = this.props;
 		const profileActions = [
@@ -469,7 +491,7 @@ class MasterbarLoggedIn extends Component {
 			<Item
 				tipTarget="reader"
 				className="masterbar__reader"
-				url="/read"
+				url="/reader"
 				icon={
 					<svg
 						width="24"
@@ -487,7 +509,11 @@ class MasterbarLoggedIn extends Component {
 				tooltip={ translate( 'Read the blogs and topics you follow' ) }
 				preloadSection={ this.preloadReader }
 				hasGlobalBorderStyle
-			/>
+			>
+				<span className="masterbar__icon-label masterbar__item-reader-label">
+					{ translate( 'Reader' ) }
+				</span>
+			</Item>
 		);
 	}
 
@@ -548,14 +574,6 @@ class MasterbarLoggedIn extends Component {
 		);
 	}
 
-	renderLaunchpadNavigator() {
-		if ( config.isEnabled( 'launchpad/navigator' ) ) {
-			return <AsyncLoad require="./masterbar-launchpad-navigator" />;
-		}
-
-		return null;
-	}
-
 	renderBackHomeButton() {
 		const { translate } = this.props;
 
@@ -604,10 +622,10 @@ class MasterbarLoggedIn extends Component {
 					{ this.renderSiteMenu() }
 					{ this.renderSiteActionMenu() }
 					{ this.renderLanguageSwitcher() }
+					{ this.renderLaunchButton() }
 				</div>
 				<div className="masterbar__section masterbar__section--right">
 					{ this.renderCart() }
-					{ this.renderLaunchpadNavigator() }
 					{ this.renderReader() }
 					{ loadHelpCenterIcon && this.renderHelpCenter() }
 					{ this.renderNotifications() }
@@ -660,6 +678,7 @@ export default connect(
 			isSiteTrialExpired: isTrialExpired( state, siteId ),
 			newPostUrl: getEditorUrl( state, siteId, null, 'post' ),
 			newPageUrl: getEditorUrl( state, siteId, null, 'page' ),
+			isUnlaunchedSite: getIsUnlaunchedSite( state, siteId ),
 		};
 	},
 	{
@@ -669,5 +688,6 @@ export default connect(
 		activateNextLayoutFocus,
 		savePreference,
 		redirectToLogout,
+		launchSiteOrRedirectToLaunchSignupFlow,
 	}
 )( localize( MasterbarLoggedIn ) );

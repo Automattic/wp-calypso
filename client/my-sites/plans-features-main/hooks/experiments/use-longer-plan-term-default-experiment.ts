@@ -1,3 +1,4 @@
+import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useExperiment } from 'calypso/lib/explat';
 
 const useTermFromExperimentVariant = (
@@ -23,7 +24,9 @@ const useTermFromExperimentVariant = (
  * define the default term in the grid/plans page.
  *
  */
-const useLongerPlanTermDefaultExperiment = (): {
+const useLongerPlanTermDefaultExperiment = (
+	flowName?: string | null
+): {
 	isLoadingExperiment: boolean;
 	term?: string | null;
 	// TODO: Consider removing this and always return concrete term values (where undefined/null would mean no term savings)
@@ -33,7 +36,10 @@ const useLongerPlanTermDefaultExperiment = (): {
 	// variation names 'default_to_three_year_plans', 'default_to_two_year_plans'
 	// and 'emphasize_savings_only'.
 	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_plans_page_emphasize_longer_plan_savings'
+		'calypso_plans_page_emphasize_longer_plan_savings',
+		{
+			isEligible: flowName === ONBOARDING_FLOW,
+		}
 	);
 	const term = useTermFromExperimentVariant( experimentAssignment?.variationName );
 

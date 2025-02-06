@@ -1,6 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import TransferOtherSiteHeader from 'calypso/my-sites/domains/domain-management/subpage-wrapper/headers/transfer-other-site-header';
 import AddForwardingEmailHeader from './headers/add-fowarding-email-header';
+import MailboxHeader from './headers/add-mailbox-header';
 import CompareEmailProvidersHeader from './headers/compare-email-providers';
+import ContactInformationHeader from './headers/contact-information-header';
 import { CustomHeaderComponentType } from './headers/custom-header-component-type';
 import DnsRecordHeader, {
 	addDnsRecordTitle,
@@ -21,12 +24,14 @@ type SubpageWrapperParamsType = {
 };
 
 // Subpage keys
+export const ADD_MAILBOX = 'add-mailbox';
 export const ADD_FORWARDING_EMAIL = 'add-forwarding-email';
 export const COMPARE_EMAIL_PROVIDERS = 'compare-email-providers';
 export const DNS_RECORDS = 'dns-records';
 export const ADD_DNS_RECORD = 'add-dns-record';
 export const EDIT_DNS_RECORD = 'edit-dns-record';
 export const EDIT_CONTACT_INFO = 'edit-contact-info';
+export const TRANSFER_OTHER_SITE = 'transfer-other-site';
 
 // Subpage params map
 const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
@@ -37,6 +42,7 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 	},
 	[ COMPARE_EMAIL_PROVIDERS ]: {
 		CustomHeader: CompareEmailProvidersHeader,
+		showBackButton: false,
 	},
 	[ DNS_RECORDS ]: {
 		CustomHeader: DNSRecordsHeader,
@@ -46,8 +52,8 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		showDetails: false,
 	},
 	[ EDIT_CONTACT_INFO ]: {
-		title: __( 'Contact information' ),
-		subtitle: __( "Manage your domain's contact details." ),
+		CustomHeader: ContactInformationHeader,
+		showPageHeader: false,
 	},
 	[ ADD_DNS_RECORD ]: {
 		CustomHeader: DnsRecordHeader,
@@ -62,6 +68,16 @@ const SUBPAGE_TO_PARAMS_MAP: Record< string, SubpageWrapperParamsType > = {
 		subtitleOverride: addDnsRecordsSubtitle,
 		showBreadcrumb: false,
 		context: 'edit',
+	},
+	[ ADD_MAILBOX ]: {
+		CustomHeader: MailboxHeader,
+		showFormHeader: false,
+		showPageHeader: false,
+		customFormHeader: __( 'New mailbox' ),
+	},
+	[ TRANSFER_OTHER_SITE ]: {
+		CustomHeader: TransferOtherSiteHeader,
+		showPageHeader: false,
 	},
 };
 

@@ -5,7 +5,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { A4AFeedback } from 'calypso/a8c-for-agencies/components/a4a-feedback';
 import useShowFeedback from 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback';
-import A4APaymentDelayedNotice from 'calypso/a8c-for-agencies/components/a4a-payment-delayed-notice';
 import A4APopover from 'calypso/a8c-for-agencies/components/a4a-popover';
 import {
 	DATAVIEWS_TABLE,
@@ -31,7 +30,6 @@ import LayoutHeader, {
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferralInvoices from '../../hooks/use-fetch-referral-invoices';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';
@@ -55,9 +53,8 @@ export default function ReferralsOverview( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		layout: {
-			primaryField: 'client',
-		},
+		fields: [ 'completed-orders', 'pending-orders', 'commissions', 'subscription-status' ],
+		titleField: 'client',
 	} );
 	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
@@ -88,9 +85,6 @@ export default function ReferralsOverview( {
 		isFetching: isFetchingReferrals,
 		refetch: refetchReferrals,
 	} = useFetchReferrals( isAutomatedReferral );
-
-	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
-		useFetchReferralInvoices( isAutomatedReferral );
 
 	const hasReferrals = !! referrals?.length;
 
@@ -129,8 +123,6 @@ export default function ReferralsOverview( {
 							<MissingPaymentSettingsNotice onClose={ () => setRequiredNoticeClosed( true ) } />
 						</div>
 					) }
-
-					{ hasReferrals && isPayable && ! actionRequiredNotice && <A4APaymentDelayedNotice /> }
 
 					{ ! isAutomatedReferral && <AutomatedReferralComingSoonBanner /> }
 
@@ -192,8 +184,6 @@ export default function ReferralsOverview( {
 							isLoading={ isLoading }
 							dataViewsState={ dataViewsState }
 							setDataViewsState={ setDataViewsState }
-							referralInvoices={ referralInvoices ?? [] }
-							isFetchingInvoices={ isFetchingReferralInvoices }
 							isArchiveView={ isArchiveView }
 							onReferralRefetch={ refetchReferrals }
 						/>
@@ -206,7 +196,6 @@ export default function ReferralsOverview( {
 				<LayoutColumn wide>
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
-						referralInvoices={ referralInvoices ?? [] }
 						isArchiveView={ isArchiveView }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {

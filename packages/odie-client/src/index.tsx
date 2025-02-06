@@ -1,7 +1,6 @@
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
-import clsx from 'clsx';
 import { useEffect } from 'react';
 import { ClosedConversationFooter } from './components/closed-conversation-footer';
 import { MessagesContainer } from './components/message/messages-container';
@@ -11,7 +10,7 @@ import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import './style.scss';
 
 export const OdieAssistant: React.FC = () => {
-	const { trackEvent, shouldUseHelpCenterExperience, currentUser } = useOdieAssistantContext();
+	const { trackEvent, currentUser } = useOdieAssistantContext();
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
@@ -24,12 +23,7 @@ export const OdieAssistant: React.FC = () => {
 	}, [] );
 
 	return (
-		<div
-			className={ clsx( 'chatbox', {
-				'help-center-experience-enabled': shouldUseHelpCenterExperience,
-				'help-center-experience-disabled': ! shouldUseHelpCenterExperience,
-			} ) }
-		>
+		<div className="chatbox">
 			<div className="chat-box-message-container" id="odie-messages-container">
 				<MessagesContainer currentUser={ currentUser } />
 			</div>

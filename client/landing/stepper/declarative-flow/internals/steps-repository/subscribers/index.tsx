@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import { StepContainer } from '@automattic/onboarding';
 import { AddSubscriberForm } from '@automattic/subscriber';
@@ -62,7 +61,7 @@ const Subscribers: Step = function ( { navigation } ) {
 							onChangeIsImportValid={ ( isValid ) => setIsImportValid( isValid ) }
 							allowEmptyFormSubmit={ false }
 							manualListEmailInviting={ ! isUserEligibleForSubscriberImporter }
-							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							showCsvUpload
 							recordTracksEvent={ recordTracksEvent }
 							titleText={ translate( 'Ready to add your first subscribers?' ) }
 							subtitleText={ subtitleText }

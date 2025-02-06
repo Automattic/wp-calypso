@@ -149,24 +149,18 @@ export class UserSignupPage {
 	 * https://wordpress.com/support/wpcc-faq/.
 	 *
 	 * @param {string} email Email address of the new user.
-	 * @param {string} username Username of the new user.
-	 * @param {string} password Password of the new user.
 	 * @returns {NewUserResponse} Response from the REST API.
 	 */
-	async signupWoo( email: string, username: string, password: string ): Promise< NewUserResponse > {
-		const isWooPasswordless = await this.page.evaluate( `configData.features['woo/passwordless']` );
-
+	async signupWoo( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		if ( ! isWooPasswordless ) {
-			await this.page.fill( selectors.usernameInput, username );
-			await this.page.fill( selectors.passwordInput, password );
-		}
-
-		const [ , response ] = await Promise.all( [
-			this.page.waitForURL( /.*woo\.com*/ ),
-			this.page.waitForResponse( /.*new\?.*/ ),
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /.*users\/new\?.*/ ),
 			this.page.click( selectors.submitButton ),
+			this.page.waitForURL( /.*woocommerce\.com*/, {
+				waitUntil: 'networkidle',
+				timeout: 25000,
+			} ),
 		] );
 
 		if ( ! response ) {

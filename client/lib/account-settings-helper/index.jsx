@@ -1,5 +1,5 @@
 import languages from '@automattic/languages';
-import ReactDom from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { useInView } from 'react-intersection-observer';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
@@ -61,9 +61,8 @@ export function AccountSettingsHelper() {
 	);
 }
 export default ( element, store ) =>
-	ReactDom.render(
+	createRoot( element ).render(
 		<Provider store={ store }>
 			<AccountSettingsHelper />
-		</Provider>,
-		element
+		</Provider>
 	);

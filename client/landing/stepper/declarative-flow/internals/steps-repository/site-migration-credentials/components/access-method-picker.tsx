@@ -1,7 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FormLabel } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import { Controller } from 'react-hook-form';
@@ -10,16 +8,10 @@ import { CredentialsFormFieldProps } from '../types';
 
 export const AccessMethodPicker: FC< CredentialsFormFieldProps > = ( { control } ) => {
 	const translate = useTranslate();
-	const locale = useLocale();
-
 	const applicationPasswordEnabled = isEnabled( 'automated-migration/application-password' );
-	const hasLabelTranslation =
-		locale.startsWith( 'en' ) || hasTranslation( 'WordPress site credentials' );
-
-	const credentialsLabel =
-		applicationPasswordEnabled && hasLabelTranslation
-			? translate( 'WordPress site credentials' )
-			: translate( 'WordPress credentials' );
+	const credentialsLabel = applicationPasswordEnabled
+		? translate( 'WordPress site credentials' )
+		: translate( 'WordPress credentials' );
 
 	return (
 		<div>

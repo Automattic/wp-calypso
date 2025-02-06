@@ -66,7 +66,7 @@ describe( 'selectors', () => {
 						selectedSiteId: 2916284,
 						section: {
 							name: 'reader',
-							paths: [ '/', '/read' ],
+							paths: [ '/', '/reader' ],
 							module: 'reader',
 							group: 'reader',
 						},
@@ -94,7 +94,7 @@ describe( 'selectors', () => {
 						selectedSiteId: 2916284,
 						section: {
 							name: 'reader',
-							paths: [ '/', '/read' ],
+							paths: [ '/', '/reader' ],
 							module: 'reader',
 							group: 'reader',
 						},
@@ -123,7 +123,7 @@ describe( 'selectors', () => {
 						selectedSiteId: 2916284,
 						section: {
 							name: 'reader',
-							paths: [ '/', '/read' ],
+							paths: [ '/', '/reader' ],
 							module: 'reader',
 							group: 'reader',
 						},

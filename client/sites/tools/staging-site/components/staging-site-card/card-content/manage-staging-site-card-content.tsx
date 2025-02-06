@@ -4,8 +4,8 @@ import { Button as WPButton } from '@wordpress/components';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import SiteIcon from 'calypso/blocks/site-icon';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
+import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { useSelector } from 'calypso/state';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
@@ -130,13 +130,7 @@ export const ManageStagingSiteCardContent = ( {
 				<Button
 					primary
 					onClick={ () => {
-						navigate(
-							`/overview/${ urlToSlug( stagingSite.url ) }?search=${ urlToSlug(
-								productionSiteUrl as string
-							) }`,
-							false,
-							true
-						);
+						showSitesPage( `/overview/${ urlToSlug( stagingSite.url ) }` );
 					} }
 					disabled={ isButtonDisabled }
 				>

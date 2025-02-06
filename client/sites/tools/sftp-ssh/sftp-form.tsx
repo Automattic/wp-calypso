@@ -119,26 +119,21 @@ export const SftpForm = ( {
 	const isLoadingSftpUsers = useSelector( ( state ) =>
 		getAtomicHostingIsLoadingSftpUsers( state, siteId )
 	);
-	const { username, password } = useSelector( ( state ) => {
-		let username;
-		let password;
 
-		const users = getAtomicHostingSftpUsers( state, siteId );
-
-		if ( ! disabled && users !== null ) {
-			if ( users.length ) {
-				// Pick first user. Rest of users will be handled in next phases.
-				username = users[ 0 ].username;
-				password = users[ 0 ].password;
-			} else {
-				// No SFTP user created yet.
-				username = null;
-				password = null;
-			}
+	let username: string | null | undefined = undefined;
+	let password: string | null | undefined = undefined;
+	const atomicSftpUsers = useSelector( ( state ) => getAtomicHostingSftpUsers( state, siteId ) );
+	if ( ! disabled && atomicSftpUsers !== null ) {
+		if ( atomicSftpUsers.length ) {
+			// Pick first user. Rest of users will be handled in next phases.
+			username = atomicSftpUsers[ 0 ].username;
+			password = atomicSftpUsers[ 0 ].password;
+		} else {
+			// No SFTP user created yet.
+			username = null;
+			password = null;
 		}
-
-		return { username, password };
-	} );
+	}
 
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -152,7 +147,7 @@ export const SftpForm = ( {
 
 	const handleResetPassword = () => {
 		setPasswordLoading( true );
-		dispatch( resetSftpPassword( siteId, username ) );
+		dispatch( resetSftpPassword( siteId, username as string ) );
 	};
 
 	const handleCreateUser = () => {
@@ -177,12 +172,14 @@ export const SftpForm = ( {
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
-			dispatch( requestAtomicSftpUsers( siteId ) );
+			if ( siteHasSftpFeature ) {
+				dispatch( requestAtomicSftpUsers( siteId ) );
+			}
 			if ( siteHasSshFeature ) {
 				dispatch( requestAtomicSshAccess( siteId ) );
 			}
 		}
-	}, [ disabled, siteId, siteHasSshFeature, dispatch ] );
+	}, [ disabled, siteId, siteHasSshFeature, siteHasSftpFeature, dispatch ] );
 
 	// For security reasons we remove the password from the state when the component is unmounted
 	// Since users should reset it every time they want to see it

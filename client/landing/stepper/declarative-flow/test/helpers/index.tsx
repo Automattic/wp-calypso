@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { MemoryRouter, useNavigate, useLocation } from 'react-router';
 import { Primitive } from 'utility-types';
 import themeReducer from 'calypso/state/themes/reducer';
+import { addQueryArgs } from '../../../../../lib/url';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import type { Flow, ProvidedDependencies, StepperStep } from '../../internals/types';
 
@@ -104,9 +105,45 @@ export const renderFlow = ( flow: Flow ) => {
 	};
 };
 
+export const runFlowNavigation = (
+	flow: Flow,
+	{ from, dependencies = {}, query = {} },
+	direction = 'forward'
+) => {
+	const { runUseStepNavigationSubmit, runUseStepNavigationGoBack } = renderFlow( flow );
+
+	if ( direction === 'forward' ) {
+		runUseStepNavigationSubmit( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( query, `/${ flow.name }/${ from.slug }` ),
+		} );
+	}
+
+	if ( direction === 'back' ) {
+		runUseStepNavigationGoBack( {
+			currentStep: from.slug,
+			dependencies: dependencies,
+			currentURL: addQueryArgs( query, `/${ flow.name }/${ from.slug }` ),
+		} );
+	}
+
+	const destination = getFlowLocation();
+	const [ pathname, searchParams ] = destination?.path?.split( '?' ) ?? [ '', '' ];
+
+	return {
+		step: pathname.replace( /^\/+/, '' ),
+		query: new URLSearchParams( searchParams ),
+	};
+};
+
 interface MatchDestinationParams {
 	step: StepperStep;
-	query: URLSearchParams | Record< string, Primitive >;
+	query: URLSearchParams | Record< string, Primitive > | null;
+}
+interface MatchExternalFlowParams {
+	path: string;
+	query: URLSearchParams | Record< string, Primitive > | null;
 }
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
@@ -117,25 +154,78 @@ declare global {
 	}
 }
 
+const differenceWith = ( a: URLSearchParams, b: URLSearchParams ) => {
+	const aEntries = Array.from( a.entries() );
+	return aEntries.filter( ( [ key ] ) => ! b.has( key ) || b.get( key ) !== a.get( key ) );
+};
+
+const toObject = ( a: URLSearchParams | Record< string, Primitive > ) => {
+	if ( a instanceof URLSearchParams ) {
+		const obj = Object.fromEntries( a.entries() );
+		if ( Object.keys( obj ).length === 0 ) {
+			return null;
+		}
+		return obj;
+	}
+	return a;
+};
+
 expect.extend( {
+	toMatchURL(
+		destination: jest.Spied< typeof window.location.assign >,
+		expected: MatchExternalFlowParams
+	) {
+		const results = destination.mock.calls.map( ( [ destination ] ) => {
+			const [ flow, queryString ] = destination.toString().split( '?' );
+			const expectedFlow = expected.path;
+
+			if ( expected.query instanceof URLSearchParams === false ) {
+				expected.query = new URLSearchParams( expected.query as Record< string, string > );
+			}
+			const receivedQuery = new URLSearchParams( queryString );
+			const diff = differenceWith( expected.query, receivedQuery );
+
+			const isSameFlow = flow === expectedFlow;
+			const isSameQuery = diff.length === 0;
+
+			if ( ! isSameQuery || ! isSameFlow ) {
+				return {
+					received: {
+						path: flow,
+						query: toObject( receivedQuery ),
+					},
+					pass: false,
+				};
+			}
+
+			return {
+				message: () => `expected ${ destination } to match ${ expected }`,
+				pass: true,
+			};
+		} );
+
+		const okResult = results.find( ( result ) => result.pass === true );
+		if ( ! okResult ) {
+			return {
+				message: () =>
+					`Expected: \n\tpath: ${ this.utils.printExpected(
+						expected.path
+					) }\n\tquery: ${ this.utils.printExpected( toObject( expected.query ) ) }
+					\nReceived: ${ results.map(
+						( result, index ) =>
+							`\n[${ index }]\tpath: ${ this.utils.printReceived(
+								result.received?.path
+							) } \n\tquery: ${ this.utils.printReceived( result.received?.query ) }`
+					) }`,
+				pass: false,
+			};
+		}
+
+		return okResult;
+	},
 	toMatchDestination( destination, expected: MatchDestinationParams ) {
 		const isSameStep = destination.step === expected.step.slug;
 
-		if ( expected.query instanceof URLSearchParams === false ) {
-			expected.query = new URLSearchParams( expected.query as Record< string, string > );
-		}
-		const isSameQuery = expected.query
-			? destination.query.toString() === expected.query.toString()
-			: true;
-
-		const pass = isSameStep && isSameQuery;
-
-		if ( pass ) {
-			return {
-				message: () => `expected ${ destination } not to match ${ expected }`,
-				pass: true,
-			};
-		}
 		if ( ! isSameStep ) {
 			return {
 				message: () =>
@@ -148,14 +238,27 @@ expect.extend( {
 			};
 		}
 
+		if ( expected.query instanceof URLSearchParams === false && expected.query !== null ) {
+			expected.query = new URLSearchParams( expected.query as Record< string, string > );
+		}
+
+		const diff = expected.query ? differenceWith( expected.query, destination.query ) : [];
+		const isSameQuery = expected.query ? diff.length === 0 : true;
+		const pass = isSameStep && isSameQuery;
+
+		if ( pass ) {
+			return {
+				message: () => `expected ${ destination } not to match ${ expected }`,
+				pass: true,
+			};
+		}
+
 		if ( ! isSameQuery ) {
 			return {
 				message: () =>
 					`Expected query: ${ this.utils.printExpected(
-						decodeURIComponent( expected.query.toString() )
-					) } \nReceived query: ${ this.utils.printReceived(
-						decodeURIComponent( destination.query.toString() )
-					) }`,
+						toObject( expected.query )
+					) } \nReceived query: ${ this.utils.printReceived( toObject( destination.query ) ) }`,
 				pass: false,
 			};
 		}

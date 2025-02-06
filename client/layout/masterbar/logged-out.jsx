@@ -53,7 +53,7 @@ class MasterbarLoggedOut extends Component {
 
 	renderSearchItem() {
 		const { translate } = this.props;
-		const searchUrl = addLocaleToPathLocaleInFront( '/read/search' );
+		const searchUrl = addLocaleToPathLocaleInFront( '/reader/search' );
 
 		return (
 			<Item url={ searchUrl }>
@@ -133,6 +133,13 @@ class MasterbarLoggedOut extends Component {
 		}
 
 		/**
+		 * Hide signup for OAuth flow (it doesn't correctly route the arugments)
+		 */
+		if ( currentQuery?.client_id !== null && currentQuery?.redirect_to != null ) {
+			return null;
+		}
+
+		/**
 		 * Hide signup from the screen when we have been sent to the login page from a redirect
 		 * by a service provider to authorize a Domain Connect template application.
 		 */
@@ -171,8 +178,10 @@ class MasterbarLoggedOut extends Component {
 			signupUrl = addLocaleToPath( signupUrl, locale );
 		}
 
-		// Add referrer query parameter for tracking
+		// Use Reader-specific signup stepper
+		// and add referrer query parameter for tracking
 		if ( sectionName === 'reader' ) {
+			signupUrl += '/reader';
 			signupUrl = addQueryArgs( { ref: 'reader-lp' }, signupUrl );
 		}
 

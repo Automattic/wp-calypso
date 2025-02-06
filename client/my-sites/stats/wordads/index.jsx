@@ -40,7 +40,7 @@ import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
 
 const formatCurrency = ( value ) => {
-	return '$' + numberFormat( value, 2 );
+	return '$' + numberFormat( value, { decimals: 2 } );
 };
 
 const CHARTS = [

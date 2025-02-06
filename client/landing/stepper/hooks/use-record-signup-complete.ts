@@ -33,6 +33,9 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 
 	const theme = site?.options?.theme_slug || selectedDesign?.slug || '';
 
+	// Avoid generating new reference on each call
+	const stringifiedGoals = goals.length && goals?.join( ',' );
+
 	return useCallback(
 		( signupCompletionState: Record< string, unknown > ) => {
 			const isNewUser = getSignupIsNewUserAndClear( userId ) ?? false;
@@ -70,7 +73,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 						hasPaidDomainItem && domainCartItem ? isDomainTransfer( domainCartItem ) : undefined,
 					signupDomainOrigin: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET,
 					framework: 'stepper',
-					goals: goals.length && goals?.join( ',' ),
+					goals: stringifiedGoals,
 				},
 				true
 			);
@@ -84,7 +87,7 @@ export const useRecordSignupComplete = ( flow: string | null ) => {
 			siteId,
 			theme,
 			userId,
-			goals,
+			stringifiedGoals,
 		]
 	);
 };

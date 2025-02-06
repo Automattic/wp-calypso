@@ -89,7 +89,7 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 				event_source: 'help-center',
 				event_external_id: uuidv4(),
 			} );
-		} else if ( openSupportInteraction ) {
+		} else if ( openSupportInteraction && ! currentSupportInteraction ) {
 			setCurrentSupportInteraction( openSupportInteraction[ 0 ] );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

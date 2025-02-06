@@ -22,6 +22,7 @@ type KebabToSnakeCase< S extends string > = S extends `${ infer T }${ infer U }`
 	: S;
 
 type TracksGoalsSelectEventProperties = {
+	flow: string;
 	goals: string;
 	combo: string;
 	total: number;
@@ -43,7 +44,7 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
 /**
  * The goals capture step
  */
-const GoalsStep: Step = ( { navigation } ) => {
+const GoalsStep: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const whatAreYourGoalsText = translate( 'What would you like to do?' );
 	const subHeaderText = translate(
@@ -82,6 +83,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			combo: goals.slice().sort().join( ',' ),
 			total: goals.length,
 			is_goals_big_sky_eligible: isGoalsBigSkyEligible( goals ),
+			flow,
 		};
 
 		goals.forEach( ( goal, i ) => {
@@ -100,7 +102,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const recordNavigationSelectTracksEvent = ( intent: Onboard.SiteIntent, action: string ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
-		recordTracksEvent( 'calypso_signup_goals_nav_click', { action } );
+		recordTracksEvent( 'calypso_signup_goals_nav_click', {
+			action,
+			is_goals_first: isGoalsAtFrontExperiment,
+		} );
 	};
 
 	const getStepSubmissionHandler =
@@ -115,7 +120,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			navigation.submit?.( { intent, ...eventProps } );
 		};
 
-	const handleSkip = getStepSubmissionHandler( 'skip', { shouldSkipSubmitTracking: true } );
+	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );
 
 	const handleImportClick = () => {

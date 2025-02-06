@@ -24,7 +24,7 @@ class FeedError extends Component {
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read/search"
+				href="/reader/search"
 			>
 				{ this.props.translate( 'Find sites to follow' ) }
 			</a>
@@ -32,12 +32,7 @@ class FeedError extends Component {
 
 		return (
 			<ReaderMain>
-				<EmptyContent
-					action={ action }
-					title={ this.props.message }
-					illustration="/calypso/images/illustrations/illustration-404.svg"
-					illustrationWidth={ 500 }
-				/>
+				<EmptyContent action={ action } title={ this.props.message } illustration="" />
 			</ReaderMain>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

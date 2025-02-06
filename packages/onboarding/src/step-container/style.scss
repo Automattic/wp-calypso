@@ -235,13 +235,12 @@
 	}
 
 	/**
-	 * Jetpack and Sensei Powered
+	 * Jetpack and WooCommerce Powered
 	 */
 	.step-container__jetpack-powered,
 	.step-container__header-jetpack-powered,
 	.step-container__woocommerce-powered,
-	.step-container__header-woocommerce-powered,
-	.step-container__sensei-powered {
+	.step-container__header-woocommerce-powered {
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -269,14 +268,6 @@
 
 		@include break-small {
 			visibility: visible;
-		}
-	}
-
-	.step-container__sensei-powered {
-		padding-bottom: 24px;
-
-		svg {
-			margin-inline-end: 8px;
 		}
 	}
 }

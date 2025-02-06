@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { SelectItems } from '@automattic/onboarding';
 import { globe, addCard, layout } from '@wordpress/icons';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { get, isEmpty } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -61,13 +61,9 @@ class SiteOrDomain extends Component {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
-		let buyADomainTitle =
-			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Just buy domains' )
-				? translate( 'Just buy a domain', 'Just buy domains', {
-						count: this.getDomainCart().length,
-				  } )
-				: translate( 'Just buy a domain' );
-
+		let buyADomainTitle = translate( 'Just buy a domain', 'Just buy domains', {
+			count: this.getDomainCart().length,
+		} );
 		if ( this.isLeanDomainSearch() && domainName ) {
 			// translators: %s is a domain name
 			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
@@ -75,11 +71,7 @@ class SiteOrDomain extends Component {
 
 		const choices = [];
 
-		const buyADomainDescription =
-			i18n.getLocaleSlug() === 'en' || i18n.hasTranslation( 'Add a site later.' )
-				? translate( 'Add a site later.' )
-				: translate( 'Show a "coming soon" notice on your domain. Add a site later.' );
-
+		const buyADomainDescription = translate( 'Add a site later.' );
 		if ( isReskinned ) {
 			choices.push( {
 				key: 'domain',
@@ -94,29 +86,15 @@ class SiteOrDomain extends Component {
 			choices.push( {
 				key: 'page',
 				title: translate( 'New site' ),
-				description:
-					i18n.getLocaleSlug() === 'en' ||
-					i18n.hasTranslation(
-						'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
-					)
-						? translate(
-								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-								{
-									components: {
-										strong: <strong />,
-										br: <br />,
-									},
-								}
-						  )
-						: translate(
-								'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-								{
-									components: {
-										strong: <strong />,
-										br: <br />,
-									},
-								}
-						  ),
+				description: translate(
+					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+					{
+						components: {
+							strong: <strong />,
+							br: <br />,
+						},
+					}
+				),
 				icon: null,
 				titleIcon: addCard,
 				value: 'page',
@@ -127,29 +105,15 @@ class SiteOrDomain extends Component {
 				choices.push( {
 					key: 'existing-site',
 					title: translate( 'Existing WordPress.com site' ),
-					description:
-						i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation(
-							'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}'
-						)
-							? translate(
-									'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-									{
-										components: {
-											strong: <strong />,
-											br: <br />,
-										},
-									}
-							  )
-							: translate(
-									'Use with a site you already started.{{br/}}{{strong}}Free domain for the first year*{{/strong}}',
-									{
-										components: {
-											strong: <strong />,
-											br: <br />,
-										},
-									}
-							  ),
+					description: translate(
+						'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+						{
+							components: {
+								strong: <strong />,
+								br: <br />,
+							},
+						}
+					),
 					icon: null,
 					titleIcon: layout,
 					value: 'existing-site',

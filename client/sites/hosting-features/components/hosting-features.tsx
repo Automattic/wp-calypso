@@ -45,12 +45,11 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 	const dispatch = useDispatch();
 	const { searchParams } = new URL( document.location.toString() );
 	const siteId = useSelector( getSelectedSiteId );
-	const { siteSlug, isSiteAtomic, hasSftpFeature, isPlanExpired } = useSelector( ( state ) => ( {
-		siteSlug: getSiteSlug( state, siteId ) || '',
-		isSiteAtomic: isSiteWpcomAtomic( state, siteId as number ),
-		hasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
-		isPlanExpired: !! getSelectedSite( state )?.plan?.expired,
-	} ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) || '' );
+	const isSiteAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId ) );
+	const hasSftpFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SFTP ) );
+	const isPlanExpired = useSelector( ( state ) => !! getSelectedSite( state )?.plan?.expired );
+
 	// The ref is required to persist the value of redirect_to after renders
 	const redirectToRef = useRef( searchParams.get( 'redirect_to' ) );
 
@@ -59,7 +58,7 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 		if ( isEnabled( 'untangling/hosting-menu' ) ) {
 			redirectUrl = `/sites/tools/${ siteId }`;
 		} else {
-			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteId }` : `/overview/${ siteId }`;
+			redirectUrl = hasSftpFeature ? `/hosting-config/${ siteSlug }` : `/overview/${ siteId }`;
 		}
 	}
 
@@ -115,6 +114,13 @@ const HostingFeatures = ( { showAsTools }: HostingFeaturesProps ) => {
 				"Access your site's database and tailor your server settings to your specific needs."
 			),
 			supportContext: 'hosting-configuration',
+		},
+		{
+			title: translate( 'SFTP & SSH Access' ),
+			text: translate(
+				'Securely access and edit your site via SFTP, or use SSH for file management and WP-CLI commands.'
+			),
+			supportContext: 'hosting-sftp',
 		},
 	];
 

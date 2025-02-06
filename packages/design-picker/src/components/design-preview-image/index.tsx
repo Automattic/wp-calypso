@@ -61,9 +61,9 @@ const DesignPreviewImage: FC< DesignPreviewImageProps > = ( {
 			alt=""
 			options={ getMShotOptions( {
 				scrollable: false,
-				highRes: ! isMobile,
-				isMobile,
-				oldHighResImageLoading,
+				highRes: true,
+				isMobile: false,
+				oldHighResImageLoading: ! isMobile,
 			} ) }
 			scrollable={ false }
 		/>

@@ -15,7 +15,7 @@ const SiteEmptyContent = ( { translate } ) => {
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	const action = (
-		<a className="empty-content__action button" onClick={ recordAction } href="/read/search">
+		<a className="empty-content__action button" onClick={ recordAction } href="/reader/search">
 			{ translate( 'Find sites to follow' ) }
 		</a>
 	);
@@ -26,8 +26,7 @@ const SiteEmptyContent = ( { translate } ) => {
 			title={ translate( 'No posts' ) }
 			line={ translate( 'This site has not posted anything yet. Try back later.' ) }
 			action={ action }
-			illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-			illustrationWidth={ 500 }
+			illustration=""
 		/>
 	);
 };

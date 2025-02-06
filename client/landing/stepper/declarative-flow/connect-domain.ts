@@ -1,7 +1,7 @@
 import { CONNECT_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { domainMapping } from 'calypso/lib/cart-values/cart-items';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -109,12 +109,17 @@ const connectDomain: Flow = {
 	useTracksEventProps() {
 		const { domain, provider } = useDomainParams();
 
-		return {
-			[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
-				domain,
-				provider,
-			},
-		};
+		return useMemo(
+			() => ( {
+				eventsProperties: {
+					[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ]: {
+						domain,
+						provider,
+					},
+				},
+			} ),
+			[ domain, provider ]
+		);
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;

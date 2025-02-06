@@ -224,7 +224,7 @@ function UnifiedPlansStep( {
 }: UnifiedPlansStepProps ) {
 	const [ isDesktop, setIsDesktop ] = useState< boolean | undefined >( isDesktopViewport() );
 	const dispatch = reduxUseDispatch();
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const translate = useTranslate();
 	const initializedSitesBackUrl = useSelector( ( state ) =>
 		getCurrentUserSiteCount( state ) ? '/sites/' : null

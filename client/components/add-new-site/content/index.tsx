@@ -13,7 +13,6 @@ const AddNewSiteContent = ( props: AddNewSiteContentProps ) => {
 			/>
 		);
 	}
-	return null;
 };
 
 export default AddNewSiteContent;

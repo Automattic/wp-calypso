@@ -26,10 +26,11 @@ import { SftpCard } from 'calypso/hosting/server-settings/components/sftp-card/c
 import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activate-status';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-acknowledge/acknowlege-modal';
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
-import SiteAdminInterface from 'calypso/my-sites/site-settings/site-admin-interface';
+import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
 import CacheCard from 'calypso/sites/settings/caching/form';
 import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
 import WebServerSettingsCard from 'calypso/sites/settings/web-server/server-configuration-form';
@@ -101,13 +102,14 @@ type AllCardsProps = {
 	isBusinessTrial?: boolean;
 	siteId: number | null;
 	siteSlug: string | null;
+	isJetpack: boolean | null;
 };
 
 const AllCards = ( {
 	isAdvancedHostingDisabled,
 	isBasicHostingDisabled,
 	siteId,
-	siteSlug,
+	isJetpack,
 }: AllCardsProps ) => {
 	const allCards: CardEntry[] = [
 		{
@@ -132,14 +134,6 @@ const AllCards = ( {
 		},
 	];
 
-	if ( siteId ) {
-		allCards.push( {
-			feature: 'wp-admin',
-			content: <SiteAdminInterface siteId={ siteId } siteSlug={ siteSlug } isHosting />,
-			type: 'basic',
-		} );
-	}
-
 	if ( config.isEnabled( 'hosting-server-settings-enhancements' ) ) {
 		allCards.push( {
 			feature: 'defensive-mode',
@@ -154,6 +148,14 @@ const AllCards = ( {
 		type: 'advanced',
 	} );
 
+	if ( isJetpack && siteId ) {
+		allCards.push( {
+			feature: 'jetpack-monitor',
+			content: <JetpackMonitor />,
+			type: 'basic',
+		} );
+	}
+
 	const availableTypes: CardEntry[ 'type' ][] = [];
 
 	if ( ! isAdvancedHostingDisabled ) {
@@ -166,6 +168,53 @@ const AllCards = ( {
 	return <ShowEnabledFeatureCards cards={ allCards } availableTypes={ availableTypes } />;
 };
 
+const InnerDiv = ( { children }: { children: React.ReactNode } ) => <>{ children }</>;
+
+const Content = ( {
+	hasAtomicFeature,
+	hasSftpFeature,
+	hasTransfer,
+	isBusinessTrial,
+	isRemoveDuplicateViewsExperimentEnabled,
+	isJetpack,
+	isSiteAtomic,
+	siteId,
+	siteSlug,
+}: {
+	hasAtomicFeature: boolean;
+	hasSftpFeature: boolean;
+	hasTransfer: boolean;
+	isBusinessTrial: boolean;
+	isRemoveDuplicateViewsExperimentEnabled: boolean;
+	isJetpack: boolean | null;
+	isSiteAtomic: boolean;
+	siteId: number | null;
+	siteSlug: string | null;
+} ) => {
+	const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
+
+	const Inner = isRemoveDuplicateViewsExperimentEnabled ? InnerDiv : MasonryGrid;
+
+	return (
+		<>
+			{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
+			{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
+			<WrapperComponent>
+				<Inner>
+					<AllCards
+						isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
+						isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
+						isBusinessTrial={ isBusinessTrial && ! hasTransfer }
+						siteId={ siteId }
+						siteSlug={ siteSlug }
+						isJetpack={ isJetpack }
+					/>
+				</Inner>
+			</WrapperComponent>
+		</>
+	);
+};
+
 type ServerSettingsProps = {
 	fetchUpdatedData: () => void;
 };
@@ -173,6 +222,8 @@ type ServerSettingsProps = {
 const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const isRemoveDuplicateViewsExperimentEnabled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const clickActivate = () =>
 		dispatch( recordTracksEvent( 'calypso_hosting_configuration_activate_click' ) );
@@ -225,11 +276,11 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 				fetchUpdatedData();
 			}
 		},
-		[ hasTransfer ]
+		[ fetchUpdatedData, hasTransfer ]
 	);
 
 	const getPageTitle = () => {
-		return translate( 'Server Settings' );
+		return translate( 'Server settings' );
 	};
 
 	const getUpgradeBanner = () => {
@@ -267,28 +318,6 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 		}
 	};
 
-	const getContent = () => {
-		const WrapperComponent = ! isSiteAtomic ? FeatureExample : Fragment;
-
-		return (
-			<>
-				{ isSiteAtomic && <QuerySites siteId={ siteId } /> }
-				{ isJetpack && siteId && <QueryJetpackModules siteId={ siteId } /> }
-				<WrapperComponent>
-					<MasonryGrid>
-						<AllCards
-							isAdvancedHostingDisabled={ ! hasSftpFeature || ! isSiteAtomic }
-							isBasicHostingDisabled={ ! hasAtomicFeature || ! isSiteAtomic }
-							isBusinessTrial={ isBusinessTrial && ! hasTransfer }
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-						/>
-					</MasonryGrid>
-				</WrapperComponent>
-			</>
-		);
-	};
-
 	/* We want to show the upsell banner for the following cases:
 	 * 1. The site is on an eCommerce trial.
 	 * 2. The site does not have the Atomic feature.
@@ -305,7 +334,7 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 	}
 
 	return (
-		<Panel wide className="page-server-settings">
+		<Panel wide={ ! isRemoveDuplicateViewsExperimentEnabled } className="page-server-settings">
 			{ ! isLoadingSftpData && (
 				<ScrollToAnchorOnMount
 					offset={ HEADING_OFFSET }
@@ -340,7 +369,17 @@ const ServerSettings = ( { fetchUpdatedData }: ServerSettingsProps ) => {
 					}
 				/>
 			) }
-			{ getContent() }
+			<Content
+				hasAtomicFeature={ hasAtomicFeature }
+				hasSftpFeature={ hasSftpFeature }
+				hasTransfer={ hasTransfer }
+				isBusinessTrial={ isBusinessTrial }
+				isRemoveDuplicateViewsExperimentEnabled={ isRemoveDuplicateViewsExperimentEnabled }
+				isJetpack={ isJetpack }
+				isSiteAtomic={ isSiteAtomic }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+			/>
 			{ isEligibleForHostingTrial && isTrialAcknowledgeModalOpen && (
 				<TrialAcknowledgeModal
 					setOpenModal={ ( isOpen ) => {

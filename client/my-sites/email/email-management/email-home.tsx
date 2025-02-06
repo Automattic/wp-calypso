@@ -105,7 +105,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
 	const hasSitesLoaded = useSelector( hasLoadedSites );
-	const isAllDomainManagementContext = context === 'domains';
+	const isAllDomainManagementContext = context === 'domains' || context === 'hosting-overview';
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
@@ -149,7 +149,9 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
 				<EmailProvidersStackedComparisonPage
-					className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+					className={ clsx( 'email-stacked-comparison-page', {
+						'context-all-domain-management': isAllDomainManagementContext,
+					} ) }
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { CircularProgressBar } from '@automattic/components';
 import { LaunchpadContainer } from '@automattic/launchpad';
@@ -19,12 +18,11 @@ import { Questions } from './questions';
 import { SitePreview } from './site-preview';
 import { Steps } from './steps';
 import { useSteps } from './steps/use-steps';
-import type { Status } from './provision-status';
 import type { Step } from '../../types';
 import './style.scss';
 
 interface PreparationEventsHookOptions {
-	migrationKeyStatus: Status;
+	migrationKeyStatus: string;
 	preparationCompleted: boolean;
 	preparationError: Error | null;
 	fromUrl: string;
@@ -88,12 +86,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 
 	useEffect( () => {
 		if ( siteId ) {
-			//TODO: We can stop to set the status to STARTED_DIY when the feature is enabled.
-			const status = isEnabled( 'automated-migration/pending-status' )
-				? MigrationStatus.PENDING_DIY
-				: MigrationStatus.STARTED_DIY;
-
-			updateMigrationStatus( { status } );
+			updateMigrationStatus( { status: MigrationStatus.PENDING_DIY } );
 		}
 	}, [ siteId, updateMigrationStatus ] );
 
@@ -112,7 +105,7 @@ const SiteMigrationInstructions: Step = function ( { navigation, flow } ) {
 		completed: preparationCompleted,
 		error: preparationError,
 		migrationKey,
-	} = usePrepareSiteForMigration( siteId );
+	} = usePrepareSiteForMigration( siteId, fromUrl, { retry: 10 } );
 
 	const migrationKeyStatus = detailedStatus.migrationKey;
 

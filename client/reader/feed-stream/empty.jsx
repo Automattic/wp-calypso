@@ -18,7 +18,7 @@ class FeedEmptyContent extends PureComponent {
 			<a
 				className="empty-content__action button is-primary" // eslint-disable-line
 				onClick={ this.recordAction }
-				href="/read/search"
+				href="/reader/search"
 			>
 				{ translate( 'Find sites to follow' ) }
 			</a>
@@ -29,8 +29,7 @@ class FeedEmptyContent extends PureComponent {
 				title={ translate( 'No recent posts' ) }
 				line={ translate( 'This site has not posted anything recently.' ) }
 				action={ action }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 500 }
+				illustration=""
 			/>
 		);
 	}

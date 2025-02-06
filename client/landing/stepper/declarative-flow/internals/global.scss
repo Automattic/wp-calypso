@@ -69,12 +69,12 @@ button {
 /**
  * Site Setup
  */
-.ai-assembler,
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
 .onboarding.goals,
 .onboarding.design-setup,
+.onboarding.design-choices,
 .onboarding.difm-starting-point,
 .site-migration,
 .migration,
@@ -108,14 +108,16 @@ button {
 .hundred-year-domain,
 .link-in-bio-tld,
 .entrepreneur,
-.generate-content {
+.generate-content,
+.processing {
 	box-sizing: border-box;
 
 	&.step-route {
 		padding: 60px 0 0;
 
 		// Launchpad has its own header
-		&.launchpad {
+		&.launchpad,
+		&.hundred-year-plan {
 			margin-top: -60px;
 		}
 
@@ -223,6 +225,10 @@ button {
 	--wp-components-color-accent-darker-20: var(--studio-wordpress-blue-70);
 	--wp-components-color-accent: var(--studio-wordpress-blue-50);
 
+}
+
+.step-route.onboarding {
+	margin: 0 auto;
 }
 
 .import-focused .step-container.site-picker,
@@ -400,17 +406,6 @@ button {
 	}
 }
 
-.wooexpress,
-.copy-site,
-.ecommerce {
-	.step-container.processing-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 25vh;
-	}
-}
-
 .assign-trial-plan,
 .processing {
 	&.wooexpress,
@@ -448,13 +443,21 @@ button {
 }
 
 .wooexpress {
+	.step-container.processing-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 9vh;
+	}
 	.step-container .step-container__content h1 {
 		font-family: proxima-nova, sans-serif;
 		font-weight: 600;
 		font-size: $font-title-large;
 	}
-	.loading-bar {
+	.stepper-loader__progress-bar {
+		--wp-components-color-foreground: var(--wooexpress-purple);
 		background-color: var(--studio-woocommerce-purple-5);
+		height: 6px;
 		width: 590px;
 		max-width: 100%;
 		margin-left: auto;
@@ -469,7 +472,7 @@ button {
 		max-width: 640px;
 		box-sizing: border-box;
 	}
-	p.processing-step__subtitle {
+	p.stepper-loader__subtitle {
 		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
 		letter-spacing: initial;

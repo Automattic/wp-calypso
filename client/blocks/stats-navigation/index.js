@@ -15,14 +15,9 @@ import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notic
 import { shouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import {
-	getJetpackStatsAdminVersion,
-	getSiteOption,
-	isSimpleSite,
-} from 'calypso/state/sites/selectors';
+import { getJetpackStatsAdminVersion, getSiteOption } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
 import {
 	updateModuleToggles,
@@ -34,6 +29,23 @@ import Intervals from './intervals';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
+
+// Helper to expose logic for default module listing.
+export function getAvailablePageModules( selectedItem, hasVideoPress ) {
+	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
+		// Set the default VideoPress visibility based on the hasVideoPress parameter.
+		// We update the disabled state as well but that value is currently ignored.
+		if ( toggleItem.key === 'videos' ) {
+			return {
+				...toggleItem,
+				disabled: ! hasVideoPress,
+				defaultValue: hasVideoPress,
+			};
+		}
+
+		return toggleItem;
+	} );
+}
 
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
@@ -67,6 +79,7 @@ class StatsNavigation extends Component {
 		isWordAds: PropTypes.bool,
 		isSubscriptionsModuleActive: PropTypes.bool,
 		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -95,18 +108,9 @@ class StatsNavigation extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
-			( toggleItem ) => {
-				// disable the "videos" toggle on sites that do not have VideoPress enabled
-				// the toggle will be disabled (grayed out and non interactive)
-				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
-
-				return {
-					...toggleItem,
-					disabled: shouldDisableVideoToggle,
-					defaultValue: shouldDisableVideoToggle === false,
-				};
-			}
+		const availableModuleToggles = getAvailablePageModules(
+			nextProps.selectedItem,
+			nextProps.hasVideoPress
 		);
 
 		if (
@@ -140,14 +144,7 @@ class StatsNavigation extends Component {
 	};
 
 	isValidItem = ( item ) => {
-		const {
-			isGoogleMyBusinessLocationConnected,
-			isStore,
-			isWordAds,
-			isSubscriptionsModuleActive,
-			isSimple,
-			siteId,
-		} = this.props;
+		const { isGoogleMyBusinessLocationConnected, isStore, isWordAds, siteId } = this.props;
 
 		switch ( item ) {
 			case 'wordads':
@@ -164,11 +161,13 @@ class StatsNavigation extends Component {
 				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
 
 			case 'subscribers':
+				return 'undefined' === typeof siteId ? false : true;
+
+			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
-
-				return isSimple || isSubscriptionsModuleActive;
+				return config.isEnabled( 'stats/real-time-tab' );
 
 			default:
 				return true;
@@ -311,8 +310,6 @@ export default connect(
 			isWordAds:
 				getSiteOption( state, siteId, 'wordads' ) &&
 				canCurrentUser( state, siteId, 'manage_options' ),
-			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions' ),
-			isSimple: isSimpleSite( state, siteId ),
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),

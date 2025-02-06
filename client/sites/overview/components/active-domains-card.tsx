@@ -21,6 +21,7 @@ import {
 	showUpdatePrimaryDomainErrorNotice,
 	showUpdatePrimaryDomainSuccessNotice,
 } from 'calypso/state/domains/management/actions';
+import { canAnySiteConnectDomains } from 'calypso/state/selectors/can-any-site-connect-domains';
 import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -38,6 +39,7 @@ const ActiveDomainsCard: FC = () => {
 	const userCanSetPrimaryDomains = useSelector(
 		( state ) => ! currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 	);
+	const hasConnectableSites = useSelector( canAnySiteConnectDomains );
 
 	const hasNonWpcomDomains = useMemo( () => {
 		return filterOutWpcomDomains( data?.domains ?? [] ).length > 0;
@@ -71,13 +73,16 @@ const ActiveDomainsCard: FC = () => {
 
 			<DomainsTable
 				className="hosting-overview__domains-table"
+				context="site"
 				hideCheckbox
 				isLoadingDomains={ isLoading }
 				domains={ data?.domains }
 				isAllSitesView={ false }
+				isHostingOverview
 				useMobileCards={ forceMobile }
 				siteSlug={ site?.slug ?? null }
 				userCanSetPrimaryDomains={ userCanSetPrimaryDomains }
+				hasConnectableSites={ hasConnectableSites }
 				onDomainAction={ ( action, domain ) => {
 					if ( action === 'set-primary-address' && site ) {
 						return {

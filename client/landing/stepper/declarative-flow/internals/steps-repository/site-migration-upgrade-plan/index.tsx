@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	PLAN_BUSINESS,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
@@ -7,7 +6,7 @@ import {
 	getPlanByPathSlug,
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { StepContainer } from '@automattic/onboarding';
+import { SITE_MIGRATION_FLOW, StepContainer } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
@@ -37,9 +36,10 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 	navigation,
 	data,
 	customizedActionButtons,
+	flow,
 	...props
 } ) => {
-	const showVariants = config.isEnabled( 'migration-flow/experiment' );
+	const showVariants = SITE_MIGRATION_FLOW === flow;
 	const { onSkip, skipLabelText, skipPosition } = props;
 	const siteItem = useSite();
 	const siteSlug = useSiteSlug();

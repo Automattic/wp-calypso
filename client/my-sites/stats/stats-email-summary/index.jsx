@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, numberFormat } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -74,7 +74,15 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = opensUnique > 0 || opens === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.opens_rate }%` : '—' }
+									value={
+										hasUniquesData
+											? `${ numberFormat( item.opens_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
 									item={ item }
 									TooltipContent={ OpensTooltipContent }
 								/>
@@ -97,7 +105,15 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 							const hasUniquesData = clicksUnique > 0 || clicks === 0;
 							return (
 								<TooltipWrapper
-									value={ hasUniquesData ? `${ item.clicks_rate }%` : '—' }
+									value={
+										hasUniquesData
+											? `${ numberFormat( item.clicks_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
 									item={ item }
 									TooltipContent={ ClicksTooltipContent }
 								/>

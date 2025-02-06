@@ -16,12 +16,12 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/plans/': __( 'upgrade plan' ),
 		'/plugins': __( 'plugins' ),
 		'/plugins/manage': __( 'manage plugins' ),
-		'/read': __( 'reader' ),
-		'/read/conversations': __( 'conversations' ),
-		'/read/list': __( 'reader list' ),
-		'/read/notifications': __( 'notifications' ),
-		'/read/search': __( 'search' ),
-		'/read/subscriptions': __( 'manage subscriptions' ),
+		'/reader': __( 'reader' ),
+		'/reader/conversations': __( 'conversations' ),
+		'/reader/list': __( 'reader list' ),
+		'/reader/notifications': __( 'notifications' ),
+		'/reader/search': __( 'search' ),
+		'/reader/subscriptions': __( 'manage subscriptions' ),
 		'/settings/performance/': __( 'performance settings' ),
 		'/settings/podcasting/': __( 'podcasting' ),
 		'/settings/reading/': __( 'reading settings' ),
@@ -43,6 +43,7 @@ export const useQueryForRoute = ( currentRoute: string ) => {
 		'/wp-admin/options-general.php?page=debug-bar-extender': __( 'debug bar extender' ),
 		'/wp-admin/options-media.php': __( 'media settings' ),
 		'/wp-admin/post-new.php?post_type=jetpack-testimonial': __( 'new testimonial' ),
+		'/wp-admin/site-editor.php?p=%2Fpattern': __( 'patterns' ),
 	};
 
 	// Find exact URL matches

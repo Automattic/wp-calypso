@@ -305,8 +305,21 @@ describe( 'streams.lastPage', () => {
 		expect( lastPage( undefined, action ) ).toBe( true );
 	} );
 
-	it( 'should maintain false if the last request had more items', () => {
-		const action = receivePage( { streamKey: 'following', streamItems: [ time2PostKey ] } );
+	it( 'should maintain false if the last request had more items and a pageHandle', () => {
+		const action = receivePage( {
+			streamKey: 'following',
+			streamItems: [ time2PostKey ],
+			pageHandle: 'next-page-token',
+		} );
 		expect( lastPage( false, action ) ).toBe( false );
+	} );
+
+	it( 'should return true if there are items but no pageHandle', () => {
+		const action = receivePage( {
+			streamKey: 'following',
+			streamItems: [ time2PostKey ],
+			pageHandle: null,
+		} );
+		expect( lastPage( false, action ) ).toBe( true );
 	} );
 } );

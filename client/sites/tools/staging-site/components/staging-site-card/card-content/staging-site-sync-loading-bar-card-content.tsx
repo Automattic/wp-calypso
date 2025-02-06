@@ -11,7 +11,7 @@ const StyledLoadingBar = styled( LoadingBar )( {
 
 type CardContentProps = {
 	progress: number;
-	siteToSync: 'production' | 'staging' | null;
+	siteToSync: 'production' | 'staging';
 };
 
 export const StagingSiteSyncLoadingBarCardContent = ( {
@@ -30,16 +30,12 @@ export const StagingSiteSyncLoadingBarCardContent = ( {
 			: translate(
 					'We are updating the production site. We’ll email the site owner once it is ready.'
 			  );
-	} else if ( siteToSync === 'staging' ) {
+	} else {
 		message = isOwner
 			? translate( 'We are updating your staging site. We’ll email you once it is ready.' )
 			: translate(
 					'We are updating the staging site. We’ll email the site owner once it is ready.'
 			  );
-	} else {
-		message = isOwner
-			? translate( 'We are updating your site. We’ll email you once it is ready.' )
-			: translate( 'We are updating the site. We’ll email the site owner once it is ready.' );
 	}
 
 	return (

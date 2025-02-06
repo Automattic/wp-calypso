@@ -26,7 +26,7 @@ export const JumpToRecent = ( {
 		if (
 			! containerReference.current ||
 			isMinimized ||
-			chat.messages.length < 2 ||
+			! chat.messages.length ||
 			chat.status !== 'loaded'
 		) {
 			return;

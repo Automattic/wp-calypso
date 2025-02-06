@@ -165,7 +165,6 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
 		} );
@@ -181,7 +180,6 @@ describe( 'StepRoute', () => {
 				signup_complete_flow_name: 'some-flow',
 				signup_complete_step_name: 'some-step-slug',
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 			} );
 		} );
@@ -213,7 +211,6 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
 				signup_complete_flow_name: 'some-other-flow',
@@ -247,7 +244,6 @@ describe( 'StepRoute', () => {
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {
 				intent: 'build',
-				assembler_source: 'premium',
 				is_in_hosting_flow: false,
 				skip_step_render: true,
 				signup_complete_flow_name: 'some-other-flow',

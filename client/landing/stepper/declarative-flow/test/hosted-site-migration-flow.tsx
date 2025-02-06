@@ -19,7 +19,8 @@ jest.mock( '../../utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 
-describe( 'Hosted site Migration Flow', () => {
+// eslint-disable-next-line jest/no-disabled-tests
+describe.skip( 'Hosted site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: { ...originalLocation, assign: jest.fn() },

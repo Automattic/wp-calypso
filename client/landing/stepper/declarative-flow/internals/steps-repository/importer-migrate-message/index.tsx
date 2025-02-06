@@ -14,12 +14,12 @@ import { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomainAndPath } from 'calypso/lib/url';
 import { UserData } from 'calypso/lib/user/user';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { useSubmitMigrationTicket } from './hooks/use-submit-migration-ticket';
 import './style.scss';
 
 interface WhatToExpectProps {

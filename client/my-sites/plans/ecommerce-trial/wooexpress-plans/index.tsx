@@ -8,8 +8,6 @@ import {
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
@@ -46,8 +44,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		yearlyControlProps,
 	} = props;
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
-
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		planSlugs: [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ],
 		siteId,
@@ -74,28 +70,16 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 				...yearlyControlProps,
 				content: (
 					<span>
-						{ isEnglishLocale ||
-						hasTranslation( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}' )
-							? translate( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}', {
-									args: { percentageSavings },
-									components: { span: <span className="wooexpress-plans__interval-savings" /> },
-							  } )
-							: translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
-									args: { percentageSavings },
-							  } ) }
+						{ translate( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}', {
+							args: { percentageSavings },
+							components: { span: <span className="wooexpress-plans__interval-savings" /> },
+						} ) }
 					</span>
 				),
 				selected: interval === 'yearly',
 			},
 		];
-	}, [
-		interval,
-		translate,
-		monthlyControlProps,
-		percentageSavings,
-		yearlyControlProps,
-		isEnglishLocale,
-	] );
+	}, [ interval, translate, monthlyControlProps, percentageSavings, yearlyControlProps ] );
 
 	const onUpgradeClick = useCallback(
 		( cartItems?: MinimalRequestCartProduct[] | null ) => {

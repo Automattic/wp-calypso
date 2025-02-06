@@ -41,7 +41,7 @@ export const useSendOdieMessage = () => {
 		setChat,
 		odieBroadcastClientId,
 		setChatStatus,
-		shouldUseHelpCenterExperience,
+		setExperimentVariationName,
 	} = useOdieAssistantContext();
 
 	const addMessage = ( message: Message | Message[], props?: Partial< Chat > ) => {
@@ -87,7 +87,7 @@ export const useSendOdieMessage = () => {
 				! returnedChat.messages[ 0 ].content
 			) {
 				const errorMessage: Message = {
-					content: ODIE_ERROR_MESSAGE( shouldUseHelpCenterExperience ),
+					content: ODIE_ERROR_MESSAGE,
 					internal_message_id,
 					role: 'bot',
 					type: 'error',
@@ -118,7 +118,7 @@ export const useSendOdieMessage = () => {
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
-
+			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( botMessage, { odieId: returnedChat.chat_id } );
 			broadcastOdieMessage( botMessage, odieBroadcastClientId );
 		},
@@ -128,9 +128,7 @@ export const useSendOdieMessage = () => {
 		onError: ( error ) => {
 			const isRateLimitError = error.message.includes( '429' );
 			const errorMessage: Message = {
-				content: isRateLimitError
-					? ODIE_RATE_LIMIT_MESSAGE
-					: ODIE_ERROR_MESSAGE( shouldUseHelpCenterExperience ),
+				content: isRateLimitError ? ODIE_RATE_LIMIT_MESSAGE : ODIE_ERROR_MESSAGE,
 				internal_message_id,
 				role: 'bot',
 				type: 'error',

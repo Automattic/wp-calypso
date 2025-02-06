@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
@@ -8,12 +7,11 @@ import {
 	render as clientRender,
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { noSite, navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	renderPluginsDashboard,
 	browsePlugins,
 	browsePluginsOrPlugin,
-	renderPluginWarnings,
 	renderProvisionPlugins,
 	jetpackCanUpdate,
 	plugins,
@@ -128,6 +126,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
+		noSite,
 		renderPluginsSidebar,
 		renderPluginsDashboard,
 		makeLayout,
@@ -141,6 +140,7 @@ export default function ( router ) {
 		scrollTopIfNoHash,
 		navigation,
 		redirectTrialSites,
+		noSite,
 		renderPluginsSidebar,
 		renderPluginsDashboard,
 		makeLayout,
@@ -176,21 +176,19 @@ export default function ( router ) {
 		clientRender
 	);
 
-	if ( isEnabled( 'plugins/multisite-scheduled-updates' ) ) {
-		router(
-			[
-				`/${ langParam }/plugins/scheduled-updates`,
-				`/${ langParam }/plugins/scheduled-updates/:action(create)`,
-				`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
-			],
-			redirectLoggedOut,
-			navigation,
-			renderPluginsSidebar,
-			scheduledUpdatesMultisite,
-			makeLayout,
-			clientRender
-		);
-	}
+	router(
+		[
+			`/${ langParam }/plugins/scheduled-updates`,
+			`/${ langParam }/plugins/scheduled-updates/:action(create)`,
+			`/${ langParam }/plugins/scheduled-updates/:action(edit)/:id`,
+		],
+		redirectLoggedOut,
+		navigation,
+		renderPluginsSidebar,
+		scheduledUpdatesMultisite,
+		makeLayout,
+		clientRender
+	);
 
 	router(
 		[
@@ -247,19 +245,6 @@ export default function ( router ) {
 		redirectTrialSites,
 		renderPluginsSidebar,
 		browsePluginsOrPlugin,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		`/${ langParam }/plugins/:plugin/eligibility/:site_id`,
-		redirectLoggedOut,
-		redirectWithoutLocaleParamIfLoggedIn,
-		scrollTopIfNoHash,
-		siteSelection,
-		navigation,
-		redirectTrialSites,
-		renderPluginWarnings,
 		makeLayout,
 		clientRender
 	);

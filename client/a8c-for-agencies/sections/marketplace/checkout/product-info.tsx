@@ -1,5 +1,4 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
@@ -7,7 +6,13 @@ import getProductIcon from 'calypso/my-sites/plans/jetpack-plans/product-store/u
 import getPressablePlan from '../pressable-overview/lib/get-pressable-plan';
 import type { ShoppingCartItem } from '../types';
 
-export default function ProductInfo( { product }: { product: ShoppingCartItem } ) {
+export default function ProductInfo( {
+	product,
+	isAutomatedReferrals,
+}: {
+	product: ShoppingCartItem;
+	isAutomatedReferrals?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -32,7 +37,7 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 			{
 				args: {
 					install: presablePlan.install,
-					visits: formatNumber( presablePlan.visits ),
+					visits: numberFormat( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
 				count: presablePlan.install,
@@ -109,6 +114,16 @@ export default function ProductInfo( { product }: { product: ShoppingCartItem } 
 					<span className="product-info__count">{ countInfo }</span>
 				</div>
 				<p className="product-info__description">{ productDescription }</p>
+				{
+					// Show pressable limit warning if the product is a Pressable plan and it's not a referral
+					product.family_slug === 'pressable-hosting' && ! isAutomatedReferrals && (
+						<div className="product-info__pressable-limit-warning">
+							{ translate(
+								"*If you exceed your plan's storage or traffic limits, you will be charged $0.50 per GB and $8 per 10K visits per month."
+							) }
+						</div>
+					)
+				}
 				{ product.licenseId && siteUrls && <p className="product-info__site-url">{ siteUrls }</p> }
 			</div>
 		</div>

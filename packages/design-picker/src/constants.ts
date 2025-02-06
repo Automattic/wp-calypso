@@ -55,7 +55,6 @@ export const SUBJECT_CATEGORIES = {
 	EDUCATION: 'education',
 	ENTERTAINMENT: 'entertainment',
 	EVENTS: 'events',
-	LINK_IN_BIO: 'link-in-bio',
 };
 
 export const CATEGORIES = {

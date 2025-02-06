@@ -1,5 +1,5 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
-import config, { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
@@ -65,7 +65,9 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { useSiteOption } from 'calypso/state/sites/hooks';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
+import { withSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/with-site-global-styles-on-personal';
 import { getCurrentPlan, isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
@@ -653,28 +655,28 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 		} = this.props;
 
-		const isGlobalStylesEnabled = isEnabled( 'global-styles/on-personal-plan' );
+		const isGlobalStylesOnPersonal = this.props.isGlobalStylesOnPersonal;
 
 		const isFreeTier = isFreePlan && themeTier?.slug === 'free';
 		const hasLimitedFeatures =
 			! isExternallyManagedTheme &&
 			! isBundledSoftwareSet &&
 			! isThemePurchased &&
-			! isGlobalStylesEnabled &&
+			! isGlobalStylesOnPersonal &&
 			! isPremium &&
 			shouldLimitGlobalStyles;
 
 		const shouldSplitDefaultVariation = isFreeTier || hasLimitedFeatures;
 
-		const needsUpgrade = isGlobalStylesEnabled
-			? isFreePlan
+		const needsUpgrade = isGlobalStylesOnPersonal
+			? isFreePlan || shouldLimitGlobalStyles
 			: shouldLimitGlobalStyles || ( isPremium && ! isThemePurchased );
 
 		return (
 			styleVariations.length > 0 && (
 				<ThemeStyleVariations
 					description={ this.getStyleVariationDescription() }
-					splitDefaultVariation={ shouldSplitDefaultVariation }
+					splitDefaultVariation={ shouldSplitDefaultVariation || needsUpgrade }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
 					needsUpgrade={ needsUpgrade }
@@ -1083,7 +1085,7 @@ class ThemeSheet extends Component {
 		params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
 
 		this.setState( { showUnlockStyleUpgradeModal: false } );
-		const upgradeToPlan = isEnabled( 'global-styles/on-personal-plan' ) ? 'personal' : 'premium';
+		const upgradeToPlan = this.props.isGlobalStylesOnPersonal ? 'personal' : 'premium';
 
 		page( `/checkout/${ this.props.siteSlug || '' }/${ upgradeToPlan }?${ params.toString() }` );
 	};
@@ -1253,7 +1255,7 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal source="details" />
+				<ActivationModal source="details" siteIntent={ this.props.siteIntent } />
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
@@ -1341,6 +1343,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	let defaultOption;
 	let secondaryOption = 'tryandcustomize';
 	const needsJetpackPlanUpgrade = isStandaloneJetpack && isPremium && ! isThemePurchased;
+	const siteIntent = useSiteOption( 'site_intent' );
 
 	if ( ! showTryAndCustomize ) {
 		secondaryOption = null;
@@ -1391,6 +1394,7 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption={ secondaryOption }
 			source="showcase-sheet"
+			siteIntent={ siteIntent }
 		/>
 	);
 };
@@ -1491,4 +1495,6 @@ export default connect(
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
 	}
-)( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );
+)(
+	withSiteGlobalStylesStatus( withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) ) )
+);

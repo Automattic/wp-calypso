@@ -21,8 +21,8 @@ const PluginIcon = ( { className, image, isPlaceholder, size = 48 }: PluginIconP
 	);
 
 	const style = {
-		width: size,
-		height: size,
+		maxWidth: size,
+		maxHeight: size,
 	};
 
 	return (

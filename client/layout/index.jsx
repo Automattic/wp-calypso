@@ -50,7 +50,7 @@ import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSiteBySlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -257,7 +257,7 @@ class Layout extends Component {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
-		if ( this.props.isWooPasswordlessJPC ) {
+		if ( this.props.isWooJPC ) {
 			return (
 				<AsyncLoad require="calypso/layout/masterbar/woo-core-profiler" placeholder={ null } />
 			);
@@ -299,18 +299,16 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
-			'is-woocommerce-core-profiler-flow': this.props.isWooPasswordlessJPC,
+			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
-			woo: this.props.isWooPasswordlessJPC,
+			woo: this.props.isWooJPC,
 			'is-global-sidebar-visible': this.props.isGlobalSidebarVisible,
 			'is-global-sidebar-collapsed': this.props.isGlobalSidebarCollapsed,
 			'is-unified-site-sidebar-visible': this.props.isUnifiedSiteSidebarVisible,
 			'is-blaze-pro': this.props.isBlazePro,
 			'is-woo-com-oauth': isWooOAuth2Client( this.props.oauth2Client ),
-			'feature-flag-woocommerce-core-profiler-passwordless-auth': config.isEnabled(
-				'woocommerce/core-profiler-passwordless-auth'
-			),
-			'feature-flag-woocommerce-rebrand-2-0': config.isEnabled( 'woocommerce/rebrand-2-0' ),
+			'feature-flag-woocommerce-core-profiler-passwordless-auth': true,
+			'feature-flag-woocommerce-rebrand-2-0': true,
 		} );
 
 		const optionalBodyProps = () => {
@@ -427,7 +425,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
 				) }
-				{ ! isA8CForAgencies() && <GlobalNotifications /> }
+				{ config.isEnabled( 'layout/global-notifications' ) && <GlobalNotifications /> }
 				{ shouldEnableCommandPalette && (
 					<AsyncLoad require="calypso/layout/command-palette" placeholder={ null } />
 				) }
@@ -447,8 +445,8 @@ export default withCurrentRoute(
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const isWooPasswordlessJPC =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooPasswordlessJPCFlow( state );
+		const isWooJPC =
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(
@@ -470,9 +468,7 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( ! isWooPasswordlessJPC &&
-				! isBlazePro &&
-				[ 'signup', 'jetpack-connect' ].includes( sectionName ) );
+			( ! isWooJPC && ! isBlazePro && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;
 		const masterbarIsHidden =
@@ -498,10 +494,7 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const isGlobalSidebarVisible = shouldShowGlobalSidebar && ! sidebarIsHidden;
 
-		const userAllowedToHelpCenter =
-			config.isEnabled( 'calypso/help-center' ) && ! getIsOnboardingAffiliateFlow( state );
-
-		const colorScheme = isWooPasswordlessJPC
+		const colorScheme = isWooJPC
 			? getColorSchemeFromCurrentQuery( currentQuery )
 			: getColorScheme( {
 					state,
@@ -517,7 +510,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			isFromAutomatticForAgenciesPlugin,
 			isEligibleForJITM,
 			isBlazePro,
@@ -539,7 +532,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
-			userAllowedToHelpCenter,
+			userAllowedToHelpCenter: ! getIsOnboardingAffiliateFlow( state ),
 			currentRoute,
 			isGlobalSidebarVisible,
 			isGlobalSidebarCollapsed: shouldShowCollapsedGlobalSidebar && ! sidebarIsHidden,

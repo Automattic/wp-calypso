@@ -9,10 +9,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 interface Props {
 	preselectedFilters: string[];
 	isBigSkyEligible: boolean;
-	isMultiSelection: boolean;
 }
 
-const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelection }: Props ) => {
+const useTrackFilters = ( { preselectedFilters, isBigSkyEligible }: Props ) => {
 	const { selectedCategories, selectedDesignTiers } = useDesignPickerFilters();
 
 	const isIncludedWithPlan = selectedDesignTiers.includes( DESIGN_TIER_CATEGORIES.FREE );
@@ -39,13 +38,6 @@ const useTrackFilters = ( { preselectedFilters, isBigSkyEligible, isMultiSelecti
 	};
 
 	const handleSelectFilter = ( term: string, type?: string ) => {
-		if ( ! isMultiSelection ) {
-			recordTracksEvent( 'calypso_signup_unified_design_select_category', {
-				category: term,
-			} );
-			return;
-		}
-
 		recordTracksEvent( 'calypso_design_picker_select_filter', {
 			...commonFilterProperties,
 			filter_type: type || getCategoryType( term ),

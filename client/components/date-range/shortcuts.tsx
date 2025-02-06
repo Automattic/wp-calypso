@@ -18,23 +18,29 @@ export interface DateRangePickerShortcut {
 	isGated?: boolean;
 }
 
+interface DateRangePickerShortcutsProps {
+	selectedShortcutId?: string;
+	onClick: (
+		newFromDate: moment.Moment,
+		newToDate: moment.Moment,
+		shortcut?: DateRangePickerShortcut
+	) => void;
+	onShortcutClick?: ( shortcut: DateRangePickerShortcut ) => void;
+	locked?: boolean;
+	startDate?: MomentOrNull;
+	endDate?: MomentOrNull;
+	shortcutList?: DateRangePickerShortcut[];
+}
+
 const DateRangePickerShortcuts = ( {
-	currentShortcut,
+	selectedShortcutId,
 	onClick,
 	onShortcutClick, // Optional callback function for tracking shortcut clicks
 	locked = false,
 	startDate,
 	endDate,
 	shortcutList,
-}: {
-	currentShortcut?: string;
-	onClick: ( newFromDate: moment.Moment, newToDate: moment.Moment ) => void;
-	onShortcutClick?: ( shortcut: DateRangePickerShortcut ) => void;
-	locked?: boolean;
-	startDate?: MomentOrNull;
-	endDate?: MomentOrNull;
-	shortcutList?: DateRangePickerShortcut[];
-} ) => {
+}: DateRangePickerShortcutsProps ) => {
 	const normalizeDate = ( date: MomentOrNull ) => {
 		return date ? date.startOf( 'day' ) : date;
 	};
@@ -46,7 +52,7 @@ const DateRangePickerShortcuts = ( {
 	const { supportedShortcutList: defaultShortcutList, selectedShortcut } = useShortcuts( {
 		chartStart: normalizedStartDate?.format( DATE_FORMAT ) ?? '',
 		chartEnd: normalizedEndDate?.format( DATE_FORMAT ) ?? '',
-		daysInRange: ( normalizedEndDate?.diff( normalizedStartDate, 'days' ) ?? 0 ) + 1,
+		shortcutId: selectedShortcutId,
 	} );
 
 	shortcutList = shortcutList || defaultShortcutList;
@@ -55,13 +61,13 @@ const DateRangePickerShortcuts = ( {
 		! locked &&
 			shortcut.startDate &&
 			shortcut.endDate &&
-			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ) );
+			onClick( moment( shortcut.startDate ), moment( shortcut.endDate ), shortcut );
 
 		// Call the onShortcutClick if provided
 		onShortcutClick && onShortcutClick( shortcut );
 	};
 
-	currentShortcut = currentShortcut || selectedShortcut?.id || 'custom_date_range';
+	selectedShortcutId = selectedShortcutId || selectedShortcut?.id || 'custom_date_range';
 
 	return (
 		<div className="date-range-picker-shortcuts__inner">
@@ -69,13 +75,13 @@ const DateRangePickerShortcuts = ( {
 				{ shortcutList.map( ( shortcut, idx ) => (
 					<li
 						className={ clsx( 'date-range-picker-shortcuts__shortcut', {
-							'is-selected': shortcut.id === currentShortcut,
+							'is-selected': shortcut.id === selectedShortcutId,
 						} ) }
 						key={ shortcut.id || idx }
 					>
 						<Button onClick={ () => handleClick( shortcut ) }>
 							<span>{ shortcut.label }</span>
-							{ shortcut.id === currentShortcut && <Icon icon={ check } /> }
+							{ shortcut.id === selectedShortcutId && <Icon icon={ check } /> }
 							{ shortcut.isGated && <Icon icon={ lock } /> }
 						</Button>
 					</li>
@@ -86,7 +92,7 @@ const DateRangePickerShortcuts = ( {
 };
 
 DateRangePickerShortcuts.propTypes = {
-	currentShortcut: PropTypes.string,
+	selectedShortcutId: PropTypes.string,
 	onClick: PropTypes.func.isRequired,
 	onShortcutClick: PropTypes.func,
 	locked: PropTypes.bool,

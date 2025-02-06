@@ -1,4 +1,4 @@
-import { commentAuthorAvatar, video } from '@wordpress/icons';
+import { commentAuthorAvatar, search, video } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -30,6 +30,15 @@ export const AVAILABLE_PAGE_MODULES: Record< string, ModuleToggleItem[] > = {
 			},
 			icon: commentAuthorAvatar,
 			defaultValue: true,
+			disabled: false,
+		},
+		{
+			key: 'search-terms',
+			get label() {
+				return translate( 'Search terms' );
+			},
+			icon: search,
+			defaultValue: false,
 			disabled: false,
 		},
 		{
@@ -95,6 +104,12 @@ const googleMyBusiness = {
 	showIntervals: false,
 } as NavItem;
 
+const realtime = {
+	label: translate( 'Realtime' ),
+	path: '/stats/realtime',
+	showIntervals: false,
+} as NavItem;
+
 export interface NavItems {
 	traffic: NavItem;
 	insights: NavItem;
@@ -102,11 +117,13 @@ export interface NavItems {
 	wordads: NavItem;
 	googleMyBusiness: NavItem;
 	subscribers?: NavItem;
+	realtime?: NavItem;
 }
 
 const assembleNavItems = () => {
 	const navItems = {
 		traffic,
+		realtime,
 		insights,
 		subscribers,
 		store,

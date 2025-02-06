@@ -49,10 +49,11 @@ const DateControl = ( {
 			<DateRange
 				selectedStartDate={ moment( dateRange.chartStart ) }
 				selectedEndDate={ moment( dateRange.chartEnd ) }
+				selectedShortcutId={ dateRange.shortcutId }
 				lastSelectableDate={ siteToday }
 				firstSelectableDate={ moment( '2010-01-01' ) }
-				onDateCommit={ ( startDate: Moment, endDate: Moment ) =>
-					startDate && endDate && onApplyButtonClick( startDate, endDate )
+				onDateCommit={ ( startDate: Moment, endDate: Moment, selectedShortcutId: string ) =>
+					startDate && endDate && onApplyButtonClick( startDate, endDate, selectedShortcutId )
 				}
 				renderTrigger={ ( {
 					onTriggerClick,

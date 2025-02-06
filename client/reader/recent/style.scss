@@ -18,6 +18,7 @@ body.is-reader-full-post {
 	);
 
 	height: $feed-content-height !important; // Using !important here to avoid having a lengthy selector.
+	overflow-y: hidden !important; // Keeps the scrolling container consistent between one and two column layouts.
 
 	@media ( min-width: $break-wide ) {
 		display: flex;
@@ -84,13 +85,6 @@ body.is-reader-full-post {
 			width: 24px;
 		}
 
-		.dataviews-view-list {
-			height: $feed-list-height;
-			overflow-y: auto;
-			@include custom-scrollbars-on-hover( transparent, $gray-600 );
-			scrollbar-gutter: auto;
-		}
-
 		.dataviews__view-actions {
 			box-sizing: border-box;
 			padding: 16px $recent-feed-spacing;
@@ -100,11 +94,15 @@ body.is-reader-full-post {
 			padding: $recent-feed-spacing;
 		}
 
-		ul {
+		.dataviews-view-list {
+			height: $feed-list-height;
+			overflow-y: auto;
+			@include custom-scrollbars-on-hover( transparent, $gray-600 );
+			scrollbar-gutter: auto;
 			list-style: none;
 			margin: 0;
 
-			li {
+			div[role="row"] {
 				border-top: 1px solid var( --studio-gray-0 );
 
 				&.is-selected + li {
@@ -184,22 +182,13 @@ body.is-reader-full-post {
 				padding: $recent-feed-spacing;
 			}
 		}
-
-		// This is a temporary fix to disable the pagination page selector because of this issue: Automattic/loop#247
-		// Once that issue is fixed, this code should be removed.
-		.dataviews-pagination__page-select {
-			display: none;
-
-			& + div {
-				margin-left: auto;
-			}
-		}
 	}
 
 	&__post-column {
 		@extend %column-shared;
 		display: none;
 		overflow-y: auto;
+		height: 100%;
 
 		&.overlay {
 			display: block;

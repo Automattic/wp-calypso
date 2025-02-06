@@ -2,7 +2,6 @@ import { Spinner } from '@wordpress/components';
 import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
-import ArrowUp from '../../assets/arrow-up.svg';
 import { SendMessageIcon } from '../../assets/send-message-icon';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
@@ -16,7 +15,7 @@ export const OdieSendMessageButton = () => {
 	const divContainerRef = useRef< HTMLDivElement >( null );
 	const inputRef = useRef< HTMLTextAreaElement >( null );
 	const attachmentButtonRef = useRef< HTMLElement >( null );
-	const { trackEvent, chat, shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { trackEvent, chat } = useOdieAssistantContext();
 	const sendMessage = useSendChatMessage();
 	const isChatBusy = chat.status === 'loading' || chat.status === 'sending';
 	const [ isMessageSizeValid, setIsMessageSizeValid ] = useState( true );
@@ -35,11 +34,7 @@ export const OdieSendMessageButton = () => {
 
 		setIsMessageSizeValid( isMessageLengthValid );
 
-		if (
-			message === '' ||
-			isChatBusy ||
-			( shouldUseHelpCenterExperience && ! isMessageLengthValid )
-		) {
+		if ( message === '' || isChatBusy || ! isMessageLengthValid ) {
 			return;
 		}
 		const messageString = inputRef.current?.value;
@@ -75,7 +70,7 @@ export const OdieSendMessageButton = () => {
 			setSubmitDisabled( false );
 			inputRef.current?.focus();
 		}
-	}, [ isChatBusy, shouldUseHelpCenterExperience, chat?.provider, trackEvent, sendMessage ] );
+	}, [ isChatBusy, chat?.provider, trackEvent, sendMessage ] );
 
 	const inputContainerClasses = clsx(
 		'odie-chat-message-input-container',
@@ -84,11 +79,12 @@ export const OdieSendMessageButton = () => {
 
 	const buttonClasses = clsx(
 		'odie-send-message-inner-button',
-		shouldUseHelpCenterExperience && 'odie-send-message-inner-button__flag'
+		'odie-send-message-inner-button__flag'
 	);
+
 	return (
 		<>
-			{ ! isMessageSizeValid && shouldUseHelpCenterExperience && (
+			{ ! isMessageSizeValid && (
 				<div className="odie-chatbox-invalid__message">
 					{ __( 'Message exceeds 4096 characters limit.' ) }
 				</div>
@@ -110,15 +106,9 @@ export const OdieSendMessageButton = () => {
 						keyUpHandle={ onKeyUp }
 					/>
 					{ isChatBusy && <Spinner className="odie-send-message-input-spinner" /> }
-					{ shouldUseHelpCenterExperience && (
-						<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
-					) }
+					<AttachmentButton attachmentButtonRef={ attachmentButtonRef } />
 					<button type="submit" className={ buttonClasses } disabled={ submitDisabled }>
-						{ shouldUseHelpCenterExperience ? (
-							<SendMessageIcon />
-						) : (
-							<img src={ ArrowUp } alt={ __( 'Arrow icon', __i18n_text_domain__ ) } />
-						) }
+						<SendMessageIcon />
 					</button>
 				</form>
 			</div>

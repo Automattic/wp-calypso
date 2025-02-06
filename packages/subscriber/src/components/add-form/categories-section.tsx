@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { localizeUrl, useIsEnglishLocale } from '@automattic/i18n-utils';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
 import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
@@ -23,8 +23,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 	setSelectedCategories,
 	isWPCOMSite = false,
 } ) => {
-	const { __, hasTranslation } = useI18n();
-	const isEnglishLocale = useIsEnglishLocale();
+	const { __ } = useI18n();
 	const [ showCategories, setShowCategories ] = useState( false );
 	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
 	const infoButtonRef = useRef< HTMLButtonElement >( null );
@@ -42,7 +41,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 		recordTracksEvent( 'calypso_subscriber_add_form_categories_change', {
 			site_id: siteId,
 			categories_count: validTokens.length,
-			action: 'added',
+			action: validTokens.length > selectedCategories.length ? 'added' : 'removed',
 		} );
 
 		setSelectedCategories( validTokens );
@@ -63,7 +62,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 		if ( ! isWPCOMSite ) {
 			return siteUrl ? `${ siteUrl }/wp-admin/admin.php?page=jetpack#/newsletter` : `#`;
 		}
-		return `/settings/newsletter/${ siteId }`;
+		return `https://wordpress.com/settings/newsletter/${ siteId }`;
 	};
 
 	return (
@@ -133,11 +132,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 					suggestions={ newsletterCategories.map( ( cat ) => cat.name ) }
 					onChange={ handleCategoryChange }
 					label=""
-					placeholder={
-						isEnglishLocale || hasTranslation( 'Type to add categories' )
-							? __( 'Type to add categories' )
-							: __( 'Search…' )
-					}
+					placeholder={ __( 'Type to add categories' ) }
 				/>
 			) }
 		</div>

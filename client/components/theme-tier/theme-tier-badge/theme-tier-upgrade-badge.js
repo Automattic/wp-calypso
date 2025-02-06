@@ -1,7 +1,6 @@
 import { getPlan } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { Plans } from '@automattic/data-stores';
-import { createInterpolateElement } from '@wordpress/element';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import useIsUpdatedBadgeDesign from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/design-setup/hooks/use-is-updated-badge-design';
@@ -9,9 +8,7 @@ import { useSelector } from 'calypso/state';
 import { useThemeTierForTheme } from 'calypso/state/themes/hooks/use-theme-tier-for-theme';
 import { getMarketplaceThemeSubscriptionPrices } from 'calypso/state/themes/selectors';
 import { THEME_TIERS } from '../constants';
-import ThemeTierBadgeCheckoutLink from './theme-tier-badge-checkout-link';
 import { useThemeTierBadgeContext } from './theme-tier-badge-context';
-import ThemeTierTooltipTracker from './theme-tier-tooltip-tracker';
 
 export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 	const translate = useTranslate();
@@ -20,7 +17,6 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 
 	const tierMinimumUpsellPlan = THEME_TIERS[ themeTier?.slug ]?.minimumUpsellPlan;
 	const mappedPlan = getPlan( tierMinimumUpsellPlan );
-	const planPathSlug = mappedPlan?.getPathSlug();
 	const subscriptionPrices = useSelector( ( state ) =>
 		getMarketplaceThemeSubscriptionPrices( state, themeId )
 	);
@@ -63,24 +59,6 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 		} );
 	};
 
-	const tooltipContent = (
-		<>
-			<ThemeTierTooltipTracker />
-			<div data-testid="upsell-message">
-				{ createInterpolateElement(
-					// Translators: %(planName)s is the name of the plan that includes this theme. Examples: "Personal" or "Premium".
-					translate( 'This theme is included in the <Link>%(planName)s plan</Link>.', {
-						args: { planName },
-						textOnly: true,
-					} ),
-					{
-						Link: <ThemeTierBadgeCheckoutLink plan={ planPathSlug } />,
-					}
-				) }
-			</div>
-		</>
-	);
-
 	return (
 		<PremiumBadge
 			className={ clsx( 'theme-tier-badge__content', {
@@ -89,10 +67,9 @@ export default function ThemeTierPlanUpgradeBadge( { showPartnerPrice } ) {
 			focusOnShow={ false }
 			labelText={ getLabel() }
 			tooltipClassName="theme-tier-badge-tooltip"
-			tooltipContent={ tooltipContent }
 			tooltipPosition="top"
-			shouldHideTooltip={ isUpdatedBadgeDesign }
-			isClickable={ ! isUpdatedBadgeDesign }
+			shouldHideTooltip
+			isClickable={ false }
 		/>
 	);
 }

@@ -7,11 +7,13 @@
 	justify-content: space-between;
 	flex-direction: column;
 	gap: 10px;
-	margin-bottom: 40px;
+	margin-bottom: 24px;
 
-	@include break-medium {
+	@include break-large {
 		flex-direction: row;
-		align-items: flex-end;
+		align-items: center;
+		justify-content: center;
+		margin-bottom: 40px;
 		gap: 24px;
 	}
 
@@ -43,12 +45,8 @@
 				background-color: var(--studio-wordpress-blue);
 			}
 
-			&:hover {
-				opacity: 0.95;
-			}
-
-			&:active {
-				opacity: 0.9;
+			&:hover::before {
+				background-color: var(--studio-wordpress-blue-60);
 			}
 		}
 	}
@@ -86,8 +84,20 @@
 	.design-picker__category-group {
 		display: flex;
 		flex-direction: column;
-		&.grow {
-			flex-grow: 1;
+
+		@include break-large {
+			flex-direction: row;
+			align-items: center;
+			gap: 8px;
+
+			&.design-picker__category-group--flex {
+				min-width: 480px;
+				display: inline-flex;
+			}
+
+			&.design-picker__category-group--grow {
+				flex-grow: 1;
+			}
 		}
 
 		.design-picker__category-group-content {
@@ -95,6 +105,10 @@
 			align-items: center;
 			flex-wrap: wrap;
 			gap: 8px 16px;
+
+			@include break-large{
+				flex-grow: 1;
+			}
 		}
 	}
 
@@ -116,8 +130,11 @@
 
 	.design-picker__design-with-ai {
 		display: none;
+		margin-bottom: 0;
+		padding-top: 6px; // vertically align with filters
+		padding-bottom: 6px;
 		
-		@include break-small {
+		@include break-large {
 			display: block;
 		}
 	}

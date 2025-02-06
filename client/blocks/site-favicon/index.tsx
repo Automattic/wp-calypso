@@ -38,7 +38,11 @@ const SiteFavicon = ( {
 			break;
 		case 'first-grapheme':
 			defaultFavicon = (
-				<div role="img" aria-label={ __( 'Site Icon' ) }>
+				<div
+					role="img"
+					aria-label={ __( 'Site Icon' ) }
+					style={ size <= 36 ? { fontSize: size * 0.6 } : {} }
+				>
 					{ getFirstGrapheme( site?.title ?? '' ) }
 				</div>
 			);

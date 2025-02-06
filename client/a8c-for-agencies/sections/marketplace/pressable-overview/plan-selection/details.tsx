@@ -1,8 +1,7 @@
 import { Button, Tooltip } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -11,7 +10,7 @@ import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import { useGetProductPricingInfo } from '../../wpcom-overview/hooks/use-total-invoice-value';
+import { useGetProductPricingInfo } from '../../hooks/use-total-invoice-value';
 import getPressablePlan from '../lib/get-pressable-plan';
 
 type Props = {
@@ -116,11 +115,11 @@ export default function PlanSelectionDetails( {
 						items={ [
 							info?.install
 								? translate(
-										'{{b}}%(count)d{{/b}} WordPress install',
-										'{{b}}%(count)d{{/b}} WordPress installs',
+										'{{b}}%(installsCount)s{{/b}} WordPress install',
+										'{{b}}%(installsCount)s{{/b}} WordPress installs',
 										{
 											args: {
-												count: info.install,
+												installsCount: numberFormat( info.install ),
 											},
 											count: info.install,
 											components: { b: <b /> },
@@ -130,7 +129,11 @@ export default function PlanSelectionDetails( {
 								: translate( 'Custom WordPress installs' ),
 							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
-									count: info ? formatNumber( info.visits ) : customString,
+									count: info
+										? numberFormat( info.visits, {
+												numberFormatOptions: { notation: 'compact' },
+										  } )
+										: customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',

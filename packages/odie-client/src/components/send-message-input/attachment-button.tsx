@@ -88,9 +88,7 @@ export const AttachmentButton: React.FC< {
 	return (
 		<FormFileUpload accept="image/*" onChange={ onFileUpload } disabled={ isAttachingFile }>
 			{ isAttachingFile && <Spinner style={ { margin: 0 } } /> }
-			{ ! isAttachingFile && attachmentButtonRef && (
-				<Icon ref={ attachmentButtonRef } icon={ image } />
-			) }
+			{ ! isAttachingFile && <Icon ref={ attachmentButtonRef } icon={ image } /> }
 		</FormFileUpload>
 	);
 };

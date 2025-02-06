@@ -4,7 +4,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -74,6 +74,7 @@ const LaunchBigSky: Step = function () {
 					body: {
 						title: 'Home',
 						status: 'publish',
+						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
 					},
 				} )
 			);
@@ -121,19 +122,14 @@ const LaunchBigSky: Step = function () {
 
 	function LaunchingBigSky() {
 		return (
-			<div className="processing-step__container">
-				<div className="processing-step">
-					<h1 className="processing-step__progress-step">
-						{ __( 'Launching the AI Website Builder' ) }
-					</h1>
-					{ ! isError && <LoadingEllipsis /> }
-					{ isError && (
-						<p className="processing-step__error">
-							{ __( 'Something unexpected happened. Please go back and try again.' ) }
-						</p>
-					) }
-				</div>
-			</div>
+			<>
+				{ ! isError && <StepperLoader title={ __( 'Launching the AI Website Builder' ) } /> }
+				{ isError && (
+					<p className="processing-step__error">
+						{ __( 'Something unexpected happened. Please go back and try again.' ) }
+					</p>
+				) }
+			</>
 		);
 	}
 

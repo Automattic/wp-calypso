@@ -54,6 +54,7 @@ export default function SitesDashboard() {
 	const {
 		dataViewsState,
 		setDataViewsState,
+		setSelectedSiteFeature,
 		initialSelectedSiteUrl,
 		selectedSiteFeature,
 		selectedCategory: category,
@@ -288,6 +289,7 @@ export default function SitesDashboard() {
 						isLoading={ isLoading }
 						isLargeScreen={ isLargeScreen || false }
 						setDataViewsState={ setDataViewsState }
+						setSelectedSiteFeature={ setSelectedSiteFeature }
 						dataViewsState={ dataViewsState }
 						onRefetchSite={ refetch }
 					/>

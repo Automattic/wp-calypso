@@ -61,7 +61,6 @@ export interface LaunchpadStatuses {
 
 export interface PermittedActions {
 	setShareSiteModalIsOpen?: ( isOpen: boolean ) => void;
-	setActiveChecklist: ( siteSlug: string, activeChecklistSlug: string ) => void;
 }
 
 export type EventHandlers = {
