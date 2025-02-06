@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -249,7 +250,13 @@ export const SiteLogs = ( {
 	);
 };
 
-export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
+export const SiteLogsDataViews = ( {
+	logType,
+	query,
+}: {
+	logType: LogType;
+	query: { from: string; to: string };
+} ) => {
 	// TODO:
 	// - DataViews:
 	//   - styling issues: spacing left/right
@@ -266,48 +273,68 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const { __ } = useI18n();
 	const moment = useLocalizedMoment();
 	const siteGmtOffset = useCurrentSiteGmtOffset();
-	const getLatestDateRange = useCallback( () => {
-		const startTime = moment().subtract( 7, 'd' );
-		const endTime = moment();
-		return { startTime, endTime };
-	}, [ moment ] );
 
 	// Can we actually derive an unique ID from the data?
 	const getItemId = useMemo( () => () => uuid(), [] );
 
-	const [ dateRange, setDateRange ] = useState( () => {
-		const latest = getLatestDateRange();
-		const dateRangeQuery = getDateRangeQueryParam( moment );
-		return {
-			startTime: dateRangeQuery.startTime || latest.startTime,
-			endTime: dateRangeQuery.endTime || latest.endTime,
-		};
-	} );
-	const handleTimeRangeChange = ( newStart: Moment | null, newEnd: Moment | null ) => {
+	const startTime = useMemo( () => {
+		const from = parseInt( query.from || '', 10 );
+		if ( ! isNaN( from ) ) {
+			return moment.unix( from );
+		}
+
+		return moment().subtract( 7, 'd' );
+	}, [ query.from, moment ] );
+
+	const endTime = useMemo( () => {
+		const to = parseInt( query.to || '', 10 );
+		if ( ! isNaN( to ) ) {
+			return moment.unix( to );
+		}
+
+		return moment();
+	}, [ query.to, moment ] );
+
+	const handleTimeRangeChange = (
+		updatedStartTime: Moment | null,
+		updatedEndTime: Moment | null
+	) => {
 		if (
-			( ! newStart && ! newEnd ) ||
-			( dateRange.startTime.isSame( newStart ) && dateRange.endTime.isSame( newEnd ) )
+			( ! updatedStartTime && ! updatedEndTime ) ||
+			( startTime.isSame( updatedStartTime ) && endTime.isSame( updatedEndTime ) )
 		) {
 			return;
 		}
 
-		// setIsMobileOpen( false ); // TODO
-		let startTime = newStart || dateRange.startTime;
-		let endTime = newEnd || dateRange.endTime;
-		if ( ! startTime.isValid() || ! endTime.isValid() ) {
-			const latest = getLatestDateRange();
-			startTime = latest.startTime;
-			endTime = latest.endTime;
+		let newStartTime = updatedStartTime || startTime;
+		let newEndTime = updatedEndTime || endTime;
+		if (
+			! newStartTime.isValid() ||
+			! newEndTime.isValid() ||
+			newStartTime.isAfter( newEndTime )
+		) {
+			newStartTime = moment().subtract( 7, 'd' );
+			newEndTime = moment();
 		}
 
-		setDateRange( { startTime, endTime } );
-		// setAutoRefresh( false ); // TODO
-		updateDateRangeQueryParam( { startTime, endTime } );
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'from', newStartTime.unix().toString( 10 ) );
+		url.searchParams.set( 'to', newEndTime.unix().toString( 10 ) );
+		// todo: when to clear the query?
+		// url.searchParams.delete( 'from' );
+		// url.searchParams.delete( 'to' );
+
+		page.replace( url.pathname + url.search );
 	};
 
 	const fields = useFields( { logType } );
 	const [ view, setView ] = useView( { logType } );
-	const { data, paginationInfo, isLoading } = useData( { view, logType, dateRange } );
+	const { data, paginationInfo, isLoading } = useData( {
+		view,
+		logType,
+		dateFrom: startTime,
+		dateTo: endTime,
+	} );
 	useEffect( () => {
 		setView( ( view: View ) => ( {
 			...view,
@@ -323,8 +350,8 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 	const onDownloadLogs = useCallback( () => {
 		downloadLogs( {
 			logType,
-			startDateTime: dateRange.startTime,
-			endDateTime: dateRange.endTime,
+			startDateTime: startTime,
+			endDateTime: endTime,
 			filter: buildFilter(
 				logType,
 				getFilterValue( view, 'severity' ),
@@ -332,7 +359,7 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 				getFilterValue( view, 'request_status' )
 			),
 		} );
-	}, [ downloadLogs, logType, dateRange, view ] );
+	}, [ downloadLogs, logType, startTime, endTime, view ] );
 
 	return (
 		<>
@@ -356,11 +383,11 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 						<DateTimePicker
 							className="site-logs-toolbar__datepicker"
 							id="from"
-							value={ dateRange.startTime }
+							value={ startTime }
 							onChange={ ( value ) => handleTimeRangeChange( value, null ) }
 							gmtOffset={ siteGmtOffset }
 							min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
-							max={ dateRange.endTime }
+							max={ endTime }
 						/>
 					</label>
 
@@ -369,11 +396,11 @@ export const SiteLogsDataViews = ( { logType }: { logType: LogType } ) => {
 						<DateTimePicker
 							className="site-logs-toolbar__datepicker"
 							id="to"
-							value={ dateRange.endTime }
+							value={ endTime }
 							onChange={ ( value ) => handleTimeRangeChange( null, value ) }
 							gmtOffset={ siteGmtOffset }
 							max={ moment() }
-							min={ dateRange.startTime }
+							min={ startTime }
 						/>
 					</label>
 					<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">

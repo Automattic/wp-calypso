@@ -7,7 +7,7 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<div className="site-logs">
 			<PageViewTracker path="/site-logs/:site/php" title="PHP Error Logs" />
-			<SiteLogsDataViews logType="php" />
+			<SiteLogsDataViews logType="php" query={ context.query } />
 		</div>
 	);
 
@@ -18,7 +18,7 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<div className="site-logs">
 			<PageViewTracker path="/site-logs/:site/web" title="Web Server Logs" />
-			<SiteLogsDataViews logType="web" />
+			<SiteLogsDataViews logType="web" query={ context.query } />
 		</div>
 	);
 
