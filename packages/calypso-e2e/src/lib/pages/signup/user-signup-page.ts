@@ -154,10 +154,13 @@ export class UserSignupPage {
 	async signupWoo( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		const [ , response ] = await Promise.all( [
-			this.page.waitForURL( /.*woocommerce\.com*/, { waitUntil: 'networkidle' } ),
-			this.page.waitForResponse( /.*new\?.*/ ),
+		const [ response ] = await Promise.all( [
+			this.page.waitForResponse( /.*users\/new\?.*/ ),
 			this.page.click( selectors.submitButton ),
+			this.page.waitForURL( /.*woocommerce\.com*/, {
+				waitUntil: 'networkidle',
+				timeout: 25000,
+			} ),
 		] );
 
 		if ( ! response ) {

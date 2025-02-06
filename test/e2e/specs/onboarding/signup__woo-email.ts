@@ -55,7 +55,7 @@ describe(
 			} );
 
 			it( 'Activate account', async function () {
-				await page.goto( activationLink, { waitUntil: 'networkidle' } );
+				await page.goto( activationLink, { waitUntil: 'networkidle', timeout: 25000 } );
 			} );
 		} );
 
