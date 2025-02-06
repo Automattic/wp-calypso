@@ -4,6 +4,9 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 const EXPERIMENT_NAME = 'calypso_post_onboarding_holdout_160125';
 
 export const getIsRemoveDuplicateViewsExperimentEnabled = async (): Promise< boolean > => {
+	const aaTestName = 'calypso_post_onboarding_aa_150125';
+	loadExperimentAssignment( aaTestName );
+
 	const experimentAssignment = await loadExperimentAssignment( EXPERIMENT_NAME );
 	return experimentAssignment?.variationName === 'treatment';
 };
