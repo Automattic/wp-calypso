@@ -22,8 +22,8 @@ export const useAttachFileToConversation = () => {
 			conversationId: string;
 			file: File;
 		} ) => {
-			const currentEnvironment = config( 'env_id' );
-			const isTestMode = currentEnvironment !== 'production';
+			const currentEnvironment = config( 'env_id' ) as string;
+			const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 			const integrationId = isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID;
 			const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
