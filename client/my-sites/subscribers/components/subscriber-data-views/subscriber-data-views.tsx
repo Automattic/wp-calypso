@@ -1,8 +1,10 @@
 import { Gravatar } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { Tooltip } from '@wordpress/components';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -66,6 +68,22 @@ const SubscriberDataViews = ( {
 	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
+	const isEnglishLocale = useIsEnglishLocale();
+
+	const renderEmailSubscriberStatus = ( isEmailSubscriber: boolean ) => {
+		if ( isEmailSubscriber ) {
+			return translate( 'Yes' );
+		}
+		if ( isEnglishLocale || hasTranslation( 'Reader only subscriber' ) ) {
+			return (
+				<Tooltip text={ translate( 'Reader only subscriber' ) }>
+					<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
+				</Tooltip>
+			);
+		}
+		return translate( 'No' );
+	};
+
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
@@ -210,15 +228,7 @@ const SubscriberDataViews = ( {
 				label: translate( 'Email subscriber' ),
 				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
 				render: ( { item }: { item: Subscriber } ) => (
-					<div>
-						{ item.is_email_subscriber ? (
-							translate( 'Yes' )
-						) : (
-							<Tooltip text={ translate( 'Reader only subscriber' ) }>
-								<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
-							</Tooltip>
-						) }
-					</div>
+					<div>{ renderEmailSubscriberStatus( item.is_email_subscriber ) }</div>
 				),
 				elements: [
 					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
@@ -242,7 +252,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[]
+		[ isEnglishLocale ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
