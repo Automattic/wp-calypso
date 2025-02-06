@@ -520,7 +520,6 @@ __metadata:
     "@storybook/addon-controls": "npm:^7.6.19"
     "@storybook/addon-docs": "npm:^7.6.19"
     "@storybook/addon-viewport": "npm:^7.6.19"
-    "@storybook/preset-scss": "npm:^1.0.3"
     "@storybook/react-webpack5": "npm:^7.6.19"
     css-loader: "npm:^6.11.0"
     react: "npm:^18.3.1"
@@ -7531,17 +7530,6 @@ __metadata:
     typescript:
       optional: true
   checksum: 195016181d078d2822a1670408538f866b1acd1ee005f5ced63c5581e12f12aef232f86d1748cad27a1669409d7046c9423cf00c39a8c59883bd4a880a15d75e
-  languageName: node
-  linkType: hard
-
-"@storybook/preset-scss@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@storybook/preset-scss@npm:1.0.3"
-  peerDependencies:
-    css-loader: "*"
-    sass-loader: "*"
-    style-loader: "*"
-  checksum: 6df3a8edb0d9ff36ad20954355ebda979b5cf32f3e3c24fea995cf22edbff6efbf349f96cbd867b3afb39af069e7e15e347fa15b7caed34a8e06a9e8cfe7eb60
   languageName: node
   linkType: hard
 

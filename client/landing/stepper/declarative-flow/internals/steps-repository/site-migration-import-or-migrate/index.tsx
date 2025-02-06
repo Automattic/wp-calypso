@@ -12,12 +12,11 @@ import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-mig
 import { useHostingProviderUrlDetails } from 'calypso/data/site-profiler/use-hosting-provider-url-details';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useMigrationExperiment } from '../../hooks/use-migration-experiment';
 import FlowCard from '../components/flow-card';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
+const SiteMigrationImportOrMigrate: Step = function ( { navigation } ) {
 	const translate = useTranslate();
 	const site = useSite();
 	const importSiteQueryParam = getQueryArg( window.location.href, 'from' )?.toString() || '';
@@ -25,22 +24,15 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const siteCanInstallPlugins = canInstallPlugins( site );
 	const isUpgradeRequired = ! siteCanInstallPlugins;
-	const isMigrationExperimentEnabled = useMigrationExperiment( flow );
 
 	const options = useMemo( () => {
-		const upgradeRequiredLabel = isMigrationExperimentEnabled
-			? translate( 'Available on %(planName)s with 50% off', {
-					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			  } )
-			: translate( 'Requires %(planName)s plan', {
-					args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-			  } );
+		const upgradeRequiredLabel = translate( 'Available on %(planName)s with 50% off', {
+			args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
+		} );
 
-		const migrateOptionDescription = isMigrationExperimentEnabled
-			? translate(
-					"Best for WordPress sites. Seamlessly move all your site's content, themes, plugins, users, and customizations to WordPress.com."
-			  )
-			: translate( "All your site's content, themes, plugins, users and customizations." );
+		const migrateOptionDescription = translate(
+			"Best for WordPress sites. Seamlessly move all your site's content, themes, plugins, users, and customizations to WordPress.com."
+		);
 
 		return [
 			{
@@ -59,7 +51,7 @@ const SiteMigrationImportOrMigrate: Step = function ( { navigation, flow } ) {
 				value: 'import',
 			},
 		];
-	}, [ isMigrationExperimentEnabled, isUpgradeRequired, translate ] );
+	}, [ isUpgradeRequired, translate ] );
 
 	const { data: hostingProviderDetails } = useHostingProviderUrlDetails( importSiteQueryParam );
 	const hostingProviderName = hostingProviderDetails.name;

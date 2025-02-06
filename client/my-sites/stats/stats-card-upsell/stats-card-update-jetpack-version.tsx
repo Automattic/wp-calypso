@@ -43,6 +43,7 @@ const StatsCardUpdateJetpackVersion: React.FC< Props > = ( { className, siteId, 
 					{ translate( 'Update Jetpack plugin' ) }
 				</Button>
 			}
+			icon="info-outline"
 		/>
 	);
 };

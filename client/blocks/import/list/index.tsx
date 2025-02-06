@@ -37,6 +37,7 @@ export default function ListStep( props: Props ) {
 	const urlQueryParams = useQuery();
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
+	const fromSite = urlQueryParams.get( 'from' );
 	const title = props.title || __( 'Import content from another platform' );
 	const subTitle = props.subTitle || __( 'Select the platform where your content lives' );
 
@@ -52,7 +53,7 @@ export default function ListStep( props: Props ) {
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
 		const importerUrl = getFinalImporterUrl(
 			siteSlug ?? '',
-			'',
+			fromSite ?? '',
 			platform,
 			backToFlow ?? undefined
 		);

@@ -1,4 +1,4 @@
-import { readFile } from 'fs/promises';
+import { open } from 'fs/promises';
 import path from 'path';
 import asyncHandler from 'express-async-handler';
 import { defaults, groupBy } from 'lodash';
@@ -21,12 +21,28 @@ const getAssetType = ( asset ) => {
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
 export default () => {
-	let assetsFile;
-	async function readAssets() {
-		if ( ! assetsFile ) {
-			assetsFile = JSON.parse( await readFile( ASSETS_FILE, 'utf8' ) );
+	let assetsFile = null;
+	let assetsFileModified = 0;
+	async function doReadAssets() {
+		const fd = await open( ASSETS_FILE );
+		const stats = await fd.stat();
+		if ( ! assetsFile || stats.mtimeMs > assetsFileModified ) {
+			assetsFile = JSON.parse( await fd.readFile( 'utf8' ) );
+			assetsFileModified = stats.mtimeMs;
 		}
+		await fd.close();
 		return assetsFile;
+	}
+
+	let checking = null;
+	function readAssets() {
+		if ( ! checking ) {
+			checking = doReadAssets().finally( () => {
+				checking = null;
+			} );
+		}
+
+		return checking;
 	}
 
 	return asyncHandler( async ( req, res, next ) => {

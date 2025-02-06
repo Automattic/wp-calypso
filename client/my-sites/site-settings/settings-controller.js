@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
+import { redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
@@ -54,7 +55,11 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
 		if ( ! URL_MAP[ slug ] ) {
 			return next();
 		}
-		return page.redirect( `/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }` );
+
+		const queryParams = context.querystring ? `?${ context.querystring }` : '';
+		return page.redirect(
+			`/sites/settings/site/${ context.params.site_id }/${ URL_MAP[ slug ] }${ queryParams }`
+		);
 	}
 
 	next();
@@ -93,7 +98,7 @@ export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, 
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 
-	next();
+	redirectIfDuplicatedView( 'options-general.php' )( context, next );
 }
 
 export async function siteSettings( context, next ) {

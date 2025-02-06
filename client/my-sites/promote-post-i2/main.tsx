@@ -354,7 +354,7 @@ export default function PromotedPosts( { tab }: Props ) {
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"
-						className="promote-post-i2__payment-blocked-notice"
+						className="promote-post-i2__payment-blocked-notice wpcomsh-notice"
 					>
 						{ translate(
 							'Your account currently has an outstanding balance of $%(debtAmount)s. Please resolve this using the links below before creating new campaigns.',

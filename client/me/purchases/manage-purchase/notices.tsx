@@ -346,6 +346,10 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
+		if ( purchase.isHundredYearDomain ) {
+			return null;
+		}
+
 		if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
 			return null;
 		}
@@ -900,7 +904,8 @@ class PurchaseNotice extends Component<
 			isOneTimePurchase( purchase ) ||
 			isIncludedWithPlan( purchase ) ||
 			! this.props.selectedSite ||
-			! purchase.payment.creditCard
+			! purchase.payment.creditCard ||
+			purchase.isHundredYearDomain
 		) {
 			return null;
 		}

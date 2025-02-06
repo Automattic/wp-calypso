@@ -19,7 +19,7 @@ import {
 } from '../constants';
 import { shouldGateStats } from '../hooks/use-should-gate-stats';
 import DatePicker from '../stats-date-picker';
-
+import { trackStatsAnalyticsEvent } from '../utils';
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
@@ -55,6 +55,10 @@ export const StatsModuleSummaryLinks = ( props ) => {
 
 	const recordStats = ( item ) => {
 		props.recordGoogleEvent( 'Stats', `Clicked Summary Link: ${ path } ${ item.stat }` );
+		trackStatsAnalyticsEvent( 'stats_summary_nav_period_clicked', {
+			path,
+			stat_type: item.statType,
+		} );
 	};
 
 	const handleClick = ( item ) => ( event ) => {
