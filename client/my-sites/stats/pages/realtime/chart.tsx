@@ -23,10 +23,10 @@ interface chartMinuteDataTypes {
 function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, params );
 }
-
-const dataUpdateIntervalInSeconds = 5;
+// TODO: Change to 60 for production.
+const UPDATE_INTERVAL_IN_SECONDS = 5;
 // TODO: Change to 30 after resolving the date format issue on the X-axis.
-const dataSeriesLength = 5;
+const MINUTE_DATA_LENGTH = 5;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const gmtOffset = useSelector( ( state: object ) =>
@@ -55,12 +55,12 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 					};
 				} );
 			} );
-		}, dataUpdateIntervalInSeconds * 1000 );
+		}, UPDATE_INTERVAL_IN_SECONDS * 1000 );
 
 		return () => clearInterval( intervalId );
 	}, [ siteId, gmtOffset ] );
 
-	let formatedChartData = Object.keys( viewsData ).map( ( eachMinute ) => {
+	let chartData = Object.keys( viewsData ).map( ( eachMinute ) => {
 		const lastMinute = moment( eachMinute ).subtract( 1, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
 		let diffViews: number = 0;
 
@@ -85,13 +85,13 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	} );
 
 	// Handle array length with padding or truncating for display.
-	if ( formatedChartData.length > 0 && formatedChartData.length < dataSeriesLength ) {
-		const paddingItemsCount = dataSeriesLength - formatedChartData.length;
+	if ( chartData.length > 0 && chartData.length < MINUTE_DATA_LENGTH ) {
+		const paddingItemsCount = MINUTE_DATA_LENGTH - chartData.length;
 		for ( let i = 0; i < paddingItemsCount; i++ ) {
-			formatedChartData.unshift( formatedChartData[ 0 ] );
+			chartData.unshift( chartData[ 0 ] );
 		}
 	} else {
-		formatedChartData = formatedChartData.slice( -dataSeriesLength );
+		chartData = chartData.slice( -MINUTE_DATA_LENGTH );
 	}
 
 	return (
@@ -100,9 +100,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				require="calypso/my-sites/stats/components/line-chart"
 				height={ 425 }
 				placeholder={ PageLoading }
-				chartData={ [
-					{ label: 'Views', options: { stroke: '#069e08' }, data: formatedChartData },
-				] }
+				chartData={ [ { label: 'Views', options: { stroke: '#069e08' }, data: chartData } ] }
 			/>
 		</div>
 	);
