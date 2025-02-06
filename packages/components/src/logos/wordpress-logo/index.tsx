@@ -1,11 +1,22 @@
 import './style.scss';
 
 type Props = {
+	/**
+	 * The CSS class name applied to the SVG element.
+	 *
+	 * Note that passing a class name through this prop will override the default class,
+	 * rather than merging them together. We plan to fix this behavior.
+	 * @default 'wordpress-logo'
+	 */
 	className?: string;
+	/**
+	 * The size of the logo in pixels.
+	 * @default 72
+	 */
 	size?: number;
 };
 
-const WordPressLogo: React.FunctionComponent< Props > = ( {
+export const WordPressLogo: React.FunctionComponent< Props > = ( {
 	className = 'wordpress-logo',
 	size = 72,
 } ) => {
@@ -15,5 +26,3 @@ const WordPressLogo: React.FunctionComponent< Props > = ( {
 		</svg>
 	);
 };
-
-export default WordPressLogo;

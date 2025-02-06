@@ -1,4 +1,4 @@
-import WordPressLogo from '../../wordpress-logo';
+import { WordPressLogo } from '../../logos/wordpress-logo';
 import { SiteThumbnail } from '../index';
 
 const ASPECT_RATIO = 16 / 11;
