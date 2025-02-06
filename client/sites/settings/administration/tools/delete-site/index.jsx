@@ -16,7 +16,7 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
-import { loadRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
@@ -190,7 +190,7 @@ class DeleteSite extends Component {
 	}
 
 	componentDidMount() {
-		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	_checkSiteLoaded = ( event ) => {
@@ -286,6 +286,6 @@ export default connect(
 	{
 		deleteSite,
 		setSelectedSiteId,
-		loadRemoveDuplicateViewsExperimentAssignment,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

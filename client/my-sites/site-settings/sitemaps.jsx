@@ -10,7 +10,7 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import { loadRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
@@ -36,7 +36,7 @@ class Sitemaps extends Component {
 	};
 
 	componentDidMount() {
-		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	isSitePublic() {
@@ -228,6 +228,6 @@ export default connect(
 		};
 	},
 	{
-		loadRemoveDuplicateViewsExperimentAssignment,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( Sitemaps ) );

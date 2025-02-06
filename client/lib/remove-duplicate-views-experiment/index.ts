@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { useDispatch, useSelector } from 'calypso/state';
-import { loadRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import {
 	getIsRemoveDuplicateViewsExperimentOverridden,
 	getIsRemoveDuplicateViewsExperimentEnabled,
@@ -13,7 +13,11 @@ export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE =
 	'remove_duplicate_views_experiment_assignment_160125';
 const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST = 'calypso_post_onboarding_aa_150125';
 
-const _loadRemoveDuplicateViewsExperimentAssignment = async (): Promise< boolean > => {
+export const loadRemoveDuplicateViewsExperimentAssignment = async ( state: AppState ) => {
+	if ( getIsRemoveDuplicateViewsExperimentOverridden( state ) === 'control' ) {
+		return 'control';
+	}
+
 	/**
 	 * REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST should be called exactly the same number of times as REMOVE_DUPLICATE_VIEWS_EXPERIMENT.
 	 * It helps ExPlat to know that the experiment is running as expected.
@@ -22,23 +26,25 @@ const _loadRemoveDuplicateViewsExperimentAssignment = async (): Promise< boolean
 	loadExperimentAssignment( aaTestName );
 
 	const experimentAssignment = await loadExperimentAssignment( REMOVE_DUPLICATE_VIEWS_EXPERIMENT );
-	return experimentAssignment?.variationName === 'treatment';
+	return experimentAssignment?.variationName;
 };
 
 export const isRemoveDuplicateViewsExperimentEnabled = async ( state: AppState ) => {
-	if ( getIsRemoveDuplicateViewsExperimentOverridden( state ) ) {
-		return false;
-	}
-	return _loadRemoveDuplicateViewsExperimentAssignment();
+	const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment( state );
+	return experimentAssignment === 'treatment';
 };
 
 export const useRemoveDuplicateViewsExperimentEnabled = (): boolean => {
-	const isEnabled = useSelector( getIsRemoveDuplicateViewsExperimentEnabled );
+	const isEnabled = useSelector( ( state: AppState ) => {
+		return getIsRemoveDuplicateViewsExperimentEnabled( state );
+	} );
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		dispatch( loadRemoveDuplicateViewsExperimentAssignment() );
-	}, [ dispatch ] );
+		if ( isEnabled === undefined ) {
+			dispatch( getRemoveDuplicateViewsExperimentAssignment() );
+		}
+	}, [ dispatch, isEnabled ] );
 
 	return isEnabled;
 };

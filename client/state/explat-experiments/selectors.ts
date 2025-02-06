@@ -5,10 +5,11 @@ import {
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { AppState } from 'calypso/types';
 
+import 'calypso/state/explat-experiments/init';
+
 export const getIsRemoveDuplicateViewsExperimentOverridden = ( state: AppState ) => {
 	const overrideAssignment = getPreference( state, REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE );
-
-	return 'control' === overrideAssignment;
+	return overrideAssignment;
 };
 
 export const getIsRemoveDuplicateViewsExperimentEnabled = ( state: AppState ) => {

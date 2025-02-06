@@ -6,7 +6,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { loadRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
@@ -41,7 +41,7 @@ class SiteTools extends Component {
 	}
 
 	componentDidMount() {
-		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	render() {
@@ -251,6 +251,6 @@ export default connect(
 	{
 		errorNotice,
 		successNotice,
-		loadRemoveDuplicateViewsExperimentAssignment,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withSiteCopy( SiteTools ) ) );

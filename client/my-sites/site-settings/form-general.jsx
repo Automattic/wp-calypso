@@ -18,7 +18,7 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingsForm from 'calypso/sites/settings/site/form';
-import { loadRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -43,7 +43,7 @@ import wrapSettingsForm from './wrap-settings-form';
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
-		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -450,7 +450,7 @@ const connectComponent = connect(
 		};
 	},
 	{
-		loadRemoveDuplicateViewsExperimentAssignment,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 );
 
