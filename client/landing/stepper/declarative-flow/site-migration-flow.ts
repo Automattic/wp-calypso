@@ -24,6 +24,7 @@ import { type SiteMigrationIdentifyAction } from './internals/steps-repository/s
 import { AssertConditionState } from './internals/types';
 import { goToImporter } from './migration/helpers';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
+import type { URL as URLString } from 'calypso/types';
 
 const FLOW_NAME = 'site-migration';
 
@@ -111,6 +112,16 @@ const siteMigration: Flow = {
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
+		};
+
+		const navigateWithRef = ( queryArguments: URLString ) => {
+			const ref = urlQueryParams.get( 'ref' );
+
+			if ( ref ) {
+				queryArguments += `&ref=${ ref }`;
+			}
+
+			return navigate( queryArguments );
 		};
 
 		// Call triggerGuidesForStep for the current step
@@ -264,7 +275,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return navigate(
+					return navigateWithRef(
 						addQueryArgs(
 							{
 								siteId,
@@ -279,7 +290,7 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
 					// Take the user to the upgrade plan step.
 					if ( providedDependencies?.destination === 'upgrade' ) {
-						return navigate(
+						return navigateWithRef(
 							addQueryArgs(
 								{
 									siteId,
@@ -295,7 +306,7 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate(
+						return navigateWithRef(
 							addQueryArgs(
 								{
 									siteSlug,
@@ -308,7 +319,7 @@ const siteMigration: Flow = {
 					}
 
 					// Continue with the migration flow.
-					return navigate(
+					return navigateWithRef(
 						addQueryArgs(
 							{ siteId, siteSlug, from: fromQueryParam },
 							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
