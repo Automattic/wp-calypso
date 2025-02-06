@@ -1,11 +1,12 @@
+import {
+	REMOVE_DUPLICATE_VIEWS_EXPERIMENT,
+	REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE,
+} from 'calypso/lib/remove-duplicate-views-experiment';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { AppState } from 'calypso/types';
 
 export const getIsRemoveDuplicateViewsExperimentOverridden = ( state: AppState ) => {
-	const overrideAssignment = getPreference(
-		state,
-		'remove_duplicate_views_experiment_assignment_160125'
-	);
+	const overrideAssignment = getPreference( state, REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE );
 
 	return 'control' === overrideAssignment;
 };
@@ -16,7 +17,7 @@ export const getIsRemoveDuplicateViewsExperimentEnabled = ( state: AppState ) =>
 	}
 
 	return (
-		state.explatExperiments.experimentAssignments[ 'calypso_post_onboarding_holdout_160125' ] ===
+		state.explatExperiments.experimentAssignments[ REMOVE_DUPLICATE_VIEWS_EXPERIMENT ] ===
 		'treatment'
 	);
 };

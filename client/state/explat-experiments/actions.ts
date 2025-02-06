@@ -1,5 +1,10 @@
 import { loadExperimentAssignment as _loadExperimentAssignment } from 'calypso/lib/explat';
+import {
+	REMOVE_DUPLICATE_VIEWS_EXPERIMENT,
+	isRemoveDuplicateViewsExperimentEnabled,
+} from 'calypso/lib/remove-duplicate-views-experiment/index';
 import { EXPERIMENT_ASSIGNMENT_RECEIVE } from 'calypso/state/action-types';
+import { AppState } from 'calypso/types';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 export const loadExperimentAssignment = ( experimentName: string ) => {
@@ -14,16 +19,12 @@ export const loadExperimentAssignment = ( experimentName: string ) => {
 };
 
 export const loadRemoveDuplicateViewsExperimentAssignment = () => {
-	return async ( dispatch: CalypsoDispatch ) => {
-		const aaTestName = 'calypso_post_onboarding_aa_150125';
-		_loadExperimentAssignment( aaTestName );
-
-		const experimentAssignment = await _loadExperimentAssignment(
-			'calypso_post_onboarding_holdout_160125'
-		);
+	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
+		const state = getState();
+		const experimentAssignment = await isRemoveDuplicateViewsExperimentEnabled( state );
 		dispatch( {
 			type: EXPERIMENT_ASSIGNMENT_RECEIVE,
-			experimentName: 'calypso_post_onboarding_holdout_160125',
+			experimentName: REMOVE_DUPLICATE_VIEWS_EXPERIMENT,
 			experimentAssignment,
 		} );
 	};

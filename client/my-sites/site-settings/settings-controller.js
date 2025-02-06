@@ -39,7 +39,7 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  * @returns
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 
 	if ( isUntangled ) {
 		const slug = context.path.split( '/' )[ 2 ];
@@ -70,7 +70,7 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
  */
 export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 
 	if ( isUntangled ) {
 		return page.redirect( `/sites/settings/site` );
@@ -88,7 +88,7 @@ export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, 
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	if ( isUntangled && hasClassicAdminInterfaceStyle ) {

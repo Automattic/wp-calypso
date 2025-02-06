@@ -53,7 +53,7 @@ export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, ne
 }
 
 async function redirectToAdministration( context: PageJSContext, siteSlug: string | null ) {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 	return isUntangled
 		? page.redirect( '/sites/settings/site/' + siteSlug )
 		: page.redirect( '/settings/general/' + siteSlug );
