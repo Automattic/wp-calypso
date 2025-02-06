@@ -46,8 +46,6 @@ export { default as AnnualHighlightCards } from './highlight-cards/annual-highli
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
 export { default as AppPromoCard } from './app-promo-card';
-export { default as ShortenedNumber } from './number-formatters';
-export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
