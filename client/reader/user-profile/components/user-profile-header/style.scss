@@ -14,7 +14,7 @@
 
 		&__main {
 			display: flex;
-			padding: 36px 0 24px;
+			padding: 0 0 24px;
 			align-items: center;
 
 			@include breakpoint-deprecated( '<660px' ) {

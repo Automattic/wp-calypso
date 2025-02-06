@@ -59,6 +59,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		selectedFeature,
 		isHostingOverview,
 		hasConnectableSites,
+		sidebarMode,
 	} = useDomainsTable();
 
 	const renderSiteCell = () => {
@@ -110,9 +111,15 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		return currentDomainData.owner.replace( / \((?!.*\().+\)$/, '' );
 	};
 
-	const handleSelect = () => {
+	const handleSelect = (): void => {
 		if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
-			page.show( domainManagementLink );
+			if ( canSelectAnyDomains && canBulkUpdate( domain ) ) {
+				return handleSelectDomain( domain );
+			}
+			if ( sidebarMode ) {
+				return page.show( domainManagementLink );
+			}
+
 			return;
 		}
 
@@ -120,7 +127,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	};
 
 	const handleDomainLinkClick = ( e: MouseEvent ) =>
-		isAllDomainManagementEnabled ? e.preventDefault() : e.stopPropagation();
+		isAllDomainManagementEnabled ? undefined : e.stopPropagation();
 
 	return (
 		<tr
