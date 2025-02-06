@@ -18,7 +18,7 @@ if ( remoteUrl.match( /github\.com[:/]Automattic\/wp-calypso\.git/ ) ) {
 
 const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 
-if ( 'trunk' === currentBranch ) {
+if ( isCalypsoRepo && 'trunk' === currentBranch ) {
 	if ( ! readline.keyInYN( "You're about to push !!![ trunk ]!!!, is that what you intended?" ) ) {
 		process.exit( 1 );
 	}
