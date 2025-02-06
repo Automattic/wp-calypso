@@ -1139,8 +1139,6 @@ const JetpackSealText = styled.span`
 const SubmitButtonHeaderWrapper = styled.div`
 	display: none;
 	font-size: 13px;
-	margin-top: -5px;
-	margin-bottom: 10px;
 	text-align: center;
 
 	.checkout__step-wrapper--last-step & {

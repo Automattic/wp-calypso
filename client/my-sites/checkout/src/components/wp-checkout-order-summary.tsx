@@ -315,7 +315,7 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 export function CheckoutSummaryRefundWindows( {
 	cart,
 	highlight = false,
-	includeRefundIcon,
+	includeRefundIcon = false,
 }: {
 	cart: ResponseCart;
 	highlight?: boolean;
@@ -412,9 +412,12 @@ export function CheckoutSummaryRefundWindows( {
 
 	return (
 		<>
-			{ includeRefundIcon && <StyledIcon icon={ reusableBlock } size={ 24 } /> }
 			<CheckoutSummaryFeaturesListItem>
-				<WPCheckoutCheckIcon id="features-list-refund-text" />
+				{ includeRefundIcon ? (
+					<StyledIcon icon={ reusableBlock } size={ 24 } />
+				) : (
+					<WPCheckoutCheckIcon id="features-list-refund-text" />
+				) }
 				{ highlight ? <strong>{ text }</strong> : text }
 			</CheckoutSummaryFeaturesListItem>
 		</>

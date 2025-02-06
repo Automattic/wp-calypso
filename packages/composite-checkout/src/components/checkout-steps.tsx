@@ -535,10 +535,10 @@ export const CheckoutStepAreaWrapper = styled.div`
 `;
 
 export const SubmitButtonWrapper = styled.div`
+	position: relative;
+	bottom: 0;
 	background: ${ ( props ) => props.theme.colors.surface };
 	padding: 24px;
-	bottom: 0;
-	left: 0;
 	box-sizing: border-box;
 	width: 100%;
 	z-index: 10;
@@ -548,42 +548,21 @@ export const SubmitButtonWrapper = styled.div`
 		box-shadow: 0 -3px 10px 0 #0000001f;
 	}
 
-	.rtl & {
-		right: 0;
-		left: auto;
-	}
-
-	.checkout-button {
-		margin: 0 auto;
+	& .checkout-steps__submit-button-content {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		.checkout-button {
-			width: 100%;
-		}
+		padding-inline-start: 40px;
+		padding-inline-end: 0;
+		position: relative;
 
 		.checkout__step-wrapper--last-step & {
 			position: relative;
 			box-shadow: none;
 		}
-
-		.checkout__step-wrapper & {
-			padding: 24px 0px 24px 40px;
-
-			.rtl & {
-				padding: 24px 40px 24px 0px;
-			}
-		}
-	}
-`;
-
-// Set right padding so that text doesn't overlap with inline help floating button.
-export const SubmitFooterWrapper = styled.div`
-	padding-right: 0;
-	min-height: 45px;
-
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
-		padding-right: 0;
 	}
 `;
 
@@ -653,15 +632,17 @@ export function CheckoutFormSubmit( {
 	} )();
 	return (
 		<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper" ref={ submitWrapperRef }>
-			{ submitButtonHeader || null }
-			{ submitButton || (
-				<CheckoutSubmitButton
-					validateForm={ validateForm }
-					disabled={ isDisabled }
-					onLoadError={ onSubmitButtonLoadError }
-				/>
-			) }
-			<SubmitFooterWrapper>{ submitButtonFooter || null }</SubmitFooterWrapper>
+			<div className="checkout-steps__submit-button-content">
+				{ submitButtonHeader || null }
+				{ submitButton || (
+					<CheckoutSubmitButton
+						validateForm={ validateForm }
+						disabled={ isDisabled }
+						onLoadError={ onSubmitButtonLoadError }
+					/>
+				) }
+				{ submitButtonFooter || null }
+			</div>
 		</SubmitButtonWrapper>
 	);
 }

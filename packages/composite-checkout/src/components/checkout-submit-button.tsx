@@ -10,8 +10,16 @@ import { useHandlePaymentProcessorResponse } from './use-process-payment';
 import type { PaymentMethod, PaymentProcessorSubmitData, ProcessPayment } from '../types';
 
 const CheckoutSubmitButtonWrapper = styled.div`
-	& > button {
-		height: 50px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 47.5px;
+	overflow: hidden;
+	justify-content: center;
+	border-radius: 4px;
+
+	& > * {
+		display: flex;
 	}
 
 	&.checkout-submit-button--inactive {
