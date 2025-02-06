@@ -6,7 +6,10 @@
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
 	"calypso:src": "src/index.ts",
-	"sideEffects": false,
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
 	"scripts": {
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
