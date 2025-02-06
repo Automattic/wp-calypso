@@ -23,7 +23,7 @@ const GRIDICONS_WITH_DROP = [
 
 const noop = () => {};
 
-type NoticeStatus =
+export type NoticeStatus =
 	| 'is-error'
 	| 'is-info'
 	| 'is-success'
