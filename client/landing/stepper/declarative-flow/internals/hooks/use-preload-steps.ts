@@ -1,9 +1,9 @@
 import { SiteDetails } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { useEffect } from 'react';
-import { Flow, StepperStep } from '../types';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import type { Flow, StepperStep } from '../types';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
 
