@@ -6,7 +6,7 @@ import WhatsNewGuide, { useWhatsNewAnnouncementsQuery } from '@automattic/whats-
 import { Button, SVG, Circle } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
-import { Icon, captureVideo, formatListNumbered, external, institution } from '@wordpress/icons';
+import { Icon, formatListNumbered, external, institution } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { NewReleases } from '../icons';
@@ -98,21 +98,6 @@ export const HelpCenterMoreResources = () => {
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
 							<span>{ __( 'Support Guides', __i18n_text_domain__ ) }</span>
-							<Icon icon={ external } size={ 20 } />
-						</a>
-					</div>
-				</li>
-				<li className="help-center-more-resources__resource-item help-center-link__item">
-					<div className="help-center-more-resources__resource-cell help-center-link__cell">
-						<a
-							href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
-							rel="noreferrer"
-							target="_blank"
-							onClick={ () => trackLearnButtonClick( 'webinairs' ) }
-							className="help-center-more-resources__capture-video"
-						>
-							<Icon icon={ captureVideo } size={ 24 } />
-							<span>{ __( 'Webinars', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
