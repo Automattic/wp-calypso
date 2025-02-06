@@ -1,6 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.domain-header {
+	.navigation-header__main {
+		align-items: center;
+
+		.formatted-header__title {
+			font-size: 1.5rem;
+			line-height: 1.25;
+		}
+	}
+}
+
 .domain-header__header-spacer {
 	height: 58px;
 
