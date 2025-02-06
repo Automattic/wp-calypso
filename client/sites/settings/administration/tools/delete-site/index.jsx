@@ -190,7 +190,7 @@ class DeleteSite extends Component {
 	}
 
 	componentDidMount() {
-		loadRemoveDuplicateViewsExperimentAssignment();
+		this.props.loadRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	_checkSiteLoaded = ( event ) => {

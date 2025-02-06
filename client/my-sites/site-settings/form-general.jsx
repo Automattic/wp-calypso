@@ -43,6 +43,7 @@ import wrapSettingsForm from './wrap-settings-form';
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+		this.props.loadRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {

@@ -35,6 +35,10 @@ class Sitemaps extends Component {
 		fields: PropTypes.object,
 	};
 
+	componentDidMount() {
+		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+	}
+
 	isSitePublic() {
 		const { fields } = this.props;
 		return parseInt( fields.blog_public ) === 1;

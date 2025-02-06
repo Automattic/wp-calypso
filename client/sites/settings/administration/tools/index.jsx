@@ -40,6 +40,10 @@ class SiteTools extends Component {
 		}
 	}
 
+	componentDidMount() {
+		this.props.loadRemoveDuplicateViewsExperimentAssignment();
+	}
+
 	render() {
 		const {
 			shouldShowSiteCopyItem,
