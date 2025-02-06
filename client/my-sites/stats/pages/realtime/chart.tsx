@@ -47,6 +47,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				stat_fields: 'views',
 			} ).then( ( response: any ) => {
 				const result = parseChartData( response );
+				// TODO: Handle data across hours because hourly data is not accumulated.
 				setChartData( ( prevChartData ) => {
 					return {
 						...prevChartData,
