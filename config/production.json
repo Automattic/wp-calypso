@@ -27,7 +27,7 @@
 		"automated-migration/application-password": true,
 		"bulk-plugin-management": true,
 		"calypso/ai-blogging-prompts": false,
-		"calypso/all-domain-management": false,
+		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
 		"bilmur-script": true,
 		"cancellation-offers": true,
