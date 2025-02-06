@@ -1,5 +1,6 @@
 import { Gravatar } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { Tooltip } from '@wordpress/components';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
@@ -209,12 +210,20 @@ const SubscriberDataViews = ( {
 				label: translate( 'Email subscriber' ),
 				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
 				render: ( { item }: { item: Subscriber } ) => (
-					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
+					<div>
+						{ item.is_email_subscriber ? (
+							'Yes'
+						) : (
+							<Tooltip text={ translate( 'Reader only subscriber' ) }>
+								<span className="subscriber-data-views__tooltip-text">No</span>
+							</Tooltip>
+						) }
+					</div>
 				),
 				elements: [
-					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
+					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'Not subscribed' ),
+						label: translate( 'False' ),
 						value: SubscribersFilterBy.ReaderSubscriber,
 					},
 				],

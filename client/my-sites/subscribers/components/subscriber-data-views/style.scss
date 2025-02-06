@@ -65,6 +65,11 @@ body.is-section-subscribers.is-subscribers-dataviews,
                 border-radius: 0;
                 cursor: pointer;
             }
+
+            .subscriber-data-views__tooltip-text {
+                border-bottom: 1px dotted var(--studio-gray-60);
+                cursor: pointer;
+            }
         
             &__list {
                 flex: 1 1 auto;
