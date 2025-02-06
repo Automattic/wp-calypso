@@ -137,6 +137,11 @@ $locations-horizontal-bar-width: 380px;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
+
+		.stats-card--hero {
+			max-width: calc(100% - $locations-horizontal-bar-width);
+			overflow: hidden;
+		}
 	}
 
 	.stats-card.list-locations,
@@ -158,7 +163,7 @@ $locations-horizontal-bar-width: 380px;
 		}
 
 		.stats-card--header-and-body {
-			flex: 0 0 380px;
+			flex: 0 0 $locations-horizontal-bar-width;
 		}
 
 		.stats-card--footer {
