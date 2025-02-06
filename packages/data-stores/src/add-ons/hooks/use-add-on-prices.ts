@@ -9,6 +9,7 @@ type AddOnPrices = {
 		yearlyPrice: number;
 		formattedMonthlyPrice: string;
 		formattedYearlyPrice: string;
+		currencyCode: string;
 	} | null;
 };
 
@@ -17,7 +18,10 @@ export const createAddOnPriceKey = ( { productSlug, quantity }: AddOnMeta ) => {
 };
 
 export const useAddOnPrices = ( addOnMetas: AddOnMeta[] ) => {
-	const productSlugs = addOnMetas.map( ( { productSlug } ) => productSlug );
+	const productSlugs = useMemo(
+		() => addOnMetas.map( ( { productSlug } ) => productSlug ),
+		[ addOnMetas ]
+	);
 	const productsList = ProductsList.useProducts( productSlugs );
 
 	return useMemo( () => {
@@ -46,23 +50,7 @@ export const useAddOnPrices = ( addOnMetas: AddOnMeta[] ) => {
 				cost = priceTier?.maximumPrice;
 			}
 
-			// Although memoized, it appears that add-on prices are unnecessarily recalculated dozens of
-			// times when invoked as part of the PlansFeaturesMain component.
-			//
-			// When we format the cost before displaying it to the end user, the formatting library warns us
-			// that it will round decimal values for smallest currency unit calculations. Because of the
-			// unnecessary recalculations, this warning is repeated and floods the console.
-			//
-			// The ideal answer is to trace the root cause of the recalculations and prevent them, but after
-			// taking a cursory look, it seems as if this will require deeper investigation. For now, because
-			// we are always working with smallest currency units for add-ons, we explicitly round decimal add-on
-			// monthly prices to suppress the warnings ( something that was already happening in the library ).
-			//
-			// Once https://github.com/Automattic/wp-calypso/issues/95416 is resolved, we can remove this rounding.
-			const initialMonthlyPrice = cost / 12;
-			let monthlyPrice = Number.isInteger( initialMonthlyPrice )
-				? initialMonthlyPrice
-				: Math.round( initialMonthlyPrice );
+			let monthlyPrice = cost / 12;
 			let yearlyPrice = cost;
 
 			if ( product?.term === 'month' ) {
@@ -82,11 +70,12 @@ export const useAddOnPrices = ( addOnMetas: AddOnMeta[] ) => {
 						stripZeros: true,
 						isSmallestUnit: true,
 					} ),
+					currencyCode: product?.currencyCode,
 				},
 				...accum,
 			};
 		}, {} );
-	}, [ productsList ] );
+	}, [ addOnMetas, productsList.data ] );
 };
 
 export default useAddOnPrices;
