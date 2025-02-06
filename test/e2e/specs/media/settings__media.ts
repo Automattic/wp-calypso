@@ -6,7 +6,6 @@
 import {
 	DataHelper,
 	TestAccount,
-	SidebarComponent,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -51,14 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 		let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
 
 		it( 'Navigate to Settings > Media', async function () {
-			// eCommerce plan loads WP-Admin for home dashboard,
-			// so instead navigate straight to the Media page.
-			if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
-				await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
-			} else {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Settings', 'Media' );
-			}
+			await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
 			wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
 		} );
 
