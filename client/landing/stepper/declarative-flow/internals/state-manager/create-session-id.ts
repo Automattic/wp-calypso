@@ -23,14 +23,8 @@ function base10ToBase62( num: number ) {
 export function createSessionId() {
 	const minNumberForTwoLettersBase62 = 62;
 	const maxNumberForTwoLettersBase62 = 3844;
-	const [ rand ] = crypto.getRandomValues( new Uint16Array( 1 ) );
-	/**
-	 * Make it from 0...1.
-	 */
-	const scaledRand = rand / 0xffff;
-
 	const seed =
-		minNumberForTwoLettersBase62 + Math.floor( scaledRand * maxNumberForTwoLettersBase62 );
+		minNumberForTwoLettersBase62 + Math.floor( Math.random() * maxNumberForTwoLettersBase62 );
 
 	return base10ToBase62( seed );
 }
