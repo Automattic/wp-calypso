@@ -1,10 +1,4 @@
 .signup-personalization-form {
-    .signup-multi-step-form__fields {
-        display: flex;
-		gap: 16px;
-        flex-direction: column;
-    }
-
     .signup-personalization-form__products-checkbox {
         .multi-checkbox label {
             flex: 0 1 calc(32% - 16px); // 3 columns for products
@@ -18,15 +12,6 @@
             }
         }
     }
-
-	.form-select,
-    .searchable-dropdown {
-        width: 100%;
-    }
-
-	.form-fieldset {
-		margin: 0;
-	}
 
     .multi-checkbox {
         display: flex;
