@@ -170,19 +170,14 @@ const MarketplaceProductInstall = ( {
 		}
 	} );
 
-	const purchaseFlowState = useSelector( getPurchaseFlowState );
-	const isDifferentFromPurchaseSite = purchaseFlowState.primaryDomain !== selectedSiteSlug;
-
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( isDifferentFromPurchaseSite ) {
+		if ( ! marketplaceInstallationInProgress ) {
 			waitFor( 2 ).then( () => {
-				if ( isDifferentFromPurchaseSite ) {
-					setNoDirectAccessError( true );
-				}
+				! marketplaceInstallationInProgress && setNoDirectAccessError( true );
 			} );
 		}
-	}, [ isDifferentFromPurchaseSite ] );
+	}, [ marketplaceInstallationInProgress ] );
 
 	// Upload flow startup
 	useEffect( () => {
