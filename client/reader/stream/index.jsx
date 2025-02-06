@@ -726,6 +726,7 @@ class ReaderStream extends Component {
 		);
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
+
 		return (
 			<TopLevel className={ baseClassnames }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
@@ -735,7 +736,7 @@ class ReaderStream extends Component {
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
-				{ showingStream && items.length && ! isRequesting && (
+				{ showingStream && !! items.length && ! isRequesting && (
 					<>
 						<ListEnd />
 						{ streamKey.startsWith( 'following' ) && (
