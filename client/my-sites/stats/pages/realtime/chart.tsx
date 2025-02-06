@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import wpcom from 'calypso/lib/wp';
-import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { getSiteOption } from 'calypso/state/sites/selectors';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
 import PageLoading from '../shared/page-loading';
 
@@ -27,16 +27,15 @@ function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 const dataUpdateIntervalInSeconds = 5;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
-	const momentSiteZone = useSelector( ( state: object ) =>
-		getMomentSiteZone( state, siteId, 'YYYY-MM-DD HH' )
-	);
+	const gmtOffset = useSelector( ( state: object ) =>
+		getSiteOption( state, siteId, 'gmt_offset' )
+	) as number;
 	const [ viewsData, setViewsData ] = useState( {} as chartMinuteDataTypes );
 
 	useEffect( () => {
 		const intervalId = setInterval( () => {
-			const currentTime = moment().format( 'mm:00' );
 			// Index the chart data by YYYY-MM-DD HH:mm:00.
-			const adjustedDatetime = `${ momentSiteZone.format( 'YYYY-MM-DD HH' ) }:${ currentTime }`;
+			const adjustedDatetime = moment().utcOffset( gmtOffset ).format( 'YYYY-MM-DD HH:mm:00' );
 
 			queryStatsVisits( siteId, {
 				unit: 'hour',
@@ -57,7 +56,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		}, dataUpdateIntervalInSeconds * 1000 );
 
 		return () => clearInterval( intervalId );
-	}, [ siteId, momentSiteZone ] );
+	}, [ siteId, gmtOffset ] );
 
 	// TODO: Push data and shift the array for the chart display.
 	const formatedChartData = Object.keys( viewsData ).map( ( eachMinute ) => {
