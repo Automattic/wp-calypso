@@ -70,20 +70,6 @@ const SubscriberDataViews = ( {
 	const isMobile = useBreakpoint( '<660px' );
 	const isEnglishLocale = useIsEnglishLocale();
 
-	const renderEmailSubscriberStatus = ( isEmailSubscriber: boolean ) => {
-		if ( isEmailSubscriber ) {
-			return translate( 'Yes' );
-		}
-		if ( isEnglishLocale || hasTranslation( 'Reader only subscriber' ) ) {
-			return (
-				<Tooltip text={ translate( 'Reader only subscriber' ) }>
-					<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
-				</Tooltip>
-			);
-		}
-		return translate( 'No' );
-	};
-
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
@@ -227,9 +213,18 @@ const SubscriberDataViews = ( {
 				id: 'is_email_subscriber',
 				label: translate( 'Email subscriber' ),
 				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
-				render: ( { item }: { item: Subscriber } ) => (
-					<div>{ renderEmailSubscriberStatus( item.is_email_subscriber ) }</div>
-				),
+				render: ( { item }: { item: Subscriber } ) => {
+					const noTooltip =
+						isEnglishLocale || hasTranslation( 'Reader only subscriber' ) ? (
+							<Tooltip text={ translate( 'Reader only subscriber' ) }>
+								<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
+							</Tooltip>
+						) : (
+							translate( 'No' )
+						);
+
+					return <div>{ item.is_email_subscriber ? translate( 'Yes' ) : noTooltip }</div>;
+				},
 				elements: [
 					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
