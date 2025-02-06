@@ -20,14 +20,13 @@ import { isE2ETest } from 'calypso/lib/e2e';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment/index.js';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,
 	isContextSourceMyJetpack,
 } from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getIsRemoveDuplicateViewsExperimentOverridden } from 'calypso/state/explat-experiments/selectors.js';
 import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -319,9 +318,8 @@ export async function redirectToHostingPromoIfNotAtomic( context, next ) {
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
 		// Keep the user within the Settings tab
-		const isRemoveDuplicateViewsExperimentEnabled =
-			await getIsRemoveDuplicateViewsExperimentEnabled();
-		if ( isRemoveDuplicateViewsExperimentEnabled ) {
+		const isEnabled = await isRemoveDuplicateViewsExperimentEnabled( context );
+		if ( isEnabled ) {
 			return page.redirect( '/sites/settings/site/' + context.params.site_id );
 		}
 
@@ -402,15 +400,9 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	if ( getIsRemoveDuplicateViewsExperimentOverridden( context.store.getState() ) ) {
-		next();
-		return;
-	}
+	const isEnabled = await isRemoveDuplicateViewsExperimentEnabled( context );
 
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-
-	if ( isE2ETest() || isRemoveDuplicateViewsExperimentEnabled ) {
+	if ( isE2ETest() || isEnabled ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
