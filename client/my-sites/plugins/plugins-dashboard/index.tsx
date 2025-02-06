@@ -41,8 +41,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
-import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
@@ -108,9 +107,8 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
-	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
-	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
+	const allSites = useSelector( ( state ) => getSites( state ) );
+	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
@@ -170,7 +168,7 @@ const PluginsDashboard = ( {
 			?.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) )
 			.map( ( p: Plugin ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
-					const site = sites.find( ( s ) => s?.ID === parseInt( siteId ) );
+					const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return {
 						plugin: p,
 						site,
@@ -308,7 +306,7 @@ const PluginsDashboard = ( {
 		showPluginActionDialog(
 			actionName as PluginActionName,
 			pluginsToProcess,
-			sites as Site[],
+			allSites as Site[],
 			selectedActionCallback( pluginsToProcess )
 		);
 	};

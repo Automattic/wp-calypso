@@ -28,6 +28,9 @@ const SITE_DASHBOARD_ROUTES = [
 	'/domains/manage/all/overview',
 	'/domains/manage/all/email',
 	'/domains/manage/all/contact-info',
+
+	// Bulk Plugins management
+	'/plugins/manage/sites',
 ];
 
 function isInRoute( state: AppState, routes: string[] ) {
