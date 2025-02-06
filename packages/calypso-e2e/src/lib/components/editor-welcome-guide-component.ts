@@ -2,8 +2,9 @@ import { Page } from 'playwright';
 import { EditorComponent } from './editor-component';
 
 const selectors = {
+	welcomeGuideWrapper: '.edit-post-welcome-guide',
 	// Welcome guide
-	welcomeGuideCloseButton: '.edit-post-welcome-guide button[aria-label="Close"]',
+	welcomeGuideCloseButton: 'button[aria-label="Close"]',
 };
 
 /**
@@ -29,8 +30,11 @@ export class EditorWelcomeGuideComponent {
 	 */
 	async closeWelcomeGuideIfNeeded(): Promise< void > {
 		const editorParent = await this.editor.parent();
-		// TODO: It would be better to check whether the element is visible or not. However, it may not be available at the beginning.
-		const locator = editorParent.locator( selectors.welcomeGuideCloseButton );
-		await locator.click();
+
+		const welcomGuideWrapper = editorParent.locator( selectors.welcomeGuideWrapper );
+		await welcomGuideWrapper.waitFor( { state: 'visible' } );
+
+		const closeBtn = editorParent.locator( selectors.welcomeGuideCloseButton );
+		await closeBtn.click();
 	}
 }
