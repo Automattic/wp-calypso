@@ -11,7 +11,7 @@ import { usePagination } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import { isSimpleSite } from 'calypso/state/sites/selectors';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
 import useManySubsSite from '../../hooks/use-many-subs-site';
@@ -96,7 +96,9 @@ export const SubscribersPageProvider = ( {
 	const [ showAddSubscribersModal, setShowAddSubscribersModal ] = useState( false );
 	const [ showMigrateSubscribersModal, setShowMigrateSubscribersModal ] = useState( false );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
-	const isSimple = useSelector( ( state ) => isSimpleSite( state, siteId ) );
+	const isJetpackNonAtomic = useSelector(
+		( state ) => siteId && isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
+	);
 	useEffect( () => {
 		if ( hasManySubscribers ) {
 			setDataViewFilterOption( SubscribersFilterBy.WPCOM );
@@ -222,10 +224,9 @@ export const SubscribersPageProvider = ( {
 				if ( code === 'subscriber_import_limit_reached' && typeof message === 'string' ) {
 					noticeArgs.button = translate( 'Upgrade' );
 					const siteSlug = selectedSiteSlug || ''; // Use a default if siteSlug is not available
-
-					noticeArgs.href = isSimple
-						? `https://wordpress.com/plans/${ siteSlug }`
-						: `https://cloud.jetpack.com/pricing/${ siteSlug }`;
+					noticeArgs.href = isJetpackNonAtomic
+						? `https://cloud.jetpack.com/pricing/${ siteSlug }`
+						: `https://wordpress.com/plans/${ siteSlug }`;
 				}
 			}
 
