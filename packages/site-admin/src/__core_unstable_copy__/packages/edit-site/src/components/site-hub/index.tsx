@@ -36,14 +36,18 @@ interface SiteData {
 
 interface SiteHubProps {
 	isTransparent: boolean;
-	goBackLabel: string; // @unstable: `goBackLabel` prop (not present in core)
-	goBackPath: string; // @unstable: `goBackPath` prop (not present in core)
+	navigationBackLabel: string; // @unstable: `navigationBackLabel` prop (not present in core)
+	navigationBackLink: string; // @unstable: `navigationBackLink` prop (not present in core)
 }
 
 const SiteHub = memo(
 	forwardRef(
 		(
-			{ isTransparent, goBackPath = '/', goBackLabel = __( 'Go to the Dashboard' ) }: SiteHubProps,
+			{
+				isTransparent,
+				navigationBackLink = '/',
+				navigationBackLabel = __( 'Go to the Dashboard' ),
+			}: SiteHubProps,
 			ref
 		) => {
 			unstableResourceWarning(
@@ -81,8 +85,8 @@ const SiteHub = memo(
 							<Button
 								__next40pxDefaultSize
 								ref={ ref }
-								href={ goBackPath }
-								label={ goBackLabel }
+								href={ navigationBackLink }
+								label={ navigationBackLabel }
 								className="edit-site-layout__view-mode-toggle"
 								style={ {
 									transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
@@ -129,11 +133,11 @@ export default SiteHub;
 // @unstable: declare SiteHubMobileProps type (not present in core)
 type SiteHubMobileProps = {
 	isTransparent: boolean;
-	goBackPath?: string; // @unstable: `goBackPath` prop (not present in core)
+	navigationBackLink?: string; // @unstable: `navigationBackLink` prop (not present in core)
 };
 
 export const SiteHubMobile = memo(
-	forwardRef( ( { isTransparent, goBackPath = '/' }: SiteHubMobileProps, ref ) => {
+	forwardRef( ( { isTransparent, navigationBackLink = '/' }: SiteHubMobileProps, ref ) => {
 		unstableResourceWarning(
 			'<SiteHubMobile />',
 			'https://github.com/WordPress/gutenberg/blob/c2d2d692e09c624bd693355822eaa23f670f84b7/packages/edit-site/src/components/site-hub/index.js#L118'
@@ -178,12 +182,12 @@ export const SiteHubMobile = memo(
 							} }
 							{ ...( ! isBlockTheme
 								? {
-										href: goBackPath,
+										href: navigationBackLink,
 										label: __( 'Go to the Dashboard' ),
 								  }
 								: {
 										onClick: () => {
-											history.navigate( goBackPath ); // @unstable: `goBackPath` prop (not present in core)
+											history.navigate( navigationBackLink ); // @unstable: `navigationBackLink` prop (not present in core)
 											navigate( 'back' );
 										},
 										label: __( 'Go to Site Editor' ),

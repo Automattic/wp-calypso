@@ -45,7 +45,7 @@ type SidebarNavigationScreenProps = {
 	backPath?: string;
 
 	navigationBackLabel?: string; // @unstable -> not in core
-	navigationBackPath?: string; // @unstable -> not in core
+	navigationBackLink?: string; // @unstable -> not in core
 };
 
 export default function SidebarNavigationScreen( {
@@ -58,7 +58,7 @@ export default function SidebarNavigationScreen( {
 	description,
 	backPath: backPathProp,
 	navigationBackLabel = __( 'Back' ), // @unstable -> not in core
-	navigationBackPath = '/', // @unstable -> not in core
+	navigationBackLink = '/', // @unstable -> not in core
 }: SidebarNavigationScreenProps ) {
 	unstableResourceWarning(
 		'<SidebarNavigationScreen />',
@@ -100,7 +100,7 @@ export default function SidebarNavigationScreen( {
 						<SidebarButton
 							icon={ icon }
 							label={ navigationBackLabel }
-							href={ navigationBackPath }
+							href={ navigationBackLink }
 						/>
 					) }
 					<Heading

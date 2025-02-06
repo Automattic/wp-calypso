@@ -1,0 +1,1 @@
+2025-02-06 - Introduce `navigationBackLabel` and `navigationBackLink` properties
