@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -9,6 +8,7 @@ import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
+import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
@@ -63,9 +63,11 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	return (
 		<Form
 			className="signup-contact-form"
-			title={ translate( `Sign up and unlock the blueprint to grow your agency's business` ) }
-			description={ translate(
-				'Join 5000+ agencies and grow your business with Automattic for Agencies.'
+			title={ preventWidows(
+				translate( `Sign up and unlock the blueprint to grow your agency's business` )
+			) }
+			description={ preventWidows(
+				translate( 'Join 5000+ agencies and grow your business with Automattic for Agencies.' )
 			) }
 		>
 			<div className="signup-multi-step-form__fields">
@@ -75,6 +77,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 							name="firstName"
 							value={ formData.firstName }
 							onChange={ handleInputChange( 'firstName' ) }
+							placeholder={ translate( 'Your first name' ) }
 						/>
 					</FormField>
 
@@ -83,6 +86,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 							name="lastName"
 							value={ formData.lastName }
 							onChange={ handleInputChange( 'lastName' ) }
+							placeholder={ translate( 'Your last name' ) }
 						/>
 					</FormField>
 				</div>
@@ -93,6 +97,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 						type="email"
 						value={ formData.email }
 						onChange={ handleInputChange( 'email' ) }
+						placeholder={ translate( 'Your email' ) }
 					/>
 				</FormField>
 
@@ -101,6 +106,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 						name="agencyName"
 						value={ formData.agencyName }
 						onChange={ handleInputChange( 'agencyName' ) }
+						placeholder={ translate( 'Agency name' ) }
 					/>
 				</FormField>
 
@@ -109,6 +115,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 						name="businessUrl"
 						value={ formData.businessUrl }
 						onChange={ handleInputChange( 'businessUrl' ) }
+						placeholder={ translate( 'Business URL' ) }
 					/>
 				</FormField>
 
@@ -120,13 +127,16 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 						countriesList={ countriesList }
 						onChange={ handlePhoneInputChange }
 						className="contact-form__phone-input"
+						phoneInputProps={ {
+							placeholder: translate( 'Phone number' ),
+						} }
 					/>
 				</FormField>
 
 				<div className="signup-contact-form__tos">
 					<p>
 						{ translate(
-							"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement{{icon}}{{/icon}}{{/link}}.",
+							"By clicking 'Continue', you agree to the{{break}}{{/break}}{{link}}Terms of the Automattic for Agencies Platform Agreement ↗{{/link}}",
 							{
 								components: {
 									break: <br />,
@@ -139,7 +149,6 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 											rel="noopener noreferrer"
 										></a>
 									),
-									icon: <Gridicon icon="external" size={ 18 } />,
 								},
 							}
 						) }
