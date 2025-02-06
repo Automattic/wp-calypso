@@ -602,11 +602,6 @@
 			.domain-search-results__domain-available-notice-icon {
 				margin-right: 4px;
 			}
-
-			/* hide transfer link */
-			a {
-				display: none;
-			}
 		}
 
 		// Hide the domain explanation image
@@ -627,12 +622,6 @@
 				align-items: flex-end;
 				align-self: center;
 				margin-right: 16px;
-			}
-		}
-
-		.domain-search-results__domain-available-notice {
-			a {
-				display: unset;
 			}
 		}
 	}
