@@ -1,16 +1,17 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_100_YEARS, getPlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Button, Modal } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useDispatch as useDataStoreDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SiteSelector from 'calypso/components/site-selector';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
-import { usePresalesChat } from 'calypso/lib/presales-chat';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { SMALL_BREAKPOINT } from '../hundred-year-plan-step-wrapper/constants';
 import type { Step } from '../../types';
@@ -135,7 +136,17 @@ const ConfirmationModal = ( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { openChat } = usePresalesChat( 'wpcom' );
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HelpCenter.register() );
+
+	const openHelpCenter = () => {
+		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
+		setNavigateToRoute(
+			'/odie?provider=zendesk&userFieldMessage=' +
+				encodeURIComponent( 'This is a user looking to purchase the 100-Year Plan' )
+		);
+		setShowHelpCenter( true );
+		closeModal();
+	};
 
 	return (
 		<StyledModal
@@ -190,12 +201,12 @@ const ConfirmationModal = ( {
 							{ hasEnTranslation( 'Need help? {{ChatLink}}Contact us{{/ChatLink}}' )
 								? translate( 'Need help? {{ChatLink}}Contact us{{/ChatLink}}', {
 										components: {
-											ChatLink: <Button variant="link" onClick={ openChat } />,
+											ChatLink: <Button variant="link" onClick={ openHelpCenter } />,
 										},
 								  } )
 								: translate( 'Need help? {{ChatLink}}Chat with us{{/ChatLink}}', {
 										components: {
-											ChatLink: <Button variant="link" onClick={ openChat } />,
+											ChatLink: <Button variant="link" onClick={ openHelpCenter } />,
 										},
 								  } ) }
 						</HelpLink>

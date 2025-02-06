@@ -248,52 +248,58 @@ describe( 'usePricingMetaForGridPlans', () => {
 		expect( pricingMeta ).toEqual( expectedPricingMeta );
 	} );
 
-	it( 'should return the original price and discounted price when site id is passed and withProratedDiscounts is false', () => {
-		Plans.useCurrentPlan.mockImplementation( () => ( {
-			productSlug: PLAN_PERSONAL,
-			planSlug: PLAN_PERSONAL,
-		} ) );
+	it.each( [
+		COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION,
+		COST_OVERRIDE_REASONS.RECENT_DOMAIN_PRORATION,
+	] )(
+		"should return the original price when site id is passed, cost override reason is '%s', and withProratedDiscounts is false",
+		( overrideCode ) => {
+			Plans.useCurrentPlan.mockImplementation( () => ( {
+				productSlug: PLAN_PERSONAL,
+				planSlug: PLAN_PERSONAL,
+			} ) );
 
-		Plans.useSitePlans.mockImplementation( () => ( {
-			isLoading: false,
-			data: {
-				[ PLAN_BUSINESS ]: {
-					...SITE_PLANS[ PLAN_BUSINESS ],
-					pricing: {
-						...SITE_PLANS[ PLAN_BUSINESS ].pricing,
-						costOverrides: [ { overrideCode: COST_OVERRIDE_REASONS.RECENT_PLAN_PRORATION } ],
+			Plans.useSitePlans.mockImplementation( () => ( {
+				isLoading: false,
+				data: {
+					[ PLAN_BUSINESS ]: {
+						...SITE_PLANS[ PLAN_BUSINESS ],
+						pricing: {
+							...SITE_PLANS[ PLAN_BUSINESS ].pricing,
+							costOverrides: [ { overrideCode } ],
+						},
 					},
 				},
-			},
-		} ) );
+			} ) );
 
-		const pricingMeta = usePricingMetaForGridPlans( {
-			planSlugs: [ PLAN_BUSINESS ],
-			siteId,
-			coupon: undefined,
-			useCheckPlanAvailabilityForPurchase,
-			withProratedDiscounts: false,
-		} );
+			const pricingMeta = usePricingMetaForGridPlans( {
+				planSlugs: [ PLAN_BUSINESS ],
+				siteId,
+				coupon: undefined,
+				useCheckPlanAvailabilityForPurchase,
+				withProratedDiscounts: false,
+			} );
 
-		const expectedPricingMeta = {
-			[ PLAN_BUSINESS ]: {
-				originalPrice: {
-					full: 500,
-					monthly: 500,
+			const expectedPricingMeta = {
+				[ PLAN_BUSINESS ]: {
+					originalPrice: {
+						full: 500,
+						monthly: 500,
+					},
+					discountedPrice: {
+						full: null,
+						monthly: null,
+					},
+					billingPeriod: 365,
+					currencyCode: 'USD',
+					expiry: null,
+					introOffer: undefined,
 				},
-				discountedPrice: {
-					full: null,
-					monthly: null,
-				},
-				billingPeriod: 365,
-				currencyCode: 'USD',
-				expiry: null,
-				introOffer: undefined,
-			},
-		};
+			};
 
-		expect( pricingMeta ).toEqual( expectedPricingMeta );
-	} );
+			expect( pricingMeta ).toEqual( expectedPricingMeta );
+		}
+	);
 
 	it( 'should return intro offer when available', () => {
 		Plans.useIntroOffers.mockImplementation( () => ( {

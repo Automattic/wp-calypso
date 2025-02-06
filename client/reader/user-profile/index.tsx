@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
+import BackButton from 'calypso/components/back-button';
 import EmptyContent from 'calypso/components/empty-content';
 import { UserData } from 'calypso/lib/user/user';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -11,11 +12,12 @@ import { requestUser } from 'calypso/state/reader/users/actions';
 import './style.scss';
 
 interface UserProfileProps {
-	streamKey?: string;
-	userId: string;
+	userLogin: string;
 	user: UserData;
 	isLoading: boolean;
-	requestUser: ( userId: string ) => Promise< void >;
+	requestUser: ( userLogin: string ) => Promise< void >;
+	showBack: boolean;
+	handleBack: () => void;
 }
 
 type UserProfileState = {
@@ -27,13 +29,13 @@ type UserProfileState = {
 	};
 };
 
-export function UserProfile( props: UserProfileProps ) {
-	const { userId, requestUser, user, streamKey, isLoading } = props;
+export function UserProfile( props: UserProfileProps ): JSX.Element | null {
+	const { userLogin, requestUser, user, isLoading, showBack, handleBack } = props;
 	const translate = useTranslate();
 
 	useEffect( () => {
-		requestUser( userId );
-	}, [ userId, requestUser ] );
+		requestUser( userLogin );
+	}, [ userLogin, requestUser ] );
 
 	if ( isLoading ) {
 		return <></>;
@@ -42,24 +44,24 @@ export function UserProfile( props: UserProfileProps ) {
 	if ( ! user ) {
 		return (
 			<EmptyContent
-				illustration="/calypso/images/illustrations/illustration-404.svg"
+				illustration=""
 				title={ translate( 'Uh oh. User not found.' ) }
 				line={ translate( 'Sorry, the user you were looking for could not be found.' ) }
 				action={ translate( 'Return to Reader' ) }
-				actionURL="/read"
+				actionURL="/reader"
 				className="user-profile__404"
 			/>
 		);
 	}
 
 	const currentPath = page.current;
-	const userProfileUrl = getUserProfileUrl( Number( userId ) );
+	const userProfileUrl = getUserProfileUrl( userLogin );
 
 	const renderContent = (): React.ReactNode => {
 		const basePath = currentPath.split( '?' )[ 0 ];
 		switch ( basePath ) {
 			case userProfileUrl:
-				return <UserPosts streamKey={ streamKey as string } user={ user } />;
+				return <UserPosts user={ user } />;
 			case `${ userProfileUrl }/lists`:
 				return <UserLists user={ user } />;
 			default:
@@ -69,7 +71,8 @@ export function UserProfile( props: UserProfileProps ) {
 
 	return (
 		<div className="user-profile">
-			<div className="user-profile__content-wrapper">
+			<div className={ `user-profile__content-wrapper${ showBack ? ' has-back-button' : '' }` }>
+				{ showBack && <BackButton onClick={ handleBack } /> }
 				<div className="user-profile__content">{ renderContent() }</div>
 			</div>
 		</div>
@@ -78,8 +81,8 @@ export function UserProfile( props: UserProfileProps ) {
 
 export default connect(
 	( state: UserProfileState, ownProps: UserProfileProps ) => ( {
-		user: state.reader.users.items[ ownProps.userId ],
-		isLoading: state.reader.users.requesting[ ownProps.userId ] ?? false,
+		user: state.reader.users.items[ ownProps.userLogin ],
+		isLoading: state.reader.users.requesting[ ownProps.userLogin ] ?? false,
 	} ),
 	{ requestUser }
 )( UserProfile );

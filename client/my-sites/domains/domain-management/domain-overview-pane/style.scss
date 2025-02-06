@@ -85,11 +85,11 @@
 			.foldable-card__content {
 				padding: 0;
 			}
-	
+
 			.foldable-card__main > div {
 				flex-grow: 0;
 			}
-	
+
 			&.is-expanded .foldable-card__content {
 				padding: 0 24px 24px 0;
 			}
@@ -119,7 +119,7 @@
 			}
 		}
 	}
-	
+
 	.domain-info-card.action-card {
 		padding: 24px;
 
@@ -202,14 +202,45 @@
 		max-height: calc(100vh - 32px - var(--masterbar-height));
 		transition: flex-grow 0.2s;
 		width: auto;
+
+		.hosting-dashboard-item-view__navigation {
+			box-shadow: none;
+			border-bottom: 1px solid var(--color-border-subtle);
+			padding-top: 1px;
+		}
 	}
 
 	.hosting-dashboard-item-view__header-info {
 		flex-wrap: wrap;
 	}
 
-	.hosting-dashboard-item-view__content div {
+	.domains-overview__details {
+		.main.is-wide-layout:not( .email-providers-in-depth-comparison-page ):not( .email-stacked-comparison-page ) {	
+			margin-left: 0;
+			max-width: 1040px;
+		}
+
+		.hosting-dashboard-layout-column__container .navigation-header div.navigation-header__main {
+			margin-left: 0;
+		}
+	}
+
+	.hosting-dashboard-item-view__content > div {
 		flex-grow: 1;
+
+		.domain-forwarding-card__fields:last-child {
+			margin-bottom: 0;
+		}
+
+		.domain-forwarding-card__accordion .foldable-card__content {
+		   > :not(:last-child):not(.domain-forwarding-card-notice) {
+			  margin-bottom: 1.5rem;
+		   }
+		}
+
+		.domain-forwarding-card__accordion .link-button {
+			color: var(--color-link);
+		}
 	}
 
 	.domain-settings-page {
@@ -231,6 +262,15 @@
 		&,
 		.hosting-dashboard-layout-column__container {
 			height: 100%;
+		}
+
+		thead.email-forward-list__row th,
+		.dns-records-list-item__wrapper.is-header .dns-records-list-item__data {
+			font-weight: 500;
+			text-transform: uppercase;
+			/* stylelint-disable-next-line scales/font-sizes */
+			font-size: .6875rem;
+			font-style: normal;
 		}
 	}
 

@@ -28,6 +28,9 @@ const SITE_DASHBOARD_ROUTES = [
 	'/domains/manage/all/overview',
 	'/domains/manage/all/email',
 	'/domains/manage/all/contact-info',
+
+	// Bulk Plugins management
+	'/plugins/manage/sites',
 ];
 
 function isInRoute( state: AppState, routes: string[] ) {
@@ -35,11 +38,11 @@ function isInRoute( state: AppState, routes: string[] ) {
 }
 
 function shouldShowSitesDashboard( state: AppState ) {
-	return isInRoute( state, [ '/sites', '/p2s', ...SITE_DASHBOARD_ROUTES ] );
+	return isInRoute( state, [ '/sites', '/p2s', '/setup', '/start', ...SITE_DASHBOARD_ROUTES ] );
 }
 
 export function shouldShowSiteDashboard( state: AppState, siteId: number | null ) {
-	return !! siteId && isInRoute( state, SITE_DASHBOARD_ROUTES );
+	return !! siteId && isInRoute( state, [ '/setup', '/start', ...SITE_DASHBOARD_ROUTES ] );
 }
 
 export const getShouldShowGlobalSidebar = (

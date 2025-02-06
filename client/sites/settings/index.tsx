@@ -1,5 +1,9 @@
 import page from '@automattic/calypso-router';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	render as clientRender,
+	redirectIfCurrentUserCannot,
+} from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import {
 	SETTINGS_SITE,
@@ -31,6 +35,7 @@ export default function () {
 		'/sites/settings/site/:site',
 		siteSelection,
 		navigation,
+		redirectIfCurrentUserCannot( 'manage_options' ),
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
@@ -48,7 +53,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/reset-site',
+		'/sites/settings/site/:site/reset-site',
 		siteSelection,
 		redirectIfCantDeleteSite,
 		navigation,
@@ -58,7 +63,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/transfer-site',
+		'/sites/settings/site/:site/transfer-site',
 		siteSelection,
 		redirectIfCantStartSiteOwnerTransfer,
 		navigation,
@@ -68,7 +73,7 @@ export default function () {
 		clientRender
 	);
 	page(
-		'/sites/settings/administration/:site/delete-site',
+		'/sites/settings/site/:site/delete-site',
 		siteSelection,
 		redirectIfCantDeleteSite,
 		navigation,

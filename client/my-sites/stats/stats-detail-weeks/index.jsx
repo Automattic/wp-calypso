@@ -100,8 +100,7 @@ const StatsPostDetailWeeks = ( props ) => {
 					'is-falling': week.change < 0,
 					'is-same': week.change === 0,
 				} );
-
-				let displayValue = numberFormat( week.change, 2 ) + '%';
+				let displayValue = numberFormat( week.change, { decimals: 2 } ) + '%';
 
 				if ( week.change > 0 ) {
 					iconType = 'arrow-up';

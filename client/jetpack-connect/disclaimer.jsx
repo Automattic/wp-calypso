@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -11,7 +10,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 		companyName: PropTypes.string,
 		siteName: PropTypes.string.isRequired,
 		from: PropTypes.string,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 	};
 
 	handleClickDisclaimer = () => {
@@ -21,7 +20,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 	render() {
 		const {
 			companyName = 'WordPress.com',
-			isWooPasswordlessJPC = false,
+			isWooJPC = false,
 			siteName,
 			from,
 			translate,
@@ -38,10 +37,7 @@ class JetpackConnectDisclaimer extends PureComponent {
 			/>
 		);
 
-		if (
-			isWooPasswordlessJPC &&
-			config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-		) {
+		if ( isWooJPC ) {
 			const termsOfServiceLink = (
 				<a
 					href={ localizeUrl( 'https://wordpress.com/tos/' ) }

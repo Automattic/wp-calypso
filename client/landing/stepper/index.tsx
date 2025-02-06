@@ -7,7 +7,6 @@ import { UserActions, User as UserStore } from '@automattic/data-stores';
 import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import {
 	HOSTED_SITE_MIGRATION_FLOW,
-	MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	SITE_MIGRATION_FLOW,
 } from '@automattic/onboarding';
@@ -76,7 +75,6 @@ const getSiteIdFromURL = () => {
 };
 
 const HOTJAR_ENABLED_FLOWS = [
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	HOSTED_SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
@@ -88,7 +86,7 @@ const initializeHotJar = ( flowName: string ) => {
 	}
 };
 
-window.AppBoot = async () => {
+async function main() {
 	const { pathname, search } = window.location;
 
 	// Before proceeding we redirect the user if necessary.
@@ -206,4 +204,6 @@ window.AppBoot = async () => {
 			</Provider>
 		</CalypsoI18nProvider>
 	);
-};
+}
+
+main();

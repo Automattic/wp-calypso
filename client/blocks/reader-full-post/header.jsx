@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
-import { translate, getLocaleSlug } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -97,7 +96,9 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 									count: followCount,
 									args: {
-										followCount: formatNumber( followCount, getLocaleSlug() ),
+										followCount: numberFormat( followCount, {
+											numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+										} ),
 									},
 								} ) }
 							</span>

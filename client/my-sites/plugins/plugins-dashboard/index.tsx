@@ -18,10 +18,11 @@ import LayoutHeader, {
 	LayoutHeaderSubtitle as Subtitle,
 } from 'calypso/layout/hosting-dashboard/header';
 import LayoutTop from 'calypso/layout/hosting-dashboard/top';
+import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import UrlSearch from 'calypso/lib/url-search';
-import { handleUpdatePlugins, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { useSelector, useDispatch } from 'calypso/state';
 import {
 	activatePlugin,
@@ -40,8 +41,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
-import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
@@ -106,9 +106,9 @@ const PluginsDashboard = ( {
 }: PluginsDashboardProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const allSites = useSelector( ( state ) => getSelectedOrAllSites( state ) );
-	const sites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
-	const siteIds = siteObjectsToSiteIds( sites ) ?? [];
+	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
+	const allSites = useSelector( ( state ) => getSites( state ) );
+	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
 		( state ) => isRequestingForAllSites( state ) || isRequestingSites( state )
@@ -151,7 +151,7 @@ const PluginsDashboard = ( {
 	const sitesWithoutPluginAvailable = sitesToShow.filter(
 		( site ) =>
 			! sitesWithPlugin.find( ( siteWithPlugin ) => siteWithPlugin?.ID === site?.ID ) &&
-			! ( isJetpackCloud() && hasMarketplaceProduct( productsList, pluginSlug ) )
+			! ( isJetpackCloudOrA8CForAgencies && hasMarketplaceProduct( productsList, pluginSlug ) )
 	);
 
 	const doActionOverSelected = (
@@ -168,7 +168,7 @@ const PluginsDashboard = ( {
 			?.filter( ( plugin: Plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) )
 			.map( ( p: Plugin ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
-					const site = sites.find( ( s ) => s?.ID === parseInt( siteId ) );
+					const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 					return {
 						plugin: p,
 						site,
@@ -257,14 +257,7 @@ const PluginsDashboard = ( {
 			return;
 		}
 
-		doActionOverSelected(
-			'updating',
-			( siteId: number, plugin: Plugin ) => {
-				handleUpdatePlugins( [ plugin ], updatePluginAction, [] );
-				removePluginStatuses();
-			},
-			plugins
-		);
+		doActionOverSelected( 'updating', updatePluginAction, plugins );
 	};
 
 	const setAutoupdateSelected = ( plugins: Plugin[] ) => ( accepted: boolean ) => {
@@ -313,7 +306,7 @@ const PluginsDashboard = ( {
 		showPluginActionDialog(
 			actionName as PluginActionName,
 			pluginsToProcess,
-			sites as Site[],
+			allSites as Site[],
 			selectedActionCallback( pluginsToProcess )
 		);
 	};
@@ -335,7 +328,9 @@ const PluginsDashboard = ( {
 			wide
 			title={ dashboardTitle }
 			sidebarNavigation={
-				isJetpackCloud() && <SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+				isJetpackCloudOrA8CForAgencies && (
+					<SidebarNavigation sectionTitle={ translate( 'Manage Plugins' ) } />
+				)
 			}
 		>
 			<PageViewTracker
@@ -352,7 +347,7 @@ const PluginsDashboard = ( {
 						{ ! pluginSlug && (
 							<Subtitle>{ translate( 'Manage all your plugins in one place' ) }</Subtitle>
 						) }
-						{ ! pluginSlug && ! isJetpackCloud() && (
+						{ ! pluginSlug && ! isJetpackCloudOrA8CForAgencies && (
 							<Actions>
 								<Button href="/plugins">{ translate( 'Browse plugins' ) }</Button>
 							</Actions>

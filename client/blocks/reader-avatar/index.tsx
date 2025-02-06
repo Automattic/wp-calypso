@@ -18,6 +18,8 @@ export type ReaderAvatarAuthor = {
 	has_avatar?: boolean;
 	display_name?: string;
 	name?: string;
+	login?: string;
+	wpcom_login?: string;
 };
 
 type ReaderAvatarProps = {
@@ -120,7 +122,8 @@ export default function ReaderAvatar( {
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
-	const avatarUrl = isUserProfileEnabled() && author?.ID ? getUserProfileUrl( author.ID ) : null;
+	const avatarUrl =
+		isUserProfileEnabled() && author?.wpcom_login ? getUserProfileUrl( author.wpcom_login ) : null;
 	const authorAvatar = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);

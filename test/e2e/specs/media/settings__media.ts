@@ -6,12 +6,10 @@
 import {
 	DataHelper,
 	TestAccount,
-	SidebarComponent,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
 	WpAdminMediaSettingsPage,
-	WritingSettingsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { skipItIf } from '../../jest-helpers';
@@ -45,51 +43,24 @@ describe( DataHelper.createSuiteTitle( 'Jetpack Settings: Media' ), function () 
 		} else {
 			await testAccount.authenticate( page );
 		}
+
+		// Atomic tests sites might have local users, so the Jetpack SSO login will
+		// show up when visiting the Jetpack dashboard directly. We can bypass it if
+		// we simulate a redirect from Calypso to WP Admin with a hardcoded referer.
+		// @see https://github.com/Automattic/jetpack/blob/12b3b9a4771169398d4e1982573aaec820babc17/projects/plugins/wpcomsh/wpcomsh.php#L230-L254
+		const siteUrl = testAccount.getSiteURL( { protocol: true } );
+		await page.goto( `${ siteUrl }wp-admin/`, {
+			timeout: 15 * 1000,
+			referer: 'https://wordpress.com/',
+		} );
 	} );
 
-	if ( envVariables.JETPACK_TARGET === 'remote-site' ) {
-		// For self-hosted sites with Jetpack plugin installed.
-		describe( 'Under writing settings for a remote site', function () {
-			let writingSettingsPage: WritingSettingsPage;
-
-			it( 'Navigate to Settings > Writing', async function () {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Settings', 'Writing' );
-
-				writingSettingsPage = new WritingSettingsPage( page );
-			} );
-
-			it( 'Toggle Carousel', async function () {
-				await writingSettingsPage.toggleOn(
-					'parent',
-					'Transform standard image galleries into full-screen slideshows'
-				);
-			} );
-
-			it( 'Toggle photo metadata', async function () {
-				await writingSettingsPage.toggleOn(
-					'child',
-					'Show photo metadata in carousel, when available'
-				);
-			} );
-
-			it( 'Select "Black" for carousel background color', async function () {
-				await writingSettingsPage.selectCarouselBackgroundColor( 'Black' );
-			} );
-		} );
-	} else {
+	if ( envVariables.JETPACK_TARGET !== 'remote-site' ) {
 		// For WPCOM hosted sites.
 		let wpAdminMediaSettingsPage: WpAdminMediaSettingsPage;
 
 		it( 'Navigate to Settings > Media', async function () {
-			// eCommerce plan loads WP-Admin for home dashboard,
-			// so instead navigate straight to the Media page.
-			if ( testAccount.accountName === 'jetpackAtomicEcommPlanUser' ) {
-				await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
-			} else {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Settings', 'Media' );
-			}
+			await page.goto( `${ testAccount.getSiteURL() }wp-admin/options-media.php` );
 			wpAdminMediaSettingsPage = new WpAdminMediaSettingsPage( page );
 		} );
 

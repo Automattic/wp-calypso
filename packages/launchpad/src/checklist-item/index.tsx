@@ -11,11 +11,18 @@ interface Props {
 	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;
+	isHighlighted?: boolean;
 	expandable?: Expandable;
 	onClick?: () => void;
 }
 
-const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClick } ) => {
+const ChecklistItem: FC< Props > = ( {
+	task,
+	isPrimaryAction,
+	isHighlighted,
+	expandable,
+	onClick,
+} ) => {
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
@@ -56,6 +63,7 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				enabled: ! disabled,
 				disabled: disabled,
 				expanded: expandable && expandable.isOpen,
+				highlighted: isHighlighted,
 			} ) }
 		>
 			{ isPrimaryAction ? (

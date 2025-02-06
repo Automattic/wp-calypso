@@ -8,18 +8,25 @@ const PALETTE = colorStudio.colors;
 const COLOR_JETPACK = PALETTE[ 'Jetpack Green 40' ];
 const COLOR_WHITE = PALETTE[ 'White' ]; // eslint-disable-line dot-notation
 
-type LogoPathProps = {
-	monochrome?: boolean;
-};
-
 type JetpackLogoProps = {
-	full?: string;
+	/**
+	 * Whether to render the full logo.
+	 * @default false
+	 */
+	full?: boolean;
+	/**
+	 * Height of the logo in pixels.
+	 * @default 32
+	 */
 	size?: number;
+	/**
+	 * Whether to render the logo in monochrome.
+	 * @default false
+	 */
 	monochrome?: boolean;
-	className?: string;
 };
 
-const LogoPathSize32: React.FunctionComponent< LogoPathProps > = ( { monochrome = false } ) => {
+const LogoPathSize32 = ( { monochrome = false }: Pick< JetpackLogoProps, 'monochrome' > ) => {
 	const primary = monochrome ? 'white' : COLOR_JETPACK;
 	const secondary = monochrome ? 'black' : COLOR_WHITE;
 
@@ -44,7 +51,7 @@ const LogoPathSize32: React.FunctionComponent< LogoPathProps > = ( { monochrome 
 	);
 };
 
-const LogoPathSize32Monochrome: React.FunctionComponent< any > = () => (
+const LogoPathSize32Monochrome = () => (
 	<>
 		<mask id="jetpack-logo-mask">
 			<LogoPathSize32 monochrome />
@@ -57,13 +64,13 @@ const LogoPathSize32Monochrome: React.FunctionComponent< any > = () => (
 	</>
 );
 
-const JetpackLogo: React.FunctionComponent< JetpackLogoProps > = ( {
+export const JetpackLogo = ( {
 	full = false,
 	monochrome = false,
 	size = 32,
 	className,
 	...props
-} ) => {
+}: JetpackLogoProps & React.SVGProps< SVGSVGElement > ) => {
 	const classes = clsx( 'jetpack-logo', className );
 
 	if ( full === true ) {
@@ -81,7 +88,6 @@ const JetpackLogo: React.FunctionComponent< JetpackLogoProps > = ( {
 
 	if ( 24 === size ) {
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<svg className={ classes } height="24" width="24" viewBox="0 0 24 24" { ...props }>
 				<path d="M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10s10-4.5,10-10S17.5,2,12,2z M11,14H6l5-10V14z M13,20V10h5L13,20z" />
 			</svg>
@@ -94,5 +100,3 @@ const JetpackLogo: React.FunctionComponent< JetpackLogoProps > = ( {
 		</svg>
 	);
 };
-
-export default JetpackLogo;

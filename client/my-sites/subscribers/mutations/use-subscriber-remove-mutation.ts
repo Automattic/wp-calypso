@@ -57,29 +57,37 @@ const useSubscriberRemoveMutation = (
 				await Promise.all( promises );
 			}
 
+			let wasRemoved = false;
+
 			// Remove the subscriber from the followers and email followers because they may be both of them.
 			if ( subscriber.user_id ) {
 				try {
 					await wpcom.req.post( `/sites/${ siteId }/followers/${ subscriber.user_id }/delete` );
+					wasRemoved = true;
 				} catch ( e ) {
-					// Only throw if subscription_id is empty
+					// Only throw if subscription_id is empty.
 					if ( ( e as ApiResponseError )?.error === 'not_found' && ! subscriber.subscription_id ) {
 						throw new Error( ( e as ApiResponseError )?.message );
 					}
 				}
 			}
 
+			// Always try to remove as email follower if they have a subscription_id.
 			if ( subscriber.subscription_id ) {
 				try {
 					await wpcom.req.post(
 						`/sites/${ siteId }/email-followers/${ subscriber.subscription_id }/delete`
 					);
+					wasRemoved = true;
 				} catch ( e ) {
-					throw new Error( ( e as ApiResponseError )?.message );
+					// Only throw if we haven't successfully removed them through any other method.
+					if ( ! wasRemoved ) {
+						throw new Error( ( e as ApiResponseError )?.message );
+					}
 				}
 			}
 
-			return true;
+			return wasRemoved;
 		},
 		onMutate: async ( subscriber ) => {
 			await queryClient.cancelQueries( { queryKey: subscribersCacheKey } );

@@ -71,4 +71,5 @@ export const PERIOD_LIST = [
 
 export const COST_OVERRIDE_REASONS = {
 	RECENT_PLAN_PRORATION: 'recent-plan-proration',
+	RECENT_DOMAIN_PRORATION: 'recent-domain-proration',
 };

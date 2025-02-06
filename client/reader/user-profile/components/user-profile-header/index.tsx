@@ -1,5 +1,7 @@
 import page from '@automattic/calypso-router';
+import { external, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import React, { useEffect, useRef, useState } from 'react';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -16,8 +18,7 @@ interface UserProfileHeaderProps {
 const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 	const translate = useTranslate();
 	const currentPath = page.current;
-	const userId = user.ID;
-	const userProfileUrl = getUserProfileUrl( Number( userId ) );
+	const userProfileUrl = getUserProfileUrl( user.user_login ?? '' );
 	const navigationItems = [
 		{
 			label: translate( 'Posts' ),
@@ -37,6 +38,26 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 		<ReaderAvatar author={ { ...user, has_avatar: !! user.avatar_URL } } iconSize={ 116 } />
 	);
 
+	const bioRef = useRef< HTMLSpanElement >( null );
+	const [ isClamped, setIsClamped ] = useState( false );
+
+	useEffect( () => {
+		if ( bioRef.current ) {
+			const element = bioRef.current;
+			const originalHeight = element.offsetHeight;
+
+			// Temporarily remove the clamp
+			element.style.webkitLineClamp = 'unset';
+			const fullHeight = element.scrollHeight;
+
+			// Restore the clamp
+			element.style.webkitLineClamp = '3';
+
+			// Determine if the text is clamped
+			setIsClamped( fullHeight > originalHeight );
+		}
+	}, [ user.bio ] );
+
 	return (
 		<div className="user-profile-header">
 			<header className="user-profile-header__main">
@@ -52,12 +73,22 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 					</div>
 					{ user.bio && (
 						<div className="user-profile-header__bio">
-							<p className="user-profile-header__bio-desc">{ user.bio }</p>
+							<p className="user-profile-header__bio-desc">
+								<span ref={ bioRef } className="user-profile-header__bio-desc-text">
+									{ user.bio }
+								</span>
+								{ isClamped && user.profile_URL && (
+									<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+										{ translate( 'Read More' ) }{ ' ' }
+										<Icon width={ 18 } height={ 18 } icon={ external } />
+									</a>
+								) }
+							</p>
 						</div>
 					) }
 				</div>
 			</header>
-			<SectionNav selectedText={ selectedTab }>
+			<SectionNav enforceTabsView selectedText={ selectedTab }>
 				<NavTabs>
 					{ navigationItems.map( ( item ) => (
 						<NavItem key={ item.path } path={ item.path } selected={ item.selected }>

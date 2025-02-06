@@ -5,20 +5,33 @@
 
 $padding-standard: 16px;
 
-body.is-section-subscribers.is-subscribers-dataviews {
+body.is-section-subscribers.is-subscribers-dataviews,
+.theme-jetpack-cloud.is-subscribers-dataviews.is-group-jetpack-cloud.is-section-jetpack-subscribers
+ {
     overflow: hidden;
     
-    .layout:not(.has-no-sidebar) {
+    .layout:not(.has-no-sidebar),
+    .has-no-masterbar {
         .layout__content {
             background: var(--studio-gray-0);
             padding: calc(var(--masterbar-height) + #{$padding-standard})
                  $padding-standard
                  $padding-standard
                  calc(var(--sidebar-width-max) + #{$padding-standard});
+
+            // This is a Jetpack Cloud breakpoint.
+            @media( max-width: 660px ) {
+                padding-left: 0;
+                padding-right: 0;
+            }
         }
     }
 
-    .subscribers.main {
+    .layout.focus-content.has-no-masterbar {
+        padding-top: 0;
+    }
+
+    .subscribers.main, .main.is-wide-layout {
         max-width: none;
         padding: 0;
         margin: 0;
@@ -41,6 +54,11 @@ body.is-section-subscribers.is-subscribers-dataviews {
             button {
                 cursor: pointer;
                 max-width: 100%;
+                border: none;
+
+                &.components-button.dataviews-all-actions-button {
+                    background: none;
+                }
             }
         
             .subscriber-data-views__square-avatar {
@@ -66,11 +84,17 @@ body.is-section-subscribers.is-subscribers-dataviews {
                     @media ( max-width: 430px ) {
                         padding: $padding-standard 24px;
                     }
+                }
 
-                    @media ( min-width: $break-small ) {
-                        .gridicon {
-                            display: none;
-                        }
+                .subscriber-launchpad {
+                    width: 100%;
+                    flex-shrink: 0;
+                    overflow: hidden;
+                    box-sizing: border-box;
+
+                    @media ( max-width: $break-small ) {
+                        margin: 0 auto;
+                        padding: 16px;
                     }
                 }
 
@@ -115,6 +139,19 @@ body.is-section-subscribers.is-subscribers-dataviews {
         
                     .navigation-header {
                         padding: $padding-standard 24px;
+
+                        .add-subscribers-button {
+                            min-height: 37px;
+                            
+                            .add-subscribers-button-text {
+                                display: none;
+                            }
+
+                            .gridicon {
+                                display: inline-block;
+                                margin-right: 0;
+                            }
+                        }
                     }
 
                     @media ( max-width: $break-wide ) {
@@ -129,10 +166,7 @@ body.is-section-subscribers.is-subscribers-dataviews {
                     /* stylelint-disable-next-line scales/radii */
                     border-radius: 8px;
                     padding: 24px;
-
-                    @media ( max-width: $break-wide ) {
-                        overflow: auto;
-                    }
+                    overflow: auto;
 
                     .subscriber-details {
                         &__header {
@@ -152,6 +186,16 @@ body.is-section-subscribers.is-subscribers-dataviews {
                                 flex-flow: column;
                             }
                         }
+
+                        &__footer {
+                            .subscriber-details__delete-button {
+                                background: var(--color-error);
+                                color: var(--color-text-inverted);
+                                border: none;
+                                border-radius: 2px;
+                                box-shadow: none;
+                            }
+                        }
                     }
                 }
             }
@@ -167,7 +211,8 @@ body.is-section-subscribers.is-subscribers-dataviews {
                 }
         
                 .subscriber-profile__user-details {
-                    .subscriber-profile__name {
+                    .subscriber-profile__name,
+                    .subscriber-profile__email {
                         text-align: left;
                     }
                 }

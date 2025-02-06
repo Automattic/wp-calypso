@@ -22,7 +22,7 @@ function SiteTitle( { site: { name, URL, feed_URL } }: { site: Site } ) {
 function renderSite( site: Site ) {
 	return (
 		<div className="site-item list-item">
-			<a className="list-item__content" href={ `/read/feeds/${ site.feed_ID }` }>
+			<a className="list-item__content" href={ `/reader/feeds/${ site.feed_ID }` }>
 				<div className="list-item__icon">
 					{ site.icon?.img && (
 						<img src={ site.icon.img } className="list-item__img image" alt="" />

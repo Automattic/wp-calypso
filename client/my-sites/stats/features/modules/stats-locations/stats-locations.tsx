@@ -1,4 +1,3 @@
-import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { SimplifiedSegmentedControl, StatsCard } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -14,7 +13,10 @@ import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
+import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import EmptyModuleCard from '../../../components/empty-module-card/empty-module-card';
 import { SUPPORT_URL, JETPACK_SUPPORT_URL_TRAFFIC } from '../../../const';
@@ -25,8 +27,11 @@ import {
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
 } from '../../../constants';
 import Geochart from '../../../geochart';
+import StatsCardUpdateJetpackVersion from '../../../stats-card-upsell/stats-card-update-jetpack-version';
 import StatsCardSkeleton from '../shared/stats-card-skeleton';
 import StatsInfoArea from '../shared/stats-info-area';
+import CountryFilter from './country-filter';
+import sampleLocations from './sample-locations';
 
 import './style.scss';
 
@@ -63,8 +68,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
 
-	// TODO: we should get it from a dropdown in the UI and manage it as a state.
-	const countryFilter = new URLSearchParams( window.location.search ).get( 'country' ) ?? null;
+	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
 	const optionLabels = {
 		[ OPTION_KEYS.COUNTRIES ]: {
@@ -72,18 +76,21 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			headerLabel: translate( 'Top countries' ),
 			analyticsId: 'countries',
 			feature: STATS_FEATURE_LOCATION_COUNTRY_VIEWS,
+			countryFilterLabel: translate( 'All countries' ),
 		},
 		[ OPTION_KEYS.REGIONS ]: {
 			selectLabel: translate( 'Regions' ),
 			headerLabel: translate( 'Top regions' ),
 			analyticsId: 'regions',
 			feature: STATS_FEATURE_LOCATION_REGION_VIEWS,
+			countryFilterLabel: translate( 'All regions' ),
 		},
 		[ OPTION_KEYS.CITIES ]: {
 			selectLabel: translate( 'Cities' ),
 			headerLabel: translate( 'Top cities' ),
 			analyticsId: 'cities',
 			feature: STATS_FEATURE_LOCATION_CITY_VIEWS,
+			countryFilterLabel: translate( 'All cities' ),
 		},
 	};
 
@@ -92,38 +99,78 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	const geoMode = GEO_MODES[ selectedOption ];
-	const title = optionLabels[ selectedOption ]?.selectLabel;
+	const title = translate( 'Locations' );
 
+	const { supportsLocationsStats: supportsLocationsStatsFeature } = useSelector( ( state ) =>
+		getEnvStatsFeatureSupportChecks( state, siteId )
+	);
+
+	// Main location data query
 	const {
-		data = [],
+		data: locationsViewsData = [],
 		isLoading: isRequestingData,
 		isError,
 	} = useLocationViewsQuery< StatsLocationViewsData >( siteId, geoMode, query, countryFilter, {
-		enabled: ! shouldGate,
+		enabled: ! shouldGate && supportsLocationsStatsFeature,
 	} );
+
+	// The legacy endpoint that only supports countries (not regions or cities)
+	// will be used when the new Locations Stats feature is not available.
+	const legacyCountriesViewsData = useSelector( ( state ) =>
+		getSiteStatsNormalizedData( state, siteId, statType, query )
+	) as [ id: number, label: string ];
+
+	const data = supportsLocationsStatsFeature ? locationsViewsData : legacyCountriesViewsData;
+
+	// Only fetch separate countries list if we're not already in country tab
+	// This is to avoid fetching the same data twice.
+	const { data: countriesList = [] } = useLocationViewsQuery< StatsLocationViewsData >(
+		siteId,
+		'country',
+		query,
+		null,
+		{
+			enabled: ! shouldGate && supportsLocationsStatsFeature && geoMode !== 'country',
+		}
+	);
+
+	const onCountryChange = ( value: string ) => {
+		trackStatsAnalyticsEvent( 'stats_locations_module_country_filter_changed', {
+			stat_type: optionLabels[ selectedOption ].feature,
+			country: value,
+		} );
+
+		setCountryFilter( value );
+	};
 
 	const changeViewButton = ( selection: SelectOptionType ) => {
 		const filter = selection.value;
-
-		const event_from = isOdysseyStats ? 'jetpack_odyssey' : 'calypso';
-		recordTracksEvent( `${ event_from }_locations_module_menu_clicked`, {
-			button: optionLabels[ filter ]?.analyticsId ?? filter,
+		trackStatsAnalyticsEvent( 'stats_locations_module_menu_clicked', {
+			stat_type: optionLabels[ filter ].feature,
 		} );
 
 		setSelectedOption( filter );
 	};
 
+	const onShowMoreClick = () => {
+		trackStatsAnalyticsEvent( 'stats_locations_module_show_more_clicked', {
+			stat_type: optionLabels[ selectedOption ].feature,
+		} );
+	};
+
 	const toggleControlComponent = (
-		<SimplifiedSegmentedControl
-			className="stats-module-locations__tabs"
-			options={ Object.entries( optionLabels ).map( ( entry ) => ( {
-				value: entry[ 0 ], // optionLabels key
-				label: entry[ 1 ].selectLabel, // optionLabels object value
-			} ) ) }
-			initialSelected={ selectedOption }
-			// @ts-expect-error TODO: missing TS type
-			onSelect={ changeViewButton }
-		/>
+		<>
+			<SimplifiedSegmentedControl
+				className="stats-module-locations__tabs"
+				options={ Object.entries( optionLabels ).map( ( entry ) => ( {
+					value: entry[ 0 ], // optionLabels key
+					label: entry[ 1 ].selectLabel, // optionLabels object value
+				} ) ) }
+				initialSelected={ selectedOption }
+				// @ts-expect-error TODO: missing TS type
+				onSelect={ changeViewButton }
+			/>
+		</>
 	);
 
 	const emptyMessage = (
@@ -148,21 +195,83 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		/>
 	);
 
-	const fakeData = [
-		{ label: 'United States', countryCode: 'US', value: 2000, region: '021' },
-		{ label: 'India', countryCode: 'IN', value: 1500, region: '034' },
-		{ label: 'United Kingdom', countryCode: 'GB', value: 1200, region: '154' },
-		{ label: 'Canada', countryCode: 'CA', value: 1000, region: '021' },
-		{ label: 'Germany', countryCode: 'DE', value: 900, region: '155' },
-		{ label: 'Indonesia', countryCode: 'ID', value: 800, region: '035' },
-		{ label: 'Japan', countryCode: 'JP', value: 700, region: '030' },
-		{ label: 'France', countryCode: 'FR', value: 600, region: '155' },
-		{ label: 'Netherlands', countryCode: 'NL', value: 500, region: '155' },
-		{ label: 'Spain', countryCode: 'ES', value: 400, region: '039' },
-	];
-	const hasLocationData = Array.isArray( data ) && data.length > 0;
+	const divisionsTooltip = (
+		<StatsInfoArea>
+			{ translate(
+				'Countries and their subdivisions are based on {{link}}ISO 3166{{/link}} standards.',
+				{
+					comment: '{{link}} links to ISO standards.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href="https://www.iso.org/maintenance_agencies.html#72482"
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Regions/Cities module when the module has data',
+				}
+			) }
+		</StatsInfoArea>
+	);
 
-	const locationData = shouldGate ? fakeData : data;
+	const titleTooltip = (
+		<StatsInfoArea>
+			{ translate( 'Visitors {{link}}viewing location{{/link}} by countries, regions and cities.', {
+				comment: '{{link}} links to support documentation.',
+				components: {
+					link: (
+						<a
+							target="_blank"
+							rel="noreferrer"
+							href={ localizeUrl( `${ supportUrl }#countries` ) }
+						/>
+					),
+				},
+				context: 'Stats: Link in a popover for Countries module when the module has data',
+			} ) }
+		</StatsInfoArea>
+	);
+
+	const showJetpackUpgradePrompt = geoMode !== 'country' && ! supportsLocationsStatsFeature;
+
+	const showUpsell = shouldGate || showJetpackUpgradePrompt;
+
+	const locationData = showUpsell ? sampleLocations : data;
+
+	const hasLocationData = Array.isArray( locationData ) && locationData.length > 0;
+
+	const heroElement = (
+		<>
+			<Geochart data={ locationData } geoMode={ geoMode } skipQuery customHeight={ 480 } />
+			{ geoMode !== 'country' && ! summaryUrl && (
+				<CountryFilter
+					countries={ countriesList }
+					defaultLabel={ optionLabels[ selectedOption ].countryFilterLabel }
+					selectedCountry={ countryFilter }
+					onCountryChange={ onCountryChange }
+					tooltip={ divisionsTooltip }
+				/>
+			) }
+		</>
+	);
+
+	const getModuleOverlay = () => {
+		if ( shouldGate ) {
+			return (
+				<StatsCardUpsell siteId={ siteId } statType={ optionLabels[ selectedOption ].feature } />
+			);
+		}
+
+		if ( showJetpackUpgradePrompt ) {
+			return <StatsCardUpdateJetpackVersion siteId={ siteId } statType="locations" />;
+		}
+
+		return null;
+	};
+
+	const moduleOverlay = getModuleOverlay();
 
 	return (
 		<>
@@ -170,7 +279,18 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
-				<StatsCardSkeleton isLoading={ isRequestingData } title={ title } type={ 3 } withHero />
+				<StatsCardSkeleton
+					className="locations-skeleton"
+					isLoading={ isRequestingData }
+					title={ title }
+					type={ 3 }
+					withHero
+					withSplitHeader
+					toggleControl={ toggleControlComponent }
+					mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
+					metricLabel={ translate( 'Views' ) }
+					titleNodes={ titleTooltip }
+				/>
 			) }
 			{ ( ( ! isRequestingData && ! isError && hasLocationData ) || shouldGate ) && (
 				// show data or an overlay
@@ -178,30 +298,14 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 					{ /* @ts-expect-error TODO: Refactor StatsListCard with TypeScript. */ }
 					<StatsListCard
 						title={ title }
-						titleNodes={
-							<StatsInfoArea>
-								{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-									comment: '{{link}} links to support documentation.',
-									components: {
-										link: (
-											<a
-												target="_blank"
-												rel="noreferrer"
-												href={ localizeUrl( `${ supportUrl }#countries` ) }
-											/>
-										),
-									},
-									context: 'Stats: Link in a popover for Countries module when the module has data',
-								} ) }
-							</StatsInfoArea>
-						}
-						moduleType="countryviews"
+						titleNodes={ titleTooltip }
+						moduleType="locations"
 						data={ locationData }
 						emptyMessage={ emptyMessage }
 						metricLabel={ translate( 'Views' ) }
 						loader={ isRequestingData && <StatsModulePlaceholder isLoading={ isRequestingData } /> }
 						splitHeader
-						heroElement={ <Geochart data={ locationData } geoMode={ geoMode } skipQuery /> }
+						heroElement={ heroElement }
 						mainItemLabel={ optionLabels[ selectedOption ]?.headerLabel }
 						toggleControl={ toggleControlComponent }
 						showMore={
@@ -219,21 +323,15 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 								  }
 								: undefined
 						}
-						overlay={
-							shouldGate && (
-								<StatsCardUpsell
-									siteId={ siteId }
-									statType={ optionLabels[ selectedOption ].feature }
-								/>
-							)
-						}
+						onShowMoreClick={ onShowMoreClick }
+						overlay={ moduleOverlay }
 					/>
 				</>
 			) }
 			{ ! isRequestingData && ! hasLocationData && ! shouldGate && (
 				// show empty state
 				<StatsCard
-					title={ translate( 'Locations' ) }
+					title={ title }
 					isEmpty
 					emptyMessage={ emptyMessage }
 					footerAction={

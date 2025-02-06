@@ -21,6 +21,7 @@
 	background: var(--color-neutral-80);
 	color: var(--color-text-inverted);
 	line-height: 1.5;
+	align-items: center;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-bottom: 24px;

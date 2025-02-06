@@ -253,7 +253,6 @@ export class FullPostView extends Component {
 			this.trackReadingTime();
 			this.trackScrollDepth();
 			this.trackExitBeforeCompletion();
-			this.resetScroll();
 		}
 	};
 
@@ -619,7 +618,7 @@ export class FullPostView extends Component {
 			{
 				components: {
 					/* eslint-disable */
-					wpLink: <a href="/read" className="reader-related-card__link" />,
+					wpLink: <a href="/reader" className="reader-related-card__link" />,
 					/* eslint-enable */
 				},
 			}

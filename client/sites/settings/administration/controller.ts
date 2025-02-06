@@ -6,7 +6,7 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../utils';
+import { isSiteSettingsUntangled } from '../utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { AppState } from 'calypso/types';
 
@@ -52,8 +52,9 @@ export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, ne
 	next();
 }
 
-function redirectToAdministration( siteSlug: string | null ) {
-	return isHostingMenuUntangled()
-		? page.redirect( '/sites/settings/administration/' + siteSlug )
+async function redirectToAdministration( siteSlug: string | null ) {
+	const isUntangled = await isSiteSettingsUntangled();
+	return isUntangled
+		? page.redirect( '/sites/settings/site/' + siteSlug )
 		: page.redirect( '/settings/general/' + siteSlug );
 }

@@ -29,6 +29,7 @@ export interface Purchase {
 	isCancelable: boolean;
 	isDomain?: boolean;
 	isDomainRegistration?: boolean;
+	isHundredYearDomain?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
 	isRechargeable: boolean;
@@ -203,6 +204,7 @@ export interface RawPurchase {
 	is_cancelable: boolean;
 	is_domain: boolean;
 	is_domain_registration: boolean;
+	is_hundred_year_domain: boolean;
 	is_locked: boolean;
 	is_iap_purchase: boolean;
 	is_rechargable: boolean;

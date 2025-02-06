@@ -23,7 +23,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
@@ -40,7 +39,6 @@ export class LoginLinks extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
-		isPartnerSignup: PropTypes.bool,
 		isGravPoweredClient: PropTypes.bool,
 		getLostPasswordLink: PropTypes.func.isRequired,
 		renderSignUpLink: PropTypes.func.isRequired,
@@ -124,8 +122,7 @@ export class LoginLinks extends Component {
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
 			isA4AOAuth2Client( this.props.oauth2Client ) ||
 			this.props.isWhiteLogin ||
-			this.props.isP2Login ||
-			this.props.isPartnerSignup
+			this.props.isP2Login
 		) {
 			return null;
 		}
@@ -303,7 +300,6 @@ export default connect(
 		query: getCurrentQueryArguments( state ),
 		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
 		wccomFrom: getWccomFrom( state ),
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordTracksEvent,

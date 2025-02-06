@@ -116,6 +116,7 @@ type Value = {
 	onSortChange: ( selectedColumn: DomainsTableColumn, direction?: 'asc' | 'desc' ) => void;
 	handleSelectDomain: ( domain: PartialDomainData ) => void;
 	onDomainsRequiringAttentionChange: ( domainsRequiringAttention: number ) => void;
+	sidebarMode?: boolean;
 	selectedDomains: Set< string >;
 	hasSelectedDomains: boolean;
 	completedJobs: JobStatus[];
@@ -428,6 +429,7 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		handleSelectDomain,
 		onDomainsRequiringAttentionChange,
 		filteredData,
+		sidebarMode,
 		selectedDomains,
 		hasSelectedDomains,
 		currentUsersOwnsAllSelectedDomains,

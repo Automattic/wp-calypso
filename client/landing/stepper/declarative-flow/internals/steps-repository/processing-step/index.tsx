@@ -5,18 +5,16 @@ import {
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
-	isWooExpressFlow,
-	isTransferringHostedSiteCreationFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -32,6 +30,7 @@ import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
+
 interface ProcessingStepProps extends StepProps {
 	title?: string;
 	subtitle?: string;
@@ -187,11 +186,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
-	if ( [ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ) {
+	if (
+		[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flowName ) ||
+		props.variantSlug === HUNDRED_YEAR_DOMAIN_TRANSFER
+	) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
-
-	const subtitle = getSubtitle();
 
 	return (
 		<>
@@ -201,22 +201,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
-					<>
-						<div className="processing-step">
-							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-							{ progress >= 0 ||
-							isWooExpressFlow( flow ) ||
-							isTransferringHostedSiteCreationFlow( flow ) ? (
-								<LoadingBar
-									progress={ progress }
-									className="processing-step__content woocommerce-install__content"
-								/>
-							) : (
-								<LoadingEllipsis />
-							) }
-							{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
-						</div>
-					</>
+					<StepperLoader
+						title={ getCurrentMessage() }
+						subtitle={ getSubtitle() }
+						progress={ progress }
+					/>
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }

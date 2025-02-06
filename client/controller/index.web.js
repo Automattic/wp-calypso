@@ -21,6 +21,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import {
 	getProductSlugFromContext,
@@ -31,6 +32,7 @@ import {
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
 } from 'calypso/state/immediate-login/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSiteAdminUrl, getSiteHomeUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions/set-sites.js';
@@ -311,12 +313,19 @@ export function redirectIfJetpackNonAtomic( context, next ) {
  * @param   {Function} next    Calls next middleware
  * @returns {void}
  */
-export function redirectToHostingPromoIfNotAtomic( context, next ) {
+export async function redirectToHostingPromoIfNotAtomic( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
+		// Keep the user within the Settings tab
+		const isRemoveDuplicateViewsExperimentEnabled =
+			await getIsRemoveDuplicateViewsExperimentEnabled();
+		if ( isRemoveDuplicateViewsExperimentEnabled ) {
+			return page.redirect( '/sites/settings/site/' + context.params.site_id );
+		}
+
 		return page.redirect( `/hosting-features/${ site?.slug }` );
 	}
 
@@ -394,12 +403,23 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const experimentName = 'calypso_post_onboarding_holdout_160125';
 	const aaTestName = 'calypso_post_onboarding_aa_150125';
 
 	loadExperimentAssignment( aaTestName );
-	const duplicateViewsExperimentAssignment = await loadExperimentAssignment( experimentName );
-	if ( isE2ETest() || duplicateViewsExperimentAssignment.variationName === 'treatment' ) {
+	const isRemoveDuplicateViewsExperimentEnabled =
+		await getIsRemoveDuplicateViewsExperimentEnabled();
+
+	const overrideAssignment = getPreference(
+		context.store.getState(),
+		'remove_duplicate_views_experiment_assignment_160125'
+	);
+
+	if ( 'control' === overrideAssignment ) {
+		next();
+		return;
+	}
+
+	if ( isE2ETest() || isRemoveDuplicateViewsExperimentEnabled ) {
 		const state = context.store.getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );

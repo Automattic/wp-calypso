@@ -19,7 +19,7 @@ interface AppState {
 
 interface UserListsProps {
 	user: UserData;
-	requestUserLists?: ( userSlug: string ) => void;
+	requestUserLists?: ( userLogin: string ) => void;
 	lists?: List[];
 	isLoading?: boolean;
 }
@@ -27,14 +27,14 @@ interface UserListsProps {
 const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps ): JSX.Element => {
 	const translate = useTranslate();
 	const [ hasRequested, setHasRequested ] = useState( false );
-	const userSlug = user.user_login;
+	const userLogin = user.user_login;
 
 	useEffect( () => {
-		if ( ! hasRequested && requestUserLists && userSlug ) {
-			requestUserLists( userSlug );
+		if ( ! hasRequested && requestUserLists && userLogin ) {
+			requestUserLists( userLogin );
 			setHasRequested( true );
 		}
-	}, [ userSlug, requestUserLists, hasRequested ] );
+	}, [ userLogin, requestUserLists, hasRequested ] );
 
 	if ( isLoading || ! hasRequested ) {
 		return <></>;
@@ -61,7 +61,7 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 				{ lists.map( ( list: List ) => (
 					<a
 						className="user-profile__lists-body-link"
-						href={ `/read/list/${ list.owner }/${ list.slug }` }
+						href={ `/reader/list/${ list.owner }/${ list.slug }` }
 						key={ list.ID }
 					>
 						<div className="card reader-post-card is-compact is-clickable">

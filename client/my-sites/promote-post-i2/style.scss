@@ -321,6 +321,12 @@ body.is-section-promote-post-i2 {
 			color: $studio-gray-100;
 		}
 
+		.section-nav-tab__link {
+			&:focus {
+				box-shadow: none;
+			}
+		}
+
 		.section-nav-tab__link .count {
 			background: var(--studio-gray-0);
 			color: $studio-gray-80;

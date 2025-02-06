@@ -23,9 +23,9 @@ const GlobalNotifications = () => {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
 		}
-		// Get URL and if it matches "/read/notifications", don't open the panel
+		// Get URL and if it matches "/reader/notifications", don't open the panel
 		// As it will cause duplicate notification panels to show
-		if ( window.location.pathname === '/read/notifications' ) {
+		if ( window.location.pathname === '/reader/notifications' ) {
 			return;
 		}
 
@@ -70,9 +70,9 @@ const GlobalNotifications = () => {
 		}
 	}, [ prevIsNotificationsOpen, isNotificationsOpen, unseenCount, dispatch ] );
 
-	// Get URL and if it matches "/read/notifications", don't render the global notifications panel.
+	// Get URL and if it matches "/reader/notifications", don't render the global notifications panel.
 	// As it will cause duplicate notification store listeners to be registered.
-	if ( currentRoute === '/read/notifications' ) {
+	if ( currentRoute === '/reader/notifications' ) {
 		return null;
 	}
 

@@ -16,6 +16,7 @@ interface TicketRequest {
 	locale: string;
 	blog_url: string;
 	from_url: string;
+	context?: string;
 }
 
 export const useSubmitMigrationTicket = <
@@ -25,8 +26,8 @@ export const useSubmitMigrationTicket = <
 >(
 	options: UseMutationOptions< TData, TError, TicketRequest, TContext > = {}
 ) => {
-	const { mutate, ...rest } = useMutation( {
-		mutationFn: ( { locale, blog_url, from_url } ) =>
+	const { mutate, mutateAsync, ...rest } = useMutation( {
+		mutationFn: ( { locale, blog_url, from_url, context } ) =>
 			wpcomRequest( {
 				path: 'help/migration-ticket/new',
 				apiNamespace: 'wpcom/v2/',
@@ -36,6 +37,7 @@ export const useSubmitMigrationTicket = <
 					locale,
 					blog_url,
 					from_url,
+					context,
 				},
 			} ),
 		...options,
@@ -43,6 +45,7 @@ export const useSubmitMigrationTicket = <
 
 	return {
 		sendTicket: mutate,
+		sendTicketAsync: mutateAsync,
 		...rest,
 	};
 };

@@ -14,7 +14,7 @@
 
 		&__main {
 			display: flex;
-			padding: 36px 0 24px;
+			padding: 0 0 24px;
 			align-items: center;
 
 			@include breakpoint-deprecated( '<660px' ) {
@@ -90,6 +90,20 @@
 
 		&__bio-desc {
 			margin: 0;
+
+			&-text {
+				-webkit-line-clamp: 3;
+				line-clamp: 3;
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+
+			&-link {
+				display: inline-flex;
+				gap: 4px;
+				align-items: center;
+			}
 		}
 
 		.section-nav {

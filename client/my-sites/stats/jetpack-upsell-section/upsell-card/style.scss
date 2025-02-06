@@ -1,0 +1,125 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
+
+.jetpack-upsell-card {
+	--jetpack-yelow-off: #edf2e2;
+}
+
+.jetpack-upsell-card__title {
+	font-family: $font-sf-pro-display;
+	font-size: $font-title-small;
+	font-weight: 500;
+}
+
+.jetpack-upsell-card__product {
+	display: grid;
+	grid-template-columns: max-content 1fr max-content max-content;
+	grid-template-areas:
+		"icon title link button"
+		"icon description link button";
+	column-gap: 1em;
+	padding: $font-body 0;
+	font-size: $font-body;
+	font-family: $font-sf-pro-text;
+}
+
+.jetpack-upsell-card__product-icon {
+	grid-area: icon;
+	align-self: center;
+	justify-self: center;
+	padding: 1em;
+	background: var(--jetpack-yelow-off);
+	line-height: 1;
+}
+.jetpack-upsell-card__product-title {
+	color: var(--studio-gray-100);
+	font-size: $font-body;
+	font-weight: 600;
+	grid-area: title;
+	letter-spacing: -0.02em;
+	margin: 0;
+}
+.jetpack-upsell-card__product-description {
+	grid-area: description;
+	margin: 0;
+	letter-spacing: -0.02em;
+	color: var(--studio-gray-80);
+}
+.jetpack-upsell-card__product-link {
+	align-self: center;
+	color: var(--studio-gray-80);
+	display: flex;
+	font-size: $font-body-small;
+	grid-area: link;
+	justify-self: end;
+	margin-bottom: 0.5em;
+	text-decoration: underline;
+
+	.gridicon {
+		align-self: flex-end;
+		fill: var(--studio-gray-80);
+		margin-left: 3px;
+	}
+
+	&:visited {
+		color: var(--studio-gray-100);
+		.gridicon {
+			fill: var(--studio-gray-100);
+		}
+	}
+}
+
+
+.jetpack-upsell-card__product-button {
+	align-self: center;
+	font-family: inherit;
+	grid-area: button;
+	justify-self: end;
+	transition: background-color 0.1s linear, border-color 0.1s linear;
+
+	// Increase specificity to override existing wp-admin styles.
+	.jetpack-upsell-card__content > .jetpack-upsell-card__product > & {
+		background: var(--studio-black);
+		border-color: var(--studio-black);
+		border-radius: 4px;
+		color: var(--studio-white);
+		font-size: $font-body;
+		line-height: 1.375;
+		min-height: initial;
+		padding: 0.5em 1.5em;
+	}
+}
+
+.jetpack-upsell-card__title--short {
+	display: none;
+}
+
+@media (max-width: $break-small) {
+	.jetpack-upsell-card__title--short {
+		display: inline;
+	}
+	.jetpack-upsell-card__title--long {
+		display: none;
+	}
+}
+
+@media (max-width: $break-medium) {
+	.jetpack-upsell-card__product {
+		grid-template-areas:
+			"title title icon"
+			"description description icon"
+			"button link link";
+		grid-template-columns: 1fr max-content max-content;
+		row-gap: 0.5em;
+	}
+
+	.jetpack-upsell-card__product-icon {
+		align-self: start;
+		justify-self: end;
+	}
+
+	.jetpack-upsell-card__product-button {
+		justify-self: start;
+	}
+}

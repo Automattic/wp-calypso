@@ -87,7 +87,11 @@ const HundredYearDomainFlow: Flow = {
 			}
 		}
 
-		return { submit };
+		const exitFlow = ( location = '/sites' ) => {
+			window.location.assign( location );
+		};
+
+		return { exitFlow, submit };
 	},
 };
 

@@ -356,12 +356,12 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	return state;
 };
 
-const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+const progress: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PROGRESS' ) {
 		return action.progress;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return -1;
+		return undefined;
 	}
 	return state;
 };
@@ -642,6 +642,20 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
+const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
+		return action.createWithBigSky;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -693,6 +707,7 @@ const reducer = combineReducers( {
 	paidSubscribers,
 	partnerBundle,
 	signupDomainOrigin,
+	createWithBigSky,
 } );
 
 export type State = ReturnType< typeof reducer >;

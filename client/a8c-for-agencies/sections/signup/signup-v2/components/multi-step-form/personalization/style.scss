@@ -1,0 +1,91 @@
+.signup-personalization-form {
+    .signup-multi-step-form__fields {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .signup-personalization-form__products-checkbox {
+        .multi-checkbox label {
+            flex: 0 1 calc(32% - 16px); // 3 columns for products
+
+            @media (max-width: 782px) {
+                flex: 0 1 calc(50% - 12px); // 2 columns on tablets
+            }
+
+            @media (max-width: 600px) {
+                flex: 0 1 100%; // Full width on mobile
+            }
+        }
+    }
+
+    .form-fieldset {
+        margin: 0;
+        padding: 2px;
+    }
+
+    // Form field styles
+    .a4a-form__section-field {
+        margin-bottom: 0;
+    }
+
+    .a4a-form__section-field-label {
+        font-size: rem(14px);
+        font-weight: 600;
+        color: var(--color-neutral-80);
+        margin-bottom: 8px;
+    }
+
+    .a4a-form__section-field-required {
+        color: var(--studio-red-50);
+        margin-left: 4px;
+    }
+
+    .form-select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid var(--color-neutral-10);
+        border-radius: 4px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-select:focus {
+        border-color: var(--studio-wordpress-blue);
+        box-shadow: 0 0 0 2px var(--studio-wordpress-blue-20);
+        outline: none;
+    }
+
+    .form-select.is-error {
+        border-color: var(--studio-red-50);
+    }
+
+    .searchable-dropdown {
+        width: 100%;
+    }
+
+    .multi-checkbox {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+    }
+
+    .multi-checkbox label {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        cursor: pointer;
+        font-size: rem(14px);
+        color: var(--color-neutral-80);
+        flex: 0 1 calc(50% - 12px); // 2 columns by default, accounting for gap
+
+        @media (max-width: 600px) {
+            flex: 0 1 100%; // Full width on mobile
+        }
+    }
+
+    .multi-checkbox .form-checkbox + span {
+        margin-left: 8px;
+    }
+} 
