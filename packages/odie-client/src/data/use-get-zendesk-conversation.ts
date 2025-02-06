@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import Smooch from 'smooch';
-import { useOdieAssistantContext } from '../context';
 import { zendeskMessageConverter } from '../utils';
 import { useGetUnreadConversations } from './use-get-unread-conversations';
 import type { ZendeskMessage } from '../types';
@@ -23,7 +22,6 @@ const parseResponse = ( conversation: Conversation ) => {
  */
 export const useGetZendeskConversation = () => {
 	const getUnreadNotifications = useGetUnreadConversations();
-	const { trackEvent } = useOdieAssistantContext();
 
 	return useCallback(
 		( {
@@ -46,19 +44,11 @@ export const useGetZendeskConversation = () => {
 					return Number( conversation.metadata[ 'odieChatId' ] ) === Number( chatId );
 				}
 
-				return false;
+				throw new Error();
 			} );
 
 			if ( ! conversation ) {
-				// Conversation id was passed but the conversion was not found. Something went wrong.
-				if ( conversationId ) {
-					trackEvent( 'zendesk_conversation_not_found', {
-						conversationId,
-						chatId,
-						conversationsCount: conversations?.length ?? null,
-					} );
-				}
-				return null;
+				throw new Error();
 			}
 
 			// We need to ensure that more than one message is loaded
@@ -70,6 +60,6 @@ export const useGetZendeskConversation = () => {
 				} )
 				.catch( () => parseResponse( conversation ) );
 		},
-		[ getUnreadNotifications, trackEvent ]
+		[ getUnreadNotifications ]
 	);
 };

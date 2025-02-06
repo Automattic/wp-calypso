@@ -2,9 +2,10 @@ import { HelpCenterSelect } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import { v4 as uuidv4 } from 'uuid';
 import { ODIE_TRANSFER_MESSAGE } from '../constants';
-import { emptyChat } from '../context';
-import { useGetZendeskConversation, useOdieChat } from '../data';
+import { emptyChat, useOdieAssistantContext } from '../context';
+import { useGetZendeskConversation, useManageSupportInteraction, useOdieChat } from '../data';
 import type { Chat, Message } from '../types';
 
 /**
@@ -39,8 +40,9 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
 	const getZendeskConversation = useGetZendeskConversation();
-
 	const { data: odieChat, isLoading: isOdieChatLoading } = useOdieChat( Number( odieId ) );
+	const { startNewInteraction } = useManageSupportInteraction();
+	const { trackEvent } = useOdieAssistantContext();
 
 	useEffect( () => {
 		if ( odieId && odieChat && ! conversationId ) {
@@ -53,25 +55,38 @@ export const useGetCombinedChat = ( canConnectToZendesk: boolean ) => {
 			} );
 		} else if ( conversationId && canConnectToZendesk ) {
 			if ( isChatLoaded ) {
-				getZendeskConversation( {
-					chatId: odieChat?.odieId,
-					conversationId: conversationId.toString(),
-				} )?.then( ( conversation ) => {
-					if ( conversation ) {
-						setMainChatState( {
-							...( odieChat ? odieChat : {} ),
-							supportInteractionId: currentSupportInteraction!.uuid,
-							conversationId: conversation.id,
-							messages: [
-								...( odieChat ? odieChat.messages : [] ),
-								...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
-								...( conversation.messages as Message[] ),
-							],
-							provider: 'zendesk',
-							status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
-						} );
-					}
-				} );
+				try {
+					getZendeskConversation( {
+						chatId: odieChat?.odieId,
+						conversationId: conversationId.toString(),
+					} )?.then( ( conversation ) => {
+						if ( conversation ) {
+							setMainChatState( {
+								...( odieChat ? odieChat : {} ),
+								supportInteractionId: currentSupportInteraction!.uuid,
+								conversationId: conversation.id,
+								messages: [
+									...( odieChat ? odieChat.messages : [] ),
+									...( odieChat ? ODIE_TRANSFER_MESSAGE : [] ),
+									...( conversation.messages as Message[] ),
+								],
+								provider: 'zendesk',
+								status: currentSupportInteraction?.status === 'closed' ? 'closed' : 'loaded',
+							} );
+						}
+					} );
+				} catch ( error ) {
+					// Conversation id was passed but the conversion was not found. Something went wrong.
+					trackEvent( 'zendesk_conversation_not_found', {
+						conversationId,
+						odieId,
+					} );
+
+					startNewInteraction( {
+						event_source: 'help-center',
+						event_external_id: uuidv4(),
+					} );
+				}
 			}
 		} else if ( currentSupportInteraction ) {
 			setMainChatState( ( prevChat ) => ( {
