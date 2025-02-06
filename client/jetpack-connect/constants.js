@@ -6,7 +6,6 @@ export const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
 export const JETPACK_MINIMUM_WORDPRESS_VERSION = '4.7';
 export const JPC_PATH_BASE = '/jetpack/connect';
 export const JPC_PATH_PLANS = '/jetpack/connect/plans';
-export const JPC_PATH_PLANS_COMPLETE = '/jetpack/connect/plans/complete';
 export const JPC_PATH_REMOTE_INSTALL = '/jetpack/connect/install';
 export const MINIMUM_JETPACK_VERSION = '3.9.6';
 export const REMOTE_PATH_ACTIVATE = '/wp-admin/plugins.php';

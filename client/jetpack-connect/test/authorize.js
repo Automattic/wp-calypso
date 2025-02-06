@@ -12,7 +12,7 @@ import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../client/test-helpers/testing-library';
 import { JetpackAuthorize } from '../authorize';
-import { JPC_PATH_PLANS, JPC_PATH_PLANS_COMPLETE } from '../constants';
+import { JPC_PATH_PLANS } from '../constants';
 import { OFFER_RESET_FLOW_TYPES } from '../flow-types';
 
 const noop = () => {};
@@ -471,55 +471,6 @@ describe( 'JetpackAuthorize', () => {
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
 				) }`,
-				expect.any( String )
-			);
-		} );
-
-		test( 'should redirect to the /jetpack/connect/plans when feature flag disabled and not multisite', async () => {
-			config.isEnabled.mockImplementation(
-				( flag ) => flag !== 'jetpack/offer-complete-after-activation'
-			);
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...DEFAULT_PROPS }
-					authQuery={ {
-						...DEFAULT_PROPS.authQuery,
-						alreadyAuthorized: true,
-					} }
-					site={ { is_multisite: false } }
-					isAlreadyOnSitesList
-					isFetchingSites
-				/>
-			);
-
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
-
-			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect_to=${ encodeURIComponent(
-					DEFAULT_PROPS.authQuery.redirectAfterAuth
-				) }`,
-				expect.any( String )
-			);
-		} );
-
-		test( 'should redirect to the /jetpack/connect/plans/complete when feature flag enabled and not multisite', async () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...DEFAULT_PROPS }
-					authQuery={ {
-						...DEFAULT_PROPS.authQuery,
-						alreadyAuthorized: true,
-					} }
-					site={ { is_multisite: false } }
-					isAlreadyOnSitesList
-					isFetchingSites
-				/>
-			);
-
-			await userEvent.click( screen.getByText( 'Return to your site' ) );
-
-			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`${ JPC_PATH_PLANS_COMPLETE }/${ SITE_SLUG }`,
 				expect.any( String )
 			);
 		} );

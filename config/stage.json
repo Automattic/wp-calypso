@@ -76,7 +76,6 @@
 		"jetpack/social-plans-v1": true,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack-social/advanced-plan": true,
-		"jetpack/offer-complete-after-activation": false,
 		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
 		"lasagna": true,

@@ -73,7 +73,6 @@ import {
 	JPC_A4A_PATH,
 	JPC_JETPACK_MANAGE_PATH,
 	JPC_PATH_PLANS,
-	JPC_PATH_PLANS_COMPLETE,
 	REMOTE_PATH_AUTH,
 } from './constants';
 import Disclaimer from './disclaimer';
@@ -993,19 +992,6 @@ export class JetpackAuthorize extends Component {
 				redirectAfterAuth
 			);
 			return redirectAfterAuth;
-		}
-
-		// We naviage users to complete page if it's not a multisite and feature flag activated
-		if ( config.isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
-			const isMultisite = this.props.site && this.props.site.is_multisite;
-			if ( ! isMultisite && this.props.site ) {
-				const jpcTargetComplete = `${ JPC_PATH_PLANS_COMPLETE }/${ urlToSlug( homeUrl ) }`;
-				debug(
-					'authorization-form: getRedirectionTarget -> Redirection target is: %s',
-					jpcTargetComplete
-				);
-				return jpcTargetComplete;
-			}
 		}
 
 		const jpcTarget = addQueryArgs(
