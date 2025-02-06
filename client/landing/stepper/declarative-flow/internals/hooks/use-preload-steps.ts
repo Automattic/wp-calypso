@@ -2,6 +2,8 @@ import { SiteDetails } from '@automattic/data-stores';
 import debugFactory from 'debug';
 import { useEffect } from 'react';
 import { Flow, StepperStep } from '../types';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { useSelector } from 'calypso/state';
 
 const debug = debugFactory( 'calypso:stepper:preloading' );
 
@@ -32,6 +34,8 @@ export function usePreloadSteps(
 	flowSteps: readonly StepperStep[],
 	flow: Flow
 ) {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	useEffect( () => {
 		if ( siteSlugOrId && ! selectedSite ) {
 			// If this step depends on a selected site, only preload after we have the data.
@@ -42,13 +46,21 @@ export function usePreloadSteps(
 		if ( currentStepRoute ) {
 			// The user step is a special case, as it's not part of the flow steps. It always comes in the end of the steps array.
 			if ( currentStepRoute === 'user' ) {
-				const nextStep = flowSteps[ 0 ];
-				const nextNextStep = flowSteps[ 1 ];
+				// Load the first steps that requires authentication.
+				const nextStepIndex = flowSteps.findIndex( ( step ) => step.requiresLoggedInUser );
+				const nextStep = flowSteps[ nextStepIndex ];
+				const nextNextStep = flowSteps[ nextStepIndex + 1 ];
 				tryPreload( nextStep, nextNextStep );
 			} else {
-				const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
-				const nextNextStepIndex = nextStepIndex + 1;
+				// If any step requires authentication, preload the user step.
+				if ( ! isLoggedIn && flowSteps.some( ( step ) => step.requiresLoggedInUser ) ) {
+					const userStep = flowSteps.find( ( step ) => step.slug === 'user' );
+					tryPreload( userStep );
+				}
 
+				const nextStepIndex = flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 1;
+				const nextNextStepIndex =
+					flowSteps.findIndex( ( step ) => step.slug === currentStepRoute ) + 2;
 				const nextStep = flowSteps[ nextStepIndex ];
 				const nextNextStep = flowSteps[ nextNextStepIndex ];
 

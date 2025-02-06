@@ -544,6 +544,6 @@ export const PRIVATE_STEPS = {
 	USER: {
 		slug: 'user',
 		asyncComponent: () =>
-			import( /* webpackChunkName: "stepper-user-step" */ './steps-repository/__user' ),
+			import( /* webpackChunkName: "async-step-user-step" */ './steps-repository/__user' ),
 	},
 } satisfies Record< string, StepperStep >;
