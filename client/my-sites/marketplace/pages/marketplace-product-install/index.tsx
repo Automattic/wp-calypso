@@ -170,13 +170,23 @@ const MarketplaceProductInstall = ( {
 		}
 	} );
 
+	const { primaryDomain } = useSelector( getPurchaseFlowState );
+
+	const shouldShowNoDirectAccessError = useMemo( () => {
+		return (
+			// Show error if:
+			// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
+			( isPluginUploadFlow && ! primaryDomain ) ||
+			// 2. This is a marketplace plugin installation but the installation process hasn't started
+			( ! isPluginUploadFlow && ! marketplaceInstallationInProgress )
+		);
+	}, [ isPluginUploadFlow, marketplaceInstallationInProgress ] );
+
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! isPluginUploadFlow && ! marketplaceInstallationInProgress ) {
+		if ( shouldShowNoDirectAccessError ) {
 			waitFor( 2 ).then( () => {
-				! isPluginUploadFlow &&
-					! marketplaceInstallationInProgress &&
-					setNoDirectAccessError( true );
+				shouldShowNoDirectAccessError && setNoDirectAccessError( true );
 			} );
 		}
 	}, [ marketplaceInstallationInProgress, isPluginUploadFlow ] );
