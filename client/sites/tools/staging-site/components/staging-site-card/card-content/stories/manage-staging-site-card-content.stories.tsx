@@ -9,7 +9,7 @@ import { ManageStagingSiteCardContent } from '../manage-staging-site-card-conten
  * Ideally, this component should depend only on local `./style.scss`. However, currently, some card styles are defined
  * in hosting page CSS file, so we need to include it here.
  */
-import '../../../style.scss';
+import '../../../../style.scss';
 
 export default {
 	title: 'client/my-sites/hosting/StagingSiteCard',

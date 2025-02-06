@@ -1,4 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "/client/assets/stylesheets/shared/mixins/breakpoints";
+@import "/client/assets/stylesheets/shared/typography";
 
 .formatted-header {
 	margin: 16px 0 24px;

@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "/client/assets/stylesheets/shared/mixins/breakpoints";
 
 :root {
 	--color-light-backdrop: var(--studio-white);
