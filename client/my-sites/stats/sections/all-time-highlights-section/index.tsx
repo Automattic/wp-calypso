@@ -1,4 +1,4 @@
-import { Card, ComponentSwapper, formattedNumber, DotPager } from '@automattic/components';
+import { Card, ComponentSwapper, DotPager } from '@automattic/components';
 import {
 	formatPercentage,
 	percentCalculator,
@@ -254,7 +254,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 										className="highlight-card-info-item-count"
 										title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
 									>
-										{ formattedNumber( info.count ) }
+										{ numberFormat( info.count ) }
 									</span>
 								</div>
 							);
