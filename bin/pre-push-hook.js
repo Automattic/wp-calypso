@@ -9,6 +9,13 @@ console.log(
 		'GPLv2 compatible licenses — see docs/CONTRIBUTING.md for details.\n\n'
 );
 
+const [ , , , remoteUrl ] = process.argv;
+let isCalypsoRepo = false;
+
+if ( remoteUrl.match( /github\.com[:/]Automattic\/wp-calypso\.git/ ) ) {
+	isCalypsoRepo = true;
+}
+
 const currentBranch = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().trim();
 
 if ( 'trunk' === currentBranch ) {
