@@ -1018,8 +1018,8 @@ export default connect(
 	},
 	( dispatch ) => ( {
 		dispatch,
-		submitSignupStep: ( ...args ) => dispatch( submitSignupStep( ...args ) ),
-		removeStep: ( ...args ) => dispatch( removeStep( ...args ) ),
-		addStep: ( ...args ) => dispatch( addStep( ...args ) ),
+		submitSignupStep,
+		removeStep,
+		addStep,
 	} )
 )( Signup );
