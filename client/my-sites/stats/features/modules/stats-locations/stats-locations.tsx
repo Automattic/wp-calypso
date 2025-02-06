@@ -218,19 +218,22 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const titleTooltip = (
 		<StatsInfoArea>
-			{ translate( 'Visitors {{link}}viewing location{{/link}} by countries, regions and cities.', {
-				comment: '{{link}} links to support documentation.',
-				components: {
-					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ supportUrl }#countries` ) }
-						/>
-					),
-				},
-				context: 'Stats: Link in a popover for Countries module when the module has data',
-			} ) }
+			{ translate(
+				'Visitors‘ {{link}}viewing location{{/link}} by countries, regions and cities.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={ localizeUrl( `${ supportUrl }#countries` ) }
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Countries module when the module has data',
+				}
+			) }
 		</StatsInfoArea>
 	);
 
