@@ -20,6 +20,7 @@ import {
 	getProfessionalEmailCheckoutUpsellPath,
 	getMailboxesPath,
 	isUnderEmailManagementAll,
+	getEmailCheckoutPath,
 } from '../paths';
 
 const siteName = 'hello.wordpress.com';
@@ -214,6 +215,31 @@ describe( 'path helper functions', () => {
 		);
 		expect( getProfessionalEmailCheckoutUpsellPath( ':site', ':domain', ':receiptId' ) ).toEqual(
 			'/checkout/offer-professional-email/:domain/:receiptId/:site'
+		);
+	} );
+
+	it( 'getEmailCheckoutPath', () => {
+		const email = 'hi@example.com';
+		const relativeToDomainManagement = '/domains/manage/all/email';
+		const relativeToSiteDomain = '/overview/site-domain/email';
+
+		expect( getEmailCheckoutPath( siteName, domainName ) ).toEqual( `/checkout/${ siteName }` );
+		expect( getEmailCheckoutPath( siteName, domainName, relativeToDomainManagement ) ).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToDomainManagement }/${ domainName }/${ siteName }`
+			) }`
+		);
+		expect(
+			getEmailCheckoutPath( siteName, domainName, relativeToDomainManagement, email )
+		).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToDomainManagement }/${ domainName }/${ siteName }?new-email=${ email }`
+			) }`
+		);
+		expect( getEmailCheckoutPath( siteName, domainName, relativeToSiteDomain, email ) ).toEqual(
+			`/checkout/${ siteName }?redirect_to=${ encodeURIComponent(
+				`${ relativeToSiteDomain }/${ domainName }/${ siteName }?new-email=${ email }`
+			) }`
 		);
 	} );
 

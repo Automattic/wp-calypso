@@ -5,6 +5,7 @@ import {
 	isUnderDomainSiteContext,
 	domainManagementRoot,
 	domainSiteContextRoot,
+	domainManagementAllEmailRoot,
 } from 'calypso/my-sites/domains/paths';
 
 type QueryStringParameters = { [ key: string ]: string | undefined };
@@ -244,6 +245,29 @@ export const getProfessionalEmailCheckoutUpsellPath = (
 	domainName: string,
 	receiptId: number | string
 ) => `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteName }`;
+
+export const getEmailCheckoutPath = (
+	siteName: string,
+	domainName: string,
+	relativeTo?: string,
+	newEmail?: string
+): string => {
+	let checkoutPath = '/checkout/' + siteName;
+
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		let redirectTo = isUnderDomainSiteContext( relativeTo )
+			? `${ domainSiteContextRoot() }/email/${ domainName }/${ siteName }`
+			: `${ domainManagementAllEmailRoot() }/${ domainName }/${ siteName }`;
+
+		if ( newEmail ) {
+			redirectTo += `?new-email=${ newEmail }`;
+		}
+
+		checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
+	}
+
+	return checkoutPath;
+};
 
 export const getMailboxesPath = ( siteName?: string | null ) =>
 	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;
