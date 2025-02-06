@@ -25,6 +25,8 @@ function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 }
 
 const dataUpdateIntervalInSeconds = 5;
+// TODO: Change to 30 after resolving the date format issue on the X-axis.
+const dataSeriesLength = 5;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const gmtOffset = useSelector( ( state: object ) =>
@@ -58,8 +60,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		return () => clearInterval( intervalId );
 	}, [ siteId, gmtOffset ] );
 
-	// TODO: Push data and shift the array for the chart display.
-	const formatedChartData = Object.keys( viewsData ).map( ( eachMinute ) => {
+	let formatedChartData = Object.keys( viewsData ).map( ( eachMinute ) => {
 		const lastMinute = moment( eachMinute ).subtract( 1, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
 		let diffViews: number = 0;
 
@@ -82,6 +83,16 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			value: diffViews,
 		};
 	} );
+
+	// Handle array length with padding or truncating for display.
+	if ( formatedChartData.length > 0 && formatedChartData.length < dataSeriesLength ) {
+		const paddingItemsCount = dataSeriesLength - formatedChartData.length;
+		for ( let i = 0; i < paddingItemsCount; i++ ) {
+			formatedChartData.unshift( formatedChartData[ 0 ] );
+		}
+	} else {
+		formatedChartData = formatedChartData.slice( -dataSeriesLength );
+	}
 
 	return (
 		<div>
