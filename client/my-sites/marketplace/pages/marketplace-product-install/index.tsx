@@ -172,12 +172,14 @@ const MarketplaceProductInstall = ( {
 
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! marketplaceInstallationInProgress ) {
+		if ( ! isPluginUploadFlow && ! marketplaceInstallationInProgress ) {
 			waitFor( 2 ).then( () => {
-				! marketplaceInstallationInProgress && setNoDirectAccessError( true );
+				! isPluginUploadFlow &&
+					! marketplaceInstallationInProgress &&
+					setNoDirectAccessError( true );
 			} );
 		}
-	}, [ marketplaceInstallationInProgress ] );
+	}, [ marketplaceInstallationInProgress, isPluginUploadFlow ] );
 
 	// Upload flow startup
 	useEffect( () => {
