@@ -35,7 +35,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 	return (
 		<Form
 			className="blueprint-form"
-			title={ preventWidows( translate( "Let's build your blurprint" ) ) }
+			title={ preventWidows( translate( "Let's build your blueprint" ) ) }
 			description={ translate(
 				"We'll send you a custom blueprint to grow your business based on your answers below."
 			) }
