@@ -208,6 +208,17 @@
 		flex-wrap: wrap;
 	}
 
+	.domains-overview__details {
+		.main.is-wide-layout:not( .email-providers-in-depth-comparison-page ):not( .email-stacked-comparison-page ) {	
+			margin-left: 0;
+			max-width: 1040px;
+		}
+
+		.hosting-dashboard-layout-column__container .navigation-header div.navigation-header__main {
+			margin-left: 0;
+		}
+	}
+
 	.hosting-dashboard-item-view__content > div {
 		flex-grow: 1;
 

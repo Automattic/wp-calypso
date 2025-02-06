@@ -1,3 +1,43 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
+
 .stepper-loader {
-	animation: loading-fade 1.6s ease-in-out infinite;
+	--wp-components-color-foreground: #3858e9;
+	padding: 1em;
+	max-width: 540px;
+	margin: 32vh auto 0;
+
+	&.stepper-loader__boot {
+		margin-top: calc(32vh + 60px);
+	}
+
+	.stepper-loader__title {
+		@include onboarding-font-recoleta;
+		font-weight: 400;
+		height: 40px;
+		letter-spacing: -0.4px;
+		line-height: 40px;
+		margin: 0;
+		text-align: center;
+		vertical-align: middle;
+
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
+	}
+
+	.stepper-loader__progress-bar {
+		margin: 46px auto 0 auto;
+	}
+
+	.stepper-loader__subtitle {
+		font-size: 1rem;
+		line-height: 21px;
+		letter-spacing: -0.02em;
+		color: var(--studio-gray-50);
+		margin-top: 24px;
+	}
 }

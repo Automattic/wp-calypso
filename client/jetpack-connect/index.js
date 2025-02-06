@@ -103,6 +103,11 @@ export default function () {
 		controller.offerResetContext
 	);
 
+	// Redirect /jetpack/connect/plans/complete/* to /jetpack/connect/plans
+	// See https://github.com/Automattic/wp-calypso/pull/74558
+	page( '/jetpack/connect/plans/complete', '/jetpack/connect/plans' );
+	page( '/jetpack/connect/plans/complete/*', '/jetpack/connect/plans' );
+
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );
 	page( '/jetpack/sso/*', controller.sso, makeLayout, clientRender );
 

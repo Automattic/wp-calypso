@@ -3,7 +3,6 @@ import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import clsx from 'clsx';
 import { numberFormat } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
-import ShortenedNumber from '../number-formatters';
 import type { HorizontalBarListItemProps } from './types';
 
 import './style.scss';
@@ -106,8 +105,18 @@ const HorizontalBarListItem = ( {
 
 	const renderValue = () => {
 		if ( useShortNumber ) {
-			return <ShortenedNumber value={ value } />;
+			return (
+				<span>
+					{ numberFormat( value, {
+						numberFormatOptions: {
+							notation: 'compact',
+							maximumFractionDigits: 1,
+						},
+					} ) }
+				</span>
+			);
 		}
+
 		if ( formatValue ) {
 			return formatValue( value, data );
 		}
