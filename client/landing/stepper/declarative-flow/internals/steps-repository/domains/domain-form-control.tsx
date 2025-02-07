@@ -202,14 +202,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const isReskinnedSupportedFlow = () => {
-		if ( ! flow ) {
-			return false;
-		}
-
-		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
-	};
-
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -289,7 +281,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+	if ( ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) && ! showUseYourDomain ) {
 		sideContent = getSideContent();
 	}
 
