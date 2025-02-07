@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import wpcom from 'calypso/lib/wp';
@@ -60,29 +60,33 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		return () => clearInterval( intervalId );
 	}, [ siteId, gmtOffset ] );
 
-	let chartData = Object.keys( viewsData ).map( ( eachMinute ) => {
-		const lastMinute = moment( eachMinute ).subtract( 1, 'minute' ).format( 'YYYY-MM-DD HH:mm:00' );
-		let diffViews: number = 0;
+	let chartData = useMemo( () => {
+		return Object.keys( viewsData ).map( ( eachMinute ) => {
+			const lastMinute = moment( eachMinute )
+				.subtract( 1, 'minute' )
+				.format( 'YYYY-MM-DD HH:mm:00' );
+			let diffViews: number = 0;
 
-		// First minute has no previous minute to compare to.
-		if ( viewsData[ lastMinute ] === undefined ) {
-			diffViews = 0;
-		} else if (
-			moment( lastMinute ).format( 'YYYY-MM-DD HH' ) !==
-			moment( eachMinute ).format( 'YYYY-MM-DD HH' )
-		) {
-			// If the previous minute is from a different hour, use the current minute's views.
-			diffViews = viewsData[ eachMinute ];
-		} else {
-			// Calculate the difference between the current minute and the previous minute.
-			diffViews = viewsData[ eachMinute ] - viewsData[ lastMinute ];
-		}
+			// First minute has no previous minute to compare to.
+			if ( viewsData[ lastMinute ] === undefined ) {
+				diffViews = 0;
+			} else if (
+				moment( lastMinute ).format( 'YYYY-MM-DD HH' ) !==
+				moment( eachMinute ).format( 'YYYY-MM-DD HH' )
+			) {
+				// If the previous minute is from a different hour, use the current minute's views.
+				diffViews = viewsData[ eachMinute ];
+			} else {
+				// Calculate the difference between the current minute and the previous minute.
+				diffViews = viewsData[ eachMinute ] - viewsData[ lastMinute ];
+			}
 
-		return {
-			date: new Date( eachMinute ),
-			value: diffViews,
-		};
-	} );
+			return {
+				date: new Date( eachMinute ),
+				value: diffViews,
+			};
+		} );
+	}, [ JSON.stringify( viewsData ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Handle array length with padding or truncating for display.
 	if ( chartData.length > 0 && chartData.length < MINUTE_DATA_LENGTH ) {
