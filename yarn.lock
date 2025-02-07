@@ -1833,6 +1833,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-admin@workspace:packages/site-admin":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-admin@workspace:packages/site-admin"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    postcss: "npm:^8.4.5"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    "@wordpress/data": ^10.16.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
