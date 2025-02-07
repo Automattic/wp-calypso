@@ -291,10 +291,9 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 			return undefined;
 		}
 
-		// Add both date range and geoMode parameters to the summary URL
 		return getPathWithUpdatedQueryString(
 			{
-				geoMode: selectedOption, // This preserves the current view (countries/regions/cities)
+				geoMode: selectedOption,
 			},
 			summaryUrl
 		);
