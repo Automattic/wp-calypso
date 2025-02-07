@@ -75,6 +75,15 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return null;
 		}
 
+		const isOnOrganizationAllSitesPage = path.startsWith( `/reader/${ organization.slug }` );
+		const isFeedStream = path.startsWith( `/reader/feeds/` );
+		const potentialFeedId = isFeedStream && path.split( '/reader/feeds/' )[ 1 ]?.split( '?' )[ 0 ];
+		const isFeedFromOrganization =
+			potentialFeedId &&
+			sites.some( ( { feed_ID } ) => Number( feed_ID ) === Number( potentialFeedId ) );
+
+		const isSelected = isOnOrganizationAllSitesPage || isFeedFromOrganization;
+
 		const defaultSelection = !! organization?.slug && `/reader/${ organization.slug }`;
 
 		return (
@@ -90,6 +99,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 					'sidebar__menu--selected'
 				}
 				defaultSelection={ defaultSelection }
+				isSelected={ isSelected }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
