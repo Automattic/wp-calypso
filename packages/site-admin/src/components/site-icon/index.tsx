@@ -1,0 +1,55 @@
+/**
+ * External dependencies
+ */
+import { store as coreDataStore } from '@wordpress/core-data';
+import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { Icon, wordpress } from '@wordpress/icons';
+import clsx from 'clsx';
+import type { JSX } from 'react';
+
+/**
+ * Internal dependencies
+ */
+import './style.scss';
+
+type SiteIconProps = {
+	className?: string;
+};
+
+/**
+ * SiteIcon component (core-copy)
+ * Displays the site icon or a default icon if the site icon is not set.
+ * @see https://github.com/WordPress/gutenberg/blob/177743059a87db2ba5f11f83dc8964e543bf3a03/packages/edit-site/src/components/site-icon/index.js#L15
+ * @param {SiteIconProps} props - SiteIcon props.
+ * @returns {JSX.Element} SiteIcon component.
+ */
+function SiteIcon( { className }: SiteIconProps ): JSX.Element {
+	const { isRequestingSite, siteIconUrl } = useSelect( ( select ) => {
+		const { getEntityRecord } = select( coreDataStore );
+		const siteData = getEntityRecord( 'root', '__unstableBase', undefined );
+
+		const site_icon_url = getEntityRecord< {
+			site_icon_url: string;
+		} >( 'root', '__unstableBase' )?.site_icon_url;
+
+		return {
+			isRequestingSite: ! siteData,
+			siteIconUrl: site_icon_url,
+		};
+	}, [] );
+
+	if ( isRequestingSite && ! siteIconUrl ) {
+		return <div className="site-admin-site-icon__image" />;
+	}
+
+	const icon = siteIconUrl ? (
+		<img className="site-admin-site-icon__image" alt={ __( 'Site Icon' ) } src={ siteIconUrl } />
+	) : (
+		<Icon className="site-admin-site-icon__icon" icon={ wordpress } size={ 48 } />
+	);
+
+	return <div className={ clsx( className, 'site-admin-site-icon' ) }>{ icon }</div>;
+}
+
+export default SiteIcon;
