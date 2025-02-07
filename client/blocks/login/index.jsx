@@ -533,7 +533,6 @@ class Login extends Component {
 					headerText = translate(
 						'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
 					);
-					preHeader = <div>{ translate( 'automattic logo here' ) }</div>;
 				}
 			}
 
