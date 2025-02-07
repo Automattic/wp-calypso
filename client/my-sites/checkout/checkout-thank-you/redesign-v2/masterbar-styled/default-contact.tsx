@@ -65,7 +65,7 @@ export function DefaultMasterbarContact() {
 
 	const isPremiumSupportAllowed = useProductsAllowsPremiumSupport( responseCart.products );
 
-	const { setShowHelpCenter, setAllowPremiumSupport } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
@@ -76,8 +76,7 @@ export function DefaultMasterbarContact() {
 			location: 'thank-you-help-center',
 		} );
 
-		setAllowPremiumSupport( isPremiumSupportAllowed );
-		setShowHelpCenter( ! isShowingHelpCenter );
+		setShowHelpCenter( ! isShowingHelpCenter, isPremiumSupportAllowed );
 	};
 
 	useEffect( () => {

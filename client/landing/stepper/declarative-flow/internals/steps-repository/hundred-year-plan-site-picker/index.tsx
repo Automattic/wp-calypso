@@ -138,9 +138,7 @@ const ConfirmationModal = ( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const { setShowHelpCenter, setNavigateToRoute, setAllowPremiumSupport } = useDataStoreDispatch(
-		HelpCenter.register()
-	);
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HelpCenter.register() );
 
 	const userFieldMessage =
 		'Automated message: This is a user looking to purchase the 100-Year Plan and is currently in the site picker step: https://wordpress.com/setup/hundred-year-plan/site-picker';
@@ -150,9 +148,8 @@ const ConfirmationModal = ( {
 
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
-		setAllowPremiumSupport( true );
 		setNavigateToRoute( helpCenterUrl );
-		setShowHelpCenter( true );
+		setShowHelpCenter( true, true );
 		closeModal();
 	};
 

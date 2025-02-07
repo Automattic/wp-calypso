@@ -1,7 +1,7 @@
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function useProductsAllowsPremiumSupport( products: ResponseCartProduct[] ) {
+export function useProductsAllowPremiumSupport( products: ResponseCartProduct[] ) {
 	const productHasPremiumSupport = ( product: ResponseCartProduct ) => {
 		switch ( true ) {
 			case product.product_slug === PLAN_100_YEARS:
