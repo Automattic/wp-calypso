@@ -7,6 +7,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
+import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
@@ -67,14 +68,16 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
+
+	const importError = useImportError();
+	const isImportInProgress = useInProgressState();
+	const hasStaleImportJobs = useHasStaleImportJobs();
+
 	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
-		addSubscribersCallback();
+		addSubscribersCallback( importError );
 	};
-
-	const isImportInProgress = useInProgressState();
-	const hasStaleImportJobs = useHasStaleImportJobs();
 
 	if ( ! showAddSubscribersModal ) {
 		return null;
