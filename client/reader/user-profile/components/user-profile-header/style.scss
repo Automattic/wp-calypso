@@ -90,6 +90,7 @@
 
 		&__bio-desc {
 			margin: 0;
+			position: relative;
 
 			&-text {
 				-webkit-line-clamp: 3;
@@ -99,10 +100,26 @@
 				overflow: hidden;
 			}
 
+			&-fader {
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				background: linear-gradient(to right, transparent 0%, #fff 25%);
+				width: 140px;
+				height: 20px;
+				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-fader");
+			}
+
 			&-link {
+				position: absolute;
+				bottom: 0;
+				right: 0;
 				display: inline-flex;
 				gap: 4px;
 				align-items: center;
+				z-index: z-index("user-profile-header", ".user-profile-header__bio-desc-link");
+				color: var(--color-text-subtle);
+				text-decoration: underline;
 			}
 		}
 
