@@ -1837,7 +1837,11 @@ __metadata:
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^7.6.19"
+    "@storybook/cli": "npm:^7.6.19"
+    "@storybook/react": "npm:^7.6.19"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"
     typescript: "npm:^5.3.3"
