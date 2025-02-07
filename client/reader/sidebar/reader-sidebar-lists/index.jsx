@@ -20,6 +20,12 @@ export class ReaderSidebarLists extends Component {
 
 	render() {
 		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
+		const { lists } = passedProps;
+
+		const defaultSelection = lists?.length
+			? `/reader/list/${ lists[ 0 ]?.owner }/${ lists[ 0 ]?.slug }`
+			: '/reader/list/new';
+
 		return (
 			<li>
 				<ExpandableSidebarMenu
@@ -29,6 +35,7 @@ export class ReaderSidebarLists extends Component {
 					customIcon={ <ReaderListIcon viewBox="-3 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/reader/list' ) && 'sidebar__menu--selected' }
+					defaultSelection={ defaultSelection }
 				>
 					<li>
 						<ReaderSidebarListsList path={ path } { ...passedProps } />
