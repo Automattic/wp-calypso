@@ -1,4 +1,3 @@
-// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
 
 import './style.scss';
@@ -19,7 +18,9 @@ export default function A4ANumberInputV2( {
 	increment = 1,
 }: Props ) {
 	const handleOnChange = ( newValue: unknown ) => {
-		onChange( newValue as number );
+		// Force convert to number, if NaN use minimum
+		const numberValue = Number( newValue ) || minimum;
+		onChange( numberValue );
 	};
 
 	return (

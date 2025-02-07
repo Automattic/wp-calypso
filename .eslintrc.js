@@ -501,6 +501,7 @@ module.exports = {
 					'__experimentalNavigatorProvider',
 					'__experimentalNavigatorScreen',
 					'__experimentalUseNavigator',
+					'__experimentalNumberControl',
 					'__unstableComposite',
 					'__unstableCompositeItem',
 					'__unstableUseCompositeState',
