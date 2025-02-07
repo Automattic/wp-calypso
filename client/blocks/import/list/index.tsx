@@ -47,12 +47,12 @@ export default function ListStep( props: Props ) {
 	);
 
 	const onImporterSelect = ( platform: ImporterPlatform ): void => {
-		const importerUrl = getFinalImporterUrl(
-			siteSlug ?? '',
-			fromSite ?? '',
+		const importerUrl = getFinalImporterUrl( {
+			targetSlug: siteSlug ?? '',
+			fromSite: fromSite ?? '',
 			platform,
-			backToFlow ?? undefined
-		);
+			backToFlow: backToFlow ?? undefined,
+		} );
 		submit?.( { platform, url: importerUrl } );
 	};
 
