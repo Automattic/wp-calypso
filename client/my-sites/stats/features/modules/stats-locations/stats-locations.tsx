@@ -219,7 +219,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const titleTooltip = (
 		<StatsInfoArea>
 			{ translate(
-				'Visitors‘ {{link}}viewing location{{/link}} by countries, regions and cities.',
+				'Visitors’ {{link}}viewing location{{/link}} by countries, regions and cities.',
 				{
 					comment: '{{link}} links to support documentation.',
 					components: {
