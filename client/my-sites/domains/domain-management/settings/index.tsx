@@ -439,6 +439,8 @@ const Settings = ( {
 			return null;
 		}
 
+		const showDnsRecordsSummary = areAllWpcomNameServers();
+
 		const selectedDomain = domains.find( ( domain ) => selectedDomainName === domain.name );
 		if ( ! selectedDomain ) {
 			return null;
@@ -460,6 +462,7 @@ const Settings = ( {
 								selectedDomainName={ selectedDomainName }
 								selectedSite={ selectedSite }
 								currentRoute={ currentRoute }
+								showDetails={ showDnsRecordsSummary }
 							/>
 						</>
 					) : (
