@@ -46,7 +46,7 @@ export class ReaderSidebarTags extends Component {
 	render() {
 		const { tags, isOpen, translate, onClick, path } = this.props;
 
-		const defaultSelection = tags.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
+		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
 
 		return (
 			<li>
