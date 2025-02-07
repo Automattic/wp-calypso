@@ -990,7 +990,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				getOptionsMenu={ isUpdatedBadgeDesign ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-				showActiveThemeBadge={ intent !== SiteIntent.Build && ! isSiteSetupFlow( flow ) }
+				showActiveThemeBadge={
+					intent !== SiteIntent.Build &&
+					! isSiteSetupFlow( flow ) &&
+					intent !== SiteIntent.UpdateDesign
+				}
 				isMultiFilterEnabled
 				isBigSkyEligible={ isBigSkyEligible }
 			/>
