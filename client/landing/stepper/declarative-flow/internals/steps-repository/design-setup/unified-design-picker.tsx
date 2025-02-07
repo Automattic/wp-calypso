@@ -676,7 +676,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 
 					return setDesignOnSite( siteSlugOrId, _selectedDesign, {
-						styleVariation: selectedStyleVariation,
+						styleVariation: selectedStyleVariation || _selectedDesign?.style_variations?.[ 0 ],
 						globalStyles,
 					} ).then( ( theme: ActiveTheme ) => {
 						return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
