@@ -1,4 +1,5 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -6,6 +7,7 @@ import StatsEmptyState from '../../stats-empty-state';
 
 function StatsLineChart( {
 	chartData = [],
+	className,
 	height = 400,
 	moment,
 	EmptyState = StatsEmptyState,
@@ -15,6 +17,7 @@ function StatsLineChart( {
 		options: object;
 		data: Array< { date: Date; value: number } >;
 	} >;
+	className?: string;
 	height?: number;
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
@@ -30,7 +33,7 @@ function StatsLineChart( {
 	};
 
 	return (
-		<div className="stats-line-chart">
+		<div className={ clsx( 'stats-line-chart', className ) }>
 			{ chartData?.[ 0 ].data?.length === 0 && (
 				<EmptyState
 					headingText={ translate( 'Real-time views' ) }

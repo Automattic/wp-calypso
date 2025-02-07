@@ -109,9 +109,15 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		<div>
 			<AsyncLoad
 				require="calypso/my-sites/stats/components/line-chart"
+				className="stats-realtime-chart"
 				height={ 425 }
 				placeholder={ PageLoading }
-				chartData={ [ { label: 'Views', options: { stroke: '#069e08' }, data: chartData } ] }
+				chartData={ [
+					{
+						label: 'Views',
+						data: chartData,
+					},
+				] }
 			/>
 		</div>
 	);
