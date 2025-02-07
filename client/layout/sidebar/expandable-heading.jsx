@@ -19,6 +19,7 @@ const ExpandableSidebarHeading = ( {
 	inlineText,
 	onClick,
 	defaultSelection,
+	isSelected,
 	...props
 } ) => {
 	return (
@@ -26,7 +27,7 @@ const ExpandableSidebarHeading = ( {
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
 			onClick={ () => {
-				if ( ! expanded && defaultSelection ) {
+				if ( ! expanded && defaultSelection && ! isSelected ) {
 					page.redirect( defaultSelection );
 				}
 				onClick();
@@ -70,6 +71,7 @@ ExpandableSidebarHeading.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
+	isSelected: PropTypes.bool,
 };
 
 export default ExpandableSidebarHeading;

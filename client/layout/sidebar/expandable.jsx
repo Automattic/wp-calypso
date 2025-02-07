@@ -147,6 +147,7 @@ ExpandableSidebarMenu.propTypes = {
 	expanded: PropTypes.bool,
 	disableFlyout: PropTypes.bool,
 	defaultSelection: PropTypes.string,
+	isSelected: PropTypes.bool,
 };
 
 export default ExpandableSidebarMenu;
