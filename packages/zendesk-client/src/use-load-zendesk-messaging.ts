@@ -1,23 +1,23 @@
 /**
  * External Dependencies
  */
-import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { ZENDESK_SCRIPT_ID } from './constants';
+import {
+	ZENDESK_SCRIPT_ID,
+	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+	ZENDESK_SUPPORT_CHAT_KEY,
+} from './constants';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
-import type { ZendeskConfigName } from './types';
+import { isTestModeEnvironment } from './util';
 
-export function useLoadZendeskMessaging(
-	keyConfigName: ZendeskConfigName,
-	enabled = false,
-	tryAuthenticating = false
-) {
+export function useLoadZendeskMessaging( enabled = false, tryAuthenticating = false ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
-	const zendeskKey: string = config( keyConfigName );
+	const isTestMode = isTestModeEnvironment();
+	const zendeskKey = isTestMode ? ZENDESK_STAGING_SUPPORT_CHAT_KEY : ZENDESK_SUPPORT_CHAT_KEY;
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isMessagingScriptLoaded && tryAuthenticating,
 		'messenger'

@@ -1,17 +1,13 @@
 import { ZENDESK_SOURCE_URL_TICKET_FIELD_ID } from './constants';
 import { useLoadZendeskMessaging } from './use-load-zendesk-messaging';
 import { useUpdateZendeskUserFields } from './use-update-zendesk-user-fields';
-import type { ZendeskConfigName, MessagingMetadata } from './types';
+import type { MessagingMetadata } from './types';
 
-export function useOpenZendeskMessaging(
-	sectionName: string,
-	keyConfigName: ZendeskConfigName = 'zendesk_support_chat_key',
-	enabled = true
-) {
+export function useOpenZendeskMessaging( sectionName: string, enabled = true ) {
 	const { isPending: isSubmittingZendeskUserFields, mutateAsync: submitUserFields } =
 		useUpdateZendeskUserFields();
 
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( keyConfigName, enabled, enabled );
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( enabled, enabled );
 
 	const openZendeskWidget = ( {
 		aiChatId,
