@@ -80,7 +80,12 @@ const UserProfileHeader = ( { user }: UserProfileHeaderProps ): JSX.Element => {
 								{ isClamped && user.profile_URL && (
 									<>
 										<div className="user-profile-header__bio-desc-fader"></div>
-										<a className="user-profile-header__bio-desc-link" href={ user.profile_URL }>
+										<a
+											className="user-profile-header__bio-desc-link"
+											href={ user.profile_URL }
+											target="_blank"
+											rel="noopener noreferrer"
+										>
 											{ translate( 'Read More' ) }{ ' ' }
 											<Icon width={ 18 } height={ 18 } icon={ external } />
 										</a>
