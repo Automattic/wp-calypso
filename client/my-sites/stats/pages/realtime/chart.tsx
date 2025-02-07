@@ -25,8 +25,7 @@ function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 }
 // TODO: Change to 60 for production.
 const UPDATE_INTERVAL_IN_SECONDS = 5;
-// TODO: Change to 30 after resolving the date format issue on the X-axis.
-const MINUTE_DATA_LENGTH = 5;
+const MINUTE_DATA_LENGTH = 30;
 
 const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	const gmtOffset = useSelector( ( state: object ) =>
@@ -82,6 +81,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 			}
 
 			return {
+				// TODO: Support simple string to display time difference rather than forcing a Date object.
 				date: new Date( eachMinute ),
 				value: diffViews,
 			};
