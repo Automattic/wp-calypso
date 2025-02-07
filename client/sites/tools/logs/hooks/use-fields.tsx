@@ -31,7 +31,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				type: 'text',
 				label: __( 'Severity' ),
 				elements: [
-					{ value: '', label: translate( 'All' ) },
 					{ value: 'User', label: translate( 'User' ) },
 					{ value: 'Warning', label: translate( 'Warning' ) },
 					{ value: 'Deprecated', label: translate( 'Deprecated' ) },
@@ -83,14 +82,15 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			type: 'text',
 			label: __( 'Request type' ),
 			elements: [
-				{ value: '', label: translate( 'All' ) },
 				{ value: 'GET', label: translate( 'GET' ) },
 				{ value: 'HEAD', label: translate( 'HEAD' ) },
 				{ value: 'POST', label: translate( 'POST' ) },
 				{ value: 'PUT', label: translate( 'PUT' ) },
 				{ value: 'DELETE', label: translate( 'DELETE' ) },
 			],
-			filterBy: { operators: [ 'is' as Operator ] },
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
 			render: ( { item }: { item: ServerLog } ) => {
 				const requestType = item.request_type;
 				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
@@ -108,7 +108,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			type: 'text',
 			label: __( 'Status' ),
 			elements: [
-				{ value: '', label: translate( 'All' ) },
 				{ value: '200', label: '200' },
 				{ value: '301', label: '301' },
 				{ value: '302', label: '302' },
@@ -120,7 +119,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				{ value: '500', label: '500' },
 			],
 			filterBy: {
-				operators: [ 'is' as Operator ],
+				operators: [ 'isAny' as Operator ],
 			},
 			enableSorting: false,
 		},
