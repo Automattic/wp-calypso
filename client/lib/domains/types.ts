@@ -100,6 +100,7 @@ export type ResponseDomain = {
 	isEligibleForInboundTransfer: boolean;
 	isIcannVerificationSuspended: boolean | null;
 	isGravatarDomain: boolean;
+	isGravatarRestrictedDomain: boolean;
 	isHundredYearDomain: boolean;
 	isLocked: boolean;
 	isMappedToAtomicSite: boolean;

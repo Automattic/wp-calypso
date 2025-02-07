@@ -99,7 +99,8 @@ const EmailProvidersStackedComparison = ( {
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
+	const isGravatarRestrictedDomain =
+		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -295,14 +296,14 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ showNonOwnerMessage && ! isGravatarDomain && (
+				{ showNonOwnerMessage && ! isGravatarRestrictedDomain && (
 					<EmailNonDomainOwnerMessage
 						domain={ domain }
 						selectedSite={ selectedSite }
 						source="email-comparison"
 					/>
 				) }
-				{ isGravatarDomain && (
+				{ isGravatarRestrictedDomain && (
 					<Notice showDismiss={ false } className="email-providers-stacked-comparison__notice">
 						{ translate(
 							'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'
