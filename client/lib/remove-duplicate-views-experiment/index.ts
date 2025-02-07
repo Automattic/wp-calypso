@@ -6,7 +6,7 @@ import {
 	getIsRemoveDuplicateViewsExperimentOverride,
 	getIsRemoveDuplicateViewsExperimentEnabled,
 } from 'calypso/state/explat-experiments/selectors';
-import { AppState } from 'calypso/types';
+import type { AppState } from 'calypso/types';
 
 export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT = 'calypso_post_onboarding_holdout_160125';
 export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE =
