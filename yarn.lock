@@ -10669,28 +10669,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/commands@npm:^1.16.0":
-  version: 1.16.0
-  resolution: "@wordpress/commands@npm:1.16.0"
-  dependencies:
-    "@babel/runtime": "npm:7.25.7"
-    "@wordpress/components": "npm:^29.2.0"
-    "@wordpress/data": "npm:^10.16.0"
-    "@wordpress/element": "npm:^6.16.0"
-    "@wordpress/i18n": "npm:^5.16.0"
-    "@wordpress/icons": "npm:^10.16.0"
-    "@wordpress/keyboard-shortcuts": "npm:^5.16.0"
-    "@wordpress/private-apis": "npm:^1.16.0"
-    clsx: "npm:^2.1.1"
-    cmdk: "npm:^1.0.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 70fb4cbf59d0f80479d54fcc6c7d0d328f36aecab85de89335f59053e4ab3071b3638909b8f31f3577f4bcb099c9a57b1c3fa17db482a6903e995f88758427d5
-  languageName: node
-  linkType: hard
-
-"@wordpress/commands@npm:^1.17.0":
+"@wordpress/commands@npm:^1.16.0, @wordpress/commands@npm:^1.17.0":
   version: 1.17.0
   resolution: "@wordpress/commands@npm:1.17.0"
   dependencies:
