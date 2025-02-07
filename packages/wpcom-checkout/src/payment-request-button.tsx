@@ -88,7 +88,7 @@ const ApplePayButton = styled.button`
 	-apple-pay-button-style: black;
 	-apple-pay-button-type: plain;
 	height: 38px;
-	width: calc( 100% - 60px );
+	width: 100%;
 	position: relative;
 
 	&::after {
@@ -115,7 +115,7 @@ const ApplePayButton = styled.button`
 const GooglePayButtonWrapper = styled.button`
 	background-color: #000;
 	border-radius: 4px;
-	width: calc( 100% - 60px );
+	width: 100%;
 	padding: 12px 24px 10px;
 	position: relative;
 	text-align: center;
