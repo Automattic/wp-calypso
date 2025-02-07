@@ -1,0 +1,34 @@
+@import '../product-card/style';
+
+$woocommerce-purple-50: #720EEC;
+
+.product-card.is-woopayments,
+.product-card.is-woopayments:hover,
+.product-card.is-woopayments:focus,
+.product-card.is-woopayments:active {
+	.product-card__inner {
+		background: $woocommerce-purple-50 url( calypso/assets/images/a8c-for-agencies/woo-product-card-bg.svg ) no-repeat bottom right;
+		border-color: $woocommerce-purple-50;
+	}
+
+	.product-card__title,
+	.product-card__description,
+	.license-lightbox-link {
+		color: var(--color-text-inverted);
+	}
+
+
+	.product-card__title {
+		@include a4a-font-heading-xl;
+	}
+
+	.product-card__description {
+		@include a4a-font-body-lg;
+		margin-block-end: 65px;
+	}
+
+	.components-button.is-primary:not(:disabled) {
+		color: $woocommerce-purple-50;
+		background-color: var(--color-surface);
+	}
+}
