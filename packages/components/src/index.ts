@@ -19,7 +19,6 @@ export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
-export { ConfirmationDialog as ConfirmationDialog } from './confirmation-dialog';
 export { default as ScreenReaderText } from './screen-reader-text';
 export { useScrollToTop } from './scroll-to-top/use-scroll-to-top';
 export { default as SelectDropdown } from './select-dropdown';
