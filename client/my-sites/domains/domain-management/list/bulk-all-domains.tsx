@@ -80,7 +80,7 @@ const domainsDashboardGlobalStyles = css`
 
 		.select-dropdown,
 		.select-dropdown__header {
-			height: 40px;
+			height: var( --domains-table-toolbar-height, 40px );
 			border-radius: 4px;
 		}
 
@@ -133,9 +133,9 @@ const domainsDashboardGlobalStyles = css`
 		}
 
 		.domains-table {
-			margin-top: 40px;
 			.domains-table-toolbar {
 				margin-inline: 48px;
+				padding: 16px 0;
 
 				.domains-table-bulk-actions-toolbar {
 					align-items: flex-start;
@@ -186,7 +186,7 @@ const domainsDashboardGlobalStyles = css`
 				}
 
 				th {
-					padding-top: 22px;
+					padding-top: 14px;
 					padding-bottom: 14px;
 
 					.list__header-column {
@@ -245,6 +245,8 @@ const domainsDashboardGlobalStyles = css`
 		}
 
 		.domains-overview__list.multi-sites-dashboard-layout-column,
+		.domains-overview__list.main .hosting-dashboard-layout-column__container,
+		.domains-overview__list.main .hosting-dashboard-layout-column__container > .main,
 		.domains-overview__list .multi-sites-dashboard-layout-column__container,
 		.domains-overview__details .multi-sites-dashboard-layout-column__container,
 		.multi-sites-dashboard-layout-column.domains-overview__list.main
@@ -255,7 +257,8 @@ const domainsDashboardGlobalStyles = css`
 
 		.multi-sites-dashboard-layout-column.domains-overview__list.main
 			.multi-sites-dashboard-layout-column__container
-			.main {
+			.main,
+		.domains-overview__list.main .hosting-dashboard-layout-column__container > .main {
 			display: flex;
 			flex-direction: column;
 			padding-bottom: 0;
@@ -293,14 +296,7 @@ const domainsDashboardGlobalStyles = css`
 				header.navigation-header {
 					padding-top: 24px;
 					padding-inline: 16px;
-					border-block-end: 1px solid var( --color-border-secondary );
-				}
-				.layout__primary > main {
-					background: var( --color-surface );
-					border-radius: 8px;
-					box-shadow: 0px 0px 17.4px 0px rgba( 0, 0, 0, 0.05 );
-					overflow: hidden;
-					max-width: none;
+					border-block-end: 1px solid var( --color-neutral-5 );
 				}
 			}
 		}
@@ -399,226 +395,6 @@ const domainsDashboardGlobalStyles = css`
 					th:first-child,
 					td:first-child {
 						padding-left: 56px;
-					}
-
-					thead.domains-table-header {
-						position: sticky;
-						top: 0;
-						z-index: 2;
-					}
-
-					th {
-						padding-top: 14px;
-						padding-bottom: 14px;
-
-						.list__header-column {
-							color: #1e1e1e;
-
-							&:hover {
-								color: var( --color-accent );
-							}
-						}
-					}
-				}
-			}
-
-			.search-component.domains-table-filter__search.is-open.has-open-icon {
-				border-radius: 4px;
-				height: 40px;
-				flex-direction: row-reverse;
-				padding-inline: 10px 8px;
-				font-size: 14px;
-				color: var( --studio-gray-40 );
-				svg {
-					fill: var( --studio-gray-40 );
-					color: var( --studio-gray-40 );
-				}
-
-				input.search-component__input[type='search'] {
-					font-size: 14px;
-					height: 40px;
-
-					&::placeholder {
-						color: var( --studio-gray-40 );
-					}
-				}
-				max-width: 245px;
-				transition: none;
-			}
-
-			.search-component.domains-table-filter__search.is-open.has-focus {
-				border-color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
-				box-shadow: 0 0 0 0.5px
-					var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
-			}
-
-			div.layout.is-global-sidebar-visible {
-				.layout__content {
-					padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
-					padding-bottom: var( --content-padding-bottom );
-				}
-				.layout__primary > main {
-					height: calc(
-						100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
-								--content-padding-bottom
-							)
-					);
-				}
-			}
-
-			.domains-overview__list.multi-sites-dashboard-layout-column,
-			.domains-overview__list.main .hosting-dashboard-layout-column__container,
-			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main,
-			.domains-overview__list .multi-sites-dashboard-layout-column__container,
-			.domains-overview__details .multi-sites-dashboard-layout-column__container,
-			.multi-sites-dashboard-layout-column.domains-overview__list.main
-				.multi-sites-dashboard-layout-column__container
-				.main {
-				height: 100%;
-			}
-
-			.multi-sites-dashboard-layout-column.domains-overview__list.main
-				.multi-sites-dashboard-layout-column__container
-				.main,
-			.domains-overview__list.main .hosting-dashboard-layout-column__container > .main {
-				display: flex;
-				flex-direction: column;
-				padding-bottom: 0;
-
-				.domains-table {
-					flex-grow: 1;
-					margin-top: 0;
-					overflow: auto;
-					padding-bottom: 0;
-					width: 100%;
-
-					table {
-						max-height: unset;
-					}
-				}
-			}
-
-			.domains-overview__list {
-				.domains-table__row {
-					.gridicons-ellipsis {
-						rotate: 90deg;
-						visibility: hidden;
-					}
-
-					&:hover,
-					&.is-selected {
-						.gridicons-ellipsis {
-							visibility: visible;
-						}
-					}
-				}
-			}
-
-			@media only screen and ( min-width: 782px ) {
-				.is-global-sidebar-visible {
-					header.navigation-header {
-						padding-top: 24px;
-						padding-inline: 16px;
-						border-block-end: 1px solid var( --color-neutral-5 );
-					}
-				}
-			}
-
-			@media only screen and ( min-width: 960px ) {
-				.domains-table {
-					.domains-table-toolbar {
-						margin-inline: 48px;
-					}
-					table {
-						grid-template-columns: 75px 2fr 1fr 1fr 1fr auto auto auto auto;
-
-						th:last-child,
-						td:last-child {
-							padding-right: 56px;
-						}
-
-						th:first-child,
-						td:first-child {
-							padding-left: 56px;
-						}
-					}
-				}
-				.domains-overview__list .domains-table {
-					table {
-						grid-template-columns: 4fr auto;
-						max-height: 100%;
-
-						.domains-table__domain-name {
-							overflow-wrap: anywhere;
-						}
-					}
-				}
-				.is-global-sidebar-visible header.navigation-header {
-					padding-inline: 26px;
-				}
-			}
-
-			@media only screen and ( max-width: 600px ) {
-				.navigation-header__main {
-					justify-content: space-between;
-					.formatted-header {
-						flex: none;
-					}
-				}
-				.domains-table {
-					table {
-						grid-template-columns: 75px 1fr minmax( auto, 1fr ) auto auto auto auto;
-
-						th:last-child,
-						td:last-child {
-							padding-right: 16px;
-						}
-
-						th:first-child,
-						td:first-child {
-							padding: 0 0 0 40px;
-							padding-left: 40px;
-						}
-					}
-				}
-				.domains-table-toolbar {
-					margin-inline: 32px;
-				}
-			}
-
-			@media only screen and ( max-width: 781px ) {
-				div.layout.is-global-sidebar-visible {
-					.layout__primary {
-						overflow-x: unset;
-					}
-				}
-				.layout__primary > main {
-					background: var( --color-surface );
-					margin: 0;
-					border-radius: 8px;
-				}
-				header.navigation-header {
-					padding-inline: 16px;
-					padding-bottom: 0;
-				}
-			}
-			@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
-				.domains-table {
-					.domains-table-toolbar {
-						margin-inline: 48px;
-					}
-					table {
-						grid-template-columns: 75px 1fr minmax( auto, 1fr ) auto auto auto auto;
-
-						th:last-child,
-						td:last-child {
-							padding-right: 16px;
-						}
-
-						th:first-child,
-						td:first-child {
-							padding-left: 56px;
-						}
 					}
 				}
 			}
