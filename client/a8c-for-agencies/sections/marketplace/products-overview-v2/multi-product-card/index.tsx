@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -228,8 +228,8 @@ export default function MultiProductCard( props: Props ) {
 							className={ clsx( { 'product-card__select-button': ! isRedesign } ) }
 							variant={ ! isSelected ? 'primary' : 'secondary' }
 							tabIndex={ -1 }
+							icon={ isSelected ? check : undefined }
 						>
-							{ isSelected && <Icon icon={ check } /> }
 							{ ctaLabel }
 						</Button>
 						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
