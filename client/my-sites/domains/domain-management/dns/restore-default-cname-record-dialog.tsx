@@ -37,8 +37,8 @@ function RestoreDefaultCnameRecordDialog( {
 	];
 
 	const targetPlatformMessage = domain?.isGravatarDomain
-		? __( 'Restoring the record will point this domain to your Gravatar profile.' )
-		: __( 'Restoring the record will point this domain to your WordPress.com site.' );
+		? __( 'Restoring the record will point the www subdomain to your Gravatar profile.' )
+		: __( 'Restoring the record will point the www subdomain to your WordPress.com site.' );
 
 	return (
 		<Dialog isVisible={ visible } buttons={ buttons } onClose={ onCancel }>
