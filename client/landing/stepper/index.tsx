@@ -23,6 +23,7 @@ import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { setupErrorLogger } from 'calypso/lib/error-logger/setup-error-logger';
+import { addQueryArgs } from 'calypso/lib/url';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { createReduxStore } from 'calypso/state';
@@ -37,6 +38,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { AsyncHelpCenter } from './declarative-flow/internals/components';
 import 'calypso/components/environment-badge/style.scss';
 import 'calypso/assets/stylesheets/style.scss';
+import { createSessionId } from './declarative-flow/internals/state-manager/create-session-id';
 import availableFlows from './declarative-flow/registered-flows';
 import { USER_STORE } from './stores';
 import { setupWpDataDebug } from './utils/devtools';
@@ -45,6 +47,7 @@ import { enhanceFlowWithAuth, injectUserStepInSteps } from './utils/enhanceFlowW
 import redirectPathIfNecessary from './utils/flow-redirect-handler';
 import { getFlowFromURL } from './utils/get-flow-from-url';
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
+import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { AnyAction } from 'redux';
 
@@ -118,8 +121,26 @@ async function main() {
 
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+	let queryClient;
 
-	const { queryClient } = await createQueryClient( userId );
+	let { default: flow } = await flowPromise;
+	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
+
+	if ( '__experimentalUseSessions' in flow ) {
+		const sessionId = getSessionId() || createSessionId();
+		history.replaceState( null, '', addQueryArgs( { sessionId }, window.location.href ) );
+		queryClient = ( await createQueryClient( 'stepper-persistence-session-' + sessionId ) )
+			.queryClient;
+	} else {
+		queryClient = ( await createQueryClient( userId ) ).queryClient;
+	}
+
+	/**
+	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
+	 */
+	if ( flowSteps === false ) {
+		return;
+	}
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
@@ -136,16 +157,6 @@ async function main() {
 	initializeAnalytics( user, getSuperProps( reduxStore ) );
 
 	setupErrorLogger( reduxStore );
-
-	let { default: flow } = await flowPromise;
-	let flowSteps = 'initialize' in flow ? await flow.initialize() : null;
-
-	/**
-	 * When `initialize` returns false, it means the app should be killed (the user probably issued a redirect).
-	 */
-	if ( flowSteps === false ) {
-		return;
-	}
 
 	// Checking for initialize implies this is a V2 flow.
 	// CLEAN UP: once the `onboarding` flow is migrated to V2, this can be cleaned up to only support V2

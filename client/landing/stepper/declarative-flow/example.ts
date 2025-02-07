@@ -28,6 +28,7 @@ const newsletter: Flow = {
 	get title() {
 		return translate( 'Newsletter Example Flow' );
 	},
+	__experimentalUseSessions: true,
 	isSignupFlow: true,
 	initialize() {
 		const query = getQuery();
