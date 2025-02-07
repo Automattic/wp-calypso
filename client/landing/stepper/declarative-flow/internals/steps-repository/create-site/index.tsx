@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -79,6 +80,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		progress,
 		partnerBundle,
 		siteGoals,
+		intent,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -91,6 +93,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			siteGoals: select( ONBOARD_STORE ).getGoals(),
+			intent: select( ONBOARD_STORE ).getIntent(),
 		} ),
 		[]
 	);
@@ -206,7 +209,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : intent;
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -228,7 +231,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined
+			shouldSaveSiteGoals ? siteGoals : undefined,
+			config.isEnabled( 'onboarding/write-goal' )
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {

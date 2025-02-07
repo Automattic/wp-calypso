@@ -115,6 +115,7 @@
 		"onboarding/import-light": false,
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/interval-dropdown": true,
+		"onboarding/write-goal": true,
 		"onboarding/trail-map-feature-grid-copy": false,
 		"onboarding/trail-map-feature-grid-structure": false,
 		"onboarding/trail-map-feature-grid": false,
