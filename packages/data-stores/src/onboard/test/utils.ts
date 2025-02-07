@@ -44,23 +44,11 @@ describe( 'Test onboard utils', () => {
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
-			expectedIntent: SiteIntent.Write,
-			featureFlags: { 'onboarding/newsletter-goal': false },
-		},
-		{
-			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: { 'onboarding/newsletter-goal': true },
-		},
-		{
-			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
-			expectedIntent: SiteIntent.Sell,
-			featureFlags: { 'onboarding/newsletter-goal': false },
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
-			featureFlags: { 'onboarding/newsletter-goal': true },
 		},
 	] )(
 		'Should map the $goals to $expectedIntent intent ($featureFlags)',
