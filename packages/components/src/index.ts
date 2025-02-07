@@ -69,7 +69,6 @@ export { default as FlowQuestion } from './flow-question';
 export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
-export { default as ClientLogoList } from './client-logo-list';
 export { JetpackLogo } from './logos/jetpack-logo';
 export { default as CloudLogo } from './logos/cloud-logo';
 export { default as VIPLogo } from './logos/vip-logo';
