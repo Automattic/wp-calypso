@@ -1847,7 +1847,6 @@ __metadata:
     "@wordpress/commands": "npm:^1.17.0"
     "@wordpress/components": "npm:^29.3.0"
     "@wordpress/dom": "npm:^4.17.0"
-    "@wordpress/edit-site": "npm:^6.17.0"
     "@wordpress/element": "npm:^6.17.0"
     "@wordpress/i18n": "npm:^5.17.0"
     "@wordpress/icons": "npm:^10.17.0"
