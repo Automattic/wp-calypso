@@ -18,6 +18,7 @@ import { getSupportedBundleSizes } from '../../products-overview/product-listing
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
 import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
+import WoopPaymentsProductCard from '../woopayments-product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
 import type { ShoppingCartItem } from '../../types';
@@ -222,9 +223,25 @@ export default function ProductListing( {
 
 	const isSingleLicenseView = quantity === 1;
 
-	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption ) =>
-			Array.isArray( productOption ) ? (
+	const getProductCards = (
+		products: APIProductFamilyProduct[],
+		withCustomCard: boolean = false
+	) => {
+		return products.map( ( productOption ) => {
+			if ( withCustomCard && productOption.slug === 'woocommerce-woopayments' ) {
+				return (
+					<WoopPaymentsProductCard
+						asReferral={ isReferralMode }
+						key={ productOption.slug }
+						product={ productOption }
+						quantity={ quantity }
+						onSelectProduct={ onSelectProduct }
+						isSelected={ isSelected( productOption.slug ) }
+					/>
+				);
+			}
+
+			return Array.isArray( productOption ) ? (
 				<MultiProductCard
 					asReferral={ isReferralMode }
 					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
@@ -258,8 +275,8 @@ export default function ProductListing( {
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
 				/>
-			)
-		);
+			);
+		} );
 	};
 
 	if ( isLoadingProducts ) {
@@ -278,7 +295,7 @@ export default function ProductListing( {
 
 			{ featuredProducts.length > 0 && (
 				<ProductListingSection title={ translate( 'Featured products' ) }>
-					{ getProductCards( featuredProducts ) }
+					{ getProductCards( featuredProducts, true ) }
 				</ProductListingSection>
 			) }
 
