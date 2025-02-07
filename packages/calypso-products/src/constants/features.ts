@@ -441,6 +441,9 @@ export const FEATURE_PRIORITY_24_7_SUPPORT = 'priority-24-7-support';
 export const FEATURE_BASIC_STATS = 'basic-stats';
 export const FEATURE_ADVANCED_STATS = 'advanced-stats';
 export const FEATURE_UPLOAD_VIDEO = 'upload-video';
+export const FEATURE_GROUP_STATS = 'stats-group';
+export const FEATURE_STATS_BASIC_20250206 = 'stats-basic-20250206';
+export const FEATURE_STATS_ADVANCED_20250206 = 'stats-advanced-20250206';
 
 // Woo Express Features
 export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
