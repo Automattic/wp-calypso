@@ -11,7 +11,7 @@ import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
 
-interface GetFinalImporterUrlParams {
+export interface GetFinalImporterUrlParams {
 	targetSlug: string;
 	fromSite: string;
 	platform: ImporterPlatform;

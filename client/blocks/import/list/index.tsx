@@ -8,6 +8,7 @@ import {
 	type ImporterConfigPriority,
 } from 'calypso/lib/importer/importer-config';
 import ImporterLogo from 'calypso/my-sites/importer/importer-logo';
+import type { GetFinalImporterUrlParams } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 import './style.scss';
 
@@ -23,12 +24,7 @@ interface Props {
 	title?: string;
 	subTitle?: string;
 	submit?: ( dependencies: Record< string, unknown > ) => void;
-	getFinalImporterUrl: (
-		siteSlug: string,
-		fromSite: string,
-		platform: ImporterPlatform,
-		backToFlow?: string
-	) => string;
+	getFinalImporterUrl: ( params: GetFinalImporterUrlParams ) => string;
 	onNavBack?: () => void;
 }
 
