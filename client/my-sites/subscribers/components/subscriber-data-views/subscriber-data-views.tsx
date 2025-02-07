@@ -393,7 +393,11 @@ const SubscriberDataViews = ( {
 						defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
 						actions={ actions }
 						search
-						searchLabel={ translate( 'Search by name, username or email…' ) }
+						searchLabel={
+							isEnglishLocale || hasTranslation( 'Search subscribers…' )
+								? translate( 'Search subscribers…' )
+								: translate( 'Search by name, username or email…' )
+						}
 					/>
 				) }
 			</section>
