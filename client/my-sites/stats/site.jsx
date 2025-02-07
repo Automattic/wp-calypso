@@ -799,11 +799,12 @@ const EnableStatsModule = ( props ) => {
 			line={
 				<p>
 					{ translate(
-						'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						'Enable %(product)s to see detailed information about your traffic, likes, comments, and subscribers.',
+						{ args: { product: STATS_PRODUCT_NAME } }
 					) }
 				</p>
 			}
-			action={ translate( 'Enable Jetpack Stats' ) }
+			action={ translate( 'Enable %(product)s', { args: { product: STATS_PRODUCT_NAME } } ) }
 			actionCallback={ enableStatsModule }
 		/>
 	);
