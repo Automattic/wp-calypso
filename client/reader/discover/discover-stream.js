@@ -7,12 +7,12 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
+import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
+import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import DiscoverNavigation from './components/navigation/v1';
-import DiscoverNavigationV2 from './components/navigation/v2';
 import {
 	getDiscoverStreamTags,
 	DEFAULT_TAB,

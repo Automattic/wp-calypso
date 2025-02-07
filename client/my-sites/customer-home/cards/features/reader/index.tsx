@@ -6,7 +6,7 @@ import iconReaderLightbulb from 'calypso/assets/images/customer-home/reader-ligh
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import DiscoverNavigation from 'calypso/reader/discover/discover-navigation';
+import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import { DEFAULT_TAB, buildDiscoverStreamKey } from 'calypso/reader/discover/helper';
 import Stream from 'calypso/reader/stream';
 import { useDispatch } from 'calypso/state';
