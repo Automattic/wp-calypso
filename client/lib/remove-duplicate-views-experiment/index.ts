@@ -3,7 +3,7 @@ import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
 import {
-	getIsRemoveDuplicateViewsExperimentOverridden,
+	getIsRemoveDuplicateViewsExperimentOverride,
 	getIsRemoveDuplicateViewsExperimentEnabled,
 } from 'calypso/state/explat-experiments/selectors';
 import { AppState } from 'calypso/types';
@@ -14,8 +14,12 @@ export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE =
 const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST = 'calypso_post_onboarding_aa_150125';
 
 export const loadRemoveDuplicateViewsExperimentAssignment = async ( state: AppState ) => {
-	if ( getIsRemoveDuplicateViewsExperimentOverridden( state ) === 'control' ) {
-		return 'control';
+	/**
+	 * This is for escape hatch users to override the experiment assignment: p7DVsv-m73-p2
+	 */
+	const overrideAssignment = getIsRemoveDuplicateViewsExperimentOverride( state );
+	if ( ! overrideAssignment ) {
+		return overrideAssignment;
 	}
 
 	/**
@@ -41,9 +45,7 @@ export const useRemoveDuplicateViewsExperimentEnabled = (): boolean => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( isEnabled === undefined ) {
-			dispatch( getRemoveDuplicateViewsExperimentAssignment() );
-		}
+		dispatch( getRemoveDuplicateViewsExperimentAssignment() );
 	}, [ dispatch, isEnabled ] );
 
 	return isEnabled;

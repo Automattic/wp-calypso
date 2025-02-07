@@ -7,18 +7,15 @@ import { AppState } from 'calypso/types';
 
 import 'calypso/state/explat-experiments/init';
 
-export const getIsRemoveDuplicateViewsExperimentOverridden = ( state: AppState ) => {
-	const overrideAssignment = getPreference( state, REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE );
-	return overrideAssignment;
+export const getIsExperimentEnabled = ( state: AppState, experimentName: string ) => {
+	return state.explatExperiments.experimentAssignments[ experimentName ] === 'treatment';
 };
 
 export const getIsRemoveDuplicateViewsExperimentEnabled = ( state: AppState ) => {
-	if ( getIsRemoveDuplicateViewsExperimentOverridden( state ) ) {
-		return false;
-	}
+	return getIsExperimentEnabled( state, REMOVE_DUPLICATE_VIEWS_EXPERIMENT );
+};
 
-	return (
-		state.explatExperiments.experimentAssignments[ REMOVE_DUPLICATE_VIEWS_EXPERIMENT ] ===
-		'treatment'
-	);
+export const getIsRemoveDuplicateViewsExperimentOverride = ( state: AppState ) => {
+	const overrideAssignment = getPreference( state, REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE );
+	return overrideAssignment;
 };
