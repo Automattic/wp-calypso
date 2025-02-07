@@ -22,6 +22,8 @@ export class ReaderSidebarLists extends Component {
 		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
 		const { lists } = passedProps;
 
+		const isOnListsPage = path.startsWith( '/reader/list' );
+
 		const defaultSelection = lists?.length
 			? `/reader/list/${ lists[ 0 ]?.owner }/${ lists[ 0 ]?.slug }`
 			: '/reader/list/new';
@@ -36,6 +38,7 @@ export class ReaderSidebarLists extends Component {
 					disableFlyout
 					className={ path.startsWith( '/reader/list' ) && 'sidebar__menu--selected' }
 					defaultSelection={ defaultSelection }
+					isSelected={ isOnListsPage }
 				>
 					<li>
 						<ReaderSidebarListsList path={ path } { ...passedProps } />

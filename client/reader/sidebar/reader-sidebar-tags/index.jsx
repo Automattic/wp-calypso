@@ -46,6 +46,7 @@ export class ReaderSidebarTags extends Component {
 	render() {
 		const { tags, isOpen, translate, onClick, path } = this.props;
 
+		const isOnTagsPage = path.startsWith( '/tag' );
 		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
 
 		return (
@@ -59,6 +60,7 @@ export class ReaderSidebarTags extends Component {
 					disableFlyout
 					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 					defaultSelection={ defaultSelection }
+					isSelected={ isOnTagsPage }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 
