@@ -107,11 +107,8 @@ const domainsDashboardGlobalStyles = css`
 				white-space: nowrap;
 				margin-left: 0;
 			}
-
-			.select-dropdown,
-			.select-dropdown__header {
-				height: var( --domains-table-toolbar-height, 40px );
-				border-radius: 4px;
+			.domain-header__buttons-mobile {
+				white-space: nowrap;
 			}
 			@media only screen and ( max-width: 479px ) {
 				.domain-header__buttons-mobile {
@@ -264,10 +261,11 @@ const domainsDashboardGlobalStyles = css`
 			padding-bottom: 0;
 
 			.domains-table {
-				.domains-table-toolbar {
-					margin-inline: 48px;
-					padding: 16px 0;
-				}
+				flex-grow: 1;
+				margin-top: 0;
+				overflow: auto;
+				padding-bottom: 0;
+				width: 100%;
 
 				table {
 					max-height: unset;
