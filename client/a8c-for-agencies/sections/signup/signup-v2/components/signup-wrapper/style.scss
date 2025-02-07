@@ -44,7 +44,7 @@
     }
   }
 
-  .signup-wrapper-testimonial {
+  .signup-wrapper__testimonial {
     color: var(--color-text);
     padding: 24px;
     background: var(--color-surface);
@@ -53,50 +53,50 @@
     position: relative;
     top: -1rem;
 
-    .signup-wrapper-testimonial-text {
+    .signup-wrapper__testimonial-text {
       font-size: 1rem;
       line-height: 1.5;
       margin-bottom: 24px;
       color: var(--color-text);
     }
 
-    .signup-wrapper-testimonial-author {
+    .signup-wrapper__testimonial-author {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .signup-wrapper-testimonial-avatar {
+    .signup-wrapper__testimonial-avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
       background: var(--color-neutral-5);
     }
 
-    .signup-wrapper-testimonial-info {
+    .signup-wrapper__testimonial-info {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .signup-wrapper-testimonial-name {
+    .signup-wrapper__testimonial-name {
       font-weight: 600;
       font-size: 1rem;
       color: var(--color-text);
     }
 
-    .signup-wrapper-testimonial-title {
+    .signup-wrapper__testimonial-title {
       font-weight: 600;
       font-size: 1rem;
       color: var(--color-text);
     }
 
-    .signup-wrapper-testimonial-url {
+    .signup-wrapper__testimonial-url {
       font-size: 0.875rem;
       color: var(--color-text-subtle);
       text-decoration: underline;
 
-      .signup-wrapper-testimonial-url:visited {
+      .signup-wrapper__testimonial-url:visited {
         color: var(--color-text-subtle);
       }
     }
@@ -153,29 +153,29 @@
       }
     }
 
-    .signup-wrapper-testimonial {
+    .signup-wrapper__testimonial {
       color: var(--color-surface);
       background: #02506E;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       backdrop-filter: blur(8px);
 
-      .signup-wrapper-testimonial-text {
+      .signup-wrapper__testimonial-text {
         color: var(--color-neutral-0);
       }
 
-      .signup-wrapper-testimonial-avatar {
+      .signup-wrapper__testimonial-avatar {
         background: var(--color-neutral-50);
       }
 
-      .signup-wrapper-testimonial-name {
+      .signup-wrapper__testimonial-name {
         color: var(--color-surface);
       }
 
-      .signup-wrapper-testimonial-title {
+      .signup-wrapper__testimonial-title {
         color: var(--color-surface);
       }
 
-      .signup-wrapper-testimonial-url {
+      .signup-wrapper__testimonial-url {
         color: var(--color-surface);
 
         &:visited {

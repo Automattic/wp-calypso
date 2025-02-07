@@ -31,4 +31,49 @@
 	.form-fieldset {
 		margin: 0;
 	}
+
+	.a4a-form__section-field-label,
+	.a4a-form__section-field-required {
+		@include a4a-font-heading-sm($font-size: rem(14px));
+	}
+
+	@media (prefers-color-scheme: dark) {
+		.a4a-form__heading .a4a-form__heading-title,
+		.a4a-form__heading .a4a-form__heading-description,
+		.a4a-form__section-field-label,
+		.a4a-form__section-field-required,
+		.signup-personalization-form .multi-checkbox label,
+		.form-phone-input label,
+		.form-radio__label,
+		.components-form-token-field__suggestion {
+			color: var(--color-text-inverted);
+		}
+
+		input[type="text"].form-text-input,
+		input[type="url"].form-text-input,
+		input[type="password"].form-text-input,
+		input[type="email"].form-text-input,
+		input[type="tel"].form-text-input,
+		input[type="number"].form-text-input,
+		input[type="search"].form-text-input,
+		.components-form-token-field__input,
+		.form-select,
+		.form-checkbox,
+		.form-radio,
+		.form-textarea,
+		.components-button.is-secondary {
+			background-color: #022836;
+			border-color: #E6F5FF1A;
+			color: var(--color-text-inverted);
+			&::placeholder {
+				color: #E6F5FF99;
+			}
+		}
+
+		.form-checkbox:checked,
+		.form-radio:checked::before {
+			background-color: var(--color-text-inverted);
+		}
+	}
 }
+

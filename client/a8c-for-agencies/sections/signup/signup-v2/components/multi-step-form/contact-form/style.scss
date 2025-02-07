@@ -18,6 +18,11 @@
 	a {
 		text-decoration: underline;
 	}
+
+
+	@media (prefers-color-scheme: dark) {
+		color: var(--color-text-inverted);
+	}
 }
 
 .signup-multi-step-form__name-fields {
