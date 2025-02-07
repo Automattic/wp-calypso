@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
-import { useProductsAllowsPremiumSupport } from '@automattic/help-center/src/hooks';
+import { useProductsAllowPremiumSupport } from '@automattic/help-center/src/hooks';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -63,7 +63,7 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const isPremiumSupportAllowed = useProductsAllowsPremiumSupport( responseCart.products );
+	const isPremiumSupportAllowed = useProductsAllowPremiumSupport( responseCart.products );
 
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
