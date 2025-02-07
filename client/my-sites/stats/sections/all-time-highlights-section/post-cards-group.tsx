@@ -22,10 +22,7 @@ import {
 	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
-import {
-	getProcessedText,
-	truncateWithLimit,
-} from '../../post-detail-highlights-section/text-utils';
+import { getProcessedText, truncateWithLimit } from '../../text-utils';
 import LatestPostCard from './latest-post-card';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;

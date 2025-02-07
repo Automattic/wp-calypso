@@ -5,10 +5,7 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-import {
-	getProcessedText,
-	truncateWithLimit,
-} from '../../post-detail-highlights-section/text-utils';
+import { getProcessedText, truncateWithLimit } from '../../text-utils';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
 

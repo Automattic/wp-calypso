@@ -10,7 +10,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
-import { truncateWithLimit, getProcessedText } from './text-utils';
+import { truncateWithLimit, getProcessedText } from '../text-utils';
 
 import './style.scss';
 
