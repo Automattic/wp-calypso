@@ -30,6 +30,7 @@ export function initializeViewState(
 		perPage: perPage || DEFAULT_PER_PAGE,
 		search: search || '',
 		type: sidebarMode ? 'list' : 'table',
+		showMedia: false,
 		titleField: 'domain_name',
 		descriptionField: 'domain_type',
 		fields: getFieldsByBreakpoint( isDesktop, sidebarMode ),
