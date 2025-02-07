@@ -8,7 +8,9 @@ import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
  * @returns {string} - The truncated text with an ellipsis if it exceeds the limit.
  */
 
-export function truncateWithLimit( text: string, limit: number ): string {
+const DEFAULT_TRUNCATE_LIMIT = 48;
+
+export function truncateWithLimit( text: string, limit: number = DEFAULT_TRUNCATE_LIMIT ): string {
 	if ( ! text ) {
 		return '';
 	}
