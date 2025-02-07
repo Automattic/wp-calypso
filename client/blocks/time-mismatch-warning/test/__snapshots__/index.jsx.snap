@@ -4,7 +4,7 @@ exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
 <div>
   <div
     aria-label="Notice"
-    class="notice is-warning is-dismissable is-light"
+    class="notice is-warning is-dismissable"
     role="status"
   >
     <span
