@@ -24,6 +24,7 @@ export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadP
 
 	const {
 		data: { checklist, is_dismissed: isDismissed, is_dismissible: isDismissible, title },
+		refetch,
 	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
 
 	const numberOfSteps = checklist?.length || 0;
@@ -49,5 +50,6 @@ export function useLaunchpad( { checklistSlug, launchpadContext }: UseLaunchpadP
 		launchpadTitle,
 		temporaryDismiss,
 		permanentDismiss,
+		refetch,
 	};
 }
