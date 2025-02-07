@@ -74,6 +74,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 		if ( ! organization.sites_count ) {
 			return null;
 		}
+
+		const defaultSelection = !! organization?.slug && `/reader/${ organization.slug }`;
+
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
@@ -86,6 +89,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ) ) &&
 					'sidebar__menu--selected'
 				}
+				defaultSelection={ defaultSelection }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
