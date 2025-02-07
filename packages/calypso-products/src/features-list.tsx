@@ -2466,12 +2466,13 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_STATS_BASIC_20250206,
 		getTitle: () => i18n.translate( 'Stats' ),
 		getDescription: () =>
-			i18n.translate( 'Basic integrated analytics to measure your site’s performance.' ),
+			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
 	},
 	[ FEATURE_STATS_ADVANCED_20250206 ]: {
 		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
 		getTitle: () => i18n.translate( 'Premium stats' ),
-		getDescription: () => i18n.translate( 'In-depth site analytics dashboard.' ),
+		getDescription: () =>
+			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
