@@ -10,28 +10,28 @@ const getVisibleFields = ( logType: LogType ) => {
 	return [ 'request_type', 'date', 'status', 'request_url' ];
 };
 const getFilterValue = ( view: View, fieldName: string ) =>
-	view.filters?.filter( ( filter ) => filter.field === fieldName )[ 0 ]?.value || '';
+	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
 
 function buildFilter(
 	logType: LogType,
-	severity: string,
-	requestType: string,
-	requestStatus: string
+	severity: string[],
+	requestType: string[],
+	requestStatus: string[]
 ): FilterType {
 	const filters: FilterType = {};
 
 	if ( logType === 'php' ) {
 		if ( severity ) {
-			filters.severity = [ severity ];
+			filters.severity = severity;
 		}
 	}
 
 	if ( logType === 'web' ) {
 		if ( requestType ) {
-			filters.request_type = [ requestType ];
+			filters.request_type = requestType;
 		}
 		if ( requestStatus ) {
-			filters.status = [ requestStatus ];
+			filters.status = requestStatus;
 		}
 	}
 

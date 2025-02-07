@@ -38,7 +38,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					{ value: 'Fatal error', label: translate( 'Fatal error' ) },
 				],
 				filterBy: {
-					operators: [ 'is' as Operator ],
+					operators: [ 'isAny' as Operator ],
 				},
 				render: ( { item }: { item: PHPLog } ) => {
 					const severity = item.severity;

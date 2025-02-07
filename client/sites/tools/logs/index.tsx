@@ -103,7 +103,7 @@ export const SiteLogs = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilter( logType, severity, requestType, requestStatus ),
+		filter: buildFilter( logType, [ severity ], [ requestType ], [ requestStatus ] ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
