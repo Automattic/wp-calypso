@@ -207,7 +207,7 @@ const SubscribersPage = ( {
 					{ isEnabled( 'subscribers-dataviews' ) ? (
 						// Your new dataviews component
 						<SubscriberDataViews
-							siteId={ selectedSite?.ID }
+							siteId={ selectedSite?.ID ?? null }
 							onGiftSubscription={ onGiftSubscription }
 							isUnverified={ isUnverified }
 							isStagingSite={ isStagingSite }
