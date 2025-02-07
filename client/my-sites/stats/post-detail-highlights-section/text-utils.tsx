@@ -1,6 +1,10 @@
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 
 export function truncateWithLimit( text: string, limit: number ): string {
+	if ( ! text ) {
+		return '';
+	}
+
 	// Determine if any processing is needed.
 	const trimmedText = text.trim();
 	if ( trimmedText.length <= limit ) {
