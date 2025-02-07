@@ -29,7 +29,7 @@ class SitePicker extends Component {
 				<SiteSelector
 					filter={ this.filterSites }
 					onSiteSelect={ this.handleSiteSelect }
-					isReskinned={ this.props.isReskinned }
+					isReskinned
 				/>
 			</Card>
 		);
