@@ -22,7 +22,7 @@ type FormData = {
 	specificApproach: string;
 };
 
-const BluePrintFormRadio = ( {
+const BlueprintFormRadio = ( {
 	label,
 	checked,
 	onChange,
@@ -122,7 +122,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 			>
 				<div className="blueprint-form__radio-group">
 					{ topGoalOptions.map( ( option ) => (
-						<BluePrintFormRadio
+						<BlueprintFormRadio
 							key={ `goal-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.topGoal === option.value }
@@ -138,7 +138,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 			>
 				<div className="blueprint-form__radio-group">
 					{ mainGoal2025Options.map( ( option ) => (
-						<BluePrintFormRadio
+						<BlueprintFormRadio
 							key={ `main-goal-2025-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.mainGoal2025 === option.value }
@@ -156,7 +156,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 			>
 				<div className="blueprint-form__radio-group">
 					{ workModelOptions.map( ( option ) => (
-						<BluePrintFormRadio
+						<BlueprintFormRadio
 							key={ `work-model-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.workModel === option.value }
