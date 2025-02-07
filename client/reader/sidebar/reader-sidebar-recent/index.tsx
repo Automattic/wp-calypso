@@ -105,6 +105,7 @@ const ReaderSidebarRecent = ( {
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
+			defaultSelection="/reader"
 		>
 			<li>
 				<button
