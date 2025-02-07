@@ -772,9 +772,7 @@ const Settings = ( {
 		}
 		return (
 			<>
-				{ ! domain.isGravatarRestrictedDomain && (
-					<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
-				) }
+				<DomainEmailInfoCard selectedSite={ selectedSite } domain={ domain } />
 				{ ! domain.isHundredYearDomain && (
 					<DomainTransferInfoCard selectedSite={ selectedSite } domain={ domain } />
 				) }
