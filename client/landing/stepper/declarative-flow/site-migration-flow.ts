@@ -18,6 +18,7 @@ import { useSiteData } from '../hooks/use-site-data';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, SITE_STORE, ONBOARD_STORE } from '../stores';
 import { goToCheckout } from '../utils/checkout';
+import { persistQueryParams } from '../utils/persist-query-params';
 import { STEPS } from './internals/steps';
 import { getSiteIdParam } from './internals/steps-repository/import/util';
 import { type SiteMigrationIdentifyAction } from './internals/steps-repository/site-migration-identify';
@@ -162,7 +163,12 @@ const siteMigration: Flow = {
 							}
 
 							if ( from ) {
-								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
+								return navigate(
+									addQueryArgs(
+										{ from },
+										persistQueryParams( STEPS.SITE_CREATION_STEP.slug, urlQueryParams )
+									)
+								);
 							}
 							return navigate( 'error' );
 						}
@@ -171,7 +177,7 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ from: from, siteSlug, siteId },
-							STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+							persistQueryParams( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug, urlQueryParams )
 						)
 					);
 				}
@@ -245,7 +251,7 @@ const siteMigration: Flow = {
 							return exitFlow(
 								addQueryArgs(
 									{ engine: 'wordpress', ref: 'site-migration' },
-									`/import/${ siteSlug }`
+									persistQueryParams( `/import/${ siteSlug }`, urlQueryParams )
 								)
 							);
 						}
@@ -259,7 +265,7 @@ const siteMigration: Flow = {
 									option: 'content',
 									backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }`,
 								},
-								`/setup/site-setup/importerWordpress`
+								persistQueryParams( '/setup/site-setup/importerWordpress', urlQueryParams )
 							)
 						);
 					}
@@ -271,7 +277,7 @@ const siteMigration: Flow = {
 								siteSlug,
 								from: fromQueryParam,
 							},
-							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+							persistQueryParams( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, urlQueryParams )
 						)
 					);
 				}
@@ -288,7 +294,7 @@ const siteMigration: Flow = {
 									destination: providedDependencies?.destination,
 									how: providedDependencies?.how as string,
 								},
-								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
+								persistQueryParams( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, urlQueryParams )
 							)
 						);
 					}
@@ -302,7 +308,7 @@ const siteMigration: Flow = {
 									from: fromQueryParam,
 									siteId,
 								},
-								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+								persistQueryParams( STEPS.SITE_MIGRATION_CREDENTIALS.slug, urlQueryParams )
 							)
 						);
 					}
@@ -311,7 +317,7 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, siteSlug, from: fromQueryParam },
-							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
+							persistQueryParams( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, urlQueryParams )
 						)
 					);
 				}
