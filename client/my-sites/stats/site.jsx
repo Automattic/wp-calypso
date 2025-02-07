@@ -32,6 +32,7 @@ import {
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -544,7 +545,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			) }
 			<NavigationHeader
 				className="stats__section-header modernized-header"
-				title={ translate( 'Jetpack Stats' ) }
+				title={ STATS_PRODUCT_NAME }
 				subtitle={ translate(
 					"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 					{
@@ -867,7 +868,7 @@ const StatsSite = ( props ) => {
 	); // Track the last viewed tab.
 
 	return (
-		<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
+		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
 			{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 			) }
@@ -880,7 +881,7 @@ const StatsSite = ( props ) => {
 			) }
 			{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 			{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker
 				path={ `/stats/${ period }/:site` }
 				title={ `Stats > ${ titlecase( period ) }` }
