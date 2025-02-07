@@ -60,10 +60,17 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 	}, [ siteId, gmtOffset ] );
 
 	let chartData = useMemo( () => {
-		return Object.keys( viewsData ).map( ( eachMinute ) => {
+		return Object.keys( viewsData ).map( ( eachMinute, idx ) => {
 			const lastMinute = moment( eachMinute )
 				.subtract( 1, 'minute' )
 				.format( 'YYYY-MM-DD HH:mm:00' );
+
+			// Reset the data if the current minute is not continuous with the previous minute,
+			// which usually happens when the device is idle for a while.
+			if ( viewsData[ lastMinute ] === undefined && idx !== 0 ) {
+				setViewsData( {} );
+			}
+
 			let diffViews: number = 0;
 
 			// First minute has no previous minute to compare to.
