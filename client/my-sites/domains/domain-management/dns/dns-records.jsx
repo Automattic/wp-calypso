@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { englishLocales } from '@automattic/i18n-utils';
 import { Icon, info } from '@wordpress/icons';
 import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
@@ -207,6 +208,10 @@ class DnsRecords extends Component {
 			return null;
 		}
 
+		recordTracksEvent( 'calypso_domain_management_dns_default_a_records_notice_show', {
+			domain_name: this.props.selectedDomainName,
+		} );
+
 		return (
 			<div className="dns-records-notice">
 				<Icon
@@ -241,6 +246,10 @@ class DnsRecords extends Component {
 		if ( this.hasDefaultCnameRecord() ) {
 			return null;
 		}
+
+		recordTracksEvent( 'calypso_domain_management_dns_default_cname_record_notice_show', {
+			domain_name: this.props.selectedDomainName,
+		} );
 
 		return (
 			<div className="dns-records-notice">
