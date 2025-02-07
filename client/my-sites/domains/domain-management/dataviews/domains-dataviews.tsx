@@ -99,6 +99,12 @@ export const DomainsDataViews = ( {
 
 	const onChangeSelection = ( items: string[] ) => {
 		setSelectedIds( items );
+		if ( view.type === 'list' ) {
+			const selectedItem = domains?.find( ( d ) => getDomainId( d ) === items[ 0 ] );
+			if ( selectedItem ) {
+				onClickDomain( selectedItem );
+			}
+		}
 	};
 
 	return (
