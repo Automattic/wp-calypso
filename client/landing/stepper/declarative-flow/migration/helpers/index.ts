@@ -38,7 +38,12 @@ export const goToImporter = ( {
 	from,
 	ref,
 }: GoToImporterParams ) => {
-	const path = getFinalImporterUrl( siteSlug, from || '', platform, backToFlow );
+	const path = getFinalImporterUrl( {
+		targetSlug: siteSlug,
+		fromSite: from || '',
+		platform,
+		backToFlow,
+	} );
 
 	if ( isWpAdminImporter( path ) ) {
 		return goTo( path, replaceHistory );

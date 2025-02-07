@@ -26,7 +26,11 @@ const ImportReady: Step = function ImportStep( props ) {
 	 ↓ Methods
 	 */
 	const goToImporterPage = () => {
-		const url = getFinalImporterUrl( siteSlug as string, urlData.url, urlData.platform );
+		const url = getFinalImporterUrl( {
+			targetSlug: siteSlug as string,
+			fromSite: urlData.url,
+			platform: urlData.platform,
+		} );
 
 		navigation.submit?.( { url, platform: urlData.platform } );
 	};

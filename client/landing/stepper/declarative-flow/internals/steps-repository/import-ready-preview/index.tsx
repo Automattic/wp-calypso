@@ -36,7 +36,11 @@ const ImportReadyPreview: Step = function ImportStep( props ) {
 			return;
 		}
 
-		const url = getFinalImporterUrl( siteSlug as string, urlData.url, urlData.platform );
+		const url = getFinalImporterUrl( {
+			targetSlug: siteSlug as string,
+			fromSite: urlData.url,
+			platform: urlData.platform,
+		} );
 		navigation.submit?.( { url } );
 	}, [ urlData, siteSlug, navigation ] );
 

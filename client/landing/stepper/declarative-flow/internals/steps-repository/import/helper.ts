@@ -11,13 +11,17 @@ import { getImporterEngines } from 'calypso/lib/importer/importer-config';
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { BASE_ROUTE } from './config';
 
-export function getFinalImporterUrl(
-	targetSlug: string,
-	fromSite: string,
-	platform: ImporterPlatform,
-	backToFlow?: string,
-	customizedActionGoToFlow?: string
-) {
+interface GetFinalImporterUrlParams {
+	targetSlug: string;
+	fromSite: string;
+	platform: ImporterPlatform;
+	backToFlow?: string;
+	customizedActionGoToFlow?: string;
+}
+
+export function getFinalImporterUrl( params: GetFinalImporterUrlParams ) {
+	const { targetSlug, fromSite, platform, backToFlow, customizedActionGoToFlow } = params;
+
 	let importerUrl;
 	const encodedFromSite = encodeURIComponent( fromSite );
 	const productImporters = getImporterEngines();
