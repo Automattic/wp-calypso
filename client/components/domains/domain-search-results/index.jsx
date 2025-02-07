@@ -318,7 +318,7 @@ class DomainSearchResults extends Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					isReskinned={ this.props.isReskinned }
+					hideMatchReasons={ this.props.hideMatchReasons }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
@@ -354,7 +354,7 @@ class DomainSearchResults extends Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						isReskinned={ this.props.isReskinned }
+						hideMatchReasons={ this.props.hideMatchReasons }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
@@ -390,13 +390,12 @@ class DomainSearchResults extends Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
-				{ ! this.props.isReskinned && this.props.children }
 				{ suggestionCount }
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
 				{ this.props.showSkipButton && domainSkipSuggestion }
-				{ this.props.isReskinned && this.props.children }
+				{ this.props.children }
 			</div>
 		);
 	}
