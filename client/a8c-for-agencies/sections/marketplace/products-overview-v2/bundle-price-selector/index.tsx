@@ -1,10 +1,6 @@
-import { Button } from '@wordpress/components';
-import { chevronDown } from '@wordpress/icons';
-import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useRef, useState } from 'react';
-import PopoverMenu from 'calypso/components/popover-menu';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { SelectControl } from '@wordpress/components';
+import { numberFormat, useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 
 import './style.scss';
 
@@ -16,17 +12,6 @@ type Props = {
 
 export function BundlePriceSelector( { options, value, onChange }: Props ) {
 	const translate = useTranslate();
-	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
-
-	const buttonRef = useRef( null );
-
-	const onSelect = useCallback(
-		( option: number ) => {
-			setIsMenuOpen( false );
-			onChange( option );
-		},
-		[ onChange ]
-	);
 
 	const getDiscountPercentage = useCallback(
 		( bundleSize: number ) => {
@@ -64,43 +49,24 @@ export function BundlePriceSelector( { options, value, onChange }: Props ) {
 	);
 
 	return (
-		<>
-			<div className="bundle-price-selector">
-				<div className="bundle-price-selector__label">{ translate( 'Bundle & save' ) }</div>
-				<Button
-					ref={ buttonRef }
-					className="bundle-price-selector__menu-button"
-					variant="secondary"
-					onClick={ () => setIsMenuOpen( ! isMenuOpen ) }
-					icon={ chevronDown }
-					iconPosition="right"
-				>
-					<span>
-						{ value > 1 ? getLabel( value ) : translate( 'Explore bundle discounts to apply' ) }
-					</span>
-				</Button>
-			</div>
-
-			<PopoverMenu
-				isVisible={ isMenuOpen }
-				onClose={ () => setIsMenuOpen( false ) }
-				context={ buttonRef.current }
-				className="bundle-price-selector__popover"
-				autoPosition={ false }
-				position="bottom right"
-			>
-				{ options.map( ( option ) => (
-					<PopoverMenuItem
-						className={ clsx( {
-							'is-selected': value === option,
-						} ) }
-						onClick={ () => onSelect( option ) }
-						key={ `bundle-price-option-${ option }` }
-					>
-						{ getLabel( option ) }
-					</PopoverMenuItem>
-				) ) }
-			</PopoverMenu>
-		</>
+		<SelectControl
+			__next40pxDefaultSize
+			__nextHasNoMarginBottom
+			label={ translate( 'Bundle size' ) }
+			labelPosition="side"
+			value={ value }
+			onChange={ onChange }
+			options={ [
+				{
+					disabled: true,
+					label: translate( 'Explore bundle discounts to apply' ),
+					value: '1',
+				},
+				...options.map( ( option ) => ( {
+					label: getLabel( option ) as string,
+					value: `${ numberFormat( option ) }`,
+				} ) ),
+			] }
+		/>
 	);
 }

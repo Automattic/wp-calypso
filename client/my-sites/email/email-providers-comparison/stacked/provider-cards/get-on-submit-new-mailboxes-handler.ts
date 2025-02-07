@@ -12,6 +12,7 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
+import { getEmailCheckoutPath } from 'calypso/my-sites/email/paths';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
@@ -26,6 +27,7 @@ export type GetOnSubmitNewMailboxesHandlerProps = {
 	shoppingCartManager: ShoppingCartManagerActions;
 	siteSlug: string;
 	source: string;
+	currentRoute: string;
 };
 
 const getEmailProductPropertiesForUpsell = (
@@ -51,6 +53,7 @@ const getOnSubmitNewMailboxesHandler =
 		shoppingCartManager,
 		siteSlug,
 		source,
+		currentRoute,
 	}: GetOnSubmitNewMailboxesHandlerProps ) =>
 	async ( mailboxOperations: MailboxOperations ) => {
 		setAddingToCart( true );
@@ -93,10 +96,17 @@ const getOnSubmitNewMailboxesHandler =
 			  )
 			: getEmailProductPropertiesForUpsell( emailProduct, numberOfMailboxes );
 
+		const checkoutPath = getEmailCheckoutPath(
+			siteSlug,
+			domain.name,
+			currentRoute,
+			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
+		);
+
 		shoppingCartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, emailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + siteSlug );
+				page( checkoutPath );
 			} )
 			.finally( () => setAddingToCart( false ) )
 			.catch( () => {

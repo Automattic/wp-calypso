@@ -71,15 +71,19 @@ export function createActions() {
 					[ 'parse_only', String( parseOnly ) ] as [ string, string ],
 				];
 
-				const data: ImportSubscribersResponse = await wpcomProxyRequest( {
+				const data = ( await wpcomProxyRequest( {
 					path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
 					method: 'POST',
 					apiNamespace: 'wpcom/v2',
 					token: typeof token === 'string' ? token : undefined,
 					formData: formDataEntries as ( string | File )[][],
-				} );
+				} ) ) as ImportSubscribersResponse & { error?: { code: string; message: string } };
 
-				dispatch.importCsvSubscribersStartSuccess( siteId, data.upload_id );
+				if ( data.upload_id ) {
+					dispatch.importCsvSubscribersStartSuccess( siteId, data.upload_id );
+				} else {
+					dispatch.importCsvSubscribersStartFailed( siteId, data as ImportSubscribersError );
+				}
 			} catch ( error ) {
 				dispatch.importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
 			}

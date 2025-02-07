@@ -49,6 +49,7 @@ const DomainHeader = ( {
 			mobileItem={ mobileItem }
 			title={ titleOverride || items[ items.length - 1 ].label }
 			subtitle={ subtitleOverride || items[ items.length - 1 ].subtitle }
+			className="domain-header"
 		>
 			{ renderButtons() }
 		</NavigationHeader>

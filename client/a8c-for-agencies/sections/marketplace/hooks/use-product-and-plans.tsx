@@ -81,14 +81,15 @@ const getDisplayableFeaturedProducts = (
 	filteredProductsAndBundles: APIProductFamilyProduct[]
 ) => {
 	const featuredProductSlugs = [
-		'woocommerce-advanced-notifications',
-		'jetpack-boost',
-		'woocommerce-bulk-stock-management',
+		'woocommerce-woopayments',
+		'jetpack-security-t1',
+		'woocommerce-subscriptions',
 	]; // For now, we hardcode this until we understand how we want pick featured products.
 
-	return filteredProductsAndBundles.filter( ( product ) =>
-		featuredProductSlugs.includes( product.slug )
-	);
+	// We do it this way to ensure we follow the same order as the featuredProductSlugs.
+	return featuredProductSlugs
+		.map( ( slug ) => filteredProductsAndBundles.find( ( product ) => product.slug === slug ) )
+		.filter( ( product ) => product !== undefined ) as APIProductFamilyProduct[];
 };
 
 const getDisplayableWoocommerceExtensions = (

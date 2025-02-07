@@ -3,6 +3,7 @@ import { Button, Icon } from '@wordpress/components';
 import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import useFetchScheduleCallLink from 'calypso/a8c-for-agencies/data/agencies/use-fetch-schedule-call-link';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -18,10 +19,22 @@ export default function OverviewSidebarGrowthAccelerator() {
 
 	const dispatch = useDispatch();
 
+	const { refetch: fetchScheduleCallLink, isFetching: isFetchingScheduleCallLink } =
+		useFetchScheduleCallLink();
+
 	const onRequestCallClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_overview_growth_accelerator_schedule_call_click' ) );
 		dispatch( savePreference( GROWTH_ACCELERATOR_REQUESTED_PREFERENCE, true ) );
-	}, [ dispatch ] );
+
+		fetchScheduleCallLink().then( ( result ) => {
+			window.open(
+				result.data
+					? result.data
+					: 'https://savvycal.com/automattic-for-agencies/agency-success?utm_campaign=overview',
+				'_blank'
+			);
+		} );
+	}, [ dispatch, fetchScheduleCallLink ] );
 
 	const onNotInterestedClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_overview_growth_accelerator_not_interested_click' ) );
@@ -56,9 +69,8 @@ export default function OverviewSidebarGrowthAccelerator() {
 				<Button
 					className="overview__growth-accelerator-footer-schedule-call"
 					variant="primary"
-					href="https://savvycal.com/automattic-for-agencies/agency-success?utm_campaign=overview"
-					target="_blank"
-					rel="noopener noreferrer"
+					disabled={ isFetchingScheduleCallLink }
+					isBusy={ isFetchingScheduleCallLink }
 					onClick={ onRequestCallClick }
 				>
 					{ translate( 'Schedule a call' ) }

@@ -99,7 +99,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	const geoMode = GEO_MODES[ selectedOption ];
-	const title = optionLabels[ selectedOption ]?.selectLabel;
+	const title = translate( 'Locations' );
 
 	const { supportsLocationsStats: supportsLocationsStatsFeature } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
@@ -218,19 +218,22 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const titleTooltip = (
 		<StatsInfoArea>
-			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-				comment: '{{link}} links to support documentation.',
-				components: {
-					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ supportUrl }#countries` ) }
-						/>
-					),
-				},
-				context: 'Stats: Link in a popover for Countries module when the module has data',
-			} ) }
+			{ translate(
+				'Visitors‘ {{link}}viewing location{{/link}} by countries, regions and cities.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={ localizeUrl( `${ supportUrl }#countries` ) }
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Countries module when the module has data',
+				}
+			) }
 		</StatsInfoArea>
 	);
 
@@ -331,7 +334,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ ! isRequestingData && ! hasLocationData && ! shouldGate && (
 				// show empty state
 				<StatsCard
-					title={ translate( 'Locations' ) }
+					title={ title }
 					isEmpty
 					emptyMessage={ emptyMessage }
 					footerAction={

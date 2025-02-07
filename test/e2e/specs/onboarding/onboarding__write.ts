@@ -264,6 +264,7 @@ describe( DataHelper.createSuiteTitle( 'Goals-First Onboarding: Write Focus' ), 
 		it( 'Editor loads', async function () {
 			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
+			await editorPage.closeWelcomeGuideIfNeeded();
 
 			await page.waitForURL( new RegExp( newSiteDetails.blog_details.site_slug ) );
 		} );
