@@ -102,6 +102,7 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			type: 'datetime',
 			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
 			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+			render: ( { item }: { item: ServerLog } ) => getFormattedDate( item.date ),
 		},
 		{
 			id: 'status',
