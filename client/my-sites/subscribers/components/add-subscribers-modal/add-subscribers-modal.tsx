@@ -19,11 +19,11 @@ import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
-import './style.scss';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
+import './style.scss';
 
 type AddSubscribersModalProps = {
 	site: SiteDetails;

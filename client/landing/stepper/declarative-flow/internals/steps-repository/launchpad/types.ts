@@ -36,6 +36,7 @@ export type TaskId =
 	| 'first_post_published'
 	| 'first_post_published_newsletter'
 	| 'subscribers_added'
+	| 'add_first_subscribers'
 	| 'plan_selected'
 	| 'plan_completed'
 	| 'newsletter_plan_created'
