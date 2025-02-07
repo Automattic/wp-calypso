@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -11,6 +12,7 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
 import DiscoverNavigation from './discover-navigation';
+import DiscoverNavigationV2 from './discover-navigation-v2';
 import {
 	getDiscoverStreamTags,
 	DEFAULT_TAB,
@@ -99,11 +101,15 @@ const DiscoverStream = ( props ) => {
 	return (
 		<Stream { ...streamProps }>
 			<DiscoverHeader selectedTab={ selectedTab } width={ props.width } />
-			<DiscoverNavigation
-				width={ props.width }
-				selectedTab={ selectedTab }
-				recommendedTags={ interestTags }
-			/>
+			{ config.isEnabled( 'reader/discovery-v2' ) ? (
+				<DiscoverNavigationV2 selectedTab={ selectedTab } />
+			) : (
+				<DiscoverNavigation
+					width={ props.width }
+					selectedTab={ selectedTab }
+					recommendedTags={ interestTags }
+				/>
+			) }
 		</Stream>
 	);
 };
