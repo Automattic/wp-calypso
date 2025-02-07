@@ -18,7 +18,7 @@ export const loadRemoveDuplicateViewsExperimentAssignment = async ( state: AppSt
 	 * This is for escape hatch users to override the experiment assignment: p7DVsv-m73-p2
 	 */
 	const overrideAssignment = getIsRemoveDuplicateViewsExperimentOverride( state );
-	if ( ! overrideAssignment ) {
+	if ( overrideAssignment ) {
 		return overrideAssignment;
 	}
 
