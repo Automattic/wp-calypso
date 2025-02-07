@@ -1,7 +1,8 @@
 .signup-multi-step-form {
 	.a4a-form {
-		padding: 48px 24px;
 		max-width: 600px;
+		margin-block-start: 56px;
+		box-sizing: border-box;
 		width: 100%;
 		gap: 16px;
 	}
@@ -20,5 +21,14 @@
 			color: var(--color-neutral-60);
 			max-width: 460px;
 		}
+	}
+
+	.form-select,
+    .searchable-dropdown {
+        width: 100%;
+    }
+
+	.form-fieldset {
+		margin: 0;
 	}
 }

@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
+import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 
 type Props = {
 	onContinue: () => void;
@@ -16,11 +17,11 @@ const FinishSignupSurvey: React.FC< Props > = ( { onContinue } ) => {
 				'We have sent you an email with more details about the program and instructions for logging in. You will also receive your blueprint in the coming days; keep an eye out for it!'
 			) }
 		>
-			<div>
-				<Button variant="primary" onClick={ onContinue }>
+			<FormFooter>
+				<Button variant="primary" onClick={ onContinue } __next40pxDefaultSize>
 					{ translate( 'Close survey' ) }
 				</Button>
-			</div>
+			</FormFooter>
 		</Form>
 	);
 };

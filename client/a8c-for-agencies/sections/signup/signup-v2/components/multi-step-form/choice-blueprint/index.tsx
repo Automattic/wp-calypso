@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
+import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
@@ -25,14 +26,24 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 		>
 			<p className="choice-blueprint__text">{ translate( 'Ready?' ) }</p>
 
-			<div className="choice-blueprint__buttons">
-				<Button className="choice-blueprint__button" variant="primary" onClick={ onContinue }>
+			<FormFooter>
+				<Button
+					className="choice-blueprint__button"
+					variant="primary"
+					onClick={ onContinue }
+					__next40pxDefaultSize
+				>
 					{ translate( 'Yes' ) }
 				</Button>
-				<Button className="choice-blueprint__button" variant="secondary" onClick={ onSkip }>
+				<Button
+					className="choice-blueprint__button"
+					variant="secondary"
+					onClick={ onSkip }
+					__next40pxDefaultSize
+				>
 					{ translate( 'Not right now' ) }
 				</Button>
-			</div>
+			</FormFooter>
 		</Form>
 	);
 };

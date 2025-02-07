@@ -1,37 +1,31 @@
-.signup-multi-step-form__fields {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	overflow-y: auto;
-	flex: 1;
-}
-
 .contact-form__phone-input {
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 16px;
 
-    .form-phone-input__country {   
+    .form-phone-input__country {
         flex: 1;
     }
 
-    .form-phone-input__phone-number {   
+    .form-phone-input__phone-number {
         flex: 1;
     }
 }
 
-.signup-contact-form__tos {
-    p {
-        font-size: 0.875rem;
-    }
+.signup-contact-form__tos  p {
+	@include a4a-font-body-sm;
+
+	a {
+		text-decoration: underline;
+	}
 }
 
 .signup-multi-step-form__name-fields {
     display: flex;
     flex-direction: row;
-	gap: 24px;
+	gap: 16px;
 
-    div {
+    > * {
         flex-grow: 1;
     }
 }
@@ -43,57 +37,11 @@
 	margin-top: 16px;
 
 	a {
-		color: var(--studio-wordpress-blue);
+		color: var(--color-primary);
 		text-decoration: none;
 	}
 
 	.signup-multi-step-form__terms a:hover {
 		text-decoration: underline;
 	}
-}
-
-// Form field styles
-.a4a-form__section-field {
-	margin-bottom: 0;
-	padding: 2px;
-}
-
-.a4a-form__section-field-required {
-	color: var(--studio-red-50);
-	margin-left: 4px;
-}
-
-.a4a-form__section-field-optional {
-	color: var(--color-neutral-20);
-	font-weight: normal;
-	margin-left: 4px;
-}
-
-.form-text-input {
-	width: 100%;
-	padding: 8px 12px;
-	border: 1px solid var(--color-neutral-10);
-	border-radius: 4px;
-	font-size: 1rem;
-	transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-text-input:focus {
-	border-color: var(--studio-wordpress-blue);
-	box-shadow: 0 0 0 2px var(--studio-wordpress-blue-20);
-	outline: none;
-}
-
-.form-text-input.is-error {
-	border-color: var(--studio-red-50);
-}
-
-.a4a-form__error {
-	color: var(--studio-red-50);
-	font-size: 0.75rem;
-	margin-top: 4px;
-}
-
-.a4a-form__error.hidden {
-	display: none;
 }
