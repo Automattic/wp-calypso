@@ -240,7 +240,6 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
-		'order-attribution': translate( 'Order Attribution' ),
 	};
 
 	const listFormatter = new Intl.ListFormat( langSlug, {
@@ -248,7 +247,7 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 		type: 'conjunction',
 	} );
 
-	const defaultTitle = listFormatter.format( Object.values( allowedPluginNames ) );
+	const defaultTitle = translate( 'your selection' );
 
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
