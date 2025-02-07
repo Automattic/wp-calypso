@@ -4,9 +4,9 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { addQueryArgs } from 'calypso/lib/url';
+import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from './helper';
-import './discover-navigation-v2.scss';
+import './style.scss';
 
 interface Tab {
 	slug: string;
@@ -17,7 +17,7 @@ interface Props {
 	selectedTab: string;
 }
 
-const DiscoverNavigationV2: React.FC< Props > = ( { selectedTab } ) => {
+const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 	const recordTabClick = () => {
 		recordAction( 'click_discover_tab' );
 		recordGaEvent( 'Clicked Discover Tab' );
@@ -60,8 +60,12 @@ const DiscoverNavigationV2: React.FC< Props > = ( { selectedTab } ) => {
 	const selectedTabData = tabs.find( ( tab ) => tab.slug === selectedTab );
 
 	return (
-		<SectionNav selectedText={ selectedTabData?.title }>
-			<NavTabs>
+		<SectionNav
+			className="discover-navigation-v2"
+			selectedText={ selectedTabData?.title }
+			enforceTabsView
+		>
+			<NavTabs hasHorizontalScroll>
 				{ tabs.map( ( tab ) => (
 					<NavItem
 						key={ tab.slug }
