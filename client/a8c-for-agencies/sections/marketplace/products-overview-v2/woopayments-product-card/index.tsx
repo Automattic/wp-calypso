@@ -1,4 +1,6 @@
 import { Button } from '@wordpress/components';
+import { check } from '@wordpress/icons';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
@@ -134,7 +136,12 @@ export default function WooPaymentsProductCard( {
 						</div>
 					</div>
 					<div className="product-card__buttons">
-						<Button variant="primary" tabIndex={ -1 }>
+						<Button
+							className={ clsx( { 'is-selected': isSelected } ) }
+							variant="primary"
+							tabIndex={ -1 }
+							icon={ isSelected ? check : undefined }
+						>
 							{ ctaLabel }
 						</Button>
 

@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import '../product-card/style';
 
 $woocommerce-purple-50: #720EEC;
@@ -24,11 +26,31 @@ $woocommerce-purple-50: #720EEC;
 
 	.product-card__description {
 		@include a4a-font-body-lg;
-		margin-block-end: 65px;
+
+		@include break-large {
+			margin-block-end: 32px;
+		}
 	}
 
 	.components-button.is-primary:not(:disabled) {
-		color: $woocommerce-purple-50;
-		background-color: var(--color-surface);
+		&,
+		&:focus,
+		&:focus-visible {
+			color: $woocommerce-purple-50;
+			background-color: var(--color-surface);
+			border: none;
+			outline: none;
+			box-shadow: none;
+		}
+
+		&.is-selected {
+			background-color: $woocommerce-purple-50;
+			color: var(--color-text-inverted);
+			border: 1px solid var(--color-surface);
+		}
+	}
+
+	.license-lightbox-link {
+		padding-inline: 8px;
 	}
 }
