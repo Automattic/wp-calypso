@@ -193,6 +193,12 @@ export const setShowSupportDoc = function* ( link: string, postId?: number, blog
 	yield setIsMinimized( false );
 };
 
+export const setAllowPremiumSupport = ( allow: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		allow,
+	} ) as const;
+
 export type HelpCenterAction =
 	| ReturnType<
 			| typeof setShowMessagingLauncher
@@ -212,5 +218,6 @@ export type HelpCenterAction =
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
+			| typeof setAllowPremiumSupport
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

@@ -42,3 +42,6 @@ export const EMAIL_SUPPORT_LOCALES = [
 	'sv-fi',
 	'sv-se',
 ];
+
+// Product slugs that are eligible for premium support during checkout
+export const PREMIUM_SUPPORT_PRODUCT_SLUGS = [ 'wp_com_hundred_year_bundle_centennially' ];

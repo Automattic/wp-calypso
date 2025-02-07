@@ -55,10 +55,14 @@ const ContactContainer = styled.div`
 	}
 `;
 
-export function DefaultMasterbarContact() {
+export function DefaultMasterbarContact( {
+	allowPremiumSupport = false,
+}: {
+	allowPremiumSupport?: boolean;
+} ) {
 	const translate = useTranslate();
 
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setAllowPremiumSupport } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
@@ -69,6 +73,7 @@ export function DefaultMasterbarContact() {
 			location: 'thank-you-help-center',
 		} );
 
+		setAllowPremiumSupport( allowPremiumSupport );
 		setShowHelpCenter( ! isShowingHelpCenter );
 	};
 
