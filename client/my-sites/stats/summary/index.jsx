@@ -175,7 +175,6 @@ class StatsSummary extends Component {
 				title = translate( 'Locations' );
 				path = 'locations';
 				statType = 'statsCountryViews';
-
 				summaryView = (
 					<Fragment key="countries-summary">
 						{ this.renderSummaryHeader( path, statType, false, moduleQuery ) }
@@ -185,6 +184,7 @@ class StatsSummary extends Component {
 							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
+							initialGeoMode={ urlParams.get( 'geoMode' ) }
 						/>
 					</Fragment>
 				);
