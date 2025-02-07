@@ -1,5 +1,3 @@
-import { PLAN_100_YEARS } from '@automattic/calypso-products';
-
 export const SUPPORT_BLOG_ID = 9619154;
 
 /**
@@ -44,6 +42,3 @@ export const EMAIL_SUPPORT_LOCALES = [
 	'sv-fi',
 	'sv-se',
 ];
-
-// Product slugs that are eligible for premium support during checkout
-export const PREMIUM_SUPPORT_PRODUCT_SLUGS = [ PLAN_100_YEARS ];

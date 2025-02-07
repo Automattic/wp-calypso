@@ -1,6 +1,5 @@
 import { WordPressWordmark } from '@automattic/components';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
-import { PREMIUM_SUPPORT_PRODUCT_SLUGS } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import clsx from 'clsx';
@@ -55,9 +54,6 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-	const isPremiumSupportEligible = responseCart.products.some( ( product ) =>
-		PREMIUM_SUPPORT_PRODUCT_SLUGS.includes( product.product_slug )
-	);
 
 	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) =>
 		leaveCheckout( {
@@ -118,9 +114,7 @@ const CheckoutMasterbar = ( {
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
 			{ title && <Item className="masterbar__item-title">{ title }</Item> }
-			{ loadHelpCenterIcon && (
-				<DefaultMasterbarContact allowPremiumSupport={ isPremiumSupportEligible } />
-			) }
+			{ loadHelpCenterIcon && <DefaultMasterbarContact /> }
 			<CheckoutModal
 				title={ modalTitleText }
 				copy={ modalBodyText }
