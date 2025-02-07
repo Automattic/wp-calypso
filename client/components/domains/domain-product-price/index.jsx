@@ -17,7 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class DomainProductPrice extends Component {
+export class DomainProductPrice extends Component {
 	static propTypes = {
 		isLoading: PropTypes.bool,
 		price: PropTypes.string,
@@ -34,42 +34,6 @@ class DomainProductPrice extends Component {
 	static defaultProps = {
 		isMappingProduct: false,
 	};
-
-	renderFreeWithPlanText() {
-		const { isMappingProduct, translate } = this.props;
-
-		let message;
-		switch ( this.props.rule ) {
-			case 'FREE_WITH_PLAN':
-				if ( isMappingProduct ) {
-					message = translate( 'Free with your plan' );
-				} else {
-					return this.renderReskinFreeWithPlanText();
-				}
-				break;
-			case 'INCLUDED_IN_HIGHER_PLAN':
-				if ( isMappingProduct ) {
-					message = translate( 'Included in paid plans' );
-				} else {
-					return this.renderReskinFreeWithPlanText();
-				}
-				break;
-			case 'UPGRADE_TO_HIGHER_PLAN_TO_BUY':
-				message = translate( '%(planName)s plan required', {
-					args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
-				} );
-				break;
-		}
-
-		return <div className="domain-product-price__free-text">{ message }</div>;
-	}
-
-	renderFreeWithPlanPrice() {
-		if ( this.props.isMappingProduct ) {
-			return;
-		}
-		return this.renderReskinDomainPrice();
-	}
 
 	renderRenewalPrice() {
 		const { price, renewPrice, translate } = this.props;
@@ -88,61 +52,15 @@ class DomainProductPrice extends Component {
 		}
 	}
 
-	renderReskinFreeWithPlanText() {
-		const {
-			isMappingProduct,
-			translate,
-			isCurrentPlan100YearPlan,
-			isBusinessOrEcommerceMonthlyPlan,
-		} = this.props;
-
-		const domainPriceElement = ( message ) => (
-			<div className="domain-product-price__free-text">{ message }</div>
-		);
-
-		if ( isMappingProduct ) {
-			return domainPriceElement( translate( 'Included in paid plans' ) );
-		}
-
-		if ( isCurrentPlan100YearPlan ) {
-			return domainPriceElement( translate( 'Free with your plan' ) );
-		}
-
-		if ( isBusinessOrEcommerceMonthlyPlan ) {
-			return domainPriceElement(
-				<>
-					<span className="domain-product-price__free-price">
-						{ translate( 'Free domain for one year' ) }
-					</span>
-				</>
-			);
-		}
-
-		const message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
-			components: { span: <span className="domain-product-price__free-price" /> },
-		} );
-
-		return domainPriceElement( message );
-	}
-
-	renderReskinDomainPrice() {
-		const priceText = this.props.translate( '%(cost)s/year', {
-			args: { cost: this.props.price },
-		} );
-
-		return (
-			<div className="domain-product-price__price">
-				<del>{ priceText }</del>
-			</div>
-		);
-	}
-
 	// This method returns "Free for the first year" text (different from "Free with plan")
 	renderFreeForFirstYear() {
 		const { translate } = this.props;
 
 		const className = clsx( 'domain-product-price', 'is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
+		} );
+		const priceText = this.props.translate( '%(cost)s/year', {
+			args: { cost: this.props.price },
 		} );
 
 		return (
@@ -152,29 +70,61 @@ class DomainProductPrice extends Component {
 						{ translate( 'Free for the first year' ) }
 					</span>
 				</div>
-				{ this.renderReskinDomainPrice() }
+				<div className="domain-product-price__price">
+					<del>{ priceText }</del>
+				</div>
 			</div>
 		);
 	}
 
 	renderFreeWithPlan() {
-		const className = clsx( 'domain-product-price', 'is-free-domain', {
+		const {
+			isMappingProduct,
+			translate,
+			isCurrentPlan100YearPlan,
+			isBusinessOrEcommerceMonthlyPlan,
+		} = this.props;
+
+		const className = clsx( 'domain-product-price is-free-domain', {
 			'domain-product-price__domain-step-signup-flow': this.props.showStrikedOutPrice,
 		} );
 
-		if ( this.props.isReskinned ) {
-			return (
-				<div className={ className }>
-					{ this.renderReskinFreeWithPlanText() }
-					{ this.renderReskinDomainPrice() }
-				</div>
+		let message;
+		if (
+			( isMappingProduct && this.props.rule === 'FREE_WITH_PLAN' ) ||
+			isCurrentPlan100YearPlan
+		) {
+			message = translate( 'Free with your plan' );
+		} else if ( isMappingProduct ) {
+			message = translate( 'Included in paid plans' );
+		} else if ( isBusinessOrEcommerceMonthlyPlan ) {
+			message = (
+				<span className="domain-product-price__free-price">
+					{ translate( 'Free domain for one year' ) }
+				</span>
 			);
+		} else if ( this.props.rule === 'UPGRADE_TO_HIGHER_PLAN_TO_BUY' ) {
+			message = translate( '%(planName)s plan required', {
+				args: { planName: getPlan( PLAN_PERSONAL )?.getTitle() ?? '' },
+			} );
+		} else {
+			message = translate( '{{span}}Free for the first year with annual paid plans{{/span}}', {
+				components: { span: <span className="domain-product-price__free-price" /> },
+			} );
 		}
 
 		return (
 			<div className={ className }>
-				{ this.renderFreeWithPlanText() }
-				{ this.renderFreeWithPlanPrice() }
+				<div className="domain-product-price__free-text">{ message }</div>
+				<div className="domain-product-price__price">
+					<del>
+						{ this.props.isMappingProduct
+							? null
+							: this.props.translate( '%(cost)s/year', {
+									args: { cost: this.props.price },
+							  } ) }
+					</del>
+				</div>
 			</div>
 		);
 	}
