@@ -1,6 +1,6 @@
 import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useCallback, useEffect } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -45,19 +45,16 @@ const MultiStepForm = () => {
 		},
 	} );
 
-	useEffect( () => {
-		if ( currentStep === 5 ) {
-			createSignup.mutate( formData as AgencyDetailsSignupPayload );
-		}
-	}, [ currentStep, formData, createSignup ] );
-
 	const updateDataAndContinue = useCallback(
 		( data: Partial< AgencyDetailsSignupPayload >, nextStep: number ) => {
-			setFormData( { ...formData, ...data } );
-
+			const newFormData = { ...formData, ...data };
+			setFormData( newFormData );
 			setCurrentStep( nextStep );
+			if ( nextStep === 5 ) {
+				createSignup.mutate( newFormData as AgencyDetailsSignupPayload );
+			}
 		},
-		[ formData ]
+		[ formData, createSignup ]
 	);
 
 	const clearDataAndRefresh = () => {
