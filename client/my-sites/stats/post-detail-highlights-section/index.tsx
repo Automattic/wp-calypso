@@ -10,7 +10,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
-import { truncateWithLimit, getProcessedTitle } from './text-utils';
+import { truncateWithLimit, getProcessedText } from './text-utils';
 
 import './style.scss';
 
@@ -48,7 +48,7 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: truncateWithLimit( getProcessedTitle( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
+		title: truncateWithLimit( getProcessedText( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )

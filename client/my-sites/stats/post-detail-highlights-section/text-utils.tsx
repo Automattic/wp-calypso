@@ -40,7 +40,7 @@ export function truncateWithLimit( text: string, limit: number = DEFAULT_TRUNCAT
  * @returns {string} - The processed text with HTML entities decoded and HTML tags stripped.
  */
 
-export function getProcessedTitle( text: string ): string {
+export function getProcessedText( text: string ): string {
 	if ( ! text ) {
 		return '';
 	}
