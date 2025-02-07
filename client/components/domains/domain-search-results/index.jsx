@@ -42,6 +42,7 @@ class DomainSearchResults extends Component {
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
+		showDomainTransferSuggestion: PropTypes.bool,
 		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
@@ -367,7 +368,7 @@ class DomainSearchResults extends Component {
 			if (
 				this.props.offerUnavailableOption &&
 				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
-				! this.props.isReskinned
+				this.props.showDomainTransferSuggestion
 			) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
