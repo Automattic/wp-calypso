@@ -7,7 +7,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import CardHeading from 'calypso/components/card-heading';
-import Notice from 'calypso/components/notice';
+import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useSelector } from 'calypso/state';
@@ -153,7 +153,7 @@ function getHoldMessages( {
  */
 export function getBlockingMessages(
 	translate: LocalizeProps[ 'translate' ] | ( ( str: string ) => string )
-): Record< string, { message: string; status: string | null; contactUrl: string | null } > {
+): Record< string, { message: string; status: NoticeStatus | null; contactUrl: string | null } > {
 	return {
 		BLOCKED_ATOMIC_TRANSFER: {
 			message: String(
@@ -238,7 +238,7 @@ export const HardBlockingNotice = ( {
 
 	return (
 		<Notice
-			status={ blockingMessages[ blockingHold ].status }
+			status={ blockingMessages[ blockingHold ].status ?? 'is-info' }
 			text={ blockingMessages[ blockingHold ].message }
 			showDismiss={ false }
 		>

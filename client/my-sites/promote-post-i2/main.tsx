@@ -324,11 +324,11 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			{ ! isLoadingBillingSummary && paymentBlocked && (
 				<Notice
-					isReskinned
 					showDismiss={ false }
 					status="is-error"
 					icon="notice-outline"
 					className="promote-post-i2__payment-blocked-notice"
+					theme="light"
 				>
 					{ translate(
 						'Your account does not have the capabilities to promote. {{wpcomSupport}}Reach out to us{{/wpcomSupport}} for support.',
@@ -350,7 +350,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			{ shouldDisplayDebtAndPaymentLinks && (
 				<>
 					<Notice
-						isReskinned
+						theme="light"
 						showDismiss={ false }
 						status="is-error"
 						icon="notice-outline"

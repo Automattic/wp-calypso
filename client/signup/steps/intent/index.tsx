@@ -18,7 +18,6 @@ import type { Dependencies } from 'calypso/signup/types';
 
 interface Props {
 	goToNextStep: () => void;
-	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
 	queryObject: {

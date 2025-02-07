@@ -136,7 +136,7 @@ const WordAdsPayments = () => {
 
 		return hasMismatch ? (
 			<Notice
-				classname="ads__activate-notice"
+				className="ads__activate-notice"
 				status="is-warning"
 				showDismiss={ false }
 				text={ translate(
