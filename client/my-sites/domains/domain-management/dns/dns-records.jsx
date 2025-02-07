@@ -51,6 +51,11 @@ class DnsRecords extends Component {
 		subtitleOverride: PropTypes.string,
 	};
 
+	getSelectedDomain = () => {
+		const { domains, selectedDomainName } = this.props;
+		return domains?.find( ( domain ) => domain?.name === selectedDomainName );
+	};
+
 	hasDefaultCnameRecord = () => {
 		const { dns, selectedDomainName } = this.props;
 		return dns?.records?.some(
@@ -99,13 +104,14 @@ class DnsRecords extends Component {
 	};
 
 	renderHeader = () => {
-		const { domains, translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
+		const { translate, selectedSite, currentRoute, selectedDomainName, dns } = this.props;
 		const {
 			showBreadcrumb = true,
 			titleOverride,
 			subtitleOverride,
 		} = this.props.context?.params || {};
-		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
+
+		const selectedDomain = this.getSelectedDomain();
 
 		const items = [
 			{
@@ -199,6 +205,7 @@ class DnsRecords extends Component {
 
 	renderDefaultARecordsNotice = () => {
 		const { translate } = this.props;
+		const selectedDomain = this.getSelectedDomain();
 
 		if ( ! this.hasWpcomNameservers() ) {
 			return null;
@@ -211,6 +218,28 @@ class DnsRecords extends Component {
 		recordTracksEvent( 'calypso_domain_management_dns_default_a_records_notice_show', {
 			domain_name: this.props.selectedDomainName,
 		} );
+		let translatedMessage = translate(
+			'Your domain is not using default A records. This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select "Restore default A records". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+			{
+				components: {
+					defaultRecordsLink: (
+						<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+					),
+				},
+			}
+		);
+		if ( selectedDomain?.isGravatarDomain ) {
+			translatedMessage = translate(
+				'Your domain is not using default A records. This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select "Restore default A records". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+				{
+					components: {
+						defaultRecordsLink: (
+							<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+						),
+					},
+				}
+			);
+		}
 
 		return (
 			<div className="dns-records-notice">
@@ -220,18 +249,7 @@ class DnsRecords extends Component {
 					className="dns-records-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="dns-records-notice__message">
-					{ translate(
-						'Your domain is not using default A records. This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select "Restore default A records". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
-						{
-							components: {
-								defaultRecordsLink: (
-									<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				</div>
+				<div className="dns-records-notice__message">{ translatedMessage }</div>
 			</div>
 		);
 	};
@@ -250,6 +268,28 @@ class DnsRecords extends Component {
 		recordTracksEvent( 'calypso_domain_management_dns_default_cname_record_notice_show', {
 			domain_name: this.props.selectedDomainName,
 		} );
+		let translatedMessage = translate(
+			'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+			{
+				components: {
+					defaultRecordsLink: (
+						<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+					),
+				},
+			}
+		);
+		if ( this.getSelectedDomain()?.isGravatarDomain ) {
+			translatedMessage = translate(
+				'Your domain is not using the default WWW CNAME record. This means your Gravatar profile may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
+				{
+					components: {
+						defaultRecordsLink: (
+							<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
+						),
+					},
+				}
+			);
+		}
 
 		return (
 			<div className="dns-records-notice">
@@ -259,25 +299,13 @@ class DnsRecords extends Component {
 					className="dns-records-notice__icon gridicon"
 					viewBox="2 2 20 20"
 				/>
-				<div className="dns-records-notice__message">
-					{ translate(
-						'Your domain is not using the default WWW CNAME record. This means your WordPress.com site may not be reached correctly using the www prefix. To restore the default WWW CNAME record, click on the three dots menu and select "Restore default CNAME record". {{defaultRecordsLink}}Learn more{{/defaultRecordsLink}}.',
-						{
-							components: {
-								defaultRecordsLink: (
-									<InlineSupportLink supportContext="dns_default_records" showIcon={ false } />
-								),
-							},
-						}
-					) }
-				</div>
+				<div className="dns-records-notice__message">{ translatedMessage }</div>
 			</div>
 		);
 	};
 
 	renderExternalNameserversNotice = () => {
-		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers, domains } =
-			this.props;
+		const { translate, selectedSite, currentRoute, selectedDomainName, nameservers } = this.props;
 
 		if (
 			( ! englishLocales.includes( getLocaleSlug() ) &&
@@ -291,7 +319,7 @@ class DnsRecords extends Component {
 			return null;
 		}
 
-		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
+		const selectedDomain = this.getSelectedDomain();
 
 		let mappingSetupStep =
 			selectedDomain.connectionMode === modeType.ADVANCED
@@ -343,11 +371,11 @@ class DnsRecords extends Component {
 		);
 	};
 
-	renderMain() {
-		const { dns, selectedDomainName, selectedSite, translate, domains } = this.props;
+	renderMain = () => {
+		const { dns, selectedDomainName, selectedSite, translate } = this.props;
 		const { showDetails = true } = this.props.context?.params || {};
-		const selectedDomain = domains?.find( ( domain ) => domain?.name === selectedDomainName );
 		const headerText = translate( 'DNS Records' );
+		const selectedDomain = this.getSelectedDomain();
 
 		return (
 			<Main wideLayout className="dns-records">
@@ -373,7 +401,7 @@ class DnsRecords extends Component {
 				) }
 			</Main>
 		);
-	}
+	};
 
 	render() {
 		const { showPlaceholder, selectedDomainName } = this.props;
