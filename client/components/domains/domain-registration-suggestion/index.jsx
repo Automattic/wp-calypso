@@ -395,11 +395,10 @@ class DomainRegistrationSuggestion extends Component {
 	renderMatchReason() {
 		const {
 			suggestion: { domain_name: domain },
-			isFeatured,
 		} = this.props;
 
-		if ( ! isFeatured || ! Array.isArray( this.props.suggestion.match_reasons ) ) {
-			return null;
+		if ( ! Array.isArray( this.props.suggestion.match_reasons ) ) {
+			return <div className="domain-registration-suggestion__match-reasons"></div>;
 		}
 
 		const matchReasons = parseMatchReasons( domain, this.props.suggestion.match_reasons );
@@ -454,7 +453,7 @@ class DomainRegistrationSuggestion extends Component {
 			>
 				{ this.renderBadges() }
 				{ this.renderDomain() }
-				{ ! hideMatchReasons && this.renderMatchReason() }
+				{ ! hideMatchReasons && isFeatured && this.renderMatchReason() }
 			</DomainSuggestion>
 		);
 	}
