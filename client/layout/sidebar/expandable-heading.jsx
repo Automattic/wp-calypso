@@ -1,4 +1,6 @@
+import page from '@automattic/calypso-router';
 import { Count, Gridicon, MaterialIcon } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import PropTypes from 'prop-types';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
@@ -15,12 +17,20 @@ const ExpandableSidebarHeading = ( {
 	menuId,
 	hideExpandableIcon,
 	inlineText,
+	onClick,
+	defaultSelection,
 	...props
 } ) => {
 	return (
 		<SidebarHeading
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
+			onClick={ () => {
+				if ( ! expanded && defaultSelection ) {
+					page.redirect( defaultSelection );
+				}
+				onClick();
+			} }
 			{ ...props }
 		>
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
@@ -38,7 +48,14 @@ const ExpandableSidebarHeading = ( {
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
 			{ ! hideExpandableIcon && (
-				<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+				<Button
+					variation="link"
+					onClick={ ( ev ) => {
+						ev.stopPropagation();
+						onClick();
+					} }
+					icon={ <MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" /> }
+				></Button>
 			) }
 		</SidebarHeading>
 	);
