@@ -186,10 +186,12 @@ I18N.prototype.numberFormat = function (
 	 */
 	if ( typeof number === 'undefined' || number === null ) {
 		warn( 'numberFormat() requires a defined and non-null value as the first argument' );
-		return String( number );
+		return number;
 	}
 
-	return __DO_NOT_IMPORT__numberFormat( number, browserSafeLocale, {
+	return __DO_NOT_IMPORT__numberFormat( {
+		number,
+		browserSafeLocale,
 		decimals,
 		forceLatin,
 		numberFormatOptions,
@@ -215,7 +217,9 @@ I18N.prototype.numberFormatCompact = function (
 		return number;
 	}
 
-	return __DO_NOT_IMPORT__numberFormatCompact( number, browserSafeLocale, {
+	return __DO_NOT_IMPORT__numberFormatCompact( {
+		number,
+		browserSafeLocale,
 		decimals,
 		forceLatin,
 		numberFormatOptions,
