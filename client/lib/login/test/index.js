@@ -255,7 +255,7 @@ describe( 'getPluginTitle', () => {
 	} );
 
 	it( 'should handle French formatting for two plugin names', () => {
-		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments', translate );
+		const result = getPluginTitle( 'jetpack-ai,woocommerce-payments', translate, 'fr' );
 		expect( result ).toBe( 'Jetpack et WooPayments' );
 	} );
 } );
