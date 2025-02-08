@@ -1,8 +1,10 @@
 export interface NumberFormatParams {
+	/**
+	 * Number to format.
+	 */
 	number: number | bigint;
 	/**
-	 * Browser-safe locale string that works with Intl.NumberFormat
-	 * e.g. 'en-US' (not 'en_US')
+	 * Browser-safe locale string that works with Intl.NumberFormat e.g. 'en-US' (not 'en_US').
 	 */
 	browserSafeLocale: string;
 	/**
@@ -12,7 +14,7 @@ export interface NumberFormatParams {
 	 */
 	decimals?: number;
 	/**
-	 * Whether to use latin numbers by default ( default = true )
+	 * Whether to use latin numbers by default ( default = true ).
 	 */
 	forceLatin?: boolean;
 	/**
@@ -26,7 +28,7 @@ export type NumberFormat = ( params: NumberFormatParams ) => string;
 
 /**
  * Formats numbers using locale settings and/or passed options.
- * @returns {string}  Formatted number as string, or original number as string if formatting fails
+ * @returns {string}  Formatted number as string, or original number as string if formatting fails.
  */
 const numberFormat: NumberFormat = ( {
 	number,
@@ -51,7 +53,7 @@ const numberFormat: NumberFormat = ( {
  * Basically sets `notation: 'compact'` and `maximumFractionDigits: 1` in the options.
  * Everything is overridable by passing the `numberFormatOptions` option.
  * If you want more digits, pass `maximumFractionDigits: 2`.
- * @returns {string}  Formatted number as string, or original number as string if formatting fails
+ * @returns {string}  Formatted number as string, or original number as string if formatting fails.
  */
 const numberFormatCompact: NumberFormat = ( { numberFormatOptions = {}, ...params } ) =>
 	numberFormat( {
