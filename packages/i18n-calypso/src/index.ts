@@ -11,6 +11,7 @@ export default i18n;
 // Export the default instance's properties and bound methods for convenience
 // These should be deprecated eventually, exposing only the default `i18n` instance
 export const numberFormat = i18n.numberFormat.bind( i18n );
+export const numberFormatCompact = i18n.numberFormatCompact.bind( i18n );
 export const translate = i18n.translate.bind( i18n );
 export const configure = i18n.configure.bind( i18n );
 export const setLocale = i18n.setLocale.bind( i18n );
