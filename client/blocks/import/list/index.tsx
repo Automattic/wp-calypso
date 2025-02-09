@@ -38,8 +38,8 @@ export default function ListStep( props: Props ) {
 	const { siteSlug, submit, getFinalImporterUrl, onNavBack } = props;
 	const backToFlow = urlQueryParams.get( 'backToFlow' );
 	const fromSite = urlQueryParams.get( 'from' );
-	const title = props.title || __( 'Import content from another platform' );
-	const subTitle = props.subTitle || __( 'Select the platform where your content lives' );
+	const title = props.title || __( 'Import content from another platform or file' );
+	const subTitle = props.subTitle || __( "Select the platform you're coming from" );
 
 	// We need to remove the wix importer from the primary importers list.
 	const primaryListOptions: ImporterOption[] = getImportersAsImporterOption( 'primary' ).filter(
