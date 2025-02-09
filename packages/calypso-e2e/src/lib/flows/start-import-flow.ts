@@ -184,7 +184,7 @@ export class StartImportFlow {
 	 */
 	async validateImporterListPage(): Promise< void > {
 		await this.page
-			.locator( selectors.startBuildingHeader( 'Import content from another platform' ) )
+			.locator( selectors.startBuildingHeader( 'Import content from another platform or file' ) )
 			.waitFor();
 	}
 
