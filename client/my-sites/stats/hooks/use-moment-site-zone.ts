@@ -7,7 +7,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { DATE_FORMAT } from '../constants';
 
 export const getMomentSiteZone = createSelector(
-	( state: object, siteId: number | null ) => {
+	( state: object, siteId: number | null, dateFormat = DATE_FORMAT ) => {
 		let localeSlug = i18n.getLocaleSlug();
 		if ( localeSlug === null ) {
 			localeSlug = 'en';
@@ -19,7 +19,7 @@ export const getMomentSiteZone = createSelector(
 		if ( Number.isFinite( gmtOffset ) ) {
 			// In all the components, `moment` is directly used, which defaults to the browser's local timezone.
 			// As a result, we need to convert the moment object to the site's timezone for easier comparison like `isSame`.
-			return moment( localizedMoment.utcOffset( gmtOffset ).format( DATE_FORMAT ) );
+			return moment( localizedMoment.utcOffset( gmtOffset ).format( dateFormat ) );
 		}
 
 		// Falls back to the browser's local timezone if no GMT offset is found

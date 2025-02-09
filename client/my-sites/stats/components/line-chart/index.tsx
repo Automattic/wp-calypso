@@ -1,22 +1,13 @@
 import { LineChart, ThemeProvider, jetpackTheme } from '@automattic/charts';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { Moment } from 'moment';
-import { useEffect, useState } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import StatsEmptyState from '../../stats-empty-state';
 
-const fixtureData = [
-	{
-		label: 'Views',
-		options: {
-			stroke: '#069e08',
-		},
-		data: [] as Array< { date: Date; value: number } >,
-	},
-];
-
 function StatsLineChart( {
-	chartData = null,
+	chartData = [],
+	className,
 	height = 400,
 	moment,
 	EmptyState = StatsEmptyState,
@@ -25,12 +16,13 @@ function StatsLineChart( {
 		label: string;
 		options: object;
 		data: Array< { date: Date; value: number } >;
-	} > | null;
+	} >;
+	className?: string;
 	height?: number;
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
 } ) {
-	const [ data, setData ] = useState( () => chartData || fixtureData );
+	const translate = useTranslate();
 	const formatTime = ( value: number ) => {
 		const date = new Date( value );
 		return new Date( date ).toLocaleTimeString( moment.locale(), {
@@ -39,24 +31,10 @@ function StatsLineChart( {
 			hour12: true,
 		} );
 	};
-	const translate = useTranslate();
-
-	useEffect( () => {
-		const intervalId = setInterval( () => {
-			if ( fixtureData[ 0 ].data.length > 30 ) {
-				fixtureData[ 0 ].data.pop();
-			}
-
-			const date = new Date();
-			fixtureData[ 0 ].data.unshift( { date, value: Math.round( Math.random() * 60 ) } );
-			setData( [ ...fixtureData ] );
-		}, 60 * 1000 );
-		return () => clearInterval( intervalId );
-	}, [] );
 
 	return (
-		<div className="stats-line-chart">
-			{ data?.[ 0 ]?.data?.length === 0 && (
+		<div className={ clsx( 'stats-line-chart', className ) }>
+			{ chartData?.[ 0 ].data?.length === 0 && (
 				<EmptyState
 					headingText={ translate( 'Real-time views' ) }
 					infoText={ translate( 'Collecting data… auto-refreshing in a minute…' ) }
@@ -64,7 +42,7 @@ function StatsLineChart( {
 			) }
 			<ThemeProvider theme={ jetpackTheme }>
 				<LineChart
-					data={ data }
+					data={ chartData }
 					withTooltips
 					withGradientFill
 					height={ height }
