@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -15,6 +15,7 @@ import StatShares from 'calypso/my-sites/stats/features/modules/stats-shares';
 import StatsModuleTags from 'calypso/my-sites/stats/features/modules/stats-tags';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useShouldGateStats } from 'calypso/my-sites/stats/hooks/use-should-gate-stats';
+import { useSelector } from 'calypso/state';
 import { STATS_PLAN_USAGE_RECEIVE } from 'calypso/state/action-types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -28,8 +29,10 @@ import statsStrings from '../../stats-strings';
 import StatsUpsell from '../../stats-upsell/insights-upsell';
 import StatsModuleListing from '../shared/stats-module-listing';
 
-const StatsInsights = ( props ) => {
-	const { siteId, siteSlug, isJetpack } = props;
+function StatsInsights() {
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 	const isEmptyStateV2 = config.isEnabled( 'stats/empty-module-v2' );
@@ -138,15 +141,6 @@ const StatsInsights = ( props ) => {
 		</Main>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
-};
+}
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isJetpack: isJetpackSite( state, siteId ),
-	};
-} );
-
-export default connectComponent( StatsInsights );
+export default StatsInsights;
