@@ -60,7 +60,6 @@ export function Terms100Year( { cart, type }: { cart: ResponseCart; type: TermsT
 	);
 }
 
-// For backward compatibility and easier usage, we can provide specific components
 export function DomainTerms100Year( { cart }: { cart: ResponseCart } ) {
 	return <Terms100Year cart={ cart } type="domain" />;
 }
