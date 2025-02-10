@@ -6,6 +6,22 @@ import { ScreenReaderText, Gridicon } from '..';
 
 import './style.scss';
 
+/**
+ * External link component that optionally includes an external link icon.
+ * @param {Object} props Component props
+ * @param {string} [props.className] Additional CSS class names
+ * @param {string} [props.href] URL the link points to
+ * @param {Function} [props.onClick] Click handler
+ * @param {boolean} [props.icon] Whether to show an external link icon
+ * @param {number} [props.iconSize] Size of the icon in pixels
+ * @param {string} [props.target] Link target attribute
+ * @param {boolean} [props.showIconFirst] Whether to show icon before the text
+ * @param {string} [props.iconClassName] Additional CSS class for the icon
+ * @param {import('react').ReactNode} [props.iconComponent] Custom icon component to use instead of default
+ * @param {boolean} [props.localizeUrl] Whether to localize the URL
+ * @param {import('react').ReactNode} [props.children] Link content
+ * @returns {import('react').ReactElement} External link component
+ */
 function ExternalLink( {
 	className,
 	href,
