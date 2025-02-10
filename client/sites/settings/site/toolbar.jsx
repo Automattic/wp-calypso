@@ -7,6 +7,7 @@ import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connec
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
@@ -14,7 +15,6 @@ import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-s
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useIsSiteSettingsUntangled } from '../hooks/use-is-site-settings-untangled';
 
 const Masterbar = ( {
 	isRequestingSettings,
@@ -25,7 +25,7 @@ const Masterbar = ( {
 } ) => {
 	const siteIsJetpack = useSelectedSiteSelector( isJetpackSite );
 	const siteIsAtomic = useSelectedSiteSelector( isSiteAutomatedTransfer );
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 

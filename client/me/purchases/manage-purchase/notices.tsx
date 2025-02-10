@@ -20,7 +20,7 @@ import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Notice from 'calypso/components/notice';
+import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -353,7 +353,7 @@ class PurchaseNotice extends Component<
 		if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
 			return null;
 		}
-		let noticeStatus = 'is-info';
+		let noticeStatus: NoticeStatus = 'is-info';
 
 		if ( isCloseToExpiration( currentPurchase ) && ! isRecentMonthlyPurchase( currentPurchase ) ) {
 			noticeStatus = 'is-error';
@@ -496,7 +496,7 @@ class PurchaseNotice extends Component<
 			},
 		};
 
-		let noticeStatus = null;
+		let noticeStatus: NoticeStatus = 'is-info';
 		let noticeIcon = null;
 		let noticeActionHref = null;
 		let noticeActionOnClick = null;

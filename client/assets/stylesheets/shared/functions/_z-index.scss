@@ -303,6 +303,10 @@ $z-layers: (
 	".tag-stream__header-follow": (
 		".follow-button": 1,
 	),
+	"user-profile-header": (
+		".user-profile-header__bio-desc-fader": 1,
+		".user-profile-header__bio-desc-link": 2,
+	),
 );
 
 // allows us to do a nested fetch

@@ -1,0 +1,52 @@
+/*
+ * Logo list styles
+ */
+
+.plans-grid-next-client-logo-list {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: 18px;
+	row-gap: 9px;
+
+	svg {
+		display: block;
+		width: auto;
+		height: 24px;
+		fill: var(--studio-gray-50);
+	}
+}
+
+/*
+ * Individual logo adjustments
+ */
+
+.plans-grid-next-client-logo-list__item {
+	--adjustment-unit: calc(24px / 60);
+
+	&.is-name-al-jazeera {
+		transform: translate3d(0, calc(var(--adjustment-unit) * -6), 0);
+	}
+
+	&.is-name-chevron {
+		padding: 0 calc(var(--adjustment-unit) * 8);
+		transform: translate3d(0, var(--adjustment-unit), 0);
+	}
+
+	&.is-name-intuit {
+		/*!rtl:ignore*/
+		transform: translate3d(var(--adjustment-unit), 0, 0);
+	}
+
+	&.is-name-salesforce {
+		padding: 0 calc(var(--adjustment-unit) * 4);
+		transform: translate3d(0, var(--adjustment-unit), 0);
+	}
+
+	&.is-name-techcrunch {
+		padding: 0 calc(var(--adjustment-unit) * 8);
+	}
+
+	&.is-name-time {
+		padding: 0 calc(var(--adjustment-unit) * 3);
+	}
+}
