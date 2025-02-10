@@ -1,4 +1,4 @@
-import { Gridicon, ShortenedNumber } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate, numberFormat } from 'i18n-calypso';
@@ -109,7 +109,14 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 			{ trendIcon }
 
 			<div className="sites-overview__stats">
-				<ShortenedNumber value={ totalViews } />
+				<span>
+					{ numberFormat( totalViews, {
+						numberFormatOptions: {
+							notation: 'compact',
+							maximumFractionDigits: 1,
+						},
+					} ) }
+				</span>
 			</div>
 		</span>
 	);

@@ -121,6 +121,11 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 							{ args }
 					  );
 				// translation example: $1 first month then $2 per year
+			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
+				return translate(
+					'%(formattedCurrentPrice)s first year then %(formattedPriceBeforeDiscounts)s per month',
+					{ args }
+				);
 			}
 			return translate(
 				'%(formattedCurrentPrice)s first month then %(formattedPriceBeforeDiscounts)s per month',
@@ -146,8 +151,18 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 					  );
 				// translation example: $1 first 3 months then $2 per 2 years
 			} else if ( productBillingTermInMonths === 12 ) {
+				return introTerm === 'month'
+					? translate(
+							'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per year',
+							{ args }
+					  )
+					: translate(
+							'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per year',
+							{ args }
+					  );
+			} else if ( productBillingTermInMonths === 1 && introTerm === 'year' ) {
 				return translate(
-					'%(formattedCurrentPrice)s first %(introCount)s months then %(formattedPriceBeforeDiscounts)s per year',
+					'%(formattedCurrentPrice)s first %(introCount)s years then %(formattedPriceBeforeDiscounts)s per month',
 					{ args }
 				);
 				// translation example: $1 first 3 months then $2 per year

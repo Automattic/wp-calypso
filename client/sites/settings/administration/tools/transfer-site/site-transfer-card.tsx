@@ -4,7 +4,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { Panel, PanelCard } from 'calypso/components/panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 
 export function SiteTransferCard( {
 	children,
@@ -14,10 +14,8 @@ export function SiteTransferCard( {
 	onClick: () => void;
 } ) {
 	const translate = useTranslate();
-	const isSiteSettingsUntangled = useIsSiteSettingsUntangled();
-	const title = isSiteSettingsUntangled
-		? translate( 'Transfer site' )
-		: translate( 'Site Transfer' );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	const title = isUntangled ? translate( 'Transfer site' ) : translate( 'Site Transfer' );
 	return (
 		<Panel className="settings-administration__transfer-site">
 			<HeaderCakeBack icon="chevron-left" onClick={ onClick } />

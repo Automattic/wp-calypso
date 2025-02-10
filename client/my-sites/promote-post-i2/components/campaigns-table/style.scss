@@ -277,8 +277,11 @@ $break-medium-expanded-menu: $break-medium + 272px;
 
 .promote-post-i2 {
 	.promote-post-i2__payment-blocked-notice {
+		border: none;
+		box-shadow: none;
 		max-width: 1040px;
 		width: calc(100% - 128px);
+		padding: 0;
 
 
 		@media screen and (max-width: $break-medium-collapsed-menu) {

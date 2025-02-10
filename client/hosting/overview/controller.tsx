@@ -4,7 +4,7 @@ import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
 import Hosting from 'calypso/hosting/server-settings/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { PanelWithSidebar } from 'calypso/sites/components/panel-sidebar';
 import HostingOverview from 'calypso/sites/overview/components/hosting-overview';
 import { SettingsSidebar } from 'calypso/sites/settings/controller';
@@ -35,9 +35,8 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-	context.primary = isRemoveDuplicateViewsExperimentEnabled ? (
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<div className="hosting-configuration">
@@ -53,9 +52,8 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 }
 
 export async function hostingActivate( context: PageJSContext, next: () => void ) {
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
-	context.primary = isRemoveDuplicateViewsExperimentEnabled ? (
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
 			<div className="hosting-configuration">

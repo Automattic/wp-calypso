@@ -30,11 +30,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -185,6 +184,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
@@ -275,6 +275,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
+			skipMigration,
 		};
 	}
 
@@ -310,18 +311,13 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
-				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<>
-						<h1>{ getCurrentMessage() }</h1>
-						{ progress >= 0 || isWooExpressFlow( flow ) ? (
-							<LoadingBar progress={ progress } />
-						) : (
-							<LoadingEllipsis />
-						) }
-						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
-					</>
+					<StepperLoader
+						title={ getCurrentMessage() }
+						subtitle={ subTitle }
+						progress={ progress }
+					/>
 				}
 				showFooterWooCommercePowered={ false }
 			/>
