@@ -1,4 +1,4 @@
-export const persistQueryParams = ( url: string, urlQueryParams: URLSearchParams ) => {
+export const appendQueryParams = ( url: string, urlQueryParams: URLSearchParams ) => {
 	if ( ! urlQueryParams.toString() ) {
 		return url;
 	}

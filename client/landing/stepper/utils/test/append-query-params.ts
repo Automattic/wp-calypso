@@ -1,11 +1,11 @@
-import { persistQueryParams } from '../persist-query-params';
+import { appendQueryParams } from '../append-query-params';
 
-describe( 'persistQueryParams', () => {
+describe( 'appendQueryParams', () => {
 	it( 'should append query parameters to a URL part without existing query parameters', () => {
 		const url = '/test-url';
 		const urlQueryParams = new URLSearchParams( { param1: 'value1', param2: 'value2' } );
 
-		const result = persistQueryParams( url, urlQueryParams );
+		const result = appendQueryParams( url, urlQueryParams );
 
 		expect( result ).toBe( `${ url }?param1=value1&param2=value2` );
 	} );
@@ -14,7 +14,7 @@ describe( 'persistQueryParams', () => {
 		const url = '/test-url/path?existingParam=existingValue';
 		const urlQueryParams = new URLSearchParams( { param1: 'value1', param2: 'value2' } );
 
-		const result = persistQueryParams( url, urlQueryParams );
+		const result = appendQueryParams( url, urlQueryParams );
 
 		expect( result ).toBe( `${ url }&param1=value1&param2=value2` );
 	} );
@@ -23,7 +23,7 @@ describe( 'persistQueryParams', () => {
 		const url = '/test/path';
 		const urlQueryParams = new URLSearchParams();
 
-		const result = persistQueryParams( url, urlQueryParams );
+		const result = appendQueryParams( url, urlQueryParams );
 
 		expect( result ).toBe( url );
 	} );
@@ -32,7 +32,7 @@ describe( 'persistQueryParams', () => {
 		const url = '/test/path';
 		const urlQueryParams = new URLSearchParams( { param1: 'value&with=special?chars' } );
 
-		const result = persistQueryParams( url, urlQueryParams );
+		const result = appendQueryParams( url, urlQueryParams );
 
 		expect( result ).toBe( `${ url }?param1=value%26with%3Dspecial%3Fchars` );
 	} );

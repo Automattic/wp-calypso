@@ -338,6 +338,25 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			describe( 'Forwards query string parameters', () => {
+				it( 'passed ref=calypso-importer forward', () => {
+					const _query = {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						ref: 'calypso-importer',
+					};
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
+						query: _query,
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE,
+						query: _query,
+					} );
+				} );
+			} );
+
 			describe( 'back', () => {
 				it( 'redirects back to the SITE_MIGRATION_IDENTIFY step', () => {
 					const destination = runNavigationBack( {
