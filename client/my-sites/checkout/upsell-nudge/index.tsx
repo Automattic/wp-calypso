@@ -1,11 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	isMonthly,
-	getPlanByPathSlug,
-	TERM_MONTHLY,
-	isPlan,
-	PlanSlug,
-} from '@automattic/calypso-products';
+import { isMonthly, TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -21,7 +15,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import Main from 'calypso/components/main';
-import { useExperiment } from 'calypso/lib/explat';
 import { getRazorpayConfiguration, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { TITAN_MAIL_MONTHLY_SLUG, TITAN_MAIL_YEARLY_SLUG } from 'calypso/lib/titan/constants';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
@@ -46,7 +39,6 @@ import {
 	type WithIsEligibleForOneClickCheckoutProps,
 	withIsEligibleForOneClickCheckout,
 } from '../purchase-modal/with-is-eligible-for-one-click-checkout';
-import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { QuickstartSessionsRetirement } from './quickstart-sessions-retirement';
 import type { WithShoppingCartProps, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './style.scss';
@@ -60,7 +52,6 @@ const noop = () => {};
  */
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
-export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export interface UpsellNudgeManualProps {
@@ -85,7 +76,6 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSevenDayRefundPeriod?: boolean;
 	translate: ReturnType< typeof useTranslate >;
 	currentPlanTerm: string;
-	shouldBypassUpsell: boolean;
 }
 
 export type UpsellNudgeProps = UpsellNudgeManualProps &
@@ -114,18 +104,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	}
 
 	render() {
-		const {
-			selectedSiteId,
-			hasProductsList,
-			hasSitePlans,
-			upsellType,
-			upgradeItem,
-			shouldBypassUpsell,
-		} = this.props;
-		const styleClass =
-			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
-				? 'business-plan-upgrade-upsell-new-design'
-				: upsellType;
+		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType, upgradeItem } = this.props;
 
 		// There is no `siteId` if we're purchasing a domain-only site, so we pass the site slug to the query component instead.
 		const siteId =
@@ -133,17 +112,8 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				? upgradeItem
 				: parseInt( String( selectedSiteId ), 10 );
 
-		if ( shouldBypassUpsell ) {
-			this.redirectToThankYouPageUrl();
-			return null;
-		}
-
 		return (
-			<Main
-				className={ clsx( styleClass, {
-					'is-wide-layout': BUSINESS_PLAN_UPGRADE_UPSELL === upsellType,
-				} ) }
-			>
+			<Main className={ clsx( upsellType ) }>
 				<QuerySites siteId={ siteId } />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && typeof siteId === 'number' && ! isNaN( siteId ) && (
@@ -205,16 +175,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	renderContent() {
 		const {
 			receiptId,
-			currencyCode,
 			currentPlanTerm,
-			planRawPrice,
-			planDiscountedRawPrice,
 			isLoggedIn,
 			upsellType,
 			upgradeItem,
-			translate,
 			siteSlug,
-			hasSevenDayRefundPeriod,
 			isLoading: isFetchingData,
 		} = this.props;
 
@@ -235,20 +200,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					/>
 				);
 
-			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				return (
-					<BusinessPlanUpgradeUpsell
-						currencyCode={ currencyCode }
-						planRawPrice={ planRawPrice }
-						planDiscountedRawPrice={ planDiscountedRawPrice }
-						receiptId={ receiptId }
-						translate={ translate }
-						handleClickAccept={ this.handleClickAccept }
-						handleClickDecline={ this.handleClickDecline }
-						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
-						isLoading={ isLoading }
-					/>
-				);
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell
@@ -285,10 +236,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		this.redirectToThankYouPageUrl( shouldHideUpsellNudges );
-	};
 
-	redirectToThankYouPageUrl = ( shouldHideUpsellNudges = true ) => {
 		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
@@ -392,11 +340,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return false;
 		}
 
-		const supportedUpsellTypes = [
-			BUSINESS_PLAN_UPGRADE_UPSELL,
-			CONCIERGE_QUICKSTART_SESSION,
-			PROFESSIONAL_EMAIL_UPSELL,
-		];
+		const supportedUpsellTypes = [ CONCIERGE_QUICKSTART_SESSION, PROFESSIONAL_EMAIL_UPSELL ];
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			debug(
 				`not eligible for one-click upsell because the upsellType (${ upsellType }) is not supported`
@@ -458,9 +402,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 const getProductSlug = ( upsellType: string, productAlias: string, planTerm: string ) => {
 	switch ( upsellType ) {
-		case BUSINESS_PLAN_UPGRADE_UPSELL:
-			return getPlanByPathSlug( productAlias )?.getStoreSlug();
-
 		case PROFESSIONAL_EMAIL_UPSELL:
 			return planTerm === TERM_MONTHLY ? TITAN_MAIL_MONTHLY_SLUG : TITAN_MAIL_YEARLY_SLUG;
 
@@ -526,14 +467,6 @@ const WrappedUpsellNudge = (
 		withProratedDiscounts: true,
 	} );
 
-	const [ isLoadingExperiment, assignment ] = useExperiment( 'calypso_checkout_premium_upsell', {
-		isEligible: upsellType === BUSINESS_PLAN_UPGRADE_UPSELL,
-	} );
-
-	if ( isLoadingExperiment ) {
-		return null;
-	}
-
 	return (
 		<UpsellNudge
 			{ ...props }
@@ -550,7 +483,6 @@ const WrappedUpsellNudge = (
 			siteSlug={ siteSlug }
 			selectedSiteId={ selectedSiteId }
 			translate={ translate }
-			shouldBypassUpsell={ assignment?.variationName === 'treatment' }
 		/>
 	);
 };
