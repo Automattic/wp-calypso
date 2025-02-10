@@ -2,7 +2,6 @@ import debugFactory from 'debug';
 import siteGetMethods from './runtime/site.get';
 import Category from './site.category';
 import Comment from './site.comment';
-import SiteCreditVouchers from './site.credit-vouchers';
 import SiteDomain from './site.domain';
 import Follow from './site.follow';
 import Media from './site.media';
@@ -190,14 +189,6 @@ class Site {
 	 */
 	taxonomy( slug ) {
 		return new SiteTaxonomy( slug, this._id, this.wpcom );
-	}
-
-	/**
-	 * Create a `SiteCreditVouchers` instance
-	 * @returns {SiteCreditVouchers} SiteCreditVouchers instance
-	 */
-	creditVouchers() {
-		return new SiteCreditVouchers( this._id, this.wpcom );
 	}
 
 	/**

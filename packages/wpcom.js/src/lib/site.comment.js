@@ -1,5 +1,3 @@
-import commentLike from './site.comment.like';
-
 /**
  * Comment methods
  * @param {string} [cid] comment id
@@ -119,23 +117,4 @@ Comment.prototype.reply = function ( query, body, fn ) {
 Comment.prototype.del = Comment.prototype.delete = function ( query, fn ) {
 	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/delete';
 	return this.wpcom.req.del( path, query, fn );
-};
-
-/**
- * Create a `commentLike` instance
- * @returns {Object} CommentLike instance
- */
-Comment.prototype.like = function () {
-	return commentLike( this._cid, this._sid, this.wpcom );
-};
-
-/**
- * Get comment likes list
- * @param {Object} [query] - query object parameter
- * @param {Function} fn - callback function
- * @returns {Function} request handler
- */
-Comment.prototype.likesList = function ( query, fn ) {
-	const path = '/sites/' + this._sid + '/comments/' + this._cid + '/likes';
-	return this.wpcom.req.get( path, query, fn );
 };

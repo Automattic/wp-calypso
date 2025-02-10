@@ -71,37 +71,6 @@ Delete a Post. Note: If the post object is of type post or page and the trash
 is enabled, this request will send the post to the trash. A second request will
 permanently delete the post.
 
-### Post#likesList(fn)
-
-Get post likes list
-
-```js
-wpcom
-	.site( 'blog.wordpress.com' )
-	.post( 342 )
-	.likesList( function ( err, list ) {
-		// like `list` object
-	} );
-```
-
-### Post#like()
-
-Create and return a new `Like` instance.
-More info in [Like doc page](./like.md).
-
-```js
-const like = wpcom.site( 'blog.wordpress.com' ).post( 342 ).like();
-```
-
-### Post#reblog()
-
-Create and return a new `Reblog` instance.
-More info in [Reblog doc page](./reblog.md).
-
-```js
-const reblog = wpcom.site( 'blog.wordpress.com' ).post( 342 ).reblog();
-```
-
 ### Post#comment()
 
 Create and return a new `Comment` instance.

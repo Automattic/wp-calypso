@@ -1,5 +1,13 @@
 # History
 
+## 7.0.0 / 2025-02-10
+
+- Removed `site.post.like`, `site.post.likesList`
+- Removed `site.post.subscriber`, `site.post.subscribersList`
+- Removed `site.post.reblog`, `site.post.related`
+- Removed `site.post.comment.like`, `site.post.comment.likesList`
+- Removed `site.creditVouchers`
+
 ## 6.0.0 / 2022-09-27
 
 - Remove dependency on `core-js`: the package user needs to provide the needed JS environment
