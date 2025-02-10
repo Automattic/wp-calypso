@@ -298,7 +298,6 @@ const HundredYearPlanSitePicker: Step = function HundredYearPlanSitePicker( { na
 				formattedHeader={
 					<FormattedHeader
 						align="center"
-						subHeaderAlign="center"
 						headerText={ translate( 'Select your site' ) }
 						subHeaderText={ translate(
 							'Start crafting your 100-Year legacy by appointing one of your sites.'

@@ -1433,7 +1433,6 @@ export class RenderDomainsStep extends Component {
 						<FormattedHeader
 							id="domains-header"
 							align="center"
-							subHeaderAlign="center"
 							headerText={ headerText }
 							subHeaderText={ fallbackSubHeaderText }
 						/>
