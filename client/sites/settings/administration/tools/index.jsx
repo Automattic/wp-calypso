@@ -6,6 +6,8 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	hasLoadedSitePurchasesFromServer,
@@ -20,7 +22,6 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite, getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isSiteSettingsUntangled } from '../../utils';
 import AdministrationToolCard from './card';
 import { requestRestore } from './restore-plan-software';
 
@@ -33,10 +34,6 @@ const trackDeleteSiteOption = ( option ) => {
 };
 
 class SiteTools extends Component {
-	state = {
-		isUntangled: false,
-	};
-
 	componentDidUpdate( prevProps ) {
 		if ( ! prevProps.purchasesError && this.props.purchasesError ) {
 			this.props.errorNotice( this.props.purchasesError );
@@ -44,11 +41,7 @@ class SiteTools extends Component {
 	}
 
 	componentDidMount() {
-		isSiteSettingsUntangled().then( ( isUntangled ) => {
-			if ( this.state.isUntangled !== isUntangled ) {
-				this.setState( { isUntangled } );
-			}
-		} );
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	render() {
@@ -59,6 +52,7 @@ class SiteTools extends Component {
 			siteSlug,
 			copySiteUrl,
 			cloneUrl,
+			isUntangled,
 			showChangeAddress,
 			showClone,
 			showRestorePlanSoftware,
@@ -70,8 +64,6 @@ class SiteTools extends Component {
 			headerTitle,
 			source,
 		} = this.props;
-
-		const { isUntangled } = this.state;
 
 		const changeAddressLink = `/domains/manage/${ siteSlug }?source=${ source }`;
 
@@ -222,6 +214,7 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
+		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
 
@@ -239,6 +232,7 @@ export default connect(
 		return {
 			site,
 			isAtomic,
+			isUntangled,
 			copySiteUrl,
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
@@ -257,5 +251,6 @@ export default connect(
 	{
 		errorNotice,
 		successNotice,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withSiteCopy( SiteTools ) ) );

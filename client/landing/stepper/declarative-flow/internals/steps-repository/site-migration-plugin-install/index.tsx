@@ -73,7 +73,7 @@ const SiteMigrationPluginInstall: Step = ( { navigation } ) => {
 				},
 			} );
 
-			setProgress( 1 );
+			setProgress( 100 );
 
 			return {
 				pluginInstalled: true,

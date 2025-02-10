@@ -90,7 +90,7 @@ export default function InstallPlugins( {
 				return;
 			}
 
-			setProgress( progress + 0.2 );
+			setProgress( progress + 20 );
 			dispatch( requestAtomicSoftwareStatus( siteId, 'woo-on-plans' ) );
 		},
 		!! installFailed || softwareApplied ? null : 3000
@@ -104,7 +104,7 @@ export default function InstallPlugins( {
 
 		if ( softwareApplied ) {
 			trackRedirect();
-			setProgress( 1 );
+			setProgress( 100 );
 			// Allow progress bar to complete
 			setTimeout( () => {
 				window.location.assign( wcAdminUrl );

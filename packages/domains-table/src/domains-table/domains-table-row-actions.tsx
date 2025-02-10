@@ -1,5 +1,5 @@
-import { Gridicon } from '@automattic/components';
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
+import { moreVertical } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { ComponentType } from 'react';
 import { canSetAsPrimary } from '../utils/can-set-as-primary';
@@ -183,7 +183,7 @@ export const DomainsTableRowActions = ( {
 	return (
 		<DropdownMenu
 			className="domains-table-row__actions"
-			icon={ <Gridicon icon="ellipsis" /> }
+			icon={ moreVertical }
 			label={ __( 'Domain actions' ) }
 		>
 			{ ( { onClose } ) => (

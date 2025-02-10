@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+
 .pending-content__wrapper {
 	padding: 1em;
 	text-align: center;
@@ -6,27 +8,27 @@
 
 .pending-content__title {
 	@extend .wp-brand-font;
-	/* stylelint-disable-next-line scales/font-sizes */
-	font-size: 1.625rem;
 	line-height: 40px;
 	text-align: center;
 	vertical-align: middle;
 	margin: 0;
-}
+	font-size: $font-title-medium;
+}	
 
 .pending-content__progress-bar {
-	margin: 24px auto 0 auto;
+	--wp-components-color-foreground: #3858e9;
+	margin: 46px auto 0 auto;
 }
 
 .pending-content__info-text-container {
 	display: inline-block;
-    font-size: 1rem;
-    text-align: left;
-    border: 1px solid var( --studio-gray-5 );
-    padding: 1rem;
+	font-size: 1rem;
+	text-align: left;
+	border: 1px solid var( --studio-gray-5 );
+	padding: 1rem;
 	@extend .wp-brand-font;
-    border-radius: 4px;
-    background-color: var( --studio-gray-0 );
+	border-radius: 4px;
+	background-color: var( --studio-gray-0 );
 
 	.pending-content__info-text {
 		> span {

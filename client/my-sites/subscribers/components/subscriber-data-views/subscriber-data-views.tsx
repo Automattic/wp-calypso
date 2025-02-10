@@ -1,9 +1,13 @@
 import { Gravatar } from '@automattic/components';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { Tooltip } from '@wordpress/components';
 import { DataViews, type View, type Action, Operator } from '@wordpress/dataviews';
 import { useMemo, useState, useCallback, useEffect } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
+import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
 import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
@@ -13,14 +17,18 @@ import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/se
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
-import { useSubscribersQuery, useSubscriberCountQuery } from '../../queries';
+import {
+	useSubscribersQuery,
+	useSubscriberCountQuery,
+	useSubscriberDetailsQuery,
+} from '../../queries';
 import { SubscriberDetails } from '../subscriber-details';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
 import './style.scss';
 
 type SubscriberDataViewsProps = {
-	siteId: number | undefined;
+	siteId: number | null;
 	isUnverified?: boolean;
 	isStagingSite?: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
@@ -59,12 +67,14 @@ const defaultView: View = {
 };
 
 const SubscriberDataViews = ( {
-	siteId = undefined,
+	siteId = null,
 	isUnverified = false,
 	isStagingSite = false,
 	onGiftSubscription,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
+	const isEnglishLocale = useIsEnglishLocale();
+
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
@@ -96,6 +106,19 @@ const SubscriberDataViews = ( {
 		filterOption,
 		limitData: true,
 	} );
+
+	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
+		siteId ?? null,
+		selectedSubscriber?.subscription_id,
+		selectedSubscriber?.user_id
+	);
+
+	const { data: subscribedNewsletterCategoriesData, isLoading: isLoadingNewsletterCategories } =
+		useSubscribedNewsletterCategories( {
+			siteId: siteId as number,
+			subscriptionId: selectedSubscriber?.subscription_id,
+			userId: selectedSubscriber?.user_id,
+		} );
 
 	const { data: subscribersTotals } = useSubscriberCountQuery( siteId ?? null );
 	const grandTotal = subscribersTotals?.email_subscribers ?? 0;
@@ -208,13 +231,22 @@ const SubscriberDataViews = ( {
 				id: 'is_email_subscriber',
 				label: translate( 'Email subscriber' ),
 				getValue: ( { item }: { item: Subscriber } ) => ( item.is_email_subscriber ? 'yes' : 'no' ),
-				render: ( { item }: { item: Subscriber } ) => (
-					<div>{ item.is_email_subscriber ? 'Yes' : 'No' }</div>
-				),
+				render: ( { item }: { item: Subscriber } ) => {
+					const noTooltip =
+						isEnglishLocale || hasTranslation( 'Reader only subscriber' ) ? (
+							<Tooltip text={ translate( 'Reader only subscriber' ) }>
+								<span className="subscriber-data-views__tooltip-text">{ translate( 'No' ) }</span>
+							</Tooltip>
+						) : (
+							translate( 'No' )
+						);
+
+					return <div>{ item.is_email_subscriber ? translate( 'Yes' ) : noTooltip }</div>;
+				},
 				elements: [
-					{ label: translate( 'Subscribed' ), value: SubscribersFilterBy.EmailSubscriber },
+					{ label: translate( 'True' ), value: SubscribersFilterBy.EmailSubscriber },
 					{
-						label: translate( 'Not subscribed' ),
+						label: translate( 'False' ),
 						value: SubscribersFilterBy.ReaderSubscriber,
 					},
 				],
@@ -233,7 +265,7 @@ const SubscriberDataViews = ( {
 				enableSorting: true,
 			},
 		],
-		[]
+		[ isEnglishLocale ]
 	);
 
 	const actions = useMemo< Action< Subscriber >[] >( () => {
@@ -361,21 +393,31 @@ const SubscriberDataViews = ( {
 						defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
 						actions={ actions }
 						search
-						searchLabel={ translate( 'Search by name, username or email…' ) }
+						searchLabel={
+							isEnglishLocale || hasTranslation( 'Search subscribers…' )
+								? translate( 'Search subscribers…' )
+								: translate( 'Search by name, username or email…' )
+						}
 					/>
 				) }
 			</section>
-			{ selectedSubscriber && siteId && (
-				<section className="subscriber-data-views__details">
-					<SubscriberDetails
-						subscriber={ selectedSubscriber }
-						siteId={ siteId }
-						subscriptionId={ selectedSubscriber.subscription_id }
-						onClose={ () => setSelectedSubscriber( null ) }
-						onUnsubscribe={ handleUnsubscribe }
-					/>
-				</section>
-			) }
+			{ selectedSubscriber &&
+				siteId &&
+				! isLoadingNewsletterCategories &&
+				! isLoadingDetails &&
+				subscriber && (
+					<section className="subscriber-data-views__details">
+						<SubscriberDetails
+							subscriber={ subscriber }
+							siteId={ siteId }
+							subscriptionId={ selectedSubscriber.subscription_id }
+							onClose={ () => setSelectedSubscriber( null ) }
+							onUnsubscribe={ handleUnsubscribe }
+							newsletterCategoriesEnabled={ subscribedNewsletterCategoriesData?.enabled }
+							newsletterCategories={ subscribedNewsletterCategoriesData?.newsletterCategories }
+						/>
+					</section>
+				) }
 			<UnsubscribeModal
 				subscriber={ currentSubscriber }
 				onCancel={ resetSubscriber }

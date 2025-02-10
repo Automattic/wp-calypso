@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { useQueryUserPurchases } from 'calypso/components/data/query-user-purchases';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
-import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
@@ -26,7 +26,7 @@ const Strong = styled( 'strong' )( {
 
 const SiteTransferComplete = () => {
 	const translate = useTranslate();
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const userEmail = useSelector( getCurrentUserEmail );
 	if ( ! userEmail ) {
@@ -71,7 +71,7 @@ const SiteOwnerTransfer = () => {
 	const pendingDomain = nonWpcomDomains?.find(
 		( wpcomDomain: ResponseDomain ) => wpcomDomain.pendingTransfer
 	);
-	const isSiteSettingsUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	useEffect( () => {
 		dispatch( recordTracksEvent( 'calypso_site_owner_transfer_page_view' ) );
@@ -85,7 +85,7 @@ const SiteOwnerTransfer = () => {
 		if ( ! pendingDomain && newSiteOwner && ! transferSiteSuccess ) {
 			setNewSiteOwner( null );
 		} else {
-			const source = isSiteSettingsUntangled ? '/sites/settings/site' : getSettingsSource();
+			const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 			page( `${ source }/${ selectedSite.slug }` );
 		}
 	};

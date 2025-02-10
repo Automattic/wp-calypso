@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -6,7 +7,6 @@ import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isSiteSettingsUntangled } from '../utils';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { AppState } from 'calypso/types';
 
@@ -38,7 +38,7 @@ function canDeleteSite( state: AppState, siteId: number | null ) {
 export function redirectIfCantDeleteSite( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	if ( ! canDeleteSite( state, getSelectedSiteId( state ) ) ) {
-		return redirectToAdministration( getSelectedSiteSlug( state ) );
+		return redirectToAdministration( context, getSelectedSiteSlug( state ) );
 	}
 
 	next();
@@ -47,13 +47,13 @@ export function redirectIfCantDeleteSite( context: PageJSContext, next: () => vo
 export function redirectIfCantStartSiteOwnerTransfer( context: PageJSContext, next: () => void ) {
 	const state = context.store.getState();
 	if ( ! canCurrentUserStartSiteOwnerTransfer( state, getSelectedSiteId( state ) ) ) {
-		return redirectToAdministration( getSelectedSiteSlug( state ) );
+		return redirectToAdministration( context, getSelectedSiteSlug( state ) );
 	}
 	next();
 }
 
-async function redirectToAdministration( siteSlug: string | null ) {
-	const isUntangled = await isSiteSettingsUntangled();
+async function redirectToAdministration( context: PageJSContext, siteSlug: string | null ) {
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 	return isUntangled
 		? page.redirect( '/sites/settings/site/' + siteSlug )
 		: page.redirect( '/settings/general/' + siteSlug );

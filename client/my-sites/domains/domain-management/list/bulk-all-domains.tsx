@@ -73,7 +73,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 
 			.select-dropdown,
 			.select-dropdown__header {
-				height: 40px;
+				height: var( --domains-table-toolbar-height, 40px );
 				border-radius: 4px;
 			}
 
@@ -123,9 +123,9 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 			}
 
 			.domains-table {
-				margin-top: 40px;
 				.domains-table-toolbar {
 					margin-inline: 48px;
+					padding: 16px 0;
 
 					.domains-table-bulk-actions-toolbar {
 						align-items: flex-start;
@@ -176,7 +176,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 					}
 
 					th {
-						padding-top: 22px;
+						padding-top: 14px;
 						padding-bottom: 14px;
 
 						.list__header-column {
