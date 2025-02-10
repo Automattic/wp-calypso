@@ -15,10 +15,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
-import SiteOrDomainChoice from './choice';
-import DomainImage from './domain-image';
-import ExistingSiteImage from './existing-site-image';
-import NewSiteImage from './new-site-image';
 
 import './style.scss';
 
@@ -58,7 +54,7 @@ class SiteOrDomain extends Component {
 	}
 
 	getChoices() {
-		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
+		const { translate, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
 		let buyADomainTitle = translate( 'Just buy a domain', 'Just buy domains', {
@@ -72,22 +68,40 @@ class SiteOrDomain extends Component {
 		const choices = [];
 
 		const buyADomainDescription = translate( 'Add a site later.' );
-		if ( isReskinned ) {
+		choices.push( {
+			key: 'domain',
+			title: buyADomainTitle,
+			description: buyADomainDescription,
+			icon: null,
+			titleIcon: globe,
+			value: 'domain',
+			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			allItemClickable: true,
+		} );
+		choices.push( {
+			key: 'page',
+			title: translate( 'New site' ),
+			description: translate(
+				'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+				{
+					components: {
+						strong: <strong />,
+						br: <br />,
+					},
+				}
+			),
+			icon: null,
+			titleIcon: addCard,
+			value: 'page',
+			actionText: <Gridicon icon="chevron-right" size={ 18 } />,
+			allItemClickable: true,
+		} );
+		if ( isLoggedIn && siteCount > 0 ) {
 			choices.push( {
-				key: 'domain',
-				title: buyADomainTitle,
-				description: buyADomainDescription,
-				icon: null,
-				titleIcon: globe,
-				value: 'domain',
-				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
-				allItemClickable: true,
-			} );
-			choices.push( {
-				key: 'page',
-				title: translate( 'New site' ),
+				key: 'existing-site',
+				title: translate( 'Existing WordPress.com site' ),
 				description: translate(
-					'Customize and launch your site.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
+					'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
 					{
 						components: {
 							strong: <strong />,
@@ -96,55 +110,10 @@ class SiteOrDomain extends Component {
 					}
 				),
 				icon: null,
-				titleIcon: addCard,
-				value: 'page',
+				titleIcon: layout,
+				value: 'existing-site',
 				actionText: <Gridicon icon="chevron-right" size={ 18 } />,
 				allItemClickable: true,
-			} );
-			if ( isLoggedIn && siteCount > 0 ) {
-				choices.push( {
-					key: 'existing-site',
-					title: translate( 'Existing WordPress.com site' ),
-					description: translate(
-						'Use the domain with a site you already started.{{br/}}{{strong}}Free domain for the first year on annual plans.{{/strong}}',
-						{
-							components: {
-								strong: <strong />,
-								br: <br />,
-							},
-						}
-					),
-					icon: null,
-					titleIcon: layout,
-					value: 'existing-site',
-					actionText: <Gridicon icon="chevron-right" size={ 18 } />,
-					allItemClickable: true,
-				} );
-			}
-		} else {
-			choices.push( {
-				type: 'page',
-				label: translate( 'New site' ),
-				image: <NewSiteImage />,
-				description: translate(
-					'Choose a theme, customize, and launch your site. A free domain for one year is included with all annual plans.'
-				),
-			} );
-			if ( isLoggedIn && siteCount > 0 ) {
-				choices.push( {
-					type: 'existing-site',
-					label: translate( 'Existing WordPress.com site' ),
-					image: <ExistingSiteImage />,
-					description: translate(
-						'Use with a site you already started. A free domain for one year is included with all annual plans.'
-					),
-				} );
-			}
-			choices.push( {
-				type: 'domain',
-				label: buyADomainTitle,
-				image: <DomainImage />,
-				description: buyADomainDescription,
 			} );
 		}
 
@@ -152,30 +121,13 @@ class SiteOrDomain extends Component {
 	}
 
 	renderChoices() {
-		const { isReskinned } = this.props;
-
 		return (
 			<div className="site-or-domain__choices">
-				{ isReskinned ? (
-					<>
-						<SelectItems
-							items={ this.getChoices() }
-							onSelect={ this.handleClickChoice }
-							preventWidows={ preventWidows }
-						/>
-					</>
-				) : (
-					<>
-						{ this.getChoices().map( ( choice, index ) => (
-							<SiteOrDomainChoice
-								choice={ choice }
-								handleClickChoice={ this.handleClickChoice }
-								isPlaceholder={ ! this.props.productsLoaded }
-								key={ `site-or-domain-choice-${ index }` }
-							/>
-						) ) }
-					</>
-				) }
+				<SelectItems
+					items={ this.getChoices() }
+					onSelect={ this.handleClickChoice }
+					preventWidows={ preventWidows }
+				/>
 			</div>
 		);
 	}
@@ -249,7 +201,7 @@ class SiteOrDomain extends Component {
 	};
 
 	render() {
-		const { translate, productsLoaded, isReskinned } = this.props;
+		const { translate, productsLoaded } = this.props;
 		const domainName = this.getDomainName();
 
 		if ( productsLoaded && ! domainName ) {
@@ -277,10 +229,8 @@ class SiteOrDomain extends Component {
 		const additionalProps = {};
 		let headerText = this.props.getHeaderText( this.getDomainCart() );
 
-		if ( isReskinned ) {
-			additionalProps.isHorizontalLayout = false;
-			additionalProps.align = 'center';
-		}
+		additionalProps.isHorizontalLayout = false;
+		additionalProps.align = 'center';
 
 		if ( this.isLeanDomainSearch() ) {
 			additionalProps.className = 'lean-domain-search';

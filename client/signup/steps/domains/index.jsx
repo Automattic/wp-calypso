@@ -44,7 +44,6 @@ import {
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
-import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
@@ -103,7 +102,6 @@ export class RenderDomainsStep extends Component {
 		stepName: PropTypes.string.isRequired,
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
-		isReskinned: PropTypes.bool,
 		recordTracksEvent: PropTypes.func,
 	};
 
@@ -1080,7 +1078,7 @@ export class RenderDomainsStep extends Component {
 				forceHideFreeDomainExplainerAndStrikeoutUi={
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
-				isReskinned={ this.props.isReskinned }
+				isOnboarding
 				reskinSideContent={ this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
@@ -1153,7 +1151,7 @@ export class RenderDomainsStep extends Component {
 	isHostingFlow = () => isHostingSignupFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
+		const { flowName, isAllDomains, stepSectionName, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -1183,12 +1181,8 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Find and claim one or more domain names' );
 		}
 
-		if ( isReskinned ) {
-			return (
-				! stepSectionName &&
-				'domain-transfer' !== flowName &&
-				translate( 'Enter some descriptive keywords to get started' )
-			);
+		if ( ! stepSectionName && 'domain-transfer' !== flowName ) {
+			return translate( 'Enter some descriptive keywords to get started' );
 		}
 
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
@@ -1197,8 +1191,7 @@ export class RenderDomainsStep extends Component {
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, isReskinned, stepSectionName, translate, flowName } =
-			this.props;
+		const { headerText, isAllDomains, stepSectionName, translate, flowName } = this.props;
 
 		if ( stepSectionName === 'use-your-domain' || 'domain-transfer' === flowName ) {
 			return '';
@@ -1212,14 +1205,10 @@ export class RenderDomainsStep extends Component {
 			return translate( 'Your next big idea starts here' );
 		}
 
-		if ( isReskinned ) {
-			if ( shouldUseMultipleDomainsInCart( flowName ) ) {
-				return ! stepSectionName && translate( 'Choose your domains' );
-			}
-			return ! stepSectionName && translate( 'Choose a domain' );
+		if ( shouldUseMultipleDomainsInCart( flowName ) ) {
+			return ! stepSectionName && translate( 'Choose your domains' );
 		}
-
-		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
+		return ! stepSectionName && translate( 'Choose a domain' );
 	}
 
 	getAnalyticsSection() {
@@ -1238,7 +1227,7 @@ export class RenderDomainsStep extends Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+		if ( ! this.props.stepSectionName ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -1325,7 +1314,6 @@ export class RenderDomainsStep extends Component {
 			stepSectionName,
 			isAllDomains,
 			translate,
-			isReskinned,
 			userSiteCount,
 			previousStepName,
 			useStepperWrapper,
@@ -1473,7 +1461,7 @@ export class RenderDomainsStep extends Component {
 				hideSkip
 				goToNextStep={ this.handleSkip }
 				align="center"
-				isWideLayout={ isReskinned }
+				isWideLayout
 			/>
 		);
 	}

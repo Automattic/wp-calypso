@@ -42,6 +42,7 @@ class DomainSearchResults extends Component {
 		mappingSuggestionLabel: PropTypes.string,
 		offerUnavailableOption: PropTypes.bool,
 		showAlreadyOwnADomain: PropTypes.bool,
+		showDomainTransferSuggestion: PropTypes.bool,
 		onClickResult: PropTypes.func.isRequired,
 		onAddMapping: PropTypes.func,
 		onAddTransfer: PropTypes.func,
@@ -318,7 +319,7 @@ class DomainSearchResults extends Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					isReskinned={ this.props.isReskinned }
+					hideMatchReasons={ this.props.hideMatchReasons }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 					isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
@@ -354,7 +355,7 @@ class DomainSearchResults extends Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						isReskinned={ this.props.isReskinned }
+						hideMatchReasons={ this.props.hideMatchReasons }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 						isCartPendingUpdateDomain={ this.props.isCartPendingUpdateDomain }
@@ -367,7 +368,7 @@ class DomainSearchResults extends Component {
 			if (
 				this.props.offerUnavailableOption &&
 				this.props.siteDesignType !== DESIGN_TYPE_STORE &&
-				! this.props.isReskinned
+				this.props.showDomainTransferSuggestion
 			) {
 				unavailableOffer = (
 					<DomainTransferSuggestion
@@ -390,13 +391,12 @@ class DomainSearchResults extends Component {
 
 		return (
 			<div className="domain-search-results__domain-suggestions">
-				{ ! this.props.isReskinned && this.props.children }
 				{ suggestionCount }
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
 				{ this.props.showSkipButton && domainSkipSuggestion }
-				{ this.props.isReskinned && this.props.children }
+				{ this.props.children }
 			</div>
 		);
 	}
