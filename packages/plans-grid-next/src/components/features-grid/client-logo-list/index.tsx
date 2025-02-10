@@ -6,7 +6,7 @@ const ClientLogoList = ( props: React.HTMLAttributes< HTMLDivElement > ) => {
 	const { className, ...otherProps } = props;
 
 	const elementProps: React.HTMLAttributes< HTMLDivElement > = {
-		className: clsx( 'plans-grid-next-features-grid-client-logo-list', className ),
+		className: clsx( 'plans-grid-next-client-logo-list', className ),
 		...otherProps,
 	};
 
@@ -15,7 +15,7 @@ const ClientLogoList = ( props: React.HTMLAttributes< HTMLDivElement > ) => {
 			{ CLIENT_LIST.map( ( { slug, name, Logo } ) => (
 				<div
 					key={ slug }
-					className={ `plans-grid-next-features-grid-client-logo-list__item plans-grid-next-features-grid-client-logo-list__item--name-${ slug }` }
+					className={ `plans-grid-next-client-logo-list__item plans-grid-next-client-logo-list__item--name-${ slug }` }
 				>
 					<Logo title={ name } />
 				</div>
