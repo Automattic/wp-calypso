@@ -341,17 +341,6 @@ export const SiteLogsDataViews = ( {
 		dateFrom: startTime,
 		dateTo: endTime,
 	} );
-	useEffect( () => {
-		setView( ( view: View ) => ( {
-			...view,
-			sort: {
-				field: getSortField( logType ),
-				direction: view?.sort?.direction || 'desc',
-			},
-			titleField: getSortField( logType ),
-			fields: getVisibleFields( logType ),
-		} ) );
-	}, [ logType, setView ] );
 
 	const { downloadLogs } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const onDownloadLogs = useCallback( () => {
@@ -417,7 +406,18 @@ export const SiteLogsDataViews = ( {
 							hideLabelFromVision
 							label=""
 							onChange={ ( value ) => {
-								navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+								if ( value === 'php' || value === 'web' ) {
+									navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+									setView( ( view: View ) => ( {
+										...view,
+										sort: {
+											field: getSortField( value ),
+											direction: view?.sort?.direction || 'desc',
+										},
+										titleField: getSortField( value ),
+										fields: getVisibleFields( value ),
+									} ) );
+								}
 							} }
 							value={ logType }
 							__nextHasNoMarginBottom
