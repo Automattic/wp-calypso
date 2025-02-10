@@ -1,14 +1,11 @@
-
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .site-logs-header {
 	display: flex;
 	gap: 16px;
 	flex-wrap: wrap;
-	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 24px;
 
 	@include break-small {
 		gap: 24px;
@@ -50,7 +47,7 @@
 	.site-logs-toolbar__download-progress {
 		display: flex;
 		align-items: center;
-		color: var(--color-neutral-50);
+		color: var( --color-neutral-50 );
 		font-size: 0.875rem;
 	}
 }
