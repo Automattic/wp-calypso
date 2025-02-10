@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
+import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -13,17 +14,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
-type FormData = {
-	firstName: string;
-	lastName: string;
-	email: string;
-	agencyName: string;
-	businessUrl: string;
-	phoneNumber: string;
-};
-
 type Props = {
-	onContinue: () => void;
+	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 };
 
 const SignupContactForm = ( { onContinue }: Props ) => {
@@ -32,12 +24,12 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
 
-	const [ formData, setFormData ] = useState< FormData >( {
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		firstName: '',
 		lastName: '',
 		email: '',
 		agencyName: '',
-		businessUrl: '',
+		agencyUrl: '',
 		phoneNumber: '',
 	} );
 
@@ -49,7 +41,8 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	};
 
 	const handleInputChange =
-		( field: keyof FormData ) => ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( field: keyof AgencyDetailsSignupPayload ) =>
+		( event: React.ChangeEvent< HTMLInputElement > ) => {
 			setFormData( ( prev ) => ( {
 				...prev,
 				[ field ]: event.target.value,
@@ -58,7 +51,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		onContinue();
+		onContinue( formData );
 	};
 
 	return (
@@ -112,9 +105,9 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 
 			<FormField label={ translate( 'Business URL' ) } isRequired>
 				<FormTextInput
-					name="businessUrl"
-					value={ formData.businessUrl }
-					onChange={ handleInputChange( 'businessUrl' ) }
+					name="agencyUrl"
+					value={ formData.agencyUrl }
+					onChange={ handleInputChange( 'agencyUrl' ) }
 					placeholder={ translate( 'Business URL' ) }
 				/>
 			</FormField>

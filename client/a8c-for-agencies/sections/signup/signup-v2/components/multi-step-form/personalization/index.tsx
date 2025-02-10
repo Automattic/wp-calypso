@@ -1,11 +1,12 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
+import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
@@ -13,31 +14,79 @@ import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
 import './style.scss';
 
 interface Props {
-	onContinue: () => void;
+	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 }
 
 export default function PersonalizationForm( { onContinue }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
 
-	const [ country, setCountry ] = useState( '' );
-	const [ userType, setUserType ] = useState( '' );
-	const [ managedSites, setManagedSites ] = useState( '' );
-	const [ servicesOffered, setServicesOffered ] = useState< string[] >( [] );
-	const [ productsOffered, setProductsOffered ] = useState< string[] >( [] );
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
+		country: '',
+		userType: '',
+		managedSites: '',
+		servicesOffered: [],
+		productsOffered: [],
+	} );
+
+	const handleInputChange =
+		( field: keyof AgencyDetailsSignupPayload ) => ( event: ChangeEvent< HTMLSelectElement > ) => {
+			setFormData( ( prev ) => ( {
+				...prev,
+				[ field ]: event.target.value,
+			} ) );
+		};
 
 	const handleSetServicesOffered = ( services: { value: string[] } ) => {
-		setServicesOffered( services.value );
+		setFormData( ( prev ) => ( {
+			...prev,
+			servicesOffered: services.value,
+		} ) );
 	};
 
 	const handleSetProductsOffered = ( products: { value: string[] } ) => {
-		setProductsOffered( products.value );
+		setFormData( ( prev ) => ( {
+			...prev,
+			productsOffered: products.value,
+		} ) );
+	};
+
+	const servicesOfferedOptions = useMemo(
+		() => [
+			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
+			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
+			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
+			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
+			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+		],
+		[ translate ]
+	);
+
+	const productsOfferedOptions = useMemo(
+		() => [
+			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
+			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
+			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
+			{ value: 'Pressable', label: translate( 'Pressable' ) },
+			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
+		],
+		[ translate ]
+	);
+
+	const handleSetCountry = ( value?: string | null ) => {
+		if ( ! value ) {
+			return;
+		}
+
+		setFormData( ( prev ) => ( {
+			...prev,
+			country: value,
+		} ) );
 	};
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
-
-		onContinue();
+		onContinue( formData );
 	};
 
 	return (
@@ -50,10 +99,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 				<FormFieldset>
 					<FormField label={ translate( 'Where is your agency located?' ) } isRequired>
 						<SearchableDropdown
-							value={ country }
-							onChange={ ( value ) => {
-								setCountry( value ?? '' );
-							} }
+							value={ formData.country }
+							onChange={ handleSetCountry }
 							options={ countryOptions }
 							placeholder={ translate( 'Select country' ) }
 						/>
@@ -64,10 +111,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 					<FormField label={ translate( 'How would you describe yourself?' ) } isRequired>
 						<FormSelect
 							id="user_type"
-							value={ userType }
-							onChange={ ( e: ChangeEvent< HTMLSelectElement > ) => {
-								setUserType( e.target.value );
-							} }
+							value={ formData.userType }
+							onChange={ handleInputChange( 'userType' ) }
 						>
 							<option value="">{ translate( 'Select option' ) }</option>
 							<option value="agency_owner">{ translate( 'Agency owner' ) }</option>
@@ -85,10 +130,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 					<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
 						<FormSelect
 							id="managed_sites"
-							value={ managedSites }
-							onChange={ ( e: ChangeEvent< HTMLSelectElement > ) => {
-								setManagedSites( e.target.value );
-							} }
+							value={ formData.managedSites }
+							onChange={ handleInputChange( 'managedSites' ) }
 						>
 							<option value="">{ translate( 'Select option' ) }</option>
 							<option value="1-5">{ translate( '1-5' ) }</option>
@@ -106,26 +149,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						<MultiCheckbox
 							id="services_offered"
 							name="services_offered"
-							checked={ servicesOffered }
-							options={ [
-								{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
-								{
-									value: 'website_design_development',
-									label: translate( 'Website design & development' ),
-								},
-								{
-									value: 'performance_optimization',
-									label: translate( 'Performance optimization' ),
-								},
-								{
-									value: 'digital_strategy_marketing',
-									label: translate( 'Digital strategy & marketing' ),
-								},
-								{
-									value: 'maintenance_support_plans',
-									label: translate( 'Maintenance & support plans' ),
-								},
-							] }
+							checked={ formData.servicesOffered }
+							options={ servicesOfferedOptions }
 							onChange={ handleSetServicesOffered as any }
 						/>
 					</FormField>
@@ -139,14 +164,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						<MultiCheckbox
 							id="products_offered"
 							name="products_offered"
-							checked={ productsOffered }
-							options={ [
-								{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
-								{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
-								{ value: 'Jetpack', label: translate( 'Jetpack' ) },
-								{ value: 'Pressable', label: translate( 'Pressable' ) },
-								{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
-							] }
+							checked={ formData.productsOffered }
+							options={ productsOfferedOptions }
 							onChange={ handleSetProductsOffered as any }
 						/>
 					</FormField>

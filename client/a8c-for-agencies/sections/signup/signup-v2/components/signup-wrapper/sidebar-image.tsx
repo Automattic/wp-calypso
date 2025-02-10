@@ -13,7 +13,7 @@ const SignupSidebarImage = ( { className }: Props ) => {
 			className={ className }
 			xmlns="http://www.w3.org/2000/svg"
 		>
-			<g clip-path="url(#clip0_8498_167)">
+			<g clipPath="url(#clip0_8498_167)">
 				<path
 					d="M125.275 96C61.952 151.947 -14.2017 300.396 48.294 316.872C166.434 348.016 277.997 154.178 335.94 200.515C425.78 272.36 34.5 431 225 750.5"
 					stroke="#98DBFF"

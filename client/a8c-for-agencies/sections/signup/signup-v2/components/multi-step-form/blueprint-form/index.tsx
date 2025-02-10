@@ -8,18 +8,12 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { preventWidows } from 'calypso/lib/formatting';
+import { AgencyDetailsSignupPayload } from '../../../../types';
 
 import './style.scss';
 
 type Props = {
-	onContinue: () => void;
-};
-
-type FormData = {
-	topGoal: string;
-	mainGoal2025: string;
-	workModel: string;
-	specificApproach: string;
+	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 };
 
 const BlueprintFormRadio = ( {
@@ -50,16 +44,17 @@ const BlueprintFormRadio = ( {
 
 const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 	const translate = useTranslate();
-	const [ formData, setFormData ] = useState< FormData >( {
-		topGoal: '',
-		mainGoal2025: '',
-		workModel: '',
-		specificApproach: '',
+	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
+		topPartneringGoal: '',
+		topYearlyGoal: '',
+		workWithClients: '',
+		workWithClientsOther: '',
+		approachAndChallenges: '',
 	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		onContinue();
+		onContinue( formData );
 	};
 
 	const topGoalOptions = [
@@ -125,8 +120,8 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 						<BlueprintFormRadio
 							key={ `goal-option-${ option.value }` }
 							label={ option.label }
-							checked={ formData.topGoal === option.value }
-							onChange={ () => setFormData( { ...formData, topGoal: option.value } ) }
+							checked={ formData.topPartneringGoal === option.value }
+							onChange={ () => setFormData( { ...formData, topPartneringGoal: option.value } ) }
 						/>
 					) ) }
 				</div>
@@ -141,8 +136,8 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 						<BlueprintFormRadio
 							key={ `main-goal-2025-option-${ option.value }` }
 							label={ option.label }
-							checked={ formData.mainGoal2025 === option.value }
-							onChange={ () => setFormData( { ...formData, mainGoal2025: option.value } ) }
+							checked={ formData.topYearlyGoal === option.value }
+							onChange={ () => setFormData( { ...formData, topYearlyGoal: option.value } ) }
 						/>
 					) ) }
 				</div>
@@ -159,17 +154,16 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 						<BlueprintFormRadio
 							key={ `work-model-option-${ option.value }` }
 							label={ option.label }
-							checked={ formData.workModel === option.value }
-							onChange={ () => setFormData( { ...formData, workModel: option.value } ) }
+							checked={ formData.workWithClients === option.value }
+							onChange={ () => setFormData( { ...formData, workWithClients: option.value } ) }
 						/>
 					) ) }
-					{ formData.workModel === 'other' && (
+					{ formData.workWithClients === 'other' && (
 						<FormTextInput
-							value={ formData.specificApproach }
-							onChange={ () => {
-								// TODO: form data
-								return;
-							} }
+							value={ formData.workWithClientsOther }
+							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
+								setFormData( { ...formData, workWithClientsOther: e.target.value } )
+							}
 							placeholder={ translate( 'Add your explanation' ) }
 						/>
 					) }
@@ -182,9 +176,9 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 				) }
 			>
 				<FormTextarea
-					value={ formData.specificApproach }
+					value={ formData.approachAndChallenges }
 					onChange={ ( e: React.ChangeEvent< HTMLTextAreaElement > ) =>
-						setFormData( { ...formData, specificApproach: e.target.value } )
+						setFormData( { ...formData, approachAndChallenges: e.target.value } )
 					}
 					placeholder={ translate( 'Add your approach' ) }
 				/>
