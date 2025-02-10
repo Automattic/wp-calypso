@@ -1,12 +1,13 @@
 import { CircularProgressBar, ConfettiAnimation } from '@automattic/components';
 import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
-import { wpcomRequest } from '@automattic/data-stores/src/wpcom-request-controls';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
+import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -18,6 +19,7 @@ import './full-screen-launchpad.scss';
 export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
+	const [ isLaunching, setIsLaunching ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
 	const site = useSelector( ( state: AppState ) => getSite( state, siteId ) );
 	const checklistSlug = site?.options?.site_intent ?? '';
@@ -39,21 +41,21 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 	} );
 
 	const onSiteLaunched = async () => {
-		onClose();
+		setIsLaunching( true );
+		launchSiteApi(
+			async () => {
+				await updateLaunchpadSettings( siteId, {
+					checklist_statuses: { site_launched: true },
+				} );
 
-		await wpcomRequest( {
-			path: `/sites/${ siteSlug }/launch`,
-			apiVersion: '1.1',
-			method: 'post',
-		} );
-
-		await updateLaunchpadSettings( siteId, {
-			checklist_statuses: { site_launched: true },
-		} );
-
-		await refetch?.();
-		layout?.refetch();
-		dispatch( requestSite( siteId ) );
+				await refetch?.();
+				await layout?.refetch();
+				await dispatch( requestSite( siteId ) );
+				onClose();
+				setIsLaunching( false );
+			},
+			{ siteSlug }
+		);
 	};
 
 	const onSkipLaunchpad = async () => {
@@ -112,11 +114,19 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 				/>
 				<div className="launchpad-actions">
 					{ launchSiteTask && isAllTasksCompleted && (
-						<Button onClick={ onSkipLaunchpad } className="launchpad-site-launch" variant="primary">
+						<Button
+							onClick={ onSiteLaunched }
+							className="launchpad-site-launch"
+							variant="primary"
+							isBusy={ isLaunching }
+							disabled={ isLaunching }
+						>
 							{ launchSiteTask?.title }
 						</Button>
 					) }
-					<Button onClick={ onSkipLaunchpad }>{ __( 'Skip to dashboard' ) }</Button>
+					<Button onClick={ onSkipLaunchpad } disabled={ isLaunching }>
+						{ __( 'Skip to dashboard' ) }
+					</Button>
 				</div>
 			</div>
 		</div>
