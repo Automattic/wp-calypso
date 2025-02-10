@@ -178,7 +178,8 @@ class StatsModule extends Component {
 		// TODO: Support error state in redux store
 		const hasError = false;
 
-		const displaySummaryLink = data && ! this.props.hideSummaryLink;
+		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
+		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
 		const footerClass = clsx( 'stats-module__footer-actions', {
 			'stats-module__footer-actions--summary': summary,
