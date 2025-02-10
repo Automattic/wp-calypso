@@ -111,7 +111,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					highlightNextAction
 				/>
 				<div className="launchpad-actions">
-					{ launchSiteTask && (
+					{ launchSiteTask && isAllTasksCompleted && (
 						<Button onClick={ onSkipLaunchpad } className="launchpad-site-launch" variant="primary">
 							{ launchSiteTask?.title }
 						</Button>

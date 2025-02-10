@@ -20,6 +20,10 @@
 		}
 	}
 
+	.launchpad__checklist-wrapper {
+		margin-bottom: 24px;
+	}
+
 	.checklist-item__task {
         padding: 2px;
         border: 1px solid var(--studio-gray-5);
@@ -95,20 +99,17 @@
 	.launchpad-site-launch {
 		font-size: 1rem;
 		padding: 1.5rem;
-		margin-top: 24px;
 	}
 
 	.launchpad-actions {
 		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		gap: 12px;
 		margin: auto;
 		align-items: center;
 		
 		.launchpad-site-launch {
 			order: 0;
 		}
-		
 	}
-	
 }
