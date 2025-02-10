@@ -159,7 +159,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
 				if ( isWooExpressFlow( flow.name ) ) {
-					return <WordPressLogo size={ 72 } className="wpcom-site__logo loading" />;
+					return <WordPressLogo size={ 72 } className="wpcom-site__logo wpcom__loading" />;
 				}
 				return <Loading />;
 			case AssertConditionState.FAILURE:
@@ -235,7 +235,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	useSignUpStartTracking( { flow } );
 
 	return (
-		<Boot fallback={ <Loading className="loading__boot" /> }>
+		<Boot fallback={ <Loading className="wpcom-loading__boot" /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
 
 			<Routes>

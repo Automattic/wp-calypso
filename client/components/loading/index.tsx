@@ -11,10 +11,10 @@ interface LoadingProps {
 
 const Loading: React.FC< LoadingProps > = ( { title, subtitle, progress, className } ) => {
 	return (
-		<div className={ clsx( 'loading', className ) }>
-			<h1 className="loading__title">{ title }</h1>
-			<ProgressBar value={ progress } className="loading__progress-bar" />
-			{ subtitle && <p className="loading__subtitle">{ subtitle }</p> }
+		<div className={ clsx( 'wpcom__loading', className ) }>
+			<h1 className="wpcom__loading-title">{ title }</h1>
+			<ProgressBar value={ progress } className="wpcom__loading-progress-bar" />
+			{ subtitle && <p className="wpcom__loading-subtitle">{ subtitle }</p> }
 		</div>
 	);
 };

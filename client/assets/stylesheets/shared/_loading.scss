@@ -16,19 +16,19 @@
 	}
 }
 
-.loading {
+.wpcom__loading {
 	--wp-components-color-foreground: #3858e9;
 	padding: 1em;
 	max-width: 540px;
 	margin: calc( 32vh + 60px ) auto 0;
 
-	.loading__title {
+	.wpcom__loading-title {
 		height: 40px;
 		line-height: 40px;
 		margin: 0;
 	}
 
-	.loading__progress-bar {
+	.wpcom__loading-progress-bar {
 		margin: 46px auto 0 auto;
 	}
 }
