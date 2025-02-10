@@ -14,7 +14,6 @@ import './index.scss';
 
 interface Props {
 	goToNextStep: () => void;
-	isReskinned: boolean;
 	signupDependencies: any;
 	stepName: string;
 	flowName: string;

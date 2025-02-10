@@ -10,7 +10,6 @@ import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import { isReskinnedFlow } from '../is-flow';
 import './style.scss';
 
 function PresalesChat() {
@@ -69,7 +68,7 @@ class StepWrapper extends Component {
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
 				allowBackFirstStep={ this.props.allowBackFirstStep || !! this.props.backUrl }
-				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				backIcon="chevron-left"
 				queryParams={ this.props.queryParams }
 			/>
 		);
@@ -211,11 +210,9 @@ class StepWrapper extends Component {
 		} );
 		const enablePresales = flows.getFlow( flowName, this.props.userLoggedIn )?.enablePresales;
 
-		let sticky = false;
+		let sticky = null;
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
-		} else {
-			sticky = isReskinnedFlow( flowName ) ? null : false;
 		}
 
 		return (

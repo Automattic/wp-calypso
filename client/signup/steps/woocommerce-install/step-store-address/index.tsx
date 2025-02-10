@@ -39,7 +39,7 @@ const CityZipRow = styled.div`
 `;
 
 export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) {
-	const { goToNextStep, isReskinned, signupDependencies } = props;
+	const { goToNextStep, signupDependencies } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 
@@ -223,9 +223,9 @@ export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) 
 			fallbackSubHeaderText={ __(
 				'This will be used as your default business address. You can change it later if you need to.'
 			) }
-			align={ isReskinned ? 'left' : 'center' }
+			align="left"
 			stepContent={ getContent() }
-			isWideLayout={ isReskinned }
+			isWideLayout
 			{ ...props }
 		/>
 	);
