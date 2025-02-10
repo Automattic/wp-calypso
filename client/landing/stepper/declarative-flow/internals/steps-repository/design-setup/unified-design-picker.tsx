@@ -676,7 +676,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					}
 
 					return setDesignOnSite( siteSlugOrId, _selectedDesign, {
-						styleVariation: selectedStyleVariation,
+						styleVariation: selectedStyleVariation || _selectedDesign?.style_variations?.[ 0 ],
 						globalStyles,
 					} ).then( ( theme: ActiveTheme ) => {
 						return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
@@ -990,7 +990,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				getOptionsMenu={ isUpdatedBadgeDesign ? getBadge : undefined }
 				oldHighResImageLoading={ oldHighResImageLoading }
 				siteActiveTheme={ siteActiveTheme?.[ 0 ]?.stylesheet ?? null }
-				showActiveThemeBadge={ intent !== SiteIntent.Build && ! isSiteSetupFlow( flow ) }
+				showActiveThemeBadge={
+					intent !== SiteIntent.Build &&
+					! isSiteSetupFlow( flow ) &&
+					intent !== SiteIntent.UpdateDesign
+				}
 				isMultiFilterEnabled
 				isBigSkyEligible={ isBigSkyEligible }
 			/>
