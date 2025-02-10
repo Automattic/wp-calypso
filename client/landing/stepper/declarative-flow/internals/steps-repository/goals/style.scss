@@ -40,12 +40,13 @@
 
 	.select-goals__alternative-flows-container {
 		display: grid;
+		width: 100%;
 		grid-template-columns: max-content;
-		justify-content: center;
 		gap: 20px 8px;
 		padding-bottom: 60px + 48px; // height of sticky footer
 
 		@include break-small {
+			justify-content: center;
 			padding-bottom: 60px;
 			grid-template-columns: repeat(3, max-content);
 			gap: 16px 8px;

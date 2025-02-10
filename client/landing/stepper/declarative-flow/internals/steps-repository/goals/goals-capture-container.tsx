@@ -32,6 +32,7 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 			formattedHeader={
 				<FormattedHeader
 					id="goals-header"
+					align={ isMediumOrBiggerScreen ? 'center' : 'left' }
 					headerText={ whatAreYourGoalsText }
 					subHeaderText={ subHeaderText }
 				/>
