@@ -24,11 +24,8 @@ import './style.scss';
  */
 function ExternalLink( {
 	className,
-	href,
-	onClick,
 	icon = false,
 	iconSize = 18,
-	target,
 	showIconFirst = false,
 	iconClassName,
 	iconComponent = null,
@@ -55,8 +52,8 @@ function ExternalLink( {
 		linkProps.rel = linkProps.rel.concat( ' noopener noreferrer' );
 	}
 
-	if ( href && shouldLocalizeUrl ) {
-		linkProps.href = localizeUrl( href );
+	if ( linkProps.href && shouldLocalizeUrl ) {
+		linkProps.href = localizeUrl( linkProps.href );
 	}
 
 	const iconEl = iconComponent || (
