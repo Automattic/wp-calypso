@@ -10,6 +10,7 @@ import TimeSince from 'calypso/components/time-since';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
 import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
+import SubscriberTotals from 'calypso/my-sites/subscribers/components/subscriber-totals';
 import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
 import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
@@ -126,10 +127,12 @@ const SubscriberDataViews = ( {
 		subscribers,
 		is_owner_subscribed: isOwnerSubscribed,
 		pages,
+		total,
 	} = subscribersQueryResult || {
 		subscribers: [],
 		is_owner_subscribed: false,
 		pages: 0,
+		total: 0,
 	};
 
 	const {
@@ -377,28 +380,37 @@ const SubscriberDataViews = ( {
 				{ shouldShowLaunchpad ? (
 					<EmptyComponent />
 				) : (
-					<DataViews< Subscriber >
-						data={ data }
-						fields={ fields }
-						view={ currentView }
-						onClickItem={ handleSubscriberOnClick }
-						onChangeView={ setCurrentView }
-						selection={
-							selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
-						}
-						onChangeSelection={ handleSubscriberSelect }
-						isLoading={ isLoading }
-						paginationInfo={ paginationInfo }
-						getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
-						defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
-						actions={ actions }
-						search
-						searchLabel={
-							isEnglishLocale || hasTranslation( 'Search subscribers…' )
-								? translate( 'Search subscribers…' )
-								: translate( 'Search by name, username or email…' )
-						}
-					/>
+					<>
+						<SubscriberTotals
+							totalSubscribers={ grandTotal }
+							filteredCount={ total }
+							filterOption={ filterOption }
+							searchTerm={ searchTerm }
+							isLoading={ isLoading }
+						/>
+						<DataViews< Subscriber >
+							data={ data }
+							fields={ fields }
+							view={ currentView }
+							onClickItem={ handleSubscriberOnClick }
+							onChangeView={ setCurrentView }
+							selection={
+								selectedSubscriber ? [ selectedSubscriber.subscription_id.toString() ] : undefined
+							}
+							onChangeSelection={ handleSubscriberSelect }
+							isLoading={ isLoading }
+							paginationInfo={ paginationInfo }
+							getItemId={ ( item: Subscriber ) => item.subscription_id.toString() }
+							defaultLayouts={ selectedSubscriber ? { list: {} } : { table: {} } }
+							actions={ actions }
+							search
+							searchLabel={
+								isEnglishLocale || hasTranslation( 'Search subscribers…' )
+									? translate( 'Search subscribers…' )
+									: translate( 'Search by name, username or email…' )
+							}
+						/>
+					</>
 				) }
 			</section>
 			{ selectedSubscriber &&
