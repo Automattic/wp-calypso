@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { type FC } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import { useLaunchpad } from './use-launchpad';
 
 import './style.scss';
@@ -18,7 +19,7 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 	checklistSlug,
 	onSiteLaunched,
 }: CustomerHomeLaunchpadProps ) => {
-	const launchpadContext = 'customer-home';
+	const launchpadContext = useLaunchpadContext();
 	const translate = useTranslate();
 
 	const {
@@ -92,5 +93,14 @@ const CustomerHomeLaunchpad: FC< CustomerHomeLaunchpadProps > = ( {
 		</div>
 	);
 };
+
+function useLaunchpadContext() {
+	const [ isLoading, isCumulative ] = useGoalsFirstCumulativeExperience();
+	if ( isLoading ) {
+		return null;
+	}
+
+	return isCumulative ? 'customer-home-treatment-cumulative' : 'customer-home';
+}
 
 export default CustomerHomeLaunchpad;

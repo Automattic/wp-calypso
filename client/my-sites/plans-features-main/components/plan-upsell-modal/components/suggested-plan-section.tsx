@@ -7,7 +7,7 @@ import {
 } from '@automattic/calypso-products';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import PlanItem from './plan-item';
 import { RowWithBorder } from '.';
 
@@ -29,8 +29,7 @@ export default function SuggestedPlanSection( {
 }: Props ) {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
-	const [ , , variationName ] = useGoalsFirstExperiment();
-	const shouldUseNewCopy = variationName === 'treatment_cumulative';
+	const [ , shouldUseNewCopy ] = useGoalsFirstCumulativeExperience();
 
 	const suggestedPlans = [
 		{

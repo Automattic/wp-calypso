@@ -138,6 +138,7 @@ export const useLaunchpad = (
 			is_dismissible: false,
 			title: null,
 		},
+		enabled: Boolean( siteSlug ),
 	} );
 };
 

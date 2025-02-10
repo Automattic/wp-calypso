@@ -31,7 +31,7 @@ export type LaunchpadChecklist = Task[];
 
 export type LaunchpadTracksData = {
 	checklistSlug: string;
-	launchpadContext: string;
+	launchpadContext: string | null;
 	recordTracksEvent: ( event: string, properties: Record< string, unknown > ) => void;
 	tasklistCompleted: boolean;
 };

@@ -17,7 +17,7 @@ export const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 type LaunchpadProps = {
 	siteSlug: string | null;
 	checklistSlug: string;
-	launchpadContext: string;
+	launchpadContext: string | null;
 	onSiteLaunched?: () => void;
 	onTaskClick?: EventHandlers[ 'onTaskClick' ];
 	onPostFilterTasks?: ( tasks: Task[] ) => Task[];
@@ -35,7 +35,11 @@ const Launchpad = ( {
 }: LaunchpadProps ) => {
 	const {
 		data: { checklist },
-	} = useSortedLaunchpadTasks( siteSlug, checklistSlug, launchpadContext );
+	} = useSortedLaunchpadTasks(
+		launchpadContext ? siteSlug : null, // Prevents launchpad data from loading until launchpadContext is loaded
+		checklistSlug,
+		launchpadContext ?? ''
+	);
 
 	const tasklistCompleted = checklist?.every( ( task: Task ) => task.completed ) || false;
 
@@ -73,6 +77,10 @@ const Launchpad = ( {
 	const launchpadOptions = {
 		onSuccess: sortLaunchpadTasksByCompletionStatus,
 	};
+
+	if ( ! launchpadContext ) {
+		return null;
+	}
 
 	return (
 		<>
