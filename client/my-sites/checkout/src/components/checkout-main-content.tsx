@@ -35,6 +35,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -78,7 +79,6 @@ import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
-import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -504,21 +504,10 @@ export default function CheckoutMainContent( {
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
-					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-					<CheckoutCompleteRedirecting />
-					<CheckoutFormSubmit
-						submitButton={
-							<Button buttonType="primary" fullWidth isBusy disabled>
-								{ translate( 'Please wait…' ) }
-							</Button>
-						}
-					/>
-				</WPCheckoutMainContent>
-			</WPCheckoutWrapper>
+			<>
+				<PerformanceTrackerStop />
+				<Loading title={ translate( 'Your purchase has been completed!' ) } />
+			</>
 		);
 	}
 

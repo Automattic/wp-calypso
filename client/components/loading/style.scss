@@ -2,17 +2,17 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/onboarding/styles/mixins";
 
-.stepper-loader {
+.loading {
 	--wp-components-color-foreground: #3858e9;
 	padding: 1em;
 	max-width: 540px;
 	margin: 32vh auto 0;
 
-	&.stepper-loader__boot {
+	&.loading__boot {
 		margin-top: calc(32vh + 60px);
 	}
 
-	.stepper-loader__title {
+	.loading__title {
 		@include onboarding-font-recoleta;
 		font-weight: 400;
 		height: 40px;
@@ -29,11 +29,11 @@
 		}
 	}
 
-	.stepper-loader__progress-bar {
+	.loading__progress-bar {
 		margin: 46px auto 0 auto;
 	}
 
-	.stepper-loader__subtitle {
+	.loading__subtitle {
 		font-size: 1rem;
 		line-height: 21px;
 		letter-spacing: -0.02em;
