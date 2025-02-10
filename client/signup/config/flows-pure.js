@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW, ONBOARDING_GUIDED_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { READER_AS_LANDING_PAGE_PREFERENCE } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 
 const noop = () => {};
 
@@ -90,6 +92,14 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
+			postCompleteCallback: async ( { dispatch } ) => {
+				dispatch(
+					savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
+						useReaderAsLandingPage: true,
+						updatedAt: Date.now(),
+					} )
+				);
+			},
 		},
 		{
 			name: 'business',
@@ -372,6 +382,14 @@ export function generateFlows( {
 			lastModified: '2025-01-28',
 			showRecaptcha: true,
 			hideProgressIndicator: true,
+			postCompleteCallback: async ( { dispatch } ) => {
+				dispatch(
+					savePreference( READER_AS_LANDING_PAGE_PREFERENCE, {
+						useReaderAsLandingPage: true,
+						updatedAt: Date.now(),
+					} )
+				);
+			},
 		},
 		{
 			name: 'crowdsignal',
