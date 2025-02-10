@@ -59,6 +59,7 @@ class StatsModule extends Component {
 
 	state = {
 		loaded: false,
+		diffData: [],
 	};
 
 	componentDidMount() {
@@ -87,6 +88,25 @@ class StatsModule extends Component {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
+
+		if ( ! isEqual( this.props.data, prevProps.data ) ) {
+			const diffData = this.calculateDiff( prevProps.data, this.props.data );
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( { diffData } );
+		}
+	}
+
+	calculateDiff( prevData, newData ) {
+		// TODO: Review diff logic.
+		// Is it good enough to use the first data set as a baseline?
+		const diff = newData.map( ( item, index ) => {
+			const prevItem = prevData[ index ] || {};
+			return {
+				...item,
+				diffValue: item.value - ( prevItem.value || 0 ),
+			};
+		} );
+		return diff;
 	}
 
 	getModuleLabel() {
@@ -137,6 +157,25 @@ class StatsModule extends Component {
 		return summary && includes( summarizedTypes, statType );
 	}
 
+	remapData() {
+		const { valueField, query } = this.props;
+		const data = this.state.diffData.length ? this.state.diffData : this.props.data;
+
+		if ( query?.interval ) {
+			return data.map( ( item ) => ( {
+				...item,
+				value: item.diffValue || 0,
+			} ) );
+		}
+
+		if ( valueField && data ) {
+			return data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
+	}
+
 	render() {
 		const {
 			className,
@@ -158,19 +197,10 @@ class StatsModule extends Component {
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
-			valueField,
 			formatValue,
 		} = this.props;
 
-		let data = this.props.data;
-
-		// If valueField is specified and data exists, remap data to use that field as the value
-		if ( valueField && data ) {
-			data = data.map( ( item ) => ( {
-				...item,
-				value: item[ valueField ],
-			} ) );
-		}
+		const data = this.remapData();
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
