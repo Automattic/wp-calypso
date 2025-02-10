@@ -160,6 +160,11 @@
 	li.trigger-highlight {
 		animation: trigger-highlight 500ms ease-out;
 	}
+
+	a {
+		text-decoration: underline;
+		color: var(--color-text);
+	}
 }
 
 .jetpack-product-info__regular-list-item {
