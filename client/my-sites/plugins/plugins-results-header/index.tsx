@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { TranslateResult } from 'calypso/../packages/i18n-calypso/types';
+import { TranslateResult } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

@@ -1,5 +1,5 @@
+import { LocalizeProps } from 'i18n-calypso';
 import React from 'react';
-import { LocalizeProps } from 'calypso/../packages/i18n-calypso/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
 import { IAppState } from 'calypso/state/types';
