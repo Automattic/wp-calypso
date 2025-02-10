@@ -3,6 +3,7 @@ import {
 	Button,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	ToggleControl,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { sprintf } from '@wordpress/i18n';
@@ -282,23 +283,36 @@ export const SiteLogsDataViews = ( {
 	// Can we actually derive an unique ID from the data?
 	const getItemId = useMemo( () => () => uuid(), [] );
 
-	const startTime = useMemo( () => {
-		const from = parseInt( query.from || '', 10 );
-		if ( ! isNaN( from ) ) {
-			return moment.unix( from );
-		}
+	const getMomentFromTimestamp = useCallback(
+		( value: string, fallback?: string ) => {
+			const fromValue = parseInt( value || '', 10 );
+			if ( ! isNaN( fromValue ) ) {
+				return moment.unix( fromValue );
+			}
 
-		return moment().subtract( 7, 'd' );
-	}, [ query.from, moment ] );
+			if ( fallback === '7-days-ago' ) {
+				return moment().subtract( 7, 'd' );
+			}
 
-	const endTime = useMemo( () => {
-		const to = parseInt( query.to || '', 10 );
-		if ( ! isNaN( to ) ) {
-			return moment.unix( to );
-		}
+			return moment();
+		},
+		[ moment ]
+	);
 
-		return moment();
-	}, [ query.to, moment ] );
+	const getTimestampFor7DaysAgo = useCallback(
+		() => moment().subtract( 7, 'd' ).unix().toString( 10 ),
+		[ moment ]
+	);
+	const getTimestampForNow = useCallback( () => moment().unix().toString( 10 ), [ moment ] );
+
+	const startTime = useMemo(
+		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
+		[ query.from, getMomentFromTimestamp ]
+	);
+	const endTime = useMemo(
+		() => getMomentFromTimestamp( query.to ),
+		[ query.to, getMomentFromTimestamp ]
+	);
 
 	const handleTimeRangeChange = (
 		updatedStartTime: Moment | null,
@@ -311,24 +325,22 @@ export const SiteLogsDataViews = ( {
 			return;
 		}
 
-		let newStartTime = updatedStartTime || startTime;
-		let newEndTime = updatedEndTime || endTime;
+		const newStartTime = updatedStartTime || startTime;
+		const newEndTime = updatedEndTime || endTime;
 		if (
 			! newStartTime.isValid() ||
 			! newEndTime.isValid() ||
 			newStartTime.isAfter( newEndTime )
 		) {
-			newStartTime = moment().subtract( 7, 'd' );
-			newEndTime = moment();
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
+			url.searchParams.set( 'to', getTimestampForNow() );
+			page.replace( url.pathname + url.search );
 		}
 
 		const url = new URL( window.location.href );
 		url.searchParams.set( 'from', newStartTime.unix().toString( 10 ) );
 		url.searchParams.set( 'to', newEndTime.unix().toString( 10 ) );
-		// todo: when to clear the query?
-		// url.searchParams.delete( 'from' );
-		// url.searchParams.delete( 'to' );
-
 		page.replace( url.pathname + url.search );
 	};
 
@@ -341,6 +353,31 @@ export const SiteLogsDataViews = ( {
 		dateFrom: startTime,
 		dateTo: endTime,
 	} );
+
+	const [ autoRefresh, setAutoRefresh ] = useState( false );
+	const autoRefreshCallback = useCallback( () => {
+		const url = new URL( window.location.href );
+		url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
+		url.searchParams.set( 'to', getTimestampForNow() );
+		page.replace( url.pathname + url.search );
+	}, [ getTimestampFor7DaysAgo, getTimestampForNow ] );
+	useInterval( autoRefreshCallback, autoRefresh && 10 * 1000 );
+	const handleAutoRefreshClick = ( isChecked: boolean ) => {
+		if ( isChecked ) {
+			const url = new URL( window.location.href );
+			url.searchParams.delete( 'from' );
+			url.searchParams.delete( 'to' );
+			page.replace( url.pathname + url.search );
+		} else {
+			const url = new URL( window.location.href );
+			url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
+			url.searchParams.set( 'to', getTimestampForNow() );
+			page.replace( url.pathname + url.search );
+		}
+
+		// TODO: enable tracks dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
+		setAutoRefresh( isChecked );
+	};
 
 	const { downloadLogs } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const onDownloadLogs = useCallback( () => {
@@ -456,12 +493,21 @@ export const SiteLogsDataViews = ( {
 					getItemId={ getItemId }
 					defaultLayouts={ { table: {} } }
 					header={
-						<Button
-							size="compact"
-							icon={ download }
-							label="Download logs"
-							onClick={ onDownloadLogs }
-						/>
+						<>
+							<Button
+								size="compact"
+								icon={ download }
+								label="Download logs"
+								onClick={ onDownloadLogs }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								className="site-logs__auto-refresh site-logs__auto-refresh_desktop"
+								label={ translate( 'Auto-refresh', { textOnly: true } ) }
+								checked={ autoRefresh }
+								onChange={ handleAutoRefreshClick }
+							/>
+						</>
 					}
 				/>
 			) }
