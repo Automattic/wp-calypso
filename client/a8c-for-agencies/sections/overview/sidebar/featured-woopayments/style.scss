@@ -9,6 +9,24 @@ $woocommerce-purple-50: #720EEC;
 	padding: 24px;
 }
 
+.theme-a8c-for-agencies .components-button.overview__featured-dismiss-button {
+	position: absolute;
+	top: 24px;
+	right: 24px;
+
+	svg {
+		fill: var(--color-text-inverted);
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus) var(--color-text-inverted);
+	}
+
+	&:active {
+		background-color: $woocommerce-purple-50;
+	}
+}
+
 .theme-a8c-for-agencies .overview__featured-woopayments .components-button.is-primary:not(:disabled) {
 	&,
 	&:hover,
