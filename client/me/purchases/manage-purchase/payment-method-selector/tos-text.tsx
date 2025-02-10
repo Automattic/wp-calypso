@@ -5,12 +5,17 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 interface TosTextProps {
 	isAkismetPurchase: boolean;
 	is100YearPlanPurchase: boolean;
+	is100YearDomainPurchase: boolean;
 }
 
-export default function TosText( { isAkismetPurchase, is100YearPlanPurchase }: TosTextProps ) {
+export default function TosText( {
+	isAkismetPurchase,
+	is100YearPlanPurchase,
+	is100YearDomainPurchase,
+}: TosTextProps ) {
 	const translate = useTranslate();
 
-	if ( is100YearPlanPurchase ) {
+	if ( is100YearPlanPurchase || is100YearDomainPurchase ) {
 		return (
 			<>
 				{ translate( 'You agree to our {{tosLink}}Terms of Service{{/tosLink}}.', {

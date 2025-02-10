@@ -130,6 +130,17 @@ export function has100YearPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( is100Year );
 }
 
+const isHundredYearDomain = ( product: {
+	extra?: RequestCartProductExtra;
+	volume?: number;
+} ): boolean => {
+	return Boolean( product.extra?.is_hundred_year_domain || product.volume === 100 );
+};
+
+export function has100YearDomain( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( isHundredYearDomain );
+}
+
 export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
 }

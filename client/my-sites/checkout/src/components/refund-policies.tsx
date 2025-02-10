@@ -16,7 +16,7 @@ import { DOMAIN_CANCEL, REFUNDS } from '@automattic/urls';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
+import { has100YearPlan, has100YearDomain } from 'calypso/lib/cart-values/cart-items';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -78,6 +78,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainRegistration( product ) ) {
+			if ( has100YearDomain( cart ) ) {
+				return RefundPolicy.GenericCentennial;
+			}
+
 			if ( isRenewal( product ) ) {
 				return RefundPolicy.DomainNameRenewal;
 			}
@@ -85,6 +89,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainTransfer( product ) ) {
+			if ( has100YearDomain( cart ) ) {
+				return RefundPolicy.GenericCentennial;
+			}
+
 			return RefundPolicy.DomainNameTransfer;
 		}
 

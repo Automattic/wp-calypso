@@ -5,7 +5,11 @@ import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Children, Fragment, ReactNode, isValidElement } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
-import { has100YearPlan, hasRenewableSubscription } from 'calypso/lib/cart-values/cart-items';
+import {
+	has100YearPlan,
+	hasRenewableSubscription,
+	has100YearDomain,
+} from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
 import { useSelector } from 'calypso/state';
@@ -24,8 +28,8 @@ import { showInternationalFeeNotice, InternationalFeeNotice } from './internatio
 import JetpackSocialAdvancedPricingDisclaimer, {
 	showJetpackSocialAdvancedPricingDisclaimer,
 } from './jetpack-social-advanced-pricing-disclaimer';
-import { PlanTerms100Year } from './plan-terms-100-year';
 import RefundPolicies from './refund-policies';
+import { PlanTerms100Year, DomainTerms100Year } from './terms-100-year';
 import { TermsOfService } from './terms-of-service';
 import ThirdPartyPluginsTermsOfService from './third-party-plugins-terms-of-service';
 import TitanTermsOfService from './titan-terms-of-service';
@@ -94,8 +98,10 @@ export default function CheckoutTerms( { cart }: { cart: ResponseCart } ) {
 				hasRenewableSubscription={ hasRenewableSubscription( cart ) || hasDomainTransfer }
 				isGiftPurchase={ Boolean( isGiftPurchase ) }
 				is100YearPlanPurchase={ has100YearPlan( cart ) }
+				is100YearDomainPurchase={ has100YearDomain( cart ) }
 			/>
 			<>
+				{ ! isGiftPurchase && <DomainTerms100Year cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationAgreement cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainPromotionalPricingRestrictions cart={ cart } /> }
 				{ ! isGiftPurchase && <DomainRegistrationHsts cart={ cart } /> }
