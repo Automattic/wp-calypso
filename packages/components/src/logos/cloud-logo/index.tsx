@@ -1,4 +1,4 @@
-const CloudLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
+export const CloudLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 	<svg xmlns="http://www.w3.org/2000/svg" width={ 31 } height={ 18 } fill="none" { ...props }>
 		<title>WP Cloud logo</title>
 		<path
@@ -37,4 +37,3 @@ const CloudLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		/>
 	</svg>
 );
-export default CloudLogo;

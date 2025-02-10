@@ -71,11 +71,11 @@ export type { RenderThumbFunction } from './pricing-slider/types';
 // Logos
 export { default as ClientLogoList } from './client-logo-list';
 export { JetpackLogo } from './logos/jetpack-logo';
-export { default as CloudLogo } from './logos/cloud-logo';
-export { default as VIPLogo } from './logos/vip-logo';
-export { default as WooLogo } from './logos/woo-logo';
+export { CloudLogo } from './logos/cloud-logo';
+export { VIPLogo } from './logos/vip-logo';
+export { WooLogo } from './logos/woo-logo';
 export { WordPressLogo } from './logos/wordpress-logo';
-export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
+export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';

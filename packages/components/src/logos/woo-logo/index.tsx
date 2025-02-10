@@ -1,4 +1,4 @@
-const WooLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
+export const WooLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 	<svg
 		version="1.1"
 		id="Layer_1"
@@ -40,5 +40,3 @@ const WooLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		</g>
 	</svg>
 );
-
-export default WooLogo;

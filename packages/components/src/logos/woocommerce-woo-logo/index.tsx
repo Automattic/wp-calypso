@@ -4,7 +4,7 @@ type WooCommerceWooLogoProps = {
 	width?: number;
 };
 
-const WooCommerceWooLogo = ( {
+export const WooCommerceWooLogo = ( {
 	className = 'woocommerce-logo',
 	height = 35,
 	width = 20,
@@ -52,5 +52,3 @@ const WooCommerceWooLogo = ( {
 		</svg>
 	);
 };
-
-export default WooCommerceWooLogo;

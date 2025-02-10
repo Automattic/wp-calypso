@@ -1,4 +1,4 @@
-const VIPLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
+export const VIPLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 	<svg
 		width="38"
 		height="17"
@@ -36,4 +36,3 @@ const VIPLogo = ( props: React.SVGProps< SVGSVGElement > ) => (
 		</defs>
 	</svg>
 );
-export default VIPLogo;
