@@ -81,9 +81,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 		return null;
 	}
 
-	const launchSiteTask = checklist?.find( ( task: Task ) =>
-		[ 'site_launched', 'blog_launched', 'link_in_bio_launched' ].includes( task.id )
-	);
+	const launchSiteTask = checklist?.find( ( task: Task ) => task.isLaunchTask );
 
 	const isAllTasksCompleted =
 		hasChecklist &&
