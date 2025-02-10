@@ -113,7 +113,6 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-medium;
 		padding: 0;
-		margin: 0 0 5px;
 	}
 
 	.is-left-align &,
@@ -127,6 +126,7 @@
 	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 	padding: 0 20px 24px;
+	margin-top: 8px;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;

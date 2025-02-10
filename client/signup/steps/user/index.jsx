@@ -311,6 +311,16 @@ export class UserStep extends Component {
 			);
 		}
 
+		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
+
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+			subHeaderText = translate(
+				'Pick an option to start moving your site to the world’s best WordPress host.'
+			);
+		} else if ( redirectToAfterLoginUrl?.startsWith( '/start/do-it-for-me' ) ) {
+			subHeaderText = translate( 'Pick an option to start shaping your dream website with us.' );
+		}
+
 		if ( this.props.userLoggedIn ) {
 			subHeaderText = '';
 		}

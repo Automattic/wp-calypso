@@ -36,35 +36,9 @@
 		transform-origin: 0 0;
 	}
 
-	.step-container__content {
-		.formatted-header {
-			margin: 24px 20px;
-			.formatted-header__title {
-				/* this is to match with start */
-				/* stylelint-disable-next-line scales/font-sizes */
-				font-size: 1.875rem;
-				line-height: 40px;
-				@include break-small {
-					font-size: 2rem;
-					line-height: 3.25;
-				}
-			}
-			.formatted-header__title:has(+ p) {
-				@include break-small {
-					line-height: 1.9;
-				}
-			}
-			.formatted-header__subtitle {
-				@include break-small {
-					padding-bottom: 1em;
-				}
-			}
-		}
-	}
-
 	.signup-form-social-first {
 		width: 327px;
-		margin: 0 auto;
+		margin: 3rem auto 0 auto;
 
 		.signup-form__notice {
 			width: 327px;
@@ -88,8 +62,8 @@
 			font-style: normal;
 			font-weight: 400;
 			line-height: 18px;
-			margin-top: 24px;
-			margin-bottom: 12px;
+			margin-top: 3rem;
+			margin-bottom: 0;
 
 			a {
 				color: var(--studio-gray-50, #646970);
@@ -98,7 +72,6 @@
 		}
 
 		.signup-form-social-first__tos-link {
-			margin-top: 32px;
 			text-align: center;
 		}
 	}
