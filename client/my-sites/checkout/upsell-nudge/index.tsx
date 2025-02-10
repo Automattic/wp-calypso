@@ -110,7 +110,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 
 		if ( upsellType === BUSINESS_PLAN_UPGRADE_UPSELL ) {
 			this.redirectToThankYouPageUrl();
-			return;
+			return null;
 		}
 
 		return (
