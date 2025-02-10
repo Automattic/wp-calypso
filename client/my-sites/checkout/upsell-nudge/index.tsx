@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isMonthly, TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
+import { TERM_MONTHLY, isPlan, PlanSlug } from '@automattic/calypso-products';
 import { RazorpayHookProvider } from '@automattic/calypso-razorpay';
 import page from '@automattic/calypso-router';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -9,7 +9,7 @@ import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping
 import { isURL } from '@wordpress/url';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { localize, useTranslate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -63,18 +63,13 @@ export interface UpsellNudgeManualProps {
 
 // Below are provided by HOCs
 export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
-	currencyCode: string | undefined;
 	isLoading?: boolean;
 	hasProductsList?: boolean;
 	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
-	planRawPrice?: number | null;
-	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
 	selectedSiteId: string | number | undefined | null;
-	hasSevenDayRefundPeriod?: boolean;
-	translate: ReturnType< typeof useTranslate >;
 	currentPlanTerm: string;
 }
 
@@ -416,7 +411,6 @@ const WrappedUpsellNudge = (
 	props: UpsellNudgeManualProps & WithIsEligibleForOneClickCheckoutProps & WithShoppingCartProps
 ) => {
 	const { siteSlugParam, upgradeItem, upsellType } = props;
-	const translate = useTranslate();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const products = ProductsList.useProducts();
@@ -470,10 +464,6 @@ const WrappedUpsellNudge = (
 	return (
 		<UpsellNudge
 			{ ...props }
-			hasSevenDayRefundPeriod={ isMonthly( planSlug ) }
-			currencyCode={ pricing?.[ planSlug ]?.currencyCode }
-			planRawPrice={ pricing?.[ planSlug ]?.originalPrice.full ?? 0 }
-			planDiscountedRawPrice={ pricing?.[ planSlug ]?.discountedPrice.full ?? 0 }
 			isLoading={ ! pricing || products.isLoading || isLoadingProductsList || isLoadingSitePlans }
 			hasSitePlans={ sitePlans ? sitePlans.length > 0 : undefined }
 			hasProductsList={ Object.keys( productsList ).length > 0 }
@@ -482,7 +472,6 @@ const WrappedUpsellNudge = (
 			isLoggedIn={ isLoggedIn }
 			siteSlug={ siteSlug }
 			selectedSiteId={ selectedSiteId }
-			translate={ translate }
 		/>
 	);
 };
