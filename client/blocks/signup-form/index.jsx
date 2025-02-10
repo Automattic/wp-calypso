@@ -765,12 +765,14 @@ class SignupForm extends Component {
 	}
 
 	recordWooCommerceSignupTracks( method ) {
-		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
-		if ( isJetpackWooCommerceFlow ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-				signup_method: method,
-			} );
-		} else if ( isWoo && 'cart' === wccomFrom ) {
+		const { isWoo, wccomFrom } = this.props;
+		// TODO: replace with other flow, or delete?
+		// if ( isJetpackWooCommerceFlow ) {
+		// 	recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
+		// 		signup_method: method,
+		// 	} );
+		// } else
+		if ( isWoo && 'cart' === wccomFrom ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
 			} );
@@ -1191,7 +1193,9 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
+		// TODO: is it ok to merge it with JPC flow? Should we replace the check
+		// with the JPC flow, or simply remove it from the check?
+		if ( /* this.props.isJetpackWooCommerceFlow || */ this.props.isJetpackWooDnaFlow ) {
 			return (
 				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
@@ -1380,14 +1384,17 @@ class SignupForm extends Component {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooJPC = isWooJPCFlow( state );
+		const isWooJPC =
+			// TODO:
+			// - is it ok to merge legacy flow with JPC, or should we merge it with DNA?
+			// - move check directly to isWooJPCFlow
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			isWooJPCFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			sectionName: getSectionName( state ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),

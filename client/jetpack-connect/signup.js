@@ -124,14 +124,19 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	isWooOnboarding() {
-		const { authQuery } = this.props;
-		return 'woocommerce-onboarding' === authQuery.from;
-	}
+	// isWooOnboarding() {
+	// 	const { authQuery } = this.props;
+	// 	return 'woocommerce-onboarding' === authQuery.from;
+	// }
 
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
+		// TODO: can we reuse existing logic?
+		return (
+			'woocommerce-onboarding' === from ||
+			'woocommerce-core-profiler' === from ||
+			this.props.isWooJPC
+		);
 	}
 
 	getWooDnaConfig() {
@@ -504,7 +509,6 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
-				isWooOnboarding={ this.isWooOnboarding() }
 				isWooJPC={ this.isWooJPC() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
@@ -512,7 +516,6 @@ export class JetpackSignup extends Component {
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
-						isWooOnboarding={ this.isWooOnboarding() }
 						isWooJPC={ this.isWooJPC() }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 						disableSiteCard={ isWooJPC }

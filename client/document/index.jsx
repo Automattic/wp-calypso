@@ -96,9 +96,6 @@ class Document extends Component {
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
 
-		const isJetpackWooCommerceFlow =
-			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
-
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
 		const theme = config( 'theme' );
@@ -177,7 +174,9 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
+									// TODO: clean up classname in styles too
+									// Should we replace it with another flow, or can we just delete?
+									// 'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>

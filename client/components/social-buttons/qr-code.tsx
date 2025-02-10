@@ -18,10 +18,8 @@ type QrCodeLoginButtonProps = {
 const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { isDisabled, isJetpackWooCommerceFlow, oauth2Client, isWoo } = useSelector( ( select ) => {
+	const { isDisabled, oauth2Client, isWoo } = useSelector( ( select ) => {
 		return {
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === getCurrentQueryArguments( select )?.from,
 			oauth2Client: getCurrentOAuth2Client( select ) as { id: string },
 			locale: getCurrentLocaleSlug( select ),
 			isWoo: getIsWoo( select ),
@@ -35,9 +33,10 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 		return null;
 	}
 
-	if ( isJetpackWooCommerceFlow ) {
-		return null;
-	}
+	// TODO: replace with another flow, or just delete?
+	// if ( isJetpackWooCommerceFlow ) {
+	// 	return null;
+	// }
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_login_magic_login_request_click', {

@@ -383,12 +383,14 @@ export class LoginForm extends Component {
 	};
 
 	recordWooCommerceLoginTracks( method ) {
-		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
-		if ( isJetpackWooCommerceFlow ) {
-			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-				login_method: method,
-			} );
-		} else if ( isWoo && 'cart' === wccomFrom ) {
+		const { isWoo, wccomFrom } = this.props;
+		// Note: replace with other flow, or delete?
+		// if ( isJetpackWooCommerceFlow ) {
+		// 	this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
+		// 		login_method: method,
+		// 	} );
+		// } else
+		if ( isWoo && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,
 			} );
@@ -648,6 +650,7 @@ export class LoginForm extends Component {
 			! canDoMagicLogin(
 				this.props.twoFactorAuthType,
 				this.props.oauth2Client,
+				// TODO: replace with other flow, or delete?
 				this.props.isJetpackWooCommerceFlow
 			)
 		) {
@@ -670,8 +673,9 @@ export class LoginForm extends Component {
 		if (
 			! canDoMagicLogin(
 				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.isJetpackWooCommerceFlow
+				this.props.oauth2Client
+				// TODO: replace with other flow, or delete?
+				// this.props.isJetpackWooCommerceFlow
 			)
 		) {
 			return null;
@@ -792,7 +796,6 @@ export class LoginForm extends Component {
 			oauth2Client,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
-			isJetpackWooCommerceFlow,
 			isP2Login,
 			isJetpack,
 			isJetpackWooDnaFlow,
@@ -878,9 +881,10 @@ export class LoginForm extends Component {
 			) : null;
 		}
 
-		if ( isJetpackWooCommerceFlow ) {
-			return this.renderWooCommerce( { socialToS } );
-		}
+		// TODO: replace with other flow, or delete?
+		// if ( isJetpackWooCommerceFlow ) {
+		// 	return this.renderWooCommerce( { socialToS } );
+		// }
 
 		if ( isJetpackWooDnaFlow ) {
 			return this.renderWooCommerce( {
@@ -1176,10 +1180,10 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWooJPC: isWooJPCFlow( state ),
+			isWooJPC:
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
+				isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),

@@ -72,7 +72,6 @@ class Login extends Component {
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
-		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromMigrationPlugin: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
@@ -115,7 +114,6 @@ class Login extends Component {
 	static defaultProps = {
 		isJetpack: false,
 		isWhiteLogin: false,
-		isJetpackWooCommerceFlow: false,
 	};
 
 	componentDidMount() {
@@ -191,7 +189,6 @@ class Login extends Component {
 	showContinueAsUser = () => {
 		const {
 			isJetpack,
-			isJetpackWooCommerceFlow,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -210,7 +207,8 @@ class Login extends Component {
 			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
 			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
-			! isJetpackWooCommerceFlow &&
+			// Note: do we need to replace with other flows?
+			// ! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
@@ -352,7 +350,6 @@ class Login extends Component {
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isJetpack,
-			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
 			isP2Login,
 			isSignupExistingAccount,
@@ -617,26 +614,6 @@ class Login extends Component {
 			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
-		} else if ( isJetpackWooCommerceFlow ) {
-			headerText = translate( 'Log in to your WordPress.com account' );
-			preHeader = (
-				<div className="login__jetpack-logo">
-					<AsyncLoad
-						require="calypso/components/jetpack-header"
-						placeholder={ null }
-						partnerSlug={ this.props.partnerSlug }
-						isWooOnboarding
-						width={ 200 }
-					/>
-				</div>
-			);
-			postHeader = (
-				<p className="login__header-subtitle">
-					{ translate(
-						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
-					) }
-				</p>
-			);
 		} else if ( isFromMigrationPlugin ) {
 			headerText = translate( 'Log in to your account' );
 		} else if ( isJetpack ) {
@@ -1059,9 +1036,12 @@ export default connect(
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isWooJPC: isWooJPCFlow( state ),
+		isWooJPC:
+			// The legacy "Jetpack WooCommerce" flow is deprecated and absorbed
+			// into the Woo JPC flow
+			// TODO: move to isWooJPCFlow check
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
+			isWooJPCFlow( state ),
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),
 		wccomFrom: getWccomFrom( state ),

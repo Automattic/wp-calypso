@@ -212,8 +212,9 @@ export class LoginLinks extends Component {
 			! canDoMagicLogin(
 				this.props.twoFactorAuthType,
 				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
+				this.props.wccomFrom
+				// Replace with other flow, or delete?
+				// this.props.isJetpackWooCommerceFlow
 			)
 		) {
 			return null;
@@ -261,9 +262,10 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpackWooCommerceFlow ) {
-			return null;
-		}
+		// Replace with other flow, or delete?
+		// if ( this.props.isJetpackWooCommerceFlow ) {
+		// 	return null;
+		// }
 
 		const loginUrl = login( {
 			locale: this.props.locale,
@@ -298,7 +300,6 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		query: getCurrentQueryArguments( state ),
-		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
 		wccomFrom: getWccomFrom( state ),
 	} ),
 	{
