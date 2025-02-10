@@ -1106,7 +1106,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.'
 	);
 	const woocommerceWoopaymentsLightboxDescription = translate(
-		'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
+		"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share on transactions from your clients' sites within Automattic for Agencies."
 	);
 	const woocommercProductFiltersLightboxDescription = translate(
 		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'

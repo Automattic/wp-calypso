@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, ReactNode, useCallback } from 'react';
 import JetpackLightbox, {
 	JetpackLightboxAside,
 	JetpackLightboxMain,
@@ -29,6 +29,7 @@ export type LicenseLightBoxProps = {
 	ctaHref?: string;
 	showPaymentPlan?: boolean;
 	fireCloseOnCTAClick?: boolean;
+	customDescription?: ReactNode;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -46,6 +47,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	quantity,
 	showPaymentPlan = true,
 	fireCloseOnCTAClick = true,
+	customDescription,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -68,7 +70,12 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 		>
 			<JetpackLightboxMain ref={ mainRef }>
 				{ productInfo && (
-					<JetpackProductInfo title={ title } product={ productInfo } full={ isLargeScreen } />
+					<JetpackProductInfo
+						title={ title }
+						product={ productInfo }
+						full={ isLargeScreen }
+						customDescription={ customDescription }
+					/>
 				) }
 			</JetpackLightboxMain>
 
