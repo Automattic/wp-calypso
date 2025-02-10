@@ -176,7 +176,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 				skipLabelText={ translate( 'Skip' ) }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<>
+					<div className="select-goals">
 						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
 						{ isMediumOrBiggerScreen && (
 							<Button
@@ -207,7 +207,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 								</Button>
 							) }
 						</div>
-					</>
+					</div>
 				}
 			/>
 		</>

@@ -26,7 +26,6 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 		<StepContainer
 			{ ...otherProps }
 			isHorizontalLayout={ false }
-			className="goals__container two-columns"
 			hideBack
 			hideSkip={ false }
 			hideNext={ isMediumOrBiggerScreen }
