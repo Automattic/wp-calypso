@@ -34,7 +34,7 @@ export default function ThemeTierBadge( {
 	const themeTier = useThemeTierForTheme( themeId );
 	const isThemeAllowed = useIsThemeAllowedOnSite( siteId, themeId );
 
-	const getBadge = useMemo( () => {
+	const badge = useMemo( () => {
 		if ( themeTier?.slug === 'free' ) {
 			return <ThemeTierFreeBadge />;
 		}
@@ -94,7 +94,7 @@ export default function ThemeTierBadge( {
 		showUpgradeBadge,
 	] );
 
-	if ( ! getBadge ) {
+	if ( ! badge ) {
 		return null;
 	}
 
@@ -107,7 +107,7 @@ export default function ThemeTierBadge( {
 				showUpgradeBadge={ showUpgradeBadge }
 				themeId={ themeId }
 			>
-				{ getBadge }
+				{ badge }
 			</ThemeTierBadgeContextProvider>
 		</div>
 	);
