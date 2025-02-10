@@ -13,10 +13,7 @@ const ClientLogoList = ( props: React.HTMLAttributes< HTMLDivElement > ) => {
 	return (
 		<div { ...elementProps }>
 			{ CLIENT_LIST.map( ( { slug, name, Logo } ) => (
-				<div
-					key={ slug }
-					className={ `plans-grid-next-client-logo-list__item plans-grid-next-client-logo-list__item--name-${ slug }` }
-				>
+				<div key={ slug } className={ `plans-grid-next-client-logo-list__item is-name-${ slug }` }>
 					<Logo title={ name } />
 				</div>
 			) ) }
