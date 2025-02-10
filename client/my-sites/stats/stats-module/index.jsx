@@ -88,7 +88,7 @@ class StatsModule extends Component {
 			return;
 		}
 
-		const paramsValid = period && path && siteSlug;
+		const paramsValid = period?.period && path && siteSlug;
 		if ( ! paramsValid ) {
 			return undefined;
 		}
