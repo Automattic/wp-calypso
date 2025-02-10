@@ -46,11 +46,11 @@ export function OnboardingNextStepAfterPublishingPost() {
 
 							// Show success notice with Next steps link
 							dispatch( 'core/notices' ).createSuccessNotice(
-								__( 'Well done publishing your first post!', 'wpcom-onboarding-task' ),
+								__( 'Well done publishing your first post!' ),
 								{
 									actions: [
 										{
-											label: 'Next steps',
+											label: __( 'Next steps' ),
 											url: `${ siteOrigin }/home/${ siteSlug }`,
 										},
 									],
