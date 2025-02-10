@@ -83,6 +83,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 	}
 
 	const launchSiteTask = checklist?.find( ( task: Task ) => task.isLaunchTask );
+	const isLaunchSiteTaskComplete = launchSiteTask?.completed;
 
 	const isAllTasksCompleted =
 		hasChecklist &&
@@ -101,7 +102,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 						size={ 40 }
 						enableDesktopScaling
 						numberOfSteps={ numberOfSteps - ( launchSiteTask ? 1 : 0 ) }
-						currentStep={ completedSteps }
+						currentStep={ completedSteps - ( isLaunchSiteTaskComplete ? 1 : 0 ) }
 					/>
 					<h2>{ ! isAllTasksCompleted ? __( "Let's get started!" ) : __( "You're all set!" ) }</h2>
 					<span>{ ! isAllTasksCompleted && launchpadTitle }</span>
