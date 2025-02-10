@@ -1841,6 +1841,7 @@ __metadata:
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"
     typescript: "npm:^5.3.3"
+    webpack: "npm:^5.97.1"
   peerDependencies:
     "@wordpress/data": ^10.16.0
     react: ^18.3.1
