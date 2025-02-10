@@ -303,7 +303,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
 
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && statType && (
+			{ ! shouldGate && ! supportsLocationsStatsFeature && geoMode === 'country' && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
