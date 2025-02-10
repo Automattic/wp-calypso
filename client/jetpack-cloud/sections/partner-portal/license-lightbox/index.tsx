@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { FunctionComponent, ReactNode, useCallback } from 'react';
 import JetpackLightbox, {
 	JetpackLightboxAside,
+	JetpackLightboxFooter,
 	JetpackLightboxMain,
 } from 'calypso/components/jetpack/jetpack-lightbox';
 import useMobileSidebar from 'calypso/components/jetpack/jetpack-lightbox/hooks/use-mobile-sidebar';
@@ -30,6 +31,7 @@ export type LicenseLightBoxProps = {
 	showPaymentPlan?: boolean;
 	fireCloseOnCTAClick?: boolean;
 	customDescription?: ReactNode;
+	customFooter?: ReactNode;
 };
 
 const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
@@ -48,6 +50,7 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 	showPaymentPlan = true,
 	fireCloseOnCTAClick = true,
 	customDescription,
+	customFooter,
 } ) => {
 	const isLargeScreen = useBreakpoint( '>782px' );
 	const { title, product: productInfo } = useLicenseLightboxData( product );
@@ -77,6 +80,8 @@ const LicenseLightbox: FunctionComponent< LicenseLightBoxProps > = ( {
 						customDescription={ customDescription }
 					/>
 				) }
+
+				{ customFooter && <JetpackLightboxFooter>{ customFooter }</JetpackLightboxFooter> }
 			</JetpackLightboxMain>
 
 			<JetpackLightboxAside ref={ sidebarRef }>
