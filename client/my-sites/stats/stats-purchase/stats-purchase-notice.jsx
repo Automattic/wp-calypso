@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { STATS_PRODUCT_NAME } from 'my-sites/stats/constants';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { trackStatsAnalyticsEvent } from '../utils';
 import {
 	StatsBenefitsCommercial,
