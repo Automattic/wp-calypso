@@ -20,7 +20,7 @@
 	--wp-components-color-foreground: #3858e9;
 	padding: 1em;
 	max-width: 540px;
-	margin: 32vh auto 0;
+	margin: calc( 32vh + 60px ) auto 0;
 
 	.loading__title {
 		height: 40px;
