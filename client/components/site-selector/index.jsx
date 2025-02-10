@@ -400,7 +400,6 @@ export class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ this.isHighlighted }
 				isSelected={ this.isSelected }
-				isReskinned
 			/>
 		);
 	}

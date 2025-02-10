@@ -2,7 +2,7 @@
 
 import { Button, Spinner } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
-import { close, search, Icon } from '@wordpress/icons';
+import { close, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { debounce } from 'lodash';
@@ -58,7 +58,6 @@ type Props = {
 	displayOpenAndCloseIcons?: boolean;
 	fitsContainer?: boolean;
 	hideClose?: boolean;
-	isReskinned?: boolean;
 	hideOpenIcon?: boolean;
 	inputLabel?: string;
 	openIconSide?: 'left' | 'right';
@@ -79,7 +78,6 @@ type Props = {
 	value?: string;
 	searchMode?: 'when-typing' | 'on-enter';
 	searchIcon?: ReactNode;
-	submitOnOpenIconClick?: boolean;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -147,10 +145,7 @@ const InnerSearch = (
 		minLength,
 		maxLength,
 		hideClose = false,
-		isReskinned = false,
 		searchMode = 'when-typing',
-		searchIcon,
-		submitOnOpenIconClick = false,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -225,15 +220,6 @@ const InnerSearch = (
 		onSearchChange?.( keyword );
 	}, [ keyword ] );
 
-	const openSearch = ( event: KeyboardOrMouseEvent ) => {
-		event.preventDefault();
-
-		setKeyword( '' );
-		setIsOpen( true );
-
-		recordEvent?.( 'Clicked Open Search' );
-	};
-
 	const closeSearch = ( event: KeyboardOrMouseEvent ) => {
 		event.preventDefault();
 
@@ -280,7 +266,6 @@ const InnerSearch = (
 	}, [ isOpen ] );
 
 	const closeListener = keyListener( closeSearch );
-	const openListener = keyListener( openSearch );
 
 	const scrollOverlay = () => {
 		window.requestAnimationFrame( () => {
@@ -395,7 +380,7 @@ const InnerSearch = (
 		return null;
 	};
 
-	const renderReskinSearchIcon = () => {
+	const renderOpenIcon = () => {
 		const searchIcon = (
 			<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path
@@ -410,46 +395,10 @@ const InnerSearch = (
 				/>
 			</svg>
 		);
-
-		return <Icon icon={ searchIcon } size={ 32 } className="search-component__icon-search" />;
-	};
-
-	const renderOpenIcon = () => {
-		const enableOpenIcon = pinned && ! isOpen;
-
 		if ( searchIcon ) {
 			return searchIcon;
 		}
-
-		if ( isReskinned ) {
-			return renderReskinSearchIcon();
-		}
-
-		const onClick = ( props: React.MouseEvent< HTMLButtonElement > ) => {
-			if ( submitOnOpenIconClick ) {
-				handleSubmit();
-			}
-
-			if ( enableOpenIcon ) {
-				return openSearch( props );
-			}
-
-			return () => searchInput.current?.focus();
-		};
-
-		return (
-			<Button
-				className="search-component__icon-navigation"
-				ref={ openIcon }
-				onClick={ onClick }
-				tabIndex={ enableOpenIcon ? 0 : undefined }
-				onKeyDown={ enableOpenIcon ? openListener : undefined }
-				aria-controls={ 'search-component-' + instanceId }
-				aria-label={ __( 'Open Search', __i18n_text_domain__ ) }
-			>
-				{ ! hideOpenIcon && <Icon icon={ search } className="search-component__open-icon" /> }
-			</Button>
-		);
+		return <Icon icon={ searchIcon } size={ 32 } className="search-component__icon-search" />;
 	};
 
 	const renderCloseButton = () => {

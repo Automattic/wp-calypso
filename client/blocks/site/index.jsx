@@ -57,9 +57,6 @@ class Site extends Component {
 
 		isP2Hub: false,
 		isSiteP2: false,
-
-		isReskinned: false,
-
 		defaultIcon: null,
 	};
 
@@ -81,7 +78,6 @@ class Site extends Component {
 		compact: PropTypes.bool,
 		isP2Hub: PropTypes.bool,
 		isSiteP2: PropTypes.bool,
-		isReskinned: PropTypes.bool,
 		defaultIcon: PropTypes.node,
 	};
 
@@ -226,7 +222,6 @@ class Site extends Component {
 			'is-selected': this.props.isSelected,
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
-			'is-reskinned': this.props.isReskinned,
 			'is-trial': this.props.isTrialSite,
 			'inline-badges': inlineBadges,
 		} );

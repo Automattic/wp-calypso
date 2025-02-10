@@ -14,22 +14,16 @@
 	padding: 0;
 	position: relative;
 
-	&.is-reskinned {
-		.site-icon {
-			background-color: var(--color-neutral-0);
-			svg {
-				transform: scale(0.65);
-				fill: var(--color-neutral-50);
-			}
-		}
-	}
-
 	&.is-loading {
 		pointer-events: none;
 
 		.site-icon {
 			animation: pulse-light 1.8s ease-in-out infinite;
-			background-color: var(--color-neutral-10);
+			background-color: var(--color-neutral-0);
+			svg {
+				transform: scale(0.65);
+				fill: var(--color-neutral-50);
+			}
 		}
 
 		.site__title,
