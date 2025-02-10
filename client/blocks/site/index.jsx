@@ -13,17 +13,11 @@ import SiteIndicator from 'calypso/my-sites/site-indicator';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { isTrialSite } from 'calypso/state/sites/plans/selectors';
-import {
-	getSite,
-	getSiteSlug,
-	isSitePreviewable,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -300,9 +294,6 @@ function mapStateToProps( state, ownProps ) {
 		isSiteP2: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
 		isTrialSite: isTrialSite( state, siteId ),
-		isAtomicAndEditingToolkitDeactivated:
-			isAtomicSite( state, siteId ) &&
-			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 	};
 }
 
