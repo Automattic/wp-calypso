@@ -1,7 +1,7 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -51,25 +51,27 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 		} ) );
 	};
 
-	const getServicesOfferedOptions = () => {
-		return [
+	const servicesOfferedOptions = useMemo(
+		() => [
 			{ value: 'strategy_consulting', label: translate( 'Strategy consulting' ) },
 			{ value: 'website_design_development', label: translate( 'Website design & development' ) },
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
-		];
-	};
+		],
+		[ translate ]
+	);
 
-	const getProductsOfferedOptions = () => {
-		return [
+	const productsOfferedOptions = useMemo(
+		() => [
 			{ value: 'WordPress.com', label: translate( 'WordPress.com' ) },
 			{ value: 'WooCommerce', label: translate( 'WooCommerce' ) },
 			{ value: 'Jetpack', label: translate( 'Jetpack' ) },
 			{ value: 'Pressable', label: translate( 'Pressable' ) },
 			{ value: 'WordPress VIP', label: translate( 'WordPress VIP' ) },
-		];
-	};
+		],
+		[ translate ]
+	);
 
 	const handleSetCountry = ( value?: string | null ) => {
 		if ( ! value ) {
@@ -148,7 +150,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 							id="services_offered"
 							name="services_offered"
 							checked={ formData.servicesOffered }
-							options={ getServicesOfferedOptions() }
+							options={ servicesOfferedOptions }
 							onChange={ handleSetServicesOffered as any }
 						/>
 					</FormField>
@@ -163,7 +165,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 							id="products_offered"
 							name="products_offered"
 							checked={ formData.productsOffered }
-							options={ getProductsOfferedOptions() }
+							options={ productsOfferedOptions }
 							onChange={ handleSetProductsOffered as any }
 						/>
 					</FormField>
