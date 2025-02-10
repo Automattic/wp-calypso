@@ -1,0 +1,46 @@
+
+$woocommerce-purple-50: #720EEC;
+
+.overview__featured-woopayments {
+	background: $woocommerce-purple-50 url( calypso/assets/images/a8c-for-agencies/woo-product-card-bg.svg ) no-repeat bottom right;
+	border-color: $woocommerce-purple-50;
+	border-radius: 4px;
+	color: var(--color-text-inverted);
+	padding: 24px;
+}
+
+.theme-a8c-for-agencies .overview__featured-woopayments .components-button.is-primary:not(:disabled) {
+	&,
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		color: $woocommerce-purple-50;
+		background-color: var(--color-surface);
+		border: none;
+		outline: none;
+		box-shadow: none;
+	}
+}
+
+.overview__featured-woopayments-badge {
+	display: inline-block;
+	background-color: var(--color-surface);
+	color: $woocommerce-purple-50;
+	margin-block-end: 16px;
+}
+
+.overview__featured-woopayments-logo {
+	margin-block-end: 16px;
+	display: block;
+	width: 200px;
+}
+
+.overview__featured-woopayments-title {
+	@include a4a-font-heading-xl;
+	margin-block-end: 12px;
+}
+
+.overview__featured-woopayments-description {
+	@include a4a-font-body-lg;
+	margin-block-end: 12px;
+}
