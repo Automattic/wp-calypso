@@ -29,7 +29,7 @@
             border-bottom: none;
         }
 
-		a, button {
+		a {
 			padding: 20px 24px;
 			margin: 0;
 			border-bottom: none;
@@ -53,8 +53,7 @@
             border-bottom: 1px solid var(--studio-gray-5);
 			border-radius: 4px;
 
-			a,
-			button {
+			a {
 				margin: 0 0 -1px 0;
 				padding: 28px 24px;
 				border-radius: 2px;
@@ -73,20 +72,47 @@
 		&:first-child {
             border-radius: 4px 4px 0 0;
 
-            a,
-            button {
+            a {
                 border-radius: 2px 2px 0 0;
             }
         }
 
-		&:last-child {
+		&:nth-last-child(2) {
 			border-radius: 0 0 4px 4px;
             border-bottom: 1px solid var(--studio-gray-5);
             
-            a,
-            button {
+            a {
                 border-radius: 0 0 2px 2px;
             }
+		}
+
+		&:last-child {
+			border: 0;
+			
+			button {
+				border-radius: 4px;
+				font-size: .875rem;
+				font-weight: 500;
+				background-color: var(--color-accent);
+				color: var(--color-text-inverted);
+				max-width: 260px;
+				margin: auto;
+				margin-top: 24px;
+
+				&:hover,
+				&:focus {
+					background-color: var(--color-accent-60);
+				}
+			}
+
+			.checklist-item__text{
+				text-align: center;
+				color: var(--color-text-inverted);
+			}
+
+			svg {
+				display: none;
+			}
 		}
 	}
 }
