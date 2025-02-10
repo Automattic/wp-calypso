@@ -47,12 +47,18 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
+	const isRealTime = query?.interval !== undefined;
+	const presentLoadingUI = isRealTime ? isRequestingData && ! data?.length : isRequestingData;
+	const presentModuleUI = isRealTime
+		? ! presentLoadingUI
+		: ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule;
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ isRequestingData && (
+			{ presentLoadingUI && (
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
 					className={ className }
@@ -60,7 +66,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					type={ 1 }
 				/>
 			) }
-			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+			{ presentModuleUI && (
 				// show data or an overlay
 				<StatsModule
 					path="posts"
