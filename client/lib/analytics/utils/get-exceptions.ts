@@ -1,7 +1,7 @@
 import cookie from 'cookie';
 import type { AdTracker } from '../tracker-buckets';
 
-const getExceptions = (): Record< AdTracker, boolean > => {
+const getExceptions = (): Partial< Record< AdTracker, boolean > > => {
 	const cookies = cookie.parse( document.cookie );
 	const region = ( cookies.region || '' ).toLowerCase();
 	const countryCode = ( cookies.country_code || '' ).toLowerCase();
