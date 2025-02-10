@@ -5,9 +5,9 @@ import type { View } from '@wordpress/dataviews';
 const getSortField = ( logType: LogType ) => ( logType === 'php' ? 'timestamp' : 'date' );
 const getVisibleFields = ( logType: LogType ) => {
 	if ( logType === 'php' ) {
-		return [ 'severity', 'timestamp', 'message' ];
+		return [ 'severity', 'message' ];
 	}
-	return [ 'request_type', 'date', 'status', 'request_url' ];
+	return [ 'request_type', 'status', 'request_url' ];
 };
 const getFilterValue = ( view: View, fieldName: string ) =>
 	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
@@ -48,6 +48,7 @@ const useView = ( { logType }: { logType: LogType } ) => {
 				field: getSortField( logType ),
 				direction: 'desc',
 			},
+			titleField: getSortField( logType ),
 			fields: getVisibleFields( logType ),
 			layout: {
 				styles: {

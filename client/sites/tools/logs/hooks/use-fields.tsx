@@ -27,6 +27,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 	if ( logType === 'php' ) {
 		return [
 			{
+				id: 'timestamp',
+				type: 'date',
+				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+				render: ( { item }: { item: PHPLog } ) => getFormattedDate( item.timestamp ),
+			},
+			{
 				id: 'severity',
 				type: 'text',
 				label: __( 'Severity' ),
@@ -44,13 +51,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 					return <Badge className={ `badge--${ severity }` }>{ severity }</Badge>;
 				},
 				enableSorting: false,
-			},
-			{
-				id: 'timestamp',
-				type: 'date',
-				// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-				label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
-				render: ( { item }: { item: PHPLog } ) => getFormattedDate( item.timestamp ),
 			},
 			{
 				id: 'message',
@@ -78,6 +78,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 
 	return [
 		{
+			id: 'date',
+			type: 'datetime',
+			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
+			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
+			render: ( { item }: { item: ServerLog } ) => getFormattedDate( item.date ),
+		},
+		{
 			id: 'request_type',
 			type: 'text',
 			label: __( 'Request type' ),
@@ -96,13 +103,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				return <Badge className={ `badge--${ requestType }` }>{ requestType }</Badge>;
 			},
 			enableSorting: false,
-		},
-		{
-			id: 'date',
-			type: 'datetime',
-			// translators: %s is the timezone offset of the site, e.g. GMT, GMT +1, GMT -1.
-			label: sprintf( __( 'Date & time (%s)' ), siteGsmOffsetDisplay ),
-			render: ( { item }: { item: ServerLog } ) => getFormattedDate( item.date ),
 		},
 		{
 			id: 'status',
