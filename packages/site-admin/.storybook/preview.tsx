@@ -1,5 +1,4 @@
-import { createReduxStore, register, RegistryProvider } from '@wordpress/data';
-import { store as coreDataStore } from '@wordpress/core-data';
+import { RegistryProvider } from '@wordpress/data';
 import React from 'react';
 
 /**
