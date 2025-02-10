@@ -173,16 +173,6 @@ class SitePost {
 	}
 
 	/**
-	 * Search within a site for related posts
-	 * @param {Object} body - body object parameter
-	 * @param {Function} fn - callback function
-	 * @returns {Function} request handler
-	 */
-	related( body, fn ) {
-		return this.wpcom.req.put( `${ this.getPostPath() }/related`, body, null, fn );
-	}
-
-	/**
 	 * Create a `Comment` instance
 	 * @param {string} [cid] - comment id
 	 * @returns {Comment} Comment instance
