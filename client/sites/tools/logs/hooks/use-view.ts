@@ -52,17 +52,16 @@ const useView = ( { logType }: { logType: LogType } ) => {
 			fields: getVisibleFields( logType ),
 			layout: {
 				styles: {
-					request_url: {
-						maxWidth: '300px',
+					// PHP errors
+					timestamp: {
+						maxWidth: '150px',
 					},
-					http_referer: {
-						maxWidth: '300px',
+					severity: {
+						maxWidth: '150px',
 					},
-					message: {
-						maxWidth: '300px',
-					},
-					file: {
-						maxWidth: '300px',
+					// Server errors
+					date: {
+						maxWidth: '150px',
 					},
 				},
 			},
