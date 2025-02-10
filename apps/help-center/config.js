@@ -1,6 +1,1 @@
-window.configData = {
-	features: {
-		'help/gpt-response': true,
-	},
-	wapuu: false,
-};
+window.configData = { env_id: 'staging', features: { 'help/gpt-response': true, wapuu: false } };
