@@ -1,8 +1,7 @@
-import { Page, Locator } from 'playwright';
+import { Page, Locator, Frame } from 'playwright';
 import { getCalypsoURL } from '../../../data-helper';
 import envVariables from '../../../env-variables';
 import type { NewUserResponse } from '../../../types/rest-api-client.types';
-
 const selectors = {
 	// Fields
 	emailInput: 'input[name="email"]',
@@ -154,21 +153,29 @@ export class UserSignupPage {
 	async signupWoo( email: string ): Promise< NewUserResponse > {
 		await this.page.fill( selectors.emailInput, email );
 
-		const [ response ] = await Promise.all( [
-			this.page.waitForResponse( /.*users\/new\?.*/ ),
-			this.page.click( selectors.submitButton ),
-			this.page.waitForURL( /.*woocommerce\.com*/, {
-				waitUntil: 'networkidle',
-				timeout: 25000,
-			} ),
-		] );
+		// Detect redirection without keeping the listener around
+		const redirectDetected = new Promise< string >( ( resolve ) => {
+			const handler = ( frame: Frame ) => {
+				const url = frame.url();
+				if ( /.*woocommerce\.com*/.test( url ) ) {
+					this.page.off( 'framenavigated', handler ); // Remove listener after use
+					resolve( url );
+				}
+			};
+			this.page.on( 'framenavigated', handler );
+		} );
+
+		// Ensure response is captured correctly
+		const responsePromise = this.page.waitForResponse( /.*users\/new\?.*/ );
+		await this.page.click( selectors.submitButton );
+
+		const [ response ] = await Promise.all( [ responsePromise, redirectDetected ] );
 
 		if ( ! response ) {
 			throw new Error( 'Failed to create new user at WooCommerce using WPCC.' );
 		}
 
 		const responseBody: NewUserResponse = await response.json();
-
 		return responseBody;
 	}
 
