@@ -1,33 +1,24 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import ExternalLink from './index';
 
-class ExternalLinkWithTracking extends Component {
-	handleClickEvent() {
-		return () => {
-			const { onClick, tracksEventName, tracksEventProps } = this.props;
-			const trackEvent = this.props.recordTracksEvent || recordTracksEvent;
+function ExternalLinkWithTracking( {
+	onClick,
+	recordTracksEvent: recordEvent,
+	tracksEventName,
+	tracksEventProps,
+	...props
+} ) {
+	const handleClickEvent = () => {
+		const trackEvent = recordEvent || recordTracksEvent;
+		trackEvent( tracksEventName, tracksEventProps );
 
-			trackEvent( tracksEventName, tracksEventProps );
+		if ( onClick ) {
+			onClick();
+		}
+	};
 
-			if ( onClick ) {
-				onClick();
-			}
-		};
-	}
-
-	render() {
-		const {
-			onClick,
-			recordTracksEvent: recordEvent,
-			tracksEventName,
-			tracksEventProps,
-			...props
-		} = this.props;
-
-		return <ExternalLink onClick={ this.handleClickEvent() } { ...props } />;
-	}
+	return <ExternalLink onClick={ handleClickEvent } { ...props } />;
 }
 
 ExternalLinkWithTracking.propTypes = {
