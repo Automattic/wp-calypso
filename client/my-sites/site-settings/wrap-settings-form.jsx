@@ -113,11 +113,8 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 
 			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlugs ] ) => {
 				if ( get( this.state.modifiedFields, field ) ) {
-					if ( Array.isArray( taskSlugs ) ) {
-						taskSlugs.forEach( ( taskSlug ) => launchpadTasksToComplete.push( taskSlug ) );
-					} else {
-						launchpadTasksToComplete.push( taskSlugs );
-					}
+					const slugs = Array.isArray( taskSlugs ) ? taskSlugs : [ taskSlugs ];
+					launchpadTasksToComplete.push( ...slugs );
 				}
 			} );
 
