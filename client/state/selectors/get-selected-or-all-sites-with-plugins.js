@@ -2,6 +2,7 @@ import { createSelector } from '@automattic/state-utils';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isJetpackConnectionPluginActive from 'calypso/state/sites/selectors/is-jetpack-connection-plugin-active';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import 'calypso/state/ui/init';
@@ -18,7 +19,8 @@ export default createSelector(
 			( site ) =>
 				isJetpackSite( state, site.ID ) &&
 				canCurrentUser( state, site.ID, 'manage_options' ) &&
-				( site.visible || getSelectedSiteId( state ) )
+				( site.visible || getSelectedSiteId( state ) ) &&
+				isJetpackConnectionPluginActive( state, site.ID, 'jetpack' )
 		),
 	( state ) => [ state.ui.selectedSiteId, state.sites.items, state.currentUser.capabilities ]
 );
