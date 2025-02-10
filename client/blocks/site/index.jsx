@@ -149,15 +149,7 @@ class Site extends Component {
 	};
 
 	renderSiteBadges() {
-		const { isSiteUnlaunched, site, translate, isAtomicAndEditingToolkitDeactivated } = this.props;
-
-		// We show public coming soon badge only when the site is not private.
-		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
-		const shouldShowPublicComingSoonSiteBadge =
-			! site.is_private &&
-			this.props.site.is_coming_soon &&
-			! isAtomicAndEditingToolkitDeactivated &&
-			! this.props.isTrialSite;
+		const { isSiteUnlaunched, site, translate } = this.props;
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
@@ -191,11 +183,6 @@ class Site extends Component {
 				{ site.options && site.options.is_difm_lite_in_progress && (
 					<span className="site__badge site__badge-domain-only">
 						{ translate( 'Express Service' ) }
-					</span>
-				) }
-				{ shouldShowPublicComingSoonSiteBadge && (
-					<span className="site__badge site__badge-coming-soon">
-						{ translate( 'Coming Soon' ) }
 					</span>
 				) }
 				{ site.options && site.options.is_redirect && (
