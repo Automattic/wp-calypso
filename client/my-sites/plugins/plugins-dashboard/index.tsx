@@ -4,6 +4,7 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -51,7 +52,6 @@ import { PluginComponentProps } from '../plugin-management-v2/types';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
-
 import './style.scss';
 
 interface PluginActionCallback {
@@ -342,6 +342,7 @@ const PluginsDashboard = ( {
 			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
+					{ isA8CForAgencies() && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
 						{ ! pluginSlug && (
