@@ -2,7 +2,7 @@ import { Button } from '@wordpress/components';
 import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, KeyboardEvent } from 'react';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
 import { useURLQueryParams } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
@@ -43,9 +43,9 @@ export default function WooPaymentsProductCard( {
 	}, [ onSelectProduct, product ] );
 
 	const onKeyDown = useCallback(
-		( e: any ) => {
+		( e: KeyboardEvent ) => {
 			// Enter
-			if ( 13 === e.keyCode ) {
+			if ( 'Enter' === e.code ) {
 				onSelect();
 			}
 		},
