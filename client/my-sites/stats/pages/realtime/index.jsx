@@ -33,7 +33,12 @@ function StatsRealtime() {
 	// Need a period, a query, and a URL to use Top Posts.
 	// See getStatHref() example on Traffic page for URL.
 	const period = {};
-	const query = {};
+	const query = {
+		period: 'day',
+		date: '2025-02-10',
+		max: 10,
+		summarize: 1,
+	};
 	const url = '#';
 
 	// Track the last viewed tab.
