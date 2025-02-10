@@ -14,8 +14,8 @@ const useActions = ( { logType }: { logType: LogType } ) => {
 					icon: copy,
 					isPrimary: true,
 					supportsBulk: false,
-					callback: ( items: PHPLog[] ) => {
-						const message = items[ 0 ].message;
+					callback: ( items: ( PHPLog | ServerLog )[] ) => {
+						const message = ( items[ 0 ] as PHPLog ).message;
 						navigator.clipboard.writeText( message );
 					},
 				},
@@ -29,8 +29,8 @@ const useActions = ( { logType }: { logType: LogType } ) => {
 				icon: copy,
 				isPrimary: true,
 				supportsBulk: false,
-				callback: ( items: ServerLog[] ) => {
-					const url = items[ 0 ].request_url;
+				callback: ( items: ( PHPLog | ServerLog )[] ) => {
+					const url = ( items[ 0 ] as ServerLog ).request_url;
 					navigator.clipboard.writeText( url );
 				},
 			},

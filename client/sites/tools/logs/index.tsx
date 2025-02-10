@@ -16,7 +16,12 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
 import Pagination from 'calypso/components/pagination';
-import { useSiteLogsQuery, LogType } from 'calypso/data/hosting/use-site-logs-query';
+import {
+	useSiteLogsQuery,
+	LogType,
+	PHPLog,
+	ServerLog,
+} from 'calypso/data/hosting/use-site-logs-query';
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -439,7 +444,7 @@ export const SiteLogsDataViews = ( {
 				<>{ __( 'No log entries within this time range.' ) }</>
 			) }
 			{ ! isLoading && data && data.length > 0 && (
-				<DataViews
+				<DataViews< PHPLog | ServerLog >
 					data={ data }
 					paginationInfo={ paginationInfo }
 					fields={ fields }
