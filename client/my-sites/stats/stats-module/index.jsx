@@ -6,6 +6,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -63,17 +64,12 @@ class StatsModule extends Component {
 	componentDidMount() {
 		const interval = this.props.query?.interval;
 		if ( ! interval ) {
-			// eslint-disable-next-line no-console
-			console.log( 'interval not set. no timer needed' );
 			return;
 		}
 
-		// eslint-disable-next-line no-console
-		console.log( 'interval set. timer after: ', interval );
-
 		this.timer = setInterval( () => {
-			// eslint-disable-next-line no-console
-			console.log( 'timer fired' );
+			const { siteId, statType, query, dispatch } = this.props;
+			dispatch( requestSiteStats( siteId, statType, query ) );
 		}, interval );
 	}
 
@@ -165,11 +161,6 @@ class StatsModule extends Component {
 			valueField,
 			formatValue,
 		} = this.props;
-
-		if ( query?.interval ) {
-			// eslint-disable-next-line no-console
-			console.log( 'StatsModule should refresh' );
-		}
 
 		let data = this.props.data;
 
@@ -267,6 +258,10 @@ class StatsModule extends Component {
 	}
 }
 
+const mapDispatchToProps = ( dispatch ) => ( {
+	dispatch,
+} );
+
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
@@ -282,4 +277,4 @@ export default connect( ( state, ownProps ) => {
 		gateStats,
 		gateDownloads,
 	};
-} )( localize( StatsModule ) );
+}, mapDispatchToProps )( localize( StatsModule ) );
