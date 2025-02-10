@@ -329,6 +329,9 @@ import {
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+	FEATURE_UPLOAD_VIDEO,
+	FEATURE_STATS_BASIC_20250206,
+	FEATURE_STATS_ADVANCED_20250206,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -2449,6 +2452,27 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Priority 24/7 support from our expert team' ),
 		getDescription: () =>
 			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
+	},
+	[ FEATURE_UPLOAD_VIDEO ]: {
+		getSlug: () => FEATURE_UPLOAD_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () =>
+			i18n.translate(
+				'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
+			),
+	},
+	// For the copy request dated 20250207 in pcNC1U-1vN-p2
+	[ FEATURE_STATS_BASIC_20250206 ]: {
+		getSlug: () => FEATURE_STATS_BASIC_20250206,
+		getTitle: () => i18n.translate( 'Stats' ),
+		getDescription: () =>
+			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
+	},
+	[ FEATURE_STATS_ADVANCED_20250206 ]: {
+		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
+		getTitle: () => i18n.translate( 'Premium stats' ),
+		getDescription: () =>
+			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
 
