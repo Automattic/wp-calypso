@@ -1,4 +1,4 @@
-## 0.0.1-beta.1
+## Next
 
 - Introduce package. Create skeleton.
 - Expose [getMeta()](./src/utils/meta/README.md)
