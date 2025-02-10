@@ -38,6 +38,7 @@ function StatsRealtime() {
 		date: '2025-02-10',
 		max: 10,
 		summarize: 1,
+		interval: 10000, // Indicate the query should be periodically refreshed.
 	};
 	const url = '#';
 

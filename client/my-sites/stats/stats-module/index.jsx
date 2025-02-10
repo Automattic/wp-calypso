@@ -145,6 +145,11 @@ class StatsModule extends Component {
 			formatValue,
 		} = this.props;
 
+		if ( query?.interval ) {
+			// eslint-disable-next-line no-console
+			console.log( 'StatsModule should refresh' );
+		}
+
 		let data = this.props.data;
 
 		// If valueField is specified and data exists, remap data to use that field as the value
