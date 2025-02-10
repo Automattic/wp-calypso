@@ -374,7 +374,7 @@ function UnifiedPlansStep( {
 		return translate( 'Choose your flavor of WordPress' );
 	};
 
-	const SubHeaderText = () => {
+	const getSubheaderText = () => {
 		const { segmentationSurveyAnswers } = signupDependencies;
 		const { segmentSlug } = getSegmentedIntent( segmentationSurveyAnswers );
 
@@ -436,7 +436,7 @@ function UnifiedPlansStep( {
 	} );
 
 	const fallbackHeaderText = fallbackHeaderTextFromProps || <HeaderText />;
-	const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || <SubHeaderText />;
+	const fallbackSubHeaderText = fallbackSubHeaderTextFromProps || getSubheaderText();
 
 	let backUrl;
 	let backLabelText;
@@ -640,7 +640,7 @@ function UnifiedPlansStep( {
 						headerText={ <HeaderText /> }
 						shouldHideNavButtons={ shouldHideNavButtons }
 						fallbackHeaderText={ fallbackHeaderText }
-						subHeaderText={ <SubHeaderText /> }
+						subHeaderText={ getSubheaderText() }
 						fallbackSubHeaderText={ fallbackSubHeaderText }
 						allowBackFirstStep={ !! initializedSitesBackUrl }
 						queryParams={ queryParams }

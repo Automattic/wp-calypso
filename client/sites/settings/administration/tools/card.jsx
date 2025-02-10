@@ -1,13 +1,13 @@
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SiteToolsLink from 'calypso/my-sites/site-settings/site-tools/link';
-import { useIsSiteSettingsUntangled } from '../../hooks/use-is-site-settings-untangled';
 
 export default function AdministrationToolCard( props ) {
 	const { description, href, isWarning, onClick, title } = props;
 
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	if ( ! isUntangled ) {
 		return <SiteToolsLink { ...props } />;

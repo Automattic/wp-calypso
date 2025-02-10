@@ -63,7 +63,6 @@ class EmailSignupTitanCard extends Component {
 			addButtonTitle,
 			extraClasses,
 			hideSkip = false,
-			isReskinned,
 			onAddButtonClick,
 			onSkipButtonClick,
 			showChevron,
@@ -73,39 +72,28 @@ class EmailSignupTitanCard extends Component {
 		const domainItem = signupDependencies.domainItem?.meta;
 		const classes = clsx( 'email-suggestion', extraClasses );
 
-		const wrapDivActionContainer = ( contentElement ) =>
-			isReskinned ? (
-				<div className="email-signup-titan-card__suggestion-action-container">
-					{ contentElement }
-				</div>
-			) : (
-				contentElement
-			);
-
 		return (
 			<>
 				<QueryProductsList />
 				<Card className={ classes } compact>
 					{ this.renderEmailSuggestion( domainItem ) }
-					{ wrapDivActionContainer(
-						<>
-							{ ! hideSkip && (
-								<Button
-									className="email-signup-titan-card__suggestion-action"
-									onClick={ onSkipButtonClick }
-								>
-									{ skipButtonTitle }
-								</Button>
-							) }
+					<div className="email-signup-titan-card__suggestion-action-container">
+						{ ! hideSkip && (
 							<Button
 								className="email-signup-titan-card__suggestion-action"
-								primary
-								onClick={ onAddButtonClick }
+								onClick={ onSkipButtonClick }
 							>
-								{ addButtonTitle }
+								{ skipButtonTitle }
 							</Button>
-						</>
-					) }
+						) }
+						<Button
+							className="email-signup-titan-card__suggestion-action"
+							primary
+							onClick={ onAddButtonClick }
+						>
+							{ addButtonTitle }
+						</Button>
+					</div>
 					{ showChevron && (
 						<Gridicon
 							className="email-signup-titan-card__suggestion-chevron"

@@ -1,5 +1,5 @@
-import { ConfirmationDialog } from '@automattic/components';
 import {
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -30,7 +30,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 
 	return (
 		<>
-			<ConfirmationDialog
+			<ConfirmDialog
 				isOpen={ isOpen }
 				onConfirm={ handleConfirm }
 				onCancel={ handleCancel }
@@ -47,7 +47,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 						) }
 					</Text>
 				</VStack>
-			</ConfirmationDialog>
+			</ConfirmDialog>
 			<DropdownMenu
 				icon={ moreVertical }
 				label={ translate( 'More options' ) }
