@@ -32,6 +32,7 @@ import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import SiteSettingPrivacyForm from 'calypso/sites/settings/site/privacy/form';
 import editorReducer from 'calypso/state/editor/reducer';
+import explatExperimentsReducer from 'calypso/state/explat-experiments/reducers';
 import jetpackReducer from 'calypso/state/jetpack/reducer';
 import mediaReducer from 'calypso/state/media/reducer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -80,6 +81,7 @@ function renderWithRedux( ui, customInitialState = {} ) {
 			timezones: timezonesReducer,
 			ui: uiReducer,
 			jetpack: jetpackReducer,
+			explatExperiments: explatExperimentsReducer,
 		},
 	} );
 }
@@ -100,6 +102,7 @@ const props = {
 	uniqueEventTracker: () => ( z ) => z,
 	fields: {},
 	moment,
+	getRemoveDuplicateViewsExperimentAssignment: jest.fn(),
 };
 
 describe( 'SiteSettingsFormGeneral', () => {

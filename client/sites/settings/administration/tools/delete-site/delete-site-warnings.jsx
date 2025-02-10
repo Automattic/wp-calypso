@@ -2,12 +2,12 @@ import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { purchasesRoot } from 'calypso/me/purchases/paths';
-import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
 
 function DeleteSiteWarnings( { p2HubP2Count, isAtomicRemovalInProgress, isTrialSite = false } ) {
 	const translate = useTranslate();
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const getButtons = () => {
 		if ( isAtomicRemovalInProgress ) {

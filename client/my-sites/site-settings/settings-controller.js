@@ -3,7 +3,7 @@ import titlecase from 'to-title-case';
 import { redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { sectionify } from 'calypso/lib/route';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
@@ -39,10 +39,9 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  * @returns
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+	if ( isUntangled ) {
 		const slug = context.path.split( '/' )[ 2 ];
 		if ( ! slug ) {
 			return next();
@@ -70,11 +69,10 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  *
  * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
  */
-export const redirectSettingsIfDuplciatedViewsEnabled = async () => {
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
+export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 
-	if ( isRemoveDuplicateViewsExperimentEnabled ) {
+	if ( isUntangled ) {
 		return page.redirect( `/sites/settings/site` );
 	}
 
@@ -90,11 +88,10 @@ export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, 
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
-	const isRemoveDuplicateViewsExperimentEnabled =
-		await getIsRemoveDuplicateViewsExperimentEnabled();
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	if ( isRemoveDuplicateViewsExperimentEnabled && hasClassicAdminInterfaceStyle ) {
+	if ( isUntangled && hasClassicAdminInterfaceStyle ) {
 		return page.redirect( `/sites/settings/site/${ siteSlug }` );
 	}
 

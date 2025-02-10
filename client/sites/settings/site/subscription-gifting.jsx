@@ -5,11 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { useIsSiteSettingsUntangled } from '../hooks/use-is-site-settings-untangled';
 
 export default function SubscriptionGiftingForm( {
 	fields,
@@ -24,7 +24,7 @@ export default function SubscriptionGiftingForm( {
 		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
 		return;

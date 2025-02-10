@@ -5,7 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { useIsSiteSettingsUntangled } from 'calypso/sites/settings/hooks/use-is-site-settings-untangled';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 
 const Strong = styled( 'strong' )( {
 	fontWeight: 500,
@@ -13,7 +13,7 @@ const Strong = styled( 'strong' )( {
 
 const PendingDomainTransfer = ( { domain }: { domain: ResponseDomain } ) => {
 	const translate = useTranslate();
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	return (
 		<>
 			<>

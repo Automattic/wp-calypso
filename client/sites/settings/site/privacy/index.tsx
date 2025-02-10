@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -13,7 +14,6 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { getSiteOption, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useIsSiteSettingsUntangled } from '../../hooks/use-is-site-settings-untangled';
 import SiteSettingPrivacyForm from './form';
 import type { AppState } from 'calypso/types';
 
@@ -54,7 +54,7 @@ const PrivacyForm = ( {
 		( state ) => !! getSiteOption( state, siteId, 'editing_toolkit_is_active' )
 	);
 	const isAtomicAndEditingToolkitDeactivated = !! siteIsAtomic && ! isEditingToolkitActive;
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	if ( isP2HubSite ) {
 		return <></>;
