@@ -5,3 +5,9 @@
 		display: none;
 	}
 }
+
+// This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
+.site-logs .dataviews-wrapper {
+	margin-right: -48px;
+	margin-left: -48px;
+}

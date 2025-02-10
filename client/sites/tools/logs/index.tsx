@@ -258,8 +258,6 @@ export const SiteLogsDataViews = ( {
 	query: { from: string; to: string };
 } ) => {
 	// TODO:
-	// - DataViews:
-	//   - styling issues: spacing left/right
 	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
