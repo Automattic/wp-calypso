@@ -52,6 +52,7 @@ const noop = () => {};
  */
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
+export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export interface UpsellNudgeManualProps {
@@ -106,6 +107,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			upsellType === PROFESSIONAL_EMAIL_UPSELL
 				? upgradeItem
 				: parseInt( String( selectedSiteId ), 10 );
+
+		if ( upsellType === BUSINESS_PLAN_UPGRADE_UPSELL ) {
+			this.redirectToThankYouPageUrl();
+			return;
+		}
 
 		return (
 			<Main className={ clsx( upsellType ) }>
@@ -231,7 +237,10 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
+		this.redirectToThankYouPageUrl( shouldHideUpsellNudges );
+	};
 
+	redirectToThankYouPageUrl = ( shouldHideUpsellNudges = true ) => {
 		const url = this.getThankYouPageUrlForIncomingCart( shouldHideUpsellNudges );
 
 		// Removes the destination cookie only if redirecting to the signup destination.
