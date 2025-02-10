@@ -124,12 +124,14 @@ const ConfirmationModal = ( {
 	isFetching,
 	siteTitle,
 	siteDomain,
+	siteId,
 	onConfirm,
 	closeModal,
 }: {
 	isFetching: boolean;
 	siteTitle?: string;
 	siteDomain?: string;
+	siteId?: number;
 	onConfirm: () => void;
 	closeModal: () => void;
 } ) => {
@@ -138,12 +140,15 @@ const ConfirmationModal = ( {
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HelpCenter.register() );
 
+	const userFieldMessage =
+		'Automated message: This is a user looking to purchase the 100-Year Plan and is currently in the site picker step: https://wordpress.com/setup/hundred-year-plan/site-picker';
+	const helpCenterUrl = `/odie?provider=zendesk&userFieldMessage=${ encodeURIComponent(
+		userFieldMessage
+	) }&siteUrl=${ siteDomain }&siteId=${ siteId }`;
+
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
-		setNavigateToRoute(
-			'/odie?provider=zendesk&userFieldMessage=' +
-				encodeURIComponent( 'This is a user looking to purchase the 100-Year Plan' )
-		);
+		setNavigateToRoute( helpCenterUrl );
 		setShowHelpCenter( true );
 		closeModal();
 	};
@@ -309,6 +314,7 @@ const HundredYearPlanSitePicker: Step = function HundredYearPlanSitePicker( { na
 					closeModal={ closeModal }
 					siteTitle={ siteTitle }
 					siteDomain={ siteDomain?.domain }
+					siteId={ site?.ID }
 				/>
 			) }
 		</>

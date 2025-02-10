@@ -1,11 +1,12 @@
 import { getPlanClass, isWpcomEnterpriseGridPlan } from '@automattic/calypso-products';
-import { ClientLogoList, FoldableCard } from '@automattic/components';
+import { FoldableCard } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { usePlansGridContext } from '../../grid-context';
 import { GridPlan } from '../../types';
 import { PlanFeaturesItem } from '../item';
 import PlanDivOrTdContainer from '../plan-div-td-container';
+import ClientLogoList from './client-logo-list';
 
 type EnterpriseFeaturesProps = {
 	renderedGridPlans: GridPlan[];

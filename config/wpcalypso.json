@@ -52,7 +52,7 @@
 		"global-styles/on-personal-plan": true,
 		"help": true,
 		"help/gpt-response": true,
-		"home/launchpad-first": false,
+		"home/launchpad-first": true,
 		"home/layout-dev": true,
 		"hosting/datacenter-picker": true,
 		"hosting-server-settings-enhancements": true,

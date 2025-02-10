@@ -235,6 +235,7 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 								disablePreventWidows
+								brandFont
 							/>
 							{ headerImageUrl && (
 								<div className="step-wrapper__header-image">

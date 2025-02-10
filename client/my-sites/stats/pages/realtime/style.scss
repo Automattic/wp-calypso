@@ -1,4 +1,4 @@
-.stats-line-chart {
+.stats-realtime-chart {
 	position: relative;
 	margin: 32px 0;
 
@@ -15,4 +15,14 @@
 		left: 50%;
 		transform: translate(-50%, 0);
 	}
+
+	/* Style the line chart svg using the user admin color scheme */
+	path.visx-line {
+		stroke: var(--color-primary);
+	}
+
+	#area-gradient-1 > stop:first-child {
+		stop-color: var(--color-primary);
+	}
+	/* Style the line chart svg using the user admin color scheme */
 }
