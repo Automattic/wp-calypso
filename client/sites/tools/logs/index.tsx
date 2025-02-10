@@ -34,6 +34,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
+import useActions from './hooks/use-actions';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
 import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
@@ -258,6 +259,7 @@ export const SiteLogsDataViews = ( {
 	query: { from: string; to: string };
 } ) => {
 	// TODO:
+	// - Review existing fields coming from the API.
 	// - Empty state after filtering should display DataViews (not the empty state)
 	// - Address the "show more" interaction.
 	// - Review existing code: track events, etc.
@@ -326,6 +328,7 @@ export const SiteLogsDataViews = ( {
 	};
 
 	const fields = useFields( { logType } );
+	const actions = useActions( { logType } );
 	const [ view, setView ] = useView( { logType } );
 	const { data, paginationInfo, isLoading } = useData( {
 		view,
@@ -442,6 +445,7 @@ export const SiteLogsDataViews = ( {
 					fields={ fields }
 					view={ view }
 					onChangeView={ setView }
+					actions={ actions }
 					search={ false }
 					getItemId={ getItemId }
 					defaultLayouts={ { table: {} } }
