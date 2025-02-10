@@ -6,6 +6,7 @@
 - Remove unused corporate logos for Bloomberg, Conde Nast, Disney, Facebook, and Time ([#99229](https://github.com/Automattic/wp-calypso/pull/99229)).
 - Remove `GMClosureNotice` ([#99309](https://github.com/Automattic/wp-calypso/pull/99309)).
 - Remove `ClientLogoList` ([#99463](https://github.com/Automattic/wp-calypso/pull/99463)).
+- Remove `number-formatters` component and utility functions ([#99405](https://github.com/Automattic/wp-calypso/pull/99405))
 
 ### Enhancements
 
