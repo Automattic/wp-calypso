@@ -2,7 +2,7 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
-import type { NumberFormatParams } from '../src/number-formatters';
+import type { NumberFormatParams } from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -151,10 +151,10 @@ export type WithoutLocalizedProps< OrigProps > = Pick<
 export type LocalizedComponent< C extends React.JSXElementConstructor< any > > =
 	React.ComponentClass< WithoutLocalizedProps< React.ComponentPropsWithRef< C > > >;
 
-export function localize< C extends React.JSXElementConstructor< any > >(
+export declare function localize< C extends React.JSXElementConstructor< any > >(
 	component: C
 ): LocalizedComponent< C >;
-export function useTranslate(): typeof translate & { localeSlug: string | undefined };
-export function useRtl(): boolean;
+export declare function useTranslate(): typeof translate & { localeSlug: string | undefined };
+export declare function useRtl(): boolean;
 
 export declare const I18NContext: React.Context< I18N >;

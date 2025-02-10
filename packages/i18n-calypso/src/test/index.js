@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import i18n, { numberFormat, translate } from '../src';
+import i18n, { numberFormat, translate } from '..';
 import data from './data';
 
 /**
