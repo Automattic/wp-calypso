@@ -44,15 +44,18 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 		setIsLaunching( true );
 		launchSiteApi(
 			async () => {
-				await updateLaunchpadSettings( siteId, {
-					checklist_statuses: { site_launched: true },
-				} );
+				try {
+					await updateLaunchpadSettings( siteId, {
+						checklist_statuses: { site_launched: true },
+					} );
 
-				await refetch?.();
-				await layout?.refetch();
-				await dispatch( requestSite( siteId ) );
-				onClose();
-				setIsLaunching( false );
+					await refetch?.();
+					await layout?.refetch();
+					await dispatch( requestSite( siteId ) );
+					onClose();
+				} finally {
+					setIsLaunching( false );
+				}
 			},
 			{ siteSlug }
 		);
