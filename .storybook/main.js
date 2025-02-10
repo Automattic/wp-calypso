@@ -4,12 +4,7 @@ const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
 
 const storybookConfig = storybookDefaultConfig( {
 	stories: [
-		'../client/components/**/*.stories.{js,jsx,ts,tsx}',
-
-		// TODO: Excluding these paths for now as they are currently broken and
-		// also add an extreme amount of time to the Storybook startup.
-		// '../client/my-sites/**/*.stories.{js,jsx,ts,tsx}',
-		// '../client/sites/**/*.stories.{js,jsx,ts,tsx}',
+		'../client/**/*.stories.{js,jsx,ts,tsx}',
 
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
 		'../packages/components/src/**/*.stories.{js,jsx,ts,tsx}',
