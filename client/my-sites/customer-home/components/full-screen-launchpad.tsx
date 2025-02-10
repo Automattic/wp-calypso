@@ -63,12 +63,17 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 		return null;
 	}
 
-	const isAllTasksCompleted = hasChecklist && numberOfSteps > 0 && completedSteps === numberOfSteps;
+	const isAllTasksCompleted =
+		hasChecklist && numberOfSteps > 0 && completedSteps >= numberOfSteps - 1; // -1 because the last task is the "Launch your site" button
 
 	return (
 		<div css={ { display: 'flex', flexDirection: 'column', alignItems: 'center' } }>
 			<div className="is-launchpad-first" css={ { width: '100%' } }>
-				<div className="customer-home-launchpad customer-home__card is-small-hero">
+				<div
+					className={ `customer-home-launchpad customer-home__card is-small-hero ${
+						isAllTasksCompleted ? 'all-tasks-completed' : ''
+					}` }
+				>
 					<div className="customer-home__launchpad-header">
 						<CircularProgressBar
 							size={ 40 }
@@ -91,9 +96,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					/>
 				</div>
 			</div>
-			<Button onClick={ onSkipLaunchpad } variant={ isAllTasksCompleted ? 'primary' : undefined }>
-				{ isAllTasksCompleted ? __( 'Explore dashboard' ) : __( 'Skip to dashboard' ) }
-			</Button>
+			<Button onClick={ onSkipLaunchpad }>{ __( 'Skip to dashboard' ) }</Button>
 		</div>
 	);
 };

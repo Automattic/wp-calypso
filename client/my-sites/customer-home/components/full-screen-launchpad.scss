@@ -3,6 +3,7 @@
 	max-width: 536px;
 	margin: auto;
 	box-shadow: none;
+	padding-bottom: 10px;
 
 	.customer-home__launchpad-header{
 		display: flex;
@@ -87,6 +88,7 @@
 		}
 
 		&:last-child {
+			display: none;
 			border: 0;
 			
 			button {
@@ -112,6 +114,14 @@
 
 			svg {
 				display: none;
+			}
+		}
+	}
+
+	&.all-tasks-completed {
+		.checklist-item__task {
+			&:last-child {
+				display: block;
 			}
 		}
 	}
