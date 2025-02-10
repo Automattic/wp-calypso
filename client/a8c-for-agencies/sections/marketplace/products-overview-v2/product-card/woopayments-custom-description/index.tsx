@@ -1,7 +1,10 @@
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
+import './style.scss';
 
 export default function WooPaymentsCustomDescription() {
 	const translate = useTranslate();
@@ -23,6 +26,12 @@ export default function WooPaymentsCustomDescription() {
 
 	return (
 		<div className="woopayments-custom-description">
+			<div className="woopayments-custom-description__required-woocommerce-notice">
+				<Icon icon={ info } />
+
+				<span>{ translate( 'This extension requires WooCommerce' ) }</span>
+			</div>
+
 			<div className="woopayments-custom-description__section">
 				<h3 className="jetpack-product-info__section-title">
 					{ translate( 'Revenue Share Terms' ) }
