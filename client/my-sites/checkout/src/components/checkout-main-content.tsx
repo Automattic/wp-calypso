@@ -504,10 +504,14 @@ export default function CheckoutMainContent( {
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
 		return (
-			<>
-				<PerformanceTrackerStop />
-				<Loading title={ translate( 'Your purchase has been completed!' ) } />
-			</>
+			<WPCheckoutWrapper>
+				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
+				<WPCheckoutMainContent>
+					<PerformanceTrackerStop />
+					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
+					<Loading title={ translate( 'Your purchase has been completed!' ) } />
+				</WPCheckoutMainContent>
+			</WPCheckoutWrapper>
 		);
 	}
 
