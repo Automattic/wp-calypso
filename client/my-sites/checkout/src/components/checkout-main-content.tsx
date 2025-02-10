@@ -8,8 +8,6 @@ import {
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
-	useTransactionStatus,
-	TransactionStatus,
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
@@ -35,7 +33,6 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
-import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -454,7 +451,6 @@ export default function CheckoutMainContent( {
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 
-	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 
 	const hasMarketplaceProduct =
@@ -500,20 +496,6 @@ export default function CheckoutMainContent( {
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
-
-	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		debug( 'rendering post-checkout redirecting page' );
-		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
-					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-					<Loading title={ translate( 'Your purchase has been completed!' ) } />
-				</WPCheckoutMainContent>
-			</WPCheckoutWrapper>
-		);
-	}
 
 	if (
 		shouldShowEmptyCartPage( {
