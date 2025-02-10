@@ -60,6 +60,27 @@ class StatsModule extends Component {
 		loaded: false,
 	};
 
+	componentDidMount() {
+		const interval = this.props.query?.interval;
+		if ( ! interval ) {
+			// eslint-disable-next-line no-console
+			console.log( 'interval not set. no timer needed' );
+			return;
+		}
+
+		// eslint-disable-next-line no-console
+		console.log( 'interval set. timer after: ', interval );
+
+		this.timer = setInterval( () => {
+			// eslint-disable-next-line no-console
+			console.log( 'timer fired' );
+		}, interval );
+	}
+
+	componentWillUnmount() {
+		clearInterval( this.timer );
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
