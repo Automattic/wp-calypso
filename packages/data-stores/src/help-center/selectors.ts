@@ -18,3 +18,4 @@ export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
 export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 export const getCurrentSupportInteraction = ( state: State ) => state.currentSupportInteraction;
+export const getOdieChatScrollPosition = ( state: State ) => state.odieChatScrollPosition;

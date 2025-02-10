@@ -159,6 +159,13 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const odieChatScrollPosition: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_ODIE_CHAT_SCROLL_POSITION' ) {
+		return action.odieChatScrollPosition;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -177,6 +184,7 @@ const reducer = combineReducers( {
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	odieChatScrollPosition,
 } );
 
 export type State = ReturnType< typeof reducer >;
