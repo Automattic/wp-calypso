@@ -348,6 +348,7 @@ export const SiteLogsDataViews = ( {
 				field: getSortField( logType ),
 				direction: view?.sort?.direction || 'desc',
 			},
+			titleField: getSortField( logType ),
 			fields: getVisibleFields( logType ),
 		} ) );
 	}, [ logType, setView ] );
