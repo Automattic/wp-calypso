@@ -34,7 +34,7 @@
             border-bottom: none;
         }
 
-		a {
+		a, button {
 			padding: 20px 24px;
 			margin: 0;
 			border-bottom: none;
@@ -58,7 +58,7 @@
             border-bottom: 1px solid var(--studio-gray-5);
 			border-radius: 4px;
 
-			a {
+			a, button {
 				margin: 0 0 -1px 0;
 				padding: 28px 24px;
 				border-radius: 2px;
@@ -77,7 +77,7 @@
 		&:first-child {
             border-radius: 4px 4px 0 0;
 
-            a {
+            a, button {
                 border-radius: 2px 2px 0 0;
             }
         }
@@ -85,8 +85,8 @@
 		&:nth-last-child(2) {
 			border-radius: 0 0 4px 4px;
             border-bottom: 1px solid var(--studio-gray-5);
-            
-            a {
+
+            a, button {
                 border-radius: 0 0 2px 2px;
             }
 		}
