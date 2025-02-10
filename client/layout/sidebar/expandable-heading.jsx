@@ -72,6 +72,7 @@ ExpandableSidebarHeading.propTypes = {
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
 	isSelected: PropTypes.bool,
+	defaultSelection: PropTypes.string,
 };
 
 export default ExpandableSidebarHeading;
