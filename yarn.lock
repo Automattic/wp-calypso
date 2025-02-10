@@ -709,7 +709,6 @@ __metadata:
     lodash: "npm:^4.17.21"
     postcss: "npm:^8.4.5"
     prop-types: "npm:^15.7.2"
-    qrcode.react: "npm:^3.1.0"
     react-modal: "npm:^3.16.1"
     react-router-dom: "npm:^6.23.1"
     react-slider: "npm:^2.0.5"
