@@ -5,7 +5,7 @@ import {
 	__experimentalVStack as VStack,
 	DropdownMenu,
 } from '@wordpress/components';
-import { rotateLeft, trash, moreHorizontalMobile } from '@wordpress/icons';
+import { rotateLeft, trash, moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
@@ -49,7 +49,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 				</VStack>
 			</ConfirmationDialog>
 			<DropdownMenu
-				icon={ moreHorizontalMobile }
+				icon={ moreVertical }
 				label={ translate( 'More options' ) }
 				controls={
 					mailbox.warnings?.length

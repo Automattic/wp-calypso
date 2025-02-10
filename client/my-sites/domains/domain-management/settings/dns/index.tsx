@@ -18,6 +18,7 @@ const DnsDetails = ( {
 	selectedDomainName,
 	currentRoute,
 	selectedSite,
+	showDetails,
 }: DnsDetailsProps ) => {
 	const showPlaceholder = ! dns.hasLoadedFromServer;
 	const translate = useTranslate();
@@ -52,6 +53,7 @@ const DnsDetails = ( {
 
 	const renderDomains = () => {
 		let domainConnectRecordIsEnabled = false;
+		const showDNSSummary = ! showDetails === false;
 
 		const domains = dns.records.map( ( dnsRecord, index ) => {
 			const isRootRecord = dnsRecord.name === `${ selectedDomainName }.`;
@@ -77,8 +79,8 @@ const DnsDetails = ( {
 
 		return (
 			<>
-				{ domains }
-				{ domainConnectRecordIsEnabled && getDomainConnectDnsRecord() }
+				{ showDNSSummary && domains }
+				{ showDNSSummary && domainConnectRecordIsEnabled && getDomainConnectDnsRecord() }
 				<Button
 					className="dns-card__button"
 					href={ domainManagementDns( selectedSite.slug, selectedDomainName, currentRoute ) }

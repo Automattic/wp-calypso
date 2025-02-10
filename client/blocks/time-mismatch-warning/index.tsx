@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
-import Notice from 'calypso/components/notice';
+import Notice, { NoticeStatus } from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';
 import { savePreference } from 'calypso/state/preferences/actions';
@@ -8,7 +8,7 @@ import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/prefe
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
 interface ExternalProps {
-	status?: string;
+	status?: NoticeStatus;
 	siteId: number | null;
 	settingsUrl?: string | null;
 }

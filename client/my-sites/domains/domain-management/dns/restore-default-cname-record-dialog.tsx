@@ -1,7 +1,18 @@
 import { Dialog } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-function RestoreDefaultCnameRecordDialog( { onClose, visible } ) {
+interface RestoreDefaultCnameRecordDialogProps {
+	visible: boolean;
+	onClose: ( result: { shouldRestoreDefaultRecords: boolean } ) => void;
+	domain: ResponseDomain | undefined;
+}
+
+function RestoreDefaultCnameRecordDialog( {
+	visible,
+	onClose,
+	domain,
+}: RestoreDefaultCnameRecordDialogProps ) {
 	const { __ } = useI18n();
 
 	const onRestore = () => {
@@ -25,14 +36,14 @@ function RestoreDefaultCnameRecordDialog( { onClose, visible } ) {
 		},
 	];
 
+	const targetPlatformMessage = domain?.isGravatarDomain
+		? __( 'Restoring the record will point the www subdomain to your Gravatar profile.' )
+		: __( 'Restoring the record will point the www subdomain to your WordPress.com site.' );
+
 	return (
 		<Dialog isVisible={ visible } buttons={ buttons } onClose={ onCancel }>
 			<h1>{ __( 'Restore default CNAME record' ) }</h1>
-			<p>
-				{ __(
-					'Restoring the record will create a www CNAME record pointing to your WordPress.com site.'
-				) }
-			</p>
+			<p>{ targetPlatformMessage }</p>
 			<p className="restore-default-cname-record-dialog__message">
 				{ __( 'In case a www CNAME record already exists, it will be deleted.' ) }
 			</p>

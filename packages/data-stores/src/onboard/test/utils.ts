@@ -39,24 +39,32 @@ describe( 'Test onboard utils', () => {
 			expectedIntent: SiteIntent.Write,
 		},
 		{
-			goals: [ SiteGoal.Write, SiteGoal.Engagement ],
+			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.Write,
+			isIntentNewsletterGoalsEnabled: false,
 		},
 		{
 			goals: [ SiteGoal.Write, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
+			isIntentNewsletterGoalsEnabled: true,
+		},
+		{
+			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
+			expectedIntent: SiteIntent.Sell,
+			isIntentNewsletterGoalsEnabled: false,
 		},
 		{
 			goals: [ SiteGoal.Sell, SiteGoal.Newsletter ],
 			expectedIntent: SiteIntent.NewsletterGoal,
+			isIntentNewsletterGoalsEnabled: true,
 		},
 	] )(
 		'Should map the $goals to $expectedIntent intent ($featureFlags)',
-		( { goals, expectedIntent, featureFlags = {} } ) => {
+		( { goals, expectedIntent, featureFlags = {}, isIntentNewsletterGoalsEnabled = false } ) => {
 			( config.isEnabled as jest.Mock ).mockImplementation( ( flag ) =>
 				Boolean( featureFlags[ flag ] )
 			);
-			expect( goalsToIntent( goals ) ).toBe( expectedIntent );
+			expect( goalsToIntent( goals, isIntentNewsletterGoalsEnabled ) ).toBe( expectedIntent );
 		}
 	);
 } );

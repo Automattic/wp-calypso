@@ -1,8 +1,18 @@
 import { Dialog } from '@automattic/components';
-import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-function RestoreDefaultARecordsDialog( { onClose, visible, defaultRecords } ) {
+interface RestoreDefaultARecordsDialogProps {
+	onClose: ( result: { shouldRestoreDefaultRecords: boolean } ) => void;
+	visible: boolean;
+	domain: ResponseDomain | undefined;
+}
+
+function RestoreDefaultARecordsDialog( {
+	onClose,
+	visible,
+	domain,
+}: RestoreDefaultARecordsDialogProps ) {
 	const { __ } = useI18n();
 
 	const onRestore = () => {
@@ -26,17 +36,18 @@ function RestoreDefaultARecordsDialog( { onClose, visible, defaultRecords } ) {
 		},
 	];
 
-	const message = defaultRecords
-		? sprintf(
-				'We will remove all A & AAAA records and set the A records to our default: %s.',
-				defaultRecords.join( ', ' )
-		  )
-		: __( 'We will remove all A & AAAA records and set the A records to our defaults.' );
+	const message = __(
+		'We will remove all A & AAAA records and set the A records to our defaults.'
+	);
+
+	const targetPlatformMessage = domain?.isGravatarDomain
+		? __( 'Restoring the records will point this domain to your Gravatar profile.' )
+		: __( 'Restoring the records will point this domain to your WordPress.com site' );
 
 	return (
 		<Dialog isVisible={ visible } buttons={ buttons } onClose={ onCancel }>
 			<h1>{ __( 'Restore default A records' ) }</h1>
-			<p>{ __( 'Restoring the records will point this domain to your WordPress.com site.' ) }</p>
+			<p>{ targetPlatformMessage }</p>
 			<p className="restore-default-a-records-dialog__message">{ message }</p>
 		</Dialog>
 	);
