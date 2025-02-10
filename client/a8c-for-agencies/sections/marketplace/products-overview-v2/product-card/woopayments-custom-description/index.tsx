@@ -9,12 +9,16 @@ export default function WooPaymentsCustomDescription() {
 
 	const onLearnMoreClick = useCallback( () => {
 		dispatch(
-			recordTracksEvent( 'calypso_a4a_marketplace_woopayments_learn_more_revenue_share_click' )
+			recordTracksEvent(
+				'calypso_marketplace_products_overview_woopayments_learn_more_revenue_share_click'
+			)
 		);
 	}, [ dispatch ] );
 
 	const onViewFullTermsClick = useCallback( () => {
-		dispatch( recordTracksEvent( 'calypso_a4a_marketplace_woopayments_view_full_terms_click' ) );
+		dispatch(
+			recordTracksEvent( 'calypso_marketplace_products_overview_woopayments_view_full_terms_click' )
+		);
 	}, [ dispatch ] );
 
 	return (

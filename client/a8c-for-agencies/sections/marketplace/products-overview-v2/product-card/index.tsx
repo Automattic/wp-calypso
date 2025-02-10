@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
-import { Icon, check, info } from '@wordpress/icons';
+import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -18,6 +18,8 @@ import { APIProductFamilyProduct } from '../../../../../state/partner-portal/typ
 import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from './product-price-with-discount-info';
 import WooPaymentsCustomDescription from './woopayments-custom-description';
+import WooPaymentsCustomFooter from './woopayments-custom-footer';
+import WooPaymentsRevenueShareNotice from './woopayments-revenue-share-notice';
 
 import './style.scss';
 
@@ -143,35 +145,21 @@ export default function ProductCard( props: Props ) {
 		return undefined;
 	}, [ product.slug ] );
 
-	const revenueShareNotice = useMemo( () => {
+	const customFooter = useMemo( () => {
 		if ( product.slug === 'woocommerce-woopayments' ) {
-			return (
-				<div className="product-card__revenue-share-notice">
-					<Icon icon={ info } size={ 24 } />
-					<span>
-						{ translate(
-							'Only sites that have the {{a}}Automattic for Agencies{{/a}} plugin installed and connected are eligible for revenue share with WooPayments.',
-							{
-								components: {
-									a: (
-										<a
-											href="https://agencieshelp.automattic.com/knowledge-base/the-automattic-for-agencies-client-plugin/"
-											target="_blank"
-											rel="noopener noreferrer"
-										>
-											A4A
-										</a>
-									),
-								},
-							}
-						) }
-					</span>
-				</div>
-			);
+			return <WooPaymentsCustomFooter />;
 		}
 
 		return undefined;
-	}, [ product.slug, translate ] );
+	}, [ product.slug ] );
+
+	const extraAsideContent = useMemo( () => {
+		if ( product.slug === 'woocommerce-woopayments' ) {
+			return <WooPaymentsRevenueShareNotice />;
+		}
+
+		return undefined;
+	}, [ product.slug ] );
 
 	const ctaLightboxLabel = useMemo( () => {
 		const selectedQuantity = quantity ?? 1;
@@ -256,7 +244,8 @@ export default function ProductCard( props: Props ) {
 					onActivate={ onSelectProduct }
 					onClose={ onHideLightbox }
 					customDescription={ customDescription }
-					extraAsideContent={ revenueShareNotice }
+					customFooter={ customFooter }
+					extraAsideContent={ extraAsideContent }
 				/>
 			) }
 		</>
