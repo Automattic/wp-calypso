@@ -9,6 +9,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
+import DiscoverTagsView from 'calypso/reader/discover/components/tags-view';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -57,6 +58,7 @@ const DiscoverStream = ( props ) => {
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab;
+
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
 		queryFn: () =>
@@ -103,7 +105,10 @@ const DiscoverStream = ( props ) => {
 		<Stream { ...streamProps }>
 			<DiscoverHeader selectedTab={ selectedTab } width={ props.width } />
 			{ config.isEnabled( 'reader/discovery-v2' ) ? (
-				<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				<>
+					<DiscoverNavigationV2 selectedTab={ selectedTab } />
+					{ selectedTab === 'tags' && <DiscoverTagsView width={ props.width } /> }
+				</>
 			) : (
 				<DiscoverNavigation
 					width={ props.width }
