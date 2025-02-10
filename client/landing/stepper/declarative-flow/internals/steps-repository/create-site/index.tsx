@@ -30,10 +30,10 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -313,11 +313,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<StepperLoader
-						title={ getCurrentMessage() }
-						subtitle={ subTitle }
-						progress={ progress }
-					/>
+					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
 				}
 				showFooterWooCommercePowered={ false }
 			/>
