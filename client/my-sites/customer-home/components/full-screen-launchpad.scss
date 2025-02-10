@@ -89,40 +89,26 @@
 
 		&:last-child {
 			display: none;
-			border: 0;
-			
-			button {
-				border-radius: 4px;
-				font-size: .875rem;
-				font-weight: 500;
-				background-color: var(--color-accent);
-				color: var(--color-text-inverted);
-				max-width: 260px;
-				margin: auto;
-				margin-top: 24px;
-
-				&:hover,
-				&:focus {
-					background-color: var(--color-accent-60);
-				}
-			}
-
-			.checklist-item__text{
-				text-align: center;
-				color: var(--color-text-inverted);
-			}
-
-			svg {
-				display: none;
-			}
 		}
 	}
 
-	&.all-tasks-completed {
-		.checklist-item__task {
-			&:last-child {
-				display: block;
-			}
-		}
+	.launchpad-site-launch {
+		font-size: 1rem;
+		padding: 1.5rem;
+		margin-top: 24px;
 	}
+
+	.launchpad-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		margin: auto;
+		align-items: center;
+		
+		.launchpad-site-launch {
+			order: 0;
+		}
+		
+	}
+	
 }
