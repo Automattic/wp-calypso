@@ -12,7 +12,6 @@ import stores from './mock-registry/stores';
 const siteKeys = Object.keys( stores );
 
 const withRegistryProvider = ( Story, context ) => {
-	console.log( 'context:', context );
 	const { site } = context.globals;
 	const registry = createMockRegistry( stores[ site ] );
 
