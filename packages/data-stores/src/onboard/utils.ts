@@ -1,6 +1,9 @@
 import { SiteGoal, SiteIntent } from './constants';
 
-export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
+export const goalsToIntent = (
+	goals: SiteGoal[],
+	isIntentNewsletterGoalEnabled: boolean
+): SiteIntent => {
 	// When DIFM and Import goals are selected together, DIFM Intent will have the priority and will be set.
 	if ( goals.includes( SiteGoal.DIFM ) ) {
 		return SiteIntent.DIFM;
@@ -11,7 +14,7 @@ export const goalsToIntent = ( goals: SiteGoal[] ): SiteIntent => {
 	}
 
 	// Newsletter flow
-	if ( goals.includes( SiteGoal.Newsletter ) ) {
+	if ( isIntentNewsletterGoalEnabled && goals.includes( SiteGoal.Newsletter ) ) {
 		return SiteIntent.NewsletterGoal;
 	}
 

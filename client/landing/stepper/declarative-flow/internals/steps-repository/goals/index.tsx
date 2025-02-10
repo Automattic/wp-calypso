@@ -58,7 +58,8 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
-	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const [ , isGoalsAtFrontExperiment, variationName ] = useGoalsFirstExperiment();
+	const isIntentNewsletterGoalEnabled = variationName === 'treatment_cumulative';
 
 	useEffect( () => {
 		resetIntent();
@@ -111,7 +112,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals );
+			const intent = goalsToIntent( goals, isIntentNewsletterGoalEnabled );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );
