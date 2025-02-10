@@ -22,13 +22,13 @@ export function Terms100Year( { cart, type }: { cart: ResponseCart; type: TermsT
 		<CheckoutTermsItem>
 			{ type === 'domain'
 				? translate(
-						'You acknowledge that you have read and understand the details about the 100-Year Domain listed {{supportLink}}here{{/supportLink}}, including feature changes that could occur during the life of your subscription.',
+						'You acknowledge that you have read and understand {{supportLink}}these details about the 100-Year Domain{{/supportLink}}, including feature changes that could occur during the life of your subscription.',
 						{
 							components: {
 								supportLink: (
 									<a
 										href={ localizeUrl(
-											'https://wordpress.com/support/plan-features/100-year-plan/'
+											'https://wordpress.com/support/plan-features/100-year-plan/#100-year-domain-registration'
 										) }
 										target="_blank"
 										rel="noopener noreferrer"
@@ -38,7 +38,7 @@ export function Terms100Year( { cart, type }: { cart: ResponseCart; type: TermsT
 						}
 				  )
 				: translate(
-						'You acknowledge that you have read and understand the details about the %(planName)s listed {{supportLink}}here{{/supportLink}}, including feature changes that could occur during the life of your plan.',
+						'You acknowledge that you have read and understand {{supportLink}}these details about the %(planName)s{{/supportLink}}, including feature changes that could occur during the life of your plan.',
 						{
 							components: {
 								supportLink: (
