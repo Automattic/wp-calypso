@@ -7,7 +7,6 @@ import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
@@ -23,21 +22,10 @@ import {
 	hasSiteStatsForQueryFinished,
 } from 'calypso/state/stats/lists/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
+import { getProcessedText, truncateWithLimit } from '../../text-utils';
 import LatestPostCard from './latest-post-card';
 
 const POST_STATS_CARD_TITLE_LIMIT = 60;
-
-// Use ellipsis when characters count over the limit.
-// TODO: Extract to shared utilities
-const textTruncator = ( text: string, limit = 48 ) => {
-	if ( ! text ) {
-		return '';
-	}
-
-	const truncatedText = text.substring( 0, limit );
-
-	return `${ truncatedText }${ text.length > limit ? '...' : '' } `;
-};
 
 const getStatsQueries = createSelector(
 	( state, siteId ) => {
@@ -118,8 +106,9 @@ export default function PostCardsGroup( {
 	const mostPopularPostData = {
 		date: mostPopularPost?.date,
 		post_thumbnail: mostPopularPost?.post_thumbnail?.URL || null,
-		title: decodeEntities(
-			stripHTML( textTruncator( mostPopularPost?.title, POST_STATS_CARD_TITLE_LIMIT ) )
+		title: truncateWithLimit(
+			getProcessedText( mostPopularPost?.title ),
+			POST_STATS_CARD_TITLE_LIMIT
 		),
 		likeCount: countLikes,
 		viewCount: mostPopularPostViewCount,

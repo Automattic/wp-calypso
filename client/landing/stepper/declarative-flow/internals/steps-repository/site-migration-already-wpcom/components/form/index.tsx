@@ -150,7 +150,6 @@ const Form: FC< FormProps > = ( { onComplete } ) => {
 			<form className="already-wpcom__form" onSubmit={ onSubmit }>
 				{ errorMessage && (
 					<Notice
-						showIcon={ false }
 						status="is-warning"
 						text={ errorMessage }
 						showDismiss={ false }

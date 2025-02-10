@@ -7,6 +7,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { thunk } from 'redux-thunk';
 import DeleteSite from '../index';
 
 const initialState = {
@@ -36,6 +37,9 @@ const initialState = {
 		hasLoadedSitePurchasesFromServer: true,
 		data: [],
 	},
+	explatExperiments: {
+		experimentAssignments: {},
+	},
 };
 
 const mockDeleteSite = jest.fn();
@@ -55,9 +59,14 @@ describe( 'index', () => {
 			deleteSite: mockDeleteSite,
 		};
 	} );
+	jest.mock( 'calypso/state/explat-experiments/actions', () => {
+		return {
+			getRemoveDuplicateViewsExperimentAssignment: jest.fn(),
+		};
+	} );
 
 	test( 'Check DeleteSite renders as expected', async () => {
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
 		const queryClient = new QueryClient();
 
@@ -75,7 +84,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'Check will delete a site if the typed domain it the current one', async () => {
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
 		const queryClient = new QueryClient();
 
@@ -97,7 +106,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'Check will show purchases message', async () => {
-		const mockStore = configureStore();
+		const mockStore = configureStore( [ thunk ] );
 		const storeData = initialState;
 		storeData.purchases.data = [
 			{
