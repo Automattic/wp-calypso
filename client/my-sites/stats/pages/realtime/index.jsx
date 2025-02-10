@@ -8,6 +8,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -20,6 +21,7 @@ import './style.scss';
 function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
+	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 
@@ -35,7 +37,7 @@ function StatsRealtime() {
 	const period = {};
 	const query = {
 		period: 'day',
-		date: '2025-02-10',
+		date: momentSiteZone.format( 'YYYY-MM-DD' ),
 		max: 10,
 		summarize: 1,
 		interval: 10000, // Indicate the query should be periodically refreshed.
