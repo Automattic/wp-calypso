@@ -343,7 +343,7 @@ const JetpackComFooter: React.FC = () => {
 													<ExternalLink
 														href={ href }
 														className="sitemap__link"
-														onClick={ trackId ? getTrackLinkClick( trackId ) : null }
+														onClick={ trackId ? getTrackLinkClick( trackId ) : undefined }
 													>
 														{ preventWidows( label ) }
 													</ExternalLink>
@@ -361,7 +361,7 @@ const JetpackComFooter: React.FC = () => {
 											<ExternalLink
 												className="sitemap__link"
 												href={ href as string }
-												onClick={ trackId ? getTrackLinkClick( trackId ) : null }
+												onClick={ trackId ? getTrackLinkClick( trackId ) : undefined }
 											>
 												<span className="social-properties__accessible-name">
 													{ accessibleName }

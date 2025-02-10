@@ -67,7 +67,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 						components: {
 							JetpackUpdateLink: (
 								<ExternalLink
-									href={ pluginUpgradeUrl }
+									href={ pluginUpgradeUrl ?? undefined }
 									onClick={ updatePluginClick }
 									target="_blank"
 								/>

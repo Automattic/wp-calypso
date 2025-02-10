@@ -8,6 +8,7 @@ import './style.scss';
 
 /**
  * External link component that optionally includes an external link icon.
+ * @type {import('react').FC}
  * @param {Object} props Component props
  * @param {string} [props.className] Additional CSS class names
  * @param {string} [props.href] URL the link points to
