@@ -2,12 +2,18 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
-.goals-step .step-container__skip-wrapper {
-	// I really hate this, but forcing a specificity is not much better.
-	margin-inline-start: 0 !important;
+.goals-step .step-container {
+	&__skip-wrapper {
+		// I really hate this, but forcing a specificity is not much better.
+		margin-inline-start: 0 !important;
 
-	@include break-small {
-		margin-inline-start: auto !important;
+		@include break-small {
+			margin-inline-start: auto !important;
+		}
+	}
+
+	&__header, &__content {
+		margin-inline: 16px;
 	}
 }
 
