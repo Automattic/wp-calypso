@@ -27,10 +27,18 @@ const ExpandableSidebarHeading = ( {
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
 			onClick={ () => {
-				if ( ! expanded && defaultSelection && ! isSelected ) {
+				// TODO - refactor this to just call the passed onClick. Handle this upstream. Give
+				// the icon an optional separate onClick. This makes this component too biased.
+				if ( ! defaultSelection ) {
+					onClick();
+					return;
+				}
+				if ( ! isSelected ) {
 					page.redirect( defaultSelection );
 				}
-				onClick();
+				if ( ! expanded ) {
+					onClick();
+				}
 			} }
 			{ ...props }
 		>
