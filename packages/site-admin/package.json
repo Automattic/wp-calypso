@@ -1,0 +1,54 @@
+{
+	"name": "@automattic/site-admin",
+	"version": "0.0.1-beta.1",
+	"description": "A reusable UI package providing essential resources for building a modern administrative interface within the WordPress admin. It offers structured components, a routing system, and layout utilities",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"calypso:src": "src/index.ts",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets && copyfiles package.json dist/",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"admin",
+		"ui",
+		"components",
+		"framework",
+		"wp-admin"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/site-admin"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/site-admin#readme",
+	"peerDependencies": {
+		"@wordpress/data": "^10.16.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"copyfiles": "^2.4.1",
+		"postcss": "^8.4.5",
+		"typescript": "^5.3.3",
+		"webpack": "^5.97.1"
+	}
+}
