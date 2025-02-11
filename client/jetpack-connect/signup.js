@@ -497,14 +497,14 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
-				isWooJPC={ this.isWooJPC() }
+				isWooJPC={ isWooJPC }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
-						isWooJPC={ this.isWooJPC() }
+						isWooJPC={ isWooJPC }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 						disableSiteCard={ isWooJPC }
 					/>
