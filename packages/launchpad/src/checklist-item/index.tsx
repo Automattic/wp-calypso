@@ -1,6 +1,7 @@
-import { Badge, Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Badge } from '@automattic/components';
+import { Button, Icon } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
+import { check, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { Task, Expandable } from '../types';
 import type { FC, Key } from 'react';
@@ -86,11 +87,11 @@ const ChecklistItem: FC< Props > = ( {
 					{ completed && (
 						// show checkmark for completed tasks regardless if they are disabled or kept active
 						<div className="checklist-item__checkmark-container">
-							<Gridicon
+							<Icon
+								icon={ check }
 								aria-label={ __( 'Task complete', 'launchpad' ) }
 								className="checklist-item__checkmark"
-								icon="checkmark"
-								size={ 18 }
+								size={ 25 }
 							/>
 						</div>
 					) }
@@ -102,11 +103,11 @@ const ChecklistItem: FC< Props > = ( {
 						</span>
 					) }
 					{ shouldDisplayChevron && (
-						<Gridicon
+						<Icon
 							aria-label={ __( 'Task enabled', 'launchpad' ) }
 							className="checklist-item__chevron"
-							icon={ `chevron-${ isRTL() ? 'left' : 'right' }` }
-							size={ 18 }
+							icon={ isRTL() ? chevronLeft : chevronRight }
+							size={ 25 }
 						/>
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }
