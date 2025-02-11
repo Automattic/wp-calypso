@@ -41,6 +41,6 @@ The package should be a reliable foundation for administrative applications, ens
 
 ### Minimal External Dependencies
 
-  * Relies solely on WordPress dependencies whenever possible.
-  * Avoids integrating with external frameworks unless strictly necessary due to Core limitations.
-  * While included in this Calypso monorepo for hosting and centralization, it is not tightly coupled with its libraries.
+- Relies solely on WordPress dependencies whenever possible.
+- Avoids integrating with external frameworks unless strictly necessary due to Core limitations.
+- While included in this Calypso monorepo for hosting and centralization, it is not tightly coupled with its libraries.
