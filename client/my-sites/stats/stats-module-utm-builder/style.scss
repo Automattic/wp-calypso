@@ -19,15 +19,15 @@ $modal-content-padding: 32px;
 			max-height: 85%;
 		}
 	}
-}
 
-.components-modal__header {
-	font-family: $font-recoleta;
-
-	// Overwrite the modal's class
-	h1.components-modal__header-heading {
-		font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
-		line-height: 39px;
+	.components-modal__header {
+		font-family: $font-recoleta;
+	
+		// Overwrite the modal's class
+		h1.components-modal__header-heading {
+			font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+			line-height: 39px;
+		}
 	}
 }
 
