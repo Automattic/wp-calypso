@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -60,6 +61,7 @@ class StatsModule extends Component {
 	state = {
 		loaded: false,
 		diffData: [],
+		dataHistory: [],
 	};
 
 	componentDidMount() {
@@ -91,9 +93,28 @@ class StatsModule extends Component {
 
 		if ( ! isEqual( this.props.data, prevProps.data ) ) {
 			const diffData = this.calculateDiff( prevProps.data, this.props.data );
+			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
 			// eslint-disable-next-line react/no-did-update-set-state
-			this.setState( { diffData } );
+			this.setState( {
+				diffData,
+				dataHistory: updatedHistory,
+			} );
 		}
+	}
+
+	updateHistory( history, data ) {
+		// Timestamp the new data snapshot.
+		const newSnapshot = {
+			timestamp: moment(),
+			data: data,
+		};
+
+		// Filter out snapshots older than 30 minutes.
+		const filteredHistory = [ ...history, newSnapshot ].filter(
+			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= 30
+		);
+
+		return filteredHistory;
 	}
 
 	calculateDiff( prevData, newData ) {
