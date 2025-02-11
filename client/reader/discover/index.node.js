@@ -42,7 +42,7 @@ export default function ( router ) {
 			[
 				'/discover',
 				'/discover/add-new',
-				'/discover/first-posts',
+				'/discover/firstposts',
 				'/discover/tags',
 				'/discover/reddit',
 				'/discover/latest',
