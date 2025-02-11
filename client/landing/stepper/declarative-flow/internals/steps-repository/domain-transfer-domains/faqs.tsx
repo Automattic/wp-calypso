@@ -156,7 +156,6 @@ const DomainTransferFAQ: FC = () => {
 									components: {
 										ExternalLinkWithTracking: (
 											<ExternalLinkWithTracking
-												icon={ false }
 												href="https://wordpress.com/help"
 												tracksEventName="domain_transfer_faq_support_link_click"
 											/>

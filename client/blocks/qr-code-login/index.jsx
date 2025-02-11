@@ -214,11 +214,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 			},
 			components: {
 				link: (
-					<ExternalLink
-						target="_blank"
-						icon={ false }
-						href="https://jetpack.com/app?campaign=login-qr-code"
-					/>
+					<ExternalLink target="_blank" href="https://jetpack.com/app?campaign=login-qr-code" />
 				),
 			},
 		} ),

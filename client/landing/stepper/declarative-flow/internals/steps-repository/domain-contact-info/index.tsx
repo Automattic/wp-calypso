@@ -206,14 +206,12 @@ function ContactInfo( {
 					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
 				) }
 				target="_blank"
-				icon={ false }
 			/>
 		);
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
 				target="_blank"
-				icon={ false }
 			/>
 		);
 
