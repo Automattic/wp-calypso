@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/site-admin",
 	"version": "0.0.1-beta.1",
-	"description": "A reusable UI package providing essential resources for building a modern administrative interface within the WordPress admin. It offers structured components, a routing system, and layout utilities",
+	"description": "A reusable UI package providing essential resources for building a modern administrative interface within the WordPress admin. It offers structured components, a routing system, and layout utilities.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
