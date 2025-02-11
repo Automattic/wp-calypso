@@ -46,7 +46,7 @@ export const WarningList = ( { context, translate, warnings, showContact = true 
 							/>
 							{ domainNames && displayDomainNames( domainNames ) }
 							{ supportUrl && (
-								<ExternalLink href={ supportUrl } target="_blank" rel="noopener noreferrer">
+								<ExternalLink href={ supportUrl } target="_blank">
 									{ translate( 'Learn more.' ) }
 								</ExternalLink>
 							) }

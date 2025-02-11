@@ -281,7 +281,6 @@ const SiteSubscriptionRow = ( {
 					<ExternalLink
 						className="title-url"
 						{ ...( url && { href: url } ) }
-						rel="noreferrer noopener"
 						target="_blank"
 						onClick={ () => {
 							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );

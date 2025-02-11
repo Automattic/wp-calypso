@@ -53,7 +53,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 		dispatch( recordTracksEvent( 'calypso_jetpack_plugin_update_warning_click' ) );
 	}, [ dispatch, setIsDismissed ] );
 
-	if ( hideWarning || isDismissed ) {
+	if ( hideWarning || isDismissed || ! pluginUpgradeUrl ) {
 		return null;
 	}
 

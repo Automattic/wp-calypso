@@ -57,7 +57,7 @@ const SiteSubscriptionSubheader = ( {
 	const hostname = getHostname( url );
 	if ( hostname !== '' ) {
 		subheaderItems.push(
-			<ExternalLink key={ url } href={ url } rel="noreferrer noopener" target="_blank">
+			<ExternalLink key={ url } href={ url } target="_blank">
 				{ hostname }
 			</ExternalLink>
 		);

@@ -113,7 +113,6 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 										<ExternalLink
 											href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
 											target="_blank"
-											rel="noopener noreferrer"
 											icon
 										/>
 									),
