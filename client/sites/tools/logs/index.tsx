@@ -447,6 +447,7 @@ export const SiteLogsDataViews = ( {
 									navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
 									setView( ( view: View ) => ( {
 										...view,
+										filters: [],
 										sort: {
 											field: getSortField( value ),
 											direction: view?.sort?.direction || 'desc',
