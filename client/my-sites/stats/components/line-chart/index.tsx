@@ -64,7 +64,7 @@ function StatsLineChart( {
 					options={ {
 						yScale: {
 							type: 'linear',
-							domain: [ 0, maxViews ],
+							zero: true,
 						},
 						axis: {
 							x: {
