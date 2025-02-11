@@ -203,11 +203,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 		return false;
 	}
 
-	// TODO: replace with other flow, or delete?
-	// if ( isJetpackWooCommerceFlow ) {
-	// 	return false;
-	// }
-
 	return true;
 };
 

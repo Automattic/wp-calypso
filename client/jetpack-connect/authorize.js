@@ -451,11 +451,6 @@ export class JetpackAuthorize extends Component {
 		);
 	};
 
-	// isWooOnboarding( props = this.props ) {
-	// 	const { from } = props.authQuery;
-	// 	return 'woocommerce-onboarding' === from;
-	// }
-
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
 		return (

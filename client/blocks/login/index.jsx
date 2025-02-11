@@ -207,8 +207,6 @@ class Login extends Component {
 			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
 			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
-			// Note: do we need to replace with other flows?
-			// ! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&

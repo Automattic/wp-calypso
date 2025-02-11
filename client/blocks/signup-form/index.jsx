@@ -1187,9 +1187,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		// TODO: is it ok to merge it with JPC flow? Should we replace the check
-		// with the JPC flow, or simply remove it from the check?
-		if ( /* this.props.isJetpackWooCommerceFlow || */ this.props.isJetpackWooDnaFlow ) {
+		if ( this.props.isJetpackWooDnaFlow ) {
 			return (
 				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
@@ -1379,8 +1377,6 @@ export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWooJPC =
-			// TODO:
-			// - is it ok to merge legacy flow with JPC, or should we merge it with DNA?
 			// - move check directly to isWooJPCFlow
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			isWooJPCFlow( state );
