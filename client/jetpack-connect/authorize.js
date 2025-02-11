@@ -443,7 +443,8 @@ export class JetpackAuthorize extends Component {
 			[
 				'woocommerce-services-auto-authorize',
 				'woocommerce-setup-wizard',
-				// Are we ok to leave this here?
+				// Legacy flow not in use anymore. Keeping around just to
+				// support redirects correctly.
 				'woocommerce-onboarding',
 				'woocommerce-core-profiler',
 			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
