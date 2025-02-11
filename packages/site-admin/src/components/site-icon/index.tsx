@@ -20,7 +20,18 @@ export type SiteIconProps = {
 /**
  * SiteIcon component
  * Displays the site icon or a default icon if the site icon is not set.
- *
+ * @example
+ * ```jsx
+ * import SiteIcon from './components/site-icon';
+ * function MyComponent() {
+ *   return (
+ *     <div>
+ *       <h1>My Site</h1>
+ *       <SiteIcon className="my-custom-class" />
+ *     </div>
+ *   );
+ * }
+ * ```
  * This component is strongly inspired by the SiteIcon component from the Edit Site package.
  * @see https://github.com/WordPress/gutenberg/blob/177743059a87db2ba5f11f83dc8964e543bf3a03/packages/edit-site/src/components/site-icon/index.js#L15
  * @param {SiteIconProps} props - SiteIcon props.
