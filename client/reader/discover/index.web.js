@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -45,19 +44,7 @@ const discover = ( context, next ) => {
 	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
-
-	// Handle both old query parameter-based routing and new path-based routing
-	let selectedTab = DEFAULT_TAB;
-	if ( config.isEnabled( 'reader/discovery-v2' ) ) {
-		// Extract the tab from the path for v2, ignoring query params
-		const cleanPath = context.path.split( '?' )[ 0 ];
-		const pathParts = cleanPath.split( '/' );
-		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
-	} else {
-		// Use query parameter for v1
-		selectedTab = context.query.selectedTab || DEFAULT_TAB;
-	}
-
+	const selectedTab = context.query.selectedTab || DEFAULT_TAB;
 	const tabTitle = getSelectedTabTitle( selectedTab );
 	context.primary = (
 		<>
@@ -90,44 +77,15 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	if ( config.isEnabled( 'reader/discovery-v2' ) ) {
-		// New path-based routes for v2
-		router(
-			[
-				'/discover',
-				'/discover/add-new',
-				'/discover/firstposts',
-				'/discover/tags',
-				'/discover/reddit',
-				'/discover/latest',
-				`/${ anyLangParam }/discover`,
-				`/${ anyLangParam }/discover/add-new`,
-				`/${ anyLangParam }/discover/firstposts`,
-				`/${ anyLangParam }/discover/tags`,
-				`/${ anyLangParam }/discover/reddit`,
-				`/${ anyLangParam }/discover/latest`,
-			],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
-		);
-	} else {
-		// Original query parameter-based route for v1
-		router(
-			[ '/discover', `/${ anyLangParam }/discover` ],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
-		);
-	}
+	router(
+		[ '/discover', `/${ anyLangParam }/discover` ],
+		redirectInvalidLanguage,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
+		setLocaleMiddleware(),
+		updateLastRoute,
+		sidebar,
+		discover,
+		makeLayout,
+		clientRender
+	);
 }
