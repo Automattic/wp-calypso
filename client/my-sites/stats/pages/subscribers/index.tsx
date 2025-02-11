@@ -133,7 +133,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 							) }
 							<StatsModuleListing className={ className } siteId={ siteId }>
 								<Followers
-									path="followers"
 									className={ clsx(
 										{
 											'stats__flexible-grid-item--half': supportsEmailStats,

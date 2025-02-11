@@ -27,7 +27,7 @@ export class GlobalNotices extends Component {
 						{ ...notice }
 						key={ `notice-${ noticeId }` }
 						onDismissClick={ this.removeReduxNotice( noticeId, onDismissClick ) }
-						theme="light"
+						theme="dark"
 					>
 						{ button && (
 							<NoticeAction href={ href } onClick={ onClick }>

@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -58,8 +59,8 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
-	const [ , isGoalsAtFrontExperiment, variationName ] = useGoalsFirstExperiment();
-	const isIntentNewsletterGoalEnabled = variationName === 'treatment_cumulative';
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
 
 	useEffect( () => {
 		resetIntent();
