@@ -181,6 +181,10 @@ class ThemeSheet extends Component {
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
+	// This is a plain instance property because we only want to know the state of the
+	// hash at the time of the component mounting.
+	isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
+
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
 	};
@@ -216,7 +220,7 @@ class ThemeSheet extends Component {
 			! prevProps.hasActivatedTheme &&
 			this.props.isActive &&
 			! prevProps.isActive &&
-			( this.props.isThemeSelectedTask || this.props.defaultOption?.key === 'activate' )
+			( this.isThemeSelectedTask || this.props.defaultOption?.key === 'activate' )
 		) {
 			const noticeSettings = {
 				id: 'site-theme-activated',
@@ -1273,7 +1277,7 @@ class ThemeSheet extends Component {
 				<ActivationModal
 					source="details"
 					siteIntent={ this.props.siteIntent }
-					showSuccessNotice={ ! this.props.isThemeSelectedTask }
+					showSuccessNotice={ ! this.isThemeSelectedTask }
 				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
@@ -1454,12 +1458,9 @@ export default connect(
 
 		const queryArgs = getCurrentQueryArguments( state );
 
-		const isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
-
 		return {
 			...theme,
 			themeId,
-			isThemeSelectedTask,
 			error,
 			siteId,
 			siteSlug,
