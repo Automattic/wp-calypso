@@ -136,12 +136,12 @@ export async function login( context, next ) {
 	next();
 }
 
-export async function desktopLogin( context, next ) {
+export function desktopLogin( context, next ) {
 	context.primary = <DesktopLogin action="start" />;
 	next();
 }
 
-export async function desktopLoginFinalize( context, next ) {
+export function desktopLoginFinalize( context, next ) {
 	const { hash } = context;
 	context.primary = (
 		<DesktopLogin action="finalize" error={ hash?.error } accessToken={ hash?.access_token } />
