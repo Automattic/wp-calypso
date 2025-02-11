@@ -58,11 +58,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
 
-	wooexpress: () =>
-		import(
-			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
-		),
-
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
