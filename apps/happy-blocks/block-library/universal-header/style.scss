@@ -243,21 +243,21 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 19px;
-	color: var(--studio-wordpress-blue-50) !important;
+	color: #135e96 !important;
 }
 
 .x-dropdown-link:hover,
 .x-dropdown-link:active,
 .x-dropdown-link:focus {
-	background: var(--studio-wordpress-blue-10);
-	color: var(--studio-wordpress-blue-60);
+	background: #e9eff5;
+	color: #0a4b78;
 	opacity: 1;
 	transition-property: background, color;
 }
 
 .x-dropdown-link:active {
-	background: var(--studio-wordpress-blue-20);
-	color: var(--studio-wordpress-blue-80);
+	background: #c5d9ed;
+	color: #01263a;
 }
 
 .js-dynamic-type-on .x-dropdown-link {
