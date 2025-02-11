@@ -151,10 +151,10 @@ export type WithoutLocalizedProps< OrigProps > = Pick<
 export type LocalizedComponent< C extends React.JSXElementConstructor< any > > =
 	React.ComponentClass< WithoutLocalizedProps< React.ComponentPropsWithRef< C > > >;
 
-export declare function localize< C extends React.JSXElementConstructor< any > >(
+export function localize< C extends React.JSXElementConstructor< any > >(
 	component: C
 ): LocalizedComponent< C >;
-export declare function useTranslate(): typeof translate & { localeSlug: string | undefined };
-export declare function useRtl(): boolean;
+export function useTranslate(): typeof translate & { localeSlug: string | undefined };
+export function useRtl(): boolean;
 
-export declare const I18NContext: React.Context< I18N >;
+export const I18NContext: React.Context< I18N >;
