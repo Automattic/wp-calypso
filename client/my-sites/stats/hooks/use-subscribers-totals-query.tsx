@@ -132,7 +132,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 					? queries[ 1 ].data.email_subscribers - queries[ 1 ].data.paid_subscribers
 					: null,
 			social_followers: queries[ 1 ]?.data?.social_followers,
-			is_owner_subscribing: queries[ 0 ]?.data?.is_owner_subscribing,
+			is_owner_subscribing: queries[ 2 ]?.data?.is_owner_subscribing,
 			// Merge email and wpcom subscribers and sort by date_subscribed, and only shows the most recent 10 subscribers.
 			subscribers:
 				[
