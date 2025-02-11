@@ -166,9 +166,7 @@ export class JetpackSignup extends Component {
 					extra: {
 						...userData.extra,
 						jpc: true,
-						source: this.props.isWooJPC
-							? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from
-							: '',
+						source: this.isWooJPC() ? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from : '',
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )

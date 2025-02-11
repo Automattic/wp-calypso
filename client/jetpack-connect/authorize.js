@@ -1021,7 +1021,7 @@ export class JetpackAuthorize extends Component {
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
-								isWooJPC={ this.props.isWooJPC }
+								isWooJPC={ this.isWooJPC() }
 							/>
 							{ this.renderStateAction() }
 						</div>
