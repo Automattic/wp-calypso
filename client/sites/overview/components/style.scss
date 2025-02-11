@@ -130,6 +130,13 @@ $blueberry-color: #3858e9;
 
 }
 
+// TODO: Determine if this is the appropriate convention for CSS grids
+.hosting-overview__domain-to-plan-credit-notice {
+	grid-column: 1 / -1;
+	grid-row: 1;
+	background-color: reset;
+}
+
 .hosting-overview__navigation-header {
 	grid-column: 1 / -1;
 	grid-row: 1;
