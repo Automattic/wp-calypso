@@ -3,7 +3,6 @@ import { initSentry, captureException } from '@automattic/calypso-sentry';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso/types';
 import { Dispatch } from 'redux';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';
@@ -19,6 +18,7 @@ import {
 	isJetpackMinimumVersion,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { translate } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:promote-post' );
 
@@ -52,7 +52,7 @@ declare global {
 				originProps?: DSPOriginProps;
 				onLoaded?: () => void;
 				onClose?: () => void;
-				translateFn?: typeof translate;
+				translateFn?: translate;
 				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
