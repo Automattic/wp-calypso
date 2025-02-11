@@ -13,7 +13,7 @@ import type { JSX } from 'react';
  */
 import './style.scss';
 
-type SiteIconProps = {
+export type SiteIconProps = {
 	className?: string;
 };
 

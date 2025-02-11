@@ -1,4 +1,4 @@
-import SiteIcon from '../';
+import SiteIcon, { SiteIconProps } from '../';
 import type { Meta, StoryFn } from '@storybook/react';
 import './style.stories.scss';
 
@@ -14,7 +14,7 @@ const meta: Meta< typeof SiteIcon > = {
 };
 export default meta;
 
-const Template: StoryFn< typeof SiteIcon > = ( args ) => <SiteIcon { ...args } />;
+const Template: StoryFn< typeof SiteIcon > = ( args: SiteIconProps ) => <SiteIcon { ...args } />;
 
 export const Default = Template.bind( {} );
 
