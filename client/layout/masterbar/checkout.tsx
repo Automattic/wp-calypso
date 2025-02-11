@@ -54,7 +54,6 @@ const CheckoutMasterbar = ( {
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
 
-
 	const closeAndLeave = ( options?: { userHasClearedCart?: boolean } ) =>
 		leaveCheckout( {
 			siteSlug,
