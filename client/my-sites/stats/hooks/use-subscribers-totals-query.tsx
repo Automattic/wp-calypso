@@ -1,6 +1,9 @@
 import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
+import { parseAvatar } from 'calypso/state/stats/lists/utils';
 import getDefaultQueryParams from './default-query-params';
+
+const MAX_SUBSCRIBERS_TO_RETURN = 10;
 
 const querySubscribersTotals = (
 	siteId: number | null,
@@ -17,7 +20,8 @@ const querySubscribersTotals = (
 				per_page: 10,
 				page: 1,
 				user_type,
-				filterAdmin,
+				filter_admin: filterAdmin, //not used.
+				sort: 'date_subscribed',
 			}
 		)
 		.catch( () => ( {} ) );
@@ -35,12 +39,38 @@ const selectSubscribers = ( payload: {
 	total_email: number;
 	total_wpcom: number;
 	is_owner_subscribing: boolean;
+	subscribers: {
+		date_subscribed: string;
+		display_name: string;
+		avatar: string;
+		url: string;
+		follow_data: { params: object };
+	}[];
 } ) => {
 	return {
 		total: payload.total,
 		total_email: payload.total_email,
 		total_wpcom: payload.total_wpcom,
 		is_owner_subscribing: payload.is_owner_subscribing,
+		subscribers: payload.subscribers?.map( ( item ) => {
+			return {
+				label: item.display_name,
+				iconClassName: 'avatar-user',
+				icon: parseAvatar( item.avatar ),
+				link: item.url,
+				value: {
+					type: 'relative-date',
+					value: item.date_subscribed,
+				},
+				actions: [
+					{
+						type: 'follow',
+						data: item.follow_data ? item.follow_data.params : false,
+					},
+				],
+				date_subscribed: item.date_subscribed,
+			};
+		} ),
 	};
 };
 
@@ -103,6 +133,17 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 					: null,
 			social_followers: queries[ 1 ]?.data?.social_followers,
 			is_owner_subscribing: false,
+			subscribers:
+				[
+					...( queries[ 0 ]?.data?.subscribers ?? [] ),
+					...( queries[ 2 ]?.data?.subscribers ?? [] ),
+				]
+					.sort( ( a, b ) => {
+						return (
+							new Date( b.date_subscribed ).getTime() - new Date( a.date_subscribed ).getTime()
+						);
+					} )
+					.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ) ?? [],
 		},
 		isLoading: queries.some( ( result ) => result.isLoading ),
 		isError: queries.some( ( result ) => result.isError ),
