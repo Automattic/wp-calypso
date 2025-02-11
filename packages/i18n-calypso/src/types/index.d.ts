@@ -157,4 +157,4 @@ export function localize< C extends React.JSXElementConstructor< any > >(
 export function useTranslate(): typeof translate & { localeSlug: string | undefined };
 export function useRtl(): boolean;
 
-export const I18NContext: React.Context< I18N >;
+export declare const I18NContext: React.Context< I18N >;
