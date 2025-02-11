@@ -1,6 +1,5 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -9,6 +8,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { useSelector } from 'calypso/state';
@@ -38,7 +38,6 @@ import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
-
 import './sftp-form.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
@@ -142,6 +141,7 @@ export const SftpForm = ( {
 	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpUsers;
 	const hasSshFeatureAndIsLoading = siteHasSshFeature && isLoadingSshAccess;
 	const siteIntent = useSiteOption( 'site_intent' );
+	const completeTasks = useCompleteLaunchpadTasksWithNotice();
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
@@ -154,8 +154,9 @@ export const SftpForm = ( {
 		setIsLoading( true );
 		dispatch( createSftpUser( siteId, currentUserId ) );
 		if ( 'host-site' === siteIntent ) {
-			updateLaunchpadSettings( siteId, {
-				checklist_statuses: { setup_ssh: true },
+			completeTasks( [ 'setup_ssh' ], translate( 'You’ve set up SSH access!' ), {
+				id: 'site-setup-ssh',
+				duration: 10000,
 			} );
 		}
 	};

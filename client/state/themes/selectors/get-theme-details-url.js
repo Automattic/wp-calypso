@@ -31,5 +31,7 @@ export function getThemeDetailsUrl( state, themeId, siteId, options = {} ) {
 		searchParams.style_variation = styleVariationSlug;
 	}
 
-	return addQueryArgs( `/theme/${ themeId }${ sitePart }`, searchParams );
+	const hash = typeof window !== 'undefined' ? window.location.hash : '';
+	const url = addQueryArgs( `/theme/${ themeId }${ sitePart }`, searchParams );
+	return hash ? `${ url }${ hash }` : url;
 }

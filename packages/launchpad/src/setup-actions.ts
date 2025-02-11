@@ -14,7 +14,6 @@ const TASKS_TO_COMPLETE_ON_CLICK = [
 	'manage_subscribers',
 	'connect_social_media',
 	'drive_traffic',
-	'site_monitoring_page',
 	'front_page_updated',
 	'post_sharing_enabled',
 	'mobile_app_installed',
