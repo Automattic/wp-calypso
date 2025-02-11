@@ -22,16 +22,9 @@ type CategoryConfig = {
 	label: string;
 };
 
-const JETPACK_COMPLETE_SLUGS = [
-	...securityProductSlugs,
-	...performanceProductSlugs,
-	...socialProductSlugs,
-	...growthProductSlugs,
-];
-
 export function useProductCategories( product: APIProductFamilyProduct ): string[] {
 	const translate = useTranslate();
-	const { family_slug, slug } = product;
+	const { family_slug } = product;
 
 	return useMemo( () => {
 		// Add e-commerce category for WooCommerce products
@@ -56,10 +49,7 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 		// Add regular categories
 		categories.push(
 			...CATEGORIES.reduce( ( acc: string[], { slugs, label } ) => {
-				if (
-					slugs.includes( family_slug ) ||
-					( slug === 'jetpack-complete' && JETPACK_COMPLETE_SLUGS.includes( family_slug ) )
-				) {
+				if ( slugs.includes( family_slug ) ) {
 					acc.push( label );
 				}
 				return acc;
@@ -68,7 +58,7 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 
 		// Add product type categories
 		if ( family_slug === 'jetpack-packs' ) {
-			categories.push( translate( 'plan' ) );
+			categories.push( translate( 'bundle' ), translate( 'plan' ) );
 		} else if ( family_slug === 'jetpack-backup-storage' ) {
 			categories.push( translate( 'add-on' ) );
 		} else if ( isProductType( family_slug ) ) {
@@ -78,5 +68,5 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 		}
 
 		return categories;
-	}, [ family_slug, slug, translate ] );
+	}, [ family_slug, translate ] );
 }
