@@ -8,7 +8,6 @@ import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/acti
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 type QrCodeLoginButtonProps = {
@@ -32,11 +31,6 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	if ( oauth2Client && ! isWoo ) {
 		return null;
 	}
-
-	// TODO: replace with another flow, or just delete?
-	// if ( isJetpackWooCommerceFlow ) {
-	// 	return null;
-	// }
 
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_login_magic_login_request_click', {

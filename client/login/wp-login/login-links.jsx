@@ -253,11 +253,6 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		// Replace with other flow, or delete?
-		// if ( this.props.isJetpackWooCommerceFlow ) {
-		// 	return null;
-		// }
-
 		const loginUrl = login( {
 			locale: this.props.locale,
 			twoFactorAuthType: 'qr',

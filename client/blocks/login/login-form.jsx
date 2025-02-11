@@ -861,11 +861,6 @@ export class LoginForm extends Component {
 			) : null;
 		}
 
-		// TODO: replace with other flow, or delete?
-		// if ( isJetpackWooCommerceFlow ) {
-		// 	return this.renderWooCommerce( { socialToS } );
-		// }
-
 		if ( isJetpackWooDnaFlow ) {
 			return this.renderWooCommerce( {
 				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
