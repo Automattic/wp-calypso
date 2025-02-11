@@ -183,13 +183,16 @@ class ThemeSheet extends Component {
 
 	// This is a plain instance property because we only want to know the state of the
 	// hash at the time of the component mounting.
-	isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
+	// Checking hash in `componentDidMount` to preserve SSR behavior.
+	isThemeSelectedTask = false;
 
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
 	};
 
 	componentDidMount() {
+		this.isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
+
 		this.scrollToTop();
 
 		const { syncActiveTheme, themeStartActivationSync, siteId, themeId } = this.props;
