@@ -174,9 +174,6 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									// TODO: clean up classname in styles too
-									// Should we replace it with another flow, or can we just delete?
-									// 'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>

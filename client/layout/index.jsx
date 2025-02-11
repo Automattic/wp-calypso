@@ -297,8 +297,6 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			// Can we just delete, or do we need to replace it with another flow?
-			// 'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,

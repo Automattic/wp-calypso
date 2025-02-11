@@ -131,8 +131,6 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-site': isJetpackCheckout,
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
-		// Ok to remove, or should it be replace with another flow?
-		// 'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,

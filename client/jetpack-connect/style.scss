@@ -5,11 +5,10 @@
 $colophon-height: 50px;
 
 .jetpack-connect__main:not(.is-woocommerce):not(.is-wpcom-migration):not(.is-automattic-for-agencies-flow),
-.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
+.layout.is-section-jetpack-connect:not(.is-jetpack-mobile-flow):not(.is-jetpack-woo-dna-flow):not(.is-wpcom-migration):not(.is-woocommerce-core-profiler-flow):not(.is-automattic-for-agencies-flow) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow,
 .layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
 }
@@ -850,7 +849,6 @@ $colophon-height: 50px;
 	}
 
 	/** WooCommerce Onboarding Styles **/
-	&.is-jetpack-woocommerce-flow,
 	&.is-jetpack-woo-dna-flow {
 		background-color: var(--color-woocommerce-onboarding-background);
 
@@ -1430,12 +1428,10 @@ $colophon-height: 50px;
 
 body.is-section-jetpack-connect {
 	background-color: var(--color-surface);
-	.layout {
-		&.is-jetpack-woocommerce-flow,
-		&.is-jetpack-woo-dna-flow {
-			.wpcom-site__logo {
-				display: none;
-			}
+
+	.layout.is-jetpack-woo-dna-flow {
+		.wpcom-site__logo {
+			display: none;
 		}
 	}
 }
