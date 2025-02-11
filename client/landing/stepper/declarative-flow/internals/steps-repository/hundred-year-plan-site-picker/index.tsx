@@ -149,7 +149,7 @@ const ConfirmationModal = ( {
 	const openHelpCenter = () => {
 		recordTracksEvent( 'calypso_hundred_year_plan_help_click' );
 		setNavigateToRoute( helpCenterUrl );
-		setShowHelpCenter( true );
+		setShowHelpCenter( true, true );
 		closeModal();
 	};
 

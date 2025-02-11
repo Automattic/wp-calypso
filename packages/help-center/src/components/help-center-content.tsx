@@ -57,7 +57,19 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 	const { data } = useSupportStatus();
 	const { data: openSupportInteraction, isLoading: isLoadingOpenSupportInteractions } =
 		useGetSupportInteractions( 'help-center' );
-	const isUserEligibleForPaidSupport = Boolean( data?.eligibility?.is_user_eligible );
+
+	const { currentSupportInteraction, navigateToRoute, isMinimized, allowPremiumSupport } =
+		useSelect( ( select ) => {
+			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			return {
+				currentSupportInteraction: store.getCurrentSupportInteraction(),
+				navigateToRoute: store.getNavigateToRoute(),
+				isMinimized: store.getIsMinimized(),
+				allowPremiumSupport: store.getAllowPremiumSupport(),
+			};
+		}, [] );
+	const isUserEligibleForPaidSupport =
+		Boolean( data?.eligibility?.is_user_eligible ) || allowPremiumSupport;
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_helpcenter_page_open', {
@@ -69,15 +81,6 @@ const HelpCenterContent: React.FC< { isRelative?: boolean; currentRoute?: string
 			is_free_user: ! isUserEligibleForPaidSupport,
 		} );
 	}, [ location, sectionName, isUserEligibleForPaidSupport ] );
-
-	const { currentSupportInteraction, navigateToRoute, isMinimized } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			currentSupportInteraction: store.getCurrentSupportInteraction(),
-			navigateToRoute: store.getNavigateToRoute(),
-			isMinimized: store.getIsMinimized(),
-		};
-	}, [] );
 
 	useEffect( () => {
 		if (
