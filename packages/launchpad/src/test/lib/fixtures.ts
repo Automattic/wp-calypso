@@ -252,6 +252,7 @@ export const defaultDomainResponse: any = {
 	isDnssecSupported: false,
 	isEligibleForInboundTransfer: false,
 	isGravatarDomain: false,
+	isGravatarRestrictedDomain: false,
 	isHundredsYearDomain: false,
 	isIcannVerificationSuspended: false,
 	isLocked: false,

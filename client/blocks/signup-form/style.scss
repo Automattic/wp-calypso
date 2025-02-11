@@ -170,8 +170,8 @@ body.is-section-accept-invite {
 				font-style: normal;
 				font-weight: 400;
 				line-height: 18px;
-				margin-top: 24px;
-				margin-bottom: 12px;
+				margin-top: 3rem;
+				margin-bottom: 0;
 
 				a {
 					color: var(--studio-gray-50, #646970);
@@ -180,7 +180,6 @@ body.is-section-accept-invite {
 			}
 
 			.signup-form-social-first__tos-link {
-				margin-top: 32px;
 				text-align: center;
 			}
 		}

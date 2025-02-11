@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, Onboard, UserSelect, ProductsList } from '@automattic/data-stores';
 import { ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
@@ -198,9 +197,6 @@ const onboarding: Flow = {
 			const destination = addQueryArgs( '/setup/site-setup', {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
-				...( config.isEnabled( 'onboarding/newsletter-goal' ) && {
-					flags: 'onboarding/newsletter-goal',
-				} ),
 			} );
 
 			return [ destination, addQueryArgs( destination, { skippedCheckout: 1 } ) ];

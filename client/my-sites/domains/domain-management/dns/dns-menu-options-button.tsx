@@ -303,12 +303,13 @@ function DnsMenuOptionsButton( {
 			<RestoreDefaultARecordsDialog
 				visible={ isRestoreARecordsDialogVisible }
 				onClose={ closeRestoreARecordsDialog }
-				defaultRecords={ null }
+				domain={ domain }
 			/>
 
 			<RestoreDefaultCnameRecordDialog
 				visible={ isRestoreCnameRecordDialogVisible }
 				onClose={ closeRestoreCnameRecordDialog }
+				domain={ domain }
 			/>
 
 			<RestoreDefaultEmailRecordsDIalog

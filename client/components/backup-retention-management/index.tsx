@@ -334,9 +334,8 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 												<ExternalLink
 													href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
 													target="_blank"
-													rel="noopener noreferrer"
 													icon
-													size={ 14 }
+													iconSize={ 14 }
 												/>
 											),
 											span: <span className="highlight-days" />,

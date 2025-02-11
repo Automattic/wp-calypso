@@ -228,9 +228,7 @@ export default function InfoModal( {
 					</Description>
 					<AnnouncementLink
 						variant="link"
-						href={ localizeUrl(
-							'https://wordpress.com/blog/2023/08/25/introducing-the-100-year-plan/'
-						) }
+						href={ localizeUrl( 'https://wp.me/pf2B5-jRP' ) }
 						target="_blank"
 					>
 						<>

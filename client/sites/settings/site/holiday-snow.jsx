@@ -4,13 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { PanelCard, PanelCardHeading, PanelCardDescription } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
-import { useIsSiteSettingsUntangled } from '../hooks/use-is-site-settings-untangled';
 
 // Add settings for holiday snow: ability to enable snow on the site until January 4th.
 export default function HolidaySnow( { fields, handleToggle, isSaving, onSave, disabled } ) {
 	const translate = useTranslate();
-	const isUntangled = useIsSiteSettingsUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 	const moment = useLocalizedMoment();
 
 	// Only display the card between December 1st and January 4th.

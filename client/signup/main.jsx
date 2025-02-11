@@ -40,15 +40,10 @@ import {
 	recordSignupPlanChange,
 	SIGNUP_DOMAIN_ORIGIN,
 } from 'calypso/lib/analytics/signup';
-import {
-	isWooOAuth2Client,
-	isGravatarOAuth2Client,
-	isBlazeProOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
-import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -74,12 +69,11 @@ import {
 	getSitePlanName,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import BlazeProSignupProcessingScreen from './blaze-pro-processing-screen';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
-import { isReskinnedFlow, isP2Flow } from './is-flow';
+import { isP2Flow } from './is-flow';
 import {
 	persistSignupDestination,
 	setDomainsDependencies,
@@ -235,13 +229,8 @@ class Signup extends Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( isReskinnedFlow( flowName ) || this.props.isGravatar ) {
-			document.body.classList.add( 'is-white-signup' );
-			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
-		} else {
-			document.body.classList.remove( 'is-white-signup' );
-			debug( 'In componentWillReceiveProps, removed is-white-signup class' );
-		}
+		document.body.classList.add( 'is-white-signup' );
+		debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 	}
 
 	componentWillUnmount() {
@@ -395,7 +384,11 @@ class Signup extends Component {
 
 		if ( flow.postCompleteCallback ) {
 			const siteId = dependencies && dependencies.siteId;
-			await flow.postCompleteCallback( { siteId, flowName: this.props.flowName } );
+			await flow.postCompleteCallback( {
+				siteId,
+				flowName: this.props.flowName,
+				dispatch: this.props.dispatch,
+			} );
 		}
 	};
 
@@ -631,7 +624,7 @@ class Signup extends Component {
 			dependencies.oauth2_client_id && ! progress?.[ 'oauth2-user' ]?.service; // service is set for social signup (e.g. Google, Apple)
 		// If the user is not logged in, we need to log them in first.
 		// And if it's regular oauth client signup, we perform the oauth login because the WPCC user creation code automatically logs the user in.
-		// There’s no need to turn the bearer token into a cookie. If we log user in again, it will cause an activation error.
+		// There's no need to turn the bearer token into a cookie. If we log user in again, it will cause an activation error.
 		// However, we need to skip this to perform a regular login for social sign in.
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || isRegularOauth2ClientSignup ) ) {
 			debug( `Handling oauth login` );
@@ -805,33 +798,25 @@ class Signup extends Component {
 		return flowSteps.length;
 	}
 
-	renderProcessingScreen( isReskinned ) {
+	renderProcessingScreen() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
-			const hasPaidDomain = isDomainRegistration( domainItem );
-			const destination = this.signupFlowController.getDestination();
+		const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
+		const hasPaidDomain = isDomainRegistration( domainItem );
+		const destination = this.signupFlowController.getDestination();
 
-			return (
-				<ReskinnedProcessingScreen
-					flowName={ this.props.flowName }
-					hasPaidDomain={ hasPaidDomain }
-					isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
-				/>
-			);
-		}
-
-		if ( isBlazeProOAuth2Client( this.props.oauth2Client ) ) {
-			return <BlazeProSignupProcessingScreen />;
-		}
-
-		return <SignupProcessingScreen flowName={ this.props.flowName } />;
+		return (
+			<ReskinnedProcessingScreen
+				flowName={ this.props.flowName }
+				hasPaidDomain={ hasPaidDomain }
+				isDestinationSetupSiteFlow={ destination.startsWith( '/setup' ) }
+			/>
+		);
 	}
 
-	renderCurrentStep( isReskinned ) {
+	renderCurrentStep() {
 		const { stepName, flowName } = this.props;
 
 		const flow = flows.getFlow( flowName, this.props.isLoggedIn );
@@ -869,7 +854,7 @@ class Signup extends Component {
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
 					{ this.state.shouldShowLoadingScreen ? (
-						this.renderProcessingScreen( isReskinned )
+						this.renderProcessingScreen()
 					) : (
 						<CurrentComponent
 							path={ this.props.path }
@@ -886,7 +871,6 @@ class Signup extends Component {
 							stepSectionName={ this.props.stepSectionName }
 							positionInFlow={ this.getPositionInFlow() }
 							hideFreePlan={ hideFreePlan }
-							isReskinned={ isReskinned }
 							queryParams={ this.getCurrentFlowSupportedQueryParams() }
 							{ ...propsForCurrentStep }
 						/>
@@ -936,7 +920,6 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName );
 		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (
@@ -950,7 +933,6 @@ class Signup extends Component {
 								stepName: this.props.stepName,
 							} }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
-							isReskinned={ isReskinned }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
@@ -962,7 +944,7 @@ class Signup extends Component {
 							}
 						/>
 					) }
-					<div className="signup__steps">{ this.renderCurrentStep( isReskinned ) }</div>
+					<div className="signup__steps">{ this.renderCurrentStep() }</div>
 					{ this.state.bearerToken && (
 						<WpcomLoginForm
 							authorization={ 'Bearer ' + this.state.bearerToken }
@@ -1012,9 +994,10 @@ export default connect(
 			hostingFlow,
 		};
 	},
-	{
+	( dispatch ) => ( {
+		dispatch,
 		submitSignupStep,
 		removeStep,
 		addStep,
-	}
+	} )
 )( Signup );
