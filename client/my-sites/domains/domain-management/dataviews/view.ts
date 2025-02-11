@@ -5,7 +5,7 @@ import {
 	DEFAULT_SORT_FIELD,
 	DEFAULT_SORT_DIRECTION,
 	QueryParams,
-} from './use-query-params';
+} from './query-params';
 
 export function getFieldsByBreakpoint( isDesktop: boolean, sidebarMode?: boolean ) {
 	if ( isDesktop && ! sidebarMode ) {

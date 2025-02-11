@@ -7,17 +7,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { navigate } from 'calypso/lib/navigate';
 import { addQueryArgs } from 'calypso/lib/url';
 import { BulkUpdateNotice } from './components/bulk-update-notice';
+import {
+	DEFAULT_PER_PAGE,
+	DEFAULT_SORT_FIELD,
+	DEFAULT_SORT_DIRECTION,
+	buildPathWithQueryParams,
+	getQueryParams,
+} from './query-params';
 import { useActions } from './use-actions';
 import { useDomainsDataViewsContext } from './use-context';
 import { getDomainId } from './use-domains';
 import './style.scss';
 import { useFields } from './use-fields';
-import useQueryParams, {
-	DEFAULT_PER_PAGE,
-	DEFAULT_SORT_FIELD,
-	DEFAULT_SORT_DIRECTION,
-	buildPathWithQueryParams,
-} from './use-query-params';
 import { initializeViewState, getFieldsByBreakpoint } from './view';
 
 type Props = {
@@ -35,8 +36,8 @@ export const DomainsDataViews = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const { isDesktop, getSiteSlug, selectedFeature } = useDomainsDataViewsContext();
-	const queryParams = useQueryParams();
 
+	const queryParams = getQueryParams();
 	const [ view, setView ] = useState( () =>
 		initializeViewState( isDesktop, queryParams, sidebarMode )
 	);
@@ -85,7 +86,7 @@ export const DomainsDataViews = ( {
 		const siteSlug = getSiteSlug( item );
 		const domainManagementLink = ! item.wpcom_domain
 			? addQueryArgs(
-					queryParams,
+					getQueryParams(),
 					getDomainManagementLink( item, siteSlug, true, selectedFeature )
 			  )
 			: '';

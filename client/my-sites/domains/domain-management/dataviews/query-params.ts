@@ -19,7 +19,7 @@ const getDefaultParams = () => ( {
 	sortDirection: DEFAULT_SORT_DIRECTION,
 } );
 
-export default function useQueryParams() {
+export function getQueryParams() {
 	const queryParams = new URLSearchParams( window.location.search );
 	return {
 		...getDefaultParams(),
