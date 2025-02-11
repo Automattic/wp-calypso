@@ -10,7 +10,7 @@ config.author = pkg.author;
 config.protocol = 'wpdesktop';
 
 config.loginURL = function () {
-	return this.baseURL() + 'log-in/desktop';
+	return this.baseURL() + 'log-in';
 };
 
 config.baseURL = function () {
