@@ -9,8 +9,9 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
-import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -34,21 +35,8 @@ class Sitemaps extends Component {
 		fields: PropTypes.object,
 	};
 
-	state = {
-		isRemoveDuplicateViewsExperimentEnabled: false,
-	};
-
 	componentDidMount() {
-		getIsRemoveDuplicateViewsExperimentEnabled().then(
-			( isRemoveDuplicateViewsExperimentEnabled ) => {
-				if (
-					this.state.isRemoveDuplicateViewsExperimentEnabled !==
-					isRemoveDuplicateViewsExperimentEnabled
-				) {
-					this.setState( { isRemoveDuplicateViewsExperimentEnabled } );
-				}
-			}
-		);
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	isSitePublic() {
@@ -98,8 +86,7 @@ class Sitemaps extends Component {
 	}
 
 	renderNonPublicExplanation() {
-		const { siteSlug, translate } = this.props;
-		const { isRemoveDuplicateViewsExperimentEnabled } = this.state;
+		const { isRemoveDuplicateViewsExperimentEnabled, siteSlug, translate } = this.props;
 		return (
 			<FormSettingExplanation>
 				{ translate(
@@ -224,16 +211,23 @@ class Sitemaps extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-
-	return {
-		siteId,
-		activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
-		site: getSelectedSite( state ),
-		siteSlug: getSelectedSiteSlug( state ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
-		sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
-	};
-} )( localize( Sitemaps ) );
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const isRemoveDuplicateViewsExperimentEnabled =
+			getIsRemoveDuplicateViewsExperimentEnabled( state );
+		return {
+			siteId,
+			activatingSitemapsModule: !! isActivatingJetpackModule( state, siteId, 'sitemaps' ),
+			isRemoveDuplicateViewsExperimentEnabled,
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			sitemapsModule: getJetpackModule( state, siteId, 'sitemaps' ),
+			sitemapsModuleActive: !! isJetpackModuleActive( state, siteId, 'sitemaps' ),
+		};
+	},
+	{
+		getRemoveDuplicateViewsExperimentAssignment,
+	}
+)( localize( Sitemaps ) );

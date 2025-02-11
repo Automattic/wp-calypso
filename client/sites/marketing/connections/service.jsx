@@ -666,14 +666,15 @@ export class SharingService extends Component {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
-						<ServiceExamples
-							service={ this.props.service }
-							action={ this.performAction }
-							connectAnother={ this.connectAnother }
-							isConnecting={ this.state.isConnecting }
-							connections={ connections }
-						/>
-
+						{ 'not-connected' === connectionStatus && (
+							<ServiceExamples
+								service={ this.props.service }
+								action={ this.performAction }
+								connectAnother={ this.connectAnother }
+								isConnecting={ this.state.isConnecting }
+								connections={ connections }
+							/>
+						) }
 						{ this.isGooglePhotosMigration( connectionStatus ) && <GooglePhotosMigration /> }
 
 						{ ! this.isMailchimpService( connectionStatus ) && (
