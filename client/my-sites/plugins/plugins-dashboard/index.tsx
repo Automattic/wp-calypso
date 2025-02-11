@@ -42,7 +42,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
 import { withShowPluginActionDialog } from '../hooks/use-show-plugin-action-dialog';
@@ -107,7 +107,7 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const allSites = useSelector( ( state ) => getSelectedOrAllSitesWithPlugins( state ) );
+	const allSites = useSelector( ( state ) => getSites( state ) );
 	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
