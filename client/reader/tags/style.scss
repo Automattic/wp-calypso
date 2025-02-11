@@ -87,7 +87,7 @@
 		.sticky-container,
 		.alphabetic-tags__table {
 			// Apply max-width at this level so we still have the full width content frame
-			// supplied by .tags__main.
+			// and scroll containers.
 			max-width: 1140px;
 			margin: 0 auto;
 		}
