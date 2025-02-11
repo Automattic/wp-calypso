@@ -28,9 +28,9 @@ const utmParams = {
 	utm_medium: 'automattic_referred',
 	utm_source: 'jpcom_footer',
 };
-const getTrackLinkClick = ( link: string ) => () => {
+const getTrackLinkClick = ( link: string | undefined ) => () => {
 	if ( ! link ) {
-		return undefined;
+		return;
 	}
 	recordTracksEvent( 'calypso_jetpack_footer_link_click', { link } );
 };
