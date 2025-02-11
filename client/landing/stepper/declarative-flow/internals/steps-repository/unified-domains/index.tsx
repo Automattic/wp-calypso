@@ -62,7 +62,6 @@ const RenderDomainsStepConnect = connect(
 			flowName: flow,
 			path: window.location.pathname,
 			positionInFlow: 1,
-			isReskinned: true,
 			stepSectionName,
 			signupDependencies: step,
 		};

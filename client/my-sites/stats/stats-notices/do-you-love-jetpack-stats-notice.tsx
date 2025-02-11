@@ -10,6 +10,7 @@ import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -103,9 +104,15 @@ const DoYouLoveJetpackStatsNotice = ( {
 	}
 
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
-		? translate( 'Grow faster with Jetpack Stats' )
-		: translate( 'Do you love Jetpack Stats?' );
-	const freeTitle = translate( 'Want to get the most out of Jetpack Stats?' );
+		? ( translate( 'Grow faster with %(product)s', {
+				args: { product: STATS_PRODUCT_NAME },
+		  } ) as string )
+		: ( translate( 'Do you love %(product)s?', {
+				args: { product: STATS_PRODUCT_NAME },
+		  } ) as string );
+	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
+		args: { product: STATS_PRODUCT_NAME },
+	} ) as string;
 
 	const learnMoreLink = isWPCOMSite
 		? 'https://wordpress.com/support/stats/#purchase-the-stats-add-on'

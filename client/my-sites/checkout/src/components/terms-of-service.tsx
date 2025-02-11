@@ -9,10 +9,12 @@ export const TermsOfService = ( {
 	hasRenewableSubscription,
 	isGiftPurchase,
 	is100YearPlanPurchase,
+	is100YearDomainPurchase,
 }: {
 	hasRenewableSubscription: boolean;
 	isGiftPurchase: boolean;
 	is100YearPlanPurchase: boolean;
+	is100YearDomainPurchase: boolean;
 } ) => {
 	const translate = useTranslate();
 	const recordTermsAndConditionsClick = () => {
@@ -42,6 +44,7 @@ export const TermsOfService = ( {
 				<TosText
 					isAkismetPurchase={ isAkismetCheckout() }
 					is100YearPlanPurchase={ is100YearPlanPurchase }
+					is100YearDomainPurchase={ is100YearDomainPurchase }
 				/>
 			);
 		}

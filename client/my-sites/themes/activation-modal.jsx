@@ -48,6 +48,7 @@ export class ActivationModal extends Component {
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
 		newThemeId: PropTypes.string,
+		showSuccessNotice: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -66,7 +67,14 @@ export class ActivationModal extends Component {
 	closeModalHandler =
 		( action = 'dismiss' ) =>
 		() => {
-			const { newThemeId, activeTheme, siteId, source, isCurrentThemeAllowedOnSite } = this.props;
+			const {
+				newThemeId,
+				activeTheme,
+				siteId,
+				source,
+				isCurrentThemeAllowedOnSite,
+				showSuccessNotice,
+			} = this.props;
 			if ( 'activeTheme' === action ) {
 				this.props.acceptActivationModal( newThemeId );
 				const eventName = ! isCurrentThemeAllowedOnSite
@@ -77,7 +85,7 @@ export class ActivationModal extends Component {
 					theme: newThemeId,
 					activeTheme: activeTheme.id,
 				} );
-				return this.props.activateTheme( newThemeId, siteId, { source } );
+				return this.props.activateTheme( newThemeId, siteId, { source, showSuccessNotice } );
 			} else if ( 'dismiss' === action ) {
 				const eventName = ! isCurrentThemeAllowedOnSite
 					? 'calypso_theme_switch_plan_warning_declined'
