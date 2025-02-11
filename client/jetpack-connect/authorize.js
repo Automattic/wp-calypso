@@ -453,12 +453,7 @@ export class JetpackAuthorize extends Component {
 
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return (
-			// TODO: can we reuse existing logic?
-			'woocommerce-onboarding' === from ||
-			'woocommerce-core-profiler' === from ||
-			this.props.isWooJPC
-		);
+		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
 	}
 
 	getWooDnaConfig( props = this.props ) {

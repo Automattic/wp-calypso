@@ -342,12 +342,7 @@ export default withCurrentRoute(
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
-			// const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
-			// TODO:
-			// - should we also add the section check like in the other file?
-			// - merge with JPC or DNA?
-			// - move to isWooJPCFlow
-			const isWooJPC = 'woocommerce-onboarding' === currentQuery?.from || isWooJPCFlow( state );
+			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
 				! ( currentSection || currentRoute ) ||

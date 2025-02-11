@@ -124,19 +124,9 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	// isWooOnboarding() {
-	// 	const { authQuery } = this.props;
-	// 	return 'woocommerce-onboarding' === authQuery.from;
-	// }
-
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		// TODO: can we reuse existing logic?
-		return (
-			'woocommerce-onboarding' === from ||
-			'woocommerce-core-profiler' === from ||
-			this.props.isWooJPC
-		);
+		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
 	}
 
 	getWooDnaConfig() {

@@ -445,11 +445,7 @@ export default withCurrentRoute(
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
 		const isWooJPC =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			// TODO:
-			// - confirm that it's ok to merge with JPC (and not DNA)
-			// - move to isWooJPCFlow function
-			( 'woocommerce-onboarding' === currentQuery?.from || isWooJPCFlow( state ) );
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) && isWooJPCFlow( state );
 		const isBlazePro = getIsBlazePro( state );
 		const shouldShowGlobalSidebar = getShouldShowGlobalSidebar( state, siteId, sectionGroup );
 		const shouldShowCollapsedGlobalSidebar = getShouldShowCollapsedGlobalSidebar(

@@ -1161,9 +1161,7 @@ export default connect(
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWooJPC:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
-				isWooJPCFlow( state ),
+			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),

@@ -1034,12 +1034,7 @@ export default connect(
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		isWooJPC:
-			// The legacy "Jetpack WooCommerce" flow is deprecated and absorbed
-			// into the Woo JPC flow
-			// TODO: move to isWooJPCFlow check
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
-			isWooJPCFlow( state ),
+		isWooJPC: isWooJPCFlow( state ),
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),
 		wccomFrom: getWccomFrom( state ),

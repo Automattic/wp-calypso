@@ -1376,10 +1376,7 @@ class SignupForm extends Component {
 export default connect(
 	( state, props ) => {
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isWooJPC =
-			// - move check directly to isWooJPCFlow
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ) ||
-			isWooJPCFlow( state );
+		const isWooJPC = isWooJPCFlow( state );
 
 		return {
 			currentUser: getCurrentUser( state ),
