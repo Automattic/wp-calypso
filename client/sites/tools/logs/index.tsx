@@ -373,7 +373,8 @@ export const SiteLogsDataViews = ( {
 		setAutoRefresh( isChecked );
 	};
 
-	const { downloadLogs } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const isDownloading = state.status === 'downloading';
 	const onDownloadLogs = useCallback( () => {
 		downloadLogs( {
 			logType,
@@ -494,6 +495,7 @@ export const SiteLogsDataViews = ( {
 								icon={ download }
 								label="Download logs"
 								onClick={ onDownloadLogs }
+								isBusy={ isDownloading }
 							/>
 							<ToggleControl
 								__nextHasNoMarginBottom
