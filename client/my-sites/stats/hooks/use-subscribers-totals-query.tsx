@@ -1,15 +1,37 @@
+import config from '@automattic/calypso-config';
 import { useQueries } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { parseAvatar } from 'calypso/state/stats/lists/utils';
 import getDefaultQueryParams from './default-query-params';
 
 const MAX_SUBSCRIBERS_TO_RETURN = 10;
+const isJetpackApi = config.isEnabled( 'is_running_in_jetpack' );
 
-const querySubscribersTotals = (
+const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
+	return wpcom.req
+		.get(
+			{
+				path: `/sites/${ siteId }/stats/followers`,
+			},
+			{
+				type: 'all',
+				filter_admin: filterAdmin ? true : false,
+				// Only one-page results adjust visible subscribers with deleted accounts to align with the subscriber list.
+				max: MAX_SUBSCRIBERS_TO_RETURN,
+			}
+		)
+		.catch( () => ( {} ) );
+};
+
+const querySubscribersTotalByType = (
 	siteId: number | null,
 	user_type: 'email' | 'wpcom',
 	filterAdmin?: boolean
 ): Promise< any > => {
+	// Return early to avoid 404.
+	if ( isJetpackApi ) {
+		return {} as any;
+	}
 	return wpcom.req
 		.get(
 			{
@@ -40,6 +62,7 @@ const selectSubscribers = ( payload: {
 	total_wpcom: number;
 	is_owner_subscribing: boolean;
 	subscribers: {
+		label?: string;
 		date_subscribed: string;
 		display_name: string;
 		avatar: string;
@@ -54,7 +77,7 @@ const selectSubscribers = ( payload: {
 		is_owner_subscribing: payload.is_owner_subscribing,
 		subscribers: payload.subscribers?.map( ( item ) => {
 			return {
-				label: item.display_name,
+				label: item.label ?? item.display_name,
 				iconClassName: 'avatar-user',
 				icon: parseAvatar( item.avatar ),
 				link: item.url,
@@ -94,12 +117,14 @@ export function useSubscribersTotalsWithoutAdminQueries( siteId: number | null )
 }
 
 function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boolean ) {
-	const queries = useQueries( {
+	const isJetpackApi = config.isEnabled( 'is_running_in_jetpack' );
+
+	const results = useQueries( {
 		queries: [
 			{
 				...getDefaultQueryParams(),
-				queryKey: [ 'stats', 'totals', 'subscribers', 'email', siteId, filterAdmin ],
-				queryFn: () => querySubscribersTotals( siteId, 'email', filterAdmin ),
+				queryKey: [ 'stats', 'totals', 'subscribers', 'all', siteId, filterAdmin ],
+				queryFn: () => querySubscribersTotals( siteId, filterAdmin ),
 				select: selectSubscribers,
 				staleTime: 1000 * 60 * 5, // 5 minutes
 			},
@@ -113,41 +138,71 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 			{
 				...getDefaultQueryParams(),
 				queryKey: [ 'stats', 'totals', 'subscribers', 'wpcom', siteId, filterAdmin ],
-				queryFn: () => querySubscribersTotals( siteId, 'wpcom', filterAdmin ),
+				queryFn: () => querySubscribersTotalByType( siteId, 'wpcom', filterAdmin ),
+				select: selectSubscribers,
+				staleTime: 1000 * 60 * 5, // 5 minutes
+			},
+			{
+				...getDefaultQueryParams(),
+				queryKey: [ 'stats', 'totals', 'subscribers', 'email', siteId, filterAdmin ],
+				queryFn: () => querySubscribersTotalByType( siteId, 'email', filterAdmin ),
 				select: selectSubscribers,
 				staleTime: 1000 * 60 * 5, // 5 minutes
 			},
 		],
 	} );
 
+	if ( ! isJetpackApi ) {
+		// Use `subscribers_by_user_type` endpoint in Calypso Stats.
+		return {
+			data: {
+				total_email: results[ 3 ]?.data?.total,
+				total_wpcom: results[ 2 ]?.data?.total,
+				total: results[ 1 ].data?.email_subscribers,
+				paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
+				free_subscribers:
+					results[ 1 ]?.data?.email_subscribers !== undefined &&
+					results[ 1 ]?.data?.paid_subscribers !== undefined
+						? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
+						: null,
+				social_followers: results[ 1 ]?.data?.social_followers,
+				is_owner_subscribing: results[ 2 ]?.data?.is_owner_subscribing,
+				// Merge email and wpcom subscribers and sort by date_subscribed, and only shows the most recent 10 subscribers.
+				subscribers:
+					[
+						...( results[ 3 ]?.data?.subscribers ?? [] ),
+						...( results[ 2 ]?.data?.subscribers ?? [] ),
+					]
+						.sort( ( a, b ) => {
+							return (
+								new Date( b.date_subscribed ).getTime() - new Date( a.date_subscribed ).getTime()
+							);
+						} )
+						.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ) ?? [],
+			},
+			isLoading: results.some( ( result ) => result.isLoading ),
+			isError: results.some( ( result ) => result.isError ),
+		};
+	}
+
+	// `subscribers_by_user_type` endpoint is not available for Odyssey Stats yet.
 	return {
 		data: {
-			total_email: queries[ 0 ]?.data?.total,
-			total_wpcom: queries[ 2 ]?.data?.total,
-			total: queries[ 1 ].data?.email_subscribers,
-			paid_subscribers: queries[ 1 ]?.data?.paid_subscribers,
+			total_email: results[ 0 ]?.data?.total_email,
+			total_wpcom: results[ 0 ]?.data?.total_wpcom,
+			total: results[ 0 ]?.data?.total,
+			paid_subscribers: results[ 1 ]?.data?.paid_subscribers,
 			free_subscribers:
-				queries[ 1 ]?.data?.email_subscribers !== undefined &&
-				queries[ 1 ]?.data?.paid_subscribers !== undefined
-					? queries[ 1 ].data.email_subscribers - queries[ 1 ].data.paid_subscribers
+				results[ 1 ]?.data?.email_subscribers !== undefined &&
+				results[ 1 ]?.data?.paid_subscribers !== undefined
+					? results[ 1 ].data.email_subscribers - results[ 1 ].data.paid_subscribers
 					: null,
-			social_followers: queries[ 1 ]?.data?.social_followers,
-			is_owner_subscribing: queries[ 2 ]?.data?.is_owner_subscribing,
-			// Merge email and wpcom subscribers and sort by date_subscribed, and only shows the most recent 10 subscribers.
-			subscribers:
-				[
-					...( queries[ 0 ]?.data?.subscribers ?? [] ),
-					...( queries[ 2 ]?.data?.subscribers ?? [] ),
-				]
-					.sort( ( a, b ) => {
-						return (
-							new Date( b.date_subscribed ).getTime() - new Date( a.date_subscribed ).getTime()
-						);
-					} )
-					.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ) ?? [],
+			social_followers: results[ 1 ]?.data?.social_followers,
+			is_owner_subscribing: results[ 0 ]?.data?.is_owner_subscribing,
+			subscribers: results[ 0 ]?.data?.subscribers,
 		},
-		isLoading: queries.some( ( result ) => result.isLoading ),
-		isError: queries.some( ( result ) => result.isError ),
+		isLoading: results.some( ( result ) => result.isLoading ),
+		isError: results.some( ( result ) => result.isError ),
 	};
 }
 
