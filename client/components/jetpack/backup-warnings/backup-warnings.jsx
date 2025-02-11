@@ -1,8 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
 import BackupWarningHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-header';
 import BackupWarningListHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-list-header';
 import LogItem from 'calypso/components/jetpack/log-item';

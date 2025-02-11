@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
