@@ -7,6 +7,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
@@ -44,12 +45,12 @@ function StatsRealtime() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main fullWidthLayout>
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/realtime/:site" title="Stats > Realtime" />
 			<div className="stats">
 				<NavigationHeader
 					className="stats__section-header modernized-header"
-					title={ translate( 'Jetpack Stats' ) }
+					title={ STATS_PRODUCT_NAME }
 					subtitle={ translate( "View your site's performance and learn from trends." ) }
 					screenReader={ navItems.realtime?.label }
 					navigationItems={ [] }

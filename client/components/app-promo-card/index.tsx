@@ -50,7 +50,7 @@ export type AppPromoCardProps = {
 	clickHandler?: ( eventName: string ) => void;
 };
 
-export default function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardProps ) {
+export function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardProps ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	// Basic user agent testing so we can show app store badges on moble.

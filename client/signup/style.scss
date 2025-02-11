@@ -226,32 +226,6 @@ body.is-section-signup .layout:not(.dops) {
 	}
 }
 
-// Signup headings
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
-	margin: 0 0 16px;
-
-	.formatted-header__title {
-		margin: 0;
-		font-weight: 400;
-		color: var(--color-text-inverted);
-	}
-
-	.formatted-header__subtitle {
-		margin: 8px 0 0;
-		font-size: $font-body;
-		color: var(--color-text-inverted);
-	}
-
-	.signup:not(.is-wpcc):not(.is-crowdsignal) a {
-		color: var(--color-neutral-0);
-		text-decoration: underline;
-
-		&:hover {
-			color: var(--color-text-inverted);
-		}
-	}
-}
-
 .is-section-signup .layout__content,
 .is-section-signup .layout__primary {
 	overflow: visible;
@@ -410,7 +384,7 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 			margin: 24px 20px;
 
 			@include break-large {
-				margin: 48px 0 40px;
+				margin: 48px 0 36px;
 			}
 		}
 	}
@@ -428,7 +402,7 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 		.formatted-header__title {
 			@include onboarding-font-recoleta;
 			color: $gray-100;
-			letter-spacing: 0.2px;
+			margin-top: 0;
 			font-size: 2.25rem;
 
 			@include break-xlarge {
@@ -439,70 +413,19 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 		.formatted-header__subtitle {
 			color: $gray-60;
 			font-size: 1rem;
-
-			@include breakpoint-deprecated("<660px") {
-				margin-top: 16px;
-			}
+			margin-bottom: 0;
 		}
 
 		.formatted-header__title,
 		.formatted-header__subtitle {
-			padding: 0 20px;
-			text-align: center;
-
 			@include break-xlarge {
 				padding: 0;
-			}
-		}
-
-		&.is-left-align {
-
-			.formatted-header__title,
-			.formatted-header__subtitle {
-				padding: 0;
-				text-align: start;
-			}
-		}
-
-		&.is-right-align {
-
-			.formatted-header__title,
-			.formatted-header__subtitle {
-				padding: 0;
-				text-align: end;
 			}
 		}
 	}
 
 	.signup__step.is-user,
 	.signup__step.is-user-social {
-		.formatted-header {
-			.formatted-header__title {
-				text-align: center;
-
-				@include break-small {
-					max-width: inherit;
-				}
-			}
-
-			.formatted-header__subtitle {
-				text-align: center;
-				color: #646970;
-				a {
-					color: var(--studio-gray-90);
-					text-decoration: underline;
-					cursor: pointer;
-				}
-
-				@include break-small {
-					max-width: inherit;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 1.625rem;
-					letter-spacing: 0.24px;
-				}
-			}
-		}
-
 		button.signup-form__submit[disabled],
 		button.signup-form__submit:disabled,
 		button.signup-form__submit.disabled {
@@ -682,25 +605,7 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 		}
 
 		.step-wrapper__header {
-			margin-bottom: 24px !important;
-		}
-
-		.formatted-header {
-			.formatted-header__title {
-				font-size: rem(30px);
-				line-height: 40px;
-
-				@include break-small {
-					font-size: 2rem;
-					line-height: 3.25;
-				}
-			}
-
-			.formatted-header__subtitle {
-				@include break-small {
-					font-size: rem(18px);
-				}
-			}
+			margin-bottom: 3rem !important;
 		}
 
 		a.step-wrapper__navigation-link {
@@ -725,27 +630,6 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 		}
 	}
 
-	.signup__step.is-user {
-		.formatted-header {
-			.formatted-header__title {
-				@include break-small {
-					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
-					line-height: 56px;
-				}
-			}
-
-			.formatted-header__subtitle {
-				@include break-small {
-					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-				}
-			}
-		}
-
-		.social-buttons__button {
-			border: 0;
-		}
-	}
-
 	// ::::: Onboarding_PM_Passwordless_Experiment ::::::
 	// This selector is part of an experiment which is supposed to be cleaned up
 	// https://github.com/Automattic/wp-calypso/pull/83886
@@ -757,29 +641,6 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 				padding: 0;
 				border-radius: 0;
 
-			}
-		}
-	}
-
-	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
-	.signup .signup__step .plans.plans-step {
-		.formatted-header {
-			.formatted-header__title {
-				font-size: 2.25rem;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 2.5rem;
-				font-weight: 500;
-
-				@include break-mobile {
-					font-size: 2.75rem;
-					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-					line-height: 3rem;
-				}
-			}
-
-			.formatted-header__subtitle button.is-borderless {
-				font-weight: 500;
-				color: var(--studio-gray-90);
 			}
 		}
 	}
@@ -862,10 +723,4 @@ body.is-section-signup .is-gravatar {
 	:root {
 		--signup-form-column-max-width: 408px;
 	}
-}
-
-body.is-section-signup
-.signup:not(.is-wpcc2)
-.layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
-	margin: 0 0 16px;
 }

@@ -100,11 +100,8 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 					className="update-plugin__new-version"
 					compact
 				>
-					{ translate( '{{span}}Update to {{/span}}%s', {
-						components: {
-							span: <span />,
-						},
-						args: updatedVersions[ 0 ],
+					{ translate( 'Update to %(version)s', {
+						args: { version: updatedVersions[ 0 ] },
 					} ) }
 				</Button>
 			</div>
