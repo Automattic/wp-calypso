@@ -646,14 +646,7 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				// TODO: replace with other flow, or delete?
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
+		if ( ! canDoMagicLogin( this.props.twoFactorAuthType, this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -670,14 +663,7 @@ export class LoginForm extends Component {
 	}
 
 	getQrLoginLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client
-				// TODO: replace with other flow, or delete?
-				// this.props.isJetpackWooCommerceFlow
-			)
-		) {
+		if ( ! canDoMagicLogin( this.props.twoFactorAuthType, this.props.oauth2Client ) ) {
 			return null;
 		}
 

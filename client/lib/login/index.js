@@ -188,7 +188,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	return signupUrl;
 }
 
-export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
+export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
 		return false;
 	}
