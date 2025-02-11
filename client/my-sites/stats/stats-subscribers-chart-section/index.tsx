@@ -3,8 +3,8 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
-import LineChart from 'calypso/my-sites/stats/components/line-chart';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -175,8 +175,9 @@ export default function SubscribersChartSection( {
 			{ ! isChartLoading && chartData.length !== 0 && (
 				<>
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
-					{ isChartLibraryEnabled && (
-						<LineChart
+					{ isChartLibraryEnabled ? (
+						<AsyncLoad
+							require="calypso/my-sites/stats/components/line-chart"
 							chartData={ [
 								{
 									label: 'Subscribers',
@@ -198,8 +199,7 @@ export default function SubscribersChartSection( {
 							] }
 							height={ 300 }
 						/>
-					) }
-					{ ! isChartLibraryEnabled && (
+					) : (
 						<UplotChart
 							data={ chartData }
 							legendContainer={ legendRef }
