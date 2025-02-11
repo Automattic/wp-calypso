@@ -13,7 +13,7 @@ class FormAnalyticsStores extends Component {
 
 	renderExplanation = ( setting ) => {
 		const link = setting.link ? (
-			<ExternalLink icon href={ setting.link.url } target="_blank" rel="noopener noreferrer">
+			<ExternalLink icon href={ setting.link.url } target="_blank">
 				{ setting.link.label }
 			</ExternalLink>
 		) : null;

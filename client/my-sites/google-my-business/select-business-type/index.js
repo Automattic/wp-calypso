@@ -187,7 +187,6 @@ class GoogleMyBusinessSelectBusinessType extends Component {
 											<ExternalLink
 												href="https://www.google.com/business/"
 												target="_blank"
-												rel="noopener noreferrer"
 												icon
 												onClick={ this.trackGoogleMyBusinessClick }
 											/>

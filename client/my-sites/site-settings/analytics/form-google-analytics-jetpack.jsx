@@ -198,7 +198,6 @@ const GoogleAnalyticsJetpackForm = ( {
 										icon
 										href="https://support.google.com/analytics/answer/2763052"
 										target="_blank"
-										rel="noopener noreferrer"
 									>
 										{ translate( 'Learn more' ) }
 									</ExternalLink>

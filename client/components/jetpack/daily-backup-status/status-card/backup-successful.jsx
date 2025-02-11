@@ -111,14 +111,7 @@ const BackupSuccessful = ( {
 									'For more information {{ExternalLink}}visit our documentation page{{/ExternalLink}}.',
 								{
 									components: {
-										ExternalLink: (
-											<ExternalLink
-												href={ multiSiteInfoLink }
-												target="_blank"
-												rel="noopener noreferrer"
-												icon
-											/>
-										),
+										ExternalLink: <ExternalLink href={ multiSiteInfoLink } target="_blank" icon />,
 									},
 								}
 							)
