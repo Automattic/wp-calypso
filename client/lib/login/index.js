@@ -236,33 +236,38 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+export const formatPluginNames = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
 	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
 	};
+
+	// Handle multiple plugin names separated by commas
+	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
 
 	const listFormatter = new Intl.ListFormat( langSlug, {
 		style: 'long',
 		type: 'conjunction',
 	} );
 
-	const defaultTitle = translate( 'of the extensions you’ve chosen' );
+	return uniqueTitles.length ? listFormatter.format( uniqueTitles ) : '';
+};
 
+export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+	const defaultTitle = translate( 'of the extensions you’ve chosen' );
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
 		return defaultTitle;
 	}
 
-	// Handle multiple plugin names separated by commas
-	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
-	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
-
-	if ( uniqueTitles.length === 0 ) {
+	const formattedNames = formatPluginNames( pluginName, translate, langSlug );
+	if ( ! formattedNames ) {
 		return defaultTitle;
 	}
+
 	return translate( 'in %(pluginNames)s', {
-		args: { pluginNames: listFormatter.format( uniqueTitles ) },
+		args: { pluginNames: formattedNames },
 		comment: 'pluginNames is a list of WooCommerce extensions',
 	} );
 };
