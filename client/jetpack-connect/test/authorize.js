@@ -178,8 +178,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( isWooRedirect( props ) ).toBe( true );
 		} );
 
-		// Should we change the test name, since this flow is not as "new"?
-		test( 'should return true for new woo onboarding', () => {
+		test( 'should return true for legacy woo onboarding', () => {
 			const props = { authQuery: { from: 'woocommerce-onboarding' } };
 			expect( isWooRedirect( props ) ).toBe( true );
 		} );
