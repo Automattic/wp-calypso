@@ -277,8 +277,10 @@ export const SiteLogsDataViews = ( {
 	//   - translate for field labels https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-toolbar/index.tsx#L82
 
 	const { __ } = useI18n();
+
 	const moment = useLocalizedMoment();
 	const siteGmtOffset = useCurrentSiteGmtOffset();
+	const ZERO_EPOCH = useMemo( () => moment.unix( 0 ), [ moment ] );
 
 	const dispatch = useDispatch();
 
@@ -316,35 +318,25 @@ export const SiteLogsDataViews = ( {
 		[ query.to, getMomentFromTimestamp ]
 	);
 
-	const handleTimeRangeChange = (
-		updatedStartTime: Moment | null,
-		updatedEndTime: Moment | null
-	) => {
-		if (
-			( ! updatedStartTime && ! updatedEndTime ) ||
-			( startTime.isSame( updatedStartTime ) && endTime.isSame( updatedEndTime ) )
-		) {
-			return;
-		}
-
-		const newStartTime = updatedStartTime || startTime;
-		const newEndTime = updatedEndTime || endTime;
-		if (
-			! newStartTime.isValid() ||
-			! newEndTime.isValid() ||
-			newStartTime.isAfter( newEndTime )
-		) {
-			const url = new URL( window.location.href );
-			url.searchParams.set( 'from', getTimestampFor7DaysAgo() );
-			url.searchParams.set( 'to', getTimestampForNow() );
-			page.replace( url.pathname + url.search );
-		}
-
+	const handleStartTimeChange = useCallback( ( updatedStartTime: Moment ) => {
 		const url = new URL( window.location.href );
-		url.searchParams.set( 'from', newStartTime.unix().toString( 10 ) );
-		url.searchParams.set( 'to', newEndTime.unix().toString( 10 ) );
+		if ( ! updatedStartTime.isValid() ) {
+			url.searchParams.delete( 'from' );
+		} else {
+			url.searchParams.set( 'from', updatedStartTime.unix().toString( 10 ) );
+		}
 		page.replace( url.pathname + url.search );
-	};
+	}, [] );
+
+	const handleEndTimeChange = useCallback( ( updatedEndTime: Moment ) => {
+		const url = new URL( window.location.href );
+		if ( ! updatedEndTime.isValid() ) {
+			url.searchParams.delete( 'to' );
+		} else {
+			url.searchParams.set( 'to', updatedEndTime.unix().toString( 10 ) );
+		}
+		page.replace( url.pathname + url.search );
+	}, [] );
 
 	const fields = useFields( { logType } );
 	const actions = useActions( { logType } );
@@ -419,9 +411,9 @@ export const SiteLogsDataViews = ( {
 							className="site-logs-toolbar__datepicker"
 							id="from"
 							value={ startTime }
-							onChange={ ( value ) => handleTimeRangeChange( value, null ) }
+							onChange={ handleStartTimeChange }
 							gmtOffset={ siteGmtOffset }
-							min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
+							min={ ZERO_EPOCH }
 							max={ endTime }
 						/>
 					</label>
@@ -432,10 +424,10 @@ export const SiteLogsDataViews = ( {
 							className="site-logs-toolbar__datepicker"
 							id="to"
 							value={ endTime }
-							onChange={ ( value ) => handleTimeRangeChange( null, value ) }
+							onChange={ handleEndTimeChange }
 							gmtOffset={ siteGmtOffset }
-							max={ moment() }
 							min={ startTime }
+							max={ moment() }
 						/>
 					</label>
 					<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">
