@@ -10,6 +10,7 @@ import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/si
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
+import usePersonalizationFormValidation from './hooks/use-personalization-form-validation';
 
 import './style.scss';
 
@@ -20,11 +21,12 @@ interface Props {
 export default function PersonalizationForm( { onContinue }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
+	const { validate, validationError, updateValidationError } = usePersonalizationFormValidation();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		country: '',
-		userType: '',
-		managedSites: '',
+		userType: 'agency_owner',
+		managedSites: '1-5',
 		servicesOffered: [],
 		productsOffered: [],
 	} );
@@ -82,10 +84,15 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 			...prev,
 			country: value,
 		} ) );
+		updateValidationError( { country: undefined } );
 	};
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
+		const error = await validate( formData );
+		if ( error ) {
+			return;
+		}
 		onContinue( formData );
 	};
 
@@ -97,7 +104,11 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 				description={ translate( "We'll tailor the product and onboarding for you." ) }
 			>
 				<FormFieldset>
-					<FormField label={ translate( 'Where is your agency located?' ) } isRequired>
+					<FormField
+						error={ validationError.country }
+						label={ translate( 'Where is your agency located?' ) }
+						isRequired
+					>
 						<SearchableDropdown
 							value={ formData.country }
 							onChange={ handleSetCountry }
