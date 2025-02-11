@@ -323,7 +323,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@types/node": "npm:^22.10.10"
     postcss: "npm:^8.5.1"
     postcss-custom-properties: "npm:^11.0.0"
@@ -593,10 +593,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/color-studio@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@automattic/color-studio@npm:3.0.1"
-  checksum: 1fed9e35e5a4cf283055d323661bf94f8836fbe762c3a1ff7c514407c9cffcae9b05791fb2d4904050c097e939b745c8f2bc13cc84c9963d35c9d1aa57f1fbd8
+"@automattic/color-studio@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@automattic/color-studio@npm:4.1.0"
+  checksum: 545a3c6cf2bc0897e0a5b5630a411db027220f821fc1eba3b50cd6d6cb71ea8c6d1469ef93eaa059855010aa64125f32dbf9b763bc83a8c7af410ee4b9b45f90
   languageName: node
   linkType: hard
 
@@ -673,7 +673,7 @@ __metadata:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/material-design-icons": "workspace:^"
@@ -731,7 +731,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
     "@storybook/cli": "npm:^7.6.20"
@@ -1626,7 +1626,7 @@ __metadata:
   resolution: "@automattic/page-pattern-modal@workspace:packages/page-pattern-modal"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/typography": "npm:1.0.0"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.2.0"
@@ -13688,7 +13688,7 @@ __metadata:
     "@automattic/calypso-sentry": "workspace:^"
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -20508,7 +20508,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-products": "workspace:^"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
@@ -35873,7 +35873,7 @@ __metadata:
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
     "@automattic/charts": "npm:^0.9.0"
-    "@automattic/color-studio": "npm:^3.0.1"
+    "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/command-palette": "workspace:^"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
