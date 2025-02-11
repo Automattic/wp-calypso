@@ -3,6 +3,7 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
 import UplotChart from 'calypso/components/chart-uplot';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import { useSelector } from 'calypso/state';
@@ -164,7 +165,6 @@ export default function SubscribersChartSection( {
 					</div>
 				</div>
 			</div>
-			{ isChartLibraryEnabled && <div>chart library is enabled</div> }
 			{ isChartLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isChartLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
@@ -175,16 +175,42 @@ export default function SubscribersChartSection( {
 			{ ! isChartLoading && chartData.length !== 0 && (
 				<>
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
-					<UplotChart
-						data={ chartData }
-						legendContainer={ legendRef }
-						period={ period }
-						// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
-						mainColor={ isOdysseyStats ? '#069e08' : undefined }
-						fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
-						fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
-						yAxisFilter={ hideFractionNumber }
-					/>
+					{ isChartLibraryEnabled ? (
+						<AsyncLoad
+							require="calypso/my-sites/stats/components/line-chart"
+							chartData={ [
+								{
+									label: 'Subscribers',
+									options: {
+										stroke: '#069e08',
+									},
+									data: data?.data?.map( ( point ) => ( {
+										date: new Date( point.period ),
+										value: point.subscribers || 0,
+									} ) ) || [
+										// Fallback dummy data if no real data available
+										{ date: new Date( '2024-01-01' ), value: 10 },
+										{ date: new Date( '2024-01-08' ), value: 15 },
+										{ date: new Date( '2024-01-15' ), value: 12 },
+										{ date: new Date( '2024-01-22' ), value: 18 },
+										{ date: new Date( '2024-01-29' ), value: 20 },
+									],
+								},
+							] }
+							height={ 300 }
+						/>
+					) : (
+						<UplotChart
+							data={ chartData }
+							legendContainer={ legendRef }
+							period={ period }
+							// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
+							mainColor={ isOdysseyStats ? '#069e08' : undefined }
+							fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
+							fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
+							yAxisFilter={ hideFractionNumber }
+						/>
+					) }
 				</>
 			) }
 		</div>
