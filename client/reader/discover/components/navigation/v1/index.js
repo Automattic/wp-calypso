@@ -2,9 +2,9 @@ import page from '@automattic/calypso-router';
 import { translate } from 'i18n-calypso';
 import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizontal-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
+import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from './helper';
-import './discover-navigation.scss';
+import './style.scss';
 
 const DiscoverNavigation = ( { recommendedTags, selectedTab, width } ) => {
 	const recordTabClick = () => {
