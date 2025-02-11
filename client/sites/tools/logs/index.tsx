@@ -280,6 +280,8 @@ export const SiteLogsDataViews = ( {
 	const moment = useLocalizedMoment();
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 
+	const dispatch = useDispatch();
+
 	// Can we actually derive an unique ID from the data?
 	const getItemId = useMemo( () => () => uuid(), [] );
 
@@ -375,7 +377,7 @@ export const SiteLogsDataViews = ( {
 			page.replace( url.pathname + url.search );
 		}
 
-		// TODO: enable tracks dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
+		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
 
