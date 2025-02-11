@@ -19,6 +19,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
@@ -174,7 +175,7 @@ class WordAds extends Component {
 				<div className="stats">
 					<NavigationHeader
 						className="stats__section-header modernized-header"
-						title={ translate( 'Jetpack Stats' ) }
+						title={ STATS_PRODUCT_NAME }
 						subtitle={ translate( 'See how ads are performing on your site.' ) }
 						screenReader={ navItems.wordads?.label }
 					></NavigationHeader>

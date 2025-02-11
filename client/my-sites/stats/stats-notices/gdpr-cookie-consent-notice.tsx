@@ -3,6 +3,7 @@ import NoticeBanner from '@automattic/components/src/notice-banner';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import useNoticeVisibilityMutation from 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation';
 import { useSelector } from 'calypso/state';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
@@ -41,8 +42,9 @@ const GDPRCookieConsentNotice = ( { siteId, isOdysseyStats }: StatsNoticeProps )
 
 	const bannerBody = isOdysseyStats
 		? translate(
-				'Your site visitors must now consent to be tracked in Jetpack Stats, which might result in a decrease in reported statistics as some visitors may not give consent. To adjust this, go to {{link}}Complianz settings{{/link}} to manage the Jetpack integration.',
+				'Your site visitors must now consent to be tracked in %(product)s, which might result in a decrease in reported statistics as some visitors may not give consent. To adjust this, go to {{link}}Complianz settings{{/link}} to manage the Jetpack integration.',
 				{
+					args: { product: STATS_PRODUCT_NAME },
 					components: {
 						link: (
 							<a

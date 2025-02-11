@@ -6,6 +6,9 @@ export const STATS_PERIOD = {
 	YEAR: 'year',
 };
 
+// The product title. Do not translate.
+export const STATS_PRODUCT_NAME = 'Jetpack Stats';
+
 // statTypes referred from
 // https://github.com/Automattic/wp-calypso/blob/trunk/packages/wpcom.js/src/lib/runtime/site.get.js
 // stat features are newly defined in this file

@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleEmails from 'calypso/my-sites/stats/features/modules/stats-emails';
 import statsStrings from 'calypso/my-sites/stats/stats-strings';
 import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
@@ -101,12 +102,12 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 
 	return (
 		<Main fullWidthLayout>
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className="stats">
 				<NavigationHeader
 					className="stats__section-header modernized-header"
-					title={ translate( 'Jetpack Stats' ) }
+					title={ STATS_PRODUCT_NAME }
 					subtitle={ translate( 'Track your subscriber growth and engagement.' ) }
 					screenReader={ navItems.subscribers?.label }
 					navigationItems={ [] }

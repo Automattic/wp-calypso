@@ -5,6 +5,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import usePlanUsageQuery from 'calypso/my-sites/stats/hooks/use-plan-usage-query';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -93,23 +94,26 @@ const CommercialSiteUpgradeNotice = ( {
 		);
 	} else if ( ! paywallUpgradeDeadlineDate ) {
 		bannerBody = translate(
-			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a %(product)s Commercial license using the button below. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}} {{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 			{
+				args: { product: STATS_PRODUCT_NAME },
 				components: sharedTranslationComponents,
 			}
 		);
 	} else {
 		bannerBody = translate(
-			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a Jetpack Stats Commercial license using the button below by {{b}}%(date)s{{/b}}. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
+			'{{p}}To ensure uninterrupted access to core Stats features, please upgrade to a %(product)s Commercial license using the button below by {{b}}%(date)s{{/b}}. {{/p}}{{p}}{{jetpackStatsProductLink}}Upgrade my Stats{{/jetpackStatsProductLink}}{{commercialUpgradeLink}}{{commercialUpgradeLinkText}}Learn more{{/commercialUpgradeLinkText}}{{externalIcon /}}{{/commercialUpgradeLink}}{{/p}}',
 			{
-				args: { date: paywallUpgradeDeadlineDate },
+				args: { date: paywallUpgradeDeadlineDate, product: STATS_PRODUCT_NAME },
 				components: sharedTranslationComponents,
 			}
 		);
 	}
 
 	const bannerTitle = showPaywallNotice
-		? translate( 'You need to upgrade to a commercial license to continue using Jetpack Stats' )
+		? ( translate( 'You need to upgrade to a commercial license to continue using %(product)s', {
+				args: { product: STATS_PRODUCT_NAME },
+		  } ) as string )
 		: translate( 'Upgrade to Stats Commercial' );
 
 	return (

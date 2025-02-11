@@ -5,6 +5,7 @@ import { Button, CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useJetpackConnectionStatus } from 'calypso/my-sites/stats/hooks/use-jetpack-connection-status';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -115,7 +116,9 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	// Page title, info text, and button text depend on isCommercial status of site.
 	if ( isCommercial ) {
 		return {
-			pageTitle: translate( 'Upgrade and continue using Jetpack Stats' ),
+			pageTitle: translate( 'Upgrade and continue using %(product)s', {
+				args: { product: STATS_PRODUCT_NAME },
+			} ),
 			infoText: translate(
 				'To continue using Stats and access its newest premium features you need to get a commercial license. {{link}}Learn more about this update{{/link}}.',
 				{
@@ -133,7 +136,8 @@ const useLocalizedStrings = ( isCommercial: boolean ) => {
 	return {
 		pageTitle: translate( 'Simple, yet powerful stats to grow your site' ),
 		infoText: translate(
-			'Jetpack Stats makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:'
+			'%(product)s makes it easy to see how your site is doing. No data science skills needed. Start with a commercial license and get premium access to:',
+			{ args: { product: STATS_PRODUCT_NAME } }
 		),
 		continueButtonText: translate( 'Get Stats to grow my site' ),
 	};
@@ -278,9 +282,15 @@ const StatsPersonalPurchase = ( {
 
 	return (
 		<>
-			<h1>{ translate( 'Support Jetpack Stats and set your price' ) }</h1>
+			<h1>
+				{ translate( 'Support %(product)s and set your price', {
+					args: { product: STATS_PRODUCT_NAME },
+				} ) }
+			</h1>
 			<p>
-				{ translate( 'Help Jetpack Stats with a non-commercial license and get these perks:' ) }
+				{ translate( 'Help %(product)s with a non-commercial license and get these perks:', {
+					args: { product: STATS_PRODUCT_NAME },
+				} ) }
 			</p>
 			<PersonalPurchase
 				subscriptionValue={ subscriptionValue }

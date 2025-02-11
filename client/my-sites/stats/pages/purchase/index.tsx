@@ -17,6 +17,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
@@ -157,7 +158,7 @@ const StatsPurchasePage = ( {
 
 	return (
 		<Main fullWidthLayout>
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			{ ! isLoading && (
 				<PageViewTracker
 					path="/stats/purchase/:site"
@@ -178,7 +179,7 @@ const StatsPurchasePage = ( {
 					<>
 						<NavigationHeader
 							className="stats__section-header modernized-header"
-							title={ translate( 'Jetpack Stats' ) }
+							title={ STATS_PRODUCT_NAME }
 							subtitle={ translate(
 								"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 								{

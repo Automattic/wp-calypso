@@ -1,6 +1,7 @@
 import NoticeBanner from '@automattic/components/src/notice-banner';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { removeStatsPurchaseSuccessParamFromCurrentUrl } from './lib/remove-stats-purchase-success-param';
 import { PaidPlanPurchaseSuccessJetpackStatsNoticeProps } from './types';
 
@@ -37,7 +38,11 @@ const PaidPlanPurchaseSuccessJetpackStatsNotice = ( {
 		>
 			<NoticeBanner
 				level="success"
-				title={ translate( 'Thank you for supporting Jetpack Stats!' ) }
+				title={
+					translate( 'Thank you for supporting %(product)s!', {
+						args: { product: STATS_PRODUCT_NAME },
+					} ) as string
+				}
 				onClose={ dismissNotice }
 			>
 				{ isCommercial

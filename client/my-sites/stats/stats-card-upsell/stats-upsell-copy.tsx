@@ -7,6 +7,7 @@ import {
 	JETPACK_SUPPORT_VIDEOPRESS_URL_STATS,
 } from 'calypso/my-sites/stats/const';
 import {
+	STATS_PRODUCT_NAME,
 	STATS_FEATURE_DATE_CONTROL,
 	STATS_FEATURE_LOCATION_REGION_VIEWS,
 	STATS_FEATURE_LOCATION_CITY_VIEWS,
@@ -203,7 +204,9 @@ const getUpsellCopy = ( statType: string ) => {
 		case STAT_TYPE_COMMENTS:
 			return translate( 'Top comments overview.' );
 		default:
-			return translate( 'Upgrade your plan to unlock Jetpack Stats.' );
+			return translate( 'Upgrade your plan to unlock %(product)s.', {
+				args: { product: STATS_PRODUCT_NAME },
+			} ) as string;
 	}
 };
 
