@@ -44,6 +44,7 @@ module.exports = function storybookDefaultConfig( {
 			'@storybook/addon-docs',
 			'@storybook/addon-toolbars',
 			'@storybook/addon-viewport',
+			'@storybook/addon-themes',
 		],
 		typescript: {
 			check: false,
