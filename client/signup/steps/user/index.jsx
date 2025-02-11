@@ -326,10 +326,10 @@ export class UserStep extends Component {
 		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
 			if ( document.location.search?.includes( 'wpcloud' ) ) {
 				subHeaderText = translate(
-					'First, create a WordPress.com account using a non-personal email address. Already have one? {{a}}Log in{{/a}}',
+					'Create a {{a}}WordPress.com{{/a}} account using a shared team email address (e.g., wpcloud@yourdomain.com) to enable collaborative access for your team members.',
 					{
 						components: {
-							a: <a href={ loginUrl } />,
+							a: <a href="https://wordpress.com" />,
 						},
 					}
 				);
