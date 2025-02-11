@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteSlug, isAdminInterfaceWPAdmin, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -26,28 +27,31 @@ const StatModuleFollowers = ( { className } ) => {
 
 	const { data: subTotals, isLoading, isError: hasError } = useSubscribersTotalsQueries( siteId );
 
-	const calculateOffset = ( pastValue ) => {
-		const now = new Date();
-		const value = new Date( pastValue );
-		const difference = now.getTime() - value.getTime();
+	const calculateOffset = useCallback(
+		( pastValue ) => {
+			const now = new Date();
+			const value = new Date( pastValue );
+			const difference = now.getTime() - value.getTime();
 
-		const seconds = Math.floor( difference / 1000 );
-		const minutes = Math.ceil( seconds / 60 );
-		const hours = Math.floor( minutes / 60 );
-		const days = Math.floor( hours / 24 );
+			const seconds = Math.floor( difference / 1000 );
+			const minutes = Math.ceil( seconds / 60 );
+			const hours = Math.floor( minutes / 60 );
+			const days = Math.floor( hours / 24 );
 
-		let result = '';
+			let result = '';
 
-		if ( days > 0 ) {
-			result = translate( '%d days', { args: days } );
-		} else if ( hours > 0 ) {
-			result = translate( '%d hours', { args: hours } );
-		} else if ( minutes > 0 ) {
-			result = translate( '%d minutes', { args: minutes } );
-		}
+			if ( days > 0 ) {
+				result = translate( '%d days', { args: days } );
+			} else if ( hours > 0 ) {
+				result = translate( '%d hours', { args: hours } );
+			} else if ( minutes > 0 ) {
+				result = translate( '%d minutes', { args: minutes } );
+			}
 
-		return result;
-	};
+			return result;
+		},
+		[ translate ]
+	);
 
 	const noData = ! subTotals.subscribers.length;
 	const summaryPageSlug = siteSlug || '';
