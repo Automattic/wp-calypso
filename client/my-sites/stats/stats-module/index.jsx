@@ -91,7 +91,10 @@ class StatsModule extends Component {
 			this.setState( { loaded: false } );
 		}
 
-		if ( ! isEqual( this.props.data, prevProps.data ) ) {
+		const isRealTime = this.props.query?.interval !== undefined;
+		if ( isRealTime && ! isEqual( this.props.data, prevProps.data ) ) {
+			// eslint-disable-next-line no-console
+			console.log( 'handling data updates' );
 			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
