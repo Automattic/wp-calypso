@@ -11,6 +11,10 @@ const sortByDateDesc = ( a: { date_subscribed: string }, b: { date_subscribed: s
 };
 
 const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
+	// Skip the query for en.blog.wordpress.com as it's blocked.
+	if ( siteId === 3584907 ) {
+		return {} as any;
+	}
 	return wpcom.req.get(
 		{
 			path: `/sites/${ siteId }/stats/followers`,
