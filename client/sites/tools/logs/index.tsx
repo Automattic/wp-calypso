@@ -350,8 +350,8 @@ export const SiteLogsDataViews = ( {
 	const { data, paginationInfo, isLoading } = useData( {
 		view,
 		logType,
-		dateFrom: startTime,
-		dateTo: endTime,
+		startTime,
+		endTime,
 	} );
 
 	const [ autoRefresh, setAutoRefresh ] = useState( false );

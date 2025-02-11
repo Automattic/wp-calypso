@@ -15,13 +15,13 @@ const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
 const useData = ( {
 	view,
 	logType,
-	dateFrom,
-	dateTo,
+	startTime,
+	endTime,
 }: {
 	view: View;
 	logType: LogType;
-	dateFrom: Moment;
-	dateTo: Moment;
+	startTime: Moment;
+	endTime: Moment;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const severity = getFilterValue( view, 'severity' );
@@ -30,8 +30,8 @@ const useData = ( {
 
 	const { data, isFetching } = useSiteLogsQuery( siteId, {
 		logType,
-		start: dateFrom.unix(),
-		end: dateTo.unix(),
+		start: startTime.unix(),
+		end: endTime.unix(),
 		filter: buildFilter( logType, severity, requestType, status ),
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
