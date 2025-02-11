@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
@@ -6,11 +7,12 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
+import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
+import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
-import DiscoverNavigation from './discover-navigation';
 import {
 	getDiscoverStreamTags,
 	DEFAULT_TAB,
@@ -18,6 +20,7 @@ import {
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
 } from './helper';
+import './style.scss';
 
 const DISCOVER_HEADER_NAVIGATION_ITEMS = [];
 
@@ -99,11 +102,15 @@ const DiscoverStream = ( props ) => {
 	return (
 		<Stream { ...streamProps }>
 			<DiscoverHeader selectedTab={ selectedTab } width={ props.width } />
-			<DiscoverNavigation
-				width={ props.width }
-				selectedTab={ selectedTab }
-				recommendedTags={ interestTags }
-			/>
+			{ config.isEnabled( 'reader/discovery-v2' ) ? (
+				<DiscoverNavigationV2 selectedTab={ selectedTab } />
+			) : (
+				<DiscoverNavigation
+					width={ props.width }
+					selectedTab={ selectedTab }
+					recommendedTags={ interestTags }
+				/>
+			) }
 		</Stream>
 	);
 };
