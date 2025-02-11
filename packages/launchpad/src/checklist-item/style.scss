@@ -111,11 +111,10 @@
 
 .checklist-item__checkmark-container {
 	margin-right: 7px;
-	width: 20px;
 	display: flex;
 	margin-left: 1px;
 	margin-bottom: -2px;
-
+	
 	.checklist-item__checkmark {
 		vertical-align: text-bottom;
 	}
@@ -191,7 +190,7 @@
 
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
-		fill: var(--color-neutral-40);
+		fill: var(--studio-green-50);
 	}
 	.checklist-item__counter {
 		color: var(--color-neutral-40);
