@@ -16,12 +16,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/src/hooks/use-stored-payment-methods';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { getAllDomains } from 'calypso/state/sites/domains/selectors';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -95,6 +97,13 @@ const TOSItemWrapper = styled.div`
 	}
 `;
 
+const getDomainDetailsFromPurchase = (
+	purchase: Purchase,
+	domainsDetails: Record< string, ResponseDomain[] >
+): ResponseDomain | undefined => {
+	return domainsDetails?.[ purchase.siteId ]?.find( ( domain ) => domain.domain === purchase.meta );
+};
+
 /**
  * A component to handle assigning payment methods to existing subscriptions.
  * This is quite different than the payment methods step of checkout even
@@ -116,8 +125,13 @@ export default function PaymentMethodSelector( {
 	const { isStripeLoading, stripe, stripeConfiguration, stripeLoadingError } = useStripe();
 	const currentlyAssignedPaymentMethodId = getPaymentMethodIdFromPayment( purchase?.payment );
 
+	const domainsDetails = useSelector( ( state ) => getAllDomains( state ) );
+
 	const isAkismetPurchase = purchase ? isAkismetProduct( purchase ) : false;
 	const is100YearPlanPurchase = purchase ? is100Year( purchase ) : false;
+	const is100YearDomainPurchase = purchase
+		? Boolean( getDomainDetailsFromPurchase( purchase, domainsDetails )?.isHundredYearDomain )
+		: false;
 
 	const showRedirectMessage = useCallback( () => {
 		reduxDispatch( infoNotice( translate( 'Redirecting to payment partner…' ) ) );
@@ -228,6 +242,7 @@ export default function PaymentMethodSelector( {
 						<TosText
 							isAkismetPurchase={ isAkismetPurchase }
 							is100YearPlanPurchase={ is100YearPlanPurchase }
+							is100YearDomainPurchase={ is100YearDomainPurchase }
 						/>
 					</p>
 				</TOSItemWrapper>

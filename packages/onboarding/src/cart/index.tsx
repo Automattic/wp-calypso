@@ -374,7 +374,7 @@ export async function setThemeOnSite(
 	}
 }
 
-async function processItemCart(
+export async function processItemCart(
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,

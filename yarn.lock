@@ -1832,6 +1832,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/site-admin@workspace:packages/site-admin":
+  version: 0.0.0-use.local
+  resolution: "@automattic/site-admin@workspace:packages/site-admin"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    copyfiles: "npm:^2.4.1"
+    postcss: "npm:^8.4.5"
+    typescript: "npm:^5.3.3"
+    webpack: "npm:^5.97.1"
+  peerDependencies:
+    "@wordpress/data": ^10.16.0
+    react: ^18.3.1
+    react-dom: ^18.3.1
+  languageName: unknown
+  linkType: soft
+
 "@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
@@ -14636,17 +14653,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cliui@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "cliui@npm:6.0.0"
-  dependencies:
-    string-width: "npm:^4.2.0"
-    strip-ansi: "npm:^6.0.0"
-    wrap-ansi: "npm:^6.2.0"
-  checksum: 35229b1bb48647e882104cac374c9a18e34bbf0bace0e2cf03000326b6ca3050d6b59545d91e17bfe3705f4a0e2988787aa5cde6331bf5cbbf0164732cef6492
-  languageName: node
-  linkType: hard
-
 "cliui@npm:^7.0.2":
   version: 7.0.4
   resolution: "cliui@npm:7.0.4"
@@ -15371,20 +15377,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"copyfiles@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "copyfiles@npm:2.3.0"
+"copyfiles@npm:^2.3.0, copyfiles@npm:^2.4.1":
+  version: 2.4.1
+  resolution: "copyfiles@npm:2.4.1"
   dependencies:
     glob: "npm:^7.0.5"
     minimatch: "npm:^3.0.3"
     mkdirp: "npm:^1.0.4"
     noms: "npm:0.0.0"
     through2: "npm:^2.0.1"
-    yargs: "npm:^15.3.1"
+    untildify: "npm:^4.0.0"
+    yargs: "npm:^16.1.0"
   bin:
     copyfiles: copyfiles
     copyup: copyfiles
-  checksum: 8fb983bb7ba4e0f43ac545b960b466379853cb093dd0c3f45c07d2ad7371cd5cd9ce632576f9ee3c44a67666f198d498d78a56bfe3a6e212960b3c67d35e87d2
+  checksum: e65cd055ec9acc14997b0ace83973d73f8d9c68167cbf4293c40b52d100af09a8c8da329042d52dc33422c0a8cbf74c6efb25e9ae088667721653659bd67bf57
   languageName: node
   linkType: hard
 
@@ -36549,16 +36556,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs-parser@npm:^18.1.2":
-  version: 18.1.3
-  resolution: "yargs-parser@npm:18.1.3"
-  dependencies:
-    camelcase: "npm:^5.0.0"
-    decamelize: "npm:^1.2.0"
-  checksum: 25df918833592a83f52e7e4f91ba7d7bfaa2b891ebf7fe901923c2ee797534f23a176913ff6ff7ebbc1cc1725a044cc6a6539fed8bfd4e13b5b16376875f9499
-  languageName: node
-  linkType: hard
-
 "yargs-parser@npm:^20.2.2, yargs-parser@npm:^20.2.3":
   version: 20.2.9
   resolution: "yargs-parser@npm:20.2.9"
@@ -36621,26 +36618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^15.3.1":
-  version: 15.4.1
-  resolution: "yargs@npm:15.4.1"
-  dependencies:
-    cliui: "npm:^6.0.0"
-    decamelize: "npm:^1.2.0"
-    find-up: "npm:^4.1.0"
-    get-caller-file: "npm:^2.0.1"
-    require-directory: "npm:^2.1.1"
-    require-main-filename: "npm:^2.0.0"
-    set-blocking: "npm:^2.0.0"
-    string-width: "npm:^4.2.0"
-    which-module: "npm:^2.0.0"
-    y18n: "npm:^4.0.0"
-    yargs-parser: "npm:^18.1.2"
-  checksum: f1ca680c974333a5822732825cca7e95306c5a1e7750eb7b973ce6dc4f97a6b0a8837203c8b194f461969bfe1fb1176d1d423036635285f6010b392fa498ab2d
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^16.0.0, yargs@npm:^16.1.1, yargs@npm:^16.2.0":
+"yargs@npm:^16.0.0, yargs@npm:^16.1.0, yargs@npm:^16.1.1, yargs@npm:^16.2.0":
   version: 16.2.0
   resolution: "yargs@npm:16.2.0"
   dependencies:
