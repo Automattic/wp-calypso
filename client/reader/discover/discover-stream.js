@@ -106,11 +106,9 @@ const DiscoverStream = ( props ) => {
 		isLoggedIn
 	);
 
-	// When on the tags tab, use the selected tag as the stream key, otherwise use the selected tab.
-	const streamKey = buildDiscoverStreamKey(
-		'tags' === selectedTab ? selectedTag : selectedTab,
-		recommendedStreamTags
-	);
+	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;
+
+	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
 
 	const streamProps = {
 		...props,
@@ -122,7 +120,7 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<Stream { ...streamProps }>
-			<DiscoverHeader selectedTab={ selectedTab } width={ props.width } />
+			<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
 			{ config.isEnabled( 'reader/discovery-v2' ) ? (
 				<>
 					<DiscoverNavigationV2 selectedTab={ selectedTab } />

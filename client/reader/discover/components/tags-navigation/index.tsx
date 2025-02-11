@@ -29,7 +29,7 @@ const DiscoverTagsNavigation = ( { recommendedTags, selectedTag, width }: Props 
 		<ScrollableHorizontalNavigation
 			className="discover-stream-navigation"
 			onTabClick={ menuTabClick }
-			selectedTab={ selectedTag }
+			selectedTab={ selectedTag || '' }
 			tabs={ recommendedTags }
 			width={ width }
 		/>
