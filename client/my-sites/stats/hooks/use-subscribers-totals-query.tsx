@@ -11,19 +11,17 @@ const sortByDateDesc = ( a: { date_subscribed: string }, b: { date_subscribed: s
 };
 
 const querySubscribersTotals = ( siteId: number | null, filterAdmin?: boolean ): Promise< any > => {
-	return wpcom.req
-		.get(
-			{
-				path: `/sites/${ siteId }/stats/followers`,
-			},
-			{
-				type: 'all',
-				filter_admin: filterAdmin ? true : false,
-				// Only one-page results adjust visible subscribers with deleted accounts to align with the subscriber list.
-				max: MAX_SUBSCRIBERS_TO_RETURN,
-			}
-		)
-		.catch( () => ( {} ) );
+	return wpcom.req.get(
+		{
+			path: `/sites/${ siteId }/stats/followers`,
+		},
+		{
+			type: 'all',
+			filter_admin: filterAdmin ? true : false,
+			// Only one-page results adjust visible subscribers with deleted accounts to align with the subscriber list.
+			max: MAX_SUBSCRIBERS_TO_RETURN,
+		}
+	);
 };
 
 const querySubscribersTotalByType = (
@@ -35,21 +33,19 @@ const querySubscribersTotalByType = (
 	if ( isJetpackApi ) {
 		return {} as any;
 	}
-	return wpcom.req
-		.get(
-			{
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/subscribers_by_user_type`,
-			},
-			{
-				per_page: MAX_SUBSCRIBERS_TO_RETURN,
-				page: 1,
-				user_type,
-				filter_admin: filterAdmin, //not used.
-				sort: 'date_subscribed',
-			}
-		)
-		.catch( () => ( {} ) );
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ siteId }/subscribers_by_user_type`,
+		},
+		{
+			per_page: MAX_SUBSCRIBERS_TO_RETURN,
+			page: 1,
+			user_type,
+			filter_admin: filterAdmin, //not used.
+			sort: 'date_subscribed',
+		}
+	);
 };
 
 const queryMore = ( siteId: number | null ): Promise< any > => {
@@ -190,13 +186,12 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 			social_followers: results[ 1 ]?.data?.social_followers,
 			is_owner_subscribing: results[ 2 ]?.data?.is_owner_subscribing,
 			// Merge email and wpcom subscribers and sort by date_subscribed, and only shows the most recent 10 subscribers.
-			subscribers:
-				[
-					...( results[ 3 ]?.data?.subscribers ?? [] ),
-					...( results[ 2 ]?.data?.subscribers ?? [] ),
-				]
-					.sort( sortByDateDesc )
-					.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ),
+			subscribers: [
+				...( results[ 3 ]?.data?.subscribers ?? [] ),
+				...( results[ 2 ]?.data?.subscribers ?? [] ),
+			]
+				.sort( sortByDateDesc )
+				.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ),
 		},
 		isLoading: results.some( ( result ) => result.isLoading ),
 		isError: results.some( ( result ) => result.isError ),
