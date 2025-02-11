@@ -27,7 +27,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/color-studio": "^3.0.1",
+		"@automattic/color-studio": "^4.1.0",
 		"@automattic/typography": "1.0.0",
 		"@wordpress/base-styles": "5.19.0",
 		"@wordpress/block-editor": "^14.14.0",
