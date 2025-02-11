@@ -374,7 +374,7 @@ const TransferPage = ( props: TransferPageProps ) => {
 						? __( 'Transfer to another registrar' )
 						: __( 'Advanced Options' ) }
 				</CardHeading>
-				{ domain?.isGravatarDomain && (
+				{ domain?.isGravatarRestrictedDomain && (
 					<InfoNotice
 						redesigned
 						text={ __(

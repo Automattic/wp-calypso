@@ -3,6 +3,7 @@
 	max-width: 536px;
 	margin: auto;
 	box-shadow: none;
+	padding-bottom: 10px;
 
 	.customer-home__launchpad-header{
 		display: flex;
@@ -17,6 +18,10 @@
 		span {
 			margin: 4px 0 24px 0;
 		}
+	}
+
+	.launchpad__checklist-wrapper {
+		margin-bottom: 24px;
 	}
 
 	.checklist-item__task {
@@ -53,8 +58,7 @@
             border-bottom: 1px solid var(--studio-gray-5);
 			border-radius: 4px;
 
-			a,
-			button {
+			a, button {
 				margin: 0 0 -1px 0;
 				padding: 28px 24px;
 				border-radius: 2px;
@@ -73,20 +77,39 @@
 		&:first-child {
             border-radius: 4px 4px 0 0;
 
-            a,
-            button {
+            a, button {
                 border-radius: 2px 2px 0 0;
             }
         }
 
-		&:last-child {
+		&:nth-last-child(2) {
 			border-radius: 0 0 4px 4px;
             border-bottom: 1px solid var(--studio-gray-5);
-            
-            a,
-            button {
+
+            a, button {
                 border-radius: 0 0 2px 2px;
             }
+		}
+
+		&:last-child {
+			display: none;
+		}
+	}
+
+	.launchpad-site-launch {
+		font-size: 1rem;
+		padding: 1.5rem;
+	}
+
+	.launchpad-actions {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: auto;
+		align-items: center;
+		
+		.launchpad-site-launch {
+			order: 0;
 		}
 	}
 }

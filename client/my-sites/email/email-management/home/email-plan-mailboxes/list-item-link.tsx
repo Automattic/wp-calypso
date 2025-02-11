@@ -41,7 +41,6 @@ function MailboxLink( { account, mailbox, readonly }: Props ) {
 				} );
 			} }
 			target="_blank"
-			rel="noopener noreferrer"
 		>
 			<span>{ emailAddress }</span>
 			<Gridicon icon="external" size={ 18 } />

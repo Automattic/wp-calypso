@@ -5,6 +5,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -59,6 +60,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const refParameter = getQueryArgs()?.ref as string;
 
 	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
 
 	useEffect( () => {
 		resetIntent();
@@ -111,7 +113,7 @@ const GoalsStep: Step = ( { navigation, flow } ) => {
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals );
+			const intent = goalsToIntent( goals, isIntentNewsletterGoalEnabled );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );

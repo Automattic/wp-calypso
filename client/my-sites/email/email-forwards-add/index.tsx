@@ -57,7 +57,8 @@ const EmailForwardsAdd = ( {
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( selectedDomain );
-	const isGravatarDomain = cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
+	const isGravatarRestrictedDomain =
+		cannotAddEmailWarningReason?.code === EMAIL_WARNING_CODE_GRAVATAR_DOMAIN;
 
 	const goToEmail = useCallback( (): void => {
 		if ( ! selectedSite ) {
@@ -80,7 +81,7 @@ const EmailForwardsAdd = ( {
 		page( getEmailManagementPath( selectedSite.slug, selectedDomainName, currentRoute ) );
 	}, [ currentRoute, selectedDomainName, selectedSite ] );
 
-	const content = isGravatarDomain ? (
+	const content = isGravatarRestrictedDomain ? (
 		<Notice showDismiss={ false } className="email-forwards-add__notice">
 			{ translate(
 				'This domain is associated with a Gravatar profile and cannot be used for email services at this time.'

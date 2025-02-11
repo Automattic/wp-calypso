@@ -106,7 +106,13 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		show,
 	} ) as const;
 
-export const setShowHelpCenter = function* ( show: boolean ) {
+export const setAllowPremiumSupport = ( allow: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		allow,
+	} ) as const;
+
+export const setShowHelpCenter = function* ( show: boolean, allowPremiumSupport = false ) {
 	if ( ! isE2ETest() ) {
 		try {
 			if ( canAccessWpcomApis() ) {
@@ -138,6 +144,9 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	}
 
 	yield setIsMinimized( false );
+	if ( allowPremiumSupport ) {
+		yield setAllowPremiumSupport( true );
+	}
 
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
@@ -212,5 +221,6 @@ export type HelpCenterAction =
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
+			| typeof setAllowPremiumSupport
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

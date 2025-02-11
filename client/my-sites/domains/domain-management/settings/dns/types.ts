@@ -7,6 +7,7 @@ export type DnsDetailsProps = {
 	selectedDomainName: string;
 	selectedSite: SiteDetails;
 	currentRoute: string;
+	showDetails?: boolean;
 };
 
 export type DnsRecordItemProps = {

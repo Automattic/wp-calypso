@@ -18,7 +18,7 @@ import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
 export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
-	const { goToNextStep, isReskinned } = props;
+	const { goToNextStep } = props;
 	const { __ } = useI18n();
 
 	const dispatch = useDispatch();
@@ -115,9 +115,9 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 							options={ [
 								{ value: '', label: '' },
 								{ value: '0', label: __( "I don't have any products yet." ) },
-								{ value: '1-10', label: __( '1-10' ) },
-								{ value: '11-100', label: __( '11-101' ) },
-								{ value: '101-1000', label: __( '101-1000' ) },
+								{ value: '1-10', label: __( '1–10' ) },
+								{ value: '11-100', label: __( '11–101' ) },
+								{ value: '101-1000', label: __( '101–1000' ) },
 								{ value: '1000+', label: __( '1000+' ) },
 							] }
 							onChange={ updateProductCount }
@@ -242,9 +242,9 @@ export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 			fallbackHeaderText={ __( 'Tell us a bit about your business' ) }
 			subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
 			fallbackSubHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
-			align={ isReskinned ? 'left' : 'center' }
+			align="left"
 			stepContent={ getContent() }
-			isWideLayout={ isReskinned }
+			isWideLayout
 			{ ...props }
 		/>
 	);
