@@ -200,7 +200,7 @@ export class AuthFormHeader extends Component {
 			switch ( currentState ) {
 				case 'logged-out':
 					return translate(
-						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+						'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Please create one now, or {{a}}log in{{/a}}. For more information, please {{doc}}review our documentation{{/doc}}.',
 						{
 							...translateParams,
 							components: {
@@ -211,7 +211,7 @@ export class AuthFormHeader extends Component {
 					);
 				default:
 					return translate(
-						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
+						'To access all of the features and functionality %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. For more information, please {{doc}}review our documentation{{/doc}}.',
 						{
 							args: { pluginName },
 							components: {

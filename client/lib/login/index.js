@@ -247,7 +247,7 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 		type: 'conjunction',
 	} );
 
-	const defaultTitle = translate( 'your selection' );
+	const defaultTitle = translate( 'of the extensions you’ve chosen' );
 
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
@@ -261,6 +261,8 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 	if ( uniqueTitles.length === 0 ) {
 		return defaultTitle;
 	}
-
-	return listFormatter.format( uniqueTitles );
+	return translate( 'in %(pluginNames)s', {
+		args: { pluginNames: listFormatter.format( uniqueTitles ) },
+		comment: 'pluginNames is a list of WooCommerce extensions',
+	} );
 };
