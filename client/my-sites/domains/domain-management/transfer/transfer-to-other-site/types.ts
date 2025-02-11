@@ -1,10 +1,10 @@
-import { LocalizeProps } from 'i18n-calypso';
 import React from 'react';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { requestSites } from 'calypso/state/sites/actions';
 import { IAppState } from 'calypso/state/types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
 type Maybe< T > = T | null;
 // TODO: remove this once the checkout types are further described
