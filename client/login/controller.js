@@ -146,7 +146,7 @@ export function desktopLoginFinalize( context, next ) {
 	context.primary = (
 		<DesktopLogin action="finalize" error={ hash?.error } accessToken={ hash?.access_token } />
 	);
-	return next();
+	next();
 }
 
 export async function magicLogin( context, next ) {
