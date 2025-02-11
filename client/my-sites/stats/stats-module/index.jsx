@@ -50,12 +50,14 @@ class StatsModule extends Component {
 		skipQuery: PropTypes.bool,
 		valueField: PropTypes.string,
 		formatValue: PropTypes.func,
+		minutesLimit: PropTypes.number,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
 		query: {},
 		valueField: 'value',
+		minutesLimit: 30,
 	};
 
 	state = {
@@ -93,8 +95,6 @@ class StatsModule extends Component {
 
 		const isRealTime = this.props.query?.interval !== undefined;
 		if ( isRealTime && ! isEqual( this.props.data, prevProps.data ) ) {
-			// eslint-disable-next-line no-console
-			console.log( 'handling data updates' );
 			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
@@ -114,9 +114,11 @@ class StatsModule extends Component {
 			data: data,
 		};
 
-		// Filter out snapshots older than 30 minutes.
+		// Filter out snapshots older than minutesLimit prop.
+		// This determines the baseline for the diff calculation.
+		const { minutesLimit } = this.props;
 		const filteredHistory = [ ...history, newSnapshot ].filter(
-			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= 30
+			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
 		return filteredHistory;
