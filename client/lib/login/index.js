@@ -268,6 +268,6 @@ export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug(
 
 	return translate( 'in %(pluginNames)s', {
 		args: { pluginNames: formattedNames },
-		comment: 'pluginNames is a list of WooCommerce extensions',
+		comment: 'pluginNames is a list of WordPress extensions',
 	} );
 };
