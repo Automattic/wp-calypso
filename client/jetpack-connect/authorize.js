@@ -540,13 +540,7 @@ export class JetpackAuthorize extends Component {
 
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
-		// const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
-
-		// Replace with another flow, keep, or delete?
-		// if ( 'woocommerce-onboarding' === from ) {
-		// 	recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
-		// }
 
 		this.props.redirectToLogout( window.location.href );
 	};
@@ -598,9 +592,11 @@ export class JetpackAuthorize extends Component {
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
 
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
-		}
+		// Should we keep this around, since we otherwise removed other instances
+		// where we fired this tracks event?
+		// if ( 'woocommerce-onboarding' === from ) {
+		// 	recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
+		// }
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );

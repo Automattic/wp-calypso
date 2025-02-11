@@ -384,12 +384,6 @@ export class LoginForm extends Component {
 
 	recordWooCommerceLoginTracks( method ) {
 		const { isWoo, wccomFrom } = this.props;
-		// Note: replace with other flow, or delete?
-		// if ( isJetpackWooCommerceFlow ) {
-		// 	this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-		// 		login_method: method,
-		// 	} );
-		// } else
 		if ( isWoo && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,

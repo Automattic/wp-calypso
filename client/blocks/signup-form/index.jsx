@@ -766,12 +766,6 @@ class SignupForm extends Component {
 
 	recordWooCommerceSignupTracks( method ) {
 		const { isWoo, wccomFrom } = this.props;
-		// TODO: replace with other flow, or delete?
-		// if ( isJetpackWooCommerceFlow ) {
-		// 	recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-		// 		signup_method: method,
-		// 	} );
-		// } else
 		if ( isWoo && 'cart' === wccomFrom ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
