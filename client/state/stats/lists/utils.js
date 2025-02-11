@@ -74,7 +74,7 @@ export function isAutoRefreshAllowedForQuery( query ) {
  * @param   {string} avatarUrl Raw avatar URL
  * @returns {string}           Parsed URL
  */
-function parseAvatar( avatarUrl ) {
+export function parseAvatar( avatarUrl ) {
 	if ( ! avatarUrl ) {
 		return null;
 	}
