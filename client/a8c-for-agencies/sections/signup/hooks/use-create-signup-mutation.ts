@@ -27,10 +27,8 @@ function createSignup( details: AgencyDetailsSignupPayload ): Promise< Agency > 
 			referral_status: details.referer,
 			top_partnering_goal: details.topPartneringGoal,
 			top_yearly_goal: details.topYearlyGoal,
-			work_with_clients:
-				details.workWithClients === 'other'
-					? details.workWithClientsOther
-					: details.workWithClients,
+			work_with_clients: details.workWithClients,
+			work_with_clients_other: details.workWithClientsOther,
 			approach_and_challenges: details.approachAndChallenges,
 		},
 	} );

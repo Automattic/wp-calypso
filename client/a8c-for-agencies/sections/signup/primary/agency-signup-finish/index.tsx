@@ -14,16 +14,18 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateAgencyMutation from '../../agency-details-form/hooks/use-create-agency-mutation';
+import { getSignupDataFromRequestParameters } from '../../lib/signup-data-from-reqest-parameters';
 import {
 	clearSignupDataFromLocalStorage,
 	getSignupDataFromLocalStorage,
 } from '../../lib/signup-data-to-local-storage';
+
 import './style.scss';
 
 export default function AgencySignupFinish() {
 	const notificationId = 'a4a-agency-signup-form';
 	const userLoggedIn = useSelector( isUserLoggedIn );
-	const signupData = getSignupDataFromLocalStorage();
+	const signupData = getSignupDataFromRequestParameters() ?? getSignupDataFromLocalStorage();
 	const agency = useSelector( getActiveAgency );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
