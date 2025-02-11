@@ -28,7 +28,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
-		"@automattic/color-studio": "^3.0.1",
+		"@automattic/color-studio": "^4.1.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
