@@ -1,3 +1,4 @@
+import { Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -30,6 +31,16 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
+			<Notice
+				className="hosting-overview__domain-to-plan-credit-notice"
+				status="info"
+				onRemove={ () => {} }
+			>
+				{ translate(
+					// TODO: Retrieve value of credit to programmatically insert into this message.
+					'You have $X in upgrade credits for a price reduction in your plan upgrade.'
+				) }
+			</Notice>
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }
