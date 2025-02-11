@@ -44,7 +44,7 @@ const selectSubscribers = ( payload: {
 		display_name: string;
 		avatar: string;
 		url: string;
-		follow_data: { params: object };
+		follow_data: { params: object }; //Empty object atm
 	}[];
 } ) => {
 	return {
