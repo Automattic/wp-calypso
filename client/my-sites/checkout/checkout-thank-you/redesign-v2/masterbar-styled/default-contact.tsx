@@ -1,6 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
+import { useProductsAllowPremiumSupport } from '@automattic/help-center/src/hooks';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import {
@@ -9,6 +11,7 @@ import {
 } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -57,6 +60,10 @@ const ContactContainer = styled.div`
 
 export function DefaultMasterbarContact() {
 	const translate = useTranslate();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
+	const isPremiumSupportAllowed = useProductsAllowPremiumSupport( responseCart.products );
 
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
@@ -69,7 +76,7 @@ export function DefaultMasterbarContact() {
 			location: 'thank-you-help-center',
 		} );
 
-		setShowHelpCenter( ! isShowingHelpCenter );
+		setShowHelpCenter( ! isShowingHelpCenter, isPremiumSupportAllowed );
 	};
 
 	useEffect( () => {

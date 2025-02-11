@@ -67,27 +67,26 @@ const playNotificationSound = () => {
 
 const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } ) => {
 	const { isEligibleForChat } = useChatStatus();
-	const { data: authData } = useAuthenticateZendeskMessaging(
-		enableAuth && isEligibleForChat,
-		'messenger'
-	);
 	const smoochRef = useRef< HTMLDivElement >( null );
-	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled } = useSelect(
-		( select ) => {
+	const { isHelpCenterShown, isChatLoaded, areSoundNotificationsEnabled, allowPremiumSupport } =
+		useSelect( ( select ) => {
 			const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 			return {
 				isHelpCenterShown: helpCenterSelect.isHelpCenterShown(),
 				isChatLoaded: helpCenterSelect.getIsChatLoaded(),
 				areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+				allowPremiumSupport: helpCenterSelect.getAllowPremiumSupport(),
 			};
-		},
-		[]
-	);
+		}, [] );
+
+	const allowChat = enableAuth && ( isEligibleForChat || allowPremiumSupport );
+
+	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
 		'zendesk_support_chat_key',
-		isEligibleForChat && enableAuth,
-		isEligibleForChat && enableAuth
+		allowChat,
+		allowChat
 	);
 	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
