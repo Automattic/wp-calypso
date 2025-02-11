@@ -60,7 +60,6 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
-			requestFrom,
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
