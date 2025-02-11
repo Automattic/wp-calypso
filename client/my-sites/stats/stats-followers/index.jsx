@@ -32,7 +32,7 @@ const StatModuleFollowers = ( { className } ) => {
 		const difference = now.getTime() - value.getTime();
 
 		const seconds = Math.floor( difference / 1000 );
-		const minutes = Math.floor( seconds / 60 );
+		const minutes = Math.ceil( seconds / 60 );
 		const hours = Math.floor( minutes / 60 );
 		const days = Math.floor( hours / 24 );
 
