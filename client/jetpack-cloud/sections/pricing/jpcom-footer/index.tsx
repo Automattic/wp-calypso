@@ -29,6 +29,9 @@ const utmParams = {
 	utm_source: 'jpcom_footer',
 };
 const getTrackLinkClick = ( link: string ) => () => {
+	if ( ! link ) {
+		return undefined;
+	}
 	recordTracksEvent( 'calypso_jetpack_footer_link_click', { link } );
 };
 
@@ -343,7 +346,7 @@ const JetpackComFooter: React.FC = () => {
 													<ExternalLink
 														href={ href }
 														className="sitemap__link"
-														onClick={ trackId ? getTrackLinkClick( trackId ) : undefined }
+														onClick={ getTrackLinkClick( trackId ) }
 													>
 														{ preventWidows( label ) }
 													</ExternalLink>
@@ -361,7 +364,7 @@ const JetpackComFooter: React.FC = () => {
 											<ExternalLink
 												className="sitemap__link"
 												href={ href as string }
-												onClick={ trackId ? getTrackLinkClick( trackId ) : undefined }
+												onClick={ getTrackLinkClick( trackId ) }
 											>
 												<span className="social-properties__accessible-name">
 													{ accessibleName }
