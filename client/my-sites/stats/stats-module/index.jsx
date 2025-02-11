@@ -92,8 +92,10 @@ class StatsModule extends Component {
 		}
 
 		if ( ! isEqual( this.props.data, prevProps.data ) ) {
-			const diffData = this.calculateDiff( prevProps.data, this.props.data );
 			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
+			const firstSnapshot = updatedHistory[ 0 ];
+			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
+			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
