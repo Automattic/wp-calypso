@@ -55,5 +55,12 @@
 		"postcss": "^8.4.5",
 		"typescript": "^5.3.3",
 		"webpack": "^5.97.1"
+	},
+	"dependencies": {
+		"@wordpress/base-styles": "^5.17.0",
+		"@wordpress/core-data": "^7.17.0",
+		"@wordpress/i18n": "^5.17.0",
+		"@wordpress/icons": "^10.17.0",
+		"clsx": "^2.1.1"
 	}
 }
