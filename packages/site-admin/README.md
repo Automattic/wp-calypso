@@ -32,7 +32,7 @@ That said, we recognize the value of aligning with Core’s guidelines. Ensuring
 
 While this package is currently developed independently, we acknowledge that some of its implementations—or even the entire package—could eventually be moved upstream to Core if it benefits the broader WordPress ecosystem.
 
-Finally, although this migration never happens, adhering to Core’s best practices remains a strategic choice that enhances productivity and long-term integration possibilities.
+Finally, even if this migration never happens, adhering to Core’s best practices remains a strategic choice that enhances productivity and long-term integration possibilities.
 
 ### Consistency in Design and Behavior
 
