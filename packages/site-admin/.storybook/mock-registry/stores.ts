@@ -4,7 +4,7 @@
 import { store as coreDataStore } from '@wordpress/core-data';
 
 const stores = {
-	'woocommerce-analytics': {
+	'WooCommerce Analytics': {
 		[ coreDataStore.name ]: {
 			name: 'WooCommerce Analytics',
 			description:
@@ -12,14 +12,14 @@ const stores = {
 			'root/__unstableBase': { site_icon_url: './woo-logo.png' },
 		},
 	},
-	'regular-site': {
+	'Regular Site': {
 		[ coreDataStore.name ]: {
 			name: 'Regular Site',
 			description: 'A regular site with no special features.',
 			'root/__unstableBase': { site_icon_url: undefined },
 		},
 	},
-	'jetpack-site': {
+	'Jetpack Site': {
 		[ coreDataStore.name ]: {
 			name: 'Jetpack Site',
 			description: 'A site with Jetpack installed.',
