@@ -1,15 +1,9 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useLocale } from '@automattic/i18n-utils';
-import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
-import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
-import wpcom from 'calypso/lib/wp';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
@@ -23,6 +17,7 @@ import {
 	getSelectedTabTitle,
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
+	isDiscoveryV2Enabled,
 } from './helper';
 import './style.scss';
 
@@ -56,47 +51,17 @@ export const DiscoverHeader = ( props ) => {
 };
 
 const DiscoverStream = ( props ) => {
-	const locale = useLocale();
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab || DEFAULT_TAB;
 
-	const { data: interestTags = [] } = useQuery( {
-		queryKey: [ 'read/interests', locale ],
-		queryFn: () =>
-			wpcom.req.get(
-				{
-					path: `/read/interests`,
-					apiNamespace: 'wpcom/v2',
-				},
-				{
-					_locale: locale,
-				}
-			),
-		select: ( data ) => {
-			return data.interests;
-		},
-	} );
+	const selectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
 
-	const promptSlug = isBloganuary() ? 'bloganuary' : 'dailyprompt';
-	const promptTitle = isBloganuary() ? translate( 'Bloganuary' ) : translate( 'Daily prompts' );
-	// Add dailyprompt to the front of interestTags if not present.
-	const hasPromptTab = interestTags.filter( ( tag ) => tag.slug === promptSlug ).length;
-	if ( ! hasPromptTab ) {
-		interestTags.unshift( { title: promptTitle, slug: promptSlug } );
+	// If the selected tab is tags and no selectedTag is provided, redirect to the tags tab with dailyprompt selected.
+	if ( selectedTab === 'tags' && ! selectedTag ) {
+		return page.redirect( '/discover/tags?selectedTag=dailyprompt' );
 	}
-
-	const urlSelectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
-	const defaultTag = interestTags[ 0 ]?.slug || '';
-	const selectedTag = urlSelectedTag || defaultTag;
-
-	// Update URL with default tag when on tags tab with no tag selected
-	useEffect( () => {
-		if ( selectedTab === 'tags' && ! urlSelectedTag && defaultTag ) {
-			page.replace( addQueryArgs( { selectedTag: defaultTag }, '/discover/tags' ) );
-		}
-	}, [ selectedTab, urlSelectedTag, defaultTag ] );
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
@@ -107,8 +72,11 @@ const DiscoverStream = ( props ) => {
 	);
 
 	const effectiveTabSelection = 'tags' === selectedTab ? selectedTag : selectedTab;
-
 	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
+
+	const handleTagSelect = ( tag ) => {
+		page.replace( addQueryArgs( { selectedTag: tag }, '/discover/tags' ) );
+	};
 
 	const streamProps = {
 		...props,
@@ -121,23 +89,19 @@ const DiscoverStream = ( props ) => {
 	return (
 		<Stream { ...streamProps }>
 			<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-			{ config.isEnabled( 'reader/discovery-v2' ) ? (
+			{ isDiscoveryV2Enabled() ? (
 				<>
 					<DiscoverNavigationV2 selectedTab={ selectedTab } />
 					{ selectedTab === 'tags' && (
 						<DiscoverTagsNavigation
 							width={ props.width }
 							selectedTag={ selectedTag }
-							recommendedTags={ interestTags }
+							onTagSelect={ handleTagSelect }
 						/>
 					) }
 				</>
 			) : (
-				<DiscoverNavigation
-					width={ props.width }
-					selectedTab={ selectedTab }
-					recommendedTags={ interestTags }
-				/>
+				<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
 			) }
 		</Stream>
 	);

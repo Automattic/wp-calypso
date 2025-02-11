@@ -22,11 +22,6 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		recordGaEvent( 'Clicked Discover Tab' );
 	};
 
-	const urlSelectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
-	const tagsPath = urlSelectedTag
-		? `/discover/tags?selectedTag=${ urlSelectedTag }`
-		: '/discover/tags';
-
 	const tabs: Tab[] = [
 		{
 			slug: DEFAULT_TAB,
@@ -46,7 +41,7 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		{
 			slug: 'tags',
 			title: translate( 'Tags' ),
-			path: tagsPath,
+			path: '/discover/tags?selectedTag=dailyprompt',
 		},
 		{
 			slug: 'reddit',
