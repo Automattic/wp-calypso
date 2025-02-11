@@ -453,7 +453,14 @@ export class JetpackAuthorize extends Component {
 
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
+		return (
+			// TODO: the two extra `from` checks shouldn't be necessary,
+			// as they should be embedded in the isWooJPCFlow. But the unit
+			// tests don't use the connected component
+			'woocommerce-core-profiler' === from ||
+			'woocommerce-onboarding' === from ||
+			this.props.isWooJPC
+		);
 	}
 
 	getWooDnaConfig( props = this.props ) {
