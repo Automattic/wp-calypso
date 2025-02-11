@@ -264,18 +264,6 @@ export const SiteLogsDataViews = ( {
 	logType: LogType;
 	query: { from: string; to: string };
 } ) => {
-	// TODO:
-	// - Review existing fields coming from the API.
-	// - Empty state after filtering should display DataViews (not the empty state)
-	// - Address the "show more" interaction.
-	// - Review existing code: track events, etc.
-	// - Endpoint
-	//   - Can filter by multiple values (e.g.: "severity is any: user, deprecated").
-	//   - What can have more filters? kind (core, plugins), name (WP version, plugin name).
-	// - Translations: translate vs __.
-	//   - __ for field elements https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-table/index.tsx#L54
-	//   - translate for field labels https://github.com/Automattic/wp-calypso/blob/update/logs-to-dataviews/client/sites/tools/logs/components/site-logs-toolbar/index.tsx#L82
-
 	const { __ } = useI18n();
 
 	const moment = useLocalizedMoment();
