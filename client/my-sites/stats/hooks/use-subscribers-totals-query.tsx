@@ -42,7 +42,7 @@ const querySubscribersTotalByType = (
 				path: `/sites/${ siteId }/subscribers_by_user_type`,
 			},
 			{
-				per_page: 10,
+				per_page: MAX_SUBSCRIBERS_TO_RETURN,
 				page: 1,
 				user_type,
 				filter_admin: filterAdmin, //not used.
