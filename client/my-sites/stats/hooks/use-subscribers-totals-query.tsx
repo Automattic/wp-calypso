@@ -196,7 +196,7 @@ function useSubscribersTotalsQueries( siteId: number | null, filterAdmin?: boole
 					...( results[ 2 ]?.data?.subscribers ?? [] ),
 				]
 					.sort( sortByDateDesc )
-					.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ) ?? [],
+					.slice( 0, MAX_SUBSCRIBERS_TO_RETURN ),
 		},
 		isLoading: results.some( ( result ) => result.isLoading ),
 		isError: results.some( ( result ) => result.isError ),
