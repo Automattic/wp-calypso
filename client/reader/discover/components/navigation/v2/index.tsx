@@ -22,11 +22,16 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		recordGaEvent( 'Clicked Discover Tab' );
 	};
 
+	const urlSelectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
+	const tagsPath = urlSelectedTag
+		? `/discover/tags?selectedTag=${ urlSelectedTag }`
+		: '/discover/tags';
+
 	const tabs: Tab[] = [
 		{
 			slug: DEFAULT_TAB,
 			title: translate( 'Recommended' ),
-			path: '/discover/recommended',
+			path: '/discover',
 		},
 		{
 			slug: 'add-new',
@@ -36,12 +41,12 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		{
 			slug: FIRST_POSTS_TAB,
 			title: translate( 'First posts' ),
-			path: '/discover/first-posts',
+			path: '/discover/firstposts',
 		},
 		{
 			slug: 'tags',
 			title: translate( 'Tags' ),
-			path: '/discover/tags',
+			path: tagsPath,
 		},
 		{
 			slug: 'reddit',

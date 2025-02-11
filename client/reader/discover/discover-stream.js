@@ -1,15 +1,18 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
+import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
 import wpcom from 'calypso/lib/wp';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
-import DiscoverTagsView from 'calypso/reader/discover/components/tags-view';
+import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -57,7 +60,7 @@ const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const selectedTab = props.selectedTab;
+	const selectedTab = props.selectedTab || DEFAULT_TAB;
 
 	const { data: interestTags = [] } = useQuery( {
 		queryKey: [ 'read/interests', locale ],
@@ -84,6 +87,17 @@ const DiscoverStream = ( props ) => {
 		interestTags.unshift( { title: promptTitle, slug: promptSlug } );
 	}
 
+	const urlSelectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
+	const defaultTag = interestTags[ 0 ]?.slug || '';
+	const selectedTag = urlSelectedTag || defaultTag;
+
+	// Update URL with default tag when on tags tab with no tag selected
+	useEffect( () => {
+		if ( selectedTab === 'tags' && ! urlSelectedTag && defaultTag ) {
+			page.replace( addQueryArgs( { selectedTag: defaultTag }, '/discover/tags' ) );
+		}
+	}, [ selectedTab, urlSelectedTag, defaultTag ] );
+
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
 	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
@@ -91,7 +105,12 @@ const DiscoverStream = ( props ) => {
 		followedTags && followedTags.map( ( tag ) => tag.slug ),
 		isLoggedIn
 	);
-	const streamKey = buildDiscoverStreamKey( selectedTab, recommendedStreamTags );
+
+	// When on the tags tab, use the selected tag as the stream key, otherwise use the selected tab.
+	const streamKey = buildDiscoverStreamKey(
+		'tags' === selectedTab ? selectedTag : selectedTab,
+		recommendedStreamTags
+	);
 
 	const streamProps = {
 		...props,
@@ -107,7 +126,13 @@ const DiscoverStream = ( props ) => {
 			{ config.isEnabled( 'reader/discovery-v2' ) ? (
 				<>
 					<DiscoverNavigationV2 selectedTab={ selectedTab } />
-					{ selectedTab === 'tags' && <DiscoverTagsView width={ props.width } /> }
+					{ selectedTab === 'tags' && (
+						<DiscoverTagsNavigation
+							width={ props.width }
+							selectedTag={ selectedTag }
+							recommendedTags={ interestTags }
+						/>
+					) }
 				</>
 			) : (
 				<DiscoverNavigation

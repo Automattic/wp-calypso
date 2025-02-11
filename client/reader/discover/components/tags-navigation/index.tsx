@@ -10,20 +10,18 @@ interface Tag {
 
 interface Props {
 	recommendedTags: Tag[];
-	selectedTab: string;
+	selectedTag?: string;
 	width: number;
 }
 
-const DiscoverTabsNavigation = ( { recommendedTags, selectedTab, width }: Props ) => {
+const DiscoverTagsNavigation = ( { recommendedTags, selectedTag, width }: Props ) => {
 	const recordTabClick = () => {
 		recordAction( 'click_discover_tab' );
 		recordGaEvent( 'Clicked Discover Tab' );
 	};
 
 	const menuTabClick = ( tab: string ) => {
-		page.replace(
-			addQueryArgs( { selectedTab: tab }, window.location.pathname + window.location.search )
-		);
+		page.replace( addQueryArgs( { selectedTag: tab }, '/discover/tags' ) );
 		recordTabClick();
 	};
 
@@ -31,11 +29,11 @@ const DiscoverTabsNavigation = ( { recommendedTags, selectedTab, width }: Props 
 		<ScrollableHorizontalNavigation
 			className="discover-stream-navigation"
 			onTabClick={ menuTabClick }
-			selectedTab={ selectedTab }
+			selectedTab={ selectedTag }
 			tabs={ recommendedTags }
 			width={ width }
 		/>
 	);
 };
 
-export default DiscoverTabsNavigation;
+export default DiscoverTagsNavigation;
