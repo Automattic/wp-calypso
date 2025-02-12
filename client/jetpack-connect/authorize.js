@@ -455,8 +455,8 @@ export class JetpackAuthorize extends Component {
 		const { from } = props.authQuery;
 		return (
 			// TODO: the two extra `from` checks shouldn't be necessary,
-			// as they should be embedded in the isWooJPCFlow. But the unit
-			// tests don't use the connected component
+			// as they are part of the isWooJPCFlow check. But the unit tests
+			// don't use the connected component and would otherwise fail.
 			'woocommerce-core-profiler' === from ||
 			'woocommerce-onboarding' === from ||
 			this.props.isWooJPC
@@ -588,12 +588,6 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
-
-		// Should we keep this around, since we otherwise removed other instances
-		// where we fired this tracks event?
-		// if ( 'woocommerce-onboarding' === from ) {
-		// 	recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
-		// }
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );

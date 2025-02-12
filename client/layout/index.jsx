@@ -503,7 +503,6 @@ export default withCurrentRoute(
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
-			// isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooJPC,
