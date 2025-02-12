@@ -18,7 +18,6 @@ import { getSiteId, getSiteOptions, isRequestingSite } from 'calypso/state/sites
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
 	position: relative;
@@ -133,10 +132,6 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 	fill: var( --studio-white );
 `;
 
-function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
-	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
-}
-
 export default function HundredYearThankYou( {
 	siteSlug,
 	receiptId,
@@ -196,16 +191,11 @@ export default function HundredYearThankYou( {
 		isReceiptLoading ||
 		isLoadingDomains ||
 		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
-	const hundredYearPlanCta =
-		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
-			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
-				{ translate( 'Start building' ) }
-			</StyledLightButton>
-		) : (
-			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
-				{ translate( 'Manage your site' ) }
-			</StyledLightButton>
-		);
+	const hundredYearPlanCta = (
+		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+			{ translate( 'Manage your site' ) }
+		</StyledLightButton>
+	);
 	const hundredYearDomainCta = (
 		<StyledLightButton
 			onClick={ () =>
@@ -216,8 +206,6 @@ export default function HundredYearThankYou( {
 		</StyledLightButton>
 	);
 	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
-
-	const messageTarget = targetDomain?.domain || siteSlug;
 	const domainSpecificDescription =
 		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
 			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
@@ -230,18 +218,19 @@ export default function HundredYearThankYou( {
 						domain: targetDomain?.domain || siteSlug,
 					},
 			  } );
-	const hundredYearPlanDescription = translate(
-		'The %(planTitle)s for %(messageTarget)s is active.',
-		{
-			args: {
-				messageTarget,
-				planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-			},
-		}
-	);
-	const helpAndSupportDescription = translate(
-		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
-	);
+	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
+		args: {
+			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+		},
+	} );
+	const helpAndSupportDescription =
+		productSlug === PLAN_100_YEARS
+			? translate(
+					'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
+			  )
+			: translate(
+					'Our Premier Support team will be in touch by email shortly and can answer any questions you have. We’re looking forward to supporting you every step of the way.'
+			  );
 
 	const description =
 		productSlug === PLAN_100_YEARS
