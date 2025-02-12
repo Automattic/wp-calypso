@@ -127,9 +127,8 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
-		if ( ! initialContext ) {
-			initialContext = Object.assign( {}, context );
-		}
+		// Merge the context as some properties are available only on the initial.
+		initialContext = Object.assign( {}, initialContext ?? {}, context );
 
 		next();
 	},
