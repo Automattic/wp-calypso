@@ -232,7 +232,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			sourceSlug,
 			siteIntent,
 			shouldSaveSiteGoals ? siteGoals : undefined,
-			config.isEnabled( 'onboarding/write-goal' )
+			config.isEnabled( 'onboarding/enable-write-goal-features' )
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
