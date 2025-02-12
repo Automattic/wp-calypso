@@ -16,7 +16,6 @@ import {
 	feedDiscovery,
 	feedListing,
 	following,
-	incompleteUrlRedirects,
 	readA8C,
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
@@ -65,21 +64,7 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		// Incomplete paths that should be redirected to `/reader`
-		page(
-			[
-				'/reader/following',
-				'/reader/blogs',
-				'/reader/feeds',
-				'/reader/blog',
-				'/reader/post',
-				'/reader/feed',
-			],
-			() => page.redirect( '/reader' )
-		);
-
 		// Feed stream
-		page( '/reader/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/feeds/:feed_id',
 			blogDiscoveryByFeedId,
@@ -93,7 +78,6 @@ export default async function (): Promise< void > {
 		);
 
 		// Blog stream
-		page( '/reader/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/blogs/:blog_id',
 			redirectLoggedOutToSignup,
@@ -205,12 +189,34 @@ function setupReaderRedirects(): void {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	const readerUrlsList: RedirectRouteList[] = [
+	const readerRedirectsList: RedirectRouteList[] = [
 		{
-			path: [ `/${ langParam }/reader`, `/${ anyLangParam }/reader` ],
+			path: [
+				`/${ langParam }/reader`,
+				`/${ anyLangParam }/reader`,
+				// Incomplete paths that should be redirected to `/reader`
+				'/reader/following',
+				'/reader/blogs',
+				'/reader/feeds',
+				'/reader/blog',
+				'/reader/post',
+				'/reader/feed',
+			],
 			getRedirect: () => '/reader',
+		},
+		// Feed stream
+		{
+			path: '/reader/feeds/:feed_id/posts',
+			regex: /^\/reader\/feeds\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/feeds/${ params?.feed_id }`,
+		},
+		// Blog stream
+		{
+			path: '/reader/blogs/:blog_id/posts',
+			regex: /^\/reader\/blogs\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/blogs/${ params?.blog_id }`,
 		},
 	];
 
-	setupRedirectRoutes( readerUrlsList );
+	setupRedirectRoutes( readerRedirectsList );
 }

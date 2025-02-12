@@ -45,22 +45,6 @@ export function updateLastRoute( context, next ) {
 	next();
 }
 
-export function incompleteUrlRedirects( context, next ) {
-	let redirect;
-	// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
-	if ( context.path.match( /^\/reader\/feeds\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/reader/feeds/${ context.params.feed_id }`;
-	} else if ( context.path.match( /^\/reader\/blogs\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/reader/blogs/${ context.params.blog_id }`;
-	}
-
-	if ( redirect ) {
-		return page.redirect( redirect );
-	}
-
-	next();
-}
-
 export function sidebar( context, next ) {
 	const state = context.store.getState();
 	if ( isUserLoggedIn( state ) ) {
@@ -399,7 +383,7 @@ export function setupReadRoutes() {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	const readUrlsList = [
+	const readRedirectsList = [
 		{
 			path: [ '/read', `/${ langParam }/read`, `/${ anyLangParam }/read` ],
 			getRedirect: () => '/reader',
@@ -582,5 +566,5 @@ export function setupReadRoutes() {
 		},
 	];
 
-	setupRedirectRoutes( readUrlsList );
+	setupRedirectRoutes( readRedirectsList );
 }
