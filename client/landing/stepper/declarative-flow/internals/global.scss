@@ -89,7 +89,6 @@ button {
 .link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
-.ecommerce,
 .copy-site,
 .intro,
 .free-setup,
@@ -405,40 +404,6 @@ button {
 
 	.gridicon {
 		fill: currentColor;
-	}
-}
-
-.processing {
-	&.ecommerce {
-		padding: 60px 0;
-		min-height: 100%;
-		min-width: 100%;
-		width: 100%;
-		height: auto;
-		position: fixed;
-		top: 0;
-		left: 0;
-		background-color: #fff;
-		background-image:
-			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
-		background-position-y: -40px, 110%;
-		/*!rtl:ignore*/
-		background-position-x: 109%, -10%;
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		background-size: auto 15%, auto 25%;
-		padding-top: 0;
-
-		@include break-huge {
-			background-size: auto 15%, auto 35%, auto 50%;
-			background-position-x: 65%, -100px, 120%;
-			background-position-y: 5%, 85%, 125%;
-			background-image:
-				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
-		}
 	}
 }
 
