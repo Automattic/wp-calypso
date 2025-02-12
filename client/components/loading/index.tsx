@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import './style.scss';
 
 interface LoadingProps {
-	title?: string;
+	title?: string | React.ReactNode;
 	subtitle?: React.ReactNode;
 	progress?: number;
 	className?: string;

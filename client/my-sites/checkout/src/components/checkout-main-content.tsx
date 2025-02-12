@@ -19,6 +19,8 @@ import {
 	PaymentMethodStep,
 	FormStatus,
 	usePaymentMethod,
+	useTransactionStatus,
+	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -33,6 +35,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -451,6 +454,7 @@ export default function CheckoutMainContent( {
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
 
+	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
 
 	const hasMarketplaceProduct =
@@ -496,6 +500,20 @@ export default function CheckoutMainContent( {
 		applyDomainContactValidationResults,
 		clearDomainContactErrorMessages,
 	} = checkoutActions;
+
+	if ( transactionStatus === TransactionStatus.COMPLETE ) {
+		return (
+			<WPCheckoutCompletedWrapper>
+				<WPCheckoutCompletedMainContent>
+					<PerformanceTrackerStop />
+					<Loading
+						className="checkout__pending-content"
+						title={ translate( "Almost there – we're currently finalizing your order." ) }
+					/>
+				</WPCheckoutCompletedMainContent>
+			</WPCheckoutCompletedWrapper>
+		);
+	}
 
 	if (
 		shouldShowEmptyCartPage( {
@@ -1168,6 +1186,26 @@ const WPCheckoutWrapper = styled.div`
 	}
 `;
 
+const WPCheckoutCompletedWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	min-height: 100vh;
+
+	& > * {
+		box-sizing: border-box;
+		width: 100%;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			min-height: 100vh;
+		}
+	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
+	}
+`;
+
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
@@ -1190,6 +1228,16 @@ const WPCheckoutMainContent = styled.div`
 
 	.editor-checkout-modal & {
 		margin-top: 20px;
+	}
+`;
+
+const WPCheckoutCompletedMainContent = styled.div`
+	margin-top: 60px;
+	min-height: 100vh;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 0 24px;
+		max-width: 648px;
 	}
 `;
 
