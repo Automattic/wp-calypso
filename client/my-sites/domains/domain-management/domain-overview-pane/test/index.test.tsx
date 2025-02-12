@@ -132,7 +132,7 @@ describe( 'DomainOverviewPane', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Email' ) );
 		expect( page.show ).toHaveBeenCalledWith(
-			'/domains/manage/all/email/example.com/example.wordpress.com'
+			'/domains/manage/all/email/example.com/example.wordpress.com?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
 		);
 	} );
 
