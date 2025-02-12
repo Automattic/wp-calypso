@@ -45,6 +45,7 @@ const ExpandableSidebarHeading = ( {
 				( expandableIconClick ? (
 					<Button
 						variant="link"
+						className="sidebar__expandable-button"
 						onClick={ ( ev ) => {
 							ev.stopPropagation();
 							expandableIconClick();
