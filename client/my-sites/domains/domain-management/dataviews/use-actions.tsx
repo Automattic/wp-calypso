@@ -16,13 +16,13 @@ import {
 	domainManagementLink,
 	domainManagementTransferToOtherSiteLink,
 	domainUseMyDomain,
+	domainManagementEditContactInfo,
 } from '@automattic/domains-table/src/utils/paths';
 import { shouldUpgradeToMakeDomainPrimary } from '@automattic/domains-table/src/utils/should-upgrade-to-make-domain-primary';
 import { Action } from '@wordpress/dataviews';
 import { Icon, drawerLeft, info, update } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
-import { domainManagementEditContactInfo } from '../../paths';
 import { AutoRenewDiolog } from './components/auto-renew-dialog';
 import { useDomainsDataViewsContext } from './use-context';
 
@@ -109,7 +109,12 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 				}
 				if ( domains.length === 1 ) {
 					const domain = domains[ 0 ];
-					const url = domainManagementEditContactInfo( getSiteSlug( domain ), domain.domain );
+					const url = domainManagementEditContactInfo(
+						getSiteSlug( domain ),
+						domain.domain,
+						null,
+						context
+					);
 					navigate( url );
 				} else {
 					handleUpdateContactInfo( domains );
