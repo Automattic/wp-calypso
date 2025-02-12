@@ -1,10 +1,7 @@
 import { SiteIcon } from '../';
+import type { Meta, StoryObj } from '@storybook/react';
 import './style.stories.scss';
-import type { Meta, StoryFn } from '@storybook/react';
 
-/**
- * Storybook metadata
- */
 const meta: Meta< typeof SiteIcon > = {
 	title: 'Components/SiteIcon',
 	component: SiteIcon,
@@ -12,7 +9,10 @@ const meta: Meta< typeof SiteIcon > = {
 
 export default meta;
 
-export const Default: StoryFn< typeof SiteIcon > = SiteIcon.bind( {} );
-Default.args = {
-	className: 'custom-icon-styles',
+type Story = StoryObj< typeof SiteIcon >;
+
+export const Default: Story = {
+	args: {
+		className: 'custom-icon-styles',
+	},
 };
