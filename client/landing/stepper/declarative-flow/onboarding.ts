@@ -182,14 +182,14 @@ const onboarding: Flow = {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
 				const destination = addQueryArgs( '/setup/site-setup/launch-big-sky', {
 					siteSlug: providedDependencies.siteSlug,
-					forceBigSkyBeforePlan: true,
+					isBigSkyBeforePlansFlow: true,
 				} );
 
 				return [
 					destination,
 					addQueryArgs( '/setup/onboarding/plans', {
 						skippedCheckout: 1,
-						forceBigSkyBeforePlan: true,
+						isBigSkyBeforePlansFlow: true,
 					} ),
 				];
 			}

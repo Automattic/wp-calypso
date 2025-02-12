@@ -15,9 +15,9 @@ export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_bigsky_202
  */
 export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
-	const forceBigSkyBeforePlan =
+	const forceBigSkyEligibility =
 		useRef(
-			new URLSearchParams( window.location.search ).get( 'forceBigSkyBeforePlan' ) === 'true'
+			new URLSearchParams( window.location.search ).get( 'isBigSkyBeforePlansFlow' ) === 'true'
 		).current || configApi.isEnabled( 'onboarding/force-big-sky-before-plan' );
 
 	const [ isLoadingGoalsFirst, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
@@ -27,10 +27,10 @@ export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 			! isLoadingGoalsFirst &&
 			isGoalsFirstExperiment &&
 			flow === ONBOARDING_FLOW &&
-			! forceBigSkyBeforePlan,
+			! forceBigSkyEligibility,
 	} );
 
-	if ( forceBigSkyBeforePlan ) {
+	if ( forceBigSkyEligibility ) {
 		setPlansListExperiment( EXPERIMENT_NAME, 'treatment' );
 		return [ false, true ];
 	}
