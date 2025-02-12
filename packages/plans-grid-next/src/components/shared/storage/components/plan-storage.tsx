@@ -12,7 +12,6 @@ type Props = {
 	options?: {
 		isTableCell?: boolean;
 	};
-	priceOnSeparateLine?: boolean;
 };
 
 const PlanStorage = ( {
@@ -20,7 +19,6 @@ const PlanStorage = ( {
 	planSlug,
 	options,
 	showUpgradeableStorage,
-	priceOnSeparateLine,
 }: Props ) => {
 	const { siteId, gridPlansIndex } = usePlansGridContext();
 	const { availableForPurchase, current } = gridPlansIndex[ planSlug ];
@@ -42,11 +40,7 @@ const PlanStorage = ( {
 	return (
 		<div className="plans-grid-next-plan-storage">
 			{ canUpgradeStorageForPlan ? (
-				<StorageDropdown
-					planSlug={ planSlug }
-					onStorageAddOnClick={ onStorageAddOnClick }
-					priceOnSeparateLine={ priceOnSeparateLine }
-				/>
+				<StorageDropdown planSlug={ planSlug } onStorageAddOnClick={ onStorageAddOnClick } />
 			) : (
 				<StorageFeatureLabel planSlug={ planSlug } />
 			) }

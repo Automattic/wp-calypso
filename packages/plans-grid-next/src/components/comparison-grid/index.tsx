@@ -602,7 +602,6 @@ const ComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 						planSlug={ planSlug }
 						onStorageAddOnClick={ onStorageAddOnClick }
 						showUpgradeableStorage={ showUpgradeableStorage }
-						priceOnSeparateLine
 					/>
 				</>
 			) : (
