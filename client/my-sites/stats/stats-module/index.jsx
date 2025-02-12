@@ -214,9 +214,10 @@ class StatsModule extends Component {
 
 	remapData() {
 		const { valueField, query } = this.props;
-		const data = this.state.diffData.length ? this.state.diffData : this.props.data;
+		const isRealTime = query?.interval !== undefined;
+		const data = isRealTime ? this.state.diffData : this.props.data;
 
-		if ( query?.interval ) {
+		if ( isRealTime ) {
 			return data
 				.filter( ( item ) => item.diffValue !== 0 )
 				.sort( ( a, b ) => {
