@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -6,7 +6,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import TimeSince from 'calypso/components/time-since';
 import {
@@ -281,7 +280,6 @@ const SiteSubscriptionRow = ( {
 					<ExternalLink
 						className="title-url"
 						{ ...( url && { href: url } ) }
-						rel="noreferrer noopener"
 						target="_blank"
 						onClick={ () => {
 							recordSiteUrlClicked( { blog_id, feed_id, source: SOURCE_SUBSCRIPTIONS_SITE_LIST } );

@@ -11,12 +11,7 @@ import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
 	JETPACK_REDIRECT_URL,
-	PLAN_BUSINESS,
 	redirectCheckoutToWpAdmin,
-	findFirstSimilarPlanKey,
-	getPlan,
-	isPlan,
-	isWpComPremiumPlan,
 	isTitanMail,
 	is100Year,
 	isValidFeatureKey,
@@ -35,17 +30,14 @@ import {
 	getGoogleApps,
 	hasGoogleApps,
 	hasRenewalItem,
-	getAllCartItems,
 	getDomainRegistrations,
 	getRenewalItems,
-	hasJetpackPlan,
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasTitanMail,
-	hasDIFMProduct,
 	hasProPlan,
 	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
@@ -632,48 +624,6 @@ function getFallbackDestination( {
 	return `/checkout/thank-you/${ siteSlug }/${ receiptIdOrPlaceholder }`;
 }
 
-/**
- * This function returns the product slug of the next higher plan of the plan item in the cart.
- * Currently, it only supports premium plans.
- * @param {ResponseCart} cart the cart object
- * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
- */
-function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
-	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
-	if ( ! currentPlanSlug ) {
-		return;
-	}
-
-	const currentPlan = getPlan( currentPlanSlug );
-
-	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
-		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
-		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
-	}
-
-	return;
-}
-
-function getPlanUpgradeUpsellUrl( {
-	receiptId,
-	cart,
-	siteSlug,
-}: {
-	receiptId: ReceiptId | ReceiptIdPlaceholder;
-	cart: ResponseCart | undefined;
-	siteSlug: string | undefined;
-} ): string | undefined {
-	if ( cart && hasPremiumPlan( cart ) ) {
-		const upgradeItem = getNextHigherPlanSlug( cart );
-
-		if ( upgradeItem ) {
-			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
-		}
-	}
-
-	return;
-}
-
 function getRedirectUrlForPostCheckoutUpsell( {
 	receiptId,
 	cart,
@@ -699,28 +649,6 @@ function getRedirectUrlForPostCheckoutUpsell( {
 
 	if ( professionalEmailUpsellUrl ) {
 		return professionalEmailUpsellUrl;
-	}
-
-	if (
-		cart &&
-		! hasJetpackPlan( cart ) &&
-		! hasDIFMProduct( cart ) &&
-		( hasBloggerPlan( cart ) ||
-			hasPersonalPlan( cart ) ||
-			hasPremiumPlan( cart ) ||
-			hasBusinessPlan( cart ) )
-	) {
-		// A user just purchased one of the qualifying plans
-
-		const planUpgradeUpsellUrl = getPlanUpgradeUpsellUrl( {
-			receiptId,
-			cart,
-			siteSlug,
-		} );
-
-		if ( planUpgradeUpsellUrl ) {
-			return planUpgradeUpsellUrl;
-		}
 	}
 }
 

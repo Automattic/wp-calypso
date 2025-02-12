@@ -28,7 +28,6 @@
 .reader-post-card.card {
 	border-bottom: 5px solid var(--color-neutral-5);
 	border-radius: 6px; /* stylelint-disable-line scales/radii */
-	box-shadow: rgba(0, 0, 0, 0.05) 0 0 0 1px inset;
 	margin: 0;
 	margin-bottom: 24px;
 	position: relative;
@@ -40,7 +39,7 @@
 	}
 
 	@include breakpoint-deprecated( ">660px" ) {
-		border-bottom: 1px solid #e9e9ea;
+		border-bottom: none;
 	}
 
 	&.is-selected {

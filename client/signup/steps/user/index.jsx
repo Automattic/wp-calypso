@@ -168,7 +168,7 @@ export class UserStep extends Component {
 	}
 
 	getLoginUrl() {
-		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale, step } = this.props;
+		const { oauth2Client, wccomFrom, sectionName, from, locale, step } = this.props;
 		const emailAddress = step?.form?.email?.value ?? step?.form?.email;
 
 		return login( {
@@ -178,7 +178,6 @@ export class UserStep extends Component {
 			locale,
 			oauth2ClientId: oauth2Client?.id,
 			wccomFrom,
-			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 			emailAddress,
 		} );
@@ -192,7 +191,6 @@ export class UserStep extends Component {
 			translate,
 			userLoggedIn,
 			wccomFrom,
-			isReskinned,
 			isOnboardingAffiliateFlow,
 			isWCCOM,
 		} = this.props;
@@ -280,7 +278,7 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( isReskinned && 0 === positionInFlow ) {
+		if ( 0 === positionInFlow ) {
 			if ( this.props.isSocialFirst ) {
 				subHeaderText = '';
 			} else {
@@ -311,6 +309,16 @@ export class UserStep extends Component {
 			subHeaderText = translate(
 				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
 			);
+		}
+
+		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
+
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+			subHeaderText = translate(
+				'Pick an option to start moving your site to the world’s best WordPress host.'
+			);
+		} else if ( redirectToAfterLoginUrl?.startsWith( '/start/do-it-for-me' ) ) {
+			subHeaderText = translate( 'Pick an option to start shaping your dream website with us.' );
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -569,7 +577,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned, isWCCOM, isWoo } = this.props;
+		const { oauth2Client, isWCCOM, isWoo } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
@@ -615,8 +623,7 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ isReskinned }
-					isReskinned={ isReskinned }
+					horizontal
 					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
 					labelText={ isWoo ? this.props.translate( 'Your email' ) : null }

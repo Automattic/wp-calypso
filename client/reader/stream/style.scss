@@ -627,6 +627,7 @@
 		.app-promo {
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			background-color: transparent;
+			margin-bottom: 24px;
 
 			.app-promo__qr-code {
 				margin: -10px 0 0;
@@ -645,7 +646,7 @@
 			}
 
 			@include breakpoint-deprecated( "<660px" ) {
-				margin: 0 16px;
+				margin-inline: 17px 17px;
 			}
 
 			@include break-medium {

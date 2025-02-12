@@ -159,6 +159,14 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT':
+			return action.allow;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -177,6 +185,7 @@ const reducer = combineReducers( {
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	allowPremiumSupport,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1300,7 +1300,7 @@ class ManagePurchase extends Component<
 				<Card className={ classes }>
 					<header className="manage-purchase__header">
 						{ this.renderPurchaseIcon() }
-						<div>
+						<div className="manage-purchase__header-content">
 							<h2 className="manage-purchase__title">{ this.getProductDisplayName() }</h2>
 							<div className="manage-purchase__description">
 								{ isHundredYearDomain
@@ -1331,6 +1331,13 @@ class ManagePurchase extends Component<
 								) }
 							</div>
 						</div>
+						{ isProductOwner && ! purchase.isLocked && (
+							<div className="manage-purchase__renew-upgrade-buttons">
+								{ preventRenewal && this.renderSelectNewButton() }
+								{ this.renderUpgradeButton( preventRenewal ) }
+								{ ! preventRenewal && this.renderRenewButton() }
+							</div>
+						) }
 					</header>
 					{ this.renderPurchaseDescription() }
 					{ ! isPartnerPurchase( purchase ) && (
@@ -1343,13 +1350,6 @@ class ManagePurchase extends Component<
 								getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath
 							}
 						/>
-					) }
-					{ isProductOwner && ! purchase.isLocked && (
-						<div className="manage-purchase__renew-upgrade-buttons">
-							{ preventRenewal && this.renderSelectNewButton() }
-							{ this.renderUpgradeButton( preventRenewal ) }
-							{ ! preventRenewal && this.renderRenewButton() }
-						</div>
 					) }
 				</Card>
 				{ ! isPartnerPurchase( purchase ) && (

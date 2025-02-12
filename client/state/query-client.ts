@@ -27,12 +27,17 @@ type CreateQueryClientReturn = {
 	unsubscribePersister: () => void;
 };
 
-export async function createQueryClient( userId?: number ): Promise< CreateQueryClientReturn > {
+export async function createQueryClient(
+	persistenceKey?: string | number
+): Promise< CreateQueryClientReturn > {
 	await loadPersistedState();
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { gcTime: MAX_AGE } },
 	} );
-	const { persister, unsubscribePersister } = await hydrateBrowserState( queryClient, userId );
+	const { persister, unsubscribePersister } = await hydrateBrowserState(
+		queryClient,
+		persistenceKey
+	);
 
 	const handleBeforeUnload = () => {
 		if ( persister && shouldPersist() ) {
@@ -60,10 +65,10 @@ export async function createQueryClient( userId?: number ): Promise< CreateQuery
 
 export async function hydrateBrowserState(
 	queryClient: QueryClient,
-	userId: number | undefined
+	persistenceKey: number | string | undefined
 ): Promise< HydrateBrowserStateReturn > {
 	if ( shouldPersist() ) {
-		const storeKey = `query-state-${ userId ?? 'logged-out' }`;
+		const storeKey = `query-state-${ persistenceKey ?? 'logged-out' }`;
 		const persister = {
 			persistClient: throttle(
 				( state: PersistedClient ) => {

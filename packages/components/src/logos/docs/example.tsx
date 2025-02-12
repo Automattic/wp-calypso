@@ -1,7 +1,8 @@
-import CloudLogo from '../cloud-logo';
+import { CloudLogo } from '../cloud-logo';
 import { JetpackLogo } from '../jetpack-logo';
-import VIPLogo from '../vip-logo';
-import WooLogo from '../woo-logo';
+import { VIPLogo } from '../vip-logo';
+import { WooLogo } from '../woo-logo';
+import { WooCommerceWooLogo } from '../woocommerce-woo-logo';
 
 import './style.scss';
 export default function ProductLogoExample() {
@@ -18,6 +19,9 @@ export default function ProductLogoExample() {
 			</div>
 			<div className="logo-container">
 				<WooLogo />
+			</div>
+			<div className="logo-container">
+				<WooCommerceWooLogo />
 			</div>
 		</div>
 	);

@@ -27,9 +27,6 @@ const EVENT_NAME_EXCEPTIONS = [
 	'a8c_cookie_banner_view',
 	'a8c_ccpa_optout',
 	// WooCommerce Onboarding / Connection Flow.
-	'wcadmin_storeprofiler_create_jetpack_account',
-	'wcadmin_storeprofiler_connect_store',
-	'wcadmin_storeprofiler_login_jetpack_account',
 	'wcadmin_storeprofiler_payment_login',
 	'wcadmin_storeprofiler_payment_create_account',
 	// Checkout

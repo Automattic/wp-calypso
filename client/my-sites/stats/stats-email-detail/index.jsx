@@ -20,6 +20,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
@@ -216,7 +217,7 @@ class StatsEmailDetail extends Component {
 						isRequesting={ isRequestingStats }
 					/>
 
-					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+					<DocumentHead title={ STATS_PRODUCT_NAME } />
 
 					<PageViewTracker
 						path="/stats/email/:statType/:site/:period/:email_id"

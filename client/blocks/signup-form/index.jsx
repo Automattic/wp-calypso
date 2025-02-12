@@ -32,7 +32,6 @@ import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
-import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
 import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
@@ -724,7 +723,7 @@ class SignupForm extends Component {
 				{ this.displayUsernameInput() && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned || ( this.props.isWoo && ! this.props.isWooJPC )
+							{ this.props.isWoo && ! this.props.isWooJPC
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -766,12 +765,8 @@ class SignupForm extends Component {
 	}
 
 	recordWooCommerceSignupTracks( method ) {
-		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
-		if ( isJetpackWooCommerceFlow ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
-				signup_method: method,
-			} );
-		} else if ( isWoo && 'cart' === wccomFrom ) {
+		const { isWoo, wccomFrom } = this.props;
+		if ( isWoo && 'cart' === wccomFrom ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
 			} );
@@ -1063,7 +1058,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate, isWoo, isBlazePro } = this.props;
+		const { isWoo, isBlazePro } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -1095,25 +1090,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		return (
-			<>
-				{ ! this.props.isReskinned && (
-					<LoggedOutFormLinks>
-						<LoggedOutFormLinkItem href={ this.getLoginLink() }>
-							{ flowName === 'onboarding' || flowName === 'onboarding-pm'
-								? translate( 'Log in to create a site for your existing account.' )
-								: translate( 'Already have a WordPress.com account?' ) }
-						</LoggedOutFormLinkItem>
-						{ this.props.oauth2Client && (
-							<LoggedOutFormBackLink
-								oauth2Client={ this.props.oauth2Client }
-								recordClick={ this.recordBackLinkClick }
-							/>
-						) }
-					</LoggedOutFormLinks>
-				) }
-			</>
-		);
+		return null;
 	}
 
 	handleOnChangeAccount = () => {
@@ -1210,7 +1187,7 @@ class SignupForm extends Component {
 			);
 		}
 
-		if ( this.props.isJetpackWooCommerceFlow || this.props.isJetpackWooDnaFlow ) {
+		if ( this.props.isJetpackWooDnaFlow ) {
 			return (
 				<div className={ clsx( 'signup-form__woocommerce', this.props.className ) }>
 					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
@@ -1405,8 +1382,6 @@ export default connect(
 			currentUser: getCurrentUser( state ),
 			oauth2Client,
 			sectionName: getSectionName( state ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			wccomFrom: getWccomFrom( state ),
