@@ -84,8 +84,10 @@ export default function Notice( {
 	}, [ onDismissClick ] );
 
 	useEffect( () => {
-		const dismissTimeout = setTimeout( onDismissClickRef.current, duration );
-		return () => clearTimeout( dismissTimeout );
+		if ( duration > 0 ) {
+			const dismissTimeout = setTimeout( onDismissClickRef.current, duration );
+			return () => clearTimeout( dismissTimeout );
+		}
 	}, [ duration ] );
 
 	const classes = clsx( 'notice', status, className, {
