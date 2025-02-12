@@ -78,6 +78,7 @@ type Props = {
 	value?: string;
 	searchMode?: 'when-typing' | 'on-enter';
 	searchIcon?: ReactNode;
+	submitOnOpenIconClick?: boolean;
 };
 
 //This is fix for IE11. Does not work on Edge.
