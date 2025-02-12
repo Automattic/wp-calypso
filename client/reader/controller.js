@@ -16,6 +16,7 @@ import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
+import { setupRedirectRoutes } from 'calypso/utils';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -581,23 +582,5 @@ export function setupReadRoutes() {
 		},
 	];
 
-	readUrlsList.forEach( ( { path, regex, getRedirect } ) => {
-		// Get the URL query parameters to append to the new URL.
-		const urlQueryParams = location.search;
-
-		// If no regex is provided, just redirect to the new URL.
-		if ( ! regex ) {
-			page( path, getRedirect() + urlQueryParams );
-			return;
-		}
-
-		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
-		page( path, ( context, next ) => {
-			if ( context.path.match( regex ) ) {
-				page.redirect( getRedirect( context.params ) + urlQueryParams );
-			}
-
-			next();
-		} );
-	} );
+	setupRedirectRoutes( readUrlsList );
 }
