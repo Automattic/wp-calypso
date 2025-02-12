@@ -8,7 +8,7 @@ import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -133,6 +133,7 @@ export default function CampaignItemDetails( props: Props ) {
 	const paymentBlocked = data?.paymentsBlocked ?? false;
 
 	const [ showReportErrorDialog, setShowReportErrorDialog ] = useState( false );
+	const [ showAllReplies, setShowAllReplies ] = useState( false );
 
 	const getEffectiveEndDate = () => {
 		const endDate = campaign?.end_date ? new Date( campaign.end_date ) : null;
@@ -179,7 +180,19 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_value,
 		conversion_rate,
 		conversion_last_currency_found,
+		tsp,
+		likes_total,
+		replies_total,
 	} = campaign_stats || {};
+
+	const {
+		impressions_total: tsp_impressions_total,
+		clicks_total: tsp_clicks_total,
+		replies,
+		permalink,
+	} = tsp || {};
+
+	const displayedReplies = showAllReplies ? replies?.notes : replies?.notes.slice( 0, 3 );
 
 	// check if delivery outperformed
 	const calculateOutperformPercentage = ( estimates: string, total: number ): number => {
@@ -241,6 +254,14 @@ export default function CampaignItemDetails( props: Props ) {
 			: '-';
 	const ctrFormatted = clickthrough_rate ? `${ clickthrough_rate.toFixed( 2 ) }%` : '-';
 	const clicksFormatted = clicks_total && clicks_total > 0 ? formatNumber( clicks_total ) : '-';
+	const likesFormatted = likes_total && likes_total > 0 ? formatNumber( likes_total ) : '-';
+	const repliesFormatted = replies_total && replies_total > 0 ? formatNumber( replies_total ) : '-';
+	const tspImpressionsFormatted =
+		tsp_impressions_total && tsp_impressions_total > 0
+			? formatNumber( tsp_impressions_total )
+			: '-';
+	const tspClicksFormatted =
+		tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
 	const weeklySpend =
 		total_budget_used && billing_data ? Math.max( 0, total_budget_used - billing_data?.total ) : 0;
@@ -827,9 +848,14 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 									) }
 									<div className="campaign-item-details__main-stats-row ">
+										<div className="campaign-item-details__main-stats-title">
+											<span className="campaign-item-details__title">
+												{ translate( 'Ad Performance' ) }
+											</span>
+										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Clicks' ) }
+												{ translate( 'Visitors' ) }
 											</span>
 											<span className="campaign-item-details__text">
 												<span className="wp-brand-font">
@@ -958,7 +984,7 @@ export default function CampaignItemDetails( props: Props ) {
 															controls={ [
 																{
 																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																	title: __( 'Clicks' ),
+																	title: __( 'Visitors' ),
 																	isDisabled: chartSource === ChartSourceOptions.Clicks,
 																},
 																{
@@ -970,7 +996,7 @@ export default function CampaignItemDetails( props: Props ) {
 															icon={ chevronDown }
 															text={
 																chartSource === ChartSourceOptions.Clicks
-																	? __( 'Clicks' )
+																	? __( 'Visitors' )
 																	: __( 'Impressions' )
 															}
 															label={ chartSource }
@@ -990,7 +1016,7 @@ export default function CampaignItemDetails( props: Props ) {
 														<div className="campaign-item-page__locaton-charts">
 															<span className="campaign-item-details__label">
 																{ chartSource === ChartSourceOptions.Clicks
-																	? __( 'Clicks by location' )
+																	? __( 'Visitors by location' )
 																	: __( 'Impressions by location' ) }
 															</span>
 															<div>
@@ -1004,6 +1030,90 @@ export default function CampaignItemDetails( props: Props ) {
 													</div>
 												</div>
 											) }
+										</>
+									) }
+									{ areStatsEnabled && tsp && (
+										<>
+											<div className="campaign-item-details__main-stats-row ">
+												<div className="campaign-item-details__main-stats-title">
+													<span className="campaign-item-details__title">
+														{ translate( 'Social Engagement' ) }
+													</span>
+													<a
+														href={ permalink }
+														target="_blank"
+														rel="noreferrer"
+														className="campaign-item-details__tsp-permalink"
+													>
+														<span>{ translate( 'Open ad preview' ) }</span>
+														<Gridicon icon="external" size={ 16 } />
+													</a>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Tumblr Post views' ) }
+													</span>
+													<span className="campaign-item-details__text">
+														<span className="wp-brand-font">
+															{ ! isLoading ? tspImpressionsFormatted : <FlexibleSkeleton /> }
+														</span>
+													</span>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Site visits from Tumblr Post' ) }
+													</span>
+													<span className="campaign-item-details__text">
+														<span className="wp-brand-font">
+															{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }
+														</span>
+													</span>
+												</div>
+											</div>
+											<div className="campaign-item-details__main-stats-row ">
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Replies' ) }
+													</span>
+													<span className="campaign-item-details__text">
+														<span className="wp-brand-font">
+															{ ! isLoading ? repliesFormatted : <FlexibleSkeleton /> }
+														</span>
+													</span>
+												</div>
+												<div>
+													<span className="campaign-item-details__label">
+														{ translate( 'Likes' ) }
+													</span>
+													<span className="campaign-item-details__text">
+														<span className="wp-brand-font">
+															{ ! isLoading ? likesFormatted : <FlexibleSkeleton /> }
+														</span>
+													</span>
+												</div>
+												{ displayedReplies && replies && replies?.total_notes > 0 && (
+													<div className="campaign-items-details__tsp-replies">
+														{ displayedReplies.map( ( note, index ) => (
+															<div key={ index } className="campaign-items-details__tsp-reply">
+																<a href={ note.blog_url } target="_blank" rel="noopener noreferrer">
+																	@{ note.blog_name }
+																</a>
+																<br />
+																{ note.type === 'like' && translate( 'Liked this' ) }
+																{ note.type === 'reblog' && translate( 'Reblogged this' ) }
+															</div>
+														) ) }
+														{ replies && replies?.total_notes > 3 && (
+															<button
+																className="campaign-items-details__replies-show-more-button"
+																onClick={ () => setShowAllReplies( ! showAllReplies ) }
+															>
+																{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
+															</button>
+														) }
+													</div>
+												) }
+											</div>
 										</>
 									) }
 								</div>
