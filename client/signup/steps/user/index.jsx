@@ -554,7 +554,7 @@ export class UserStep extends Component {
 				return (
 					<div className={ clsx( 'signup-form__wrapper' ) }>
 						<WPCloudLogo size={ 256 } />
-						<h5>{ translate( 'Apply to become a host partner.' ) }</h5>
+						<h5>{ translate( 'Apply to become a hosting partner.' ) }</h5>
 					</div>
 				);
 			}
