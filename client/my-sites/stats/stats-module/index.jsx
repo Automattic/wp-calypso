@@ -217,11 +217,13 @@ class StatsModule extends Component {
 		const data = this.state.diffData.length ? this.state.diffData : this.props.data;
 
 		if ( query?.interval ) {
-			// TODO: Sort the updated results by value?
-			return data.map( ( item ) => ( {
-				...item,
-				value: item.diffValue || 0,
-			} ) );
+			return data
+				.filter( ( item ) => item.diffValue !== 0 )
+				.sort( ( a, b ) => b.diffValue - a.diffValue )
+				.map( ( item ) => ( {
+					...item,
+					value: item.diffValue || 0,
+				} ) );
 		}
 
 		if ( valueField && data ) {
