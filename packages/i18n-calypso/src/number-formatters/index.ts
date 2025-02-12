@@ -1,3 +1,5 @@
+import getFormatter from './get-formatter';
+
 export interface NumberFormatParams {
 	/**
 	 * Number to format.
@@ -25,24 +27,6 @@ export interface NumberFormatParams {
 }
 
 export type NumberFormat = ( params: NumberFormatParams ) => string;
-
-const formatterCache = new Map();
-
-function getFormatter( {
-	locale,
-	options,
-}: {
-	locale: string;
-	options?: Intl.NumberFormatOptions;
-} ): Intl.NumberFormat {
-	const key = JSON.stringify( [ locale, options ] );
-
-	if ( ! formatterCache.has( key ) ) {
-		formatterCache.set( key, new Intl.NumberFormat( locale, options ) );
-	}
-
-	return formatterCache.get( key );
-}
 
 /**
  * Formats numbers using locale settings and/or passed options.
