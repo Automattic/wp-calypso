@@ -1,0 +1,36 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.default,
+.goals,
+.user {
+	text-align: center;
+}
+
+.goals {
+	&__list {
+		display: grid;
+		gap: 1rem;
+
+		@include break-small {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+}
+
+.user {
+	max-width: 400px;
+	margin: 0 auto;
+}
+
+.difm__content {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2rem;
+}
+
+.theme-preview {
+	display: grid;
+	grid-template-columns: 3fr 9fr;
+	gap: 3rem;
+}
