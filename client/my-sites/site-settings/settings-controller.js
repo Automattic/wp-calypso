@@ -88,7 +88,7 @@ export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, 
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSelectedSiteSlug( state );
 
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
 	const hasClassicAdminInterfaceStyle =
 		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
 	if ( isUntangled && hasClassicAdminInterfaceStyle ) {
@@ -96,22 +96,6 @@ export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, 
 	}
 
 	redirectIfDuplicatedView( 'options-general.php' )( context, next );
-}
-
-/**
- * Redirect to /settings/general if the Remove Duplicate Views experiment is DISABLED
- * since /sites/settings/site/:site looks broken for those users.
- */
-export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
-	const state = context.store.getState();
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
-	const siteSlug = getSelectedSiteSlug( state );
-
-	if ( ! isUntangled ) {
-		return page.redirect( `/settings/general/${ siteSlug }` );
-	}
-
-	next();
 }
 
 export async function siteSettings( context, next ) {
