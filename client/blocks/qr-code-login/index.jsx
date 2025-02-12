@@ -1,13 +1,12 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { Card, Gridicon } from '@automattic/components';
+import { Card, Gridicon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import qrCenter from 'calypso/assets/images/qr-login/app.png';
-import ExternalLink from 'calypso/components/external-link';
 import { setStoredItem, getStoredItem } from 'calypso/lib/browser-storage';
 import { useInterval } from 'calypso/lib/interval';
 import { login } from 'calypso/lib/paths';

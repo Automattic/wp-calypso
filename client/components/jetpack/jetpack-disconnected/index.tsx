@@ -1,9 +1,9 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_SUPPORT_CONNECTION_ISSUES } from '@automattic/urls';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import JetpackDisconnectedSVG from 'calypso/assets/images/jetpack/disconnected-gray.svg';
-import ExternalLink from 'calypso/components/external-link';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useSelector, useDispatch } from 'calypso/state';

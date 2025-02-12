@@ -1,9 +1,9 @@
+import { ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useEffect, useState, useRef } from 'react';
 import * as React from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackSaleBanner from 'calypso/jetpack-cloud/sections/pricing/sale-banner';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

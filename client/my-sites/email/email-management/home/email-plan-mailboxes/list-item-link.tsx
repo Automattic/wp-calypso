@@ -1,5 +1,4 @@
-import { Gridicon } from '@automattic/components';
-import ExternalLink from 'calypso/components/external-link';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { getEmailAddress, isEmailForwardAccount, isTitanMailAccount } from 'calypso/lib/emails';
 import { getGmailUrl } from 'calypso/lib/gsuite';
 import { getTitanEmailUrl, useTitanAppsUrlPrefix } from 'calypso/lib/titan';

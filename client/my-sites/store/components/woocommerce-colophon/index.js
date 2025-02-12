@@ -1,7 +1,7 @@
+import { ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import WooCommerceLogo from '../woocommerce-logo';
 

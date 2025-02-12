@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -5,7 +6,6 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import PostShare from 'calypso/blocks/post-share';
-import ExternalLink from 'calypso/components/external-link';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import { bumpStat } from 'calypso/state/analytics/actions';

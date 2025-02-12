@@ -4,10 +4,10 @@ import {
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 	getPriceTierForUnits,
 } from '@automattic/calypso-products';
+import { ExternalLink } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { translate, TranslateResult } from 'i18n-calypso';
 import { createElement } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { PriceTierEntry } from '@automattic/calypso-products';
 

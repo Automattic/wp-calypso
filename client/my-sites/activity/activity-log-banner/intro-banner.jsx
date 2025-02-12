@@ -4,7 +4,7 @@ import {
 	PLAN_PERSONAL,
 	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
@@ -12,7 +12,6 @@ import activityImage from 'calypso/assets/images/illustrations/site-activity.svg
 import DismissibleCard from 'calypso/blocks/dismissible-card';
 import CardHeading from 'calypso/components/card-heading';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
-import ExternalLink from 'calypso/components/external-link';
 import { preventWidows } from 'calypso/lib/formatting';
 import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

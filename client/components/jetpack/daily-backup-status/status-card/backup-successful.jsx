@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { default as ActivityCard, useToggleContent } from 'calypso/components/activity-card';
 import { default as Toolbar } from 'calypso/components/activity-card/toolbar';
-import ExternalLink from 'calypso/components/external-link';
 import BackupWarningRetry from 'calypso/components/jetpack/backup-warnings/backup-warning-retry';
 import NextScheduledBackup from 'calypso/components/jetpack/daily-backup-status/status-card/parts/next-scheduled-backup';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

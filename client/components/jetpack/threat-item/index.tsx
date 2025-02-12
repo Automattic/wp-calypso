@@ -1,8 +1,7 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLinkWithTracking } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import {
 	getThreatPayloadDescription,
 	getThreatFix,

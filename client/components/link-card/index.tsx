@@ -1,6 +1,6 @@
+import { ExternalLink } from '@automattic/components';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 
 import './style.scss';
 

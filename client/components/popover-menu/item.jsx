@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { omit } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 
 const noop = () => {};
 

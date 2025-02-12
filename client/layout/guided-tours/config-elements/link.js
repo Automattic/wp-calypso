@@ -1,5 +1,5 @@
+import { ExternalLink } from '@automattic/components';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
 class Link extends Component {

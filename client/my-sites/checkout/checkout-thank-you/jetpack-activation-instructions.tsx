@@ -1,7 +1,6 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import JetpackInstructionList from './jetpack-instruction-list';
 
 const JetpackActivationInstructions: React.FC = () => {

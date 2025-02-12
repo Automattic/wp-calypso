@@ -1,9 +1,9 @@
+import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
 import { createRef, Component } from 'react';
 import titleCase from 'to-title-case';
-import ExternalLink from 'calypso/components/external-link';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';

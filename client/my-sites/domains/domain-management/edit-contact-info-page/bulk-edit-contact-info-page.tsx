@@ -1,5 +1,5 @@
 import page, { type Context } from '@automattic/calypso-router';
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ExternalLink } from '@automattic/components';
 import {
 	useAllDomainsQuery,
 	useDomainsBulkActionsMutation,
@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryWhois from 'calypso/components/data/query-whois';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
-import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain } from 'calypso/lib/domains';

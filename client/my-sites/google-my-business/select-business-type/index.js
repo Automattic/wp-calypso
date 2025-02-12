@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,7 +11,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import ExternalLink from 'calypso/components/external-link';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

@@ -1,7 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import ExternalLink from 'calypso/components/external-link';
 import { OrderInfo } from 'calypso/data/promote-post/use-promote-post-billing-summary-query';
 import { formatNumber } from 'calypso/my-sites/promote-post-i2/utils';
 

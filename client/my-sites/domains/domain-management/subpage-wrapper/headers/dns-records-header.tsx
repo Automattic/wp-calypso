@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { domainManagementAllOverview } from 'calypso/my-sites/domains/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';

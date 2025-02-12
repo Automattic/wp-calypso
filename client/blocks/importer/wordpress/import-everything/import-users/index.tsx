@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { useSendInvites } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { NextButton, Title, SubTitle } from '@automattic/onboarding';
@@ -7,7 +7,6 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 import { check } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import Pagination from 'calypso/components/pagination';
 import Search from 'calypso/components/search';
 import useExternalContributorsQuery from 'calypso/data/external-contributors/use-external-contributors';

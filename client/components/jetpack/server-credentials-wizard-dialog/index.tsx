@@ -1,8 +1,7 @@
-import { Dialog, Gridicon } from '@automattic/components';
+import { Dialog, Gridicon, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
 import { useSelector } from 'calypso/state';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';

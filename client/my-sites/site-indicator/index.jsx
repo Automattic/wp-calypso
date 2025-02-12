@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button, Gridicon, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import Animate from 'calypso/components/animate';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
-import ExternalLink from 'calypso/components/external-link';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isJetpackConnectionUnhealthy from 'calypso/state/jetpack-connection-health/selectors/is-jetpack-connection-unhealthy';

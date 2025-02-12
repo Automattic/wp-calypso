@@ -1,11 +1,10 @@
 import page from '@automattic/calypso-router';
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
-import ExternalLink from 'calypso/components/external-link';
 import Main from 'calypso/components/main';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';

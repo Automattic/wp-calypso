@@ -1,6 +1,6 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
-import ExternalLink from 'calypso/components/external-link';
 import { PanelCard } from 'calypso/components/panel';
 import { useSelector } from 'calypso/state';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
