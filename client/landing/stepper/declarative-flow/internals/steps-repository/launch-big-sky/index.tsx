@@ -1,4 +1,3 @@
-import { ProgressBar } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -13,6 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import '../processing-step/style.scss';
+import StepperLoader from '../../components/stepper-loader';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -142,7 +142,7 @@ const LaunchBigSky: Step = function () {
 		return (
 			<div className="processing-step__container">
 				<div className="processing-step">
-					{ ! isError && <ProgressBar value={ progress } compact /> }
+					{ ! isError && <StepperLoader progress={ progress } /> }
 					{ isError && (
 						<p className="processing-step__error">
 							{ __( 'Something unexpected happened. Please go back and try again.' ) }
