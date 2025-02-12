@@ -66,12 +66,7 @@ export const UserMessage = ( {
 	};
 
 	const renderExtraContactOptions = () => {
-		const currentMessageIndex = chat.messages.findIndex(
-			( msg ) => msg.message_id === message.message_id
-		);
-		const isLastMessage = currentMessageIndex === chat.messages.length - 1;
-
-		return isLastMessage && <GetSupport onClickAdditionalEvent={ handleContactSupportClick } />;
+		return <GetSupport onClickAdditionalEvent={ handleContactSupportClick } />;
 	};
 
 	const isMessageShowingDisclaimer =
