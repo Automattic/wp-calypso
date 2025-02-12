@@ -1,6 +1,6 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { ScreenReaderText, Gridicon } from '..';
 
@@ -34,6 +34,7 @@ function ExternalLink( {
 	children,
 	...rest
 } ) {
+	const translate = useTranslate();
 	const classes = clsx( 'external-link', className, {
 		'icon-first': showIconFirst,
 		'has-icon': icon,
