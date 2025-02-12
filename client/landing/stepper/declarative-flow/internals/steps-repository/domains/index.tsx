@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import {
 	StepContainer,
-	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
 	NEWSLETTER_FLOW,
@@ -177,13 +176,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				return createInterpolateElement(
 					__(
 						'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
-					),
-					decideLaterComponent
-				);
-			case LINK_IN_BIO_TLD_FLOW:
-				return createInterpolateElement(
-					__(
-						'Set your Link in Bio apart with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);

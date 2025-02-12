@@ -3,7 +3,6 @@ import {
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
-	LINK_IN_BIO_TLD_FLOW,
 	isSiteAssemblerFlow,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -93,10 +92,6 @@ export function DomainFormControl( {
 		showSkipButton = true;
 	}
 
-	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-		includeWordPressDotCom = false;
-	}
-
 	if ( flow === DOMAIN_UPSELL_FLOW ) {
 		includeWordPressDotCom = false;
 	}
@@ -148,24 +143,6 @@ export function DomainFormControl( {
 				{ useYourDomain }
 			</div>
 		);
-	};
-
-	const getOtherManagedSubdomains = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
-	};
-
-	const getOtherManagedSubdomainsCountOverride = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 1;
-		}
-	};
-
-	const getPromoTlds = () => {
-		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return [ 'link' ];
-		}
 	};
 
 	const shouldIncludeDotBlogSubdomain = () => {
@@ -248,15 +225,14 @@ export function DomainFormControl( {
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
-					otherManagedSubdomains={ getOtherManagedSubdomains() }
-					otherManagedSubdomainsCountOverride={ getOtherManagedSubdomainsCountOverride() }
+					otherManagedSubdomains={ [] }
 					onAddDomain={ onAddDomain }
 					onAddMapping={ onAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ onSkip }
 					path={ path }
 					products={ productsList }
-					promoTlds={ getPromoTlds() }
+					promoTlds={ [] }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
