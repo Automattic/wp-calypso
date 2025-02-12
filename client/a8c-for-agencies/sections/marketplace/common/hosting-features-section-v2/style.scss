@@ -1,6 +1,16 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.hosting-features-section-v2 {
+	.a4a-carousel-wrapper {
+		margin-block-start: -64px;
+	}
+
+	.a4a-carousel__navigation-button {
+		border: 1px solid var(--color-neutral-50);
+	}
+}
+
 .hosting-features-section-v2__cards {
 	display: grid;
 	gap: 16px;
