@@ -5,6 +5,7 @@ import {
 	isUrlExcludedForPerformance,
 	mayWeTrackUserGpcInCcpaRegion,
 	mayWeSessionTrack,
+	getExceptions,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -39,7 +40,7 @@ const allAdTrackers = [
 
 const sessionAdTrackers = [ 'hotjar', 'logrocket' ];
 
-type AdTracker = ( typeof allAdTrackers )[ number ];
+export type AdTracker = ( typeof allAdTrackers )[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',
@@ -136,6 +137,12 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 };
 
 export const mayWeInitTracker = ( tracker: AdTracker ) => {
+	const exceptions = getExceptions();
+
+	if ( exceptions[ tracker ] ) {
+		return false;
+	}
+
 	const bucket = AdTrackersBuckets[ tracker ];
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
