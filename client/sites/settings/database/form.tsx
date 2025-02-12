@@ -3,7 +3,9 @@ import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import wpcom from 'calypso/lib/wp';
 import {
 	composeAnalytics,
@@ -59,21 +61,15 @@ export function useOpenPhpMyAdmin() {
 }
 
 interface PhpMyAdminFormProps {
-	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
-	upsell?: React.ReactNode;
 	disabled?: boolean;
 }
 
-export default function PhpMyAdminForm( {
-	disabled,
-	ContainerComponent,
-	DescriptionComponent,
-	upsell,
-}: PhpMyAdminFormProps ) {
+export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
+
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	const form = (
 		<div className="phpmyadmin-card__wrapper">
@@ -128,17 +124,18 @@ export default function PhpMyAdminForm( {
 	);
 
 	return (
-		<ContainerComponent
+		<HostingCard
 			className="phpmyadmin-card"
 			headingId="database-access"
 			title={ translate( 'Database access' ) }
+			fallthrough={ isUntangled }
 		>
-			<DescriptionComponent>
+			<HostingCardDescription hide={ isUntangled }>
 				{ translate(
 					'For the tech-savvy, manage your database with phpMyAdmin and run a wide range of operations with MySQL.'
 				) }
-			</DescriptionComponent>
-			{ upsell ?? form }
-		</ContainerComponent>
+			</HostingCardDescription>
+			{ form }
+		</HostingCard>
 	);
 }

@@ -76,7 +76,7 @@ export default function () {
 
 	if ( isEnabled( 'untangling/hosting-menu' ) ) {
 		page( '/hosting-config/:site', ( context: PageJSContext ) => {
-			page.redirect( `/sites/tools/${ context.params.site }` );
+			page.redirect( `/sites/settings/server/${ context.params.site }` );
 		} );
 	} else {
 		page(

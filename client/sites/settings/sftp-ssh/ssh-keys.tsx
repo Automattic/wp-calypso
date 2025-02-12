@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Spinner } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -8,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSSHKeyQuery } from 'calypso/me/security-ssh-key/use-ssh-key-query';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -82,11 +82,13 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 		return !! keys.find( ( { user_login } ) => user_login === username );
 	}, [ keys, username ] );
 
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+
 	const isLoading = isLoadingKeys || isLoadingUserKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
 	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
-		source: isEnabled( 'untangling/hosting-menu' ) ? 'sites/tools/sftp-ssh' : 'hosting-config',
+		source: isUntangled ? 'sites/settings/sftp-ssh' : 'hosting-config',
 		siteSlug,
 	} );
 

@@ -1,7 +1,7 @@
 @import 'node_modules/@wordpress/base-styles/breakpoints';
 @import 'node_modules/@wordpress/base-styles/mixins';
 
-.settings-web-server {
+.settings-server {
 	select {
 		width: unset;
 		max-width: 250px;
@@ -26,5 +26,15 @@
 
 	> .defensive-mode__description {
 		margin-bottom: 16px;
+	}
+
+	// Downtime monitoring indent child toggles
+	.jetpack-monitor-settings__child-settings {
+		margin: 16px 48px 0;
+	}
+
+	// Downtime monitoring duplicates style from site-settings/style.scss
+	.support-info + .jetpack-module-toggle {
+		display: flex;
 	}
 }
