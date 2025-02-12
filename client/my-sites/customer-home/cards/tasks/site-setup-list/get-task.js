@@ -110,7 +110,9 @@ export const getTask = (
 		case CHECKLIST_KNOWN_TASKS.BLOGNAME_SET:
 			taskData = {
 				timing: 1,
-				title: isBlogger ? translate( 'Name your blog' ) : translate( 'Give your site a name' ),
+				title: isBlogger
+					? translate( 'Name your blog' )
+					: translate( 'Give your site a name Local 2' ),
 				description: isBlogger
 					? translate(
 							"Choose a name for your blog that reflects your site's personality. Don't worry, you can change it any time you like."

@@ -8,7 +8,7 @@ const sitePropertiesDefaults = {
 	siteMockupHelpTipCopyBottom: i18n.translate( 'Scroll back up to continue.' ),
 	siteMockupTitleFallback: i18n.translate( 'Your New Website' ),
 	// Site title step
-	siteTitleLabel: i18n.translate( 'Give your site a name' ),
+	siteTitleLabel: i18n.translate( 'Give your site a name local 1' ),
 	siteTitleSubheader: i18n.translate(
 		'This will appear at the top of your site and can be changed at anytime.'
 	),

@@ -28,11 +28,22 @@ export const setUpActionsForTasks = ( {
 	uiContext = 'calypso',
 }: LaunchpadTaskActionsProps ): Task[] => {
 	const { recordTracksEvent, checklistSlug, launchpadContext } = tracksData;
-	const { setShareSiteModalIsOpen } = extraActions;
+	const { setShareSiteModalIsOpen, setEligibilityDialogIsOpen } = extraActions;
 	const { onSiteLaunched, onTaskClick } = eventHandlers || {};
 
+	// It will be received from the backend
+	const hackedTasks = [
+		...tasks,
+		{
+			id: 'install_sensei_plugin',
+			title: ' Get your site prepared for creating courses',
+			disabled: false,
+			completed: false,
+		},
+	];
+
 	// Add actions to the tasks.
-	return tasks.map( ( task: Task ) => {
+	return hackedTasks.map( ( task: Task ) => {
 		let action: () => void;
 		let logMissingCalypsoPath = false;
 		let useCalypsoPath = true;
@@ -60,6 +71,13 @@ export const setUpActionsForTasks = ( {
 				case 'share_site':
 					action = () => {
 						setShareSiteModalIsOpen?.( true );
+					};
+					useCalypsoPath = false;
+					break;
+
+				case 'install_sensei_plugin':
+					action = () => {
+						setEligibilityDialogIsOpen?.( true );
 					};
 					useCalypsoPath = false;
 					break;
