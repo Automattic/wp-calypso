@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page, { Context } from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
@@ -9,6 +10,7 @@ import {
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
 import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
+import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
 	feedDiscovery,
@@ -48,6 +50,7 @@ export async function lazyLoadDependencies(): Promise< void > {
 
 export default async function (): Promise< void > {
 	await lazyLoadDependencies();
+	setupReaderRedirects();
 	setupReadRoutes();
 
 	if ( config.isEnabled( 'reader' ) ) {
@@ -193,4 +196,21 @@ export default async function (): Promise< void > {
 		makeLayout,
 		clientRender
 	);
+}
+
+/**
+ * Setup redirects for the reader routes.
+ */
+function setupReaderRedirects(): void {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const readerUrlsList: RedirectRouteList[] = [
+		{
+			path: [ `/${ langParam }/reader`, `/${ anyLangParam }/reader` ],
+			getRedirect: () => '/reader',
+		},
+	];
+
+	setupRedirectRoutes( readerUrlsList );
 }

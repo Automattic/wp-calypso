@@ -62,7 +62,7 @@ export function getRouteFromContext( context: Context ) {
 	return route;
 }
 
-interface RouteRedirectList {
+export interface RedirectRouteList {
 	path: string | string[];
 	regex?: RegExp;
 	getRedirect: ( params?: Record< string, string > ) => string;
@@ -71,8 +71,8 @@ interface RouteRedirectList {
 /**
  * Setup redirect routes for the provided list of routes.
  */
-export function setupRedirectRoutes( routeRedirectList: RouteRedirectList[] ): void {
-	routeRedirectList.forEach( ( { path, regex, getRedirect } ): void => {
+export function setupRedirectRoutes( redirectRouteList: RedirectRouteList[] ): void {
+	redirectRouteList.forEach( ( { path, regex, getRedirect } ): void => {
 		// Get the URL query parameters to append to the new URL.
 		const urlQueryParams = location.search;
 
