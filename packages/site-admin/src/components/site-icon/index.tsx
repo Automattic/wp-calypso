@@ -3,7 +3,6 @@
  */
 import { store as coreDataStore } from '@wordpress/core-data';
 import { useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { JSX } from 'react';
