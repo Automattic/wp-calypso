@@ -80,6 +80,10 @@ const useView = ( { logType }: { logType: LogType } ) => {
 				dispatch(
 					recordTracksEvent( 'calypso_site_logs_severity_filter', {
 						severity,
+						severity_user: severity.includes( 'User' ),
+						severity_warning: severity.includes( 'Warning' ),
+						severity_deprecated: severity.includes( 'Deprecated' ),
+						severity_fatal: severity.includes( 'Fatal' ),
 					} )
 				);
 			}
