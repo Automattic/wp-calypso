@@ -21,8 +21,6 @@ const GRIDICONS_WITH_DROP = [
 	'spam',
 ] as const;
 
-const noop = () => {};
-
 export type NoticeStatus =
 	| 'is-error'
 	| 'is-info'
@@ -70,7 +68,7 @@ export default function Notice( {
 	icon,
 	isCompact = false,
 	isLoading = false,
-	onDismissClick = noop,
+	onDismissClick,
 	showDismiss = ! isCompact,
 	status,
 	text,
@@ -85,7 +83,7 @@ export default function Notice( {
 
 	useEffect( () => {
 		if ( duration > 0 ) {
-			const dismissTimeout = setTimeout( onDismissClickRef.current, duration );
+			const dismissTimeout = setTimeout( () => onDismissClickRef.current?.(), duration );
 			return () => clearTimeout( dismissTimeout );
 		}
 	}, [ duration ] );
