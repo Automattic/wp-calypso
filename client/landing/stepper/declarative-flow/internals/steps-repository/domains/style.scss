@@ -520,6 +520,10 @@
 			margin: 0;
 		}
 
+		.domain-transfer-suggestion {
+			display: none;
+		}
+
 		// Reset styles for the featured domain suggestion
 		.domain-suggestion.card.featured-domain-suggestion {
 			box-shadow: none;
