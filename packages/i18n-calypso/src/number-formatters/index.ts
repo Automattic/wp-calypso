@@ -26,6 +26,24 @@ export interface NumberFormatParams {
 
 export type NumberFormat = ( params: NumberFormatParams ) => string;
 
+const formatterCache = new Map();
+
+function getFormatter( {
+	locale,
+	options,
+}: {
+	locale: string;
+	options?: Intl.NumberFormatOptions;
+} ): Intl.NumberFormat {
+	const key = JSON.stringify( [ locale, options ] );
+
+	if ( ! formatterCache.has( key ) ) {
+		formatterCache.set( key, new Intl.NumberFormat( locale, options ) );
+	}
+
+	return formatterCache.get( key );
+}
+
 /**
  * Formats numbers using locale settings and/or passed options.
  * @returns {string}  Formatted number as string, or original number as string if formatting fails.
@@ -37,12 +55,15 @@ const numberFormat: NumberFormat = ( {
 	forceLatin = true,
 	numberFormatOptions = {},
 } ) => {
+	const locale = `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`;
+	const options = {
+		minimumFractionDigits: decimals, // minimumFractionDigits default is 0
+		maximumFractionDigits: decimals, // maximumFractionDigits default is the greater between minimumFractionDigits and 3
+		...numberFormatOptions,
+	};
+
 	try {
-		return Intl.NumberFormat( `${ browserSafeLocale }${ forceLatin ? '-u-nu-latn' : '' }`, {
-			minimumFractionDigits: decimals, // minimumFractionDigits default is 0
-			maximumFractionDigits: decimals, // maximumFractionDigits default is the greater between minimumFractionDigits and 3
-			...numberFormatOptions,
-		} ).format( number );
+		return getFormatter( { locale, options } )?.format( number );
 	} catch ( error ) {
 		return String( number );
 	}
