@@ -1,6 +1,7 @@
 import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -18,7 +19,6 @@ import { getSiteId, getSiteOptions, isRequestingSite } from 'calypso/state/sites
 import { hideMasterbar } from 'calypso/state/ui/actions';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-const HOUR_IN_MS = 1000 * 60;
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
 	position: relative;
@@ -70,6 +70,13 @@ const Content = styled.div< { isMobile: boolean } >`
 	text-align: center;
 	.hundred-year-plan-thank-you__thank-you-text-container {
 		margin: 24px ${ ( { isMobile } ) => ( isMobile ? '0' : '80px' ) };
+	}
+	.hundred-year-plan-thank-you__thank-you-link {
+		color: var( --studio-gray-5 );
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
 	}
 `;
 
@@ -133,10 +140,6 @@ const CustomizedWordPressLogo = styled( WordPressLogo )`
 	fill: var( --studio-white );
 `;
 
-function isSiteCreatedWithinLastHour( createdTime: string ): boolean {
-	return Date.now() - new Date( createdTime ).getTime() < HOUR_IN_MS;
-}
-
 export default function HundredYearThankYou( {
 	siteSlug,
 	receiptId,
@@ -196,16 +199,11 @@ export default function HundredYearThankYou( {
 		isReceiptLoading ||
 		isLoadingDomains ||
 		( productSlug !== PLAN_100_YEARS && ! isDomainDataLoaded );
-	const hundredYearPlanCta =
-		siteCreatedTimeStamp && isSiteCreatedWithinLastHour( siteCreatedTimeStamp ) ? (
-			<StyledLightButton onClick={ () => page( `/setup/site-setup/goals?siteSlug=${ siteSlug }` ) }>
-				{ translate( 'Start building' ) }
-			</StyledLightButton>
-		) : (
-			<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
-				{ translate( 'Manage your site' ) }
-			</StyledLightButton>
-		);
+	const hundredYearPlanCta = (
+		<StyledLightButton onClick={ () => page( ` /home/${ siteSlug }` ) }>
+			{ translate( 'Manage your site' ) }
+		</StyledLightButton>
+	);
 	const hundredYearDomainCta = (
 		<StyledLightButton
 			onClick={ () =>
@@ -216,8 +214,6 @@ export default function HundredYearThankYou( {
 		</StyledLightButton>
 	);
 	const cta = productSlug === PLAN_100_YEARS ? hundredYearPlanCta : hundredYearDomainCta;
-
-	const messageTarget = targetDomain?.domain || siteSlug;
 	const domainSpecificDescription =
 		productSlug === domainProductSlugs.DOTCOM_DOMAIN_REGISTRATION
 			? translate( 'Your 100-Year Domain %(domain)s has been registered.', {
@@ -230,23 +226,38 @@ export default function HundredYearThankYou( {
 						domain: targetDomain?.domain || siteSlug,
 					},
 			  } );
-	const hundredYearPlanDescription = translate(
-		'The %(planTitle)s for %(messageTarget)s is active.',
-		{
-			args: {
-				messageTarget,
-				planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
-			},
-		}
-	);
+	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
+		args: {
+			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
+		},
+	} );
 	const helpAndSupportDescription = translate(
 		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
 	);
+	const domainHelpAndSupportDescription = translate(
+		'If you have any questions please take a look at {{faqLink}}our guide{{/faqLink}}, or feel free to reach out to our Premier Support team. We’re looking forward to working with you every step of the way.',
+		{
+			components: {
+				faqLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/plan-features/100-year-plan/' ) }
+						target="_blank"
+						className="hundred-year-plan-thank-you__thank-you-link"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		}
+	);
 
 	const description =
-		productSlug === PLAN_100_YEARS
-			? `${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
-			: `${ domainSpecificDescription } ${ helpAndSupportDescription }`;
+		productSlug === PLAN_100_YEARS ? (
+			`${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
+		) : (
+			<>
+				{ domainSpecificDescription } { domainHelpAndSupportDescription }
+			</>
+		);
 
 	return (
 		<>
