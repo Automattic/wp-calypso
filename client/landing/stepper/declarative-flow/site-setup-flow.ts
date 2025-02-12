@@ -694,8 +694,11 @@ const siteSetupFlow: FlowV1 = {
 				}
 
 				try {
-					await activateDesign();
-				} catch ( error ) {
+					await activateDesign( selectedDesign, {
+						styleVariation: selectedStyleVariation,
+						globalStyles: selectedGlobalStyles,
+					} );
+				} catch ( error: any ) {
 					// We attempt to set the design on the site anyway even when the checkout is skipped.
 					// That's because the user might have selected a free design, and there's no reason
 					// we shouldn't set that design on the site when the checkout is skipped.

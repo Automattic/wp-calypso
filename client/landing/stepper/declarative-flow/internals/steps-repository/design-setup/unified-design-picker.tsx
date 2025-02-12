@@ -197,7 +197,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
-	const activateDesign = useActivateDesign( {} );
+	const activateDesign = useActivateDesign();
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {

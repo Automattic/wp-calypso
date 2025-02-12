@@ -29,7 +29,7 @@ export const useActivateDesign = () => {
 						source: 'assembler',
 					} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
 				);
-				await assembleSite( site.ID, activeThemeStylesheet, {
+				await assembleSite( site?.ID, activeThemeStylesheet, {
 					homeHtml: design.recipe?.pattern_html,
 					headerHtml: design.recipe?.header_html,
 					footerHtml: design.recipe?.footer_html,
@@ -41,15 +41,15 @@ export const useActivateDesign = () => {
 			// Try to install the theme on Jetpack sites.
 			if ( isJetpack ) {
 				try {
-					await installTheme( site.ID, themeId );
-				} catch ( error ) {
+					await installTheme( site?.ID, themeId );
+				} catch ( error: any ) {
 					if ( error.error !== 'theme_already_installed' ) {
 						throw error;
 					}
 				}
 			}
 
-			const activeTheme = await setDesignOnSite( site.ID, design, {
+			const activeTheme = await setDesignOnSite( site?.ID, design, {
 				enableThemeSetup: ! isJetpack,
 				...designOptions,
 			} );

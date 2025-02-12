@@ -536,6 +536,7 @@ export interface LaunchPadCheckListTasksStatuses {
 }
 
 export interface ActiveTheme {
+	id: string;
 	stylesheet: string;
 	_links: {
 		'wp:user-global-styles': { href: string }[];

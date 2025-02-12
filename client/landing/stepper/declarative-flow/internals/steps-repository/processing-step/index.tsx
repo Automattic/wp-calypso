@@ -114,7 +114,7 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					// including the values that were updated during the action() running.
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
-				} catch ( e ) {
+				} catch ( e: any ) {
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
