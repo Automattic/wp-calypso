@@ -1,7 +1,7 @@
+import { ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import WooCommerceLogo from '../woocommerce-logo';
 
@@ -15,7 +15,7 @@ class WooCommerceColophon extends Component {
 	render() {
 		return (
 			<div className="woocommerce-colophon">
-				<ExternalLink icon={ false } onClick={ this.onClick } href="https://woocommerce.com">
+				<ExternalLink onClick={ this.onClick } href="https://woocommerce.com">
 					{ this.props.translate( 'Powered by {{WooCommerceLogo /}}', {
 						components: {
 							WooCommerceLogo: <WooCommerceLogo height={ 32 } width={ 120 } />,

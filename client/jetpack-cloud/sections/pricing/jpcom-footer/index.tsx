@@ -1,9 +1,8 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
 import DoNotSellDialogContainer from 'calypso/blocks/do-not-sell-dialog';
-import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SocialLogo from 'calypso/components/social-logo';
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
