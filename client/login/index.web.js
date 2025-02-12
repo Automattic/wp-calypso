@@ -18,6 +18,8 @@ import {
 	redirectJetpack,
 	redirectDefaultLocale,
 	redirectLostPassword,
+	desktopLogin,
+	desktopLoginFinalize,
 } from './controller';
 import redirectLoggedIn from './redirect-logged-in';
 import { setShouldServerSideRenderLogin, ssrSetupLocaleLogin, setMetaTags } from './ssr';
@@ -65,6 +67,31 @@ const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 
 export default ( router ) => {
 	const lang = getLanguageRouteParam();
+
+	// In development environments, the desktop app can be launched in a way in which it does not bundle calypso,
+	// but instead uses a calypso instance that is running outside the desktop app.
+	// In such a scenario, `config.isEnabled( 'desktop' )` returns false, but we still want the route to be available.
+	// For this reason, we always enable the desktop login routes in development environments.
+	if ( config.isEnabled( 'desktop' ) || config( 'env_id' ) === 'development' ) {
+		router(
+			[ `/log-in/desktop/${ lang }` ],
+			redirectLoggedIn,
+			setLocaleMiddleware(),
+			setMetaTags,
+			setSectionMiddleware( { ...LOGIN_SECTION_DEFINITION, isomorphic: false } ),
+			desktopLogin,
+			makeLoggedOutLayout
+		);
+		router(
+			[ `/log-in/desktop/finalize` ],
+			redirectLoggedIn,
+			setLocaleMiddleware(),
+			setMetaTags,
+			setSectionMiddleware( { ...LOGIN_SECTION_DEFINITION, isomorphic: false } ),
+			desktopLoginFinalize,
+			makeLoggedOutLayout
+		);
+	}
 
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
