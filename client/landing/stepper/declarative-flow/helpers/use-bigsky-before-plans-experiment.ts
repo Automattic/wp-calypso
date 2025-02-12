@@ -1,3 +1,4 @@
+import configApi from '@automattic/calypso-config';
 import { setPlansListExperiment } from '@automattic/calypso-products';
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { useMemo, useRef } from 'react';
@@ -14,9 +15,11 @@ export const EXPERIMENT_NAME = 'calypso_signup_onboarding_goals_first_bigsky_202
  */
 export function useBigSkyBeforePlans(): [ boolean, boolean ] {
 	const flow = useMemo( () => getFlowFromURL(), [] );
-	const forceBigSkyBeforePlan = useRef(
-		new URLSearchParams( window.location.search ).get( 'forceBigSkyBeforePlan' ) === 'true'
-	).current;
+	const forceBigSkyBeforePlan =
+		useRef(
+			new URLSearchParams( window.location.search ).get( 'forceBigSkyBeforePlan' ) === 'true'
+		).current || configApi.isEnabled( 'onboarding/force-big-sky-before-plan' );
+
 	const [ isLoadingGoalsFirst, isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 
 	const [ isLoading, experimentAssignment ] = useExperiment( EXPERIMENT_NAME, {
