@@ -61,7 +61,7 @@ function SiteIcon( { className }: SiteIconProps ): JSX.Element {
 	}
 
 	const icon = siteIconUrl ? (
-		<img className="site-admin-site-icon__image" alt={ __( 'Site Icon' ) } src={ siteIconUrl } />
+		<img className="site-admin-site-icon__image" alt="" src={ siteIconUrl } />
 	) : (
 		<Icon className="site-admin-site-icon__icon" icon={ wordpress } size={ 48 } />
 	);
