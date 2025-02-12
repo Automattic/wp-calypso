@@ -7,7 +7,6 @@ import {
 } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
-	isLinkInBioFlow,
 	isAnyHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 	isBlogOnboardingFlow,
@@ -16,10 +15,6 @@ import { ResponseCartProduct } from '@automattic/shopping-cart';
 
 const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterSignupFeatures;
-};
-
-const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getLinkInBioSignupFeatures;
 };
 
 const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
@@ -49,7 +44,6 @@ const getPlanFeatureAccessor = ( {
 } ) => {
 	return [
 		newsletterFeatures( flowName, plan ),
-		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
 		blogOnboardingFeatures( flowName, plan ),
 		senseiFeatures( plan ),
@@ -63,14 +57,6 @@ const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomP
 	return flowName === NEWSLETTER_FLOW && plan.getNewsletterHighlightedFeatures;
 };
 
-const linkInBioHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getLinkInBioHighlightedFeatures;
-};
-
-const hostingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return isLinkInBioFlow( flowName ) && plan.getHostingHighlightedFeatures;
-};
-
 const blogOnboardingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return isBlogOnboardingFlow( flowName ) && plan.getBlogOnboardingHighlightedFeatures;
 };
@@ -81,8 +67,6 @@ const senseiHighlightedFeatures = ( plan: IncompleteWPcomPlan ) =>
 const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
 		newsletterHighlightedFeatures( flowName, plan ),
-		linkInBioHighlightedFeatures( flowName, plan ),
-		hostingHighlightedFeatures( flowName, plan ),
 		blogOnboardingHighlightedFeatures( flowName, plan ),
 		senseiHighlightedFeatures( plan ),
 	].find( ( accessor ) => {

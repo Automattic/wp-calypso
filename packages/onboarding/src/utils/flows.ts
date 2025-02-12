@@ -43,12 +43,6 @@ export const ONBOARDING_FLOW = 'onboarding';
 export const EXAMPLE_FLOW = 'example';
 export const ONBOARDING_GUIDED_FLOW = '__disabled_onboarding';
 
-export const isLinkInBioFlow = ( flowName: string | null | undefined ) => {
-	return Boolean(
-		flowName && [ LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
-	);
-};
-
 export const isNewsletterFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
