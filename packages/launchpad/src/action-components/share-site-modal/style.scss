@@ -44,15 +44,11 @@
 	}
 
 	.share-site-modal__modal-domain-text {
+		padding: 0 8px;
 		margin: 0;
 		color: var(--studio-gray-80);
 		font-size: 1rem;
 		line-height: 24px;
-	}
-
-	.share-site-modal__modal-domain-text {
-		padding: 0 8px;
-
 		// prevent text overflow
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -143,7 +139,7 @@
 		letter-spacing: -0.154px;
 		color: #101517;
 		.share-site-modal__modal-icon {
-			background-color: white;
+			background-color: $white;
 			border: 1px solid var(--studio-gray-90);
 			border-radius: 100%;
 			padding: 4px;
@@ -151,7 +147,8 @@
 	}
 
 	.share-site-modal__modal-copy-link {
-		background-color: white;
+		background-color: $white;
+		margin: 0 0 0 4px;
 	}
 
 	.share-site-modal__modal-share-link:visited {

@@ -2,10 +2,10 @@ import { Popover } from '@automattic/components';
 import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Icon, link } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, link, share } from '@wordpress/icons';
 import { useState, useRef } from 'react';
-import SocialLogo from 'calypso/components/social-logo';
+import { SocialLogo } from 'social-logos';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
@@ -15,22 +15,90 @@ interface ShareSiteModalProps {
 	site: SiteDetails | null;
 }
 
-// @TODO: build and use this list to generate links. Get site title.
-const shareLinkNetworks = [
-	{
-		icon: 'tumblr',
-		url: `http://www.reddit.com/submit?url=%%SITE_URL%%&title=%%SITE_TITLE%%`,
-		label: __( 'Tumblr', 'launchpad' ),
-	},
-];
+interface ShareLink {
+	href: string;
+	className: string;
+	title: string;
+	icon: string;
+	label: string;
+}
 
-// @TODO: consider making the slug text use https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API
+const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
+	const encodedSiteUrl = encodeURIComponent( siteUrl );
+	const encodedText = encodeURIComponent( text );
+	return [
+		{
+			href: `mailto:?subject=${ encodedText }&body=${ encodedSiteUrl }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share via email', 'launchpad' ),
+			icon: 'mail',
+			label: __( 'Email', 'launchpad' ),
+		},
+		{
+			href: `https://wordpress.com/post?url=${ encodedSiteUrl }&is_post_share=true`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on WordPress', 'launchpad' ),
+			icon: 'wordpress',
+			label: __( 'WordPress', 'launchpad' ),
+		},
+		{
+			href: `http://www.tumblr.com/share/link?url=${ encodedSiteUrl }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on Tumblr', 'launchpad' ),
+			icon: 'tumblr',
+			label: __( 'Tumblr', 'launchpad' ),
+		},
+		{
+			href: `https://bsky.app/intent/compose?text=${ encodedSiteUrl }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on Bluesky', 'launchpad' ),
+			icon: 'bluesky',
+			label: __( 'Bluesky', 'launchpad' ),
+		},
+		{
+			href: `https://www.linkedin.com/shareArticle?mini=true&url=${ encodedSiteUrl }&title=${ encodedText }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on LinkedIn', 'launchpad' ),
+			icon: 'linkedin',
+			label: __( 'LinkedIn', 'launchpad' ),
+		},
+		{
+			href: `${ encodeURIComponent( encodedSiteUrl ) }&text=${ encodedText }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on Telegram', 'launchpad' ),
+			icon: 'telegram',
+			label: __( 'Telegram', 'launchpad' ),
+		},
+		{
+			href: `http://www.reddit.com/submit?url=${ encodedSiteUrl }&title=${ encodedText }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on Reddit', 'launchpad' ),
+			icon: 'reddit',
+			label: __( 'Reddit', 'launchpad' ),
+		},
+		{
+			href: `https://api.whatsapp.com/send?text=${ encodedSiteUrl }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on WhatsApp', 'launchpad' ),
+			icon: 'whatsapp',
+			label: __( 'WhatsApp', 'launchpad' ),
+		},
+		{
+			href: `https://x.com/intent/post?url=${ encodedSiteUrl }&text=${ encodedText }`,
+			className: 'share-site-modal__modal-share-link',
+			title: __( 'Share on X', 'launchpad' ),
+			icon: 'x',
+			label: __( 'X', 'launchpad' ),
+		},
+	];
+};
+
 // @TODO add click events for social network to ensure tracking, then open in new window.
 const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 	const queryClient = useQueryClient();
-	const getSiteSlug = ( site: SiteDetails | null ): string | null => {
+	const getSiteSlug = ( site: SiteDetails | null ) => {
 		if ( ! site ) {
-			return null;
+			return '';
 		}
 
 		if ( site.slug ) {
@@ -40,23 +108,42 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 		if ( site.URL ) {
 			return new URL( site.URL ).host;
 		}
-		return null;
+		return '';
 	};
 	const siteSlug = getSiteSlug( site );
+	const shareData = {
+		title: siteSlug,
+		text: sprintf(
+			/* translators: siteSlug is the short form of the site URL with the https:// */
+			__( 'Please visit my site: %(siteSlug)s', 'launchpad' ),
+			{
+				siteSlug,
+			}
+		),
+		url: site?.URL || '',
+	};
+	const canUseWebShare = window.navigator?.canShare && window.navigator.canShare( shareData );
 
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const clipboardTextEl = useRef( null );
 
 	const copyHandler = async () => {
-		navigator.clipboard.writeText( `https://${ siteSlug }` );
-		if ( siteSlug ) {
-			await updateLaunchpadSettings( siteSlug, {
+		navigator.clipboard.writeText( shareData.url );
+		if ( shareData.title ) {
+			await updateLaunchpadSettings( shareData.title, {
 				checklist_statuses: { share_site: true },
 			} );
 		}
 		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
 		setClipboardCopied( true );
 		setTimeout( () => setClipboardCopied( false ), 3000 );
+	};
+
+	const webShareClickHandler = async () => {
+		if ( ! canUseWebShare ) {
+			return;
+		}
+		await navigator.share( shareData );
 	};
 
 	return (
@@ -76,7 +163,7 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 						<div className="share-site-modal__modal-site">
 							<div className="share-site-modal__modal-domain">
 								<p className="share-site-modal__modal-domain-text" ref={ clipboardTextEl }>
-									{ siteSlug }
+									{ shareData.title }
 								</p>
 
 								<Popover
@@ -89,112 +176,48 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 								</Popover>
 							</div>
 
-							<Button
-								onClick={ copyHandler }
-								className="share-site-modal__modal-copy-link"
-								disabled={ ! siteSlug }
-							>
-								<Icon icon={ link } size={ 22 } />
-								<span className="share-site-modal__modal-view-site-text">
-									{ __( 'Copy', 'launchpad' ) }
-								</span>
-							</Button>
+							<div>
+								<Button
+									onClick={ copyHandler }
+									className="share-site-modal__modal-copy-link"
+									disabled={ ! shareData.title }
+								>
+									<Icon icon={ link } size={ 22 } />
+									<span className="share-site-modal__modal-view-site-text">
+										{ __( 'Copy', 'launchpad' ) }
+									</span>
+								</Button>
+								{ canUseWebShare && (
+									<Button
+										className="share-site-modal__modal-copy-link"
+										onClick={ webShareClickHandler }
+									>
+										<Icon icon={ share } size={ 22 } />
+										<span className="share-site-modal__modal-view-site-text">
+											{ __( 'Share', 'launchpad' ) }
+										</span>
+									</Button>
+								) }
+							</div>
 						</div>
 						<div className="share-site-modal__modal-social">
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share via email', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="mail" />
-								<span>{ __( 'Email', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on WordPress', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="wordpress" />
-								<span>{ __( 'WordPress', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Tumblr', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="tumblr" />
-								<span>{ __( 'Tumblr', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Bluesky', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="bluesky" />
-								<span>{ __( 'Bluesky', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Instagram', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="instagram" />
-								<span>{ __( 'Instagram', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on LinkedIn', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="linkedin" />
-								<span>{ __( 'LinkedIn', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Medium', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="medium" />
-								<span>{ __( 'Medium', 'launchpad' ) }</span>
-							</a>
-							<a
-								href="https://wordpress.com"
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Telegram', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="telegram" />
-								<span>{ __( 'Telegram', 'launchpad' ) }</span>
-							</a>
-							<a
-								href={ `http://www.reddit.com/submit?url=${ encodeURI(
-									'https://' + siteSlug
-								) }&title=` }
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on Reddit', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="whatsapp" />
-								<span>{ __( 'Reddit', 'launchpad' ) }</span>
-							</a>
-							<a
-								href={ `https://api.whatsapp.com/send?text=${ encodeURI(
-									'https://' + siteSlug
-								) } ` }
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on WhatsApp', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="whatsapp" />
-								<span>{ __( 'WhatsApp', 'launchpad' ) }</span>
-							</a>
-							<a
-								href={ `https://x.com/intent/post?url=${ encodeURI(
-									'https://' + siteSlug
-								) }&text=` }
-								className="share-site-modal__modal-share-link"
-								title={ __( 'Share on X', 'launchpad' ) }
-							>
-								<SocialLogo className="share-site-modal__modal-icon" size={ 24 } icon="x" />
-								<span>{ __( 'X', 'launchpad' ) }</span>
-							</a>
+							{ getShareLinks( shareData.url, shareData.text ).map( ( link, index ) => (
+								<a
+									key={ index }
+									href={ link.href }
+									className={ link.className }
+									title={ link.title }
+									rel="noopener noreferrer"
+									target="_blank"
+								>
+									<SocialLogo
+										className="share-site-modal__modal-icon"
+										size={ 24 }
+										icon={ link.icon }
+									/>
+									<span>{ link.label }</span>
+								</a>
+							) ) }
 						</div>
 					</div>
 				</div>
