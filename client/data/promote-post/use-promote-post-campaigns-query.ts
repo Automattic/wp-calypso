@@ -43,12 +43,12 @@ export type CampaignResponse = {
 		conversion_rate?: number;
 		conversion_value?: Record< string, number >;
 		conversion_last_currency_found?: string;
-		likes_total: number;
-		replies_total: number;
 		tsp?: {
 			impressions_total: number;
 			clicks_total: number;
 			permalink: string;
+			likes_total: number;
+			replies_total: number;
 			replies?: {
 				total_notes: number;
 				notes: {

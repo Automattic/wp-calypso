@@ -181,14 +181,15 @@ export default function CampaignItemDetails( props: Props ) {
 		conversion_rate,
 		conversion_last_currency_found,
 		tsp,
-		likes_total,
-		replies_total,
 	} = campaign_stats || {};
 
 	const {
 		impressions_total: tsp_impressions_total,
-		clicks_total: tsp_clicks_total,
+		// uncomment this line when we check that clicks are tracked through smart
+		// clicks_total: tsp_clicks_total,
 		replies,
+		likes_total,
+		replies_total,
 		permalink,
 	} = tsp || {};
 
@@ -260,8 +261,9 @@ export default function CampaignItemDetails( props: Props ) {
 		tsp_impressions_total && tsp_impressions_total > 0
 			? formatNumber( tsp_impressions_total )
 			: '-';
-	const tspClicksFormatted =
-		tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
+	// uncomment this line when we check that clicks are tracked through smart
+	// const tspClicksFormatted =
+	// 	tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
 	const weeklySpend =
 		total_budget_used && billing_data ? Math.max( 0, total_budget_used - billing_data?.total ) : 0;
@@ -1059,16 +1061,17 @@ export default function CampaignItemDetails( props: Props ) {
 														</span>
 													</span>
 												</div>
-												<div>
-													<span className="campaign-item-details__label">
-														{ translate( 'Site visits from Tumblr Post' ) }
-													</span>
-													<span className="campaign-item-details__text">
-														<span className="wp-brand-font">
-															{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }
-														</span>
-													</span>
-												</div>
+												{ /* commenting this until we figure out if this is working properly*/ }
+												{ /*<div>*/ }
+												{ /*	<span className="campaign-item-details__label">*/ }
+												{ /*		{ translate( 'Site visits from Tumblr Post' ) }*/ }
+												{ /*	</span>*/ }
+												{ /*	<span className="campaign-item-details__text">*/ }
+												{ /*		<span className="wp-brand-font">*/ }
+												{ /*			{ ! isLoading ? tspClicksFormatted : <FlexibleSkeleton /> }*/ }
+												{ /*		</span>*/ }
+												{ /*	</span>*/ }
+												{ /*</div>*/ }
 											</div>
 											<div className="campaign-item-details__main-stats-row ">
 												<div>
