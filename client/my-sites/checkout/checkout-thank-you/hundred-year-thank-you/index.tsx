@@ -209,7 +209,7 @@ export default function HundredYearThankYou( {
 	const hundredYearDomainCta = (
 		<StyledLightButton
 			onClick={ () =>
-				page( ` /domains/manage/all/${ targetDomain?.name }/edit/${ targetDomain?.name }` )
+				page( ` /domains/manage/all/overview/${ targetDomain?.name }/${ targetDomain?.name }` )
 			}
 		>
 			{ translate( 'Manage your domain' ) }
