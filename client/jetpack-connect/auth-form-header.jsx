@@ -19,7 +19,6 @@ import { authQueryPropTypes } from './utils';
 export class AuthFormHeader extends Component {
 	static propTypes = {
 		authQuery: authQueryPropTypes.isRequired,
-		isWooOnboarding: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
@@ -57,7 +56,6 @@ export class AuthFormHeader extends Component {
 		const {
 			translate,
 			partnerSlug,
-			isWooOnboarding,
 			isWooJPC,
 			wooDnaConfig,
 			isWpcomMigration,
@@ -95,15 +93,6 @@ export class AuthFormHeader extends Component {
 		}
 
 		const currentState = this.getState();
-
-		if ( isWooOnboarding ) {
-			switch ( currentState ) {
-				case 'logged-out':
-					return translate( 'Create a Jetpack account' );
-				default:
-					return translate( 'Connecting your store' );
-			}
-		}
 
 		if ( isWooJPC ) {
 			switch ( currentState ) {
@@ -150,24 +139,12 @@ export class AuthFormHeader extends Component {
 	getSubHeaderText() {
 		const {
 			translate,
-			isWooOnboarding,
 			isWooJPC,
 			wooDnaConfig,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
 		} = this.props;
 		const currentState = this.getState();
-
-		if ( isWooOnboarding ) {
-			switch ( currentState ) {
-				case 'logged-out':
-					return translate(
-						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
-					);
-				default:
-					return translate( "Once connected we'll continue setting up your store" );
-			}
-		}
 
 		if ( isWooJPC ) {
 			const pluginName = getPluginTitle( this.props.authQuery?.plugin_name, translate );

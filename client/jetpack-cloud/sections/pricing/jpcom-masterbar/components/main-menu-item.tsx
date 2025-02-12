@@ -1,8 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import { isMobile, sortByMenuOrder, onLinkClick, closeOnFocusOut, isValidLink } from '../utils';
 import BundlesSection from './bundles-section';
 import type { MenuItem } from 'calypso/data/jetpack/use-jetpack-masterbar-data-query';

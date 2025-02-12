@@ -519,6 +519,7 @@ __metadata:
     "@storybook/addon-actions": "npm:^7.6.19"
     "@storybook/addon-controls": "npm:^7.6.19"
     "@storybook/addon-docs": "npm:^7.6.19"
+    "@storybook/addon-toolbars": "npm:^7.6.19"
     "@storybook/addon-viewport": "npm:^7.6.19"
     "@storybook/react-webpack5": "npm:^7.6.19"
     css-loader: "npm:^6.11.0"
@@ -1837,7 +1838,16 @@ __metadata:
   resolution: "@automattic/site-admin@workspace:packages/site-admin"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@storybook/addon-actions": "npm:^7.6.19"
+    "@storybook/cli": "npm:^7.6.19"
+    "@storybook/react": "npm:^7.6.19"
+    "@wordpress/base-styles": "npm:^5.17.0"
+    "@wordpress/core-data": "npm:^7.17.0"
+    "@wordpress/i18n": "npm:^5.17.0"
+    "@wordpress/icons": "npm:^10.17.0"
+    clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"
     postcss: "npm:^8.4.5"
     typescript: "npm:^5.3.3"
@@ -6881,6 +6891,13 @@ __metadata:
   dependencies:
     "@storybook/global": "npm:^5.0.0"
   checksum: ae61dc1a8a44df117529afd333dd55f4fb47d9ea796a4f44bc5f097c48505b9ec757cdbd25f613613cd6e9f58c93bcb0f740a365e7af42a435f47e382787eb24
+  languageName: node
+  linkType: hard
+
+"@storybook/addon-toolbars@npm:^7.6.19":
+  version: 7.6.20
+  resolution: "@storybook/addon-toolbars@npm:7.6.20"
+  checksum: b5c560dd988df4629463c6f6b574d12fbdf8ae5f780b50f54b3332fe548185f4527285aa058f4bff89b7abb4669fb80574dff569c087e1ca60836cb7b552f2ae
   languageName: node
   linkType: hard
 

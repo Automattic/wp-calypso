@@ -148,8 +148,8 @@ const DoYouLoveJetpackStatsNotice = ( {
 
 	return (
 		<div
-			className={ `inner-notice-container has-odyssey-stats-bg-color ${
-				! isOdysseyStats && 'inner-notice-container--calypso'
+			className={ `inner-notice-container ${
+				! isOdysseyStats ? 'inner-notice-container--calypso' : ''
 			}` }
 		>
 			<NoticeBanner

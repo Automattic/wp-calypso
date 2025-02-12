@@ -1,6 +1,6 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 
 import './style.scss';
@@ -40,14 +40,14 @@ function SupportInfo( {
 				{ link || filteredPrivacyLink ? ' ' : null }
 				{ link && (
 					<span className="support-info__learn-more">
-						<ExternalLink href={ link } target="_blank" rel="noopener noreferrer">
+						<ExternalLink href={ link } target="_blank">
 							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</span>
 				) }
 				{ filteredPrivacyLink && (
 					<span className="support-info__privacy">
-						<ExternalLink href={ filteredPrivacyLink } target="_blank" rel="noopener noreferrer">
+						<ExternalLink href={ filteredPrivacyLink } target="_blank">
 							{ translate( 'Privacy Information' ) }
 						</ExternalLink>
 					</span>
