@@ -8,6 +8,7 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
+import BackButton from 'calypso/components/back-button';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -613,6 +614,12 @@ class ReaderStream extends Component {
 		return this.getScrollContainer( node.parentNode );
 	};
 
+	handleBack = () => {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
@@ -733,6 +740,7 @@ class ReaderStream extends Component {
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
+				<BackButton onClick={ this.handleBack } />
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
