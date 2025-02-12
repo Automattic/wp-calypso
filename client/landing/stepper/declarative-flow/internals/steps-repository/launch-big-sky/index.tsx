@@ -133,7 +133,7 @@ const LaunchBigSky: Step = function () {
 		);
 	}
 
-	if ( isLoading || ! isEligible ) {
+	if ( isLoading || isEligible === false ) {
 		return null;
 	}
 
