@@ -1,7 +1,7 @@
 import { type StarterDesigns, useStarterDesignsQuery } from '@automattic/data-stores';
 import { Design } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { ECOMMERCE_FLOW, StepContainer, isLinkInBioFlow } from '@automattic/onboarding';
+import { ECOMMERCE_FLOW, StepContainer } from '@automattic/onboarding';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -11,15 +11,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 import './style.scss';
-
-const shouldOnlyDisplayMobileCarousel = ( flow: string | null | undefined ) => {
-	switch ( true ) {
-		case isLinkInBioFlow( flow ):
-			return true;
-		default:
-			return false;
-	}
-};
 
 const getEcommerceDesigns = ( allDesigns: StarterDesigns ) => {
 	let selectedDesigns = allDesigns?.designs;
@@ -38,17 +29,6 @@ const getEcommerceDesigns = ( allDesigns: StarterDesigns ) => {
 		.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
 
 	return selectedDesigns;
-};
-
-const getLinkInBioDesigns = ( allDesigns: StarterDesigns ) => {
-	const designs =
-		allDesigns?.designs.filter(
-			( design ) =>
-				design.is_virtual &&
-				design.categories.some( ( category ) => category.slug === 'link-in-bio' )
-		) ?? [];
-
-	return designs;
 };
 
 const getCarouselDesktopOptions = (
@@ -77,8 +57,6 @@ const getFlowDesigns = (
 	}
 
 	switch ( true ) {
-		case isLinkInBioFlow( flow ):
-			return getLinkInBioDesigns( allDesigns );
 		case flow === ECOMMERCE_FLOW:
 			return getEcommerceDesigns( allDesigns );
 		default:
@@ -114,7 +92,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 					placeholder={ null }
 					onPick={ pickDesign }
 					selectedDesigns={ getFlowDesigns( allDesigns, flow ) }
-					onlyDisplayMobileCarousel={ shouldOnlyDisplayMobileCarousel( flow ) }
+					onlyDisplayMobileCarousel={ false }
 					carouselDesktopOptions={ getCarouselDesktopOptions( flow, isLargerThan1440px ) }
 				/>
 			}
