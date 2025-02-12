@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isPremiumPlan, isPersonalPlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import userAgent from 'calypso/lib/user-agent';
@@ -32,7 +32,10 @@ export function useIsBigSkyEligible() {
 	);
 
 	const isEligibleGoals = isGoalsBigSkyEligible( goals );
-	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
+	const isEligiblePlan =
+		isPremiumPlan( product_slug ) ||
+		isBusinessPlan( product_slug ) ||
+		isPersonalPlan( product_slug );
 	const [ isLoadingBigsky, isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 
 	if ( isLoadingBigsky ) {
