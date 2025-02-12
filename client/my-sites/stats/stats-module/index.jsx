@@ -148,15 +148,21 @@ class StatsModule extends Component {
 	}
 
 	calculateDiff( prevData, newData ) {
-		// TODO: Review diff logic.
-		// Is it good enough to use the first data set as a baseline?
-		const diff = newData.map( ( item, index ) => {
-			const prevItem = prevData[ index ] || {};
+		// Create a lookup map for previous data using item IDs.
+		const prevDataMap = prevData.reduce( ( map, item ) => {
+			map[ item.id ] = item;
+			return map;
+		}, {} );
+
+		// Calculate the difference value for each new item.
+		const diff = newData.map( ( item ) => {
+			const prevItem = prevDataMap[ item.id ] || { value: 0 }; // Default to 0 if not found
 			return {
 				...item,
-				diffValue: item.value - ( prevItem.value || 0 ),
+				diffValue: item.value - prevItem.value,
 			};
 		} );
+
 		return diff;
 	}
 
