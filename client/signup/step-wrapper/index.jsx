@@ -9,7 +9,7 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import flows from 'calypso/signup/config/flows';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { isReskinnedFlow } from '../is-flow';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
 
 function PresalesChat() {
@@ -67,8 +67,8 @@ class StepWrapper extends Component {
 				backUrl={ this.props.backUrl }
 				rel={ this.props.isExternalBackUrl ? 'external' : '' }
 				labelText={ this.props.backLabelText }
-				allowBackFirstStep={ this.props.allowBackFirstStep }
-				backIcon={ isReskinnedFlow( this.props.flowName ) ? 'chevron-left' : undefined }
+				allowBackFirstStep={ this.props.allowBackFirstStep || !! this.props.backUrl }
+				backIcon="chevron-left"
 				queryParams={ this.props.queryParams }
 			/>
 		);
@@ -210,11 +210,9 @@ class StepWrapper extends Component {
 		} );
 		const enablePresales = flows.getFlow( flowName, this.props.userLoggedIn )?.enablePresales;
 
-		let sticky = false;
+		let sticky = null;
 		if ( isSticky !== undefined ) {
 			sticky = isSticky;
-		} else {
-			sticky = isReskinnedFlow( flowName ) ? null : false;
 		}
 
 		return (
@@ -234,6 +232,7 @@ class StepWrapper extends Component {
 								subHeaderText={ this.subHeaderText() }
 								align={ align }
 								disablePreventWidows
+								brandFont
 							/>
 							{ headerImageUrl && (
 								<div className="step-wrapper__header-image">
@@ -265,8 +264,14 @@ class StepWrapper extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
+	const backToParam = getCurrentQueryArguments( state )?.back_to?.toString();
+	const backTo = backToParam?.startsWith( '/' ) ? backToParam : undefined;
+
+	const backUrl = ownProps.backUrl ?? backTo;
+
 	return {
+		backUrl,
 		userLoggedIn: isUserLoggedIn( state ),
 	};
 } )( localize( StepWrapper ) );

@@ -29,7 +29,7 @@ function TeamMembersSiteTransfer( props: Props ) {
 	}
 
 	function onClick( user: Member ) {
-		props.onClick( user.login );
+		props.onClick( user.email as string );
 	}
 
 	function renderPerson( user: Member ) {

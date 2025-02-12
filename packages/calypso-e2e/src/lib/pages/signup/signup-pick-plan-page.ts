@@ -5,7 +5,8 @@ import type { SiteDetails, NewSiteResponse } from '../../../types/rest-api-clien
 /**
  * The plans page URL regex.
  */
-export const plansPageUrl = /.*start\/plans|start\/with-theme\/plans-theme-preselected.*/;
+export const plansPageUrl =
+	/.*setup\/onboarding\/plans|start\/plans|start\/with-theme\/plans-theme-preselected.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -44,7 +45,7 @@ export class SignupPickPlanPage {
 		}
 
 		const actions = [
-			this.page.waitForResponse( /.*sites\/new\?.*/ ),
+			this.page.waitForResponse( /.*sites\/new\?.*/, { timeout: 30 * 1000 } ),
 			this.page.waitForURL( url, { timeout: 30 * 1000 } ),
 			this.plansPage.selectPlan( name ),
 		];

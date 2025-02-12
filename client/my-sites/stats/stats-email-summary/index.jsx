@@ -1,10 +1,15 @@
-import { localize } from 'i18n-calypso';
+import { localize, numberFormat } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	TooltipWrapper,
+	OpensTooltipContent,
+	ClicksTooltipContent,
+} from '../features/modules/stats-emails/tooltips';
 import StatsModule from '../stats-module';
 import PageViewTracker from '../stats-page-view-tracker';
 import statsStringsFactory from '../stats-strings';
@@ -63,11 +68,26 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 								<span>{ translate( 'Opens' ) }</span>
 							</>
 						),
-						body: ( item ) => (
-							<>
-								<span>{ item.opens }</span>
-							</>
-						),
+						body: ( item ) => {
+							const opensUnique = parseInt( item.unique_opens, 10 );
+							const opens = parseInt( item.opens, 10 );
+							const hasUniquesData = opensUnique > 0 || opens === 0;
+							return (
+								<TooltipWrapper
+									value={
+										hasUniquesData
+											? `${ numberFormat( item.opens_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
+									item={ item }
+									TooltipContent={ OpensTooltipContent }
+								/>
+							);
+						},
 					} }
 					path="emails"
 					moduleStrings={ { ...StatsStrings.emails, title: '' } }
@@ -77,6 +97,30 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 					mainItemLabel={ translate( 'Latest Emails' ) }
 					hideSummaryLink
 					metricLabel={ translate( 'Clicks' ) }
+					valueField="clicks_rate"
+					formatValue={ ( value, item ) => {
+						if ( item?.clicks !== undefined ) {
+							const clicksUnique = parseInt( item.unique_clicks, 10 );
+							const clicks = parseInt( item.clicks, 10 );
+							const hasUniquesData = clicksUnique > 0 || clicks === 0;
+							return (
+								<TooltipWrapper
+									value={
+										hasUniquesData
+											? `${ numberFormat( item.clicks_rate, {
+													numberFormatOptions: {
+														maximumFractionDigits: 2,
+													},
+											  } ) }%`
+											: '—'
+									}
+									item={ item }
+									TooltipContent={ ClicksTooltipContent }
+								/>
+							);
+						}
+						return <span>{ value }</span>;
+					} }
 					listItemClassName="stats__summary--narrow-mobile"
 				/>
 				<JetpackColophon />

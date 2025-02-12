@@ -27,3 +27,6 @@ export const JETPACK_SUPPORT_VIDEOPRESS_URL = 'https://jetpack.com/support/jetpa
 export const JETPACK_SUPPORT_VIDEOPRESS_URL_STATS =
 	'https://jetpack.com/support/jetpack-videopress/add-video-block-editor/video-stats/';
 export const JETPACK_VIDEOPRESS_LANDING_PAGE_URL = 'https://jetpack.com/videopress/';
+export const WPCOM_PERSONAL_PLAN_SUPPORT =
+	// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+	'https://wordpress.com/support/plan-features/personal-plan/';

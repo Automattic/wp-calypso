@@ -90,7 +90,16 @@ function findColorBestAnalogous( hexCodes: string[], baseHex: string ) {
 	let bestHslDifference = -Infinity;
 	let bestAnalogous = '';
 	for ( const hex of hexCodes ) {
-		const hsl = hexToHsl( hex );
+		let hsl;
+
+		// We can't convert the hex to hsl if the value is something like `color-mix(in srgb, currentColor 20%, transparent)`
+		try {
+			hsl = hexToHsl( hex );
+		} catch ( e ) {
+			debug( e );
+			continue;
+		}
+
 		const hslDifference = Math.max(
 			getHslDifference( analogous[ 0 ], hsl ),
 			getHslDifference( analogous[ 1 ], hsl )

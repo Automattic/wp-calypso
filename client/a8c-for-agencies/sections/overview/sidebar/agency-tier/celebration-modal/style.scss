@@ -92,6 +92,7 @@ $announcement-blue: #032836;
 		flex-direction: column;
 		padding-block-end: 16px;
 		padding-inline-end: 0;
+		z-index: 1; // Place modal content above the overlapping video on Safari
 	}
 
 	.a4a-themed-modal__sidebar-image-container {

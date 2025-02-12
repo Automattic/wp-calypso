@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import HostingFeatures from 'calypso/sites/hosting-features/components/hosting-features';
+import { SiteLogs } from 'calypso/sites/tools/logs';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
@@ -15,7 +16,6 @@ import {
 	Deployments,
 } from './deployments';
 import { indexPage } from './deployments/routes';
-import Logs from './logs';
 import Monitoring from './monitoring';
 import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
 import SftpSsh from './sftp-ssh/page';
@@ -168,7 +168,7 @@ export function phpErrorLogs( context: PageJSContext, next: () => void ) {
 				path={ getRouteFromContext( context ) }
 			/>
 			<ToolsSidebar />
-			<Logs logType="php" />
+			<SiteLogs logType="php" />
 		</PanelWithSidebar>
 	);
 	next();
@@ -182,7 +182,7 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 				path={ getRouteFromContext( context ) }
 			/>
 			<ToolsSidebar />
-			<Logs logType="web" />
+			<SiteLogs logType="web" />
 		</PanelWithSidebar>
 	);
 	next();

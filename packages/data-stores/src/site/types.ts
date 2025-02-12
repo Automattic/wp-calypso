@@ -278,6 +278,7 @@ export interface SiteDetailsOptions {
 	site_goals?: SiteGoal[];
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
+	site_creation_flow?: string;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;
@@ -290,8 +291,9 @@ export interface SiteDetailsOptions {
 	was_created_with_blank_canvas_design?: boolean;
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
-	launchpad_screen?: false | 'off' | 'full' | 'minimized';
+	launchpad_screen?: false | 'off' | 'full' | 'minimized' | 'skipped';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
+	migration_source_site_domain?: string;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;
@@ -502,14 +504,14 @@ interface PaletteColor {
 	slug: string;
 	color: string;
 	name: string;
-	default: string;
+	default?: string;
 }
 
 export interface GlobalStyles {
 	slug?: string;
 	title?: string;
 	settings: {
-		color: {
+		color?: {
 			palette: {
 				default: PaletteColor[];
 				theme: PaletteColor[];
@@ -675,6 +677,7 @@ export interface AssembleSiteOptions {
  * Site media storage from `/sites/[ siteIdOrSlug ]/media-storage` endpoint
  */
 export interface RawSiteMediaStorage {
+	max_storage_bytes_from_add_ons: number;
 	max_storage_bytes: number;
 	storage_used_bytes: number;
 }
@@ -683,6 +686,7 @@ export interface RawSiteMediaStorage {
  * Site media storage transformed for frontend use
  */
 export interface SiteMediaStorage {
+	maxStorageBytesFromAddOns: number;
 	maxStorageBytes: number;
 	storageUsedBytes: number;
 }

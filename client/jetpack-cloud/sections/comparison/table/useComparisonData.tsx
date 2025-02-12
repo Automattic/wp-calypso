@@ -348,7 +348,8 @@ export const useComparisonData = () => {
 								content: translate( '20 free requests' ),
 							},
 							COMPLETE: {
-								content: translate( '20 free requests' ),
+								content: translate( 'High request capacity' ),
+								highlight: true,
 							},
 						},
 					},

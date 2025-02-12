@@ -1,51 +1,87 @@
-import { type PlanSlug, PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
-import styled from '@emotion/styled';
+import {
+	type PlanSlug,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from '@automattic/calypso-products';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import PlanUpsellButton from './plan-upsell-button';
-import { DomainName } from '.';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
+import PlanItem from './plan-item';
+import { RowWithBorder } from '.';
 
-const FreeDomainText = styled.div`
-	font-size: 14px;
-	line-height: 20px;
-	letter-spacing: -0.15px;
-	color: var( --studio-green-50 );
-	margin-top: 4px;
-`;
-
-export default function SuggestedPlanSection( props: {
-	paidDomainName?: string;
-	onPlanSelected: ( planSlug: PlanSlug ) => void;
+interface Props {
+	hidePersonalPlan?: boolean;
+	hidePremiumPlan?: boolean;
 	isBusy: boolean;
-} ) {
+	onPlanSelected: ( planSlug: PlanSlug ) => void;
+}
+
+/**
+ * List the suggested plan for paid features.
+ */
+export default function SuggestedPlanSection( {
+	hidePersonalPlan,
+	hidePremiumPlan,
+	isBusy,
+	onPlanSelected,
+}: Props ) {
 	const translate = useTranslate();
-	const { paidDomainName, onPlanSelected, isBusy } = props;
+	const hasEnTranslation = useHasEnTranslation();
+	const [ , shouldUseNewCopy ] = useGoalsFirstCumulativeExperience();
+
+	const suggestedPlans = [
+		{
+			planSlug: PLAN_PERSONAL,
+			description:
+				hasEnTranslation( 'Free one-year domain and some premium themes' ) && shouldUseNewCopy
+					? translate( 'Free one-year domain and some premium themes' )
+					: translate( 'Domain credit, some premium themes' ),
+			disabled: hidePersonalPlan,
+		},
+		{
+			planSlug: PLAN_PREMIUM,
+			description:
+				hasEnTranslation( 'Free one-year domain and all premium themes' ) && shouldUseNewCopy
+					? translate( 'Free one-year domain and all premium themes' )
+					: translate( 'Domain credit, all premium themes' ),
+			disabled: hidePremiumPlan,
+		},
+		{
+			planSlug: PLAN_BUSINESS,
+			description:
+				hasEnTranslation( 'Free one-year domain, plugins, and all premium themes' ) &&
+				shouldUseNewCopy
+					? translate( 'Free one-year domain, plugins, and all premium themes' )
+					: translate( 'Domain credit, plugins, all premium themes' ),
+		},
+		{
+			planSlug: PLAN_ECOMMERCE,
+			description:
+				hasEnTranslation(
+					'Free one-year domain, plugins, all premium and store themes, WooCommerce'
+				) && shouldUseNewCopy
+					? translate( 'Free one-year domain, plugins, all premium and store themes, WooCommerce' )
+					: translate( 'Domain credit, plugins, all premium and store themes, WooCommerce' ),
+		},
+	];
 
 	return (
 		<>
-			{ paidDomainName && (
-				<DomainName>
-					<div>{ paidDomainName }</div>
-					<FreeDomainText>{ translate( 'Free for one year' ) }</FreeDomainText>
-				</DomainName>
-			) }
-			<PlanUpsellButton
-				planSlug={ PLAN_PERSONAL }
-				onPlanSelected={ onPlanSelected }
-				isBusy={ isBusy }
-			/>
-			{ paidDomainName && (
-				<DomainName>
-					<div>{ paidDomainName }</div>
-					<FreeDomainText>
-						{ translate( 'Free for one year. Includes Premium themes.' ) }
-					</FreeDomainText>
-				</DomainName>
-			) }
-			<PlanUpsellButton
-				planSlug={ PLAN_PREMIUM }
-				onPlanSelected={ onPlanSelected }
-				isBusy={ isBusy }
-			/>
+			{ suggestedPlans
+				.filter( ( plan ) => ! plan.disabled )
+				.slice( 0, 2 )
+				.map( ( { planSlug, description } ) => (
+					<RowWithBorder key={ planSlug }>
+						<PlanItem
+							planSlug={ planSlug as PlanSlug }
+							description={ description }
+							isBusy={ isBusy }
+							onPlanSelected={ onPlanSelected }
+						/>
+					</RowWithBorder>
+				) ) }
 		</>
 	);
 }

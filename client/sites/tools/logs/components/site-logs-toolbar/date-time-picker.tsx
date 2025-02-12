@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import type { Moment } from 'moment';
 
@@ -21,7 +22,15 @@ interface Props
 // The datetime-local input expects this specific format
 const INPUT_DATE_FORMAT = 'YYYY-MM-DDTHH:mm:ss';
 
-export function DateTimePicker( { value, onChange, gmtOffset = 0, max, min, ...rest }: Props ) {
+export function DateTimePicker( {
+	className,
+	value,
+	onChange,
+	gmtOffset = 0,
+	max,
+	min,
+	...rest
+}: Props ) {
 	const moment = useLocalizedMoment();
 
 	const onDateChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -33,7 +42,7 @@ export function DateTimePicker( { value, onChange, gmtOffset = 0, max, min, ...r
 
 	return (
 		<input
-			className="button"
+			className={ clsx( 'button', className ) }
 			type="datetime-local"
 			value={ value
 				.clone()

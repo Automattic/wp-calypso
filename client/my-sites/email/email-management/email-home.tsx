@@ -1,6 +1,8 @@
 import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import React, { ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
@@ -25,27 +27,32 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactNode } ) => {
+type PropsWithClass = {
+	className?: string;
+};
+type PropsWithClassAndChildren = React.PropsWithChildren< PropsWithClass >;
+
+const ContentWithHeader = ( { children, className }: PropsWithClassAndChildren ) => {
 	const translate = useTranslate();
+
 	return (
-		<Main wideLayout>
+		<Main wideLayout className={ className }>
 			<DocumentHead title={ translate( 'Emails', { textOnly: true } ) } />
 
 			<EmailHeader />
 
-			{ props.children }
+			{ children }
 		</Main>
 	);
 };
 
-const NoAccess = () => {
+const NoAccess = ( { className }: PropsWithClass ) => {
 	const translate = useTranslate();
 	return (
-		<ContentWithHeader>
+		<ContentWithHeader className={ className }>
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
 				illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -54,9 +61,9 @@ const NoAccess = () => {
 	);
 };
 
-const LoadingPlaceholder = () => {
+const LoadingPlaceholder = ( { className }: PropsWithClass ) => {
 	return (
-		<ContentWithHeader>
+		<ContentWithHeader className={ className }>
 			<SectionHeader className="email-home__section-placeholder is-placeholder" />
 			<Card className="email-home__content-placeholder is-placeholder" />
 		</ContentWithHeader>
@@ -71,6 +78,7 @@ interface EmailManagementHomeProps {
 	selectedIntervalLength?: IntervalLength;
 	showActiveDomainList?: boolean;
 	source: string;
+	context?: 'domains' | 'email' | string;
 }
 
 const domainHasEmail = ( domain: ResponseDomain ) =>
@@ -85,6 +93,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		selectedIntervalLength,
 		sectionHeaderLabel,
 		source,
+		context,
 	} = props;
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -96,6 +105,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
 	const hasSitesLoaded = useSelector( hasLoadedSites );
+	const isAllDomainManagementContext = context === 'domains' || context === 'hosting-overview';
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
 
@@ -117,11 +127,19 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		domainsWithEmail.length === 1 && domainsWithNoEmail.length === 0;
 
 	if ( isSiteDomainLoading || ! hasSitesLoaded || ! selectedSite || ! domains ) {
-		return <LoadingPlaceholder />;
+		return (
+			<LoadingPlaceholder
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			/>
+		);
 	}
 
 	if ( ! canManageSite ) {
-		return <NoAccess />;
+		return (
+			<NoAccess
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			/>
+		);
 	}
 
 	if ( selectedDomainName ) {
@@ -131,26 +149,36 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		if ( ! domainHasEmail( selectedDomain ) ) {
 			return (
 				<EmailProvidersStackedComparisonPage
+					className={ clsx( 'email-stacked-comparison-page', {
+						'context-all-domain-management': isAllDomainManagementContext,
+					} ) }
 					comparisonContext="email-home-selected-domain"
 					selectedDomainName={ selectedDomainName }
 					selectedEmailProviderSlug={ selectedEmailProviderSlug }
 					selectedIntervalLength={ selectedIntervalLength }
 					source={ source }
+					hideNavigation={ isAllDomainManagementContext }
 				/>
 			);
 		}
 
 		return (
-			<ContentWithHeader>
+			<ContentWithHeader
+				className={ clsx( { 'context-all-domain-management': isAllDomainManagementContext } ) }
+			>
 				<EmailPlan
 					domain={ selectedDomain }
 					// When users have a single domain with email, they are auto-redirected from the
 					// `/email/:site_slug` page to `/email/:domain/manage/:site_slug`. That's why
 					// we also hide the back button, to avoid scenarios where clicking "Back"
 					// redirects users to the same page as they are currently on.
-					hideHeaderCake={ isSingleDomainThatHasEmail }
+					hideHeaderCake={ isAllDomainManagementContext || isSingleDomainThatHasEmail }
+					hideHeader={ isAllDomainManagementContext }
+					hidePlanActions={ isAllDomainManagementContext }
+					hideMailPoetUpsell={ isAllDomainManagementContext }
 					selectedSite={ selectedSite }
 					source={ source }
+					context={ context }
 				/>
 			</ContentWithHeader>
 		);

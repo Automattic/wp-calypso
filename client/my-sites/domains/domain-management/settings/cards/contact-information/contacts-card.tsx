@@ -1,15 +1,18 @@
 import { Button, Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { PRIVACY_PROTECTION, PUBLIC_VS_PRIVATE } from '@automattic/urls';
+import { PRIVACY_PROTECTION } from '@automattic/urls';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import useDomainTransferRequestQuery from 'calypso/data/domains/transfers/use-domain-transfer-request-query';
 import {
+	domainManagementAllEditContactInfo,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
+	isUnderDomainManagementOverview,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -112,7 +115,12 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 			<p className="contact-information__toggle-item">
 				{ translate( 'We recommend keeping privacy protection on. {{a}}Learn more{{/a}}', {
 					components: {
-						a: <a href={ localizeUrl( PUBLIC_VS_PRIVATE ) } target="blank" />,
+						a: (
+							<InlineSupportLink
+								supportContext="public-vs-private-registration-and-gdpr"
+								showIcon={ false }
+							/>
+						),
 					},
 				} ) }
 			</p>
@@ -184,6 +192,17 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 
 	const { selectedDomainName, canManageConsent, currentRoute, readOnly, isHundredYearDomain } =
 		props;
+	const editContactInfoLink = isUnderDomainManagementOverview( currentRoute )
+		? domainManagementAllEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  )
+		: domainManagementEditContactInfo(
+				props.selectedSite.slug,
+				props.selectedDomainName,
+				currentRoute
+		  );
 
 	return (
 		<div>
@@ -195,15 +214,7 @@ const ContactsPrivacyCard = ( props: ContactsCardProps ) => {
 						{ ! isHundredYearDomain && (
 							<Button
 								disabled={ disableEdit || readOnly || pendingContactUpdate }
-								href={
-									disableEdit || readOnly || pendingContactUpdate
-										? ''
-										: domainManagementEditContactInfo(
-												props.selectedSite.slug,
-												props.selectedDomainName,
-												currentRoute
-										  )
-								}
+								href={ disableEdit || readOnly || pendingContactUpdate ? '' : editContactInfoLink }
 							>
 								{ translate( 'Edit' ) }
 							</Button>

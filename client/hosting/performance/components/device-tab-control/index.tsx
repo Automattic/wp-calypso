@@ -1,14 +1,13 @@
 import { SegmentedControl } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { TabType } from 'calypso/performance-profiler/components/header';
 
 import './style.scss';
 
-export type Tab = 'mobile' | 'desktop';
-
 type DeviceTabControlsProps = {
-	onDeviceTabChange: ( tab: Tab ) => void;
-	value: Tab;
+	onDeviceTabChange: ( tab: TabType ) => void;
+	value: TabType;
 	showTitle?: boolean;
 	disabled?: boolean;
 };
@@ -21,7 +20,7 @@ export const DeviceTabControls = ( {
 }: DeviceTabControlsProps ) => {
 	const translate = useTranslate();
 
-	const options = [
+	const options: { value: TabType; label: string }[] = [
 		{
 			value: 'mobile',
 			label: translate( 'Mobile' ),
@@ -46,7 +45,7 @@ export const DeviceTabControls = ( {
 							key={ option.value }
 							value={ option.value }
 							selected={ value === option.value }
-							onClick={ () => onDeviceTabChange( option.value as Tab ) }
+							onClick={ () => onDeviceTabChange( option.value ) }
 						>
 							{ option.label }
 						</SegmentedControl.Item>

@@ -1,3 +1,25 @@
+import {
+	IMAGE_STYLE_ENHANCE,
+	IMAGE_STYLE_ANIME,
+	IMAGE_STYLE_PHOTOGRAPHIC,
+	IMAGE_STYLE_DIGITAL_ART,
+	IMAGE_STYLE_COMICBOOK,
+	IMAGE_STYLE_FANTASY_ART,
+	IMAGE_STYLE_ANALOG_FILM,
+	IMAGE_STYLE_NEONPUNK,
+	IMAGE_STYLE_ISOMETRIC,
+	IMAGE_STYLE_LOWPOLY,
+	IMAGE_STYLE_ORIGAMI,
+	IMAGE_STYLE_LINE_ART,
+	IMAGE_STYLE_CRAFT_CLAY,
+	IMAGE_STYLE_CINEMATIC,
+	IMAGE_STYLE_3D_MODEL,
+	IMAGE_STYLE_PIXEL_ART,
+	IMAGE_STYLE_TEXTURE,
+	IMAGE_STYLE_MONTY_PYTHON,
+	IMAGE_STYLE_AUTO,
+	IMAGE_STYLE_NONE,
+} from './constants';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
@@ -110,6 +132,7 @@ export type AiFeatureProps = {
 			logo: number;
 		};
 	};
+	featuresControl: FeaturesControl;
 };
 
 // Type used in the `wordpress-com/plans` store.
@@ -126,6 +149,7 @@ export type Logo = {
 	url: string;
 	description: string;
 	mediaId?: number;
+	revisedPrompt?: string;
 };
 
 export type RequestError = string | Error | null;
@@ -172,6 +196,19 @@ export type Selectors = {
 	getSaveToLibraryError(): RequestError;
 	getLogoUpdateError(): RequestError;
 	getContext(): string;
+	getFeatureControl( feature: string ): FeatureControl;
+};
+
+export type LogoGeneratorFeatureControl = FeatureControl & {
+	styles: Array< ImageStyleObject > | [];
+};
+
+export type FeatureControl = {
+	enabled: boolean;
+};
+
+export type FeaturesControl = {
+	[ key: string ]: FeatureControl | LogoGeneratorFeatureControl;
 };
 
 /*
@@ -202,4 +239,32 @@ export type AiAssistantFeatureEndpointResponseProps = {
 			logo: number;
 		};
 	};
+	'features-control': FeaturesControl;
+};
+
+export type ImageStyle =
+	| typeof IMAGE_STYLE_ENHANCE
+	| typeof IMAGE_STYLE_ANIME
+	| typeof IMAGE_STYLE_PHOTOGRAPHIC
+	| typeof IMAGE_STYLE_DIGITAL_ART
+	| typeof IMAGE_STYLE_COMICBOOK
+	| typeof IMAGE_STYLE_FANTASY_ART
+	| typeof IMAGE_STYLE_ANALOG_FILM
+	| typeof IMAGE_STYLE_NEONPUNK
+	| typeof IMAGE_STYLE_ISOMETRIC
+	| typeof IMAGE_STYLE_LOWPOLY
+	| typeof IMAGE_STYLE_ORIGAMI
+	| typeof IMAGE_STYLE_LINE_ART
+	| typeof IMAGE_STYLE_CRAFT_CLAY
+	| typeof IMAGE_STYLE_CINEMATIC
+	| typeof IMAGE_STYLE_3D_MODEL
+	| typeof IMAGE_STYLE_PIXEL_ART
+	| typeof IMAGE_STYLE_TEXTURE
+	| typeof IMAGE_STYLE_MONTY_PYTHON
+	| typeof IMAGE_STYLE_AUTO
+	| typeof IMAGE_STYLE_NONE;
+
+export type ImageStyleObject = {
+	label: string;
+	value: ImageStyle;
 };

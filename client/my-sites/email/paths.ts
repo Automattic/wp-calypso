@@ -1,5 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { stringify } from 'qs';
-import { isUnderDomainManagementAll, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import {
+	isUnderDomainManagementAll,
+	isUnderDomainSiteContext,
+	domainManagementRoot,
+	domainSiteContextRoot,
+	domainManagementAllEmailRoot,
+} from 'calypso/my-sites/domains/paths';
 
 type QueryStringParameters = { [ key: string ]: string | undefined };
 
@@ -7,14 +14,21 @@ type EmailPathUtilityFunction = (
 	siteName: string | null | undefined,
 	domainName?: string | null,
 	relativeTo?: string | null,
-	urlParameters?: QueryStringParameters
+	urlParameters?: QueryStringParameters,
+	inSiteContext?: boolean
 ) => string;
 
 export const emailManagementPrefix = '/email';
 export const emailManagementAllSitesPrefix = '/email/all';
+export const domainsManagementPrefix = '/domains/manage/all/email';
+export const emailSiteContextPrefix = `${ domainSiteContextRoot() }/email`;
 
 export function isUnderEmailManagementAll( path?: string | null ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
+}
+
+export function isUnderCheckoutRoute( path?: string | null ) {
+	return path?.startsWith( '/checkout' );
 }
 
 // Builds a URL query string from an object. Handles null values.
@@ -36,7 +50,7 @@ function resolveRootPath( relativeTo?: string | null ) {
 function getPath(
 	siteName: string | null | undefined,
 	domainName: string | null | undefined,
-	slug: string,
+	slug?: string | null,
 	relativeTo?: string | null,
 	urlParameters?: QueryStringParameters
 ) {
@@ -48,12 +62,13 @@ function getPath(
 			domainName = encodeURIComponent( encodeURIComponent( domainName ) );
 		}
 
+		const slugFragment = slug ? '/' + slug : '';
+
 		return (
 			resolveRootPath( relativeTo ) +
 			'/' +
 			domainName +
-			'/' +
-			slug +
+			slugFragment +
 			'/' +
 			siteName +
 			buildQueryString( urlParameters )
@@ -73,7 +88,19 @@ export const getAddEmailForwardsPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/forwarding/add/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'forwarding/add', relativeTo, urlParameters );
+};
 
 // Retrieves the URL of the Add New Mailboxes page either for G Suite or Google Workspace
 export function getAddGSuiteUsersPath(
@@ -115,7 +142,19 @@ export const getNewTitanAccountPath: EmailPathUtilityFunction = (
 	domainName,
 	relativeTo,
 	urlParameters
-) => getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+) => {
+	if ( relativeTo?.startsWith( '/overview/site-domain/' ) ) {
+		return `/overview/site-domain/email/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	} else if ( isUnderDomainManagementAll( relativeTo ) ) {
+		return `${ domainsManagementPrefix }/${ domainName }/titan/new/${ siteName }${ buildQueryString(
+			urlParameters
+		) }`;
+	}
+
+	return getPath( siteName, domainName, 'titan/new', relativeTo, urlParameters );
+};
 
 // Retrieves the URL to set up Titan mailboxes
 export const getTitanSetUpMailboxPath: EmailPathUtilityFunction = (
@@ -136,9 +175,25 @@ export const getTitanControlPanelRedirectPath: EmailPathUtilityFunction = (
 export const getEmailManagementPath: EmailPathUtilityFunction = (
 	siteName,
 	domainName,
-	relativeTo,
-	urlParameters
-) => getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+	relativeTo = null,
+	urlParameters = {},
+	inSiteContext = false
+) => {
+	if (
+		inSiteContext ||
+		isUnderDomainManagementAll( relativeTo ) ||
+		( isUnderCheckoutRoute( relativeTo ) && isEnabled( 'calypso/all-domain-management' ) )
+	) {
+		const prefix =
+			inSiteContext || isUnderDomainSiteContext( relativeTo )
+				? emailSiteContextPrefix
+				: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/${ siteName }${ buildQueryString( urlParameters ) }`;
+	}
+
+	return getPath( siteName, domainName, 'manage', relativeTo, urlParameters );
+};
 
 export const getForwardingPath: EmailPathUtilityFunction = ( siteName, domainName, relativeTo ) =>
 	getPath( siteName, domainName, 'forwarding', relativeTo );
@@ -165,18 +220,54 @@ export const getEmailInDepthComparisonPath = (
 	relativeTo?: string,
 	source?: string,
 	intervalLength?: string
-) =>
-	getPath( siteName, domainName, 'compare', relativeTo, {
+) => {
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		const prefix = isUnderDomainSiteContext( relativeTo )
+			? emailSiteContextPrefix
+			: domainsManagementPrefix;
+
+		return `${ prefix }/${ domainName }/compare/${ siteName }${ buildQueryString( {
+			interval: intervalLength,
+			referrer: relativeTo,
+			source,
+		} ) }`;
+	}
+
+	return getPath( siteName, domainName, 'compare', relativeTo, {
 		interval: intervalLength,
 		referrer: relativeTo,
 		source,
 	} );
+};
 
 export const getProfessionalEmailCheckoutUpsellPath = (
 	siteName: string,
 	domainName: string,
 	receiptId: number | string
 ) => `/checkout/offer-professional-email/${ domainName }/${ receiptId }/${ siteName }`;
+
+export const getEmailCheckoutPath = (
+	siteName: string,
+	domainName: string,
+	relativeTo?: string,
+	newEmail?: string
+): string => {
+	let checkoutPath = '/checkout/' + siteName;
+
+	if ( isUnderDomainManagementAll( relativeTo ) ) {
+		let redirectTo = isUnderDomainSiteContext( relativeTo )
+			? `${ domainSiteContextRoot() }/email/${ domainName }/${ siteName }`
+			: `${ domainManagementAllEmailRoot() }/${ domainName }/${ siteName }`;
+
+		if ( newEmail ) {
+			redirectTo += `?new-email=${ newEmail }`;
+		}
+
+		checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
+	}
+
+	return checkoutPath;
+};
 
 export const getMailboxesPath = ( siteName?: string | null ) =>
 	siteName ? `/mailboxes/${ siteName }` : `/mailboxes`;

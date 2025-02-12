@@ -5,7 +5,7 @@
 // Overrides default 720px width
 .is-reader-page .following.main,
 .is-reader-page .tag-stream__main.main {
-	max-width: 600px;
+	max-width: 768px;
 
 	&.reader-two-column {
 		max-width: 968px;
@@ -48,6 +48,16 @@
 
 .following {
 
+	.stream__caught-up {
+		text-align: center;
+		color: var( --color-text-subtle );
+		font-size: $font-body-small;
+
+		p {
+			margin: 0 0 0.5em;
+		}
+	}
+
 	@include breakpoint-deprecated( "<660px" ) {
 		-webkit-perspective: none;
 		perspective: none;
@@ -55,8 +65,7 @@
 }
 
 .reader__content .reader-excerpt,
-.reader__content .reader-post-card__title,
-.reader__content .reader-combined-card__post-title {
+.reader__content .reader-post-card__title {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -604,7 +613,7 @@
 	align-items: flex-start;
 	display: flex;
 	flex-wrap: nowrap;
-	gap: 80px;
+	gap: 40px;
 	justify-content: flex-start;
 }
 
@@ -1026,4 +1035,3 @@
 		}
 	}
 }
-

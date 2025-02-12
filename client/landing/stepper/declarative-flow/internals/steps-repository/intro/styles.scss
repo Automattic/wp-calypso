@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/onboarding/styles/mixins";
-@import "../../sensei-variables";
 
 .intro {
 	&.newsletter {
@@ -91,74 +90,6 @@
 		}
 	}
 
-	&.sensei {
-		background-color: $sensei-onboarding-color;
-
-		.signup-header .wordpress-logo {
-			fill: #000;
-		}
-
-		.signup-header h1,
-		.step-container__sensei-powered {
-			color: #000;
-		}
-
-		.intro__title {
-			color: #1e1e1e;
-			font-size: $font-title-medium;
-
-			@include break-medium {
-				font-size: $font-headline-medium;
-			}
-		}
-
-		.intro__button-row {
-			.intro__button,
-			.intro__button-more {
-				border-radius: 4px;
-			}
-
-			.intro__button {
-				background-color: $sensei-purple-50;
-			}
-
-			.intro__button-more {
-				border-color: rgba(38, 33, 46, 0.5);
-				color: $sensei-purple-50;
-				transition: border 0.2s ease-in-out;
-
-				&:hover {
-					border-color: $sensei-purple-50;
-					color: $sensei-purple-50;
-				}
-			}
-		}
-
-		.step-container {
-			background-image:
-				url(calypso/assets/images/onboarding/sensei/progress-bg-bottom-left.png),
-				url(calypso/assets/images/onboarding/sensei/progress-bg-top-right.png);
-			background-position-y: 100%, 0%;
-			/*!rtl:ignore*/
-			background-position-x: 0, 100%;
-			background-repeat: no-repeat, no-repeat;
-			background-attachment: fixed;
-			background-size: auto 15%, auto 15%;
-
-			@include break-small {
-				background-size: auto 20%, auto 20%;
-			}
-
-			@include break-medium {
-				background-size: auto 25%, auto 25%;
-			}
-
-			@include break-large {
-				background-size: auto 35%, auto 35%;
-			}
-		}
-	}
-
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -202,12 +133,6 @@
 			@include onboarding-break-mobile-landscape {
 				margin: 5px 0 60px;
 			}
-		}
-
-		.step-container__sensei-powered {
-			position: absolute;
-			bottom: 0;
-			left: 0;
 		}
 	}
 

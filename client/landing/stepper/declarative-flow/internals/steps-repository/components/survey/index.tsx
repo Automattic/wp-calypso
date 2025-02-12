@@ -98,7 +98,6 @@ export const Survey = ( {
 	const shouldShow = ! cookieValue[ name ];
 	const [ shouldShowSurvey, setShouldShowSurvey ] = useState( isOpen && shouldShow );
 	const element = bemElement( className );
-
 	const handleClose = useCallback(
 		( reason: 'skip' | 'accept' | 'skip_backdrop' ) => {
 			const PERIOD = reason === 'skip_backdrop' ? ONE_DAY_IN_SECONDS : ONE_YEAR_IN_SECONDS;

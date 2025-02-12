@@ -1,19 +1,26 @@
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
+import { useGetSupportInteractionById } from '../../data';
 import { useCreateZendeskConversation } from '../../hooks';
+import { useGetMostRecentOpenConversation } from '../../hooks/use-get-most-recent-open-conversation';
 
 import './get-support.scss';
 
 interface GetSupportProps {
-	onClickAdditionalEvent?: () => void;
+	onClickAdditionalEvent?: ( destination: string ) => void;
 	isUserEligibleForPaidSupport?: boolean;
+	canConnectToZendesk?: boolean;
 }
 
 interface ButtonConfig {
 	text: string;
 	action: () => Promise< void >;
+	waitTimeText?: string;
+	hideButton?: boolean;
 }
 
 export const NewThirdPartyCookiesNotice: React.FC = () => {
@@ -42,14 +49,25 @@ export const NewThirdPartyCookiesNotice: React.FC = () => {
 export const GetSupport: React.FC< GetSupportProps > = ( {
 	onClickAdditionalEvent,
 	isUserEligibleForPaidSupport,
+	canConnectToZendesk = false,
 } ) => {
 	const navigate = useNavigate();
 	const newConversation = useCreateZendeskConversation();
+	const location = useLocation();
 	const {
 		chat,
 		isUserEligibleForPaidSupport: contextIsUserEligibleForPaidSupport,
-		canConnectToZendesk,
+		canConnectToZendesk: contextCanConnectToZendesk,
+		trackEvent,
 	} = useOdieAssistantContext();
+
+	const { mostRecentSupportInteractionId } = useGetMostRecentOpenConversation();
+
+	const { data: supportInteraction } = useGetSupportInteractionById(
+		mostRecentSupportInteractionId?.toString() ?? null
+	);
+
+	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	// Early return if user is already talking to a human
 	if ( chat.provider !== 'odie' ) {
@@ -57,42 +75,81 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	}
 
 	if (
-		! canConnectToZendesk &&
+		! ( canConnectToZendesk || contextCanConnectToZendesk ) &&
 		( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport )
 	) {
 		return <NewThirdPartyCookiesNotice />;
 	}
 
-	const getButtonConfig = (): ButtonConfig => {
+	const getButtonConfig = (): ButtonConfig[] => {
 		if ( isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport ) {
-			return {
-				text: __( 'Get instant support', __i18n_text_domain__ ),
-				action: async () => {
-					onClickAdditionalEvent?.();
-					await newConversation();
+			return [
+				{
+					text: __( 'Continue your open conversation', __i18n_text_domain__ ),
+					action: async () => {
+						if ( supportInteraction ) {
+							trackEvent( 'chat_open_previous_conversation' );
+							setCurrentSupportInteraction( supportInteraction );
+							if ( ! location?.pathname?.includes( '/odie' ) ) {
+								navigate( '/odie' );
+							}
+						}
+					},
+					hideButton: !! supportInteraction,
 				},
-			};
+				{
+					text: __( 'Chat with support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Average wait time < 5 minutes', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.( 'chat' );
+						await newConversation();
+					},
+				},
+				{
+					text: __( 'Email support', __i18n_text_domain__ ),
+					waitTimeText: __( 'Average wait time < 8 hours', __i18n_text_domain__ ),
+					action: async () => {
+						onClickAdditionalEvent?.( 'email' );
+						await newConversation();
+					},
+				},
+			];
 		}
 
-		return {
-			text: __( 'Ask in our forums', __i18n_text_domain__ ),
-			action: async () => {
-				onClickAdditionalEvent?.();
-				navigate( '/contact-form?mode=FORUM' );
+		return [
+			{
+				text: __( 'Ask in our forums', __i18n_text_domain__ ),
+				action: async () => {
+					onClickAdditionalEvent?.( 'forum' );
+					navigate( '/contact-form?mode=FORUM' );
+				},
 			},
-		};
+		];
 	};
 
 	const buttonConfig = getButtonConfig();
 
-	const handleClick = async ( event: React.MouseEvent< HTMLButtonElement > ) => {
+	const handleClick = async (
+		event: React.MouseEvent< HTMLButtonElement >,
+		button: ButtonConfig
+	) => {
 		event.preventDefault();
-		await buttonConfig.action();
+		await button.action();
 	};
 
 	return (
 		<div className="odie__transfer-chat">
-			<button onClick={ handleClick }>{ buttonConfig.text }</button>
+			{ buttonConfig.map(
+				( button, index ) =>
+					button.hideButton !== false && (
+						<div className="odie__transfer-chat--button-container" key={ index }>
+							<button onClick={ ( e ) => handleClick( e, button ) }>{ button.text }</button>
+							{ button.waitTimeText && (
+								<span className="odie__transfer-chat--wait-time">{ button.waitTimeText }</span>
+							) }
+						</div>
+					)
+			) }
 		</div>
 	);
 };

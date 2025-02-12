@@ -6,10 +6,9 @@ import {
 	sites,
 	navigation,
 } from 'calypso/my-sites/controller';
-import { addOnsSiteSelectionHeader, addOnsManagement, redirectIfNotEnabled } from './controller';
+import { addOnsSiteSelectionHeader, addOnsManagement } from './controller';
 
 const commonHandlers = [
-	redirectIfNotEnabled,
 	stagingSiteNotSupportedRedirect,
 	siteSelection,
 	addOnsSiteSelectionHeader,

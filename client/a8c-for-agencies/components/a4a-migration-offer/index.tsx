@@ -27,7 +27,7 @@ const MigrationOfferHeader = ( { withIcon }: { withIcon?: boolean } ) => {
 const MigrationOfferBody = () => {
 	const translate = useTranslate();
 	const description = translate(
-		'From now until the end of 2024, you’ll receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000.* If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
+		'Receive $100 for each site you migrate to Pressable or WordPress.com, up to $10,000.* If you’re a WP\u00A0Engine customer, we’ll also credit the costs to set you free. {{a}}Full Terms ↗{{/a}}',
 		{
 			components: {
 				a: (
@@ -50,7 +50,16 @@ const MigrationOfferBody = () => {
 			</Button>
 			<p className="a4a-migration-offer__asterisk">
 				{ translate(
-					'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts.'
+					'* The migration limit is $10,000 for WP\u00A0Engine and $3,000 for other hosts. Offer valid until %(endDate)s',
+					{
+						args: {
+							endDate: new Date( '2025-01-31T00:00:00' ).toLocaleDateString( translate.localeSlug, {
+								year: 'numeric',
+								month: 'long',
+								day: 'numeric',
+							} ),
+						},
+					}
 				) }
 			</p>
 		</>

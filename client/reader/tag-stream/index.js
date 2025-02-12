@@ -1,10 +1,8 @@
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { getLanguageRouteParam, getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import { startsWith } from 'lodash';
 import {
 	makeLayout,
-	redirectLoggedOutToSignup,
 	redirectInvalidLanguage,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
 	render as clientRender,
@@ -21,13 +19,6 @@ const redirectHashtaggedTags = ( context, next ) => {
 	next();
 };
 
-const redirectToSignup = ( context, next ) => {
-	if ( ! config.isEnabled( 'reader/public-tag-pages' ) ) {
-		return redirectLoggedOutToSignup( context, next );
-	}
-	return next();
-};
-
 export default function () {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
@@ -40,7 +31,6 @@ export default function () {
 		page(
 			[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
 			setLocaleMiddleware(),
-			redirectToSignup,
 			updateLastRoute,
 			tagListing,
 			makeLayout,
@@ -53,7 +43,6 @@ export default function () {
 		[ '/tag/:tag', `/${ langParam }/tag/:tag` ],
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
-		redirectToSignup,
 		updateLastRoute,
 		sidebar,
 		tagListing,

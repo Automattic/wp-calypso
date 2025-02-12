@@ -2,11 +2,13 @@ import colorStudio from '@automattic/color-studio';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { HOSTING_SITE_MONITORING_HASH } from 'calypso/hosting/constants';
+import { useCompleteLaunchpadTaskWithNoticeOnLoad } from 'calypso/launchpad/hooks/use-complete-launchpad-task-with-notice-on-load';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	MetricsType,
@@ -513,6 +515,10 @@ const useErrorHttpCodeSeries = () => {
 };
 
 export const SiteMonitoring = ( { className }: { className?: string } ) => {
+	const initiallyLoadedWithTaskCompletionHash = useRef(
+		window.location.hash === HOSTING_SITE_MONITORING_HASH
+	);
+
 	const { __, _x } = useI18n();
 	const moment = useLocalizedMoment();
 	const timeRange = useTimeRange();
@@ -538,6 +544,13 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 		timeRange,
 		errorHttpCodes.statusCodes
 	);
+
+	useCompleteLaunchpadTaskWithNoticeOnLoad( {
+		taskSlug: 'site_monitoring_page',
+		enabled: initiallyLoadedWithTaskCompletionHash.current && ! isLoadingLineChart,
+		noticeId: 'site-monitoring-page-visited',
+		noticeText: 'You’ve explored the site monitoring page!',
+	} );
 
 	const startDate = moment( timeRange.start * 1000 );
 	const endDate = moment( timeRange.end * 1000 );

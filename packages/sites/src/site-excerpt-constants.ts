@@ -6,6 +6,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'is_coming_soon',
 	'is_private',
 	'is_deleted',
+	'is_vip',
 	'visible',
 	'launch_status',
 	'icon',

@@ -17,7 +17,7 @@ export const CardContentWrapper: FunctionComponent< Props > = ( { children, subt
 				subtitle={
 					subtitle ||
 					translate(
-						'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}.',
+						'Preview and troubleshoot changes before updating your production site. {{a}}Learn more{{/a}}',
 						{
 							components: {
 								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,

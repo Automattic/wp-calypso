@@ -16,6 +16,7 @@ class PrimaryHeader extends Component {
 					displayAt="2023-12-26 00:00Z"
 					closesAt="2023-12-31 00:00Z"
 					reopensAt="2024-01-02 07:00Z"
+					isGM={ false }
 				/>
 				<Card>
 					<img

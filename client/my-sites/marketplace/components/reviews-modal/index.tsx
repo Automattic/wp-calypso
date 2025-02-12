@@ -106,10 +106,11 @@ export const ReviewsModal = ( props: Props ) => {
 					<div className="marketplace-reviews-modal__summary">
 						<div className="marketplace-reviews-modal__stats">
 							<div className="marketplace-reviews-modal__ratings-average">
-								{ averageRating.toLocaleString( getLocaleSlug() ?? 'default', {
-									minimumFractionDigits: 1,
-									maximumFractionDigits: 1,
-								} ) }
+								{ numberOfReviews > 0 &&
+									averageRating.toLocaleString( getLocaleSlug() ?? 'default', {
+										minimumFractionDigits: 1,
+										maximumFractionDigits: 1,
+									} ) }
 							</div>
 							<div className="marketplace-reviews-modal__ratings">
 								<Rating rating={ normalizedRating } />

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
@@ -12,14 +11,8 @@ import {
 	initialDataViewsState,
 } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
-import Layout from 'calypso/a8c-for-agencies/components/layout';
-import LayoutBody from 'calypso/a8c-for-agencies/components/layout/body';
-import LayoutColumn from 'calypso/a8c-for-agencies/components/layout/column';
-import LayoutHeader, {
-	LayoutHeaderTitle as Title,
-	LayoutHeaderActions as Actions,
-} from 'calypso/a8c-for-agencies/components/layout/header';
-import LayoutTop from 'calypso/a8c-for-agencies/components/layout/top';
+import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
+import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_MARKETPLACE_PRODUCTS_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { REFERRAL_EMAIL_QUERY_PARAM_KEY } from 'calypso/a8c-for-agencies/constants';
@@ -28,10 +21,15 @@ import {
 	MARKETPLACE_TYPE_SESSION_STORAGE_KEY,
 	MARKETPLACE_TYPE_REFERRAL,
 } from 'calypso/a8c-for-agencies/sections/marketplace/hoc/with-marketplace-type';
+import LayoutBody from 'calypso/layout/hosting-dashboard/body';
+import LayoutColumn from 'calypso/layout/hosting-dashboard/column';
+import LayoutHeader, {
+	LayoutHeaderTitle as Title,
+	LayoutHeaderActions as Actions,
+} from 'calypso/layout/hosting-dashboard/header';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import MissingPaymentSettingsNotice from '../../common/missing-payment-settings-notice';
-import useFetchReferralInvoices from '../../hooks/use-fetch-referral-invoices';
 import useFetchReferrals from '../../hooks/use-fetch-referrals';
 import useGetTipaltiPayee from '../../hooks/use-get-tipalti-payee';
 import { getAccountStatus } from '../../lib/get-account-status';
@@ -55,9 +53,8 @@ export default function ReferralsOverview( {
 
 	const [ dataViewsState, setDataViewsState ] = useState< DataViewsState >( {
 		...initialDataViewsState,
-		layout: {
-			primaryField: 'client',
-		},
+		fields: [ 'completed-orders', 'pending-orders', 'commissions', 'subscription-status' ],
+		titleField: 'client',
 	} );
 	const [ requiredNoticeClose, setRequiredNoticeClosed ] = useState( false );
 
@@ -66,7 +63,6 @@ export default function ReferralsOverview( {
 	);
 
 	const { showFeedback, feedbackProps } = useShowFeedback( 'referral-complete' );
-	const isProductFeedbackEnabled = isEnabled( 'a4a-product-feedback' );
 
 	const isDesktop = useDesktopBreakpoint();
 
@@ -89,9 +85,6 @@ export default function ReferralsOverview( {
 		isFetching: isFetchingReferrals,
 		refetch: refetchReferrals,
 	} = useFetchReferrals( isAutomatedReferral );
-
-	const { data: referralInvoices, isFetching: isFetchingReferralInvoices } =
-		useFetchReferralInvoices( isAutomatedReferral );
 
 	const hasReferrals = !! referrals?.length;
 
@@ -181,7 +174,7 @@ export default function ReferralsOverview( {
 				</LayoutTop>
 
 				<LayoutBody>
-					{ showFeedback && isProductFeedbackEnabled ? (
+					{ showFeedback ? (
 						<A4AFeedback { ...feedbackProps } />
 					) : (
 						<LayoutBodyContent
@@ -191,8 +184,6 @@ export default function ReferralsOverview( {
 							isLoading={ isLoading }
 							dataViewsState={ dataViewsState }
 							setDataViewsState={ setDataViewsState }
-							referralInvoices={ referralInvoices ?? [] }
-							isFetchingInvoices={ isFetchingReferralInvoices }
 							isArchiveView={ isArchiveView }
 							onReferralRefetch={ refetchReferrals }
 						/>
@@ -205,7 +196,6 @@ export default function ReferralsOverview( {
 				<LayoutColumn wide>
 					<ReferralDetails
 						referral={ dataViewsState.selectedItem }
-						referralInvoices={ referralInvoices ?? [] }
 						isArchiveView={ isArchiveView }
 						closeSitePreviewPane={ () =>
 							setDataViewsState( {

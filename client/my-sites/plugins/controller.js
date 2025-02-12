@@ -23,11 +23,10 @@ import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
 import PluginListComponent from './main';
 import PluginDetails from './plugin-details';
-import PluginEligibility from './plugin-eligibility';
 import PluginNotFound from './plugin-not-found';
 import PluginBrowser from './plugins-browser';
+import PluginsDashboard from './plugins-dashboard';
 import { RelatedPluginsPage } from './related-plugins-page';
-
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
 
@@ -80,18 +79,6 @@ function renderPluginsBrowser( context ) {
 	} );
 }
 
-export function renderPluginWarnings( context, next ) {
-	const state = context.store.getState();
-	const site = getSelectedSite( state );
-	const pluginSlug = decodeURIComponent( context.params.plugin );
-
-	context.primary = createElement( PluginEligibility, {
-		siteSlug: site.slug,
-		pluginSlug,
-	} );
-	next();
-}
-
 export function redirectMailPoetUpgrade( context, next ) {
 	const state = context.store.getState();
 	const site = getSelectedSite( state );
@@ -115,6 +102,11 @@ export function plugins( context, next ) {
 
 	context.params.pluginFilter = filter;
 	renderPluginList( context, basePath );
+	next();
+}
+
+export function renderPluginsDashboard( context, next ) {
+	context.primary = <PluginsDashboard pluginSlug={ context.params.slug } />;
 	next();
 }
 
@@ -403,8 +395,7 @@ export function renderPluginsSidebar( context, next ) {
 				isCollapsed={ getShouldShowCollapsedGlobalSidebar(
 					state,
 					undefined,
-					context.section.group,
-					context.section.name
+					context.section.group
 				) }
 			/>
 		);

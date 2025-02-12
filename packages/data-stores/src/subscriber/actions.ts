@@ -1,6 +1,6 @@
 import * as oauthToken from '@automattic/oauth-token';
-import { wpcomRequest } from '../wpcom-request-controls';
-import {
+import wpcomProxyRequest from 'wpcom-proxy-request';
+import type {
 	AddSubscribersResponse,
 	GetSubscribersImportResponse,
 	GetSubscribersImportsResponse,
@@ -14,11 +14,17 @@ export function createActions() {
 	/**
 	 * ↓ Import subscribers by CSV
 	 */
-	const importCsvSubscribersStart = ( siteId: number, file?: File, emails: string[] = [] ) => ( {
+	const importCsvSubscribersStart = (
+		siteId: number,
+		file: File | undefined,
+		emails: string[],
+		categories: number[]
+	) => ( {
 		type: 'IMPORT_CSV_SUBSCRIBERS_START' as const,
 		siteId,
 		file,
 		emails,
+		categories,
 	} );
 
 	const importCsvSubscribersStartSuccess = ( siteId: number, jobId: number ) => ( {
@@ -38,32 +44,50 @@ export function createActions() {
 		job,
 	} );
 
-	function* importCsvSubscribers(
-		siteId: number,
-		file?: File,
-		emails: string[] = [],
-		parseOnly: boolean = false
-	) {
-		yield importCsvSubscribersStart( siteId, file, emails );
+	const importCsvSubscribers =
+		(
+			siteId: number,
+			file?: File,
+			emails: string[] = [],
+			categories: number[] = [],
+			parseOnly: boolean = false
+		) =>
+		async ( { dispatch }: ThunkArgs ) => {
+			dispatch.importCsvSubscribersStart( siteId, file, emails, categories );
 
-		try {
-			const token = oauthToken.getToken();
-			const data: ImportSubscribersResponse = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
-				method: 'POST',
-				apiNamespace: 'wpcom/v2',
-				token: typeof token === 'string' ? token : undefined,
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
-				formData: file && [ [ 'import', file, file.name ] ],
-				body: { emails, parse_only: parseOnly },
-			} );
+			try {
+				const token = oauthToken.getToken();
+				const formDataEntries: Array<
+					[ string, string | number | File ] | [ string, File, string ]
+				> = [
+					...( file ? [ [ 'import', file, file.name ] as [ string, File, string ] ] : [] ),
 
-			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
-		} catch ( error ) {
-			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
-		}
-	}
+					...categories.map(
+						( categoryId ) => [ 'categories[]', categoryId ] as [ string, number ]
+					),
+
+					...emails.map( ( email ) => [ 'emails[]', email ] as [ string, string ] ),
+
+					[ 'parse_only', String( parseOnly ) ] as [ string, string ],
+				];
+
+				const data = ( await wpcomProxyRequest( {
+					path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`,
+					method: 'POST',
+					apiNamespace: 'wpcom/v2',
+					token: typeof token === 'string' ? token : undefined,
+					formData: formDataEntries as ( string | File )[][],
+				} ) ) as ImportSubscribersResponse & { error?: { code: string; message: string } };
+
+				if ( data.upload_id ) {
+					dispatch.importCsvSubscribersStartSuccess( siteId, data.upload_id );
+				} else {
+					dispatch.importCsvSubscribersStartFailed( siteId, data as ImportSubscribersError );
+				}
+			} catch ( error ) {
+				dispatch.importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
+			}
+		};
 
 	/**
 	 * ↓ Add subscribers
@@ -84,27 +108,29 @@ export function createActions() {
 		siteId,
 	} );
 
-	function* addSubscribers( siteId: number, emails: string[] ) {
-		yield addSubscribersStart( siteId );
+	const addSubscribers =
+		( siteId: number, emails: string[] ) =>
+		async ( { dispatch }: ThunkArgs ) => {
+			dispatch.addSubscribersStart( siteId );
 
-		try {
-			const data: AddSubscribersResponse = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
-				method: 'POST',
-				apiNamespace: 'rest/v1.1',
-				body: {
-					invitees: emails,
-					role: 'follower',
-					source: 'calypso',
-					is_external: false,
-				},
-			} );
+			try {
+				const response: AddSubscribersResponse = await wpcomProxyRequest( {
+					path: `/sites/${ encodeURIComponent( siteId ) }/invites/new`,
+					method: 'POST',
+					apiNamespace: 'rest/v1.1',
+					body: {
+						invitees: emails,
+						role: 'follower',
+						source: 'calypso',
+						is_external: false,
+					},
+				} );
 
-			yield addSubscribersSuccess( siteId, data );
-		} catch ( err ) {
-			yield addSubscribersFailed( siteId );
-		}
-	}
+				dispatch.addSubscribersSuccess( siteId, response );
+			} catch {
+				dispatch.addSubscribersFailed( siteId );
+			}
+		};
 
 	/**
 	 * ↓ Get import
@@ -115,19 +141,21 @@ export function createActions() {
 		importJob,
 	} );
 
-	function* getSubscribersImport( siteId: number, importId: number ) {
-		try {
-			const token = oauthToken.getToken();
-			const data: GetSubscribersImportResponse = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import/${ importId }`,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-				token: typeof token === 'string' ? token : undefined,
-			} );
+	const getSubscribersImport =
+		( siteId: number, importId: number ) =>
+		async ( { dispatch }: ThunkArgs ) => {
+			try {
+				const token = oauthToken.getToken();
+				const importJob: GetSubscribersImportResponse = await wpcomProxyRequest( {
+					path: `/sites/${ encodeURIComponent( siteId ) }/subscribers/import/${ importId }`,
+					method: 'GET',
+					apiNamespace: 'wpcom/v2',
+					token: typeof token === 'string' ? token : undefined,
+				} );
 
-			yield getSubscribersImportSuccess( siteId, data );
-		} catch ( e ) {}
-	}
+				dispatch.getSubscribersImportSuccess( siteId, importJob );
+			} catch ( e ) {}
+		};
 
 	/**
 	 * ↓ Get imports
@@ -141,22 +169,24 @@ export function createActions() {
 		imports,
 	} );
 
-	function* getSubscribersImports( siteId: number, status?: ImportJobStatus ) {
-		try {
-			const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
-			const token = oauthToken.getToken();
-			const data: GetSubscribersImportsResponse = yield wpcomRequest( {
-				path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-				token: typeof token === 'string' ? token : undefined,
-			} );
+	const getSubscribersImports =
+		( siteId: number, status?: ImportJobStatus ) =>
+		async ( { dispatch }: ThunkArgs ) => {
+			try {
+				const path = `/sites/${ encodeURIComponent( siteId ) }/subscribers/import`;
+				const token = oauthToken.getToken();
+				const imports: GetSubscribersImportsResponse = await wpcomProxyRequest( {
+					path: ! status ? path : `${ path }?status=${ encodeURIComponent( status ) }`,
+					method: 'GET',
+					apiNamespace: 'wpcom/v2',
+					token: typeof token === 'string' ? token : undefined,
+				} );
 
-			yield getSubscribersImportsSuccess( siteId, data );
-		} catch ( error ) {
-			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
-		}
-	}
+				dispatch.getSubscribersImportsSuccess( siteId, imports );
+			} catch ( error ) {
+				dispatch.importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
+			}
+		};
 
 	return {
 		importCsvSubscribersStart,
@@ -176,6 +206,8 @@ export function createActions() {
 }
 
 export type ActionCreators = ReturnType< typeof createActions >;
+
+type ThunkArgs = { dispatch: ActionCreators };
 
 export type Action = ReturnType<
 	| ActionCreators[ 'importCsvSubscribersStart' ]

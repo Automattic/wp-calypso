@@ -3,7 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSiteData } from '../hooks/use-site-data';
 import { ONBOARD_STORE } from '../stores';
-import { Flow } from './internals/types';
+import { FlowV1 } from './internals/types';
 import siteSetup from './site-setup-flow';
 
 const { goalsToIntent } = Onboard.utils;
@@ -11,7 +11,7 @@ const { goalsToIntent } = Onboard.utils;
 /**
  * A variant of site-setup flow without goals step.
  */
-const siteSetupWithoutGoalsFlow: Flow = {
+const siteSetupWithoutGoalsFlow: FlowV1 = {
 	...siteSetup,
 	variantSlug: 'site-setup-wg',
 	useSteps() {
@@ -31,7 +31,7 @@ const siteSetupWithoutGoalsFlow: Flow = {
 		const { site } = useSiteData();
 
 		useEffect( () => {
-			setIntent( goalsToIntent( site?.options?.site_goals ?? [] ) );
+			setIntent( goalsToIntent( site?.options?.site_goals ?? [], false ) );
 			setGoals( site?.options?.site_goals ?? [] );
 		}, [ site, setIntent, setGoals ] );
 

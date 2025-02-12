@@ -5,8 +5,8 @@ import AsyncLoad from 'calypso/components/async-load';
 import './style.scss';
 
 interface QrCodeProps {
-	campaign: string;
-	size: number;
+	campaign?: string;
+	size?: number;
 }
 
 export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodeProps ) => {

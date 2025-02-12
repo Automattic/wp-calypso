@@ -25,29 +25,45 @@ export const useStepNavigationWithTracking = ( {
 	flow,
 	currentStepRoute,
 	navigate,
-}: Params< ReturnType< Flow[ 'useSteps' ] > > ) => {
+}: Params< StepperStep[] > ) => {
 	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
-	const intent =
-		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(), [] ) ?? '';
+	const { intent, goals } = useSelect( ( select ) => {
+		const onboardStore = select( ONBOARD_STORE ) as OnboardSelect;
+		return {
+			intent: onboardStore.getIntent(),
+			goals: onboardStore.getGoals(),
+		};
+	}, [] );
+
 	const tracksEventPropsFromFlow = flow.useTracksEventProps?.();
 
 	const handleRecordStepNavigation = useCallback(
 		( {
 			event,
 			providedDependencies,
-			additionalProps,
-		}: Omit< RecordStepNavigationParams, 'step' | 'intent' | 'flow' | 'variant' > ) => {
+		}: Omit< RecordStepNavigationParams, 'step' | 'intent' | 'goals' | 'flow' | 'variant' > ) => {
+			const { eventProps, ...dependencies } = providedDependencies || {};
+
 			recordStepNavigation( {
 				event,
-				intent,
+				intent: intent ?? '',
+				goals: goals ?? [],
 				flow: flow.name,
 				step: currentStepRoute,
 				variant: flow.variantSlug,
-				providedDependencies,
-				additionalProps,
+				providedDependencies: dependencies,
+				additionalProps: {
+					...( eventProps ?? {} ),
+					// Don't add eventProps if `useTracksEventProps` is still loading.
+					// It's not tight, but it's a trade-off to avoid firing events with incorrect props.
+					// It's a tiny edge case where the use navigates before this hook is ready.
+					...( tracksEventPropsFromFlow?.isLoading
+						? undefined
+						: tracksEventPropsFromFlow?.eventsProperties?.[ event ] ?? {} ),
+				},
 			} );
 		},
-		[ intent, currentStepRoute, flow ]
+		[ intent, tracksEventPropsFromFlow, goals, currentStepRoute, flow ]
 	);
 
 	return useMemo(
@@ -58,7 +74,6 @@ export const useStepNavigationWithTracking = ( {
 						handleRecordStepNavigation( {
 							event: STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
 							providedDependencies,
-							additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT ],
 						} );
 					}
 					stepNavigation.submit?.( providedDependencies, ...params );
@@ -68,9 +83,10 @@ export const useStepNavigationWithTracking = ( {
 				exitFlow: ( to: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
-						additionalProps: {
-							to,
-							...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW ] ?? {} ),
+						providedDependencies: {
+							eventProps: {
+								to,
+							},
 						},
 					} );
 					stepNavigation.exitFlow?.( to );
@@ -80,7 +96,6 @@ export const useStepNavigationWithTracking = ( {
 				goBack: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK,
-						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_BACK ],
 					} );
 					stepNavigation.goBack?.();
 				},
@@ -89,7 +104,6 @@ export const useStepNavigationWithTracking = ( {
 				goNext: () => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT,
-						additionalProps: tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_NEXT ],
 					} );
 					stepNavigation.goNext?.();
 				},
@@ -98,15 +112,16 @@ export const useStepNavigationWithTracking = ( {
 				goToStep: ( step: string ) => {
 					handleRecordStepNavigation( {
 						event: STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO,
-						additionalProps: {
-							to: step,
-							...( tracksEventPropsFromFlow?.[ STEPPER_TRACKS_EVENT_STEP_NAV_GO_TO ] ?? {} ),
+						providedDependencies: {
+							eventProps: {
+								to: step,
+							},
 						},
 					} );
 					stepNavigation.goToStep?.( step );
 				},
 			} ),
 		} ),
-		[ handleRecordStepNavigation, tracksEventPropsFromFlow, stepNavigation ]
+		[ handleRecordStepNavigation, stepNavigation ]
 	);
 };

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button, FormLabel, Gridicon } from '@automattic/components';
 import { guessTimezone, localizeUrl } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -19,6 +18,8 @@ import scrollToAnchor from 'calypso/lib/scroll-to-anchor';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import SiteSettingsForm from 'calypso/sites/settings/site/form';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import getTimezonesLabels from 'calypso/state/selectors/get-timezones-labels';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
@@ -28,6 +29,7 @@ import {
 	getSiteOption,
 	isAdminInterfaceWPAdmin,
 	isJetpackSite,
+	isWpcomSite,
 } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -41,6 +43,7 @@ import wrapSettingsForm from './wrap-settings-form';
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
 		setTimeout( () => scrollToAnchor( { offset: 15 } ) );
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
 	}
 
 	getIncompleteLocaleNoticeMessage = ( language ) => {
@@ -374,6 +377,7 @@ export class SiteSettingsFormGeneral extends Component {
 	render() {
 		const {
 			handleSubmitForm,
+			isRemoveDuplicateViewsExperimentEnabled,
 			isRequestingSettings,
 			isSavingSettings,
 			site,
@@ -417,29 +421,38 @@ export class SiteSettingsFormGeneral extends Component {
 						</Card>
 					</>
 				) }
-				{ ! isEnabled( 'untangling/hosting-menu' ) && <SiteSettingsForm { ...this.props } /> }
+				{ ! isRemoveDuplicateViewsExperimentEnabled && <SiteSettingsForm { ...this.props } /> }
 				{ ! isDevelopmentSite && this.renderAdminInterface() }
 			</div>
 		);
 	}
 }
 
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	return {
-		isAtomicAndEditingToolkitDeactivated:
-			isAtomicSite( state, siteId ) &&
-			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
-		adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
-		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
-		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-		selectedSite: getSelectedSite( state ),
-		siteIsJetpack: isJetpackSite( state, siteId ),
-		siteSlug: getSelectedSiteSlug( state ),
-		timezonesLabels: getTimezonesLabels( state ),
-	};
-} );
+const connectComponent = connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const isRemoveDuplicateViewsExperimentEnabled =
+			getIsRemoveDuplicateViewsExperimentEnabled( state );
+		return {
+			isAtomicAndEditingToolkitDeactivated:
+				isAtomicSite( state, siteId ) &&
+				getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
+			adminInterfaceIsWPAdmin: isAdminInterfaceWPAdmin( state, siteId ),
+			isRemoveDuplicateViewsExperimentEnabled,
+			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
+			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+			selectedSite: getSelectedSite( state ),
+			siteIsJetpack: isJetpackSite( state, siteId ),
+			siteIsWpcom: isWpcomSite( state, siteId ),
+			siteSlug: getSelectedSiteSlug( state ),
+			timezonesLabels: getTimezonesLabels( state ),
+		};
+	},
+	{
+		getRemoveDuplicateViewsExperimentAssignment,
+	}
+);
 
 const getFormSettings = ( settings ) => {
 	const defaultSettings = {
@@ -448,6 +461,7 @@ const getFormSettings = ( settings ) => {
 		lang_id: '',
 		timezone_string: '',
 		blog_public: '',
+		jetpack_holiday_snow_enabled: false,
 		wpcom_coming_soon: '',
 		wpcom_data_sharing_opt_out: false,
 		wpcom_legacy_contact: '',
@@ -471,6 +485,8 @@ const getFormSettings = ( settings ) => {
 		timezone_string: settings.timezone_string,
 
 		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
+
+		jetpack_holiday_snow_enabled: !! settings.jetpack_holiday_snow_enabled,
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_data_sharing_opt_out: !! settings.wpcom_data_sharing_opt_out,

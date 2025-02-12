@@ -1,5 +1,5 @@
 import { Card, FormLabel } from '@automattic/components';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -34,12 +34,10 @@ class NotificationSubscriptions extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	handleCheckboxEvent( action ) {
+	handleCheckboxEvent( action, invert = false ) {
 		return ( event ) => {
-			const eventAction = 'Clicked ' + action + ' checkbox';
-			const optionValue = event.target.checked ? 1 : 0;
-
-			this.props.recordGoogleEvent( 'Me', eventAction, 'checked', optionValue );
+			const optionValue = invert ? ! event.target.checked : event.target.checked;
+			this.props.recordGoogleEvent( 'Me', `Clicked ${ action } checkbox`, 'checked', +optionValue );
 		};
 	}
 
@@ -58,7 +56,7 @@ class NotificationSubscriptions extends Component {
 	}
 
 	render() {
-		const { locale, teams } = this.props;
+		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
 
 		return (
@@ -212,11 +210,7 @@ class NotificationSubscriptions extends Component {
 						</FormFieldset>
 
 						<FormFieldset>
-							<FormLegend>
-								{ locale === 'en' || i18n.hasTranslation( 'Pause emails' )
-									? this.props.translate( 'Pause emails' )
-									: this.props.translate( 'Block emails' ) }
-							</FormLegend>
+							<FormLegend>{ this.props.translate( 'Pause emails' ) }</FormLegend>
 							<FormLabel>
 								<FormCheckbox
 									checked={ this.props.getSetting( 'subscription_delivery_email_blocked' ) }
@@ -227,37 +221,35 @@ class NotificationSubscriptions extends Component {
 									onClick={ this.handleCheckboxEvent( 'Block All Notification Emails' ) }
 								/>
 								<span>
-									{ locale === 'en' ||
-									i18n.hasTranslation(
-										'Pause all email updates from sites you’re following on WordPress.com'
-									)
-										? this.props.translate(
-												'Pause all email updates from sites you’re following on WordPress.com'
-										  )
-										: this.props.translate(
-												'Block all email updates from blogs you’re following on WordPress.com'
-										  ) }
+									{ this.props.translate(
+										'Pause all email updates from sites you’re subscribed to on WordPress.com'
+									) }
 								</span>
 							</FormLabel>
+							<FormSettingExplanation>
+								{ this.props.translate(
+									'Newsletters are sent via WordPress.com. If you pause emails, you will not receive newsletters from the sites you are subscribed to.'
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						{ isAutomattician && (
 							<FormFieldset>
-								<FormLegend>
-									Disable auto-follow P2 posts upon commenting (Automatticians only)
-								</FormLegend>
+								<FormLegend>Auto-follow P2 posts (Automatticians only)</FormLegend>
 								<FormLabel>
 									<FormCheckbox
-										checked={ this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
+										checked={ ! this.props.getSetting( 'p2_disable_autofollow_on_comment' ) }
 										disabled={ this.props.getDisabledState() }
 										id="p2_disable_autofollow_on_comment"
 										name="p2_disable_autofollow_on_comment"
 										onChange={ this.props.toggleSetting }
-										onClick={ this.handleCheckboxEvent( 'Disable auto-follow P2 Upon Comment' ) }
+										onClick={ this.handleCheckboxEvent(
+											'Enable auto-follow P2 upon comment',
+											true
+										) }
 									/>
 									<span>
-										Don't automatically subscribe to notifications for a P2 post whenever you leave
-										a comment on it.
+										Automatically subscribe to P2 post notifications when you leave a comment.
 									</span>
 								</FormLabel>
 							</FormFieldset>

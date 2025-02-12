@@ -10,7 +10,6 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
-import HundredYearDomainNotTransferrableNotice from 'calypso/my-sites/domains/domain-management/components/domain/hundred-year-domain-not-transferrable-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -128,13 +127,14 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	}
 
 	render() {
-		const { selectedSite, selectedDomainName, currentRoute } = this.props;
+		const { selectedSite, selectedDomainName, currentRoute, showHeader } = this.props;
 		const slug = selectedSite?.slug;
 		const componentClassName = 'transfer-domain-to-other-site';
+
 		if ( ! this.isDataReady() ) {
 			return (
 				<DomainMainPlaceholder
-					breadcrumbs={ this.renderHeader }
+					breadcrumbs={ showHeader && this.renderHeader }
 					backHref={ domainManagementTransfer( slug, selectedDomainName, currentRoute ) }
 				/>
 			);
@@ -147,7 +147,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 					group={ componentClassName }
 					section={ componentClassName }
 				/>
-				{ this.renderHeader() }
+				{ showHeader && this.renderHeader() }
 				<div className={ `${ componentClassName }__container` }>
 					<div className={ `${ componentClassName }__main` }>{ this.renderSection() }</div>
 				</div>
@@ -211,10 +211,6 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 			return <NonOwnerCard { ...propsWithoutChildren } />;
 		}
 
-		if ( domain?.isHundredYearDomain ) {
-			return <HundredYearDomainNotTransferrableNotice />;
-		}
-
 		if ( aftermarketAuction ) {
 			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
 		}
@@ -267,6 +263,7 @@ export default connect(
 			domain = getSelectedDomain( ownProps );
 		}
 		const siteId = getSelectedSiteId( state );
+
 		return {
 			currentRoute: getCurrentRoute( state ),
 			currentUserCanManage: typeof domain === 'object' && domain.currentUserCanManage,
@@ -276,6 +273,7 @@ export default connect(
 			isDomainOnly: isDomainOnlySite( state, siteId ),
 			isMapping: Boolean( domain ) && isMappedDomain( domain ),
 			sites: getSites( state ) as TransferDomainToOtherSiteStateProps[ 'sites' ],
+			showHeader: ownProps?.context?.params?.showPageHeader ?? true,
 		};
 	},
 	{

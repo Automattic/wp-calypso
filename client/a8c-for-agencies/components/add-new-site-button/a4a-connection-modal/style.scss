@@ -18,12 +18,14 @@
 .a4a-connection-modal__input-container {
 	display: flex;
 	gap: 16px;
-	align-items: flex-end;
 	flex-direction: column;
 
 	.form-fieldset {
 		margin: 0;
-		width: 70%;
+
+		@include break-small {
+			width: 70%;
+		}
 	}
 
 	.button {
@@ -31,7 +33,7 @@
 	}
 
 	@include break-small {
-
+		align-items: flex-end;
 		flex-direction: row;
 	}
 }

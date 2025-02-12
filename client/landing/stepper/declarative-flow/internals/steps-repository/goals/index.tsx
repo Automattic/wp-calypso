@@ -5,10 +5,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
+import { useGoalsFirstExperiment } from 'calypso/landing/stepper/declarative-flow/helpers/use-goals-first-experiment';
 import { isGoalsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useExperiment } from 'calypso/lib/explat';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import DashboardIcon from './dashboard-icon';
 import { GoalsCaptureContainer } from './goals-capture-container';
@@ -22,6 +23,7 @@ type KebabToSnakeCase< S extends string > = S extends `${ infer T }${ infer U }`
 	: S;
 
 type TracksGoalsSelectEventProperties = {
+	flow: string;
 	goals: string;
 	combo: string;
 	total: number;
@@ -43,19 +45,12 @@ const refGoals: Record< string, Onboard.SiteGoal[] > = {
 /**
  * The goals capture step
  */
-const GoalsStep: Step = ( { navigation } ) => {
-	const [ isAddedGoalsExpLoading, addedGoalsExpAssignment ] = useExperiment(
-		'calypso_onboarding_goals_step_added_goals'
-	);
-	const isAddedGoalsExp = addedGoalsExpAssignment?.variationName === 'treatment';
-
+const GoalsStep: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
-	const whatAreYourGoalsText = isAddedGoalsExp
-		? translate( 'What would you like to do?' )
-		: translate( 'What are your goals?' );
-	const subHeaderText = isAddedGoalsExp
-		? translate( 'Pick one or more goals and we’ll tailor the setup experience for you.' )
-		: translate( 'Tell us what would you like to accomplish with your website.' );
+	const whatAreYourGoalsText = translate( 'What would you like to do?' );
+	const subHeaderText = translate(
+		'Pick one or more goals and we’ll tailor the setup experience for you.'
+	);
 
 	const goals = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
@@ -63,6 +58,9 @@ const GoalsStep: Step = ( { navigation } ) => {
 	);
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
+
+	const [ , isGoalsAtFrontExperiment ] = useGoalsFirstExperiment();
+	const [ , isIntentNewsletterGoalEnabled ] = useGoalsFirstCumulativeExperience();
 
 	useEffect( () => {
 		resetIntent();
@@ -84,9 +82,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 			...commonEventProps,
 			intent,
 			goals: serializeGoals( goals ),
-			combo: goals.sort().join( ',' ),
+			combo: goals.slice().sort().join( ',' ),
 			total: goals.length,
 			is_goals_big_sky_eligible: isGoalsBigSkyEligible( goals ),
+			flow,
 		};
 
 		goals.forEach( ( goal, i ) => {
@@ -105,13 +104,16 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const recordNavigationSelectTracksEvent = ( intent: Onboard.SiteIntent, action: string ) => {
 		recordTracksEvent( 'calypso_signup_intent_select', { intent } );
-		recordTracksEvent( 'calypso_signup_goals_nav_click', { action } );
+		recordTracksEvent( 'calypso_signup_goals_nav_click', {
+			action,
+			is_goals_first: isGoalsAtFrontExperiment,
+		} );
 	};
 
 	const getStepSubmissionHandler =
 		( action: string, eventProps: Record< string, unknown > = {} ) =>
 		() => {
-			const intent = goalsToIntent( goals );
+			const intent = goalsToIntent( goals, isIntentNewsletterGoalEnabled );
 			setIntent( intent );
 
 			recordGoalsSelectTracksEvent( goals, intent );
@@ -120,7 +122,7 @@ const GoalsStep: Step = ( { navigation } ) => {
 			navigation.submit?.( { intent, ...eventProps } );
 		};
 
-	const handleSkip = getStepSubmissionHandler( 'skip', { shouldSkipSubmitTracking: true } );
+	const handleSkip = getStepSubmissionHandler( 'skip' );
 	const handleNext = getStepSubmissionHandler( 'next' );
 
 	const handleImportClick = () => {
@@ -161,10 +163,6 @@ const GoalsStep: Step = ( { navigation } ) => {
 
 	const isMediumOrBiggerScreen = useViewportMatch( 'small', '>=' );
 
-	if ( isAddedGoalsExpLoading ) {
-		return null;
-	}
-
 	return (
 		<>
 			<DocumentHead title={ whatAreYourGoalsText } />
@@ -173,18 +171,14 @@ const GoalsStep: Step = ( { navigation } ) => {
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 				stepName="goals-step"
-				onSkip={ isAddedGoalsExp ? handleSkip : handleDashboardClick }
+				onSkip={ handleSkip }
 				goNext={ handleNext }
 				nextLabelText={ translate( 'Next' ) }
-				skipLabelText={ isAddedGoalsExp ? translate( 'Skip' ) : translate( 'Skip to dashboard' ) }
+				skipLabelText={ translate( 'Skip' ) }
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
 					<>
-						<SelectGoals
-							selectedGoals={ goals }
-							onChange={ setGoals }
-							isAddedGoalsExp={ isAddedGoalsExp }
-						/>
+						<SelectGoals selectedGoals={ goals } onChange={ setGoals } />
 						{ isMediumOrBiggerScreen && (
 							<Button
 								__next40pxDefaultSize
@@ -192,18 +186,18 @@ const GoalsStep: Step = ( { navigation } ) => {
 								variant="primary"
 								onClick={ handleNext }
 							>
-								{ isAddedGoalsExp ? translate( 'Next' ) : translate( 'Continue' ) }
+								{ translate( 'Next' ) }
 							</Button>
 						) }
-						{ isAddedGoalsExp && (
-							<div className="select-goals__alternative-flows-container">
-								<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
-									{ translate( 'Import or migrate an existing site' ) }
-								</Button>
-								<span className="select-goals__link-separator" />
-								<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
-									{ translate( 'Let us build a custom site for you' ) }
-								</Button>
+						<div className="select-goals__alternative-flows-container">
+							<Button variant="link" onClick={ handleImportClick } className="select-goals__link">
+								{ translate( 'Import or migrate an existing site' ) }
+							</Button>
+							<span className="select-goals__link-separator" />
+							<Button variant="link" onClick={ handleDIFMClick } className="select-goals__link">
+								{ translate( 'Let us build a custom site for you' ) }
+							</Button>
+							{ ! isGoalsAtFrontExperiment && (
 								<Button
 									variant="link"
 									onClick={ handleDashboardClick }
@@ -212,8 +206,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 									<DashboardIcon />
 									{ translate( 'Skip to dashboard' ) }
 								</Button>
-							</div>
-						) }
+							) }
+						</div>
 					</>
 				}
 			/>

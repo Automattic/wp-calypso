@@ -32,6 +32,10 @@ export type HorizontalBarListItemProps = {
 	 * @property {boolean} hasNoBackground - don't render the background bar and adjust indentation
 	 */
 	hasNoBackground?: boolean;
+	/**
+	 * @property {Function} formatValue - function to format the value display. Can optionally receive the full item data.
+	 */
+	formatValue?: ( value: number, item?: StatDataObject ) => React.ReactNode;
 };
 
 type StatDataObject = {
@@ -75,6 +79,7 @@ export type StatsCardProps = {
 	footerAction?: {
 		label?: string;
 		url?: string;
+		onClick?: ( event?: React.MouseEvent | React.KeyboardEvent ) => void;
 	};
 	/**
 	 * @property {boolean} isEmpty - renders an empty card with a message (`emptyMessage`) when true. It doesn't render column labels.

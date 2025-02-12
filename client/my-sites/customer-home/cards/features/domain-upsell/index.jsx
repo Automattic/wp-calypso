@@ -228,7 +228,7 @@ export function RenderDomainUpsell( {
 	const illustrationHeader = domainSuggestionName ? domainNameSVG : null;
 
 	return (
-		<Card className="domain-upsell__card customer-home__card">
+		<Card className="domain-upsell__card customer-home__card is-large-hero">
 			<QueryProductsList />
 			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
 			<div>

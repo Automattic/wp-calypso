@@ -7,6 +7,7 @@ type StepData = Record< string, unknown > & {
 	path: string;
 	intent: SiteIntent;
 	previousStep: string;
+	nextStep?: string;
 };
 
 export const stepData: Reducer< StepData | null, StepperInternalAction > = (

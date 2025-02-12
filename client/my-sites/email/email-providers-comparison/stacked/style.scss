@@ -55,3 +55,14 @@
 .email-providers-stacked-comparison__notice {
 	margin-top: 24px;
 }
+
+.context-all-domain-management {
+
+	.card.action-panel {
+		border-radius: 4px;
+	}
+
+	.form-text-input-with-affixes input {
+		border-radius: 2px 0 0 2px !important;
+	}
+}

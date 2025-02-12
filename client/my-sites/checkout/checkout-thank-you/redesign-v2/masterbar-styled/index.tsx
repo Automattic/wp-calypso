@@ -2,6 +2,7 @@ import { Global, css } from '@emotion/react';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { DefaultMasterbarContact } from './default-contact';
 import './style.scss';
 
@@ -37,7 +38,10 @@ const MasterbarStyled = ( {
 				{ backText }
 			</Item>
 		) }
-		{ showContact && contact }
+
+		{ showContact && contact && (
+			<CalypsoShoppingCartProvider>{ contact }</CalypsoShoppingCartProvider>
+		) }
 	</Masterbar>
 );
 

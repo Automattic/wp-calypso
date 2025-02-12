@@ -12,7 +12,7 @@ class SubscriptionManagementBackButton extends Component {
 			page.current.includes( 'referrer=management' ) && (
 				<Button
 					className="subscription-management-back-button"
-					onClick={ () => page( '/read/subscriptions' ) }
+					onClick={ () => page( '/reader/subscriptions' ) }
 					icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
 				>
 					{ this.props.translate( 'Manage all subscriptions' ) }

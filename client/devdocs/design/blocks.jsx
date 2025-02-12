@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import PlanPrice from '@automattic/components/src/plan-price/docs/example';
 import clsx from 'clsx';
@@ -11,17 +10,13 @@ import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/exa
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
-import { CategoryPillNavigationExample } from 'calypso/blocks/category-pill-navigation/docs/example';
-import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import CommentButtons from 'calypso/blocks/comment-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
-import DailyPostButton from 'calypso/blocks/daily-post-button/docs/example';
 import DataCenterPicker from 'calypso/blocks/data-center-picker/docs/example';
 import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
-import DomainTip from 'calypso/blocks/domain-tip/docs/example';
 import FollowButton from 'calypso/blocks/follow-button/docs/example';
 import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt/docs/example';
@@ -35,7 +30,6 @@ import PostShare from 'calypso/blocks/post-share/docs/example';
 import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
-import ReaderCombinedCard from 'calypso/blocks/reader-combined-card/docs/example';
 import ReaderExportButton from 'calypso/blocks/reader-export-button/docs/example';
 import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video/docs/example';
 import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example';
@@ -96,9 +90,6 @@ export default class AppComponents extends Component {
 						<HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 							{ slugToCamelCase( this.props.component ) }
 						</HeaderCake>
-						{ isEnabled( 'devdocs/color-scheme-picker' ) && (
-							<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-						) }
 					</Fragment>
 				) : (
 					<div>
@@ -116,9 +107,6 @@ export default class AppComponents extends Component {
 					filter={ this.state.filter }
 					section="blocks"
 				>
-					{ isEnabled( 'devdocs/color-scheme-picker' ) && (
-						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
-					) }
 					<AnnouncementModalExample readmeFilePath="announcement-modal" />
 					<AllSites readmeFilePath="all-sites" />
 					<AuthorSelector readmeFilePath="author-selector" />
@@ -144,21 +132,18 @@ export default class AppComponents extends Component {
 					<Theme />
 					<ThemesListExample />
 					<PlanCompareCard />
-					<DomainTip />
 					<RelatedPostCard />
 					<ReaderAuthorLink readmeFilePath="reader-author-link" />
 					<ReaderSubscriptionListItem />
 					<ReaderSiteStreamLink readmeFilePath="reader-site-stream-link" />
 					<AuthorCompactProfile />
 					<ReaderPostCard />
-					<ReaderCombinedCard />
 					<PlanPrice />
 					<PostShare readmeFilePath="post-share" />
 					<PlanThankYouCard readmeFilePath="plan-thank-you-card" />
 					<DismissibleCard readmeFilePath="dismissible-card" />
 					<ReaderAvatar readmeFilePath="reader-avatar" />
 					<ReaderPostOptionsMenu readmeFilePath="reader-post-options-menu" />
-					<DailyPostButton readmeFilePath="daily-post-button" />
 					<PostLikes readmeFilePath="post-likes" />
 					<ReaderFeaturedVideo readmeFilePath="reader-featured-video" />
 					<ReaderExportButton readmeFilePath="reader-export-button" />
@@ -175,7 +160,6 @@ export default class AppComponents extends Component {
 					<UpsellNudge />
 					<JetpackReviewPrompt readmeFilePath="jetpack-review-prompt" />
 					<ReaderJoinConversationDialogExample readmeFilePath="reader-join-conversation" />
-					<CategoryPillNavigationExample readmeFilePath="category-pill-navigation" />
 				</Collection>
 			</Main>
 		);

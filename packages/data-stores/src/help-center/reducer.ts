@@ -68,6 +68,17 @@ const isChatLoaded: Reducer< boolean, HelpCenterAction > = ( state = false, acti
 	return state;
 };
 
+const areSoundNotificationsEnabled: Reducer< boolean, HelpCenterAction > = (
+	state = true,
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED':
+			return action.areSoundNotificationsEnabled;
+	}
+	return state;
+};
+
 const zendeskClientId: Reducer< string, HelpCenterAction > = ( state = '', action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_ZENDESK_CLIENT_ID':
@@ -148,6 +159,14 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT':
+			return action.allow;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -160,11 +179,13 @@ const reducer = combineReducers( {
 	hasSeenWhatsNewModal,
 	isMinimized,
 	isChatLoaded,
+	areSoundNotificationsEnabled,
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	allowPremiumSupport,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1,5 +1,6 @@
-import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS, ACCOUNT_RESTORE } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/me/account/close';
+import 'calypso/state/data-layer/wpcom/me/account/restore';
 import 'calypso/state/account/init';
 
 export function closeAccount() {
@@ -8,8 +9,16 @@ export function closeAccount() {
 	};
 }
 
-export function closeAccountSuccess() {
+export function closeAccountSuccess( response ) {
 	return {
 		type: ACCOUNT_CLOSE_SUCCESS,
+		payload: response,
+	};
+}
+
+export function restoreAccount( token ) {
+	return {
+		type: ACCOUNT_RESTORE,
+		payload: { token },
 	};
 }

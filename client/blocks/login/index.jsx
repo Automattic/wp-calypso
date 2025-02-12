@@ -18,18 +18,16 @@ import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
-import { getPluginTitle, getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
+import { getPluginTitle, getSignupUrl } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isA4AOAuth2Client,
-	isWooOAuth2Client,
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
-import { addQueryArgs } from 'calypso/lib/route';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
@@ -49,18 +47,19 @@ import {
 	getSocialAccountIsLinking,
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
-import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { isPasswordlessAccount } from 'calypso/state/login/utils';
 import { logoutUser } from 'calypso/state/logout/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
-import isWooPasswordlessJPCFlow from 'calypso/state/selectors/is-woo-passwordless-jpc-flow';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
 import LoginForm from './login-form';
@@ -74,6 +73,7 @@ class Login extends Component {
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
 		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
+		isFromAkismet: PropTypes.bool,
 		isFromMigrationPlugin: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
@@ -95,7 +95,6 @@ class Login extends Component {
 		onTwoFactorRequested: PropTypes.func,
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
-		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
@@ -103,7 +102,9 @@ class Login extends Component {
 		isSignupExistingAccount: PropTypes.bool,
 		emailRequested: PropTypes.bool,
 		isSendingEmail: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
+		isWCCOM: PropTypes.bool,
+		isWoo: PropTypes.bool,
 		from: PropTypes.string,
 	};
 
@@ -199,9 +200,8 @@ class Login extends Component {
 			currentUser,
 			twoFactorEnabled,
 			loginEmailAddress,
-			isWoo,
+			isWCCOM,
 			isBlazePro,
-			isPartnerSignup,
 		} = this.props;
 
 		return (
@@ -209,7 +209,7 @@ class Login extends Component {
 			! socialConnect &&
 			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
-			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) && ! isBlazePro ) &&
+			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
@@ -222,14 +222,13 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
-		} else if ( this.props.isWoo || this.props.isGravPoweredClient ) {
+		} else if ( this.props.isWCCOM || this.props.isGravPoweredClient ) {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
-					isPartnerSignup: this.props.isPartnerSignup,
 					// Pass oauth2 and redirectTo query params so that we can get the correct signup url for the user
 					oauth2ClientId: this.props.oauth2Client?.id,
 					redirectTo: this.props.redirectTo,
@@ -242,7 +241,6 @@ class Login extends Component {
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
-					isPartnerSignup: this.props.isPartnerSignup,
 					from: this.props.currentQuery?.from,
 				} )
 			);
@@ -323,29 +321,21 @@ class Login extends Component {
 			pathname,
 			locale,
 			signupUrl,
-			isWoo,
-			isWooPasswordless,
-			isWooPasswordlessJPC,
+			isWCCOM,
+			isWooJPC,
 		} = this.props;
 
 		if ( signupUrl ) {
 			return signupUrl;
 		}
 
-		if ( isWoo && isEmpty( currentQuery ) ) {
+		if ( isWCCOM && isEmpty( currentQuery ) ) {
 			// if query is empty, return to the woo start flow
 			return 'https://woocommerce.com/start/';
 		}
 
-		if ( isWooPasswordlessJPC && isEmpty( currentQuery ) ) {
+		if ( isWooJPC && isEmpty( currentQuery ) ) {
 			return getSignupUrl( initialQuery, currentRoute, oauth2Client, locale, pathname );
-		}
-
-		if ( isWooPasswordless ) {
-			return addQueryArgs(
-				{ 'woo-passwordless': 'yes' },
-				getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname )
-			);
 		}
 
 		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
@@ -356,6 +346,7 @@ class Login extends Component {
 			action,
 			currentQuery,
 			fromSite,
+			isFromAkismet,
 			isFromMigrationPlugin,
 			isFromAutomatticForAgenciesPlugin,
 			isGravPoweredClient,
@@ -364,11 +355,10 @@ class Login extends Component {
 			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
 			isP2Login,
-			isPartnerSignup,
 			isSignupExistingAccount,
 			isSocialFirst,
 			isWhiteLogin,
-			isWoo,
+			isWCCOM,
 			linkingSocialService,
 			oauth2Client,
 			privateSite,
@@ -376,7 +366,7 @@ class Login extends Component {
 			translate,
 			twoStepNonce,
 			wccomFrom,
-			isWooPasswordlessJPC,
+			isWooJPC,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -407,7 +397,7 @@ class Login extends Component {
 					{ translate(
 						'It happens to the best of us. Enter the email address associated with your WordPress.com account and we’ll send you a link to reset your password.'
 					) }
-					{ isWooPasswordlessJPC && (
+					{ isWooJPC && (
 						<span>
 							<br />
 							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
@@ -439,10 +429,8 @@ class Login extends Component {
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
-			if ( isWoo ) {
-				if ( isPartnerSignup ) {
-					headerText = translate( 'Log in to your account' );
-				} else if ( wccomFrom === 'cart' ) {
+			if ( isWCCOM ) {
+				if ( wccomFrom === 'cart' ) {
 					preHeader = <WooCommerceConnectCartHeader />;
 					headerText = translate( 'Log in with a WordPress.com account' );
 					postHeader = (
@@ -455,7 +443,7 @@ class Login extends Component {
 				} else if ( this.props.twoFactorEnabled ) {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 				} else if ( currentQuery.lostpassword_flow ) {
-					headerText = null;
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					postHeader = (
 						<p className="login__header-subtitle">
 							{ translate(
@@ -463,7 +451,7 @@ class Login extends Component {
 							) }
 						</p>
 					);
-				} else if ( this.showContinueAsUser() && this.props.isWooPasswordless ) {
+				} else if ( this.showContinueAsUser() ) {
 					headerText = (
 						<h3>
 							{ wccomFrom === 'nux'
@@ -478,12 +466,12 @@ class Login extends Component {
 								: translate( 'Select the account you’d like to use.' ) }
 						</p>
 					);
-				} else if ( this.props.isWooPasswordless ) {
+				} else {
 					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
 					const poweredByWpCom = (
 						<>
-							{ translate( 'Log in with your WordPress.com account.' ) }
-							<br />
+							{ translate( 'Log in with your WordPress.com account.' ) }{ ' ' }
+							<br className="hide-on-desktop" />
 						</>
 					);
 
@@ -496,32 +484,6 @@ class Login extends Component {
 									br: <br />,
 								},
 							} ) }
-						</p>
-					);
-				} else {
-					headerText = <h3>{ translate( "Let's get started" ) }</h3>;
-					const poweredByWpCom =
-						wccomFrom === 'nux' ? (
-							<>
-								{ translate( 'All Woo Express stores are powered by WordPress.com!' ) }
-								<br />
-							</>
-						) : null;
-					const accountSelectionOrLoginToContinue = this.showContinueAsUser()
-						? translate( "First, select the account you'd like to use." )
-						: translate(
-								"Please, log in to continue. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-								{
-									components: {
-										signupLink,
-										br: <br />,
-									},
-								}
-						  );
-					postHeader = (
-						<p className="login__header-subtitle">
-							{ poweredByWpCom }
-							{ accountSelectionOrLoginToContinue }
 						</p>
 					);
 				}
@@ -613,7 +575,7 @@ class Login extends Component {
 					);
 				}
 			}
-		} else if ( isWooPasswordlessJPC ) {
+		} else if ( isWooJPC ) {
 			const isLostPasswordFlow = currentQuery.lostpassword_flow === 'true';
 			const isTwoFactorAuthFlow = this.props.twoFactorEnabled;
 			const pluginName = getPluginTitle(
@@ -624,9 +586,8 @@ class Login extends Component {
 
 			switch ( true ) {
 				case isLostPasswordFlow:
-					headerText = config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ? (
-						<h3>{ translate( "You've got mail" ) }</h3>
-					) : null;
+					headerText = <h3>{ translate( "You've got mail" ) }</h3>;
+
 					subtitle = translate(
 						"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 					);
@@ -635,41 +596,24 @@ class Login extends Component {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
 					break;
 				default:
-					headerText = (
-						<h3>
-							{ config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' )
-								? translate( 'Log in to your account' )
-								: translate( 'One last step' ) }
-						</h3>
+					headerText = <h3>{ translate( 'Log in to your account' ) }</h3>;
+					subtitle = translate(
+						'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
+						{
+							components: {
+								signupLink,
+								br: <br />,
+								doc: (
+									<a
+										href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
+										target="_blank"
+										rel="noreferrer"
+									/>
+								),
+							},
+							args: { pluginName },
+						}
 					);
-					if ( config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) ) {
-						subtitle = translate(
-							'To access all of the features and functionality in %(pluginName)s, you’ll first need to connect your store to a WordPress.com account. Log in now, or {{signupLink}}create a new account{{/signupLink}}. For more information, please {{doc}}review our documentation{{/doc}}.',
-							{
-								components: {
-									signupLink,
-									br: <br />,
-									doc: (
-										<a
-											href="https://woocommerce.com/document/connect-your-store-to-a-wordpress-com-account/"
-											target="_blank"
-											rel="noreferrer"
-										/>
-									),
-								},
-								args: { pluginName },
-							}
-						);
-					} else {
-						subtitle = translate(
-							"In order to take advantage of the benefits offered by Jetpack, please log in to your WordPress.com account below. Don't have an account? {{signupLink}}Sign up{{/signupLink}}",
-							{
-								components: {
-									signupLink,
-								},
-							}
-						);
-					}
 			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
@@ -681,9 +625,8 @@ class Login extends Component {
 						require="calypso/components/jetpack-header"
 						placeholder={ null }
 						partnerSlug={ this.props.partnerSlug }
-						isWoo
+						isWooOnboarding
 						width={ 200 }
-						lightColorScheme
 					/>
 				</div>
 			);
@@ -740,6 +683,21 @@ class Login extends Component {
 						<path d="M20 10c0-5.51-4.49-10-10-10C4.48 0 0 4.49 0 10c0 5.52 4.48 10 10 10 5.51 0 10-4.48 10-10zM7.78 15.37L4.37 6.22c.55-.02 1.17-.08 1.17-.08.5-.06.44-1.13-.06-1.11 0 0-1.45.11-2.37.11-.18 0-.37 0-.58-.01C4.12 2.69 6.87 1.11 10 1.11c2.33 0 4.45.87 6.05 2.34-.68-.11-1.65.39-1.65 1.58 0 .74.45 1.36.9 2.1.35.61.55 1.36.55 2.46 0 1.49-1.4 5-1.4 5l-3.03-8.37c.54-.02.82-.17.82-.17.5-.05.44-1.25-.06-1.22 0 0-1.44.12-2.38.12-.87 0-2.33-.12-2.33-.12-.5-.03-.56 1.2-.06 1.22l.92.08 1.26 3.41zM17.41 10c.24-.64.74-1.87.43-4.25.7 1.29 1.05 2.71 1.05 4.25 0 3.29-1.73 6.24-4.4 7.78.97-2.59 1.94-5.2 2.92-7.78zM6.1 18.09C3.12 16.65 1.11 13.53 1.11 10c0-1.3.23-2.48.72-3.59C3.25 10.3 4.67 14.2 6.1 18.09zm4.03-6.63l2.58 6.98c-.86.29-1.76.45-2.71.45-.79 0-1.57-.11-2.29-.33.81-2.38 1.62-4.74 2.42-7.1z"></path>
 					</svg>
 				</div>
+			);
+		}
+
+		if ( isFromAkismet ) {
+			headerText = translate( 'Log in to Akismet with WordPress.com' );
+			preHeader = (
+				<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="none">
+					<rect width="44" height="44" fill="#357B49" rx="6" />
+					<path
+						fill="#fff"
+						fill-rule="evenodd"
+						d="m29.746 28.31-6.392-16.797c-.152-.397-.305-.672-.789-.675-.673 0-1.408.611-1.746 1.316l-7.378 16.154c-.072.16-.143.311-.214.454-.5.995-1.045 1.546-2.357 1.626a.399.399 0 0 0-.16.033l-.01.004a.399.399 0 0 0-.23.392v.01c0 .054.01.106.03.155l.004.01a.416.416 0 0 0 .394.252h6.212a.417.417 0 0 0 .307-.12.416.416 0 0 0 .124-.305.398.398 0 0 0-.105-.302.399.399 0 0 0-.294-.127c-.757 0-2.197-.062-2.197-1.164.02-.318.103-.63.245-.916l1.399-3.152c.52-1.163 1.654-1.163 2.572-1.163h5.843c.023 0 .044 0 .062.003.13.014.16.081.214.242l1.534 4.07a2.857 2.857 0 0 1 .216 1.04c0 .054-.003.104-.01.153-.09.726-.831.887-1.49.887a.4.4 0 0 0-.294.127l-.007.008-.007.008a.401.401 0 0 0-.092.286v.01c0 .054.01.106.03.155l.005.01a.42.42 0 0 0 .395.252h7.011a.413.413 0 0 0 .279-.13.412.412 0 0 0 .11-.297.387.387 0 0 0-.09-.294.388.388 0 0 0-.277-.135c-1.448-.122-2.295-.643-2.847-2.08Zm-11.985-5.844 2.847-6.304c.361-.728.659-1.486.889-2.265 0-.06.03-.092.06-.092s.061.032.061.091c.02.122.045.247.073.374.197.888.584 1.878.914 2.723l.176.453 1.684 4.529a.927.927 0 0 1 .092.4.473.473 0 0 1-.009.094c-.041.202-.228.272-.602.272h-6.063c-.122 0-.184-.03-.184-.092a.36.36 0 0 1 .062-.183Zm17.107-.721c0 .786-.446 1.231-1.25 1.231-.806 0-1.125-.409-1.125-1.034 0-.786.465-1.231 1.25-1.231.785 0 1.125.427 1.125 1.034ZM9.629 23.002c.803 0 1.25-.447 1.25-1.231 0-.607-.343-1.036-1.128-1.036-.785 0-1.25.447-1.25 1.231 0 .625.325 1.036 1.128 1.036Z"
+						clip-rule="evenodd"
+					/>
+				</svg>
 			);
 		}
 
@@ -854,11 +812,9 @@ class Login extends Component {
 			userEmail,
 			handleUsernameChange,
 			signupUrl,
-			isWoo,
-			isWooPasswordless,
+			isWCCOM,
 			isBlazePro,
 			translate,
-			isPartnerSignup,
 			action,
 			currentQuery,
 			isGravPoweredClient,
@@ -867,7 +823,8 @@ class Login extends Component {
 			isFromAutomatticForAgenciesPlugin,
 			currentUser,
 			redirectTo,
-			isWooPasswordlessJPC,
+			isWooJPC,
+			isWoo,
 		} = this.props;
 
 		const signupLink = this.getSignupLinkComponent();
@@ -881,18 +838,20 @@ class Login extends Component {
 			);
 		}
 
-		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
+		if ( action === 'lostpassword' ) {
 			return (
 				<Fragment>
-					<AsyncLoad
-						require="calypso/blocks/login/lost-password-form"
-						redirectToAfterLoginUrl={ this.props.redirectTo }
-						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
-						locale={ locale }
-						isWooPasswordlessJPC={ isWooPasswordlessJPC }
-						from={ get( currentQuery, 'from' ) }
-					/>
-					{ ! isWooPasswordlessJPC && ! isBlazePro && (
+					<div className="login__lost-password-form-wrapper">
+						<AsyncLoad
+							require="calypso/blocks/login/lost-password-form"
+							redirectToAfterLoginUrl={ this.props.redirectTo }
+							oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
+							locale={ locale }
+							isWooJPC={ isWooJPC }
+							from={ get( currentQuery, 'from' ) }
+						/>
+					</div>
+					{ ! isWooJPC && ! isBlazePro && (
 						<div className="login__lost-password-footer">
 							<p className="login__lost-password-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
@@ -926,9 +885,7 @@ class Login extends Component {
 						require="calypso/blocks/login/two-factor-authentication/two-factor-content"
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
-						isWoo={ isWoo }
 						isBlazePro={ isBlazePro }
-						isPartnerSignup={ isPartnerSignup }
 						isGravPoweredClient={ isGravPoweredClient }
 						twoFactorAuthType={ twoFactorAuthType }
 						twoFactorNotificationSent={ twoFactorNotificationSent }
@@ -936,7 +893,7 @@ class Login extends Component {
 						rebootAfterLogin={ this.rebootAfterLogin }
 						switchTwoFactorAuthType={ this.handleTwoFactorRequested }
 					/>
-					{ ( isWoo || isWooPasswordlessJPC ) && ! isPartnerSignup && (
+					{ isWoo && (
 						<div className="login__two-factor-footer">
 							<p className="login__two-factor-no-account">
 								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
@@ -968,36 +925,7 @@ class Login extends Component {
 		}
 
 		if ( this.showContinueAsUser() ) {
-			if ( isWoo ) {
-				return (
-					<div className="login__body login__body--continue-as-user">
-						<ContinueAsUser
-							currentUser={ currentUser }
-							onChangeAccount={ this.handleContinueAsAnotherUser }
-							redirectPath={ redirectTo }
-							isWoo={ isWoo }
-							isWooPasswordless={ isWooPasswordless }
-						/>
-						<LoginForm
-							disableAutoFocus={ disableAutoFocus }
-							onSuccess={ this.handleValidLogin }
-							privateSite={ privateSite }
-							socialService={ socialService }
-							socialServiceResponse={ socialServiceResponse }
-							domain={ domain }
-							isP2Login={ isP2Login }
-							locale={ locale }
-							userEmail={ userEmail }
-							handleUsernameChange={ handleUsernameChange }
-							signupUrl={ signupUrl }
-							showSocialLoginFormOnly
-							sendMagicLoginLink={ this.sendMagicLoginLink }
-							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-						/>
-					</div>
-				);
-			}
-			if ( isBlazePro ) {
+			if ( isWCCOM || isBlazePro ) {
 				return (
 					<div className="login__body login__body--continue-as-user">
 						<ContinueAsUser
@@ -1005,6 +933,7 @@ class Login extends Component {
 							onChangeAccount={ this.handleContinueAsAnotherUser }
 							redirectPath={ redirectTo }
 							isBlazePro={ isBlazePro }
+							isWoo={ isWCCOM }
 						/>
 						<LoginForm
 							disableAutoFocus={ disableAutoFocus }
@@ -1052,14 +981,13 @@ class Login extends Component {
 				hideSignupLink={ isGravPoweredClient || isBlazePro }
 				isSignupExistingAccount={ isSignupExistingAccount }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
+				isFromAkismet={ this.props.isFromAkismet }
 				isSendingEmail={ this.props.isSendingEmail }
 				isSocialFirst={ isSocialFirst }
 				isJetpack={ isJetpack }
 				isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
 				loginButtonText={
-					config.isEnabled( 'woocommerce/core-profiler-passwordless-auth' ) &&
-					isWooPasswordlessJPC &&
-					this.props.initialQuery?.lostpassword_flow === 'true'
+					isWooJPC && this.props.initialQuery?.lostpassword_flow === 'true'
 						? translate( 'Log in' )
 						: null
 				}
@@ -1072,12 +1000,19 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWoo, isFromAutomatticForAgenciesPlugin } =
-			this.props;
+		const {
+			isFromAkismet,
+			isJetpack,
+			oauth2Client,
+			locale,
+			isWCCOM,
+			isFromAutomatticForAgenciesPlugin,
+		} = this.props;
 
 		return (
 			<div
 				className={ clsx( 'login', {
+					'is-akismet': isFromAkismet,
 					'is-jetpack': isJetpack,
 					'is-jetpack-cloud': isJetpackCloudOAuth2Client( oauth2Client ),
 					'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
@@ -1087,7 +1022,7 @@ class Login extends Component {
 				{ this.renderHeader() }
 
 				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
-				{ ! isWoo && <ErrorNotice locale={ locale } /> }
+				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
 
@@ -1116,6 +1051,9 @@ export default connect(
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
 		linkingSocialService: getSocialAccountLinkService( state ),
 		partnerSlug: getPartnerSlugFromQuery( state ),
+		isFromAkismet: !! new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] )
+			.get( 'back' )
+			?.startsWith( 'https://akismet.com' ),
 		isFromAutomatticForAgenciesPlugin:
 			'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ) ||
 			'automattic-for-agencies-client' ===
@@ -1123,9 +1061,10 @@ export default connect(
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 		isJetpackWooCommerceFlow:
 			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isWooPasswordlessJPC: isWooPasswordlessJPCFlow( state ),
+		isWooJPC: isWooJPCFlow( state ),
+		isWCCOM: getIsWCCOM( state ),
+		isWoo: getIsWoo( state ),
 		wccomFrom: getWccomFrom( state ),
-		isWooPasswordless: getIsWooPasswordless( state ),
 		isFromMigrationPlugin: startsWith(
 			get( getCurrentQueryArguments( state ), 'from' ),
 			'wpcom-migration'
@@ -1133,9 +1072,7 @@ export default connect(
 		currentQuery: getCurrentQueryArguments( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		currentRoute: getCurrentRoute( state ),
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
-		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 		isBlazePro: isBlazeProOAuth2Client( getCurrentOAuth2Client( state ) ),
 		isSignupExistingAccount: !! (
 			getInitialQueryArguments( state )?.is_signup_existing_account ||
@@ -1163,9 +1100,7 @@ export default connect(
 				redirectTo: stateProps.redirectTo,
 				loginFormFlow: true,
 				showGlobalNotices: false,
-				source: stateProps.isWooPasswordlessJPC
-					? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' )
-					: '',
+				source: stateProps.isWooJPC ? 'woo-passwordless-jpc' + '-' + get( stateProps, 'from' ) : '',
 				flow:
 					( ownProps.isJetpack && 'jetpack' ) ||
 					( ownProps.isGravPoweredClient && getGravatarOAuth2Flow( ownProps.oauth2Client ) ) ||

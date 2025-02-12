@@ -32,6 +32,8 @@ import {
 import Subscriptions from './subscriptions';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 
+import './styles.scss';
+
 function useLogPurchasesError( message: string ) {
 	return useCallback(
 		( error: Error ) => {
@@ -76,7 +78,7 @@ export function Purchases() {
 			<PurchaseListConciergeBanner
 				availableSessions={ availableConciergeSessions }
 				isUserBlocked={ isConciergeUserBlocked }
-				nextAppointment={ nextConciergeAppointment }
+				nextAppointment={ nextConciergeAppointment ?? undefined }
 				siteId={ siteId ?? undefined }
 			/>
 			<CheckoutErrorBoundary

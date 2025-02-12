@@ -1,6 +1,5 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner } from '@automattic/components';
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
@@ -9,6 +8,7 @@ import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { useCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { useSelector } from 'calypso/state';
@@ -38,7 +38,6 @@ import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
-
 import './sftp-form.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
@@ -119,26 +118,21 @@ export const SftpForm = ( {
 	const isLoadingSftpUsers = useSelector( ( state ) =>
 		getAtomicHostingIsLoadingSftpUsers( state, siteId )
 	);
-	const { username, password } = useSelector( ( state ) => {
-		let username;
-		let password;
 
-		const users = getAtomicHostingSftpUsers( state, siteId );
-
-		if ( ! disabled && users !== null ) {
-			if ( users.length ) {
-				// Pick first user. Rest of users will be handled in next phases.
-				username = users[ 0 ].username;
-				password = users[ 0 ].password;
-			} else {
-				// No SFTP user created yet.
-				username = null;
-				password = null;
-			}
+	let username: string | null | undefined = undefined;
+	let password: string | null | undefined = undefined;
+	const atomicSftpUsers = useSelector( ( state ) => getAtomicHostingSftpUsers( state, siteId ) );
+	if ( ! disabled && atomicSftpUsers !== null ) {
+		if ( atomicSftpUsers.length ) {
+			// Pick first user. Rest of users will be handled in next phases.
+			username = atomicSftpUsers[ 0 ].username;
+			password = atomicSftpUsers[ 0 ].password;
+		} else {
+			// No SFTP user created yet.
+			username = null;
+			password = null;
 		}
-
-		return { username, password };
-	} );
+	}
 
 	// State for clipboard copy button for both username and password data
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -147,20 +141,22 @@ export const SftpForm = ( {
 	const hasSftpFeatureAndIsLoading = siteHasSftpFeature && isLoadingSftpUsers;
 	const hasSshFeatureAndIsLoading = siteHasSshFeature && isLoadingSshAccess;
 	const siteIntent = useSiteOption( 'site_intent' );
+	const completeTasks = useCompleteLaunchpadTasksWithNotice();
 
 	const sshConnectString = `ssh ${ username }@sftp.wp.com`;
 
 	const handleResetPassword = () => {
 		setPasswordLoading( true );
-		dispatch( resetSftpPassword( siteId, username ) );
+		dispatch( resetSftpPassword( siteId, username as string ) );
 	};
 
 	const handleCreateUser = () => {
 		setIsLoading( true );
 		dispatch( createSftpUser( siteId, currentUserId ) );
 		if ( 'host-site' === siteIntent ) {
-			updateLaunchpadSettings( siteId, {
-				checklist_statuses: { setup_ssh: true },
+			completeTasks( [ 'setup_ssh' ], translate( 'You’ve set up SSH access!' ), {
+				id: 'site-setup-ssh',
+				duration: 10000,
 			} );
 		}
 	};
@@ -177,12 +173,14 @@ export const SftpForm = ( {
 	useEffect( () => {
 		if ( ! disabled ) {
 			setIsLoading( true );
-			dispatch( requestAtomicSftpUsers( siteId ) );
+			if ( siteHasSftpFeature ) {
+				dispatch( requestAtomicSftpUsers( siteId ) );
+			}
 			if ( siteHasSshFeature ) {
 				dispatch( requestAtomicSshAccess( siteId ) );
 			}
 		}
-	}, [ disabled, siteId, siteHasSshFeature, dispatch ] );
+	}, [ disabled, siteId, siteHasSshFeature, siteHasSftpFeature, dispatch ] );
 
 	// For security reasons we remove the password from the state when the component is unmounted
 	// Since users should reset it every time they want to see it

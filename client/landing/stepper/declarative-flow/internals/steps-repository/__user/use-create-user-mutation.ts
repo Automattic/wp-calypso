@@ -2,7 +2,6 @@
 // import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { useMutation } from '@tanstack/react-query';
 import { createAccount } from 'calypso/lib/signup/api/account';
-import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { useDispatch } from 'calypso/state';
 import {
 	SOCIAL_LOGIN_REQUEST,
@@ -22,9 +21,6 @@ export function useCreateAccountMutation() {
 			} );
 		},
 		onSuccess: ( data ) => {
-			if ( 'isNewAccountCreated' in data && data.isNewAccountCreated ) {
-				setSignupIsNewUser( data?.username );
-			}
 			dispatch( {
 				type: SOCIAL_LOGIN_REQUEST_SUCCESS,
 				data: data,

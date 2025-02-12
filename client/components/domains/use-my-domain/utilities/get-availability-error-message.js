@@ -8,7 +8,7 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 	const { status, mappable, maintenance_end_time, other_site_domain, other_site_domain_only } =
 		availabilityData;
 
-	if ( domainAvailability.AVAILABLE === status ) {
+	if ( [ status, mappable ].includes( domainAvailability.AVAILABLE ) ) {
 		if ( selectedSite ) {
 			const searchPageLink = domainAddNew( selectedSite.slug, domainName );
 			return createInterpolateElement(

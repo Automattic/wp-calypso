@@ -1,32 +1,18 @@
-import config from '@automattic/calypso-config';
 import { getPlan, TYPE_ECOMMERCE, TYPE_BUSINESS } from '@automattic/calypso-products/';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
-	isAssemblerSupported,
 } from '@automattic/design-picker';
 import { isOnboardingGuidedFlow, isSiteAssemblerFlow } from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { get, includes, reject } from 'lodash';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
-
-function constructBackUrlFromPath( path ) {
-	if ( config( 'env' ) !== 'production' ) {
-		const protocol = config( 'protocol' ) ?? 'https';
-		const port = config( 'port' ) ? ':' + config( 'port' ) : '';
-		const hostName = config( 'hostname' );
-
-		return `${ protocol }://${ hostName }${ port }${ path }`;
-	}
-
-	return `https://${ config( 'hostname' ) }${ path }`;
-}
 
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -47,7 +33,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 	// the domain only flow has special rule. Ideally they should also be configurable in flows-pure.
 	const checkoutBackUrl = isURL( destination )
 		? destination
-		: constructBackUrlFromPath( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
+		: pathToUrl( isDomainOnly ? `/start/${ flowName }/domain-only` : destination );
 
 	return addQueryArgs(
 		{
@@ -139,39 +125,9 @@ function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
 	);
 }
 
-function getChecklistThemeDestination( {
-	flowName,
-	siteSlug,
-	themeParameter,
-	headerPatternId,
-	footerPatternId,
-	sectionPatternIds,
-	screen,
-	screenParameter,
-} ) {
+function getChecklistThemeDestination( { flowName, siteSlug } ) {
 	if ( isSiteAssemblerFlow( flowName ) ) {
-		// Check whether to go to the assembler. If not, go to the site editor directly
-		if ( isAssemblerSupported() ) {
-			return addQueryArgs(
-				{
-					theme: themeParameter,
-					siteSlug: siteSlug,
-					isNewSite: true,
-					header_pattern_id: headerPatternId,
-					footer_pattern_id: footerPatternId,
-					pattern_ids: sectionPatternIds,
-					screen,
-					screen_parameter: screenParameter,
-				},
-				`/setup/with-theme-assembler`
-			);
-		}
-
-		const params = new URLSearchParams( {
-			canvas: 'edit',
-			assembler: '1',
-		} );
-
+		const params = new URLSearchParams( { canvas: 'edit' } );
 		return `/site-editor/${ siteSlug }?${ params }`;
 	}
 
@@ -322,7 +278,6 @@ const flows = generateFlows( {
 	getLaunchDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,
-	getChecklistThemeDestination,
 	getWithThemeDestination,
 	getWithPluginDestination,
 	getEditorDestination,

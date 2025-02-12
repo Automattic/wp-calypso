@@ -274,3 +274,26 @@ $break-medium-expanded-menu: $break-medium + 272px;
 		@include blazepress-campaigns-table-mobile;
 	}
 }
+
+.promote-post-i2 {
+	.promote-post-i2__payment-blocked-notice {
+		border: none;
+		box-shadow: none;
+		max-width: 1040px;
+		width: calc(100% - 128px);
+		padding: 0;
+
+
+		@media screen and (max-width: $break-medium-collapsed-menu) {
+			width: calc(100% - 32px);
+		}
+		@media screen and (max-width: $break-medium-expanded-menu) {
+			width: calc(100% - 32px);
+		}
+
+		.notice__text {
+			display: inline-block;
+			padding-right: 16px;
+		}
+	}
+}

@@ -132,8 +132,9 @@ export class UndoListItem extends Component {
 	};
 
 	actImmediately = ( event ) => {
-		if ( event && event.preventDefault ) {
+		if ( event ) {
 			event.preventDefault();
+			event.stopPropagation();
 		}
 		clearTimeout( this.state.undoTimer );
 		this.instance && this.setState( { isVisible: false } );

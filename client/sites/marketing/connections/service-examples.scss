@@ -39,3 +39,45 @@
 		gap: 0.5rem;
 	}
 }
+
+.service-example__screenshot {
+	img {
+		width: 100%;
+		max-width: 550px;
+		margin-bottom: 1rem;
+	}
+
+	&-label {
+		margin-bottom: 1rem;
+	}
+}
+
+.connections__sharing-service-tip {
+	margin: 1rem 0;
+}
+
+.sharing-service-examples {
+	display: grid;
+	grid-auto-columns: minmax(0, 1fr);
+	grid-auto-flow: column;
+	margin-top: 0.4rem;
+
+	@media (max-width: 660px) {
+		grid-auto-flow: row;
+		grid-gap: 2rem;
+		height: auto;
+		min-height: unset;
+	}
+
+	img {
+		max-height: 520px;
+		max-width: 100%;
+	}
+
+	>div {
+		&:has(img) {
+			margin-inline-start: auto;
+			margin-inline-end: auto;
+		}
+	}
+}

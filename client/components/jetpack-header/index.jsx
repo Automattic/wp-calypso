@@ -15,7 +15,7 @@ export class JetpackHeader extends PureComponent {
 		partnerSlug: PropTypes.string,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isWooOnboarding: PropTypes.bool,
-		isWooPasswordlessJPC: PropTypes.bool,
+		isWooJPC: PropTypes.bool,
 		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
 	};
@@ -27,12 +27,12 @@ export class JetpackHeader extends PureComponent {
 			width,
 			isFromAutomatticForAgenciesPlugin,
 			isWooOnboarding,
-			isWooPasswordlessJPC,
+			isWooJPC,
 			isWooDna,
 			translate,
 		} = this.props;
 
-		if ( isWooPasswordlessJPC ) {
+		if ( isWooJPC ) {
 			return null;
 		}
 
@@ -44,11 +44,13 @@ export class JetpackHeader extends PureComponent {
 					viewBox="0 0 1270 170"
 					partnerName="WooCommerce"
 				>
-					<AsyncLoad
-						require="calypso/components/jetpack-header/woocommerce"
-						darkColorScheme={ darkColorScheme }
-						placeholder={ null }
-					/>
+					<g transform="translate(360 25)">
+						<AsyncLoad
+							require="calypso/components/jetpack-header/woocommerce"
+							darkColorScheme={ darkColorScheme }
+							placeholder={ null }
+						/>
+					</g>
 				</JetpackPartnerLogoGroup>
 			);
 		}
@@ -58,7 +60,7 @@ export class JetpackHeader extends PureComponent {
 				<svg width={ width } viewBox="0 0 1270 170">
 					<title>{ translate( 'WooCommerce logo' ) }</title>
 					<g fill="none" fillRule="evenodd">
-						<g transform="translate(-120)">
+						<g transform="translate(125 25)">
 							<AsyncLoad
 								require="calypso/components/jetpack-header/woocommerce"
 								darkColorScheme={ darkColorScheme }

@@ -11,8 +11,6 @@ import CommentButton from 'calypso/blocks/comment-button';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
-import DailyPostButton from 'calypso/blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import PostEditButton from 'calypso/blocks/post-edit-button';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { scrollToComments } from 'calypso/blocks/reader-full-post/scroll-to-comments';
@@ -79,6 +77,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { disableAppBanner, enableAppBanner } from 'calypso/state/ui/actions';
 import ReaderFullPostHeader from './header';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
+import ScrollTracker from './scroll-tracker';
 import ReaderFullPostUnavailable from './unavailable';
 
 import './style.scss';
@@ -94,12 +93,14 @@ export class FullPostView extends Component {
 		isWPForTeamsItem: PropTypes.bool,
 		hasOrganization: PropTypes.bool,
 		layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
+		currentPath: PropTypes.string,
 	};
 
 	hasScrolledToCommentAnchor = false;
 	readerMainWrapper = createRef();
 	commentsWrapper = createRef();
 	postContentWrapper = createRef();
+	mountedPath;
 
 	state = {
 		isSuggestedFollowsModalOpen: false,
@@ -113,11 +114,14 @@ export class FullPostView extends Component {
 	};
 
 	componentDidMount() {
+		this.scrollTracker = new ScrollTracker();
 		// Send page view
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
+		this.setReadingStartTime();
 		this.attemptToSendPageView();
 		this.maybeDisableAppBanner();
+		this.mountedPath = this.props.currentPath;
 
 		this.checkForCommentAnchor();
 
@@ -133,6 +137,17 @@ export class FullPostView extends Component {
 		document.querySelector( 'body' ).classList.add( 'is-reader-full-post' );
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
+
+		document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		const scrollableContainer =
+			document.querySelector( '#primary > div > div.recent-feed > section' ) || // for Recent Feed in Dataview
+			document.querySelector( '#primary > div > div' ); // for Recent Feed in Stream
+		if ( scrollableContainer ) {
+			this.scrollableContainer = scrollableContainer;
+			this.scrollTracker.setContainer( scrollableContainer );
+			this.resetScroll();
+		}
 	}
 	componentDidUpdate( prevProps ) {
 		// Send page view if applicable
@@ -145,6 +160,15 @@ export class FullPostView extends Component {
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
 			this.maybeDisableAppBanner();
+
+			// If the post being viewed changes, track the reading time.
+			if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ) {
+				this.trackReadingTime( prevProps.post );
+				this.trackScrollDepth( prevProps.post );
+				this.trackExitBeforeCompletion( prevProps.post );
+				this.setReadingStartTime();
+				this.resetScroll();
+			}
 		}
 
 		if ( this.props.shouldShowComments && ! prevProps.shouldShowComments ) {
@@ -172,8 +196,19 @@ export class FullPostView extends Component {
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
 		document.querySelector( 'body' ).classList.remove( 'is-reader-full-post' );
+		this.trackReadingTime();
 		document.removeEventListener( 'keydown', this.handleKeydown, true );
+		document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+
+		// Track scroll depth and remove related instruments
+		this.trackScrollDepth( this.props.post );
+		this.scrollTracker.cleanup();
+		this.clearResetScrollTimeout();
 	}
+
+	setReadingStartTime = () => {
+		this.readingStartTime = new Date().getTime();
+	};
 
 	handleKeydown = ( event ) => {
 		if ( this.props.notificationsOpen ) {
@@ -210,6 +245,135 @@ export class FullPostView extends Component {
 			case 75: {
 				return this.goToPreviousPost();
 			}
+		}
+	};
+
+	handleVisibilityChange = () => {
+		if ( document.hidden ) {
+			this.trackReadingTime();
+			this.trackScrollDepth();
+			this.trackExitBeforeCompletion();
+		}
+	};
+
+	trackReadingTime( post = null ) {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+		if ( this.readingStartTime && post.ID ) {
+			const endTime = Math.floor( Date.now() );
+			const engagementTime = endTime - this.readingStartTime;
+			recordTrackForPost(
+				'calypso_reader_article_engaged_time',
+				post,
+				{
+					context: 'full-post',
+					engagement_time: engagementTime / 1000,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
+			// check if the user exited early
+			this.checkFastExit( post, engagementTime );
+		}
+	}
+
+	clearResetScrollTimeout = () => {
+		if ( this.resetScrollTimeout ) {
+			clearTimeout( this.resetScrollTimeout );
+			this.resetScrollTimeout = null;
+		}
+	};
+
+	resetScroll = () => {
+		this.clearResetScrollTimeout();
+		this.resetScrollTimeout = setTimeout( () => {
+			this.scrollableContainer.scrollTo( {
+				top: 0,
+				left: 0,
+				behavior: 'instant',
+			} );
+			this.scrollTracker.resetMaxScrollDepth();
+		}, 0 ); // Defer until after the DOM update
+	};
+
+	trackScrollDepth = ( post = null ) => {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if ( this.scrollableContainer && post.ID ) {
+			const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
+			recordTrackForPost(
+				'calypso_reader_article_scroll_depth',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
+		}
+	};
+
+	trackExitBeforeCompletion = ( post = null ) => {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		const maxScrollDepth = this.scrollTracker.getMaxScrollDepthAsPercentage();
+		const hasCompleted = maxScrollDepth >= 90; // User has read 90% of the post
+
+		if ( this.scrollableContainer && post.ID && ! hasCompleted ) {
+			recordTrackForPost(
+				'calypso_reader_article_exit_before_completion',
+				post,
+				{
+					context: 'full-post',
+					scroll_depth: maxScrollDepth,
+					path: this.mountedPath,
+				},
+				{ pathnameOverride: this.mountedPath }
+			);
+		}
+	};
+
+	trackFastExit = ( post, elapsedSeconds, fastExitThreshold ) => {
+		recordTrackForPost(
+			'calypso_reader_article_fast_exit',
+			post,
+			{
+				context: 'full-post',
+				estimated_reading_time: post.minutes_to_read,
+				elapsed_seconds: elapsedSeconds,
+				fast_exit_threshold: fastExitThreshold,
+				path: this.mountedPath,
+			},
+			{ pathnameOverride: this.mountedPath }
+		);
+	};
+
+	checkFastExit = ( post = null, engagementTime ) => {
+		if ( ! post ) {
+			post = this.props.post;
+		}
+
+		if (
+			! this.readingStartTime ||
+			! post?.ID ||
+			! post?.minutes_to_read ||
+			post?.minutes_to_read === 0
+		) {
+			return;
+		}
+
+		const elapsedSeconds = engagementTime / 1000;
+		const estimatedSecondsToRead = post.minutes_to_read * 60;
+		const fastExitThreshold = estimatedSecondsToRead * 0.25; // Define a "fast exit" as 25% of estimated time
+
+		if ( elapsedSeconds < fastExitThreshold ) {
+			this.trackFastExit( post, elapsedSeconds, fastExitThreshold );
 		}
 	};
 
@@ -454,7 +618,7 @@ export class FullPostView extends Component {
 			{
 				components: {
 					/* eslint-disable */
-					wpLink: <a href="/read" className="reader-related-card__link" />,
+					wpLink: <a href="/reader" className="reader-related-card__link" />,
 					/* eslint-enable */
 				},
 			}
@@ -610,9 +774,6 @@ export class FullPostView extends Component {
 							) }
 
 							{ post.use_excerpt && <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> }
-							{ isDailyPostChallengeOrPrompt( post ) && (
-								<DailyPostButton post={ post } site={ site } />
-							) }
 
 							<ReaderPostActions
 								post={ post }
@@ -698,6 +859,7 @@ export default connect(
 		const { feedId, blogId, postId } = ownProps;
 		const postKey = pickBy( { feedId: +feedId, blogId: +blogId, postId: +postId } );
 		const post = getPostByKey( state, postKey ) || { _state: 'pending' };
+		const currentPath = state.route.path.current;
 
 		const { site_ID: siteId, is_external: isExternal } = post;
 
@@ -708,6 +870,7 @@ export default connect(
 			post,
 			liked: isLikedPost( state, siteId, post.ID ),
 			postKey,
+			currentPath,
 		};
 
 		if ( ! isExternal && siteId ) {

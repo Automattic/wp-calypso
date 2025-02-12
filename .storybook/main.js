@@ -4,9 +4,9 @@ const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
 
 const storybookConfig = storybookDefaultConfig( {
 	stories: [
-		'../client/**/*.stories.{js,jsx,ts,tsx}',
+		'../client/components/**/*.stories.{js,jsx,tsx}',
+
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',
-		'../packages/components/src/**/*.stories.{js,jsx,ts,tsx}',
 		'../packages/domains-table/src/**/*.stories.{js,jsx,ts,tsx}',
 	],
 } );
@@ -20,4 +20,4 @@ storybookConfig.previewHead = ( head ) => `
 	</script>
 `;
 
-module.exports = storybookConfig;
+module.exports = { ...storybookConfig };

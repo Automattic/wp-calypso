@@ -8,7 +8,7 @@ import { useSelector } from 'calypso/state';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext } from '../../context';
-import { useTotalInvoiceValue } from '../../wpcom-overview/hooks/use-total-invoice-value';
+import { useTotalInvoiceValue } from '../../hooks/use-total-invoice-value';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 

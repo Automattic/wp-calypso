@@ -2,7 +2,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .import-hosted-site,
-.site-migration :not(.site-migration-instructions--launchpad),
+.site-migration :not(.site-migration-instructions--launchpad, .is-wide-layout),
 .migrate-message {
 	.step-container__header {
 		margin: auto;

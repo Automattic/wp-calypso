@@ -13,11 +13,11 @@ export async function cancelPurchaseFlow(
 	}
 ) {
 	await page
-		.getByRole( 'combobox', { name: 'WHY WOULD YOU LIKE TO CANCEL?' } )
+		.getByRole( 'combobox', { name: 'Why would you like to cancel?' } )
 		.selectOption( feedback.reason );
 
 	await page
-		.getByRole( 'textbox', { name: 'CAN YOU PLEASE SPECIFY?' } )
+		.getByRole( 'textbox', { name: 'Can you please specify?' } )
 		.fill( feedback.customReasonText );
 
 	await page.getByRole( 'button', { name: 'Submit' } ).click();

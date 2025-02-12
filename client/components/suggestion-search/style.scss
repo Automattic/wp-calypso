@@ -8,12 +8,6 @@
 		left: 10px;
 		fill: var(--color-text-subtle);
 
-		// On smaller screens the input gets bigger,
-		// so this icon needs to move down a bit.
-		@include breakpoint-deprecated( "<660px" ) {
-			top: 16px;
-		}
-
 		+ input.form-text-input {
 			padding-left: 42px;
 		}

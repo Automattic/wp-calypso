@@ -58,6 +58,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		isCancelable: Boolean( purchase.is_cancelable ),
 		isDomain: Boolean( purchase.is_domain ),
 		isDomainRegistration: Boolean( purchase.is_domain_registration ),
+		isHundredYearDomain: Boolean( purchase.is_hundred_year_domain ),
 		isLocked: Boolean( purchase.is_locked ),
 		isInAppPurchase: Boolean( purchase.is_iap_purchase ),
 		isRechargeable: Boolean( purchase.is_rechargable ),

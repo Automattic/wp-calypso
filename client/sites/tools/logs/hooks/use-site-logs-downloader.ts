@@ -2,8 +2,9 @@ import { useTranslate } from 'i18n-calypso';
 import { get, isEmpty, map } from 'lodash';
 import { useReducer } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { FilterType, SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { FilterType } from 'calypso/data/hosting/use-site-logs-query';
 import wpcom from 'calypso/lib/wp';
+import { LogType } from 'calypso/sites/tools/logs';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
@@ -80,7 +81,7 @@ const siteLogsDownloaderReducer = (
 };
 
 interface UseSiteLogsDownloaderArgs {
-	logType: SiteLogsTab;
+	logType: LogType;
 	startDateTime: Moment;
 	endDateTime: Moment;
 	filter: FilterType;

@@ -1,22 +1,17 @@
-import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
+import { getTracksAnonymousUserId, recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import {
-	WPCOM_DIFM_LITE,
-	planHasFeature,
-	FEATURE_UPLOAD_THEMES_PLUGINS,
-	PRODUCT_1GB_SPACE,
-	isEcommerce,
-	isDomainTransfer,
-} from '@automattic/calypso-products';
+import { WPCOM_DIFM_LITE, PRODUCT_1GB_SPACE, isDomainTransfer } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site, AddOns } from '@automattic/data-stores';
+import { STORAGE_ADD_ONS } from '@automattic/data-stores/src/add-ons';
+import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { isOnboardingGuidedFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { buildUpgradeFunction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
@@ -58,6 +53,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
+
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -1252,29 +1248,17 @@ export function maybeAddStorageAddonToCart( stepName, defaultDependencies, nextP
 	const state = store.getState();
 	const selectedStorage = get( getSignupDependencyStore( state ), 'storage', null );
 
-	switch ( selectedStorage ) {
-		case AddOns.ADD_ON_50GB_STORAGE:
-			cartItem.push( {
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 50,
-				volume: 1,
-				extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
-			} );
-			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-				add_on_slug: AddOns.ADD_ON_50GB_STORAGE,
-			} );
-			break;
-		case AddOns.ADD_ON_100GB_STORAGE:
-			cartItem.push( {
-				product_slug: PRODUCT_1GB_SPACE,
-				quantity: 100,
-				volume: 1,
-				extra: { feature_slug: AddOns.ADD_ON_100GB_STORAGE },
-			} );
-			recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
-				add_on_slug: AddOns.ADD_ON_100GB_STORAGE,
-			} );
-			break;
+	if ( STORAGE_ADD_ONS.includes( selectedStorage ) ) {
+		const selectedAddOn = getAddOn( selectedStorage );
+		cartItem.push( {
+			product_slug: PRODUCT_1GB_SPACE,
+			quantity: selectedAddOn.quantity,
+			volume: 1,
+			extra: { feature_slug: AddOns.ADD_ON_50GB_STORAGE },
+		} );
+		recordTracksEvent( 'calypso_signup_storage_add_on_selected', {
+			add_on_slug: selectedAddOn.addOnSlug,
+		} );
 	}
 
 	submitSignupStep( { stepName, cartItem, wasSkipped: true }, { cartItem } );
@@ -1333,65 +1317,4 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export const buildUpgradeFunction = ( planProps, cartItems ) => {
-	const {
-		additionalStepData,
-		flowName,
-		launchSite,
-		selectedSite,
-		stepName,
-		stepSectionName,
-		themeSlugWithRepo,
-		goToNextStep,
-		submitSignupStep,
-	} = planProps;
-	const planCartItem = getPlanCartItem( cartItems );
-
-	if ( planCartItem ) {
-		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
-			product_slug: planCartItem.product_slug,
-			from_section: stepSectionName ? stepSectionName : 'default',
-		} );
-
-		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
-		// set a flag on it. It will trigger Automated Transfer when the product is being
-		// activated at the end of the checkout process.
-		if (
-			flowName === 'ecommerce' &&
-			planHasFeature( planCartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
-		) {
-			planCartItem.extra = Object.assign( planCartItem.extra || {}, {
-				is_store_signup: true,
-			} );
-		}
-	} else {
-		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
-			from_section: stepSectionName ? stepSectionName : 'default',
-		} );
-	}
-
-	const step = {
-		stepName,
-		stepSectionName,
-		cartItems,
-		...additionalStepData,
-	};
-
-	if ( selectedSite && flowName === 'site-selected' && ! planCartItem ) {
-		submitSignupStep( step, { cartItems } );
-		goToNextStep();
-		return;
-	}
-
-	const signupVals = {
-		cartItems,
-		...( themeSlugWithRepo && { themeSlugWithRepo } ),
-		...( launchSite && { comingSoon: 0 } ),
-	};
-
-	if ( planCartItem && isEcommerce( planCartItem ) ) {
-		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
-	}
-	submitSignupStep( step, signupVals );
-	goToNextStep();
-};
+export { buildUpgradeFunction };

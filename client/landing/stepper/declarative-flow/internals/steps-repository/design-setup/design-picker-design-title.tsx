@@ -16,6 +16,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 			className="design-picker-design-title__theme-tier-badge"
 			isLockedStyleVariation={ false }
 			themeId={ selectedDesign.slug }
+			showPartnerPrice
 		/>
 	</div>
 );

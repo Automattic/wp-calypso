@@ -1,8 +1,10 @@
+import { default as apiFetchPromise } from '@wordpress/api-fetch';
 import { apiFetch } from '@wordpress/data-controls';
-import { canAccessWpcomApis } from 'wpcom-proxy-request';
+import { default as wpcomRequestPromise, canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { isE2ETest } from '.';
 import type { APIFetchOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
@@ -80,6 +82,12 @@ export const setIsChatLoaded = ( isChatLoaded: boolean ) =>
 		isChatLoaded,
 	} ) as const;
 
+export const setAreSoundNotificationsEnabled = ( areSoundNotificationsEnabled: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ARE_SOUND_NOTIFICATIONS_ENABLED',
+		areSoundNotificationsEnabled,
+	} ) as const;
+
 export const setZendeskClientId = ( zendeskClientId: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ZENDESK_CLIENT_ID',
@@ -98,7 +106,37 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		show,
 	} ) as const;
 
-export const setShowHelpCenter = function* ( show: boolean ) {
+export const setAllowPremiumSupport = ( allow: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		allow,
+	} ) as const;
+
+export const setShowHelpCenter = function* ( show: boolean, allowPremiumSupport = false ) {
+	if ( ! isE2ETest() ) {
+		try {
+			if ( canAccessWpcomApis() ) {
+				// Use the promise version to do that action without waiting for the result.
+				wpcomRequestPromise( {
+					path: `/me/preferences`,
+					apiNamespace: 'wpcom/v2',
+					method: 'PUT',
+					body: {
+						calypso_preferences: { help_center_open: show },
+					},
+				} );
+			} else {
+				// Use the promise version to do that action without waiting for the result.
+				apiFetchPromise( {
+					global: true,
+					path: `/help-center/open-state`,
+					method: 'PUT',
+					data: { help_center_open: show },
+				} as APIFetchOptions );
+			}
+		} catch {}
+	}
+
 	if ( ! show ) {
 		yield setNavigateToRoute( undefined );
 	} else {
@@ -106,6 +144,9 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	}
 
 	yield setIsMinimized( false );
+	if ( allowPremiumSupport ) {
+		yield setAllowPremiumSupport( true );
+	}
 
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
@@ -174,10 +215,12 @@ export type HelpCenterAction =
 			| typeof setUnreadCount
 			| typeof setIsMinimized
 			| typeof setIsChatLoaded
+			| typeof setAreSoundNotificationsEnabled
 			| typeof setZendeskClientId
 			| typeof setNavigateToRoute
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
+			| typeof setAllowPremiumSupport
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

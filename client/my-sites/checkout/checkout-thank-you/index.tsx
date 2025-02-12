@@ -58,6 +58,7 @@ import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
 import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
 import { requestSite } from 'calypso/state/sites/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
 import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSiteHomeUrl, getSiteSlug, getSite } from 'calypso/state/sites/selectors';
@@ -86,6 +87,7 @@ import {
 import type { FindPredicate } from './utils';
 import type { SitesPlansResult } from '../src/hooks/product-variants';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UserData } from 'calypso/lib/user/user';
 import type { ReceiptState, ReceiptPurchase } from 'calypso/state/receipts/types';
 import type { LocalizeProps } from 'i18n-calypso';
@@ -126,6 +128,7 @@ export interface CheckoutThankYouConnectedProps {
 	siteHomeUrl: string;
 	customizeUrl: string | null | undefined;
 	site: SiteDetails | null | undefined;
+	siteDomains: ResponseDomain[] | null | undefined;
 	fetchAtomicTransfer: ( siteId: number ) => void;
 	fetchSitePlugins: ( siteId: number ) => void;
 	fetchReceipt: ( receiptId: number ) => void;
@@ -541,10 +544,11 @@ export class CheckoutThankYou extends Component<
 				isGSuiteOrExtraLicenseOrGoogleWorkspace
 			);
 
-			if ( isOnlyDomainTransfers( purchases ) ) {
+			if ( this.props.receipt.data && isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
 						purchases={ purchases }
+						receipt={ this.props.receipt.data }
 						currency={ this.props.receipt.data?.currency ?? 'USD' }
 					/>
 				);
@@ -718,6 +722,7 @@ export default connect(
 					? getCustomizeOrEditFrontPageUrl( state, activeTheme, siteId )
 					: undefined,
 			site: siteId ? getSite( state, siteId ) : null,
+			siteDomains: siteId ? getDomainsBySiteId( state, siteId ) : null,
 		};
 	},
 	{

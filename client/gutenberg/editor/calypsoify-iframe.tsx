@@ -809,7 +809,6 @@ const mapStateToProps = (
 		showDraftPostModal,
 		...pressThisData,
 		...bloggingPromptData,
-		assembler: getQueryArg( window.location.href, 'assembler' ), // Customize the first slide of Welcome Tour in the site editor
 		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 

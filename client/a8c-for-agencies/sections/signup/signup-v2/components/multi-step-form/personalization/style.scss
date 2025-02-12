@@ -1,0 +1,39 @@
+.signup-personalization-form {
+    .signup-personalization-form__products-checkbox {
+        .multi-checkbox label {
+            flex: 0 1 calc(32% - 16px); // 3 columns for products
+
+            @media (max-width: 782px) {
+                flex: 0 1 calc(50% - 12px); // 2 columns on tablets
+            }
+
+            @media (max-width: 600px) {
+                flex: 0 1 100%; // Full width on mobile
+            }
+        }
+    }
+
+    .multi-checkbox {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 24px;
+    }
+
+    .multi-checkbox label {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        cursor: pointer;
+        font-size: rem(14px);
+        color: var(--color-neutral-80);
+        flex: 0 1 calc(50% - 12px); // 2 columns by default, accounting for gap
+
+        @media (max-width: 600px) {
+            flex: 0 1 100%; // Full width on mobile
+        }
+    }
+
+    .multi-checkbox .form-checkbox + span {
+        margin-left: 8px;
+    }
+}

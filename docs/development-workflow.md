@@ -72,6 +72,12 @@ DEBUG=calypso:* yarn start
 
 Since building and starting the express server is done via a npm command, the normal method of passing argument to the node process won't work. However, you can start the debugger via the `NODE_OPTIONS` environment variable. This means you can run the built-in inspector by running `NODE_OPTIONS="--inspect" yarn start`. If you would like to debug the build process as well, it might be convenient to have the debugger/inspector break on the first line and wait for you. In that case, you should also pass in the `--inspect-brk` option like so: `NODE_OPTIONS="--inspect-brk" yarn start`.
 
+#### Debugging in VS Code
+
+1. Run `yarn start:debug`
+2. Set breakpoints in VS Code.
+3. Select the appropriate launch configuration and start the debugger.
+
 ## Monitoring builds and tests
 
 Throughout your Calypso development workflow, you will find yourself waiting — either for a build to finish or for tests to run. Rather than standing idle looking at terminals while you wait, you can use status indicators and/or system notifications.

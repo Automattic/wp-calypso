@@ -1,7 +1,6 @@
 import { Gridicon } from '@automattic/components';
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
 import clsx from 'clsx';
-import { translate, getLocaleSlug } from 'i18n-calypso';
+import { translate, numberFormat } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TagsList from 'calypso/blocks/reader-post-card/tags-list';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -11,7 +10,7 @@ import TimeSince from 'calypso/components/time-since';
 import { recordPermalinkClick } from 'calypso/reader/stats';
 import ReaderFullPostHeaderPlaceholder from './placeholders/header';
 
-const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
+const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => {
 	const handlePermalinkClick = () => {
 		recordPermalinkClick( 'full_post_title', post );
 	};
@@ -97,7 +96,9 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout } ) => {
 								{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 									count: followCount,
 									args: {
-										followCount: formatNumber( followCount, getLocaleSlug() ),
+										followCount: numberFormat( followCount, {
+											numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
+										} ),
 									},
 								} ) }
 							</span>
@@ -128,10 +129,6 @@ ReaderFullPostHeader.propTypes = {
 	post: PropTypes.object.isRequired,
 	children: PropTypes.node,
 	layout: PropTypes.oneOf( [ 'default', 'recent' ] ),
-};
-
-ReaderFullPostHeader.defaultProps = {
-	layout: 'default',
 };
 
 export default ReaderFullPostHeader;

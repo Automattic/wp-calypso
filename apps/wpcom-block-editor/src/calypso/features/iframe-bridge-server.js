@@ -638,11 +638,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 	const popoverContainer = getPopoverFallbackContainer();
 	popoverContainer && popoverSlotObserver.observe( popoverContainer, { childList: true } );
 
-	const { createNewPostUrl } = calypsoifyGutenberg;
-	if ( ! createNewPostUrl ) {
-		return;
-	}
-
 	// Handle the view post link in the snackbar, which unfortunately has a click
 	// handler which stops propagation, so we can't override it with the global handler.
 	const updateViewPostLinkNotice = () => {
@@ -670,90 +665,6 @@ async function openLinksInParentFrame( calypsoPort ) {
 		console.warn(
 			'Could not find the snackbar list element so, the "View post" link may open inside the iframe.'
 		);
-	}
-
-	// Create a new post link in block settings sidebar for Query block
-	const tryToReplaceCreateNewPostLink = () => {
-		// We need to wait for the rendering to be finished.
-		// This is mostly for Safari, but it doesn't hurt for other browsers.
-		setTimeout( () => {
-			const hyperlink = document.querySelector( '.wp-block-query__create-new-link a' );
-			if ( hyperlink ) {
-				hyperlink.href = createNewPostUrl;
-				hyperlink.target = '_top';
-			}
-		} );
-	};
-	const createNewPostLinkObserver = new window.MutationObserver( tryToReplaceCreateNewPostLink );
-
-	const shouldReplaceCreateNewPostLinksFor = ( node ) =>
-		createNewPostUrl && node.classList.contains( 'interface-interface-skeleton__sidebar' );
-
-	const observeSidebarMutations = ( node ) => {
-		if (
-			// Block settings sidebar for Query block.
-			shouldReplaceCreateNewPostLinksFor( node )
-		) {
-			createNewPostLinkObserver.observe( node, { childList: true, subtree: true } );
-			// If a Query block is selected, then the sidebar will
-			// directly open on the block settings tab
-			tryToReplaceCreateNewPostLink();
-		}
-	};
-
-	const unobserveSidebarMutations = ( node ) => {
-		if (
-			// Block settings sidebar for Query block.
-			shouldReplaceCreateNewPostLinksFor( node )
-		) {
-			createNewPostLinkObserver.disconnect();
-		}
-	};
-
-	// This observer functions as a "parent" observer, which connects and disconnects
-	// "child" observers as the relevant sidebar settings appear and disappear in the DOM.
-	const sidebarsObserver = new window.MutationObserver( ( mutations ) => {
-		for ( const record of mutations ) {
-			// We are checking for added nodes here to start observing for more specific changes.
-			for ( const node of record.addedNodes ) {
-				observeSidebarMutations( node );
-			}
-
-			// We are checking the removed nodes here to disconect
-			// the correct observer when a node is removed.
-			for ( const node of record.removedNodes ) {
-				unobserveSidebarMutations( node );
-			}
-		}
-	} );
-
-	// If one of the sidebar elements we're interested in is already present, start observing
-	// them for changes immediately.
-	const sidebars = document.querySelectorAll(
-		'.interface-interface-skeleton__sidebar, .interface-interface-skeleton__secondary-sidebar'
-	);
-	for ( const sidebar of sidebars ) {
-		observeSidebarMutations( sidebar );
-	}
-
-	// Add and remove the sidebar observers as the sidebar elements appear and disappear.
-	// They are always direct children of the body element.
-	const body = document.querySelector( '.interface-interface-skeleton__body' );
-	sidebarsObserver.observe( body, { childList: true } );
-
-	// Sidebar might already be open before this script is executed.
-	// post and site editors
-	if ( createNewPostUrl ) {
-		const sidebarComponentsPanel = document.querySelector(
-			'.interface-interface-skeleton__sidebar .components-panel'
-		);
-		if ( sidebarComponentsPanel ) {
-			createNewPostLinkObserver.observe( sidebarComponentsPanel, {
-				childList: true,
-				subtree: true,
-			} );
-			tryToReplaceCreateNewPostLink();
-		}
 	}
 }
 

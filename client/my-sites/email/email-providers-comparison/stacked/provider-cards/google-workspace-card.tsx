@@ -25,6 +25,7 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { useDispatch, useSelector } from 'calypso/state';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { TranslateResult } from 'i18n-calypso';
@@ -73,6 +74,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 		domains,
 		selectedDomainName: selectedDomainName,
 	} );
+	const currentRoute = useSelector( getCurrentRoute );
 
 	const cartKey = useCartKey();
 	const dispatch = useDispatch();
@@ -123,6 +125,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 		setAddingToCart,
 		shoppingCartManager,
 		siteSlug,
+		currentRoute,
 	} );
 
 	googleWorkspace.onExpandedChange = onExpandedChange;

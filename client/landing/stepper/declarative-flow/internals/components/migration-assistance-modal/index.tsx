@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import ConfirmModal from 'calypso/blocks/importer/components/confirm-modal';
 import { setMigrationAssistanceAccepted } from 'calypso/blocks/importer/wordpress/utils';
 import './style.scss';
+import type { PlanSlug } from '@automattic/calypso-products';
 
 const EVENT_NAMES = {
 	accepted: 'calypso_migration_assistance_modal_deal_accepted',
@@ -15,7 +16,7 @@ const EVENT_NAMES = {
 interface MigrationAssistanceModalProps {
 	navigateBack: ( () => void ) | undefined;
 	migrateFrom: string | null;
-	onConfirm: ( () => void ) | undefined;
+	onConfirm: ( ( planSlug: PlanSlug ) => void ) | undefined;
 }
 export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssistanceModalProps > = (
 	props: MigrationAssistanceModalProps
@@ -39,7 +40,7 @@ export const MigrationAssistanceModal: React.FunctionComponent< MigrationAssista
 		const acceptedDeal = true;
 		setMigrationAssistanceAccepted();
 		logEvent( acceptedDeal );
-		props.onConfirm?.();
+		props.onConfirm?.( PLAN_BUSINESS );
 	};
 
 	useEffect( () => {

@@ -32,7 +32,7 @@ import { clearStore } from 'calypso/lib/user/store';
 import wpcom from 'calypso/lib/wp';
 import AccountEmailField from 'calypso/me/account/account-email-field';
 import ReauthRequired from 'calypso/me/reauth-required';
-import { bumpStat, recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
@@ -52,7 +52,7 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
-import ToggleSitesAsLandingPage from './toggle-sites-as-landing-page';
+import ToggleLandingPageSettings from './toggle-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
 import './style.scss';
@@ -209,16 +209,6 @@ class Account extends Component {
 			} );
 			this.saveInterfaceSettings( event );
 		}
-	};
-
-	updateColorScheme = ( colorScheme ) => {
-		this.props.recordTracksEvent( 'calypso_color_schemes_select', { color_scheme: colorScheme } );
-		this.props.recordGoogleEvent( 'Me', 'Selected Color Scheme', 'scheme', colorScheme );
-		this.props.recordTracksEvent( 'calypso_color_schemes_save', {
-			color_scheme: colorScheme,
-		} );
-		this.props.recordGoogleEvent( 'Me', 'Saved Color Scheme', 'scheme', colorScheme );
-		this.props.bumpStat( 'calypso_changed_color_scheme', colorScheme );
 	};
 
 	updateUserLoginConfirm = ( event ) => {
@@ -957,9 +947,14 @@ class Account extends Component {
 
 						<FormFieldset className="account__settings-admin-home">
 							<FormLabel id="account__default_landing_page">
-								{ translate( 'Admin home' ) }
+								{ translate( 'Default Landing Page' ) }
 							</FormLabel>
-							<ToggleSitesAsLandingPage />
+							<ToggleLandingPageSettings />
+							<FormSettingExplanation>
+								{ translate(
+									'When you type https://www.wordpress.com in your browser, this is the page you land on.'
+								) }
+							</FormSettingExplanation>
 						</FormFieldset>
 
 						<FormFieldset>
@@ -999,7 +994,6 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 		} ),
 		{
-			bumpStat,
 			clearUnsavedUserSettings,
 			errorNotice,
 			removeNotice,

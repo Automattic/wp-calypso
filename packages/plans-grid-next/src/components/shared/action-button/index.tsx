@@ -63,7 +63,7 @@ const ActionButton = ( {
 	const storageAddOns = AddOns.useStorageAddOns( { siteId } );
 	const selectedStorageOptionForPlan = useSelect(
 		( select ) => select( WpcomPlansUI.store ).getSelectedStorageOptionForPlan( planSlug, siteId ),
-		[ planSlug ]
+		[ planSlug, siteId ]
 	);
 	const selectedStorageAddOn = storageAddOns?.find( ( addOn ) => {
 		return selectedStorageOptionForPlan && addOn
@@ -115,7 +115,7 @@ const ActionButton = ( {
 
 	const defaultStorageOption = useDefaultStorageOption( { planSlug } );
 	const canPurchaseStorageAddOns = storageAddOns?.some(
-		( storageAddOn ) => ! storageAddOn?.purchased && ! storageAddOn?.exceedsSiteStorageLimits
+		( storageAddOn ) => ! storageAddOn?.purchased
 	);
 
 	const storageAddOnCheckoutHref = storageAddOns?.find(

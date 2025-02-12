@@ -117,6 +117,7 @@ const renderComponent = ( component, initialState = {} ) => {
 	const store = mockStore( {
 		purchases: {},
 		sites: {},
+		ui: { selectedSiteId: 'anySiteId' },
 		...initialState,
 	} );
 
@@ -182,7 +183,7 @@ describe( 'UnifiedDesignPickerStep', () => {
 			);
 
 			await waitFor( () => {
-				expect( screen.getByText( 'Pick a design' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Pick a theme' ) ).toBeInTheDocument();
 				expect( container.getElementsByClassName( 'unified-design-picker__designs' ) ).toHaveLength(
 					1
 				);

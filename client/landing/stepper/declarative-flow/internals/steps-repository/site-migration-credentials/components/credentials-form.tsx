@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { NextButton } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
@@ -20,13 +21,21 @@ interface CredentialsFormProps {
 		siteInfo?: UrlData | undefined,
 		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => void;
-	onSkip: () => void;
 }
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
-	const { control, errors, accessMethod, isBusy, submitHandler, canBypassVerification } =
-		useCredentialsForm( onSubmit );
+	const hasEnTranslation = useHasEnTranslation();
+
+	const {
+		control,
+		errors,
+		accessMethod,
+		isBusy,
+		submitHandler,
+		canBypassVerification,
+		clearErrors,
+	} = useCredentialsForm( onSubmit );
 
 	const queryError = useQuery().get( 'error' ) || null;
 
@@ -42,7 +51,11 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 	}
 
 	const getContinueButtonText = () => {
-		if ( isBusy && ! canBypassVerification ) {
+		if ( isBusy ) {
+			const hasScanningTranslation = hasEnTranslation( 'Scanning site' );
+			if ( applicationPasswordEnabled && hasScanningTranslation ) {
+				return translate( 'Scanning site' );
+			}
 			return translate( 'Verifying credentials' );
 		}
 		if ( canBypassVerification ) {
@@ -52,10 +65,16 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 		return translate( 'Continue' );
 	};
 
+	const onSubmitLocal = ( e: React.FormEvent< HTMLFormElement > ) => {
+		e.preventDefault();
+		clearErrors();
+		submitHandler();
+	};
+
 	const showSpecialInstructions = ! applicationPasswordEnabled || accessMethod === 'backup';
 
 	return (
-		<form className="site-migration-credentials__form" onSubmit={ submitHandler }>
+		<form className="site-migration-credentials__form" onSubmit={ onSubmitLocal }>
 			{ errorMessage && (
 				<Notice
 					className="site-migration-credentials__error-notice"
@@ -95,16 +114,6 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 						{ getContinueButtonText() }
 					</NextButton>
 				</div>
-			</div>
-
-			<div className="site-migration-credentials__skip">
-				<button
-					className="button navigation-link step-container__navigation-link has-underline is-borderless"
-					onClick={ onSkip }
-					type="button"
-				>
-					{ translate( 'I need help, please contact me' ) }
-				</button>
 			</div>
 		</form>
 	);

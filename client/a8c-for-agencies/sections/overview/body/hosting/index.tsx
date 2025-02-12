@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
-import MigrationOffer from 'calypso/a8c-for-agencies/components/a4a-migration-offer';
+import { useCallback, useState } from 'react';
+import MigrationOfferV3 from 'calypso/a8c-for-agencies/components/a4a-migration-offer-v3';
 import Offering from 'calypso/a8c-for-agencies/components/offering';
 import { OfferingItemProps } from 'calypso/a8c-for-agencies/components/offering/types';
 import { A4A_MARKETPLACE_HOSTING_WPCOM_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
@@ -14,6 +14,8 @@ import PressableOffering from './pressable-oferring';
 const OverviewBodyHosting = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const [ isMigrationOfferExpanded, setIsMigrationOfferExpanded ] = useState( true );
 
 	const actionHandlerCallback = useCallback(
 		( section: string, product: string ) => {
@@ -56,8 +58,6 @@ const OverviewBodyHosting = () => {
 		},
 	};
 
-	const migrationOffer = <MigrationOffer foldable />;
-
 	return (
 		<Offering
 			title={ translate( 'Hosting' ) }
@@ -66,7 +66,10 @@ const OverviewBodyHosting = () => {
 			) }
 			items={ [ wpcom ] }
 		>
-			{ migrationOffer }
+			<MigrationOfferV3
+				isExpanded={ isMigrationOfferExpanded }
+				onToggleView={ () => setIsMigrationOfferExpanded( ( prev ) => ! prev ) }
+			/>
 			<PressableOffering />
 		</Offering>
 	);

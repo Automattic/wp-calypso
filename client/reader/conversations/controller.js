@@ -18,7 +18,13 @@ export function conversations( context, next ) {
 	);
 
 	const streamKey = 'conversations';
-	const scrollTracker = trackScrollPage.bind( null, '/read/conversations', title, 'Reader', mcKey );
+	const scrollTracker = trackScrollPage.bind(
+		null,
+		'/reader/conversations',
+		title,
+		'Reader',
+		mcKey
+	);
 
 	context.primary = (
 		<AsyncLoad
@@ -48,7 +54,7 @@ export function conversationsA8c( context, next ) {
 
 	const scrollTracker = trackScrollPage.bind(
 		null,
-		'/read/conversations/a8c',
+		'/reader/conversations/a8c',
 		title,
 		'Reader',
 		mcKey
@@ -60,6 +66,7 @@ export function conversationsA8c( context, next ) {
 			key="conversations"
 			title="Conversations @ Automattic"
 			streamKey={ streamKey }
+			store={ { id: streamKey } }
 			trackScrollPage={ scrollTracker }
 		/>
 	);

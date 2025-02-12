@@ -21,7 +21,7 @@ export const fetch = ( action ) => {
 					unit: period,
 					date: adjustedDate,
 					quantity,
-					stat_fields: 'views',
+					stat_fields: statFields,
 				},
 			},
 			action

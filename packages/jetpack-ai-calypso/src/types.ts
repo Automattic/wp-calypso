@@ -22,6 +22,7 @@ export interface LogoPresenterProps {
 export type SaveToMediaLibraryProps = {
 	siteId: string | number;
 	url: string;
+	logo?: Logo;
 	attrs?: {
 		caption?: string;
 		description?: string;

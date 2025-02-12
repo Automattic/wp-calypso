@@ -24,6 +24,7 @@ export * from './editor-gutenberg-component';
 export * from './editor-block-list-view-component';
 export * from './editor-sidebar-block-inserter-component';
 export * from './editor-welcome-tour-component';
+export * from './editor-welcome-guide-component';
 export * from './editor-popover-menu-component';
 export * from './editor-site-styles-component';
 export * from './editor-color-picker-component';
@@ -36,6 +37,7 @@ export * from './full-side-editor-nav-sidebar-component';
 export * from './full-side-editor-data-views-component';
 export * from './editor-dimensions-component';
 export * from './jetpack-instant-search-modal-component';
+export * from './wp-admin-notice-component';
 
 export * from './me';
 

@@ -1,7 +1,5 @@
-import config from '@automattic/calypso-config';
 import { PLAN_MIGRATION_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { Onboard, type SiteSelect, type UserSelect } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { isHostedSiteMigrationFlow } from '@automattic/onboarding';
 import { SiteExcerptData } from '@automattic/sites';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -57,6 +55,7 @@ const siteMigration: Flow = {
 			STEPS.SITE_MIGRATION_ALREADY_WPCOM,
 			STEPS.SITE_MIGRATION_OTHER_PLATFORM_DETECTED_IMPORT,
 			STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION,
+			STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS,
 		];
 
 		const hostedVariantSteps = isHostedSiteMigrationFlow( this.variantSlug ?? FLOW_NAME )
@@ -109,7 +108,6 @@ const siteMigration: Flow = {
 			true
 		);
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
-		const isEnglishLocale = useIsEnglishLocale();
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -138,7 +136,9 @@ const siteMigration: Flow = {
 							// siteId/siteSlug wont be defined here if coming from a direct link/signup.
 							// We need to make sure there's a site to import into.
 							if ( ! siteSlugParam ) {
-								return navigate( STEPS.SITE_CREATION_STEP.slug );
+								return navigate(
+									addQueryArgs( { from, skipMigration: true }, STEPS.SITE_CREATION_STEP.slug )
+								);
 							}
 						}
 						return exitFlow(
@@ -213,7 +213,7 @@ const siteMigration: Flow = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.siteCreated ) {
-						if ( ! fromQueryParam ) {
+						if ( ! fromQueryParam || providedDependencies?.skipMigration ) {
 							// If we get to this point without a fromQueryParam then we are coming from a direct
 							// pick your current platform link. That's why we navigate to the importList step.
 							return exitFlow(
@@ -223,6 +223,7 @@ const siteMigration: Flow = {
 										siteSlug,
 										origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
 										backToFlow: `/${ flowPath }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+										...( fromQueryParam && { from: fromQueryParam } ),
 									},
 									'/setup/site-setup/importList'
 								)
@@ -252,6 +253,7 @@ const siteMigration: Flow = {
 						return exitFlow(
 							addQueryArgs(
 								{
+									siteId,
 									siteSlug,
 									from: fromQueryParam ?? '',
 									option: 'content',
@@ -262,26 +264,16 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
-						return navigate( STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
-
-					// Take the user to the upgrade plan step.
-					if ( providedDependencies?.destination === 'upgrade' ) {
-						return navigate( STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
-
-					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+							},
+							STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
+						)
+					);
 				}
 
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
@@ -303,41 +295,34 @@ const siteMigration: Flow = {
 
 					// Do it for me option.
 					if ( providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
-							return navigate(
-								addQueryArgs(
-									{
-										siteSlug,
-										from: fromQueryParam,
-										siteId,
-									},
-									STEPS.SITE_MIGRATION_CREDENTIALS.slug
-								)
-							);
-						}
-
-						return navigate( STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug, {
-							siteId,
-							siteSlug,
-						} );
+						return navigate(
+							addQueryArgs(
+								{
+									siteSlug,
+									from: fromQueryParam,
+									siteId,
+								},
+								STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							)
+						);
 					}
 
 					// Continue with the migration flow.
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate(
+						addQueryArgs(
+							{ siteId, siteSlug, from: fromQueryParam },
+							STEPS.SITE_MIGRATION_INSTRUCTIONS.slug
+						)
+					);
 				}
 
+				//TODO: Check if we can remove this step once there is no reference to it in the codebase.
 				case STEPS.SITE_MIGRATION_ASSIGN_TRIAL_PLAN.slug: {
 					if ( providedDependencies?.error ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_INSTRUCTIONS.slug, {
-						siteId,
-						siteSlug,
-					} );
+					return navigate( addQueryArgs( { siteId, siteSlug }, STEPS.ERROR.slug ) );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
@@ -348,14 +333,7 @@ const siteMigration: Flow = {
 							providedDependencies?.userAcceptedDeal ||
 							urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
 						) {
-							if ( config.isEnabled( 'automated-migration/collect-credentials' ) ) {
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
-							} else if ( ! fromQueryParam ) {
-								// If the user selected "Do it for me" but has not given us a source site, we should take them to the source URL step.
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_SOURCE_URL.slug;
-							} else {
-								redirectAfterCheckout = STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug;
-							}
+							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
 						}
 
 						const destination = addQueryArgs(
@@ -373,6 +351,7 @@ const siteMigration: Flow = {
 							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
 							siteSlug: siteSlug,
 							destination: destination,
+							from: fromQueryParam ?? undefined,
 							plan: providedDependencies.plan as string,
 							cancelDestination: `/setup/${ flowPath }/${
 								STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug
@@ -388,15 +367,19 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_INSTRUCTIONS.slug: {
-					// Take the user to the migration started step.
-					if ( providedDependencies?.destination === 'migration-started' ) {
-						return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
-							siteId,
-							siteSlug,
-						} );
-					}
+					return navigate(
+						addQueryArgs(
+							{
+								siteId,
+								siteSlug,
+								from: fromQueryParam,
+							},
+							STEPS.SITE_MIGRATION_STARTED.slug
+						)
+					);
 				}
 
+				//TODO: Remove this step, it is not used anywhere.
 				case STEPS.SITE_MIGRATION_SOURCE_URL.slug: {
 					const { from } = providedDependencies as {
 						from: string;
@@ -434,7 +417,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( isEnglishLocale && action === 'already-wpcom' ) {
+					if ( action === 'already-wpcom' ) {
 						return navigate(
 							addQueryArgs(
 								{ siteId, from: from || fromQueryParam, siteSlug },
@@ -443,7 +426,7 @@ const siteMigration: Flow = {
 						);
 					}
 
-					if ( isEnglishLocale && action === 'site-is-not-using-wordpress' ) {
+					if ( action === 'site-is-not-using-wordpress' ) {
 						return navigate(
 							addQueryArgs(
 								{
@@ -497,12 +480,12 @@ const siteMigration: Flow = {
 					if ( action === 'skip' ) {
 						return navigate(
 							addQueryArgs(
-								{ siteId, from: from || fromQueryParam, siteSlug },
+								{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
 								STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
 							)
 						);
 					}
-
+					//TODO: Check if both conditions are needed.
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
@@ -549,22 +532,22 @@ const siteMigration: Flow = {
 					return navigate(
 						addQueryArgs(
 							{ siteId, from: fromQueryParam, siteSlug },
-							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+							STEPS.SITE_MIGRATION_SUPPORT_INSTRUCTIONS.slug
 						)
 					);
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
-					const { action, authorizationUrl } = providedDependencies as {
+					const { action, authorizationUrl, from } = providedDependencies as {
 						action: string;
+						from: string;
 						authorizationUrl: string;
 					};
 
 					if ( action === 'authorization' ) {
 						const currentUrl = window.location.href;
 						const successUrl = encodeURIComponent( currentUrl );
-						window.location.href = authorizationUrl + `&success_url=${ successUrl }`;
-						return;
+						return exitFlow( authorizationUrl + `&success_url=${ successUrl }` );
 					}
 
 					if ( action === 'fallback-credentials' ) {
@@ -582,10 +565,13 @@ const siteMigration: Flow = {
 						);
 					}
 
-					return navigate( STEPS.SITE_MIGRATION_STARTED.slug, {
-						siteId,
-						siteSlug,
-					} );
+					//TODO: Add a skip flag to track the user is having trouble to share the credentials.
+					return navigate(
+						addQueryArgs(
+							{ siteId, from: from || fromQueryParam, siteSlug, preventTicketCreation: true },
+							STEPS.SITE_MIGRATION_ASSISTED_MIGRATION.slug
+						)
+					);
 				}
 			}
 		}
@@ -613,23 +599,12 @@ const siteMigration: Flow = {
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
 					if ( urlQueryParams.has( 'showModal' ) || ! isFromSiteWordPress ) {
 						urlQueryParams.delete( 'showModal' );
-						if ( config.isEnabled( 'migration-flow/enable-migration-assistant' ) ) {
-							return navigate(
-								`${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }`
-							);
-						}
-
-						return navigate(
-							`${ STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug }?${ urlQueryParams }`
-						);
+						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
 					// If the user selected the "Do it for me" option, we should take them back to the how to migrate step skipping
 					// the modal.
-					if (
-						config.isEnabled( 'migration-flow/enable-migration-assistant' ) &&
-						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
-					) {
+					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
 						return navigate( `${ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug }?${ urlQueryParams }` );
 					}
 
@@ -662,6 +637,10 @@ const siteMigration: Flow = {
 				}
 
 				case STEPS.SITE_MIGRATION_APPLICATION_PASSWORD_AUTHORIZATION.slug: {
+					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
+				}
+
+				case STEPS.SITE_MIGRATION_ALREADY_WPCOM.slug: {
 					return navigate( `${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?${ urlQueryParams }` );
 				}
 			}

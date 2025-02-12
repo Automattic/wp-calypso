@@ -10,6 +10,7 @@ import {
 	HUNDRED_YEAR_PLAN_FLOW,
 	isDomainUpsellFlow,
 	isSiteAssemblerFlow,
+	isHundredYearDomainFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
@@ -232,7 +233,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			},
 		} );
 
-		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection() ) );
+		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
 
@@ -242,7 +243,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const handleAddMapping = ( domain: string ) => {
 		const domainCartItem = domainMapping( { domain } );
 
-		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection() ) );
+		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection(), flow ) );
 
 		setDomainCartItem( domainCartItem );
 
@@ -255,11 +256,22 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				suggestion.domain_name,
 				getAnalyticsSection(),
 				position,
-				suggestion?.is_premium
+				suggestion?.is_premium,
+				flow
 			)
 		);
 
 		submitWithDomain( suggestion );
+	};
+
+	const onUseYourDomainClick = ( domain?: string ) => {
+		if ( domain && isHundredYearDomainFlow( flow ) ) {
+			const leaveFlowFunction = exitFlow ?? window.location.assign;
+			leaveFlowFunction( `/setup/hundred-year-domain-transfer/domains?new=${ domain }` );
+			return;
+		}
+
+		setShowUseYourDomain( true );
 	};
 
 	const renderContent = () => (
@@ -270,7 +282,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			onAddMapping={ handleAddMapping }
 			onAddTransfer={ handleAddTransfer }
 			onSkip={ handleSkip }
-			onUseYourDomainClick={ () => setShowUseYourDomain( true ) }
+			onUseYourDomainClick={ onUseYourDomainClick }
 			showUseYourDomain={ showUseYourDomain }
 			isCartPendingUpdate={ isCartPendingUpdate }
 			isCartPendingUpdateDomain={ isCartPendingUpdateDomain }
@@ -321,16 +333,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="domains-header"
-					align={
-						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-							? 'center'
-							: 'left'
-					}
-					subHeaderAlign={
-						[ HUNDRED_YEAR_PLAN_FLOW, HUNDRED_YEAR_DOMAIN_FLOW ].includes( flow )
-							? 'center'
-							: undefined
-					}
+					align="center"
+					subHeaderAlign="center"
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>

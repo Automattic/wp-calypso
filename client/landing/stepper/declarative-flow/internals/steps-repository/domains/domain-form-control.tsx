@@ -37,7 +37,7 @@ interface DomainFormControlProps {
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
-	onUseYourDomainClick: () => void;
+	onUseYourDomainClick: ( domain?: string ) => void;
 	showUseYourDomain: boolean;
 	isCartPendingUpdate: boolean;
 	isCartPendingUpdateDomain: DomainSuggestion | undefined;
@@ -202,14 +202,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const isReskinnedSupportedFlow = () => {
-		if ( ! flow ) {
-			return false;
-		}
-
-		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
-	};
-
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -251,7 +243,7 @@ export function DomainFormControl( {
 					includeWordPressDotCom={ includeWordPressDotCom ?? true }
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
-					isReskinned
+					isOnboarding
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
@@ -289,7 +281,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+	if ( ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) && ! showUseYourDomain ) {
 		sideContent = getSideContent();
 	}
 

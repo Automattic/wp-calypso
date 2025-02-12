@@ -7,18 +7,14 @@ import IconGood from 'calypso/assets/images/a8c-for-agencies/feedback/good.svg';
 import IconNeutral from 'calypso/assets/images/a8c-for-agencies/feedback/neutral.svg';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextarea from 'calypso/components/forms/form-textarea';
-import { FeedbackQueryData } from './types';
+import type { FeedbackQueryData, FeedbackProps } from './types';
 
 import './style.scss';
 
-export type Props = {
-	title: string;
-	description: string;
-	questionDetails: string;
-	ctaText: string;
+export interface Props extends FeedbackProps {
 	onSubmit: ( data: FeedbackQueryData ) => void;
 	onSkip: () => void;
-};
+}
 
 export function A4AFeedback( {
 	title,

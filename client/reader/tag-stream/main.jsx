@@ -149,9 +149,7 @@ class TagStream extends Component {
 			/>
 		);
 		const sidebarProps = ! isReaderTagEmbedPage( window.location ) && {
-			streamSidebar: () => (
-				<ReaderTagSidebar tag={ this.props.decodedTagSlug } showFollow={ false } />
-			),
+			streamSidebar: () => <ReaderTagSidebar tag={ this.props.decodedTagSlug } />,
 			sidebarTabTitle: this.props.translate( 'Related' ),
 		};
 

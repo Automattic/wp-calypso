@@ -9,7 +9,8 @@ export default {
 			items: {
 				type: 'array',
 				items: {
-					type: [ 'integer', 'string', 'array' ],
+					// Valid for NULL from unsupported stats fields in hourly data
+					type: [ 'integer', 'string', 'array', null ],
 				},
 			},
 		},

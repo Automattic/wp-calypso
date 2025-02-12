@@ -7,21 +7,18 @@
 	position: relative;
 	margin-top: 0;
 	margin-bottom: 30px;
-	border-radius: 3px;
 
 	@include break-small {
 		flex-direction: row;
 		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin-bottom: 16px;
+		border-radius: 3px;
 	}
 
 	.task__text,
 	.task__illustration {
+		padding: 24px 16px;
 		box-sizing: border-box;
-
-		@include break-small {
-			padding: 24px 16px;
-		}
 
 		@include break-xlarge {
 			padding: 32px 24px;
@@ -31,8 +28,11 @@
 	.task__text {
 		display: flex;
 		flex-direction: column;
-		margin-top: 16px;
 		align-items: flex-start;
+
+		> :last-child {
+			margin-bottom: 0;
+		}
 	}
 
 	.task__illustration {
@@ -42,7 +42,7 @@
 		margin-left: auto;
 		text-align: center;
 		margin-top: 32px;
-		
+
 		@include break-small {
 			width: 33.33%;
 			margin-top: 0;
@@ -83,7 +83,7 @@
 		font-size: $font-body;
 		line-height: 24px;
 		color: var(--color-text-subtle);
-		
+
 		@include break-medium {
 			line-height: 28px;
 			margin-bottom: 32px;

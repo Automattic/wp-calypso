@@ -9,9 +9,10 @@ import {
 	TERM_ANNUALLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { AddOns, Plans } from '@automattic/data-stores';
+import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
+import { usePlansGridContext } from '../../grid-context';
 import type { GridPlan } from '../../types';
 
 interface UsePlanBillingDescriptionProps {
@@ -19,31 +20,30 @@ interface UsePlanBillingDescriptionProps {
 	planSlug: PlanSlug;
 	pricing: GridPlan[ 'pricing' ] | null;
 	isMonthlyPlan?: boolean;
-	storageAddOnsForPlan: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
 	useCheckPlanAvailabilityForPurchase: Plans.UseCheckPlanAvailabilityForPurchase;
+	reflectStorageSelectionInPlanPrices?: boolean;
 }
 
 export default function usePlanBillingDescription( {
 	siteId,
 	planSlug,
 	pricing,
-	storageAddOnsForPlan,
 	isMonthlyPlan,
 	coupon,
 	useCheckPlanAvailabilityForPurchase,
 }: UsePlanBillingDescriptionProps ) {
 	const translate = useTranslate();
 	const { currencyCode, originalPrice, discountedPrice, billingPeriod, introOffer } = pricing || {};
-
+	const { reflectStorageSelectionInPlanPrices } = usePlansGridContext();
 	const yearlyVariantPlanSlug = getPlanSlugForTermVariant( planSlug, TERM_ANNUALLY );
 
 	const yearlyVariantPricing = Plans.usePricingMetaForGridPlans( {
 		planSlugs: yearlyVariantPlanSlug ? [ yearlyVariantPlanSlug ] : [],
-		storageAddOns: storageAddOnsForPlan,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices,
 	} )?.[ yearlyVariantPlanSlug ?? '' ];
 
 	if ( ! pricing ) {

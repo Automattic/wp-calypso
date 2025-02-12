@@ -5,6 +5,7 @@ import moment from 'moment';
 import AsyncLoad from 'calypso/components/async-load';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -15,6 +16,7 @@ import StatsSite from './site';
 import StatsEmailDetail from './stats-email-detail';
 import StatsEmailSummary from './stats-email-summary';
 import StatsPageLoader from './stats-page-loader';
+import { appendQueryStringForRedirection } from './utils';
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
 	const endOfCurrentPeriod = momentSiteZone.endOf( period );
@@ -63,11 +65,6 @@ function getWordAdsFilters( siteId ) {
 			period: 'year',
 		},
 	];
-}
-
-function getMomentSiteZone( state, siteId ) {
-	const gmtOffset = getSiteOption( state, siteId, 'gmt_offset' );
-	return moment().utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 );
 }
 
 export function redirectToActivity( context ) {
@@ -226,9 +223,12 @@ export function site( context, next ) {
 }
 
 export function redirectToDaySummary( context ) {
-	page.redirect(
-		`/stats/day/${ context.params.module }/${ context.params.site }${ window.location.search }`
+	const url = appendQueryStringForRedirection(
+		`/stats/day/${ context.params.module }/${ context.params.site }`,
+		context.query
 	);
+
+	page.redirect( url );
 }
 
 export function summary( context, next ) {
@@ -252,6 +252,7 @@ export function summary( context, next ) {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
@@ -514,5 +515,6 @@ export function emailSummary( context, next ) {
 }
 
 export { default as insights } from './pages/insights/controller';
+export { default as realtime } from './pages/realtime/controller';
 export { default as subscribers } from './pages/subscribers/controller';
 export { default as purchase } from './pages/purchase/controller';

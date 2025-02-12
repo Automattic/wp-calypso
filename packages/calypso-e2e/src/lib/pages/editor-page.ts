@@ -13,6 +13,7 @@ import {
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
 	EditorWelcomeTourComponent,
+	EditorWelcomeGuideComponent,
 	EditorBlockToolbarComponent,
 	EditorTemplateModalComponent,
 	EditorPopoverMenuComponent,
@@ -57,6 +58,7 @@ export class EditorPage {
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
+	private editorWelcomeGuideComponent: EditorWelcomeGuideComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorTemplateModalComponent: EditorTemplateModalComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
@@ -78,6 +80,7 @@ export class EditorPage {
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorWelcomeGuideComponent = new EditorWelcomeGuideComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
@@ -153,7 +156,7 @@ export class EditorPage {
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
 		await Promise.all( [
-			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php)/, { timeout } ),
+			this.page.waitForURL( /(\/post\/.+|\/page\/+|\/post-new.php|\/post.php+)/, { timeout } ),
 			this.page.waitForResponse( /.*posts.*/, { timeout } ),
 		] );
 	}
@@ -515,6 +518,22 @@ export class EditorPage {
 	//#region Settings Sidebar
 
 	/**
+	 * Returns the locator for the root element of the settings sidebar.
+	 */
+	async getSettingsRoot() {
+		return await this.editorSettingsSidebarComponent.getRoot();
+	}
+
+	/**
+	 * Returns the locator of a section (panel body) settings sidebar.
+	 *
+	 * @param {string} name Name of the section.
+	 */
+	async getSettingsSection( name: string ) {
+		return await this.editorSettingsSidebarComponent.getSection( name );
+	}
+
+	/**
 	 * Opens the Settings sidebar.
 	 */
 	async openSettings( target: EditorToolbarSettingsButton = 'Settings' ): Promise< void > {
@@ -538,8 +557,8 @@ export class EditorPage {
 	 *
 	 * @param {string} name Name of the section to expand.
 	 */
-	async expandSection( name: string ): Promise< void > {
-		await this.editorSettingsSidebarComponent.expandSection( name );
+	async expandSection( name: string ) {
+		return await this.editorSettingsSidebarComponent.expandSection( name );
 	}
 
 	/**
@@ -681,6 +700,13 @@ export class EditorPage {
 	//#endregion
 
 	//#region Publish, Draft & Schedule
+
+	/**
+	 * Returns the locator for the root element of the publish toolbar.
+	 */
+	async getPublishPanelRoot() {
+		return await this.editorPublishPanelComponent.getRoot();
+	}
 
 	/**
 	 * Publishes the post or page and returns the resulting URL.
@@ -965,6 +991,13 @@ export class EditorPage {
 	 */
 	async openEditorOptionsMenu(): Promise< void > {
 		return this.editorToolbarComponent.openMoreOptionsMenu();
+	}
+
+	/**
+	 * Close the
+	 */
+	async closeWelcomeGuideIfNeeded(): Promise< void > {
+		return this.editorWelcomeGuideComponent.closeWelcomeGuideIfNeeded();
 	}
 
 	//#endregion

@@ -1,3 +1,6 @@
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/mixins";
+
 body.is-group-me.is-section-help,
 body.is-section-me {
 	background: var(--studio-gray-0);
@@ -19,6 +22,16 @@ body.is-section-me {
 		}
 		.layout_primary > div {
 			padding-bottom: 0;
+		}
+
+		.layout__primary > .main {
+			height: calc(100vh - var(--masterbar-height) - var(--content-padding-top));
+		}
+
+		@include break-small {
+			.layout__primary > .main {
+				height: calc(100vh - var(--masterbar-height) - var(--content-padding-bottom) - var(--content-padding-top));
+			}
 		}
 	}
 
@@ -45,6 +58,9 @@ body.is-section-me {
 					max-width: 1040px;
 					margin: 0 auto;
 				}
+				& > div.section-nav {
+                    margin-bottom: 24px; /* Preserve margin for Purchases mobile nav */
+	            }
 			}
 		}
 	}
@@ -83,7 +99,5 @@ body.is-section-me {
 
 	.email-verification-banner {
 		max-width: 1040px;
-		--color-accent: var(--studio-red);
-		--color-accent-60: var(--studio-red-60);
 	}
 }

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
@@ -25,18 +24,16 @@ import {
 	isReadymadeFlow,
 	isOnboardingFlow,
 	setThemeOnSite,
-	AI_ASSEMBLER_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingBar } from 'calypso/components/loading-bar';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
+import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -49,6 +46,7 @@ import {
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
+import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -84,6 +82,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		siteUrl,
 		progress,
 		partnerBundle,
+		siteGoals,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -95,11 +94,13 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
+			siteGoals: select( ONBOARD_STORE ).getGoals(),
 		} ),
 		[]
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
+	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -109,9 +110,11 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
 
+	const shouldSaveSiteGoals = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
+
 	const username = useSelector( getCurrentUserName );
 
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -127,8 +130,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		theme = DEFAULT_LINK_IN_BIO_THEME;
 	} else if ( isNewsletterFlow( flow ) ) {
 		theme = DEFAULT_NEWSLETTER_THEME;
-	} else if ( flow === AI_ASSEMBLER_FLOW ) {
-		theme = 'pub/assembler';
 	}
 
 	let preselectedThemeSlug = '';
@@ -183,13 +184,14 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	const { addTempSiteToSourceOption } = useAddTempSiteToSourceOptionMutation();
 	const urlQueryParams = useQuery();
 	const sourceSiteSlug = urlQueryParams.get( 'from' ) || '';
+	const skipMigration = urlQueryParams.get( 'skipMigration' ) || '';
 	const { data: sourceMigrationStatus } = useSourceMigrationStatusQuery( sourceSiteSlug );
 	const useThemeHeadstart =
 		! isStartWritingFlow( flow ) &&
 		! isNewHostedSiteCreationFlow( flow ) &&
 		! isSiteAssemblerFlow( flow ) &&
 		! isMigrationSignupFlow( flow );
-	const shouldGoToCheckout = Boolean( planCartItem || mergedDomainCartItems.length );
+	const shouldGoToCheckout = Boolean( planCartItem );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -199,6 +201,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				await addPlanToCart( slug, flow, true, theme, planCartItem );
 			}
 
+			if ( productCartItems?.length && slug ) {
+				await addProductsToCart( slug, flow, productCartItems );
+			}
+
 			return {
 				siteSlug: getSignupCompleteSlug(),
 				goToCheckout: shouldGoToCheckout,
@@ -206,11 +212,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent =
-			config.isEnabled( 'migration-flow/enable-white-labeled-plugin' ) &&
-			isMigrationSignupFlow( flow )
-				? 'migration'
-				: '';
+		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -231,7 +233,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			siteUrl,
 			domainItem,
 			sourceSlug,
-			siteIntent
+			siteIntent,
+			shouldSaveSiteGoals ? siteGoals : undefined
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
@@ -272,13 +275,11 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			goToCheckout: shouldGoToCheckout,
 			hasSetPreselectedTheme: Boolean( preselectedThemeSlug ),
 			siteCreated: true,
+			skipMigration,
 		};
 	}
 
 	useEffect( () => {
-		if ( ! isFreeFlow( flow ) ) {
-			setProgress( 0.1 );
-		}
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();
@@ -310,18 +311,13 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="create-site"
-				isHorizontalLayout
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<>
-						<h1>{ getCurrentMessage() }</h1>
-						{ progress >= 0 || isWooExpressFlow( flow ) ? (
-							<LoadingBar progress={ progress } />
-						) : (
-							<LoadingEllipsis />
-						) }
-						{ subTitle && <p className="processing-step__subtitle">{ subTitle }</p> }
-					</>
+					<StepperLoader
+						title={ getCurrentMessage() }
+						subtitle={ subTitle }
+						progress={ progress }
+					/>
 				}
 				showFooterWooCommercePowered={ false }
 			/>

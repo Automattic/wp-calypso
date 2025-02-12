@@ -25,7 +25,6 @@ const ComparisonGridToggle = forwardRef<
 			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
 			color: var( --studio-gray-100 );
 			font-size: var( --scss-font-body-small );
-			font-weight: 500;
 			height: 48px;
 			justify-content: center;
 			line-height: 20px;

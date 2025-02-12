@@ -16,3 +16,7 @@
 .vat-form__row input[type="checkbox"]:disabled {
 	opacity: 0.5;
 }
+
+.is-section-checkout .components-checkbox-control__input[type="checkbox"]:checked {
+	--wp-admin-theme-color: var(--studio-wordpress-blue-50);
+}

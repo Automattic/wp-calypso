@@ -5,9 +5,22 @@ import { check, Icon, chevronDown, lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { capitalize } from 'lodash';
 import qs from 'qs';
+import { useRef } from 'react';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
+import { useSelector } from 'calypso/state';
+import getSiteId from 'calypso/state/sites/selectors/get-site-id';
 import './style.scss';
 
-const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGatedHandler } ) => {
+const StatsIntervalDropdownListing = ( {
+	selected,
+	onSelection,
+	intervals,
+	onGatedHandler,
+	onClickOutside,
+} ) => {
+	const ref = useRef( null );
+	useOutsideClickCallback( ref, onClickOutside );
+
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 
 	const isSelectedItem = ( interval ) => {
@@ -33,7 +46,7 @@ const StatsIntervalDropdownListing = ( { selected, onSelection, intervals, onGat
 	};
 
 	return (
-		<div className="stats-interval-dropdown-listing">
+		<div className="stats-interval-dropdown-listing" ref={ ref }>
 			<ul className="stats-interval-dropdown-listing__list" role="radiogroup">
 				{ Object.keys( intervals ).map( ( intervalKey ) => {
 					const interval = intervals[ intervalKey ];
@@ -69,6 +82,8 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 	// New interval listing that preserves date range.
 	// TODO: Figure out how to dismiss on select.
 
+	const siteId = useSelector( ( state ) => getSiteId( state, slug ) );
+
 	function generateNewLink( newPeriod ) {
 		const newRangeQuery = qs.stringify( Object.assign( {}, queryParams, {} ), {
 			addQueryPrefix: true,
@@ -90,6 +105,10 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 			return;
 		}
 
+		// Deprecate the stored period and removing legacy localStorage keys.
+		localStorage.removeItem( 'jetpack_stats_stored_period' );
+		localStorage.removeItem( `jetpack_stats_stored_period_${ siteId }` );
+
 		page( generateNewLink( interval ) );
 	}
 
@@ -105,13 +124,14 @@ const IntervalDropdown = ( { slug, period, queryParams, intervals, onGatedHandle
 					<Icon className="gridicon" icon={ chevronDown } />
 				</Button>
 			) }
-			renderContent={ () => (
+			renderContent={ ( { onClose } ) => (
 				<div className="stats-interval-dropdown__container">
 					<StatsIntervalDropdownListing
 						selected={ period }
 						onSelection={ onSelectionHandler }
 						intervals={ intervals }
 						onGatedHandler={ onGatedHandler }
+						onClickOutside={ onClose }
 					/>
 				</div>
 			) }

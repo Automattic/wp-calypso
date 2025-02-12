@@ -9,8 +9,10 @@ import {
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_REQUEST,
-	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_RECEIVE,
+	READER_LIST_CREATE_SUCCESS,
+	READER_LIST_CREATE_FAILURE,
 	READER_LIST_UNFOLLOW,
 	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
@@ -22,6 +24,7 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
+	READER_USER_LISTS_REQUEST,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -69,16 +72,34 @@ export function requestList( listOwner, listSlug ) {
 	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
+/**
+ * Receive a single Reader list.
+ * @param  {Object}  data List
+ * @returns {Object}       Action object
+ */
 export function receiveReaderList( data ) {
+	return { type: READER_LIST_RECEIVE, data };
+}
+
+export function handleRequestListFailure( errorInfo ) {
 	return {
-		type: READER_LIST_REQUEST_SUCCESS,
+		type: READER_LIST_REQUEST_FAILURE,
+		error: errorInfo.error,
+		owner: errorInfo.owner,
+		slug: errorInfo.slug,
+	};
+}
+
+export function receiveCreateReaderList( data ) {
+	return {
+		type: READER_LIST_CREATE_SUCCESS,
 		data,
 	};
 }
 
-export function handleReaderListRequestFailure( errorInfo ) {
+export function handleCreateReaderListFailure( errorInfo ) {
 	return {
-		type: READER_LIST_REQUEST_FAILURE,
+		type: READER_LIST_CREATE_FAILURE,
 		error: errorInfo.error,
 		owner: errorInfo.owner,
 		slug: errorInfo.slug,
@@ -271,3 +292,10 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 	listOwner,
 	listSlug,
 } );
+
+export function requestUserLists( userLogin ) {
+	return {
+		type: READER_USER_LISTS_REQUEST,
+		userLogin,
+	};
+}

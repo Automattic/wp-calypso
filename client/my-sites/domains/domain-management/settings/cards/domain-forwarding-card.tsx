@@ -626,14 +626,15 @@ export default function DomainForwardingCard( {
 						},
 					} ) }
 			</form>
-
-			<Button
-				borderless
-				className="add-forward-button  link-button"
-				onClick={ () => handleAddForward() }
-			>
-				{ translate( '+ Add forward' ) }
-			</Button>
+			{ editingId !== -1 && (
+				<Button
+					borderless
+					className="add-forward-button  link-button"
+					onClick={ () => handleAddForward() }
+				>
+					{ translate( '+ Add forward' ) }
+				</Button>
+			) }
 		</>
 	);
 }

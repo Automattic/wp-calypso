@@ -1,0 +1,28 @@
+.stats-realtime-chart {
+	position: relative;
+	margin: 32px 0;
+
+	.line-chart {
+		background-color: var(--studio-white);
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+	}
+
+	.stats__empty-state {
+		max-width: 75%;
+		position: absolute;
+		top: 30%;
+		left: 50%;
+		transform: translate(-50%, 0);
+	}
+
+	/* Style the line chart svg using the user admin color scheme */
+	path.visx-line {
+		stroke: var(--color-primary);
+	}
+
+	#area-gradient-1 > stop:first-child {
+		stop-color: var(--color-primary);
+	}
+	/* Style the line chart svg using the user admin color scheme */
+}

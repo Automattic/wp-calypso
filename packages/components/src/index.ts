@@ -29,7 +29,6 @@ export { default as PaginationControl } from './pagination-control';
 export { Gravatar } from './gravatar';
 export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
-export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressWordmark } from './wordpress-wordmark';
 export { default as MaterialIcon } from './material-icon';
 export { ListTile } from './list-tile';
@@ -44,24 +43,12 @@ export {
 export { default as CountCard } from './highlight-cards/count-card';
 export { default as CountComparisonCard } from './highlight-cards/count-comparison-card';
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
-export {
-	default as WeeklyHighlightCards,
-	PAST_SEVEN_DAYS,
-	PAST_THIRTY_DAYS,
-	BETWEEN_PAST_EIGHT_AND_FIFTEEN_DAYS,
-	BETWEEN_PAST_THIRTY_ONE_AND_SIXTY_DAYS,
-} from './highlight-cards/weekly-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
-export { default as AppPromoCard } from './app-promo-card';
-export { default as ShortenedNumber } from './number-formatters';
-export { default as formattedNumber } from './number-formatters/formatted-number';
 export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
-export { default as JetpackUpsellCard } from './jetpack-upsell-card';
-export { UpsellMenuGroup } from './upsell-menu-group';
 export { default as PricingSlider } from './pricing-slider';
 export { default as Tooltip } from './tooltip';
 export { default as SegmentedControl } from './segmented-control';
@@ -76,21 +63,12 @@ export { default as FlowQuestion } from './flow-question';
 export type { RenderThumbFunction } from './pricing-slider/types';
 
 // Logos
-export { default as ClientLogoList } from './client-logo-list';
-export { default as JetpackLogo } from './logos/jetpack-logo';
-export { default as BloombergLogo } from './logos/bloomberg-logo';
-export { default as CloudLogo } from './logos/cloud-logo';
-export { default as CNNLogo } from './logos/cnn-logo';
-export { default as CondenastLogo } from './logos/condenast-logo';
-export { default as DisneyLogo } from './logos/disney-logo';
-export { default as FacebookLogo } from './logos/facebook-logo';
-export { default as SalesforceLogo } from './logos/salesforce-logo';
-export { default as SlackLogo } from './logos/slack-logo';
-export { default as TimeLogo } from './logos/time-logo';
-export { default as VIPLogo } from './logos/vip-logo';
-export { default as WooLogo } from './logos/woo-logo';
-export { default as WordPressLogo } from './wordpress-logo';
-export { default as WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
+export { JetpackLogo } from './logos/jetpack-logo';
+export { CloudLogo } from './logos/cloud-logo';
+export { VIPLogo } from './logos/vip-logo';
+export { WooLogo } from './logos/woo-logo';
+export { WordPressLogo } from './logos/wordpress-logo';
+export { WooCommerceWooLogo } from './logos/woocommerce-woo-logo';
 export { default as Swipeable } from './swipeable';
 export { default as DotPager } from './dot-pager';
 export { default as EmbedContainer } from './embed-container';

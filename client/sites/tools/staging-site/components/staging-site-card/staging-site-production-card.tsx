@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
@@ -6,25 +6,30 @@ import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Notice from 'calypso/components/notice';
-import { navigate } from 'calypso/lib/navigate';
 import { urlToSlug } from 'calypso/lib/url';
+import { showSitesPage } from 'calypso/sites/components/sites-dashboard';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import getSiteUrl from 'calypso/state/selectors/get-site-url';
+import { getSiteUrl } from 'calypso/state/sites/selectors';
 import { getIsSyncingInProgress } from 'calypso/state/sync/selectors/get-is-syncing-in-progress';
 import { IAppState } from 'calypso/state/types';
 import { useProductionSiteDetail, ProductionSite } from '../../hooks/use-production-site-detail';
 import { usePullFromStagingMutation, usePushToStagingMutation } from '../../hooks/use-staging-sync';
 import { CardContentWrapper } from './card-content/card-content-wrapper';
 import { SiteSyncCard } from './card-content/staging-sync-card';
+import { ConfirmationModal } from './confirmation-modal';
 import { LoadingPlaceholder } from './loading-placeholder';
 
 const ActionButtons = styled.div( {
 	display: 'flex',
-	'@media ( max-width: 768px )': {
+	gap: '1em',
+
+	'@media screen and (max-width: 768px)': {
+		gap: '0.5em',
 		flexDirection: 'column',
-		alignItems: 'stretch',
+		'.button': { flexGrow: 1 },
+		alignSelf: 'stretch',
 	},
 } );
 
@@ -98,6 +103,31 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 		},
 	} );
 
+	const handleDeleteClick = () => {
+		if ( ! productionSite?.url ) {
+			return;
+		}
+		sessionStorage.setItem( 'deleteStagingSite', 'true' );
+		showSitesPage( `/staging-site/${ urlToSlug( productionSite.url ) }` );
+	};
+
+	const DeleteStagingSiteButton = () => (
+		<ConfirmationModal
+			disabled={ disabled || isSyncInProgress }
+			onConfirm={ handleDeleteClick }
+			isScary
+			modalTitle={ translate( 'Confirm staging site deletion' ) }
+			modalMessage={ translate(
+				'Are you sure you want to delete the staging site? This action cannot be undone.'
+			) }
+			confirmLabel={ translate( 'Delete staging site' ) }
+			cancelLabel={ translate( 'Cancel' ) }
+		>
+			<Gridicon icon="trash" />
+			<span>{ translate( 'Delete staging site' ) }</span>
+		</ConfirmationModal>
+	);
+
 	const getLoadingErrorContent = ( message: string ) => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
@@ -112,19 +142,12 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 				<ActionButtons>
 					<Button
 						primary
-						onClick={ () => {
-							navigate(
-								`/overview/${ urlToSlug( productionSite.url ) }?search=${ urlToSlug(
-									productionSite.url
-								) }`,
-								false,
-								true
-							);
-						} }
+						onClick={ () => showSitesPage( `/overview/${ urlToSlug( productionSite.url ) }` ) }
 						disabled={ disabled || isSyncInProgress }
 					>
 						<span>{ __( 'Switch to production site' ) }</span>
 					</Button>
+					<DeleteStagingSiteButton />
 				</ActionButtons>
 				<SyncActionsContainer>
 					<SiteSyncCard
@@ -160,7 +183,7 @@ function StagingSiteProductionCard( { disabled, siteId, translate }: CardProps )
 	return (
 		<CardContentWrapper
 			subtitle={ translate(
-				'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+				'This staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}',
 				{
 					components: {
 						a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,

@@ -95,10 +95,9 @@ const ReaderExportButton = ( {
 			disabled={ disabled || isExportInProgress }
 			onClick={ onClick }
 			icon={ download }
+			text={ translate( 'Export OPML' ) }
 			{ ...props }
-		>
-			<span className="reader-export-button__label">{ translate( 'Export OPML' ) }</span>
-		</Button>
+		/>
 	);
 };
 

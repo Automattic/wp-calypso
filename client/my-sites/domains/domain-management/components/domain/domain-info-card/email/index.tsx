@@ -39,7 +39,7 @@ const DomainEmailInfoCard = ( { domain, selectedSite }: DomainInfoCardProps ) =>
 	return ! emailAddresses.length ? (
 		<DomainInfoCard
 			type="href"
-			href={ getEmailManagementPath( selectedSite.slug, domain.name ) }
+			href={ getEmailManagementPath( selectedSite.slug, domain.name, currentRoute ) }
 			title={ translate( 'Email' ) }
 			description={ translate( 'Send and receive emails from youremail@%(domainName)s', {
 				args: { domainName: domain.name },

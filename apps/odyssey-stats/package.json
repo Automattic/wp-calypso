@@ -35,9 +35,9 @@
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@tanstack/react-query": "^5.15.5",
-		"@wordpress/base-styles": "^5.8.0",
-		"@wordpress/data": "^10.8.0",
-		"@wordpress/icons": "^10.8.0",
+		"@wordpress/base-styles": "^5.16.0",
+		"@wordpress/data": "^10.16.0",
+		"@wordpress/icons": "^10.16.0",
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
 		"debug": "^4.3.4",
@@ -45,7 +45,7 @@
 		"prop-types": "^15.8.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-redux": "^9.1.2",
+		"react-redux": "^9.2.0",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
 		"wpcom": "workspace:^"
@@ -60,9 +60,9 @@
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/webpack-inline-constant-exports-plugin": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
-		"@babel/core": "^7.25.8",
+		"@babel/core": "^7.26.0",
 		"@size-limit/file": "^8.2.6",
-		"@wordpress/dependency-extraction-webpack-plugin": "^6.11.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.14.0",
 		"autoprefixer": "^10.2.5",
 		"babel-jest": "^29.6.1",
 		"gettext-parser": "^6.0.0",
@@ -74,7 +74,7 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
 		"size-limit": "^8.2.6",
-		"webpack": "^5.95.0",
+		"webpack": "^5.97.1",
 		"webpack-bundle-analyzer": "^4.10.2"
 	}
 }

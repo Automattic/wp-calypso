@@ -17,7 +17,6 @@
  */
 body {
 	--color-body-background: #fdfdfd;
-	--wooexpress-purple: #7f54b3;
 	background-color: var(--color-body-background);
 }
 
@@ -69,10 +68,13 @@ button {
 /**
  * Site Setup
  */
-.ai-assembler,
 .new-hosted-site,
 .import-hosted-site,
 .site-setup,
+.onboarding.goals,
+.onboarding.design-setup,
+.onboarding.design-choices,
+.onboarding.difm-starting-point,
 .site-migration,
 .migration,
 .migration-signup,
@@ -88,13 +90,11 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
-.wooexpress,
 .copy-site,
 .intro,
 .free-setup,
 .free-post-setup,
 .free,
-.with-theme-assembler,
 .assembler-first,
 .setup-blog,
 .celebration-step,
@@ -106,14 +106,16 @@ button {
 .hundred-year-domain,
 .link-in-bio-tld,
 .entrepreneur,
-.generate-content {
+.generate-content,
+.processing {
 	box-sizing: border-box;
 
 	&.step-route {
 		padding: 60px 0 0;
 
 		// Launchpad has its own header
-		&.launchpad {
+		&.launchpad,
+		&.hundred-year-plan {
 			margin-top: -60px;
 		}
 
@@ -121,6 +123,13 @@ button {
 			&.courses,
 			&.site-picker,
 			&.new-or-existing-site,
+			&.domains:not(.copy-site):not(.onboarding) {
+				margin-top: -60px;
+			}
+		}
+
+		@include break-xlarge {
+			&.goals,
 			&.domains {
 				margin-top: -60px;
 			}
@@ -214,6 +223,10 @@ button {
 	--wp-components-color-accent-darker-20: var(--studio-wordpress-blue-70);
 	--wp-components-color-accent: var(--studio-wordpress-blue-50);
 
+}
+
+.step-route.onboarding {
+	margin: 0 auto;
 }
 
 .import-focused .step-container.site-picker,
@@ -391,20 +404,7 @@ button {
 	}
 }
 
-.wooexpress,
-.copy-site,
-.ecommerce {
-	.step-container.processing-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 25vh;
-	}
-}
-
-.assign-trial-plan,
 .processing {
-	&.wooexpress,
 	&.ecommerce {
 		padding: 60px 0;
 		min-height: 100%;
@@ -436,53 +436,6 @@ button {
 				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
 		}
 	}
-}
-
-.wooexpress {
-	.step-container .step-container__content h1 {
-		font-family: proxima-nova, sans-serif;
-		font-weight: 600;
-		font-size: $font-title-large;
-	}
-	.loading-bar {
-		background-color: var(--studio-woocommerce-purple-5);
-		width: 590px;
-		max-width: 100%;
-		margin-left: auto;
-		margin-right: auto;
-
-		@media screen and (max-width: 640px) {
-			width: 100%;
-		}
-	}
-	.processing-step {
-		width: 100%;
-		max-width: 640px;
-		box-sizing: border-box;
-	}
-	p.processing-step__subtitle {
-		font-family: "SF Pro Text", $sans;
-		font-weight: 400;
-		letter-spacing: initial;
-
-		.woo-inline-purple-heart {
-			width: 18px;
-			height: 15px;
-			margin-bottom: -2px; // bring visual center inline with the text
-		}
-
-		strong {
-			font-weight: 500;
-		}
-	}
-	.loading-bar::before {
-		background: var(--wooexpress-purple);
-	}
-	.signup-header .wordpress-logo {
-		display: block;
-		width: 500px;
-	}
-
 }
 
 /*

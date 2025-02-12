@@ -1,5 +1,6 @@
 import { ExternalLink } from '@automattic/components';
 import { decodeEntities } from '@wordpress/html-entities';
+import { __ } from '@wordpress/i18n';
 import type { PostObject } from '../types';
 
 export const SupportArticleHeader = ( {
@@ -21,7 +22,7 @@ export const SupportArticleHeader = ( {
 				target="_blank"
 				icon
 			>
-				Open support page
+				{ __( 'Open support page', __i18n_text_domain__ ) }
 			</ExternalLink>
 			<h1 className="help-center-article-content__header-title">
 				{ decodeEntities( post.title ) }

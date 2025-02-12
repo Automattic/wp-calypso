@@ -7,7 +7,6 @@ import ChatWithSupportLabel from '../chat-with-support';
 import CustomALink from './custom-a-link';
 import DislikeFeedbackMessage from './dislike-feedback-message';
 import ErrorMessage from './error-message';
-import Sources from './sources';
 import { uriTransformer } from './uri-transformer';
 import { UserMessage } from './user-message';
 import type { ZendeskMessage, Message } from '../../types';
@@ -26,19 +25,20 @@ export const MessageContent = ( {
 	displayChatWithSupportLabel?: boolean;
 } ) => {
 	const { __ } = useI18n();
-	const { shouldUseHelpCenterExperience } = useOdieAssistantContext();
+	const { experimentVariationName } = useOdieAssistantContext();
 	const messageClasses = clsx(
 		'odie-chatbox-message',
 		`odie-chatbox-message-${ message.role }`,
 		`odie-chatbox-message-${ message.type ?? 'message' }`,
-		shouldUseHelpCenterExperience &&
-			message?.context?.flags?.show_ai_avatar === false &&
-			`odie-chatbox-message-no-avatar`
+		message?.context?.flags?.show_ai_avatar === false && `odie-chatbox-message-no-avatar`
 	);
 	const containerClasses = clsx(
 		'odie-chatbox-message-sources-container',
-		shouldUseHelpCenterExperience && isNextMessageFromSameSender && 'next-chat-message-same-sender'
+		isNextMessageFromSameSender && 'next-chat-message-same-sender'
 	);
+
+	const stopConflatingNegativeRatingWithContactSupport =
+		experimentVariationName === 'give_wapuu_a_chance';
 
 	const isMessageWithOnlyText =
 		message.context?.flags?.hide_disclaimer_content ||
@@ -102,11 +102,11 @@ export const MessageContent = ( {
 							</p>
 						</div>
 					) }
-					{ message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
+					{ ! stopConflatingNegativeRatingWithContactSupport &&
+						message.type === 'dislike-feedback' && <DislikeFeedbackMessage /> }
 				</div>
-				{ ! isMessageWithOnlyText && <Sources message={ message } /> }
 			</div>
-			{ shouldUseHelpCenterExperience && displayChatWithSupportLabel && <ChatWithSupportLabel /> }
+			{ displayChatWithSupportLabel && <ChatWithSupportLabel /> }
 		</>
 	);
 };

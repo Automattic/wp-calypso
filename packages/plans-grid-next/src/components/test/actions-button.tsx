@@ -23,6 +23,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 	AddOns: {
 		useStorageAddOns: jest.fn(),
 	},
+	Purchases: {
+		useSitePurchasesByProductSlug: jest.fn(),
+	},
 } ) );
 jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),

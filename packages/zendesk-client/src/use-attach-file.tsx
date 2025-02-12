@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
-import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import {
 	SMOOCH_APP_ID,
 	SMOOCH_APP_ID_STAGING,
@@ -23,8 +22,8 @@ export const useAttachFileToConversation = () => {
 			conversationId: string;
 			file: File;
 		} ) => {
-			const currentEnvironment = config( 'env_id' );
-			const isTestMode = currentEnvironment !== 'production';
+			const currentEnvironment = config( 'env_id' ) as string;
+			const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
 
 			const integrationId = isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID;
 			const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
@@ -47,8 +46,7 @@ export const useAttachFileToConversation = () => {
 			formData.append( 'message', JSON.stringify( {} ) );
 			formData.append( 'source', file );
 
-			return apiFetch( {
-				path: `${ url }/sc/sdk/v2/apps/${ appId }/conversations/${ conversationId }/files`,
+			return fetch( `${ url }/sc/sdk/v2/apps/${ appId }/conversations/${ conversationId }/files`, {
 				method: 'POST',
 				body: formData,
 				credentials: 'include',
@@ -58,7 +56,7 @@ export const useAttachFileToConversation = () => {
 					'x-smooch-clientid': clientId,
 					'x-smooch-sdk': 'web/zendesk/0.1',
 				},
-			} as APIFetchOptions );
+			} );
 		},
 	} );
 };

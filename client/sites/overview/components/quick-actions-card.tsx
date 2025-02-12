@@ -64,22 +64,21 @@ const QuickActionsCard: FC = () => {
 	const hasEnTranslation = useHasEnTranslation();
 	const site = useSelector( getSelectedSite );
 	const { data: activeThemeData } = useActiveThemeQuery( site?.ID || -1, !! site );
-	const { editorUrl, themeInstallUrl, pluginInstallUrl, statsUrl, siteEditorUrl } = useSelector(
-		( state ) => ( {
-			editorUrl: site?.ID ? getEditorUrl( state, site.ID ) : '#',
-			themeInstallUrl: getThemeInstallUrl( state, site?.ID ) ?? '',
-			pluginInstallUrl: getPluginInstallUrl( state, site?.ID ) ?? '',
-			statsUrl: getStatsUrl( state, site?.ID ) ?? '',
-			siteEditorUrl:
-				site?.ID && activeThemeData
-					? getCustomizeUrl(
-							state as object,
-							activeThemeData[ 0 ]?.stylesheet,
-							site?.ID,
-							activeThemeData[ 0 ]?.is_block_theme
-					  )
-					: '',
-		} )
+	const editorUrl = useSelector( ( state ) =>
+		site?.ID ? getEditorUrl( state, site?.ID ) : '#'
+	);
+	const themeInstallUrl = useSelector( ( state ) => getThemeInstallUrl( state, site?.ID ) ?? '' );
+	const pluginInstallUrl = useSelector( ( state ) => getPluginInstallUrl( state, site?.ID ) ?? '' );
+	const statsUrl = useSelector( ( state ) => getStatsUrl( state, site?.ID ) ?? '' );
+	const siteEditorUrl = useSelector( ( state ) =>
+		site?.ID && activeThemeData
+			? getCustomizeUrl(
+					state as object,
+					activeThemeData[ 0 ]?.stylesheet,
+					site?.ID,
+					activeThemeData[ 0 ]?.is_block_theme
+			  )
+			: ''
 	);
 
 	const { adminLabel, adminUrl } = useSiteAdminInterfaceData( site?.ID );

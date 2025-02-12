@@ -74,7 +74,7 @@
 }
 
 .responsive-toolbar-group__swipe {
-	width: 100%;
+	width: calc(100% + 20px);
 
 	.responsive-toolbar-group__swipe-list {
 		padding: 0 8px;

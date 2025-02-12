@@ -1,0 +1,58 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.promoted-posts__payment-links-container {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1040px;
+	width: calc(100% - 128px);
+	background: var(--studio-gray-0);
+	border-radius: 4px;
+	margin-bottom: 24px;
+
+	@media screen and (max-width: $break-medium + 36px) {
+		width: calc(100% - 32px);
+	}
+	@media screen and (max-width: $break-medium + 272px) {
+		width: calc(100% - 32px);
+	}
+
+	.promoted-posts__payment-links {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 16px;
+
+		.promoted-posts__payment-link-row {
+			display: grid;
+			grid-template-columns: 40% 40% 20%;
+
+			.payment-link__label {
+				font-size: 0.875rem;
+				font-weight: 500;
+			}
+
+			.payment-link__link {
+				justify-self: flex-end;
+				a {
+					display: flex;
+					align-items: start;
+					gap: 2px;
+
+
+					svg {
+						path {
+							fill: var(--color-primary);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+.campaign-item__container {
+	.promoted-posts__payment-links-container {
+		width: 100%;
+	}
+}

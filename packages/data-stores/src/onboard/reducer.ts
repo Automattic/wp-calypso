@@ -10,6 +10,7 @@ import type {
 } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
 import type { FeatureId } from '../shared-types';
+import type { GlobalStyles } from '../site';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -111,6 +112,14 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	if ( action.type === 'SET_SELECTED_DESIGN' ) {
 		return action.selectedDesign;
 	}
+
+	if (
+		action.type === 'RESET_ONBOARD_STORE' &&
+		action?.skipFlags?.includes( 'skipSelectedDesign' )
+	) {
+		return state;
+	}
+
 	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return undefined;
 	}
@@ -128,6 +137,22 @@ const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction
 		return undefined;
 	}
 	return state;
+};
+
+const selectedGlobalStyles: Reducer< GlobalStyles | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	switch ( action.type ) {
+		case 'SET_SELECTED_GLOBAL_STYLES':
+			return action.selectedGlobalStyles;
+
+		case 'RESET_ONBOARD_STORE':
+			return undefined;
+
+		default:
+			return state;
+	}
 };
 
 const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
@@ -331,12 +356,12 @@ const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardActio
 	return state;
 };
 
-const progress: Reducer< number, OnboardAction > = ( state = -1, action ) => {
+const progress: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_PROGRESS' ) {
 		return action.progress;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return -1;
+		return undefined;
 	}
 	return state;
 };
@@ -353,7 +378,7 @@ const progressTitle: Reducer< string | undefined, OnboardAction > = ( state, act
 
 const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'SET_GOALS' ) {
-		return action.goals;
+		return [ ...action.goals ];
 	}
 	if ( action.type === 'CLEAR_IMPORT_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.Import );
@@ -361,9 +386,14 @@ const goals: Reducer< SiteGoal[], OnboardAction > = ( state = [], action ) => {
 	if ( action.type === 'CLEAR_DIFM_GOAL' ) {
 		return state.filter( ( goal ) => goal !== SiteGoal.DIFM );
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && action?.skipFlags?.includes( 'skipGoals' ) ) {
+		return state;
+	}
+
 	if ( [ 'RESET_GOALS', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return [];
 	}
+
 	return state;
 };
 
@@ -612,6 +642,20 @@ const signupDomainOrigin: Reducer< string | undefined, OnboardAction > = (
 	return state;
 };
 
+const createWithBigSky: Reducer< boolean | undefined, OnboardAction > = (
+	state = undefined,
+	action
+) => {
+	if ( action.type === 'SET_CREATE_WITH_BIG_SKY' ) {
+		return action.createWithBigSky;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainCartItem,
@@ -629,6 +673,7 @@ const reducer = combineReducers( {
 	storeType,
 	selectedDesign,
 	selectedStyleVariation,
+	selectedGlobalStyles,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,
@@ -662,6 +707,7 @@ const reducer = combineReducers( {
 	paidSubscribers,
 	partnerBundle,
 	signupDomainOrigin,
+	createWithBigSky,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -1,6 +1,5 @@
 import { Onboard, useLaunchpad } from '@automattic/data-stores';
-import { isAssemblerDesign } from '@automattic/design-picker';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
@@ -17,7 +16,6 @@ import { STEPS } from './internals/steps';
 import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { OnboardSelect } from '@automattic/data-stores';
 
 const updateDesign: Flow = {
 	name: 'update-design',
@@ -26,7 +24,7 @@ const updateDesign: Flow = {
 	},
 	isSignupFlow: false,
 	useSteps() {
-		return [ STEPS.DESIGN_SETUP, STEPS.PATTERN_ASSEMBLER, STEPS.PROCESSING, STEPS.ERROR ];
+		return [ STEPS.DESIGN_SETUP, STEPS.PROCESSING, STEPS.ERROR ];
 	},
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );
@@ -40,10 +38,6 @@ const updateDesign: Flow = {
 		const siteSlug = useSiteSlug();
 		const flowToReturnTo = useQuery().get( 'flowToReturnTo' ) || 'free';
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const selectedDesign = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
-			[]
-		);
 		const { data: { launchpad_screen: launchpadScreenOption } = {} } = useLaunchpad( siteSlug );
 
 		const exitFlow = ( to: string ) => {
@@ -71,15 +65,6 @@ const updateDesign: Flow = {
 
 					if ( results.some( ( result ) => result === ProcessingResult.FAILURE ) ) {
 						return navigate( 'error' );
-					}
-
-					if ( isAssemblerDesign( selectedDesign ) ) {
-						const params = new URLSearchParams( {
-							canvas: 'edit',
-							assembler: '1',
-						} );
-
-						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					if ( launchpadScreenOption === 'skipped' ) {
@@ -111,26 +96,11 @@ const updateDesign: Flow = {
 						);
 					}
 
-					if ( providedDependencies?.shouldGoToAssembler ) {
-						return navigate( 'pattern-assembler' );
-					}
-
 					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
-
-				case 'pattern-assembler': {
-					return navigate( `processing?siteSlug=${ siteSlug }&flowToReturnTo=${ flowToReturnTo }` );
-				}
 			}
 		}
 
-		const goBack = () => {
-			switch ( currentStep ) {
-				case 'pattern-assembler':
-					return navigate( 'designSetup' );
-			}
-		};
-
-		return { submit, goBack };
+		return { submit };
 	},
 };
 

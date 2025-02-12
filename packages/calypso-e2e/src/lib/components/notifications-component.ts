@@ -38,7 +38,8 @@ export class NotificationsComponent {
 	async clickNotificationAction( action: string ): Promise< void > {
 		await this.anchor
 			.getByRole( 'list' )
-			.getByRole( 'button', { name: action, exact: true } )
+			.getByRole( 'button' )
+			.filter( { hasText: action } )
 			.click();
 	}
 

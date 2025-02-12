@@ -1,33 +1,56 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlanSlugForTermVariant,
 	PlanSlug,
+	TERMS_LIST,
 	URL_FRIENDLY_TERMS_MAPPING,
 	UrlFriendlyTermType,
 } from '@automattic/calypso-products';
-import { AddOns, Plans } from '@automattic/data-stores';
-import { GridPlan } from '@automattic/plans-grid-next';
+import { Plans } from '@automattic/data-stores';
+import {
+	HiddenPlans,
+	PlansIntent,
+	usePlansFromTypes,
+	usePlanTypesWithIntent,
+} from '@automattic/plans-grid-next';
 import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 
 const useEligibilityForTermSavingsPriceDisplay = ( {
-	gridPlans,
+	flowName,
+	hiddenPlans,
+	intent,
+	isSubdomainNotGenerated,
+	selectedPlan,
+	term,
 	displayedIntervals,
 	coupon,
 	siteId,
-	storageAddOns,
 	isInSignup,
 }: {
-	gridPlans: GridPlan[];
+	flowName?: string | null;
+	hiddenPlans?: HiddenPlans;
+	intent?: PlansIntent;
+	isSubdomainNotGenerated?: boolean;
+	selectedPlan?: PlanSlug;
+	term: ( typeof TERMS_LIST )[ number ];
 	displayedIntervals: UrlFriendlyTermType[];
-	storageAddOns: ( AddOns.AddOnMeta | null )[] | null;
 	coupon?: string;
 	siteId?: number | null;
 	isInSignup?: boolean;
 } ) => {
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
-	const planSlugs = gridPlans.map( ( { planSlug } ) => planSlug );
-	const planSlugsForAllDisplayedIntervals = planSlugs.flatMap(
+	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
+	const availablePlanSlugs = usePlansFromTypes( {
+		planTypes: usePlanTypesWithIntent( {
+			intent,
+			selectedPlan,
+			siteId,
+			hiddenPlans,
+			isSubdomainNotGenerated,
+		} ),
+		term,
+		intent,
+	} );
+	const planSlugsForAllDisplayedIntervals = availablePlanSlugs.flatMap(
 		( planSlug ) =>
 			displayedIntervals
 				.map( ( term ) =>
@@ -37,10 +60,10 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	);
 	const pricingForAllDisplayedIntervals = Plans.usePricingMetaForGridPlans( {
 		planSlugs: planSlugsForAllDisplayedIntervals,
-		storageAddOns,
 		coupon,
 		siteId,
 		useCheckPlanAvailabilityForPurchase,
+		reflectStorageSelectionInPlanPrices: true,
 	} );
 	const isAnyGridPlanDiscounted = Object.values( pricingForAllDisplayedIntervals ?? {} ).reduce(
 		( isDiscounted, { discountedPrice, introOffer } ) => {
@@ -56,11 +79,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		return false;
 	}
 
-	return (
-		( isEnabled( 'plans/term-savings-price-display' ) ||
-			longerPlanTermDefaultExperiment.isEligibleForTermSavings ) &&
-		isInSignup
-	);
+	return longerPlanTermDefaultExperiment.isEligibleForTermSavings && isInSignup;
 };
 
 export default useEligibilityForTermSavingsPriceDisplay;

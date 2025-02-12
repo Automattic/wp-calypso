@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import {
-	AI_ASSEMBLER_FLOW,
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
 	NEW_HOSTED_SITE_FLOW,
@@ -9,8 +8,8 @@ import {
 	IMPORT_HOSTED_SITE_FLOW,
 	DOMAIN_TRANSFER,
 	GOOGLE_TRANSFER,
+	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	REBLOGGING_FLOW,
-	MIGRATION_FLOW,
 	SITE_MIGRATION_FLOW,
 	MIGRATION_SIGNUP_FLOW,
 	ENTREPRENEUR_FLOW,
@@ -19,6 +18,7 @@ import {
 	NEW_HOSTED_SITE_FLOW_USER_INCLUDED,
 	ONBOARDING_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
+	EXAMPLE_FLOW,
 } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
@@ -58,22 +58,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	[ ENTREPRENEUR_FLOW ]: () =>
 		import( /* webpackChunkName: "entrepreneur-flow" */ '../declarative-flow/entrepreneur-flow' ),
 
-	wooexpress: () =>
-		import(
-			/* webpackChunkName: "trial-wooexpress-flow" */ '../declarative-flow/trial-wooexpress-flow'
-		),
-
-	'with-theme-assembler': () =>
-		import( /* webpackChunkName: "with-theme-assembler-flow" */ './with-theme-assembler-flow' ),
-
 	'assembler-first': () =>
 		import( /* webpackChunkName: "assembler-first-flow" */ './assembler-first-flow' ),
 
 	'readymade-template': () =>
 		import( /* webpackChunkName: "readymade-template-flow" */ './readymade-template' ),
-
-	[ AI_ASSEMBLER_FLOW ]: () =>
-		import( /* webpackChunkName: "ai-assembler-flow" */ './ai-assembler' ),
 
 	'free-post-setup': () =>
 		import( /* webpackChunkName: "free-post-setup-flow" */ '../declarative-flow/free-post-setup' ),
@@ -140,8 +129,8 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 		import(
 			/* webpackChunkName: "site-migration-flow" */ '../declarative-flow/site-migration-flow'
 		),
-	[ MIGRATION_FLOW ]: () =>
-		import( /* webpackChunkName: "migration-flow" */ '../declarative-flow/migration' ),
+	[ EXAMPLE_FLOW ]: () =>
+		import( /* webpackChunkName: "example-flow" */ '../declarative-flow/example' ),
 };
 
 const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } > > = {
@@ -156,6 +145,10 @@ const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > 
 		? {
 				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
 					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+				[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
+					import(
+						/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+					),
 		  }
 		: {};
 

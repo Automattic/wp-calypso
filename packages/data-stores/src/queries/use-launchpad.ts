@@ -70,7 +70,7 @@ export const fetchLaunchpad = (
 	const checklistSlugEncoded = checklistSlug ? encodeURIComponent( checklistSlug ) : null;
 	const launchpadContextEncoded = launchpadContext ? encodeURIComponent( launchpadContext ) : null;
 	const queryArgs = {
-		_locale: 'uesr',
+		_locale: 'user',
 		...( checklistSlug && { checklist_slug: checklistSlugEncoded } ),
 		...( launchpadContext && { launchpad_context: launchpadContextEncoded } ),
 	};
@@ -138,6 +138,7 @@ export const useLaunchpad = (
 			is_dismissible: false,
 			title: null,
 		},
+		enabled: Boolean( siteSlug ),
 	} );
 };
 

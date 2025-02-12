@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
 import { Button, CompactCard } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
@@ -6,11 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardDescription, PanelCardHeading } from 'calypso/components/panel';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
-import { isHostingMenuUntangled } from '../utils';
 
 export default function SubscriptionGiftingForm( {
 	fields,
@@ -25,12 +24,11 @@ export default function SubscriptionGiftingForm( {
 		WPCOM_FEATURES_SUBSCRIPTION_GIFTING
 	);
 	const isWpcomStagingSite = useSelectedSiteSelector( isSiteWpcomStaging );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
-	if ( ! isEnabled( 'subscription-gifting' ) || ! hasSubscriptionGifting || isWpcomStagingSite ) {
+	if ( ! hasSubscriptionGifting || isWpcomStagingSite ) {
 		return;
 	}
-
-	const isUntangled = isHostingMenuUntangled();
 
 	const renderForm = () => {
 		return (
@@ -41,6 +39,7 @@ export default function SubscriptionGiftingForm( {
 					label={ translate( 'Allow site visitors to gift your plan and domain renewal costs' ) }
 					checked={ fields.wpcom_gifting_subscription }
 					onChange={ handleToggle( 'wpcom_gifting_subscription' ) }
+					__next40pxDefaultSize
 				/>
 				{ ! isUntangled && (
 					<FormSettingExplanation>

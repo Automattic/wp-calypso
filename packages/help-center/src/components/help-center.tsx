@@ -3,7 +3,6 @@
  * External Dependencies
  */
 import { initializeAnalytics } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { useGetSupportInteractions } from '@automattic/odie-client/src/data/use-get-support-interactions';
 import { useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
@@ -28,7 +27,6 @@ const HelpCenter: React.FC< Container > = ( {
 	handleClose,
 	hidden,
 	currentRoute = window.location.pathname + window.location.search,
-	shouldUseHelpCenterExperience,
 } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
 
@@ -80,7 +78,7 @@ const HelpCenter: React.FC< Container > = ( {
 				currentRoute={ currentRoute }
 				openingCoordinates={ openingCoordinates }
 			/>
-			{ shouldUseHelpCenterExperience && canConnectToZendesk && (
+			{ canConnectToZendesk && (
 				<HelpCenterSmooch enableAuth={ isHelpCenterShown || hasOpenZendeskConversations } />
 			) }
 		</>,
@@ -91,12 +89,9 @@ const HelpCenter: React.FC< Container > = ( {
 export default function ContextualizedHelpCenter(
 	props: Container & HelpCenterRequiredInformation
 ) {
-	const shouldUseHelpCenterExperience =
-		config.isEnabled( 'help-center-experience' ) || props.shouldUseHelpCenterExperience;
-
 	return (
-		<HelpCenterRequiredContextProvider value={ { ...props, shouldUseHelpCenterExperience } }>
-			<HelpCenter { ...props } shouldUseHelpCenterExperience={ shouldUseHelpCenterExperience } />
+		<HelpCenterRequiredContextProvider value={ props }>
+			<HelpCenter { ...props } />
 		</HelpCenterRequiredContextProvider>
 	);
 }

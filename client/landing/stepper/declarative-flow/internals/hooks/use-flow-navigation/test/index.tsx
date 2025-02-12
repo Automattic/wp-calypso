@@ -8,7 +8,19 @@ import React from 'react';
 import { MemoryRouter, useLocation } from 'react-router';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { STEPPER_INTERNAL_STORE } from '../../../../../stores';
+import { Flow } from '../../../types';
 import { useFlowNavigation } from '../index';
+
+const mockFlow: Flow = {
+	name: 'some-flow',
+	isSignupFlow: false,
+	useSteps() {
+		return [ { slug: 'some-step', component: () => <div>Step 1</div> } ];
+	},
+	useStepNavigation() {
+		return {};
+	},
+};
 
 const LocationDisplay = () => {
 	const location = useLocation();
@@ -34,7 +46,8 @@ const Wrapper =
 	);
 
 const render = ( { initialEntry = '/setup/some-flow/some-step' } = {} ) => {
-	return renderHookWithProvider( () => useFlowNavigation(), {
+	window.history.replaceState( null, '', initialEntry );
+	return renderHookWithProvider( () => useFlowNavigation( mockFlow ), {
 		wrapper: Wrapper( initialEntry ),
 	} );
 };

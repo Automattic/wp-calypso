@@ -1,6 +1,7 @@
-import { Badge, Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Badge } from '@automattic/components';
+import { Button, Icon } from '@wordpress/components';
 import { __, isRTL } from '@wordpress/i18n';
+import { check, chevronLeft, chevronRight } from '@wordpress/icons';
 import clsx from 'clsx';
 import type { Task, Expandable } from '../types';
 import type { FC, Key } from 'react';
@@ -11,11 +12,18 @@ interface Props {
 	key?: Key;
 	task: Task;
 	isPrimaryAction?: boolean;
+	isHighlighted?: boolean;
 	expandable?: Expandable;
 	onClick?: () => void;
 }
 
-const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClick } ) => {
+const ChecklistItem: FC< Props > = ( {
+	task,
+	isPrimaryAction,
+	isHighlighted,
+	expandable,
+	onClick,
+} ) => {
 	const { id, completed, disabled = false, title, subtitle, actionDispatch } = task;
 
 	// If the task says we should use the Calypso path, ensure we use that link for the button's href.
@@ -56,10 +64,12 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 				enabled: ! disabled,
 				disabled: disabled,
 				expanded: expandable && expandable.isOpen,
+				highlighted: isHighlighted,
 			} ) }
 		>
 			{ isPrimaryAction ? (
 				<ButtonElement
+					variant="primary"
 					className={ clsx( 'checklist-item__checklist-primary-button', buttonClassName ) }
 					data-task={ id }
 					onClick={ onClickHandler }
@@ -77,11 +87,11 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 					{ completed && (
 						// show checkmark for completed tasks regardless if they are disabled or kept active
 						<div className="checklist-item__checkmark-container">
-							<Gridicon
+							<Icon
+								icon={ check }
 								aria-label={ __( 'Task complete', 'launchpad' ) }
 								className="checklist-item__checkmark"
-								icon="checkmark"
-								size={ 18 }
+								size={ 25 }
 							/>
 						</div>
 					) }
@@ -93,11 +103,11 @@ const ChecklistItem: FC< Props > = ( { task, isPrimaryAction, expandable, onClic
 						</span>
 					) }
 					{ shouldDisplayChevron && (
-						<Gridicon
+						<Icon
 							aria-label={ __( 'Task enabled', 'launchpad' ) }
 							className="checklist-item__chevron"
-							icon={ `chevron-${ isRTL() ? 'left' : 'right' }` }
-							size={ 18 }
+							icon={ isRTL() ? chevronLeft : chevronRight }
+							size={ 25 }
 						/>
 					) }
 					{ subtitle && <p className="checklist-item__subtext">{ subtitle }</p> }

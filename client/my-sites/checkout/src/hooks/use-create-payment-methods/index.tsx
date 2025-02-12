@@ -66,8 +66,7 @@ export function useCreatePayPalExpress( {
 }
 
 export function useCreatePayPalPPCP(): PaymentMethod | null {
-	const shouldUsePayPalPPCP = isEnabled( 'checkout/paypal-ppcp' );
-	return useMemo( () => ( shouldUsePayPalPPCP ? createPayPal() : null ), [ shouldUsePayPalPPCP ] );
+	return useMemo( () => createPayPal(), [] );
 }
 
 export function useCreateCreditCard( {

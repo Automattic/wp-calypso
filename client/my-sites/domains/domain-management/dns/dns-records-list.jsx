@@ -18,7 +18,7 @@ import DomainConnectInfoDialog from './domain-connect-info-dialog';
 class DnsRecordsList extends Component {
 	static propTypes = {
 		dns: PropTypes.object.isRequired,
-		selectedDOmain: PropTypes.object.isRequired,
+		selectedDomain: PropTypes.object.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 	};

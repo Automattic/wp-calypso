@@ -40,6 +40,8 @@ const StatsListCard = ( {
 	listItemClassName,
 	overlay, // an overlay used to hide the module behind a blur overlay
 	hasNoBackground,
+	formatValue,
+	onShowMoreClick,
 } ) => {
 	const moduleNameTitle = titlecase( moduleType );
 	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
@@ -131,6 +133,7 @@ const StatsListCard = ( {
 					? {
 							url: showMore?.url,
 							label: showMore?.label,
+							onClick: onShowMoreClick || undefined,
 					  }
 					: undefined
 			}
@@ -176,6 +179,7 @@ const StatsListCard = ( {
 								isLinkUnderlined={ isLinkUnderlined }
 								leftGroupToggle={ item?.children && moduleType === 'tags-categories' } // tags and categories show toggle on the oposite side
 								hasNoBackground={ hasNoBackground }
+								formatValue={ formatValue }
 							/>
 						);
 					} ) }

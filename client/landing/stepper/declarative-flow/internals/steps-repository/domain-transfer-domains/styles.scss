@@ -11,6 +11,68 @@
 	align-items: center;
 	gap: 30px;
 
+	&.hundred-year-domain-transfer {
+
+		&.step-route.domains.domain-transfer {
+			gap: 0;
+			width: 100%;
+			margin: 0;
+			max-width: none;
+
+			@include break-small {
+				margin-top: 0;
+			}
+
+			&.processing {
+				padding: 0;
+			}
+		}
+
+		&.step-route.hundred-year-domain-transfer.processing {
+			gap: 0;
+			width: 100%;
+			margin: 0;
+			max-width: none;
+			padding: 0;
+		}
+
+		.domains {
+			.step-container__header {
+				@media (max-width: $break-wide) {
+					margin-top: 32px;
+				}
+			}
+		}
+
+		.bulk-domain-transfer__cta-container {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 32px;
+
+			.bulk-domain-transfer__cta {
+				height: 48px;
+				width: 240px;
+
+				&.components-button.is-primary[disabled]{
+					background: var(--studio-gray-30);
+				}
+
+				&.components-button.is-primary{
+					background: var(--studio-gray-100);
+
+					&:hover {
+						background: var(--studio-gray-70);
+					}
+				}
+				
+
+				@media (max-width: $break-medium) {
+					width: 100%;
+				}
+			}
+		}
+	}
+
 	button:disabled {
 		pointer-events: none;
 	}

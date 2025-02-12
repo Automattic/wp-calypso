@@ -18,6 +18,7 @@ import {
 	subscribers,
 	purchase,
 	redirectToDaySummary,
+	realtime,
 } from './controller';
 
 import './style.scss';
@@ -37,6 +38,7 @@ export default function () {
 		'referrers',
 		'clicks',
 		'countryviews',
+		'locations',
 		'authors',
 		'videoplays',
 		'videodetails',
@@ -50,6 +52,11 @@ export default function () {
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	page( '/stats', '/stats/day' );
+
+	// Real-time stats?!
+	// ToDo: Clarify usage of real time.
+	// Not really used as one word generally.
+	statsPage( '/stats/realtime/:site', realtime );
 
 	// Stat Overview Page
 	statsPage( `/stats/:period(${ validPeriods })`, overview );

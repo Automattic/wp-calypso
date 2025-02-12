@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import config, { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -39,13 +40,25 @@ const API_RESPONSE_WITH_OTHER_PLATFORM: UrlData = {
 };
 
 const MOCK_WORDPRESS_SITE_SLUG = 'test-example.wordpress.com';
-
 const getInput = () => screen.getByLabelText( /Enter your site address/ );
+
+const isMigrationExperimentEnabled = isEnabled( 'migration-flow/experiment' );
+
+const restoreIsMigrationExperimentEnabled = () => {
+	if ( isMigrationExperimentEnabled ) {
+		config.enable( 'migration-flow/experiment' );
+	} else {
+		config.disable( 'migration-flow/experiment' );
+	}
+};
 
 describe( 'SiteMigrationIdentify', () => {
 	beforeAll( () => nock.disableNetConnect() );
+	afterEach( () => {
+		restoreIsMigrationExperimentEnabled();
+	} );
 
-	it( 'continues the flow and saves the migration domain when the platform is wordpress', async () => {
+	it( 'continues the flow when the platform is wordpress', async () => {
 		useSiteSlug.mockReturnValue( MOCK_WORDPRESS_SITE_SLUG );
 
 		const submit = jest.fn();
@@ -55,15 +68,6 @@ describe( 'SiteMigrationIdentify', () => {
 			.get( '/wpcom/v2/imports/analyze-url' )
 			.query( { site_url: 'https://example.com' } )
 			.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
-
-		const saveSettingsMock = mockApi()
-			.post(
-				`/rest/v1.4/sites/${ MOCK_WORDPRESS_SITE_SLUG }/settings`,
-				JSON.stringify( { migration_source_site_domain: API_RESPONSE_WORDPRESS_PLATFORM.url } )
-			)
-			.reply( 200, {
-				updated: { migration_source_site_domain: API_RESPONSE_WORDPRESS_PLATFORM.url },
-			} );
 
 		await userEvent.type( getInput(), 'https://example.com' );
 
@@ -76,7 +80,6 @@ describe( 'SiteMigrationIdentify', () => {
 					from: API_RESPONSE_WORDPRESS_PLATFORM.url,
 				} )
 			);
-			expect( saveSettingsMock.isDone() ).toBeTruthy();
 		} );
 	} );
 
@@ -156,15 +159,22 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it( 'shows why host with us points', async () => {
+		config.disable( 'migration-flow/experiment' );
+
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
 		expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-		expect( screen.getByText( /Unmatched Reliability and Uptime/ ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				/Our infrastructure's 99.99% uptime, combined with our automatic update system, ensures your site remains accessible and secure./
+				/Blazing fast speeds with lightning-fast load times for a seamless experience/
 			)
+		).toBeVisible();
+		expect(
+			screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
+		).toBeVisible();
+		expect(
+			screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
 		).toBeVisible();
 	} );
 } );

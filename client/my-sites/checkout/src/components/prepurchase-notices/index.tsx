@@ -146,7 +146,12 @@ const PrePurchaseNotices = () => {
 	// but this site does not have the minimum plugin version.
 	const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
 	const backupProductInCart = backupSlugInCart && getProductFromSlug( backupSlugInCart );
-	if ( ! siteHasBackupMinimumPluginVersion && backupProductInCart ) {
+	if (
+		! siteHasBackupMinimumPluginVersion &&
+		backupProductInCart &&
+		// getProductFromSlug returns a string if it fails, so we want to check for that.
+		typeof backupProductInCart !== 'string'
+	) {
 		return (
 			<JetpackPluginRequiredVersionNotice
 				product={ backupProductInCart }

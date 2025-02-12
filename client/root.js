@@ -13,6 +13,7 @@ import {
 	getSiteAdminUrl,
 	isAdminInterfaceWPAdmin,
 } from 'calypso/state/sites/selectors';
+import { hasReadersAsLandingPage } from 'calypso/state/sites/selectors/has-reader-as-landing-page';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { getSelectedSiteId } from './state/ui/selectors';
 
@@ -93,6 +94,12 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 		return '/sites';
 	}
 
+	const useReaderAsLandingPage = hasReadersAsLandingPage( getState() );
+
+	if ( useReaderAsLandingPage ) {
+		return '/reader';
+	}
+
 	// determine the primary site ID (it's a property of "current user" object) and then
 	// ensure that the primary site info is loaded into Redux before proceeding.
 	const primaryOrSelectedSiteId = getSelectedSiteId( getState() ) || getPrimarySiteId( getState() );
@@ -101,7 +108,7 @@ async function getLoggedInLandingPage( { dispatch, getState } ) {
 
 	if ( ! primarySiteSlug ) {
 		if ( getIsSubscriptionOnly( getState() ) ) {
-			return '/read';
+			return '/reader';
 		}
 		// there is no primary site or the site info couldn't be fetched. Redirect to Sites Dashboard.
 		return '/sites';

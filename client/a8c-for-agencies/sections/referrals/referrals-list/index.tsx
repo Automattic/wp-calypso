@@ -10,9 +10,9 @@ import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashbo
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useHandleReferralArchive from '../hooks/use-handle-referral-archive';
-import { Referral, ReferralInvoice } from '../types';
 import CommissionsColumn from './commissions-column';
 import SubscriptionStatus from './subscription-status';
+import type { Referral } from '../types';
 import type { Field, Action } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -21,7 +21,6 @@ interface Props {
 	referrals: Referral[];
 	dataViewsState: DataViewsState;
 	setDataViewsState: ( callback: ( prevState: DataViewsState ) => DataViewsState ) => void;
-	referralInvoices: ReferralInvoice[];
 	isArchiveView?: boolean;
 	onArchiveReferral?: ( referral: Referral ) => void;
 }
@@ -30,7 +29,6 @@ export default function ReferralList( {
 	referrals,
 	dataViewsState,
 	setDataViewsState,
-	referralInvoices,
 	isArchiveView,
 	onArchiveReferral,
 }: Props ) {
@@ -81,6 +79,15 @@ export default function ReferralList( {
 							enableSorting: false,
 						},
 						{
+							id: 'completed-orders',
+							label: translate( 'Purchases' ).toUpperCase(),
+							getValue: () => '-',
+							render: ( { item }: { item: Referral } ): ReactNode =>
+								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
+							enableHiding: false,
+							enableSorting: false,
+						},
+						{
 							id: 'pending-orders',
 							label: translate( 'Pending Orders' ).toUpperCase(),
 							getValue: () => '-',
@@ -89,32 +96,15 @@ export default function ReferralList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-						{
-							id: 'completed-orders',
-							label: translate( 'Completed Orders' ).toUpperCase(),
-							getValue: () => '-',
-							render: ( { item }: { item: Referral } ): ReactNode =>
-								item.referralStatuses.filter( ( status ) => status === 'active' ).length,
-							enableHiding: false,
-							enableSorting: false,
-						},
 						...( ! isArchiveView
 							? [
 									{
-										id: 'commissions',
-										label: translate( 'Commissions' ).toUpperCase(),
+										id: 'estimated-commissions',
+										label: translate( 'Estimated Commissions' ).toUpperCase(),
 										getValue: () => '-',
-										render: ( { item }: { item: Referral } ): ReactNode => {
-											const clientReferralInvoices = referralInvoices.filter(
-												( invoice ) => invoice.clientId === item.client.id
-											);
-											return (
-												<CommissionsColumn
-													referral={ item }
-													referralInvoices={ clientReferralInvoices }
-												/>
-											);
-										},
+										render: ( { item }: { item: Referral } ): ReactNode => (
+											<CommissionsColumn referral={ item } />
+										),
 										enableHiding: false,
 										enableSorting: false,
 									},
@@ -131,7 +121,7 @@ export default function ReferralList( {
 							  ]
 							: [] ),
 				  ],
-		[ dataViewsState.selectedItem, isDesktop, referralInvoices, translate, isArchiveView ]
+		[ dataViewsState.selectedItem, isDesktop, translate, isArchiveView ]
 	);
 
 	useEffect( () => {

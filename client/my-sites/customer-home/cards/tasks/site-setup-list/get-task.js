@@ -282,7 +282,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Choose a theme' ),
 				isSkippable: false,
-				actionUrl: `/themes/${ siteSlug }`,
+				actionUrl: `/themes/${ siteSlug }#theme-selected`,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
@@ -365,7 +365,7 @@ export const getTask = (
 					'Add new features to your site with plugins. Choose from thousands of free and premium plugins or upload your own to make your site stand out.'
 				),
 				actionText: translate( 'Install' ),
-				actionUrl: `/plugins/${ siteSlug }`,
+				actionUrl: `/plugins/${ siteSlug }#install-plugin`,
 				isSkippable: true,
 			};
 			break;

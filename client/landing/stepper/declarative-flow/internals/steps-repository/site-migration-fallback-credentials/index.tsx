@@ -30,7 +30,7 @@ const SiteMigrationFallbackCredentials: Step = function ( { navigation } ) {
 		<>
 			<DocumentHead title={ translate( 'Tell us about your WordPress site' ) } />
 			<StepContainer
-				stepName="site-migration-credentials"
+				stepName="site-migration-fallback-credentials"
 				flowName="site-migration"
 				goBack={ navigation?.goBack }
 				goNext={ navigation?.submit }

@@ -31,7 +31,7 @@ Uses custom theme highlight monochromatic palette for primary + accent
 	--theme-icon-color: #f3f1f1; /* $icon-color */
 	--theme-highlight-color: #3858e9; /* $highlight-color */
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-	--theme-notification-color: #3858e9; /* Direct from wp-admin */
+	--theme-notification-color: var(--studio-wordpress-blue-20);
 
 	/* Theme highlight monochromatic palette */
 	--theme-highlight-color-0: #d5dffa;

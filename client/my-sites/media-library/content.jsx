@@ -21,7 +21,6 @@ import {
 	MEDIA_IMAGE_THUMBNAIL,
 	SCALE_TOUCH_GRID,
 } from 'calypso/lib/media/constants';
-import GooglePhotosPickerButton from 'calypso/my-sites/media-library/google-photos-picker-button';
 import InlineConnection from 'calypso/sites/marketing/connections/inline-connection';
 import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
 import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
@@ -37,6 +36,8 @@ import {
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import MediaLibraryExternalHeader from './external-media-header';
+import GooglePhotosAuthUpgrade from './google-photos-auth-upgrade';
+import GooglePhotosPickerButton from './google-photos-picker-button';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
 import './content.scss';
@@ -140,6 +141,12 @@ export class MediaLibraryContent extends Component {
 		}
 
 		return false;
+	}
+
+	hasGoogleInvalidConnection( props ) {
+		const { googleConnection, source } = props;
+
+		return source === 'google_photos' && googleConnection && googleConnection.status === 'invalid';
 	}
 
 	renderErrors() {
@@ -407,6 +414,10 @@ export class MediaLibraryContent extends Component {
 					mediaScale={ this.props.mediaScale }
 				/>
 			);
+		}
+
+		if ( this.hasGoogleInvalidConnection( this.props ) ) {
+			return <GooglePhotosAuthUpgrade connection={ this.props.googleConnection } />;
 		}
 
 		if ( this.needsToBeConnected() ) {

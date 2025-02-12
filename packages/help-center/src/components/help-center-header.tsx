@@ -1,18 +1,22 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
 import { EllipsisMenu } from '@automattic/odie-client';
-import { useManageSupportInteraction } from '@automattic/odie-client/src/data';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
-import { CardHeader, Button, Flex } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
-import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
+import {
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	commentContent,
+	page,
+	Icon,
+	comment,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -69,16 +73,23 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
-	const { startNewInteraction } = useManageSupportInteraction();
+	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
+		return {
+			areSoundNotificationsEnabled: helpCenterSelect.getAreSoundNotificationsEnabled(),
+		};
+	}, [] );
+	const { setAreSoundNotificationsEnabled } = useDispatch( HELP_CENTER_STORE );
 
 	const clearChat = async () => {
 		await resetSupportInteraction();
-		startNewInteraction( {
-			event_source: 'help-center',
-			event_external_id: uuidv4(),
-		} );
 		clearHelpCenterZendeskConversationStarted();
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
+	};
+
+	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
+		event.stopPropagation();
+		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
 	};
 
 	return (
@@ -87,10 +98,23 @@ const ChatEllipsisMenu = () => {
 			position="bottom"
 			trackEventProps={ { source: 'help_center' } }
 		>
-			<div className="clear-conversation__wrapper">
-				<button onClick={ clearChat }>
-					<Gridicon icon="comment" />
-					<div>{ __( 'Clear Conversation' ) }</div>
+			<div className="conversation-menu__wrapper">
+				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+					<Icon icon={ comment } />
+					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+				</button>
+				<button onClick={ toggleSoundNotifications }>
+					<div>
+						<ToggleControl
+							className="conversation-menu__notification-toggle"
+							label={ __( 'Notification sound', __i18n_text_domain__ ) }
+							checked={ areSoundNotificationsEnabled }
+							onChange={ ( newValue ) => {
+								setAreSoundNotificationsEnabled( newValue );
+							} }
+							__nextHasNoMarginBottom
+						/>
+					</div>
 				</button>
 			</div>
 		</EllipsisMenu>
@@ -109,8 +133,6 @@ const HeaderText = () => {
 		};
 	}, [] );
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
-
 	useEffect( () => {
 		if ( currentSupportInteraction ) {
 			const zendeskEvent = currentSupportInteraction?.events.find(
@@ -126,27 +148,22 @@ const HeaderText = () => {
 
 	const headerText = useMemo( () => {
 		const getOdieHeader = () => {
-			if ( shouldUseHelpCenterExperience ) {
-				return isConversationWithZendesk
-					? __( 'Support Team', __i18n_text_domain__ )
-					: __( 'Support Assistant', __i18n_text_domain__ );
-			}
-			return __( 'Wapuu', __i18n_text_domain__ );
+			return isConversationWithZendesk
+				? __( 'Support Team', __i18n_text_domain__ )
+				: __( 'Support Assistant', __i18n_text_domain__ );
 		};
 
 		switch ( pathname ) {
 			case '/odie':
 				return getOdieHeader();
 			case '/contact-form':
-				return shouldUseHelpCenterExperience
-					? __( 'Support Assistant', __i18n_text_domain__ )
-					: __( 'Wapuu', __i18n_text_domain__ );
+				return __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, isConversationWithZendesk, pathname, shouldUseHelpCenterExperience ] );
+	}, [ __, isConversationWithZendesk, pathname ] );
 
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
@@ -159,10 +176,7 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
-
-	const shouldDisplayClearChatButton =
-		shouldUseHelpCenterExperience && pathname.startsWith( '/odie' );
+	const shouldDisplayClearChatButton = pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
 
 	return (
@@ -194,7 +208,6 @@ const ContentMinimized = ( {
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	const { shouldUseHelpCenterExperience } = useHelpCenterContext();
 	return (
 		<>
 			<p
@@ -214,14 +227,7 @@ const ContentMinimized = ( {
 					<Route path="/contact-form" element={ <SupportModeTitle /> } />
 					<Route path="/post" element={ <ArticleTitle /> } />
 					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route
-						path="/odie"
-						element={
-							shouldUseHelpCenterExperience
-								? __( 'Support Assistant', __i18n_text_domain__ )
-								: __( 'Wapuu', __i18n_text_domain__ )
-						}
-					/>
+					<Route path="/odie" element={ __( 'Support Assistant', __i18n_text_domain__ ) } />
 					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
 				</Routes>
 				{ unreadCount > 0 && (
@@ -249,14 +255,11 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 		[]
 	);
 
-	const handleClick = useCallback(
-		( event: React.SyntheticEvent ) => {
-			if ( event.target === event.currentTarget ) {
-				onMaximize?.();
-			}
-		},
-		[ onMaximize ]
-	);
+	const handleClick = useCallback( () => {
+		if ( isMinimized ) {
+			onMaximize?.();
+		}
+	}, [ onMaximize, isMinimized ] );
 
 	const classNames = clsx(
 		'help-center__container-header',

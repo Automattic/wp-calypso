@@ -34,7 +34,7 @@ class TagEmptyContent extends Component {
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/read"
+				href="/reader"
 			>
 				{ this.props.translate( 'Back to Following' ) }
 			</a>
@@ -67,8 +67,7 @@ class TagEmptyContent extends Component {
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
-				illustrationWidth={ 400 }
+				illustration=""
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

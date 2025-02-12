@@ -34,4 +34,5 @@ export { getRegisteredDomains, isFreeUrlDomain, isRegisteredDomain } from './reg
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
+export { getTransferredInDomains, isTransferredInDomain } from './transferred-domains';
 export { extractDomainFromInput } from './get-domain-from-input';

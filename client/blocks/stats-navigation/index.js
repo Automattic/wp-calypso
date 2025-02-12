@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -28,6 +29,23 @@ import Intervals from './intervals';
 import PageModuleToggler from './page-module-toggler';
 
 import './style.scss';
+
+// Helper to expose logic for default module listing.
+export function getAvailablePageModules( selectedItem, hasVideoPress ) {
+	return ( AVAILABLE_PAGE_MODULES[ selectedItem ] || [] ).map( ( toggleItem ) => {
+		// Set the default VideoPress visibility based on the hasVideoPress parameter.
+		// We update the disabled state as well but that value is currently ignored.
+		if ( toggleItem.key === 'videos' ) {
+			return {
+				...toggleItem,
+				disabled: ! hasVideoPress,
+				defaultValue: hasVideoPress,
+			};
+		}
+
+		return toggleItem;
+	} );
+}
 
 // Use HOC to wrap hooks of `react-query` for fetching the notice visibility state.
 function withNoticeHook( HookedComponent ) {
@@ -59,6 +77,9 @@ class StatsNavigation extends Component {
 		isGoogleMyBusinessLocationConnected: PropTypes.bool.isRequired,
 		isStore: PropTypes.bool,
 		isWordAds: PropTypes.bool,
+		isSubscriptionsModuleActive: PropTypes.bool,
+		isSimple: PropTypes.bool,
+		isSiteJetpackNotAtomic: PropTypes.bool,
 		hasVideoPress: PropTypes.bool,
 		selectedItem: PropTypes.oneOf( Object.keys( navItems ) ).isRequired,
 		siteId: PropTypes.number,
@@ -87,24 +108,10 @@ class StatsNavigation extends Component {
 	};
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
-		const availableModuleToggles = ( AVAILABLE_PAGE_MODULES[ nextProps.selectedItem ] || [] ).map(
-			( toggleItem ) => {
-				// disable the "videos" toggle on sites that do not have VideoPress enabled
-				// the toggle will be disabled (grayed out and non interactive)
-				const shouldDisableVideoToggle = ! nextProps.hasVideoPress && toggleItem.key === 'videos';
-
-				return {
-					...toggleItem,
-					disabled: shouldDisableVideoToggle,
-					defaultValue: shouldDisableVideoToggle === false,
-				};
-			}
+		const availableModuleToggles = getAvailablePageModules(
+			nextProps.selectedItem,
+			nextProps.hasVideoPress
 		);
-
-		// toggle the visibility of video module itself
-		if ( ! nextProps.hasVideoPress ) {
-			nextProps.pageModuleToggles.videos = false;
-		}
 
 		if (
 			prevState.pageModules !== nextProps.pageModuleToggles ||
@@ -154,9 +161,13 @@ class StatsNavigation extends Component {
 				return config.isEnabled( 'google-my-business' ) && isGoogleMyBusinessLocationConnected;
 
 			case 'subscribers':
+				return 'undefined' === typeof siteId ? false : true;
+
+			case 'realtime':
 				if ( 'undefined' === typeof siteId ) {
 					return false;
 				}
+				return config.isEnabled( 'stats/real-time-tab' );
 
 			default:
 				return true;
@@ -179,6 +190,7 @@ class StatsNavigation extends Component {
 			hideModuleSettings,
 			delayTooltipPresentation,
 			gatedTrafficPage,
+			siteId,
 		} = this.props;
 		const { pageModules, isPageSettingsTooltipDismissed, availableModuleToggles } = this.state;
 		const { label, showIntervals, path } = navItems[ selectedItem ];
@@ -205,6 +217,7 @@ class StatsNavigation extends Component {
 
 		return (
 			<div className={ wrapperClass }>
+				{ siteId && <QueryJetpackModules siteId={ siteId } /> }
 				<SectionNav selectedText={ label }>
 					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )

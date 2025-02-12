@@ -411,3 +411,31 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 			return PromoteWidgetStatus.FETCHING;
 	}
 };
+
+/**
+ * Hook to verify if Jetpack/Blaze Ads version is greater than or equals the provided versions.
+ * It will return true if any of the checks passes.
+ * @param siteId Site Id.
+ * @param minJetpackVersion Minimum Jetpack version to check.
+ * @param minBlazeAdsVersion Minimum Blaze Ads version to check.
+ */
+export const useJetpackBlazeVersionCheck = (
+	siteId: number,
+	minJetpackVersion: string,
+	minBlazeAdsVersion: string
+): boolean => {
+	const siteJetpackVersion =
+		useSelector( ( state ) => getSiteOption( state, siteId, 'jetpack_version' ) ) ?? 0;
+	const blazeAdsVersion =
+		useSelector( ( state ) => getSiteOption( state, siteId, 'blaze_ads_version' ) ) ?? 0;
+
+	// If we don't have a version (Jetpack or Blaze Ads), we must be in a simple site, and we use latest Jetpack version in there.
+	if ( ! siteJetpackVersion && ! blazeAdsVersion ) {
+		return true;
+	}
+
+	return Boolean(
+		( siteJetpackVersion && versionCompare( siteJetpackVersion, minJetpackVersion, '>=' ) ) ||
+			( blazeAdsVersion && versionCompare( siteJetpackVersion, minBlazeAdsVersion, '>=' ) )
+	);
+};

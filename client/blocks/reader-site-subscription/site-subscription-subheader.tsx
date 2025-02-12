@@ -47,7 +47,7 @@ const SiteSubscriptionSubheader = ( {
 			<div key={ `subscriber-count-${ subscriberCount }` }>
 				{ translate( '%s subscriber', '%s subscribers', {
 					count: subscriberCount,
-					args: [ numberFormat( subscriberCount, 0 ) ],
+					args: [ numberFormat( subscriberCount ) ],
 					comment: '%s is the number of subscribers. For example: "12,000,000"',
 				} ) }
 			</div>
@@ -57,7 +57,7 @@ const SiteSubscriptionSubheader = ( {
 	const hostname = getHostname( url );
 	if ( hostname !== '' ) {
 		subheaderItems.push(
-			<ExternalLink key={ url } href={ url } rel="noreferrer noopener" target="_blank">
+			<ExternalLink key={ url } href={ url } target="_blank">
 				{ hostname }
 			</ExternalLink>
 		);

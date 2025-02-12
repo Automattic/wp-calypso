@@ -15,6 +15,7 @@ import { withEditMedia } from 'calypso/data/media/use-edit-media-mutation';
 import { withDeleteMedia } from 'calypso/data/media/with-delete-media';
 import accept from 'calypso/lib/accept';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getMimeType } from 'calypso/lib/media/utils';
 import searchUrl from 'calypso/lib/search-url';
 import MediaLibrary from 'calypso/my-sites/media-library';
@@ -104,6 +105,8 @@ class Media extends Component {
 			currentDetail: null,
 			selectedItems: [],
 		} );
+
+		recordTracksEvent( 'calypso_media_editor_close' );
 		this.maybeRedirectToAll();
 	};
 
@@ -120,16 +123,23 @@ class Media extends Component {
 
 	editImage = () => {
 		this.setState( { currentDetail: null, editedImageItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'image' } );
 	};
 
 	editVideo = () => {
 		this.setState( { currentDetail: null, editedVideoItem: this.getSelectedIndex() } );
+		recordTracksEvent( 'calypso_media_editor_edit_click', { type: 'video' } );
+	};
+
+	onImageEditorReset = () => {
+		recordTracksEvent( 'calypso_media_image_editor_reset' );
 	};
 
 	onImageEditorCancel = ( imageEditorProps ) => {
 		const { resetAllImageEditorState } = imageEditorProps;
-		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
 
+		this.setState( { currentDetail: this.state.editedImageItem, editedImageItem: null } );
+		recordTracksEvent( 'calypso_media_image_editor_cancel' );
 		resetAllImageEditorState();
 	};
 
@@ -153,7 +163,9 @@ class Media extends Component {
 
 		this.props.editMedia( site.ID, item );
 		resetAllImageEditorState();
+
 		this.setState( { currentDetail: null, editedImageItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_image_editor_done' );
 		this.maybeRedirectToAll();
 	};
 
@@ -186,10 +198,13 @@ class Media extends Component {
 
 	onVideoEditorCancel = () => {
 		this.setState( { currentDetail: this.state.editedVideoItem, editedVideoItem: null } );
+		recordTracksEvent( 'calypso_media_video_editor_cancel' );
 	};
 
 	onVideoEditorUpdatePoster = () => {
 		this.setState( { currentDetail: null, editedVideoItem: null, selectedItems: [] } );
+		recordTracksEvent( 'calypso_media_video_editor_update_poster_update' );
+
 		this.maybeRedirectToAll();
 	};
 
@@ -286,6 +301,7 @@ class Media extends Component {
 
 	deleteMediaByItemDetail = () => {
 		this.deleteMedia( () => this.closeDetailsModal() );
+		recordTracksEvent( 'calypso_media_editor_delete' );
 	};
 
 	confirmDeleteMedia = () => {
@@ -446,6 +462,7 @@ class Media extends Component {
 								siteId={ site && site.ID }
 								media={ this.getSelectedItem( this.state.editedImageItem ) }
 								onDone={ this.onImageEditorDone }
+								onReset={ this.onImageEditorReset }
 								onCancel={ this.onImageEditorCancel }
 							/>
 						) }

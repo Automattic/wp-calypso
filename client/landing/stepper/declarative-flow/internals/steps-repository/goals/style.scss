@@ -115,7 +115,7 @@
 		width: 160px;
 	}
 
-	.select-goals__link.is-link { // extra specificity to override default link styles
+	.components-button.select-goals__link.is-link { // extra specificity to override default link styles
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
 	}

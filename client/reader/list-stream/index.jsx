@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -11,6 +10,7 @@ import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
+	hasRequestedListByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
 import EmptyContent from './empty';
@@ -55,6 +55,10 @@ class ListStream extends Component {
 		const list = this.props.list;
 		const shouldShowFollow = list && ! list.is_owner;
 		const listStreamIconClasses = 'gridicon gridicon__list';
+
+		if ( ! this.props.hasRequested ) {
+			return <QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />;
+		}
 
 		if ( list ) {
 			this.title = list.title;
@@ -105,7 +109,7 @@ class ListStream extends Component {
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
-					showEdit={ config.isEnabled( 'reader/list-management' ) && list && list.is_owner }
+					showEdit={ list && list.is_owner }
 					editUrl={ window.location.href + '/edit' }
 				/>
 			</Stream>
@@ -118,6 +122,7 @@ export default connect(
 		return {
 			list: getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 			isSubscribed: isSubscribedByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
+			hasRequested: hasRequestedListByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},

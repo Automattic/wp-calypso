@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import AsyncLoad from 'calypso/components/async-load';
@@ -9,7 +8,6 @@ import ReaderOnboarding from 'calypso/reader/onboarding';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import ReaderStream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import Recent from '../recent';
-import ReaderStreamSidebar from './reader-stream-sidebar';
 import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
@@ -18,7 +16,6 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
-	const viewToggle = config.isEnabled( 'reader/recent-feed-overhaul' ) ? <ViewToggle /> : null;
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
@@ -41,14 +38,10 @@ function FollowingStream( { ...props } ) {
 
 	return (
 		<>
-			{ currentView === 'recent' && config.isEnabled( 'reader/recent-feed-overhaul' ) ? (
-				<Recent viewToggle={ viewToggle } />
+			{ currentView === 'recent' ? (
+				<Recent viewToggle={ <ViewToggle /> } />
 			) : (
-				<ReaderStream
-					{ ...props }
-					className="following"
-					streamSidebar={ () => <ReaderStreamSidebar /> }
-				>
+				<ReaderStream { ...props } className="following">
 					<BloganuaryHeader />
 					<NavigationHeader
 						title={ translate( 'Recent' ) }
@@ -57,7 +50,7 @@ function FollowingStream( { ...props } ) {
 							'reader-dual-column': props.width > WIDE_DISPLAY_CUTOFF,
 						} ) }
 					>
-						{ viewToggle }
+						<ViewToggle />
 					</NavigationHeader>
 					<ReaderOnboarding />
 				</ReaderStream>

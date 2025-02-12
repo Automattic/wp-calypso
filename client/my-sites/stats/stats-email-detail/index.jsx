@@ -20,6 +20,7 @@ import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import memoizeLast from 'calypso/lib/memoize-last';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsEmailModule from 'calypso/my-sites/stats/stats-email-module';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSitePost } from 'calypso/state/posts/selectors';
@@ -122,6 +123,11 @@ class StatsEmailDetail extends Component {
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
+
+		if ( ! title ) {
+			title = <em>{ this.props.translate( 'Untitled' ) }</em>;
+		}
+
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
@@ -211,7 +217,7 @@ class StatsEmailDetail extends Component {
 						isRequesting={ isRequestingStats }
 					/>
 
-					<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+					<DocumentHead title={ STATS_PRODUCT_NAME } />
 
 					<PageViewTracker
 						path="/stats/email/:statType/:site/:period/:email_id"
@@ -247,7 +253,12 @@ class StatsEmailDetail extends Component {
 							<div className="stats__email-wrapper">
 								<h3 className="highlight-cards-heading">{ this.getTitle( statType ) }</h3>
 
-								<StatsEmailTopRow siteId={ siteId } postId={ postId } statType={ statType } />
+								<StatsEmailTopRow
+									siteId={ siteId }
+									postId={ postId }
+									statType={ statType }
+									post={ post }
+								/>
 
 								<StatsPeriodHeader>
 									<StatsPeriodNavigation

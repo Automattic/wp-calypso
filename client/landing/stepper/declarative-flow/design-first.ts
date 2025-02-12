@@ -237,7 +237,6 @@ const designFirst: Flow = {
 			switch ( currentStep ) {
 				case 'launchpad':
 					skipLaunchpad( {
-						checklistSlug: site?.options?.site_intent,
 						siteId,
 						siteSlug,
 					} );

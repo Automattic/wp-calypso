@@ -1,5 +1,21 @@
 /* Layout
 ================================================== */
+.layout__primary .main {
+	& div.section-nav {
+		@media ( max-width: 480px ) {
+			&.is-open {
+				& > .section-nav__panel {
+					padding: 0;
+
+					& > .section-nav-group {
+						margin-top: 0;
+					}
+				}
+			}
+		}
+	}
+}
+
 .purchases-layout__wrapper {
 	display: flex;
 	align-items: center;

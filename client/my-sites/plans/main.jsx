@@ -12,15 +12,11 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
-	getBillingMonthsForTerm,
-	URL_FRIENDLY_TERMS_MAPPING,
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { WpcomPlansUI, Plans } from '@automattic/data-stores';
-import { englishLocales } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
-import { hasTranslation } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -41,7 +37,6 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import useLongerPlanTermDefaultExperiment from 'calypso/my-sites/plans-features-main/hooks/experiments/use-longer-plan-term-default-experiment';
 import { useSelector } from 'calypso/state';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -266,11 +261,9 @@ class PlansComponent extends Component {
 		// The Jetpack mobile app wants to display a specific selection of plans
 		const plansIntent = this.props.jetpackAppPlans ? 'plans-jetpack-app' : null;
 		const hidePlanTypeSelector =
-			( this.props.domainAndPlanPackage &&
-				( ! this.props.isDomainUpsell ||
-					( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) ) ) ||
-			// TODO: Remove after 1733443200000.
-			( this.props.coupon === 'BF25' && Date.now() < new Date( 1733443200000 ) );
+			this.props.domainAndPlanPackage &&
+			( ! this.props.isDomainUpsell ||
+				( this.props.isDomainUpsell && currentPlanIntervalType === 'monthly' ) );
 
 		return (
 			<PlansFeaturesMain
@@ -402,22 +395,13 @@ class PlansComponent extends Component {
 		const wooExpressSubHeaderText = translate(
 			"Discover what's available in your Woo Express plan."
 		);
-
-		const hasEntrepreneurTrialSubHeaderTextTranslation = hasTranslation(
-			"Discover what's available in your %(planName)s plan."
-		);
-
-		const isEnglishLocale = englishLocales.includes( this.props.locale );
-
 		const entrepreneurTrialSubHeaderText =
-			isEnglishLocale || hasEntrepreneurTrialSubHeaderTextTranslation
-				? // translators: %(planName)s is a plan name. E.g. Commerce plan.
-				  translate( "Discover what's available in your %(planName)s plan.", {
-						args: {
-							planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
-						},
-				  } )
-				: translate( "Discover what's available in your Entrepreneur plan." );
+			// translators: %(planName)s is a plan name. E.g. Commerce plan.
+			translate( "Discover what's available in your %(planName)s plan.", {
+				args: {
+					planName: getPlan( PLAN_ECOMMERCE )?.getTitle() ?? '',
+				},
+			} );
 
 		const isWooExpressTrial = purchase?.isWooExpressTrial;
 
@@ -557,22 +541,14 @@ export default function PlansWrapper( props ) {
 	const { intervalType: intervalTypeFromProps } = props;
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = Plans.useCurrentPlan( { siteId: selectedSiteId } );
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment();
 	/**
 	 * For WP.com plans page, if intervalType is not explicitly specified in the URL,
 	 * we want to show plans of the same term as plan that is currently active
 	 * We want to show the highest term between the current plan and the longer plan term default experiment
 	 */
-	const currentPlanTerm = useSelector( ( state ) =>
+	const intervalTypeForCurrentPlanTerm = useSelector( ( state ) =>
 		getIntervalTypeForTerm( getCurrentPlanTerm( state, selectedSiteId ) )
 	);
-	const intervalType =
-		longerPlanTermDefaultExperiment.term &&
-		currentPlanTerm &&
-		getBillingMonthsForTerm( URL_FRIENDLY_TERMS_MAPPING[ currentPlanTerm ] ) >
-			getBillingMonthsForTerm( URL_FRIENDLY_TERMS_MAPPING[ longerPlanTermDefaultExperiment.term ] )
-			? currentPlanTerm
-			: longerPlanTermDefaultExperiment.term;
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -580,7 +556,7 @@ export default function PlansWrapper( props ) {
 				{ ...props }
 				currentPlan={ currentPlan }
 				selectedSiteId={ selectedSiteId }
-				intervalType={ intervalTypeFromProps ?? intervalType ?? currentPlanTerm }
+				intervalType={ intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm }
 			/>
 		</CalypsoShoppingCartProvider>
 	);

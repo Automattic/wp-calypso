@@ -23,7 +23,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
-	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
@@ -47,7 +46,8 @@ import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsBlazePro from 'calypso/state/selectors/get-is-blaze-pro';
-import getIsWooPasswordless from 'calypso/state/selectors/get-is-woo-passwordless';
+import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
+import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
@@ -64,20 +64,12 @@ function getRedirectToAfterLoginUrl( {
 	signupDependencies,
 	stepName,
 	userLoggedIn,
-	isWooPasswordless,
 } ) {
 	if (
 		oauth2Signup &&
 		initialContext?.query?.oauth2_redirect &&
 		isOauth2RedirectValid( initialContext.query.oauth2_redirect )
 	) {
-		if (
-			isWooPasswordless &&
-			! initialContext.query.oauth2_redirect.includes( 'woo-passwordless' )
-		) {
-			return initialContext.query.oauth2_redirect + '&woo-passwordless=yes';
-		}
-
 		return initialContext.query.oauth2_redirect;
 	}
 	if (
@@ -176,7 +168,7 @@ export class UserStep extends Component {
 	}
 
 	getLoginUrl() {
-		const { oauth2Client, wccomFrom, isReskinned, sectionName, from, locale, step } = this.props;
+		const { oauth2Client, wccomFrom, sectionName, from, locale, step } = this.props;
 		const emailAddress = step?.form?.email?.value ?? step?.form?.email;
 
 		return login( {
@@ -186,7 +178,6 @@ export class UserStep extends Component {
 			locale,
 			oauth2ClientId: oauth2Client?.id,
 			wccomFrom,
-			isWhiteLogin: isReskinned,
 			signupUrl: window.location.pathname + window.location.search,
 			emailAddress,
 		} );
@@ -200,15 +191,15 @@ export class UserStep extends Component {
 			translate,
 			userLoggedIn,
 			wccomFrom,
-			isReskinned,
 			isOnboardingAffiliateFlow,
+			isWCCOM,
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
 		const loginUrl = this.getLoginUrl();
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
-			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+			if ( isWCCOM ) {
 				switch ( wccomFrom ) {
 					case 'cart':
 						subHeaderText = translate(
@@ -241,18 +232,6 @@ export class UserStep extends Component {
 							}
 						);
 				}
-			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
-				subHeaderText = translate(
-					'Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
-					{
-						components: {
-							a: <a href={ loginUrl } />,
-							br: <br />,
-						},
-						comment:
-							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
-					}
-				);
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
@@ -299,7 +278,7 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
 		}
 
-		if ( isReskinned && 0 === positionInFlow ) {
+		if ( 0 === positionInFlow ) {
 			if ( this.props.isSocialFirst ) {
 				subHeaderText = '';
 			} else {
@@ -330,6 +309,16 @@ export class UserStep extends Component {
 			subHeaderText = translate(
 				"Thanks for stopping by! You're a few steps away from building your perfect website. Let's do this."
 			);
+		}
+
+		const redirectToAfterLoginUrl = getRedirectToAfterLoginUrl( this.props );
+
+		if ( redirectToAfterLoginUrl?.startsWith( '/setup/hosted-site-migration' ) ) {
+			subHeaderText = translate(
+				'Pick an option to start moving your site to the world’s best WordPress host.'
+			);
+		} else if ( redirectToAfterLoginUrl?.startsWith( '/start/do-it-for-me' ) ) {
+			subHeaderText = translate( 'Pick an option to start shaping your dream website with us.' );
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -491,6 +480,7 @@ export class UserStep extends Component {
 			isSocialFirst,
 			userLoggedIn,
 			isBlazePro,
+			isWCCOM,
 		} = this.props;
 
 		if ( userLoggedIn ) {
@@ -504,7 +494,7 @@ export class UserStep extends Component {
 			return translate( 'Sign up for Crowdsignal' );
 		}
 
-		if ( isWooOAuth2Client( oauth2Client ) ) {
+		if ( isWCCOM ) {
 			if ( 'cart' === wccomFrom ) {
 				return <WooCommerceConnectCartHeader />;
 			}
@@ -565,7 +555,7 @@ export class UserStep extends Component {
 	}
 
 	submitButtonText() {
-		const { translate, flowName } = this.props;
+		const { translate, flowName, isWCCOM } = this.props;
 
 		if ( isP2Flow( flowName ) ) {
 			return translate( 'Continue' );
@@ -575,7 +565,7 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
+		if ( isWCCOM ) {
 			return translate( 'Get started' );
 		}
 
@@ -587,17 +577,17 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, isWCCOM, isWoo } = this.props;
 		const isPasswordless =
 			isMobile() ||
 			this.props.isPasswordless ||
 			isNewsletterFlow( this.props?.queryObject?.variationName ) ||
-			this.props.isWooPasswordless;
+			isWoo;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWooOAuth2Client( oauth2Client ) ) {
+		if ( isWCCOM ) {
 			isSocialSignupEnabled = true;
 		}
 
@@ -633,13 +623,10 @@ export class UserStep extends Component {
 					socialService={ socialService }
 					socialServiceResponse={ socialServiceResponse }
 					recaptchaClientId={ this.state.recaptchaClientId }
-					horizontal={ isReskinned }
-					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError={
-						! isWooOAuth2Client( oauth2Client ) && ! isBlazeProOAuth2Client( oauth2Client )
-					}
+					horizontal
+					shouldDisplayUserExistsError={ ! isWCCOM && ! isBlazeProOAuth2Client( oauth2Client ) }
 					isSocialFirst={ this.props.isSocialFirst }
-					labelText={ this.props.isWooPasswordless ? this.props.translate( 'Your email' ) : null }
+					labelText={ isWoo ? this.props.translate( 'Your email' ) : null }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
@@ -732,8 +719,8 @@ export class UserStep extends Component {
 	}
 
 	render() {
-		if ( this.userCreationComplete() ) {
-			return null; // return nothing so that we don't see the completed signup form flash.
+		if ( this.userCreationComplete() && ! this.props.isWCCOM ) {
+			return null; // return nothing so that we don't see the completed signup form flash but skip for Woo because it need to keep the form until the user is redirected back to original page (e.g. WooCommerce.com).
 		}
 
 		if ( isP2Flow( this.props.flowName ) ) {
@@ -748,7 +735,7 @@ export class UserStep extends Component {
 			return this.renderGravatarSignupStep();
 		}
 
-		if ( isWooOAuth2Client( this.props.oauth2Client ) && this.props.userLoggedIn ) {
+		if ( this.props.isWCCOM && this.props.userLoggedIn ) {
 			page( this.getLoginUrl() );
 			return null;
 		}
@@ -772,11 +759,14 @@ export class UserStep extends Component {
 
 const ConnectedUser = connect(
 	( state ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+
 		return {
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client: oauth2Client,
 			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
-			isWooPasswordless: getIsWooPasswordless( state ),
+			isWCCOM: getIsWCCOM( state ),
+			isWoo: getIsWoo( state ),
 			isBlazePro: getIsBlazePro( state ),
 			from: get( getCurrentQueryArguments( state ), 'from' ),
 			userLoggedIn: isUserLoggedIn( state ),
