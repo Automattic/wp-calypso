@@ -8,7 +8,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
@@ -84,7 +83,8 @@ const LaunchBigSky: Step = function () {
 						body: {
 							title: 'Home',
 							status: 'publish',
-						content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',},
+							content: '<!-- wp:paragraph -->\n<p>Hello world!</p>\n<!-- /wp:paragraph -->',
+						},
 					} )
 				);
 			}
@@ -140,13 +140,15 @@ const LaunchBigSky: Step = function () {
 
 	function LaunchingBigSky() {
 		return (
-			<>
-				{ ! isError && <StepperLoader title={ __( 'Launching the AI Website Builder' ) } /> }
-				{ isError && (
-					<p className="processing-step__error">
-						{ __( 'Something unexpected happened. Please go back and try again.' ) }
-					</p>
-				) }
+			<div className="processing-step__container">
+				<div className="processing-step">
+					{ ! isError && <ProgressBar value={ progress } compact /> }
+					{ isError && (
+						<p className="processing-step__error">
+							{ __( 'Something unexpected happened. Please go back and try again.' ) }
+						</p>
+					) }
+				</div>
 				<div className="big-sky-disclaimer">
 					<p>
 						{ translate(
@@ -177,7 +179,7 @@ const LaunchBigSky: Step = function () {
 						) }
 					</p>
 				</div>
-			</>
+			</div>
 		);
 	}
 

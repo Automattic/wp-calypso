@@ -1,24 +1,15 @@
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { OnboardSelect, ProductsList } from '@automattic/data-stores';
 import { themesIllustrationImage } from '@automattic/design-picker';
-import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { StepContainer, isOnboardingFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
-import {
-	getAssemblerDesign,
-	themesIllustrationImage,
-	assemblerIllustrationV2Image,
-} from '@automattic/design-picker';
-import { StepContainer } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { navigate } from 'calypso/lib/navigate';
-import { preventWidows } from 'calypso/lib/formatting';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { ONBOARD_STORE } from '../../../../stores';
 import kebabCase from '../../../../utils/kebabCase';
@@ -43,18 +34,14 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const { submit, goBack } = navigation;
 
+	let documentHeaderText = translate( 'Bring your vision to life' );
+	let headerText = translate( 'Time to build your site!{{br/}}How would you like to get started?', {
+		components: {
+			br: <br />,
+		},
+	} );
 
-	let documentHeaderText =  translate( 'Bring your vision to life' );
-	let headerText =  translate(
-			'Time to build your site!{{br/}}How would you like to get started?',
-			{
-				components: {
-					br: <br />,
-				},
-			}
-		);
-
-	if(isGoalsFirstVariation){
+	if ( isGoalsFirstVariation ) {
 		documentHeaderText = headerText = translate( 'How would you like to start?' );
 	}
 
