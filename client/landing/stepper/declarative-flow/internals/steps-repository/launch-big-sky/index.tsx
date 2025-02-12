@@ -108,7 +108,7 @@ const LaunchBigSky: Step = function () {
 	};
 
 	useEffect( () => {
-		if ( isError || ! isEligible || isLoading ) {
+		if ( isError || isEligible === false || isLoading ) {
 			return;
 		}
 		const syntheticEvent = {
