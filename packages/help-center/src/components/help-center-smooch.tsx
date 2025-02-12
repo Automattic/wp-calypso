@@ -13,7 +13,6 @@ import {
 import { useSelect, useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import Smooch from 'smooch';
-import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useChatStatus } from '../hooks';
 import { HELP_CENTER_STORE } from '../stores';
 import { getClientId, getZendeskConversations } from './utils';
@@ -83,11 +82,9 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 	const allowChat = enableAuth && ( isEligibleForChat || allowPremiumSupport );
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
-	const { sectionName } = useHelpCenterContext();
 
-	const isPresalesChat = allowPremiumSupport && sectionName === 'checkout';
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
-		isPresalesChat ? 'zendesk_presales_chat_key' : 'zendesk_support_chat_key',
+		'zendesk_support_chat_key',
 		allowChat,
 		allowChat
 	);
