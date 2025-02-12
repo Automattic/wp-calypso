@@ -26,11 +26,7 @@ class SitePicker extends Component {
 	renderScreen() {
 		return (
 			<Card className="site-picker__wrapper">
-				<SiteSelector
-					filter={ this.filterSites }
-					onSiteSelect={ this.handleSiteSelect }
-					isReskinned
-				/>
+				<SiteSelector filter={ this.filterSites } onSiteSelect={ this.handleSiteSelect } />
 			</Card>
 		);
 	}

@@ -438,7 +438,6 @@ export class SiteSelector extends Component {
 					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
-					isReskinned
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
