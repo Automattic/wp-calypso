@@ -179,7 +179,7 @@ class Document extends Component {
 							>
 								<div className="layout__content">
 									{ sectionName === 'checkout' ? (
-										<Loading />
+										<Loading className="wpcom-loading__boot" />
 									) : (
 										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 									) }

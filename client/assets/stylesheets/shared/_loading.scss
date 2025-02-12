@@ -22,6 +22,10 @@
 	max-width: 540px;
 	margin: 32vh auto 0;
 
+	&.wpcom-loading__boot {
+		margin: calc( 32vh + 60px ) auto 0;
+	}
+
 	.wpcom__loading-title {
 		height: 40px;
 		line-height: 40px;
