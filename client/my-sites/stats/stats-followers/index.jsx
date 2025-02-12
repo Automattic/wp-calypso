@@ -38,19 +38,20 @@ const StatModuleFollowers = ( { className } ) => {
 			const hours = Math.floor( minutes / 60 );
 			const days = Math.floor( hours / 24 );
 
-			// Translation helper.
-			const formatTime = ( i, singular, plural ) =>
-				// eslint-disable-next-line wpcalypso/i18n-no-variables
-				translate( singular, plural, { count: i, args: { count: i } } );
+			const getTranslationArgs = ( count ) => ( { count, args: { count } } );
 
 			let result = '';
 
 			if ( days > 0 ) {
-				result = formatTime( days, '%(count)d day', '%(count)d days' );
+				result = translate( '%(count)d day', '%(count)d days', getTranslationArgs( days ) );
 			} else if ( hours > 0 ) {
-				result = formatTime( hours, '%(count)d hour', '%(count)d hours' );
+				result = translate( '%(count)d hour', '%(count)d hours', getTranslationArgs( hours ) );
 			} else if ( minutes > 0 ) {
-				result = formatTime( minutes, '%(count)d minute', '%(count)d minutes' );
+				result = translate(
+					'%(count)d minute',
+					'%(count)d minutes',
+					getTranslationArgs( minutes )
+				);
 			}
 
 			return result;
