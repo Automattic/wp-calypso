@@ -24,6 +24,8 @@ export default function A4ACarousel( { children, className }: Props ) {
 
 	const offsetStep = containerWidth;
 
+	const requiresNavigation = contentWidth > containerWidth;
+
 	const moveLeft = useCallback( () => {
 		setOffsetX( Math.min( offsetX + offsetStep, 0 ) );
 	}, [ offsetStep, offsetX ] );
@@ -66,7 +68,11 @@ export default function A4ACarousel( { children, className }: Props ) {
 	};
 
 	return (
-		<div className={ clsx( 'a4a-carousel-wrapper', className ) }>
+		<div
+			className={ clsx( 'a4a-carousel-wrapper', className, {
+				'is-with-navigation': requiresNavigation,
+			} ) }
+		>
 			<div
 				className={ clsx( 'a4a-carousel', { 'is-touch-active': !! touchStart } ) }
 				ref={ containerRef }
@@ -74,22 +80,24 @@ export default function A4ACarousel( { children, className }: Props ) {
 				onTouchMove={ onTouchMove }
 				onTouchEnd={ onTouchEnd }
 			>
-				<div className="a4a-carousel__navigation">
-					<Button
-						className="a4a-carousel__navigation-button"
-						onClick={ moveLeft }
-						disabled={ offsetX === 0 }
-					>
-						<Icon icon={ chevronLeft } size={ 20 } />
-					</Button>
-					<Button
-						className="a4a-carousel__navigation-button"
-						onClick={ moveRight }
-						disabled={ offsetX === -maxOffset }
-					>
-						<Icon icon={ chevronRight } size={ 20 } />
-					</Button>
-				</div>
+				{ requiresNavigation && (
+					<div className="a4a-carousel__navigation">
+						<Button
+							className="a4a-carousel__navigation-button"
+							onClick={ moveLeft }
+							disabled={ offsetX === 0 }
+						>
+							<Icon icon={ chevronLeft } size={ 20 } />
+						</Button>
+						<Button
+							className="a4a-carousel__navigation-button"
+							onClick={ moveRight }
+							disabled={ offsetX === -maxOffset }
+						>
+							<Icon icon={ chevronRight } size={ 20 } />
+						</Button>
+					</div>
+				) }
 				<div
 					className="a4a-carousel__content"
 					style={ { transform: `translateX(${ offsetX }px)` } }

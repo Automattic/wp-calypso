@@ -2,8 +2,26 @@
 @import "@wordpress/base-styles/mixins";
 
 .hosting-features-section-v2 {
-	.a4a-carousel-wrapper {
-		margin-block-start: -64px;
+	.a4a-carousel__navigation {
+		display: none;
+
+		@include break-large {
+			display: flex;
+		}
+	}
+
+	.a4a-carousel-wrapper.is-with-navigation {
+		@include break-large {
+			margin-block-start: -64px;
+		}
+	}
+
+	.a4a-carousel__content {
+		width: 100%;
+
+		@include break-large {
+			width: max-content;
+		}
 	}
 
 	.a4a-carousel__navigation-button {
@@ -14,6 +32,8 @@
 .hosting-features-section-v2__cards {
 	display: grid;
 	gap: 16px;
+	grid-template-columns: 1fr;
+	min-width: 100%;
 
 	@include break-large {
 		grid-template-columns: repeat(4, 350px);
