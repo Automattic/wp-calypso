@@ -1,6 +1,6 @@
 import { Onboard, OnboardActions, updateLaunchpadSettings } from '@automattic/data-stores';
 import { EXAMPLE_FLOW } from '@automattic/onboarding';
-import { dispatch } from '@wordpress/data';
+import { dispatch, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useLaunchpadDecider } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-launchpad-decider';
@@ -13,15 +13,19 @@ import {
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
+import { useCreateSite } from '../hooks/use-create-site-hook';
 import { useExitFlow } from '../hooks/use-exit-flow';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getQuery } from '../utils/get-query';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
+import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
+
+const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 
 const newsletter: Flow = {
 	name: EXAMPLE_FLOW,
@@ -50,7 +54,6 @@ const newsletter: Flow = {
 			STEPS.PLANS,
 			STEPS.PROCESSING,
 			STEPS.SUBSCRIBERS,
-			STEPS.SITE_CREATION_STEP,
 			STEPS.LAUNCHPAD,
 		] );
 
@@ -66,8 +69,13 @@ const newsletter: Flow = {
 		const siteId = useSiteIdParam();
 		const siteSlug = useSiteSlug();
 		const query = useQuery();
+		const { set } = useFlowState();
 		const { exitFlow } = useExitFlow();
 		const isComingFromMarketingPage = query.get( 'ref' ) === 'newsletter-lp';
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
+		const { saveSiteSettings } = useDispatch( SITE_STORE );
+
+		const createSite = useCreateSite();
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
 			exitFlow,
@@ -84,7 +92,7 @@ const newsletter: Flow = {
 
 		triggerGuidesForStep( flowName, _currentStep );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const launchpadUrl = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 
 			switch ( _currentStep ) {
@@ -92,21 +100,39 @@ const newsletter: Flow = {
 					return navigate( 'newsletterSetup' );
 
 				case 'newsletterSetup':
+					set( 'newsletterSetup', providedDependencies );
 					return navigate( 'newsletterGoals' );
 
 				case 'newsletterGoals':
+					set( 'newsletterGoals', providedDependencies );
 					return navigate( 'domains' );
 
 				case 'domains':
+					set( 'domains', providedDependencies );
 					return navigate( 'plans' );
 
 				case 'plans':
-					return navigate( 'createSite' );
-
-				case 'createSite':
-					return navigate( 'processing' );
+					set( 'plans', providedDependencies );
+					setPendingAction( () =>
+						createSite( {
+							theme: DEFAULT_NEWSLETTER_THEME,
+							siteIntent: Onboard.SiteIntent.Newsletter,
+						} )
+					);
+					return navigate( 'processing', null, true );
 
 				case 'processing':
+					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
+						await saveSiteSettings( providedDependencies?.siteSlug, {
+							launchpad_screen: 'full',
+						} );
+
+						initializeLaunchpadState( {
+							siteId: providedDependencies?.siteId as number,
+							siteSlug: providedDependencies?.siteSlug as string,
+						} );
+					}
+
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
 							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
@@ -127,11 +153,6 @@ const newsletter: Flow = {
 							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
 						);
 					}
-
-					initializeLaunchpadState( {
-						siteId: providedDependencies?.siteId as number,
-						siteSlug: providedDependencies?.siteSlug as string,
-					} );
 
 					return window.location.assign(
 						getPostFlowUrl( {

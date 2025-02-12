@@ -118,6 +118,7 @@ export const useCreateSite = () => {
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
+	//TODO: Need to change newsletterSetup to something more general
 	const siteTitle = get( 'newsletterSetup' )?.siteTitle as string;
 
 	/**
@@ -139,8 +140,10 @@ export const useCreateSite = () => {
 			theme: string;
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
-		} ) =>
-			createSite( {
+		} ) => {
+			// const domains = get( 'domains' );
+			// console.log('before calling createSite domains', JSON.stringify(domains));
+			return createSite( {
 				flowName,
 				userIsLoggedIn,
 				isPurchasingDomainItem: false,
@@ -159,6 +162,7 @@ export const useCreateSite = () => {
 				domainItem: domains?.domainItem,
 				siteIntent,
 				planCartItems,
-			} ),
+			} );
+		},
 	} ).mutateAsync;
 };

@@ -134,6 +134,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			freeDomain: suggestion?.is_free,
 			domainName: suggestion?.domain_name,
 			productSlug: suggestion?.product_slug,
+			domainItem: suggestion,
 		} );
 	};
 

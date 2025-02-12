@@ -67,6 +67,8 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 				NEWSLETTER_POST_SETUP_FLOW,
 				LINK_IN_BIO_TLD_FLOW,
 				LINK_IN_BIO_POST_SETUP_FLOW,
+				// Testing example as newsletter flow
+				// EXAMPLE_FLOW,
 			].includes( flowName )
 	);
 };
