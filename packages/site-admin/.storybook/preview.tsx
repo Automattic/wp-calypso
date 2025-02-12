@@ -27,7 +27,7 @@ export const globalTypes = {
 		description: 'Site for testing',
 		defaultValue: siteKeys[ 0 ],
 		toolbar: {
-			icon: 'globe',
+			icon: 'home',
 			items: siteKeys,
 		},
 	},
