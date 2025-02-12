@@ -64,6 +64,7 @@ class StatsModule extends Component {
 		loaded: false,
 		diffData: [],
 		dataHistory: [],
+		lastUpdated: null,
 	};
 
 	componentDidMount() {
@@ -94,7 +95,17 @@ class StatsModule extends Component {
 		}
 
 		const isRealTime = this.props.query?.interval !== undefined;
-		if ( isRealTime && ! isEqual( this.props.data, prevProps.data ) ) {
+		if ( ! isRealTime ) {
+			return;
+		}
+
+		// Limit data processing to match the query interval to avoid spurious updates.
+		// Need to convert from milliseconds to seconds for comparison.
+		const limit = this.props.query.interval / 1000;
+		const { lastUpdated } = this.state;
+		const now = moment();
+
+		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= limit ) {
 			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
@@ -103,6 +114,7 @@ class StatsModule extends Component {
 			this.setState( {
 				diffData,
 				dataHistory: updatedHistory,
+				lastUpdated: now,
 			} );
 		}
 	}
