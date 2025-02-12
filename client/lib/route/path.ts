@@ -45,11 +45,6 @@ export function getSiteFragment( path: URLString ): SiteSlug | SiteId | false {
 	) {
 		searchPositions = [ 3, pieces.length - 2, pieces.length - 1 ];
 	}
-	// In other paths the site fragment is in the second position.
-	// e.g. /checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534
-	else if ( basePath.includes( '/offer-plan-upgrade/' ) && basePath.startsWith( '/checkout/' ) ) {
-		searchPositions = [ 2 ];
-	}
 	// For this specific path, the site fragment is in the last index position.
 	// e.g /checkout/offer-professional-email/new-domain.com/example.wordpress.com (last)
 	else if (

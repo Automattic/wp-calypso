@@ -157,11 +157,6 @@ describe( 'route', function () {
 			test( 'should return the correct site fragment during upsell', function () {
 				expect(
 					route.getSiteFragment(
-						'/checkout/example.wordpress.com/offer-plan-upgrade/business-monthly/75806534'
-					)
-				).toEqual( 'example.wordpress.com' );
-				expect(
-					route.getSiteFragment(
 						'/checkout/offer-professional-email/new-domain.com/75806534/example.wordpress.com'
 					)
 				).toEqual( 'example.wordpress.com' );
