@@ -1,6 +1,6 @@
-import page from '@automattic/calypso-router';
 import { Count, Gridicon, MaterialIcon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import SidebarHeading from 'calypso/layout/sidebar/heading';
@@ -17,29 +17,14 @@ const ExpandableSidebarHeading = ( {
 	menuId,
 	hideExpandableIcon,
 	inlineText,
-	onClick,
-	defaultSelection,
-	isSelected,
+	expandableIconClick,
 	...props
 } ) => {
+	const translate = useTranslate();
 	return (
 		<SidebarHeading
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
-			onClick={ () => {
-				// TODO - refactor this to just call the passed onClick. Handle this upstream. Give
-				// the icon an optional separate onClick. This makes this component too biased.
-				if ( ! defaultSelection ) {
-					onClick();
-					return;
-				}
-				if ( ! isSelected ) {
-					page.redirect( defaultSelection );
-				}
-				if ( ! expanded ) {
-					onClick();
-				}
-			} }
 			{ ...props }
 		>
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
@@ -56,16 +41,22 @@ const ExpandableSidebarHeading = ( {
 				{ undefined !== count && <Count count={ count } /> }
 				{ inlineText && <span className="sidebar__inline-text">{ inlineText }</span> }
 			</span>
-			{ ! hideExpandableIcon && (
-				<Button
-					variation="link"
-					onClick={ ( ev ) => {
-						ev.stopPropagation();
-						onClick();
-					} }
-					icon={ <MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" /> }
-				></Button>
-			) }
+			{ ! hideExpandableIcon &&
+				( expandableIconClick ? (
+					<Button
+						variation="link"
+						onClick={ ( ev ) => {
+							ev.stopPropagation();
+							expandableIconClick();
+						} }
+						aria-label={ expanded ? translate( 'Collapse menu' ) : translate( 'Expand menu' ) }
+						icon={
+							<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+						}
+					></Button>
+				) : (
+					<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
+				) ) }
 		</SidebarHeading>
 	);
 };
@@ -79,8 +70,7 @@ ExpandableSidebarHeading.propTypes = {
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
-	isSelected: PropTypes.bool,
-	defaultSelection: PropTypes.string,
+	expandableIconClick: PropTypes.func,
 };
 
 export default ExpandableSidebarHeading;
