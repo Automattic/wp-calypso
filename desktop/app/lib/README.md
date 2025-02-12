@@ -2,7 +2,6 @@
 
 The following libraries are available:
 
-- [App Instance](app-instance/README.md)
 - [App Quit](app-quit/README.md)
 - [Config](config/README.md)
 - [Cookie Auth](cookie-auth/README.md)
