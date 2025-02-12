@@ -1,4 +1,7 @@
-import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
+import {
+	getAnyLanguageRouteParam,
+	removeLocaleFromPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	makeLayout,
@@ -50,7 +53,10 @@ const discover = ( context, next ) => {
 	if ( isDiscoveryV2Enabled() ) {
 		// Extract the tab from the path for v2, ignoring query params.
 		const cleanPath = context.path.split( '?' )[ 0 ];
-		const pathParts = cleanPath.split( '/' );
+		// Remove any locale prefix if it exists to get a clean path.
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
+		const pathParts = pathWithoutLocale.split( '/' );
+		// Now pathParts[2] will consistently be the tab.
 		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
 	} else {
 		// Use query parameter for v1.
@@ -80,6 +86,7 @@ const discover = ( context, next ) => {
 				showBack={ false }
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
+				query={ context.query }
 			/>
 		</>
 	);

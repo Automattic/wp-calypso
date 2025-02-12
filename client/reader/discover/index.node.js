@@ -1,4 +1,7 @@
-import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
+import {
+	getAnyLanguageRouteParam,
+	removeLocaleFromPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
 import renderHeaderSection from '../lib/header-section';
@@ -14,7 +17,10 @@ const discoverSsr = ( context, next ) => {
 	if ( isDiscoveryV2Enabled() ) {
 		// Extract the tab from the path for v2, ignoring query params.
 		const cleanPath = context.path.split( '?' )[ 0 ];
-		const pathParts = cleanPath.split( '/' );
+		// Remove any locale prefix if it exists to get a clean path.
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
+		const pathParts = pathWithoutLocale.split( '/' );
+		// Now pathParts[2] will consistently be the tab.
 		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
 	} else {
 		// Use query parameter for v1.

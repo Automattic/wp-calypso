@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { addLocaleToPathLocaleInFront, useLocale } from '@automattic/i18n-utils';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -52,20 +53,22 @@ export const DiscoverHeader = ( props ) => {
 
 const DiscoverStream = ( props ) => {
 	const translate = useTranslate();
+	const currentLocale = useLocale();
 	const followedTags = useSelector( getReaderFollowedTags );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const selectedTab = props.selectedTab || DEFAULT_TAB;
-
-	const selectedTag = new URLSearchParams( window.location.search ).get( 'selectedTag' );
+	const selectedTag = props.query?.selectedTag;
 
 	// If the selected tab is tags and no selectedTag is provided, redirect to the tags tab with dailyprompt selected.
 	if ( selectedTab === 'tags' && ! selectedTag ) {
-		return page.redirect( '/discover/tags?selectedTag=dailyprompt' );
+		const redirectPath = '/discover/tags';
+		const localizedPath = addLocaleToPathLocaleInFront( redirectPath, currentLocale );
+		return page.redirect( addQueryArgs( { selectedTag: 'dailyprompt' }, localizedPath ) );
 	}
 
 	const isDefaultTab = selectedTab === DEFAULT_TAB;
 
-	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags.
+	// Do not supply a fallback empty array as null is good data for getDiscoverStreamTags
 	const recommendedStreamTags = getDiscoverStreamTags(
 		followedTags && followedTags.map( ( tag ) => tag.slug ),
 		isLoggedIn
@@ -75,7 +78,9 @@ const DiscoverStream = ( props ) => {
 	const streamKey = buildDiscoverStreamKey( effectiveTabSelection, recommendedStreamTags );
 
 	const handleTagSelect = ( tag ) => {
-		page.replace( addQueryArgs( { selectedTag: tag }, '/discover/tags' ) );
+		const redirectPath = '/discover/tags';
+		const localizedPath = addLocaleToPathLocaleInFront( redirectPath, currentLocale );
+		page.replace( addQueryArgs( { selectedTag: tag }, localizedPath ) );
 	};
 
 	const streamProps = {

@@ -1,3 +1,5 @@
+import { useLocale } from '@automattic/i18n-utils/src/locale-context';
+import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils/src/utils';
 import { translate } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -17,12 +19,18 @@ interface Props {
 }
 
 const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
+	const currentLocale = useLocale();
+
 	const recordTabClick = () => {
 		recordAction( 'click_discover_tab' );
 		recordGaEvent( 'Clicked Discover Tab' );
 	};
 
-	const tabs: Tab[] = [
+	const getLocalizedPath = ( path: string ) => {
+		return addLocaleToPathLocaleInFront( path, currentLocale );
+	};
+
+	const baseTabs: Tab[] = [
 		{
 			slug: DEFAULT_TAB,
 			title: translate( 'Recommended' ),
@@ -54,6 +62,12 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 			path: '/discover/latest',
 		},
 	];
+
+	// Add localization to paths if needed.
+	const tabs = baseTabs.map( ( tab ) => ( {
+		...tab,
+		path: getLocalizedPath( tab.path ),
+	} ) );
 
 	const selectedTabData = tabs.find( ( tab ) => tab.slug === selectedTab );
 
