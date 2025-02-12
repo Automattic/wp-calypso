@@ -68,9 +68,10 @@ export function DefaultMasterbarContact() {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const { hasDIFMProduct, has100YPlan } = useProductsWithPremiumSupport( responseCart.products );
+	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
+		responseCart.products
+	);
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const isPremiumSupportAllowed = hasDIFMProduct || has100YPlan;
 
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
@@ -82,17 +83,13 @@ export function DefaultMasterbarContact() {
 			location: 'thank-you-help-center',
 		} );
 
-		if ( isPremiumSupportAllowed ) {
-			const initialMessage = hasDIFMProduct
-				? 'User is purchasing DIFM plan.'
-				: 'User is purchasing 100 year plan.';
-
-			setShowHelpCenter( ! isShowingHelpCenter, isPremiumSupportAllowed );
+		if ( hasPremiumSupport ) {
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 			setNavigateToRoute(
 				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
 			);
 		} else {
-			setShowHelpCenter( ! isShowingHelpCenter, isPremiumSupportAllowed );
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
 		}
 	};
 

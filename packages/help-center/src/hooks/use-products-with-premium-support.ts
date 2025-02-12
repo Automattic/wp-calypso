@@ -14,8 +14,14 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[] )
 		}
 	}
 
+	const initialMessage = hasDIFMProduct
+		? 'User is purchasing DIFM plan.'
+		: 'User is purchasing 100 year plan.';
+
+	const hasPremiumSupport = hasDIFMProduct || has100YPlan;
+
 	return {
-		hasDIFMProduct,
-		has100YPlan,
+		initialMessage,
+		hasPremiumSupport,
 	};
 }
