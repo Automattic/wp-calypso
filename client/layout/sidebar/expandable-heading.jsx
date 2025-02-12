@@ -44,16 +44,22 @@ const ExpandableSidebarHeading = ( {
 			{ ! hideExpandableIcon &&
 				( expandableIconClick ? (
 					<Button
-						variation="link"
+						variant="link"
 						onClick={ ( ev ) => {
 							ev.stopPropagation();
 							expandableIconClick();
+						} }
+						onKeyDown={ ( ev ) => {
+							// Prevent bubbling or the SidebarHeading's onClick will also trigger.
+							if ( ev.key === 'Enter' ) {
+								ev.stopPropagation();
+							}
 						} }
 						aria-label={ expanded ? translate( 'Collapse menu' ) : translate( 'Expand menu' ) }
 						icon={
 							<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
 						}
-					></Button>
+					/>
 				) : (
 					<MaterialIcon icon="keyboard_arrow_down" className="sidebar__expandable-arrow" />
 				) ) }
