@@ -278,7 +278,7 @@ describe( 'I18n', function () {
 			} );
 		} );
 
-		describe( 'compact notation', function () {
+		describe( 'numberFormatCompact()', function () {
 			describe( 'ar', () => {
 				beforeEach( function () {
 					i18n.setLocale( {
