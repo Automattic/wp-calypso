@@ -518,14 +518,24 @@ export class FullPostView extends Component {
 	};
 
 	goToNextPost = () => {
-		if ( this.props.nextPost ) {
-			this.props.showSelectedPost( { postKey: this.props.nextPost } );
+		const { nextPost, layout, setSelectedItem, showSelectedPost: showPost } = this.props;
+		if ( nextPost ) {
+			if ( layout === 'recent' && setSelectedItem ) {
+				setSelectedItem( nextPost );
+			} else {
+				showPost( { postKey: nextPost } );
+			}
 		}
 	};
 
 	goToPreviousPost = () => {
-		if ( this.props.previousPost ) {
-			this.props.showSelectedPost( { postKey: this.props.previousPost } );
+		const { previousPost, layout, setSelectedItem, showSelectedPost: showPost } = this.props;
+		if ( previousPost ) {
+			if ( layout === 'recent' && setSelectedItem ) {
+				setSelectedItem( previousPost );
+			} else {
+				showPost( { postKey: previousPost } );
+			}
 		}
 	};
 
