@@ -1654,9 +1654,9 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_COMMISSION_FEE_STANDARD_FEATURES,
 		getTitle: () =>
 			i18n.fixMe( {
-				text: 'Transaction fee for standard payments (+ standard processing\u00A0fee)',
+				text: 'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)',
 				newCopy: i18n.translate(
-					'Transaction fee for standard payments (+ standard processing\u00A0fee)'
+					'Transaction fee for standard payments (+\u00A0standard processing\u00A0fee)'
 				),
 				oldCopy: i18n.translate(
 					'Commission fee for standard payment features (plus standard processing\u00A0fee)'
