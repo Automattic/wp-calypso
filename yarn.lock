@@ -520,8 +520,9 @@ __metadata:
     "@storybook/addon-actions": "npm:^7.6.20"
     "@storybook/addon-controls": "npm:^7.6.20"
     "@storybook/addon-docs": "npm:^7.6.20"
+    "@storybook/addon-themes": "npm:7.6.20"
     "@storybook/addon-toolbars": "npm:^7.6.20"
-    "@storybook/addon-viewport": "npm:^7.6.20"
+    "@storybook/addon-viewport": "npm:^7.6.19"
     "@storybook/react-webpack5": "npm:^7.6.20"
     "@storybook/test": "npm:^7.6.20"
     css-loader: "npm:^6.11.0"
@@ -6881,6 +6882,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-themes@npm:7.6.20":
+  version: 7.6.20
+  resolution: "@storybook/addon-themes@npm:7.6.20"
+  dependencies:
+    ts-dedent: "npm:^2.0.0"
+  checksum: d0ec71bc9484ec8d3a30ae88fce42671e9c469793f4d185eb0f3f798e4b5ee4839ec8885702021b7a7feae709296c844a7fc2c5b8d26f54fa856f7aa77ca08d8
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-toolbars@npm:^7.6.20":
   version: 7.6.20
   resolution: "@storybook/addon-toolbars@npm:7.6.20"
@@ -6888,7 +6898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-viewport@npm:^7.6.20":
+"@storybook/addon-viewport@npm:^7.6.19":
   version: 7.6.20
   resolution: "@storybook/addon-viewport@npm:7.6.20"
   dependencies:
