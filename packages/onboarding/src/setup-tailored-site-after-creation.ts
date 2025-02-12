@@ -8,7 +8,7 @@ import {
 } from '@automattic/data-stores';
 import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isNewsletterFlow, isNewsletterOrLinkInBioFlow, isFreeFlow } from './utils';
+import { isNewsletterFlow, isFreeFlow } from './utils';
 import type { ActiveTheme } from '@automattic/data-stores';
 
 const ONBOARD_STORE = Onboard.register();
@@ -65,7 +65,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 		const promises = [];
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) || isFreeFlow( flowName ) ) {
+		if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) ) {
 			if ( isFreeFlow( flowName ) ) {
 				// We removed the link in free flow, we need to keep this reference here to avoid side effects.
 				settings.site_intent = 'free';

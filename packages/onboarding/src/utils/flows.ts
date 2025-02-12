@@ -51,16 +51,8 @@ export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_POST_SETUP_FLOW ].includes( flowName ) );
 };
 
-export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && [ NEWSLETTER_FLOW, NEWSLETTER_POST_SETUP_FLOW ].includes( flowName )
-	);
-};
-
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && ( isNewsletterOrLinkInBioFlow( flowName ) || ECOMMERCE_FLOW === flowName )
-	);
+	return Boolean( flowName && ( isNewsletterFlow( flowName ) || ECOMMERCE_FLOW === flowName ) );
 };
 
 export const isEntrepreneurSignupFlow = ( flowName: string | null ) => {

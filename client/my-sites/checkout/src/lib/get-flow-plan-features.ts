@@ -8,7 +8,7 @@ import {
 import {
 	NEWSLETTER_FLOW,
 	isAnyHostingFlow,
-	isNewsletterOrLinkInBioFlow,
+	isNewsletterFlow,
 	isBlogOnboardingFlow,
 } from '@automattic/onboarding';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -28,7 +28,7 @@ const blogOnboardingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) =
 const senseiFeatures = ( plan: IncompleteWPcomPlan ) => plan.getSenseiFeatures?.( plan.term );
 
 const signupFlowDefaultFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	if ( ! flowName || isNewsletterOrLinkInBioFlow( flowName ) ) {
+	if ( ! flowName || isNewsletterFlow( flowName ) ) {
 		return;
 	}
 
