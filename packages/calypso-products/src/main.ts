@@ -839,13 +839,6 @@ export const getPopularPlanSpec = ( {
 		};
 	}
 
-	if ( flowName === 'link-in-bio' || flowName === 'link-in-bio-tld' ) {
-		return {
-			type: TYPE_PERSONAL,
-			group,
-		};
-	}
-
 	if ( customerType === 'personal' ) {
 		if ( availablePlans.findIndex( isPremiumPlan ) !== -1 ) {
 			return {

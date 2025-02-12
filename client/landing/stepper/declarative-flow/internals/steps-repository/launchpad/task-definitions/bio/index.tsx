@@ -4,20 +4,7 @@ import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { getSiteIdOrSlug } from '../../task-helper';
 import { type TaskAction } from '../../types';
-
-export const getSetupLinkInBioTask: TaskAction = ( task, flow, context ) => {
-	const { site, siteSlug } = context;
-
-	return {
-		...task,
-		calypso_path: addQueryArgs( `/setup/link-in-bio-post-setup/linkInBioPostSetup`, {
-			...getSiteIdOrSlug( flow, site, siteSlug ),
-		} ),
-		useCalypsoPath: true,
-	};
-};
 
 export const getLinkInBioLaunchedTask: TaskAction = ( task, _, context ) => {
 	const { siteSlug, site, submit } = context;
@@ -53,7 +40,6 @@ export const getLinksAddedTask: TaskAction = ( task ) => {
 };
 
 export const actions = {
-	setup_link_in_bio: getSetupLinkInBioTask,
 	link_in_bio_launched: getLinkInBioLaunchedTask,
 	links_added: getLinksAddedTask,
 };
