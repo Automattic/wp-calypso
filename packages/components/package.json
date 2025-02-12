@@ -27,7 +27,6 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/color-studio": "^3.0.1",
