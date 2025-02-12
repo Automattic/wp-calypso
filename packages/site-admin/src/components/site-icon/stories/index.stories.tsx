@@ -13,3 +13,6 @@ const meta: Meta< typeof SiteIcon > = {
 export default meta;
 
 export const Default: StoryFn< typeof SiteIcon > = SiteIcon.bind( {} );
+Default.args = {
+	className: 'custom-icon-styles',
+};

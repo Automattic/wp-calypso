@@ -1,7 +1,7 @@
-.story-site-icon {
+.custom-icon-styles {
 	width: 130px;
 
-	.site-admin-site-icon__image {
+	& > img {
 		aspect-ratio: 1 / 1;
 		object-fit: contain;
 	}
