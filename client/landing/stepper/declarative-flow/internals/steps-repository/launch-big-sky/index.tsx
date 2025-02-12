@@ -138,51 +138,6 @@ const LaunchBigSky: Step = function () {
 		onSubmit( syntheticEvent );
 	}, [ isError, isEligible, isLoading, onSubmit ] );
 
-	function LaunchingBigSky() {
-		return (
-			<div className="processing-step__container">
-				<div className="processing-step">
-					{ ! isError && <ProgressBar value={ progress } compact /> }
-					{ isError && (
-						<p className="processing-step__error">
-							{ __( 'Something unexpected happened. Please go back and try again.' ) }
-						</p>
-					) }
-				</div>
-				<div className="big-sky-disclaimer">
-					<p>
-						{ translate(
-							'By using the AI builder you agree on our{{br/}} {{ai_guidelines}}AI guidelines{{/ai_guidelines}} and our {{user_guidelines}}User Guidelines{{/user_guidelines}}.',
-							{
-								components: {
-									ai_guidelines: (
-										<a
-											href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
-											target="_blank"
-											rel="noreferrer noopener"
-											onClick={ ( event ) => {
-												recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
-												event.stopPropagation();
-											} }
-										/>
-									),
-									user_guidelines: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/support/user-guidelines/' ) }
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-									br: <br />,
-								},
-							}
-						) }
-					</p>
-				</div>
-			</div>
-		);
-	}
-
 	if ( isLoading || ! isEligible ) {
 		return null;
 	}
@@ -190,7 +145,46 @@ const LaunchBigSky: Step = function () {
 	return (
 		<div className="site-prompt__signup is-woocommerce-install">
 			<div className="site-prompt__is-store-address">
-				<LaunchingBigSky />
+				<div className="processing-step__container">
+					<div className="processing-step">
+						{ ! isError && <ProgressBar key="main-progress" value={ progress } compact /> }
+						{ isError && (
+							<p className="processing-step__error">
+								{ __( 'Something unexpected happened. Please go back and try again.' ) }
+							</p>
+						) }
+					</div>
+					<div className="big-sky-disclaimer">
+						<p>
+							{ translate(
+								'By using the AI builder you agree on our{{br/}} {{ai_guidelines}}AI guidelines{{/ai_guidelines}} and our {{user_guidelines}}User Guidelines{{/user_guidelines}}.',
+								{
+									components: {
+										ai_guidelines: (
+											<a
+												href={ localizeUrl( 'https://automattic.com/ai-guidelines/' ) }
+												target="_blank"
+												rel="noreferrer noopener"
+												onClick={ ( event ) => {
+													recordTracksEvent( 'calypso_big_sky_ai_guidelines_click' );
+													event.stopPropagation();
+												} }
+											/>
+										),
+										user_guidelines: (
+											<a
+												href={ localizeUrl( 'https://wordpress.com/support/user-guidelines/' ) }
+												target="_blank"
+												rel="noreferrer noopener"
+											/>
+										),
+										br: <br />,
+									},
+								}
+							) }
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
