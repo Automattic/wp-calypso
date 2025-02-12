@@ -4,6 +4,7 @@
 
 body.is-section-domains.is-bulk-all-domains-page {
 	main.dataviews {
+		background: var(--color-surface);
 		max-width: none;
 		height: calc(100vh - var(--masterbar-height) - var(--content-padding-top) - var(--content-padding-bottom));
 		display: flex;
@@ -139,50 +140,6 @@ body.is-section-domains.is-bulk-all-domains-page {
 				&__status-error {
 					color: var(--studio-red-50);
 				}
-			}
-		}
-
-		@media only screen and ( max-width: 479px ) {
-			.domain-header__buttons-mobile {
-				.options-domain-button__add {
-					height: 24px;
-					width: 24px;
-					transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
-				}
-
-				.is-menu-visible .options-domain-button__add {
-					transform: rotate( 180deg );
-				}
-
-				.options-domain-button {
-					width: 48px;
-				}
-			}
-		}
-		@media only screen and ( min-width: 782px ) {
-			.is-global-sidebar-visible {
-				header.navigation-header {
-					padding-top: 24px;
-					padding-inline: 16px;
-					border-block-end: 1px solid var( --color-border-secondary );
-				}
-			}
-		}
-
-
-		@media only screen and ( max-width: 600px ) {
-			.navigation-header__main {
-				justify-content: space-between;
-				.formatted-header {
-					flex: none;
-				}
-			}
-		}
-
-		@media only screen and ( max-width: 781px ) {
-			header.navigation-header {
-				padding-inline: 16px;
-				padding-bottom: 0;
 			}
 		}
 	}

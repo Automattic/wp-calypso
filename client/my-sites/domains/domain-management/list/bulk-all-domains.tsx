@@ -43,12 +43,16 @@ const domainsDataViewsGlobalStyles = css`
 	body.is-bulk-all-domains-page {
 		background: var( --studio-gray-0 );
 
+		header.navigation-header {
+			border-block-end: 1px solid var( --color-neutral-5 );
+			padding-block-start: 24px;
+			padding-block-end: 24px;
+		}
+
 		@media only screen and ( min-width: 782px ) {
 			.is-global-sidebar-visible {
 				header.navigation-header {
-					padding-top: 24px;
 					padding-inline: 16px;
-					border-block-end: 1px solid var( --color-neutral-5 );
 				}
 			}
 		}
