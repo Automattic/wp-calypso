@@ -146,8 +146,6 @@
 .start-writing,
 .design-first,
 .newsletter,
-.link-in-bio.launchpad,
-.link-in-bio-tld:not(.domains),
 .free,
 .build,
 .write,
@@ -304,28 +302,6 @@
 		background-color: #fff;
 	}
 
-	&.link-in-bio {
-		position: fixed;
-		width: 100%;
-		height: 100%;
-		background-color: #d0cce3;
-		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
-			url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		background-size: auto 30%, auto 30%;
-		background-position-x: 0%, 100%;
-		background-position-y: 90%, 10%;
-
-		@include break-huge {
-			background-size: auto 50%, auto 50%;
-			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
-		}
-	}
-
 	.step-container {
 		display: flex;
 		flex-direction: column;
@@ -363,13 +339,6 @@
 	}
 
 	.launchpad__sidebar-header-flow-name {
-		display: none;
-	}
-}
-
-// Link in Bio flow
-.link-in-bio-tld.launchpad {
-	.signup-header {
 		display: none;
 	}
 }
