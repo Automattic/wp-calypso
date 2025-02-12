@@ -119,14 +119,22 @@
 			font-size: 0.875rem;
 		}
 
-		&:hover, &:focus {
-			background-color: $help-center-blue;
-			color: var(--studio-white);
-
+		:disabled {
 			svg {
-				fill: var(--studio-white);
+				fill: var( --wp-components-color-gray-600, #949494 );
 			}
+		}
 
+		&:not( :disabled ) {
+			&:hover,
+			&:focus {
+				background-color: $help-center-blue;
+				color: var( --studio-white );
+
+				svg {
+					fill: var( --studio-white );
+				}
+			}
 		}
 	}
 

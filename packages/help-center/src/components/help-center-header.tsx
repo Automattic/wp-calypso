@@ -112,23 +112,21 @@ const ChatEllipsisMenu = () => {
 			trackEventProps={ { source: 'help_center' } }
 		>
 			<div className="conversation-menu__wrapper">
-				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+				<button onClick={ clearChat }>
 					<Icon icon={ comment } />
 					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
 				</button>
-				{ totalNumberOfConversations > 0 && (
-					<button className="conversation-menu__view-chats" onClick={ handleViewChats }>
-						<Icon icon={ scheduled } />
-						<div>
-							{ _n(
-								'View recent chat',
-								'View recent chats',
-								totalNumberOfConversations,
-								__i18n_text_domain__
-							) }
-						</div>
-					</button>
-				) }
+				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
+					<Icon icon={ scheduled } />
+					<div>
+						{ _n(
+							'View recent chat',
+							'View recent chats',
+							totalNumberOfConversations,
+							__i18n_text_domain__
+						) }
+					</div>
+				</Button>
 				<button onClick={ toggleSoundNotifications }>
 					<ToggleControl
 						className="conversation-menu__notification-toggle"
