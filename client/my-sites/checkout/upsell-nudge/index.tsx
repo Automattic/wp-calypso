@@ -52,7 +52,6 @@ const noop = () => {};
  */
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
-export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export interface UpsellNudgeManualProps {
@@ -108,7 +107,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				? upgradeItem
 				: parseInt( String( selectedSiteId ), 10 );
 
-		if ( upsellType === BUSINESS_PLAN_UPGRADE_UPSELL ) {
+		if ( ! upsellType ) {
 			this.redirectToThankYouPageUrl();
 			return null;
 		}
