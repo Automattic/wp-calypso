@@ -22,7 +22,7 @@ type SiteIconProps = {
 };
 
 /**
- * SiteIcon component
+ * SiteIcon component.
  * Displays the site icon or a default icon if the site icon is not set.
  * @example
  * ```jsx
