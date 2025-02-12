@@ -7,7 +7,16 @@ import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { _n } from '@wordpress/i18n';
-import { closeSmall, chevronUp, lineSolid, scheduled, page, Icon, comment } from '@wordpress/icons';
+import {
+	closeSmall,
+	chevronUp,
+	lineSolid,
+	scheduled,
+	page,
+	Icon,
+	comment,
+	commentContent,
+} from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
