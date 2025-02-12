@@ -63,7 +63,7 @@ export function getRouteFromContext( context: Context ) {
 }
 
 export interface RedirectRouteList {
-	path: string | string[];
+	path: string;
 	regex?: RegExp;
 	getRedirect: ( params?: Record< string, string > ) => string;
 }

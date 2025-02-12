@@ -43,7 +43,7 @@ interface Page {
 	/**
 	 * Setup redirect form one path to other.
 	 */
-	( fromPath: string | string[], toPath: string ): void;
+	( fromPath: string, toPath: string ): void;
 	/**
 	 * Register page's popstate / click bindings. If you're doing selective binding you'll like want to pass { click: false } to specify this yourself. The following options are available:
 	 *

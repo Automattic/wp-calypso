@@ -49,7 +49,6 @@ export async function lazyLoadDependencies(): Promise< void > {
 
 export default async function (): Promise< void > {
 	await lazyLoadDependencies();
-	setupReaderRedirects();
 	setupReadRoutes();
 
 	if ( config.isEnabled( 'reader' ) ) {
@@ -99,6 +98,7 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
 		page(
 			getUserProfileBasePath( 'lists' ),
 			blogDiscoveryByFeedId,
@@ -109,6 +109,8 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
+		setupReaderRedirects();
 	}
 
 	// Automattic Employee Posts
@@ -191,17 +193,36 @@ function setupReaderRedirects(): void {
 
 	const readerRedirectsList: RedirectRouteList[] = [
 		{
-			path: [
-				`/${ langParam }/reader`,
-				`/${ anyLangParam }/reader`,
-				// Incomplete paths that should be redirected to `/reader`
-				'/reader/following',
-				'/reader/blogs',
-				'/reader/feeds',
-				'/reader/blog',
-				'/reader/post',
-				'/reader/feed',
-			],
+			path: `/${ langParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		// Incomplete paths that should be redirected to `/reader`
+		{
+			path: '/reader/following',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blogs',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feeds',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blog',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/post',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feed',
 			getRedirect: () => '/reader',
 		},
 		// Feed stream

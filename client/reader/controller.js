@@ -385,7 +385,15 @@ export function setupReadRoutes() {
 
 	const readRedirectsList = [
 		{
-			path: [ '/read', `/${ langParam }/read`, `/${ anyLangParam }/read` ],
+			path: '/read',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ langParam }/read`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/read`,
 			getRedirect: () => '/reader',
 		},
 		{
