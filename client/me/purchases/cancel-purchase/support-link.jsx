@@ -26,8 +26,7 @@ const CancelPurchaseSupportLink = ( { purchase } ) => {
 	);
 	const { isOpeningZendeskWidget } = useOpenZendeskMessaging(
 		'migration-error',
-		isEligibleForChat,
-		'zendesk_support_chat_key'
+		isEligibleForChat
 	);
 
 	const getHelp = useCallback( () => {
