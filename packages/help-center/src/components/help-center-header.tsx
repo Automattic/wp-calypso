@@ -7,15 +7,7 @@ import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
 import { _n } from '@wordpress/i18n';
-import {
-	closeSmall,
-	chevronUp,
-	lineSolid,
-	commentContent,
-	page,
-	Icon,
-	comment,
-} from '@wordpress/icons';
+import { closeSmall, chevronUp, lineSolid, scheduled, page, Icon, comment } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
 import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
@@ -117,7 +109,7 @@ const ChatEllipsisMenu = () => {
 				</button>
 				{ totalNumberOfConversations > 0 && (
 					<button className="conversation-menu__view-chats" onClick={ handleViewChats }>
-						<Icon icon={ commentContent } />
+						<Icon icon={ scheduled } />
 						<div>
 							{ _n(
 								'View recent chat',
@@ -129,17 +121,15 @@ const ChatEllipsisMenu = () => {
 					</button>
 				) }
 				<button onClick={ toggleSoundNotifications }>
-					<div>
-						<ToggleControl
-							className="conversation-menu__notification-toggle"
-							label={ __( 'Notification sound', __i18n_text_domain__ ) }
-							checked={ areSoundNotificationsEnabled }
-							onChange={ ( newValue ) => {
-								setAreSoundNotificationsEnabled( newValue );
-							} }
-							__nextHasNoMarginBottom
-						/>
-					</div>
+					<ToggleControl
+						className="conversation-menu__notification-toggle"
+						label={ __( 'Notification sound', __i18n_text_domain__ ) }
+						checked={ areSoundNotificationsEnabled }
+						onChange={ ( newValue ) => {
+							setAreSoundNotificationsEnabled( newValue );
+						} }
+						__nextHasNoMarginBottom
+					/>
 				</button>
 			</div>
 		</EllipsisMenu>

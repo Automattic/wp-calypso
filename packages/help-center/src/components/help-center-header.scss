@@ -103,18 +103,6 @@
 		padding: 0 4px;
 	}
 
-	.conversation-menu__clear-conversation {
-		&:hover, &:focus {
-			background-color: $help-center-blue;
-			color: var(--studio-white);
-
-			svg {
-				fill: var(--studio-white);
-			}
-
-		}
-	}
-
 	button {
 		display: flex;
 		align-items: center;
@@ -129,6 +117,16 @@
 		div {
 			margin-bottom: 2px;
 			font-size: 0.875rem;
+		}
+
+		&:hover, &:focus {
+			background-color: $help-center-blue;
+			color: var(--studio-white);
+
+			svg {
+				fill: var(--studio-white);
+			}
+
 		}
 	}
 
