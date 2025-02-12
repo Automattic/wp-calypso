@@ -855,7 +855,7 @@ export default function CampaignItemDetails( props: Props ) {
 										</div>
 										<div>
 											<span className="campaign-item-details__label">
-												{ translate( 'Visitors' ) }
+												{ translate( 'Clicks' ) }
 											</span>
 											<span className="campaign-item-details__text">
 												<span className="wp-brand-font">
@@ -984,7 +984,7 @@ export default function CampaignItemDetails( props: Props ) {
 															controls={ [
 																{
 																	onClick: () => setChartSource( ChartSourceOptions.Clicks ),
-																	title: __( 'Visitors' ),
+																	title: __( 'Clicks' ),
 																	isDisabled: chartSource === ChartSourceOptions.Clicks,
 																},
 																{
@@ -996,7 +996,7 @@ export default function CampaignItemDetails( props: Props ) {
 															icon={ chevronDown }
 															text={
 																chartSource === ChartSourceOptions.Clicks
-																	? __( 'Visitors' )
+																	? __( 'Clicks' )
 																	: __( 'Impressions' )
 															}
 															label={ chartSource }
@@ -1016,7 +1016,7 @@ export default function CampaignItemDetails( props: Props ) {
 														<div className="campaign-item-page__locaton-charts">
 															<span className="campaign-item-details__label">
 																{ chartSource === ChartSourceOptions.Clicks
-																	? __( 'Visitors by location' )
+																	? __( 'Clicks by location' )
 																	: __( 'Impressions by location' ) }
 															</span>
 															<div>
@@ -1032,7 +1032,7 @@ export default function CampaignItemDetails( props: Props ) {
 											) }
 										</>
 									) }
-									{ areStatsEnabled && tsp && (
+									{ tsp && (
 										<>
 											<div className="campaign-item-details__main-stats-row ">
 												<div className="campaign-item-details__main-stats-title">
