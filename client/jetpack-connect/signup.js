@@ -124,11 +124,6 @@ export class JetpackSignup extends Component {
 		this.props.resetAuthAccountType();
 	};
 
-	isWooOnboarding() {
-		const { authQuery } = this.props;
-		return 'woocommerce-onboarding' === authQuery.from;
-	}
-
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
 		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
@@ -171,9 +166,7 @@ export class JetpackSignup extends Component {
 					extra: {
 						...userData.extra,
 						jpc: true,
-						source: this.props.isWooJPC
-							? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from
-							: '',
+						source: this.isWooJPC() ? 'woo-passwordless-jpc' + '-' + this.props.authQuery.from : '',
 					},
 				} )
 				.then( this.handleUserCreationSuccess, this.handleUserCreationError )
@@ -504,16 +497,14 @@ export class JetpackSignup extends Component {
 
 		return (
 			<MainWrapper
-				isWooOnboarding={ this.isWooOnboarding() }
-				isWooJPC={ this.isWooJPC() }
+				isWooJPC={ isWooJPC }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderLocaleSuggestions() }
 					<AuthFormHeader
 						authQuery={ this.props.authQuery }
-						isWooOnboarding={ this.isWooOnboarding() }
-						isWooJPC={ this.isWooJPC() }
+						isWooJPC={ isWooJPC }
 						isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 						disableSiteCard={ isWooJPC }
 					/>

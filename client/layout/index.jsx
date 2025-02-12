@@ -297,7 +297,6 @@ class Layout extends Component {
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
-			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
 			'is-woocommerce-core-profiler-flow': this.props.isWooJPC,
 			'is-automattic-for-agencies-flow': this.props.isFromAutomatticForAgenciesPlugin,
@@ -480,9 +479,6 @@ export default withCurrentRoute(
 			isJetpackCloud() ||
 			isA8CForAgencies();
 		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-		const isJetpackWooCommerceFlow =
-			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
-			'woocommerce-onboarding' === currentQuery?.from;
 		const isJetpackWooDnaFlow =
 			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
 			wooDnaConfig( currentQuery ).isWooDnaFlow();
@@ -507,7 +503,6 @@ export default withCurrentRoute(
 			sidebarIsHidden,
 			isJetpack,
 			isJetpackLogin,
-			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isJetpackMobileFlow,
 			isWooJPC,

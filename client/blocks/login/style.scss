@@ -6,7 +6,7 @@
 
 $breakpoint-mobile: 782px; //Mobile size.
 
-.layout:not(.is-jetpack-woocommerce-flow):not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+.layout:not(.is-jetpack-woo-dna-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	.login.is-jetpack:not(.is-automattic-for-agencies-flow) {
 		.button.is-primary {
 			background-color: var(--studio-jetpack-green-50);
@@ -56,7 +56,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow,
 .layout.is-jetpack-woo-dna-flow,
 .layout.is-wccom-oauth-flow {
 	.login__jetpack-logo,

@@ -12,7 +12,6 @@ import { retrieveMobileRedirect } from './persistence-utils';
 export class JetpackConnectMainWrapper extends PureComponent {
 	static propTypes = {
 		isWide: PropTypes.bool,
-		isWooOnboarding: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
 		isWpcomMigration: PropTypes.bool,
 		wooDnaConfig: PropTypes.object,
@@ -23,7 +22,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 	static defaultProps = {
 		isWide: false,
-		isWooOnboarding: false,
 		isWooJPC: false,
 		wooDnaConfig: null,
 	};
@@ -31,7 +29,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 	render() {
 		const {
 			isWide,
-			isWooOnboarding,
 			isWooJPC,
 			isWpcomMigration,
 			isFromAutomatticForAgenciesPlugin,
@@ -47,14 +44,15 @@ export class JetpackConnectMainWrapper extends PureComponent {
 
 		const wrapperClassName = clsx( 'jetpack-connect__main', {
 			'is-wide': isWide,
-			'is-woocommerce': isWooOnboarding || isWooDna || isWooJPC,
+			'is-woocommerce': isWooDna || isWooJPC,
 			'is-woocommerce-core-profiler-flow': isWooJPC,
 			'is-mobile-app-flow': !! retrieveMobileRedirect(),
 			'is-wpcom-migration': isWpcomMigration,
 			'is-automattic-for-agencies-flow': isFromAutomatticForAgenciesPlugin,
 		} );
 
-		const width = isWooOnboarding || isWooDna ? 200 : undefined;
+		// Note: legacy flow here was "merged" with DNA
+		const width = isWooDna ? 200 : undefined;
 		const darkColorScheme = false;
 
 		return (
@@ -68,7 +66,6 @@ export class JetpackConnectMainWrapper extends PureComponent {
 						<JetpackHeader
 							partnerSlug={ partnerSlug }
 							isFromAutomatticForAgenciesPlugin={ isFromAutomatticForAgenciesPlugin }
-							isWooOnboarding={ isWooOnboarding }
 							isWooJPC={ isWooJPC }
 							isWooDna={ isWooDna }
 							width={ width }

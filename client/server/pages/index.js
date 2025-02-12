@@ -176,7 +176,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		user: false,
 		env: calypsoEnv,
 		sanitize: sanitize,
-		requestFrom: request.query.from,
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),

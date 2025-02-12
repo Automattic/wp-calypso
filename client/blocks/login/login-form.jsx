@@ -383,12 +383,8 @@ export class LoginForm extends Component {
 	};
 
 	recordWooCommerceLoginTracks( method ) {
-		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
-		if ( isJetpackWooCommerceFlow ) {
-			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
-				login_method: method,
-			} );
-		} else if ( isWoo && 'cart' === wccomFrom ) {
+		const { isWoo, wccomFrom } = this.props;
+		if ( isWoo && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,
 			} );
@@ -644,13 +640,7 @@ export class LoginForm extends Component {
 	};
 
 	getMagicLoginPageLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
+		if ( ! canDoMagicLogin( this.props.twoFactorAuthType, this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -667,13 +657,7 @@ export class LoginForm extends Component {
 	}
 
 	getQrLoginLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
+		if ( ! canDoMagicLogin( this.props.twoFactorAuthType, this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -792,7 +776,6 @@ export class LoginForm extends Component {
 			oauth2Client,
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
-			isJetpackWooCommerceFlow,
 			isP2Login,
 			isJetpack,
 			isJetpackWooDnaFlow,
@@ -876,10 +859,6 @@ export class LoginForm extends Component {
 					/>
 				</Fragment>
 			) : null;
-		}
-
-		if ( isJetpackWooCommerceFlow ) {
-			return this.renderWooCommerce( { socialToS } );
 		}
 
 		if ( isJetpackWooDnaFlow ) {
@@ -1176,8 +1155,6 @@ export default connect(
 			oauth2Client: getCurrentOAuth2Client( state ),
 			isFromAutomatticForAgenciesPlugin:
 				'automattic-for-agencies-client' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),

@@ -406,11 +406,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		expect( request.context.sanitize ).toEqual( app.getMocks().sanitize );
 	} );
 
-	it( 'sets requestFrom', async () => {
-		const { request } = await app.run( { request: { query: { from: 'from' } } } );
-		expect( request.context.requestFrom ).toEqual( 'from' );
-	} );
-
 	it( 'sets lang to the default', async () => {
 		const { request } = await app.run();
 		expect( request.context.lang ).toEqual( 'en' );

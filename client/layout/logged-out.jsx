@@ -55,7 +55,6 @@ const LayoutLoggedOut = ( {
 	isJetpackLogin,
 	isWhiteLogin,
 	isPopup,
-	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
 	isP2Login,
 	isGravatar,
@@ -132,7 +131,6 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-site': isJetpackCheckout,
 		'is-white-login': isWhiteLogin,
 		'is-popup': isPopup,
-		'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-p2-login': isP2Login,
 		'is-gravatar': isGravatar,
@@ -344,7 +342,6 @@ export default withCurrentRoute(
 				! isWooOAuth2Client( oauth2Client ) &&
 				! isBlazeProOAuth2Client( oauth2Client ) &&
 				[ 'signup', 'jetpack-connect' ].includes( sectionName );
-			const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 			const isWooJPC = isWooJPCFlow( state );
 			const wccomFrom = getWccomFrom( state );
 			const masterbarIsHidden =
@@ -360,7 +357,6 @@ export default withCurrentRoute(
 				isJetpackLogin,
 				isWhiteLogin,
 				isPopup,
-				isJetpackWooCommerceFlow,
 				isJetpackWooDnaFlow,
 				isP2Login,
 				isGravatar,

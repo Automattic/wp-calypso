@@ -25,7 +25,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 
 export class LoginLinks extends Component {
 	static propTypes = {
@@ -208,14 +207,7 @@ export class LoginLinks extends Component {
 	}
 
 	renderMagicLoginLink() {
-		if (
-			! canDoMagicLogin(
-				this.props.twoFactorAuthType,
-				this.props.oauth2Client,
-				this.props.wccomFrom,
-				this.props.isJetpackWooCommerceFlow
-			)
-		) {
+		if ( ! canDoMagicLogin( this.props.twoFactorAuthType, this.props.oauth2Client ) ) {
 			return null;
 		}
 
@@ -261,10 +253,6 @@ export class LoginLinks extends Component {
 			return null;
 		}
 
-		if ( this.props.isJetpackWooCommerceFlow ) {
-			return null;
-		}
-
 		const loginUrl = login( {
 			locale: this.props.locale,
 			twoFactorAuthType: 'qr',
@@ -298,8 +286,6 @@ export default connect(
 		currentRoute: getCurrentRoute( state ),
 		isLoggedIn: Boolean( getCurrentUserId( state ) ),
 		query: getCurrentQueryArguments( state ),
-		isJetpackWooCommerceFlow: 'woocommerce-onboarding' === getCurrentQueryArguments( state ).from,
-		wccomFrom: getWccomFrom( state ),
 	} ),
 	{
 		recordTracksEvent,

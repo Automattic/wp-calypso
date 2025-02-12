@@ -14,7 +14,6 @@ export class JetpackHeader extends PureComponent {
 		darkColorScheme: PropTypes.bool,
 		partnerSlug: PropTypes.string,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
-		isWooOnboarding: PropTypes.bool,
 		isWooJPC: PropTypes.bool,
 		isWooDna: PropTypes.bool,
 		width: PropTypes.number,
@@ -26,7 +25,6 @@ export class JetpackHeader extends PureComponent {
 			partnerSlug,
 			width,
 			isFromAutomatticForAgenciesPlugin,
-			isWooOnboarding,
 			isWooJPC,
 			isWooDna,
 			translate,
@@ -34,25 +32,6 @@ export class JetpackHeader extends PureComponent {
 
 		if ( isWooJPC ) {
 			return null;
-		}
-
-		if ( isWooOnboarding ) {
-			// @todo Implement WooCommerce + partner co-branding in the future.
-			return (
-				<JetpackPartnerLogoGroup
-					width={ width || 662.5 }
-					viewBox="0 0 1270 170"
-					partnerName="WooCommerce"
-				>
-					<g transform="translate(360 25)">
-						<AsyncLoad
-							require="calypso/components/jetpack-header/woocommerce"
-							darkColorScheme={ darkColorScheme }
-							placeholder={ null }
-						/>
-					</g>
-				</JetpackPartnerLogoGroup>
-			);
 		}
 
 		if ( isWooDna ) {

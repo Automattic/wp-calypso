@@ -188,7 +188,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	return signupUrl;
 }
 
-export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
+export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
 		return false;
 	}
@@ -200,10 +200,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 
 	// Automattic for Agencies cannot have users being sent to WordPress.com
 	if ( isA4AOAuth2Client( oauth2Client ) ) {
-		return false;
-	}
-
-	if ( isJetpackWooCommerceFlow ) {
 		return false;
 	}
 

@@ -443,20 +443,24 @@ export class JetpackAuthorize extends Component {
 			[
 				'woocommerce-services-auto-authorize',
 				'woocommerce-setup-wizard',
+				// Legacy flow not in use anymore. Keeping around just to
+				// support redirects correctly.
 				'woocommerce-onboarding',
 				'woocommerce-core-profiler',
 			].includes( from ) || this.getWooDnaConfig( props ).isWooDnaFlow()
 		);
 	};
 
-	isWooOnboarding( props = this.props ) {
-		const { from } = props.authQuery;
-		return 'woocommerce-onboarding' === from;
-	}
-
 	isWooJPC( props = this.props ) {
 		const { from } = props.authQuery;
-		return 'woocommerce-core-profiler' === from || this.props.isWooJPC;
+		return (
+			// TODO: the two extra `from` checks shouldn't be necessary,
+			// as they are part of the isWooJPCFlow check. But the unit tests
+			// don't use the connected component and would otherwise fail.
+			'woocommerce-core-profiler' === from ||
+			'woocommerce-onboarding' === from ||
+			this.props.isWooJPC
+		);
 	}
 
 	getWooDnaConfig( props = this.props ) {
@@ -503,10 +507,6 @@ export class JetpackAuthorize extends Component {
 
 		const { recordTracksEvent } = this.props;
 		switch ( true ) {
-			case this.isWooOnboarding():
-				recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
-				window.location.href = e.target.href;
-				break;
 			case this.isWooJPC():
 				// Logout user before redirecting to login page.
 				try {
@@ -537,12 +537,7 @@ export class JetpackAuthorize extends Component {
 
 	handleSignOut = () => {
 		const { recordTracksEvent } = this.props;
-		const { from } = this.props.authQuery;
 		recordTracksEvent( 'calypso_jpc_signout_click' );
-
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { create_jetpack: true } );
-		}
 
 		this.props.redirectToLogout( window.location.href );
 	};
@@ -593,10 +588,6 @@ export class JetpackAuthorize extends Component {
 		}
 
 		recordTracksEvent( 'calypso_jpc_approve_click' );
-
-		if ( 'woocommerce-onboarding' === from ) {
-			recordTracksEvent( 'wcadmin_storeprofiler_connect_store', { use_account: true } );
-		}
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );
@@ -1031,7 +1022,7 @@ export class JetpackAuthorize extends Component {
 								siteName={ decodeEntities( authQuery.blogname ) }
 								companyName={ this.getCompanyName() }
 								from={ authQuery.from }
-								isWooJPC={ this.props.isWooJPC }
+								isWooJPC={ this.isWooJPC() }
 							/>
 							{ this.renderStateAction() }
 						</div>
@@ -1224,7 +1215,6 @@ export class JetpackAuthorize extends Component {
 
 		return (
 			<MainWrapper
-				isWooOnboarding={ this.isWooOnboarding() }
 				isWooJPC={ this.isWooJPC() }
 				isWpcomMigration={ this.isFromMigrationPlugin() }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
@@ -1247,7 +1237,6 @@ export class JetpackAuthorize extends Component {
 						/>
 						<AuthFormHeader
 							authQuery={ this.props.authQuery }
-							isWooOnboarding={ this.isWooOnboarding() }
 							isWooJPC={ this.isWooJPC() }
 							isWpcomMigration={ this.isFromMigrationPlugin() }
 							isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
