@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
@@ -43,11 +44,17 @@ export class ReaderSidebarTags extends Component {
 		this.setState( ( state ) => ( { addTagCounter: state.addTagCounter + 1 } ) );
 	};
 
+	selectMenu = () => {
+		const { onClick, tags, isOpen } = this.props;
+		if ( ! isOpen ) {
+			onClick();
+		}
+		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
+		page.redirect( defaultSelection );
+	};
+
 	render() {
 		const { tags, isOpen, translate, onClick, path } = this.props;
-
-		const isOnTagsPage = path.startsWith( '/tag' );
-		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
 
 		return (
 			<li>
@@ -55,12 +62,11 @@ export class ReaderSidebarTags extends Component {
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
-					onClick={ onClick }
+					onClick={ this.selectMenu }
 					customIcon={ <ReaderTagIcon viewBox="-3 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
-					defaultSelection={ defaultSelection }
-					isSelected={ isOnTagsPage }
+					expandableIconClick={ onClick }
 				>
 					<ReaderSidebarTagsList { ...this.props } />
 

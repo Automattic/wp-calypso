@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -24,21 +25,19 @@ export class ReaderSidebarOrganizationsList extends Component {
 		teams: PropTypes.array,
 	};
 
-	handleClick = () => {
+	toggleMenu = () => {
 		this.props.toggleReaderSidebarOrganization( { organizationId: this.props.organization.id } );
 	};
 
-	isSelected() {
-		const { organization, path, sites } = this.props;
-		const isOnOrganizationAllSitesPage = path.startsWith( `/reader/${ organization.slug }` );
-		const isFeedStream = path.startsWith( `/reader/feeds/` );
-		const potentialFeedId = isFeedStream && path.split( '/reader/feeds/' )[ 1 ]?.split( '?' )[ 0 ];
-		const isFeedFromOrganization =
-			potentialFeedId &&
-			sites.some( ( { feed_ID } ) => Number( feed_ID ) === Number( potentialFeedId ) );
-
-		return isOnOrganizationAllSitesPage || isFeedFromOrganization;
-	}
+	selectMenu = () => {
+		const { organization, isOrganizationOpen: isOpen } = this.props;
+		if ( ! isOpen ) {
+			this.toggleMenu();
+		}
+		if ( organization.slug ) {
+			page.redirect( `/reader/${ organization.slug }` );
+		}
+	};
 
 	renderIcon() {
 		const { organization } = this.props;
@@ -87,13 +86,12 @@ export class ReaderSidebarOrganizationsList extends Component {
 			return null;
 		}
 
-		const defaultSelection = !! organization?.slug && `/reader/${ organization.slug }`;
-
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				onClick={ this.handleClick }
+				onClick={ this.selectMenu }
+				expandableIconClick={ this.toggleMenu }
 				customIcon={ this.renderIcon() }
 				disableFlyout
 				className={
@@ -101,8 +99,6 @@ export class ReaderSidebarOrganizationsList extends Component {
 						sites.some( ( site ) => `/reader/feeds/${ site.feed_ID }` === path ) ) &&
 					'sidebar__menu--selected'
 				}
-				defaultSelection={ defaultSelection }
-				isSelected={ this.isSelected() }
 			>
 				{ this.renderAll() }
 				{ this.renderSites() }
