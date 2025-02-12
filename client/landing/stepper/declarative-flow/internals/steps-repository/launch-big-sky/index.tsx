@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -12,7 +13,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import '../processing-step/style.scss';
-import StepperLoader from '../../components/stepper-loader';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -92,7 +92,6 @@ const LaunchBigSky: Step = function () {
 
 			// Delete the existing boilerplate about page, always has a page ID of 1
 			pendingActions.push( deletePage( selectedSiteId, 1 ) );
-			setProgress( 75 );
 
 			try {
 				const results = await Promise.all( pendingActions );
@@ -102,6 +101,7 @@ const LaunchBigSky: Step = function () {
 					const homePagePostId = results[ 1 ].id;
 					await setStaticHomepageOnSite( selectedSiteId, homePagePostId );
 				}
+				setProgress( 75 );
 
 				window.location.replace(
 					`${ siteURL }/wp-admin/site-editor.php?canvas=edit&referrer=design-choices`
@@ -142,7 +142,7 @@ const LaunchBigSky: Step = function () {
 		return (
 			<div className="processing-step__container">
 				<div className="processing-step">
-					{ ! isError && <StepperLoader progress={ progress } /> }
+					{ ! isError && <ProgressBar value={ progress } compact /> }
 					{ isError && (
 						<p className="processing-step__error">
 							{ __( 'Something unexpected happened. Please go back and try again.' ) }

@@ -14,15 +14,15 @@ $color-big-sky-background: #000cb2;
 
 	.processing-step__container {
 		height: 100vh;
-    display: flex;
+		display: flex;
 		flex-direction: column;
-    justify-content: center;
-    align-items: center;
+		justify-content: center;
+		align-items: center;
 
 		.processing-step {
 			margin-top: 0;
 			width: 100%;
-			max-width: 300px;
+			max-width: 188px;
 		}
 
 		.big-sky-disclaimer {
