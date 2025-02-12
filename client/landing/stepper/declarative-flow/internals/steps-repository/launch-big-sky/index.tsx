@@ -1,3 +1,4 @@
+import configApi from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
@@ -101,6 +102,10 @@ const LaunchBigSky: Step = function () {
 	};
 
 	const onSubmit = async ( event: FormEvent ) => {
+		if ( configApi.isEnabled( 'debug/big-sky-personal' ) ) {
+			// eslint-disable-next-line no-console
+			console.log( 'ON SUBMIT ENTERED' );
+		}
 		event.preventDefault();
 		setIntentOnSite( siteSlug, SiteIntent.AIAssembler );
 		setGoalsOnSite( siteSlug, goals );
@@ -131,6 +136,11 @@ const LaunchBigSky: Step = function () {
 				) }
 			</>
 		);
+	}
+
+	if ( configApi.isEnabled( 'debug/big-sky-personal' ) ) {
+		// eslint-disable-next-line no-console
+		console.log( 'LAUNCH RENDER', isLoading, isEligible, isError, goals );
 	}
 
 	if ( isLoading || ! isEligible ) {

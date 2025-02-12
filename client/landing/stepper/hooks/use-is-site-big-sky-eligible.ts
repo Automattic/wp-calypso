@@ -35,6 +35,21 @@ export function useIsBigSkyEligible() {
 	const isEligiblePlan = isPremiumPlan( product_slug ) || isBusinessPlan( product_slug );
 	const [ isLoadingBigsky, isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 
+	if ( config.isEnabled( 'debug/big-sky-personal' ) ) {
+		// eslint-disable-next-line no-console
+		console.log(
+			'useIsBigSkyEligible',
+			isLoadingBigsky,
+			isBigSkyBeforePlansExperiment,
+			isEligibleGoals,
+			isEligiblePlan,
+			site,
+			isOwner,
+			onSupportedDevice,
+			goals
+		);
+	}
+
 	if ( isLoadingBigsky ) {
 		return { isLoading: true, isEligible: null };
 	}

@@ -1,3 +1,4 @@
+import configApi from '@automattic/calypso-config';
 import {
 	Onboard,
 	updateLaunchpadSettings,
@@ -621,6 +622,12 @@ const siteSetupFlow: FlowV1 = {
 			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
 			[]
 		);
+
+		if ( configApi.isEnabled( 'debug/big-sky-personal' ) ) {
+			// eslint-disable-next-line no-console
+			console.log( 'useAssertConditions', userIsLoggedIn, siteSlug, siteId, fetchingSiteError );
+		}
+
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! userIsLoggedIn ) {
