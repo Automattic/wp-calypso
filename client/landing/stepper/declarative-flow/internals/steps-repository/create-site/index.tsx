@@ -30,6 +30,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -100,6 +101,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
+	const [ , isGoalsFirstCumulativeExperience ] = useGoalsFirstCumulativeExperience();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -232,7 +234,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			sourceSlug,
 			siteIntent,
 			shouldSaveSiteGoals ? siteGoals : undefined,
-			config.isEnabled( 'onboarding/enable-write-goal-features' )
+			isGoalsFirstCumulativeExperience &&
+				config.isEnabled( 'onboarding/enable-write-goal-features' )
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
