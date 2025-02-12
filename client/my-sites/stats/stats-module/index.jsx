@@ -133,7 +133,18 @@ class StatsModule extends Component {
 			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
-		return filteredHistory;
+		return this.compactHistory( filteredHistory );
+	}
+
+	compactHistory( history ) {
+		const MAX_HISTORY_LENGTH = 35;
+
+		if ( history.length > MAX_HISTORY_LENGTH ) {
+			// Keep every other entry to keep memory usage low.
+			return history.filter( ( _, index ) => index % 2 === 0 );
+		}
+
+		return history;
 	}
 
 	calculateDiff( prevData, newData ) {
