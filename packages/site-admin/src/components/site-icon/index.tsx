@@ -13,7 +13,11 @@ import type { JSX } from 'react';
  */
 import './style.scss';
 
-export type SiteIconProps = {
+type SiteIconProps = {
+	/**
+	 * Custom class name for styling the component.
+	 * This allows consumers to apply additional styles.
+	 */
 	className?: string;
 };
 
@@ -65,4 +69,4 @@ function SiteIcon( { className }: SiteIconProps ): JSX.Element {
 	return <div className={ clsx( className, 'site-admin-site-icon' ) }>{ icon }</div>;
 }
 
-export default SiteIcon;
+export { SiteIcon };

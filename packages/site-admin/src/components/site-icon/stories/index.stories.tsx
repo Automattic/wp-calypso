@@ -1,6 +1,6 @@
-import SiteIcon, { SiteIconProps } from '../';
-import type { Meta, StoryFn } from '@storybook/react';
+import { SiteIcon } from '../';
 import './style.stories.scss';
+import type { Meta, StoryFn } from '@storybook/react';
 
 /**
  * Storybook metadata
@@ -8,17 +8,8 @@ import './style.stories.scss';
 const meta: Meta< typeof SiteIcon > = {
 	title: 'Components/SiteIcon',
 	component: SiteIcon,
-	args: {
-		className: '',
-	},
 };
+
 export default meta;
 
-const Template: StoryFn< typeof SiteIcon > = ( args: SiteIconProps ) => <SiteIcon { ...args } />;
-
-export const Default = Template.bind( {} );
-
-Default.storyName = 'SiteIcon';
-Default.args = {
-	className: 'story-site-icon',
-};
+export const Default: StoryFn< typeof SiteIcon > = SiteIcon.bind( {} );
