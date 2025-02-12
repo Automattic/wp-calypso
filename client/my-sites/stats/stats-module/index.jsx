@@ -149,14 +149,12 @@ class StatsModule extends Component {
 
 	calculateDiff( prevData, newData ) {
 		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = prevData.reduce( ( map, item ) => {
-			map[ item.id ] = item;
-			return map;
-		}, {} );
+		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
 
 		// Calculate the difference value for each new item.
 		const diff = newData.map( ( item ) => {
-			const prevItem = prevDataMap[ item.id ] || { value: 0 }; // Default to 0 if not found
+			// Pull matching data from previous snapshot, or default to 0 if not found.
+			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
 			return {
 				...item,
 				diffValue: item.value - prevItem.value,
