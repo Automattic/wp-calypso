@@ -1,4 +1,4 @@
-import { numberFormat } from 'i18n-calypso';
+import { numberFormatCompact } from 'i18n-calypso';
 import { FILTER_TYPE_INSTALL, FILTER_TYPE_STORAGE, FILTER_TYPE_VISITS } from '../constants';
 import { FilterType } from '../types';
 import { PressablePlan } from './get-pressable-plan';
@@ -19,9 +19,7 @@ export default function getSliderOptions(
 			if ( type === FILTER_TYPE_INSTALL ) {
 				label = `${ plan.install }`;
 			} else if ( type === FILTER_TYPE_VISITS ) {
-				label = `${ numberFormat( plan.visits, {
-					numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
-				} ) }`;
+				label = `${ numberFormatCompact( plan.visits ) }`;
 			} else if ( type === FILTER_TYPE_STORAGE ) {
 				label = `${ plan.storage }${ compact ? '' : 'GB' }`;
 			}

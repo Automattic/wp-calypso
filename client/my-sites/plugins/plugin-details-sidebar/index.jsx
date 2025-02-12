@@ -4,7 +4,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import './style.scss';
@@ -160,7 +160,7 @@ const PluginDetailsSidebar = ( {
 						{ translate( 'Active installations' ) }
 					</div>
 					<div className="plugin-details-sidebar__active-installs-value value">
-						{ numberFormat( active_installs, { numberFormatOptions: { notation: 'compact' } } ) }
+						{ numberFormatCompact( active_installs ) }
 					</div>
 				</div>
 			) }
