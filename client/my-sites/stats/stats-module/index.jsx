@@ -281,6 +281,11 @@ class StatsModule extends Component {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
+		const isRealTime = query?.interval !== undefined;
+		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
+		// TODO: Translate empty message
+		// But not yet as this is just a placeholder for now.
+
 		return (
 			<>
 				{ ! skipQuery && siteId && statType && (
@@ -293,7 +298,7 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
-					emptyMessage={ moduleStrings.empty }
+					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
 						displaySummaryLink && ! summary
