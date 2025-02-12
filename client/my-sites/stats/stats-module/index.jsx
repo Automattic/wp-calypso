@@ -219,7 +219,14 @@ class StatsModule extends Component {
 		if ( query?.interval ) {
 			return data
 				.filter( ( item ) => item.diffValue !== 0 )
-				.sort( ( a, b ) => b.diffValue - a.diffValue )
+				.sort( ( a, b ) => {
+					// Primary sort: diffValue (high to low)
+					if ( b.diffValue !== a.diffValue ) {
+						return b.diffValue - a.diffValue;
+					}
+					// Secondary sort: label (alphabetically)
+					return ( a.label || '' ).localeCompare( b.label || '' );
+				} )
 				.map( ( item ) => ( {
 					...item,
 					value: item.diffValue || 0,
