@@ -15,21 +15,17 @@ const BackupSupportLinks = ( { siteUrl } ) => {
 			</div>
 			<div className="backup-support-links__links">
 				<div>
-					<ExternalLink href={ troubleshootingLink } target="_blank" rel="noopener noreferrer">
+					<ExternalLink href={ troubleshootingLink } target="_blank">
 						{ translate( 'Troubleshooting tips' ) }
 					</ExternalLink>
 				</div>
 				<div>
-					<ExternalLink href={ fixConnectionIssuesLink } target="_blank" rel="noopener noreferrer">
+					<ExternalLink href={ fixConnectionIssuesLink } target="_blank">
 						{ translate( 'How to fix connection issues' ) }
 					</ExternalLink>
 				</div>
 				<div>
-					<ExternalLink
-						href={ contactSupportUrl( siteUrl ) }
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<ExternalLink href={ contactSupportUrl( siteUrl ) } target="_blank">
 						{ translate( 'Contact Jetpack support' ) }
 					</ExternalLink>
 				</div>

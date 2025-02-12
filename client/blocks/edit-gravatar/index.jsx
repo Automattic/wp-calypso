@@ -193,14 +193,7 @@ export class EditGravatar extends Component {
 								' them from appearing on any site.{{/p}}',
 							{
 								components: {
-									ExternalLink: (
-										<ExternalLink
-											href={ gravatarLink }
-											target="_blank"
-											rel="noopener noreferrer"
-											icon
-										/>
-									),
+									ExternalLink: <ExternalLink href={ gravatarLink } target="_blank" icon />,
 									p: <p />,
 								},
 							}
@@ -280,14 +273,7 @@ export class EditGravatar extends Component {
 								' If you do not have a Gravatar account, one will be created for you when you upload your first image.{{/p}}',
 							{
 								components: {
-									ExternalLink: (
-										<ExternalLink
-											href={ gravatarLink }
-											target="_blank"
-											rel="noopener noreferrer"
-											icon
-										/>
-									),
+									ExternalLink: <ExternalLink href={ gravatarLink } target="_blank" icon />,
 									p: <p />,
 								},
 							}

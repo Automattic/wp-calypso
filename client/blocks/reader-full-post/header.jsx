@@ -67,7 +67,6 @@ const ReaderFullPostHeader = ( { post, authorProfile, layout = 'default' } ) => 
 							className="reader-full-post__header-title-link"
 							href={ post.URL }
 							target="_blank"
-							icon={ false }
 							onClick={ handlePermalinkClick }
 						>
 							{ post.title }

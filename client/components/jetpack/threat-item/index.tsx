@@ -210,7 +210,6 @@ const ThreatItem: React.FC< Props > = ( {
 						className="button is-primary threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
-						rel="noopener noreferrer"
 						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
 					>
 						{ translate( 'Get a free estimate' ) }

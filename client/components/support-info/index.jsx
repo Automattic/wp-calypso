@@ -40,14 +40,14 @@ function SupportInfo( {
 				{ link || filteredPrivacyLink ? ' ' : null }
 				{ link && (
 					<span className="support-info__learn-more">
-						<ExternalLink href={ link } target="_blank" rel="noopener noreferrer">
+						<ExternalLink href={ link } target="_blank">
 							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</span>
 				) }
 				{ filteredPrivacyLink && (
 					<span className="support-info__privacy">
-						<ExternalLink href={ filteredPrivacyLink } target="_blank" rel="noopener noreferrer">
+						<ExternalLink href={ filteredPrivacyLink } target="_blank">
 							{ translate( 'Privacy Information' ) }
 						</ExternalLink>
 					</span>

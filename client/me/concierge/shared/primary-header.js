@@ -30,12 +30,7 @@ class PrimaryHeader extends Component {
 							'Use the tool below to book your in-depth support session.'
 						) }
 					/>
-					<ExternalLink
-						className="shared__info-link"
-						icon={ false }
-						href={ CONCIERGE_SUPPORT }
-						target="_blank"
-					>
+					<ExternalLink className="shared__info-link" href={ CONCIERGE_SUPPORT } target="_blank">
 						{ translate( 'Learn more' ) }
 					</ExternalLink>
 				</Card>

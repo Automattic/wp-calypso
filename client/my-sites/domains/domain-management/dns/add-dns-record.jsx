@@ -58,7 +58,6 @@ class AddDnsRecord extends Component {
 						: localizeUrl( DNS_RECORDS_ADD )
 				}
 				target="_blank"
-				icon={ false }
 			/>
 		);
 

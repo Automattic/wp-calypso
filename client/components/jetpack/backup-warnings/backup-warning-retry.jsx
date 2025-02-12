@@ -40,8 +40,6 @@ export default function BackupWarningRetry( { siteId } ) {
 							<ExternalLink
 								href={ warningInfoLink }
 								target="_blank"
-								rel="noopener noreferrer"
-								icon={ false }
 								onClick={ () => recordTracksEvent( 'calypso_jetpack_backup_learn_why_click' ) }
 							/>
 						),

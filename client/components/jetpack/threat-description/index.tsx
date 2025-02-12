@@ -102,7 +102,7 @@ class ThreatDescription extends PureComponent< Props > {
 				{ source &&
 					this.renderTextOrNode(
 						<p className="threat-description__section-text">
-							<ExternalLink href={ source } rel="noopener noreferrer">
+							<ExternalLink href={ source }>
 								{ translate( 'Learn more about this vulnerability' ) }
 							</ExternalLink>
 						</p>
