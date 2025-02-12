@@ -794,6 +794,7 @@ export default function CheckoutMain( {
 					isLoggedOutCart={ !! isLoggedOutCart }
 					onPageLoadError={ onPageLoadError }
 					paymentMethods={ paymentMethods }
+					storedCards={ storedCards }
 					removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					siteId={ updatedSiteId }

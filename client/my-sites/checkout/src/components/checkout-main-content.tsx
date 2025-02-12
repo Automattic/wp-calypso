@@ -106,6 +106,7 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { PropsWithChildren, ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
@@ -338,6 +339,7 @@ export default function CheckoutMainContent( {
 	showErrorMessageBriefly,
 	siteId,
 	siteUrl,
+	storedCards,
 	isRemovingProductFromCart,
 	areThereErrors,
 	isInitialCartLoading,
@@ -359,6 +361,7 @@ export default function CheckoutMainContent( {
 	showErrorMessageBriefly: ( error: string ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
+	storedCards: StoredPaymentMethod[];
 	isRemovingProductFromCart: boolean;
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
@@ -790,6 +793,7 @@ export default function CheckoutMainContent( {
 						is100YearPlanTermsAccepted={ is100YearPlanTermsAccepted }
 						setIs100YearPlanTermsAccepted={ setIs100YearPlanTermsAccepted }
 						isSubmitted={ isSubmitted }
+						storedCards={ storedCards }
 					/>
 					<CheckoutFormSubmit
 						validateForm={ validateForm }
@@ -985,12 +989,14 @@ function CheckoutTermsAndCheckboxes( {
 	is100YearPlanTermsAccepted,
 	setIs100YearPlanTermsAccepted,
 	isSubmitted,
+	storedCards,
 }: {
 	is3PDAccountConsentAccepted: boolean;
 	setIs3PDAccountConsentAccepted: ( isAccepted: boolean ) => void;
 	is100YearPlanTermsAccepted: boolean;
 	setIs100YearPlanTermsAccepted: ( isAccepted: boolean ) => void;
 	isSubmitted: boolean;
+	storedCards: StoredPaymentMethod[];
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -1003,7 +1009,7 @@ function CheckoutTermsAndCheckboxes( {
 	return (
 		<CheckoutTermsAndCheckboxesWrapper>
 			<BeforeSubmitCheckoutHeader />
-			<IsForBusinessCheckbox />
+			<IsForBusinessCheckbox storedCards={ storedCards } />
 			{ hasMarketplaceProduct && (
 				<AcceptTermsOfServiceCheckbox
 					isAccepted={ is3PDAccountConsentAccepted }

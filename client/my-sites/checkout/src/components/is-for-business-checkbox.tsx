@@ -1,10 +1,12 @@
-import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { usePaymentMethodId, FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic/shopping-cart';
 import { hasCheckoutVersion, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import useCartKey from '../../use-cart-key';
+import { logStashEvent } from '../lib/analytics';
 const CheckboxWrapper = styled.div`
 	margin-top: 16px;
 
@@ -17,12 +19,29 @@ const CheckboxWrapper = styled.div`
 		color: ${ ( props ) => props.theme.colors.primary };
 	}
 `;
-export function IsForBusinessCheckbox() {
+export function IsForBusinessCheckbox( { storedCards }: { storedCards: StoredPaymentMethod[] } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 
 	const cartKey = useCartKey();
 	const { responseCart, updateLocation, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
+	const [ paymentMethodId ] = usePaymentMethodId();
+
+	function isValidFormattedString( str: unknown ): str is `${ string }-${ number }` {
+		if ( typeof str !== 'string' ) {
+			throw new TypeError(
+				`Invalid input: Expected a formatted string - e.g. "existingCard-1234567", but received ${ typeof str } (${ String(
+					str
+				) })`
+			);
+		}
+		if ( ! /^[a-zA-Z]+-\d+$/.test( str ) ) {
+			throw new Error(
+				`Invalid format: Expected a formatted string - e.g. "existingCard-1234567", but received "${ str }"`
+			);
+		}
+		return true;
+	}
 
 	const isUnitedStateWithBusinessOption = ( () => {
 		if ( responseCart.tax.location.country_code !== 'US' ) {
@@ -40,10 +59,37 @@ export function IsForBusinessCheckbox() {
 		return false;
 	} )();
 
+	const isForBusinessUseSetOnActivePaymentMethod = ( () => {
+		// Get stored payment methods
+		// Get selected payment method in payment step
+		try {
+			if ( isValidFormattedString( paymentMethodId ) ) {
+				// Compare selected card id against storedCards ids, get selectedPaymentMethod object
+
+				if ( storedCards.length ) {
+					const selectedPaymentMethodObj = storedCards.find(
+						( payment ) => payment.stored_details_id === paymentMethodId.split( '-' )[ 1 ]
+					);
+
+					return !! selectedPaymentMethodObj?.tax_location?.is_for_business;
+				}
+			}
+		} catch ( error ) {
+			logStashEvent( 'checkout_add_product_analytics_error', {
+				error: String( error ),
+			} );
+			return false;
+		}
+	} )();
+
 	const isChecked = responseCart.tax.location.is_for_business ?? false;
 	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
 
-	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
+	if (
+		! isUnitedStateWithBusinessOption ||
+		! hasCheckoutVersion( 'business-use-tax' ) ||
+		isForBusinessUseSetOnActivePaymentMethod
+	) {
 		return null;
 	}
 
