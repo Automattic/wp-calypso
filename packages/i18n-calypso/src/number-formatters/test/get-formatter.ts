@@ -13,6 +13,9 @@ describe( 'getFormatter', () => {
 
 		// Check that the same formatter instance is returned
 		expect( formatter1 ).toBe( formatter2 );
+
+		// Check that the formatter formats correctly
+		expect( formatter1.format( 1234.56 ) ).toBe( '$1,234.56' );
 	} );
 
 	it( 'should create a new formatter when options are different', () => {
@@ -28,5 +31,9 @@ describe( 'getFormatter', () => {
 
 		// Check that different formatter instances are returned
 		expect( formatter1 ).not.toBe( formatter2 );
+
+		// Check that the formatters format correctly
+		expect( formatter1.format( 1234.56 ) ).toBe( '$1,234.56' );
+		expect( formatter2.format( 1234.56 ) ).toBe( '€1,234.56' );
 	} );
 } );
