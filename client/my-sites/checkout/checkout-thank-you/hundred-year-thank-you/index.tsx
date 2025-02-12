@@ -1,6 +1,7 @@
 import { PLAN_100_YEARS, getPlan, domainProductSlugs } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -69,6 +70,13 @@ const Content = styled.div< { isMobile: boolean } >`
 	text-align: center;
 	.hundred-year-plan-thank-you__thank-you-text-container {
 		margin: 24px ${ ( { isMobile } ) => ( isMobile ? '0' : '80px' ) };
+	}
+	.hundred-year-plan-thank-you__thank-you-link {
+		color: var( --studio-gray-5 );
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
 	}
 `;
 
@@ -223,19 +231,33 @@ export default function HundredYearThankYou( {
 			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',
 		},
 	} );
-	const helpAndSupportDescription =
-		productSlug === PLAN_100_YEARS
-			? translate(
-					'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
-			  )
-			: translate(
-					'Our Premier Support team will be in touch by email shortly and can answer any questions you have. We’re looking forward to supporting you every step of the way.'
-			  );
+	const helpAndSupportDescription = translate(
+		'Our Premier Support team will be in touch by email shortly to schedule a welcome session and walk you through your exclusive benefits. We’re looking forward to supporting you every step of the way.'
+	);
+	const domainHelpAndSupportDescription = translate(
+		'If you have any questions please take a look at {{faqLink}}our guide{{/faqLink}}, or feel free to reach out to our Premier Support team. We’re looking forward to working with you every step of the way.',
+		{
+			components: {
+				faqLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/support/plan-features/100-year-plan/' ) }
+						target="_blank"
+						className="hundred-year-plan-thank-you__thank-you-link"
+						rel="noopener noreferrer"
+					/>
+				),
+			},
+		}
+	);
 
 	const description =
-		productSlug === PLAN_100_YEARS
-			? `${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
-			: `${ domainSpecificDescription } ${ helpAndSupportDescription }`;
+		productSlug === PLAN_100_YEARS ? (
+			`${ hundredYearPlanDescription } ${ helpAndSupportDescription }`
+		) : (
+			<>
+				{ domainSpecificDescription } { domainHelpAndSupportDescription }
+			</>
+		);
 
 	return (
 		<>
