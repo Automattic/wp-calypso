@@ -288,7 +288,6 @@ const webpackConfig = {
 			calypso: __dirname,
 
 			util: findPackage( 'util/' ), //Trailing `/` stops node from resolving it to the built-in module
-			'@wordpress/upload-media': false,
 		} ),
 		fallback: {
 			stream: require.resolve( 'stream-browserify' ),

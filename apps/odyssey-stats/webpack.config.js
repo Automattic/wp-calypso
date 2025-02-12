@@ -110,9 +110,6 @@ module.exports = {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
 		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		conditionNames: [ 'calypso:src', 'import', 'module', 'require' ],
-		alias: {
-			'@wordpress/upload-media': false,
-		},
 	},
 	node: false,
 	plugins: [

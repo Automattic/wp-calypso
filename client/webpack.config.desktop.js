@@ -93,7 +93,6 @@ module.exports = {
 			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 			calypso: __dirname,
-			'@wordpress/upload-media': false,
 		},
 	},
 	plugins: [

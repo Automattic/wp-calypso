@@ -4,7 +4,4 @@ module.exports = {
 		configData: {},
 	},
 	transformIgnorePatterns: [ 'node_modules/(?!gridicons)(?!.*\\.svg)' ],
-	moduleNameMapper: {
-		'^@wordpress/upload-media$': '<rootDir>/src/__mocks__/index.js',
-	},
 };
