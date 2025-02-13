@@ -383,7 +383,7 @@ class PurchaseItem extends Component {
 
 		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
-			if ( productType ) {
+			if ( productType && site.name ) {
 				return translate(
 					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
 					{
@@ -424,6 +424,32 @@ class PurchaseItem extends Component {
 						},
 					}
 				);
+			}
+
+			if ( productType ) {
+				return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
+					args: {
+						purchaseType: productType,
+						siteDomain: site.domain,
+					},
+					components: {
+						button: (
+							<button
+								className="purchase-item__link"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									event.preventDefault();
+									page( getPurchaseListUrlFor( slug ) );
+								} }
+								title={ translate( 'View subscriptions for %(siteDomain)s', {
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+					},
+				} );
 			}
 
 			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
