@@ -58,15 +58,6 @@
 		min-height: 100vh;
 	}
 
-	.global-notices {
-		padding: 8px;
-
-		/* This is the breakpoint we're using in client/components/global-notices/style.scss */
-		@include breakpoint-deprecated( ">660px" ) {
-			padding: 0;
-		}
-	}
-
 	.layout__secondary .global-sidebar {
 		border: none;
 	}
