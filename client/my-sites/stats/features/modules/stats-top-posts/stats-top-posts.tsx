@@ -102,7 +102,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					summary={ summary }
 					listItemClassName={ listItemClassName }
 					skipQuery
-					isRealTime
+					isRealTime={ isRealTime }
 				/>
 			) }
 			{ presentEmptyUI && (
