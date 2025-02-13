@@ -16,14 +16,16 @@ import withProductLightbox, {
 } from '../hocs/with-product-lightbox';
 import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
+import useCustomProductCard from './hooks/use-custom-product-card';
 
-import '../style.scss';
+import './style.scss';
 
 type Props = WithProductLightboxProps &
 	ProductLightboxActivatorProps & {
 		suggestedProduct?: string | null;
 		hideDiscount?: boolean;
 		onVariantChange?: ( value: APIProductFamilyProduct ) => void;
+		withCustomCard?: boolean;
 	};
 
 function ProductCard( props: Props ) {
@@ -40,10 +42,13 @@ function ProductCard( props: Props ) {
 		currentProduct,
 		setCurrentProduct,
 		onShowLightbox,
+		withCustomCard,
 	} = props;
 	const translate = useTranslate();
 
 	const { description: productDescription } = useProductDescription( currentProduct.slug );
+
+	const customProductCard = useCustomProductCard( withCustomCard ? currentProduct : null );
 
 	const variantOptions = products.map( ( option ) => ( {
 		id: option.slug,
@@ -133,7 +138,7 @@ function ProductCard( props: Props ) {
 
 	return (
 		<div
-			className={ clsx( 'product-card', 'product-card--with-variant', {
+			className={ clsx( 'product-card', customProductCard?.className, {
 				'product-card--with-variant': hasMultipleProducts,
 				selected: isSelected,
 				disabled: isDisabled,
@@ -148,47 +153,58 @@ function ProductCard( props: Props ) {
 				<div className="product-card__details">
 					<div className="product-card__main">
 						<div className="product-card__heading">
-							<h3 className="product-card__title">{ productTitle }</h3>
-							<ProductBadges product={ currentProduct } />
-							{ ! isRedesign && hasMultipleProducts && (
-								<MultipleChoiceQuestion
-									name={ `${ currentProduct.family_slug }-variant-options` }
-									question={ translate( 'Select variant:' ) }
-									answers={ variantOptions }
-									selectedAnswerId={ currentProduct.slug }
-									onAnswerChange={ onChangeOption }
-									shouldShuffleAnswers={ false }
-								/>
+							{ customProductCard?.image && <img src={ customProductCard?.image } alt="" /> }
+
+							<h3 className="product-card__title">{ customProductCard?.title ?? productTitle }</h3>
+
+							{ ! customProductCard && (
+								<>
+									<ProductBadges product={ currentProduct } />
+									{ ! isRedesign && hasMultipleProducts && (
+										<MultipleChoiceQuestion
+											name={ `${ currentProduct.family_slug }-variant-options` }
+											question={ translate( 'Select variant:' ) }
+											answers={ variantOptions }
+											selectedAnswerId={ currentProduct.slug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									) }
+
+									<div className="product-card__pricing is-compact">
+										<ProductPriceWithDiscount
+											product={ currentProduct }
+											hideDiscount={ hideDiscount }
+											quantity={ quantity }
+											compact
+										/>
+									</div>
+
+									{ isRedesign && hasMultipleProducts && (
+										<MultipleChoiceQuestion
+											name={ `${ currentProduct.family_slug }-variant-options` }
+											question={ translate( 'Select variant:' ) }
+											answers={ variantOptions }
+											selectedAnswerId={ currentProduct.slug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									) }
+								</>
 							) }
 
-							<div className="product-card__pricing is-compact">
-								<ProductPriceWithDiscount
-									product={ currentProduct }
-									hideDiscount={ hideDiscount }
-									quantity={ quantity }
-									compact
-								/>
+							<div className="product-card__description">
+								{ customProductCard?.description ?? productDescription }
 							</div>
-
-							{ isRedesign && hasMultipleProducts && (
-								<MultipleChoiceQuestion
-									name={ `${ currentProduct.family_slug }-variant-options` }
-									question={ translate( 'Select variant:' ) }
-									answers={ variantOptions }
-									selectedAnswerId={ currentProduct.slug }
-									onAnswerChange={ onChangeOption }
-									shouldShuffleAnswers={ false }
-								/>
-							) }
-
-							<div className="product-card__description">{ productDescription }</div>
 						</div>
 					</div>
 				</div>
 				<div className="product-card__buttons">
 					<Button
-						className={ clsx( { 'product-card__select-button': ! isRedesign } ) }
-						variant={ ! isSelected ? 'primary' : 'secondary' }
+						className={ clsx( 'product-card__select-button', {
+							'is-selected': isSelected,
+						} ) }
+						variant={ ! isSelected || customProductCard ? 'primary' : 'secondary' }
 						tabIndex={ -1 }
 						icon={ isSelected ? check : undefined }
 					>

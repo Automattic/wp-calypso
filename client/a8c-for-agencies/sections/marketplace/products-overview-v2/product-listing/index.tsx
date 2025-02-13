@@ -17,7 +17,6 @@ import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
 import ProductCard from '../product-card';
-import WoopPaymentsProductCard from '../woopayments-product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
 import type { ShoppingCartItem } from '../../types';
@@ -156,13 +155,6 @@ export default function ProductListing( {
 		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
@@ -227,19 +219,6 @@ export default function ProductListing( {
 		withCustomCard: boolean = false
 	) => {
 		return products.map( ( productOption ) => {
-			if ( withCustomCard && productOption.slug === 'woocommerce-woopayments' ) {
-				return (
-					<WoopPaymentsProductCard
-						asReferral={ isReferralMode }
-						key={ productOption.slug }
-						products={ [ productOption ] }
-						quantity={ quantity }
-						onSelectProduct={ onSelectProduct }
-						isSelected={ isSelected( productOption.slug ) }
-					/>
-				);
-			}
-
 			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
 
 			return (
@@ -258,6 +237,7 @@ export default function ProductListing( {
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
+					withCustomCard={ withCustomCard }
 				/>
 			);
 		} );
