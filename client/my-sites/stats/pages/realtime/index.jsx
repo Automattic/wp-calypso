@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -10,6 +11,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
+import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../../sections/annual-highlights-section';
 import PageViewTracker from '../../stats-page-view-tracker';
@@ -23,6 +25,7 @@ function StatsRealtime() {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const momentSiteZone = useSelector( ( state ) => getMomentSiteZone( state, siteId ) );
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const moduleStrings = statsStrings();
 
@@ -36,6 +39,17 @@ function StatsRealtime() {
 	// Need a period, a query, and a URL to use Top Posts.
 	// See getStatHref() example on Traffic page for URL.
 	const period = {};
+	const url = '#';
+
+	// TODO: Query is used inside useEffect block so we should memoize it.
+	// - BUT, we need to update the date when a new day starts so better to move it inside the block.
+
+	// TODO: Remove interval from query in favour of a real-time flag.
+
+	// TODO: Create a new query as part of the timed request.
+	// - This will make sure the date is correct when a new days starts.
+
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const query = {
 		period: 'day',
 		date: momentSiteZone.format( 'YYYY-MM-DD' ),
@@ -43,7 +57,27 @@ function StatsRealtime() {
 		summarize: 1,
 		interval: 10000, // Indicate the query should be periodically refreshed.
 	};
-	const url = '#';
+
+	useEffect( () => {
+		// TODO: This array determines which requests are fired.
+		// Currently firing two requests but only displaying top posts.
+		const statTypes = [ 'statsTopPosts', 'statsReferrers' ];
+
+		// Function to dispatch the request
+		const fetchStats = () => {
+			statTypes.forEach( ( statType ) => {
+				dispatch( requestSiteStats( siteId, statType, query ) );
+			} );
+		};
+
+		// Initial fetch, followed by timed fetch.
+		fetchStats();
+		const intervalInMilliseconds = 15000; // 15 seconds
+		const intervalId = setInterval( fetchStats, intervalInMilliseconds );
+
+		// Clear the interval when the component unmounts
+		return () => clearInterval( intervalId );
+	}, [ dispatch, siteId, query ] );
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
