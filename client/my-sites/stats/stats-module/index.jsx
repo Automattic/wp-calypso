@@ -84,13 +84,13 @@ class StatsModule extends Component {
 			return;
 		}
 
-		// Limit data processing to match the query interval to avoid spurious updates.
+		// Limit data processing to avoid spurious updates.
 		// Need to convert from milliseconds to seconds for comparison.
-		const limit = this.props.query.interval / 1000;
+		const UPDATE_THRESHOLD_IN_SECONDS = 15;
 		const { lastUpdated } = this.state;
 		const now = moment();
 
-		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= limit ) {
+		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
