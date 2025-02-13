@@ -205,9 +205,15 @@ const content3 = i18n.translate( 'post', {
 
 See the [test cases](test/test.jsx) for more example usage.
 
-## numberFormat Method
+## numberFormat Method (and variants)
 
 The numberFormat method is also available to format numbers using the loaded locale settings (i.e., locale-specific thousands and decimal separators). You pass in the number (integer or float) and (optionally) the number of decimal places you want (or an options object), and a string is returned with the proper formatting for the currently-loaded locale. You can also override the locale settings for a particular number if necessary by expanding the second argument into an object with the attributes you want to override.
+
+### Variants
+
+The following variants exist:
+
+- `numberFormatCompact` will format and localise a number using compact notation with 1 decimal point e.g. 1K, 1.5M, etc. It works identical to `numberFormat` (same number and order of arguments).
 
 ### Examples
 

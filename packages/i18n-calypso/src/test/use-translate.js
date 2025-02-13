@@ -4,7 +4,7 @@
 
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
-import i18n, { useTranslate } from '../src';
+import i18n, { useTranslate } from '..';
 
 function Label() {
 	const translate = useTranslate();

@@ -157,6 +157,7 @@ __metadata:
     debug: "npm:^4.3.4"
     gettext-parser: "npm:^6.0.0"
     html-webpack-plugin: "npm:^5.6.3"
+    i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"

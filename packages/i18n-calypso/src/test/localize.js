@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-import i18n, { localize } from '../src';
+import i18n, { localize } from '..';
 
 describe( 'localize()', () => {
 	it( 'should be named using the variable name of the composed component', () => {

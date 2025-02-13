@@ -37,6 +37,7 @@
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
 		"debug": "^4.3.4",
+		"i18n-calypso": "workspace:^",
 		"moment": "^2.26.0",
 		"prop-types": "^15.8.1",
 		"react": "^18.3.1",
