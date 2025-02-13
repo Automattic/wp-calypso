@@ -4,6 +4,7 @@
 .product-card {
 	display: flex;
 	justify-content: stretch;
+	min-height: 270px;
 	&.disabled {
 		opacity: 0.5;
 

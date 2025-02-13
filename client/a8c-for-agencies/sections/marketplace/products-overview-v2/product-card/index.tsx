@@ -13,6 +13,7 @@ import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-po
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
+import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
 import ProductBadges from '../product-badges';
@@ -82,16 +83,6 @@ export default function ProductCard( props: Props ) {
 			}
 		}
 	}, [] );
-
-	const truncateDescription = ( description: any ) => {
-		if ( description.length <= 84 ) {
-			return description;
-		}
-
-		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
-
-		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
-	};
 
 	const { description: productDescription } = useProductDescription( product.slug );
 
@@ -209,7 +200,7 @@ export default function ProductCard( props: Props ) {
 								</div>
 
 								<div className="product-card__description">
-									{ truncateDescription( productDescription ) }
+									{ preventWidows( productDescription ) }
 								</div>
 							</div>
 						</div>
