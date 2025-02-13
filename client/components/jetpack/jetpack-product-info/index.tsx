@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import { useIncludedProductDescriptionMap } from 'calypso/components/jetpack/jetpack-product-info/hooks/use-included-product-description-map';
 import isWooCommerceProduct from 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product';
 import { PricingBreakdown } from 'calypso/my-sites/plans/jetpack-plans/product-store/pricing-breakdown';
@@ -12,6 +12,7 @@ import JetpackProductInfoProductList from './product-list';
 import JetpackProductInfoRecommendationTags from './recommendation-tags';
 import JetpackProductInfoRegularList from './regular-list';
 import JetpackProductInfoSection from './section';
+
 import './style.scss';
 
 type JetpackProductInfoProps = {
@@ -20,6 +21,7 @@ type JetpackProductInfoProps = {
 	showPricingBreakdown?: boolean;
 	siteId?: number;
 	title: TranslateResult;
+	customDescription?: ReactNode;
 };
 
 const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
@@ -28,6 +30,7 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 	showPricingBreakdown,
 	siteId = null,
 	title,
+	customDescription,
 } ) => {
 	const {
 		alsoIncluded,
@@ -74,6 +77,8 @@ const JetpackProductInfo: FunctionComponent< JetpackProductInfoProps > = ( {
 			) }
 
 			{ full && recommendedFor && <JetpackProductInfoRecommendationTags tags={ recommendedFor } /> }
+
+			{ customDescription }
 
 			{ product.productsIncluded ? (
 				<>

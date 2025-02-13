@@ -38,6 +38,16 @@ export const JetpackLightboxAside = forwardRef< HTMLDivElement, ContainerProps >
 	}
 );
 
+export const JetpackLightboxFooter = forwardRef< HTMLDivElement, ContainerProps >(
+	( { children }, ref ) => {
+		return (
+			<div className="jetpack-lightbox__content-footer" ref={ ref }>
+				{ children }
+			</div>
+		);
+	}
+);
+
 const JetpackLightbox: FunctionComponent< JetpackLightboxProps > = ( {
 	children,
 	className,

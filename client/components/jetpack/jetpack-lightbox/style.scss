@@ -90,6 +90,19 @@
 	}
 }
 
+.jetpack-lightbox__content-footer {
+	background-color: var(--studio-white);
+	border-block-start: 1px solid var(--studio-gray-0);
+	margin: 0 -40px 40px;
+	padding: 16px 40px;
+
+	@include break-medium {
+		margin: 0 -40px -40px;
+		position: sticky;
+		bottom: -40px;
+	}
+}
+
 .jetpack-lightbox__close-button {
 	position: absolute;
 	right: 1rem;

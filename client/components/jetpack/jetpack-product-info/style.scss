@@ -52,6 +52,11 @@
 	line-height: 1.5;
 	color: var(--studio-gray-80);
 	font-size: 1rem;
+
+	a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
 }
 
 .jetpack-product-info__tags {
@@ -159,6 +164,11 @@
 
 	li.trigger-highlight {
 		animation: trigger-highlight 500ms ease-out;
+	}
+
+	a {
+		text-decoration: underline;
+		color: var(--color-text);
 	}
 }
 

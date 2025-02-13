@@ -1106,7 +1106,7 @@ export const getJetpackProductsLightboxDescription = (): Record< string, Transla
 		'Automatically calculate how much sales tax should be collected for WooCommerce orders — by city, country, or state — at checkout.'
 	);
 	const woocommerceWoopaymentsLightboxDescription = translate(
-		'The only payment solution fully integrated to Woo. Accept credit/debit cards and local payment options with no setup or monthly fees.'
+		"Accept credit/debit cards and local payment options with no setup or monthly fees. Earn revenue share on transactions from your clients' sites within Automattic for Agencies."
 	);
 	const woocommercProductFiltersLightboxDescription = translate(
 		'This is a tool to create ajax product filters that make the process of finding products in your store simple and fast.'
@@ -1821,6 +1821,10 @@ export const getJetpackProductsWhatIsIncludedComingSoon = (): Record<
 };
 
 export const getJetpackProductsBenefits = (): Record< string, Array< TranslateResult > > => {
+	const getLink = ( href: string ) => (
+		<a href={ href } target="_blank" rel="noopener noreferrer"></a>
+	);
+
 	const backupBenefits = [
 		translate( 'Protect your revenue stream and content' ),
 		translate( 'Restore your site in one click from desktop or mobile' ),
@@ -2224,10 +2228,73 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		translate( 'Generate tax reports for easy filing' ),
 	];
 	const woocommerceWoopaymentsBenefits = [
-		translate( 'Accept payments directly on your site' ),
-		translate( 'Streamline payment processing and management' ),
-		translate( 'Support multiple payment methods' ),
-		translate( 'View detailed transaction reports in WooCommerce dashboard' ),
+		translate(
+			'WooPayments is available {{a}}in 38 countries{{/a}} and accepts payments in 135+ currencies, no other extensions needed.',
+			{
+				components: {
+					a: getLink( 'https://woocommerce.com/products/woopayments/' ),
+				},
+			}
+		),
+		translate(
+			'Get started for free. Pay-as-you-go fees per transaction. There are no monthly fees, either. {{a}}Learn more about our fees{{/a}}.',
+			{
+				components: {
+					a: getLink( 'https://woocommerce.com/document/woopayments/fees-and-debits/fees/' ),
+				},
+			}
+		),
+		translate(
+			'Try Tap to Pay or {{OrderCardReaderLink}}order a card reader{{/OrderCardReaderLink}} that syncs with your inventory through WooPayments. {{LearnMoreLink}}Learn more about Tap to Pay on iPhone and Android{{/LearnMoreLink}}.',
+			{
+				components: {
+					OrderCardReaderLink: getLink( 'https://woocommerce.com/in-person-payments/' ),
+					LearnMoreLink: getLink( 'https://woocommerce.com/tap-to-pay/' ),
+				},
+			}
+		),
+		translate(
+			'Multi-Currency support is built-in. Accept payments in 135+ currencies using WooPayments.'
+		),
+		translate(
+			'Increase conversions by enabling payment methods including {{WooPayLink}}WooPay{{/WooPayLink}}, {{ApplePayLink}}Apple Pay®{{/ApplePayLink}}, {{GooglePayLink}}Google Pay{{/GooglePayLink}}, {{IDealLink}}iDeal{{/IDealLink}}, {{P24Link}}P24{{/P24Link}}, {{EPSLink}}EPS{{/EPSLink}}, and {{BancontactLink}}Bancontact{{/BancontactLink}}.',
+			{
+				components: {
+					WooPayLink: getLink( 'https://woocommerce.com/woopay-businesses/' ),
+					ApplePayLink: getLink(
+						'https://woocommerce.com/document/woopayments/payment-methods/apple-pay/'
+					),
+					GooglePayLink: getLink(
+						'https://woocommerce.com/document/woopayments/payment-methods/google-pay/'
+					),
+					IDealLink: getLink( 'https://woocommerce.com/woocommerce-payments-ideal/' ),
+					P24Link: getLink( 'https://woocommerce.com/woopayments-p24/' ),
+					EPSLink: getLink( 'https://woocommerce.com/woocommerce-payments-eps/' ),
+					BancontactLink: getLink( 'https://woocommerce.com/woocommerce-payments-bancontact/' ),
+				},
+			}
+		),
+		translate(
+			'Enable buy now, pay later (BNPL) in one click. Sell more and reach new customers with {{a}}top BNPL options{{/a}} built into your dashboard (not available in all geographies).',
+			{
+				components: {
+					a: getLink( 'https://woocommerce.com/buy-now-pay-later/' ),
+				},
+			}
+		),
+		translate(
+			"Simplify your workflow. No more logging into third-party payment processor sites - manage everything from the comfort of your store's dashboard."
+		),
+		translate(
+			'Set a custom payout schedule to get your funds into your bank account as often as you need — daily, weekly, monthly, or even on-demand.'
+		),
+		translate( 'Reduce cart abandonment with a streamlined checkout flow.' ),
+		translate(
+			'Stay on top of chargebacks, disputes, and refunds thanks to the integrated dashboard.'
+		),
+		translate(
+			'Stay on top of chargebacks, disputes, and refunds thanks to the integrated dashboard.'
+		),
 	];
 	const woocommerceProductFiltersBenefits = [
 		translate( 'Create ajax product filters for quick and simple product search' ),

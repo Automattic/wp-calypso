@@ -1,0 +1,10 @@
+.woopayments-custom-description__required-woocommerce-notice {
+	@include a4a-font-body-md;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	border: 1px solid var(--color-neutral-5);
+	border-radius: 4px;
+	padding: 4px 8px;
+	margin-block-end: 32px;
+}
