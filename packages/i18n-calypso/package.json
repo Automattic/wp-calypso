@@ -1,11 +1,11 @@
 {
 	"name": "i18n-calypso",
-	"version": "7.2.1",
+	"version": "7.2.2",
 	"description": "I18n JavaScript library on top of Tannin originally used in Calypso.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
-	"calypso:src": "src/index.js",
-	"types": "types/index.d.ts",
+	"calypso:src": "src/index.ts",
+	"types": "src/types",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -16,6 +16,13 @@
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
+	"scripts": {
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepare": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"test": "yarn jest"
+	},
 	"dependencies": {
 		"@automattic/interpolate-components": "workspace:^",
 		"@babel/runtime": "^7.26.0",
@@ -31,16 +38,15 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/jest-dom": "^6.4.5",
+		"@types/jest": "^29.5.12",
+		"@types/react": "^18.2.6",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-test-renderer": "^18.3.1"
+		"react-test-renderer": "^18.3.1",
+		"typescript": "^5.3.3"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1"
-	},
-	"scripts": {
-		"clean": "rm -rf dist",
-		"build": "yarn run -T transpile",
-		"prepack": "yarn run clean && yarn run build"
 	}
 }

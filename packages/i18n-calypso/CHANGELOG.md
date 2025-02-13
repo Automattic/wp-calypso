@@ -1,3 +1,7 @@
+## 7.2.2
+
+- TS configuration & jest depdencies
+
 ## 7.2.1
 
 - `compact` option for `numberFormat`
