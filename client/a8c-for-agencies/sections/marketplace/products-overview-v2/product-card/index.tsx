@@ -4,39 +4,51 @@ import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
+import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
+import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
+import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import withProductLightbox, {
 	ProductLightboxActivatorProps,
 	WithProductLightboxProps,
 } from '../hocs/with-product-lightbox';
 import ProductBadges from '../product-badges';
-import ProductPriceWithDiscount from './product-price-with-discount-info';
+import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
 
-import './style.scss';
+import '../style.scss';
 
 type Props = WithProductLightboxProps &
 	ProductLightboxActivatorProps & {
 		suggestedProduct?: string | null;
 		hideDiscount?: boolean;
+		onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 	};
 
 function ProductCard( props: Props ) {
 	const {
 		asReferral,
-		currentProduct,
+		products,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
+		currentProduct,
+		setCurrentProduct,
 		onShowLightbox,
 	} = props;
-	const productTitle = getProductShortTitle( currentProduct );
-
 	const translate = useTranslate();
+
+	const { description: productDescription } = useProductDescription( currentProduct.slug );
+
+	const variantOptions = products.map( ( option ) => ( {
+		id: option.slug,
+		answerText: getProductVariantShortTitle( option.name ),
+	} ) );
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
@@ -47,7 +59,7 @@ function ProductCard( props: Props ) {
 	}, [ isDisabled, onSelectProduct, currentProduct ] );
 
 	const onKeyDown = useCallback(
-		( e: any ) => {
+		( e: React.KeyboardEvent< HTMLDivElement > ) => {
 			// Enter
 			if ( 13 === e.keyCode ) {
 				onSelect();
@@ -65,19 +77,37 @@ function ProductCard( props: Props ) {
 				onSelect();
 			}
 		}
-	}, [] );
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ currentProduct.slug, suggestedProduct ] );
 
-	const truncateDescription = ( description: any ) => {
-		if ( description.length <= 84 ) {
-			return description;
-		}
+	const onChangeOption = useCallback(
+		( selectedProductSlug: string ) => {
+			if ( isDisabled ) {
+				return;
+			}
 
-		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+			const selectedProduct =
+				products.find( ( { slug } ) => slug === selectedProductSlug ) ?? products[ 0 ];
 
-		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
-	};
+			if ( isSelected ) {
+				// If the current card is selected, we need to update selected licenses.
+				onSelectProduct?.( selectedProduct, currentProduct );
+			}
 
-	const { description: productDescription } = useProductDescription( currentProduct.slug );
+			setCurrentProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
+		},
+		[
+			isDisabled,
+			products,
+			isSelected,
+			setCurrentProduct,
+			onVariantChange,
+			onSelectProduct,
+			currentProduct,
+		]
+	);
 
 	const ctaLabel = useMemo( () => {
 		const selectedQuantity = quantity ?? 1;
@@ -97,18 +127,22 @@ function ProductCard( props: Props ) {
 
 	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
 
+	const hasMultipleProducts = products.length > 1;
+
+	const productTitle = getProductShortTitle( currentProduct, hasMultipleProducts );
+
 	return (
 		<div
-			onClick={ onSelect }
-			onKeyDown={ onKeyDown }
-			role="button"
-			tabIndex={ 0 }
-			aria-disabled={ isDisabled }
-			className={ clsx( {
-				'product-card': true,
+			className={ clsx( 'product-card', 'product-card--with-variant', {
+				'product-card--with-variant': hasMultipleProducts,
 				selected: isSelected,
 				disabled: isDisabled,
 			} ) }
+			onKeyDown={ onKeyDown }
+			onClick={ onSelect }
+			role="button"
+			aria-disabled={ isDisabled }
+			tabIndex={ 0 }
 		>
 			<div className="product-card__inner">
 				<div className="product-card__details">
@@ -116,6 +150,17 @@ function ProductCard( props: Props ) {
 						<div className="product-card__heading">
 							<h3 className="product-card__title">{ productTitle }</h3>
 							<ProductBadges product={ currentProduct } />
+							{ ! isRedesign && hasMultipleProducts && (
+								<MultipleChoiceQuestion
+									name={ `${ currentProduct.family_slug }-variant-options` }
+									question={ translate( 'Select variant:' ) }
+									answers={ variantOptions }
+									selectedAnswerId={ currentProduct.slug }
+									onAnswerChange={ onChangeOption }
+									shouldShuffleAnswers={ false }
+								/>
+							) }
+
 							<div className="product-card__pricing is-compact">
 								<ProductPriceWithDiscount
 									product={ currentProduct }
@@ -125,9 +170,18 @@ function ProductCard( props: Props ) {
 								/>
 							</div>
 
-							<div className="product-card__description">
-								{ truncateDescription( productDescription ) }
-							</div>
+							{ isRedesign && hasMultipleProducts && (
+								<MultipleChoiceQuestion
+									name={ `${ currentProduct.family_slug }-variant-options` }
+									question={ translate( 'Select variant:' ) }
+									answers={ variantOptions }
+									selectedAnswerId={ currentProduct.slug }
+									onAnswerChange={ onChangeOption }
+									shouldShuffleAnswers={ false }
+								/>
+							) }
+
+							<div className="product-card__description">{ productDescription }</div>
 						</div>
 					</div>
 				</div>
@@ -143,7 +197,7 @@ function ProductCard( props: Props ) {
 					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
 						<LicenseLightboxLink
 							customText={ translate( 'View details' ) }
-							productName={ productTitle }
+							productName={ getProductShortTitle( currentProduct ) }
 							onClick={ onShowLightbox }
 							showIcon={ ! isRedesign }
 						/>

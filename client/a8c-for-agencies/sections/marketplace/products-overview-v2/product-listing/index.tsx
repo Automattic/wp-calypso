@@ -16,7 +16,6 @@ import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
-import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
 import WoopPaymentsProductCard from '../woopayments-product-card';
 import ProductListingEmpty from './empty';
@@ -241,31 +240,21 @@ export default function ProductListing( {
 				);
 			}
 
-			return Array.isArray( productOption ) ? (
-				<MultiProductCard
+			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+
+			return (
+				<ProductCard
 					asReferral={ isReferralMode }
-					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-					products={ productOption }
+					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
+					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
+							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
-					hideDiscount={ isSingleLicenseView }
-					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
-				/>
-			) : (
-				<ProductCard
-					asReferral={ isReferralMode }
-					key={ productOption.slug }
-					products={ [ productOption ] }
-					onSelectProduct={ onSelectProduct }
-					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
