@@ -89,6 +89,7 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
+		showBack: true,
 	};
 
 	return (
