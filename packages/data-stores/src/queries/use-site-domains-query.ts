@@ -130,6 +130,11 @@ export interface DomainData {
 	pending_registration_at_registry_url: string;
 	registered_via_trustee: boolean;
 	registered_via_trustee_url: string;
+	domain_status?: {
+		status: string;
+		status_type: string;
+		status_weight: number;
+	};
 }
 
 export interface SiteDomainsQueryFnData {

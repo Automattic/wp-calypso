@@ -2,8 +2,13 @@ import { type as domainTypes, domainInfoContext } from './constants';
 import { ResponseDomain } from './types';
 import type { __ as __type } from '@wordpress/i18n';
 
+type PartialDomainInfo = Pick<
+	ResponseDomain,
+	'tldMaintenanceEndTime' | 'type' | 'isSubdomain' | 'isPremium'
+>;
+
 export function getDomainTypeText(
-	domain: ResponseDomain,
+	domain: PartialDomainInfo,
 	__: typeof __type = ( text: string ) => text,
 	context = domainInfoContext.DOMAIN_ITEM
 ) {
