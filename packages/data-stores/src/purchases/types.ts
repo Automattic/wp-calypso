@@ -8,6 +8,7 @@ export interface Purchase {
 	billPeriodLabel: string;
 	blogCreatedDate: string;
 	canDisableAutoRenew: boolean;
+	asyncPendingPaymentBlockIsSet: boolean;
 	canExplicitRenew: boolean;
 	canReenableAutoRenewal: boolean;
 	costToUnbundle: number;
@@ -184,6 +185,7 @@ export interface RawPurchase {
 	most_recent_renew_date: string;
 	can_disable_auto_renew: boolean;
 	can_reenable_auto_renewal: boolean;
+	async_pending_payment_block_is_set: boolean;
 	can_explicit_renew: boolean;
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;

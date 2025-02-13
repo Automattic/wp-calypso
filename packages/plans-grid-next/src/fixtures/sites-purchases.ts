@@ -91,6 +91,7 @@ export default [
 		product_display_price: '<abbr title="Australian Dollars">A$</abbr>155.40',
 		price_integer: 15540,
 		is_cancelable: true,
+		async_pending_payment_block_is_set: false,
 		can_explicit_renew: true,
 		can_disable_auto_renew: true,
 		can_reenable_auto_renewal: false,
