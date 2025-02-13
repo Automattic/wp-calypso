@@ -1,7 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { FilterType, LogType } from 'calypso/data/hosting/use-site-logs-query';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import type { View } from '@wordpress/dataviews';
 
 const getSortField = ( logType: LogType ) => ( logType === 'php' ? 'timestamp' : 'date' );
@@ -41,9 +39,7 @@ function buildFilter(
 }
 
 const useView = ( { logType }: { logType: LogType } ) => {
-	const dispatch = useDispatch();
-
-	const [ view, setView ] = useState< View >( () => {
+	return useState< View >( () => {
 		return {
 			type: 'table' as const,
 			page: 1,
@@ -71,28 +67,6 @@ const useView = ( { logType }: { logType: LogType } ) => {
 			},
 		};
 	} );
-
-	const oldSeverity = getFilterValue( view, 'severity' )?.sort().toString() || '';
-	const setViewWithTracking = useCallback(
-		( newView: View ) => {
-			const severity = getFilterValue( newView, 'severity' )?.sort().toString() || '';
-			if ( severity !== oldSeverity ) {
-				dispatch(
-					recordTracksEvent( 'calypso_site_logs_severity_filter', {
-						severity,
-						severity_user: severity.includes( 'User' ),
-						severity_warning: severity.includes( 'Warning' ),
-						severity_deprecated: severity.includes( 'Deprecated' ),
-						severity_fatal: severity.includes( 'Fatal' ),
-					} )
-				);
-			}
-			setView( newView );
-		},
-		[ oldSeverity, dispatch ]
-	);
-
-	return [ view, setViewWithTracking ];
 };
 
 export default useView;

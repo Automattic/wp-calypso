@@ -323,16 +323,6 @@ export const SiteLogsDataViews = ( {
 		page.replace( url.pathname + url.search );
 	}, [] );
 
-	const [ view, setView ] = useView( { logType } );
-	const fields = useFields( { logType } );
-	const { data, paginationInfo, isLoading } = useData( {
-		view,
-		logType,
-		startTime,
-		endTime,
-	} );
-	const actions = useActions( { logType, isLoading } );
-
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const autoRefreshCallback = useCallback( () => {
 		const url = new URL( window.location.href );
@@ -357,6 +347,42 @@ export const SiteLogsDataViews = ( {
 		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
+
+	const [ view, setView ] = useView( { logType } );
+	const oldSeverity = getFilterValue( view, 'severity' )?.sort().toString() || '';
+	const setViewWithSideEffects = useCallback(
+		( newView: View ) => {
+			const severity = getFilterValue( newView, 'severity' )?.sort().toString() || '';
+			if ( severity !== oldSeverity ) {
+				dispatch(
+					recordTracksEvent( 'calypso_site_logs_severity_filter', {
+						severity,
+						severity_user: severity.includes( 'User' ),
+						severity_warning: severity.includes( 'Warning' ),
+						severity_deprecated: severity.includes( 'Deprecated' ),
+						severity_fatal: severity.includes( 'Fatal' ),
+					} )
+				);
+			}
+
+			// Disable auto-refresh if the user navigates to a different page.
+			if ( autoRefresh === true && newView.page !== view.page ) {
+				setAutoRefresh( false );
+			}
+
+			setView( newView );
+		},
+		[ autoRefresh, setAutoRefresh, oldSeverity, view.page, setView, dispatch ]
+	);
+
+	const fields = useFields( { logType } );
+	const { data, paginationInfo, isLoading } = useData( {
+		view,
+		logType,
+		startTime,
+		endTime,
+	} );
+	const actions = useActions( { logType, isLoading } );
 
 	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const isDownloading = state.status === 'downloading';
@@ -464,7 +490,7 @@ export const SiteLogsDataViews = ( {
 				paginationInfo={ paginationInfo }
 				fields={ fields }
 				view={ view }
-				onChangeView={ setView }
+				onChangeView={ setViewWithSideEffects }
 				actions={ actions }
 				search={ false }
 				getItemId={ getItemId }
