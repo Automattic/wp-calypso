@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  */
 
 import { DataHelper, TracksEventManager } from '@automattic/calypso-e2e';

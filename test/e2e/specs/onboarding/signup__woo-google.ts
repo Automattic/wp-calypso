@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  *
  * Google blocks Chrome-based browsers that are controlled via automation
  * from performing login to their services.
