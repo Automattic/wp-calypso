@@ -4,7 +4,14 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import { isWooCommerceCoreProfilerFlow } from './is-woocommerce-core-profiler-flow';
 import type { AppState } from 'calypso/types';
 
-const isWooCommercePaymentsOnboardingFlow = ( state: AppState ): boolean => {
+// The legacy Jetpack Woo Onboarding flow is not in use anymore,
+// and is now absorbed into the Woo JPC Onboarding flow.
+// See https://github.com/Automattic/wp-calypso/pull/99558 for more details.
+const isLegacyJetpackWooOnboardingFlow = ( state: AppState ) => {
+	return 'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
+};
+
+const isWooCommercePaymentsOnboardingFlow = ( state: AppState ) => {
 	const from =
 		get( getInitialQueryArguments( state ), 'from' ) === 'woocommerce-payments' ||
 		get( getCurrentQueryArguments( state ), 'from' ) === 'woocommerce-payments';
@@ -42,7 +49,11 @@ const isWooCommercePaymentsOnboardingFlow = ( state: AppState ): boolean => {
  * @returns {?boolean}        Whether the user should see the new passwordless Jetpack connection or not
  */
 export const isWooJPCFlow = ( state: AppState ): boolean => {
-	return isWooCommerceCoreProfilerFlow( state ) || isWooCommercePaymentsOnboardingFlow( state );
+	return (
+		isLegacyJetpackWooOnboardingFlow( state ) ||
+		isWooCommerceCoreProfilerFlow( state ) ||
+		isWooCommercePaymentsOnboardingFlow( state )
+	);
 };
 
 export default isWooJPCFlow;

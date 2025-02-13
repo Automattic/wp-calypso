@@ -41,7 +41,6 @@ $mobile-card-max-width: 440px;
 	text-align: left;
 
 	.plans-grid-next-storage-dropdown__addon-offset-price {
-		color: var(--studio-green-50);
 		font-size: $font-body-extra-small;
 		font-weight: 500;
 	}
@@ -52,11 +51,13 @@ $mobile-card-max-width: 440px;
 	line-height: 20px;
 	min-height: 30px;
 	padding-top: 5px;
+	font-size: 0.75rem;
+	text-align: start;
 }
 
-.plans-grid-next-storage-dropdown__option-title {
+.plans-grid-next-storage-dropdown__option-title, .plans-grid-next-storage-dropdown__option .title {
 	color: var(--color-text);
-	font-weight: 500;
+	font-weight: 600;
 
 	.plans-grid-next-features-grid__mobile-plan-card & {
 		font-size: 0.875rem;

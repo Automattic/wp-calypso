@@ -1,11 +1,10 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { Button, FormInputValidation, ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get, omit } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
-import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormInput from 'calypso/components/forms/form-text-input-with-affixes';
 import InlineSupportLink from 'calypso/components/inline-support-link';

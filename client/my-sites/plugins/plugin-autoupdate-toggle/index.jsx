@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { DISABLE_AUTOUPDATE_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';

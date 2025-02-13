@@ -1,11 +1,10 @@
-import { Card, Button, FormInputValidation, FormLabel } from '@automattic/components';
+import { Card, Button, FormInputValidation, FormLabel, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';

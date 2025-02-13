@@ -1,9 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import Button from 'calypso/components/forms/form-button';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { rewindBackupSite } from 'calypso/state/activity-log/actions';
@@ -40,8 +39,6 @@ export default function BackupWarningRetry( { siteId } ) {
 							<ExternalLink
 								href={ warningInfoLink }
 								target="_blank"
-								rel="noopener noreferrer"
-								icon={ false }
 								onClick={ () => recordTracksEvent( 'calypso_jetpack_backup_learn_why_click' ) }
 							/>
 						),
