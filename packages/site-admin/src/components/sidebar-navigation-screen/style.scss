@@ -1,0 +1,94 @@
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+
+.admin-site-sidebar-navigation-screen {
+	display: flex;
+	flex-direction: column;
+	overflow-x: unset !important;
+	position: relative;
+}
+
+.admin-site-sidebar-navigation-screen__main {
+	// Ensure the sidebar is always at least as tall as the viewport.
+	// This allows the footer section to be sticky at the bottom of the viewport.
+	flex-grow: 1;
+	margin-bottom: $grid-unit-20;
+	&.has-footer {
+		margin-bottom: 0;
+	}
+}
+
+.admin-site-sidebar-navigation-screen__content {
+	padding: 0 $grid-unit-20;
+
+	.components-text {
+		color: $gray-400;
+	}
+
+	.components-heading {
+		margin-bottom: $grid-unit-10;
+	}
+}
+
+.admin-site-sidebar-navigation-screen__meta {
+	margin: 0 0 $grid-unit-20 $grid-unit-20;
+	color: $gray-400;
+	.components-text {
+		color: $gray-400;
+	}
+}
+
+.admin-site-sidebar-navigation-screen__page-link {
+	color: $gray-600;
+	display: inline-block;
+	word-break: break-word;
+
+	&:hover,
+	&:focus {
+		color: $white;
+	}
+
+	.components-external-link__icon {
+		margin-left: $grid-unit-05;
+	}
+}
+
+.admin-site-sidebar-navigation-screen__title-icon {
+	position: sticky;
+	top: 0;
+	padding-top: $grid-unit-60;
+	margin-bottom: $grid-unit-10;
+	padding-bottom: $grid-unit-10;
+	z-index: z-index(".admin-site-sidebar-navigation-screen__title-icon");
+}
+
+.admin-site-sidebar-navigation-screen__title {
+	flex-grow: 1;
+	overflow-wrap: break-word;
+
+	&#{&},
+	&#{&} .admin-site-sidebar-navigation-screen__title {
+		line-height: $font-line-height-x-large;
+	}
+}
+
+.admin-site-sidebar-navigation-screen__actions {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.admin-site-sidebar-navigation-screen__footer {
+	position: sticky;
+	bottom: 0;
+	background-color: $gray-900;
+	gap: 0;
+	padding: $grid-unit-10 $grid-unit-20;
+	margin: $grid-unit-20 0 0;
+	border-top: 1px solid $gray-800;
+
+	.admin-site-sidebar-navigation-screen-details-footer {
+		margin-left: -$grid-unit-20;
+		margin-right: -$grid-unit-20;
+	}
+}

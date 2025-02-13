@@ -1,7 +1,7 @@
 @import '@wordpress/base-styles/variables'; // @todo: different from core: not imported
 @import '@wordpress/base-styles/mixins'; // @todo: different from core: not imported
 
-.edit-site-sidebar-navigation-item.components-item {
+.site-admin-sidebar-navigation-item.components-item {
 	color: $gray-600;
 	// 6px right padding to align with + button
 	padding: $grid-unit-10 6px $grid-unit-10 $grid-unit-20;
@@ -13,7 +13,7 @@
 	&[aria-current='true'] {
 		color: $gray-200;
 
-		.edit-site-sidebar-navigation-item__drilldown-indicator {
+		.site-admin-sidebar-navigation-item__drilldown-indicator {
 			fill: $gray-200;
 		}
 	}
@@ -29,7 +29,7 @@
 		transform: translateZ( 0 );
 	}
 
-	.edit-site-sidebar-navigation-item__drilldown-indicator {
+	.site-admin-sidebar-navigation-item__drilldown-indicator {
 		fill: $gray-600;
 	}
 
@@ -38,7 +38,7 @@
 	}
 }
 
-.edit-site-sidebar-navigation-screen__content .block-editor-list-view-block-select-button {
+.site-admin-sidebar-navigation-screen__content .block-editor-list-view-block-select-button {
 	cursor: grab;
 	padding: $grid-unit-10 $grid-unit-10 $grid-unit-10 0;
 }

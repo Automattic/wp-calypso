@@ -13,8 +13,8 @@ import clsx from 'clsx';
 /**
  * Internal dependencies
  */
+import { SidebarNavigationContext } from '../../components';
 import { useHistory, useLink } from '../../router';
-import { SidebarNavigationContext } from '../sidebar';
 
 import './style.scss';
 
@@ -30,7 +30,7 @@ export type SidebarNavigationItemProps = {
 	icon?: React.ReactElement;
 };
 
-export default function SidebarNavigationItem( {
+export function SidebarNavigationItem( {
 	className,
 	icon,
 	withChevron = false,
@@ -61,7 +61,7 @@ export default function SidebarNavigationItem( {
 	return (
 		<Item
 			className={ clsx(
-				'edit-site-sidebar-navigation-item',
+				'site-admin-sidebar-navigation-item',
 				{ 'with-suffix': ! withChevron && suffix },
 				className
 			) }
@@ -77,7 +77,7 @@ export default function SidebarNavigationItem( {
 				{ withChevron && (
 					<Icon
 						icon={ isRTL() ? chevronLeftSmall : chevronRightSmall }
-						className="edit-site-sidebar-navigation-item__drilldown-indicator"
+						className="site-admin-sidebar-navigation-item__drilldown-indicator"
 						size={ 24 }
 					/>
 				) }

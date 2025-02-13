@@ -3,15 +3,15 @@
  */
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import * as allIconComponents from '@wordpress/icons';
 /*
  * Internal dependencies
  */
-import * as allIconComponents from '@wordpress/icons';
-import SidebarNavigationItem, { SidebarNavigationItemProps } from '../';
-import { createNavState, SidebarNavigationContext } from '../../sidebar';
+import { SidebarNavigationItem, SidebarNavigationContext, createNavState } from '../../';
 /**
  * Types
  */
+import type { SidebarNavigationItemProps } from '../';
 import type { Meta, StoryFn } from '@storybook/react';
 
 type IconName = keyof typeof allIcons;
