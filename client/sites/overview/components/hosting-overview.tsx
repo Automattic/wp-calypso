@@ -1,4 +1,4 @@
-import { Notice } from '@wordpress/components';
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -8,6 +8,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ActiveDomainsCard from './active-domains-card';
 import MigrationOverview from './migration-overview';
 import PlanCard from './plan-card';
+import PlanCreditNotice from './plan-credit-notice';
 import QuickActionsCard from './quick-actions-card';
 import SiteBackupCard from './site-backup-card';
 import SupportCard from './support-card';
@@ -31,16 +32,7 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
-			<Notice
-				className="hosting-overview__domain-to-plan-credit-notice"
-				status="info"
-				onRemove={ () => {} }
-			>
-				{ translate(
-					// TODO: Retrieve value of credit to programmatically insert into this message.
-					'You have $X in upgrade credits for a price reduction in your plan upgrade.'
-				) }
-			</Notice>
+			{ isEnabled( 'domain-to-plan-credit' ) && <PlanCreditNotice /> }
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }
