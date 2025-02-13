@@ -15,6 +15,7 @@ import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
@@ -26,6 +27,7 @@ import {
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -506,6 +508,32 @@ class Login extends Component {
 						<A4APlusWpComLogo className="login__a4a-plus-wpcom-logo" size={ 32 } />
 					</div>
 				);
+			}
+
+			if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
+				if ( document.location.search?.includes( 'wpcloud' ) ) {
+					headerText = translate(
+						'Howdy! Log into the WP Cloud Partner Portal with your WordPress.com account.'
+					);
+					preHeader = (
+						<div>
+							<WPCloudLogo className="login__wpcloud-logo" size={ 256 } />
+						</div>
+					);
+				} else if ( document.location.search?.includes( 'jetpack' ) ) {
+					headerText = translate(
+						'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
+					);
+					preHeader = (
+						<div>
+							<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
+						</div>
+					);
+				} else {
+					headerText = translate(
+						'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
+					);
+				}
 			}
 
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) {
