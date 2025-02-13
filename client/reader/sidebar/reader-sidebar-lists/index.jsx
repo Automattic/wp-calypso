@@ -20,14 +20,16 @@ export class ReaderSidebarLists extends Component {
 	};
 
 	selectMenu = () => {
-		const { onClick, lists, isOpen } = this.props;
+		const { onClick, lists, isOpen, path } = this.props;
 		const defaultSelection = lists?.length
 			? `/reader/list/${ lists[ 0 ]?.owner }/${ lists[ 0 ]?.slug }`
 			: '/reader/list/new';
 		if ( ! isOpen ) {
 			onClick();
 		}
-		page.redirect( defaultSelection );
+		if ( path !== defaultSelection ) {
+			page( defaultSelection );
+		}
 	};
 
 	render() {

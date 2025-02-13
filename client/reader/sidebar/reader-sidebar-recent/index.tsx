@@ -97,7 +97,9 @@ const ReaderSidebarRecent = ( {
 			onClick();
 		}
 		selectSite( null );
-		page.redirect( '/reader' );
+		if ( ! isRecentStream ) {
+			page( '/reader' );
+		}
 	};
 
 	return (

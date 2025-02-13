@@ -45,12 +45,14 @@ export class ReaderSidebarTags extends Component {
 	};
 
 	selectMenu = () => {
-		const { onClick, tags, isOpen } = this.props;
+		const { onClick, tags, isOpen, path } = this.props;
 		if ( ! isOpen ) {
 			onClick();
 		}
 		const defaultSelection = tags?.length ? `/tag/${ tags[ 0 ]?.slug }` : '/tags';
-		page.redirect( defaultSelection );
+		if ( path !== defaultSelection ) {
+			page( defaultSelection );
+		}
 	};
 
 	render() {

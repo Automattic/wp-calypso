@@ -30,12 +30,13 @@ export class ReaderSidebarOrganizationsList extends Component {
 	};
 
 	selectMenu = () => {
-		const { organization, isOrganizationOpen: isOpen } = this.props;
+		const { organization, isOrganizationOpen: isOpen, path } = this.props;
 		if ( ! isOpen ) {
 			this.toggleMenu();
 		}
-		if ( organization.slug ) {
-			page.redirect( `/reader/${ organization.slug }` );
+		const defaultSelection = organization.slug && `/reader/${ organization.slug }`;
+		if ( defaultSelection && path !== defaultSelection ) {
+			page( defaultSelection );
 		}
 	};
 
