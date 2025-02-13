@@ -8,8 +8,6 @@ import {
 import { Gridicon, MaterialIcon } from '@automattic/components';
 import {
 	Button,
-	useTransactionStatus,
-	TransactionStatus,
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
@@ -21,6 +19,8 @@ import {
 	PaymentMethodStep,
 	FormStatus,
 	usePaymentMethod,
+	useTransactionStatus,
+	TransactionStatus,
 } from '@automattic/composite-checkout';
 import { formatCurrency } from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -35,6 +35,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
+import Loading from 'calypso/components/loading';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import {
 	hasGoogleApps,
@@ -78,7 +79,6 @@ import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
-import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutNextSteps from './checkout-next-steps';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -502,23 +502,16 @@ export default function CheckoutMainContent( {
 	} = checkoutActions;
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
-		debug( 'rendering post-checkout redirecting page' );
 		return (
-			<WPCheckoutWrapper>
-				<WPCheckoutSidebarContent></WPCheckoutSidebarContent>
-				<WPCheckoutMainContent>
+			<WPCheckoutCompletedWrapper>
+				<WPCheckoutCompletedMainContent>
 					<PerformanceTrackerStop />
-					<WPCheckoutTitle>{ translate( 'Checkout' ) }</WPCheckoutTitle>
-					<CheckoutCompleteRedirecting />
-					<CheckoutFormSubmit
-						submitButton={
-							<Button buttonType="primary" fullWidth isBusy disabled>
-								{ translate( 'Please wait…' ) }
-							</Button>
-						}
+					<Loading
+						className="checkout__pending-content"
+						title={ translate( "Almost there – we're currently finalizing your order." ) }
 					/>
-				</WPCheckoutMainContent>
-			</WPCheckoutWrapper>
+				</WPCheckoutCompletedMainContent>
+			</WPCheckoutCompletedWrapper>
 		);
 	}
 
@@ -1193,6 +1186,26 @@ const WPCheckoutWrapper = styled.div`
 	}
 `;
 
+const WPCheckoutCompletedWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	justify-items: center;
+	min-height: 100vh;
+
+	& > * {
+		box-sizing: border-box;
+		width: 100%;
+
+		@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+			min-height: 100vh;
+		}
+	}
+
+	& *:focus {
+		outline: ${ ( props ) => props.theme.colors.outline } solid 2px;
+	}
+`;
+
 const WPCheckoutMainContent = styled.div`
 	grid-area: main-content;
 	margin-top: 50px;
@@ -1215,6 +1228,16 @@ const WPCheckoutMainContent = styled.div`
 
 	.editor-checkout-modal & {
 		margin-top: 20px;
+	}
+`;
+
+const WPCheckoutCompletedMainContent = styled.div`
+	margin-top: 60px;
+	min-height: 100vh;
+
+	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+		padding: 0 24px;
+		max-width: 648px;
 	}
 `;
 

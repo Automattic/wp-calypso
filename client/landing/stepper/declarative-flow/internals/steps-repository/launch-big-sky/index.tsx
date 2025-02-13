@@ -4,7 +4,7 @@ import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, FormEvent, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
+import Loading from 'calypso/components/loading';
 import { SITE_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { useIsBigSkyEligible } from '../../../../hooks/use-is-site-big-sky-eligible';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -123,7 +123,7 @@ const LaunchBigSky: Step = function () {
 	function LaunchingBigSky() {
 		return (
 			<>
-				{ ! isError && <StepperLoader title={ __( 'Launching the AI Website Builder' ) } /> }
+				{ ! isError && <Loading title={ __( 'Launching the AI Website Builder' ) } /> }
 				{ isError && (
 					<p className="processing-step__error">
 						{ __( 'Something unexpected happened. Please go back and try again.' ) }

@@ -2,4 +2,3 @@ export { default as GoogleDomainsTransferInstructions } from './google-domains-t
 export { default as AsyncHelpCenter } from './help-center/async';
 export { default as SitePreview } from './site-preview';
 export { default as StepRoute } from './step-route';
-export { default as StepperLoader } from './stepper-loader';

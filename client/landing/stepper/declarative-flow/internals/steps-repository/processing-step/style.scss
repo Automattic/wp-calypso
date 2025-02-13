@@ -34,17 +34,17 @@
 
 // Processing Copy Site Styles
 .copy-site.processing-copy {
-	.processing-step, .stepper-loader {
+	.processing-step, .wpcom__loading {
 		margin: 5vh auto 0;
 		max-width: 660px;
 	}
 
-	.stepper-loader__title {
+	.wpcom__loading-title {
 		font-size: 3rem;
 		margin-bottom: 24px;
 	}
 
-	.stepper-loader__progress-bar {
+	.wpcom__loading-progress-bar {
 		max-width: 540px;
 		margin: 0 auto;
 	}

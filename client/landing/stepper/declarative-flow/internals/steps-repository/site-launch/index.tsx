@@ -3,7 +3,7 @@ import { useDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import DocumentHead from 'calypso/components/data/document-head';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
+import Loading from 'calypso/components/loading';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -45,7 +45,7 @@ const SiteLaunchStep: React.FC< SiteLaunchStepProps > = function ( props ) {
 				shouldHideNavButtons
 				hideFormattedHeader
 				stepName="processing-step"
-				stepContent={ <StepperLoader title={ __( 'Launching blog' ) } /> }
+				stepContent={ <Loading title={ __( 'Launching blog' ) } /> }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		</>

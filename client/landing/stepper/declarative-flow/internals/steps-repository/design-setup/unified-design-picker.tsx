@@ -39,6 +39,7 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import { useQueryThemes } from 'calypso/components/data/query-themes';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Loading from 'calypso/components/loading';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import {
 	THEME_TIERS,
@@ -85,7 +86,6 @@ import {
 	recordSelectedDesign,
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
-import StepperLoader from '../../components/stepper-loader';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -798,7 +798,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const isLoading = isSiteLoading || isDesignsLoading;
 
 	if ( isLoading || isComingFromTheUpgradeScreen ) {
-		return <StepperLoader />;
+		return <Loading />;
 	}
 
 	if ( selectedDesign && isPreviewingDesign ) {

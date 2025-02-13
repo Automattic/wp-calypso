@@ -16,6 +16,7 @@ import EnvironmentBadge, {
 } from 'calypso/components/environment-badge';
 import Head from 'calypso/components/head';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import Loading from 'calypso/components/loading';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -177,7 +178,11 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									{ sectionName === 'checkout' ? (
+										<Loading className="wpcom-loading__boot" />
+									) : (
+										<LoadingLogo size={ 72 } className="wpcom-site__logo" />
+									) }
 								</div>
 							</div>
 						</div>

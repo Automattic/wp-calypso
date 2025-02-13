@@ -9,6 +9,7 @@ import { isOnboardingFlow, useStepPersistedState } from '@automattic/onboarding'
 import { useDispatch, useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useState } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
+import Loading from 'calypso/components/loading';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
@@ -23,7 +24,6 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getTheme, getThemeType } from 'calypso/state/themes/selectors';
 import { useGoalsFirstExperiment } from '../../../helpers/use-goals-first-experiment';
-import StepperLoader from '../../components/stepper-loader';
 import UnifiedPlansStep from './unified-plans-step';
 import { getIntervalType } from './util';
 import type { ProvidedDependencies, StepProps } from '../../types';
@@ -145,7 +145,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 	useQueryTheme( 'wpcom', selectedDesign?.slug );
 
 	if ( isLoadingSelectedTheme ) {
-		return <StepperLoader />;
+		return <Loading />;
 	}
 
 	return (
