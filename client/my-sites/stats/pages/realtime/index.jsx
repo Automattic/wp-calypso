@@ -107,6 +107,7 @@ function StatsRealtime() {
 						query={ query }
 						summaryUrl={ url }
 						className={ halfWidthModuleClasses }
+						isRealTime
 					/>
 				</StatsModuleListing>
 				<JetpackColophon />
