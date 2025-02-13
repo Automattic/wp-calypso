@@ -6,13 +6,14 @@ import { getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { ConfigContext, useHistory } from '.';
+import { ConfigContext } from '../..';
+import useHistory from '../use-history';
 /**
  * Types
  */
-import type { NavigationOptions } from './types';
+import type { NavigationOptions } from '../../types';
 
-export function useLink( to: string, options: NavigationOptions = {} ) {
+export default function useLink( to: string, options: NavigationOptions = {} ) {
 	const history = useHistory();
 	const { pathArg, beforeNavigate } = useContext( ConfigContext );
 	function onClick( event: React.SyntheticEvent< HTMLAnchorElement > ) {

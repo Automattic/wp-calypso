@@ -12,9 +12,6 @@ import type { Config, Match } from './types';
 export const RoutesContext = createContext< Match | null >( null );
 export const ConfigContext = createContext< Config >( { pathArg: 'p' } );
 
-// Components
-export * from './link';
-
 // Hooks
 export * from './hooks';
 
