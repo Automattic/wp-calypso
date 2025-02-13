@@ -54,7 +54,11 @@ import {
 	installAndActivateTheme,
 	requestActiveTheme,
 } from 'calypso/state/themes/actions';
-import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
+import {
+	getTheme,
+	isThemeActive as getThemeActive,
+	isExternallyManagedTheme,
+} from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -111,9 +115,16 @@ const MarketplaceProductInstall = ( {
 		isMarketplaceProductSelector( state, pluginSlug )
 	);
 
-	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+	const thirdPartyTheme = useSelector( ( state ) => {
+		if ( isExternallyManagedTheme( state, themeSlug ) ) {
+			return getTheme( state, 'wpcom', themeSlug );
+		}
+		return getTheme( state, 'wporg', themeSlug );
+	} );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
+	// Fetch the theme from both wporg and wpcom APIs, to look up community and partner themes.
 	useQueryTheme( 'wporg', themeSlug );
+	useQueryTheme( 'wpcom', themeSlug );
 
 	const { data: wpComPluginData } = useWPCOMPlugin( pluginSlug, {
 		enabled: isProductListFetched && isMarketplaceProduct,
@@ -203,7 +214,7 @@ const MarketplaceProductInstall = ( {
 			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
 			! isPluginUploadFlow &&
 			! initializeInstallFlow &&
-			( wporgPlugin || wpOrgTheme )
+			( wporgPlugin || thirdPartyTheme )
 		) {
 			const triggerInstallFlow = () => {
 				setInitializeInstallFlow( true );
@@ -211,9 +222,9 @@ const MarketplaceProductInstall = ( {
 			};
 
 			if ( isJetpack || isAtomic ) {
-				if ( wpOrgTheme ) {
+				if ( thirdPartyTheme ) {
 					// initilize theme activating
-					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
+					dispatch( installAndActivateTheme( thirdPartyTheme.id, siteId ) );
 				} else {
 					// initialize plugin installing
 					dispatch( installPlugin( siteId, wporgPlugin, false ) );
@@ -222,7 +233,7 @@ const MarketplaceProductInstall = ( {
 				triggerInstallFlow();
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
-				if ( wpOrgTheme ) {
+				if ( thirdPartyTheme ) {
 					dispatch( initiateAtomicTransfer( siteId, { themeSlug, context: 'theme_install' } ) );
 				} else {
 					setAtomicFlow( true );
@@ -239,7 +250,7 @@ const MarketplaceProductInstall = ( {
 		initializeInstallFlow,
 		siteId,
 		wporgPlugin,
-		wpOrgTheme,
+		thirdPartyTheme,
 		pluginSlug,
 		themeSlug,
 		dispatch,
@@ -279,7 +290,7 @@ const MarketplaceProductInstall = ( {
 	const canManagePlugins = useSelector( ( state ) => {
 		return siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 	} );
-	// Check completition of all flows and redirect to thank you page
+	// Check completion of all flows and redirect to thank you page
 	useEffect( () => {
 		if (
 			// Happens in 3 cases:
@@ -314,21 +325,23 @@ const MarketplaceProductInstall = ( {
 
 	// Validate theme is already active
 	useEffect( () => {
-		if ( themeSlug && wpOrgTheme && isThemeActive ) {
+		if ( themeSlug && thirdPartyTheme && isThemeActive ) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
 					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
 				)
 			);
 		}
-	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+	}, [ themeSlug, thirdPartyTheme, isThemeActive, selectedSiteSlug ] );
 
 	// Polling for theme activation status
 	useInterval(
 		() => {
 			dispatch( requestActiveTheme( siteId ) );
 		},
-		! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive ) ? null : 3000
+		! themeSlug || currentStep === 0 || ( themeSlug && thirdPartyTheme && isThemeActive )
+			? null
+			: 3000
 	);
 
 	const steps = useMemo( () => {
@@ -385,18 +398,20 @@ const MarketplaceProductInstall = ( {
 			const variation = wpComPluginData?.variations?.[ variationPeriod ];
 			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
 			const productPage = `/themes/${ themeSlug }/${ selectedSite?.slug }`;
-			const productName = wpOrgTheme?.name || themeSlug;
+			const productName = thirdPartyTheme?.name || themeSlug;
 
 			return (
 				<>
 					<QueryProductsList />
 					<EmptyContent
 						className="marketplace-plugin-install__direct-install-container"
-						illustration={ wpOrgTheme?.screenshot || '/calypso/images/illustrations/error.svg' }
-						illustrationWidth={ wpOrgTheme?.screenshot && 720 }
+						illustration={
+							thirdPartyTheme?.screenshot || '/calypso/images/illustrations/error.svg'
+						}
+						illustrationWidth={ thirdPartyTheme?.screenshot && 720 }
 						title={ productName }
 						line={ translate( 'Do you want to activate the theme %(theme)s?', {
-							args: { theme: wpOrgTheme?.name },
+							args: { theme: thirdPartyTheme?.name },
 						} ) }
 					>
 						{ isProductListFetched && (
