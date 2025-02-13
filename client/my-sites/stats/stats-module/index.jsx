@@ -7,7 +7,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { requestSiteStats } from 'calypso/state/stats/lists/actions';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
@@ -65,31 +64,7 @@ class StatsModule extends Component {
 		diffData: [],
 		dataHistory: [],
 		lastUpdated: null,
-		fireTimer: false,
 	};
-
-	componentDidMount() {
-		if ( this.state.fireTimer === false ) {
-			return;
-		}
-
-		const interval = this.props.query?.interval;
-		if ( ! interval ) {
-			return;
-		}
-
-		this.timer = setInterval( () => {
-			const { siteId, statType, query, dispatch } = this.props;
-			dispatch( requestSiteStats( siteId, statType, query ) );
-		}, interval );
-	}
-
-	componentWillUnmount() {
-		if ( this.state.fireTimer === false ) {
-			return;
-		}
-		clearInterval( this.timer );
-	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ! this.props.requesting && prevProps.requesting ) {
@@ -368,10 +343,6 @@ class StatsModule extends Component {
 	}
 }
 
-const mapDispatchToProps = ( dispatch ) => ( {
-	dispatch,
-} );
-
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );
 	const siteSlug = getSiteSlug( state, siteId );
@@ -387,4 +358,4 @@ export default connect( ( state, ownProps ) => {
 		gateStats,
 		gateDownloads,
 	};
-}, mapDispatchToProps )( localize( StatsModule ) );
+} )( localize( StatsModule ) );
