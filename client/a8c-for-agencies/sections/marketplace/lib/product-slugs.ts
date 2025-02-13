@@ -1,4 +1,4 @@
-export const securityProductSlugs = [
+export const SECURITY_PRODUCT_SLUGS = [
 	'jetpack-backup',
 	'jetpack-scan',
 	'jetpack-anti-spam',
@@ -6,15 +6,19 @@ export const securityProductSlugs = [
 	'jetpack-backup-storage',
 ];
 
-export const performanceProductSlugs = [ 'jetpack-boost', 'jetpack-search', 'jetpack-videopress' ];
+export const PERFORMANCE_PRODUCT_SLUGS = [
+	'jetpack-boost',
+	'jetpack-search',
+	'jetpack-videopress',
+];
 
-export const socialProductSlugs = [ 'jetpack-social' ];
+export const SOCIAL_PRODUCT_SLUGS = [ 'jetpack-social' ];
 
-export const growthProductSlugs = [ 'jetpack-creator', 'jetpack-ai', 'jetpack-stats' ];
+export const GROWTH_PRODUCT_SLUGS = [ 'jetpack-creator', 'jetpack-ai', 'jetpack-stats' ];
 
-export const paymentsProductSlugs = [ 'woocommerce-woopayments' ];
+export const PAYMENTS_PRODUCT_SLUGS = [ 'woocommerce-woopayments' ];
 
-export const shippingDeliveryFulfillmentProductSlugs = [
+export const SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS = [
 	'woocommerce-advanced-notifications',
 	'woocommerce-all-products-woo-subscriptions',
 	'woocommerce-conditional-shipping-payments',
@@ -26,7 +30,8 @@ export const shippingDeliveryFulfillmentProductSlugs = [
 	'woocommerce-order-barcodes',
 	'woocommerce-shipping',
 ];
-export const conversionProductSlugs = [
+
+export const CONVERSION_PRODUCT_SLUGS = [
 	'woocommerce-back-in-stock-notifications',
 	'woocommerce-checkout-field-editor',
 	'woocommerce-product-recommendations',
@@ -35,14 +40,16 @@ export const conversionProductSlugs = [
 	'woocommerce-product-add-ons',
 	'woocommerce-product-bundles',
 ];
-export const customerServiceProductSlugs = [
+
+export const CUSTOMER_SERVICE_PRODUCT_SLUGS = [
 	'woocommerce-automatewoo',
 	'woocommerce-automatewoo-birthdays',
 	'woocommerce-automatewoo-refer-a-friend',
 	'woocommerce-returns-warranty-requests',
 	'woocommerce-shipment-tracking',
 ];
-export const merchandisingProductSlugs = [
+
+export const MERCHANDISING_PRODUCT_SLUGS = [
 	'woocommerce-composite-products',
 	'woocommerce-eu-vat-number',
 	'woocommerce-gift-cards',
@@ -54,7 +61,8 @@ export const merchandisingProductSlugs = [
 	'woocommerce-subscription-downloads',
 	'woocommerce-subscriptions',
 ];
-export const storeContentProductSlugs = [
+
+export const STORE_CONTENT_PRODUCT_SLUGS = [
 	'woocommerce-accommodations-bookings',
 	'woocommerce-additional-image-variations',
 	'woocommerce-bookings',
@@ -64,7 +72,8 @@ export const storeContentProductSlugs = [
 	'woocommerce-minmax-quantities',
 	'woocommerce-one-page-checkout',
 ];
-export const storeManagementProductSlugs = [
+
+export const STORE_MANAGEMENT_PRODUCT_SLUGS = [
 	'woocommerce-bulk-stock-management',
 	'woocommerce-product-csv-import-suite',
 	'woocommerce-tax',

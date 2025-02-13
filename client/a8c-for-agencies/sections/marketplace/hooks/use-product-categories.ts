@@ -4,17 +4,17 @@ import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-por
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { isProductType } from '../lib/product-filter';
 import {
-	securityProductSlugs,
-	performanceProductSlugs,
-	socialProductSlugs,
-	growthProductSlugs,
-	paymentsProductSlugs,
-	shippingDeliveryFulfillmentProductSlugs,
-	conversionProductSlugs,
-	customerServiceProductSlugs,
-	merchandisingProductSlugs,
-	storeContentProductSlugs,
-	storeManagementProductSlugs,
+	SECURITY_PRODUCT_SLUGS,
+	PERFORMANCE_PRODUCT_SLUGS,
+	SOCIAL_PRODUCT_SLUGS,
+	GROWTH_PRODUCT_SLUGS,
+	PAYMENTS_PRODUCT_SLUGS,
+	SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS,
+	CONVERSION_PRODUCT_SLUGS,
+	CUSTOMER_SERVICE_PRODUCT_SLUGS,
+	MERCHANDISING_PRODUCT_SLUGS,
+	STORE_CONTENT_PRODUCT_SLUGS,
+	STORE_MANAGEMENT_PRODUCT_SLUGS,
 } from '../lib/product-slugs';
 
 type CategoryConfig = {
@@ -33,17 +33,17 @@ export function useProductCategories( product: APIProductFamilyProduct ): string
 			: [];
 
 		const CATEGORIES: CategoryConfig[] = [
-			{ slugs: securityProductSlugs, label: translate( 'security' ) },
-			{ slugs: performanceProductSlugs, label: translate( 'performance' ) },
-			{ slugs: socialProductSlugs, label: translate( 'social' ) },
-			{ slugs: growthProductSlugs, label: translate( 'growth' ) },
-			{ slugs: paymentsProductSlugs, label: translate( 'payments' ) },
-			{ slugs: shippingDeliveryFulfillmentProductSlugs, label: translate( 'shipping' ) },
-			{ slugs: conversionProductSlugs, label: translate( 'conversion' ) },
-			{ slugs: customerServiceProductSlugs, label: translate( 'customer service' ) },
-			{ slugs: merchandisingProductSlugs, label: translate( 'merchandising' ) },
-			{ slugs: storeContentProductSlugs, label: translate( 'store content' ) },
-			{ slugs: storeManagementProductSlugs, label: translate( 'store management' ) },
+			{ slugs: SECURITY_PRODUCT_SLUGS, label: translate( 'security' ) },
+			{ slugs: PERFORMANCE_PRODUCT_SLUGS, label: translate( 'performance' ) },
+			{ slugs: SOCIAL_PRODUCT_SLUGS, label: translate( 'social' ) },
+			{ slugs: GROWTH_PRODUCT_SLUGS, label: translate( 'growth' ) },
+			{ slugs: PAYMENTS_PRODUCT_SLUGS, label: translate( 'payments' ) },
+			{ slugs: SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS, label: translate( 'shipping' ) },
+			{ slugs: CONVERSION_PRODUCT_SLUGS, label: translate( 'conversion' ) },
+			{ slugs: CUSTOMER_SERVICE_PRODUCT_SLUGS, label: translate( 'customer service' ) },
+			{ slugs: MERCHANDISING_PRODUCT_SLUGS, label: translate( 'merchandising' ) },
+			{ slugs: STORE_CONTENT_PRODUCT_SLUGS, label: translate( 'store content' ) },
+			{ slugs: STORE_MANAGEMENT_PRODUCT_SLUGS, label: translate( 'store management' ) },
 		];
 
 		// Add regular categories
