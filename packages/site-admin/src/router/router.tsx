@@ -2,47 +2,16 @@
  * External dependencies
  */
 import { useEvent } from '@wordpress/compose';
-import { useContext, useSyncExternalStore, useMemo } from '@wordpress/element';
+import { useContext, useMemo } from '@wordpress/element';
 import { getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
-import { createBrowserHistory } from 'history';
-import RouteRecognizer from 'route-recognizer';
 /**
  * Internal dependencies
  */
-import { ConfigContext, RoutesContext } from '.';
-import { useMatch } from './';
-/**
- * Types
- */
-import type { BeforeNavigate, Route } from './types';
-import type { ReactNode } from 'react';
+import { browserHistory, ConfigContext } from '.';
 
-const history = createBrowserHistory();
-
-export interface NavigationOptions {
+interface NavigationOptions {
 	transition?: string;
 	state?: Record< string, any >;
-}
-
-const locationMemo = new WeakMap();
-function getLocationWithQuery() {
-	const location = history.location;
-	let locationWithQuery = locationMemo.get( location );
-	if ( ! locationWithQuery ) {
-		locationWithQuery = {
-			...location,
-			query: Object.fromEntries( new URLSearchParams( location.search ) ),
-		};
-		locationMemo.set( location, locationWithQuery );
-	}
-	return locationWithQuery;
-}
-
-interface RouterProviderProps {
-	routes: Route[];
-	pathArg: string;
-	beforeNavigate?: BeforeNavigate;
-	children: ReactNode;
 }
 
 export function useHistory() {
@@ -55,7 +24,7 @@ export function useHistory() {
 		const performPush = () => {
 			const result = beforeNavigate ? beforeNavigate( { path, query } ) : { path, query };
 
-			return history.push(
+			return browserHistory.push(
 				{
 					search: buildQueryString( {
 						[ pathArg ]: result.path,
@@ -90,39 +59,8 @@ export function useHistory() {
 	return useMemo(
 		() => ( {
 			navigate,
-			back: history.back,
+			back: browserHistory.back,
 		} ),
 		[ navigate ]
-	);
-}
-
-export function RouterProvider( {
-	routes,
-	pathArg,
-	beforeNavigate,
-	children,
-}: RouterProviderProps ) {
-	const location = useSyncExternalStore(
-		history.listen,
-		getLocationWithQuery,
-		getLocationWithQuery
-	);
-	const matcher = useMemo( () => {
-		const ret = new RouteRecognizer();
-		routes.forEach( ( route ) => {
-			ret.add( [ { path: route.path, handler: route } ], {
-				as: route.name,
-			} );
-		} );
-		return ret;
-	}, [ routes ] );
-
-	const match = useMatch( location, matcher, pathArg );
-	const config = useMemo( () => ( { beforeNavigate, pathArg } ), [ beforeNavigate, pathArg ] );
-
-	return (
-		<ConfigContext.Provider value={ config }>
-			<RoutesContext.Provider value={ match }>{ children }</RoutesContext.Provider>
-		</ConfigContext.Provider>
 	);
 }

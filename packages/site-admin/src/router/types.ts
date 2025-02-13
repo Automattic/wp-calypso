@@ -29,3 +29,10 @@ export interface Route {
 	areas: Record< string, ReactNode >;
 	widths: Record< string, number >;
 }
+
+export interface RouterProviderProps {
+	routes: Route[];
+	pathArg: string;
+	beforeNavigate?: BeforeNavigate;
+	children: ReactNode;
+}
