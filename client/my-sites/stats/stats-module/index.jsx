@@ -261,9 +261,25 @@ class StatsModule extends Component {
 		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
 		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
-		const footerClass = clsx( 'stats-module__footer-actions', {
-			'stats-module__footer-actions--summary': summary,
-		} );
+
+		const renderDownloadCsv = () => {
+			if ( gateDownloads ) {
+				return <DownloadCsvUpsell siteId={ siteId } borderless />;
+			}
+
+			return (
+				<DownloadCsv
+					statType={ statType }
+					query={ query }
+					path={ path }
+					borderless
+					period={ period }
+					skipQuery={ skipQuery }
+				/>
+			);
+		};
+
+		const downloadCsv = renderDownloadCsv();
 
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
@@ -281,6 +297,7 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
+					downloadCsv={ downloadCsv }
 					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
@@ -305,6 +322,7 @@ class StatsModule extends Component {
 					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }
+					multiHeader={ isAllTime }
 					mainItemLabel={ mainItemLabel }
 					showLeftIcon={ path === 'authors' }
 					listItemClassName={ listItemClassName }
@@ -322,22 +340,6 @@ class StatsModule extends Component {
 					}
 					formatValue={ formatValue }
 				/>
-				{ isAllTime && (
-					<div className={ footerClass }>
-						{ gateDownloads ? (
-							<DownloadCsvUpsell siteId={ siteId } borderless />
-						) : (
-							<DownloadCsv
-								statType={ statType }
-								query={ query }
-								path={ path }
-								borderless
-								period={ period }
-								skipQuery={ skipQuery }
-							/>
-						) }
-					</div>
-				) }
 			</>
 		);
 	}

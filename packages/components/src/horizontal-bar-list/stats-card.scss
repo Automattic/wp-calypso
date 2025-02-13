@@ -71,6 +71,12 @@
 		}
 	}
 
+	.stats-card-sub-header {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 $padding-outside $header-spacer $padding-outside;
+	}
+
 	.stats-card-header--main {
 		display: flex;
 		justify-content: space-between;
