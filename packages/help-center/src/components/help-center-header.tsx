@@ -114,7 +114,7 @@ const ChatEllipsisMenu = () => {
 			<div className="conversation-menu__wrapper">
 				<button onClick={ clearChat }>
 					<Icon icon={ comment } />
-					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
 				</button>
 				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
 					<Icon icon={ scheduled } />
