@@ -139,7 +139,9 @@ describe( 'DomainOverviewPane', () => {
 	it( 'handles close button click', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Close' ) );
-		expect( page.show ).toHaveBeenCalledWith( '/domains/manage' );
+		expect( page.show ).toHaveBeenCalledWith(
+			'/domains/manage?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
+		);
 	} );
 } );
 
