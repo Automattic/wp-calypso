@@ -12,7 +12,8 @@
 	margin-left: -48px;
 }
 
-// TODO: this needs an upstream ticket.
+// https://github.com/WordPress/gutenberg/issues/69194
+// Needs discussion and implementation upstream.
 .dataviews-wrapper table.dataviews-view-table[aria-busy='true'] {
 	opacity: 0.5;
 }
