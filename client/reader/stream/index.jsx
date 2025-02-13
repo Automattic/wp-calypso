@@ -78,6 +78,7 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
+		showBack: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.func,
 		streamSidebar: PropTypes.func,
@@ -99,6 +100,7 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
+		showBack: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 	};
@@ -740,7 +742,7 @@ class ReaderStream extends Component {
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
-				<BackButton onClick={ this.handleBack } />
+				{ this.props.showBack && <BackButton onClick={ this.handleBack } /> }
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }
