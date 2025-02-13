@@ -141,8 +141,8 @@ export const useCreateSite = () => {
 			theme: string;
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
-		} ) => {
-			return createSite( {
+		} ) =>
+			createSite( {
 				flowName,
 				userIsLoggedIn,
 				isPurchasingDomainItem: false,
@@ -161,7 +161,6 @@ export const useCreateSite = () => {
 				domainItem: domains?.domainItem,
 				siteIntent,
 				planCartItems,
-			} );
-		},
+			} ),
 	} ).mutateAsync;
 };
