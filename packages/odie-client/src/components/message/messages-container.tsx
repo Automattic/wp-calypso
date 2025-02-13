@@ -48,7 +48,8 @@ interface ChatMessagesProps {
 }
 
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, botNameSlug, experimentVariationName, isChatLoaded } = useOdieAssistantContext();
+	const { chat, botNameSlug, experimentVariationName, isChatLoaded, isUserEligibleForPaidSupport } =
+		useOdieAssistantContext();
 	const createZendeskConversation = useCreateZendeskConversation();
 	const resetSupportInteraction = useResetSupportInteraction();
 	const [ searchParams, setSearchParams ] = useSearchParams();
@@ -64,17 +65,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
-	useHelpCenterChatScroll(
-		chat?.supportInteractionId,
-		scrollParentRef,
-		! shouldEnableAutoScroll && isChatLoaded
-	);
+	useHelpCenterChatScroll( chat?.supportInteractionId, scrollParentRef, ! shouldEnableAutoScroll );
 
 	useEffect( () => {
-		if ( navType === 'POP' ) {
+		if ( navType === 'POP' && ( isChatLoaded || ! isUserEligibleForPaidSupport ) ) {
 			setShouldEnableAutoScroll( false );
 		}
-	}, [ navType ] );
+	}, [ navType, isUserEligibleForPaidSupport, shouldEnableAutoScroll, isChatLoaded ] );
 
 	useEffect( () => {
 		if ( messagesContainerRef.current && scrollParentRef.current === null ) {
