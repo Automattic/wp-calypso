@@ -424,7 +424,11 @@ class ThemeSheet extends Component {
 	}
 
 	isWpcomOnlyTheme() {
-		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
+		return (
+			this.props.isWpcomTheme &&
+			! this.props.isExternallyManagedTheme &&
+			! this.props.stylesheet.startsWith( 'a8c' )
+		);
 	}
 
 	isThemeCurrentOne() {
