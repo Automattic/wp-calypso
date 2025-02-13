@@ -1057,7 +1057,7 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^10.0.1"
-    "@types/jasmine": "npm:^3.10.3"
+    "@types/jasmine": "npm:^3.10.18"
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
     "@types/karma-summary-reporter": "npm:^3.1.0"
@@ -8857,7 +8857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:^3.10.3":
+"@types/jasmine@npm:^3.10.18":
   version: 3.10.18
   resolution: "@types/jasmine@npm:3.10.18"
   checksum: 09914c65b09cb90536debd21c90000b27a26b730881d45e32c5c19cd429cdcf7407cf27dad2b11a5319bbba7e7e6d756b4a6f1f3c854b691bd1f0ac4f4ea1226
