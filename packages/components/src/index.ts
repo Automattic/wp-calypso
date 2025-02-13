@@ -1,6 +1,6 @@
 export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
-export { default as Button } from './button';
+export { Button } from './button';
 export type { ButtonProps } from './button';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
