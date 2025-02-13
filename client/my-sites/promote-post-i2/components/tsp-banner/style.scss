@@ -1,0 +1,64 @@
+.tsp-banner__container {
+	background-color: #f6f7f7;
+	border-radius: 4px;
+
+	.tsp-banner__content {
+		border: 0 none;
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		position: relative;
+
+		.tsp-banner__close {
+			cursor: pointer;
+			position: absolute;
+			top: 24px;
+			right: 24px;
+		}
+
+		.tsp-banner__text {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			// Max width by figma minus paddings
+			max-width: calc(582px - 42px - 72px);
+			padding-left: 42px;
+			padding-right: 72px;
+
+			.tsp-banner__header {
+				font-size: rem(32px);
+				line-height: 40px;
+			}
+
+			.tsp-banner__description {
+				font-size: rem(14px);
+				font-weight: 400;
+				line-height: 20px;
+				padding-bottom: 16px;
+				padding-top: 32px;
+
+				a, a:visited {
+					color: #50575e;
+					text-decoration: underline;
+				}
+
+				a:hover {
+					text-decoration: none;
+				}
+			}
+
+			.tsp-banner__link {
+				a, a:visited {
+					color: #3858e9;
+					font-size: rem(14px);
+					line-height: 20px;
+					font-weight: 500;
+				}
+			}
+		}
+	}
+
+	.tsp-banner__image {
+		padding-bottom: 42px;
+	}
+}
