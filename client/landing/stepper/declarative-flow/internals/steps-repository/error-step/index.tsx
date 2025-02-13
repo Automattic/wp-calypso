@@ -17,7 +17,7 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
-	const siteSetupError = useSiteSetupError();
+	const { error, message } = useSiteSetupError();
 
 	let domain = '';
 
@@ -25,20 +25,15 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 		domain = siteDomains[ 0 ].domain;
 	}
 
-	const messageCopy = () => {
-		return __(
-			'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
-		);
-	};
-
-	const headerText = siteSetupError?.error || __( "We've hit a snag" );
-	const bodyText = siteSetupError?.message || messageCopy();
-
 	const getContent = () => {
+		const errorMessage = [ error, message ].filter( Boolean ).join( ': ' );
 		return (
-			<WarningsOrHoldsSection>
-				<SupportCard domain={ domain } />
-			</WarningsOrHoldsSection>
+			<>
+				{ !! errorMessage && <p className="error-step__message">{ errorMessage }</p> }
+				<WarningsOrHoldsSection>
+					<SupportCard domain={ domain } />
+				</WarningsOrHoldsSection>
+			</>
 		);
 	};
 
@@ -50,8 +45,16 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<>
-					<FormattedHeader id="step-error-header" headerText={ headerText } align="left" />
-					<p>{ bodyText }</p>
+					<FormattedHeader
+						id="step-error-header"
+						headerText={ __( "We've hit a snag" ) }
+						align="left"
+					/>
+					<p>
+						{ __(
+							'It looks like something went wrong while setting up your site. Please contact support so that we can help you out.'
+						) }
+					</p>
 				</>
 			}
 			stepContent={ getContent() }

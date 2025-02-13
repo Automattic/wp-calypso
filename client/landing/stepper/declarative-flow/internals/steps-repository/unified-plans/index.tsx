@@ -126,6 +126,7 @@ export default function PlansStepAdaptor( props: StepProps ) {
 			setPendingAction( async () => {
 				return setDesignOnSite( site?.ID, defaultDesign, {
 					styleVariation: defaultDesign?.style_variations?.[ 0 ],
+					enableThemeSetup: true,
 				} ).then( async ( theme: ActiveTheme ) => {
 					await updateLaunchpadSettings( site?.ID || '', {
 						checklist_statuses: { design_completed: false },

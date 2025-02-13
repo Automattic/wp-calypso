@@ -582,10 +582,16 @@ describe( 'Site Actions', () => {
 
 		it( 'should call theme-setup api', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
-			const generator = setDesignOnSite( siteSlug, {
-				...mockedDesign,
-				slug: 'arbutus',
-			} );
+			const generator = setDesignOnSite(
+				siteSlug,
+				{
+					...mockedDesign,
+					slug: 'arbutus',
+				},
+				{
+					enableThemeSetup: true,
+				}
+			);
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
 			expect( generator.next().value ).toEqual(
@@ -595,7 +601,7 @@ describe( 'Site Actions', () => {
 			);
 
 			// Second iteration: WP_COM_REQUEST to /sites/${ siteSlug }/theme-setup is fired
-			expect( generator.next().value ).toEqual( createMockedThemeSetupApiRequest() );
+			expect( generator.next( {} ).value ).toEqual( createMockedThemeSetupApiRequest() );
 
 			// Second iteration: Complete the cycle
 			expect( generator.next().done ).toEqual( true );

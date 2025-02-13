@@ -129,7 +129,9 @@ const pluginBundleFlow: FlowV1 = {
 						setGoalsOnSite( siteSlug, goals ),
 					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
+						pendingActions.push(
+							setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN, { enableThemeSetup: true } )
+						);
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );

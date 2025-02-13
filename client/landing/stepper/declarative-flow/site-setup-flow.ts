@@ -1,8 +1,4 @@
-import {
-	Onboard,
-	updateLaunchpadSettings,
-	getThemeIdFromStylesheet,
-} from '@automattic/data-stores';
+import { Onboard, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
@@ -15,9 +11,9 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
-import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
+import { useActivateDesign } from '../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
@@ -34,9 +30,6 @@ import {
 	ProvidedDependencies,
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
-import type { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
-import type { AnyAction } from 'redux';
-import type { ThunkAction } from 'redux-thunk';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -199,7 +192,9 @@ const siteSetupFlow: FlowV1 = {
 					const pendingActions = [];
 
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
+						pendingActions.push(
+							setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN, { enableThemeSetup: true } )
+						);
 					}
 
 					// Update Launchpad option based on site intent
@@ -668,7 +663,6 @@ const siteSetupFlow: FlowV1 = {
 		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const { siteSlugOrId, siteId } = useSiteData();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
 		const { selectedDesign, selectedStyleVariation, selectedGlobalStyles } = useSelect(
 			( select ) => {
 				const { getSelectedDesign, getSelectedStyleVariation, getSelectedGlobalStyles } = select(
@@ -687,6 +681,8 @@ const siteSetupFlow: FlowV1 = {
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
 
+		const activateDesign = useActivateDesign();
+
 		useEffect( () => {
 			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
@@ -697,60 +693,32 @@ const siteSetupFlow: FlowV1 = {
 					return;
 				}
 
-				// Complete the "Select a design" task only when there is a selected design.
+				try {
+					await activateDesign( selectedDesign, {
+						styleVariation: selectedStyleVariation,
+						globalStyles: selectedGlobalStyles,
+					} );
+				} catch ( error: any ) {
+					// We attempt to set the design on the site anyway even when the checkout is skipped.
+					// That's because the user might have selected a free design, and there's no reason
+					// we shouldn't set that design on the site when the checkout is skipped.
+					// If the ThemeNotPurchasedError is thrown we know that they actually selected a
+					// paid theme and we're unable to apply it.
+					if ( error.name !== 'ThemeNotPurchasedError' || skippedCheckout !== '1' ) {
+						throw error;
+					}
+				}
+
 				const design_completed = selectedDesign?.default ? false : true;
 				await updateLaunchpadSettings( siteSlugOrId, {
 					checklist_statuses: { design_completed },
 				} );
-
-				if ( selectedDesign?.is_virtual ) {
-					const themeId = getThemeIdFromStylesheet( selectedDesign.recipe?.stylesheet ?? '' );
-					return Promise.resolve()
-						.then( () =>
-							dispatch(
-								activateOrInstallThenActivate( themeId ?? '', siteId, {
-									source: 'assembler',
-								} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
-							)
-						)
-						.then( ( activeThemeStylesheet: string ) =>
-							assembleSite( siteSlugOrId, activeThemeStylesheet, {
-								homeHtml: selectedDesign.recipe?.pattern_html,
-								headerHtml: selectedDesign.recipe?.header_html,
-								footerHtml: selectedDesign.recipe?.footer_html,
-								siteSetupOption: 'assembler-virtual-theme',
-							} )
-						);
-				}
-
-				return setDesignOnSite( siteSlugOrId, selectedDesign, {
-					styleVariation: selectedStyleVariation,
-					globalStyles: selectedGlobalStyles,
-				} )
-					.then( async ( theme: ActiveTheme ) => {
-						const design_completed = selectedDesign?.default ? false : true;
-						await updateLaunchpadSettings( siteSlugOrId, {
-							checklist_statuses: { design_completed },
-						} );
-						return dispatch( setActiveTheme( siteId, theme ) );
-					} )
-					.catch( ( error: Error ) => {
-						// We attempt to set the design on the site anyway even when the checkout is skipped.
-						// That's because the user might have selected a free design, and there's no reason
-						// we shouldn't set that design on the site when the checkout is skipped.
-						// If the ThemeNotPurchasedError is thrown we know that they actually selected a
-						// paid theme and we're unable to apply it.
-						if ( error.name === 'ThemeNotPurchasedError' && skippedCheckout === '1' ) {
-							return;
-						}
-						throw error;
-					} );
 			} );
 		}, [
 			isGoalsAtFrontExperiment,
 			siteSlugOrId,
 			siteId,
-			setDesignOnSite,
+			activateDesign,
 			selectedDesign,
 			setPendingAction,
 			dispatch,

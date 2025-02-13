@@ -97,6 +97,8 @@ export interface Design {
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	globalStyles?: GlobalStylesObject;
+	/** Potentially runs Headstart. */
+	enableThemeSetup?: boolean;
 }
 
 export interface DesignPreviewOptions {

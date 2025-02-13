@@ -404,7 +404,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			selectedDesign.slug ||
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] ||
 			selectedDesign.theme;
-		const { styleVariation, globalStyles } = options;
+		const { styleVariation, globalStyles, enableThemeSetup } = options;
 		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine?_locale=user`,
 			apiVersion: '1.1',
@@ -413,15 +413,16 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			},
 			method: 'POST',
 		} );
+		const activatedThemeId = activatedTheme.stylesheet ?? activatedTheme.id;
 
 		if ( styleVariation?.slug === DEFAULT_GLOBAL_STYLES_VARIATION_SLUG ) {
-			yield* resetGlobalStyles( siteSlug, activatedTheme.stylesheet, activatedTheme );
+			yield* resetGlobalStyles( siteSlug, activatedThemeId, activatedTheme );
 		}
 		// @todo Always use the global styles for consistency
 		else if ( styleVariation?.slug ) {
 			const variations: GlobalStyles[] = yield* getGlobalStylesVariations(
 				siteSlug,
-				activatedTheme.stylesheet
+				activatedThemeId
 			);
 			const currentVariation = variations.find(
 				( variation ) =>
@@ -430,22 +431,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				yield* setGlobalStyles(
-					siteSlug,
-					activatedTheme.stylesheet,
-					currentVariation,
-					activatedTheme
-				);
+				yield* setGlobalStyles( siteSlug, activatedThemeId, currentVariation, activatedTheme );
 			}
 		}
 
 		if ( globalStyles ) {
-			yield* setGlobalStyles( siteSlug, activatedTheme.stylesheet, globalStyles, activatedTheme );
+			yield* setGlobalStyles( siteSlug, activatedThemeId, globalStyles, activatedTheme );
 		}
 
 		// Potentially runs Headstart.
 		// E.g. if the homepage has a Query Loop block, we insert placeholder posts on the new site.
-		yield* runThemeSetupOnSite( siteSlug );
+		if ( enableThemeSetup ) {
+			yield* runThemeSetupOnSite( siteSlug );
+		}
 
 		return activatedTheme;
 	}
