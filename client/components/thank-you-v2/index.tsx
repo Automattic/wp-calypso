@@ -5,8 +5,6 @@ import ThankYouFooter, { ThankYouFooterDetailProps } from './footer';
 import ThankYouHeader from './header';
 import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
 
-const CONFETTI_ANIMATION_DELAY_MS = 2500;
-
 import './style.scss';
 
 interface ThankYouV2Props {
@@ -37,9 +35,8 @@ export default function ThankYouV2( props: ThankYouV2Props ) {
 	useEffect( () => {
 		if ( showSuccessAnimation ) {
 			setShouldShowAnimation( true );
-			setTimeout( () => setShouldShowAnimation( false ), CONFETTI_ANIMATION_DELAY_MS );
 		}
-	}, [] );
+	}, [ showSuccessAnimation ] );
 
 	return (
 		<div className="thank-you">
