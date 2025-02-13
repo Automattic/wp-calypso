@@ -10,10 +10,15 @@ import { browserHistory, ConfigContext, RoutesContext, useMatch } from '../';
 /**
  * Types
  */
-import type { RouterProviderProps } from '../types';
+import type { LocationWithQuery, RouterProviderProps } from '../types';
+import type { JSX } from 'react';
 
+/**
+ * Cache for storing location objects with parsed query parameters.
+ */
 const locationMemo = new WeakMap();
-function getLocationWithQuery() {
+
+function getLocationWithQuery(): LocationWithQuery {
 	const location = browserHistory.location;
 	let locationWithQuery = locationMemo.get( location );
 	if ( ! locationWithQuery ) {
@@ -26,6 +31,26 @@ function getLocationWithQuery() {
 	return locationWithQuery;
 }
 
+/**
+ * Provides routing context for the application.
+ *
+ * This provider initializes and maintains the routing state using `browserHistory`,
+ * and manages route recognition and navigation context.
+ * @param {RouterProviderProps} props - The properties for the router provider.
+ * @returns {JSX.Element} The router context provider wrapping child components.
+ * @example
+ * ```tsx
+ * import { RouterProvider } from '../router';
+ *
+ * function App() {
+ *     return (
+ *         <RouterProvider routes={ [ { name: 'home', path: '/' } ] } pathArg="p">
+ *             <MyComponent />
+ *         </RouterProvider>
+ *     );
+ * }
+ * ```
+ */
 export function RouterProvider( {
 	routes,
 	pathArg,
