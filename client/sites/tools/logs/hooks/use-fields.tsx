@@ -73,6 +73,12 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 				enableSorting: false,
 			},
 			{ id: 'line', type: 'integer', label: __( 'Line' ), enableSorting: false },
+			{
+				id: 'atomic_site_id',
+				type: 'integer',
+				label: __( 'Atomic Site ID' ),
+				enableSorting: false,
+			},
 		] as Field< PHPLog | ServerLog >[];
 	}
 
@@ -133,7 +139,6 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			},
 			enableSorting: false,
 		},
-		{ id: 'timestamp', type: 'integer', label: __( 'Timestamp' ), enableSorting: false },
 		{
 			id: 'body_bytes_sent',
 			type: 'integer',
@@ -145,10 +150,71 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 		{
 			id: 'http_referer',
 			type: 'text',
-			label: __( 'Referrer' ),
+			label: __( 'HTTP Referrer' ),
 			render: ( { item }: { item: ServerLog } ) => {
-				return <span className="site-logs-table__http-referer">{ item.request_url }</span>;
+				return <span className="site-logs-table__http-referer">{ item.http_referer }</span>;
 			},
+			enableSorting: false,
+		},
+		{
+			id: 'http2',
+			type: 'text',
+			label: __( 'HTTP2' ),
+			enableSorting: false,
+		},
+		{
+			id: 'http_user_agent',
+			type: 'text',
+			label: __( 'HTTP User Agent' ),
+			enableSorting: false,
+		},
+		{
+			id: 'http_version',
+			type: 'text',
+			label: __( 'HTTP Version' ),
+			enableSorting: false,
+		},
+		{
+			id: 'http_x_forwarded_for',
+			type: 'text',
+			label: __( 'HTTP X Forwarded Port' ),
+			enableSorting: false,
+		},
+		{
+			id: 'renderer',
+			type: 'text',
+			label: __( 'Renderer' ),
+			enableSorting: false,
+		},
+		{
+			id: 'request_completion',
+			type: 'text',
+			label: __( 'Request Completion' ),
+			enableSorting: false,
+		},
+		{
+			id: 'request_time',
+			type: 'text',
+			label: __( 'Request Time' ),
+			enableSorting: false,
+		},
+		{
+			id: 'scheme',
+			type: 'text',
+			label: __( 'Scheme' ),
+			enableSorting: false,
+		},
+		{ id: 'timestamp', type: 'integer', label: __( 'Timestamp' ), enableSorting: false },
+		{
+			id: 'type',
+			type: 'text',
+			label: __( 'Type' ),
+			enableSorting: false,
+		},
+		{
+			id: 'user_ip',
+			type: 'text',
+			label: __( 'User IP' ),
 			enableSorting: false,
 		},
 	] as Field< PHPLog | ServerLog >[];
