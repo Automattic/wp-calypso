@@ -294,35 +294,6 @@ export const SiteLogsDataViews = ( {
 	);
 	const getTimestampForNow = useCallback( () => moment().unix().toString( 10 ), [ moment ] );
 
-	const startTime = useMemo(
-		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
-		[ query.from, getMomentFromTimestamp ]
-	);
-	const endTime = useMemo(
-		() => getMomentFromTimestamp( query.to ),
-		[ query.to, getMomentFromTimestamp ]
-	);
-
-	const handleStartTimeChange = useCallback( ( updatedStartTime: Moment ) => {
-		const url = new URL( window.location.href );
-		if ( ! updatedStartTime.isValid() ) {
-			url.searchParams.delete( 'from' );
-		} else {
-			url.searchParams.set( 'from', updatedStartTime.unix().toString( 10 ) );
-		}
-		page.replace( url.pathname + url.search );
-	}, [] );
-
-	const handleEndTimeChange = useCallback( ( updatedEndTime: Moment ) => {
-		const url = new URL( window.location.href );
-		if ( ! updatedEndTime.isValid() ) {
-			url.searchParams.delete( 'to' );
-		} else {
-			url.searchParams.set( 'to', updatedEndTime.unix().toString( 10 ) );
-		}
-		page.replace( url.pathname + url.search );
-	}, [] );
-
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const autoRefreshCallback = useCallback( () => {
 		const url = new URL( window.location.href );
@@ -347,6 +318,39 @@ export const SiteLogsDataViews = ( {
 		dispatch( recordTracksEvent( 'calypso_site_logs_auto_refresh', { enabled: isChecked } ) );
 		setAutoRefresh( isChecked );
 	};
+
+	const startTime = useMemo(
+		() => getMomentFromTimestamp( query.from, '7-days-ago' ),
+		[ query.from, getMomentFromTimestamp ]
+	);
+	const endTime = useMemo(
+		() => getMomentFromTimestamp( query.to ),
+		[ query.to, getMomentFromTimestamp ]
+	);
+
+	const handleStartTimeChange = useCallback( ( updatedStartTime: Moment ) => {
+		setAutoRefresh( false );
+
+		const url = new URL( window.location.href );
+		if ( ! updatedStartTime.isValid() ) {
+			url.searchParams.delete( 'from' );
+		} else {
+			url.searchParams.set( 'from', updatedStartTime.unix().toString( 10 ) );
+		}
+		page.replace( url.pathname + url.search );
+	}, [] );
+
+	const handleEndTimeChange = useCallback( ( updatedEndTime: Moment ) => {
+		setAutoRefresh( false );
+
+		const url = new URL( window.location.href );
+		if ( ! updatedEndTime.isValid() ) {
+			url.searchParams.delete( 'to' );
+		} else {
+			url.searchParams.set( 'to', updatedEndTime.unix().toString( 10 ) );
+		}
+		page.replace( url.pathname + url.search );
+	}, [] );
 
 	const [ view, setView ] = useView( { logType } );
 	const oldSeverity = getFilterValue( view, 'severity' )?.sort().toString() || '';
