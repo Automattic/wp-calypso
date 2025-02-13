@@ -2,15 +2,19 @@
  * External dependencies
  */
 import { useEvent } from '@wordpress/compose';
-import { createContext, useContext, useSyncExternalStore, useMemo } from '@wordpress/element';
+import { useContext, useSyncExternalStore, useMemo } from '@wordpress/element';
 import { addQueryArgs, getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
 import { createBrowserHistory } from 'history';
 import RouteRecognizer from 'route-recognizer';
-import type { ReactNode } from 'react';
-
 /**
  * Internal dependencies
  */
+import { ConfigContext, RoutesContext } from '.';
+/**
+ * Types
+ */
+import type { BeforeNavigate, Match } from './types';
+import type { ReactNode } from 'react';
 
 const history = createBrowserHistory();
 interface Route {
@@ -24,32 +28,10 @@ type LocationWithQuery = Location & {
 	query?: Record< string, any >;
 };
 
-interface Match {
-	name: string;
-	path: string;
-	areas: Record< string, ReactNode >;
-	widths: Record< string, number >;
-	query?: Record< string, any >;
-	params?: Record< string, any >;
-}
-
-export type BeforeNavigate = ( arg: { path: string; query: Record< string, any > } ) => {
-	path: string;
-	query: Record< string, any >;
-};
-
-interface Config {
-	pathArg: string;
-	beforeNavigate?: BeforeNavigate;
-}
-
 export interface NavigationOptions {
 	transition?: string;
 	state?: Record< string, any >;
 }
-
-const RoutesContext = createContext< Match | null >( null );
-export const ConfigContext = createContext< Config >( { pathArg: 'p' } );
 
 const locationMemo = new WeakMap();
 function getLocationWithQuery() {
@@ -63,14 +45,6 @@ function getLocationWithQuery() {
 		locationMemo.set( location, locationWithQuery );
 	}
 	return locationWithQuery;
-}
-
-export function useLocation() {
-	const context = useContext( RoutesContext );
-	if ( ! context ) {
-		throw new Error( 'useLocation must be used within a RouterProvider' );
-	}
-	return context;
 }
 
 interface RouterProviderProps {
