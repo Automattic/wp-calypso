@@ -38,7 +38,6 @@ import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-l
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { Skeleton } from './components/site-logs-table/skeleton';
 import { DateTimePicker } from './components/site-logs-toolbar/date-time-picker';
 import useActions from './hooks/use-actions';
 import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
@@ -327,7 +326,7 @@ export const SiteLogsDataViews = ( {
 	const fields = useFields( { logType } );
 	const actions = useActions( { logType } );
 	const [ view, setView ] = useView( { logType } );
-	const { data, paginationInfo, isLoading, isInitialLoad } = useData( {
+	const { data, paginationInfo, isLoading } = useData( {
 		view,
 		logType,
 		startTime,
@@ -459,39 +458,36 @@ export const SiteLogsDataViews = ( {
 					</label>
 				</div>
 			</div>
-			{ isInitialLoad && <Skeleton className="site-logs-table-webserver__skeleton" /> }
-			{ ! isInitialLoad && (
-				<DataViews< PHPLog | ServerLog >
-					data={ data }
-					isLoading={ isLoading }
-					paginationInfo={ paginationInfo }
-					fields={ fields }
-					view={ view }
-					onChangeView={ setView }
-					actions={ actions }
-					search={ false }
-					getItemId={ getItemId }
-					defaultLayouts={ { table: {} } }
-					header={
-						<>
-							<Button
-								size="compact"
-								icon={ download }
-								label="Download logs"
-								onClick={ onDownloadLogs }
-								isBusy={ isDownloading }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								className="site-logs__auto-refresh site-logs__auto-refresh_desktop"
-								label={ translate( 'Auto-refresh', { textOnly: true } ) }
-								checked={ autoRefresh }
-								onChange={ handleAutoRefreshClick }
-							/>
-						</>
-					}
-				/>
-			) }
+			<DataViews< PHPLog | ServerLog >
+				data={ data }
+				isLoading={ isLoading }
+				paginationInfo={ paginationInfo }
+				fields={ fields }
+				view={ view }
+				onChangeView={ setView }
+				actions={ actions }
+				search={ false }
+				getItemId={ getItemId }
+				defaultLayouts={ { table: {} } }
+				header={
+					<>
+						<Button
+							size="compact"
+							icon={ download }
+							label="Download logs"
+							onClick={ onDownloadLogs }
+							isBusy={ isDownloading }
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							className="site-logs__auto-refresh site-logs__auto-refresh_desktop"
+							label={ translate( 'Auto-refresh', { textOnly: true } ) }
+							checked={ autoRefresh }
+							onChange={ handleAutoRefreshClick }
+						/>
+					</>
+				}
+			/>
 		</>
 	);
 };
