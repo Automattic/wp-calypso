@@ -9,7 +9,7 @@ const stores = {
 			name: 'WooCommerce Analytics',
 			description:
 				'WooCommerce Analytics is a powerful tool that helps you understand how your store is performing and how you can improve your store’s performance.',
-			'root/__unstableBase': { site_icon_url: './woo-logo.png' },
+			'root/__unstableBase': { site_icon_url: './woocommerce/product-icon.svg' },
 		},
 	},
 	'Regular Site': {
@@ -23,7 +23,7 @@ const stores = {
 		[ coreDataStore.name ]: {
 			name: 'Jetpack Site',
 			description: 'A site with Jetpack installed.',
-			'root/__unstableBase': { site_icon_url: './jetpack-favicon-2018.png' },
+			'root/__unstableBase': { site_icon_url: './jetpack/connected.svg' },
 		},
 	},
 };
