@@ -97,7 +97,7 @@ export const FullScreenLaunchpad = ( {
 		completedSteps >= numberOfSteps - ( launchSiteTask ? 1 : 0 );
 
 	return (
-		<div className="is-launchpad-first" css={ { width: '100%' } }>
+		<div data-testid="launchpad-first" className="is-launchpad-first" css={ { width: '100%' } }>
 			<div
 				className={ clsx( `customer-home-launchpad customer-home__card is-small-hero`, {
 					'all-tasks-completed': isAllTasksCompleted,
