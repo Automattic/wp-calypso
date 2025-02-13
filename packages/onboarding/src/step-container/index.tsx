@@ -42,7 +42,6 @@ interface Props {
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
 	showHeaderJetpackPowered?: boolean;
 	showJetpackPowered?: boolean;
-	showHeaderWooCommercePowered?: boolean;
 	showFooterWooCommercePowered?: boolean;
 	backUrl?: string;
 }
@@ -82,7 +81,6 @@ const StepContainer: React.FC< Props > = ( {
 	stepSectionName,
 	recordTracksEvent,
 	showHeaderJetpackPowered,
-	showHeaderWooCommercePowered,
 	showJetpackPowered,
 	showFooterWooCommercePowered,
 } ) => {
@@ -201,11 +199,6 @@ const StepContainer: React.FC< Props > = ( {
 					{ showHeaderJetpackPowered && (
 						<div className="step-container__header-jetpack-powered">
 							<JetpackLogo monochrome size={ 18 } /> <span>{ translate( 'Jetpack powered' ) }</span>
-						</div>
-					) }
-					{ showHeaderWooCommercePowered && (
-						<div className="step-container__header-woocommerce-powered">
-							<WooCommerceWooLogo /> <span>{ translate( 'WooCommerce powered' ) }</span>
 						</div>
 					) }
 				</div>

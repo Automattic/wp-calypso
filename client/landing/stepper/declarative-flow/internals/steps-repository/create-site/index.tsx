@@ -1,10 +1,8 @@
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
-	ECOMMERCE_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
-	WOOEXPRESS_FLOW,
 	addPlanToCart,
 	addProductsToCart,
 	createSiteWithCart,
@@ -15,7 +13,6 @@ import {
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
-	isWooExpressFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
@@ -53,7 +50,6 @@ import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
-const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
@@ -120,8 +116,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	let theme = '';
 	if ( isImportFocusedFlow( flow ) || isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
-	} else if ( isWooExpressFlow( flow ) ) {
-		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
@@ -156,7 +150,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
-	const wooFlows = [ ECOMMERCE_FLOW, ENTREPRENEUR_FLOW, WOOEXPRESS_FLOW ];
+	const wooFlows = [ ENTREPRENEUR_FLOW ];
 
 	// These flows default to "Coming Soon"
 	if (
@@ -288,17 +282,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}, [] );
 
 	const getCurrentMessage = () => {
-		return isWooExpressFlow( flow )
-			? __( "Woo! We're creating your store" )
-			: __( 'Creating your site' );
+		return __( 'Creating your site' );
 	};
 
 	const getSubTitle = () => {
-		if ( isWooExpressFlow( flow ) ) {
-			return __(
-				'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
-			);
-		}
 		return null;
 	};
 

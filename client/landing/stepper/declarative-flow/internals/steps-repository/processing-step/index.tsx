@@ -4,7 +4,6 @@ import {
 	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
-	ECOMMERCE_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
@@ -180,7 +179,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
-	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Return tailored processing screens for flows that need them
 	if (
@@ -210,7 +208,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
-				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);

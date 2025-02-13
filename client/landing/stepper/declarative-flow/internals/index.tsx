@@ -1,4 +1,3 @@
-import { isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { lazy, useEffect } from 'react';
@@ -7,7 +6,6 @@ import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
@@ -158,9 +156,6 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				if ( isWooExpressFlow( flow.name ) ) {
-					return <WordPressLogo size={ 72 } className="wpcom-site__logo wpcom__loading" />;
-				}
 				return <Loading />;
 			case AssertConditionState.FAILURE:
 				return null;
@@ -248,7 +243,6 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 								key={ step.slug }
 								step={ step }
 								flow={ flow }
-								showWooLogo={ isWooExpressFlow( flow.name ) }
 								renderStep={ renderStep }
 								navigate={ navigate }
 							/>
