@@ -132,25 +132,6 @@ $woocommerce-purple-50: #720EEC;
 	align-items: flex-start;
 }
 
-.product-card__revenue-share-notice {
-	@include a4a-font-body-md;
-
-	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	gap: 4px;
-	margin-block-start: 16px;
-
-	svg {
-		flex-shrink: 0;
-	}
-
-	a {
-		text-decoration: underline;
-		color: var(--color-text);
-	}
-}
-
 @mixin product-card-block__title {
 	flex: 0 1  calc(100% - 34px);
 }

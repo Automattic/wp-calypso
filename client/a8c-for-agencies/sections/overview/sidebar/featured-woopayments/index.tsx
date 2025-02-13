@@ -1,4 +1,5 @@
 import page from '@automattic/calypso-router';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { A4A_MARKETPLACE_CHECKOUT_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useShoppingCart from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-shopping-cart';
@@ -6,8 +7,8 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import WooPaymentsFeaturedCard from './featured-card';
 import useWooPaymentsProduct from './hooks/use-get-woopayments-product';
-import WooPaymentsFeaturedCard from './woopayments-featured-card';
 
 import './style.scss';
 
@@ -15,7 +16,7 @@ const DISMISSED_PREFERENCE = 'a4a_woopayments_featured_overview_card_dismissed';
 
 export default function OverviewSidebarFeaturedWooPayments() {
 	const dispatch = useDispatch();
-
+	const translate = useTranslate();
 	const { setSelectedCartItems } = useShoppingCart();
 
 	const product = useWooPaymentsProduct();
@@ -51,9 +52,7 @@ export default function OverviewSidebarFeaturedWooPayments() {
 			products={ [ product ] }
 			onSelectProduct={ onAddToCart }
 			onDismiss={ onDismiss }
-			isSelected={ false }
-			asReferral={ false }
-			isDisabled={ false }
+			customCTALabel={ translate( 'Add to cart and checkout' ) }
 		/>
 	);
 }
