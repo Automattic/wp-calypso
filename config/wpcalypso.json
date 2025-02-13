@@ -105,7 +105,6 @@
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
-		"newsletter-categories-section": true,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
