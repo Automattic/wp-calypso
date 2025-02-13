@@ -117,6 +117,7 @@ export const FullScreenLaunchpad = ( {
 					siteSlug={ siteSlug }
 					checklistSlug={ checklistSlug }
 					launchpadContext={ launchpadContext }
+					onPostFilterTasks={ ( tasks ) => tasks.filter( ( task ) => ! task.isLaunchTask ) }
 					onSiteLaunched={ onSiteLaunched }
 					highlightNextAction
 				/>

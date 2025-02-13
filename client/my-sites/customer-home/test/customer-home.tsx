@@ -1,11 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import apiFetch from '@wordpress/api-fetch';
+import nock from 'nock';
 import React, { act } from 'react';
+import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import CustomerHome from '../../../main';
+import CustomerHome from '../main';
 import type { SiteDetails } from '@automattic/data-stores';
+
+jest.mock( '@wordpress/api-fetch' );
 
 jest.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
@@ -13,7 +18,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	return config;
 } );
 
-jest.mock( '../../../components/home-content', () => () => (
+jest.mock( '../components/home-content', () => () => (
 	<div data-testid="home-content">Home Content</div>
 ) );
 
@@ -32,7 +37,7 @@ function makeTestSite( site: Partial< SiteDetails > = {} ): SiteDetails {
 	return {
 		ID: 1,
 		title: 'Test Site',
-		slug: 'https://example.com',
+		slug: 'example.com',
 		URL: 'https://example.com',
 		domain: 'example.com',
 		launch_status: 'launched',
@@ -42,7 +47,15 @@ function makeTestSite( site: Partial< SiteDetails > = {} ): SiteDetails {
 	} as any; // This partial site object should be good enough for testing purposes
 }
 
-describe( 'Make sure CustomerHome render traditional home or Focused Launchpad', () => {
+describe( 'CustomerHome', () => {
+	beforeEach( () => {
+		nock.disableNetConnect();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'should show HomeContent for launched site', () => {
 		const testSite = makeTestSite( { launch_status: 'launched' } );
 
@@ -83,5 +96,59 @@ describe( 'Make sure CustomerHome render traditional home or Focused Launchpad',
 		// Verify HomeContent is now shown
 		expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument();
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
+	} );
+
+	it.only( 'should show the site launched modal once the site is launched', async () => {
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { site_creation_flow: 'onboarding', site_intent: 'write', launchpad_screen: false },
+		} );
+
+		nock( 'https://public-api.wordpress.com' ).get( '/wpcom/v2/sites/1/home/layout' ).reply( 200, {
+			primary: [],
+			secondary: [],
+		} );
+
+		const data = {
+			checklist_statuses: {
+				design_completed: true,
+				site_theme_selected: true,
+				site_launched: false,
+				site_edited: true,
+			},
+			launchpad_screen: 'full',
+			site_intent: 'write',
+			checklist: [
+				{
+					id: 'site_launched',
+					isLaunchTask: true,
+					title: 'Launch your site',
+					completed: false,
+				},
+			],
+		};
+
+		jest.mocked( apiFetch ).mockResolvedValue( data );
+
+		renderWithProvider( <CustomerHome site={ testSite } />, {
+			reducers: { ui },
+			initialState: {
+				sites: {
+					items: {
+						[ testSite.ID ]: testSite,
+					},
+				},
+				ui: {
+					selectedSiteId: testSite.ID,
+				},
+			},
+		} );
+
+		const launchSiteButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
+
+		// Click the Launch site button
+		act( () => launchSiteButton.click() );
+
+		expect( await screen.findByText( 'Congrats, your site is live!' ) ).toBeInTheDocument();
 	} );
 } );
