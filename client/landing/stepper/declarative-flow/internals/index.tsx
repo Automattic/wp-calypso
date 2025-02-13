@@ -5,6 +5,7 @@ import Modal from 'react-modal';
 import { generatePath, useParams } from 'react-router';
 import { Route, Routes } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import Loading from 'calypso/components/loading';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import { useSelector } from 'calypso/state';
@@ -155,7 +156,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 	const renderStep = ( step: StepperStep ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
-				return <StepperLoader />;
+				return <Loading />;
 			case AssertConditionState.FAILURE:
 				return null;
 		}
