@@ -132,16 +132,14 @@ describe( 'DomainOverviewPane', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Email' ) );
 		expect( page.show ).toHaveBeenCalledWith(
-			'/domains/manage/all/email/example.com/example.wordpress.com?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
+			'/domains/manage/all/email/example.com/example.wordpress.com'
 		);
 	} );
 
 	it( 'handles close button click', () => {
 		renderComponent();
 		fireEvent.click( screen.getByText( 'Close' ) );
-		expect( page.show ).toHaveBeenCalledWith(
-			'/domains/manage?page=1&perPage=50&sortField=domain_name&sortDirection=asc'
-		);
+		expect( page.show ).toHaveBeenCalledWith( '/domains/manage' );
 	} );
 } );
 

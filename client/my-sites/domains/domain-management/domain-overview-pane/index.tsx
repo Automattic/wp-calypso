@@ -7,11 +7,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
-import { addQueryArgs } from 'calypso/lib/url';
 import * as paths from 'calypso/my-sites/domains/paths';
 import SiteIcon from 'calypso/sites/components/sites-dataviews/site-icon';
 import { useSiteAdminInterfaceData } from 'calypso/state/sites/hooks';
-import { getQueryParams } from '../dataviews/query-params';
 import {
 	FEATURE_TO_ROUTE_MAP,
 	DOMAIN_OVERVIEW,
@@ -132,11 +130,11 @@ const DomainOverviewPane = ( {
 								? FEATURE_TO_ROUTE_MAP_IN_SITE_CONTEXT
 								: FEATURE_TO_ROUTE_MAP;
 
-							const featureUrl = featureMap[ defaultFeatureId ]
-								.replace( ':domain', selectedDomain )
-								.replace( ':site', siteSlug );
-
-							showDomainManagementPage( addQueryArgs( getQueryParams(), featureUrl ) );
+							showDomainManagementPage(
+								featureMap[ defaultFeatureId ]
+									.replace( ':domain', selectedDomain )
+									.replace( ':site', siteSlug )
+							);
 						}
 					},
 				},
@@ -189,9 +187,7 @@ const DomainOverviewPane = ( {
 			<ItemView
 				itemData={ itemData }
 				closeItemView={ () => {
-					inSiteContext
-						? page.show( '/sites' )
-						: page.show( addQueryArgs( getQueryParams(), paths.domainManagementRoot() ) );
+					inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
 				} }
 				features={ features }
 				enforceTabsView
