@@ -71,9 +71,9 @@ export function UserProfile( props: UserProfileProps ): JSX.Element | null {
 
 	return (
 		<div className="user-profile">
-			<div className={ `user-profile__content-wrapper${ showBack ? ' has-back-button' : '' }` }>
+			<div className={ `user-profile__wrapper${ showBack ? ' has-back-button' : '' }` }>
 				{ showBack && <BackButton onClick={ handleBack } /> }
-				<div className="user-profile__content">{ renderContent() }</div>
+				<div className="user-profile__wrapper-content">{ renderContent() }</div>
 			</div>
 		</div>
 	);
