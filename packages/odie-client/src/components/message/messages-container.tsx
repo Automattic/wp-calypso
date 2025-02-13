@@ -10,7 +10,7 @@ import {
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
 } from '../../hooks';
-import { useHelpCenterArticleScroll } from '../../hooks/use-help-center-chat-scroll';
+import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
 import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -64,7 +64,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
-	useHelpCenterArticleScroll(
+	useHelpCenterChatScroll(
 		chat?.supportInteractionId,
 		scrollParentRef,
 		! shouldEnableAutoScroll && isChatLoaded
