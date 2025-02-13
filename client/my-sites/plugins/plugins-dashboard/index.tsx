@@ -345,7 +345,7 @@ const PluginsDashboard = ( {
 			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
-					{ isA8CForAgencies() && <A4APluginsJetpackBanner /> }
+					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
 						{ ! pluginSlug && (

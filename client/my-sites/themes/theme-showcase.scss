@@ -69,7 +69,7 @@
 			display: flex;
 			flex-direction: column;
 			flex-grow: 1;
-			margin-top: 40px;
+			margin-top: 16px;
 			min-height: 0;
 			@media (max-width: $break-small) {
 				margin-top: 10px;
@@ -588,8 +588,8 @@
 			box-sizing: content-box;
 
 			.is-global-sidebar-visible & {
-				padding-top: 40px;
-				margin-top: -40px;
+				padding-top: 16px;
+				margin-top: -16px;
 				&.is-sticky {
 					height: auto;
 				}

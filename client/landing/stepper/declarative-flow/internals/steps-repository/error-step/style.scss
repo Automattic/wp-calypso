@@ -13,6 +13,13 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	}
 }
 
+.error-step__message {
+	padding: 12px;
+	border-radius: 4px;
+	color: var(--color-error-50);
+	background-color: var(--color-error-5);
+}
+
 .error-step__button {
 	background: $design-button-primary-color;
 	border-color: $design-button-primary-color;

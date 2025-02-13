@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
@@ -35,7 +36,19 @@ export const loadRemoveDuplicateViewsExperimentAssignment = async ( state: AppSt
 
 export const isRemoveDuplicateViewsExperimentEnabled = async ( state: AppState ) => {
 	const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment( state );
-	return experimentAssignment === 'treatment';
+	if ( experimentAssignment === 'treatment' ) {
+		return true;
+	}
+
+	/**
+	 * If we don't update the E2E tests, they will break when we start the "Remove duplicate views",
+	 * effectively blocking the Calypso deployment queue.
+	 */
+	if ( isE2ETest() ) {
+		return true;
+	}
+
+	return false;
 };
 
 export const useRemoveDuplicateViewsExperimentEnabled = (): boolean => {
