@@ -5,19 +5,28 @@ import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import AutoDirection from 'calypso/components/auto-direction';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
 
-const CompactPost = ( {
-	children,
-	post,
-	expandCard,
-	postKey,
-	isExpanded,
-	site,
-	postByline,
-	teams,
-	openSuggestedFollows,
-} ) => {
+const CompactPost = ( props ) => {
+	const {
+		children,
+		post,
+		expandCard,
+		postKey,
+		isExpanded,
+		site,
+		postByline,
+		teams,
+		openSuggestedFollows,
+	} = props;
+
+	// Rather than create complex logic to create context or pass props
+	// to see if the user is on the discover page, let's check the pathname
+	const path = window.location.pathname.split( '/' );
+	const isDiscover = path.length > 0 && path[ 1 ].includes( 'discover' );
+
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
 	const [ showExcerpt, setShowExcerpt ] = useState( ! isExpanded ?? true );
@@ -51,13 +60,25 @@ const CompactPost = ( {
 							{ postByline }
 						</div>
 						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) && (
-							<ReaderPostEllipsisMenu
-								site={ site }
-								teams={ teams }
-								post={ post }
-								showFollow
-								openSuggestedFollows={ openSuggestedFollows }
-							/>
+							<div className="reader-post-card__post-options">
+								{ isDiscover && (
+									<ReaderFollowButton
+										tagName="div"
+										siteUrl={ post.feed_URL || post.site_URL }
+										followSource={ READER_DISCOVER }
+										iconSize={ 20 }
+										followLabel="Subscribe"
+										followingLabel="Unsubscribe"
+									/>
+								) }
+								<ReaderPostEllipsisMenu
+									site={ site }
+									teams={ teams }
+									post={ post }
+									showFollow
+									openSuggestedFollows={ openSuggestedFollows }
+								/>
+							</div>
 						) }
 					</div>
 					<ReaderExcerpt
@@ -70,13 +91,25 @@ const CompactPost = ( {
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
 						{ ! isSmallScreen && hasExcerpt && (
-							<ReaderPostEllipsisMenu
-								site={ site }
-								teams={ teams }
-								post={ post }
-								showFollow
-								openSuggestedFollows={ openSuggestedFollows }
-							/>
+							<div className="reader-post-card__post-options">
+								{ isDiscover && (
+									<ReaderFollowButton
+										tagName="div"
+										siteUrl={ post.feed_URL || post.site_URL }
+										followSource={ READER_DISCOVER }
+										iconSize={ 20 }
+										followLabel="Subscribe"
+										followingLabel="Unsubscribe"
+									/>
+								) }
+								<ReaderPostEllipsisMenu
+									site={ site }
+									teams={ teams }
+									post={ post }
+									showFollow
+									openSuggestedFollows={ openSuggestedFollows }
+								/>
+							</div>
 						) }
 						<FeaturedAsset
 							post={ post }

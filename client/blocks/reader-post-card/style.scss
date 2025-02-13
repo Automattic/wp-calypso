@@ -213,6 +213,16 @@
 			text-align: right;
 		}
 
+		.reader-post-card__post-options {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+
+			> .follow-button {
+				padding-bottom: 5px;
+			}
+		}
+
 		.reader-excerpt {
 			max-height: none;
 			-webkit-line-clamp: 3;
