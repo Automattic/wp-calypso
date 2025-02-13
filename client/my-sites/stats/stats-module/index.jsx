@@ -69,29 +69,28 @@ class StatsModule extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( ! this.props.requesting && prevProps.requesting ) {
+		const { data, isRealTime, query, requesting } = this.props;
+		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
 		}
 
-		if ( ! isEqual( this.props.query, prevProps.query ) ) {
+		if ( ! isEqual( query, prevProps.query ) ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
 
-		const { isRealTime } = this.props;
 		if ( ! isRealTime ) {
 			return;
 		}
 
 		// Limit data processing to avoid spurious updates.
-		// Need to convert from milliseconds to seconds for comparison.
+		const { dataHistory, lastUpdated } = this.state;
 		const UPDATE_THRESHOLD_IN_SECONDS = 15;
-		const { lastUpdated } = this.state;
 		const now = moment();
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
-			const updatedHistory = this.updateHistory( this.state.dataHistory, this.props.data );
+			const updatedHistory = this.updateHistory( dataHistory, data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
 			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
