@@ -34,6 +34,14 @@ export default function ProductPriceWithDiscount( {
 		quantity
 	);
 
+	if ( actualCost === 0 && discountedCost === 0 ) {
+		return (
+			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>
+				{ translate( 'Free' ) }
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<div className={ clsx( 'product-price-with-discount__price', { 'is-compact': compact } ) }>

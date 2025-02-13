@@ -17,6 +17,9 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
 import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from './product-price-with-discount-info';
+import WooPaymentsCustomDescription from './woopayments-custom-description';
+import WooPaymentsCustomFooter from './woopayments-custom-footer';
+import WooPaymentsRevenueShareNotice from './woopayments-revenue-share-notice';
 
 import './style.scss';
 
@@ -134,6 +137,30 @@ export default function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, quantity, translate ] );
 
+	const customDescription = useMemo( () => {
+		if ( product.slug === 'woocommerce-woopayments' ) {
+			return <WooPaymentsCustomDescription />;
+		}
+
+		return undefined;
+	}, [ product.slug ] );
+
+	const customFooter = useMemo( () => {
+		if ( product.slug === 'woocommerce-woopayments' ) {
+			return <WooPaymentsCustomFooter />;
+		}
+
+		return undefined;
+	}, [ product.slug ] );
+
+	const extraAsideContent = useMemo( () => {
+		if ( product.slug === 'woocommerce-woopayments' ) {
+			return <WooPaymentsRevenueShareNotice />;
+		}
+
+		return undefined;
+	}, [ product.slug ] );
+
 	const ctaLightboxLabel = useMemo( () => {
 		const selectedQuantity = quantity ?? 1;
 
@@ -216,6 +243,9 @@ export default function ProductCard( props: Props ) {
 					isDisabled={ isDisabled }
 					onActivate={ onSelectProduct }
 					onClose={ onHideLightbox }
+					customDescription={ customDescription }
+					customFooter={ customFooter }
+					extraAsideContent={ extraAsideContent }
 				/>
 			) }
 		</>
