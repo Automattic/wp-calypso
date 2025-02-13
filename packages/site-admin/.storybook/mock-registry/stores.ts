@@ -14,7 +14,8 @@ export type MockSiteKey =
 	| typeof WOOCOMMERCE_ANALYTICS_SITE_KEY
 	| typeof REGULAR_SITE_KEY
 	| typeof JETPACK_SITE_KEY;
-export type MockStore = Record< MockSiteKey, Record< string, WPDataRegistry > >;
+
+export type MockStores = Record< MockSiteKey, Record< string, WPDataRegistry > >;
 
 const stores = {
 	[ WOOCOMMERCE_ANALYTICS_SITE_KEY ]: {
