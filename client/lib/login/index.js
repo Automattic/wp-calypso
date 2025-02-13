@@ -188,7 +188,7 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	return signupUrl;
 }
 
-export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCommerceFlow ) => {
+export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client ) => {
 	if ( ! config.isEnabled( `login/magic-login` ) || twoFactorAuthType ) {
 		return false;
 	}
@@ -200,10 +200,6 @@ export const canDoMagicLogin = ( twoFactorAuthType, oauth2Client, isJetpackWooCo
 
 	// Automattic for Agencies cannot have users being sent to WordPress.com
 	if ( isA4AOAuth2Client( oauth2Client ) ) {
-		return false;
-	}
-
-	if ( isJetpackWooCommerceFlow ) {
 		return false;
 	}
 
@@ -236,32 +232,38 @@ export const getLoginLinkPageUrl = ( {
 	return login( loginParameters );
 };
 
-export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+export const formatPluginNames = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
 	const allowedPluginNames = {
 		'jetpack-ai': translate( 'Jetpack' ),
 		'woocommerce-payments': translate( 'WooPayments' ),
-		'order-attribution': translate( 'Order Attribution' ),
 	};
+
+	// Handle multiple plugin names separated by commas
+	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
+	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
 
 	const listFormatter = new Intl.ListFormat( langSlug, {
 		style: 'long',
 		type: 'conjunction',
 	} );
 
-	const defaultTitle = listFormatter.format( Object.values( allowedPluginNames ) );
+	return uniqueTitles.length ? listFormatter.format( uniqueTitles ) : '';
+};
 
+export const getPluginTitle = ( pluginName, translate, langSlug = getLocaleSlug() ) => {
+	const defaultTitle = translate( 'of the extensions you’ve chosen' );
 	if ( ! pluginName ) {
 		// Handle null, undefined, or empty strings
 		return defaultTitle;
 	}
 
-	// Handle multiple plugin names separated by commas
-	const titles = pluginName.split( ',' ).map( ( name ) => allowedPluginNames[ name.trim() ] );
-	const uniqueTitles = Array.from( new Set( titles ) ).filter( ( title ) => title );
-
-	if ( uniqueTitles.length === 0 ) {
+	const formattedNames = formatPluginNames( pluginName, translate, langSlug );
+	if ( ! formattedNames ) {
 		return defaultTitle;
 	}
 
-	return listFormatter.format( uniqueTitles );
+	return translate( 'in %(pluginNames)s', {
+		args: { pluginNames: formattedNames },
+		comment: 'pluginNames is a list of WordPress extensions',
+	} );
 };

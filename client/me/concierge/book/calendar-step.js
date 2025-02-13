@@ -1,9 +1,8 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, ExternalLinkWithTracking } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -94,7 +93,6 @@ class CalendarStep extends Component {
 										u: <u />,
 										externalLink: (
 											<ExternalLinkWithTracking
-												icon={ false }
 												href="/webinars"
 												target="_blank"
 												tracksEventName="calypso_concierge_book_view_webinars"
