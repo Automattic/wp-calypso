@@ -54,6 +54,7 @@ const ReaderSidebarRecent = ( {
 	);
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const dispatch = useDispatch();
+	const isRecentStream = RECENT_PATH_REGEX.test( path );
 
 	let sitesToShow = showAllSites ? sites : sites.slice( 0, SITE_DISPLAY_CUTOFF );
 	// const totalUnseenCount = sites.reduce( ( total, site ) => total + site.unseen_count, 0 );
@@ -75,7 +76,7 @@ const ReaderSidebarRecent = ( {
 
 	const selectSite = ( feedId: number | null ) => {
 		dispatch( selectSidebarRecentSite( { feedId } ) );
-		if ( ! RECENT_PATH_REGEX.test( path ) ) {
+		if ( ! isRecentStream ) {
 			page( '/reader' );
 		}
 
@@ -99,7 +100,7 @@ const ReaderSidebarRecent = ( {
 			customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
-				'sidebar__menu--selected': ! isOpen && RECENT_PATH_REGEX.test( path ),
+				'sidebar__menu--selected': ! isOpen && isRecentStream,
 			} ) }
 			count={ undefined }
 			icon={ null }
@@ -111,7 +112,8 @@ const ReaderSidebarRecent = ( {
 					className={ clsx(
 						'reader-sidebar-recent__item reader-sidebar-recent__item--without-icon',
 						{
-							'reader-sidebar-recent__item--selected': selectedSiteFeedId === null,
+							'reader-sidebar-recent__item--selected':
+								isRecentStream && selectedSiteFeedId === null,
 						}
 					) }
 					onClick={ () => selectSite( null ) }
@@ -124,7 +126,8 @@ const ReaderSidebarRecent = ( {
 				<li key={ site.ID }>
 					<button
 						className={ clsx( 'reader-sidebar-recent__item', {
-							'reader-sidebar-recent__item--selected': site.feed_ID === selectedSiteFeedId,
+							'reader-sidebar-recent__item--selected':
+								isRecentStream && site.feed_ID === selectedSiteFeedId,
 						} ) }
 						onClick={ () => selectSite( site.feed_ID ) }
 					>
