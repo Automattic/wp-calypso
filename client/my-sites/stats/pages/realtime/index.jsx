@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
@@ -41,19 +41,17 @@ function StatsRealtime() {
 	const period = {};
 	const url = '#';
 
-	// TODO: Query is used inside useEffect block so we should memoize it.
-	// - BUT, we need to update the date when a new day starts so better to move it inside the block.
+	// TODO: Create a new query when the date changes.
 
-	// TODO: Create a new query as part of the timed request.
-	// - This will make sure the date is correct when a new days starts.
-
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const query = {
-		period: 'day',
-		date: momentSiteZone.format( 'YYYY-MM-DD' ),
-		max: 10,
-		summarize: 1,
-	};
+	const query = useMemo(
+		() => ( {
+			period: 'day',
+			date: momentSiteZone.format( 'YYYY-MM-DD' ),
+			max: 10,
+			summarize: 1,
+		} ),
+		[ momentSiteZone ]
+	);
 
 	useEffect( () => {
 		// TODO: This array determines which requests are fired.
