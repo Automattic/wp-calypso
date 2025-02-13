@@ -9,6 +9,16 @@ import RouteRecognizer from 'route-recognizer';
  */
 import type { LocationWithQuery, Match, Route } from '../../types';
 
+/**
+ * Custom hook for matching the current location against registered routes.
+ *
+ * This hook uses a `RouteRecognizer` instance to match the given location
+ * and return a structured match object containing the resolved route and query parameters.
+ * @param {LocationWithQuery} location - The current browser location, including query parameters.
+ * @param {RouteRecognizer} matcher    - The route recognizer instance used to match the path.
+ * @param {string} pathArg             - The argument key used to extract the path from query parameters.
+ * @returns {Match} A structured match object containing route details.
+ */
 export default function useMatch(
 	location: LocationWithQuery,
 	matcher: RouteRecognizer,
@@ -41,6 +51,7 @@ export default function useMatch(
 				} )
 			);
 		};
+
 		return {
 			name: matchedRoute.name,
 			areas: resolveFunctions( matchedRoute.areas ),
