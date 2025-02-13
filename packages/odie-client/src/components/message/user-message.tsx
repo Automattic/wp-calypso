@@ -66,7 +66,11 @@ export const UserMessage = ( {
 	};
 
 	const renderExtraContactOptions = () => {
-		return <GetSupport onClickAdditionalEvent={ handleContactSupportClick } />;
+		return (
+			chat.provider === 'odie' && (
+				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+			)
+		);
 	};
 
 	const isMessageShowingDisclaimer =
