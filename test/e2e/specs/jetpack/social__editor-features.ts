@@ -75,7 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 			let socialConnectionsManager: SocialConnectionsManager;
 
 			const testAccountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
-				{ siteType, accountName },
+				{ gutenberg: 'stable', siteType, accountName },
 			] );
 
 			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
