@@ -14,3 +14,6 @@ export const ConfigContext = createContext< Config >( { pathArg: 'p' } );
 // Components
 export * from './link';
 export * from './router';
+
+// Hooks
+export * from './hooks';

@@ -3,30 +3,21 @@
  */
 import { useEvent } from '@wordpress/compose';
 import { useContext, useSyncExternalStore, useMemo } from '@wordpress/element';
-import { addQueryArgs, getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
+import { getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
 import { createBrowserHistory } from 'history';
 import RouteRecognizer from 'route-recognizer';
 /**
  * Internal dependencies
  */
 import { ConfigContext, RoutesContext } from '.';
+import { useMatch } from './';
 /**
  * Types
  */
-import type { BeforeNavigate, Match } from './types';
+import type { BeforeNavigate, Route } from './types';
 import type { ReactNode } from 'react';
 
 const history = createBrowserHistory();
-interface Route {
-	name: string;
-	path: string;
-	areas: Record< string, ReactNode >;
-	widths: Record< string, number >;
-}
-
-type LocationWithQuery = Location & {
-	query?: Record< string, any >;
-};
 
 export interface NavigationOptions {
 	transition?: string;
@@ -103,49 +94,6 @@ export function useHistory() {
 		} ),
 		[ navigate ]
 	);
-}
-
-export default function useMatch(
-	location: LocationWithQuery,
-	matcher: RouteRecognizer,
-	pathArg: string
-): Match {
-	const { query: rawQuery = {} } = location;
-
-	return useMemo( () => {
-		const { [ pathArg ]: path = '/', ...query } = rawQuery;
-		const result = matcher.recognize( path )?.[ 0 ];
-		if ( ! result ) {
-			return {
-				name: '404',
-				path: addQueryArgs( path, query ),
-				areas: {},
-				widths: {},
-				query,
-				params: {},
-			};
-		}
-
-		const matchedRoute = result.handler as Route;
-		const resolveFunctions = ( record: Record< string, any > = {} ) => {
-			return Object.fromEntries(
-				Object.entries( record ).map( ( [ key, value ] ) => {
-					if ( typeof value === 'function' ) {
-						return [ key, value( { query, params: result.params } ) ];
-					}
-					return [ key, value ];
-				} )
-			);
-		};
-		return {
-			name: matchedRoute.name,
-			areas: resolveFunctions( matchedRoute.areas ),
-			widths: resolveFunctions( matchedRoute.widths ),
-			params: result.params,
-			query,
-			path: addQueryArgs( path, query ),
-		};
-	}, [ matcher, rawQuery, pathArg ] );
 }
 
 export function RouterProvider( {

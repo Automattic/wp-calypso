@@ -8,8 +8,7 @@ import { archive, Icon, navigation, settings } from '@wordpress/icons';
  * Internal dependencies
  */
 import { SidebarContent, SidebarNavigationItem, SidebarNavigationScreen } from '../../';
-import { RouterProvider } from '../../../router';
-import { useLocation } from '../../../router/hooks';
+import { useLocation, RouterProvider } from '../../../router';
 /**
  * Types
  */
