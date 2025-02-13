@@ -1,5 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
@@ -26,6 +27,7 @@ const CompactPost = ( props ) => {
 	// to see if the user is on the discover page, let's check the pathname
 	const path = window.location.pathname.split( '/' );
 	const isDiscover = path.length > 0 && path[ 1 ].includes( 'discover' );
+	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
@@ -67,8 +69,8 @@ const CompactPost = ( props ) => {
 										siteUrl={ post.feed_URL || post.site_URL }
 										followSource={ READER_DISCOVER }
 										iconSize={ 20 }
-										followLabel="Subscribe"
-										followingLabel="Unsubscribe"
+										followLabel={ translate( 'Subscribe' ) }
+										followingLabel={ translate( 'Unsubscribe' ) }
 									/>
 								) }
 								<ReaderPostEllipsisMenu
@@ -98,8 +100,8 @@ const CompactPost = ( props ) => {
 										siteUrl={ post.feed_URL || post.site_URL }
 										followSource={ READER_DISCOVER }
 										iconSize={ 20 }
-										followLabel="Subscribe"
-										followingLabel="Unsubscribe"
+										followLabel={ translate( 'Subscribe' ) }
+										followingLabel={ translate( 'Unsubscribe' ) }
 									/>
 								) }
 								<ReaderPostEllipsisMenu
