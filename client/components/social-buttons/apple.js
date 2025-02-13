@@ -152,11 +152,7 @@ class AppleLoginButton extends Component {
 						data-social-service="apple"
 						onClick={ this.handleClick }
 					>
-						<AppleIcon
-							isDisabled={ isDisabled }
-							width={ this.props.isReskinned ? 17 : 20 }
-							height={ this.props.isReskinned ? 17 : 20 }
-						/>
+						<AppleIcon isDisabled={ isDisabled } width={ 17 } height={ 17 } />
 
 						<span className="social-buttons__service-name">
 							{ this.props.translate( 'Continue with %(service)s', {
