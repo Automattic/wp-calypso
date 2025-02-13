@@ -54,7 +54,7 @@
 		"jest-teamcity": "^1.11.0",
 		"lodash": "^4.17.20",
 		"mailosaur": "^8.4.0",
-		"node-fetch": "^2.6.1",
+		"node-fetch": "^2.7.0",
 		"playwright": "1.48.2",
 		"postcss": "^8.3.11"
 	}
