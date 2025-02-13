@@ -1079,7 +1079,7 @@ export class RenderDomainsStep extends Component {
 					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
 				}
 				isOnboarding
-				reskinSideContent={ this.getSideContent() }
+				sideContent={ this.getSideContent() }
 				isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				promptText={
 					this.isHostingFlow()

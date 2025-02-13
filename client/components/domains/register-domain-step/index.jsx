@@ -1725,7 +1725,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderSideContent() {
-		return this.props.isOnboarding && ! this.state.loadingResults && this.props.reskinSideContent;
+		return this.props.isOnboarding && ! this.state.loadingResults && this.props.sideContent;
 	}
 
 	getFetchAlgo() {

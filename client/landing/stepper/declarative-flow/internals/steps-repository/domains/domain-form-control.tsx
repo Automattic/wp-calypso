@@ -244,7 +244,7 @@ export function DomainFormControl( {
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
 					isOnboarding
-					reskinSideContent={ getSideContent() }
+					sideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
