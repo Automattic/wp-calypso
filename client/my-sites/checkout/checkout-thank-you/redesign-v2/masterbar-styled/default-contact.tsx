@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
-import { useProductsAllowPremiumSupport } from '@automattic/help-center/src/hooks';
+import { useProductsWithPremiumSupport } from '@automattic/help-center/src/hooks';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -12,6 +12,8 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector } from 'calypso/state';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -59,13 +61,18 @@ const ContactContainer = styled.div`
 `;
 
 export function DefaultMasterbarContact() {
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
 	const translate = useTranslate();
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
-	const isPremiumSupportAllowed = useProductsAllowPremiumSupport( responseCart.products );
+	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
+		responseCart.products
+	);
+	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isShowingHelpCenter = useDataStoreSelect(
 		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 		[]
@@ -76,7 +83,14 @@ export function DefaultMasterbarContact() {
 			location: 'thank-you-help-center',
 		} );
 
-		setShowHelpCenter( ! isShowingHelpCenter, isPremiumSupportAllowed );
+		if ( hasPremiumSupport ) {
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+			setNavigateToRoute(
+				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
+			);
+		} else {
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+		}
 	};
 
 	useEffect( () => {
