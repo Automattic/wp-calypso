@@ -3,8 +3,18 @@
  */
 import { store as coreDataStore } from '@wordpress/core-data';
 
+const WOOCOMMERCE_ANALYTICS_SITE_KEY = 'Woocommerce Analytics' as const;
+const REGULAR_SITE_KEY = 'Regular Site' as const;
+const JETPACK_SITE_KEY = 'Jetpack Site' as const;
+
+export type MockSiteKey =
+	| typeof WOOCOMMERCE_ANALYTICS_SITE_KEY
+	| typeof REGULAR_SITE_KEY
+	| typeof JETPACK_SITE_KEY;
+export type MockStore = Record< MockSiteKey, Record< string, any > >;
+
 const stores = {
-	'WooCommerce Analytics': {
+	[ WOOCOMMERCE_ANALYTICS_SITE_KEY ]: {
 		[ coreDataStore.name ]: {
 			name: 'WooCommerce Analytics',
 			description:
@@ -12,14 +22,14 @@ const stores = {
 			'root/__unstableBase': { site_icon_url: './woocommerce/product-icon.svg' },
 		},
 	},
-	'Regular Site': {
+	[ REGULAR_SITE_KEY ]: {
 		[ coreDataStore.name ]: {
 			name: 'Regular Site',
 			description: 'A regular site with no special features.',
 			'root/__unstableBase': { site_icon_url: undefined },
 		},
 	},
-	'Jetpack Site': {
+	[ JETPACK_SITE_KEY ]: {
 		[ coreDataStore.name ]: {
 			name: 'Jetpack Site',
 			description: 'A site with Jetpack installed.',

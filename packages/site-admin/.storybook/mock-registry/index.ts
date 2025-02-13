@@ -4,6 +4,11 @@
 import { createReduxStore, createRegistry } from '@wordpress/data';
 
 /**
+ * Types
+ */
+import type { MockStore } from './stores';
+
+/**
  * Registers a mock store with the given initial state.
  */
 const registerMockStore = ( registry, storeName, initialState ) => {
@@ -26,7 +31,7 @@ const registerMockStore = ( registry, storeName, initialState ) => {
 /**
  * Creates a global mock registry for @wordpress/data
  */
-export const createMockRegistry = ( stores = {} ) => {
+export const createMockRegistry = ( stores: MockStore ): any => {
 	const registry = createRegistry();
 
 	Object.entries( stores ).forEach( ( [ storeName, initialState ] ) => {
