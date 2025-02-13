@@ -18,7 +18,7 @@
 	],
 	"license": "GPL-2.0-or-later",
 	"dependencies": {
-		"@jest/types": "^29.5.0",
+		"@jest/types": "^29.6.3",
 		"@playwright/browser-chromium": "1.48.2",
 		"@playwright/browser-firefox": "1.48.2",
 		"@types/totp-generator": "^0.0.3",
