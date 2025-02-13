@@ -19,6 +19,10 @@ type StatsDefaultModuleProps = {
 	 * @property {string} listItemClassName Custom class name for list items (used on a summary page).
 	 */
 	listItemClassName?: string;
+	/**
+	 * @property {boolean} isRealTime Signals to the module to turn on diff rendering for real-time data.
+	 */
+	isRealTime?: boolean;
 };
 
 type StatsAdvancedModuleWrapperProps = {

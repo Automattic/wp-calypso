@@ -28,6 +28,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	summaryUrl,
 	summary,
 	listItemClassName,
+	isRealTime = false,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -48,7 +49,6 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
 	const hasData = !! data?.length;
-	const isRealTime = query?.interval !== undefined;
 	// TODO: Is there a way to show the Skeleton loader for real-time data?
 	// We don't want it to show every time a rquest is being run for real-time data so it's disabled for now.
 	const presentLoadingUI = isRealTime
@@ -102,6 +102,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					summary={ summary }
 					listItemClassName={ listItemClassName }
 					skipQuery
+					isRealTime
 				/>
 			) }
 			{ presentEmptyUI && (
