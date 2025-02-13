@@ -49,6 +49,20 @@ const domainsDataViewsGlobalStyles = css`
 			padding-block-end: 24px;
 		}
 
+		div.layout.is-global-sidebar-visible {
+			.layout__content {
+				padding-top: calc( var( --masterbar-height ) + var( --content-padding-top ) );
+				padding-bottom: var( --content-padding-bottom );
+			}
+			.layout__primary > main {
+				height: calc(
+					100vh - var( --masterbar-height ) - var( --content-padding-top ) - var(
+							--content-padding-bottom
+						)
+				);
+			}
+		}
+
 		@media only screen and ( min-width: 782px ) {
 			.is-global-sidebar-visible {
 				header.navigation-header {
