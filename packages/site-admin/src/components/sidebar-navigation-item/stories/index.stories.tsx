@@ -51,7 +51,9 @@ const meta: Meta< typeof SidebarNavigationItem > = {
 
 export default meta;
 
-const Template: StoryFn< typeof SidebarNavigationItem > = ( args: SidebarNavigationItemProps ) => {
+export const Default: StoryFn< typeof SidebarNavigationItem > = (
+	args: SidebarNavigationItemProps
+) => {
 	const { icon: iconName, children, ...validArgs } = args;
 
 	// Pick the icon component based on the icon name.
@@ -67,8 +69,6 @@ const Template: StoryFn< typeof SidebarNavigationItem > = ( args: SidebarNavigat
 		</SidebarNavigationContext.Provider>
 	);
 };
-
-export const Default = Template.bind( {} );
 
 Default.storyName = 'SidebarNavigationItem';
 Default.args = {

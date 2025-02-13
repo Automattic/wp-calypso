@@ -68,15 +68,10 @@ const SidebarItems = () => {
 	);
 };
 
-const Template: StoryFn< typeof SidebarContent > = ( args: SidebarContentProps ) => (
+export const Default: StoryFn< typeof SidebarContent > = ( args: SidebarContentProps ) => (
 	<SidebarContent { ...args }>
 		<RouterProvider routes={ [] } pathArg="page">
 			<SidebarNavigationScreen isRoot title={ __( 'Analytics' ) } content={ <SidebarItems /> } />
 		</RouterProvider>
 	</SidebarContent>
 );
-
-export const Default = Template.bind( {} );
-
-Default.storyName = 'SidebarContent';
-Default.args = {};
