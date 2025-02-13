@@ -44,8 +44,6 @@ function StatsRealtime() {
 	// TODO: Query is used inside useEffect block so we should memoize it.
 	// - BUT, we need to update the date when a new day starts so better to move it inside the block.
 
-	// TODO: Remove interval from query in favour of a real-time flag.
-
 	// TODO: Create a new query as part of the timed request.
 	// - This will make sure the date is correct when a new days starts.
 
@@ -55,7 +53,6 @@ function StatsRealtime() {
 		date: momentSiteZone.format( 'YYYY-MM-DD' ),
 		max: 10,
 		summarize: 1,
-		interval: 10000, // Indicate the query should be periodically refreshed.
 	};
 
 	useEffect( () => {
