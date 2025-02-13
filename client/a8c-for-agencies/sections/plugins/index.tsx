@@ -4,6 +4,8 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import { renderPluginsDashboard } from 'calypso/my-sites/plugins/controller';
 import { pluginsContext, pluginManagementContext, pluginDetailsContext } from './controller';
 
+import './style.scss';
+
 export default function () {
 	page( '/plugins', requireAccessContext, pluginsContext, makeLayout, clientRender );
 

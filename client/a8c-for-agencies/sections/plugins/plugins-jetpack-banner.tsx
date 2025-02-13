@@ -1,9 +1,20 @@
 import { JetpackLogo } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
+import { useSelector } from 'calypso/state';
+import { getPreference } from 'calypso/state/preferences/selectors';
+
+const JETPACK_BANNER_DISMISS_PREFERENCE = 'a4a-plugins-jetpack-banner';
 
 export default function A4APluginsJetpackBanner() {
 	const translate = useTranslate();
+	const isDismissed = useSelector( ( state ) =>
+		getPreference( state, 'dismissible-card-' + JETPACK_BANNER_DISMISS_PREFERENCE )
+	);
+
+	if ( isDismissed ) {
+		return null;
+	}
 
 	return (
 		<div className="a4a-plugins-jetpack-banner-container">
@@ -14,7 +25,7 @@ export default function A4APluginsJetpackBanner() {
 				) }
 				icon={ <JetpackLogo size={ 16 } /> }
 				className="plugins__jetpack-banner"
-				dismissPreferenceName="a4a-plugins-jetpack-banner"
+				dismissPreferenceName={ JETPACK_BANNER_DISMISS_PREFERENCE }
 				disableCircle
 				jetpack
 			/>
