@@ -366,7 +366,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
-    "@jest/types": "npm:^29.5.0"
+    "@jest/types": "npm:^29.6.3"
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
@@ -5081,7 +5081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/types@npm:^29.5.0, @jest/types@npm:^29.6.3":
+"@jest/types@npm:^29.6.3":
   version: 29.6.3
   resolution: "@jest/types@npm:29.6.3"
   dependencies:
