@@ -69,6 +69,7 @@ const getFormSettings = ( settings: any ) => {
 		wpcom_locked_mode: false,
 		wpcom_public_coming_soon: '',
 		wpcom_gifting_subscription: false,
+		wpcom_hide_action_bar: false,
 		is_fully_managed_agency_site: true,
 	};
 
@@ -86,6 +87,7 @@ const getFormSettings = ( settings: any ) => {
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
 		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 		is_fully_managed_agency_site: settings.is_fully_managed_agency_site,
+		wpcom_hide_action_bar: settings.wpcom_hide_action_bar,
 	};
 	return formSettings;
 };
