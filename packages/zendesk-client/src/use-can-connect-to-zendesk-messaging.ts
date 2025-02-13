@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from '@wordpress/element';
 
 async function fetchZendeskConfig(): Promise< boolean > {
 	const config = await fetch( 'https://wpcom.zendesk.com/embeddable/config' );
