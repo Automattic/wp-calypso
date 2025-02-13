@@ -47,11 +47,19 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
+	const hasData = !! data?.length;
 	const isRealTime = query?.interval !== undefined;
-	const presentLoadingUI = isRealTime ? isRequestingData && ! data?.length : isRequestingData;
+	// TODO: Is there a way to show the Skeleton loader for real-time data?
+	// We don't want it to show every time a rquest is being run for real-time data so it's disabled for now.
+	const presentLoadingUI = isRealTime
+		? isRequestingData && ! hasData && false
+		: isRequestingData && ! shouldGateStatsModule;
 	const presentModuleUI = isRealTime
-		? ! presentLoadingUI
-		: ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule;
+		? hasData && ! presentLoadingUI
+		: ( ! isRequestingData && hasData ) || shouldGateStatsModule;
+	const presentEmptyUI = isRealTime
+		? ! hasData && ! presentLoadingUI
+		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
 
 	return (
 		<>
@@ -96,7 +104,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					skipQuery
 				/>
 			) }
-			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+			{ presentEmptyUI && (
 				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card
