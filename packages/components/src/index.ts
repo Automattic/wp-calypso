@@ -45,7 +45,6 @@ export { default as CountComparisonCard } from './highlight-cards/count-comparis
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
-export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';

@@ -2,6 +2,7 @@
 // Project: i18n-calypso
 
 import * as React from 'react';
+import type { NumberFormatParams } from '../number-formatters';
 
 type LocaleData = Record< string, unknown >;
 type NormalizedTranslateArgs =
@@ -62,24 +63,6 @@ export type TranslateOptionsPluralText = TranslateOptionsPlural & { textOnly: tr
 // force us to declare the return type as a generic React node, not as just string.
 export type TranslateResult = ExistingReactNode;
 
-export interface NumberFormatOptions {
-	/**
-	 * Number of decimal places to use.
-	 * This is just convenience over setting `minimumFractionDigits`, `maximumFractionDigits` to the same value.
-	 * ( default = 0 )
-	 */
-	decimals?: number;
-	/**
-	 * Whether to use latin numbers by default ( default = true )
-	 */
-	forceLatin?: boolean;
-	/**
-	 * `Intl.NumberFormat` options to pass through.
-	 * `minimumFractionDigits` & `maximumFractionDigits` will override `decimals` if set.
-	 */
-	numberFormatOptions?: Intl.NumberFormatOptions;
-}
-
 export type TranslateHook = (
 	translation: ExistingReactNode,
 	options: NormalizedTranslateArgs
@@ -88,6 +71,8 @@ export type TranslateHook = (
 export type ComponentUpdateHook = ( ...args: any ) => any;
 
 export type EventListener = ( ...payload: any ) => any;
+
+export type NumberFormatOptions = Omit< NumberFormatParams, 'number' | 'browserSafeLocale' >;
 
 export interface I18N {
 	/**
@@ -106,7 +91,8 @@ export interface I18N {
 	translate( original: string, plural: string, options: TranslateOptionsPlural ): ExistingReactNode;
 	translate( original: string, plural: string, options: TranslateOptionsPluralText ): string;
 
-	numberFormat( number: number, options?: NumberFormatOptions ): string | number;
+	numberFormat( number: number, options?: NumberFormatOptions ): string;
+	numberFormatCompact( number: number, options?: NumberFormatOptions ): string;
 
 	setLocale( localeData: LocaleData ): void;
 	addTranslations( localeData: LocaleData ): void;
@@ -115,8 +101,9 @@ export interface I18N {
 	configure( options: Record< string, any > ): void;
 
 	getLocale(): LocaleData;
-	getLocaleSlug(): string | null;
+	getLocaleSlug(): string | null; // TODO clk i18ncalypso this should be string. Default is 'en'
 	getLocaleVariant(): string | undefined;
+	getBrowserSafeLocale(): string;
 	isRtl(): boolean;
 	defaultLocaleSlug: string;
 
@@ -134,12 +121,14 @@ declare const i18n: I18N;
 export default i18n;
 export declare const translate: typeof i18n.translate;
 export declare const numberFormat: typeof i18n.numberFormat;
+export declare const numberFormatCompact: typeof i18n.numberFormatCompact;
 export declare const setLocale: typeof i18n.setLocale;
 export declare const addTranslations: typeof i18n.addTranslations;
 export declare const configure: typeof i18n.configure;
 export declare const getLocale: typeof i18n.getLocale;
 export declare const getLocaleSlug: typeof i18n.getLocaleSlug;
 export declare const getLocaleVariant: typeof i18n.getLocaleVariant;
+export declare const getBrowserSafeLocale: typeof i18n.getBrowserSafeLocale;
 export declare const isRtl: typeof i18n.isRtl;
 export declare const defaultLocaleSlug: typeof i18n.defaultLocaleSlug;
 export declare const registerTranslateHook: typeof i18n.registerTranslateHook;

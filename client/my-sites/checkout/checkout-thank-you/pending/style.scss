@@ -1,4 +1,15 @@
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/mixins';
+
+.checkout__pending-content {
+	.wpcom__loading-title {
+		@extend .wp-brand-font;
+		line-height: 40px;
+		text-align: center;
+		vertical-align: middle;
+		margin: 0;
+		font-size: $font-title-medium;
+	}
+}
 
 .pending-content__wrapper {
 	padding: 1em;
@@ -13,7 +24,7 @@
 	vertical-align: middle;
 	margin: 0;
 	font-size: $font-title-medium;
-}	
+}
 
 .pending-content__progress-bar {
 	--wp-components-color-foreground: #3858e9;

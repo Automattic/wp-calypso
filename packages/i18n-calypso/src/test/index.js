@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import i18n, { numberFormat, translate } from '../src';
+import i18n, { numberFormat, numberFormatCompact, translate } from '..';
 import data from './data';
 
 /**
@@ -278,7 +278,7 @@ describe( 'I18n', function () {
 			} );
 		} );
 
-		describe( 'compact notation', function () {
+		describe( 'numberFormatCompact()', function () {
 			describe( 'ar', () => {
 				beforeEach( function () {
 					i18n.setLocale( {
@@ -290,13 +290,14 @@ describe( 'I18n', function () {
 				} );
 				test( 'defaults to latin notation and localised unit', () => {
 					expect(
-						numberFormat( 1234, { numberFormatOptions: { notation: 'compact' }, decimals: 1 } )
+						numberFormatCompact( 1234, {
+							decimals: 1,
+						} )
 					).toEqual( '1.2 ألف' );
 				} );
 				test( 'non-latin/original notation and localised unit', () => {
 					expect(
-						numberFormat( 1234, {
-							numberFormatOptions: { notation: 'compact' },
+						numberFormatCompact( 1234, {
 							decimals: 1,
 							forceLatin: false,
 						} )

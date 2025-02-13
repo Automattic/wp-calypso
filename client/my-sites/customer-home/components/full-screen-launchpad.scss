@@ -97,7 +97,6 @@
 	}
 
 	.launchpad-site-launch {
-		font-size: 1rem;
 		padding: 1.5rem;
 	}
 
@@ -107,6 +106,10 @@
 		gap: 12px;
 		margin: auto;
 		align-items: center;
+
+		.components-button {
+			font-size: 1rem;
+		}
 		
 		.launchpad-site-launch {
 			order: 0;
