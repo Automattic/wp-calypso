@@ -92,11 +92,21 @@ const ReaderSidebarRecent = ( {
 		}
 	};
 
+	const selectMenu = () => {
+		if ( ! isOpen ) {
+			onClick();
+		}
+		selectSite( null );
+		if ( ! isRecentStream ) {
+			page( '/reader' );
+		}
+	};
+
 	return (
 		<ExpandableSidebarMenu
 			expanded={ isOpen }
 			title={ translate( 'Recent' ) }
-			onClick={ onClick }
+			onClick={ selectMenu }
 			customIcon={ <ReaderFollowingIcon viewBox="-3 0 24 24" /> }
 			disableFlyout
 			className={ clsx( 'reader-sidebar-recent', className, {
@@ -106,6 +116,7 @@ const ReaderSidebarRecent = ( {
 			icon={ null }
 			materialIcon={ null }
 			materialIconStyle={ null }
+			expandableIconClick={ onClick }
 		>
 			<li>
 				<button

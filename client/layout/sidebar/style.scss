@@ -268,6 +268,15 @@
 			color: var(--color-sidebar-submenu-selected-text);
 		}
 	}
+
+	.sidebar__expandable-button.components-button:focus {
+		outline: none;
+		box-shadow: none;
+
+		.accessible-focus & {
+			box-shadow: inset 0 0 0 2px var(--color-primary-light);
+		}
+	}
 }
 
 // Sometimes we show info at the bottom of the sidebar. For
