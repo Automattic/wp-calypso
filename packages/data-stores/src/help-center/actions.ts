@@ -183,12 +183,6 @@ export const resetStore = () =>
 		type: 'HELP_CENTER_RESET_STORE',
 	} ) as const;
 
-export const setOdieChatScrollPosition = ( odieChatScrollPosition: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_ODIE_CHAT_SCROLL_POSITION',
-		odieChatScrollPosition,
-	} ) as const;
-
 export const setShowMessagingChat = function* () {
 	yield setShowHelpCenter( false );
 	yield setShowMessagingLauncher( true );
@@ -228,6 +222,5 @@ export type HelpCenterAction =
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
-			| typeof setOdieChatScrollPosition
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

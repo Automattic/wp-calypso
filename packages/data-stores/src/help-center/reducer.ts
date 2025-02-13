@@ -167,13 +167,6 @@ const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = fals
 	return state;
 };
 
-const odieChatScrollPosition: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
-	if ( action.type === 'HELP_CENTER_SET_ODIE_CHAT_SCROLL_POSITION' ) {
-		return action.odieChatScrollPosition;
-	}
-	return state;
-};
-
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -193,7 +186,6 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,
-	odieChatScrollPosition,
 } );
 
 export type State = ReturnType< typeof reducer >;
