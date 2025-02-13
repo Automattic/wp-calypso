@@ -97,7 +97,7 @@ class StatsDownloadCsv extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				<Gridicon icon="cloud-download" />{ ' ' }
-				{ translate( 'Download data as CSV', {
+				{ translate( 'Download CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }
 			</Button>
