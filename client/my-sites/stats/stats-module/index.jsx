@@ -65,9 +65,14 @@ class StatsModule extends Component {
 		diffData: [],
 		dataHistory: [],
 		lastUpdated: null,
+		fireTimer: false,
 	};
 
 	componentDidMount() {
+		if ( this.state.fireTimer === false ) {
+			return;
+		}
+
 		const interval = this.props.query?.interval;
 		if ( ! interval ) {
 			return;
@@ -80,6 +85,9 @@ class StatsModule extends Component {
 	}
 
 	componentWillUnmount() {
+		if ( this.state.fireTimer === false ) {
+			return;
+		}
 		clearInterval( this.timer );
 	}
 
