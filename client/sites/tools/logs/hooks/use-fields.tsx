@@ -184,6 +184,13 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			id: 'renderer',
 			type: 'text',
 			label: __( 'Renderer' ),
+			elements: [
+				{ value: 'php', label: 'PHP' },
+				{ value: 'static', label: translate( 'Static' ) },
+			],
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
 			enableSorting: false,
 		},
 		{

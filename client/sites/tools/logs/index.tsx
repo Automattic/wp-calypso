@@ -109,7 +109,12 @@ export const SiteLogs = ( {
 		logType,
 		start: dateRange.startTime.unix(),
 		end: dateRange.endTime.unix(),
-		filter: buildFilter( logType, [ severity ], [ requestType ], [ requestStatus ] ),
+		filter: buildFilter( {
+			logType,
+			requestType: [ requestType ],
+			severity: [ severity ],
+			status: [ requestStatus ],
+		} ),
 		sortOrder: 'desc',
 		pageSize,
 		pageIndex: currentPageIndex,
@@ -395,12 +400,13 @@ export const SiteLogsDataViews = ( {
 			logType,
 			startDateTime: startTime,
 			endDateTime: endTime,
-			filter: buildFilter(
+			filter: buildFilter( {
 				logType,
-				getFilterValue( view, 'severity' ),
-				getFilterValue( view, 'request_type' ),
-				getFilterValue( view, 'request_status' )
-			),
+				renderer: getFilterValue( view, 'renderer' ),
+				requestType: getFilterValue( view, 'request_type' ),
+				severity: getFilterValue( view, 'severity' ),
+				status: getFilterValue( view, 'status' ),
+			} ),
 		} );
 	}, [ downloadLogs, logType, startTime, endTime, view ] );
 

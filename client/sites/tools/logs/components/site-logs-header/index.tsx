@@ -81,7 +81,12 @@ export function SiteLogsHeader( {
 							logType,
 							startDateTime,
 							endDateTime,
-							filter: buildFilter( logType, severity, requestType, requestStatus ),
+							filter: buildFilter( {
+								logType,
+								severity: [ severity ],
+								requestType: [ requestType ],
+								status: [ requestStatus ],
+							} ),
 						} )
 					}
 				>

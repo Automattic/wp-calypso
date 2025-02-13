@@ -63,12 +63,13 @@ const useData = ( {
 	const severity = getFilterValue( view, 'severity' );
 	const status = getFilterValue( view, 'status' );
 	const requestType = getFilterValue( view, 'request_type' );
+	const renderer = getFilterValue( view, 'renderer' );
 
 	const { data, isFetching, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
 		start: startTime.unix(),
 		end: endTime.unix(),
-		filter: buildFilter( logType, severity, requestType, status ),
+		filter: buildFilter( { logType, renderer, requestType, severity, status } ),
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
 		pageIndex: view.page,

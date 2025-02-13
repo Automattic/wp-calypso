@@ -12,12 +12,19 @@ const getVisibleFields = ( logType: LogType ) => {
 const getFilterValue = ( view: View, fieldName: string ) =>
 	view.filters?.filter( ( filter ) => filter.field === fieldName )?.[ 0 ]?.value;
 
-function buildFilter(
-	logType: LogType,
-	severity: string[],
-	requestType: string[],
-	requestStatus: string[]
-): FilterType {
+function buildFilter( {
+	logType,
+	renderer,
+	requestType,
+	severity,
+	status,
+}: {
+	logType: LogType;
+	renderer?: string[];
+	requestType?: string[];
+	severity?: string[];
+	status?: string[];
+} ): FilterType {
 	const filters: FilterType = {};
 
 	if ( logType === 'php' ) {
@@ -30,8 +37,11 @@ function buildFilter(
 		if ( requestType ) {
 			filters.request_type = requestType;
 		}
-		if ( requestStatus ) {
-			filters.status = requestStatus;
+		if ( status ) {
+			filters.status = status;
+		}
+		if ( renderer ) {
+			filters.renderer = renderer;
 		}
 	}
 
