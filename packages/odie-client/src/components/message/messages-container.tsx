@@ -9,6 +9,7 @@ import {
 	useAutoScroll,
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
+	useUpdateDocumentTitle,
 } from '../../hooks';
 import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
@@ -59,6 +60,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	useZendeskMessageListener();
 	useAutoScroll( messagesContainerRef );
+	useUpdateDocumentTitle();
 
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {
