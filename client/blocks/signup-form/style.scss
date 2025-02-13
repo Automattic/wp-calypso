@@ -56,10 +56,6 @@
 	button {
 		display: block;
 		margin: 0 auto 15px;
-		box-shadow:
-			0 1px 1px 0 rgba(0, 0, 0, 0.14),
-			0 2px 1px -1px rgba(0, 0, 0, 0.12),
-			0 1px 3px 0 rgba(0, 0, 0, 0.2);
 	}
 }
 
@@ -304,7 +300,6 @@ body.is-section-accept-invite {
 					background: var(--black-white-white, #fff);
 					border: 1px solid #ccc;
 					border-radius: 4px;
-					box-shadow: none;
 					height: 40px;
 					margin-bottom: 0;
 					padding: 4px 16px;
