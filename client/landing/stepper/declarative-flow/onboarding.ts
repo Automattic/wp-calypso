@@ -24,6 +24,7 @@ import {
 } from '../constants';
 import { useFlowLocale } from '../hooks/use-flow-locale';
 import { useIsBigSkyEligible } from '../hooks/use-is-site-big-sky-eligible';
+import { useMarketplaceThemeProducts } from '../hooks/use-marketplace-theme-products';
 import { useQuery } from '../hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
@@ -149,7 +150,6 @@ const onboarding: Flow = {
 
 		const { planCartItem, signupDomainOrigin, isUserLoggedIn, createWithBigSky } = useSelect(
 			( select ) => ( {
-				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
 				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
 				isUserLoggedIn: ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -167,6 +167,8 @@ const onboarding: Flow = {
 		const [ , isBigSkyBeforePlansExperiment ] = useBigSkyBeforePlans();
 		const { isEligible: isBigSkyEligible } = useIsBigSkyEligible();
 		const isDesignChoicesStepEnabled = isBigSkyEligible && isGoalsAtFrontExperiment;
+
+		const { selectedMarketplaceProduct } = useMarketplaceThemeProducts();
 
 		if ( typeof window !== 'undefined' && createWithBigSky ) {
 			window.__a8cBigSkyOnboarding = true;
@@ -357,9 +359,10 @@ const onboarding: Flow = {
 					}
 
 					// Make sure to put the rest of products into the cart, e.g. the storage add-ons.
-					if ( cartItems?.length > 0 ) {
-						setProductCartItems( cartItems.slice( 1 ) );
-					}
+					setProductCartItems( [
+						...( selectedMarketplaceProduct ? [ selectedMarketplaceProduct ] : [] ),
+						...( cartItems || [] ).slice( 1 ),
+					] );
 
 					setSignupCompleteFlowName( flowName );
 					return navigate( 'create-site', undefined, false );
@@ -393,6 +396,9 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					}
+				}
+				case 'waitForAtomic': {
+					return navigate( 'processing' );
 				}
 				default:
 					return;
