@@ -260,11 +260,6 @@ export default function ProductListing( {
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-					selectedOption={ productOption.find( ( option ) =>
-						selectedCartItems.find(
-							( item ) => item.slug === option.slug && item.quantity === quantity
-						)
-					) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
@@ -278,7 +273,7 @@ export default function ProductListing( {
 				<ProductCard
 					asReferral={ isReferingProducts }
 					key={ productOption.slug }
-					product={ productOption }
+					products={ [ productOption ] }
 					onSelectProduct={ onSelectProduct }
 					isSelected={ isSelected( productOption.slug ) }
 					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }

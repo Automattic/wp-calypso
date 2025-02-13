@@ -25,7 +25,7 @@ type Props = WithProductLightboxProps &
 function ProductCard( props: Props ) {
 	const {
 		asReferral,
-		product,
+		currentProduct,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
@@ -34,7 +34,7 @@ function ProductCard( props: Props ) {
 		quantity,
 		onShowLightbox,
 	} = props;
-	const productTitle = getProductShortTitle( product );
+	const productTitle = getProductShortTitle( currentProduct );
 
 	const translate = useTranslate();
 
@@ -43,8 +43,8 @@ function ProductCard( props: Props ) {
 			return;
 		}
 
-		onSelectProduct?.( product );
-	}, [ isDisabled, onSelectProduct, product ] );
+		onSelectProduct?.( currentProduct );
+	}, [ isDisabled, onSelectProduct, currentProduct ] );
 
 	const onKeyDown = useCallback(
 		( e: any ) => {
@@ -61,7 +61,7 @@ function ProductCard( props: Props ) {
 			// Transform the comma-separated list of products to array.
 			const suggestedProducts = suggestedProduct.split( ',' );
 
-			if ( suggestedProducts.includes( product.slug ) ) {
+			if ( suggestedProducts.includes( currentProduct.slug ) ) {
 				onSelect();
 			}
 		}
@@ -77,7 +77,7 @@ function ProductCard( props: Props ) {
 		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
 	};
 
-	const { description: productDescription } = useProductDescription( product.slug );
+	const { description: productDescription } = useProductDescription( currentProduct.slug );
 
 	const ctaLabel = useMemo( () => {
 		const selectedQuantity = quantity ?? 1;
@@ -115,10 +115,10 @@ function ProductCard( props: Props ) {
 					<div className="product-card__main">
 						<div className="product-card__heading">
 							<h3 className="product-card__title">{ productTitle }</h3>
-							<ProductBadges product={ product } />
+							<ProductBadges product={ currentProduct } />
 							<div className="product-card__pricing is-compact">
 								<ProductPriceWithDiscount
-									product={ product }
+									product={ currentProduct }
 									hideDiscount={ hideDiscount }
 									quantity={ quantity }
 									compact
@@ -140,7 +140,7 @@ function ProductCard( props: Props ) {
 					>
 						{ ctaLabel }
 					</Button>
-					{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
+					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
 						<LicenseLightboxLink
 							customText={ translate( 'View details' ) }
 							productName={ productTitle }

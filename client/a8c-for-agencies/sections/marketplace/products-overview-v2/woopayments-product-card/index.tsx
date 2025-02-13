@@ -20,7 +20,7 @@ type Props = WithProductLightboxProps &
 
 function WooPaymentsProductCard( {
 	asReferral,
-	product,
+	currentProduct,
 	isSelected,
 	onSelectProduct,
 	quantity,
@@ -29,8 +29,8 @@ function WooPaymentsProductCard( {
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {
-		onSelectProduct?.( product );
-	}, [ onSelectProduct, product ] );
+		onSelectProduct?.( currentProduct );
+	}, [ onSelectProduct, currentProduct ] );
 
 	const onKeyDown = useCallback(
 		( e: KeyboardEvent ) => {
@@ -94,7 +94,7 @@ function WooPaymentsProductCard( {
 
 					<LicenseLightboxLink
 						customText={ translate( 'View details' ) }
-						productName={ product.name }
+						productName={ currentProduct.name }
 						onClick={ onShowLightbox }
 						showIcon={ false }
 					/>

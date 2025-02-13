@@ -233,7 +233,7 @@ export default function ProductListing( {
 					<WoopPaymentsProductCard
 						asReferral={ isReferralMode }
 						key={ productOption.slug }
-						product={ productOption }
+						products={ [ productOption ] }
 						quantity={ quantity }
 						onSelectProduct={ onSelectProduct }
 						isSelected={ isSelected( productOption.slug ) }
@@ -249,11 +249,6 @@ export default function ProductListing( {
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
 					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-					selectedOption={ productOption.find( ( option ) =>
-						selectedCartItems.find(
-							( item ) => item.slug === option.slug && item.quantity === quantity
-						)
-					) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
@@ -267,7 +262,7 @@ export default function ProductListing( {
 				<ProductCard
 					asReferral={ isReferralMode }
 					key={ productOption.slug }
-					product={ productOption }
+					products={ [ productOption ] }
 					onSelectProduct={ onSelectProduct }
 					isSelected={ isSelected( productOption.slug ) }
 					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }

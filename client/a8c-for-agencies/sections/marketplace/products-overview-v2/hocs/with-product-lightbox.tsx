@@ -11,15 +11,20 @@ import WooPaymentsCustomFooter from '../product-card/woopayments-custom-footer';
 import WooPaymentsRevenueShareNotice from '../product-card/woopayments-revenue-share-notice';
 
 export type WithProductLightboxProps = {
-	product: APIProductFamilyProduct;
+	products: APIProductFamilyProduct[];
 	isSelected: boolean;
 	quantity?: number;
-	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
+	onSelectProduct: (
+		value: APIProductFamilyProduct,
+		replace?: APIProductFamilyProduct
+	) => void | null;
 	asReferral?: boolean;
 	isDisabled?: boolean;
 };
 
 export type ProductLightboxActivatorProps = {
+	currentProduct: APIProductFamilyProduct;
+	setCurrentProduct: ( product: APIProductFamilyProduct ) => void;
 	onShowLightbox: ( e: React.MouseEvent< HTMLElement > ) => void;
 };
 
@@ -30,11 +35,12 @@ function withProductLightbox< T >(
 		const translate = useTranslate();
 		const dispatch = useDispatch();
 
-		const { product, isSelected, quantity, onSelectProduct, asReferral, isDisabled } = props;
+		const { isSelected, quantity, onSelectProduct, asReferral, isDisabled, products } = props;
+		const [ currentProduct, setCurrentProduct ] = useState( products[ 0 ] );
 
 		const { setParams, resetParams, getParamValue } = useURLQueryParams();
 		const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-		const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
+		const [ showLightbox, setShowLightbox ] = useState( modalParamValue === currentProduct.slug );
 
 		const onShowLightbox = useCallback(
 			( e: React.MouseEvent< HTMLElement > ) => {
@@ -42,19 +48,20 @@ function withProductLightbox< T >(
 
 				dispatch(
 					recordTracksEvent( 'calypso_marketplace_products_overview_product_view', {
-						product: product.slug,
+						product: currentProduct.slug,
 					} )
 				);
 
 				setParams( [
 					{
 						key: LICENSE_INFO_MODAL_ID,
-						value: product.slug,
+						value: currentProduct.slug,
 					},
 				] );
+
 				setShowLightbox( true );
 			},
-			[ dispatch, product.slug, setParams ]
+			[ currentProduct.slug, dispatch, setParams ]
 		);
 
 		const onHideLightbox = useCallback( () => {
@@ -79,35 +86,40 @@ function withProductLightbox< T >(
 		}, [ asReferral, isSelected, quantity, translate ] );
 
 		const customDescription = useMemo( () => {
-			if ( product.slug === 'woocommerce-woopayments' ) {
+			if ( currentProduct.slug === 'woocommerce-woopayments' ) {
 				return <WooPaymentsCustomDescription />;
 			}
 
 			return undefined;
-		}, [ product.slug ] );
+		}, [ currentProduct.slug ] );
 
 		const customFooter = useMemo( () => {
-			if ( product.slug === 'woocommerce-woopayments' ) {
+			if ( currentProduct.slug === 'woocommerce-woopayments' ) {
 				return <WooPaymentsCustomFooter />;
 			}
 
 			return undefined;
-		}, [ product.slug ] );
+		}, [ currentProduct.slug ] );
 
 		const extraAsideContent = useMemo( () => {
-			if ( product.slug === 'woocommerce-woopayments' ) {
+			if ( currentProduct.slug === 'woocommerce-woopayments' ) {
 				return <WooPaymentsRevenueShareNotice />;
 			}
 
 			return undefined;
-		}, [ product.slug ] );
+		}, [ currentProduct.slug ] );
 
 		return (
 			<>
-				<WrappedComponent { ...props } onShowLightbox={ onShowLightbox } />
+				<WrappedComponent
+					{ ...props }
+					currentProduct={ currentProduct }
+					setCurrentProduct={ setCurrentProduct }
+					onShowLightbox={ onShowLightbox }
+				/>
 				{ showLightbox && (
 					<LicenseLightbox
-						product={ product }
+						product={ currentProduct }
 						quantity={ quantity }
 						ctaLabel={ ctaLightboxLabel as string }
 						isCTAPrimary={ ! isSelected }
