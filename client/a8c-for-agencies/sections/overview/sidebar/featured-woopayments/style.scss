@@ -1,3 +1,5 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 $woocommerce-purple-50: #720EEC;
 
@@ -9,11 +11,14 @@ $woocommerce-purple-50: #720EEC;
 	padding: 24px;
 }
 
-.theme-a8c-for-agencies .components-button.overview__featured-dismiss-button {
-	position: absolute;
-	top: 24px;
-	right: 24px;
+.overview__featured-woopayments-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-block-end: 16px;
+}
 
+.theme-a8c-for-agencies .components-button.overview__featured-dismiss-button {
 	svg {
 		fill: var(--color-text-inverted);
 	}
@@ -44,7 +49,6 @@ $woocommerce-purple-50: #720EEC;
 	display: inline-block;
 	background-color: var(--color-surface);
 	color: $woocommerce-purple-50;
-	margin-block-end: 16px;
 	text-transform: uppercase;
 }
 
@@ -55,11 +59,11 @@ $woocommerce-purple-50: #720EEC;
 }
 
 .overview__featured-woopayments-title {
-	@include a4a-font-heading-xl;
+	@include heading-x-large;
 	margin-block-end: 12px;
 }
 
 .overview__featured-woopayments-description {
-	@include a4a-font-body-lg;
+	@include body-large;
 	margin-block-end: 12px;
 }

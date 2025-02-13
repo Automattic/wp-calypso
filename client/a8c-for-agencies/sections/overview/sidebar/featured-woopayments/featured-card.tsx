@@ -18,14 +18,16 @@ const WooPaymentsFeaturedCard = ( { onDismiss, onShowLightbox }: Props ) => {
 
 	return (
 		<Card className="overview__featured-woopayments">
-			<Button
-				className="overview__featured-dismiss-button"
-				variant="tertiary"
-				icon={ close }
-				onClick={ onDismiss }
-			/>
+			<div className="overview__featured-woopayments-top">
+				<Badge className="overview__featured-woopayments-badge">{ translate( 'Featured' ) }</Badge>
 
-			<Badge className="overview__featured-woopayments-badge">{ translate( 'Featured' ) }</Badge>
+				<Button
+					className="overview__featured-dismiss-button"
+					variant="tertiary"
+					icon={ close }
+					onClick={ onDismiss }
+				/>
+			</div>
 
 			<img
 				className="overview__featured-woopayments-logo"
