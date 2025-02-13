@@ -19,7 +19,7 @@ interface ShareLink {
 	href: string;
 	className: string;
 	title: string;
-	icon: string;
+	icon: 'mail' | 'tumblr' | 'bluesky' | 'linkedin' | 'telegram' | 'reddit' | 'whatsapp' | 'x';
 	label: string;
 }
 
@@ -33,13 +33,6 @@ const getShareLinks = ( siteUrl: string, text: string ): ShareLink[] => {
 			title: __( 'Share via email', 'launchpad' ),
 			icon: 'mail',
 			label: __( 'Email', 'launchpad' ),
-		},
-		{
-			href: `https://wordpress.com/post?url=${ encodedSiteUrl }&is_post_share=true`,
-			className: 'share-site-modal__modal-share-link',
-			title: __( 'Share on WordPress', 'launchpad' ),
-			icon: 'wordpress',
-			label: __( 'WordPress', 'launchpad' ),
 		},
 		{
 			href: `http://www.tumblr.com/share/link?url=${ encodedSiteUrl }`,
@@ -201,23 +194,25 @@ const ShareSiteModal = ( { setModalIsOpen, site }: ShareSiteModalProps ) => {
 							</div>
 						</div>
 						<div className="share-site-modal__modal-social">
-							{ getShareLinks( shareData.url, shareData.text ).map( ( link, index ) => (
-								<a
-									key={ index }
-									href={ link.href }
-									className={ link.className }
-									title={ link.title }
-									rel="noopener noreferrer"
-									target="_blank"
-								>
-									<SocialLogo
-										className="share-site-modal__modal-icon"
-										size={ 24 }
-										icon={ link.icon }
-									/>
-									<span>{ link.label }</span>
-								</a>
-							) ) }
+							{ getShareLinks( shareData.url, shareData.text ).map(
+								( { href, className, title, icon, label }, index ) => (
+									<a
+										key={ index }
+										href={ href }
+										className={ className }
+										title={ title }
+										rel="noopener noreferrer"
+										target="_blank"
+									>
+										<SocialLogo
+											className="share-site-modal__modal-icon"
+											size={ 24 }
+											icon={ icon }
+										/>
+										<span>{ label }</span>
+									</a>
+								)
+							) }
 						</div>
 					</div>
 				</div>
