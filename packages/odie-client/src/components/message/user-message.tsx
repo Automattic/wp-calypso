@@ -66,12 +66,11 @@ export const UserMessage = ( {
 	};
 
 	const renderExtraContactOptions = () => {
-		const currentMessageIndex = chat.messages.findIndex(
-			( msg ) => msg.message_id === message.message_id
+		return (
+			chat.provider === 'odie' && (
+				<GetSupport onClickAdditionalEvent={ handleContactSupportClick } />
+			)
 		);
-		const isLastMessage = currentMessageIndex === chat.messages.length - 1;
-
-		return isLastMessage && <GetSupport onClickAdditionalEvent={ handleContactSupportClick } />;
 	};
 
 	const isMessageShowingDisclaimer =
