@@ -6,7 +6,11 @@
 import {
 	DataHelper,
 	EditorPage,
+	envToFeatureKey,
+	envVariables,
+	getTestAccountByFeature,
 	SecretsManager,
+	SiteType,
 	SocialConnectionsManager,
 	TestAccount,
 	TestAccountName,
@@ -24,7 +28,7 @@ const features4SimpleSites = {
 
 const testCases: Array< {
 	plan: string;
-	platform: 'Simple' | 'Atomic';
+	siteType: SiteType;
 	testAccountName: TestAccountName;
 	features: Record<
 		'resharing' | 'manualSharing' | 'mediaSharing' | 'socialImageGenerator',
@@ -33,19 +37,19 @@ const testCases: Array< {
 } > = [
 	{
 		plan: 'Free',
-		platform: 'Simple',
+		siteType: 'simple',
 		testAccountName: 'simpleSiteFreePlanUser',
 		features: features4SimpleSites,
 	},
 	{
 		plan: 'Personal',
-		platform: 'Simple',
+		siteType: 'simple',
 		testAccountName: 'simpleSitePersonalPlanUser',
 		features: features4SimpleSites,
 	},
 	{
 		plan: 'Paid',
-		platform: 'Atomic',
+		siteType: 'atomic',
 		testAccountName: 'atomicUser',
 		features: {
 			resharing: true,
@@ -62,13 +66,17 @@ const testCases: Array< {
  * Keywords: Social, Jetpack, Publicize
  */
 describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () {
-	for ( const { plan, platform, testAccountName, features } of testCases ) {
-		const title = `For ${ platform } sites with ${ plan } plan`;
+	for ( const { plan, siteType, testAccountName: accountName, features } of testCases ) {
+		const title = `For ${ siteType } sites with ${ plan } plan`;
 
 		describe( DataHelper.createSuiteTitle( title ), function () {
 			let page: Page;
 			let editorPage: EditorPage;
 			let socialConnectionsManager: SocialConnectionsManager;
+
+			const testAccountName = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+				{ siteType, accountName },
+			] );
 
 			const credentials = SecretsManager.secrets.testAccounts[ testAccountName ];
 			const siteSlug = credentials.testSites?.primary?.url;
@@ -205,7 +213,7 @@ describe( DataHelper.createSuiteTitle( 'Social: Editor features' ), function () 
 
 				// For some reason the manual sharing is not visible on the post publish panel for Simple sites with personal plan.
 				const isPostPublishManualSharingVisible =
-					features.manualSharing && ! ( platform === 'Simple' && plan === 'Personal' );
+					features.manualSharing && ! ( siteType === 'simple' && plan === 'Personal' );
 
 				if ( isPostPublishManualSharingVisible ) {
 					await manualSharing.waitFor();
