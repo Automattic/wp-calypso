@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
+import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -386,17 +386,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_FREE_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -414,17 +404,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -445,17 +425,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
