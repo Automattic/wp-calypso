@@ -384,33 +384,51 @@ class PurchaseItem extends Component {
 		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
 			if ( productType ) {
-				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
-					args: {
-						purchaseType: productType,
-						site: site.domain,
-					},
-					components: {
-						button: (
-							<button
-								className="purchase-item__link"
-								onClick={ ( event ) => {
-									event.stopPropagation();
-									event.preventDefault();
-									page( getPurchaseListUrlFor( slug ) );
-								} }
-								title={ translate( 'View subscriptions for %(siteName)s', {
-									args: {
-										siteName: site.name,
-									},
-								} ) }
-							/>
-						),
-					},
-				} );
+				return translate(
+					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
+					{
+						args: {
+							purchaseType: productType,
+							siteName: site.name,
+							siteDomain: site.domain,
+						},
+						components: {
+							button: (
+								<button
+									className="purchase-item__link"
+									onClick={ ( event ) => {
+										event.stopPropagation();
+										event.preventDefault();
+										page( getPurchaseListUrlFor( slug ) );
+									} }
+									title={ translate( 'View subscriptions for %(siteName)s', {
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+							link: (
+								<a
+									className="purchase-item__link"
+									href={ 'https://' + site.domain }
+									target="_blank"
+									rel="noreferrer"
+									title={ translate( 'View %(siteName)s', {
+										args: {
+											siteName: site.name,
+										},
+									} ) }
+								/>
+							),
+						},
+					}
+				);
 			}
 
-			return translate( 'for {{button}}%(site)s{{/button}}', {
+			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
 				args: {
+					siteName: site.name,
 					site: site.domain,
 				},
 				components: {
@@ -423,6 +441,19 @@ class PurchaseItem extends Component {
 								page( getPurchaseListUrlFor( slug ) );
 							} }
 							title={ translate( 'View subscriptions for %(siteName)s', {
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+					link: (
+						<a
+							className="purchase-item__link"
+							href={ 'https://' + site.domain }
+							target="_blank"
+							rel="noreferrer"
+							title={ translate( 'View %(siteName)s', {
 								args: {
 									siteName: site.name,
 								},
