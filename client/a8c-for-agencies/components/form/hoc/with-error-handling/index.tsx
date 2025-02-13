@@ -1,4 +1,4 @@
-import { ComponentType, useCallback, useMemo, useState } from 'react';
+import { ComponentType, useCallback, useMemo, useState, useEffect } from 'react';
 import { FieldTypes } from './types';
 
 type Validator< T > = ( field: T ) => string | null;
@@ -20,6 +20,11 @@ function withErrorHandling< T, F extends FieldTypes >(
 		if ( !! props.error && props.error !== newProps.error ) {
 			setError( props.error );
 		}
+
+		// This is a workaround to ensure that the error is updated when the parent component updates the error.
+		useEffect( () => {
+			setError( props.error );
+		}, [ props.error ] );
 
 		const validate = useCallback( () => {
 			if ( ! checks ) {
