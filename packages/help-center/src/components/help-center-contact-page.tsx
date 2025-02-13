@@ -62,7 +62,6 @@ export const HelpCenterContactPage: FC< HelpCenterContactPageProps > = ( {
 		supportActivity,
 	} = useChatStatus();
 	useLoadZendeskMessaging(
-		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats,
 		isEligibleForChat || hasActiveChats
 	);

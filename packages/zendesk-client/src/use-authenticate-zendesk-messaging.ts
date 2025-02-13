@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
@@ -9,6 +8,7 @@ import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 /**
  * Internal dependencies
  */
+import { isTestModeEnvironment } from './util';
 import type { APIFetchOptions, MessagingAuth, ZendeskAuthType } from './types';
 
 /**
@@ -20,9 +20,7 @@ export function useAuthenticateZendeskMessaging(
 	enabled = false,
 	type: ZendeskAuthType = 'zendesk'
 ) {
-	const currentEnvironment = config( 'env_id' ) as string;
-	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
-
+	const isTestMode = isTestModeEnvironment();
 	return useQuery( {
 		queryKey: [ 'getMessagingAuth', VERSION, type, isTestMode ],
 		queryFn: async () => {

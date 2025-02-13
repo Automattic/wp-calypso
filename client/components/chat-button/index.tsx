@@ -112,8 +112,8 @@ const ChatButton: FC< Props > = ( {
 	const configName = getConfigNameForIntent( chatIntent );
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		section,
-		configName,
-		shouldShowChatButton()
+		shouldShowChatButton(),
+		configName
 	);
 
 	const handleClick = () => {

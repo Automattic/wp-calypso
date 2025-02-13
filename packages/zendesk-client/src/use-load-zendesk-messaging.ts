@@ -7,17 +7,30 @@ import { useEffect, useState } from '@wordpress/element';
 /**
  * Internal Dependencies
  */
-import { ZENDESK_SCRIPT_ID } from './constants';
+import {
+	ZENDESK_SCRIPT_ID,
+	ZENDESK_STAGING_SUPPORT_CHAT_KEY,
+	ZENDESK_SUPPORT_CHAT_KEY,
+} from './constants';
 import { useAuthenticateZendeskMessaging } from './use-authenticate-zendesk-messaging';
+import { isTestModeEnvironment } from './util';
 import type { ZendeskConfigName } from './types';
 
 export function useLoadZendeskMessaging(
-	keyConfigName: ZendeskConfigName,
 	enabled = false,
-	tryAuthenticating = false
+	tryAuthenticating = false,
+	keyConfigName: ZendeskConfigName = 'zendesk_support_chat_key'
 ) {
 	const [ isMessagingScriptLoaded, setMessagingScriptLoaded ] = useState( false );
-	const zendeskKey: string = config( keyConfigName );
+	const isTestMode = isTestModeEnvironment();
+
+	let zendeskKey: string;
+	if ( keyConfigName === 'zendesk_support_chat_key' ) {
+		zendeskKey = isTestMode ? ZENDESK_STAGING_SUPPORT_CHAT_KEY : ZENDESK_SUPPORT_CHAT_KEY;
+	} else {
+		zendeskKey = config( keyConfigName );
+	}
+
 	const { data: authData } = useAuthenticateZendeskMessaging(
 		isMessagingScriptLoaded && tryAuthenticating,
 		'messenger'

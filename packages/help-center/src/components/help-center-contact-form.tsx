@@ -114,7 +114,6 @@ export const HelpCenterContactForm = () => {
 	const { hasActiveChats, isEligibleForChat, isLoading: isLoadingChatStatus } = useChatStatus();
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		sectionName,
-		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
 

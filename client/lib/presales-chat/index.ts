@@ -73,9 +73,9 @@ export function usePresalesChat( keyType: KeyType, enabled = true, skipAvailabil
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const zendeskKeyName = getConfigName( keyType );
 	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
-		zendeskKeyName,
 		isEligibleForPresalesChat && isPresalesChatAvailable,
-		isLoggedIn
+		isLoggedIn,
+		zendeskKeyName
 	);
 
 	const openChat = () => {

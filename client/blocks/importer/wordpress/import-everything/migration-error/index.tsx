@@ -51,7 +51,6 @@ export const MigrationError = ( props: Props ) => {
 	);
 	const { openZendeskWidget, isOpeningZendeskWidget } = useOpenZendeskMessaging(
 		'migration-error',
-		'zendesk_support_chat_key',
 		isEligibleForChat
 	);
 	const { title, subTitle, hintId, goBackCta, getHelpCta, tryAgainCta, importContentCta } =
