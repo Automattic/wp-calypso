@@ -50,7 +50,7 @@
 		"a8c-for-agencies-auth": true,
 		"a8c-for-agencies-landing": true,
 		"a8c-for-agencies-overview": true,
-		"a8c-for-agencies-plugins": false,
+		"a8c-for-agencies-plugins": true,
 		"a8c-for-agencies-sites": true,
 		"a8c-for-agencies-marketplace": true,
 		"a8c-for-agencies-purchases": true,
