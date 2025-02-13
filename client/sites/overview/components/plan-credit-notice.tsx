@@ -29,6 +29,7 @@ const PlanCreditNotice = () => {
 			{ showNotice && (
 				<Notice
 					className="hosting-overview__domain-to-plan-credit-notice"
+					isDismissible={ false }
 					status="info"
 					onRemove={ () => {} }
 				>
