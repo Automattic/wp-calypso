@@ -36167,7 +36167,7 @@ __metadata:
     jest-teamcity: "npm:^1.11.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    node-fetch: "npm:^2.6.1"
+    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"
