@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
@@ -94,6 +95,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
+
+	// Keep track of the previous restore status so we can detect when it transitions
+	// from 'queued'/'running' to 'finished' during this session (rather than being
+	// 'finished' from a past session).
+	const previousRestoreStatus = usePrevious( inProgressRewindStatus );
+
 	const { message, percent, currentEntry, status } = useSelector(
 		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
@@ -471,7 +478,27 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const isFinished = isRestoreDone && showFinishedScreen;
 
 	useEffect( () => {
-		if ( isRestoreDone && userHasRequestedRestore && ! showFinishedScreen ) {
+		// If the server says the restore is 'queued' or 'running', it means a
+		// restore is in progress. Even if the user just refreshed the page, we
+		// want to mark userHasRequestedRestore = true so that when it finishes,
+		// we'll know it actually completed during this session (and can show
+		// the Finished screen).
+		if (
+			inProgressRewindStatus &&
+			[ 'queued', 'running' ].includes( inProgressRewindStatus ) &&
+			! userHasRequestedRestore
+		) {
+			setUserHasRequestedRestore( true );
+		}
+	}, [ inProgressRewindStatus, userHasRequestedRestore ] );
+
+	useEffect( () => {
+		if (
+			isRestoreDone &&
+			userHasRequestedRestore &&
+			[ 'queued', 'running' ].includes( previousRestoreStatus as string ) &&
+			! showFinishedScreen
+		) {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_backup_restore_completed', {
 					has_credentials: hasCredentials,
@@ -494,6 +521,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		inProgressRewindStatus,
 		isRestoreDone,
 		isRestoreInProgress,
+		previousRestoreStatus,
 		restoreInitiated,
 		showFinishedScreen,
 		userHasRequestedRestore,
@@ -516,6 +544,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		} else if ( isInProgress ) {
 			return renderInProgress();
 		} else if ( isRestoreDone && ! showFinishedScreen ) {
+			// The API may still say "finished" from a *previous* restore with the same rewindId.
+			// If our local showFinishedScreen flag is false, we treat this as a "new" visit
+			// and show the confirm screen instead of the finished screen.
 			return renderConfirm();
 		} else if ( isFinished ) {
 			return renderFinished();
