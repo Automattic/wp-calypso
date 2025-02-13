@@ -371,8 +371,17 @@ body.is-mobile-app-view {
 	}
 }
 
-// Try to clean things up a bit when printing.
 .layout {
+	.global-notices {
+		padding: 8px;
+
+		/* This is the breakpoint we're using in client/components/global-notices/style.scss */
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 0;
+		}
+	}
+
+	// Try to clean things up a bit when printing.
 	.masterbar,
 	.layout__secondary {
 		@media print {
