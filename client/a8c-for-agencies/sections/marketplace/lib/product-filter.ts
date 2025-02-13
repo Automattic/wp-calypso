@@ -36,7 +36,19 @@ import {
 	PRODUCT_TYPE_WPCOM_PLAN,
 } from '../constants';
 import { isPressableHostingProduct, isWPCOMHostingProduct } from '../lib/hosting';
-
+import {
+	SECURITY_PRODUCT_SLUGS,
+	PERFORMANCE_PRODUCT_SLUGS,
+	SOCIAL_PRODUCT_SLUGS,
+	GROWTH_PRODUCT_SLUGS,
+	PAYMENTS_PRODUCT_SLUGS,
+	SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS,
+	CONVERSION_PRODUCT_SLUGS,
+	CUSTOMER_SERVICE_PRODUCT_SLUGS,
+	MERCHANDISING_PRODUCT_SLUGS,
+	STORE_CONTENT_PRODUCT_SLUGS,
+	STORE_MANAGEMENT_PRODUCT_SLUGS,
+} from './product-slugs';
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
 	[ PRODUCT_FILTER_KEY_CATEGORIES ]: Record< string, boolean >;
@@ -199,6 +211,16 @@ function filterProductsAndPlansByCategories(
 	return Array.from( filteredData );
 }
 
+export const isProductType = ( family_slug: string ) => {
+	return (
+		family_slug !== 'jetpack-packs' &&
+		family_slug !== 'jetpack-backup-storage' &&
+		! isWooCommerceProduct( family_slug ) &&
+		! isWpcomHostingProduct( family_slug ) &&
+		! isPressableHostingProduct( family_slug )
+	);
+};
+
 /*
  * Filter products and plans by type.
  *
@@ -214,14 +236,7 @@ export function filterProductsAndPlansByType(
 		case PRODUCT_TYPE_JETPACK_PRODUCT:
 		case PRODUCT_TYPE_PRODUCT: // Right now this is the same as jetpack product but once we have more non-jetpack products we can separate them.
 			return (
-				allProductsAndPlans?.filter(
-					( { family_slug } ) =>
-						family_slug !== 'jetpack-packs' &&
-						family_slug !== 'jetpack-backup-storage' &&
-						! isWooCommerceProduct( family_slug ) &&
-						! isWpcomHostingProduct( family_slug ) &&
-						! isPressableHostingProduct( family_slug )
-				) || []
+				allProductsAndPlans?.filter( ( { family_slug } ) => isProductType( family_slug ) ) || []
 			);
 		case PRODUCT_TYPE_JETPACK_PLAN:
 		case PRODUCT_TYPE_PLAN: // Right now this is the same as jetpack plan but once we have more non-jetpack plans we can separate them.
@@ -289,107 +304,50 @@ function filterProductsAndPlansByCategory(
 		case PRODUCT_CATEGORY_SECURITY:
 			return allProductsAndPlans.filter(
 				( { slug, family_slug } ) =>
-					[
-						'jetpack-backup',
-						'jetpack-scan',
-						'jetpack-anti-spam',
-						'jetpack-monitor',
-						'jetpack-backup-storage',
-					].includes( family_slug ) || slug === 'jetpack-complete'
+					SECURITY_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
 			);
 		case PRODUCT_CATEGORY_PERFORMANCE:
 			return allProductsAndPlans.filter(
 				( { slug, family_slug } ) =>
-					[ 'jetpack-boost', 'jetpack-search', 'jetpack-videopress' ].includes( family_slug ) ||
-					slug === 'jetpack-complete'
+					PERFORMANCE_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
 			);
 		case PRODUCT_CATEGORY_SOCIAL:
 			return allProductsAndPlans.filter(
-				( { slug, family_slug } ) => family_slug === 'jetpack-social' || slug === 'jetpack-complete'
+				( { slug, family_slug } ) =>
+					SOCIAL_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
 			);
 		case PRODUCT_CATEGORY_GROWTH:
 			return allProductsAndPlans.filter(
 				( { slug, family_slug } ) =>
-					[ 'jetpack-creator', 'jetpack-ai', 'jetpack-stats' ].includes( family_slug ) ||
-					slug === 'jetpack-complete'
+					GROWTH_PRODUCT_SLUGS.includes( family_slug ) || slug === 'jetpack-complete'
 			);
 		case PRODUCT_CATEGORY_PAYMENTS:
-			return allProductsAndPlans.filter(
-				( { family_slug } ) => family_slug === 'woocommerce-woopayments'
+			return allProductsAndPlans.filter( ( { family_slug } ) =>
+				PAYMENTS_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_SHIPPING_DELIVERY_FULFILLMENT:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-advanced-notifications',
-					'woocommerce-all-products-woo-subscriptions',
-					'woocommerce-conditional-shipping-payments',
-					'woocommerce-flat-rate-box-shipping',
-					'woocommerce-per-product-shipping',
-					'woocommerce-shipping-multiple-addresses',
-					'woocommerce-table-rate-shipping',
-					'woocommerce-distance-rate-shipping',
-					'woocommerce-order-barcodes',
-					'woocommerce-shipping',
-				].includes( family_slug )
+				SHIPPING_DELIVERY_FULFILLMENT_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_CONVERSION:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-back-in-stock-notifications',
-					'woocommerce-checkout-field-editor',
-					'woocommerce-product-recommendations',
-					'woocommerce-coupon-campaigns',
-					'woocommerce-points-and-rewards',
-					'woocommerce-product-add-ons',
-					'woocommerce-product-bundles',
-				].includes( family_slug )
+				CONVERSION_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_CUSTOMER_SERVICE:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-automatewoo',
-					'woocommerce-automatewoo-birthdays',
-					'woocommerce-automatewoo-refer-a-friend',
-					'woocommerce-returns-warranty-requests',
-					'woocommerce-shipment-tracking',
-				].includes( family_slug )
+				CUSTOMER_SERVICE_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_MERCHANDISING:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-composite-products',
-					'woocommerce-eu-vat-number',
-					'woocommerce-gift-cards',
-					'woocommerce-gifting-wc-subscriptions',
-					'woocommerce-product-vendors',
-					'woocommerce-deposits',
-					'woocommerce-pre-orders',
-					'woocommerce-purchase-order-gateway',
-					'woocommerce-subscription-downloads',
-					'woocommerce-subscriptions',
-				].includes( family_slug )
+				MERCHANDISING_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_STORE_CONTENT:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-accommodations-bookings',
-					'woocommerce-additional-image-variations',
-					'woocommerce-bookings',
-					'woocommerce-bookings-availability',
-					'woocommerce-box-office',
-					'woocommerce-brands',
-					'woocommerce-minmax-quantities',
-					'woocommerce-one-page-checkout',
-				].includes( family_slug )
+				STORE_CONTENT_PRODUCT_SLUGS.includes( family_slug )
 			);
 		case PRODUCT_CATEGORY_STORE_MANAGEMENT:
 			return allProductsAndPlans.filter( ( { family_slug } ) =>
-				[
-					'woocommerce-bulk-stock-management',
-					'woocommerce-product-csv-import-suite',
-					'woocommerce-tax',
-					'woocommerce-woopayments',
-				].includes( family_slug )
+				STORE_MANAGEMENT_PRODUCT_SLUGS.includes( family_slug )
 			);
 	}
 

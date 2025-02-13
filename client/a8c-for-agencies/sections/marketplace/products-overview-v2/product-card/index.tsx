@@ -15,6 +15,7 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
+import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from './product-price-with-discount-info';
 
 import './style.scss';
@@ -170,7 +171,7 @@ export default function ProductCard( props: Props ) {
 						<div className="product-card__main">
 							<div className="product-card__heading">
 								<h3 className="product-card__title">{ productTitle }</h3>
-
+								<ProductBadges product={ product } />
 								<div className="product-card__pricing is-compact">
 									<ProductPriceWithDiscount
 										product={ product }

@@ -104,6 +104,7 @@
 		"@wordpress/i18n": "^5.16.0",
 		"@wordpress/icons": "^10.16.0",
 		"@wordpress/is-shallow-equal": "^5.16.0",
+		"@wordpress/private-apis": "^1.16.0",
 		"@wordpress/react-i18n": "^4.16.0",
 		"@wordpress/url": "^4.16.0",
 		"@wordpress/warning": "^3.16.0",
