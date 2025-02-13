@@ -88,10 +88,6 @@ export type BlazePagedItem = BlazablePost | Campaign;
 
 export type PromotePostWarning = 'sync_in_progress';
 
-type TspEligiblePartialQueryResult = {
-	tsp_eligible: boolean;
-};
-
 export type PostQueryResult = {
 	posts?: BlazablePost[];
 	has_more_pages: boolean;
@@ -101,7 +97,7 @@ export type PostQueryResult = {
 	pages: [];
 	pageParams: [];
 	warnings?: PromotePostWarning[];
-} & TspEligiblePartialQueryResult;
+};
 
 export type CampaignQueryResult = {
 	campaigns: Campaign[];
@@ -114,8 +110,7 @@ export type CampaignQueryResult = {
 		total_clicks: number;
 	};
 	warnings?: PromotePostWarning[];
-} & TspEligiblePartialQueryResult;
-
+};
 export type CampaignReportRequestBody = {
 	start_date: string;
 	end_date?: string;
