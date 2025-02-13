@@ -98,7 +98,6 @@ const SiteMigrationOtherPlatform: Step = function ( { navigation } ) {
 								platformName === 'Unknown' ? descriptionWithoutPlatform : descriptionWithPlatform
 							}
 							align="center"
-							subHeaderAlign="center"
 						/>
 					)
 				}

@@ -62,6 +62,7 @@ const initialPurchases = [
 		most_recent_renew_date: '',
 		can_disable_auto_renew: true,
 		can_reenable_auto_renewal: true,
+		async_pending_payment_block_is_set: false,
 		can_explicit_renew: true,
 		cost_to_unbundle: undefined,
 		cost_to_unbundle_display: undefined,

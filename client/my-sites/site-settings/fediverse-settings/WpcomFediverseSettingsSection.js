@@ -5,7 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import { Notice } from 'calypso/components/notice';
+import Notice from 'calypso/components/notice';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains.ts';
@@ -82,7 +82,7 @@ const DomainPendingWarning = ( { siteId, domains } ) => {
 		  );
 
 	return (
-		<Notice status="is-warning" translate={ translate } isCompact className="is-full-width">
+		<Notice status="is-warning" isCompact className="is-full-width">
 			{ message }
 		</Notice>
 	);

@@ -389,10 +389,21 @@ const domainsDashboardGlobalStyles = css`
 			}
 		}
 
-		@media only screen and ( max-width: 781px ) {
-			div.layout.is-global-sidebar-visible {
-				.layout__primary {
-					overflow-x: unset;
+			@media only screen and ( max-width: 781px ) {
+				div.layout.is-global-sidebar-visible {
+					.layout__primary {
+						overflow-x: unset;
+					}
+				}
+				.layout__primary > main {
+					background: var( --color-surface );
+					margin: 0;
+					border-radius: 8px;
+				}
+				header.navigation-header {
+					padding-inline: 16px;
+					padding-bottom: 0;
+					padding-top: 24px;
 				}
 			}
 			.layout__primary > main {

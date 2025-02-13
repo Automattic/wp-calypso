@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	START_WRITING_FLOW,
 	CONNECT_DOMAIN_FLOW,
@@ -48,11 +47,6 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'newsletter-post-setup': () =>
 		import(
 			/* webpackChunkName: "newsletter-post-setup-flow" */ '../declarative-flow/newsletter-post-setup'
-		),
-
-	ecommerce: () =>
-		import(
-			/* webpackChunkName: "tailored-ecommerce-flow" */ '../declarative-flow/tailored-ecommerce-flow'
 		),
 
 	[ ENTREPRENEUR_FLOW ]: () =>
@@ -140,17 +134,14 @@ const hostedSiteMigrationFlow: Record< string, () => Promise< { default: Flow } 
 		),
 };
 
-const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > =
-	config.isEnabled( '100-year-domain' )
-		? {
-				[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
-					import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
-				[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
-					import(
-						/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
-					),
-		  }
-		: {};
+const hundredYearDomainFlow: Record< string, () => Promise< { default: Flow } > > = {
+	[ HUNDRED_YEAR_DOMAIN_FLOW ]: () =>
+		import( /* webpackChunkName: "hundred-year-domain" */ './hundred-year-domain' ),
+	[ HUNDRED_YEAR_DOMAIN_TRANSFER ]: () =>
+		import(
+			/* webpackChunkName: "hundred-year-domain-transfer" */ './hundred-year-domain-transfer'
+		),
+};
 
 export default {
 	...availableFlows,

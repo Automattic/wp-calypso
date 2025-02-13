@@ -42,6 +42,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getSelectedOrAllSitesWithJetpackPlugin from 'calypso/state/selectors/get-selected-or-all-sites-with-jetpack-plugin';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
@@ -107,7 +108,9 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const allSites = useSelector( ( state ) => getSites( state ) );
+	const allSites = useSelector( ( state ) =>
+		isA8CForAgencies() ? getSelectedOrAllSitesWithJetpackPlugin( state ) : getSites( state )
+	);
 	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
@@ -342,7 +345,7 @@ const PluginsDashboard = ( {
 			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
-					{ isA8CForAgencies() && <A4APluginsJetpackBanner /> }
+					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
 						{ ! pluginSlug && (

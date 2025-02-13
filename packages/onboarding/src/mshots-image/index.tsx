@@ -214,6 +214,7 @@ const useMshotsImgTreatment = (
 			}
 		};
 		newImage.src = srcUrl;
+		newImage.loading = 'lazy';
 		imgRef.current = newImage;
 
 		return () => {
@@ -302,6 +303,7 @@ const MShotsImageTreatment = ( {
 	alt,
 	options,
 	scrollable = false,
+	loading,
 }: MShotsImageProps ) => {
 	const maybeImage = useMshotsImgTreatment( url, options );
 	const src: string = maybeImage?.src || '';
@@ -333,7 +335,12 @@ const MShotsImageTreatment = ( {
 	return scrollable || ! visible ? (
 		<div className={ className } style={ style } aria-labelledby={ labelledby } />
 	) : (
-		<img { ...{ className, style, src, alt } } aria-labelledby={ labelledby } alt={ alt } />
+		<img
+			{ ...{ className, style, src, alt } }
+			loading={ loading }
+			aria-labelledby={ labelledby }
+			alt={ alt }
+		/>
 	);
 };
 

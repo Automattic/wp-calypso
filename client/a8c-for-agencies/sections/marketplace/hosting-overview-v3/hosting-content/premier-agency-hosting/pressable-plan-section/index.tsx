@@ -1,5 +1,5 @@
 import { external } from '@wordpress/icons';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
 import useProductAndPlans from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-product-and-plans';
@@ -218,9 +218,7 @@ export default function PressablePlanSection( {
 							),
 							translate( '{{b}}%(count)s visits{{/b}} per month*', {
 								args: {
-									count: numberFormat( selectedPlanInfo?.visits ?? 0, {
-										numberFormatOptions: { notation: 'compact' },
-									} ),
+									count: numberFormatCompact( selectedPlanInfo?.visits ?? 0 ),
 								},
 								components: {
 									b: <b />,

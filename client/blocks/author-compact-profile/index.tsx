@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
@@ -91,12 +91,7 @@ export default function AuthorCompactProfile( props: AuthorCompactProfileProps )
 						{ translate( '%(followCount)s subscriber', '%(followCount)s subscribers', {
 							count: followCount,
 							args: {
-								followCount: numberFormat( followCount, {
-									numberFormatOptions: {
-										notation: 'compact',
-										maximumFractionDigits: 1,
-									},
-								} ),
+								followCount: numberFormatCompact( followCount ),
 							},
 						} ) }
 					</div>

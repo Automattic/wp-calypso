@@ -1,7 +1,8 @@
-import { Card, Count, PostStatsCard } from '@automattic/components';
+import { Card, Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -27,6 +28,7 @@ type Post = {
 	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
 	comment_count: number | null;
+	url: string | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
@@ -50,6 +52,7 @@ export default function PostDetailHighlightsSection( {
 		post_thumbnail: post?.post_thumbnail?.URL || null,
 		title: truncateWithLimit( getProcessedText( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
+
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
@@ -98,6 +101,7 @@ export default function PostDetailHighlightsSection( {
 							viewCount={ viewCount }
 							commentCount={ post?.comment_count || 0 }
 							locale={ userLocale }
+							titleLink={ post?.url || undefined }
 						/>
 
 						<Card className="highlight-card">

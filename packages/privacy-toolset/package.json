@@ -49,7 +49,7 @@
 		"@storybook/react": "^7.6.19",
 		"@testing-library/jest-dom": "^6.4.5",
 		"@testing-library/react": "^15.0.7",
-		"postcss": "^8.4.5",
+		"postcss": "^8.5.1",
 		"require-from-string": "^2.0.2",
 		"typescript": "^5.3.3",
 		"webpack": "^5.97.1"
