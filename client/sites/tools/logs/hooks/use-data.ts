@@ -39,11 +39,11 @@ const useData = ( {
 	} );
 
 	return {
-		data: data?.logs ? ( data.logs as ( PHPLog | ServerLog )[] ) : EMPTY_ARRAY,
+		data: ! data?.logs || isFetching ? EMPTY_ARRAY : ( data.logs as ( PHPLog | ServerLog )[] ),
 		paginationInfo: {
-			totalItems: data?.total_results || 0,
+			totalItems: isFetching ? 0 : data?.total_results || 0,
 			totalPages:
-				!! data?.total_results && !! view.perPage
+				!! data?.total_results && !! view.perPage && ! isFetching
 					? Math.ceil( data.total_results / view.perPage )
 					: 0,
 		},
