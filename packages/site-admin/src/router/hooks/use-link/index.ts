@@ -13,6 +13,18 @@ import useHistory from '../use-history';
  */
 import type { NavigationOptions } from '../../types';
 
+type UseLink = {
+	/**
+	 * The full navigation URL including query parameters.
+	 */
+	href: string;
+
+	/**
+	 * A function to handle link navigation via `history.navigate`.
+	 */
+	onClick: ( event: React.SyntheticEvent< HTMLAnchorElement > ) => void;
+};
+
 /**
  * Custom hook for generating navigation links within the routing system.
  *
@@ -20,7 +32,7 @@ import type { NavigationOptions } from '../../types';
  * It ensures correct query string handling and allows interception via `beforeNavigate`.
  * @param {string} to                   - The target path for the navigation link.
  * @param {NavigationOptions} [options] - Optional navigation options such as transition and state.
- * @returns {Object} An object containing:
+ * @returns {UseLink} An object containing:
  * - `href`: The full navigation URL including query parameters.
  * - `onClick`: A function to handle link navigation via `history.navigate`.
  * @example
@@ -34,7 +46,7 @@ import type { NavigationOptions } from '../../types';
  * }
  * ```
  */
-export default function useLink( to: string, options: NavigationOptions = {} ): object {
+export default function useLink( to: string, options: NavigationOptions = {} ): UseLink {
 	const history = useHistory();
 	const { pathArg, beforeNavigate } = useContext( ConfigContext );
 

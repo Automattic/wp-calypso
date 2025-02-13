@@ -13,7 +13,47 @@ import { browserHistory, ConfigContext } from '../..';
  */
 import type { NavigationOptions } from '../../types';
 
-export default function useHistory() {
+type UseNavigation = {
+	/**
+	 * Navigate to a given path with options.
+	 */
+	navigate: ( path: string, options?: NavigationOptions ) => void;
+
+	/**
+	 * Navigate back in browser history.
+	 */
+	back: () => void;
+};
+
+/**
+ * Custom hook for handling navigation history within the application.
+ *
+ * This hook provides programmatic navigation capabilities, including
+ * transitioning between pages, managing query parameters, and handling back navigation.
+ * @returns {UseNavigation} An object containing:
+ * - `navigate`: A function to navigate to a given path with options.
+ * - `back`: A function to navigate back in browser history.
+ * @example
+ * ```tsx
+ * import useHistory from '../use-history';
+ *
+ * function MyComponent() {
+ *     const { navigate, back } = useHistory();
+ *
+ *     return (
+ *         <div>
+ *             <button onClick={() => navigate('/dashboard', { state: { from: 'home' } })}>
+ *                 Go to Dashboard
+ *             </button>
+ *             <button onClick={back}>
+ *                 Go Back
+ *             </button>
+ *         </div>
+ *     );
+ * }
+ * ```
+ */
+export default function useHistory(): UseNavigation {
 	const { pathArg, beforeNavigate } = useContext( ConfigContext );
 
 	const navigate = useEvent( async ( rawPath: string, options: NavigationOptions = {} ) => {
