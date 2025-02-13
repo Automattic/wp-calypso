@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import wpcom from 'calypso/lib/wp';
 import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices/actions';
 
 const useAddSitesModalNotices = () => {
@@ -13,14 +12,14 @@ const useAddSitesModalNotices = () => {
 			if ( error?.error === 'email_unverified' ) {
 				dispatch(
 					errorNotice(
-						translate( 'You need to verify your email address before subscribing to sites.', {
+						translate( 'Please verify your email before subscribing.', {
 							comment: 'Error shown when trying to subscribe to a site with an unverified email.',
 						} ),
 						{
 							id: 'resend-verification-email',
-							button: translate( 'Resend Email' ),
+							button: translate( 'Account Settings' ),
 							onClick: () => {
-								wpcom.req.post( '/me/send-verification-email' );
+								window.location.href = '/me/account';
 							},
 						}
 					)
