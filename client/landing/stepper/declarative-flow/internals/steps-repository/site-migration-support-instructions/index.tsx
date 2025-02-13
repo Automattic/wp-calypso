@@ -102,7 +102,6 @@ export const SiteMigrationSupportInstructions: Step = ( { stepName } ) => {
 				<FormattedHeader
 					headerText={ translate( 'We’ll take it from here!' ) }
 					subHeaderText={ content }
-					subHeaderAlign="center"
 				/>
 			}
 			isHorizontalLayout={ false }

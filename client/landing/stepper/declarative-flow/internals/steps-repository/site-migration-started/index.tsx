@@ -79,7 +79,6 @@ const SiteMigrationStarted: Step = function () {
 						</>
 					}
 					align="center"
-					subHeaderAlign="center"
 				/>
 			}
 			hideSkip

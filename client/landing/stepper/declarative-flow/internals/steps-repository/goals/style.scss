@@ -2,62 +2,28 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
-.goals__container {
-	padding: 0 20px;
+.goals-step .step-container {
+	&__skip-wrapper {
+		// I really hate this, but forcing a specificity is not much better.
+		margin-inline-start: 0 !important;
 
-	&.two-columns {
-		.step-container__header {
-			margin-bottom: 16px;
-			margin-top: 20px;
-
-			.formatted-header {
-				.formatted-header__subtitle,
-				.formatted-header__title {
-					text-align: center;
-				}
-
-				.formatted-header__title {
-					text-wrap-style: pretty;
-				}
-
-				.formatted-header__subtitle {
-					margin-top: 8px;
-					text-wrap-style: balance;
-				}
-
-				margin-bottom: 24px;
-
-				@include break-small {
-					margin-top: 32px;
-					margin-bottom: 40px;
-				}
-			}
-		}
-
-		.select-goals__cards-hint {
-			font-weight: 400;
-			line-height: 24px;
-			color: #787c82;
-		}
-
-		.step-container__skip-wrapper {
-			// I really hate this, but forcing a specificity is not much better.
-			margin-inline-start: 0 !important;
-
-			@include break-small {
-				margin-inline-start: auto !important;
-			}
-		}
-
-		.step-container__content {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 24px;
+		@include break-small {
+			margin-inline-start: auto !important;
 		}
 	}
 
-	.select-goals__cards-container {
+	&__header, &__content {
+		margin-inline: 16px;
+	}
+}
+
+.select-goals {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 24px;
+
+	&__cards-container {
 		font-family: Inter, $sans;
 		display: grid;
 		gap: 16px;
@@ -78,33 +44,15 @@
 		}
 	}
 
-	.select-goals__actions-container {
-		padding: 32px 0 48px;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
-
-		button.is-primary {
-			width: 130px;
-			height: 44px;
-			border-radius: 4px;
-			box-shadow: 0 1px 2px rgb(0 0 0 / 5%) !important;
-		}
-
-		@include break-small {
-			// i2: justify-content: center;
-			flex-direction: row;
-		}
-	}
-
 	.select-goals__alternative-flows-container {
 		display: grid;
+		width: 100%;
 		grid-template-columns: max-content;
-		justify-content: center;
 		gap: 20px 8px;
 		padding-bottom: 60px + 48px; // height of sticky footer
 
 		@include break-small {
+			justify-content: center;
 			padding-bottom: 60px;
 			grid-template-columns: repeat(3, max-content);
 			gap: 16px 8px;
@@ -112,11 +60,11 @@
 	}
 
 	.select-goals__next {
-		width: 160px;
+		padding: 0.5rem 3rem;
 	}
 
 	.components-button.select-goals__link.is-link { // extra specificity to override default link styles
-		color: var(--studio-gray-100);
+		color: var(--color-neutral-100);
 		font-size: $font-body-small;
 	}
 
@@ -140,64 +88,5 @@
 		@include break-small {
 			display: block;
 		}
-	}
-}
-
-.goals-link {
-	&__container {
-		position: relative;
-		padding: 0 0 32px;
-
-		@include break-small {
-			display: flex;
-			align-items: flex-start;
-			justify-content: space-between;
-			padding: 0 0 25px;
-		}
-	}
-
-	&__info-wrapper {
-		@include break-mobile {
-			display: flex;
-			align-items: flex-start;
-			width: 100%;
-		}
-	}
-
-	&__info {
-		flex: 1;
-		padding-right: 6px;
-	}
-
-	&__description {
-		font-size: $font-body-small;
-		color: #646970;
-		margin-bottom: 0;
-		margin-right: 0.2rem;
-	}
-
-	&__button {
-		margin-top: 2px;
-		padding: 0;
-		min-width: 130px;
-		border: none;
-		background: none;
-		color: #101517;
-		text-decoration: underline;
-		font-weight: 500;
-		text-align: start;
-
-		@include break-small {
-			margin-top: 0;
-			text-align: end;
-		}
-
-		&:not([disabled]):hover {
-			color: var(--color-neutral-70);
-		}
-	}
-
-	&__disabled-info svg {
-		fill: var(--color-neutral-20);
 	}
 }

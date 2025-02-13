@@ -170,7 +170,6 @@ const SiteMigrationUpgradePlan: FC< Props > = ( {
 						headerText={ headerText }
 						subHeaderText={ subHeaderText }
 						align="center"
-						subHeaderAlign="center"
 					/>
 				}
 				stepContent={ stepContent }

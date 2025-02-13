@@ -108,7 +108,6 @@ const SiteMigrationApplicationPasswordsAuthorization: Step = function ( { naviga
 		<FormattedHeader
 			id="site-migration-credentials-header"
 			headerText={ translate( 'Get ready for blazing fast speeds' ) }
-			subHeaderAlign="center"
 			subHeaderText={ subHeaderText }
 			align="center"
 		/>

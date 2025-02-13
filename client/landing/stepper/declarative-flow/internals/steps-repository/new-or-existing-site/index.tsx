@@ -127,9 +127,7 @@ const NewOrExistingSiteStep: Step = function NewOrExistingSiteStep( { navigation
 					intentsAlt={ [] }
 				/>
 			}
-			formattedHeader={
-				<FormattedHeader brandFont headerText={ getHeaderText() } subHeaderAlign="center" />
-			}
+			formattedHeader={ <FormattedHeader brandFont headerText={ getHeaderText() } /> }
 			justifyStepContent="center"
 			stepName="new-or-existing-site"
 			flowName={ flow }
