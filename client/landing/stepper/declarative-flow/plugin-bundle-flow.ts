@@ -3,6 +3,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch } from 'calypso/state';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useComingFromThemeActivationParam } from '../hooks/use-coming-from-theme-activation';
+import { useQuery } from '../hooks/use-query';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSitePluginSlug } from '../hooks/use-site-plugin-slug';
@@ -75,6 +76,7 @@ const pluginBundleFlow: FlowV1 = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const comingFromThemeActivation = useComingFromThemeActivationParam();
+		const skipConfirmation = useQuery().has( 'skipConfirmation' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -164,6 +166,10 @@ const pluginBundleFlow: FlowV1 = {
 			if ( 'bundleConfirm' === nextStep ) {
 				if ( isAtomic ) {
 					return navigate( 'bundleInstallPlugins' );
+				}
+
+				if ( skipConfirmation ) {
+					return navigate( 'bundleTransfer' );
 				}
 			}
 

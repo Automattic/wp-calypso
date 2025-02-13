@@ -18,6 +18,7 @@ import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundl
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import { useSitePluginSlug } from 'calypso/landing/stepper/hooks/use-site-plugin-slug';
 
 const debug = debugFactory( 'calypso:plugin-bundle:stepper:get-current-theme-software-sets' );
 
@@ -32,6 +33,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 		siteSlug = new URL( site.URL ).host;
 	}
 	const [ hasRequested, setHasRequested ] = useState( false );
+	const requestPluginInstallation = useSitePluginSlug();
 
 	const reduxDispatch = useReduxDispatch();
 	const { goNext } = navigation;
@@ -69,10 +71,14 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 			'Deciding to redirect, proceed, or wait',
 			JSON.stringify( { hasRequested, isRequestingActiveTheme, currentThemeId: currentTheme?.id } )
 		);
-		if ( hasRequested && ! isRequestingActiveTheme && ! isRequestingTheme && currentTheme ) {
+		if (
+			( hasRequested && ! isRequestingActiveTheme && ! isRequestingTheme ) ||
+			( requestPluginInstallation && currentTheme )
+		) {
 			const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
-			if ( theme_software_set && siteSlug ) {
-				setBundledPluginSlug( siteSlug, theme_software_set[ 0 ].slug ); // only install first software set
+			if ( ( theme_software_set || requestPluginInstallation ) && siteSlug ) {
+				const pluginSlug = theme_software_set?.[ 0 ]?.slug || requestPluginInstallation;
+				setBundledPluginSlug( siteSlug, pluginSlug ); // only install first software set
 				debug(
 					'Proceeding because theme has bundled software',
 					JSON.stringify( {
@@ -91,9 +97,10 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 						siteSlug,
 					} )
 				);
+				console.log( 'Fail' );
 
 				// Current theme has no bundled plugins; they shouldn't be in this flow
-				window.location.replace( `/home/${ siteSlug }` );
+				// window.location.replace( `/home/${ siteSlug }` );
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

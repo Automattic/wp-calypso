@@ -63,6 +63,7 @@ const BundleConfirm: Step = function BundleConfirm( { navigation } ) {
 	const site = useSite();
 	const siteId = site && site?.ID;
 	const pluginSlug = useSitePluginSlug();
+
 	const isAtomicSite = useSelect(
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
 		[ siteId ]

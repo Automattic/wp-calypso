@@ -8,14 +8,19 @@ import {
 	sortLaunchpadTasksByCompletionStatus,
 	useSortedLaunchpadTasks,
 } from '@automattic/data-stores';
+import { requiresUpgrade } from '@automattic/data-stores/src/site/selectors';
+import { canInstallPlugins } from '@automattic/sites';
+import { Button } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { number } from 'yargs';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { useSiteTransfer } from '../../../client/landing/stepper/hooks/use-site-transfer/index';
 import { ShareSiteModal } from './action-components';
 import LaunchpadInternal from './launchpad-internal';
 import { setUpActionsForTasks } from './setup-actions';
@@ -40,33 +45,33 @@ const usePluginInstallation = () => {
 	//Is it necessary to remove the plugin statuses?
 	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 	const selectedSite = useSelector( getSelectedSite );
+	const siteCanInstallPlugins = canInstallPlugins( selectedSite as SiteDetails );
+	const isUpgradeRequired = ! siteCanInstallPlugins;
 
 	const install = () => {
 		const plugin = {
-			slug: 'sensei-lms',
+			slug: 'sensei',
 		};
 
-		const upgradeAndInstall = true;
+		const installPluginURL = `/setup/plugin-bundle/checkForPlugins?siteSlug=${ selectedSite?.slug }&siteId=${ selectedSite.ID }&pluginSlug=${ plugin.slug }&skipConfirmation=1`;
+		const billingPeriod = 'montly';
 
-		const billingPeriod = 'monthly';
-
-		// After buying a plan we need to redirect to the plugin install page.
-		const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite?.slug }`;
-		if ( upgradeAndInstall ) {
-			// We also need to add a business plan to the cart.
+		if ( isUpgradeRequired ) {
 			return page(
 				`/checkout/${ selectedSite?.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-				) }?redirect_to=${ installPluginURL }#step2`
+				) }?redirect_to=${ encodeURIComponent( installPluginURL ) }`
 			);
 		}
 
-		// No need to go through chekout, go to install page directly.
 		return page( installPluginURL );
 	};
 
-	return install;
+	return {
+		install,
+		isUpgradeRequired,
+	};
 };
 
 const DialogElligibility = ( {
@@ -76,10 +81,10 @@ const DialogElligibility = ( {
 	isVisible: boolean;
 	onClose: () => void;
 } ) => {
-	const installPlugin = usePluginInstallation();
+	const { install, isUpgradeRequired } = usePluginInstallation();
 
 	const handleInstallPlugin = () => {
-		installPlugin();
+		install();
 		onClose();
 	};
 
@@ -92,12 +97,21 @@ const DialogElligibility = ( {
 			onClose={ onClose }
 			showCloseIcon
 		>
-			<EligibilityWarnings
-				currentContext="plugin-details"
-				isMarketplace={ false }
-				standaloneProceed
-				onProceed={ handleInstallPlugin }
-			/>
+			{ isUpgradeRequired && (
+				<EligibilityWarnings
+					currentContext="plugin-details"
+					isMarketplace={ false }
+					standaloneProceed
+					onProceed={ handleInstallPlugin }
+				/>
+			) }
+
+			{ ! isUpgradeRequired && (
+				<>
+					<h1>Install the plugin</h1>
+					<Button onClick={ handleInstallPlugin }> Install the Sensei Plugin</Button>
+				</>
+			) }
 		</Dialog>
 	);
 };
