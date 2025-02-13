@@ -2,14 +2,16 @@ import config from '@automattic/calypso-config';
 import { getLanguage } from '@automattic/i18n-utils';
 import { getNewSiteParams, processItemCart } from '@automattic/onboarding/src/cart';
 import { useMutation } from '@tanstack/react-query';
+import { select } from '@wordpress/data';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserName, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { useFlowState } from '../declarative-flow/internals/state-manager/store';
+import { ONBOARD_STORE } from '../stores';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion, NewSiteSuccessResponse, Site } from '@automattic/data-stores';
-import type { SiteGoal } from '@automattic/data-stores/src/onboard';
+import type { OnboardSelect, SiteGoal } from '@automattic/data-stores/src/onboard';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 type Params = {
@@ -118,8 +120,7 @@ export const useCreateSite = () => {
 	const domains = get( 'domains' );
 	const username = useSelector( getCurrentUserName );
 	const planCartItems = get( 'plans' )?.cartItems;
-	//TODO: Need to change newsletterSetup to something more general
-	const siteTitle = get( 'newsletterSetup' )?.siteTitle as string;
+	const siteTitle = ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -141,8 +142,6 @@ export const useCreateSite = () => {
 			siteIntent: string;
 			siteGoals?: SiteGoal[];
 		} ) => {
-			// const domains = get( 'domains' );
-			// console.log('before calling createSite domains', JSON.stringify(domains));
 			return createSite( {
 				flowName,
 				userIsLoggedIn,
