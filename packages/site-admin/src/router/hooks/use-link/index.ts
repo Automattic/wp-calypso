@@ -41,8 +41,8 @@ type UseLink = {
  *
  * function MyComponent() {
  *     // Generates a link pointing to '/dashboard?p=active'
- *     const { href, onClick } = useLink('/dashboard?filter=active');
- *     return <a href={href} onClick={onClick}>Go to Dashboard</a>;
+ *     const { href, onClick } = useLink( '/dashboard?filter=active' );
+ *     return <a href={ href } onClick={ onClick }>Go to Dashboard</a>;
  * }
  * ```
  */

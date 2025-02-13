@@ -15,7 +15,7 @@ import { RoutesContext } from '../..';
  *
  * function MyComponent() {
  *     const { path } = useLocation();
- *     return <div>Current Path: {path}</div>;
+ *     return <div>Current Path: { path }</div>;
  * }
  * ```
  */

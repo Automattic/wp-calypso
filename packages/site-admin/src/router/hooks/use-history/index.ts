@@ -42,10 +42,10 @@ type UseNavigation = {
  *
  *     return (
  *         <div>
- *             <button onClick={() => navigate('/dashboard', { state: { from: 'home' } })}>
+ *             <button onClick={ () => navigate('/dashboard', { state: { from: 'home' } } ) }>
  *                 Go to Dashboard
  *             </button>
- *             <button onClick={back}>
+ *             <button onClick={ back }>
  *                 Go Back
  *             </button>
  *         </div>
