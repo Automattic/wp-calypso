@@ -103,6 +103,12 @@
 		padding: 0 4px;
 	}
 
+	button:disabled {
+		svg {
+			fill: var(--wp-components-color-gray-600, #949494);
+		}
+	}
+
 	button {
 		display: flex;
 		align-items: center;
@@ -117,12 +123,6 @@
 		div {
 			margin-bottom: 2px;
 			font-size: 0.875rem;
-		}
-
-		:disabled {
-			svg {
-				fill: var( --wp-components-color-gray-600, #949494 );
-			}
 		}
 
 		&:not( :disabled ) {
