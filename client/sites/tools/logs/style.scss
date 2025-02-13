@@ -11,3 +11,8 @@
 	margin-right: -48px;
 	margin-left: -48px;
 }
+
+// TODO: this needs an upstream ticket.
+.dataviews-wrapper table.dataviews-view-table[aria-busy='true'] {
+	opacity: 0.5;
+}

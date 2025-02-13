@@ -323,15 +323,15 @@ export const SiteLogsDataViews = ( {
 		page.replace( url.pathname + url.search );
 	}, [] );
 
-	const fields = useFields( { logType } );
-	const actions = useActions( { logType } );
 	const [ view, setView ] = useView( { logType } );
+	const fields = useFields( { logType } );
 	const { data, paginationInfo, isLoading } = useData( {
 		view,
 		logType,
 		startTime,
 		endTime,
 	} );
+	const actions = useActions( { logType, isLoading } );
 
 	const [ autoRefresh, setAutoRefresh ] = useState( false );
 	const autoRefreshCallback = useCallback( () => {
