@@ -389,21 +389,10 @@ const domainsDashboardGlobalStyles = css`
 			}
 		}
 
-			@media only screen and ( max-width: 781px ) {
-				div.layout.is-global-sidebar-visible {
-					.layout__primary {
-						overflow-x: unset;
-					}
-				}
-				.layout__primary > main {
-					background: var( --color-surface );
-					margin: 0;
-					border-radius: 8px;
-				}
-				header.navigation-header {
-					padding-inline: 16px;
-					padding-bottom: 0;
-					padding-top: 24px;
+		@media only screen and ( max-width: 781px ) {
+			div.layout.is-global-sidebar-visible {
+				.layout__primary {
+					overflow-x: unset;
 				}
 			}
 			.layout__primary > main {
@@ -414,6 +403,7 @@ const domainsDashboardGlobalStyles = css`
 			header.navigation-header {
 				padding-inline: 16px;
 				padding-bottom: 0;
+				padding-top: 24px;
 			}
 		}
 		@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
