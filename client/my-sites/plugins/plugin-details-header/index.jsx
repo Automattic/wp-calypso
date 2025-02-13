@@ -1,5 +1,5 @@
 import { Badge, Button } from '@automattic/components';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -132,9 +132,7 @@ const PluginDetailsHeader = ( {
 							{ translate( 'Active installations' ) }
 						</div>
 						<div className="plugin-details-header__info-value">
-							{ numberFormat( plugin.active_installs, {
-								numberFormatOptions: { notation: 'compact' },
-							} ) }
+							{ numberFormatCompact( plugin.active_installs ) }
 						</div>
 					</div>
 				) }

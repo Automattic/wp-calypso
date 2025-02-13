@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { Icon, external } from '@wordpress/icons';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormat, numberFormatCompact } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT_WITH_PRODUCT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -129,11 +129,7 @@ export default function PlanSelectionDetails( {
 								: translate( 'Custom WordPress installs' ),
 							translate( '{{b}}%(count)s{{/b}} visits per month*', {
 								args: {
-									count: info
-										? numberFormat( info.visits, {
-												numberFormatOptions: { notation: 'compact' },
-										  } )
-										: customString,
+									count: info ? numberFormatCompact( info.visits ) : customString,
 								},
 								components: { b: <b /> },
 								comment: '%(count)s is the number of visits per month.',

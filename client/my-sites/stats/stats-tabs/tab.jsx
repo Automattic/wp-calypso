@@ -2,7 +2,7 @@ import { TooltipContent } from '@automattic/components/src/highlight-cards/count
 import { TrendComparison } from '@automattic/components/src/highlight-cards/count-comparison-card';
 import Popover from '@automattic/components/src/popover';
 import clsx from 'clsx';
-import { localize } from 'i18n-calypso';
+import { localize, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 
@@ -66,7 +66,6 @@ class StatsTabsTab extends Component {
 			previousValue,
 			value,
 			hasPreviousData,
-			numberFormat,
 		} = this.props;
 
 		const tabClass = clsx( 'stats-tab', className, {
@@ -100,12 +99,7 @@ class StatsTabsTab extends Component {
 					{ hasPreviousData && (
 						<div className="stats-tabs__highlight">
 							<span className="stats-tabs__highlight-value" ref={ this.tooltipRef }>
-								{ numberFormat( value, {
-									numberFormatOptions: {
-										notation: 'compact',
-										maximumFractionDigits: 1,
-									},
-								} ) }
+								{ numberFormatCompact( value ) }
 							</span>
 							<TrendComparison count={ value } previousCount={ previousValue } />
 							<Popover
