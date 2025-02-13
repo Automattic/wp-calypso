@@ -384,6 +384,7 @@ class PurchaseItem extends Component {
 		const productType = purchaseType( purchase );
 		if ( showSite && site ) {
 			if ( productType && site.name ) {
+				// translators: The string contains the product name, the name of the site, and the URL for the site e.g. Premium plan for Block Store (blockstore.com)
 				return translate(
 					'%(purchaseType)s for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})',
 					{
@@ -427,6 +428,7 @@ class PurchaseItem extends Component {
 			}
 
 			if ( productType ) {
+				// translators: The string contains the product name, and the URL of the site e.g. Premium plan for blockstore.com
 				return translate( '%(purchaseType)s for {{button}}%(siteDomain)s{{/button}}', {
 					args: {
 						purchaseType: productType,
@@ -452,6 +454,7 @@ class PurchaseItem extends Component {
 				} );
 			}
 
+			// translators: The string contains the name of the site, and the URL of the site e.g. for Block Store (blockstore.com)
 			return translate( 'for {{button}}%(siteName)s{{/button}} ({{link}}%(siteDomain)s{{/link}})', {
 				args: {
 					siteName: site.name,
