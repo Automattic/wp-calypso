@@ -8,6 +8,6 @@ export default withThemeByClassName( {
 		auto: 'theme-auto',
 		'site admin': 'theme-admin-app',
 	},
-	defaultTheme: 'auto',
+	defaultTheme: 'site admin',
 	parentSelector: 'body',
 } );
