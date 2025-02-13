@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
+import { createRegistry } from '@wordpress/data';
 import { store as coreDataStore } from '@wordpress/core-data';
+
+type WPDataRegistry = ReturnType< typeof createRegistry >;
 
 const WOOCOMMERCE_ANALYTICS_SITE_KEY = 'Woocommerce Analytics' as const;
 const REGULAR_SITE_KEY = 'Regular Site' as const;
@@ -11,7 +14,7 @@ export type MockSiteKey =
 	| typeof WOOCOMMERCE_ANALYTICS_SITE_KEY
 	| typeof REGULAR_SITE_KEY
 	| typeof JETPACK_SITE_KEY;
-export type MockStore = Record< MockSiteKey, Record< string, any > >;
+export type MockStore = Record< MockSiteKey, Record< string, WPDataRegistry > >;
 
 const stores = {
 	[ WOOCOMMERCE_ANALYTICS_SITE_KEY ]: {
