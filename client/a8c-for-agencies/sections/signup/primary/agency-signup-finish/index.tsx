@@ -18,7 +18,9 @@ import { getSignupDataFromRequestParameters } from '../../lib/signup-data-from-r
 import {
 	clearSignupDataFromLocalStorage,
 	getSignupDataFromLocalStorage,
+	saveSignupDataToLocalStorage,
 } from '../../lib/signup-data-to-local-storage';
+import { useHandleWPCOMRedirect } from '../../signup-form/hooks/use-handle-wpcom-redirect';
 
 import './style.scss';
 
@@ -29,6 +31,7 @@ export default function AgencySignupFinish() {
 	const agency = useSelector( getActiveAgency );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const handleWPCOMRedirect = useHandleWPCOMRedirect();
 
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
@@ -50,9 +53,16 @@ export default function AgencySignupFinish() {
 
 	useEffect( () => {
 		function createAgencyHandler() {
-			// Added to prevent typescript errors and for additional safety
-			if ( ! userLoggedIn || ! signupData ) {
+			// If the signup data is not present, redirect to the signup page.
+			if ( ! signupData ) {
 				page.redirect( A4A_SIGNUP_LINK );
+				return;
+			}
+
+			// If the user is not logged in, save the signup data to local storage and redirect to the WPCOM login page.
+			if ( ! userLoggedIn ) {
+				saveSignupDataToLocalStorage( signupData );
+				handleWPCOMRedirect( signupData );
 				return;
 			}
 
