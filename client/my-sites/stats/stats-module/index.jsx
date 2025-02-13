@@ -50,6 +50,7 @@ class StatsModule extends Component {
 		valueField: PropTypes.string,
 		formatValue: PropTypes.func,
 		minutesLimit: PropTypes.number,
+		isRealTime: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -57,6 +58,7 @@ class StatsModule extends Component {
 		query: {},
 		valueField: 'value',
 		minutesLimit: 30,
+		isRealTime: false,
 	};
 
 	state = {
@@ -77,7 +79,7 @@ class StatsModule extends Component {
 			this.setState( { loaded: false } );
 		}
 
-		const isRealTime = this.props.query?.interval !== undefined;
+		const { isRealTime } = this.props;
 		if ( ! isRealTime ) {
 			return;
 		}
@@ -196,8 +198,7 @@ class StatsModule extends Component {
 	}
 
 	remapData() {
-		const { valueField, query } = this.props;
-		const isRealTime = query?.interval !== undefined;
+		const { valueField, isRealTime } = this.props;
 		const data = isRealTime ? this.state.diffData : this.props.data;
 
 		if ( isRealTime ) {
@@ -247,6 +248,7 @@ class StatsModule extends Component {
 			skipQuery,
 			titleNodes,
 			formatValue,
+			isRealTime,
 		} = this.props;
 
 		const data = this.remapData();
@@ -264,7 +266,6 @@ class StatsModule extends Component {
 			'stats-module__footer-actions--summary': summary,
 		} );
 
-		const isRealTime = query?.interval !== undefined;
 		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
 		// TODO: Translate empty message
 		// But not yet as this is just a placeholder for now.
