@@ -60,7 +60,6 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
-			requestFrom,
 			sectionGroup,
 			sectionName,
 			storeSandboxHelper,
@@ -95,9 +94,6 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
-
-		const isJetpackWooCommerceFlow =
-			'jetpack-connect' === sectionName && 'woocommerce-onboarding' === requestFrom;
 
 		const isJetpackWooDnaFlow = 'jetpack-connect' === sectionName && isWooDna;
 
@@ -177,7 +173,6 @@ class Document extends Component {
 								className={ clsx( 'layout', {
 									[ 'is-group-' + sectionGroup ]: sectionGroup,
 									[ 'is-section-' + sectionName ]: sectionName,
-									'is-jetpack-woocommerce-flow': isJetpackWooCommerceFlow,
 									'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 								} ) }
 							>

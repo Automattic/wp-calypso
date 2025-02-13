@@ -17,6 +17,7 @@ import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/licen
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
 
 import '../product-card/style.scss';
@@ -186,7 +187,7 @@ export default function MultiProductCard( props: Props ) {
 						<div className="product-card__main">
 							<div className="product-card__heading">
 								<h3 className="product-card__title">{ getProductShortTitle( product, true ) }</h3>
-
+								<ProductBadges product={ product } />
 								{ ! isRedesign && (
 									<MultipleChoiceQuestion
 										name={ `${ product.family_slug }-variant-options` }

@@ -3,6 +3,7 @@ import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
 import { trackStatsAnalyticsEvent } from '../utils';
 import {
 	StatsBenefitsCommercial,
@@ -43,7 +44,11 @@ const StatsCommercialOwned = ( { siteSlug } ) => {
 
 	return (
 		<>
-			<h1>{ translate( 'You already have a commercial license for Jetpack Stats.' ) }</h1>
+			<h1>
+				{ translate( 'You already have a commercial license for %(product)s.', {
+					args: { product: STATS_PRODUCT_NAME },
+				} ) }
+			</h1>
 			<p>
 				{ translate(
 					'You already have a license for this product and it has been successfully activated. You currently have access to:'
@@ -72,7 +77,11 @@ const StatsPWYWOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame>
-			<h1>{ translate( 'You already have a license for Jetpack Stats.' ) }</h1>
+			<h1>
+				{ translate( 'You already have a license for %(product)s.', {
+					args: { product: STATS_PRODUCT_NAME },
+				} ) }
+			</h1>
 			<p>
 				{ translate(
 					'You already have a license for this product and it has been successfully activated. You currently have access to:'
@@ -109,7 +118,11 @@ const StatsFreeOwnedNotice = ( { siteId, siteSlug } ) => {
 
 	return (
 		<StatsSingleItemPagePurchaseFrame>
-			<h1>{ translate( 'You already have a free license for Jetpack Stats.' ) }</h1>
+			<h1>
+				{ translate( 'You already have a free license for %(product)s.', {
+					args: { product: STATS_PRODUCT_NAME },
+				} ) }
+			</h1>
 			<p>
 				{ translate(
 					'You already have a license for this product and it has been successfully activated. You currently have access to:'
