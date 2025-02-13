@@ -1,6 +1,6 @@
+import { ExternalLink } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo, useState } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import Notice from 'calypso/components/notice';
 import { preventWidows } from 'calypso/lib/formatting';
 import version_compare from 'calypso/lib/version-compare';
@@ -53,7 +53,7 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 		dispatch( recordTracksEvent( 'calypso_jetpack_plugin_update_warning_click' ) );
 	}, [ dispatch, setIsDismissed ] );
 
-	if ( hideWarning || isDismissed ) {
+	if ( hideWarning || isDismissed || ! pluginUpgradeUrl ) {
 		return null;
 	}
 

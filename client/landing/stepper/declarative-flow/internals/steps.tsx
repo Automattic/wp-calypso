@@ -227,11 +227,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	ASSIGN_TRIAL_PLAN: {
-		slug: 'assignTrialPlan',
-		asyncComponent: () => import( './steps-repository/assign-trial-plan' ),
-	},
-
 	SITE_MIGRATION_ASSIGN_TRIAL_PLAN: {
 		slug: 'site-migration-assign-trial-plan',
 		asyncComponent: () => import( './steps-repository/site-migration-assign-trial-plan' ),

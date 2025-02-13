@@ -1,7 +1,7 @@
+import { ExternalLinkWithTracking } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_EXPIRED_PLAN,

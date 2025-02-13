@@ -17,7 +17,6 @@
  */
 body {
 	--color-body-background: #fdfdfd;
-	--wooexpress-purple: #7f54b3;
 	background-color: var(--color-body-background);
 }
 
@@ -91,7 +90,6 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
-.wooexpress,
 .copy-site,
 .intro,
 .free-setup,
@@ -406,9 +404,7 @@ button {
 	}
 }
 
-.assign-trial-plan,
 .processing {
-	&.wooexpress,
 	&.ecommerce {
 		padding: 60px 0;
 		min-height: 100%;
@@ -440,61 +436,6 @@ button {
 				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
 		}
 	}
-}
-
-.wooexpress {
-	.step-container.processing-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 9vh;
-	}
-	.step-container .step-container__content h1 {
-		font-family: proxima-nova, sans-serif;
-		font-weight: 600;
-		font-size: $font-title-large;
-	}
-	.stepper-loader__progress-bar {
-		--wp-components-color-foreground: var(--wooexpress-purple);
-		background-color: var(--studio-woocommerce-purple-5);
-		height: 6px;
-		width: 590px;
-		max-width: 100%;
-		margin-left: auto;
-		margin-right: auto;
-
-		@media screen and (max-width: 640px) {
-			width: 100%;
-		}
-	}
-	.processing-step {
-		width: 100%;
-		max-width: 640px;
-		box-sizing: border-box;
-	}
-	p.stepper-loader__subtitle {
-		font-family: "SF Pro Text", $sans;
-		font-weight: 400;
-		letter-spacing: initial;
-
-		.woo-inline-purple-heart {
-			width: 18px;
-			height: 15px;
-			margin-bottom: -2px; // bring visual center inline with the text
-		}
-
-		strong {
-			font-weight: 500;
-		}
-	}
-	.loading-bar::before {
-		background: var(--wooexpress-purple);
-	}
-	.signup-header .wordpress-logo {
-		display: block;
-		width: 500px;
-	}
-
 }
 
 /*
