@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 import nock from 'nock';
 import React, { act } from 'react';
@@ -98,7 +98,7 @@ describe( 'CustomerHome', () => {
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 
-	it.only( 'should show the site launched modal once the site is launched', async () => {
+	it( 'should show the site launched modal once the site is launched', async () => {
 		const testSite = makeTestSite( {
 			launch_status: 'unlaunched',
 			options: { site_creation_flow: 'onboarding', site_intent: 'write', launchpad_screen: false },
