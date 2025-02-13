@@ -1,6 +1,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import '../product-card/style';
+@import "@wordpress/base-styles/variables";
 
 $woocommerce-purple-50: #720EEC;
 
@@ -21,18 +22,18 @@ $woocommerce-purple-50: #720EEC;
 
 
 	.product-card__title {
-		@include a4a-font-heading-xl;
+		@include heading-x-large;
 	}
 
 	.product-card__description {
-		@include a4a-font-body-lg;
+		@include body-large;
 
 		@include break-large {
 			margin-block-end: 32px;
 		}
 	}
 
-	.components-button.is-primary:not(:disabled) {
+	.product-card__button.is-primary:not(:disabled) {
 		&,
 		&:focus,
 		&:focus-visible {

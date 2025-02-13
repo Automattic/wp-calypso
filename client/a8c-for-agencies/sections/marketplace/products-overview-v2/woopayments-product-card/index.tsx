@@ -137,7 +137,7 @@ export default function WooPaymentsProductCard( {
 					</div>
 					<div className="product-card__buttons">
 						<Button
-							className={ clsx( { 'is-selected': isSelected } ) }
+							className={ clsx( 'product-card__button', { 'is-selected': isSelected } ) }
 							variant="primary"
 							tabIndex={ -1 }
 							icon={ isSelected ? check : undefined }
