@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { camelToSnakeCase, mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
 import { useTranslate } from 'i18n-calypso';
@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import TwoColumnsLayout from 'calypso/components/domains/layout/two-columns-layout';
-import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	useDomainTransferReceive,
@@ -206,14 +205,12 @@ function ContactInfo( {
 					'https://wordpress.com/support/domains/domain-registrations-and-privacy/#privacy-protection'
 				) }
 				target="_blank"
-				icon={ false }
 			/>
 		);
 		const icannLink = (
 			<ExternalLink
 				href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
 				target="_blank"
-				icon={ false }
 			/>
 		);
 

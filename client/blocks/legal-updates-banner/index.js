@@ -1,9 +1,8 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { acceptTos, requestLegalData } from 'calypso/state/legal/actions';
 import { shouldDisplayTosUpdateBanner } from 'calypso/state/selectors/should-display-tos-update-banner';
 

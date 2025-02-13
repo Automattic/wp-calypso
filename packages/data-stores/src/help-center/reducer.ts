@@ -159,6 +159,14 @@ const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT':
+			return action.allow;
+	}
+	return state;
+};
+
 const odieChatScrollPosition: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_ODIE_CHAT_SCROLL_POSITION' ) {
 		return action.odieChatScrollPosition;
@@ -184,6 +192,7 @@ const reducer = combineReducers( {
 	navigateToRoute,
 	odieInitialPromptText,
 	odieBotNameSlug,
+	allowPremiumSupport,
 	odieChatScrollPosition,
 } );
 

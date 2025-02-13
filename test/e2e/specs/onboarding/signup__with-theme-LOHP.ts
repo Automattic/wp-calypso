@@ -127,14 +127,6 @@ describe( 'Lifecyle: Logged Out Home Page, signup, onboard, launch and cancel su
 			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 		} );
 
-		it( 'Skip business plan upsell', async function () {
-			const selector = 'button[data-e2e-button="decline"]';
-
-			const locator = page.locator( selector );
-
-			await locator.click( { timeout: 30 * 1000 } );
-		} );
-
 		it( 'Checks the active theme', async function () {
 			const restAPIClient = new RestAPIClient(
 				{

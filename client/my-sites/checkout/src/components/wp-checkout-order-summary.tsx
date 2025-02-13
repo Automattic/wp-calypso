@@ -22,6 +22,7 @@ import {
 	WPCOM_FEATURES_ATOMIC,
 	isWooExpressPlan,
 	isSenseiProduct,
+	PLAN_100_YEARS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
@@ -711,12 +712,14 @@ function CheckoutSummaryPlanFeatures( props: {
 
 	const showPricingGridFeatures = ! hasRenewalInCart;
 
+	const isHundredYearPlan = PLAN_100_YEARS === planInCart?.product_slug;
+
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		nextDomainIsFree,
+		nextDomainIsFree && ! isHundredYearPlan,
 		showPricingGridFeatures
 	);
 

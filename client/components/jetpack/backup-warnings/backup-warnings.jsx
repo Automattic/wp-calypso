@@ -1,8 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Gridicon } from '@automattic/components';
+import { Gridicon, ExternalLink } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import ExternalLink from 'calypso/components/external-link';
 import BackupWarningHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-header';
 import BackupWarningListHeader from 'calypso/components/jetpack/backup-warnings/backup-warning-list-header';
 import LogItem from 'calypso/components/jetpack/log-item';
@@ -24,8 +23,6 @@ const getWarningInfo = ( code, category ) => {
 						<ExternalLink
 							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/#file-access-permissions"
 							target="_blank"
-							rel="noopener noreferrer"
-							icon={ false }
 						/>
 					),
 				},
@@ -39,8 +36,6 @@ const getWarningInfo = ( code, category ) => {
 						<ExternalLink
 							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/adding-credentials-to-jetpack/"
 							target="_blank"
-							rel="noopener noreferrer"
-							icon={ false }
 						/>
 					),
 				},
@@ -54,8 +49,6 @@ const getWarningInfo = ( code, category ) => {
 						<ExternalLink
 							href="https://jetpack.com/support/backup/backups-via-the-jetpack-plugin/#frequently-asked-questions"
 							target="_blank"
-							rel="noopener noreferrer"
-							icon={ false }
 						/>
 					),
 				},
@@ -69,8 +62,6 @@ const getWarningInfo = ( code, category ) => {
 						<ExternalLink
 							href="https://jetpack.com/blog/error-establishing-database-connection-on-wordpress/"
 							target="_blank"
-							rel="noopener noreferrer"
-							icon={ false }
 						/>
 					),
 				},
