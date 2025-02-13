@@ -16,3 +16,10 @@
 .dataviews-wrapper table.dataviews-view-table[aria-busy='true'] {
 	opacity: 0.5;
 }
+
+// There's no way for a consumer to disable the per-page pagination
+// in DataViews: https://github.com/WordPress/gutenberg/issues/69193
+// This needs to be fixed upstream.
+.dataviews-pagination__page-select {
+	display: none !important;
+}
