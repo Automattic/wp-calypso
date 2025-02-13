@@ -185,7 +185,7 @@ export default function CampaignItemDetails( props: Props ) {
 
 	const {
 		impressions_total: tsp_impressions_total,
-		// uncomment this line when we check that clicks are tracked through smart
+		// todo uncomment this line when we check that clicks are tracked through smart
 		// clicks_total: tsp_clicks_total,
 		replies,
 		likes_total,
@@ -261,7 +261,7 @@ export default function CampaignItemDetails( props: Props ) {
 		tsp_impressions_total && tsp_impressions_total > 0
 			? formatNumber( tsp_impressions_total )
 			: '-';
-	// uncomment this line when we check that clicks are tracked through smart
+	// todo uncomment this line when we check that clicks are tracked through smart
 	// const tspClicksFormatted =
 	// 	tsp_clicks_total && tsp_clicks_total > 0 ? formatNumber( tsp_clicks_total ) : '-';
 	const weeklyBudget = budget_cents ? ( budget_cents / 100 ) * 7 : 0;
@@ -1061,7 +1061,7 @@ export default function CampaignItemDetails( props: Props ) {
 														</span>
 													</span>
 												</div>
-												{ /* commenting this until we figure out if this is working properly*/ }
+												{ /* todo commenting this until we figure out if this is working properly*/ }
 												{ /*<div>*/ }
 												{ /*	<span className="campaign-item-details__label">*/ }
 												{ /*		{ translate( 'Site visits from Tumblr Post' ) }*/ }
@@ -1104,6 +1104,7 @@ export default function CampaignItemDetails( props: Props ) {
 																<br />
 																{ note.type === 'like' && translate( 'Liked this' ) }
 																{ note.type === 'reblog' && translate( 'Reblogged this' ) }
+																{ note.type === 'reply' && ( note?.reply_text || '-' ) }
 															</div>
 														) ) }
 														{ replies && replies?.total_notes > 3 && (

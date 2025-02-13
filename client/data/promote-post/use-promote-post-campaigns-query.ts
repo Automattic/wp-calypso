@@ -55,6 +55,7 @@ export type CampaignResponse = {
 					blog_name: string;
 					type: string;
 					blog_url: string;
+					reply_text?: string;
 				}[];
 			};
 		};
