@@ -7,14 +7,13 @@ import { getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { browserHistory, ConfigContext } from '.';
+import { browserHistory, ConfigContext } from '../..';
+/**
+ * Types
+ */
+import type { NavigationOptions } from '../../types';
 
-interface NavigationOptions {
-	transition?: string;
-	state?: Record< string, any >;
-}
-
-export function useHistory() {
+export default function useHistory() {
 	const { pathArg, beforeNavigate } = useContext( ConfigContext );
 
 	const navigate = useEvent( async ( rawPath: string, options: NavigationOptions = {} ) => {

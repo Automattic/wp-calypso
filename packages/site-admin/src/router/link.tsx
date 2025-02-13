@@ -6,8 +6,11 @@ import { getQueryArgs, getPath, buildQueryString } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { useHistory, type NavigationOptions } from './router';
-import { ConfigContext } from '.';
+import { ConfigContext, useHistory } from '.';
+/**
+ * Types
+ */
+import type { NavigationOptions } from './types';
 
 export function useLink( to: string, options: NavigationOptions = {} ) {
 	const history = useHistory();

@@ -36,3 +36,8 @@ export interface RouterProviderProps {
 	beforeNavigate?: BeforeNavigate;
 	children: ReactNode;
 }
+
+export interface NavigationOptions {
+	transition?: string;
+	state?: Record< string, any >;
+}
