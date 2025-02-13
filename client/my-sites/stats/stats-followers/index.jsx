@@ -38,14 +38,20 @@ const StatModuleFollowers = ( { className } ) => {
 			const hours = Math.floor( minutes / 60 );
 			const days = Math.floor( hours / 24 );
 
+			const getTranslationArgs = ( count ) => ( { count, args: { count } } );
+
 			let result = '';
 
 			if ( days > 0 ) {
-				result = translate( '%d days', { args: days } );
+				result = translate( '%(count)d day', '%(count)d days', getTranslationArgs( days ) );
 			} else if ( hours > 0 ) {
-				result = translate( '%d hours', { args: hours } );
+				result = translate( '%(count)d hour', '%(count)d hours', getTranslationArgs( hours ) );
 			} else if ( minutes > 0 ) {
-				result = translate( '%d minutes', { args: minutes } );
+				result = translate(
+					'%(count)d minute',
+					'%(count)d minutes',
+					getTranslationArgs( minutes )
+				);
 			}
 
 			return result;

@@ -12,7 +12,6 @@ import {
 	updateLaunchpadSettings,
 	useStarterDesignBySlug,
 	useStarterDesignsQuery,
-	getThemeIdFromStylesheet,
 } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
@@ -49,7 +48,7 @@ import {
 } from 'calypso/components/theme-tier/constants';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
 import { ThemeUpgradeModal as UpgradeModal } from 'calypso/components/theme-upgrade-modal';
-import { ActiveTheme, useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import { useIsBigSkyEligible } from 'calypso/landing/stepper/hooks/use-is-site-big-sky-eligible';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useExperiment } from 'calypso/lib/explat';
@@ -65,7 +64,6 @@ import { hasPurchasedDomain } from 'calypso/state/purchases/selectors/has-purcha
 import { useSiteGlobalStylesOnPersonal } from 'calypso/state/sites/hooks/use-site-global-styles-on-personal';
 import { useSiteGlobalStylesStatus } from 'calypso/state/sites/hooks/use-site-global-styles-status';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
-import { setActiveTheme, activateOrInstallThenActivate } from 'calypso/state/themes/actions';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';
 import {
 	isMarketplaceThemeSubscribed as getIsMarketplaceThemeSubscribed,
@@ -74,6 +72,7 @@ import {
 } from 'calypso/state/themes/selectors';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { getPreferredBillingCycleProductSlug } from 'calypso/state/themes/theme-utils';
+import { useActivateDesign } from '../../../../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
@@ -104,8 +103,6 @@ import type {
 } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
-import type { AnyAction } from 'redux';
-import type { ThunkAction } from 'redux-thunk';
 import './style.scss';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -200,6 +197,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	);
 
 	const { setDesignOnSite, assembleSite } = useDispatch( SITE_STORE );
+	const activateDesign = useActivateDesign();
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
@@ -654,32 +652,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					( design ) => design.slug === _selectedDesign?.slug
 				);
 
-				setPendingAction( () => {
-					if ( _selectedDesign?.is_virtual ) {
-						const themeId = getThemeIdFromStylesheet( _selectedDesign.recipe?.stylesheet ?? '' );
-						return Promise.resolve()
-							.then( () =>
-								reduxDispatch(
-									activateOrInstallThenActivate( themeId ?? '', site?.ID ?? 0, {
-										source: 'assembler',
-									} ) as ThunkAction< PromiseLike< string >, any, any, AnyAction >
-								)
-							)
-							.then( ( activeThemeStylesheet: string ) =>
-								assembleSite( siteSlugOrId, activeThemeStylesheet, {
-									homeHtml: _selectedDesign.recipe?.pattern_html,
-									headerHtml: _selectedDesign.recipe?.header_html,
-									footerHtml: _selectedDesign.recipe?.footer_html,
-									siteSetupOption: 'assembler-virtual-theme',
-								} )
-							);
-					}
-
-					return setDesignOnSite( siteSlugOrId, _selectedDesign, {
+				setPendingAction( async () => {
+					await activateDesign( _selectedDesign, {
 						styleVariation: selectedStyleVariation || _selectedDesign?.style_variations?.[ 0 ],
 						globalStyles,
-					} ).then( ( theme: ActiveTheme ) => {
-						return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
 					} );
 				} );
 
@@ -703,6 +679,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			}
 		},
 		[
+			activateDesign,
 			assembleSite,
 			categorization.selections,
 			designs,

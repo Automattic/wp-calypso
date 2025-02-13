@@ -7,6 +7,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/account-settings/',
 		post_id: 80368,
 	},
+	'action-bar': {
+		link: 'https://wordpress.com/support/action-bar/',
+		post_id: 319993,
+	},
 	'admin-interface-style': {
 		link: 'https://wordpress.com/support/set-your-admin-interface-style/',
 		post_id: 386651,

@@ -368,6 +368,7 @@ export default function BulkAllDomains( props: BulkAllDomainsProps ) {
 				header.navigation-header {
 					padding-inline: 16px;
 					padding-bottom: 0;
+					padding-top: 24px;
 				}
 			}
 			@media only screen and ( min-width: 601px ) and ( max-width: 781px ) {
