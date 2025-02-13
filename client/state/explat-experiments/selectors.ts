@@ -12,9 +12,15 @@ export const getIsExperimentEnabled = ( state: AppState, experimentName: string 
 	if ( state.explatExperiments.experimentAssignments[ experimentName ] === 'treatment' ) {
 		return true;
 	}
+
+	/**
+	 * If we don't update the E2E tests, they will break when we start the "Remove duplicate views",
+	 * effectively blocking the Calypso deployment queue.
+	 */
 	if ( isE2ETest() ) {
 		return true;
 	}
+
 	return false;
 };
 
