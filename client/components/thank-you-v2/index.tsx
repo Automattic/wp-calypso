@@ -1,5 +1,6 @@
 import { ConfettiAnimation } from '@automattic/components';
 import { TranslateResult } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import ThankYouFooter, { ThankYouFooterDetailProps } from './footer';
 import ThankYouHeader from './header';
 import ThankYouUpsell, { ThankYouUpsellProps } from './upsell';
@@ -29,9 +30,17 @@ export default function ThankYouV2( props: ThankYouV2Props ) {
 		showSuccessAnimation = true,
 	} = props;
 
+	const [ shouldShowAnimation, setShouldShowAnimation ] = useState( false );
+
+	useEffect( () => {
+		if ( showSuccessAnimation ) {
+			setShouldShowAnimation( true );
+		}
+	}, [ showSuccessAnimation ] );
+
 	return (
 		<div className="thank-you">
-			{ showSuccessAnimation && <ConfettiAnimation delay={ 1000 } /> }
+			{ shouldShowAnimation && <ConfettiAnimation delay={ 1000 } /> }
 
 			<ThankYouHeader title={ title } subtitle={ subtitle } buttons={ headerButtons } />
 
