@@ -12,6 +12,42 @@ import type { Moment } from 'moment';
 
 const EMPTY_ARRAY: ( ServerLog | PHPLog )[] = [];
 
+/*
+ * Providing cached data while the new data is being fetched
+ * prevents table layout shifts from happening.
+ *
+ * However, the logs table has two schemas/fields (PHP or Web errors)
+ * so when the user changes the logType, we want to refresh the cached data.
+ * Otherwise, until the fresh data comes in, the table will display
+ * the number of rows of the cached data but with empty fields.
+ */
+const isCachedDataOfProperType = (
+	logType: LogType,
+	data: { logs?: ( PHPLog | ServerLog )[] }
+) => {
+	if (
+		logType === 'php' &&
+		!! data.logs &&
+		data.logs.length > 0 &&
+		'severity' in data.logs[ 0 ] &&
+		'message' in data.logs[ 0 ]
+	) {
+		return true;
+	}
+
+	if (
+		logType === 'web' &&
+		!! data.logs &&
+		data.logs.length > 0 &&
+		'request_type' in data.logs[ 0 ] &&
+		'status' in data.logs[ 0 ]
+	) {
+		return true;
+	}
+
+	return false;
+};
+
 const useData = ( {
 	view,
 	logType,
@@ -39,7 +75,10 @@ const useData = ( {
 	} );
 
 	return {
-		data: ! data?.logs ? EMPTY_ARRAY : ( data.logs as ( PHPLog | ServerLog )[] ),
+		data:
+			! data?.logs || ! isCachedDataOfProperType( logType, data )
+				? EMPTY_ARRAY
+				: ( data.logs as ( PHPLog | ServerLog )[] ),
 		paginationInfo: {
 			totalItems: data?.total_results || 0,
 			totalPages:
