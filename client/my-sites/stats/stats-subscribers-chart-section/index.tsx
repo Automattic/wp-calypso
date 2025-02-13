@@ -181,20 +181,11 @@ export default function SubscribersChartSection( {
 							chartData={ [
 								{
 									label: 'Subscribers',
-									options: {
-										stroke: '#069e08',
-									},
-									data: data?.data?.map( ( point ) => ( {
-										date: new Date( point.period ),
-										value: point.subscribers || 0,
-									} ) ) || [
-										// Fallback dummy data if no real data available
-										{ date: new Date( '2024-01-01' ), value: 10 },
-										{ date: new Date( '2024-01-08' ), value: 15 },
-										{ date: new Date( '2024-01-15' ), value: 12 },
-										{ date: new Date( '2024-01-22' ), value: 18 },
-										{ date: new Date( '2024-01-29' ), value: 20 },
-									],
+									data:
+										data?.data?.map( ( point ) => ( {
+											date: new Date( point.period ),
+											value: point.subscribers || 0,
+										} ) ) || [],
 								},
 							] }
 							height={ 300 }
