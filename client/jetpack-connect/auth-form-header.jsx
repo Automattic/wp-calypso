@@ -85,7 +85,7 @@ export class AuthFormHeader extends Component {
 				break;
 		}
 
-		if ( host && ! isWooOnboarding && ! isWooJPC ) {
+		if ( host && ! isWooJPC ) {
 			return translate( 'Jetpack, in partnership with %(host)s', {
 				args: { host },
 				comment: '%(host)s is the company name of a hosting partner. Ex. - Pressable',
