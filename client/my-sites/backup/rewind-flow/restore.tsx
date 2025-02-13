@@ -88,6 +88,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ restoreInitiated, setRestoreInitiated ] = useState( false );
 	const [ restoreFailed, setRestoreFailed ] = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
+	const [ showFinishedScreen, setShowFinishedScreen ] = useState( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -117,7 +118,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	useEffect( () => {
 		const preflightPassed = isPreflightEnabled && preflightStatus === PreflightTestStatus.SUCCESS;
-
 		if ( userHasRequestedRestore && ! isRestoreInProgress && ! restoreInitiated ) {
 			if ( credentialsAreValid || preflightPassed ) {
 				setRestoreInitiated( true );
@@ -467,10 +467,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
 		( userHasRequestedRestore && inProgressRewindStatus === 'failed' && ! restoreFailed );
-	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
+	const isRestoreDone = inProgressRewindStatus === 'finished';
+	const isFinished = isRestoreDone && showFinishedScreen;
 
 	useEffect( () => {
-		if ( isFinished ) {
+		if ( isRestoreDone && userHasRequestedRestore && ! showFinishedScreen ) {
 			dispatch(
 				recordTracksEvent( 'calypso_jetpack_backup_restore_completed', {
 					has_credentials: hasCredentials,
@@ -479,6 +480,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			setRestoreInitiated( false );
 			setUserHasRequestedRestore( false );
 			setRestoreFailed( false );
+			setShowFinishedScreen( true );
 		}
 
 		if ( ! isRestoreInProgress && restoreInitiated && inProgressRewindStatus === 'failed' ) {
@@ -490,9 +492,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch,
 		hasCredentials,
 		inProgressRewindStatus,
-		isFinished,
+		isRestoreDone,
 		isRestoreInProgress,
 		restoreInitiated,
+		showFinishedScreen,
 		userHasRequestedRestore,
 	] );
 
@@ -512,6 +515,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			);
 		} else if ( isInProgress ) {
 			return renderInProgress();
+		} else if ( isRestoreDone && ! showFinishedScreen ) {
+			return renderConfirm();
 		} else if ( isFinished ) {
 			return renderFinished();
 		}
