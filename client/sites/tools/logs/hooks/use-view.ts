@@ -14,12 +14,14 @@ const getFilterValue = ( view: View, fieldName: string ) =>
 
 function buildFilter( {
 	logType,
+	cached,
 	renderer,
 	requestType,
 	severity,
 	status,
 }: {
 	logType: LogType;
+	cached?: string[];
 	renderer?: string[];
 	requestType?: string[];
 	severity?: string[];
@@ -34,6 +36,10 @@ function buildFilter( {
 	}
 
 	if ( logType === 'web' ) {
+		if ( cached ) {
+			filters.cached = cached;
+		}
+
 		if ( requestType ) {
 			filters.request_type = requestType;
 		}

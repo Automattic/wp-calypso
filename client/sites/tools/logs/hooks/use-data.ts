@@ -60,6 +60,7 @@ const useData = ( {
 	endTime: Moment;
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const cached = getFilterValue( view, 'cached' );
 	const severity = getFilterValue( view, 'severity' );
 	const status = getFilterValue( view, 'status' );
 	const requestType = getFilterValue( view, 'request_type' );
@@ -69,7 +70,7 @@ const useData = ( {
 		logType,
 		start: startTime.unix(),
 		end: endTime.unix(),
-		filter: buildFilter( { logType, renderer, requestType, severity, status } ),
+		filter: buildFilter( { logType, cached, renderer, requestType, severity, status } ),
 		sortOrder: view.sort?.direction,
 		pageSize: view.perPage,
 		pageIndex: view.page,

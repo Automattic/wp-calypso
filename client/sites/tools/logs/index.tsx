@@ -402,6 +402,7 @@ export const SiteLogsDataViews = ( {
 			endDateTime: endTime,
 			filter: buildFilter( {
 				logType,
+				cached: getFilterValue( view, 'cached' ),
 				renderer: getFilterValue( view, 'renderer' ),
 				requestType: getFilterValue( view, 'request_type' ),
 				severity: getFilterValue( view, 'severity' ),

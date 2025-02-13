@@ -145,7 +145,19 @@ const useFields = ( { logType }: { logType: LogType } ): Field< ServerLog | PHPL
 			label: __( 'Body bytes sent' ),
 			enableSorting: false,
 		},
-		{ id: 'cached', type: 'text', label: __( 'Cached' ), enableSorting: false },
+		{
+			id: 'cached',
+			type: 'text',
+			label: __( 'Cached' ),
+			enableSorting: false,
+			elements: [
+				{ value: 'false', label: translate( 'False' ) },
+				{ value: 'true', label: translate( 'True' ) },
+			],
+			filterBy: {
+				operators: [ 'isAny' as Operator ],
+			},
+		},
 		{ id: 'http_host', type: 'text', label: __( 'HTTP Host' ), enableSorting: false },
 		{
 			id: 'http_referer',
