@@ -5,7 +5,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-class ReskinSideExplainer extends Component {
+class SideExplainer extends Component {
 	getStrings() {
 		const { flowName, translate, type } = this.props;
 
@@ -122,16 +122,16 @@ class ReskinSideExplainer extends Component {
 
 		return (
 			/* eslint-disable jsx-a11y/click-events-have-key-events */
-			<div className="reskin-side-explainer">
-				<div className="reskin-side-explainer__title">{ title }</div>
-				<div className="reskin-side-explainer__subtitle">
+			<div className="side-explainer">
+				<div className="side-explainer__title">{ title }</div>
+				<div className="side-explainer__subtitle">
 					<div>{ subtitle }</div>
-					{ subtitle2 && <div className="reskin-side-explainer__subtitle-2">{ subtitle2 }</div> }
+					{ subtitle2 && <div className="side-explainer__subtitle-2">{ subtitle2 }</div> }
 				</div>
 				{ ctaText && (
-					<div className="reskin-side-explainer__cta">
+					<div className="side-explainer__cta">
 						<button
-							className="reskin-side-explainer__cta-text"
+							className="side-explainer__cta-text"
 							onClick={ this.props.onClick }
 							tabIndex="0"
 						>
@@ -151,4 +151,4 @@ export default connect( ( state ) => {
 	return {
 		selectedSiteId,
 	};
-} )( localize( ReskinSideExplainer ) );
+} )( localize( SideExplainer ) );
