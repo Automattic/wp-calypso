@@ -86,7 +86,6 @@
 		"migration-flow/experiment": false,
 		"migration-flow/introductory-offer": true,
 		"network-connection": true,
-		"newsletter-categories-section": false,
 		"p2/p2-plus": true,
 		"p2-enabled": false,
 		"plans/hosting-trial": true,

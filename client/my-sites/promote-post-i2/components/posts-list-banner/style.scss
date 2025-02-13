@@ -4,7 +4,10 @@
 .promote-post-i2 {
 	.posts-list-banner__container {
 		background-color: #ecf3f9;
+	}
 
+	.posts-list-banner__container,
+	.tsp-banner__container {
 		.posts-list-banner__content {
 			align-items: center;
 			border: none;
@@ -63,15 +66,19 @@
 		}
 	}
 
-	#primary .promote-post-i2 .posts-list-banner__container {
-		border: none !important;
-		background-color: #ecf3f9 !important;
+	#primary .promote-post-i2 {
+		.posts-list-banner__container,
+		.tsp-banner__container {
+			border: none !important;
+			background-color: #ecf3f9 !important;
+		}
 	}
 }
 
 @mixin blazepress-banner-mobile {
 	.promote-post-i2 {
-		.posts-list-banner__container {
+		.posts-list-banner__container,
+		.tsp-banner__container {
 			display: none;
 		}
 	}

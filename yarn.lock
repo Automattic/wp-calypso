@@ -160,7 +160,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.1"
     prop-types: "npm:^15.8.1"
@@ -292,7 +292,7 @@ __metadata:
     gettext-parser: "npm:^6.0.0"
     lodash: "npm:^4.17.21"
     mini-css-extract-plugin: "npm:^1.6.2"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     postcss-custom-properties: "npm:^11.0.0"
     postcss-loader: "npm:^6.2.1"
     recursive-copy: "npm:^2.0.14"
@@ -366,11 +366,11 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@jest/globals": "npm:^29.7.0"
-    "@jest/types": "npm:^29.5.0"
+    "@jest/types": "npm:^29.6.3"
     "@playwright/browser-chromium": "npm:1.48.2"
     "@playwright/browser-firefox": "npm:1.48.2"
     "@types/node": "npm:^22.7.5"
-    "@types/node-fetch": "npm:^2.6.1"
+    "@types/node-fetch": "npm:^2.6.12"
     "@types/totp-generator": "npm:^0.0.3"
     "@wordpress/i18n": "npm:^5.16.0"
     asana-phrase: "npm:^0.0.8"
@@ -378,7 +378,7 @@ __metadata:
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
     nock: "npm:^13.5.4"
-    node-fetch: "npm:^2.6.7"
+    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
     typescript: "npm:^5.3.3"
@@ -619,7 +619,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^1.0.4"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.1"
     react: "npm:^18.3.1"
@@ -794,7 +794,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
     nock: "npm:^13.5.4"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1057,7 +1057,7 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.0.1"
     "@rollup/plugin-terser": "npm:^0.4.4"
     "@rollup/plugin-typescript": "npm:^10.0.1"
-    "@types/jasmine": "npm:^3.10.3"
+    "@types/jasmine": "npm:^3.10.18"
     "@types/karma": "npm:^6.3.3"
     "@types/karma-spec-reporter": "npm:^0.0.3"
     "@types/karma-summary-reporter": "npm:^3.1.0"
@@ -1594,7 +1594,7 @@ __metadata:
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     path-browserify: "npm:^1.0.1"
     postcss: "npm:^8.5.1"
     prop-types: "npm:^15.8.1"
@@ -2011,7 +2011,7 @@ __metadata:
     "@wordpress/rich-text": "npm:^7.16.0"
     "@wordpress/stylelint-config": "npm:^23.8.0"
     "@wordpress/url": "npm:^4.16.0"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     typescript: "npm:^5.3.3"
   peerDependencies:
     "@babel/core": "*"
@@ -2124,7 +2124,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     lodash: "npm:^4.17.21"
     mkdirp: "npm:^1.0.4"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.1"
     react: "npm:^18.2.0"
@@ -5081,7 +5081,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/types@npm:^29.5.0, @jest/types@npm:^29.6.3":
+"@jest/types@npm:^29.6.3":
   version: 29.6.3
   resolution: "@jest/types@npm:29.6.3"
   dependencies:
@@ -8754,10 +8754,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gtag.js@npm:^0.0.19":
-  version: 0.0.19
-  resolution: "@types/gtag.js@npm:0.0.19"
-  checksum: 68385c22289efcca6a7359c576412283186e29cb4a965dd7423543dfbf461ae3d5465b810d589cd7f648df9cc5d97c0dadd6903fd39115f2556075c971ffc593
+"@types/gtag.js@npm:^0.0.20":
+  version: 0.0.20
+  resolution: "@types/gtag.js@npm:0.0.20"
+  checksum: eb878aa3cfab6b98f5e69ef3383e9788aaea6a4d0611c72078678374dcbb4731f533ff2bf479a865536f1626a57887b1198279ff35a65d223fe4f93d9c76dbdd
   languageName: node
   linkType: hard
 
@@ -8857,7 +8857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:^3.10.3":
+"@types/jasmine@npm:^3.10.18":
   version: 3.10.18
   resolution: "@types/jasmine@npm:3.10.18"
   checksum: 09914c65b09cb90536debd21c90000b27a26b730881d45e32c5c19cd429cdcf7407cf27dad2b11a5319bbba7e7e6d756b4a6f1f3c854b691bd1f0ac4f4ea1226
@@ -9038,13 +9038,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.1, @types/node-fetch@npm:^2.6.4":
-  version: 2.6.6
-  resolution: "@types/node-fetch@npm:2.6.6"
+"@types/node-fetch@npm:^2.6.12, @types/node-fetch@npm:^2.6.4":
+  version: 2.6.12
+  resolution: "@types/node-fetch@npm:2.6.12"
   dependencies:
     "@types/node": "npm:*"
     form-data: "npm:^4.0.0"
-  checksum: fce52a0b65f4cb9e5059c9b3250682c8f0f0c2ce1d1a18b5bbc61b5fbf5f320b76d42b4dfa5c0567fe0704bdf0c0397527008efcb0749859aaaff8c51b6ed6c1
+  checksum: 7693acad5499b7df2d1727d46cff092a63896dc04645f36b973dd6dd754a59a7faba76fcb777bdaa35d80625c6a9dd7257cca9c401a4bab03b04480cda7fd1af
   languageName: node
   linkType: hard
 
@@ -13948,6 +13948,7 @@ __metadata:
     "@wordpress/i18n": "npm:^5.16.0"
     "@wordpress/icons": "npm:^10.16.0"
     "@wordpress/is-shallow-equal": "npm:^5.16.0"
+    "@wordpress/private-apis": "npm:^1.16.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
     "@wordpress/url": "npm:^4.16.0"
     "@wordpress/warning": "npm:^3.16.0"
@@ -26501,7 +26502,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -33634,9 +33635,9 @@ __metadata:
   linkType: hard
 
 "tinymce@npm:^5.0.0":
-  version: 5.10.2
-  resolution: "tinymce@npm:5.10.2"
-  checksum: 6ae13353bb0c882b5dfc57235a1e7c13f805441122cfb115a18209f082aee8b53ed66629bc2d50f9a64df04dc41392c1ece2b7c0b4ca981acf03e3242518e889
+  version: 5.10.9
+  resolution: "tinymce@npm:5.10.9"
+  checksum: 8b0d8602259d54ab89ffbf7bc4ea08f1bb35fa1f523748358d22550fed1abbffda3a2168af7c7a562a6bb8828c1c9dedb41e8ed1cd63b21a00f31ef39e708443
   languageName: node
   linkType: hard
 
@@ -35993,7 +35994,7 @@ __metadata:
     "@types/dompurify": "npm:^3.0.5"
     "@types/eslint": "npm:^9.6.1"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
-    "@types/gtag.js": "npm:^0.0.19"
+    "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^29.5.12"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^22.7.5"
@@ -36083,7 +36084,7 @@ __metadata:
     moment: "npm:^2.26.0"
     ncp: "npm:^2.0.0"
     nock: "npm:^13.5.4"
-    node-fetch: "npm:^2.6.6"
+    node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
     postcss: "npm:^8.5.1"
@@ -36156,7 +36157,7 @@ __metadata:
     jest-teamcity: "npm:^1.11.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
-    node-fetch: "npm:^2.6.1"
+    node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     postcss: "npm:^8.3.11"
     webpack: "npm:^5.63.0"

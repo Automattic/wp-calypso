@@ -50,7 +50,7 @@ const testCases: Array< {
 		features: {
 			resharing: true,
 			manualSharing: true,
-			mediaSharing: false,
+			mediaSharing: true,
 			socialImageGenerator: false,
 		},
 	},

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import {
 	SMOOCH_APP_ID,
@@ -8,6 +7,7 @@ import {
 	WIDGET_URL,
 	WIDGET_URL_STAGING,
 } from './constants';
+import { isTestModeEnvironment } from './util';
 
 export const useAttachFileToConversation = () => {
 	return useMutation( {
@@ -22,9 +22,7 @@ export const useAttachFileToConversation = () => {
 			conversationId: string;
 			file: File;
 		} ) => {
-			const currentEnvironment = config( 'env_id' ) as string;
-			const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
-
+			const isTestMode = isTestModeEnvironment();
 			const integrationId = isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID;
 			const url = isTestMode ? WIDGET_URL_STAGING : WIDGET_URL;
 			const appId = isTestMode ? SMOOCH_APP_ID_STAGING : SMOOCH_APP_ID;
