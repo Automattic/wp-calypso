@@ -223,6 +223,10 @@
 			}
 		}
 
+		.ellipsis-menu__toggle {
+			padding-bottom: 36px;
+		}
+
 		.reader-excerpt {
 			max-height: none;
 			-webkit-line-clamp: 3;
@@ -267,12 +271,6 @@
 			@include breakpoint-deprecated( "<660px" ) {
 				margin: 24px 0 0;
 			}
-		}
-	}
-
-	&.is-compact.has-thumbnail {
-		.ellipsis-menu__toggle {
-			padding-bottom: 36px;
 		}
 	}
 
