@@ -8,12 +8,14 @@ interface DomainsTableSslCellProps {
 	domainManagementLink: string;
 	sslStatus: DomainData[ 'ssl_status' ];
 	hasWpcomManagedSslCert: boolean;
+	as?: 'td' | 'div';
 }
 
 export default function DomainsTableSslCell( {
 	domainManagementLink,
 	sslStatus,
 	hasWpcomManagedSslCert,
+	as: Element = 'td',
 }: DomainsTableSslCellProps ) {
 	const translate = useTranslate();
 	// WordPress.com managed subdomains (e.g. *.wordpress.com, *.wpcomstaging.com, etc.)
@@ -53,7 +55,7 @@ export default function DomainsTableSslCell( {
 	}
 
 	return (
-		<td
+		<Element
 			className={ clsx( `domains-table-row__ssl-cell`, {
 				[ `domains-table-row__ssl-cell__active` ]: isActiveSsl,
 				[ `domains-table-row__ssl-cell__pending` ]: isPendingSsl,
@@ -62,6 +64,6 @@ export default function DomainsTableSslCell( {
 		>
 			{ domainHasSsl && <Icon icon={ lock } size={ 18 } /> }
 			{ button }
-		</td>
+		</Element>
 	);
 }

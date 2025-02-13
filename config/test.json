@@ -28,6 +28,7 @@
 		"akismet/checkout-quantity-dropdown": true,
 		"automated-migration/application-password": true,
 		"calypso/all-domain-management": true,
+		"calypso/domains-dataviews": false,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
 		"checkout/ebanx-pix": true,

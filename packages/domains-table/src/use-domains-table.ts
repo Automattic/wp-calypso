@@ -7,7 +7,7 @@ import {
 export function useDomainsTable(
 	fetchAllDomains?: ( queryArgs?: AllDomainsQueryArgs ) => Promise< AllDomainsQueryFnData >
 ) {
-	const queryArgs = { no_wpcom: true };
+	const queryArgs = { no_wpcom: true, resolve_status: true };
 
 	const { data, ...queryResult } = useAllDomainsQuery(
 		queryArgs,
