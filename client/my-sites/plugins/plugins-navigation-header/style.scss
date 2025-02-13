@@ -26,9 +26,15 @@
 		}
 	}
 
+	.formatted-header {
+		display: flex;
+		align-items: center;
+		min-height: 40px;
+	}
+
 	.formatted-header__title {
 		font-size: 1.5rem;
-		line-height: 1.2;
+		line-height: 1.25;
 	}
 }
 
