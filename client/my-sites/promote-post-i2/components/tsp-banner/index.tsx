@@ -1,6 +1,5 @@
-import { Gridicon } from '@automattic/components';
+import { ExternalLink, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import ExternalLink from 'calypso/components/external-link';
 import TspBannerImage from './tsp-banner-image';
 
 import './style.scss';
