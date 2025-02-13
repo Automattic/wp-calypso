@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { PostStatsCard, ComponentSwapper, DotPager } from '@automattic/components';
+import { ComponentSwapper, DotPager } from '@automattic/components';
 import { createSelector } from '@automattic/state-utils';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -7,6 +7,7 @@ import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {

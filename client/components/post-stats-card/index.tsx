@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Card, Button } from '@automattic/components';
+import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { Card, Button } from '../';
-import { eye } from '../icons';
 import './style.scss';
 
 type PostStatsCardProps = {

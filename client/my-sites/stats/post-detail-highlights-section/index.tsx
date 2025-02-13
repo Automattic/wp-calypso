@@ -1,7 +1,8 @@
-import { Card, Count, PostStatsCard } from '@automattic/components';
+import { Card, Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
