@@ -125,7 +125,6 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 							value={ formData.userType }
 							onChange={ handleInputChange( 'userType' ) }
 						>
-							<option value="">{ translate( 'Select option' ) }</option>
 							<option value="agency_owner">{ translate( 'Agency owner' ) }</option>
 							<option value="developer_at_agency">{ translate( 'Developer at an agency' ) }</option>
 							<option value="sales_marketing_operations_at_agency">
@@ -144,7 +143,6 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 							value={ formData.managedSites }
 							onChange={ handleInputChange( 'managedSites' ) }
 						>
-							<option value="">{ translate( 'Select option' ) }</option>
 							<option value="1-5">{ translate( '1-5' ) }</option>
 							<option value="6-20">{ translate( '6-20' ) }</option>
 							<option value="21-50">{ translate( '21-50' ) }</option>
