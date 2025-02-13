@@ -189,7 +189,9 @@ const DomainOverviewPane = ( {
 			<ItemView
 				itemData={ itemData }
 				closeItemView={ () => {
-					inSiteContext ? page.show( '/sites' ) : page.show( paths.domainManagementRoot() );
+					inSiteContext
+						? page.show( '/sites' )
+						: page.show( addQueryArgs( getQueryParams(), paths.domainManagementRoot() ) );
 				} }
 				features={ features }
 				enforceTabsView
