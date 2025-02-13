@@ -17,13 +17,16 @@ export type MockSiteKey =
 
 export type MockStores = Record< MockSiteKey, Record< string, WPDataRegistry > >;
 
+const image_url_01 = 'https://i.pravatar.cc/300';
+const image_url_02 = 'https://i.pravatar.cc/301';
+
 const stores = {
 	[ WOOCOMMERCE_ANALYTICS_SITE_KEY ]: {
 		[ coreDataStore.name ]: {
 			name: 'WooCommerce Analytics',
 			description:
 				'WooCommerce Analytics is a powerful tool that helps you understand how your store is performing and how you can improve your store’s performance.',
-			'root/__unstableBase': { site_icon_url: './woocommerce/product-icon.svg' },
+			'root/__unstableBase': { site_icon_url: image_url_01 },
 		},
 	},
 	[ REGULAR_SITE_KEY ]: {
@@ -37,7 +40,7 @@ const stores = {
 		[ coreDataStore.name ]: {
 			name: 'Jetpack Site',
 			description: 'A site with Jetpack installed.',
-			'root/__unstableBase': { site_icon_url: './jetpack/connected.svg' },
+			'root/__unstableBase': { site_icon_url: image_url_02 },
 		},
 	},
 };
