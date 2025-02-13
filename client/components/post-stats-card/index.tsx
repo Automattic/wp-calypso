@@ -60,7 +60,7 @@ export default function PostStatsCard( {
 		<Card className={ classes }>
 			<h4 className="post-stats-card__heading">{ heading }</h4>
 			<div className="post-stats-card__post-info">
-				<TitleTag className="post-stats-card__post-title" href={ titleLink }>
+				<TitleTag className="post-stats-card__post-title" href={ titleLink } target="_blank">
 					{ post?.title }
 				</TitleTag>
 				{ ( isLoading || post?.date ) && (

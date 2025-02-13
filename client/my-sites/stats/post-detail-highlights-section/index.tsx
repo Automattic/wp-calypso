@@ -28,6 +28,7 @@ type Post = {
 	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
 	comment_count: number | null;
+	url: string | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
@@ -51,6 +52,7 @@ export default function PostDetailHighlightsSection( {
 		post_thumbnail: post?.post_thumbnail?.URL || null,
 		title: truncateWithLimit( getProcessedText( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
+
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
@@ -99,6 +101,7 @@ export default function PostDetailHighlightsSection( {
 							viewCount={ viewCount }
 							commentCount={ post?.comment_count || 0 }
 							locale={ userLocale }
+							titleLink={ post?.url || undefined }
 						/>
 
 						<Card className="highlight-card">
