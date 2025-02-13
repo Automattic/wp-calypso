@@ -4,8 +4,8 @@ import { TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
-import wpcom from 'calypso/lib/wp';
+import { useCallback, useState } from 'react';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
 import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '../../tracks';
@@ -13,82 +13,25 @@ import './styles.scss';
 
 type AddSitesFormProps = {
 	onAddFinished: () => void;
-	onPreviewFeed?: ( feedId: number | null, error?: string ) => void;
-	onLoadingPreview?: ( isLoading: boolean ) => void;
 };
 
-type FeedResponse = {
-	feeds: Array< {
-		feed_ID: number;
-	} >;
+type SubscriptionError = {
+	error?: string;
+	message?: string;
 };
 
-const PREVIEW_DEBOUNCE_MS = 500;
-
-const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSitesFormProps ) => {
+const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
-	const [ previewDebounceTimeout, setPreviewDebounceTimeout ] = useState< ReturnType<
-		typeof setTimeout
-	> | null >( null );
+	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
-
-	// Cleanup timeout on unmount
-	useEffect( () => {
-		return () => {
-			if ( previewDebounceTimeout ) {
-				clearTimeout( previewDebounceTimeout );
-			}
-		};
-	}, [ previewDebounceTimeout ] );
-
-	const getFeedPreview = useCallback(
-		( url: string ) => {
-			if ( ! onPreviewFeed ) {
-				return;
-			}
-
-			// Clear any existing timeout
-			if ( previewDebounceTimeout ) {
-				clearTimeout( previewDebounceTimeout );
-			}
-
-			// Set preview to null immediately when input changes
-			onPreviewFeed( null );
-
-			// Show loading state immediately
-			onLoadingPreview?.( true );
-
-			// Debounce the actual preview request
-			const timeout = setTimeout( () => {
-				wpcom.req
-					.get< FeedResponse >( '/read/feed', { url } )
-					.then( ( response: FeedResponse ) => {
-						if ( response?.feeds?.[ 0 ]?.feed_ID ) {
-							onPreviewFeed( response.feeds[ 0 ].feed_ID );
-						} else {
-							onPreviewFeed( null, translate( 'No valid feed found at this URL' ) );
-						}
-					} )
-					.catch( () => {
-						// Pass error message to preview handler
-						onPreviewFeed( null, translate( 'Unable to find a valid feed at this URL' ) );
-					} )
-					.finally( () => {
-						onLoadingPreview?.( false );
-					} );
-			}, PREVIEW_DEBOUNCE_MS );
-
-			setPreviewDebounceTimeout( timeout );
-		},
-		[ onPreviewFeed, previewDebounceTimeout, onLoadingPreview, translate ]
-	);
 
 	const validateInputValue = useCallback(
 		( url: string, showError = false ) => {
@@ -96,25 +39,20 @@ const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSi
 			if ( url.length === 0 ) {
 				setIsValidInput( false );
 				setInputFieldError( null );
-				onPreviewFeed?.( null );
-				onLoadingPreview?.( false );
 				return;
 			}
 
 			if ( isValidUrl( url ) ) {
 				setInputFieldError( null );
 				setIsValidInput( true );
-				getFeedPreview( url );
 			} else {
 				setIsValidInput( false );
 				if ( showError ) {
 					setInputFieldError( translate( 'Please enter a valid URL' ) );
 				}
-				onPreviewFeed?.( null );
-				onLoadingPreview?.( false );
 			}
 		},
-		[ translate, onPreviewFeed, getFeedPreview, onLoadingPreview ]
+		[ translate ]
 	);
 
 	const onTextFieldChange = useCallback(
@@ -126,6 +64,11 @@ const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSi
 	);
 
 	const onAddSite = useCallback( () => {
+		if ( ! isLoggedIn ) {
+			setShowLoginDialog( true );
+			return;
+		}
+
 		if ( isValidInput ) {
 			subscribe(
 				{ url: inputValue },
@@ -146,8 +89,8 @@ const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSi
 						}
 						onAddFinished();
 					},
-					onError: () => {
-						showErrorNotice( inputValue );
+					onError: ( error: SubscriptionError ) => {
+						showErrorNotice( inputValue, error );
 						onAddFinished();
 					},
 				}
@@ -156,6 +99,7 @@ const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSi
 	}, [
 		inputValue,
 		isValidInput,
+		isLoggedIn,
 		onAddFinished,
 		recordSiteSubscribed,
 		showErrorNotice,
@@ -165,32 +109,44 @@ const AddSitesForm = ( { onAddFinished, onPreviewFeed, onLoadingPreview }: AddSi
 	] );
 
 	return (
-		<div className="subscriptions-add-sites__form--container">
-			<TextControl
-				className={ clsx(
-					'subscriptions-add-sites__form-input',
-					inputFieldError ? 'is-error' : ''
-				) }
-				disabled={ subscribing }
-				placeholder={ translate( 'https://www.site.com' ) }
-				value={ inputValue }
-				type="url"
-				onChange={ onTextFieldChange }
-				help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
-				onBlur={ () => validateInputValue( inputValue, true ) }
+		<>
+			<div className="subscriptions-add-sites__form--container">
+				<TextControl
+					className={ clsx(
+						'subscriptions-add-sites__form-input',
+						inputFieldError ? 'is-error' : ''
+					) }
+					disabled={ subscribing }
+					placeholder={ translate( 'https://www.site.com' ) }
+					value={ inputValue }
+					type="url"
+					onChange={ onTextFieldChange }
+					help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
+					onBlur={ () => validateInputValue( inputValue, true ) }
+				/>
+
+				{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+
+				<Button
+					primary
+					className="subscriptions-add-sites__save-button"
+					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					onClick={ onAddSite }
+				>
+					{ translate( 'Add site' ) }
+				</Button>
+			</div>
+
+			<ReaderJoinConversationDialog
+				isVisible={ showLoginDialog }
+				onClose={ () => setShowLoginDialog( false ) }
+				onLoginSuccess={ () => window.location.reload() }
+				loggedInAction={ {
+					type: 'subscribe',
+					url: inputValue,
+				} }
 			/>
-
-			{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
-
-			<Button
-				primary
-				className="subscriptions-add-sites__save-button"
-				disabled={ ! inputValue || !! inputFieldError || subscribing }
-				onClick={ onAddSite }
-			>
-				{ translate( 'Add site' ) }
-			</Button>
-		</div>
+		</>
 	);
 };
 
