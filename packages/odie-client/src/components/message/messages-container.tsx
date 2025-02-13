@@ -1,11 +1,8 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
-import { NavigationType, useLocation, useNavigationType, useSearchParams } from 'react-router-dom';
+import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
 import { useOdieAssistantContext } from '../../context';
 import {
@@ -13,7 +10,7 @@ import {
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
 } from '../../hooks';
-import { useHandleChatScrollPosition } from '../../hooks/use-handle-chat-scroll-position';
+import { useHelpCenterArticleScroll } from '../../hooks/use-help-center-chat-scroll';
 import { getOdieInitialMessage } from '../../utils';
 import { ViewMostRecentOpenConversationNotice } from '../odie-notice/view-most-recent-conversation-notice';
 import { DislikeFeedbackMessage } from './dislike-feedback-message';
@@ -59,53 +56,33 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const [ hasForwardedToZendesk, setHasForwardedToZendesk ] = useState( false );
 	const [ chatMessagesLoaded, setChatMessagesLoaded ] = useState( false );
-	const messagesContainerRef = useRef< HTMLDivElement >( null );
-
-	const location = useLocation();
+	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const navType: NavigationType = useNavigationType();
 
-	const { odieChatScrollPosition } = useSelect( ( select ) => {
-		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
-		return {
-			odieChatScrollPosition: helpCenterSelect.getOdieChatScrollPosition(),
-		};
-	}, [] );
-
-	const shouldAutoScroll = false;
+	const messagesContainerRef = useRef< HTMLDivElement >( null );
+	const scrollParentRef = useRef< HTMLElement | null >( null );
 
 	useZendeskMessageListener();
-	useAutoScroll( messagesContainerRef, shouldAutoScroll );
-	useHandleChatScrollPosition( messagesContainerRef, shouldAutoScroll );
-
-	const { setOdieChatScrollPosition } = useDispatch( HELP_CENTER_STORE );
-	useEffect( () => {
-		if ( navType === 'POP' && location.key !== 'default' && odieChatScrollPosition ) {
-			const container = document.querySelector( '.help-center__container-content' );
-			setTimeout( () => {
-				container?.scrollTo( 0, odieChatScrollPosition );
-			}, 500 );
-		}
-	}, [ location, navType, odieChatScrollPosition, setOdieChatScrollPosition ] );
+	useAutoScroll( messagesContainerRef, shouldEnableAutoScroll );
+	useHelpCenterArticleScroll(
+		chat?.supportInteractionId,
+		scrollParentRef,
+		! shouldEnableAutoScroll && isChatLoaded
+	);
 
 	useEffect( () => {
-		const handleScroll = () => {
-			const container = document.querySelector( '.help-center__container-content' );
-			if ( container && navType !== 'POP' ) {
-				setOdieChatScrollPosition( container.scrollTop );
-			}
-		};
-
-		const container = document.querySelector( '.help-center__container-content' );
-		if ( container ) {
-			container.addEventListener( 'scroll', handleScroll );
+		if ( navType === 'POP' ) {
+			setShouldEnableAutoScroll( false );
 		}
+	}, [ navType ] );
 
-		return () => {
-			if ( container ) {
-				container.removeEventListener( 'scroll', handleScroll );
-			}
-		};
-	}, [] );
+	useEffect( () => {
+		if ( messagesContainerRef.current && scrollParentRef.current === null ) {
+			scrollParentRef.current = messagesContainerRef.current?.closest(
+				'.help-center__container-content'
+			);
+		}
+	}, [ messagesContainerRef ] );
 
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {

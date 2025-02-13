@@ -3,7 +3,7 @@ import { useOdieAssistantContext } from '../context';
 
 export const useAutoScroll = (
 	messagesContainerRef: RefObject< HTMLDivElement >,
-	shouldAutoScroll: boolean
+	isEnabled: boolean
 ) => {
 	const { chat, experimentVariationName } = useOdieAssistantContext();
 	const debounceTimeoutRef = useRef< number >( 500 );
@@ -11,7 +11,7 @@ export const useAutoScroll = (
 	const lastChatStatus = useRef< string | null >( null );
 
 	useEffect( () => {
-		if ( ! shouldAutoScroll ) {
+		if ( ! isEnabled ) {
 			return;
 		}
 
@@ -51,5 +51,5 @@ export const useAutoScroll = (
 			} );
 		}, debounceTimeoutRef.current ) as unknown as number;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ chat.messages.length, chat.status, messagesContainerRef.current, shouldAutoScroll ] );
+	}, [ chat.messages.length, chat.status, messagesContainerRef.current, isEnabled ] );
 };
