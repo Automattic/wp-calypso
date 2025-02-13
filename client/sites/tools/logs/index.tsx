@@ -264,8 +264,6 @@ export const SiteLogsDataViews = ( {
 	logType: LogType;
 	query: { from: string; to: string };
 } ) => {
-	const { __ } = useI18n();
-
 	const moment = useLocalizedMoment();
 	const siteGmtOffset = useCurrentSiteGmtOffset();
 	const ZERO_EPOCH = useMemo( () => moment.unix( 0 ), [ moment ] );
@@ -329,7 +327,7 @@ export const SiteLogsDataViews = ( {
 	const fields = useFields( { logType } );
 	const actions = useActions( { logType } );
 	const [ view, setView ] = useView( { logType } );
-	const { data, paginationInfo, isLoading } = useData( {
+	const { data, paginationInfo, isLoading, isInitialLoad } = useData( {
 		view,
 		logType,
 		startTime,
@@ -461,13 +459,11 @@ export const SiteLogsDataViews = ( {
 					</label>
 				</div>
 			</div>
-			{ isLoading && <Skeleton className="site-logs-table-webserver__skeleton" /> }
-			{ ! isLoading && data && data.length === 0 && (
-				<>{ __( 'No log entries within this time range.' ) }</>
-			) }
-			{ ! isLoading && data && data.length > 0 && (
+			{ isInitialLoad && <Skeleton className="site-logs-table-webserver__skeleton" /> }
+			{ ! isInitialLoad && (
 				<DataViews< PHPLog | ServerLog >
 					data={ data }
+					isLoading={ isLoading }
 					paginationInfo={ paginationInfo }
 					fields={ fields }
 					view={ view }

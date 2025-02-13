@@ -28,7 +28,7 @@ const useData = ( {
 	const status = getFilterValue( view, 'status' );
 	const requestType = getFilterValue( view, 'request_type' );
 
-	const { data, isFetching } = useSiteLogsQuery( siteId, {
+	const { data, isFetching, isLoading } = useSiteLogsQuery( siteId, {
 		logType,
 		start: startTime.unix(),
 		end: endTime.unix(),
@@ -48,6 +48,7 @@ const useData = ( {
 					: 0,
 		},
 		isLoading: isFetching,
+		isInitialLoad: isLoading,
 	};
 };
 
