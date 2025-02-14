@@ -16,10 +16,8 @@ import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selector
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useActivateDesign } from '../hooks/use-activate-design';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
-import { useMarketplaceThemeProducts } from '../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../hooks/use-site-data';
 import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
-import { useWaitForAtomic } from '../hooks/use-wait-for-atomic';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { shouldRedirectToSiteMigration } from './helpers';
 import { useLaunchpadDecider } from './internals/hooks/use-launchpad-decider';
@@ -613,7 +611,6 @@ const siteSetupFlow: FlowV1 = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
 		const { site, siteSlug, siteId } = useSiteData();
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -650,14 +647,8 @@ const siteSetupFlow: FlowV1 = {
 		}
 
 		const isLoadingSite = ( siteSlug || siteId ) && ! site;
-		const { canManageOptions, isLoading: isLoadingCanUserManageOptions } =
-			useCanUserManageOptions();
-		const { isLoading: isLoadingMarketplaceThemeProducts } = useMarketplaceThemeProducts();
-		if (
-			isLoadingSite ||
-			isLoadingCanUserManageOptions ||
-			( isGoalsAtFrontExperiment && isLoadingMarketplaceThemeProducts )
-		) {
+		const { canManageOptions, isLoading } = useCanUserManageOptions();
+		if ( isLoadingSite || isLoading ) {
 			result = {
 				state: AssertConditionState.CHECKING,
 			};
@@ -695,60 +686,16 @@ const siteSetupFlow: FlowV1 = {
 
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
 
-		const isJetpack = useSelect(
-			( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isJetpackSite( siteId ),
-			[ siteId ]
-		);
-
-		const isAtomic = useSelect(
-			( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
-			[ siteId ]
-		);
-
-		const isJetpackOrAtomic = isJetpack || isAtomic;
-
 		const activateDesign = useActivateDesign();
 
-		const {
-			isLoading: isLoadingMarketplaceThemeProducts,
-			isMarketplaceThemeSubscribed,
-			isExternallyManagedThemeAvailable,
-		} = useMarketplaceThemeProducts();
-
-		const { waitForTransfer, waitForFeature, waitForLatestSiteData } = useWaitForAtomic();
-
 		useEffect( () => {
-			if (
-				! isGoalsAtFrontExperiment ||
-				! siteSlugOrId ||
-				! siteId ||
-				isLoadingMarketplaceThemeProducts
-			) {
+			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {
 				return;
 			}
 
 			setPendingAction( async () => {
 				if ( ! selectedDesign ) {
 					return;
-				}
-
-				/**
-				 * If the externally managed theme is selected, we have to check:
-				 * - Whether the theme is available. If not, do nothing as the user may remove the theme product during the checkout.
-				 * - Whether the site is atomic since it should be installed on the user's site.
-				 *
-				 * Note that the atomic transfer would be initiated immediately after the user purchases a externally managed theme.
-				 */
-				if ( selectedDesign.is_externally_managed ) {
-					if ( ! isMarketplaceThemeSubscribed && ! isExternallyManagedThemeAvailable ) {
-						return;
-					}
-
-					if ( ! isJetpackOrAtomic ) {
-						await waitForTransfer();
-						await waitForFeature();
-						await waitForLatestSiteData();
-					}
 				}
 
 				try {
@@ -776,7 +723,6 @@ const siteSetupFlow: FlowV1 = {
 			isGoalsAtFrontExperiment,
 			siteSlugOrId,
 			siteId,
-			isLoadingMarketplaceThemeProducts,
 			activateDesign,
 			selectedDesign,
 			setPendingAction,
@@ -784,9 +730,6 @@ const siteSetupFlow: FlowV1 = {
 			selectedStyleVariation,
 			selectedGlobalStyles,
 			skippedCheckout,
-			isMarketplaceThemeSubscribed,
-			isExternallyManagedThemeAvailable,
-			isJetpackOrAtomic,
 		] );
 	},
 };

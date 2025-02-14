@@ -55,6 +55,10 @@ const clearUseMyDomainsQueryParams = ( currentStepSlug: string | undefined ) => 
 	}
 };
 
+const withLocale = ( url: string, locale: string ) => {
+	return locale && locale !== 'en' ? `${ url }/${ locale }` : url;
+};
+
 const onboarding: Flow = {
 	name: ONBOARDING_FLOW,
 	isSignupFlow: true,
@@ -127,7 +131,8 @@ const onboarding: Flow = {
 				STEPS.GOALS,
 				STEPS.DESIGN_CHOICES,
 				STEPS.DESIGN_SETUP,
-				STEPS.DIFM_STARTING_POINT
+				STEPS.DIFM_STARTING_POINT,
+				STEPS.POST_CHECKOUT_ONBOARDING
 			);
 		}
 
@@ -182,21 +187,24 @@ const onboarding: Flow = {
 			providedDependencies: ProvidedDependencies
 		): [ string, string ] => {
 			if ( createWithBigSky && isBigSkyBeforePlansExperiment && isGoalsAtFrontExperiment ) {
-				const destination = addQueryArgs( '/setup/site-setup/launch-big-sky', {
-					siteSlug: providedDependencies.siteSlug,
-					isBigSkyBeforePlansFlow: true,
-				} );
+				const destination = addQueryArgs(
+					withLocale( '/setup/site-setup/launch-big-sky', locale ),
+					{
+						siteSlug: providedDependencies.siteSlug,
+						isBigSkyBeforePlansFlow: true,
+					}
+				);
 
 				return [
 					destination,
-					addQueryArgs( '/setup/onboarding/plans', {
+					addQueryArgs( withLocale( '/setup/onboarding/plans', locale ), {
 						skippedCheckout: 1,
 						isBigSkyBeforePlansFlow: true,
 					} ),
 				];
 			}
 
-			const destination = addQueryArgs( '/setup/site-setup', {
+			const destination = addQueryArgs( withLocale( '/setup/site-setup', locale ), {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 			} );
@@ -209,19 +217,12 @@ const onboarding: Flow = {
 		const submit = async ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( currentStepSlug ) {
 				case 'goals': {
-					const goalsUrl =
-						locale && locale !== 'en'
-							? `/setup/onboarding/goals/${ locale }`
-							: '/setup/onboarding/goals';
-
+					const goalsUrl = withLocale( '/setup/onboarding/goals', locale );
 					const { intent } = providedDependencies;
 
 					switch ( intent ) {
 						case SiteIntent.Import: {
-							const migrationFlowLink =
-								locale && locale !== 'en'
-									? `/setup/hosted-site-migration/${ locale }`
-									: '/setup/hosted-site-migration';
+							const migrationFlowLink = withLocale( '/setup/hosted-site-migration', locale );
 							return window.location.assign(
 								addQueryArgs( migrationFlowLink, {
 									back_to: goalsUrl,
@@ -259,13 +260,10 @@ const onboarding: Flow = {
 
 				case 'difmStartingPoint': {
 					const { newOrExistingSiteChoice } = providedDependencies;
-					const difmFlowLink = addQueryArgs(
-						locale && locale !== 'en' ? `/start/do-it-for-me/${ locale }` : '/start/do-it-for-me',
-						{
-							back_to: window.location.href.replace( window.location.origin, '' ),
-							newOrExistingSiteChoice,
-						}
-					);
+					const difmFlowLink = addQueryArgs( withLocale( '/start/do-it-for-me', locale ), {
+						back_to: window.location.href.replace( window.location.origin, '' ),
+						newOrExistingSiteChoice,
+					} );
 
 					if ( isUserLoggedIn ) {
 						return window.location.assign( difmFlowLink );
@@ -369,6 +367,8 @@ const onboarding: Flow = {
 				}
 				case 'create-site':
 					return navigate( 'processing', undefined, true );
+				case 'post-checkout-onboarding':
+					return navigate( 'processing' );
 				case 'processing': {
 					const [ destination, backDestination ] =
 						getPostCheckoutDestination( providedDependencies );
@@ -383,7 +383,13 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace(
 							addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-								redirect_to: destination,
+								// Go to the post-checkout step to see whether to wait for the atomic transfer
+								redirect_to: addQueryArgs(
+									withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
+									{
+										siteSlug,
+									}
+								),
 								signup: 1,
 								checkoutBackUrl: pathToUrl( backDestination ),
 								coupon,
@@ -396,9 +402,6 @@ const onboarding: Flow = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					}
-				}
-				case 'waitForAtomic': {
-					return navigate( 'processing' );
 				}
 				default:
 					return;

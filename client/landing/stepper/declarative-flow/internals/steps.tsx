@@ -313,6 +313,11 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-picker' ),
 	},
 
+	POST_CHECKOUT_ONBOARDING: {
+		slug: 'post-checkout-onboarding',
+		asyncComponent: () => import( './steps-repository/post-checkout/post-checkout-onboarding' ),
+	},
+
 	SEGMENTATION_SURVEY: {
 		slug: 'segmentation-survey',
 		asyncComponent: () => import( './steps-repository/segmentation-survey' ),
