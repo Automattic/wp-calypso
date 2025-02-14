@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { WordPressLogo, JetpackLogo } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { download, reusableBlock, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -50,7 +51,7 @@ const offerClick = () => {
 	recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_item', {
 		action: 'offer',
 	} );
-	window.location.assign( 'https://wordpress.com/pricing/' );
+	window.location.assign( localizeUrl( 'https://wordpress.com/pricing/' ) );
 };
 
 export const Content = () => {
