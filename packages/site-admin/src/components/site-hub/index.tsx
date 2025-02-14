@@ -17,6 +17,10 @@ import clsx from 'clsx';
  */
 import { SiteIcon } from '../';
 import './style.scss';
+/**
+ * Types
+ */
+import type { JSX } from 'react';
 
 interface SiteData {
 	title: string;
@@ -33,6 +37,16 @@ interface SiteHubProps {
 	navigationBackLink: string; // core picks this prop (dashboardLink) from site-admin store.
 }
 
+/**
+ * SiteHub Component
+ *
+ * Provides a top-level navigation element displaying the site title,
+ * a back navigation button, and access to the command palette.
+ * It integrates with WordPress Core's entity data
+ * to fetch site information dynamically.
+ * @param {SiteHubProps} props - The component props.
+ * @returns {JSX.Element} The rendered SiteHub component.
+ */
 export const SiteHub = memo(
 	forwardRef(
 		(
@@ -42,7 +56,7 @@ export const SiteHub = memo(
 				navigationBackLabel = __( 'Go to the Dashboard' ),
 			}: SiteHubProps,
 			ref
-		) => {
+		): JSX.Element => {
 			const { homeUrl, siteTitle } = useSelect( ( select ) => {
 				const { getEntityRecord } = select( coreStore );
 
