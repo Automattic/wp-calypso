@@ -67,6 +67,13 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  * Redirect /settings to /sites/settings/site when the Remove Duplicate Views experiment is enabled.
  *
  * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
+ *
+ * This is to maintain previous behavior by providing HE's with a consistent location, `/settings`, to link
+ * to for visibility and site launching options.
+ *
+ * When the experiment is over:
+ * - /settings can always redirect to /sites/settings/site
+ * - /settings/general can always redirect to /wp-admin/options-general.php
  */
 export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
 	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
