@@ -207,6 +207,7 @@ function ProductCard( props: Props ) {
 							customText={ translate( 'View details' ) }
 							productName={ getProductShortTitle( currentProduct ) }
 							onClick={ onShowLightbox }
+							showIcon={ false }
 						/>
 					) }
 				</div>
