@@ -20,7 +20,14 @@ const useSubscriberRemoveMutation = (
 	args: SubscriberListArgs,
 	invalidateDetailsCache = false
 ) => {
-	const { currentPage, perPage = DEFAULT_PER_PAGE, filterOption, searchTerm, sortTerm } = args;
+	const {
+		currentPage,
+		perPage = DEFAULT_PER_PAGE,
+		filterOption,
+		filters = [],
+		searchTerm,
+		sortTerm,
+	} = args;
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
 	const { hasManySubscribers } = useManySubsSite( siteId );
@@ -31,6 +38,7 @@ const useSubscriberRemoveMutation = (
 		searchTerm,
 		sortTerm,
 		filterOption,
+		filters,
 		hasManySubscribers
 	);
 
@@ -127,6 +135,7 @@ const useSubscriberRemoveMutation = (
 								searchTerm,
 								sortTerm,
 								filterOption,
+								filters,
 								hasManySubscribers
 							)
 						);
@@ -177,6 +186,7 @@ const useSubscriberRemoveMutation = (
 							searchTerm,
 							sortTerm,
 							filterOption,
+							filters,
 							hasManySubscribers
 						),
 						previousSubscribers
