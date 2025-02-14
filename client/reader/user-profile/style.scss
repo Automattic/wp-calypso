@@ -11,7 +11,7 @@
 			padding-top: 150px;
 		}
 
-		&__wrapper {
+		.user-profile__wrapper {
 
 			&-content {
 				padding-top: 36px;
@@ -43,7 +43,7 @@
 			}
 
 			&.has-back-button {
-				&-content {
+				.user-profile__wrapper-content {
 					padding-top: 0;
 				}
 
