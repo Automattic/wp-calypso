@@ -3,7 +3,7 @@ import { Card, Button } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, commentContent, starEmpty } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useMemo } from 'react';
 import './style.scss';
 
@@ -60,7 +60,7 @@ export default function PostStatsCard( {
 		<Card className={ classes }>
 			<h4 className="post-stats-card__heading">{ heading }</h4>
 			<div className="post-stats-card__post-info">
-				<TitleTag className="post-stats-card__post-title" href={ titleLink }>
+				<TitleTag className="post-stats-card__post-title" href={ titleLink } target="_blank">
 					{ post?.title }
 				</TitleTag>
 				{ ( isLoading || post?.date ) && (
@@ -79,14 +79,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Views' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && viewCount !== null
-								? numberFormat( viewCount, {
-										numberFormatOptions: {
-											notation: 'compact',
-											maximumFractionDigits: 1,
-										},
-								  } )
-								: '-' }
+							{ ! isLoading && viewCount !== null ? numberFormatCompact( viewCount ) : '-' }
 						</span>
 					</div>
 				</div>
@@ -95,14 +88,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Likes' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && likeCount !== null
-								? numberFormat( likeCount, {
-										numberFormatOptions: {
-											notation: 'compact',
-											maximumFractionDigits: 1,
-										},
-								  } )
-								: '-' }
+							{ ! isLoading && likeCount !== null ? numberFormatCompact( likeCount ) : '-' }
 						</span>
 					</div>
 				</div>
@@ -111,14 +97,7 @@ export default function PostStatsCard( {
 					<div className="post-stats-card__count-header">{ translate( 'Comments' ) }</div>
 					<div className="post-stats-card__count-value">
 						<span>
-							{ ! isLoading && commentCount !== null
-								? numberFormat( commentCount, {
-										numberFormatOptions: {
-											notation: 'compact',
-											maximumFractionDigits: 1,
-										},
-								  } )
-								: '-' }
+							{ ! isLoading && commentCount !== null ? numberFormatCompact( commentCount ) : '-' }
 						</span>
 					</div>
 				</div>

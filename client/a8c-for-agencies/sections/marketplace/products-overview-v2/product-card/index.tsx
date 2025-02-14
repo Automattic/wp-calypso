@@ -1,69 +1,71 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@wordpress/components';
-import { Icon, check } from '@wordpress/icons';
+import { check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import {
-	useProductDescription,
-	useURLQueryParams,
-} from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-portal/lib';
+import { useCallback, useEffect, useMemo } from 'react';
+import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
+import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
-import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
+import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from '../../../../../state/partner-portal/types';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
+import withProductLightbox, {
+	ProductLightboxActivatorProps,
+	WithProductLightboxProps,
+} from '../hocs/with-product-lightbox';
 import ProductBadges from '../product-badges';
-import ProductPriceWithDiscount from './product-price-with-discount-info';
-import WooPaymentsCustomDescription from './woopayments-custom-description';
-import WooPaymentsCustomFooter from './woopayments-custom-footer';
-import WooPaymentsRevenueShareNotice from './woopayments-revenue-share-notice';
+import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
+import useCustomProductCard from './hooks/use-custom-product-card';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
-interface Props {
-	asReferral?: boolean;
-	product: APIProductFamilyProduct;
-	isSelected: boolean;
-	isDisabled?: boolean;
-	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
-	suggestedProduct?: string | null;
-	hideDiscount?: boolean;
-	quantity?: number;
-}
+type Props = WithProductLightboxProps &
+	ProductLightboxActivatorProps & {
+		suggestedProduct?: string | null;
+		hideDiscount?: boolean;
+		onVariantChange?: ( value: APIProductFamilyProduct ) => void;
+		withCustomCard?: boolean;
+	};
 
-export default function ProductCard( props: Props ) {
+function ProductCard( props: Props ) {
 	const {
 		asReferral,
-		product,
+		products,
 		isSelected,
 		isDisabled,
 		onSelectProduct,
+		onVariantChange,
 		suggestedProduct,
 		hideDiscount,
 		quantity,
+		currentProduct,
+		setCurrentProduct,
+		onShowLightbox,
+		withCustomCard,
 	} = props;
-
-	const { setParams, resetParams, getParamValue } = useURLQueryParams();
-	const modalParamValue = getParamValue( LICENSE_INFO_MODAL_ID );
-	const productTitle = getProductShortTitle( product );
-
-	const [ showLightbox, setShowLightbox ] = useState( modalParamValue === product.slug );
 	const translate = useTranslate();
-	const dispatch = useDispatch();
+
+	const { description: productDescription } = useProductDescription( currentProduct.slug );
+
+	const customProductCard = useCustomProductCard( withCustomCard ? currentProduct : null );
+
+	const variantOptions = products.map( ( option ) => ( {
+		id: option.slug,
+		answerText: getProductVariantShortTitle( option.name ),
+	} ) );
 
 	const onSelect = useCallback( () => {
 		if ( isDisabled ) {
 			return;
 		}
 
-		onSelectProduct?.( product );
-	}, [ onSelectProduct, product ] );
+		onSelectProduct?.( currentProduct );
+	}, [ isDisabled, onSelectProduct, currentProduct ] );
 
 	const onKeyDown = useCallback(
-		( e: any ) => {
+		( e: React.KeyboardEvent< HTMLDivElement > ) => {
 			// Enter
 			if ( 13 === e.keyCode ) {
 				onSelect();
@@ -77,49 +79,41 @@ export default function ProductCard( props: Props ) {
 			// Transform the comma-separated list of products to array.
 			const suggestedProducts = suggestedProduct.split( ',' );
 
-			if ( suggestedProducts.includes( product.slug ) ) {
+			if ( suggestedProducts.includes( currentProduct.slug ) ) {
 				onSelect();
 			}
 		}
-	}, [] );
+		// Do not add onSelect to the dependency array as it will cause an infinite loop
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ currentProduct.slug, suggestedProduct ] );
 
-	const truncateDescription = ( description: any ) => {
-		if ( description.length <= 84 ) {
-			return description;
-		}
+	const onChangeOption = useCallback(
+		( selectedProductSlug: string ) => {
+			if ( isDisabled ) {
+				return;
+			}
 
-		const lastSpace = description.slice( 0, 82 ).lastIndexOf( ' ' );
+			const selectedProduct =
+				products.find( ( { slug } ) => slug === selectedProductSlug ) ?? products[ 0 ];
 
-		return description.slice( 0, lastSpace > 0 ? lastSpace : 83 ) + '…';
-	};
+			if ( isSelected ) {
+				// If the current card is selected, we need to update selected licenses.
+				onSelectProduct?.( selectedProduct, currentProduct );
+			}
 
-	const { description: productDescription } = useProductDescription( product.slug );
-
-	const onShowLightbox = useCallback(
-		( e: React.MouseEvent< HTMLElement > ) => {
-			e.stopPropagation();
-
-			dispatch(
-				recordTracksEvent( 'calypso_marketplace_products_overview_product_view', {
-					product: product.slug,
-				} )
-			);
-
-			setParams( [
-				{
-					key: LICENSE_INFO_MODAL_ID,
-					value: product.slug,
-				},
-			] );
-			setShowLightbox( true );
+			setCurrentProduct( selectedProduct );
+			onVariantChange?.( selectedProduct );
 		},
-		[ dispatch, product.slug, setParams ]
+		[
+			isDisabled,
+			products,
+			isSelected,
+			setCurrentProduct,
+			onVariantChange,
+			onSelectProduct,
+			currentProduct,
+		]
 	);
-
-	const onHideLightbox = useCallback( () => {
-		resetParams( [ LICENSE_INFO_MODAL_ID ] );
-		setShowLightbox( false );
-	}, [ resetParams ] );
 
 	const ctaLabel = useMemo( () => {
 		const selectedQuantity = quantity ?? 1;
@@ -137,121 +131,103 @@ export default function ProductCard( props: Props ) {
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
 	}, [ asReferral, isSelected, quantity, translate ] );
 
-	const customDescription = useMemo( () => {
-		if ( product.slug === 'woocommerce-woopayments' ) {
-			return <WooPaymentsCustomDescription />;
-		}
-
-		return undefined;
-	}, [ product.slug ] );
-
-	const customFooter = useMemo( () => {
-		if ( product.slug === 'woocommerce-woopayments' ) {
-			return <WooPaymentsCustomFooter />;
-		}
-
-		return undefined;
-	}, [ product.slug ] );
-
-	const extraAsideContent = useMemo( () => {
-		if ( product.slug === 'woocommerce-woopayments' ) {
-			return <WooPaymentsRevenueShareNotice />;
-		}
-
-		return undefined;
-	}, [ product.slug ] );
-
-	const ctaLightboxLabel = useMemo( () => {
-		const selectedQuantity = quantity ?? 1;
-
-		if ( asReferral ) {
-			return isSelected ? translate( 'Remove from referral' ) : translate( 'Add to referral' );
-		}
-
-		if ( selectedQuantity > 1 ) {
-			return isSelected
-				? translate( 'Remove %(quantity)s from cart', { args: { quantity: selectedQuantity } } )
-				: translate( 'Add %(quantity)s to cart', { args: { quantity: selectedQuantity } } );
-		}
-
-		return isSelected ? translate( 'Remove from cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, quantity, translate ] );
-
 	const isRedesign = isEnabled( 'a4a-product-page-redesign' );
 
-	return (
-		<>
-			<div
-				onClick={ onSelect }
-				onKeyDown={ onKeyDown }
-				role="button"
-				tabIndex={ 0 }
-				aria-disabled={ isDisabled }
-				className={ clsx( {
-					'product-card': true,
-					selected: isSelected,
-					disabled: isDisabled,
-				} ) }
-			>
-				<div className="product-card__inner">
-					<div className="product-card__details">
-						<div className="product-card__main">
-							<div className="product-card__heading">
-								<h3 className="product-card__title">{ productTitle }</h3>
-								<ProductBadges product={ product } />
-								<div className="product-card__pricing is-compact">
-									<ProductPriceWithDiscount
-										product={ product }
-										hideDiscount={ hideDiscount }
-										quantity={ quantity }
-										compact
-									/>
-								</div>
+	const hasMultipleProducts = products.length > 1;
 
-								<div className="product-card__description">
-									{ truncateDescription( productDescription ) }
-								</div>
+	const productTitle = getProductShortTitle( currentProduct, hasMultipleProducts );
+
+	return (
+		<div
+			className={ clsx( 'product-card', customProductCard?.className, {
+				'product-card--with-variant': hasMultipleProducts,
+				selected: isSelected,
+				disabled: isDisabled,
+			} ) }
+			onKeyDown={ onKeyDown }
+			onClick={ onSelect }
+			role="button"
+			aria-disabled={ isDisabled }
+			tabIndex={ 0 }
+		>
+			<div className="product-card__inner">
+				<div className="product-card__details">
+					<div className="product-card__main">
+						<div className="product-card__heading">
+							{ customProductCard?.image && (
+								<img
+									src={ customProductCard?.image }
+									alt={ `${ currentProduct?.name } product logo` }
+								/>
+							) }
+
+							<h3 className="product-card__title">{ customProductCard?.title ?? productTitle }</h3>
+
+							{ ! customProductCard && (
+								<>
+									<ProductBadges product={ currentProduct } />
+									{ ! isRedesign && hasMultipleProducts && (
+										<MultipleChoiceQuestion
+											name={ `${ currentProduct.family_slug }-variant-options` }
+											question={ translate( 'Select variant:' ) }
+											answers={ variantOptions }
+											selectedAnswerId={ currentProduct.slug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									) }
+
+									<div className="product-card__pricing is-compact">
+										<ProductPriceWithDiscount
+											product={ currentProduct }
+											hideDiscount={ hideDiscount }
+											quantity={ quantity }
+											compact
+										/>
+									</div>
+
+									{ isRedesign && hasMultipleProducts && (
+										<MultipleChoiceQuestion
+											name={ `${ currentProduct.family_slug }-variant-options` }
+											question={ translate( 'Select variant:' ) }
+											answers={ variantOptions }
+											selectedAnswerId={ currentProduct.slug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									) }
+								</>
+							) }
+
+							<div className="product-card__description">
+								{ preventWidows( customProductCard?.description ?? productDescription ) }
 							</div>
 						</div>
 					</div>
-					<div className="product-card__buttons">
-						<Button
-							className={ clsx( { 'product-card__select-button': ! isRedesign } ) }
-							variant={ ! isSelected ? 'primary' : 'secondary' }
-							tabIndex={ -1 }
-						>
-							{ isSelected && <Icon icon={ check } /> }
-							{ ctaLabel }
-						</Button>
-						{ ! /^jetpack-backup-addon-storage-/.test( product.slug ) && (
-							<LicenseLightboxLink
-								customText={ translate( 'View details' ) }
-								productName={ productTitle }
-								onClick={ onShowLightbox }
-								showIcon={ ! isRedesign }
-							/>
-						) }
-					</div>
+				</div>
+				<div className="product-card__buttons">
+					<Button
+						className={ clsx( 'product-card__select-button', {
+							'is-selected': isSelected,
+						} ) }
+						variant={ ! isSelected || customProductCard ? 'primary' : 'secondary' }
+						tabIndex={ -1 }
+						icon={ isSelected ? check : undefined }
+					>
+						{ ctaLabel }
+					</Button>
+					{ ! /^jetpack-backup-addon-storage-/.test( currentProduct.slug ) && (
+						<LicenseLightboxLink
+							customText={ translate( 'View details' ) }
+							productName={ getProductShortTitle( currentProduct ) }
+							onClick={ onShowLightbox }
+							showIcon={ ! isRedesign }
+						/>
+					) }
 				</div>
 			</div>
-			{ showLightbox && (
-				<LicenseLightbox
-					product={ product }
-					quantity={ quantity }
-					ctaLabel={ ctaLightboxLabel as string }
-					isCTAPrimary={ ! isSelected }
-					isDisabled={ isDisabled }
-					onActivate={ onSelectProduct }
-					onClose={ onHideLightbox }
-					customDescription={ customDescription }
-					customFooter={ customFooter }
-					extraAsideContent={ extraAsideContent }
-				/>
-			) }
-		</>
+		</div>
 	);
 }
 
-ProductCard.defaultProps = {
-	onSelectProduct: null,
-};
+export default withProductLightbox( ProductCard );
