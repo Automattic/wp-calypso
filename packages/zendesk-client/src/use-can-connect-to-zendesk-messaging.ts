@@ -41,7 +41,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 		if ( ! query.data ) {
 			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
 				status: query.status,
-				statusText: query.error?.message,
+				status_text: query.error?.message,
 			} );
 		}
 	}, [ query.data, query.error?.message, query.status ] );
