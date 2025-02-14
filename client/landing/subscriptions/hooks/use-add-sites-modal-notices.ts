@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -19,7 +20,7 @@ const useAddSitesModalNotices = () => {
 							id: 'resend-verification-email',
 							button: translate( 'Account Settings' ),
 							onClick: () => {
-								window.location.href = '/me/account';
+								page( '/me/account' );
 							},
 						}
 					)
