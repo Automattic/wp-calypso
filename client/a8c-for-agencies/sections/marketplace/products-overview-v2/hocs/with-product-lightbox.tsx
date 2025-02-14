@@ -12,7 +12,7 @@ import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types
 
 export type WithProductLightboxProps = {
 	products: APIProductFamilyProduct[];
-	isSelected: boolean;
+	isSelected?: boolean;
 	quantity?: number;
 	onSelectProduct: (
 		value: APIProductFamilyProduct,
@@ -20,6 +20,7 @@ export type WithProductLightboxProps = {
 	) => void | null;
 	asReferral?: boolean;
 	isDisabled?: boolean;
+	customCTALabel?: string;
 };
 
 export type ProductLightboxActivatorProps = {
@@ -32,10 +33,19 @@ function withProductLightbox< T >(
 	WrappedComponent: ComponentType< T & WithProductLightboxProps & ProductLightboxActivatorProps >
 ): ComponentType< T & WithProductLightboxProps > {
 	return ( props ) => {
+		const {
+			isSelected,
+			quantity,
+			onSelectProduct,
+			asReferral,
+			isDisabled,
+			products,
+			customCTALabel,
+		} = props;
+
 		const translate = useTranslate();
 		const dispatch = useDispatch();
 
-		const { isSelected, quantity, onSelectProduct, asReferral, isDisabled, products } = props;
 		const [ currentProduct, setCurrentProduct ] = useState( products[ 0 ] );
 
 		const { setParams, resetParams, getParamValue } = useURLQueryParams();
@@ -121,7 +131,7 @@ function withProductLightbox< T >(
 					<LicenseLightbox
 						product={ currentProduct }
 						quantity={ quantity }
-						ctaLabel={ ctaLightboxLabel as string }
+						ctaLabel={ customCTALabel ?? ( ctaLightboxLabel as string ) }
 						isCTAPrimary={ ! isSelected }
 						isDisabled={ isDisabled }
 						onActivate={ onSelectProduct }

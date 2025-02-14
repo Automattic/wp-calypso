@@ -1,6 +1,8 @@
 import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 
+import './style.scss';
+
 export default function WooPaymentsRevenueShareNotice() {
 	const translate = useTranslate();
 

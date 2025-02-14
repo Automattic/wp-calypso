@@ -1,5 +1,8 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .woopayments-custom-description__required-woocommerce-notice {
-	@include a4a-font-body-md;
+	@include body-medium;
 	display: flex;
 	align-items: center;
 	gap: 4px;
