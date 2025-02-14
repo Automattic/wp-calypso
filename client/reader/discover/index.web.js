@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import {
 	getAnyLanguageRouteParam,
 	removeLocaleFromPathLocaleInFront,
@@ -33,9 +34,9 @@ const discover = ( context, next ) => {
 	const streamKey = 'discover:recommended';
 	const mcKey = 'discover';
 	const state = context.store.getState();
-
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
+	const isLoggedIn = isUserLoggedIn( state );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
@@ -44,7 +45,7 @@ const discover = ( context, next ) => {
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
 
-	if ( ! isUserLoggedIn( state ) ) {
+	if ( ! isLoggedIn ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
 
@@ -58,6 +59,11 @@ const discover = ( context, next ) => {
 		const pathParts = pathWithoutLocale.split( '/' );
 		// Now pathParts[2] will consistently be the tab.
 		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
+
+		// Redirect /discover/add-new to /discover if logged out.
+		if ( selectedTab === 'add-new' && ! isLoggedIn ) {
+			return page.redirect( '/discover' );
+		}
 	} else {
 		// Use query parameter for v1.
 		selectedTab = context.query.selectedTab || DEFAULT_TAB;

@@ -4,6 +4,7 @@ import {
 } from '@automattic/i18n-utils';
 import { makeLayout, ssrSetupLocale } from 'calypso/controller';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
 import { DiscoverHeader } from './discover-stream';
@@ -22,6 +23,12 @@ const discoverSsr = ( context, next ) => {
 		const pathParts = pathWithoutLocale.split( '/' );
 		// Now pathParts[2] will consistently be the tab.
 		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
+
+		// Redirect /discover/add-new to /discover if logged out.
+		if ( selectedTab === 'add-new' && ! isUserLoggedIn( context.store.getState() ) ) {
+			context.res.redirect( '/discover' );
+			return;
+		}
 	} else {
 		// Use query parameter for v1.
 		selectedTab = context.query.selectedTab || DEFAULT_TAB;

@@ -6,6 +6,8 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import './style.scss';
 
 interface Tab {
@@ -20,6 +22,7 @@ interface Props {
 
 const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const recordTabClick = () => {
 		recordAction( 'click_discover_tab' );
@@ -63,8 +66,11 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		},
 	];
 
+	// Only show the add new tab if the user is logged in.
+	const filteredTabs = baseTabs.filter( ( tab ) => tab.slug !== 'add-new' || isLoggedIn );
+
 	// Add localization to paths if needed.
-	const tabs = baseTabs.map( ( tab ) => ( {
+	const tabs = filteredTabs.map( ( tab ) => ( {
 		...tab,
 		path: getLocalizedPath( tab.path ),
 	} ) );
