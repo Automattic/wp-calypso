@@ -2,9 +2,13 @@ import { copy } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { LogType, ServerLog, PHPLog } from 'calypso/data/hosting/use-site-logs-query';
+import { useDispatch } from 'calypso/state';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: boolean } ) => {
 	const { __ } = useI18n();
+	const dispatch = useDispatch();
+
 	const actions = useMemo( () => {
 		if ( logType === 'php' ) {
 			return [
@@ -15,9 +19,24 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 					isPrimary: true,
 					disabled: isLoading,
 					supportsBulk: false,
-					callback: ( items: ( PHPLog | ServerLog )[] ) => {
+					callback: async ( items: ( PHPLog | ServerLog )[] ) => {
 						const message = ( items[ 0 ] as PHPLog ).message;
-						navigator.clipboard.writeText( message );
+						try {
+							await navigator.clipboard.writeText( message );
+							dispatch(
+								successNotice(
+									/* translators: notice shown upon copy of Logs entry */
+									__( 'Copied' )
+								)
+							);
+						} catch ( error ) {
+							dispatch(
+								errorNotice(
+									/* translators: notice shown upon failed copy of Logs entry */
+									__( 'Copy failed' )
+								)
+							);
+						}
 					},
 				},
 			];
@@ -37,7 +56,7 @@ const useActions = ( { logType, isLoading }: { logType: LogType; isLoading: bool
 				},
 			},
 		];
-	}, [ logType, __, isLoading ] );
+	}, [ logType, __, isLoading, dispatch ] );
 
 	return actions;
 };
