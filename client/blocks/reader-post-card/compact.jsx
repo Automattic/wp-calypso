@@ -10,6 +10,13 @@ import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_DISCOVER } from 'calypso/reader/follow-sources';
 import FeaturedAsset from './featured-asset';
 
+// Rather than create complex logic to create context or pass props
+// to see if the user is on thediscover page, let's check the pathname
+const getIsDiscover = () => {
+	const path = window.location.pathname.split( '/' );
+	return path.length > 0 && path[ 1 ].includes( 'discover' );
+};
+
 const CompactPost = ( props ) => {
 	const {
 		children,
@@ -22,11 +29,7 @@ const CompactPost = ( props ) => {
 		teams,
 		openSuggestedFollows,
 	} = props;
-
-	// Rather than create complex logic to create context or pass props
-	// to see if the user is on the discover page, let's check the pathname
-	const path = window.location.pathname.split( '/' );
-	const isDiscover = path.length > 0 && path[ 1 ].includes( 'discover' );
+	const isDiscover = getIsDiscover();
 	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
