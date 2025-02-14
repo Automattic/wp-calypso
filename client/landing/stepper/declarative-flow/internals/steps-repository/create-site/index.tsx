@@ -81,6 +81,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		progress,
 		partnerBundle,
 		siteGoals,
+		intent,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -93,6 +94,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			siteGoals: select( ONBOARD_STORE ).getGoals(),
+			intent: select( ONBOARD_STORE ).getIntent(),
 		} ),
 		[]
 	);
@@ -109,7 +111,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
 
-	const shouldSaveSiteGoals = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
+	const isGoalsFirstOnboarding = isOnboardingFlow( flow ) && isGoalsFirstExperiment;
 
 	const username = useSelector( getCurrentUserName );
 
@@ -209,7 +211,12 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
+		// eslint-disable-next-line no-nested-ternary
+		const siteIntent = isMigrationSignupFlow( flow )
+			? 'migration'
+			: isGoalsFirstOnboarding
+			? intent
+			: '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
@@ -231,7 +238,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined,
+			isGoalsFirstOnboarding ? siteGoals : undefined,
 			isGoalsFirstCumulativeExperience &&
 				config.isEnabled( 'onboarding/enable-write-goal-features' )
 		);
