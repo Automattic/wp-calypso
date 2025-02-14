@@ -41,10 +41,10 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupContentsPath } from '../paths';
-import Error from './error';
 import GranularRestoreLoading from './loading-placeholder/granular-restore';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreError from './steps/restore-error';
 import RestoreFinished from './steps/restore-finished';
 import RestoreInProgress from './steps/restore-in-progress';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
@@ -260,6 +260,22 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const onGoBack = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_granular_restore_goback', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onAddingCredentialsClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_granular_restore_adding_credentials', {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials ] );
+
+	const onLearnAddingCredentialsClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_granular_restore_learn_adding_credentials', {
 				has_credentials: hasCredentials,
 			} )
 		);
@@ -490,27 +506,6 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const renderError = () => (
-		<Error
-			errorText={ translate( 'Restore failed: %s', {
-				args: [ backupDisplayDate ],
-				comment: '%s is a time/date string',
-			} ) }
-			siteUrl={ siteUrl }
-		>
-			<p className="rewind-flow__info">
-				{ translate(
-					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
-					{
-						components: {
-							button: <Button className="rewind-flow__error-retry-button" onClick={ onConfirm } />,
-						},
-					}
-				) }
-			</p>
-		</Error>
-	);
-
 	const isFinished = inProgressRewindStatus !== null && inProgressRewindStatus === 'finished';
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
@@ -575,7 +570,20 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			);
 		}
-		return renderError();
+
+		return (
+			<RestoreError
+				backupDisplayDate={ backupDisplayDate }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				siteUrl={ siteUrl }
+				hasCredentials={ hasCredentials }
+				canAutoconfigure={ rewindState.canAutoconfigure }
+				onRetryClick={ onConfirm }
+				onAddingCredentialsClick={ onAddingCredentialsClick }
+				onLearnAddingCredentialsClick={ onLearnAddingCredentialsClick }
+			/>
+		);
 	};
 
 	return (

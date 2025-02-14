@@ -13,7 +13,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { BackupRealtimeMessage } from 'calypso/components/jetpack/daily-backup-status/status-card/backup-realtime-message';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
-import { backupPath, settingsPath } from 'calypso/lib/jetpack/paths';
+import { backupPath } from 'calypso/lib/jetpack/paths';
 import { useDispatch, useSelector } from 'calypso/state';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -38,11 +38,11 @@ import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupMainPath } from '../paths';
-import Error from './error';
 import Loading from './loading';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreError from './steps/restore-error';
 import RestoreFinished from './steps/restore-finished';
 import RestoreInProgress from './steps/restore-in-progress';
 import { defaultRewindConfig, RewindConfig } from './types';
@@ -323,75 +323,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const ErrorDetails = () => {
-		return (
-			<p className="rewind-flow__info">
-				{ translate(
-					'An error occurred while restoring your site. Please {{button}}try your restore again{{/button}} or contact our support team to resolve the issue.',
-					{
-						components: {
-							button: (
-								<Button className="rewind-flow__error-retry-button" onClick={ onRetryClick } />
-							),
-						},
-					}
-				) }
-			</p>
-		);
-	};
-
-	const ErrorDetailsAddCredentials = () => {
-		return (
-			<>
-				<p className="rewind-flow__info">
-					{ translate(
-						'An error occurred while restoring your site. You may need to {{linkCredentials}}add your server credentials{{/linkCredentials}}. You can follow the steps in {{linkGuide}}our guide{{/linkGuide}} to add SSH, SFTP, or FTP credentials, and then try to restore again.',
-						{
-							components: {
-								linkCredentials: (
-									<a
-										href={
-											rewindState.canAutoconfigure
-												? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-												: `${ settingsPath( siteSlug ) }#credentials`
-										}
-										onClick={ onAddingCredentialsClick }
-									/>
-								),
-								linkGuide: (
-									<ExternalLink
-										href="https://jetpack.com/support/adding-credentials-to-jetpack/"
-										onClick={ onLearnAddingCredentialsClick }
-										children={ null }
-									/>
-								),
-							},
-						}
-					) }
-				</p>
-				<p className="rewind-flow__info">
-					{ translate(
-						'If the issue persists, contact our support team to help you resolve the issue.'
-					) }
-				</p>
-			</>
-		);
-	};
-
-	const renderError = () => {
-		return (
-			<Error
-				errorText={ translate( 'Restore failed: %s', {
-					args: [ backupDisplayDate ],
-					comment: '%s is a time/date string',
-				} ) }
-				siteUrl={ siteUrl }
-			>
-				{ credentialsAreValid ? <ErrorDetails /> : <ErrorDetailsAddCredentials /> }
-			</Error>
-		);
-	};
-
 	const isInProgress =
 		( ! inProgressRewindStatus && userHasRequestedRestore ) ||
 		( inProgressRewindStatus && [ 'queued', 'running' ].includes( inProgressRewindStatus ) ) ||
@@ -488,7 +419,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			);
 		}
-		return renderError();
+		return (
+			<RestoreError
+				backupDisplayDate={ backupDisplayDate }
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				siteUrl={ siteUrl }
+				hasCredentials={ hasCredentials }
+				canAutoconfigure={ rewindState.canAutoconfigure }
+				onRetryClick={ onRetryClick }
+				onAddingCredentialsClick={ onAddingCredentialsClick }
+				onLearnAddingCredentialsClick={ onLearnAddingCredentialsClick }
+			/>
+		);
 	};
 
 	return (
