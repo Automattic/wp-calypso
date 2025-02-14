@@ -136,7 +136,9 @@ export default function SubscribersChartSection( {
 		const series = [
 			{
 				label: 'Subscribers',
-				options: {},
+				options: {
+					stroke: '#069e08',
+				},
 				data: data.map( ( point ) => ( {
 					date: new Date( point.period ),
 					value: point.subscribers ?? 0,
