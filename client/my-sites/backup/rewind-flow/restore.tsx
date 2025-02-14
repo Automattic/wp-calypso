@@ -5,7 +5,6 @@ import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
-import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -44,6 +43,7 @@ import Loading from './loading';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreFinished from './steps/restore-finished';
 import RestoreInProgress from './steps/restore-in-progress';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
@@ -217,14 +217,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	}, [ dispatch, hasCredentials ] );
 
-	const onViewSiteClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_restore_completed_view_site', {
-				has_credentials: hasCredentials,
-			} )
-		);
-	}, [ dispatch, hasCredentials ] );
-
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
 	const loading = rewindState.state === 'uninitialized';
@@ -330,41 +322,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</>
 		);
 	};
-
-	const renderFinished = () => (
-		<>
-			<div className="rewind-flow__header">
-				<img src={ restoreSuccessImage } alt="jetpack cloud restore success" />
-			</div>
-			<h3 className="rewind-flow__title">
-				{ translate( 'Your site has been successfully restored.' ) }
-			</h3>
-			<p className="rewind-flow__info">
-				{ translate(
-					'All of your selected items are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<Button
-				primary
-				href={ siteUrl }
-				target="_blank"
-				className="rewind-flow__primary-button"
-				onClick={ onViewSiteClick }
-			>
-				{ translate( 'View your website {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
-				} ) }
-			</Button>
-		</>
-	);
 
 	const ErrorDetails = () => {
 		return (
@@ -522,7 +479,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			// and show the confirm screen instead of the finished screen.
 			return renderConfirm();
 		} else if ( isFinished ) {
-			return renderFinished();
+			return (
+				<RestoreFinished
+					backupDisplayDate={ backupDisplayDate }
+					siteUrl={ siteUrl }
+					viewSiteClickEventName="calypso_jetpack_restore_completed_view_site"
+				/>
+			);
 		}
 		return renderError();
 	};

@@ -1,11 +1,10 @@
 import config from '@automattic/calypso-config';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import { Button as WordPressButton } from '@wordpress/components';
 import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Icon, arrowLeft, backup, chevronDown, chevronRight } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
@@ -46,6 +45,7 @@ import Error from './error';
 import GranularRestoreLoading from './loading-placeholder/granular-restore';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreFinished from './steps/restore-finished';
 import RestoreInProgress from './steps/restore-in-progress';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -260,14 +260,6 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 	const onGoBack = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_granular_restore_goback', {
-				has_credentials: hasCredentials,
-			} )
-		);
-	}, [ dispatch, hasCredentials ] );
-
-	const onViewSiteClick = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_jetpack_backup_granular_restore_complete_view_site', {
 				has_credentials: hasCredentials,
 			} )
 		);
@@ -498,41 +490,6 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const renderFinished = () => (
-		<>
-			<div className="rewind-flow__header">
-				<img src={ restoreSuccessImage } alt="jetpack cloud restore success" />
-			</div>
-			<h3 className="rewind-flow__title">
-				{ translate( 'Your site has been successfully restored.' ) }
-			</h3>
-			<p className="rewind-flow__info">
-				{ translate(
-					'All of your selected items are now restored back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<Button
-				primary
-				target="_blank"
-				href={ siteUrl }
-				className="rewind-flow__primary-button"
-				onClick={ onViewSiteClick }
-			>
-				{ translate( 'View your website {{externalIcon/}}', {
-					components: { externalIcon: <Gridicon icon="external" size={ 24 } /> },
-				} ) }
-			</Button>
-		</>
-	);
-
 	const renderError = () => (
 		<Error
 			errorText={ translate( 'Restore failed: %s', {
@@ -609,7 +566,13 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			);
 		} else if ( isFinished ) {
-			return renderFinished();
+			return (
+				<RestoreFinished
+					backupDisplayDate={ backupDisplayDate }
+					siteUrl={ siteUrl }
+					viewSiteClickEventName="calypso_jetpack_restore_completed_view_site"
+				/>
+			);
 		}
 		return renderError();
 	};
