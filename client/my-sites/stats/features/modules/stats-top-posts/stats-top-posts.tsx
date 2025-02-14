@@ -28,6 +28,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 	summaryUrl,
 	summary,
 	listItemClassName,
+	isRealTime = false,
 } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
@@ -47,12 +48,25 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 		getSiteStatsNormalizedData( state, siteId, statType, query )
 	) as [ id: number, label: string ]; // TODO: get post shape and share in an external type file.
 
+	const hasData = !! data?.length;
+	// TODO: Is there a way to show the Skeleton loader for real-time data?
+	// We don't want it to show every time a rquest is being run for real-time data so it's disabled for now.
+	const presentLoadingUI = isRealTime
+		? isRequestingData && ! hasData && false
+		: isRequestingData && ! shouldGateStatsModule;
+	const presentModuleUI = isRealTime
+		? hasData && ! presentLoadingUI
+		: ( ! isRequestingData && hasData ) || shouldGateStatsModule;
+	const presentEmptyUI = isRealTime
+		? ! hasData && ! presentLoadingUI
+		: ! isRequestingData && ! hasData && ! shouldGateStatsModule;
+
 	return (
 		<>
 			{ ! shouldGateStatsModule && siteId && statType && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
-			{ isRequestingData && (
+			{ presentLoadingUI && (
 				<StatsCardSkeleton
 					isLoading={ isRequestingData }
 					className={ className }
@@ -60,7 +74,7 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					type={ 1 }
 				/>
 			) }
-			{ ( ( ! isRequestingData && !! data?.length ) || shouldGateStatsModule ) && (
+			{ presentModuleUI && (
 				// show data or an overlay
 				<StatsModule
 					path="posts"
@@ -88,9 +102,10 @@ const StatsTopPosts: React.FC< StatsDefaultModuleProps > = ( {
 					summary={ summary }
 					listItemClassName={ listItemClassName }
 					skipQuery
+					isRealTime={ isRealTime }
 				/>
 			) }
-			{ ! isRequestingData && ! data?.length && ! shouldGateStatsModule && (
+			{ presentEmptyUI && (
 				// show empty state
 				<StatsCard
 					className={ clsx( 'stats-card--empty-variant', className ) } // when removing stats/empty-module-traffic add this to the root of the card

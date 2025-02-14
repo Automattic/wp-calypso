@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { includes, isEqual } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -48,28 +49,103 @@ class StatsModule extends Component {
 		skipQuery: PropTypes.bool,
 		valueField: PropTypes.string,
 		formatValue: PropTypes.func,
+		minutesLimit: PropTypes.number,
+		isRealTime: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showSummaryLink: false,
 		query: {},
 		valueField: 'value',
+		minutesLimit: 30,
+		isRealTime: false,
 	};
 
 	state = {
 		loaded: false,
+		diffData: [],
+		dataHistory: [],
+		lastUpdated: null,
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( ! this.props.requesting && prevProps.requesting ) {
+		const { data, isRealTime, query, requesting } = this.props;
+		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
 		}
 
-		if ( ! isEqual( this.props.query, prevProps.query ) ) {
+		if ( ! isEqual( query, prevProps.query ) ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: false } );
 		}
+
+		if ( ! isRealTime ) {
+			return;
+		}
+
+		// Limit data processing to avoid spurious updates.
+		const { dataHistory, lastUpdated } = this.state;
+		const UPDATE_THRESHOLD_IN_SECONDS = 15;
+		const now = moment();
+
+		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
+			const updatedHistory = this.updateHistory( dataHistory, data );
+			const firstSnapshot = updatedHistory[ 0 ];
+			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
+			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				diffData,
+				dataHistory: updatedHistory,
+				lastUpdated: now,
+			} );
+		}
+	}
+
+	updateHistory( history, data ) {
+		// Timestamp the new data snapshot.
+		const newSnapshot = {
+			timestamp: moment(),
+			data: data,
+		};
+
+		// Filter out snapshots older than minutesLimit prop.
+		// This determines the baseline for the diff calculation.
+		const { minutesLimit } = this.props;
+		const filteredHistory = [ ...history, newSnapshot ].filter(
+			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
+		);
+
+		return this.compactHistory( filteredHistory );
+	}
+
+	compactHistory( history ) {
+		const MAX_HISTORY_LENGTH = 35;
+
+		if ( history.length > MAX_HISTORY_LENGTH ) {
+			// Keep every other entry to keep memory usage low.
+			return history.filter( ( _, index ) => index % 2 === 0 );
+		}
+
+		return history;
+	}
+
+	calculateDiff( prevData, newData ) {
+		// Create a lookup map for previous data using item IDs.
+		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
+
+		// Calculate the difference value for each new item.
+		const diff = newData.map( ( item ) => {
+			// Pull matching data from previous snapshot, or default to 0 if not found.
+			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
+			return {
+				...item,
+				diffValue: item.value - prevItem.value,
+			};
+		} );
+
+		return diff;
 	}
 
 	getModuleLabel() {
@@ -88,7 +164,7 @@ class StatsModule extends Component {
 			return;
 		}
 
-		const paramsValid = period && path && siteSlug;
+		const paramsValid = period?.period && path && siteSlug;
 		if ( ! paramsValid ) {
 			return undefined;
 		}
@@ -120,6 +196,35 @@ class StatsModule extends Component {
 		return summary && includes( summarizedTypes, statType );
 	}
 
+	remapData() {
+		const { valueField, isRealTime } = this.props;
+		const data = isRealTime ? this.state.diffData : this.props.data;
+
+		if ( isRealTime ) {
+			return data
+				.filter( ( item ) => item.diffValue !== 0 )
+				.sort( ( a, b ) => {
+					// Primary sort: diffValue (high to low)
+					if ( b.diffValue !== a.diffValue ) {
+						return b.diffValue - a.diffValue;
+					}
+					// Secondary sort: label (alphabetically)
+					return ( a.label || '' ).localeCompare( b.label || '' );
+				} )
+				.map( ( item ) => ( {
+					...item,
+					value: item.diffValue || 0,
+				} ) );
+		}
+
+		if ( valueField && data ) {
+			return data.map( ( item ) => ( {
+				...item,
+				value: item[ valueField ],
+			} ) );
+		}
+	}
+
 	render() {
 		const {
 			className,
@@ -141,19 +246,11 @@ class StatsModule extends Component {
 			hasNoBackground,
 			skipQuery,
 			titleNodes,
-			valueField,
 			formatValue,
+			isRealTime,
 		} = this.props;
 
-		let data = this.props.data;
-
-		// If valueField is specified and data exists, remap data to use that field as the value
-		if ( valueField && data ) {
-			data = data.map( ( item ) => ( {
-				...item,
-				value: item[ valueField ],
-			} ) );
-		}
+		const data = this.remapData();
 
 		// Only show loading indicators when nothing is in state tree, and request in-flight
 		const isLoading = ! this.state.loaded && ! ( data && data.length );
@@ -161,11 +258,16 @@ class StatsModule extends Component {
 		// TODO: Support error state in redux store
 		const hasError = false;
 
-		const displaySummaryLink = data && ! this.props.hideSummaryLink;
+		const summaryLink = ! this.props.hideSummaryLink && this.getSummaryLink();
+		const displaySummaryLink = data && summaryLink;
 		const isAllTime = this.isAllTimeList();
 		const footerClass = clsx( 'stats-module__footer-actions', {
 			'stats-module__footer-actions--summary': summary,
 		} );
+
+		const emptyMessage = isRealTime ? 'gathering info…' : moduleStrings.empty;
+		// TODO: Translate empty message
+		// But not yet as this is just a placeholder for now.
 
 		return (
 			<>
@@ -179,7 +281,7 @@ class StatsModule extends Component {
 					useShortLabel={ useShortLabel }
 					title={ this.props.moduleStrings?.title }
 					titleNodes={ titleNodes }
-					emptyMessage={ moduleStrings.empty }
+					emptyMessage={ emptyMessage }
 					metricLabel={ metricLabel }
 					showMore={
 						displaySummaryLink && ! summary
