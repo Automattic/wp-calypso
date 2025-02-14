@@ -375,6 +375,8 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	}
 };
 
+const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
+
 const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
@@ -2634,17 +2636,28 @@ const FEATURES_LIST: FeatureList = {
 					strong: <strong />,
 				},
 			} ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			isEnglishLocale ||
+			i18n.hasTranslation( 'Create a stunning website with our AI Website Builder.' )
+				? i18n.translate( 'Create a stunning website with our AI Website Builder.' )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			i18n.hasTranslation( 'Create a stunning website with our AI Website Builder.' )
+				? i18n.translate( 'Create a stunning website with our AI Website Builder.' )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
+		getDescription: () =>
+			i18n.translate(
+				'Scale without limits. Create unlimited pages, posts, and users. Welcome as many visitors as you want!'
+			),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,
