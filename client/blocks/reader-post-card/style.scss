@@ -213,6 +213,21 @@
 			text-align: right;
 		}
 
+		.reader-post-card__post-options {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			margin-bottom: 5px;
+
+			> .follow-button {
+				padding-bottom: 5px;
+			}
+		}
+
+		.ellipsis-menu__toggle {
+			padding-bottom: 36px;
+		}
+
 		.reader-excerpt {
 			max-height: none;
 			-webkit-line-clamp: 3;
@@ -257,12 +272,6 @@
 			@include breakpoint-deprecated( "<660px" ) {
 				margin: 24px 0 0;
 			}
-		}
-	}
-
-	&.is-compact.has-thumbnail {
-		.ellipsis-menu__toggle {
-			padding-bottom: 36px;
 		}
 	}
 
