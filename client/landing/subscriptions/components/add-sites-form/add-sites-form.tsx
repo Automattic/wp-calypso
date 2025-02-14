@@ -5,22 +5,30 @@ import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
+import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
 import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '../../tracks';
 import './styles.scss';
 
 type AddSitesFormProps = {
-	onAddFinished: () => void;
+	onAddFinished?: () => void;
 };
 
-const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
+type SubscriptionError = {
+	error?: string;
+	message?: string;
+};
+
+const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
+	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
 	const { showErrorNotice, showWarningNotice, showSuccessNotice } = useAddSitesModalNotices();
 	const recordSiteSubscribed = useRecordSiteSubscribed();
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	const { mutate: subscribe, isPending: subscribing } =
 		SubscriptionManager.useSiteSubscribeMutation();
@@ -56,6 +64,11 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	);
 
 	const onAddSite = useCallback( () => {
+		if ( ! isLoggedIn ) {
+			setShowLoginDialog( true );
+			return;
+		}
+
 		if ( isValidInput ) {
 			subscribe(
 				{ url: inputValue },
@@ -76,8 +89,8 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 						}
 						onAddFinished();
 					},
-					onError: () => {
-						showErrorNotice( inputValue );
+					onError: ( error: SubscriptionError ) => {
+						showErrorNotice( inputValue, error );
 						onAddFinished();
 					},
 				}
@@ -86,6 +99,7 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	}, [
 		inputValue,
 		isValidInput,
+		isLoggedIn,
 		onAddFinished,
 		recordSiteSubscribed,
 		showErrorNotice,
@@ -95,32 +109,44 @@ const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
 	] );
 
 	return (
-		<div className="subscriptions-add-sites__form--container">
-			<TextControl
-				className={ clsx(
-					'subscriptions-add-sites__form-input',
-					inputFieldError ? 'is-error' : ''
-				) }
-				disabled={ subscribing }
-				placeholder={ translate( 'https://www.site.com' ) }
-				value={ inputValue }
-				type="url"
-				onChange={ onTextFieldChange }
-				help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
-				onBlur={ () => validateInputValue( inputValue, true ) }
+		<>
+			<div className="subscriptions-add-sites__form--container">
+				<TextControl
+					className={ clsx(
+						'subscriptions-add-sites__form-input',
+						inputFieldError ? 'is-error' : ''
+					) }
+					disabled={ subscribing }
+					placeholder={ translate( 'https://www.site.com' ) }
+					value={ inputValue }
+					type="url"
+					onChange={ onTextFieldChange }
+					help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
+					onBlur={ () => validateInputValue( inputValue, true ) }
+				/>
+
+				{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+
+				<Button
+					primary
+					className="subscriptions-add-sites__save-button"
+					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					onClick={ onAddSite }
+				>
+					{ translate( 'Add site' ) }
+				</Button>
+			</div>
+
+			<ReaderJoinConversationDialog
+				isVisible={ showLoginDialog }
+				onClose={ () => setShowLoginDialog( false ) }
+				onLoginSuccess={ () => window.location.reload() }
+				loggedInAction={ {
+					type: 'subscribe',
+					url: inputValue,
+				} }
 			/>
-
-			{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
-
-			<Button
-				primary
-				className="subscriptions-add-sites__save-button"
-				disabled={ ! inputValue || !! inputFieldError || subscribing }
-				onClick={ onAddSite }
-			>
-				{ translate( 'Add site' ) }
-			</Button>
-		</div>
+		</>
 	);
 };
 
