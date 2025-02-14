@@ -14,7 +14,6 @@ import FilterSearch from '../../../../components/filter-search';
 import { MarketplaceTypeContext, ShoppingCartContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
 import ListingSection from '../../listing-section';
-import MultiProductCard from '../../products-overview-v2/multi-product-card';
 import ProductCard from '../../products-overview-v2/product-card';
 import ProductFilter from '../product-filter';
 import EmptyResultMessage from './empty-result-message';
@@ -166,13 +165,6 @@ export default function ProductListing( {
 		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
@@ -251,43 +243,28 @@ export default function ProductListing( {
 	const isSingleLicenseView = quantity === 1;
 
 	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption ) =>
-			Array.isArray( productOption ) ? (
-				<MultiProductCard
+		return products.map( ( productOption ) => {
+			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+
+			return (
+				<ProductCard
 					asReferral={ isReferingProducts }
-					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-					products={ productOption }
+					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-					selectedOption={ productOption.find( ( option ) =>
-						selectedCartItems.find(
-							( item ) => item.slug === option.slug && item.quantity === quantity
-						)
-					) }
+					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
+							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
 				/>
-			) : (
-				<ProductCard
-					asReferral={ isReferingProducts }
-					key={ productOption.slug }
-					product={ productOption }
-					onSelectProduct={ onSelectProduct }
-					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
-					hideDiscount={ isSingleLicenseView }
-					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
-				/>
-			)
-		);
+			);
+		} );
 	};
 
 	if ( isLoadingProducts ) {
