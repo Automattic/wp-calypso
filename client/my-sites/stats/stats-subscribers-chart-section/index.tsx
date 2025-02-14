@@ -213,14 +213,6 @@ export default function SubscribersChartSection( {
 							chartData={ transformDataForLineChart( data?.data || [] ) }
 							height={ 300 }
 							formatTimeTick={ formatTimeTick }
-							maxViews={ Math.max(
-								...( data?.data || [] ).map( ( point ) =>
-									Math.max(
-										point.subscribers || 0,
-										hasAddedPaidSubscriptionProduct ? point.subscribers_paid || 0 : 0
-									)
-								)
-							) }
 						/>
 					) : (
 						<UplotChart
