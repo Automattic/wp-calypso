@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
-import { SiteDetails } from '@automattic/data-stores';
+import { SiteDetails, Onboard } from '@automattic/data-stores';
+
+const SiteIntent = Onboard.SiteIntent;
 
 /**
  * Determines if the launchpad should be shown first based on site createion flow
@@ -7,10 +9,11 @@ import { SiteDetails } from '@automattic/data-stores';
  * @returns {boolean} Whether launchpad should be shown first
  */
 export const shouldShowLaunchpadFirst = ( site: SiteDetails ) => {
-	const wasSiteCreatedOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
 	const isLaunchpadFirstEnabled = config.isEnabled( 'home/launchpad-first' );
+	const wasSiteCreatedOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
+	const isNotBigSkyIntent = site?.options?.site_intent !== SiteIntent.AIAssembler;
 
-	return wasSiteCreatedOnboardingFlow && isLaunchpadFirstEnabled;
+	return isLaunchpadFirstEnabled && wasSiteCreatedOnboardingFlow && isNotBigSkyIntent;
 };
 
 export default shouldShowLaunchpadFirst;
