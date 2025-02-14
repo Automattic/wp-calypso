@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
-import { redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
@@ -78,25 +77,6 @@ export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
 
 	return page.redirect( '/settings/general' );
 };
-
-/**
- * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
- * if the Remove Duplicate Views experiment is enabled.
- */
-export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
-
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
-	const hasClassicAdminInterfaceStyle =
-		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	if ( isUntangled && hasClassicAdminInterfaceStyle ) {
-		return page.redirect( `/sites/settings/site/${ siteSlug }` );
-	}
-
-	redirectIfDuplicatedView( 'options-general.php' )( context, next );
-}
 
 /**
  * Redirect to /settings/general if the Remove Duplicate Views experiment is DISABLED
