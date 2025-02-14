@@ -1,9 +1,10 @@
-import { Button, Spinner } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Loading from 'calypso/components/loading';
 import { restoreAccount } from 'calypso/state/account/actions';
 import { getIsRestoring, getRestoreToken } from 'calypso/state/account/selectors';
 import isAccountDeleting from 'calypso/state/selectors/is-account-deleting';
@@ -41,18 +42,7 @@ function AccountDeletedPage() {
 	};
 
 	if ( isDeleting ) {
-		return (
-			<BlankCanvas className="account-deleted">
-				<BlankCanvas.Header />
-				<BlankCanvas.Content>
-					<FormattedHeader
-						brandFont
-						headerText={ translate( 'Your account is being deleted' ) }
-						subHeaderText={ <Spinner style={ { width: '32px', height: '32px' } } /> }
-					/>
-				</BlankCanvas.Content>
-			</BlankCanvas>
-		);
+		return <Loading title={ translate( 'Your account is being deleted' ) } />;
 	}
 
 	return (
