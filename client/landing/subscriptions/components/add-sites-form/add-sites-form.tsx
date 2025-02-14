@@ -12,7 +12,7 @@ import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '.
 import './styles.scss';
 
 type AddSitesFormProps = {
-	onAddFinished: () => void;
+	onAddFinished?: () => void;
 };
 
 type SubscriptionError = {
@@ -20,7 +20,7 @@ type SubscriptionError = {
 	message?: string;
 };
 
-const AddSitesForm = ( { onAddFinished }: AddSitesFormProps ) => {
+const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
