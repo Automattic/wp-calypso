@@ -20,7 +20,6 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, SITE_STORE } from '../stores';
 import { getQuery } from '../utils/get-query';
 import { stepsWithRequiredLogin } from '../utils/steps-with-required-login';
-import { getSessionId } from '../utils/use-session-id';
 import { useFlowState } from './internals/state-manager/store';
 import { STEPS } from './internals/steps';
 import { ProvidedDependencies } from './internals/types';
@@ -155,15 +154,10 @@ const newsletter: Flow = {
 						);
 					}
 
-					let postFlowUrl = getPostFlowUrl( {
+					const postFlowUrl = getPostFlowUrl( {
 						flow: flowName,
 						siteId: providedDependencies?.siteId as number,
 						siteSlug: providedDependencies?.siteSlug as string,
-					} );
-
-					// TODO: move into getPostFlowUrl function
-					postFlowUrl = addQueryArgs( postFlowUrl, {
-						sessionId: getSessionId(),
 					} );
 
 					return window.location.assign( postFlowUrl );
