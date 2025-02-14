@@ -5,6 +5,7 @@ import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-t
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
+import StepperLoader from '../../components/stepper-loader';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
@@ -98,7 +99,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		isExternallyManagedThemeAvailable,
 	] );
 
-	return null;
+	return <StepperLoader />;
 };
 
 export default PostCheckoutOnboarding;
