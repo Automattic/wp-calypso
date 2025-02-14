@@ -375,8 +375,6 @@ const getTransactionFeeCopy = ( commission = 0, variation = '' ) => {
 	}
 };
 
-const isEnglishLocale = i18n.getLocaleSlug()?.startsWith( 'en' );
-
 const FEATURES_LIST: FeatureList = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
@@ -2637,7 +2635,7 @@ const FEATURES_LIST: FeatureList = {
 				},
 			} ),
 		getDescription: () =>
-			isEnglishLocale ||
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
 			i18n.hasTranslation( 'Create a stunning website with our AI Website Builder.' )
 				? i18n.translate( 'Create a stunning website with our AI Website Builder.' )
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
@@ -2646,6 +2644,7 @@ const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
 		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
 			i18n.hasTranslation( 'Create a stunning website with our AI Website Builder.' )
 				? i18n.translate( 'Create a stunning website with our AI Website Builder.' )
 				: i18n.translate( 'Build your site with our AI Website Builder.' ),
