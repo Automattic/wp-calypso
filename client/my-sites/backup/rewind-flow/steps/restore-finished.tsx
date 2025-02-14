@@ -9,12 +9,14 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 interface Props {
 	backupDisplayDate: string;
+	hasCredentials: boolean;
 	siteUrl: string;
 	viewSiteClickEventName: string;
 }
 
 const RestoreFinished: FunctionComponent< Props > = ( {
 	backupDisplayDate,
+	hasCredentials,
 	siteUrl,
 	viewSiteClickEventName,
 } ) => {
@@ -22,8 +24,12 @@ const RestoreFinished: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const onViewSiteClick = useCallback( () => {
-		dispatch( recordTracksEvent( viewSiteClickEventName ) );
-	}, [ dispatch, viewSiteClickEventName ] );
+		dispatch(
+			recordTracksEvent( viewSiteClickEventName, {
+				has_credentials: hasCredentials,
+			} )
+		);
+	}, [ dispatch, hasCredentials, viewSiteClickEventName ] );
 	return (
 		<>
 			<div className="rewind-flow__header">

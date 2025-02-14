@@ -482,6 +482,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			return (
 				<RestoreFinished
 					backupDisplayDate={ backupDisplayDate }
+					hasCredentials={ hasCredentials }
 					siteUrl={ siteUrl }
 					viewSiteClickEventName="calypso_jetpack_restore_completed_view_site"
 				/>

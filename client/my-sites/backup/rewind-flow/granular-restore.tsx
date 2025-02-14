@@ -569,8 +569,9 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			return (
 				<RestoreFinished
 					backupDisplayDate={ backupDisplayDate }
+					hasCredentials={ hasCredentials }
 					siteUrl={ siteUrl }
-					viewSiteClickEventName="calypso_jetpack_restore_completed_view_site"
+					viewSiteClickEventName="calypso_jetpack_backup_granular_restore_complete_view_site"
 				/>
 			);
 		}
