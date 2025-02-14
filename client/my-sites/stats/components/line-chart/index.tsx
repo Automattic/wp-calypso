@@ -32,12 +32,12 @@ function StatsLineChart( {
 		? formatTimeTick
 		: ( value: number ) => {
 				const date = new Date( value );
-				return date.toLocaleDateString( moment.locale(), {
-					month: 'short',
-					day: 'numeric',
+				return new Date( date ).toLocaleTimeString( moment.locale(), {
+					hour: '2-digit',
+					minute: '2-digit',
+					hour12: true,
 				} );
 		  };
-
 	const formatViews = ( value: number ) => {
 		return value.toFixed( 0 ).toString();
 	};
