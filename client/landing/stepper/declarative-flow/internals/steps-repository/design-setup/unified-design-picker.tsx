@@ -464,6 +464,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const getBadge = ( themeId: string, isLockedStyleVariation: boolean ) => (
 		<ThemeTierBadge
 			canGoToCheckout={ false }
+			hideBackgroundOnUpgrade
 			isLockedStyleVariation={ isLockedStyleVariation }
 			themeId={ themeId }
 		/>
