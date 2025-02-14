@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.0.4",
+	"version": "8.1.0-beta1",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
