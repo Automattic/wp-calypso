@@ -1,7 +1,7 @@
-import config from '@automattic/calypso-config';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
+import { isThemePersonal } from 'calypso/state/themes/selectors/is-theme-personal';
 import { AppState } from 'calypso/types';
 import {
 	isWpcomTheme,
@@ -156,8 +156,9 @@ export const getIsLivePreviewSupported = ( state: AppState, themeId: string, sit
 			 * @see https://github.com/Automattic/wp-calypso/issues/79223
 			 */
 			if (
-				config.isEnabled( 'themes/block-theme-previews-premium-and-woo' ) &&
-				( isThemePremium( state, themeId ) || isThemeWooCommerce( state, themeId ) )
+				isThemePersonal( state, themeId ) ||
+				isThemePremium( state, themeId ) ||
+				isThemeWooCommerce( state, themeId )
 			) {
 				return true;
 			}
