@@ -70,7 +70,11 @@ export const Default: Story = {
 	render: function Template( args: SidebarContentProps ) {
 		return (
 			<RouterProvider routes={ [] } pathArg="page">
-				<SiteHub isTransparent navigationBackLink="/" navigationBackLabel="Go to the Dashboard" />
+				<SiteHub
+					isTransparent
+					navigationBackLabel={ __( 'Go to the Dashboard' ) }
+					navigationBackLink="/"
+				/>
 				<SidebarContent { ...args }>
 					<SidebarNavigationScreen
 						isRoot
