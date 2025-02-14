@@ -127,6 +127,36 @@ export default function SubscribersChartSection( {
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
+	// Adds a data transform function specific to the line chart component
+	function transformDataForLineChart( data: SubscribersData[] ): Array< {
+		label: string;
+		options: object;
+		data: Array< { date: Date; value: number } >;
+	} > {
+		const series = [
+			{
+				label: 'Subscribers',
+				options: {},
+				data: data.map( ( point ) => ( {
+					date: new Date( point.period ),
+					value: point.subscribers ?? 0,
+				} ) ),
+			},
+		];
+
+		return series;
+	}
+
+	// adds in a tick formatting function to pass to the linechart component
+	// this can be modified to add more date formats (eg. month, year, etc.)
+	const formatTimeTick = ( value: number ) => {
+		const date = new Date( value );
+		return date.toLocaleDateString( undefined, {
+			month: 'short',
+			day: 'numeric',
+		} );
+	};
+
 	const subscribers = {
 		label: 'Subscribers',
 		path: `/stats/subscribers/`,
@@ -178,17 +208,17 @@ export default function SubscribersChartSection( {
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
 							require="calypso/my-sites/stats/components/line-chart"
-							chartData={ [
-								{
-									label: 'Subscribers',
-									data:
-										data?.data?.map( ( point ) => ( {
-											date: new Date( point.period ),
-											value: point.subscribers || 0,
-										} ) ) || [],
-								},
-							] }
+							chartData={ transformDataForLineChart( data?.data || [] ) }
 							height={ 300 }
+							formatTimeTick={ formatTimeTick }
+							maxViews={ Math.max(
+								...( data?.data || [] ).map( ( point ) =>
+									Math.max(
+										point.subscribers || 0,
+										hasAddedPaidSubscriptionProduct ? point.subscribers_paid || 0 : 0
+									)
+								)
+							) }
 						/>
 					) : (
 						<UplotChart
