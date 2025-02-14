@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	lock,
 	people,
@@ -45,20 +44,16 @@ export default function useProductFilterOptions() {
 
 	return {
 		[ PRODUCT_FILTER_KEY_CATEGORIES ]: [
-			...( isEnabled( 'a4a-product-page-redesign' )
-				? [
-						{
-							key: PRODUCT_CATEGORY_JETPACK,
-							label: translate( 'Jetpack' ) as string,
-							image: <JetpackLogo full />,
-						},
-						{
-							key: PRODUCT_CATEGORY_WOOCOMMERCE,
-							label: translate( 'WooCommerce' ) as string,
-							image: <img width={ 80 } src={ WooLogoRebrand2 } alt="WooCommerce" />,
-						},
-				  ]
-				: [] ),
+			{
+				key: PRODUCT_CATEGORY_JETPACK,
+				label: translate( 'Jetpack' ) as string,
+				image: <JetpackLogo full />,
+			},
+			{
+				key: PRODUCT_CATEGORY_WOOCOMMERCE,
+				label: translate( 'WooCommerce' ) as string,
+				image: <img width={ 80 } src={ WooLogoRebrand2 } alt="WooCommerce" />,
+			},
 			{
 				key: PRODUCT_CATEGORY_PAYMENTS,
 				label: translate( 'Payments' ) as string,
