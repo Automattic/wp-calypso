@@ -17,10 +17,12 @@ const registerMockStore = ( registry, storeName, initialState ) => {
 		reducer: ( state = initialState ) => state,
 		selectors: {
 			getEntityRecord: ( state, kind, name ) => {
-				if ( kind === 'root' && name === '__unstableBase' ) {
-					return state[ 'root/__unstableBase' ] || null;
+				const mockStateKey = `${ kind }/${ name }`;
+				if ( ! state[ mockStateKey ] ) {
+					return null;
 				}
-				return null;
+
+				return state[ mockStateKey ];
 			},
 		},
 		actions: {},

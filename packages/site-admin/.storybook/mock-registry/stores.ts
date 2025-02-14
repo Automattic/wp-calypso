@@ -27,6 +27,7 @@ const stores = {
 			description:
 				'WooCommerce Analytics is a powerful tool that helps you understand how your store is performing and how you can improve your store’s performance.',
 			'root/__unstableBase': { site_icon_url: image_url_01 },
+			'root/site': { title: 'WooCommerce Analytics Site', url: 'https://woocommerce.com' },
 		},
 	},
 	[ REGULAR_SITE_KEY ]: {
@@ -34,6 +35,7 @@ const stores = {
 			name: 'Regular Site',
 			description: 'A regular site with no special features.',
 			'root/__unstableBase': { site_icon_url: undefined },
+			'root/site': { title: 'My Regular Site', url: 'https://example.com' },
 		},
 	},
 	[ JETPACK_SITE_KEY ]: {
@@ -41,6 +43,7 @@ const stores = {
 			name: 'Jetpack Site',
 			description: 'A site with Jetpack installed.',
 			'root/__unstableBase': { site_icon_url: image_url_02 },
+			'root/site': { title: 'Jetpack Super Site', url: 'https://jetpack.com' },
 		},
 	},
 };
