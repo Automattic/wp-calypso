@@ -9,7 +9,7 @@ config.author = pkg.author;
 
 config.protocol = 'wpdesktop';
 
-config.oauthLoginEnabled = false;
+config.oauthLoginEnabled = true;
 
 config.loginURL = function () {
 	const loginUri = ! config.oauthLoginEnabled ? 'log-in' : 'log-in/desktop';
