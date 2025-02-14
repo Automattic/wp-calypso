@@ -85,8 +85,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			<div className="launched__modal-upsell">
 				<div className="launched__modal-upsell-content">{ contentElement }</div>
 				<Button
-					isLarge
-					isPrimary
+					variant="primary"
 					href={ buttonHref }
 					onClick={ () =>
 						dispatch(

@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page, { Context } from '@automattic/calypso-router';
+import { getAnyLanguageRouteParam, getLanguageRouteParam } from '@automattic/i18n-utils';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 import {
 	makeLayout,
@@ -9,12 +10,12 @@ import {
 	setSelectedSiteIdByOrigin,
 } from 'calypso/controller';
 import { getUserProfileBasePath } from 'calypso/reader/user-profile/user-profile.utils';
+import { RedirectRouteList, setupRedirectRoutes } from 'calypso/utils';
 import {
 	blogListing,
 	feedDiscovery,
 	feedListing,
 	following,
-	incompleteUrlRedirects,
 	readA8C,
 	readFollowingP2,
 	redirectLoggedOutToDiscover,
@@ -62,21 +63,7 @@ export default async function (): Promise< void > {
 			clientRender
 		);
 
-		// Incomplete paths that should be redirected to `/reader`
-		page(
-			[
-				'/reader/following',
-				'/reader/blogs',
-				'/reader/feeds',
-				'/reader/blog',
-				'/reader/post',
-				'/reader/feed',
-			],
-			() => page.redirect( '/reader' )
-		);
-
 		// Feed stream
-		page( '/reader/feeds/:feed_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/feeds/:feed_id',
 			blogDiscoveryByFeedId,
@@ -90,7 +77,6 @@ export default async function (): Promise< void > {
 		);
 
 		// Blog stream
-		page( '/reader/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/reader/blogs/:blog_id',
 			redirectLoggedOutToSignup,
@@ -112,6 +98,7 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
 		page(
 			getUserProfileBasePath( 'lists' ),
 			blogDiscoveryByFeedId,
@@ -122,6 +109,8 @@ export default async function (): Promise< void > {
 			makeLayout,
 			clientRender
 		);
+
+		setupReaderRedirects();
 	}
 
 	// Automattic Employee Posts
@@ -193,4 +182,62 @@ export default async function (): Promise< void > {
 		makeLayout,
 		clientRender
 	);
+}
+
+/**
+ * Setup redirects for the reader routes.
+ */
+function setupReaderRedirects(): void {
+	const langParam = getLanguageRouteParam();
+	const anyLangParam = getAnyLanguageRouteParam();
+
+	const readerRedirectsList: RedirectRouteList[] = [
+		{
+			path: `/${ langParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/reader`,
+			getRedirect: () => '/reader',
+		},
+		// Incomplete paths that should be redirected to `/reader`
+		{
+			path: '/reader/following',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blogs',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feeds',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/blog',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/post',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: '/reader/feed',
+			getRedirect: () => '/reader',
+		},
+		// Feed stream
+		{
+			path: '/reader/feeds/:feed_id/posts',
+			regex: /^\/reader\/feeds\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/feeds/${ params?.feed_id }`,
+		},
+		// Blog stream
+		{
+			path: '/reader/blogs/:blog_id/posts',
+			regex: /^\/reader\/blogs\/([0-9]+)\/posts$/i,
+			getRedirect: ( params?: Record< string, string > ) => `/reader/blogs/${ params?.blog_id }`,
+		},
+	];
+
+	setupRedirectRoutes( readerRedirectsList );
 }

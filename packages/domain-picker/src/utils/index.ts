@@ -1,8 +1,6 @@
 import {
 	NEWSLETTER_FLOW,
 	LINK_IN_BIO_TLD_FLOW,
-	ECOMMERCE_FLOW,
-	WOOEXPRESS_FLOW,
 	DOMAIN_FOR_GRAVATAR_FLOW,
 	isDomainForGravatarFlow,
 	isHundredYearPlanFlow,
@@ -21,12 +19,7 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?:
-		| typeof NEWSLETTER_FLOW
-		| typeof LINK_IN_BIO_TLD_FLOW
-		| typeof ECOMMERCE_FLOW
-		| typeof WOOEXPRESS_FLOW
-		| typeof DOMAIN_FOR_GRAVATAR_FLOW;
+	flowName?: typeof NEWSLETTER_FLOW | typeof LINK_IN_BIO_TLD_FLOW | typeof DOMAIN_FOR_GRAVATAR_FLOW;
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
@@ -53,9 +46,6 @@ export function getDomainSuggestionsVendor(
 	}
 	if ( options.flowName === NEWSLETTER_FLOW ) {
 		return 'newsletter';
-	}
-	if ( options.flowName === ECOMMERCE_FLOW || options.flowName === WOOEXPRESS_FLOW ) {
-		return 'ecommerce';
 	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';

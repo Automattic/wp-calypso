@@ -26,13 +26,13 @@ export const GoalsCaptureContainer: React.FC< GoalsCaptureContainerProps > = ( {
 		<StepContainer
 			{ ...otherProps }
 			isHorizontalLayout={ false }
-			className="goals__container two-columns"
 			hideBack
 			hideSkip={ false }
 			hideNext={ isMediumOrBiggerScreen }
 			formattedHeader={
 				<FormattedHeader
 					id="goals-header"
+					align={ isMediumOrBiggerScreen ? 'center' : 'left' }
 					headerText={ whatAreYourGoalsText }
 					subHeaderText={ subHeaderText }
 				/>

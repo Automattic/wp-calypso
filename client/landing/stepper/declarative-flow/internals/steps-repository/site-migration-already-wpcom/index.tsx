@@ -57,7 +57,6 @@ const SiteMigrationAlreadyWPCOM: FC< StepProps > = ( { stepName, flow, navigatio
 				formattedHeader={
 					<FormattedHeader
 						subHeaderAs="div"
-						subHeaderAlign="center"
 						headerText={ title }
 						subHeaderText={ subHeaderText }
 						align="center"

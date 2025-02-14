@@ -237,12 +237,12 @@ export class FullPostView extends Component {
 
 			// Next post - j
 			case 74: {
-				return this.goToNextPost();
+				return this.goToPost( this.props.nextPost );
 			}
 
 			// Previous post - k
 			case 75: {
-				return this.goToPreviousPost();
+				return this.goToPost( this.props.previousPost );
 			}
 		}
 	};
@@ -516,15 +516,14 @@ export class FullPostView extends Component {
 		}
 	};
 
-	goToNextPost = () => {
-		if ( this.props.nextPost ) {
-			this.props.showSelectedPost( { postKey: this.props.nextPost } );
-		}
-	};
-
-	goToPreviousPost = () => {
-		if ( this.props.previousPost ) {
-			this.props.showSelectedPost( { postKey: this.props.previousPost } );
+	goToPost = ( post ) => {
+		const { layout, setSelectedItem, showSelectedPost: showPost } = this.props;
+		if ( post ) {
+			if ( layout === 'recent' && setSelectedItem ) {
+				setSelectedItem( post );
+			} else {
+				showPost( { postKey: post } );
+			}
 		}
 	};
 

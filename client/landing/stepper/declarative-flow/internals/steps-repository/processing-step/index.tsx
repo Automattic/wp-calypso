@@ -4,7 +4,6 @@ import {
 	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
-	ECOMMERCE_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
@@ -14,7 +13,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
+import Loading from 'calypso/components/loading';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -180,7 +179,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
-	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Return tailored processing screens for flows that need them
 	if (
@@ -206,15 +204,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
-					<StepperLoader
-						title={ getCurrentMessage() }
-						subtitle={ getSubtitle() }
-						progress={ progress }
-					/>
+					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
-				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);
