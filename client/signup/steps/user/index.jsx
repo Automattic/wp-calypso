@@ -667,12 +667,6 @@ export class UserStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( 'Let’s get you signed up' ) }
 				subHeaderText={ this.getSubHeaderText() }
-				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
-					args: {
-						currentStep: 1,
-						totalSteps: 1,
-					},
-				} ) }
 			>
 				{ this.renderSignupForm() }
 			</VideoPressStepWrapper>

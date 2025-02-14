@@ -1,4 +1,3 @@
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -8,7 +7,6 @@ import './style.scss';
 function VideoPressStepWrapper( {
 	flowName,
 	stepName,
-	headerIcon,
 	headerText,
 	subHeaderText,
 	positionInFlow,
@@ -21,11 +19,6 @@ function VideoPressStepWrapper( {
 		<div className={ clsx( 'videopress-step-wrapper', 'is-videopress-stepper', className ) }>
 			<div className="videopress-step-wrapper__middle">
 				<div className="videopress-step-wrapper__header">
-					{ headerIcon && (
-						<div className="videopress-step-wrapper__header-icon">
-							<Icon icon={ headerIcon } />
-						</div>
-					) }
 					{ headerText && (
 						<h1 className="wp-brand-font videopress-step-wrapper__header-text">{ headerText }</h1>
 					) }
@@ -60,7 +53,6 @@ function VideoPressStepWrapper( {
 VideoPressStepWrapper.propTypes = {
 	headerText: PropTypes.node,
 	subHeaderText: PropTypes.node,
-	stepIndicator: PropTypes.string,
 	showHeaderLogout: PropTypes.bool,
 	flowName: PropTypes.string,
 	stepName: PropTypes.string,
