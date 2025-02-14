@@ -1,6 +1,3 @@
-import MeSettingsPassword from './me.settings.password';
-import MeProfileLinks from './me.settings.profile-links';
-
 /**
  * `MeSettings` constructor.
  *
@@ -44,24 +41,4 @@ MeSettings.prototype.get = function ( query, fn ) {
  */
 MeSettings.prototype.update = function ( query, body, fn ) {
 	return this.wpcom.req.put( '/me/settings/', query, body, fn );
-};
-
-/**
- * Return `MeProfileLinks` instance
- *
- * Example:
- * // Create a MeProfileLinks instance
- * var profile_links = wpcom.me().settings().profileLinks();
- * @returns {MeProfileLinks} MeProfileLinks instance
- */
-MeSettings.prototype.profileLinks = function () {
-	return new MeProfileLinks( this.wpcom );
-};
-
-/**
- * Return `MeSettingsPassword` instance
- * @returns {MeSettingsPassword} MeSettingsPassword instance
- */
-MeSettings.prototype.password = function () {
-	return new MeSettingsPassword( this.wpcom );
 };

@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
@@ -9,8 +10,6 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
-
-import './style.scss';
 
 // Total time to perform "loading"
 const DURATION_IN_MS = 60000;
@@ -40,9 +39,9 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const [ currentStep, setCurrentStep ] = React.useState( 0 );
 
 	/**
-	 * Completion progress: 0 <= progress <= 1
+	 * Completion progress: 0 <= progress <= 100
 	 */
-	const progress = ( currentStep + 1 ) / totalSteps;
+	const progress = ( ( currentStep + 1 ) / totalSteps ) * 100;
 	const isComplete = progress >= 1;
 
 	useInterval(
@@ -105,27 +104,18 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		}
 	}, [ transfer, dispatch, siteSlug, __, orderId ] );
 
+	const progressValue = ! hasStarted ? /* initial 10% progress */ 10 : progress;
+
 	return (
-		<div className="transfer-pending">
-			<h1 className="transfer-pending__progress-step">{ steps.current[ currentStep ] }</h1>
-			<div
-				className="transfer-pending__progress-bar"
-				style={
-					{
-						'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-					} as React.CSSProperties
-				}
-			/>
-			<p className="transfer-pending__progress-numbered-steps">
-				{
-					// translators: these are progress steps. Eg: step 1 of 4.
-					sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
-						currentStep: currentStep + 1,
-						totalSteps,
-					} )
-				}
-			</p>
-		</div>
+		<Loading
+			title={ steps.current[ currentStep ] }
+			progress={ progressValue }
+			// translators: these are progress steps. Example: Step 1 of 3
+			subtitle={ sprintf( __( 'Step %(currentStep)d of %(totalSteps)d' ), {
+				currentStep: currentStep + 1,
+				totalSteps,
+			} ) }
+		/>
 	);
 };
 
