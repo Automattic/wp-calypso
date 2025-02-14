@@ -48,6 +48,28 @@ const CompactPost = ( props ) => {
 			  }
 			: null;
 
+	const postOptions = (
+		<div className="reader-post-card__post-options">
+			{ isDiscoveryV2Enabled && isDiscoverPage && (
+				<ReaderFollowButton
+					tagName="div"
+					siteUrl={ post.feed_URL || post.site_URL }
+					followSource={ READER_DISCOVER }
+					iconSize={ 20 }
+					followLabel={ translate( 'Subscribe' ) }
+					followingLabel={ translate( 'Unsubscribe' ) }
+				/>
+			) }
+			<ReaderPostEllipsisMenu
+				site={ site }
+				teams={ teams }
+				post={ post }
+				showFollow
+				openSuggestedFollows={ openSuggestedFollows }
+			/>
+		</div>
+	);
+
 	return (
 		<div className="reader-post-card__post">
 			<div
@@ -67,27 +89,8 @@ const CompactPost = ( props ) => {
 							</AutoDirection>
 							{ postByline }
 						</div>
-						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) && (
-							<div className="reader-post-card__post-options">
-								{ isDiscoveryV2Enabled && isDiscoverPage && (
-									<ReaderFollowButton
-										tagName="div"
-										siteUrl={ post.feed_URL || post.site_URL }
-										followSource={ READER_DISCOVER }
-										iconSize={ 20 }
-										followLabel={ translate( 'Subscribe' ) }
-										followingLabel={ translate( 'Unsubscribe' ) }
-									/>
-								) }
-								<ReaderPostEllipsisMenu
-									site={ site }
-									teams={ teams }
-									post={ post }
-									showFollow
-									openSuggestedFollows={ openSuggestedFollows }
-								/>
-							</div>
-						) }
+						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) &&
+							postOptions }
 					</div>
 					<ReaderExcerpt
 						post={ post }
@@ -98,27 +101,7 @@ const CompactPost = ( props ) => {
 				</div>
 				{ post.canonical_media && (
 					<div className="reader-post-card__post-media">
-						{ ! isSmallScreen && hasExcerpt && (
-							<div className="reader-post-card__post-options">
-								{ isDiscoveryV2Enabled && isDiscoverPage && (
-									<ReaderFollowButton
-										tagName="div"
-										siteUrl={ post.feed_URL || post.site_URL }
-										followSource={ READER_DISCOVER }
-										iconSize={ 20 }
-										followLabel={ translate( 'Subscribe' ) }
-										followingLabel={ translate( 'Unsubscribe' ) }
-									/>
-								) }
-								<ReaderPostEllipsisMenu
-									site={ site }
-									teams={ teams }
-									post={ post }
-									showFollow
-									openSuggestedFollows={ openSuggestedFollows }
-								/>
-							</div>
-						) }
+						{ ! isSmallScreen && hasExcerpt && postOptions }
 						<FeaturedAsset
 							post={ post }
 							canonicalMedia={ post.canonical_media }
