@@ -1,4 +1,5 @@
-import { __i18n_text_domain__ } from '@automattic/i18n-calypso';
+/* global __i18n_text_domain__ */
+
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
