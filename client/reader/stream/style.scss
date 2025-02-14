@@ -1029,21 +1029,31 @@
 	.back-button {
 		border: none;
 		position: fixed;
-		top: calc(var(--masterbar-height) + 20px);
+		top: calc(var(--masterbar-height) + 29px);
 		left: var(--sidebar-width-max);
 		background-color: transparent;
 		z-index: z-index(".masterbar", ".reader-back");
 	
 		button.is-compact.is-borderless {
-			margin: 2px;
-			@media ( max-width: 781px ) {
-				padding-top: 12px;
-				padding-bottom: 12px;
+			// margin: 2px;
+			// @media ( min-width: 1180px ) {
+			// 	padding-top: 12px;
+			// 	padding-bottom: 12px;
+			// }
+
+			@media ( max-width: 1180px ) {
+				margin: -5px 0 7px 0;
+				padding: 0;
+			}
+
+			@media ( max-width: 600px ) {
+				margin: 0 0 0 15px;
 			}
 		}
 	
 		@media ( max-width: 1180px ) {
-			display: none;
+			position: unset;
+			display: flex;
 		}
 	}
 
