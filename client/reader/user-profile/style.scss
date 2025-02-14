@@ -2,7 +2,7 @@
 
 .is-section-reader {
 
-	div.user-profile {
+	.user-profile {
 		position: relative;
 
 		&__404.empty-content {
@@ -11,7 +11,7 @@
 			padding-top: 150px;
 		}
 
-		.user-profile__wrapper {
+		div.user-profile__wrapper {
 
 			&-content {
 				padding-top: 36px;
