@@ -353,6 +353,7 @@ const SubscriberDataViews = ( {
 		// Handle filter option from the view.
 		const filterValues =
 			( currentView.filters
+				// Filter out undefined values to prevent unnecessary queries.
 				?.filter( ( filter ) => filter.value !== undefined )
 				.map( ( filter ) => filter.value ) as SubscribersFilterBy[] ) ?? [];
 		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
