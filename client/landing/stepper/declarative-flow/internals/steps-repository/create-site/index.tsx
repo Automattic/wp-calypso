@@ -81,7 +81,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 		progress,
 		partnerBundle,
 		siteGoals,
-		intent,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -94,7 +93,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			siteGoals: select( ONBOARD_STORE ).getGoals(),
-			intent: select( ONBOARD_STORE ).getIntent(),
 		} ),
 		[]
 	);
@@ -211,7 +209,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			};
 		}
 
-		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : intent;
+		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
