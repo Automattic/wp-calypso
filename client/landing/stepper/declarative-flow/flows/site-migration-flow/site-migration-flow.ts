@@ -34,8 +34,9 @@ const siteMigration: Flow = {
 	__experimentalUseSessions: true,
 
 	useSideEffect() {
-		const { setIntent } = useDispatch( ONBOARD_STORE );
+		const { setIntent, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
+			resetOnboardStore();
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [] );
 		const { set, get } = useFlowState();
