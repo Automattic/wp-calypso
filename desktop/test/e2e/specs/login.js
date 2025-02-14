@@ -38,6 +38,7 @@ const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
 
 const skipIfOAuthLogin = config.oauthLoginEnabled ? it.skip : it;
+const runIfOAuthLogin = config.oauthLoginEnabled ? it : it.skip;
 
 describe( 'User Can log in', () => {
 	jest.setTimeout( 60000 );
@@ -90,6 +91,15 @@ describe( 'User Can log in', () => {
 		for ( const [ , frame ] of mainWindow.frames().entries() ) {
 			await frame.waitForLoadState();
 		}
+	} );
+
+	runIfOAuthLogin( 'Start the OAuth login flow', async function () {
+		const loginButton = await mainWindow.waitForSelector(
+			'a:has-text("Log in with WordPress.com")'
+		);
+		const href = await loginButton.getAttribute( 'href' );
+		// eslint-disable-next-line jest/no-standalone-expect
+		expect( href ).toBe( '/desktop-start-login' );
 	} );
 
 	skipIfOAuthLogin( 'Log in with username and password', async function () {
