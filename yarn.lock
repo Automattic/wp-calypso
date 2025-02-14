@@ -1794,6 +1794,7 @@ __metadata:
     "@storybook/cli": "npm:^7.6.20"
     "@storybook/react": "npm:^7.6.20"
     "@wordpress/base-styles": "npm:^5.20.0"
+    "@wordpress/commands": "npm:^1.19.0"
     "@wordpress/components": "npm:^29.6.0"
     "@wordpress/compose": "npm:^7.20.0"
     "@wordpress/core-data": "npm:^7.20.0"
@@ -8314,7 +8315,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debug@npm:^4.0.0, @types/debug@npm:^4.1.12, @types/debug@npm:^4.1.6":
+"@types/debug@npm:^4.0.0, @types/debug@npm:^4.1.6":
+  version: 4.1.8
+  resolution: "@types/debug@npm:4.1.8"
+  dependencies:
+    "@types/ms": "npm:*"
+  checksum: 913aea60b8c94cd0009bbdd531d8a3594ec3275ca0e8d1cbcf783417884252b3c53113f6665fd2fb0076b8ce628ee12cd083d2af107ed26c0f2e75852d8bc074
+  languageName: node
+  linkType: hard
+
+"@types/debug@npm:^4.1.12":
   version: 4.1.12
   resolution: "@types/debug@npm:4.1.12"
   dependencies:
@@ -10460,6 +10470,27 @@ __metadata:
   version: 6.20.0
   resolution: "@wordpress/browserslist-config@npm:6.20.0"
   checksum: 451d25358238f7d10d24545f10784c6f15890ec818cf632e31fca87c77a3a5f5040d192665beb004076be6190b849d53e454a313a9a300dbfcddd09ed13dc720
+  languageName: node
+  linkType: hard
+
+"@wordpress/commands@npm:^1.19.0":
+  version: 1.19.0
+  resolution: "@wordpress/commands@npm:1.19.0"
+  dependencies:
+    "@babel/runtime": "npm:7.25.7"
+    "@wordpress/components": "npm:^29.5.0"
+    "@wordpress/data": "npm:^10.19.0"
+    "@wordpress/element": "npm:^6.19.0"
+    "@wordpress/i18n": "npm:^5.19.0"
+    "@wordpress/icons": "npm:^10.19.0"
+    "@wordpress/keyboard-shortcuts": "npm:^5.19.0"
+    "@wordpress/private-apis": "npm:^1.19.0"
+    clsx: "npm:^2.1.1"
+    cmdk: "npm:^1.0.0"
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 700c94b35a94a5d9bbd3a8a07f2a568aa9b7b3b6fd416cd48373384acbfe65622a05a6444f74a87c9f3b6b0c246cad28d4b4cd4d1e4ab2ba961f435d36ba7a80
   languageName: node
   linkType: hard
 
