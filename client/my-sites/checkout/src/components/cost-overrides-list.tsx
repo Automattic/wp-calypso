@@ -23,11 +23,10 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
-import { getAffiliateCouponLabel, getCouponLabel } from '../../utils';
+import { getAffiliateCouponLabel } from '../../utils';
 import type { Theme } from '@automattic/composite-checkout';
 import type { LineItemCostOverrideForDisplay } from '@automattic/wpcom-checkout';
 
@@ -324,10 +323,6 @@ export function CouponCostOverride( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box_v2', {
-		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
-	} );
 
 	if ( ! responseCart.coupon || ! responseCart.coupon_savings_total_integer ) {
 		return null;
@@ -338,9 +333,7 @@ export function CouponCostOverride( {
 		args: { couponCode: responseCart.coupon },
 	} );
 
-	const label = isOnboardingAffiliateFlow
-		? getAffiliateCouponLabel()
-		: getCouponLabel( couponLabel as string, experimentAssignment?.variationName );
+	const label = isOnboardingAffiliateFlow ? getAffiliateCouponLabel() : couponLabel;
 	return (
 		<CostOverridesListStyle>
 			<div className="cost-overrides-list-item cost-overrides-list-item--coupon">

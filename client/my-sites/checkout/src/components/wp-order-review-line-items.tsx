@@ -21,14 +21,13 @@ import {
 import styled from '@emotion/styled';
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { has100YearPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/src/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getAffiliateCouponLabel, getCouponLabel, isCouponBoxHidden } from '../../utils';
+import { getAffiliateCouponLabel } from '../../utils';
 import { AkismetProQuantityDropDown } from './akismet-pro-quantity-dropdown';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeAkProQuantity } from './akismet-pro-quantity-dropdown';
@@ -95,18 +94,11 @@ export function WPOrderReviewLineItems( {
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const couponLineItem = getCouponLineItemFromCart( responseCart );
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box_v2', {
-		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
-	} );
 
 	if ( couponLineItem ) {
 		couponLineItem.label = isOnboardingAffiliateFlow
 			? getAffiliateCouponLabel()
-			: getCouponLabel( couponLineItem.label, experimentAssignment?.variationName );
-		if ( isCouponBoxHidden( productSlugs, experimentAssignment?.variationName ) ) {
-			couponLineItem.hasDeleteButton = false;
-		}
+			: couponLineItem.label;
 	}
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;

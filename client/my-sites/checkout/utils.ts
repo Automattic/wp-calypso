@@ -135,24 +135,3 @@ export function getAffiliateCouponLabel(): string {
 	// translators: The label of the coupon line item in checkout
 	return translate( 'Exclusive Offer Applied' );
 }
-
-export function getCouponLabel(
-	originalLabel: string,
-	experimentVariationName: string | null | undefined
-): string {
-	return experimentVariationName === 'treatment' ? translate( 'Offer Applied' ) : originalLabel;
-}
-
-export function isCouponBoxHidden(
-	productSlugs: string[],
-	experimentVariationName: string | null | undefined
-): boolean {
-	const ignoredProductSlugs = [ 'wp_difm_lite' ];
-	const containsIgnoredProduct = productSlugs.some( ( slug ) =>
-		ignoredProductSlugs.includes( slug )
-	);
-	if ( containsIgnoredProduct ) {
-		return false;
-	}
-	return experimentVariationName === 'treatment' ? true : false;
-}
