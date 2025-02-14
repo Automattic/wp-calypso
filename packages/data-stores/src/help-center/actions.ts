@@ -112,6 +112,12 @@ export const setAllowPremiumSupport = ( allow: boolean ) =>
 		allow,
 	} ) as const;
 
+export const setChatRelatedGuidesScrollY = ( chatRelatedGuidesScrollY: number ) =>
+	( {
+		type: 'HELP_CENTER_SET_CHAT_RELATED_GUIDES_SCROLL_Y',
+		chatRelatedGuidesScrollY,
+	} ) as const;
+
 export const setShowHelpCenter = function* ( show: boolean, allowPremiumSupport = false ) {
 	if ( ! isE2ETest() ) {
 		try {
@@ -222,5 +228,6 @@ export type HelpCenterAction =
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
 			| typeof setAllowPremiumSupport
+			| typeof setChatRelatedGuidesScrollY
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

@@ -1,5 +1,7 @@
+import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import FoldableCard from '../foldable';
@@ -9,6 +11,9 @@ import type { Message, Source } from '../../types';
 export const Sources = ( { message }: { message: Message } ) => {
 	const navigate = useNavigate();
 	const { trackEvent } = useOdieAssistantContext();
+	const sourcesRef = useRef< HTMLDivElement | null >( null );
+	const { setChatRelatedGuidesScrollY } = useDataStoreDispatch( HELP_CENTER_STORE );
+
 	const sources = useMemo( () => {
 		const messageLength = message?.context?.sources?.length ?? 0;
 		if ( messageLength > 0 ) {
@@ -63,13 +68,14 @@ export const Sources = ( { message }: { message: Message } ) => {
 			screenReaderText="More"
 			iconSize={ 16 }
 		>
-			<div className="odie-chatbox-message-sources">
+			<div className="odie-chatbox-message-sources" ref={ sourcesRef }>
 				{ sources.length > 0 &&
 					sources.map( ( source, index ) => (
 						<SupportDocLink
 							key={ index }
 							link={ source.url }
-							onLinkClickHandler={ () => {
+							onLinkClickHandler={ ( e ) => {
+								e.preventDefault();
 								trackEvent( 'chat_message_action_click', {
 									action: 'link',
 									in_chat_view: true,
@@ -80,7 +86,24 @@ export const Sources = ( { message }: { message: Message } ) => {
 									action: 'click',
 									href: source.url,
 								} );
-								navigate( `/post?link=${ source.url }` );
+								const scrollParentRef = sourcesRef.current?.closest(
+									'.help-center__container-content'
+								);
+								console.log( 'scrollParentRef on click', scrollParentRef );
+								console.log( 'scrollY', scrollParentRef?.scrollTop );
+
+								console.log(
+									'supportlink click',
+									{ scrollParentRef, sourcesRef },
+									sourcesRef.current?.closest( '.help-center__container-content' )
+								);
+
+								setChatRelatedGuidesScrollY( scrollParentRef?.scrollTop );
+
+								// return;
+								navigate( `/post?link=${ source.url }`, {
+									state: { chatScrollY: scrollParentRef?.scrollTop, scrollParentRef },
+								} );
 							} }
 							title={ source.title }
 						/>

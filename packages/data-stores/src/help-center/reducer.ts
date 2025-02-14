@@ -167,6 +167,14 @@ const allowPremiumSupport: Reducer< boolean, HelpCenterAction > = ( state = fals
 	return state;
 };
 
+const chatRelatedGuidesScrollY: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_CHAT_RELATED_GUIDES_SCROLL_Y':
+			return action.chatRelatedGuidesScrollY;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	currentSupportInteraction,
 	showHelpCenter,
@@ -186,6 +194,7 @@ const reducer = combineReducers( {
 	odieInitialPromptText,
 	odieBotNameSlug,
 	allowPremiumSupport,
+	chatRelatedGuidesScrollY,
 } );
 
 export type State = ReturnType< typeof reducer >;
