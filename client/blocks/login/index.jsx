@@ -1,4 +1,3 @@
-import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -126,9 +125,6 @@ class Login extends Component {
 		}
 
 		window.scrollTo( 0, 0 );
-
-		// Add accessible-focus listener
-		accessibleFocus();
 	}
 
 	componentDidUpdate( prevProps ) {
