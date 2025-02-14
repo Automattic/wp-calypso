@@ -189,6 +189,7 @@ class AccountCloseConfirmDialog extends Component {
 									<InlineSupportLink
 										supportPostId={ supportPostId }
 										supportLink={ supportLink }
+										onClick={ this.handleCancel }
 										showText={ false }
 										iconSize={ 20 }
 										tracksEvent="calypso_close_account_alternative_clicked"
