@@ -12,45 +12,40 @@ type SubscriberTotalsProps = {
 };
 
 const getFilterLabel = ( filters: SubscribersFilterBy[], count: number ): string => {
-	if ( filters.length === 0 || filters.includes( SubscribersFilterBy.All ) ) {
-		return count === 1 ? translate( 'subscriber' ) : translate( 'subscribers' );
-	}
-
-	// For multiple filters, sort to ensure consistent order
+	// Sort to make sure the filter order is consistent.
 	const sortedFilters = [ ...filters ].sort();
 	const filterKey = sortedFilters.join( ',' );
 
-	// Handle all filter combinations
 	switch ( filterKey ) {
-		// Single filter cases
-		case `${ SubscribersFilterBy.Paid }`:
+		// Single filter cases.
+		case SubscribersFilterBy.Paid:
 			return count === 1 ? translate( 'paid subscriber' ) : translate( 'paid subscribers' );
-		case `${ SubscribersFilterBy.Free }`:
+		case SubscribersFilterBy.Free:
 			return count === 1 ? translate( 'free subscriber' ) : translate( 'free subscribers' );
-		case `${ SubscribersFilterBy.EmailSubscriber }`:
+		case SubscribersFilterBy.EmailSubscriber:
 			return count === 1 ? translate( 'email subscriber' ) : translate( 'email subscribers' );
-		case `${ SubscribersFilterBy.ReaderSubscriber }`:
+		case SubscribersFilterBy.ReaderSubscriber:
 			return count === 1 ? translate( 'reader subscriber' ) : translate( 'reader subscribers' );
 
-		// Two filter combinations
-		case `${ SubscribersFilterBy.EmailSubscriber },${ SubscribersFilterBy.Paid }`:
+		// Two filter combinations.
+		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Paid:
 			return count === 1
 				? translate( 'paid email subscriber' )
 				: translate( 'paid email subscribers' );
-		case `${ SubscribersFilterBy.Paid },${ SubscribersFilterBy.ReaderSubscriber }`:
+		case SubscribersFilterBy.Paid + ',' + SubscribersFilterBy.ReaderSubscriber:
 			return count === 1
 				? translate( 'paid reader subscriber' )
 				: translate( 'paid reader subscribers' );
-		case `${ SubscribersFilterBy.EmailSubscriber },${ SubscribersFilterBy.Free }`:
+		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Free:
 			return count === 1
 				? translate( 'free email subscriber' )
 				: translate( 'free email subscribers' );
-		case `${ SubscribersFilterBy.Free },${ SubscribersFilterBy.ReaderSubscriber }`:
+		case SubscribersFilterBy.Free + ',' + SubscribersFilterBy.ReaderSubscriber:
 			return count === 1
 				? translate( 'free reader subscriber' )
 				: translate( 'free reader subscribers' );
 
-		// Default case
+		// Default case.
 		default:
 			return count === 1 ? translate( 'subscriber' ) : translate( 'subscribers' );
 	}
