@@ -38,6 +38,7 @@ function StatsLineChart( {
 					hour12: true,
 				} );
 		  };
+
 	const formatViews = ( value: number ) => {
 		return value.toFixed( 0 ).toString();
 	};
