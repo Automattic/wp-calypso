@@ -1,4 +1,4 @@
-import { CircularProgressBar, ConfettiAnimation } from '@automattic/components';
+import { CircularProgressBar } from '@automattic/components';
 import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
@@ -17,7 +17,13 @@ import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
 import './full-screen-launchpad.scss';
 
-export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX.Element | null => {
+export const FullScreenLaunchpad = ( {
+	onClose,
+	onSiteLaunch,
+}: {
+	onClose: () => void;
+	onSiteLaunch: () => void;
+} ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const [ isLaunching, setIsLaunching ] = useState( false );
@@ -53,7 +59,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
-					onClose();
+					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
 				}
@@ -91,7 +97,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 		completedSteps >= numberOfSteps - ( launchSiteTask ? 1 : 0 );
 
 	return (
-		<div className="is-launchpad-first" css={ { width: '100%' } }>
+		<div data-testid="launchpad-first" className="is-launchpad-first" css={ { width: '100%' } }>
 			<div
 				className={ clsx( `customer-home-launchpad customer-home__card is-small-hero`, {
 					'all-tasks-completed': isAllTasksCompleted,
@@ -107,11 +113,11 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					<h2>{ ! isAllTasksCompleted ? __( "Let's get started!" ) : __( "You're all set!" ) }</h2>
 					<span>{ ! isAllTasksCompleted && launchpadTitle }</span>
 				</div>
-				{ isAllTasksCompleted && <ConfettiAnimation /> }
 				<Launchpad
 					siteSlug={ siteSlug }
 					checklistSlug={ checklistSlug }
 					launchpadContext={ launchpadContext }
+					onPostFilterTasks={ ( tasks ) => tasks.filter( ( task ) => ! task.isLaunchTask ) }
 					onSiteLaunched={ onSiteLaunched }
 					highlightNextAction
 				/>

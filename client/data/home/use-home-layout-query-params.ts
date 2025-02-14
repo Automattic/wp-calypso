@@ -8,10 +8,10 @@ export interface HomeLayoutQueryParams {
 }
 
 export function useHomeLayoutQueryParams(): HomeLayoutQueryParams {
-	const { dev, view } = useSelector( getCurrentQueryArguments ) as any;
+	const { dev, view } = useSelector( getCurrentQueryArguments ) ?? {};
 
 	return {
 		dev: dev === 'true' || ( ! dev && config.isEnabled( 'home/layout-dev' ) ) || undefined,
-		view,
+		view: view?.toString(),
 	};
 }
