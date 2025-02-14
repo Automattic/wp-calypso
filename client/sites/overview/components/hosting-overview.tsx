@@ -32,12 +32,12 @@ const HostingOverview: FC = () => {
 
 	return (
 		<div className="hosting-overview">
-			{ isEnabled( 'domain-to-plan-credit' ) && <PlanCreditNotice /> }
 			<NavigationHeader
 				className="hosting-overview__navigation-header"
 				title={ translate( 'Overview' ) }
 				subtitle={ subtitle }
 			/>
+			{ isEnabled( 'domain-to-plan-credit' ) && <PlanCreditNotice /> }
 			<PlanCard />
 			<QuickActionsCard />
 			<SiteBackupCard />
