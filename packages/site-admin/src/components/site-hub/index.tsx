@@ -1,0 +1,116 @@
+/**
+ * External dependencies
+ */
+import { store as commandsStore } from '@wordpress/commands';
+import { Button, VisuallyHidden, __experimentalHStack as HStack } from '@wordpress/components';
+import { store as coreStore } from '@wordpress/core-data';
+import { useSelect, useDispatch } from '@wordpress/data';
+import { memo, forwardRef } from '@wordpress/element';
+import { decodeEntities } from '@wordpress/html-entities';
+import { __ } from '@wordpress/i18n';
+import { search } from '@wordpress/icons';
+import { displayShortcut } from '@wordpress/keycodes';
+import { filterURLForDisplay } from '@wordpress/url';
+import clsx from 'clsx';
+/**
+ * Internal dependencies
+ */
+import { SiteIcon } from '../';
+import './style.scss';
+
+interface SiteData {
+	title: string;
+	url: string;
+	show_on_front?: string;
+	page_on_front?: string | number;
+	page_for_posts?: string | number;
+}
+
+interface SiteHubProps {
+	isTransparent: boolean;
+
+	navigationBackLabel: string;
+	navigationBackLink: string; // core picks this prop (dashboardLink) from site-admin store.
+}
+
+export const SiteHub = memo(
+	forwardRef(
+		(
+			{
+				isTransparent,
+				navigationBackLink = '/',
+				navigationBackLabel = __( 'Go to the Dashboard' ),
+			}: SiteHubProps,
+			ref
+		) => {
+			const { homeUrl, siteTitle } = useSelect( ( select ) => {
+				const { getEntityRecord } = select( coreStore );
+
+				const _site = getEntityRecord( 'root', 'site' ) as SiteData;
+				const home = getEntityRecord< {
+					home: string;
+				} >( 'root', '__unstableBase' )?.home;
+
+				return {
+					homeUrl: home,
+					siteTitle:
+						! _site?.title && !! _site?.url ? filterURLForDisplay( _site?.url ) : _site?.title,
+				};
+			}, [] );
+
+			const { open: openCommandCenter } = useDispatch( commandsStore );
+
+			return (
+				<div className="site-admin-site-hub">
+					<HStack justify="flex-start" spacing="0">
+						<div
+							className={ clsx( 'site-admin-site-hub__view-mode-toggle-container', {
+								'has-transparent-background': isTransparent,
+							} ) }
+						>
+							<Button
+								__next40pxDefaultSize
+								ref={ ref }
+								href={ navigationBackLink }
+								label={ navigationBackLabel }
+								className="site-admin-layout__view-mode-toggle"
+								style={ {
+									transform: 'scale(0.5333) translateX(-4px)', // Offset to position the icon 12px from viewport edge
+									borderRadius: 4,
+								} }
+							>
+								<SiteIcon className="site-admin-layout__view-mode-toggle-icon" />
+							</Button>
+						</div>
+
+						<HStack>
+							<div className="site-admin-site-hub__title">
+								<Button __next40pxDefaultSize variant="link" href={ homeUrl } target="_blank">
+									{ decodeEntities( siteTitle ) }
+									<VisuallyHidden as="span">
+										{
+											/* translators: accessibility text */
+											__( '(opens in a new tab)' )
+										}
+									</VisuallyHidden>
+								</Button>
+							</div>
+
+							<HStack spacing={ 0 } expanded={ false } className="site-admin-site-hub__actions">
+								<Button
+									size="compact"
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									className="site-admin-site-hub_toggle-command-center"
+									icon={ search }
+									onClick={ () => openCommandCenter() }
+									label={ __( 'Open command palette' ) }
+									shortcut={ displayShortcut.primary( 'k' ) }
+								/>
+							</HStack>
+						</HStack>
+					</HStack>
+				</div>
+			);
+		}
+	)
+);
