@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -12,7 +13,7 @@ import FeaturedAsset from './featured-asset';
 
 // Rather than create complex logic to create context or pass props
 // to see if the user is on thediscover page, let's check the pathname
-const getIsDiscover = () => {
+const getIsDiscoverPage = () => {
 	const path = window.location.pathname.split( '/' );
 	return path.length > 0 && path[ 1 ].includes( 'discover' );
 };
@@ -29,7 +30,9 @@ const CompactPost = ( props ) => {
 		teams,
 		openSuggestedFollows,
 	} = props;
-	const isDiscover = getIsDiscover();
+
+	const isDiscoveryV2Enabled = config.isEnabled( 'reader/discovery-v2' );
+	const isDiscoverPage = getIsDiscoverPage();
 	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
@@ -66,7 +69,7 @@ const CompactPost = ( props ) => {
 						</div>
 						{ ( imagePostWithoutExcerpt || ! post.canonical_media || isSmallScreen ) && (
 							<div className="reader-post-card__post-options">
-								{ isDiscover && (
+								{ isDiscoveryV2Enabled && isDiscoverPage && (
 									<ReaderFollowButton
 										tagName="div"
 										siteUrl={ post.feed_URL || post.site_URL }
@@ -97,7 +100,7 @@ const CompactPost = ( props ) => {
 					<div className="reader-post-card__post-media">
 						{ ! isSmallScreen && hasExcerpt && (
 							<div className="reader-post-card__post-options">
-								{ isDiscover && (
+								{ isDiscoveryV2Enabled && isDiscoverPage && (
 									<ReaderFollowButton
 										tagName="div"
 										siteUrl={ post.feed_URL || post.site_URL }
