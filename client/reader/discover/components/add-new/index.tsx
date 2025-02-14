@@ -1,5 +1,3 @@
-import { User, UserSelect } from '@automattic/data-stores';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
@@ -7,17 +5,14 @@ import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-const USER_STORE = User.register();
-
 const DiscoverAddNew = () => {
 	const translate = useTranslate();
-	const isLoggedIn = useSelect(
-		( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-		[]
-	);
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	return (
 		<div className="discover-add-new">
