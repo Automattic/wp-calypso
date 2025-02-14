@@ -45,10 +45,8 @@ export const useHelpCenterChatScroll = (
 		const scrollRef = scrollParentRef?.current;
 		// const scrollBehaviour = scrollRef.style.scrollBehavior;
 		// const scrollPosiiton = scrollPositionY || cachedScrollPositions[ id ] || 0;
-		console.log( 'inside hook', chatRelatedGuidesScrollY );
 
 		if ( chatRelatedGuidesScrollY && isEnabled ) {
-			console.log( 'scrolling to position', chatRelatedGuidesScrollY );
 			setScroll( scrollRef, () =>
 				setTimeout( () => {
 					scrollRef.scrollTop = chatRelatedGuidesScrollY;

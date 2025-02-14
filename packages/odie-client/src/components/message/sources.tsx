@@ -89,14 +89,14 @@ export const Sources = ( { message }: { message: Message } ) => {
 								const scrollParentRef = sourcesRef.current?.closest(
 									'.help-center__container-content'
 								);
-								console.log( 'scrollParentRef on click', scrollParentRef );
-								console.log( 'scrollY', scrollParentRef?.scrollTop );
+								// console.log( 'scrollParentRef on click', scrollParentRef );
+								// console.log( 'scrollY', scrollParentRef?.scrollTop );
 
-								console.log(
-									'supportlink click',
-									{ scrollParentRef, sourcesRef },
-									sourcesRef.current?.closest( '.help-center__container-content' )
-								);
+								// console.log(
+								// 	'supportlink click',
+								// 	{ scrollParentRef, sourcesRef },
+								// 	sourcesRef.current?.closest( '.help-center__container-content' )
+								// );
 
 								setChatRelatedGuidesScrollY( scrollParentRef?.scrollTop );
 

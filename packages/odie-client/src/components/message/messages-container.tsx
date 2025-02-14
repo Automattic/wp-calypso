@@ -1,9 +1,9 @@
-import { HelpCenterSelect } from '@automattic/data-stores';
+// import { HelpCenterSelect } from '@automattic/data-stores';
 import { useResetSupportInteraction } from '@automattic/help-center/src/hooks/use-reset-support-interaction';
-import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+// import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
 import { getShortDateString } from '@automattic/i18n-utils';
 import { Spinner } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+// import { useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigationType, useSearchParams } from 'react-router-dom';
 import { ThumbsDown } from '../../assets/thumbs-down';
@@ -64,12 +64,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const navType: NavigationType = useNavigationType();
 
-	const { chatRelatedGuidesScrollY } = useSelect( ( select ) => {
-		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
-		return {
-			chatRelatedGuidesScrollY: store.getChatRelatedGuidesScrollY(),
-		};
-	}, [] );
+	// const { chatRelatedGuidesScrollY } = useSelect( ( select ) => {
+	// 	const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	// 	return {
+	// 		chatRelatedGuidesScrollY: store.getChatRelatedGuidesScrollY(),
+	// 	};
+	// }, [] );
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
 	const scrollParentRef = useRef< HTMLElement | null >( null );
