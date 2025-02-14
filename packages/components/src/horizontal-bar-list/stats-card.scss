@@ -72,6 +72,7 @@
 
 		.stats-download-csv {
 			color: var(--color-link);
+			gap: 4px;
 
 			&[disabled],
 			&.disabled {
