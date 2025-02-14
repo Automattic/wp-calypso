@@ -28,7 +28,7 @@
 		"calypso/ai-blogging-prompts": false,
 		"calypso/all-domain-management": true,
 		"calypso/big-sky": true,
-		"calypso/domains-dataviews": false,
+		"calypso/domains-dataviews": true,
 		"cancellation-offers": true,
 		"catch-js-errors": true,
 		"checkout/ebanx-pix": true,
