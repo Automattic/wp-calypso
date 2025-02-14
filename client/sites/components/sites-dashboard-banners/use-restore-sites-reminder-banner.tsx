@@ -1,6 +1,7 @@
 import { NoticeBanner } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { useState } from 'react';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './styles.scss';
@@ -35,7 +36,17 @@ export function useRestoreSitesBanner() {
 				>
 					<div>
 						{ translate(
-							'You’ll need to invite any users that previously had access to your sites.'
+							`{{restoreSiteLink}}Restore sites{{/restoreSiteLink}} from the action menu. You'll also need to {{invitePeopleLink}}invite any users{{/invitePeopleLink}} that previously had access to your sites.`,
+							{
+								components: {
+									restoreSiteLink: (
+										<InlineSupportLink showIcon={ false } supportContext="restore-site" />
+									),
+									invitePeopleLink: (
+										<InlineSupportLink showIcon={ false } supportContext="invite-people" />
+									),
+								},
+							}
 						) }
 					</div>
 				</NoticeBanner>
