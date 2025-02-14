@@ -9,7 +9,7 @@ import { useProductDescription } from 'calypso/jetpack-cloud/sections/partner-po
 import getProductShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-short-title';
 import getProductVariantShortTitle from 'calypso/jetpack-cloud/sections/partner-portal/lib/get-product-variant-short-title';
 import LicenseLightboxLink from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox-link';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import withProductLightbox, {
 	ProductLightboxActivatorProps,
 	WithProductLightboxProps,
@@ -17,6 +17,7 @@ import withProductLightbox, {
 import ProductBadges from '../product-badges';
 import ProductPriceWithDiscount from '../product-card/product-price-with-discount-info';
 import useCustomProductCard from './hooks/use-custom-product-card';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -153,7 +154,12 @@ function ProductCard( props: Props ) {
 				<div className="product-card__details">
 					<div className="product-card__main">
 						<div className="product-card__heading">
-							{ customProductCard?.image && <img src={ customProductCard?.image } alt="" /> }
+							{ customProductCard?.image && (
+								<img
+									src={ customProductCard?.image }
+									alt={ `${ currentProduct?.name } product logo` }
+								/>
+							) }
 
 							<h3 className="product-card__title">{ customProductCard?.title ?? productTitle }</h3>
 
@@ -194,7 +200,7 @@ function ProductCard( props: Props ) {
 							) }
 
 							<div className="product-card__description">
-								{ customProductCard?.description ?? productDescription }
+								{ preventWidows( customProductCard?.description ?? productDescription ) }
 							</div>
 						</div>
 					</div>

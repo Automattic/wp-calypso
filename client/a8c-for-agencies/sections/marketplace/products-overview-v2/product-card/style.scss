@@ -7,6 +7,7 @@ $woocommerce-purple-50: #720EEC;
 .product-card {
 	display: flex;
 	justify-content: stretch;
+	min-height: 270px;
 	&.disabled {
 		opacity: 0.5;
 

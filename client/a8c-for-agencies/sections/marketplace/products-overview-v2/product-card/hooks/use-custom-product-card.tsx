@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import WooPaymentsLogo from 'calypso/assets/images/a8c-for-agencies/product-logos/woopayments.svg';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 type CustomProductCard = {
 	className: string;

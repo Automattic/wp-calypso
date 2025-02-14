@@ -5,10 +5,10 @@ import { LICENSE_INFO_MODAL_ID } from 'calypso/jetpack-cloud/sections/partner-po
 import LicenseLightbox from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import WooPaymentsCustomDescription from '../product-card/woopayments-custom-description';
 import WooPaymentsCustomFooter from '../product-card/woopayments-custom-footer';
 import WooPaymentsRevenueShareNotice from '../product-card/woopayments-revenue-share-notice';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 export type WithProductLightboxProps = {
 	products: APIProductFamilyProduct[];
