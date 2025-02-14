@@ -16,6 +16,7 @@ import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getSection } from 'calypso/state/ui/selectors';
+import { setupRedirectRoutes } from 'calypso/utils';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -41,22 +42,6 @@ export function updateLastRoute( context, next ) {
 		context.lastRoute = lastRoute;
 	}
 	lastRoute = context.path;
-	next();
-}
-
-export function incompleteUrlRedirects( context, next ) {
-	let redirect;
-	// Have we arrived at a URL ending in /posts? Redirect to feed stream/blog stream
-	if ( context.path.match( /^\/reader\/feeds\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/reader/feeds/${ context.params.feed_id }`;
-	} else if ( context.path.match( /^\/reader\/blogs\/([0-9]+)\/posts$/i ) ) {
-		redirect = `/reader/blogs/${ context.params.blog_id }`;
-	}
-
-	if ( redirect ) {
-		return page.redirect( redirect );
-	}
-
 	next();
 }
 
@@ -398,9 +383,17 @@ export function setupReadRoutes() {
 	const langParam = getLanguageRouteParam();
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	const readUrlsList = [
+	const readRedirectsList = [
 		{
 			path: '/read',
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ langParam }/read`,
+			getRedirect: () => '/reader',
+		},
+		{
+			path: `/${ anyLangParam }/read`,
 			getRedirect: () => '/reader',
 		},
 		{
@@ -581,23 +574,5 @@ export function setupReadRoutes() {
 		},
 	];
 
-	readUrlsList.forEach( ( { path, regex, getRedirect } ) => {
-		// Get the URL query parameters to append to the new URL.
-		const urlQueryParams = location.search;
-
-		// If no regex is provided, just redirect to the new URL.
-		if ( ! regex ) {
-			page( path, getRedirect() + urlQueryParams );
-			return;
-		}
-
-		// If a regex is provided, redirect to the new URL by extracting the parameters from the URL.
-		page( path, ( context, next ) => {
-			if ( context.path.match( regex ) ) {
-				page.redirect( getRedirect( context.params ) + urlQueryParams );
-			}
-
-			next();
-		} );
-	} );
+	setupRedirectRoutes( readRedirectsList );
 }

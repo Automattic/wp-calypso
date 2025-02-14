@@ -386,9 +386,10 @@ const sections = [
 		name: 'reader',
 		paths: [
 			'/reader',
+			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/reader', // For locale-specific reader.
 			// Legacy paths that we need to support for backwards compatibility.
 			'/read(/?.*)',
-			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read/search',
+			'/([a-z]{2,3}|[a-z]{2}-[a-z]{2})/read', // For locale-specific reader.
 		],
 		module: 'calypso/reader',
 		group: 'reader',
