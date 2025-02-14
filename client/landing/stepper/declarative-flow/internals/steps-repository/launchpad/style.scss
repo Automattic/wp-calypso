@@ -300,7 +300,7 @@
 
 // Launchpad - Processing Screens
 .processing {
-	.stepper-loader__progress-bar {
+	.wpcom__loading-progress-bar {
 		background-color: #fff;
 	}
 
@@ -342,8 +342,8 @@
 	}
 }
 
-.stepper-loader {
-	h1.stepper-loader__title {
+.wpcom__loading {
+	h1.wpcom__loading-title {
 		font-size: $font-title-medium;
 
 		@include break-medium {

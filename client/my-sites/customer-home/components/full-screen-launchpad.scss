@@ -82,17 +82,13 @@
             }
         }
 
-		&:nth-last-child(2) {
+		&:last-child {
 			border-radius: 0 0 4px 4px;
             border-bottom: 1px solid var(--studio-gray-5);
 
             a, button {
                 border-radius: 0 0 2px 2px;
             }
-		}
-
-		&:last-child {
-			display: none;
 		}
 	}
 
@@ -110,7 +106,7 @@
 		.components-button {
 			font-size: 1rem;
 		}
-		
+
 		.launchpad-site-launch {
 			order: 0;
 		}

@@ -1,22 +1,25 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { EllipsisMenu } from '@automattic/odie-client';
+import { useGetMostRecentOpenConversation } from '@automattic/odie-client/src/hooks/use-get-most-recent-open-conversation';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
+import { _n } from '@wordpress/i18n';
 import {
 	closeSmall,
 	chevronUp,
 	lineSolid,
-	commentContent,
+	scheduled,
 	page,
 	Icon,
 	comment,
+	commentContent,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -73,6 +76,8 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
+	const navigate = useNavigate();
+	const { totalNumberOfConversations } = useGetMostRecentOpenConversation();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -87,6 +92,14 @@ const ChatEllipsisMenu = () => {
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
 
+	const handleViewChats = () => {
+		recordTracksEvent( 'calypso_inlinehelp_view_open_chats_menu', {
+			total_number_of_conversations: totalNumberOfConversations,
+		} );
+
+		navigate( '/chat-history' );
+	};
+
 	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.stopPropagation();
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
@@ -99,22 +112,31 @@ const ChatEllipsisMenu = () => {
 			trackEventProps={ { source: 'help_center' } }
 		>
 			<div className="conversation-menu__wrapper">
-				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+				<button onClick={ clearChat }>
 					<Icon icon={ comment } />
-					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
 				</button>
-				<button onClick={ toggleSoundNotifications }>
+				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
+					<Icon icon={ scheduled } />
 					<div>
-						<ToggleControl
-							className="conversation-menu__notification-toggle"
-							label={ __( 'Notification sound', __i18n_text_domain__ ) }
-							checked={ areSoundNotificationsEnabled }
-							onChange={ ( newValue ) => {
-								setAreSoundNotificationsEnabled( newValue );
-							} }
-							__nextHasNoMarginBottom
-						/>
+						{ _n(
+							'View recent chat',
+							'View recent chats',
+							totalNumberOfConversations,
+							__i18n_text_domain__
+						) }
 					</div>
+				</Button>
+				<button onClick={ toggleSoundNotifications }>
+					<ToggleControl
+						className="conversation-menu__notification-toggle"
+						label={ __( 'Notification sound', __i18n_text_domain__ ) }
+						checked={ areSoundNotificationsEnabled }
+						onChange={ ( newValue ) => {
+							setAreSoundNotificationsEnabled( newValue );
+						} }
+						__nextHasNoMarginBottom
+					/>
 				</button>
 			</div>
 		</EllipsisMenu>
