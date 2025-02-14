@@ -86,6 +86,7 @@ class StatsTabsTab extends Component {
 			<li
 				className={ clsx( tabClass, { 'tab-disabled': ! hasClickAction } ) }
 				onClick={ this.clickHandler }
+				ref={ this.tooltipRef }
 			>
 				<a
 					href={ href }
@@ -98,9 +99,7 @@ class StatsTabsTab extends Component {
 					{ children }
 					{ hasPreviousData && (
 						<div className="stats-tabs__highlight">
-							<span className="stats-tabs__highlight-value" ref={ this.tooltipRef }>
-								{ numberFormatCompact( value ) }
-							</span>
+							<span className="stats-tabs__highlight-value">{ numberFormatCompact( value ) }</span>
 							<TrendComparison count={ value } previousCount={ previousValue } />
 							<Popover
 								className="tooltip tooltip--darker highlight-card-tooltip"
