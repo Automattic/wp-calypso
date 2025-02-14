@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { isValidElement, cloneElement } from 'react';
-import Button from '../button';
+import { Button } from '../button';
 import type { ReactElement, ReactNode, FunctionComponent } from 'react';
 
 export type BaseButton = {

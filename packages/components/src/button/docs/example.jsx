@@ -1,4 +1,4 @@
-import Button from '..';
+import { Button } from '..';
 import Card from '../../card';
 import Gridicon from '../../gridicon';
 

@@ -67,7 +67,7 @@ const cleanButtonProps = ( {
 	...buttonProps
 }: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } ) as ButtonProps;
 
-const Button: ForwardRefRenderFunction<
+const UnforwardedButton: ForwardRefRenderFunction<
 	HTMLButtonElement | HTMLAnchorElement,
 	ButtonProps | AnchorProps
 > = ( props, ref ) => {
@@ -108,6 +108,4 @@ const Button: ForwardRefRenderFunction<
  * @deprecated This button has been deprecated in favor of the `Button` component from `@wordpress/components`.
  * Please use the `Button` component from `@wordpress/components` instead. This button has aggressive and generic CSS that breaks many other buttons when imported.
  */
-const ButtonWithForwardedRef = forwardRef( Button );
-
-export default ButtonWithForwardedRef;
+export const Button = forwardRef( UnforwardedButton );

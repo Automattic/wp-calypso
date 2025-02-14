@@ -1,5 +1,5 @@
 import { ExternalLink } from '@wordpress/components';
-import Button from '../button';
+import { Button } from '../button';
 import NoticeBanner from './index';
 
 export default {
