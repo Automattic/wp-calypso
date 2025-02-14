@@ -93,11 +93,31 @@ const DiscoverStream = ( props ) => {
 		selectedStreamName: selectedTab,
 	};
 
+	const HeaderAndNavigation = () => {
+		return (
+			<>
+				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
+				{ isDiscoveryV2Enabled() ? (
+					<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				) : (
+					<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
+				) }
+
+				{ selectedTab === 'tags' && (
+					<DiscoverTagsNavigation
+						width={ props.width }
+						selectedTag={ selectedTag }
+						onTagSelect={ handleTagSelect }
+					/>
+				) }
+			</>
+		);
+	};
+
 	if ( selectedTab === 'add-new' ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
-				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-				<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				<HeaderAndNavigation />
 				<div className="reader__content">
 					<DiscoverAddNew />
 				</div>
@@ -107,21 +127,7 @@ const DiscoverStream = ( props ) => {
 
 	return (
 		<Stream { ...streamProps }>
-			<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-			{ isDiscoveryV2Enabled() ? (
-				<>
-					<DiscoverNavigationV2 selectedTab={ selectedTab } />
-					{ selectedTab === 'tags' && (
-						<DiscoverTagsNavigation
-							width={ props.width }
-							selectedTag={ selectedTag }
-							onTagSelect={ handleTagSelect }
-						/>
-					) }
-				</>
-			) : (
-				<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
-			) }
+			<HeaderAndNavigation />
 		</Stream>
 	);
 };
