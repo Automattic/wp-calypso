@@ -99,8 +99,7 @@ export const SiteHub = memo(
 							<HStack spacing={ 0 } expanded={ false } className="site-admin-site-hub__actions">
 								<Button
 									size="compact"
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									className="site-admin-site-hub_toggle-command-center"
+									className="site-admin-site-hub__toggle-command-center"
 									icon={ search }
 									onClick={ () => openCommandCenter() }
 									label={ __( 'Open command palette' ) }

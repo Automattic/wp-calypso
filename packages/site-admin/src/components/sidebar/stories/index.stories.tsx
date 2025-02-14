@@ -7,7 +7,7 @@ import { archive, navigation, settings } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import { SidebarContent, SidebarNavigationItem, SidebarNavigationScreen } from '../../';
+import { SidebarContent, SidebarNavigationItem, SidebarNavigationScreen, SiteHub } from '../../';
 import { useLocation, RouterProvider } from '../../../router';
 /**
  * Types
@@ -70,6 +70,7 @@ export const Default: Story = {
 	render: function Template( args: SidebarContentProps ) {
 		return (
 			<RouterProvider routes={ [] } pathArg="page">
+				<SiteHub isTransparent navigationBackLink="/" navigationBackLabel="Go to the Dashboard" />
 				<SidebarContent { ...args }>
 					<SidebarNavigationScreen
 						isRoot
