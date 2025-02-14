@@ -44,10 +44,9 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupContentsPath } from '../paths';
 import Error from './error';
 import GranularRestoreLoading from './loading-placeholder/granular-restore';
-import ProgressBar from './progress-bar';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreInProgress from './steps/restore-in-progress';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 
@@ -499,40 +498,6 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const renderInProgress = () => (
-		<>
-			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar
-				isReady={ 'running' === status }
-				initializationMessage={ translate( 'Initializing the restore process' ) }
-				message={ message }
-				entry={ currentEntry }
-				percent={ percent }
-			/>
-			<p className="rewind-flow__info">
-				{ translate(
-					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<CheckYourEmail
-				message={ translate(
-					"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
-				) }
-			/>
-		</>
-	);
-
 	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
@@ -634,7 +599,15 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			);
 		} else if ( isInProgress ) {
-			return renderInProgress();
+			return (
+				<RestoreInProgress
+					backupDisplayDate={ backupDisplayDate }
+					status={ status }
+					message={ message }
+					currentEntry={ currentEntry }
+					percent={ percent }
+				/>
+			);
 		} else if ( isFinished ) {
 			return renderFinished();
 		}

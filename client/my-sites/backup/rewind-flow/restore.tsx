@@ -41,11 +41,10 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupMainPath } from '../paths';
 import Error from './error';
 import Loading from './loading';
-import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import MissingCredentials from './steps/missing-credentials';
+import RestoreInProgress from './steps/restore-in-progress';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -332,40 +331,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		);
 	};
 
-	const renderInProgress = () => (
-		<>
-			<div className="rewind-flow__header">
-				<Gridicon icon="history" size={ 48 } />
-			</div>
-			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar
-				isReady={ 'running' === status }
-				initializationMessage={ translate( 'Initializing the restore process' ) }
-				message={ message }
-				entry={ currentEntry }
-				percent={ percent }
-			/>
-			<p className="rewind-flow__info">
-				{ translate(
-					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
-					{
-						args: {
-							backupDisplayDate,
-						},
-						components: {
-							strong: <strong />,
-						},
-					}
-				) }
-			</p>
-			<CheckYourEmail
-				message={ translate(
-					"Don't want to wait? For your convenience, we'll email you when your site has been fully restored."
-				) }
-			/>
-		</>
-	);
-
 	const renderFinished = () => (
 		<>
 			<div className="rewind-flow__header">
@@ -542,7 +507,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				/>
 			);
 		} else if ( isInProgress ) {
-			return renderInProgress();
+			return (
+				<RestoreInProgress
+					backupDisplayDate={ backupDisplayDate }
+					status={ status }
+					message={ message }
+					currentEntry={ currentEntry }
+					percent={ percent }
+				/>
+			);
 		} else if ( isRestoreDone && ! showFinishedScreen ) {
 			// The API may still say "finished" from a *previous* restore with the same rewindId.
 			// If our local showFinishedScreen flag is false, we treat this as a "new" visit
