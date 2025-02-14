@@ -183,6 +183,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/user-roles/#adding-users-to-your-site',
 		post_id: 1221,
 	},
+	'invite-people': {
+		link: 'https://wordpress.com/support/invite-people/',
+		post_id: 1221,
+	},
 	'manage-profile': {
 		link: 'https://wordpress.com/support/manage-my-profile/',
 		post_id: 19775,
@@ -282,6 +286,10 @@ const contextLinks = {
 	purchases: {
 		link: 'https://wordpress.com/support/manage-purchases/',
 		post_id: 111349,
+	},
+	'restore-site': {
+		link: 'https://wordpress.com/support/delete-site/#restore-a-deleted-site',
+		post_id: 14411,
 	},
 	'reusable-blocks': {
 		link: 'https://wordpress.com/support/wordpress-editor/blocks/reusable-block/',

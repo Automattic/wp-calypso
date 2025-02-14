@@ -47,7 +47,6 @@ const Intro: Step = function Intro( { navigation, variantSlug } ) {
 			stepContent={ <IntroStep onSubmit={ handleSubmit } variantSlug={ variantSlug } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ false }
-			showHeaderWooCommercePowered={ false }
 			showJetpackPowered={ false }
 			customizedActionButtons={
 				<ChatButton

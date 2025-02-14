@@ -569,7 +569,6 @@ function UnifiedPlansStep( {
 							<FormattedHeader
 								id="plans-header"
 								align="center"
-								subHeaderAlign="center"
 								headerText={ <HeaderText /> }
 								subHeaderText={ fallbackSubHeaderText }
 							/>

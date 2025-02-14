@@ -169,6 +169,7 @@ class StatsPostDetail extends Component {
 
 		// Prepare post details to PostStatsCard from post or postFallback.
 		const passedPost = this.getPost();
+		passedPost.url = previewUrl;
 
 		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;

@@ -9,6 +9,7 @@ import {
 	useAutoScroll,
 	useCreateZendeskConversation,
 	useZendeskMessageListener,
+	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
 import { getOdieInitialMessage } from '../../utils';
@@ -80,6 +81,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			);
 		}
 	}, [ messagesContainerRef ] );
+	useUpdateDocumentTitle();
 
 	useEffect( () => {
 		if ( isForwardingToZendesk || hasForwardedToZendesk ) {

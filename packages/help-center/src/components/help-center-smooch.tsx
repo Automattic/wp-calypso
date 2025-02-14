@@ -1,10 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
 import { HelpCenterSelect } from '@automattic/data-stores';
 import { useGetUnreadConversations } from '@automattic/odie-client/src/data';
 import {
 	useLoadZendeskMessaging,
 	useAuthenticateZendeskMessaging,
+	isTestModeEnvironment,
 } from '@automattic/zendesk-client';
 import {
 	SMOOCH_INTEGRATION_ID,
@@ -30,8 +30,7 @@ const initSmooch = ( {
 	jwt: string;
 	externalId: string | undefined;
 } ) => {
-	const currentEnvironment = config( 'env_id' ) as string;
-	const isTestMode = ! [ 'production', 'desktop' ].includes( currentEnvironment );
+	const isTestMode = isTestModeEnvironment();
 
 	return Smooch.init( {
 		integrationId: isTestMode ? SMOOCH_INTEGRATION_ID_STAGING : SMOOCH_INTEGRATION_ID,
@@ -83,11 +82,7 @@ const HelpCenterSmooch: React.FC< { enableAuth: boolean } > = ( { enableAuth } )
 
 	const { data: authData } = useAuthenticateZendeskMessaging( allowChat, 'messenger' );
 
-	const { isMessagingScriptLoaded } = useLoadZendeskMessaging(
-		'zendesk_support_chat_key',
-		allowChat,
-		allowChat
-	);
+	const { isMessagingScriptLoaded } = useLoadZendeskMessaging( allowChat, allowChat );
 	const { setIsChatLoaded, setZendeskClientId } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const getUnreadNotifications = useGetUnreadConversations();
 

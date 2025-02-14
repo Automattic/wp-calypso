@@ -17,13 +17,12 @@ import type { StepperInternalSelect } from '@automattic/data-stores';
 type StepRouteProps = {
 	step: StepperStep;
 	flow: Flow;
-	showWooLogo: boolean;
 	renderStep: ( step: StepperStep ) => JSX.Element | null;
 	navigate: Navigate< StepperStep[] >;
 };
 
 // TODO: Check we can move RenderStep function to here and remove the renderStep prop
-const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRouteProps ) => {
+const StepRoute = ( { step, flow, renderStep, navigate }: StepRouteProps ) => {
 	const userIsLoggedIn = useSelector( isUserLoggedIn );
 	const stepContent = renderStep( step );
 	const stepData = useSelect(
@@ -76,7 +75,7 @@ const StepRoute = ( { step, flow, showWooLogo, renderStep, navigate }: StepRoute
 		>
 			{ stepContent && (
 				<>
-					<SignupHeader pageTitle={ flow.title } showWooLogo={ showWooLogo } />
+					<SignupHeader pageTitle={ flow.title } />
 					{ stepContent }
 					<SurveyManager flow={ flow } />
 					<StepperPerformanceTrackerStop flow={ flow.name } step={ step.slug } />
