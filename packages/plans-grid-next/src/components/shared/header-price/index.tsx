@@ -185,7 +185,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	}
 
-	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings ) {
+	if ( enableTermSavingsPriceDisplay && termVariantPricing && savings && ! current ) {
 		return (
 			<div className="plans-grid-next-header-price">
 				<div className="plans-grid-next-header-price__badge">
