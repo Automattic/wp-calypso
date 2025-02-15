@@ -12,11 +12,9 @@ import {
 	usePlansFromTypes,
 	usePlanTypesWithIntent,
 } from '@automattic/plans-grid-next';
-import useLongerPlanTermDefaultExperiment from './experiments/use-longer-plan-term-default-experiment';
 import useCheckPlanAvailabilityForPurchase from './use-check-plan-availability-for-purchase';
 
 const useEligibilityForTermSavingsPriceDisplay = ( {
-	flowName,
 	hiddenPlans,
 	intent,
 	isSubdomainNotGenerated,
@@ -25,7 +23,6 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals,
 	coupon,
 	siteId,
-	isInSignup,
 }: {
 	flowName?: string | null;
 	hiddenPlans?: HiddenPlans;
@@ -36,9 +33,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 	displayedIntervals: UrlFriendlyTermType[];
 	coupon?: string;
 	siteId?: number | null;
-	isInSignup?: boolean;
 } ) => {
-	const longerPlanTermDefaultExperiment = useLongerPlanTermDefaultExperiment( flowName );
 	const availablePlanSlugs = usePlansFromTypes( {
 		planTypes: usePlanTypesWithIntent( {
 			intent,
@@ -79,7 +74,7 @@ const useEligibilityForTermSavingsPriceDisplay = ( {
 		return false;
 	}
 
-	return longerPlanTermDefaultExperiment.isEligibleForTermSavings && isInSignup;
+	return true;
 };
 
 export default useEligibilityForTermSavingsPriceDisplay;
