@@ -3,6 +3,7 @@ import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic
 import { hasCheckoutVersion, ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useCartKey from '../../use-cart-key';
 
@@ -54,6 +55,18 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 	// Ensure the checkbox state is always a boolean
 	const isChecked = Boolean( responseCart.tax.location.is_for_business );
 	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
+
+	useEffect( () => {
+		if (
+			! isUnitedStateWithBusinessOption &&
+			responseCart.tax.location.is_for_business !== undefined
+		) {
+			updateLocation( {
+				...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
+				isForBusiness: undefined,
+			} );
+		}
+	}, [ isUnitedStateWithBusinessOption ] );
 
 	// Hide checkbox if not eligible
 	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
