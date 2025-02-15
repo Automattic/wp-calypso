@@ -16,6 +16,7 @@ import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { isValid } from '../types/wpcom-store-state';
 import CountrySelectMenu from './country-select-menu';
 import { LeftColumn, RightColumn } from './ie-fallback';
+import { IsForBusinessCheckbox } from './is-for-business-checkbox';
 import { VatForm } from './vat-form';
 import type {
 	CountryListItem,
@@ -256,6 +257,7 @@ export default function TaxFields( {
 			{ isVatSupported && (
 				<VatForm section={ section } isDisabled={ isDisabled } countryCode={ countryCode?.value } />
 			) }
+			<IsForBusinessCheckbox taxInfo={ taxInfo } />
 		</>
 	);
 }
