@@ -175,7 +175,6 @@ class TagStream extends Component {
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				{ this.props.showBack && <HeaderBack /> }
 			</Stream>
 		);
 	}

@@ -1045,12 +1045,6 @@
 		z-index: z-index(".masterbar", ".reader-back");
 	
 		button.is-compact.is-borderless {
-			// margin: 2px;
-			// @media ( min-width: 1180px ) {
-			// 	padding-top: 12px;
-			// 	padding-bottom: 12px;
-			// }
-
 			@media ( max-width: 1180px ) {
 				margin: -5px 0 7px 0;
 				padding: 0;
@@ -1064,6 +1058,19 @@
 		@media ( max-width: 1180px ) {
 			position: unset;
 			display: flex;
+		}
+	}
+
+	&.tag-stream__main {
+		.back-button {
+			button.is-compact.is-borderless {	
+				@media ( max-width: 660px ) {
+					padding: 0 0 0 16px;
+				}
+				@media ( max-width: 600px ) {
+					padding: 0 0 8px 0;
+				}
+			}
 		}
 	}
 
