@@ -424,7 +424,6 @@ const PlansFeaturesMain = ( {
 	};
 
 	const enableTermSavingsPriceDisplay = useEligibilityForTermSavingsPriceDisplay( {
-		flowName: flowName,
 		selectedPlan,
 		hiddenPlans,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
@@ -433,7 +432,6 @@ const PlansFeaturesMain = ( {
 		displayedIntervals: filteredDisplayedIntervals,
 		coupon,
 		siteId,
-		isInSignup,
 	} );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
