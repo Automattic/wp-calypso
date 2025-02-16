@@ -101,9 +101,7 @@ export const useFeaturesList = () => {
 					comment: 'Feature description',
 				}
 			),
-			linkLearnMore: localizeUrl(
-				'https://developer.wordpress.com/?post_type=documentation&p=99417'
-			),
+			linkLearnMore: localizeUrl( 'https://developer.wordpress.com/docs/glance/support/' ),
 		},
 		{
 			id: 'malware-scanning-removal',
