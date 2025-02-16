@@ -35,6 +35,10 @@ export const useHandleSocialResponse = ( flowName: string ) => {
 			id_token: string | null = null,
 			userData: PreSignUpUserData | null
 		) => {
+			if ( ! id_token ) {
+				return;
+			}
+
 			const storedRedirectTo = window.sessionStorage.getItem( 'signup_redirect_to' );
 
 			if ( storedRedirectTo ) {
