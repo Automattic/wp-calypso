@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
@@ -26,6 +27,9 @@ const ChartHeader = ( {
 			treatAtomicAsJetpackSite: false,
 		} );
 	} );
+
+	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
+
 	const onGatedHandler = ( events, source, statType ) => {
 		// Stop the popup from showing for Jetpack sites.
 		if ( isSiteJetpackNotAtomic ) {
@@ -53,6 +57,7 @@ const ChartHeader = ( {
 				intervals={ intervals }
 				onGatedHandler={ onGatedHandler }
 			/>
+			{ isChartLibraryEnabled && <div>Chart type switcher</div> }
 		</div>
 	);
 };
