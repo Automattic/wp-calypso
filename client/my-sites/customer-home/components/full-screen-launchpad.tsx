@@ -133,7 +133,12 @@ export const FullScreenLaunchpad = ( {
 							{ launchSiteTask?.title }
 						</Button>
 					) }
-					<Button onClick={ onSkipLaunchpad } disabled={ isLaunching }>
+					<Button
+						style={ { color: 'var(--color-neutral-100)' } }
+						variant="link"
+						onClick={ onSkipLaunchpad }
+						disabled={ isLaunching }
+					>
 						{ __( 'Skip to dashboard' ) }
 					</Button>
 				</div>
