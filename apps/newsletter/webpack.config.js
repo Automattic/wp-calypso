@@ -16,7 +16,7 @@ function getWebpackConfig( env = {}, argv = {} ) {
 	return {
 		...webpackConfig,
 		entry: {
-			app: path.join( __dirname, 'src', 'index.js' ),
+			newsletter: path.join( __dirname, 'src', 'index.js' ),
 		},
 		output: {
 			...webpackConfig.output,
