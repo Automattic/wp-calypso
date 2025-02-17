@@ -1036,7 +1036,7 @@ export default function CampaignItemDetails( props: Props ) {
 															recordTracksEvent( 'calypso_dsp_tsp_open_post_click', {} );
 														} }
 													>
-														<span>{ translate( 'Open Tumblr Post”' ) }</span>
+														<span>{ translate( 'Open Tumblr Post' ) }</span>
 														<Gridicon icon="external" size={ 16 } />
 													</a>
 												</div>
