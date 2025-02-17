@@ -1,11 +1,10 @@
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
-import { Button, FormLabel, Spinner } from '@automattic/components';
+import { Button, FormLabel, Spinner, ExternalLink } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
-import ExternalLink from 'calypso/components/external-link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice';

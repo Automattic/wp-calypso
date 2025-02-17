@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
-import { PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';

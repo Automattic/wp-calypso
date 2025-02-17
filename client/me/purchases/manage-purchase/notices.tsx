@@ -1140,11 +1140,24 @@ class PurchaseNotice extends Component<
 		);
 	}
 
+	renderAsyncPendingPaymentNotice() {
+		const { translate } = this.props;
+		const noticeText = translate(
+			'There is currently a payment processing for this subscription. Please wait for the payment to complete before attempting to make any changes.'
+		);
+
+		return <Notice showDismiss={ false } status="is-warning" text={ noticeText }></Notice>;
+	}
+
 	render() {
 		const { purchase } = this.props;
 
 		if ( this.props.isDataLoading ) {
 			return null;
+		}
+
+		if ( purchase.asyncPendingPaymentBlockIsSet ) {
+			return this.renderAsyncPendingPaymentNotice();
 		}
 
 		if ( isDomainTransfer( purchase ) ) {

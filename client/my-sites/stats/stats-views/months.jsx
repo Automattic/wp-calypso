@@ -1,6 +1,6 @@
 import page from '@automattic/calypso-router';
 import { Popover } from '@automattic/components';
-import { localize, numberFormat } from 'i18n-calypso';
+import { localize, numberFormat, numberFormatCompact } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, createElement, PureComponent } from 'react';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
@@ -131,10 +131,7 @@ const StatsViewsMonths = ( props ) => {
 				totals.months[ month ] += value;
 				totals.yearsCount[ year ] += 1;
 				totals.monthsCount[ month ] += 1;
-				displayValue = numberFormat( value, {
-					decimals: 1,
-					numberFormatOptions: { notation: 'compact' },
-				} );
+				displayValue = numberFormatCompact( value );
 			}
 
 			totalValue += value;

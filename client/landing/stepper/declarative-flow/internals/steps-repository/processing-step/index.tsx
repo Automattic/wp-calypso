@@ -3,21 +3,20 @@ import {
 	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
-	ECOMMERCE_FLOW,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 	isNewsletterFlow,
 } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
+import Loading from 'calypso/components/loading';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
@@ -98,7 +97,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
+	const { setSiteSetupError, clearSiteSetupError } = useDispatch( SITE_STORE );
+
 	useEffect( () => {
+		clearSiteSetupError();
+
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
@@ -110,10 +113,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					// including the values that were updated during the action() running.
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
-				} catch ( e ) {
+				} catch ( e: any ) {
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
+					setSiteSetupError( e.error || e.code, e.message );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
@@ -175,7 +179,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterFlow( flowName );
-	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Return tailored processing screens for flows that need them
 	if ( isNewsletterFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
@@ -197,15 +200,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
-					<StepperLoader
-						title={ getCurrentMessage() }
-						subtitle={ getSubtitle() }
-						progress={ progress }
-					/>
+					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
-				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);

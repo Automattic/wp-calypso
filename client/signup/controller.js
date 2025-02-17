@@ -127,8 +127,15 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( ! initialContext ) {
 			initialContext = Object.assign( {}, context );
+		} else if (
+			getFlowName( initialContext.params, userLoggedIn ) !==
+			getFlowName( context.params, userLoggedIn )
+		) {
+			// Update the `initialContext` when the flow changes.
+			initialContext = Object.assign( {}, initialContext, context );
 		}
 
 		next();

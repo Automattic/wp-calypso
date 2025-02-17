@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,7 +9,25 @@ const useAddSitesModalNotices = () => {
 	const translate = useTranslate();
 
 	const showErrorNotice = useCallback(
-		( url: string ) => {
+		( url: string, error?: { error?: string } ) => {
+			if ( error?.error === 'email_unverified' ) {
+				dispatch(
+					errorNotice(
+						translate( 'Please verify your email before subscribing.', {
+							comment: 'Error shown when trying to subscribe to a site with an unverified email.',
+						} ),
+						{
+							id: 'resend-verification-email',
+							button: translate( 'Account Settings' ),
+							onClick: () => {
+								page( '/me/account' );
+							},
+						}
+					)
+				);
+				return;
+			}
+
 			dispatch(
 				errorNotice(
 					translate( 'There was an error when trying to subscribe to %s.', {

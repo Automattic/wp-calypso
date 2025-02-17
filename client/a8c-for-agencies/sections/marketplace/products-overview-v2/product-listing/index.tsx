@@ -16,7 +16,6 @@ import useProductAndPlans from '../../hooks/use-product-and-plans';
 import { SelectedFilters } from '../../lib/product-filter';
 import { getSupportedBundleSizes } from '../../products-overview/product-listing/hooks/use-product-bundle-size';
 import useSubmitForm from '../../products-overview/product-listing/hooks/use-submit-form';
-import MultiProductCard from '../multi-product-card';
 import ProductCard from '../product-card';
 import ProductListingEmpty from './empty';
 import ProductListingSection from './section';
@@ -156,13 +155,6 @@ export default function ProductListing( {
 		[ dispatch, quantity, selectedCartItems, setSelectedCartItems ]
 	);
 
-	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
-			handleSelectBundleLicense( product );
-		},
-		[ handleSelectBundleLicense ]
-	);
-
 	const onSelectOrReplaceProduct = useCallback(
 		( product: APIProductFamilyProduct, replace?: APIProductFamilyProduct ) => {
 			if ( replace ) {
@@ -222,44 +214,33 @@ export default function ProductListing( {
 
 	const isSingleLicenseView = quantity === 1;
 
-	const getProductCards = ( products: APIProductFamilyProduct[] ) => {
-		return products.map( ( productOption ) =>
-			Array.isArray( productOption ) ? (
-				<MultiProductCard
+	const getProductCards = (
+		products: APIProductFamilyProduct[],
+		withCustomCard: boolean = false
+	) => {
+		return products.map( ( productOption ) => {
+			const options = Array.isArray( productOption ) ? productOption : [ productOption ];
+
+			return (
+				<ProductCard
 					asReferral={ isReferralMode }
-					key={ productOption.map( ( { slug } ) => slug ).join( ',' ) }
-					products={ productOption }
+					key={ options.map( ( { slug } ) => slug ).join( ',' ) }
+					products={ options }
 					onSelectProduct={ onSelectOrReplaceProduct }
 					onVariantChange={ onClickVariantOption }
-					isSelected={ isSelected( productOption.map( ( { slug } ) => slug ) ) }
-					selectedOption={ productOption.find( ( option ) =>
-						selectedCartItems.find(
-							( item ) => item.slug === option.slug && item.quantity === quantity
-						)
-					) }
+					isSelected={ isSelected( options.map( ( { slug } ) => slug ) ) }
 					isDisabled={
 						! isReady ||
 						( isIncompatibleProduct( productOption, incompatibleProducts ) &&
-							! isSelected( productOption.map( ( { slug } ) => slug ) ) )
+							! isSelected( options.map( ( { slug } ) => slug ) ) )
 					}
 					hideDiscount={ isSingleLicenseView }
 					suggestedProduct={ suggestedProduct }
 					quantity={ quantity }
+					withCustomCard={ withCustomCard }
 				/>
-			) : (
-				<ProductCard
-					asReferral={ isReferralMode }
-					key={ productOption.slug }
-					product={ productOption }
-					onSelectProduct={ onSelectProduct }
-					isSelected={ isSelected( productOption.slug ) }
-					isDisabled={ ! isReady || isIncompatibleProduct( productOption, incompatibleProducts ) }
-					hideDiscount={ isSingleLicenseView }
-					suggestedProduct={ suggestedProduct }
-					quantity={ quantity }
-				/>
-			)
-		);
+			);
+		} );
 	};
 
 	if ( isLoadingProducts ) {
@@ -278,7 +259,7 @@ export default function ProductListing( {
 
 			{ featuredProducts.length > 0 && (
 				<ProductListingSection title={ translate( 'Featured products' ) }>
-					{ getProductCards( featuredProducts ) }
+					{ getProductCards( featuredProducts, true ) }
 				</ProductListingSection>
 			) }
 

@@ -15,6 +15,7 @@ import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import SignupForm from 'calypso/blocks/signup-form';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import {
@@ -23,6 +24,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
@@ -321,6 +323,19 @@ export class UserStep extends Component {
 			subHeaderText = translate( 'Pick an option to start shaping your dream website with us.' );
 		}
 
+		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
+			if ( document.location.search?.includes( 'wpcloud' ) ) {
+				subHeaderText = translate(
+					'Create a {{a}}WordPress.com{{/a}} account using a shared team email address (e.g., wpcloud@yourdomain.com) to enable collaborative access for your team members.',
+					{
+						components: {
+							a: <a href="https://wordpress.com" />,
+						},
+					}
+				);
+			}
+		}
+
 		if ( this.props.userLoggedIn ) {
 			subHeaderText = '';
 		}
@@ -534,6 +549,17 @@ export class UserStep extends Component {
 			} );
 		}
 
+		if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
+			if ( document.location.search?.includes( 'wpcloud' ) ) {
+				return (
+					<div className={ clsx( 'signup-form__wrapper' ) }>
+						<WPCloudLogo size={ 256 } />
+						<h5>{ translate( 'Apply to become a hosting partner.' ) }</h5>
+					</div>
+				);
+			}
+		}
+
 		if ( flowName === 'wpcc' && oauth2Client ) {
 			return translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
 				args: { clientTitle: oauth2Client.title },
@@ -641,12 +667,6 @@ export class UserStep extends Component {
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( 'Let’s get you signed up' ) }
 				subHeaderText={ this.getSubHeaderText() }
-				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
-					args: {
-						currentStep: 1,
-						totalSteps: 1,
-					},
-				} ) }
 			>
 				{ this.renderSignupForm() }
 			</VideoPressStepWrapper>

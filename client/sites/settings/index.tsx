@@ -5,6 +5,7 @@ import {
 	redirectIfCurrentUserCannot,
 } from 'calypso/controller';
 import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
+import { redirectSiteSettingsIfDuplicatedViewsDisabled } from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	SETTINGS_SITE,
 	SETTINGS_ADMINISTRATION,
@@ -36,6 +37,7 @@ export default function () {
 		siteSelection,
 		navigation,
 		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectSiteSettingsIfDuplicatedViewsDisabled,
 		siteSettings,
 		siteDashboard( SETTINGS_SITE ),
 		makeLayout,
