@@ -1,3 +1,5 @@
+@import "@automattic/typography/styles/variables";
+
 .discover-add-new {
 	padding: 10px;
 }
@@ -5,4 +7,14 @@
 .discover-add-new__subscriptions {
 	padding-top: 20px;
 	clear: both;
+}
+
+.discover-add-new__form-title {
+	margin-bottom: 10px;
+}
+
+.discover-add-new__subscriptions-title {
+	font-size: $font-title-small;
+	font-weight: 500;
+	margin-bottom: 10px;
 }
