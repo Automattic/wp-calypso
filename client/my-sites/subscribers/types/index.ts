@@ -46,6 +46,7 @@ export type SubscriberListArgs = {
 	currentPage: number;
 	perPage?: number;
 	filterOption?: SubscribersFilterBy;
+	filters?: SubscribersFilterBy[];
 	searchTerm?: string;
 	sortTerm?: SubscribersSortBy;
 };

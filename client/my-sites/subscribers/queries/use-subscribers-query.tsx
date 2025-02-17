@@ -13,6 +13,7 @@ type SubscriberQueryParams = {
 	sortTerm?: SubscribersSortBy;
 	sortOrder?: 'asc' | 'desc';
 	filterOption?: SubscribersFilterBy;
+	filters?: SubscribersFilterBy[];
 	timestamp?: number;
 	limitData?: boolean;
 };
@@ -26,6 +27,7 @@ const useSubscribersQuery = ( {
 	sortTerm = SubscribersSortBy.DateSubscribed,
 	sortOrder,
 	filterOption = SubscribersFilterBy.All,
+	filters = [],
 	limitData = false,
 }: SubscriberQueryParams ) => {
 	const { hasManySubscribers, isLoading } = useManySubsSite( siteId );
@@ -40,6 +42,7 @@ const useSubscribersQuery = ( {
 			search,
 			sortTerm,
 			filterOption,
+			filters,
 			limitDataReturned,
 			timestamp,
 			sortOrder
@@ -61,6 +64,10 @@ const useSubscribersQuery = ( {
 				...( search && { search } ),
 				...( sortTerm && { sort: sortTerm } ),
 				...( sortOrder && { sort_order: sortOrder } ),
+			} );
+
+			filters.forEach( ( filter ) => {
+				params.append( 'filters[]', filter );
 			} );
 
 			return wpcom.req.get( {
