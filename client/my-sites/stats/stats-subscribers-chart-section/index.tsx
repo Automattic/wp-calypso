@@ -127,33 +127,6 @@ export default function SubscribersChartSection( {
 	const hasAddedPaidSubscriptionProduct = products && products.length > 0;
 	const chartData = transformData( data?.data || [], hasAddedPaidSubscriptionProduct );
 
-	// Adds a data transform function specific to the line chart component
-	function transformDataForLineChart( data: SubscribersData[] ) {
-		// Create a copy of the data array to avoid mutating the original
-		const sortedData = [ ...data ]
-			// Sort in chronological order (oldest to newest)
-			.sort( ( a, b ) => new Date( a.period ).getTime() - new Date( b.period ).getTime() );
-
-		return [
-			{
-				label: 'Subscribers',
-				options: {
-					stroke: '#069e08',
-				},
-				data: sortedData.map( ( point ) => {
-					const date = new Date( point.period );
-					// Lock date to midnight for all values to better align with ticks
-					date.setHours( 0, 0, 0, 0 );
-
-					return {
-						date,
-						value: point.subscribers ?? 0,
-					};
-				} ),
-			},
-		];
-	}
-
 	// adds in a tick formatting function to pass to the linechart component
 	// this can be modified to add more date formats (eg. month, year, etc.)
 	const formatTimeTick = ( value: number ) => {
@@ -215,7 +188,19 @@ export default function SubscribersChartSection( {
 					{ isChartLibraryEnabled ? (
 						<AsyncLoad
 							require="calypso/my-sites/stats/components/line-chart"
-							chartData={ transformDataForLineChart( data?.data || [] ) }
+							chartData={ [
+								{
+									label: 'Subscribers',
+									options: {
+										stroke: '#069e08',
+									},
+									data:
+										data?.data?.map( ( point ) => ( {
+											date: new Date( point.period ),
+											value: point.subscribers ?? 0,
+										} ) ) || [],
+								},
+							] }
 							height={ 300 }
 							formatTimeTick={ formatTimeTick }
 						/>
