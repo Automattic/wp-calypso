@@ -87,11 +87,17 @@ export default function useHistory(): UseNavigation {
 		await new Promise< void >( ( resolve ) => {
 			const classname = options.transition ?? '';
 			document.documentElement.classList.add( classname );
-			const transition = document.startViewTransition( () => performPush() );
-			transition.finished.finally( () => {
+			if ( document.startViewTransition ) {
+				const transition = document.startViewTransition( () => performPush() );
+				transition.finished.finally( () => {
+					document.documentElement.classList.remove( classname );
+					resolve();
+				} );
+			} else {
+				performPush();
 				document.documentElement.classList.remove( classname );
 				resolve();
-			} );
+			}
 		} );
 	} );
 
