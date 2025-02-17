@@ -27,7 +27,7 @@ const useSteps = ( {
 	isDestinationSetupSiteFlow,
 }: ProcessingScreenProps ) => {
 	const { __ } = useI18n();
-	let steps: ( Step | false )[] = [];
+	let steps: Step[] = [];
 
 	switch ( flowName ) {
 		case 'launch-site':
@@ -86,10 +86,10 @@ const useSteps = ( {
 				{ title: __( 'Turning on the lights' ) },
 				{ title: __( 'Making you cookies' ) },
 				{ title: __( 'Planning the next chess move' ) },
-			];
+			].filter( Boolean ) as Step[];
 	}
 
-	return useRef( steps.filter( Boolean ) );
+	return useRef( steps );
 };
 
 // This component is cloned from the CreateSite component of Gutenboarding flow
