@@ -165,7 +165,9 @@ class DomainSearchResults extends Component {
 									// eslint-disable-next-line jsx-a11y/anchor-is-valid
 									<a
 										href="#"
-										onClick={ () => this.props.onClickUseYourDomain( domainArgument ) }
+										onClick={ ( event ) =>
+											this.props.onClickUseYourDomain( event, domainArgument )
+										}
 										data-tracks-button-click-source={ this.props.tracksButtonClickSource }
 									/>
 								),
