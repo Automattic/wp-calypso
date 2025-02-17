@@ -18,9 +18,6 @@ export default function () {
 	page( '/site-logs', siteSelection, sites, makeLayout, clientRender );
 
 	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		// TODO:
-		// - how to test this flow?
-		// - check other places where we use untangling/hosting-menu
 		page( '/site-logs/:site', ( context: Context ) => {
 			page.redirect( `/sites/tools/logs/${ context.params.site }` );
 		} );

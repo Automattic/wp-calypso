@@ -1,10 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-
 import { render, screen, fireEvent } from '@testing-library/react';
 import moment from 'moment';
-import { DateTimePicker } from '../components/site-logs-toolbar/date-time-picker';
+import React from 'react';
+import { DateTimePicker } from '../components/date-time-picker';
 
 test( `display values in the specified timezone`, () => {
 	const { rerender } = render(
