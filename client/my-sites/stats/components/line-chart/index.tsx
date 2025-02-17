@@ -72,7 +72,7 @@ function StatsLineChart( {
 						axis: {
 							x: {
 								tickFormat: formatTime,
-								numTicks: className === 'stats-realtime-chart' ? undefined : 5,
+								numTicks: className === 'stats-realtime-chart' ? undefined : dataSeries.length,
 							},
 							y: {
 								orientation: 'right',

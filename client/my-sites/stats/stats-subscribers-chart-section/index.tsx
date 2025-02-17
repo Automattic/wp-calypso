@@ -78,7 +78,7 @@ export default function SubscribersChartSection( {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
 	const quantityDefault: QuantityDefaultType = {
-		day: 30,
+		day: 14,
 		week: 12,
 		month: 6,
 		year: 3,
@@ -196,23 +196,21 @@ export default function SubscribersChartSection( {
 											return null;
 										}
 
-										// Freeze the object to prevent mutations and ensure immutability
-										return Object.freeze( {
+										return {
 											date: dateObj,
 											value: point.subscribers ?? 0,
-										} );
+										};
 										// Filter out any null values from invalid dates, fallback to empty array if data is undefined
 									} )
 									.filter( Boolean ) || [];
 
-							// Freeze the entire chart data structure to maintain immutability throughout
-							const chartData = Object.freeze( [
+							const chartData = [
 								{
 									label: 'Subscribers',
 									options: { stroke: '#069e08' },
 									data: transformedData,
 								},
-							] );
+							];
 
 							return (
 								<AsyncLoad
