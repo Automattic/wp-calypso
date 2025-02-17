@@ -36,7 +36,6 @@ const discover = ( context, next ) => {
 	const state = context.store.getState();
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
-	const isLoggedIn = isUserLoggedIn( state );
 
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 	recordTrack(
@@ -45,7 +44,7 @@ const discover = ( context, next ) => {
 		{ pathnameOverride: `${ currentRoute }?${ currentQueryArgs }` }
 	);
 
-	if ( ! isLoggedIn ) {
+	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
 
