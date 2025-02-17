@@ -10,7 +10,7 @@ import './style.scss';
 /**
  * Types
  */
-import type { ButtonProps } from '@wordpress/components/src/button/types';
+import type { ButtonProps } from '@wordpress/components/build-types/button/types';
 
 export function SidebarButton( props: ButtonProps ) {
 	return (
