@@ -12,7 +12,6 @@ $input-z-index: 20;
 .search-component {
 	border-radius: 2px;
 	display: flex;
-	flex: 1 1 auto;
 	width: 60px;
 	height: 51px;
 	position: relative;
@@ -21,8 +20,14 @@ $input-z-index: 20;
 	z-index: 1;
 	transition: all 0.15s ease-in-out;
 
+	.search-component__left-icon-container {
+		min-width: 32px;
+		svg {
+			fill: var( --color-neutral-10 );
+		}
+	}
+
 	input.search-component__input[type="search"] {
-		width: 0;
 		flex: 1 1 auto;
 		z-index: $input-z-index;
 		top: 0;

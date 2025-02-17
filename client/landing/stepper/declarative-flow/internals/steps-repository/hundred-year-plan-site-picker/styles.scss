@@ -42,8 +42,6 @@
 				}
 
 				.site-selector__sites {
-					border-top: none;
-
 					@include breakpoint-deprecated( "<660px" ) {
 						max-height: none;
 					}

@@ -106,7 +106,6 @@ class BlogsSettings extends Component {
 						onSearch={ ( searchTerm ) => {
 							this.setState( { searchTerm } );
 						} }
-						isReskinned
 						placeholder={ this.props.translate( 'Search by name or domain…' ) }
 						disableAutocorrect
 						defaultValue=""

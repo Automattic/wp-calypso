@@ -155,7 +155,6 @@ export const SitesContentControls = ( {
 			<SitesSearch
 				searchIcon={ <SearchIcon /> }
 				onSearch={ handleSearch }
-				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect
 				defaultValue={ initialSearch }
