@@ -1,0 +1,51 @@
+{
+	"name": "@automattic/newsletter",
+	"version": "1.0.0",
+	"description": "The Newsletter widget",
+	"calypso:src": "src/index.js",
+	"main": "dist/build.min.js",
+	"module": "dist/build.esm.js",
+	"sideEffects": true,
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"scripts": {
+		"clean": "npx rimraf dist",
+		"build": "NODE_ENV=production yarn dev",
+		"build:newsletter": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/newsletter",
+		"translate": "rm -rf dist/strings && mkdirp dist && wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir './dist/strings' --output './dist/whats-new-strings.pot' && build-app-languages --stringsFilePath='./dist/whats-new-strings.pot'"
+	},
+	"dependencies": {
+		"@automattic/newsletter": "workspace:^",
+		"@wordpress/element": "^6.16.0",
+		"@wordpress/i18n": "^5.16.0",
+		"i18n-calypso": "workspace:^",
+		"mkdirp": "npm:^3.0.1",
+		"postcss": "^8.5.2",
+		"react": "^18.2.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/wp-babel-makepot": "workspace:^",
+		"@wordpress/dependency-extraction-webpack-plugin": "^6.14.0",
+		"webpack": "^5.97.1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/your-package"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"dist",
+		"src"
+	]
+}
