@@ -51,6 +51,7 @@ function UseMyDomain( props ) {
 		setUseMyDomainMode,
 		isStepper = false,
 		stepLocation,
+		errorAction,
 	} = props;
 
 	const { __ } = useI18n();
@@ -151,9 +152,10 @@ function UseMyDomain( props ) {
 				availabilityData: wpRegistrationCheckData,
 				domainName: filteredDomainName,
 				selectedSite,
+				errorAction,
 			} ),
 		};
-	}, [ filterDomainName, domainName, selectedSite ] );
+	}, [ filterDomainName, domainName, selectedSite, errorAction ] );
 
 	const getAvailability = useCallback( async () => {
 		const filteredDomainName = filterDomainName( domainName );
@@ -173,9 +175,10 @@ function UseMyDomain( props ) {
 				availabilityData,
 				domainName: filteredDomainName,
 				selectedSite,
+				errorAction,
 			} ),
 		};
-	}, [ filterDomainName, domainName, getWpcomAvailabilityErrors, selectedSite ] );
+	}, [ filterDomainName, domainName, getWpcomAvailabilityErrors, selectedSite, errorAction ] );
 
 	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
@@ -481,6 +484,7 @@ UseMyDomain.propTypes = {
 	setUseMyDomainMode: PropTypes.func,
 	isStepper: PropTypes.bool,
 	stepLocation: PropTypes.object,
+	errorAction: PropTypes.func,
 };
 
 export default connect( ( state ) => ( {

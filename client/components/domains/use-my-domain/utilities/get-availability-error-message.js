@@ -4,7 +4,12 @@ import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 
-export function getAvailabilityErrorMessage( { availabilityData, domainName, selectedSite } ) {
+export function getAvailabilityErrorMessage( {
+	availabilityData,
+	domainName,
+	selectedSite,
+	errorAction,
+} ) {
 	const { status, mappable, maintenance_end_time, other_site_domain, other_site_domain_only } =
 		availabilityData;
 
@@ -17,6 +22,18 @@ export function getAvailabilityErrorMessage( { availabilityData, domainName, sel
 					a: createElement( 'a', { href: searchPageLink } ),
 				}
 			);
+		}
+
+		if ( errorAction ) {
+			return createInterpolateElement( __( "This domain isn't registered. <a>Register now.</a>" ), {
+				a: createElement( 'a', {
+					href: '#',
+					onClick: ( event ) => {
+						event.preventDefault();
+						errorAction();
+					},
+				} ),
+			} );
 		}
 
 		return __( "This domain isn't registered. Try again." );
