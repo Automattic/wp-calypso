@@ -50,14 +50,10 @@ export type CampaignResponse = {
 			likes_total: number;
 			replies_total: number;
 			replies?: {
-				total_notes: number;
-				notes: {
-					blog_name: string;
-					type: string;
-					blog_url: string;
-					reply_text?: string;
-				}[];
-			};
+				blog_name: string;
+				blog_url: string;
+				reply_text?: string;
+			}[];
 		};
 	};
 	billing_data: {
