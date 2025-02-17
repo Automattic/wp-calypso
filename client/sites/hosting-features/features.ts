@@ -1,6 +1,7 @@
 import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useSelector } from 'calypso/state';
+import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
@@ -19,7 +20,12 @@ export function useAreHostingFeaturesSupported() {
 
 export function areAdvancedHostingFeaturesSupported( state: AppState ) {
 	const site = getSelectedSite( state );
+	const features = getSiteFeatures( state, site?.ID );
 	const hasSftpFeature = siteHasFeature( state, site?.ID, FEATURE_SFTP );
+
+	if ( ! features ) {
+		return null;
+	}
 	return areHostingFeaturesSupported( site ) && hasSftpFeature;
 }
 
