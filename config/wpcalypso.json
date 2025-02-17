@@ -35,7 +35,7 @@
 		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": false,
-		"cloudflare": true,
+		"cloudflare": false,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
