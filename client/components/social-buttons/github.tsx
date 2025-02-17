@@ -28,6 +28,7 @@ type GithubLoginButtonProps = {
 	socialServiceResponse?: ExchangeCodeForTokenResponse | null;
 	userHasDisconnected?: boolean;
 	isLogin: boolean;
+	overrideRedirectUri?: string;
 };
 
 type ExchangeCodeForTokenResponse = {
@@ -42,10 +43,11 @@ const GitHubLoginButton = ( {
 	socialServiceResponse,
 	userHasDisconnected,
 	isLogin,
+	overrideRedirectUri,
 }: GithubLoginButtonProps ) => {
 	const translate = useTranslate();
-	const redirectUri = useSelector( ( state: AppState ) =>
-		getRedirectUri( 'github', state, isLogin )
+	const redirectUri = useSelector(
+		( state: AppState ) => overrideRedirectUri || getRedirectUri( 'github', state, isLogin )
 	);
 	const { code, service } = useSelector( ( state: AppState ) => state.route?.query?.initial ) ?? {};
 

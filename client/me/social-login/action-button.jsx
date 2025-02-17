@@ -20,6 +20,7 @@ class SocialLoginActionButton extends Component {
 		connectSocialUser: PropTypes.func.isRequired,
 		disconnectSocialUser: PropTypes.func.isRequired,
 		socialServiceResponse: PropTypes.object,
+		redirectUri: PropTypes.string,
 	};
 
 	state = {
@@ -121,7 +122,7 @@ class SocialLoginActionButton extends Component {
 	};
 
 	render() {
-		const { service, isConnected, isUpdatingSocialConnection, translate } = this.props;
+		const { service, isConnected, isUpdatingSocialConnection, redirectUri, translate } = this.props;
 
 		const { fetchingUser, userHasDisconnected } = this.state;
 
@@ -175,6 +176,7 @@ class SocialLoginActionButton extends Component {
 					responseHandler={ this.handleSocialServiceResponse }
 					socialServiceResponse={ this.props.socialServiceResponse }
 					userHasDisconnected={ userHasDisconnected }
+					overrideRedirectUri={ redirectUri }
 				>
 					{ actionButton }
 				</GithubLoginButton>
