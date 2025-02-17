@@ -5,7 +5,6 @@ import { useState, useEffect } from '@wordpress/element';
 async function fetchZendeskConfig(): Promise< boolean > {
 	const config = await fetch( 'https://wpcom.zendesk.com/embeddable/config' );
 	const validResponse = config.ok && config.status === 200;
-
 	return validResponse;
 }
 
@@ -38,7 +37,7 @@ export function useCanConnectToZendeskMessaging( enabled = true ) {
 	}, [ query.isSuccess, queryClient ] );
 
 	useEffect( () => {
-		if ( ! query.data ) {
+		if ( ! query.data && query.status !== 'pending' ) {
 			recordTracksEvent( 'calypso_helpcenter_zendesk_config_error', {
 				status: query.status,
 				status_text: query.error?.message,
