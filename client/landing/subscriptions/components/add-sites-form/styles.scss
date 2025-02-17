@@ -12,7 +12,7 @@
 	}
 
 	.components-base-control__field {
-		margin-bottom: 16px;
+		margin-bottom: 20px;
 	}
 
 	.is-error .components-base-control__field {
@@ -27,6 +27,7 @@
 		padding: rem(10px) rem(16px);
 		/* We need to allow space for the SVG checkmark */
 		padding-right: calc(0.5rem + 24px);
+		height: 40px;
 
 		&::placeholder {
 			color: var(--studio-gray-20);

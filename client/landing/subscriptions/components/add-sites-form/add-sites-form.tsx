@@ -111,21 +111,23 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 	return (
 		<>
 			<div className="subscriptions-add-sites__form--container">
-				<TextControl
-					className={ clsx(
-						'subscriptions-add-sites__form-input',
-						inputFieldError ? 'is-error' : ''
-					) }
-					disabled={ subscribing }
-					placeholder={ translate( 'https://www.site.com' ) }
-					value={ inputValue }
-					type="url"
-					onChange={ onTextFieldChange }
-					help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
-					onBlur={ () => validateInputValue( inputValue, true ) }
-				/>
+				<div className="subscriptions-add-sites__form-field">
+					<TextControl
+						className={ clsx(
+							'subscriptions-add-sites__form-input',
+							inputFieldError ? 'is-error' : ''
+						) }
+						disabled={ subscribing }
+						placeholder={ translate( 'https://www.site.com' ) }
+						value={ inputValue }
+						type="url"
+						onChange={ onTextFieldChange }
+						help={ isValidInput ? <Icon icon={ check } data-testid="check-icon" /> : undefined }
+						onBlur={ () => validateInputValue( inputValue, true ) }
+					/>
 
-				{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+					{ inputFieldError ? <FormInputValidation isError text={ inputFieldError } /> : null }
+				</div>
 
 				<Button
 					primary
