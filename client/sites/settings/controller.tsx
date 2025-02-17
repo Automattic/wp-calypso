@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getRouteFromContext } from 'calypso/utils';
@@ -54,6 +55,21 @@ export function SettingsSidebar() {
 			) }
 		</Sidebar>
 	);
+}
+
+export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
+	context: PageJSContext,
+	next: () => void
+) {
+	const state = context.store.getState();
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
+	const siteSlug = getSelectedSiteSlug( state );
+
+	if ( ! isUntangled ) {
+		return page.redirect( `/hosting-config/${ siteSlug }` );
+	}
+
+	next();
 }
 
 export function redirectToSiteSettingsIfHostingFeaturesNotSupported(

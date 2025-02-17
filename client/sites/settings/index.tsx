@@ -32,6 +32,7 @@ import {
 	performanceSettings,
 	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 	redirectToSiteSettingsIfHostingFeaturesNotSupported,
+	redirectToHostingConfigIfDuplicatedViewsDisabled,
 } from './controller';
 
 export default function () {
@@ -83,6 +84,7 @@ export default function () {
 	page(
 		'/sites/settings/server/:site',
 		siteSelection,
+		redirectToHostingConfigIfDuplicatedViewsDisabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		serverSettings,
@@ -95,6 +97,7 @@ export default function () {
 	page(
 		'/sites/settings/sftp-ssh/:site',
 		siteSelection,
+		redirectToHostingConfigIfDuplicatedViewsDisabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		sftpSshSettings,
@@ -107,6 +110,7 @@ export default function () {
 	page(
 		'/sites/settings/database/:site',
 		siteSelection,
+		redirectToHostingConfigIfDuplicatedViewsDisabled,
 		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
 		databaseSettings,
@@ -119,6 +123,7 @@ export default function () {
 	page(
 		'/sites/settings/performance/:site',
 		siteSelection,
+		redirectToHostingConfigIfDuplicatedViewsDisabled,
 		redirectToSiteSettingsIfHostingFeaturesNotSupported,
 		navigation,
 		performanceSettings,
