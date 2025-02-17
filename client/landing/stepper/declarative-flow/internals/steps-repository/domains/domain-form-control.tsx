@@ -262,7 +262,9 @@ export function DomainFormControl( {
 					showSkipButton={ showSkipButton }
 					shouldQuerySubdomains={ shouldQuerySubdomains }
 					suggestion={ initialQuery }
-					handleClickUseYourDomain={ ( event, domain ) => onUseYourDomainClick( domain ) }
+					handleClickUseYourDomain={ ( event: React.MouseEvent, domain: string ) =>
+						onUseYourDomainClick( domain )
+					}
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: false,
