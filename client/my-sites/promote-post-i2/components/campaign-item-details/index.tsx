@@ -8,7 +8,7 @@ import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import InfoPopover from 'calypso/components/info-popover';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -24,6 +24,7 @@ import {
 	Order,
 } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useJetpackBlazeVersionCheck } from 'calypso/lib/promote-post';
 import AdPreview from 'calypso/my-sites/promote-post-i2/components/ad-preview';
 import AdPreviewModal from 'calypso/my-sites/promote-post-i2/components/campaign-item-details/AdPreviewModal';
@@ -608,6 +609,28 @@ export default function CampaignItemDetails( props: Props ) {
 		},
 	];
 
+	const tspTargetRef = useRef< HTMLDivElement | null >( null );
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( tspTargetRef.current ) {
+				const rect = tspTargetRef.current.getBoundingClientRect();
+				const inView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+				if ( inView ) {
+					window.removeEventListener( 'scroll', handleScroll );
+					recordTracksEvent( 'calypso_dsp_tsp_section_scroll_into_view', {} );
+				}
+			}
+		};
+
+		window.addEventListener( 'scroll', handleScroll );
+		handleScroll();
+
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [] );
+
 	return (
 		<div className="campaign-item__container">
 			<Dialog
@@ -999,7 +1022,7 @@ export default function CampaignItemDetails( props: Props ) {
 									) }
 									{ tsp && (
 										<>
-											<div className="campaign-item-details__main-stats-row ">
+											<div className="campaign-item-details__main-stats-row" ref={ tspTargetRef }>
 												<div className="campaign-item-details__main-stats-title">
 													<span className="campaign-item-details__title">
 														{ translate( 'Social Engagement' ) }
@@ -1009,8 +1032,11 @@ export default function CampaignItemDetails( props: Props ) {
 														target="_blank"
 														rel="noreferrer"
 														className="campaign-item-details__tsp-permalink"
+														onClick={ () => {
+															recordTracksEvent( 'calypso_dsp_tsp_open_post_click', {} );
+														} }
 													>
-														<span>{ translate( 'Open ad preview' ) }</span>
+														<span>{ translate( 'Open Tumblr Post”' ) }</span>
 														<Gridicon icon="external" size={ 16 } />
 													</a>
 												</div>
