@@ -13,6 +13,7 @@ function StatsLineChart( {
 	height = 400,
 	moment,
 	EmptyState = StatsEmptyState,
+	zeroBaseline = true,
 }: {
 	chartData: Array< {
 		label: string;
@@ -25,6 +26,7 @@ function StatsLineChart( {
 	height?: number;
 	moment: Moment;
 	EmptyState: typeof StatsEmptyState;
+	zeroBaseline?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -65,10 +67,12 @@ function StatsLineChart( {
 						yScale: {
 							type: 'linear',
 							domain: [ 0, maxViews ],
+							zero: zeroBaseline,
 						},
 						axis: {
 							x: {
 								tickFormat: formatTime,
+								numTicks: className === 'stats-realtime-chart' ? undefined : 5,
 							},
 							y: {
 								orientation: 'right',
