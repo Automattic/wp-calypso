@@ -47,7 +47,7 @@
 		"checkout/vat-form": true,
 		"checkout/checkout-version": true,
 		"checkout/razorpay": true,
-		"cloudflare": true,
+		"cloudflare": false,
 		"comments/filters-in-posts": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
