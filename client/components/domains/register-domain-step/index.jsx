@@ -783,9 +783,10 @@ class RegisterDomainStep extends Component {
 		this.setState( ( state ) => {
 			const newPremiumDomains = { ...state.premiumDomains };
 			delete newPremiumDomains[ domainName ];
+			const searchResults = state.searchResults || [];
 			return {
 				premiumDomains: newPremiumDomains,
-				searchResults: state.searchResults.filter(
+				searchResults: searchResults.filter(
 					( suggestion ) => suggestion.domain_name !== domainName
 				),
 			};
