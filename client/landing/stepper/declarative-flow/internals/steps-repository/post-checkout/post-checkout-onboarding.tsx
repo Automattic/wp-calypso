@@ -1,11 +1,11 @@
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import Loading from 'calypso/components/loading';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer/query';
 import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
-import StepperLoader from '../../components/stepper-loader';
 import type { Step } from '../../types';
 import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
@@ -76,7 +76,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 			if ( siteTransferStatusData.isTransferring ) {
 				await waitForAtomic();
 			} else if (
-				selectedDesign.is_externally_managed &&
+				selectedDesign?.is_externally_managed &&
 				( isMarketplaceThemeSubscribed || isExternallyManagedThemeAvailable )
 			) {
 				await waitForInitiateTransfer();
@@ -99,7 +99,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		isExternallyManagedThemeAvailable,
 	] );
 
-	return <StepperLoader />;
+	return <Loading />;
 };
 
 export default PostCheckoutOnboarding;
