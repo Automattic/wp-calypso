@@ -16,7 +16,6 @@ import './style.scss';
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
-	error_log( print_r( compact( '' ), true ) );
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
