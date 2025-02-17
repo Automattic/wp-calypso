@@ -186,30 +186,50 @@ export default function SubscribersChartSection( {
 				<>
 					<div className="subscribers-section-legend" ref={ legendRef }></div>
 					{ isChartLibraryEnabled ? (
-						<AsyncLoad
-							require="calypso/my-sites/stats/components/line-chart"
-							chartData={ [
+						( () => {
+							// Create Date objects and validate them
+							const transformedData =
+								data?.data
+									?.map( ( point ) => {
+										const dateObj = new Date( point.period );
+										if ( isNaN( dateObj.getTime() ) ) {
+											return null;
+										}
+
+										// Freeze the object to prevent mutations and ensure immutability
+										return Object.freeze( {
+											date: dateObj,
+											value: point.subscribers ?? 0,
+										} );
+										// Filter out any null values from invalid dates, fallback to empty array if data is undefined
+									} )
+									.filter( Boolean ) || [];
+
+							// Freeze the entire chart data structure to maintain immutability throughout
+							const chartData = Object.freeze( [
 								{
 									label: 'Subscribers',
-									options: {
-										stroke: '#069e08',
-									},
-									data:
-										data?.data?.map( ( point ) => ( {
-											date: new Date( point.period ),
-											value: point.subscribers ?? 0,
-										} ) ) || [],
+									options: { stroke: '#069e08' },
+									data: transformedData,
 								},
-							] }
-							height={ 300 }
-							formatTimeTick={ formatTimeTick }
-						/>
+							] );
+
+							return (
+								<AsyncLoad
+									require="calypso/my-sites/stats/components/line-chart"
+									chartData={ chartData }
+									height={ 300 }
+									formatTimeTick={ formatTimeTick }
+									EmptyState={ () => null }
+									zeroBaseline={ false }
+								/>
+							);
+						} )()
 					) : (
 						<UplotChart
-							data={ chartData }
+							data={ transformData( data?.data || [], hasAddedPaidSubscriptionProduct ) }
 							legendContainer={ legendRef }
 							period={ period }
-							// Use variable --studio-jetpack-green for chart colors on Odyssey Stats.
 							mainColor={ isOdysseyStats ? '#069e08' : undefined }
 							fillColorFrom={ isOdysseyStats ? 'rgba(6, 158, 8, 0.4)' : undefined }
 							fillColorTo={ isOdysseyStats ? 'rgba(6, 158, 8, 0)' : undefined }
