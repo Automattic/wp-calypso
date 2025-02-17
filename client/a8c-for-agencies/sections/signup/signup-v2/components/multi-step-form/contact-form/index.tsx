@@ -136,17 +136,15 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 
 			{ noCountryList && <QuerySmsCountries /> }
 
-			<FormField label={ translate( 'Phone number' ) } showOptionalLabel>
-				<FormPhoneInput
-					isDisabled={ noCountryList }
-					countriesList={ countriesList }
-					onChange={ handlePhoneInputChange }
-					className="contact-form__phone-input"
-					phoneInputProps={ {
-						placeholder: translate( 'Phone number' ),
-					} }
-				/>
-			</FormField>
+			<FormPhoneInput
+				isDisabled={ noCountryList }
+				countriesList={ countriesList }
+				onChange={ handlePhoneInputChange }
+				className="contact-form__phone-input"
+				phoneInputProps={ {
+					placeholder: translate( 'Phone number' ),
+				} }
+			/>
 
 			<div className="signup-contact-form__tos">
 				<p>

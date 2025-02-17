@@ -5,11 +5,13 @@ import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
+import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { useCountriesAndStates } from 'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
+import { preventWidows } from 'calypso/lib/formatting';
 import usePersonalizationFormValidation from './hooks/use-personalization-form-validation';
 
 import './style.scss';
@@ -96,6 +98,8 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 		onContinue( formData );
 	};
 
+	const isUserSiteOwner = formData.userType === 'site_owner';
+
 	return (
 		<div className="signup-personalization-form">
 			<Form
@@ -136,55 +140,89 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 					</FormField>
 				</FormFieldset>
 
-				<FormFieldset>
-					<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
-						<FormSelect
-							id="managed_sites"
-							value={ formData.managedSites }
-							onChange={ handleInputChange( 'managedSites' ) }
-						>
-							<option value="1-5">{ translate( '1-5' ) }</option>
-							<option value="6-20">{ translate( '6-20' ) }</option>
-							<option value="21-50">{ translate( '21-50' ) }</option>
-							<option value="50-100">{ translate( '50-100' ) }</option>
-							<option value="101-500">{ translate( '101-500' ) }</option>
-							<option value="500+">{ translate( '500+' ) }</option>
-						</FormSelect>
-					</FormField>
-				</FormFieldset>
+				{ ! isUserSiteOwner ? (
+					<>
+						<FormFieldset>
+							<FormField label={ translate( 'How many sites do you manage?' ) } isRequired>
+								<FormSelect
+									id="managed_sites"
+									value={ formData.managedSites }
+									onChange={ handleInputChange( 'managedSites' ) }
+								>
+									<option value="1-5">{ translate( '1-5' ) }</option>
+									<option value="6-20">{ translate( '6-20' ) }</option>
+									<option value="21-50">{ translate( '21-50' ) }</option>
+									<option value="50-100">{ translate( '50-100' ) }</option>
+									<option value="101-500">{ translate( '101-500' ) }</option>
+									<option value="500+">{ translate( '500+' ) }</option>
+								</FormSelect>
+							</FormField>
+						</FormFieldset>
 
-				<FormFieldset>
-					<FormField label={ translate( 'What services do you offer?' ) } isRequired>
-						<MultiCheckbox
-							id="services_offered"
-							name="services_offered"
-							checked={ formData.servicesOffered }
-							options={ servicesOfferedOptions }
-							onChange={ handleSetServicesOffered as any }
-						/>
-					</FormField>
-				</FormFieldset>
+						<FormFieldset className="signup-personalization-form__checkbox">
+							<FormField label={ translate( 'What services do you offer?' ) } isRequired>
+								<MultiCheckbox
+									id="services_offered"
+									name="services_offered"
+									checked={ formData.servicesOffered }
+									options={ servicesOfferedOptions }
+									onChange={ handleSetServicesOffered as any }
+								/>
+							</FormField>
+						</FormFieldset>
 
-				<FormFieldset className="signup-personalization-form__products-checkbox">
-					<FormField
-						label={ translate( 'What Automattic products do you currently offer your clients?' ) }
-						isRequired
+						<FormFieldset className="signup-personalization-form__checkbox">
+							<FormField
+								label={ translate(
+									'What Automattic products do you currently offer your clients?'
+								) }
+								isRequired
+							>
+								<MultiCheckbox
+									id="products_offered"
+									name="products_offered"
+									checked={ formData.productsOffered }
+									options={ productsOfferedOptions }
+									onChange={ handleSetProductsOffered as any }
+								/>
+							</FormField>
+						</FormFieldset>
+
+						<FormFooter>
+							<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
+								{ translate( 'Continue' ) }
+							</Button>
+						</FormFooter>
+					</>
+				) : (
+					<LayoutBanner
+						hideCloseButton
+						level="warning"
+						title={ preventWidows(
+							translate( 'It seems like we might not be the perfect match right now.' )
+						) }
 					>
-						<MultiCheckbox
-							id="products_offered"
-							name="products_offered"
-							checked={ formData.productsOffered }
-							options={ productsOfferedOptions }
-							onChange={ handleSetProductsOffered as any }
-						/>
-					</FormField>
-				</FormFieldset>
-
-				<FormFooter>
-					<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
-						{ translate( 'Continue' ) }
-					</Button>
-				</FormFooter>
+						<div>
+							{ preventWidows(
+								translate(
+									'Automattic for Agencies is a program designed for agencies, developers, and freelancers who work with and provide services to their clients.' +
+										" Depending on what you are looking for, you may want to check out one of our individual products, like {{wp}}WordPress.com{{/wp}}, {{pressable}}Pressable.com{{/pressable}}, {{woo}}Woo.com{{/woo}}, {{jetpack}}Jetpack.com{{/jetpack}}. If you really aren't sure where to go, feel free to contact us at {{email}}partnerships@automattic.com{{/email}} and we'll point you in the right direction.",
+									{
+										components: {
+											wp: <a href="https://wordpress.com" target="_blank" rel="noreferrer" />,
+											pressable: (
+												<a href="https://pressable.com" target="_blank" rel="noreferrer" />
+											),
+											woo: <a href="https://woocommerce.com" target="_blank" rel="noreferrer" />,
+											jetpack: <a href="https://jetpack.com" target="_blank" rel="noreferrer" />,
+											email: <a href="mailto:partnerships@automattic.com" />,
+										},
+									}
+								)
+							) }
+						</div>
+					</LayoutBanner>
+				) }
 			</Form>
 		</div>
 	);
