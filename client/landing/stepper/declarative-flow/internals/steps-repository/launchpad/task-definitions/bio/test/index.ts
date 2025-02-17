@@ -1,4 +1,4 @@
-import { getLinkInBioLaunchedTask, getLinksAddedTask } from '../';
+import { getLinksAddedTask } from '../';
 import { buildTask } from '../../../test/lib/fixtures';
 import { type TaskContext } from '../../../types';
 
@@ -8,16 +8,6 @@ const buildContext = ( options?: Partial< TaskContext > ) => {
 		...options,
 	} as TaskContext;
 };
-
-describe( 'getLinkInBioLaunchedTask', () => {
-	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
-
-	it( 'doesnt use the calypso path', () => {
-		expect(
-			getLinkInBioLaunchedTask( task, 'flowId', buildContext() ).useCalypsoPath
-		).toBeUndefined();
-	} );
-} );
 
 describe( 'getLinksAddedTask', () => {
 	const task = buildTask( { id: 'task', calypso_path: 'some-path' } );
