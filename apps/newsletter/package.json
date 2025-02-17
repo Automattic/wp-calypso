@@ -24,6 +24,8 @@
 		"@wordpress/element": "^6.16.0",
 		"@wordpress/i18n": "^5.16.0",
 		"i18n-calypso": "workspace:^",
+		"mkdirp": "npm:^3.0.1",
+		"postcss": "^8.5.2",
 		"react": "^18.2.0"
 	},
 	"devDependencies": {

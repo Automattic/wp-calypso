@@ -1,8 +1,7 @@
 /* global __i18n_text_domain__ */
 
+import { createRoot } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import React from 'react';
-import { createRoot } from 'react-dom/client';
 
 function Newsletter() {
 	return (
