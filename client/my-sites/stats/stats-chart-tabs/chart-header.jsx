@@ -1,5 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { Icon, Button, ButtonGroup } from '@wordpress/components';
+import { chartBar, trendingUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
@@ -57,7 +59,24 @@ const ChartHeader = ( {
 				intervals={ intervals }
 				onGatedHandler={ onGatedHandler }
 			/>
-			{ isChartLibraryEnabled && <div>Chart type switcher</div> }
+			{ isChartLibraryEnabled && (
+				<ButtonGroup className="stats-chart-tabs__type-toggle">
+					<Button
+						icon={ <Icon icon={ trendingUp } /> }
+						isSmall
+						isPrimary={ chartType === 'line' }
+						onClick={ () => handleChartTypeChange( 'line' ) }
+						aria-label="Switch to line chart"
+					/>
+					<Button
+						icon={ <Icon icon={ chartBar } /> }
+						isSmall
+						isPrimary={ chartType === 'bar' }
+						onClick={ () => handleChartTypeChange( 'bar' ) }
+						aria-label="Switch to bar chart"
+					/>
+				</ButtonGroup>
+			) }
 		</div>
 	);
 };
