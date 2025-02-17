@@ -123,6 +123,7 @@ const onboarding: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			STEPS.POST_CHECKOUT_ONBOARDING,
 		] );
 
 		if ( isGoalsAtFrontExperiment ) {
@@ -131,8 +132,7 @@ const onboarding: Flow = {
 				STEPS.GOALS,
 				STEPS.DESIGN_CHOICES,
 				STEPS.DESIGN_SETUP,
-				STEPS.DIFM_STARTING_POINT,
-				STEPS.POST_CHECKOUT_ONBOARDING
+				STEPS.DIFM_STARTING_POINT
 			);
 		}
 
