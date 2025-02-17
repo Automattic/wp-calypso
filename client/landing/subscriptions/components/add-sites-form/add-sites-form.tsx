@@ -13,6 +13,7 @@ import './styles.scss';
 
 type AddSitesFormProps = {
 	onAddFinished?: () => void;
+	placeholder?: string;
 };
 
 type SubscriptionError = {
@@ -20,7 +21,7 @@ type SubscriptionError = {
 	message?: string;
 };
 
-const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
+const AddSitesForm = ( { onAddFinished = () => {}, placeholder }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
@@ -118,7 +119,7 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 							inputFieldError ? 'is-error' : ''
 						) }
 						disabled={ subscribing }
-						placeholder={ translate( 'https://www.site.com' ) }
+						placeholder={ placeholder || translate( 'https://www.site.com' ) }
 						value={ inputValue }
 						type="url"
 						onChange={ onTextFieldChange }
