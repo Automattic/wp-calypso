@@ -48,9 +48,13 @@
 	}
 
 	.components-base-control__help {
+		display: flex;
+		align-items: center;
+		margin: 0;
 		position: absolute;
 		top: 0;
 		right: 0.5rem;
+		height: 100%;
 
 		svg {
 			fill: var(--color-success-50);
