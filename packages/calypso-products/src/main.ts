@@ -709,7 +709,6 @@ export type FilteredPlan = Plan &
 		| 'getAnnualPlansOnlyFeatures'
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
-		| 'getLinkInBioTagLine'
 		| 'getBlogOnboardingTagLine'
 	>;
 
