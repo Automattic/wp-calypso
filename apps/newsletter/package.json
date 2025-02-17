@@ -21,16 +21,10 @@
 	},
 	"dependencies": {
 		"@automattic/newsletter": "workspace:^",
-		"@tanstack/react-query": "^5.15.5",
+		"@wordpress/element": "^6.16.0",
 		"@wordpress/i18n": "^5.16.0",
-		"@wordpress/plugins": "^7.16.0",
-		"calypso": "workspace:^",
 		"i18n-calypso": "workspace:^",
-		"mkdirp": "^3.0.1",
-		"postcss": "^8.5.2",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"redux": "^5.0.1"
+		"react": "^18.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
@@ -38,8 +32,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/wp-babel-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.14.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^3.17.0",
-		"copy-webpack-plugin": "^12.0.2",
 		"webpack": "^5.97.1"
 	},
 	"repository": {
