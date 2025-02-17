@@ -72,8 +72,10 @@ export function DefaultMasterbarContact() {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
-		responseCart.products
+		responseCart.products,
+		'checkout'
 	);
+
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
