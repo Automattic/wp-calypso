@@ -442,8 +442,7 @@ body.is-section-signup.is-white-signup:not(.is-videopress-signup) .layout:not(.d
 			letter-spacing: 0.32px;
 			line-height: 17px;
 
-			&.newsletter-signup-form,
-			&.link-in-bio-signup-form {
+			&.newsletter-signup-form {
 				background-color: var(--color-primary);
 			}
 		}
