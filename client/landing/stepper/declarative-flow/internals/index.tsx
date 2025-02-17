@@ -158,7 +158,7 @@ export const FlowRenderer: React.FC< { flow: Flow; steps: readonly StepperStep[]
 			case AssertConditionState.CHECKING:
 				return <Loading />;
 			case AssertConditionState.FAILURE:
-				console.error( AssertConditionState.message ); // eslint-disable-line no-console
+				console.error( assertCondition.message ); // eslint-disable-line no-console
 				return null;
 		}
 

@@ -73,7 +73,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 			 * The atomic transfer would be initiated immediately after the user purchases a externally managed theme.
 			 * If not, then we have to initiate the atomic transfer manually.
 			 */
-			if ( siteTransferStatusData.isTransferring ) {
+			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
 			} else if (
 				selectedDesign?.is_externally_managed &&

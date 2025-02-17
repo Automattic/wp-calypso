@@ -39,7 +39,7 @@ interface UseWaitForAtomicProps {
 export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicProps = {} ) => {
 	const [ searchParams ] = useSearchParams();
 	const reduxDispatch = useReduxDispatch();
-	const { site } = useSiteData();
+	const { siteId } = useSiteData();
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
 		( select ) => select( SITE_STORE ) as SiteSelect,
@@ -70,9 +70,9 @@ export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicPro
 
 		while ( true ) {
 			await wait( 3000 );
-			await requestLatestAtomicTransfer( site?.ID );
-			const transfer = getSiteLatestAtomicTransfer( site?.ID );
-			const transferError = getSiteLatestAtomicTransferError( site?.ID );
+			await requestLatestAtomicTransfer( siteId );
+			const transfer = getSiteLatestAtomicTransfer( siteId );
+			const transferError = getSiteLatestAtomicTransferError( siteId );
 			const transferStatus = transfer?.status;
 			const isTransferringStatusFailed = transferError && transferError?.status >= 500;
 
@@ -108,7 +108,7 @@ export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicPro
 
 		while ( true ) {
 			const siteFeatures = await reduxDispatch< Promise< { active: string[] } > >(
-				fetchSiteFeatures( site?.ID )
+				fetchSiteFeatures( siteId )
 			);
 			if ( siteFeatures?.active?.indexOf?.( feature ) >= 0 ) {
 				break;
@@ -120,8 +120,11 @@ export const useWaitForAtomic = ( { handleTransferFailure }: UseWaitForAtomicPro
 
 	const waitForLatestSiteData = async () => {
 		while ( true ) {
-			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( site?.ID ) );
-			if ( requestedSite?.options?.is_wpcom_atomic && site?.capabilities?.manage_options ) {
+			const requestedSite = await reduxDispatch< SiteDetails >( requestSite( siteId ) );
+			if (
+				requestedSite?.options?.is_wpcom_atomic &&
+				requestedSite?.capabilities?.manage_options
+			) {
 				break;
 			}
 

@@ -600,13 +600,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				} );
 			}
 
-			const optionalProps = {};
+			const optionalProps: { position_index?: number } = {};
 			const positionIndex = designs.findIndex(
 				( design ) => design.slug === _selectedDesign?.slug
 			);
 
 			if ( positionIndex >= 0 ) {
-				optionalProps[ 'position_index' ] = positionIndex;
+				optionalProps.position_index = positionIndex;
 			}
 
 			if ( siteSlugOrId && _selectedDesign ) {
