@@ -28,12 +28,12 @@ export default function emailVerification( context, next ) {
 			);
 			const notice = successNotice( message, {
 				duration: 10000,
-				button: i18n.translate( 'Update information' ),
+				button: i18n.translate( 'Update' ),
 				href: '/domains/manage?site=all&action=edit-contact-email',
 				onClick: () => {
 					context.store.dispatch(
 						recordTracksEvent( 'calypso_domain_contact_email_update_notice_click', {
-							link_text: 'Update information',
+							link_text: 'Update',
 							domain: null,
 						} )
 					);
