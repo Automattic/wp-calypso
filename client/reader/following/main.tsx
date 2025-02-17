@@ -12,12 +12,10 @@ import { useSiteSubscriptions } from './use-site-subscriptions';
 import { useFollowingView } from './view-preference';
 import ViewToggle from './view-toggle';
 import './style.scss';
-import HeaderBack from '../header-back';
 
 function FollowingStream( { ...props } ) {
 	const { currentView } = useFollowingView();
 	const { isLoading, hasNonSelfSubscriptions } = useSiteSubscriptions();
-	console.log( 'props', props );
 
 	if ( ! isLoading && ! hasNonSelfSubscriptions ) {
 		return (
