@@ -306,17 +306,6 @@ export function generateFlows( {
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
 			showRecaptcha: true,
 		},
-		{
-			name: 'videopress-account',
-			steps: [ 'user' ],
-			destination: getRedirectDestination,
-			description: 'VideoPress onboarding signup flow',
-			lastModified: '2022-10-19',
-			get pageTitle() {
-				return translate( 'Create an account' );
-			},
-			showRecaptcha: true,
-		},
 		...p2Flows,
 		{
 			name: 'domain',
