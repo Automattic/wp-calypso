@@ -24,7 +24,6 @@ type DomainSuggestionsVendor =
 	| 'variation2_front'
 	| 'variation4_front'
 	| 'variation8_front'
-	| 'link-in-bio'
 	| 'newsletter'
 	| 'ecommerce'
 	| 'gravatar'
