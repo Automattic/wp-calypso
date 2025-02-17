@@ -297,22 +297,6 @@ export const getTask = (
 				actionUrl: getTitanSetUpMailboxPath( siteSlug, task.domain ),
 			};
 			break;
-		case CHECKLIST_KNOWN_TASKS.BLOG_PREVIEWED:
-			taskData = {
-				timing: 1,
-				title: translate( 'Preview your blog' ),
-				description: translate(
-					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
-				),
-				actionText: translate( 'Preview blog' ),
-				actionUrl: `/view/${ siteSlug }`,
-				...( ! task.isCompleted && {
-					actionDispatch: requestSiteChecklistTaskUpdate,
-					actionDispatchArgs: [ siteId, task.id ],
-				} ),
-				isSkippable: true,
-			};
-			break;
 		case CHECKLIST_KNOWN_TASKS.THEMES_BROWSED:
 			taskData = {
 				timing: 2,

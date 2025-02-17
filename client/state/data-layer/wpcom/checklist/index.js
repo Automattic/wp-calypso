@@ -26,7 +26,6 @@ export const CHECKLIST_KNOWN_TASKS = {
 	JETPACK_VIDEO_HOSTING: 'jetpack_video_hosting',
 	JETPACK_SEARCH: 'jetpack_search',
 	PROFESSIONAL_EMAIL_MAILBOX_CREATED: 'professional_email_mailbox_created',
-	BLOG_PREVIEWED: 'blog_previewed',
 	THEMES_BROWSED: 'themes_browsed',
 	FIRST_POST_PUBLISHED: 'first_post_published',
 	POST_SHARING_ENABLED: 'post_sharing_enabled',
