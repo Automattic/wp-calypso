@@ -1,4 +1,3 @@
-/*import config from '@automattic/calypso-config';*/
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
