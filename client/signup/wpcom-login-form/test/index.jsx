@@ -38,15 +38,6 @@ describe( 'WpcomLoginForm', () => {
 		expect( el ).toHaveValue( 'another_log' );
 	} );
 
-	test( 'should render extra fields if extraFields prop is passed.', () => {
-		const extraFields = { foo: 'bar', lorem: 'ipsum' };
-		const { container } = render( <WpcomLoginForm { ...props } extraFields={ extraFields } /> );
-
-		expect( container.querySelectorAll( 'input[type="hidden"]' ) ).toHaveLength( 6 );
-		expect( container.querySelector( 'input[name="foo"]' ) ).toHaveValue( 'bar' );
-		expect( container.querySelector( 'input[name="lorem"]' ) ).toHaveValue( 'ipsum' );
-	} );
-
 	test( 'its action should be under the wpcom subdomain that `redirectTo` prop contains.', () => {
 		const { container, rerender } = render(
 			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
