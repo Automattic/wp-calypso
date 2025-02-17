@@ -8,7 +8,7 @@ export function getAvailabilityErrorMessage( {
 	availabilityData,
 	domainName,
 	selectedSite,
-	errorAction,
+	errorAction = undefined,
 } ) {
 	const { status, mappable, maintenance_end_time, other_site_domain, other_site_domain_only } =
 		availabilityData;
