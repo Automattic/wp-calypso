@@ -8,6 +8,9 @@
 			padding: 0;
 		}
 	}
+	.navigation-header__main {
+		padding-top: 24px;
+	}
 }
 
 // .has-header-section only applies for logged out views
@@ -71,7 +74,8 @@
 	top: 0;
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
-
+	padding: 0 1px;
+    margin: 0 -1px;
 	@media only screen and (min-width: 601px) and (max-width: 660px) {
 		width: calc(100% - 96px);
 	}
@@ -127,6 +131,7 @@
 	@include breakpoint-deprecated( "<660px" ) {
 		perspective: none; // Fix search bar pushed up behind the masterbar in Safari
 	}
+	padding: 0;
 }
 
 // Post recommendations in Search
