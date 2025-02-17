@@ -1,4 +1,3 @@
-import page from '@automattic/calypso-router';
 import {
 	getAnyLanguageRouteParam,
 	removeLocaleFromPathLocaleInFront,
@@ -8,6 +7,7 @@ import {
 	makeLayout,
 	redirectInvalidLanguage,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
+	redirectLoggedOutToSignup,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -59,11 +59,6 @@ const discover = ( context, next ) => {
 		const pathParts = pathWithoutLocale.split( '/' );
 		// Now pathParts[2] will consistently be the tab.
 		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
-
-		// Redirect /discover/add-new to /discover if logged out.
-		if ( selectedTab === 'add-new' && ! isLoggedIn ) {
-			return page.redirect( '/discover' );
-		}
 	} else {
 		// Use query parameter for v1.
 		selectedTab = context.query.selectedTab || DEFAULT_TAB;
@@ -102,43 +97,42 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
+	const commonMiddleware = [
+		redirectInvalidLanguage,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
+		setLocaleMiddleware(),
+		updateLastRoute,
+		sidebar,
+		discover,
+		makeLayout,
+		clientRender,
+	];
+
 	if ( isDiscoveryV2Enabled() ) {
+		// Must be logged in to access.
+		router(
+			[ '/discover/add-new', `/${ anyLangParam }/discover/add-new` ],
+			redirectLoggedOutToSignup,
+			...commonMiddleware
+		);
+
 		router(
 			[
 				'/discover',
-				'/discover/add-new',
 				'/discover/firstposts',
 				'/discover/tags',
 				'/discover/reddit',
 				'/discover/latest',
 				`/${ anyLangParam }/discover`,
-				`/${ anyLangParam }/discover/add-new`,
 				`/${ anyLangParam }/discover/firstposts`,
 				`/${ anyLangParam }/discover/tags`,
 				`/${ anyLangParam }/discover/reddit`,
 				`/${ anyLangParam }/discover/latest`,
 			],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
+			...commonMiddleware
 		);
 	} else {
 		// Original query parameter-based route for v1
-		router(
-			[ '/discover', `/${ anyLangParam }/discover` ],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
-		);
+		router( [ '/discover', `/${ anyLangParam }/discover` ], ...commonMiddleware );
 	}
 }
