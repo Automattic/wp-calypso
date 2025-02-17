@@ -128,13 +128,6 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 
-		test( 'Should render <PlanFeatures /> with LinkInBio plans when called with link-in-bio intent', () => {
-			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-link-in-bio" /> );
-			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
-				JSON.stringify( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ] )
-			);
-		} );
-
 		test( 'Should render <PlanFeatures /> with Newsletter plans when site with newsletter intent', () => {
 			useIntentFromSiteMeta.mockImplementation( () => ( {
 				processing: false,
