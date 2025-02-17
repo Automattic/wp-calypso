@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/newsletter",
 	"version": "1.0.0",
-	"description": "The Newsletter widget",
+	"description": "The Newsletter widget.",
 	"calypso:src": "src/index.js",
 	"main": "dist/build.min.js",
 	"module": "dist/build.esm.js",
