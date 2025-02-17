@@ -63,7 +63,7 @@ const DiscoverTagsNavigation = ( { selectedTag, width, onTagSelect }: Props ) =>
 	const recordTabClick = ( tab: string ) => {
 		recordAction( 'click_discover_tag' );
 		recordGaEvent( 'Clicked Discover Tag' );
-		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tag_clicked', { tag: tab } ) );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tag_tab_clicked', { tag: tab } ) );
 	};
 
 	const menuTabClick = ( tab: string ) => {
