@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { ExternalLink } from '@automattic/components';
 import PropTypes from 'prop-types';
-import ExternalLink from './index';
 
 /**
  * External link component with tracking capabilities. Inherits all props from ExternalLink component.

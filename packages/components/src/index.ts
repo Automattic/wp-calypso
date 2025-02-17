@@ -54,7 +54,6 @@ export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
-export { default as ExternalLinkWithTracking } from './external-link/with-tracking';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
 
