@@ -187,7 +187,7 @@ export default function CampaignItemDetails( props: Props ) {
 		permalink,
 	} = tsp || {};
 
-	const displayedReplies = showAllReplies ? replies?.notes : replies?.notes.slice( 0, 3 );
+	const displayedReplies = showAllReplies ? replies : replies?.slice( 0, 3 );
 
 	// check if delivery outperformed
 	const calculateOutperformPercentage = ( estimates: string, total: number ): number => {
@@ -1057,20 +1057,22 @@ export default function CampaignItemDetails( props: Props ) {
 														</span>
 													</span>
 												</div>
-												{ displayedReplies && replies && replies?.total_notes > 0 && (
+												{ displayedReplies && replies && replies?.length > 0 && (
 													<div className="campaign-items-details__tsp-replies">
-														{ displayedReplies.map( ( note, index ) => (
+														{ displayedReplies.map( ( reply, index ) => (
 															<div key={ index } className="campaign-items-details__tsp-reply">
-																<a href={ note.blog_url } target="_blank" rel="noopener noreferrer">
-																	@{ note.blog_name }
+																<a
+																	href={ reply.blog_url }
+																	target="_blank"
+																	rel="noopener noreferrer"
+																>
+																	@{ reply.blog_name }
 																</a>
 																<br />
-																{ note.type === 'like' && translate( 'Liked this' ) }
-																{ note.type === 'reblog' && translate( 'Reblogged this' ) }
-																{ note.type === 'reply' && ( note?.reply_text || '-' ) }
+																{ reply?.reply_text || '-' }
 															</div>
 														) ) }
-														{ replies && replies?.total_notes > 3 && (
+														{ replies && replies?.length > 3 && (
 															<button
 																className="campaign-items-details__replies-show-more-button"
 																onClick={ () => setShowAllReplies( ! showAllReplies ) }
