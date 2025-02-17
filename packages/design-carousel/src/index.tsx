@@ -16,7 +16,6 @@ import type { Design } from '@automattic/design-picker/src/types';
 type DesignCarouselProps = {
 	onPick: ( design: Design ) => void;
 	selectedDesigns: Design[] | null | undefined;
-	onlyDisplayMobileCarousel?: boolean;
 	carouselDesktopOptions?: MShotsOptions;
 	carouselMobileOptions?: MShotsOptions;
 };
@@ -24,7 +23,6 @@ type DesignCarouselProps = {
 export default function DesignCarousel( {
 	onPick,
 	selectedDesigns,
-	onlyDisplayMobileCarousel = false,
 	carouselDesktopOptions = { w: 1280, vpw: 1920, vph: 1280, format: 'png' },
 	carouselMobileOptions = { w: 400, vpw: 400, vph: 872, format: 'png' },
 }: DesignCarouselProps ) {
@@ -68,26 +66,16 @@ export default function DesignCarousel( {
 				<div className="swiper-wrapper">
 					{ selectedDesigns.map( ( design, key ) => (
 						<div className="design-carousel__slide swiper-slide" key={ key }>
-							{ ! onlyDisplayMobileCarousel ? (
-								<>
-									<Item
-										design={ design }
-										options={ carouselDesktopOptions }
-										className="design-carousel__item-desktop"
-									/>
-									<Item
-										design={ design }
-										options={ carouselMobileOptions }
-										className="design-carousel__item-mobile"
-									/>
-								</>
-							) : (
-								<Item
-									design={ design }
-									options={ carouselMobileOptions }
-									className="design-carousel__item-mobile-only"
-								/>
-							) }
+							<Item
+								design={ design }
+								options={ carouselDesktopOptions }
+								className="design-carousel__item-desktop"
+							/>
+							<Item
+								design={ design }
+								options={ carouselMobileOptions }
+								className="design-carousel__item-mobile"
+							/>
 						</div>
 					) ) }
 				</div>

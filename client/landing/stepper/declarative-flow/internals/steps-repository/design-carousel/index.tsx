@@ -92,7 +92,6 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 					placeholder={ null }
 					onPick={ pickDesign }
 					selectedDesigns={ getFlowDesigns( allDesigns, flow ) }
-					onlyDisplayMobileCarousel={ false }
 					carouselDesktopOptions={ getCarouselDesktopOptions( flow, isLargerThan1440px ) }
 				/>
 			}
