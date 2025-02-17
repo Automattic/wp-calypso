@@ -376,12 +376,13 @@ export default function CampaignItemDetails( props: Props ) {
 	};
 
 	const areStatsEnabled = useJetpackBlazeVersionCheck( siteId, '14.1', '0.5.3' );
+	const hasStats = !! impressions_total && areStatsEnabled;
 
 	const campaignStatsQuery = useCampaignChartStatsQuery(
 		siteId,
 		campaignId,
 		chartParams,
-		!! impressions_total && areStatsEnabled
+		hasStats
 	);
 	const { isLoading: campaignsStatsIsLoading } = campaignStatsQuery;
 	const { data: campaignStats } = campaignStatsQuery;
@@ -623,13 +624,17 @@ export default function CampaignItemDetails( props: Props ) {
 			}
 		};
 
-		window.addEventListener( 'scroll', handleScroll );
-		handleScroll();
+		// check that the page has loaded, before adding the listener
+		// check if the campaign has stats, in this case wait for the campaigns stats loading to complete
+		if ( ! isLoading && ( ! hasStats || ! campaignsStatsIsLoading ) ) {
+			window.addEventListener( 'scroll', handleScroll );
+			handleScroll();
+		}
 
 		return () => {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
-	}, [] );
+	}, [ isLoading, hasStats, campaignsStatsIsLoading ] );
 
 	return (
 		<div className="campaign-item__container">
@@ -1099,7 +1104,15 @@ export default function CampaignItemDetails( props: Props ) {
 														{ replies && replies?.total_notes > 3 && (
 															<button
 																className="campaign-items-details__replies-show-more-button"
-																onClick={ () => setShowAllReplies( ! showAllReplies ) }
+																onClick={ () => {
+																	if ( ! showAllReplies ) {
+																		recordTracksEvent(
+																			'calypso_dsp_tsp_section_replies_show_more_click',
+																			{}
+																		);
+																	}
+																	setShowAllReplies( ! showAllReplies );
+																} }
 															>
 																{ showAllReplies ? __( 'Show Less' ) : __( 'Show More' ) }
 															</button>
