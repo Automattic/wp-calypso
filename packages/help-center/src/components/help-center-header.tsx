@@ -198,14 +198,26 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const shouldDisplayClearChatButton = pathname.startsWith( '/odie' );
+	const { helpCenterOptions } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			helpCenterOptions: store.getHelpCenterOptions(),
+		};
+	}, [] );
+
+	const isChat = pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
+	// Show the back button if it's not the help center home page and:
+	// - it's a chat and the hideBackButton option is not set
+	// - it's not a chat
+	const shouldShowBackButton =
+		! isHelpCenterHome && ( ( isChat && ! helpCenterOptions?.hideBackButton ) || ! isChat );
 
 	return (
 		<>
-			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
+			{ shouldShowBackButton ? <BackButton /> : <DragIcon /> }
 			<HeaderText />
-			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
+			{ isChat && <ChatEllipsisMenu /> }
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }

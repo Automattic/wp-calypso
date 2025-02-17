@@ -84,7 +84,7 @@ export function DefaultMasterbarContact() {
 		} );
 
 		if ( hasPremiumSupport ) {
-			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, { hideBackButton: true } );
 			setNavigateToRoute(
 				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
 			);
