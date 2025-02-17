@@ -165,14 +165,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const isComingFromTheUpgradeScreen = queryParams.get( 'continue' ) === '1';
 
-	useEffect( () => {
-		if ( isAtomic ) {
-			// TODO: move this logic from this step to the flow(s). See: https://wp.me/pdDR7T-KR
-			exitFlow?.( `/site-editor/${ siteSlugOrId }` );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ isAtomic ] );
-
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
 			( select ) =>
