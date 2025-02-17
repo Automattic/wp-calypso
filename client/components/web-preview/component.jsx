@@ -69,6 +69,7 @@ export class WebPreviewModal extends Component {
 		disableTabbing: false,
 		showExternal: true,
 		showClose: true,
+		showEditHeaderLink: true,
 		showSEO: true,
 		showDeviceSwitcher: true,
 		showEdit: false,

@@ -535,7 +535,7 @@ WebPreviewContent.defaultProps = {
 	showSEO: true,
 	showDeviceSwitcher: true,
 	showEdit: false,
-	showEditHeaderLink: true,
+	showEditHeaderLink: false,
 	editUrl: null,
 	previewUrl: null,
 	previewMarkup: null,

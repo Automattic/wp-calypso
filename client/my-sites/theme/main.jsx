@@ -1009,27 +1009,29 @@ class ThemeSheet extends Component {
 	};
 
 	renderPreviewButton = () => {
-		const { isLivePreviewSupported, translate, isExternalLink } = this.props;
+		const { isLivePreviewSupported, translate, isWpcomTheme, isExternallyManagedTheme } =
+			this.props;
 
-		if ( ! isLivePreviewSupported && ! this.shouldRenderPreviewButton() ) {
+		const isExternalLink = ! isWpcomTheme || isExternallyManagedTheme;
+
+		if ( isLivePreviewSupported || ! this.shouldRenderPreviewButton() ) {
 			return null;
 		}
 
-		const buttonProps = {
-			className: isLivePreviewSupported
-				? 'theme__sheet-preview-button'
-				: 'theme__sheet-demo-button',
-			onClick: ( e ) =>
-				this.previewAction(
-					e,
-					isLivePreviewSupported ? 'button' : 'link',
-					'preview',
-					isLivePreviewSupported ? 'live-preview' : 'regular'
-				),
-		};
-
 		return (
-			<Button { ...buttonProps }>
+			<Button
+				className={
+					isLivePreviewSupported ? 'theme__sheet-preview-button' : 'theme__sheet-demo-button'
+				}
+				onClick={ ( e ) =>
+					this.previewAction(
+						e,
+						isLivePreviewSupported ? 'button' : 'link',
+						'preview',
+						isLivePreviewSupported ? 'live-preview' : 'regular'
+					)
+				}
+			>
 				{ translate( 'Preview', {
 					context: 'Button to preview a theme',
 				} ) }

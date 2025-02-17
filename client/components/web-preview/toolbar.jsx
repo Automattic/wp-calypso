@@ -1,5 +1,6 @@
 import { Button, Gridicon, SelectDropdown } from '@automattic/components';
 import { getThemeIdFromStylesheet } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -20,6 +21,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 
 class PreviewToolbar extends Component {
+	state = {
+		isRedirecting: false,
+	};
+
 	static propTypes = {
 		// Show device viewport switcher
 		showDeviceSwitcher: PropTypes.bool,
@@ -77,17 +82,22 @@ class PreviewToolbar extends Component {
 
 	handleEditorWebPreviewEditHeader = async ( event ) => {
 		event.preventDefault();
+		this.setState( { isRedirecting: true } );
+
 		this.props.recordTracksEvent( 'calypso_editor_preview_edit_header_click' );
 
 		const { isAtomic, selectedSiteId, siteEditorUrl, themeInstallId } = this.props;
 
 		// For atomic sites, we need to install theme before navigating to site editor
 		// If theme is already installed, installation will silently fail, and we just switch to the site-editor.
-		if ( isAtomic ) {
-			await this.props.installTheme( themeInstallId, selectedSiteId );
+		try {
+			if ( isAtomic ) {
+				await this.props.installTheme( themeInstallId, selectedSiteId );
+			}
+			window.location.href = siteEditorUrl;
+		} catch ( error ) {
+			this.setState( { isRedirecting: false } );
 		}
-
-		window.location.href = siteEditorUrl;
 	};
 
 	render() {
@@ -174,10 +184,19 @@ class PreviewToolbar extends Component {
 						<Button
 							borderless
 							aria-label={ translate( 'Try and customize' ) }
-							className="web-preview__edit-header-link"
+							className={
+								this.state.isRedirecting
+									? 'web-preview__loading-spinner'
+									: 'web-preview__edit-header-link'
+							}
 							onClick={ this.handleEditorWebPreviewEditHeader }
+							disabled={ this.state.isRedirecting }
 						>
-							{ translate( 'Try and customize' ) }
+							{ this.state.isRedirecting ? (
+								<Spinner size={ 16 } />
+							) : (
+								translate( 'Try and customize' )
+							) }
 						</Button>
 					) }
 					{ showExternal && (
@@ -219,9 +238,14 @@ export default connect(
 			? suffixThemeIdForInstall( state, selectedSiteId, ownProps.themeId )
 			: null;
 
+		const dashboardLink = `${ window.location.pathname }${ window.location.search }`.replace(
+			/^\/+/,
+			'/'
+		);
+
 		const siteEditorUrl = getSiteEditorUrl( state, siteId, {
 			wp_theme_preview: themePreviewId,
-			wpcom_dashboard_link: window.location.href,
+			wpcom_dashboard_link: dashboardLink,
 		} );
 
 		return {
