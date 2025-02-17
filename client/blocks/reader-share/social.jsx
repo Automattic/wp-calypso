@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
-import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
+import ReaderXIcon from 'calypso/reader/components/icons/x-icon';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { useDispatch } from 'calypso/state';
@@ -14,7 +14,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  * Local variables
  */
 const actionMap = {
-	twitter( post ) {
+	x( post ) {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
 		const params = new URLSearchParams( {
 			text: post.title,
@@ -22,9 +22,9 @@ const actionMap = {
 		} );
 		baseUrl.search = params.toString();
 
-		const twitterUrl = baseUrl.href;
+		const xUrl = baseUrl.href;
 
-		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
+		window.open( xUrl, 'x', 'width=550,height=420,resizeable,scrollbars' );
 	},
 	facebook( post ) {
 		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
@@ -84,13 +84,13 @@ const ReaderSocialShareSelection = ( props ) => {
 				<span>Facebook</span>
 			</PopoverMenuItem>
 			<PopoverMenuItem
-				action="twitter"
+				action="x"
 				className="reader-share__popover-item"
-				title={ translate( 'Share on Twitter' ) }
+				title={ translate( 'Share on X' ) }
 				focusOnHover={ false }
 			>
-				<ReaderTwitterIcon iconSize={ 20 } />
-				<span>Twitter</span>
+				<ReaderXIcon iconSize={ 20 } />
+				<span>X</span>
 			</PopoverMenuItem>
 			<PopoverMenuItemClipboard
 				action="copy_link"
