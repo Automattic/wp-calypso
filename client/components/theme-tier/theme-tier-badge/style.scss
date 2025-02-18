@@ -47,8 +47,13 @@
 	}
 }
 
-.theme-tier-included-label {
+.theme-tier-free-included-label {
 	border-radius: 4px;
+	font-family: $sans;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: $font-body-extra-small;
 }
 
 .theme-tier-badge-tooltip,

@@ -6,7 +6,7 @@ export default function ThemeTierIncludedBadge() {
 	const translate = useTranslate();
 
 	return (
-		<Badge type="info" className="theme-tier-included-label">
+		<Badge type="info" className="theme-tier-free-included-label">
 			{ translate( 'Included with plan' ) }
 		</Badge>
 	);
