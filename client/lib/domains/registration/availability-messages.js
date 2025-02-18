@@ -617,7 +617,7 @@ function getAvailabilityNotice(
 			break;
 
 		case domainAvailability.INVALID_LENGTH:
-			message = translate( 'The domain name you entered is too long.' );
+			message = translate( 'The domain name is too long.' );
 			break;
 
 		case 'blocked':
