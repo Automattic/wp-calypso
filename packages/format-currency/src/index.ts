@@ -15,7 +15,6 @@ const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
 
 // TODO clk numberFormatCurrency exported only for tests
 export function createFormatter(): CurrencyFormatter {
-	const currencyOverrides: Record< string, { symbol?: string | undefined } > = {};
 	let defaultLocale: string | undefined = undefined;
 	let geoLocation = '';
 
@@ -238,7 +237,7 @@ export function createFormatter(): CurrencyFormatter {
 		if ( code === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
 			return { symbol: 'US$' };
 		}
-		return currencyOverrides[ code ] ?? defaultCurrencyOverrides[ code ];
+		return defaultCurrencyOverrides[ code ];
 	}
 
 	function doesCurrencyExist( code: string ): boolean {
