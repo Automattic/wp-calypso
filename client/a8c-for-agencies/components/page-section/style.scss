@@ -54,9 +54,15 @@
 
 .page-section__header-description {
 	@include a4a-font-body-md;
+	max-width: 600px;
 	margin: 0;
 
 	@include break-medium {
 		@include a4a-font-body-lg;
+	}
+
+
+	@include break-large {
+		margin-inline-end: 64px;
 	}
 }

@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import A4ACarousel from 'calypso/a8c-for-agencies/components/a4a-carousel';
 import PageSection from 'calypso/a8c-for-agencies/components/page-section';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
+import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
@@ -34,8 +35,10 @@ export default function MigrationsHostingFeatures() {
 		<PageSection
 			className="migrations-hosting-features"
 			heading={ translate( 'Best-in-class WordPress hosting' ) }
-			description={ translate(
-				'WordPress.com and Pressable are powered by WP Cloud, the only cloud platform optimized for WordPress.'
+			description={ preventWidows(
+				translate(
+					'WordPress.com and Pressable are powered by WP Cloud, the only cloud platform optimized for WordPress.'
+				)
 			) }
 		>
 			<A4ACarousel>
