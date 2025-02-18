@@ -105,8 +105,9 @@ class StatsModule extends Component {
 
 	updateHistory( history, data ) {
 		// Timestamp the new data snapshot.
+		const now = moment();
 		const newSnapshot = {
-			timestamp: moment(),
+			timestamp: now,
 			data: data,
 		};
 
@@ -114,7 +115,7 @@ class StatsModule extends Component {
 		// This determines the baseline for the diff calculation.
 		const { minutesLimit } = this.props;
 		const filteredHistory = [ ...history, newSnapshot ].filter(
-			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
+			( snapshot ) => now.diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
 		return this.compactHistory( filteredHistory );
