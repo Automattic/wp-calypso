@@ -13,8 +13,6 @@ import { SubscriberDataViews } from 'calypso/my-sites/subscribers/components/sub
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { Subscriber } from './types';
 
-import './style.scss';
-
 const SubscribersPage = () => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) ?? null;

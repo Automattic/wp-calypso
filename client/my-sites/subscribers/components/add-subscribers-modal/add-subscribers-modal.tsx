@@ -9,9 +9,9 @@ import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
+import { useState } from '@wordpress/element';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';

@@ -106,8 +106,28 @@ const SubscriberDataViews = ( {
 		sortTerm: currentView.sort?.field as SubscribersSortBy,
 		sortOrder: currentView.sort?.direction as 'asc' | 'desc',
 		filters: filters,
-		limitData: true,
 	} );
+
+	const {
+		currentSubscriber,
+		onClickUnsubscribe: handleUnsubscribe,
+		onConfirmModal,
+		resetSubscriber,
+	} = useUnsubscribeModal(
+		siteId ?? null,
+		{
+			page: currentView.page ?? 1,
+			perPage: currentView.perPage,
+			search: searchTerm,
+			sortTerm: currentView.sort?.field as SubscribersSortBy,
+			sortOrder: currentView.sort?.direction as 'asc' | 'desc',
+			filters: filters,
+		},
+		false,
+		() => {
+			setSelectedSubscriber( null );
+		}
+	);
 
 	const { data: subscriber, isLoading: isLoadingDetails } = useSubscriberDetailsQuery(
 		siteId ?? null,
@@ -135,25 +155,6 @@ const SubscriberDataViews = ( {
 		pages: 0,
 		total: 0,
 	};
-
-	const {
-		currentSubscriber,
-		onClickUnsubscribe: handleUnsubscribe,
-		onConfirmModal,
-		resetSubscriber,
-	} = useUnsubscribeModal(
-		siteId ?? null,
-		{
-			currentPage: currentView.page ?? 1,
-			filters,
-			searchTerm,
-			sortTerm: SubscribersSortBy.DateSubscribed,
-		},
-		false,
-		() => {
-			setSelectedSubscriber( null );
-		}
-	);
 
 	const EmptyComponent = isSimple || isAtomic ? SubscriberLaunchpad : EmptyListView;
 	const shouldShowLaunchpad =

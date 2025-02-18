@@ -40,7 +40,7 @@ export const SubscribersHeader = ( {
 	const [ isMigrateSubscribersModalOpen, setIsMigrateSubscribersModalOpen ] = useState( false );
 
 	const openHelpCenter = () => {
-		setShowSupportDoc( 'wordpress.com/support/paid-newsletters/' );
+		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
 	};
 
 	const paidNewsletterUrl = ! isWPCOMSite
@@ -68,7 +68,7 @@ export const SubscribersHeader = ( {
 	return (
 		<>
 			<NavigationHeader
-				className="stats__section-header modernized-header"
+				className="subscribers__header"
 				title={ translate( 'Subscribers' ) }
 				subtitle={
 					hideSubtitle
