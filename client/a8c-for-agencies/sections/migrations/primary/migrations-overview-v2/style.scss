@@ -15,9 +15,14 @@
 	.page-section__header-description {
 		@include a4a-font-heading-md;
 		color: var(--color-neutral-70);
+		max-width: 600px;
 
 		@include break-medium {
 			@include a4a-font-heading-xl;
+		}
+
+		@include break-large {
+			padding-inline-end: 64px;
 		}
 	}
 }
