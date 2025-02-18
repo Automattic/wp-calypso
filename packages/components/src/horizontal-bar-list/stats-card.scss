@@ -69,6 +69,26 @@
 			width: $value-column-width;
 			text-align: right;
 		}
+
+		.stats-download-csv {
+			color: var(--color-link);
+			gap: 4px;
+
+			&[disabled],
+			&.disabled {
+				color: var(--color-neutral-20);
+			}
+
+			&:hover:not([disabled]) {
+				color: var(--color-link-dark);
+			}
+		}
+	}
+
+	.stats-card-sub-header {
+		display: flex;
+		justify-content: space-between;
+		padding: 0 $padding-outside $header-spacer $padding-outside;
 	}
 
 	.stats-card-header--main {

@@ -76,6 +76,10 @@ export type StatsCardProps = {
 	 * @property {React.ReactNode} titleNodes - additional nodes to be displayed next to the title - use TitleExtras component for unified resutl.
 	 */
 	titleNodes?: React.ReactNode;
+	/**
+	 * @property {React.ReactNode} downloadCsv - a node to be displayed next to the title - use DownloadCsv component for unified result.
+	 */
+	downloadCsv?: React.ReactNode;
 	footerAction?: {
 		label?: string;
 		url?: string;
@@ -98,6 +102,10 @@ export type StatsCardProps = {
 	 * @property {React.ReactNode} heroElement - a node placed before the list
 	 */
 	heroElement?: React.ReactNode;
+	/**
+	 * @property {boolean} multiHeader - adds a sub-header row, including metric label, after the header containing the name of the card and download csv button
+	 */
+	multiHeader?: boolean;
 	/**
 	 * @property {boolean} splitHeader - instead of using a simple header containing the name of the card use additional columns and header items
 	 */

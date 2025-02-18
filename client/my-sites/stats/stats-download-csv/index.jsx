@@ -1,4 +1,5 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@wordpress/components';
+import { download } from '@wordpress/icons';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -92,12 +93,12 @@ class StatsDownloadCsv extends Component {
 				onClick={ this.downloadCsv }
 				disabled={ disabled }
 				borderless={ borderless }
+				icon={ download }
 			>
 				{ ! skipQuery && siteId && statType && query && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				<Gridicon icon="cloud-download" />{ ' ' }
-				{ translate( 'Download data as CSV', {
+				{ translate( 'Download CSV', {
 					context: 'Action shown in stats to download data as csv.',
 				} ) }
 			</Button>
