@@ -15,6 +15,10 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
  */
 const actionMap = {
 	x( post ) {
+		// Note: Changing the base URL to x.com breaks the sharing of the featured image
+		// when sharing the post; it seems the Twitter API may have been updated in the move
+		// to X. This works well as is, so let's just leave it for now. In the future, we can
+		// consider updating the base URL if this endpoint becomes deprecated or stops working.
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
 		const params = new URLSearchParams( {
 			text: post.title,
