@@ -21,7 +21,8 @@ type Props = {
 
 const SignupContactForm = ( { onContinue }: Props ) => {
 	const translate = useTranslate();
-	const { validate, validationError, updateValidationError } = useContactFormValidation();
+	const { validate, validationError, updateValidationError, isValidating } =
+		useContactFormValidation();
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -169,7 +170,12 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 			</div>
 
 			<FormFooter>
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
+				<Button
+					__next40pxDefaultSize
+					disabled={ isValidating }
+					variant="primary"
+					onClick={ handleSubmit }
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			</FormFooter>

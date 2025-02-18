@@ -24,8 +24,6 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 				`By answering a few simple questions, we'll provide tips on maximizing your agency's impact.`
 			) }
 		>
-			<p className="choice-blueprint__text">{ translate( 'Ready?' ) }</p>
-
 			<FormFooter>
 				<Button
 					className="choice-blueprint__button"
@@ -33,7 +31,7 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 					onClick={ onContinue }
 					__next40pxDefaultSize
 				>
-					{ translate( 'Yes' ) }
+					{ translate( 'Build my custom blueprint' ) }
 				</Button>
 				<Button
 					className="choice-blueprint__button"

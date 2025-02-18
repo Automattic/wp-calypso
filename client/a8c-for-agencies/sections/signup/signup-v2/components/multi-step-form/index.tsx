@@ -7,6 +7,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
 import StepProgress from '../step-progress';
 import BlueprintForm from './blueprint-form';
+import BlueprintForm2 from './blueprint-form-2';
 import ChoiceBlueprint from './choice-blueprint';
 import SignupContactForm from './contact-form';
 import FinishSignupSurvey from './finish-signup-survey';
@@ -28,11 +29,18 @@ const MultiStepForm = () => {
 			label: translate( 'Personalize' ),
 			isActive: currentStep === 2 || currentStep === 3 || currentStep === 4,
 			isComplete: currentStep > 2,
+			half: true,
+		},
+		{
+			label: '',
+			isActive: currentStep === 5,
+			isComplete: currentStep > 5,
+			half: true,
 		},
 		{
 			label: translate( 'Finish survey' ),
-			isActive: currentStep === 5,
-			isComplete: currentStep > 5,
+			isActive: currentStep === 6,
+			isComplete: currentStep > 6,
 		},
 	];
 
@@ -50,7 +58,7 @@ const MultiStepForm = () => {
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
-			if ( nextStep === 5 ) {
+			if ( nextStep === 6 ) {
 				createSignup.mutate( newFormData as AgencyDetailsSignupPayload );
 			}
 		},
@@ -59,7 +67,7 @@ const MultiStepForm = () => {
 
 	const clearDataAndRefresh = () => {
 		setFormData( {} );
-		setCurrentStep( 1 );
+		window.location.reload();
 	};
 
 	const currentForm = useMemo( () => {
@@ -72,12 +80,14 @@ const MultiStepForm = () => {
 				return (
 					<ChoiceBlueprint
 						onContinue={ () => updateDataAndContinue( {}, 4 ) }
-						onSkip={ () => updateDataAndContinue( {}, 5 ) }
+						onSkip={ () => updateDataAndContinue( {}, 6 ) }
 					/>
 				);
 			case 4:
 				return <BlueprintForm onContinue={ ( data ) => updateDataAndContinue( data, 5 ) } />;
 			case 5:
+				return <BlueprintForm2 onContinue={ ( data ) => updateDataAndContinue( data, 6 ) } />;
+			case 6:
 				return <FinishSignupSurvey onContinue={ clearDataAndRefresh } />;
 			default:
 				return null;

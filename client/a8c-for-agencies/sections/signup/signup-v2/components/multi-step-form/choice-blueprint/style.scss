@@ -1,13 +1,4 @@
-.choice-blueprint__text {
-	@include a4a-font-body-lg;
-    color: var(--color-neutral-60);
-
-	@media (prefers-color-scheme: dark) {
-			color: var(--color-text-inverted);
-	}
-}
-
 .choice-blueprint__button {
-	width: 180px;
+	width: 200px;
 	justify-content: center;
 }

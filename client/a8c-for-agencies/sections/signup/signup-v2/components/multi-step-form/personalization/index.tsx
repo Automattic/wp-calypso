@@ -152,7 +152,7 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 									<option value="1-5">{ translate( '1-5' ) }</option>
 									<option value="6-20">{ translate( '6-20' ) }</option>
 									<option value="21-50">{ translate( '21-50' ) }</option>
-									<option value="50-100">{ translate( '50-100' ) }</option>
+									<option value="51-100">{ translate( '51-100' ) }</option>
 									<option value="101-500">{ translate( '101-500' ) }</option>
 									<option value="500+">{ translate( '500+' ) }</option>
 								</FormSelect>
