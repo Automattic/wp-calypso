@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CircularProgressBar } from '@automattic/components';
 import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
@@ -10,7 +11,6 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
