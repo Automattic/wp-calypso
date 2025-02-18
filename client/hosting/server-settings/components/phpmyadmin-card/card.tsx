@@ -1,16 +1,9 @@
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
-import PhpMyAdminForm from 'calypso/sites/tools/database/form';
+import PhpMyAdminForm from 'calypso/sites/settings/database/form';
 
 type PhpMyAdminCardProps = {
 	disabled?: boolean;
 };
 
 export default function PhpMyAdminCard( { disabled }: PhpMyAdminCardProps ) {
-	return (
-		<PhpMyAdminForm
-			ContainerComponent={ HostingCard }
-			DescriptionComponent={ HostingCardDescription }
-			disabled={ disabled }
-		/>
-	);
+	return <PhpMyAdminForm disabled={ disabled } />;
 }

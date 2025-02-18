@@ -10,7 +10,7 @@ import {
 	useEdgeCacheDefensiveModeQuery,
 	useEdgeCacheDefensiveModeMutation,
 } from 'calypso/data/hosting/use-cache';
-import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
+import DefensiveModeCard from 'calypso/sites/settings/server/defensive-mode-form';
 
 const INITIAL_STATE = {
 	sites: {

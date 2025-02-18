@@ -1,4 +1,5 @@
-import { Context as PageJSContext } from '@automattic/calypso-router';
+import config from '@automattic/calypso-config';
+import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
@@ -68,5 +69,18 @@ export async function hostingActivate( context: PageJSContext, next: () => void 
 			<HostingActivate />
 		</div>
 	);
+	next();
+}
+
+export async function redirectToServerSettingsIfDuplicatedView(
+	context: PageJSContext,
+	next: () => void
+) {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	if ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) {
+		const siteParam = context.params.site_id;
+		return page.redirect( `/sites/settings/server/${ siteParam }` );
+	}
 	next();
 }

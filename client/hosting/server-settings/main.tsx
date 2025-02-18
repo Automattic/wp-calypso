@@ -31,9 +31,9 @@ import { TrialAcknowledgeModal } from 'calypso/my-sites/plans/trials/trial-ackno
 import { WithOnclickTrialRequest } from 'calypso/my-sites/plans/trials/trial-acknowledge/with-onclick-trial-request';
 import TrialBanner from 'calypso/my-sites/plans/trials/trial-banner';
 import JetpackMonitor from 'calypso/my-sites/site-settings/form-jetpack-monitor';
-import CacheCard from 'calypso/sites/settings/caching/form';
-import DefensiveModeCard from 'calypso/sites/settings/web-server/defensive-mode-form';
-import WebServerSettingsCard from 'calypso/sites/settings/web-server/server-configuration-form';
+import CacheCard from 'calypso/sites/settings/performance/form';
+import DefensiveModeCard from 'calypso/sites/settings/server/defensive-mode-form';
+import WebServerSettingsCard from 'calypso/sites/settings/server/server-configuration-form';
 import { useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';

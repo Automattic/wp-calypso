@@ -8,7 +8,6 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import { getRouteFromContext } from 'calypso/utils';
 import { SidebarItem, Sidebar, PanelWithSidebar } from '../components/panel-sidebar';
 import { areHostingFeaturesSupported } from '../hosting-features/features';
-import Database from './database/page';
 import {
 	DeploymentCreation,
 	DeploymentManagement,
@@ -17,14 +16,10 @@ import {
 } from './deployments';
 import { indexPage } from './deployments/routes';
 import Monitoring from './monitoring';
-import useSftpSshSettingTitle from './sftp-ssh/hooks/use-sftp-ssh-setting-title';
-import SftpSsh from './sftp-ssh/page';
 import StagingSite from './staging-site';
 
 export function ToolsSidebar() {
 	const slug = useSelector( getSelectedSiteSlug );
-
-	const sftpSshTitle = useSftpSshSettingTitle();
 
 	return (
 		<Sidebar>
@@ -36,8 +31,6 @@ export function ToolsSidebar() {
 			</SidebarItem>
 			<SidebarItem href={ `/sites/tools/monitoring/${ slug }` }>{ __( 'Monitoring' ) }</SidebarItem>
 			<SidebarItem href={ `/sites/tools/logs/${ slug }` }>{ __( 'Logs' ) }</SidebarItem>
-			<SidebarItem href={ `/sites/tools/sftp-ssh/${ slug }` }>{ sftpSshTitle }</SidebarItem>
-			<SidebarItem href={ `/sites/tools/database/${ slug }` }>{ __( 'Database' ) }</SidebarItem>
 		</Sidebar>
 	);
 }
@@ -183,34 +176,6 @@ export function webServerLogs( context: PageJSContext, next: () => void ) {
 			/>
 			<ToolsSidebar />
 			<SiteLogs logType="web" />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function sftpSsh( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > SFTP/SSH"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<SftpSsh />
-		</PanelWithSidebar>
-	);
-	next();
-}
-
-export function database( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<PanelWithSidebar>
-			<PageViewTracker
-				title="Sites > Advanced Tools > Database"
-				path={ getRouteFromContext( context ) }
-			/>
-			<ToolsSidebar />
-			<Database />
 		</PanelWithSidebar>
 	);
 	next();

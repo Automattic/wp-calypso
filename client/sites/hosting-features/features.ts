@@ -1,10 +1,10 @@
-import { FEATURE_SFTP, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { FEATURE_SFTP } from '@automattic/calypso-products';
 import { SiteExcerptData } from '@automattic/sites';
 import { useSelector } from 'calypso/state';
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { useSelectedSiteSelector } from 'calypso/state/sites/hooks';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { AppState } from 'calypso/types';
 
 export function areHostingFeaturesSupported( site?: SiteExcerptData | null ) {
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
@@ -18,21 +18,10 @@ export function useAreHostingFeaturesSupported() {
 	return areHostingFeaturesSupported( site );
 }
 
-export function useAreHostingFeaturesSupportedAfterActivation() {
-	const features = useSelectedSiteSelector( getSiteFeatures );
-	const hasAtomicFeature = useSelectedSiteSelector( siteHasFeature, WPCOM_FEATURES_ATOMIC );
-
-	if ( ! features ) {
-		return null;
-	}
-
-	return hasAtomicFeature;
-}
-
-export function useAreAdvancedHostingFeaturesSupported() {
-	const site = useSelector( getSelectedSite );
-	const features = useSelectedSiteSelector( getSiteFeatures );
-	const hasSftpFeature = useSelectedSiteSelector( siteHasFeature, FEATURE_SFTP );
+export function areAdvancedHostingFeaturesSupported( state: AppState ) {
+	const site = getSelectedSite( state );
+	const features = getSiteFeatures( state, site?.ID );
+	const hasSftpFeature = siteHasFeature( state, site?.ID, FEATURE_SFTP );
 
 	if ( ! features ) {
 		return null;
@@ -40,12 +29,6 @@ export function useAreAdvancedHostingFeaturesSupported() {
 	return areHostingFeaturesSupported( site ) && hasSftpFeature;
 }
 
-export function useAreAdvancedHostingFeaturesSupportedAfterActivation() {
-	const features = useSelectedSiteSelector( getSiteFeatures );
-	const hasSftpFeature = useSelectedSiteSelector( siteHasFeature, FEATURE_SFTP );
-
-	if ( ! features ) {
-		return null;
-	}
-	return hasSftpFeature;
+export function useAreAdvancedHostingFeaturesSupported() {
+	return useSelector( areAdvancedHostingFeaturesSupported );
 }
