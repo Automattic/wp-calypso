@@ -51,7 +51,7 @@ export const ODIE_TRANSFER_MESSAGE: Message[] = [
 		context: {
 			flags: {
 				hide_disclaimer_content: true,
-				show_contact_support_msg: true,
+				show_contact_support_msg: false,
 			},
 			site_id: null,
 		},

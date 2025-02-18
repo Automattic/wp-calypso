@@ -206,7 +206,7 @@ export type ZendeskMessage = {
 	role: string;
 	actions?: MessageAction[];
 	source?: {
-		type: 'web' | 'slack' | 'zd:surveys';
+		type: 'web' | 'slack' | 'zd:surveys' | 'zd:answerBot';
 		id: string;
 		integrationId: string;
 	};
