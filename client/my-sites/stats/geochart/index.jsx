@@ -3,6 +3,7 @@ import { loadScript } from '@automattic/load-script';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { throttle, map } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
@@ -32,16 +33,22 @@ class StatsGeochart extends Component {
 		isLoading: PropTypes.bool,
 		numberLabel: PropTypes.string,
 		customHeight: PropTypes.number,
+		isRealTime: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		geoMode: 'country',
 		kind: 'site',
 		numberLabel: '',
+		isRealTime: false,
 	};
 
 	state = {
 		visualizationsLoaded: false,
+		// For real-time data.
+		diffData: [],
+		dataHistory: [],
+		lastUpdated: null,
 	};
 
 	visualization = null;
@@ -62,6 +69,10 @@ class StatsGeochart extends Component {
 
 	componentDidUpdate() {
 		if ( this.state.visualizationsLoaded ) {
+			// Process real-time data from stats normalized data.
+			if ( this.props.isRealTime ) {
+				this.processRealtimeData();
+			}
 			this.drawData();
 		}
 	}
@@ -83,6 +94,71 @@ class StatsGeochart extends Component {
 
 	recordEvent = () => {
 		gaRecordEvent( 'Stats', 'Clicked Country on Map' );
+	};
+
+	// TODO: Unify this with the same function in StatsModule.
+	updateHistory = ( history, data ) => {
+		// Timestamp the new data snapshot.
+		const newSnapshot = {
+			timestamp: moment(),
+			data: data,
+		};
+
+		const filteredHistory = [ ...history, newSnapshot ].filter(
+			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= 30
+		);
+
+		return filteredHistory;
+	};
+
+	// TODO: Unify this with the same function in StatsModule.
+	calculateDiff = ( prevData, newData, dataIndexId ) => {
+		// Create a lookup map for previous data using item IDs.
+		const prevDataMap = new Map( prevData.map( ( item ) => [ item[ dataIndexId ], item ] ) );
+
+		// Calculate the difference value for each new item.
+		const diff = newData.map( ( item ) => {
+			// Pull matching data from previous snapshot, or default to 0 if not found.
+			const prevItem = prevDataMap.get( item[ dataIndexId ] ) || { value: 0 };
+			return {
+				...item,
+				diffValue: item.value - prevItem.value,
+			};
+		} );
+
+		return diff;
+	};
+
+	// TODO: Better manage the real-time data state across components.
+	processRealtimeData = () => {
+		const { dataHistory, lastUpdated } = this.state;
+		const UPDATE_THRESHOLD_IN_SECONDS = 15;
+		const now = moment();
+
+		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
+			const updatedHistory = this.updateHistory( dataHistory, this.props.data );
+			const firstSnapshot = updatedHistory[ 0 ];
+			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
+
+			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data, 'countryCode' );
+			const filteredDiffData = diffData
+				.filter( ( diff ) => {
+					return diff.diffValue > 0;
+				} )
+				.map( ( diff ) => {
+					return {
+						...diff,
+						value: diff.diffValue,
+					};
+				} );
+
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				diffData: filteredDiffData,
+				dataHistory: updatedHistory,
+				lastUpdated: now,
+			} );
+		}
 	};
 
 	drawRegionsMap = () => {
@@ -157,7 +233,9 @@ class StatsGeochart extends Component {
 	};
 
 	drawData = () => {
-		const { currentUserCountryCode, data, geoMode, customHeight } = this.props;
+		const { currentUserCountryCode, geoMode, customHeight, isRealTime } = this.props;
+		// Determine if we should use real-time data or normalized data.
+		const data = isRealTime ? this.state.diffData : this.props.data;
 		if ( ! data || ! data.length ) {
 			return;
 		}

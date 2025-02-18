@@ -303,7 +303,9 @@ class StatsModule extends Component {
 					error={ hasError && <ErrorPanel /> }
 					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					heroElement={
-						path === 'countryviews' && <Geochart query={ query } skipQuery={ skipQuery } />
+						path === 'countryviews' && (
+							<Geochart query={ query } skipQuery={ skipQuery } isRealTime={ isRealTime } />
+						)
 					}
 					additionalColumns={ additionalColumns }
 					splitHeader={ !! additionalColumns }
