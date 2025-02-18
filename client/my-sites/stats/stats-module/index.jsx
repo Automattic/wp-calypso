@@ -214,8 +214,7 @@ class StatsModule extends Component {
 				.map( ( item ) => ( {
 					...item,
 					value: item.diffValue || 0,
-				} ) )
-				.slice( 0, 10 );
+				} ) );
 		}
 
 		if ( valueField && data ) {

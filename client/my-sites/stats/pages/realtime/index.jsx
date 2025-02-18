@@ -47,7 +47,7 @@ function StatsRealtime() {
 		() => ( {
 			period: 'day',
 			date: momentSiteZone.format( 'YYYY-MM-DD' ),
-			max: 20,
+			max: 10,
 			summarize: 1,
 		} ),
 		[ momentSiteZone ]
