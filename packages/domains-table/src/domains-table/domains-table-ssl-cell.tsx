@@ -3,6 +3,7 @@ import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { navigate } from 'calypso/lib/navigate'; // eslint-disable-line no-restricted-imports
 
 interface DomainsTableSslCellProps {
 	domainManagementLink: string;
@@ -40,13 +41,15 @@ export default function DomainsTableSslCell( {
 
 	if ( sslStatus ) {
 		button = (
-			<a
+			<button
 				className="domains-table-row__ssl-status-button"
-				href={ `${ domainManagementLink }?ssl-open=true` }
-				onClick={ ( event ) => event.stopPropagation() }
+				onClick={ ( event ) => {
+					event.stopPropagation();
+					navigate( `${ domainManagementLink }?ssl-open=true` );
+				} }
 			>
 				{ getSslStatusText() }
-			</a>
+			</button>
 		);
 	} else if ( hasWpcomManagedSslCert ) {
 		button = <span>{ translate( 'Active' ) }</span>;
