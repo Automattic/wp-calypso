@@ -10,6 +10,13 @@ import { useDispatch } from 'calypso/state';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
+const getWindowCenterPosition = ( targetWidth, targetHeight ) => {
+	return {
+		left: window.screenX + ( window.innerWidth / 2 - targetWidth / 2 ),
+		top: window.screenY + ( window.innerHeight / 2 - targetHeight / 2 ),
+	};
+};
+
 /**
  * Local variables
  */
@@ -27,8 +34,15 @@ const actionMap = {
 		baseUrl.search = params.toString();
 
 		const xUrl = baseUrl.href;
+		const width = 550;
+		const height = 420;
+		const { left, top } = getWindowCenterPosition( width, height );
 
-		window.open( xUrl, 'x', 'width=550,height=420,resizeable,scrollbars' );
+		window.open(
+			xUrl,
+			'x',
+			`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
+		);
 	},
 	facebook( post ) {
 		const baseUrl = new URL( 'https://www.facebook.com/sharer.php' );
@@ -40,7 +54,15 @@ const actionMap = {
 
 		const facebookUrl = baseUrl.href;
 
-		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
+		const width = 626;
+		const height = 436;
+		const { left, top } = getWindowCenterPosition( width, height );
+
+		window.open(
+			facebookUrl,
+			'facebook',
+			`width=${ width },height=${ height },left=${ left },top=${ top },resizable,scrollbars`
+		);
 	},
 	copy_link() {},
 };
