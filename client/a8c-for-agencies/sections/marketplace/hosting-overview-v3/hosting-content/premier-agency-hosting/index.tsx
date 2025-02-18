@@ -17,9 +17,9 @@ import HostingAdditionalFeaturesSection from '../../../common/hosting-additional
 import HostingTestimonialsSection from '../../../common/hosting-testimonials-section';
 import { MarketplaceTypeContext } from '../../../context';
 import useProductAndPlans from '../../../hooks/use-product-and-plans';
-import usePressableOwnershipType from '../../../hosting-overview/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../../../pressable-overview/hooks/use-existing-pressable-plan';
 import useGetPressablePlanByProductId from '../../../pressable-overview/hooks/use-get-pressable-plan-by-product-id';
+import usePressableOwnershipType from '../../hooks/use-pressable-ownership-type';
 import ClientRelationships from '../common/client-relationships';
 import HostingFeatures from '../common/hosting-features';
 import PressablePlanSection from './pressable-plan-section';

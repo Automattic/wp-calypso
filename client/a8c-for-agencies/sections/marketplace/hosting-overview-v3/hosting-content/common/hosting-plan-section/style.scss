@@ -1,6 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-
 .hosting-plan-section {
 	padding-block: 32px;
 
@@ -123,9 +122,6 @@
 	}
 }
 
-.hosting-plan-section__aside-button {
-	display: flex;
-	align-items: center;
+.hosting-plan-section__aside-button.hosting-plan-section__aside-button.hosting-plan-section__aside-button {
 	justify-content: center;
-	gap: 4px;
 }
