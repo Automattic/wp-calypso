@@ -17,7 +17,11 @@ class UserHeader extends Component {
 		const grav = this.props.user.media[ 0 ];
 		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } alt="" />;
 		const base_home_url = this.props.user.ranges[ 0 ].url;
-		const userId = this.props.user.ranges[ 0 ].id;
+		// Some site notifications populate Id with the siteId, so consider the userId falsy in this
+		// case.
+		const userId =
+			this.props.user.ranges[ 0 ].id !== this.props.user.ranges[ 0 ].site_id &&
+			this.props.user.ranges[ 0 ].id;
 		const home_url = userId ? `https://wordpress.com/reader/users/${ userId }` : base_home_url;
 		const note = this.props.note;
 
