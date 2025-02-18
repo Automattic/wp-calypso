@@ -9,7 +9,6 @@ import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
-import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -17,7 +16,6 @@ import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/co
 import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
-import { isCouponBoxHidden } from '../../utils';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -199,9 +197,6 @@ export function CouponFieldArea( {
 	const translate = useTranslate();
 	const { setCouponFieldValue } = couponFieldStateProps;
 	const isOnboardingAffiliateFlow = useSelector( getIsOnboardingAffiliateFlow );
-	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
-	const productSlugs = responseCart.products?.map( ( product ) => product.product_slug );
 
 	useEffect( () => {
 		if ( couponStatus === 'applied' ) {
@@ -210,16 +205,7 @@ export function CouponFieldArea( {
 		}
 	}, [ couponStatus, setCouponFieldValue ] );
 
-	const [ , experimentAssignment ] = useExperiment( 'calypso_checkout_hide_coupon_box_v2', {
-		isEligible: ! productSlugs.some( ( slug ) => 'wp_difm_lite' === slug ),
-	} );
-
-	if (
-		isPurchaseFree ||
-		couponStatus === 'applied' ||
-		isOnboardingAffiliateFlow ||
-		isCouponBoxHidden( productSlugs, experimentAssignment?.variationName )
-	) {
+	if ( isPurchaseFree || couponStatus === 'applied' || isOnboardingAffiliateFlow ) {
 		return null;
 	}
 

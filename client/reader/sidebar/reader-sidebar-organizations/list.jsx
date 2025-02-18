@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Count } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { map } from 'lodash';
@@ -24,8 +25,19 @@ export class ReaderSidebarOrganizationsList extends Component {
 		teams: PropTypes.array,
 	};
 
-	handleClick = () => {
+	toggleMenu = () => {
 		this.props.toggleReaderSidebarOrganization( { organizationId: this.props.organization.id } );
+	};
+
+	selectMenu = () => {
+		const { organization, isOrganizationOpen: isOpen, path } = this.props;
+		if ( ! isOpen ) {
+			this.toggleMenu();
+		}
+		const defaultSelection = organization.slug && `/reader/${ organization.slug }`;
+		if ( defaultSelection && path !== defaultSelection ) {
+			page( defaultSelection );
+		}
 	};
 
 	renderIcon() {
@@ -74,11 +86,13 @@ export class ReaderSidebarOrganizationsList extends Component {
 		if ( ! organization.sites_count ) {
 			return null;
 		}
+
 		return (
 			<ExpandableSidebarMenu
 				expanded={ this.props.isOrganizationOpen }
 				title={ organization.title }
-				onClick={ this.handleClick }
+				onClick={ this.selectMenu }
+				expandableIconClick={ this.toggleMenu }
 				customIcon={ this.renderIcon() }
 				disableFlyout
 				className={

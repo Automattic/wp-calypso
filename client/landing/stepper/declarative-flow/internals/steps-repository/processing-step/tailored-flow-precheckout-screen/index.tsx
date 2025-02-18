@@ -3,7 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
+import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -87,7 +87,7 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 
 	return (
 		<>
-			<StepperLoader title={ steps.current[ currentStep ]?.title } progress={ progress } />
+			<Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />
 			{ flowName === NEWSLETTER_FLOW && (
 				<div className="processing-step__jetpack-powered">
 					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>

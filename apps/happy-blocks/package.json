@@ -16,7 +16,6 @@
 		"build-calypso-strings": "wp-babel-makepot '../../{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base '../../' --dir 'dist/strings' --output './dist/calypso-strings.pot' && rm -rf dist/strings",
 		"build:pricing-plans": "calypso-build --env block='pricing-plans'",
 		"build:universal-header": "calypso-build --env block='universal-header'",
-		"build:universal-footer": "calypso-build --env block='universal-footer'",
 		"build:support-content-footer": "calypso-build --env block='support-content-footer'",
 		"build:education-header": "calypso-build --env block='education-header'",
 		"build:support-content-links": "calypso-build --env block='support-content-links'",
@@ -52,7 +51,8 @@
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@emotion/react": "^11.11.1",
-		"@testing-library/react": "^15.0.7",
+		"@testing-library/dom": "^10.4.0",
+		"@testing-library/react": "^16.2.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^3.14.0",
 		"copy-webpack-plugin": "^10.2.4",
 		"glob": "^7.1.6",

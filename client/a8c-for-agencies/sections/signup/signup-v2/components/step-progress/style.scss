@@ -12,15 +12,21 @@
 
 	.step-progress__steps-container {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(6, 1fr);
 		gap: 8px;
 		width: 100%;
 	}
 
 	.step-progress__step {
+		justify-content: space-between;
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+		grid-column: span 2;
+
+		&.is-half {
+			grid-column: span 1;
+		}
 	}
 
 	.step-progress__step.is-active {

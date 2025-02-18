@@ -1,7 +1,7 @@
 import page from '@automattic/calypso-router';
 import { getUrlParts, getUrlFromParts, determineUrlType, format } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import SearchRestyled from '@automattic/search';
+import Search from '@automattic/search';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -12,7 +12,6 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import Search from 'calypso/components/search';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
@@ -59,7 +58,6 @@ export class SiteSelector extends Component {
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
 		navigateToSite: PropTypes.func.isRequired,
-		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
 		maxResults: PropTypes.number,
@@ -402,7 +400,6 @@ export class SiteSelector extends Component {
 				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ this.isHighlighted }
 				isSelected={ this.isSelected }
-				isReskinned={ this.props.isReskinned }
 			/>
 		);
 	}
@@ -426,8 +423,6 @@ export class SiteSelector extends Component {
 
 		const sites = this.sitesToBeRendered();
 
-		const SearchComponent = this.props.isReskinned ? SearchRestyled : Search;
-
 		return (
 			<div
 				ref={ this.props.forwardRef }
@@ -435,7 +430,7 @@ export class SiteSelector extends Component {
 				onMouseMove={ this.onMouseMove }
 				onMouseLeave={ this.onMouseLeave }
 			>
-				<SearchComponent
+				<Search
 					onSearch={ this.onSearch }
 					placeholder={ this.props.searchPlaceholder }
 					// eslint-disable-next-line jsx-a11y/no-autofocus
@@ -443,7 +438,6 @@ export class SiteSelector extends Component {
 					disabled={ ! this.props.hasLoadedSites }
 					onSearchClose={ this.props.onClose }
 					onKeyDown={ this.onKeyDown }
-					isReskinned={ this.props.isReskinned }
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }

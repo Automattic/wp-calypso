@@ -3,7 +3,7 @@ import { initSentry, captureException } from '@automattic/calypso-sentry';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import debugFactory from 'debug';
-import { translate } from 'i18n-calypso/types';
+import { translate } from 'i18n-calypso';
 import { Dispatch } from 'redux';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { getMobileDeviceInfo, isWcMobileApp, isWpMobileApp } from 'calypso/lib/mobile-app';

@@ -2,10 +2,7 @@ import clsx from 'clsx';
 import React from 'react';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import * as stats from 'calypso/reader/stats';
-import {
-	getUserProfileUrl,
-	isUserProfileEnabled,
-} from 'calypso/reader/user-profile/user-profile.utils';
+import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 
 import './style.scss';
 
@@ -42,10 +39,9 @@ export default function ReaderAuthorLink( props: ReaderAuthorLinkProps ) {
 		onClick?.();
 	};
 
-	const authorLinkUrl =
-		isUserProfileEnabled() && author.wpcom_login
-			? getUserProfileUrl( author.wpcom_login )
-			: props.siteUrl ?? author.URL;
+	const authorLinkUrl = author.wpcom_login
+		? getUserProfileUrl( author.wpcom_login )
+		: props.siteUrl ?? author.URL;
 
 	const authorName = author.name;
 	// If the author name is blocked, don't return anything

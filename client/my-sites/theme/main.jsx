@@ -383,7 +383,7 @@ class ThemeSheet extends Component {
 		} );
 
 		// The embed live demo works only for WP.com themes
-		if ( this.isWpcomOnlyTheme() ) {
+		if ( this.isWebPreviewAvailable() ) {
 			const { preview } = this.props.options;
 			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
@@ -423,7 +423,7 @@ class ThemeSheet extends Component {
 		);
 	}
 
-	isWpcomOnlyTheme() {
+	isWebPreviewAvailable() {
 		return (
 			this.props.isWpcomTheme &&
 			! this.props.isExternallyManagedTheme &&
@@ -1302,7 +1302,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
+							{ this.isWebPreviewAvailable() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>

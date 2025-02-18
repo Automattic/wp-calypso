@@ -13,14 +13,18 @@
 	justify-content: space-between;
 	padding: 0;
 	position: relative;
-
-	&.is-reskinned {
-		.site-icon {
-			background-color: var(--color-neutral-0);
-			svg {
-				transform: scale(0.65);
-				fill: var(--color-neutral-50);
-			}
+	.site-icon {
+		position: relative;
+		height: 30px;
+		width: 30px;
+		overflow: hidden;
+		align-self: flex-start;
+		margin-right: 8px;
+		flex: 0 0 auto;
+		background-color: var(--color-neutral-0);
+		svg {
+			transform: scale(0.65);
+			fill: var(--color-neutral-50);
 		}
 	}
 
@@ -117,17 +121,6 @@
 	}
 }
 
-// Adjusts the SiteIcon component for use
-// within a Site item
-.site .site-icon {
-	position: relative;
-	height: 30px;
-	width: 30px;
-	overflow: hidden;
-	align-self: flex-start;
-	margin-right: 8px;
-	flex: 0 0 auto;
-}
 
 // The group of site title and domain
 .site__info {
