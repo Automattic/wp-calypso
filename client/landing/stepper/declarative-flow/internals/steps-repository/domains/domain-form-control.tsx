@@ -69,7 +69,7 @@ export function DomainFormControl( {
 
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( true );
 
-	const path = '/start/link-in-bio/domains?new=test';
+	const path = '/setup/onboarding/domains';
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
