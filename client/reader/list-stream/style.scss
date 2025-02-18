@@ -15,16 +15,6 @@
 	&:hover {
 		cursor: default;
 	}
-
-	// Main layout already has mx
-	.navigation-header {
-		margin: 0 auto;
-		padding: 0 0 16px 0;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 0 16px 16px;
-		}
-	}
 }
 
 .list-stream__header-icon {
