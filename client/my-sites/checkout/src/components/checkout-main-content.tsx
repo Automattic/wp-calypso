@@ -408,6 +408,10 @@ export default function CheckoutMainContent( {
 
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
+	const businessUseDetails = useSelect(
+		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
+		[]
+	);
 
 	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
@@ -682,7 +686,8 @@ export default function CheckoutMainContent( {
 											responseCart,
 											updateLocation,
 											contactInfo,
-											vatDetailsInForm
+											vatDetailsInForm,
+											businessUseDetails
 										);
 									} catch {
 										// If updating the cart fails, we should not continue. No need

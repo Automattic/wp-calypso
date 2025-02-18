@@ -1,11 +1,12 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useShoppingCart, convertTaxLocationToLocationUpdate } from '@automattic/shopping-cart';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import { hasCheckoutVersion, ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import useCartKey from '../../use-cart-key';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 
 // Styled component for checkbox styles
 const CheckboxWrapper = styled.div`
@@ -47,26 +48,20 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const cartKey = useCartKey();
-	const { responseCart, updateLocation, isLoading, isPendingUpdate } = useShoppingCart( cartKey );
+	const { isLoading, isPendingUpdate } = useShoppingCart( cartKey );
+	const businessUseDetailsInForm = useSelect(
+		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
+		[]
+	);
+	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
+	const setBusinessUseDetailsInForm = wpcomStoreActions?.setBusinessUseDetails;
 
 	// Determine if the checkbox should be shown
 	const isUnitedStateWithBusinessOption = shouldShowBusinessOption( taxInfo );
 
 	// Ensure the checkbox state is always a boolean
-	const isChecked = Boolean( responseCart.tax.location.is_for_business );
+	const isChecked = Boolean( businessUseDetailsInForm?.is_for_business );
 	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
-
-	useEffect( () => {
-		if (
-			! isUnitedStateWithBusinessOption &&
-			responseCart.tax.location.is_for_business !== undefined
-		) {
-			updateLocation( {
-				...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
-				isForBusiness: undefined,
-			} );
-		}
-	}, [ isUnitedStateWithBusinessOption ] );
 
 	// Hide checkbox if not eligible
 	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
@@ -96,9 +91,8 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 					if ( isDisabled ) {
 						return;
 					}
-					updateLocation( {
-						...convertTaxLocationToLocationUpdate( responseCart.tax.location ),
-						isForBusiness: newValue,
+					setBusinessUseDetailsInForm( {
+						is_for_business: newValue,
 					} );
 				} }
 			/>

@@ -442,6 +442,7 @@ export type WpcomStoreState = {
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
 	vatDetails: VatDetails;
+	businessUseDetails: BusinessUseDetails;
 };
 
 export interface FailedPurchase {
@@ -457,6 +458,10 @@ export interface VatDetails {
 	id?: string | null;
 	name?: string | null;
 	address?: string | null;
+}
+
+export interface BusinessUseDetails {
+	is_for_business?: boolean | undefined;
 }
 
 /*

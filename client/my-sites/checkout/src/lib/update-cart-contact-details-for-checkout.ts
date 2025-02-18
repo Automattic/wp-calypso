@@ -9,6 +9,7 @@ import type {
 	ManagedContactDetails,
 	CountryListItem,
 	VatDetails,
+	BusinessUseDetails,
 } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:update-cart-contact-details-for-checkout' );
@@ -21,7 +22,8 @@ export async function updateCartContactDetailsForCheckout(
 	responseCart: ResponseCart,
 	updateLocation: UpdateTaxLocationInCart,
 	contactInfo: ManagedContactDetails | undefined,
-	vatDetails: VatDetails
+	vatDetails: VatDetails,
+	businessUseDetails: BusinessUseDetails
 ): Promise< void | ResponseCart > {
 	const areCountriesLoaded = !! countriesList.length;
 	const countryCode = vatDetails.country ?? contactInfo?.countryCode?.value ?? '';
@@ -79,6 +81,7 @@ export async function updateCartContactDetailsForCheckout(
 		organization,
 		address,
 		city: ( taxRequirements.city ? contactInfo.city?.value : undefined ) ?? '',
+		isForBusiness: businessUseDetails?.is_for_business,
 	};
 	debug( 'updating cart with', cartLocationData );
 	return updateLocation( cartLocationData );
