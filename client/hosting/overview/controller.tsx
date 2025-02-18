@@ -76,7 +76,8 @@ export async function redirectToServerSettingsIfDuplicatedView(
 	context: PageJSContext,
 	next: () => void
 ) {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	if ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) {
 		const siteParam = context.params.site_id;
 		return page.redirect( `/sites/settings/server/${ siteParam }` );
