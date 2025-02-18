@@ -31,20 +31,19 @@ import {
 	MARKETING_TRAFFIC,
 	MARKETING_SHARING,
 	SETTINGS_SITE,
-	SETTINGS_ADMINISTRATION,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 	SETTINGS_ADMINISTRATION_DELETE_SITE,
-	SETTINGS_CACHING,
-	SETTINGS_WEB_SERVER,
+	SETTINGS_SERVER,
+	SETTINGS_SFTP_SSH,
+	SETTINGS_DATABASE,
+	SETTINGS_PERFORMANCE,
 	TOOLS,
 	TOOLS_STAGING_SITE,
 	TOOLS_DEPLOYMENTS,
 	TOOLS_MONITORING,
 	TOOLS_LOGS_PHP,
 	TOOLS_LOGS_WEB,
-	TOOLS_SFTP_SSH,
-	TOOLS_DATABASE,
 } from './constants';
 import PreviewPaneHeaderButtons from './preview-pane-header-buttons';
 import SiteEnvironmentSwitcher from './site-environment-switcher';
@@ -149,8 +148,6 @@ const DotcomPreviewPane = ( {
 					TOOLS_MONITORING,
 					TOOLS_LOGS_PHP,
 					TOOLS_LOGS_WEB,
-					TOOLS_SFTP_SSH,
-					TOOLS_DATABASE,
 				],
 			},
 			{
@@ -169,23 +166,21 @@ const DotcomPreviewPane = ( {
 				enabled: isRemoveDuplicateViewsExperimentEnabled,
 				featureIds: [
 					SETTINGS_SITE,
-					SETTINGS_ADMINISTRATION,
 					SETTINGS_ADMINISTRATION_RESET_SITE,
 					SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 					SETTINGS_ADMINISTRATION_DELETE_SITE,
-					SETTINGS_CACHING,
-					SETTINGS_WEB_SERVER,
-					...[ isRemoveDuplicateViewsExperimentEnabled ? DOTCOM_HOSTING_CONFIG : null ],
+					SETTINGS_SERVER,
+					SETTINGS_SFTP_SSH,
+					SETTINGS_DATABASE,
+					SETTINGS_PERFORMANCE,
+					...( ! config.isEnabled( 'untangling/settings-i2' ) ? [ DOTCOM_HOSTING_CONFIG ] : [] ),
 				],
 			},
 			{
 				label: hasEnTranslation( 'Server Settings' )
 					? __( 'Server Settings' )
 					: __( 'Server Config' ),
-				enabled:
-					! isRemoveDuplicateViewsExperimentEnabled &&
-					isActiveAtomicSite &&
-					! config.isEnabled( 'untangling/hosting-menu' ),
+				enabled: ! isRemoveDuplicateViewsExperimentEnabled && isActiveAtomicSite,
 				featureIds: [ DOTCOM_HOSTING_CONFIG ],
 			},
 		];

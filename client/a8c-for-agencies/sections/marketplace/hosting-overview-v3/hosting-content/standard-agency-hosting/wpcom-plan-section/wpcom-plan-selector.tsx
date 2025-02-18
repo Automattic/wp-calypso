@@ -5,10 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import A4ANumberInputV2 from 'calypso/a8c-for-agencies/components/a4a-number-input-v2';
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-wpcom-plan-description';
-import useWPCOMDiscountTiers from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-wpcom-discount-tiers';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
+import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
 
 type Props = {
 	plan: APIProductFamilyProduct;

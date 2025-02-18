@@ -6,8 +6,9 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import './style.scss';
 
 interface Tab {
@@ -22,11 +23,13 @@ interface Props {
 
 const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 	const currentLocale = useLocale();
+	const dispatch = useDispatch();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const recordTabClick = () => {
+	const recordTabClick = ( tab: string ) => {
 		recordAction( 'click_discover_tab' );
 		recordGaEvent( 'Clicked Discover Tab' );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tab_clicked', { tab } ) );
 	};
 
 	const getLocalizedPath = ( path: string ) => {
@@ -89,7 +92,7 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 						key={ tab.slug }
 						selected={ selectedTab === tab.slug }
 						path={ tab.path }
-						onClick={ recordTabClick }
+						onClick={ () => recordTabClick( tab.slug ) }
 					>
 						{ tab.title }
 					</NavItem>

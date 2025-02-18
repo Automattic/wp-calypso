@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
@@ -16,6 +15,7 @@ import { HostingCardDescription } from 'calypso/components/hosting-card';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import { useDataCenterOptions } from 'calypso/data/data-center/use-data-center-options';
 import { usePhpVersions } from 'calypso/data/php-versions/use-php-versions';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import { useSelector } from 'calypso/state';
 import {
 	updateAtomicPhpVersion,
@@ -103,7 +103,7 @@ export default function ServerConfigurationForm( { disabled }: ServerConfigurati
 	const isLoading =
 		isGettingGeoAffinity || isGettingPhpVersion || isGettingStaticFile404 || isGettingWpVersion;
 
-	const isUntangled = config.isEnabled( 'untangling/hosting-menu' );
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
 
 	useEffect( () => {
 		function scrollTo( hash: string ) {

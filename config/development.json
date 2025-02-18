@@ -204,6 +204,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"untangling/hosting-menu": false,
+		"untangling/settings-i2": true,
 		"user-management-revamp": true,
 		"wpcom-user-bootstrap": false,
 		"yolo/command-palette": true

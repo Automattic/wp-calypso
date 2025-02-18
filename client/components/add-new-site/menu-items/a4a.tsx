@@ -14,7 +14,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useFetchDevLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-dev-licenses';
 import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
-import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview/hooks/use-pressable-ownership-type';
+import usePressableOwnershipType from 'calypso/a8c-for-agencies/sections/marketplace/hosting-overview-v3/hooks/use-pressable-ownership-type';
 import usePaymentMethod from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/hooks/use-payment-method';
 import devSiteBanner from 'calypso/assets/images/a8c-for-agencies/dev-site-banner.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
