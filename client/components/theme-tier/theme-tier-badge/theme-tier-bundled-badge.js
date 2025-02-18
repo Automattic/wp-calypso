@@ -35,7 +35,7 @@ export default function ThemeTierBundledBadge( { hideBackgroundOnUpgrade, hideBu
 
 			{ ! isUpdatedBadgeDesign && ! hideBundledBadge && (
 				<BundledBadge
-					className="theme-tier-badge__content is-bundled-theme"
+					className="theme-tier-badge__content"
 					color={ color }
 					icon={ <BadgeIcon /> }
 					isClickable={ false }

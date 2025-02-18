@@ -15,7 +15,7 @@ const MAX_LABEL_LENGTH = 45;
 const useUpgradeLabel = ( showPartnerPrice, planName, subscriptionPrices, translate ) => {
 	return useMemo( () => {
 		if ( showPartnerPrice && subscriptionPrices.month ) {
-			const fullLabel = translate( 'Available on %(planName)s + %(price)s/month', {
+			const fullLabel = translate( 'On %(planName)s + %(price)s/month', {
 				args: {
 					planName,
 					price: subscriptionPrices.month,

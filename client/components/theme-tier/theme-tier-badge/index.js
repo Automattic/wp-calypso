@@ -51,7 +51,7 @@ export default function ThemeTierBadge( {
 			return (
 				<ThemeTierBundledBadge
 					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
-					hideBundledBadge={ themeTier?.slug === 'woocommerce' }
+					hideBundledBadge={ hideBackgroundOnUpgrade }
 				/>
 			);
 		}
@@ -61,7 +61,12 @@ export default function ThemeTierBadge( {
 		}
 
 		if ( themeType === DOT_ORG_THEME ) {
-			return <ThemeTierCommunityBadge hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade } />;
+			return (
+				<ThemeTierCommunityBadge
+					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
+					hideCommunityBadge={ hideBackgroundOnUpgrade }
+				/>
+			);
 		}
 
 		if ( themeTier?.slug === 'partner' || themeType === MARKETPLACE_THEME ) {

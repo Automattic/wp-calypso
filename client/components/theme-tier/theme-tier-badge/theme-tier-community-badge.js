@@ -7,7 +7,7 @@ import { useThemeTierBadgeContext } from './theme-tier-badge-context';
 import ThemeTierIncludedBadge from './theme-tier-included-badge';
 import ThemeTierPlanUpgradeBadge from './theme-tier-upgrade-badge';
 
-export default function ThemeTierCommunityBadge( { hideBackgroundOnUpgrade } ) {
+export default function ThemeTierCommunityBadge( { hideBackgroundOnUpgrade, hideCommunityBadge } ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { showUpgradeBadge, themeId } = useThemeTierBadgeContext();
@@ -25,14 +25,16 @@ export default function ThemeTierCommunityBadge( { hideBackgroundOnUpgrade } ) {
 
 			{ isThemeIncluded && <ThemeTierIncludedBadge /> }
 
-			<PremiumBadge
-				className="theme-tier-badge__content is-third-party"
-				focusOnShow={ false }
-				isClickable={ false }
-				labelText={ translate( 'Community' ) }
-				shouldHideIcon
-				shouldHideTooltip
-			/>
+			{ ! hideCommunityBadge && (
+				<PremiumBadge
+					className="theme-tier-badge__content is-third-party"
+					focusOnShow={ false }
+					isClickable={ false }
+					labelText={ translate( 'Community' ) }
+					shouldHideIcon
+					shouldHideTooltip
+				/>
+			) }
 		</>
 	);
 }
