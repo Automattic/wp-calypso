@@ -1,7 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
-import { useProductsWithPremiumSupport } from '@automattic/help-center/src/hooks';
+import {
+	useProductsCustomOptions,
+	useProductsWithPremiumSupport,
+} from '@automattic/help-center/src/hooks';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
@@ -69,8 +72,12 @@ export function DefaultMasterbarContact() {
 	const { responseCart } = useShoppingCart( cartKey );
 
 	const { hasPremiumSupport, initialMessage } = useProductsWithPremiumSupport(
-		responseCart.products
+		responseCart.products,
+		'checkout'
 	);
+
+	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
+
 	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
 
 	const isShowingHelpCenter = useDataStoreSelect(
@@ -84,7 +91,7 @@ export function DefaultMasterbarContact() {
 		} );
 
 		if ( hasPremiumSupport ) {
-			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport );
+			setShowHelpCenter( ! isShowingHelpCenter, hasPremiumSupport, helpCenterOptions );
 			setNavigateToRoute(
 				`/odie?provider=zendesk&userFieldMessage=${ initialMessage }&siteUrl=${ siteSlug }&siteId=${ siteId }`
 			);
