@@ -66,18 +66,23 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 			}
 
 			/**
-			 * If the externally managed theme is selected, we have to check:
-			 * - Whether the theme is available. If not, do nothing as the user may remove the theme product during the checkout.
-			 * - Whether the site is atomic since it should be installed on the user's site.
+			 * If an externally managed theme is selected, we need to check the following:
+			 * - Ensure the theme is available. If it's not, we do nothing, as the user may remove the theme product during checkout.
+			 * - Verify that the site is atomic, as the theme should be installed on the user's site.
 			 *
-			 * The atomic transfer would be initiated immediately after the user purchases a externally managed theme.
-			 * If not, then we have to initiate the atomic transfer manually.
+			 * The atomic transfer will be initiated immediately after the user purchases an externally managed theme.
+			 * If it’s not initiated, we need to trigger the atomic transfer manually.
+			 *
+			 * Note that an externally managed theme is only available when both of the following conditions are met:
+			 * - The site must be subscribed to the theme.
+			 * - The site must be eligible for managed external themes.
 			 */
 			if ( siteTransferStatusData?.isTransferring ) {
 				await waitForAtomic();
 			} else if (
 				selectedDesign?.is_externally_managed &&
-				( isMarketplaceThemeSubscribed || isExternallyManagedThemeAvailable )
+				isMarketplaceThemeSubscribed &&
+				isExternallyManagedThemeAvailable
 			) {
 				await waitForInitiateTransfer();
 				await waitForAtomic();
