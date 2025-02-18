@@ -45,6 +45,12 @@ export function generateSteps( {
 	excludeSegmentSurveyStepIfInactive = noop,
 } = {} ) {
 	return {
+		'set-reader-landing': {
+			stepName: 'set-reader-landing',
+			props: {
+				nonInteractive: true,
+			},
+		},
 		'domains-launch': {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
@@ -564,7 +570,7 @@ export function generateSteps( {
 					);
 				},
 				get subHeaderText() {
-					return i18n.translate( 'Don’t worry, you can easily change it later.' );
+					return i18n.translate( "Don't worry, you can easily change it later." );
 				},
 			},
 			providesDependencies: [

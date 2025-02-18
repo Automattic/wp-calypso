@@ -383,11 +383,7 @@ class Signup extends Component {
 
 		if ( flow.postCompleteCallback ) {
 			const siteId = dependencies && dependencies.siteId;
-			await flow.postCompleteCallback( {
-				siteId,
-				flowName: this.props.flowName,
-				dispatch: this.props.dispatch,
-			} );
+			await flow.postCompleteCallback( { siteId, flowName: this.props.flowName } );
 		}
 	};
 
@@ -989,10 +985,9 @@ export default connect(
 			hostingFlow,
 		};
 	},
-	( dispatch ) => ( {
-		dispatch,
-		submitSignupStep: ( ...args ) => dispatch( submitSignupStep( ...args ) ),
-		removeStep: ( ...args ) => dispatch( removeStep( ...args ) ),
-		addStep: ( ...args ) => dispatch( addStep( ...args ) ),
-	} )
+	{
+		submitSignupStep,
+		removeStep,
+		addStep,
+	}
 )( Signup );
