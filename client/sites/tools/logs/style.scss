@@ -34,3 +34,14 @@
 .site-logs .dataviews-pagination__page-select {
 	display: none !important;
 }
+
+// Long fields in PHP Errors.
+.site-logs-table__message,
+.site-logs-table__file,
+// Long fields in Web Errors.
+.site-logs-table__request-url,
+.site-logs-table__http-referer {
+	overflow: visible;
+	white-space: normal;
+	word-break: break-word;
+}
