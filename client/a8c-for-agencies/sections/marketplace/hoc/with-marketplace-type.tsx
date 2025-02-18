@@ -35,7 +35,7 @@ function withMarketplaceType< T >(
 		};
 
 		const toggleMarketplaceType = () => {
-			if ( ! isAutomatedReferrals || ! isPayable ) {
+			if ( ! isAutomatedReferrals ) {
 				return;
 			}
 			const nextType =
