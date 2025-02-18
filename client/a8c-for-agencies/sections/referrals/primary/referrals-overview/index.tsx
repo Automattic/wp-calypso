@@ -118,7 +118,7 @@ export default function ReferralsOverview( {
 							onClose={ () => setReferralEmail( '' ) }
 						/>
 					) }
-					{ ! actionRequiredNotice && (
+					{ actionRequiredNotice && (
 						<div className="referrals-overview__notice">
 							<MissingPaymentSettingsNotice onClose={ () => setRequiredNoticeClosed( true ) } />
 						</div>
