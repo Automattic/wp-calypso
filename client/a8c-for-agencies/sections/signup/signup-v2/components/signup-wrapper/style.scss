@@ -184,3 +184,18 @@
     }
   }
 }
+
+.blueprint-form__radio-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.blue-print-form__radio {
+	cursor: pointer;
+	padding-block: 4px;
+
+	.form-radio__label {
+		@include a4a-font-body-md;
+	}
+}

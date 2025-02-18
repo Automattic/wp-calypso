@@ -8,8 +8,6 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsSignupPayload } from '../../../../types';
 
-import './style.scss';
-
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 };
