@@ -14,7 +14,10 @@ const Reddit = () => {
 		<div className="discover-reddit">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 				<div className="discover-reddit__form">
-					<AddSitesForm placeholder={ translate( 'Search by Reddit URL' ) } />
+					<AddSitesForm
+						placeholder={ translate( 'Search by Reddit URL' ) }
+						buttonText={ translate( 'Add Feed' ) }
+					/>
 				</div>
 				<div className="discover-reddit__instructions">
 					<div className="discover-reddit__instructions-icon">

@@ -14,6 +14,7 @@ import './styles.scss';
 type AddSitesFormProps = {
 	onAddFinished?: () => void;
 	placeholder?: string;
+	buttonText?: string;
 };
 
 type SubscriptionError = {
@@ -21,7 +22,11 @@ type SubscriptionError = {
 	message?: string;
 };
 
-const AddSitesForm = ( { onAddFinished = () => {}, placeholder }: AddSitesFormProps ) => {
+const AddSitesForm = ( {
+	onAddFinished = () => {},
+	placeholder,
+	buttonText,
+}: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
@@ -136,7 +141,7 @@ const AddSitesForm = ( { onAddFinished = () => {}, placeholder }: AddSitesFormPr
 					disabled={ ! inputValue || !! inputFieldError || subscribing }
 					onClick={ onAddSite }
 				>
-					{ translate( 'Add site' ) }
+					{ buttonText || translate( 'Add site' ) }
 				</Button>
 			</div>
 

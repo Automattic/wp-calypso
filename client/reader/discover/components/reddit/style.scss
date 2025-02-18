@@ -1,14 +1,17 @@
 @import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
 
 .discover-reddit {
 
 	&__instructions {
 		border: 1px solid #e2e2e2;
 		border-radius: 4px;
-		padding: 30px 45px;
-		margin: 73px auto 0;
-		width: 100%;
-		max-width: 580px;
+		padding: 30px 15px;
+		margin: 100px auto 0;
+
+		@include break-mobile {
+			padding: 30px 45px;
+		}
 
 		&-icon {
 			display: flex;
@@ -31,5 +34,7 @@
 		strong {
 			font-weight: 700;
 		}
+
+
 	}
 }
