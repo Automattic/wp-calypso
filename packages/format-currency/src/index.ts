@@ -1,4 +1,5 @@
 import { defaultCurrencyOverrides } from './currencies';
+import { getCachedFormatter } from './get-cached-formatter';
 import type {
 	CurrencyObject,
 	CurrencyObjectOptions,
@@ -8,7 +9,6 @@ import type {
 
 export * from './types';
 
-const formatterCache = new Map();
 const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
 const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
@@ -42,16 +42,23 @@ export function createFormatter(): CurrencyFormatter {
 		return options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	}
 
-	function getFormatter(
+	function getCurrencyFormatter(
 		number: number,
 		code: string,
 		options: CurrencyObjectOptions
 	): Intl.NumberFormat {
+		const numberFormatOptions: Intl.NumberFormatOptions = {
+			style: 'currency',
+			currency: code,
+			...( isNoDecimals( number, options )
+				? { maximumFractionDigits: 0, minimumFractionDigits: 0 }
+				: {} ),
+			...( options.signForPositive ? { signDisplay: 'exceptZero' } : {} ),
+		};
+
 		return getCachedFormatter( {
 			locale: getLocaleToUse( options ),
-			currency: code,
-			noDecimals: isNoDecimals( number, options ),
-			signForPositive: options.signForPositive ?? false,
+			options: numberFormatOptions,
 		} );
 	}
 
@@ -93,12 +100,12 @@ export function createFormatter(): CurrencyFormatter {
 		options: CurrencyObjectOptions = {}
 	): string {
 		const locale = getLocaleToUse( options );
-		code = getValidCurrency( code );
-		const currencyOverride = getCurrencyOverride( code );
-		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
+		const validCurrency = getValidCurrency( code );
+		const currencyOverride = getCurrencyOverride( validCurrency );
+		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 
-		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
-		const formatter = getFormatter( numberAsFloat, code, options );
+		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
+		const formatter = getCurrencyFormatter( numberAsFloat, validCurrency, options );
 		const parts = formatter.formatToParts( numberAsFloat );
 
 		return parts.reduce( ( formatted, part ) => {
@@ -159,12 +166,12 @@ export function createFormatter(): CurrencyFormatter {
 		options: CurrencyObjectOptions = {}
 	): CurrencyObject {
 		const locale = getLocaleToUse( options );
-		code = getValidCurrency( code );
-		const currencyOverride = getCurrencyOverride( code );
-		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, code );
+		const validCurrency = getValidCurrency( code );
+		const currencyOverride = getCurrencyOverride( validCurrency );
+		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 
-		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision, options );
-		const formatter = getFormatter( numberAsFloat, code, options );
+		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
+		const formatter = getCurrencyFormatter( numberAsFloat, validCurrency, options );
 		const parts = formatter.formatToParts( numberAsFloat );
 
 		let sign = '' as CurrencyObject[ 'sign' ];
@@ -254,6 +261,14 @@ export function createFormatter(): CurrencyFormatter {
 		defaultLocale = locale;
 	}
 
+	function getPrecisionForLocaleAndCurrency(
+		locale: string,
+		currency: string
+	): number | undefined {
+		const formatter = getCurrencyFormatter( 0, currency, { locale } );
+		return formatter.resolvedOptions().maximumFractionDigits ?? 3; // 3 is the default for Intl.NumberFormat
+	}
+
 	return {
 		formatCurrency,
 		getCurrencyObject,
@@ -278,94 +293,6 @@ function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
 		return true;
 	}
 	return false;
-}
-
-/**
- * Creating an Intl.NumberFormat is expensive, so this allows caching.
- *
- * TODO clk numberFormatCurrency caching logic identical to numberFormat, except for fallback
- */
-function getCachedFormatter( {
-	locale,
-	currency,
-	noDecimals,
-	signForPositive,
-}: {
-	locale: string;
-	currency: string;
-	noDecimals: boolean;
-	signForPositive: boolean;
-} ): Intl.NumberFormat {
-	const numberFormatOptions: Intl.NumberFormatOptions = {
-		style: 'currency',
-		currency,
-		...( signForPositive ? { signDisplay: 'exceptZero' } : {} ),
-		// There's an option called `trailingZeroDisplay` but it does not yet work
-		// in FF so we have to strip zeros manually.
-		...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
-	};
-	const cacheKey = JSON.stringify( [ locale, numberFormatOptions ] );
-
-	try {
-		return (
-			formatterCache.get( cacheKey ) ??
-			formatterCache
-				.set(
-					cacheKey,
-					new Intl.NumberFormat( addNumberingSystemToLocale( locale ), numberFormatOptions )
-				)
-				.get( cacheKey )
-		);
-	} catch ( error ) {
-		// If the locale is invalid, creating the NumberFormat will throw.
-		// eslint-disable-next-line no-console
-		console.warn(
-			`formatCurrency was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
-		);
-
-		return getCachedFormatter( {
-			locale: fallbackLocale,
-			currency,
-			noDecimals,
-			signForPositive,
-		} );
-	}
-}
-
-/**
- * `numberingSystem` is an option to `Intl.NumberFormat` and is available
- * in all major browsers according to
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options
- * but is not part of the TypeScript types in `es2020`:
- *
- * https://github.com/microsoft/TypeScript/blob/cfd472f7aa5a2010a3115263bf457b30c5b489f3/src/lib/es2020.intl.d.ts#L272
- *
- * However, it is part of the TypeScript types in `es5`:
- *
- * https://github.com/microsoft/TypeScript/blob/cfd472f7aa5a2010a3115263bf457b30c5b489f3/src/lib/es5.d.ts#L4310
- *
- * Apparently calypso uses `es2020` so we cannot use that option here right
- * now. Instead, we will use the unicode extension to the locale, documented
- * here:
- *
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/numberingSystem#adding_a_numbering_system_via_the_locale_string
- */
-function addNumberingSystemToLocale( locale: string ): string {
-	// TODO clk numberFormatCurrency this can all go. it's just a static string added to locale
-	const numberingSystem = 'latn';
-	const numberingSystemUnicodeLocaleExtension = `-u-nu-${ numberingSystem }`;
-	const localeWithNumberingSystem = `${ locale }${ numberingSystemUnicodeLocaleExtension }`;
-	return localeWithNumberingSystem;
-}
-
-function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): number {
-	const defaultFormatter = getCachedFormatter( {
-		locale,
-		currency,
-		noDecimals: false,
-		signForPositive: false,
-	} );
-	return defaultFormatter.resolvedOptions().maximumFractionDigits;
 }
 
 function prepareNumberForFormatting(
