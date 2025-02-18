@@ -37,7 +37,7 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState(), dispatch );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
@@ -55,7 +55,7 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 
 export async function hostingActivate( context: PageJSContext, next: () => void ) {
 	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState(), dispatch );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />

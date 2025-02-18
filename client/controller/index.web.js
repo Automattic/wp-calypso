@@ -319,7 +319,7 @@ export async function redirectToHostingPromoIfNotAtomic( context, next ) {
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
 		// Keep the user within the Settings tab
-		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state, dispatch );
+		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 		if ( isUntangled ) {
 			return page.redirect( '/sites/settings/site/' + context.params.site_id );
 		}
@@ -402,10 +402,10 @@ export const ssrSetupLocale = ( _context, next ) => {
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
 	const { getState, dispatch } = context.store;
-	const state = getState();
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state, dispatch );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isE2ETest() || isUntangled ) {
+		const state = getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
 		if ( wpAdminUrl ) {

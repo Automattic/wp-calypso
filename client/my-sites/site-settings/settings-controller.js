@@ -39,7 +39,7 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
 	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState(), dispatch );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		const slug = context.path.split( '/' )[ 2 ];
@@ -78,7 +78,7 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  */
 export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
 	const { getState, dispatch } = context.store;
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState(), dispatch );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		return page.redirect( `/sites/settings/site` );
@@ -93,9 +93,8 @@ export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
  */
 export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
 	const { getState, dispatch } = context.store;
-	const state = getState();
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state, dispatch );
-	const siteSlug = getSelectedSiteSlug( state );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const siteSlug = getSelectedSiteSlug( getState() );
 
 	if ( ! isUntangled ) {
 		return page.redirect( `/settings/general/${ siteSlug }` );

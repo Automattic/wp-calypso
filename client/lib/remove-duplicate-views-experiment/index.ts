@@ -18,27 +18,27 @@ export const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_OVERRIDE =
 const REMOVE_DUPLICATE_VIEWS_EXPERIMENT_AA_TEST = 'calypso_post_onboarding_aa_150125';
 
 const loadRemoveDuplicateViewsExperimentOverride = async (
-	state: AppState,
+	getState: () => AppState,
 	dispatch: CalypsoDispatch
 ) => {
 	/**
 	 * The overrideAssignment relies on the preferences so we have to ensure the preferences is fetched.
 	 */
-	if ( ! hasReceivedRemotePreferences( state ) ) {
+	if ( ! hasReceivedRemotePreferences( getState() ) ) {
 		await dispatch( fetchPreferences() );
 	}
 
-	return getIsRemoveDuplicateViewsExperimentOverride( state );
+	return getIsRemoveDuplicateViewsExperimentOverride( getState() );
 };
 
 export const loadRemoveDuplicateViewsExperimentAssignment = async (
-	state: AppState,
+	getState: () => AppState,
 	dispatch: CalypsoDispatch
 ) => {
 	/**
 	 * This is for escape hatch users to override the experiment assignment: p7DVsv-m73-p2
 	 */
-	const overrideAssignment = await loadRemoveDuplicateViewsExperimentOverride( state, dispatch );
+	const overrideAssignment = await loadRemoveDuplicateViewsExperimentOverride( getState, dispatch );
 	if ( overrideAssignment ) {
 		return overrideAssignment;
 	}
@@ -55,11 +55,11 @@ export const loadRemoveDuplicateViewsExperimentAssignment = async (
 };
 
 export const isRemoveDuplicateViewsExperimentEnabled = async (
-	state: AppState,
+	getState: () => AppState,
 	dispatch: CalypsoDispatch
 ) => {
 	const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment(
-		state,
+		getState,
 		dispatch
 	);
 	if ( experimentAssignment === 'treatment' ) {
