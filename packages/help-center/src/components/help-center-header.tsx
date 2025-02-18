@@ -19,7 +19,7 @@ import {
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Route, Routes, useLocation, useSearchParams, useNavigate } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -143,14 +143,13 @@ const ChatEllipsisMenu = () => {
 	);
 };
 
-const HeaderText = () => {
+const useHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 	const [ isConversationWithZendesk, setIsConversationWithZendesk ] = useState< boolean >( false );
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
-			isChatLoaded: store.getIsChatLoaded(),
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
 		};
 	}, [] );
@@ -160,33 +159,39 @@ const HeaderText = () => {
 			const zendeskEvent = currentSupportInteraction?.events.find(
 				( event ) => event.event_source === 'zendesk'
 			);
-			if ( zendeskEvent ) {
-				setIsConversationWithZendesk( true );
-			} else {
-				setIsConversationWithZendesk( false );
-			}
+			setIsConversationWithZendesk( !! zendeskEvent );
 		}
 	}, [ currentSupportInteraction ] );
 
-	const headerText = useMemo( () => {
-		const getOdieHeader = () => {
-			return isConversationWithZendesk
-				? __( 'Support Team', __i18n_text_domain__ )
-				: __( 'Support Assistant', __i18n_text_domain__ );
-		};
-
+	return useMemo( () => {
 		switch ( pathname ) {
-			case '/odie':
-				return getOdieHeader();
+			case '/':
+				return __( 'Help Center', __i18n_text_domain__ );
+			case '/contact-options':
+				return __( 'Contact Options', __i18n_text_domain__ );
+			case '/inline-chat':
+				return __( 'Live Chat', __i18n_text_domain__ );
 			case '/contact-form':
-				return __( 'Support Assistant', __i18n_text_domain__ );
+				return <SupportModeTitle />;
+			case '/post':
+			case '/post/':
+				return <ArticleTitle />;
+			case '/success':
+				return __( 'Message Submitted', __i18n_text_domain__ );
+			case '/odie':
+				return isConversationWithZendesk
+					? __( 'Support Team', __i18n_text_domain__ )
+					: __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
 	}, [ __, isConversationWithZendesk, pathname ] );
+};
 
+const HeaderText = () => {
+	const headerText = useHeaderText();
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
 			{ headerText }
@@ -240,6 +245,7 @@ const ContentMinimized = ( {
 	onMaximize?: () => void;
 } ) => {
 	const { __ } = useI18n();
+	const headerText = useHeaderText();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	return (
@@ -251,19 +257,7 @@ const ContentMinimized = ( {
 				onKeyUp={ handleClick }
 				role="presentation"
 			>
-				<Routes>
-					<Route path="/" element={ __( 'Help Center', __i18n_text_domain__ ) } />
-					<Route
-						path="/contact-options"
-						element={ __( 'Contact Options', __i18n_text_domain__ ) }
-					/>
-					<Route path="/inline-chat" element={ __( 'Live Chat', __i18n_text_domain__ ) } />
-					<Route path="/contact-form" element={ <SupportModeTitle /> } />
-					<Route path="/post" element={ <ArticleTitle /> } />
-					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route path="/odie" element={ __( 'Support Assistant', __i18n_text_domain__ ) } />
-					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
-				</Routes>
+				{ headerText }
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 				) }
