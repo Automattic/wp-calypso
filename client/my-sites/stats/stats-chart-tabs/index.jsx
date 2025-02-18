@@ -54,6 +54,10 @@ class StatModuleChartTabs extends Component {
 		onChangeLegend: PropTypes.func.isRequired,
 	};
 
+	state = {
+		chartType: 'bar',
+	};
+
 	intervalId = null;
 
 	componentDidMount() {
@@ -100,9 +104,14 @@ class StatModuleChartTabs extends Component {
 		this.props.queryDayComp && this.props.requestChartCounts( this.props.queryDayComp );
 	};
 
+	handleChartTypeChange = ( newType ) => {
+		this.setState( { chartType: newType } );
+	};
+
 	render() {
 		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
 			this.props;
+		const { chartType } = this.state;
 
 		const chartData = this.props.chartData.map( ( record ) => {
 			record.className = record.className?.replaceAll( 'is-selected', '' );
@@ -130,6 +139,8 @@ class StatModuleChartTabs extends Component {
 					slug={ slug }
 					period={ selectedPeriod }
 					queryParams={ queryParams }
+					chartType={ chartType }
+					onChartTypeChange={ this.handleChartTypeChange }
 				/>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
