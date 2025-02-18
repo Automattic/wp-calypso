@@ -291,9 +291,15 @@ const SitesDashboard = ( {
 		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
+	const includeA8CSites =
+		dataViewsState.filters?.some(
+			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
+		) ?? false;
+
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
 		search: dataViewsState.search,
+		includeA8CSites,
 	} );
 
 	const paginatedSites =
