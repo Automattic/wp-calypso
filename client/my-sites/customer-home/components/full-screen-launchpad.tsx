@@ -10,12 +10,14 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
+import { recordEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
 import './full-screen-launchpad.scss';
+import { useLaunchpadContext } from '../cards/launchpad/utils';
 
 export const FullScreenLaunchpad = ( {
 	onClose,
@@ -32,7 +34,7 @@ export const FullScreenLaunchpad = ( {
 	const checklistSlug = site?.options?.site_intent ?? '';
 	const layout = useHomeLayoutQuery( siteId || null );
 
-	const launchpadContext = 'customer-home';
+	const launchpadContext = useLaunchpadContext() ?? 'customer-home';
 
 	const {
 		siteSlug,
@@ -59,6 +61,7 @@ export const FullScreenLaunchpad = ( {
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
+					recordEvent( 'calypso_full_screen_launchpad_launch_site' );
 					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
@@ -76,6 +79,8 @@ export const FullScreenLaunchpad = ( {
 			siteSlug,
 			redirectToHome: false,
 		} );
+
+		recordEvent( 'calypso_full_screen_launchpad_skip' );
 
 		dispatch( requestSite( siteId ) );
 	};
@@ -118,7 +123,6 @@ export const FullScreenLaunchpad = ( {
 					checklistSlug={ checklistSlug }
 					launchpadContext={ launchpadContext }
 					onPostFilterTasks={ ( tasks ) => tasks.filter( ( task ) => ! task.isLaunchTask ) }
-					onSiteLaunched={ onSiteLaunched }
 					highlightNextAction
 				/>
 				<div className="launchpad-actions">
