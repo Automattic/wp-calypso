@@ -2720,7 +2720,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONNECT_ANALYTICS ]: {
 		getSlug: () => FEATURE_CONNECT_ANALYTICS,
-		getTitle: () => i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' ),
+		getTitle: () => i18n.translate( 'Connect Google Analytics' ),
 		getDescription: () =>
 			i18n.translate(
 				'Link your accounts to gain more valuable insights in seconds. No coding required.'
