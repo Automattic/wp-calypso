@@ -125,12 +125,12 @@
 	}
 
 	.gridicon,
-	.reader-twitter,
-	.reader-facebook {
+	.reader-facebook,
+	.reader-x {
 		height: 20px;
 		width: 20px;
 		position: absolute;
-		top: 8px;
+		top: 9.75px;
 		left: 18px;
 		padding: 0;
 		fill: var(--color-neutral-light);
@@ -144,18 +144,18 @@
 		fill: var(--color-primary);
 	}
 
-	.reader-twitter {
-		fill: var(--color-twitter);
-	}
-
 	.reader-facebook {
 		fill: var(--color-facebook);
+	}
+
+	.reader-x {
+		fill: var(--color-x);
 	}
 
 	&:focus,
 	&:hover {
 		.gridicon,
-		.reader-twitter,
+		.reader-x,
 		.reader-facebook {
 			fill: var(--color-text-inverted);
 		}
