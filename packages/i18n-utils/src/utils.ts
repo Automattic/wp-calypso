@@ -297,5 +297,5 @@ export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
  * @returns {boolean}
  */
 export function isAITranslatedLocale( locale: string ) {
-	return [ 'el', 'fi', 'hu', 'nb', 'pl', 'th' ].indexOf( locale ) > -1;
+	return [ 'el', 'nb' ].indexOf( locale ) > -1;
 }
