@@ -94,17 +94,12 @@
 	padding-bottom: 12px;
 
 	&.register-domain-step__search-domain-step:not(.is-sticky) {
-		padding-bottom: 24px;
-
-		.is-white-signup & {
-			padding-bottom: 16px;
-		}
+		padding-bottom: 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
 			padding-top: 18px;
 
-			.is-section-stepper &,
-			.is-white-signup & {
+			.is-section-stepper & {
 				padding-top: 0;
 				padding-bottom: 16px;
 			}
@@ -237,15 +232,8 @@ body.is-section-domains {
 	}
 }
 
-body.is-section-signup:not(.is-white-signup) {
-	.register-domain-step__search-card {
-		background: none;
-		box-shadow: none;
-	}
-}
-
 body.is-section-stepper,
-body.is-section-signup.is-white-signup {
+body.is-section-signup {
 	.domain-search-results__domain-availability .card {
 		box-shadow: none;
 		padding: 0;

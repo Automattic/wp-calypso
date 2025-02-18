@@ -229,9 +229,6 @@ class Signup extends Component {
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
 			this.updateShouldShowLoadingScreen( progress );
 		}
-
-		document.body.classList.add( 'is-white-signup' );
-		debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 	}
 
 	componentWillUnmount() {

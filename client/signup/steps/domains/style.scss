@@ -282,12 +282,8 @@ body.is-section-stepper .domains__step-content,
 	}
 }
 
-/**
- * Styles for design reskin
- * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
- */
 body.is-section-stepper.is-group-stepper,
-body.is-section-signup.is-white-signup {
+body.is-section-signup {
 	$light-white: #f3f4f5;
 
 	#primary {
