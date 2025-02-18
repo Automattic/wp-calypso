@@ -1528,8 +1528,7 @@ class RegisterDomainStep extends Component {
 	}
 
 	renderExampleSuggestions() {
-		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products, path } =
-			this.props;
+		const { isOnboarding, domainsWithPlansOnly, offerUnavailableOption, products } = this.props;
 
 		if ( isOnboarding ) {
 			return this.renderBestNamesPrompt();
@@ -1540,7 +1539,6 @@ class RegisterDomainStep extends Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				offerUnavailableOption={ offerUnavailableOption }
 				onClickExampleSuggestion={ this.handleClickExampleSuggestion }
-				path={ path }
 				products={ products }
 				url={ this.getUseYourDomainUrl() }
 			/>

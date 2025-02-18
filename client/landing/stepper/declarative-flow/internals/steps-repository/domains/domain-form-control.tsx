@@ -229,7 +229,6 @@ export function DomainFormControl( {
 					onAddMapping={ onAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ onSkip }
-					path={ path }
 					products={ productsList }
 					promoTlds={ [] }
 					selectedSite={ selectedSite }
