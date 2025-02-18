@@ -10,7 +10,7 @@ import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { skipLaunchpad } from 'calypso/landing/stepper/utils/skip-launchpad';
 import { launchSiteApi } from 'calypso/lib/signup/step-actions';
 import { useDispatch } from 'calypso/state';
-import { recordEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -61,7 +61,7 @@ export const FullScreenLaunchpad = ( {
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
-					recordEvent( 'calypso_full_screen_launchpad_launch_site' );
+					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site' );
 					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
@@ -80,7 +80,9 @@ export const FullScreenLaunchpad = ( {
 			redirectToHome: false,
 		} );
 
-		recordEvent( 'calypso_full_screen_launchpad_skip' );
+		recordTracksEvent( 'calypso_full_screen_launchpad_skip', {
+			context: launchpadContext,
+		} );
 
 		dispatch( requestSite( siteId ) );
 	};
