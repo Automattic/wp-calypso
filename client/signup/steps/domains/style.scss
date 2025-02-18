@@ -454,10 +454,6 @@ body.is-section-signup.is-white-signup {
 			transform: scaleX(-1);
 		}
 
-		.search-component__icon-navigation.components-button:focus:not(:disabled) {
-			box-shadow: 0 0 0 1px var(--color-primary);
-		}
-
 		.search-component__icon-search {
 			fill: #a7aaad;
 			margin: 8px 6px 8px 8px;
@@ -484,8 +480,7 @@ body.is-section-signup.is-white-signup {
 		}
 
 		.button {
-			&:hover,
-			&:focus {
+			&:hover {
 				box-shadow: none;
 			}
 
