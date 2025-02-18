@@ -74,6 +74,7 @@ class ThemePreview extends Component {
 						themeId={ themeId }
 						showPreview
 						showExternal={ false }
+						showEditHeaderLink
 						showSEO={ false }
 						onClose={ this.props.hideThemePreview }
 						previewUrl={ this.appendStyleVariationOptionToUrl(

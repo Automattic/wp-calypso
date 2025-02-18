@@ -15,7 +15,7 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import getIsUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { installTheme } from 'calypso/state/themes/actions';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
-import { getTheme } from 'calypso/state/themes/selectors';
+import { getIsLivePreviewSupported, getTheme } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
@@ -58,6 +58,7 @@ class PreviewToolbar extends Component {
 		selectedSiteId: PropTypes.number,
 		installTheme: PropTypes.func,
 		isAtomic: PropTypes.bool,
+		isLivePreviewSupported: PropTypes.bool,
 		siteEditorUrl: PropTypes.string,
 		themeInstallId: PropTypes.string,
 	};
@@ -118,6 +119,7 @@ class PreviewToolbar extends Component {
 			showEditHeaderLink,
 			translate,
 			isUnlaunchedSite,
+			isLivePreviewSupported,
 		} = this.props;
 
 		const devices = {
@@ -180,7 +182,7 @@ class PreviewToolbar extends Component {
 							{ translate( 'Edit' ) }
 						</Button>
 					) }
-					{ showEditHeaderLink && canUserEditThemeOptions && (
+					{ showEditHeaderLink && canUserEditThemeOptions && isLivePreviewSupported && (
 						<Button
 							borderless
 							aria-label={ translate( 'Try and customize' ) }
@@ -255,6 +257,7 @@ export default connect(
 			siteEditorUrl,
 			isAtomic,
 			themeInstallId,
+			isLivePreviewSupported: getIsLivePreviewSupported( state, ownProps.themeId, siteId ),
 		};
 	},
 	{ recordTracksEvent, installTheme }
