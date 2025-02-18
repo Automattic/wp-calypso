@@ -1,6 +1,7 @@
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 export const NEWSLETTER_CATEGORIES_ENABLED_OPTION = 'wpcom_newsletter_categories_enabled';
 
@@ -27,12 +28,13 @@ const NewsletterCategoriesToggle = ( {
 			/>
 			<FormSettingExplanation>
 				{ translate(
-					'Newsletter categories allow visitors to subscribe only to specific topics.'
-				) +
-					' ' +
-					translate(
-						'When enabled, only posts published under the categories selected below will be emailed to your subscribers.'
-					) }
+					'Newsletter categories let visitors subscribe to specific topics. When enabled, only posts in the selected categories will be emailed. By default, subscribers can choose from your selected categories, or you can pre-select categories in the {{link}}subscribe block{{/link}}.',
+					{
+						components: {
+							link: <InlineSupportLink showIcon={ false } supportContext="subscribe-block" />,
+						},
+					}
+				) }
 			</FormSettingExplanation>
 		</div>
 	);
