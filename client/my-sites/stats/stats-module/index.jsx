@@ -91,9 +91,7 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const baseline = this.createBaselineLookup( updatedHistory );
-			const diffData = this.calculateDiff( baseline, lastSnapshot.data );
+			const diffData = this.calculateDiff( updatedHistory );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -132,14 +130,15 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( baseline, latestSnapshot ) {
-		// Create a lookup map for the baseline using item IDs.
+	calculateDiff( history ) {
+		const baseline = this.createBaselineLookup( history );
+		const lastSnapshot = history[ history.length - 1 ].data;
+
+		// Convert baseline object to Map for optimized lookups.
 		const baselineMap = new Map( Object.values( baseline ).map( ( item ) => [ item.id, item ] ) );
 
-		// Calculate the difference value for each item in the latest snapshot.
-		// Note that items are guaranteed to exist in the baseline.
-		return latestSnapshot.map( ( item ) => {
-			const baselineItem = baselineMap.get( item.id );
+		return lastSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item.id ) || { value: 0 };
 			return {
 				...item,
 				diffValue: item.value - baselineItem.value,
