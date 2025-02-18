@@ -42,7 +42,7 @@ export function createFormatter(): CurrencyFormatter {
 		return options.locale ?? defaultLocale ?? getLocaleFromBrowser();
 	}
 
-	function getCurrencyFormatter(
+	function getFormatter(
 		number: number,
 		code: string,
 		options: CurrencyObjectOptions
@@ -107,7 +107,7 @@ export function createFormatter(): CurrencyFormatter {
 		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 
 		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
-		const formatter = getCurrencyFormatter( numberAsFloat, validCurrency, options );
+		const formatter = getFormatter( numberAsFloat, validCurrency, options );
 		const parts = formatter.formatToParts( numberAsFloat );
 
 		return parts.reduce( ( formatted, part ) => {
@@ -173,7 +173,7 @@ export function createFormatter(): CurrencyFormatter {
 		const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 
 		const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
-		const formatter = getCurrencyFormatter( numberAsFloat, validCurrency, options );
+		const formatter = getFormatter( numberAsFloat, validCurrency, options );
 		const parts = formatter.formatToParts( numberAsFloat );
 
 		let sign = '' as CurrencyObject[ 'sign' ];
@@ -267,7 +267,7 @@ export function createFormatter(): CurrencyFormatter {
 		locale: string,
 		currency: string
 	): number | undefined {
-		const formatter = getCurrencyFormatter( 0, currency, { locale } );
+		const formatter = getFormatter( 0, currency, { locale } );
 		return formatter.resolvedOptions().maximumFractionDigits ?? 3; // 3 is the default for Intl.NumberFormat
 	}
 
