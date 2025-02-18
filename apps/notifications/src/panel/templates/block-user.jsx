@@ -162,15 +162,28 @@ export class UserBlock extends Component {
 			);
 		}
 
+		const userId = this.props.block?.meta?.ids?.user;
+		const readerProfileUrl = userId ? `https://wordpress.com/reader/users/${ userId }` : home_url;
+
 		if ( home_url ) {
 			return (
 				<div className="wpnc__user">
-					<a className="wpnc__user__site" href={ home_url } target="_blank" rel="noreferrer">
+					<a
+						className="wpnc__user__site"
+						href={ readerProfileUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
 						<img src={ grav.url } height={ grav.height } width={ grav.width } alt="Avatar" />
 					</a>
 					<div>
 						<span className="wpnc__user__username">
-							<a className="wpnc__user__home" href={ home_url } target="_blank" rel="noreferrer">
+							<a
+								className="wpnc__user__home"
+								href={ readerProfileUrl }
+								target="_blank"
+								rel="noreferrer"
+							>
 								{ this.props.block.text }
 							</a>
 						</span>
