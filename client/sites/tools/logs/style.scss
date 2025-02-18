@@ -1,11 +1,3 @@
-.site-logs-container {
-	// The logging API doesn't allow us to jump directly to a page, so hide page buttons.
-	.pagination__page-number,
-	.pagination__ellipsis {
-		display: none;
-	}
-}
-
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
 .site-logs .dataviews-wrapper {
 	margin-right: -48px;
