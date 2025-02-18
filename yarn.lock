@@ -23463,7 +23463,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-teamcity@npm:^1.11.0, jest-teamcity@npm:^1.12.0":
+"jest-teamcity@npm:^1.12.0":
   version: 1.12.0
   resolution: "jest-teamcity@npm:1.12.0"
   checksum: 34cc32ac7f7aec739ab4f0e29ae8f0709312bb80e4fbabca309dca70025d8b02e461859d9ea3567d3e69ac77ef1f75fd1888540938e380e30ecb4451e8d11520
@@ -36438,7 +36438,7 @@ __metadata:
     jest-environment-node: "npm:^29.6.1"
     jest-runner: "npm:^29.6.1"
     jest-runner-groups: "npm:^2.2.0"
-    jest-teamcity: "npm:^1.11.0"
+    jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
     node-fetch: "npm:^2.7.0"
