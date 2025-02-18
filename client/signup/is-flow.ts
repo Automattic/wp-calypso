@@ -8,10 +8,6 @@ export const isP2Flow = ( flowName: string ) => {
 	return flowName === 'p2' || flowName === 'p2v1';
 };
 
-export const isVideoPressFlow = ( flowName: string ) => {
-	return flowName === 'videopress-account';
-};
-
 export const isWpccFlow = ( flowName: string ) => {
 	return flowName === 'wpcc';
 };

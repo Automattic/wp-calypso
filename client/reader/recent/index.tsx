@@ -278,6 +278,7 @@ const Recent = ( { viewToggle }: RecentProps ) => {
 									focusItem?.focus();
 								} );
 							} }
+							setSelectedItem={ setSelectedItem }
 							layout="recent"
 						/>
 						<EngagementBar feedId={ selectedItem?.feedId } postId={ selectedItem?.postId } />

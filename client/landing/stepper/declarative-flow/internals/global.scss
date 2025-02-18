@@ -17,7 +17,6 @@
  */
 body {
 	--color-body-background: #fdfdfd;
-	--wooexpress-purple: #7f54b3;
 	background-color: var(--color-body-background);
 }
 
@@ -90,8 +89,6 @@ button {
 .link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
-.ecommerce,
-.wooexpress,
 .copy-site,
 .intro,
 .free-setup,
@@ -134,6 +131,10 @@ button {
 			&.goals,
 			&.domains {
 				margin-top: -60px;
+
+				.wpcom__loading {
+					margin: calc(32vh + 60px) auto 0;
+				}
 			}
 		}
 
@@ -404,97 +405,6 @@ button {
 	.gridicon {
 		fill: currentColor;
 	}
-}
-
-.assign-trial-plan,
-.processing {
-	&.wooexpress,
-	&.ecommerce {
-		padding: 60px 0;
-		min-height: 100%;
-		min-width: 100%;
-		width: 100%;
-		height: auto;
-		position: fixed;
-		top: 0;
-		left: 0;
-		background-color: #fff;
-		background-image:
-			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
-		background-position-y: -40px, 110%;
-		/*!rtl:ignore*/
-		background-position-x: 109%, -10%;
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		background-size: auto 15%, auto 25%;
-		padding-top: 0;
-
-		@include break-huge {
-			background-size: auto 15%, auto 35%, auto 50%;
-			background-position-x: 65%, -100px, 120%;
-			background-position-y: 5%, 85%, 125%;
-			background-image:
-				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
-				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
-		}
-	}
-}
-
-.wooexpress {
-	.step-container.processing-step {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin-top: 9vh;
-	}
-	.step-container .step-container__content h1 {
-		font-family: proxima-nova, sans-serif;
-		font-weight: 600;
-		font-size: $font-title-large;
-	}
-	.stepper-loader__progress-bar {
-		--wp-components-color-foreground: var(--wooexpress-purple);
-		background-color: var(--studio-woocommerce-purple-5);
-		height: 6px;
-		width: 590px;
-		max-width: 100%;
-		margin-left: auto;
-		margin-right: auto;
-
-		@media screen and (max-width: 640px) {
-			width: 100%;
-		}
-	}
-	.processing-step {
-		width: 100%;
-		max-width: 640px;
-		box-sizing: border-box;
-	}
-	p.stepper-loader__subtitle {
-		font-family: "SF Pro Text", $sans;
-		font-weight: 400;
-		letter-spacing: initial;
-
-		.woo-inline-purple-heart {
-			width: 18px;
-			height: 15px;
-			margin-bottom: -2px; // bring visual center inline with the text
-		}
-
-		strong {
-			font-weight: 500;
-		}
-	}
-	.loading-bar::before {
-		background: var(--wooexpress-purple);
-	}
-	.signup-header .wordpress-logo {
-		display: block;
-		width: 500px;
-	}
-
 }
 
 /*

@@ -49,7 +49,6 @@ const HelpCenterContactSupportOption = ( {
 
 	const { isOpeningZendeskWidget, openZendeskWidget } = useOpenZendeskMessaging(
 		sectionName,
-		'zendesk_support_chat_key',
 		isEligibleForChat || hasActiveChats
 	);
 

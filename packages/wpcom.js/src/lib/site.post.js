@@ -1,10 +1,5 @@
 import debugFactory from 'debug';
-import sitePostGetMethods from './runtime/site.post.get';
 import Comment from './site.comment';
-import Like from './site.post.like';
-import Reblog from './site.post.reblog';
-import Subscriber from './site.post.subscriber';
-import runtimeBuilder from './util/runtime-builder';
 
 /**
  * Module vars
@@ -178,16 +173,6 @@ class SitePost {
 	}
 
 	/**
-	 * Search within a site for related posts
-	 * @param {Object} body - body object parameter
-	 * @param {Function} fn - callback function
-	 * @returns {Function} request handler
-	 */
-	related( body, fn ) {
-		return this.wpcom.req.put( `${ this.getPostPath() }/related`, body, null, fn );
-	}
-
-	/**
 	 * Create a `Comment` instance
 	 * @param {string} [cid] - comment id
 	 * @returns {Comment} Comment instance
@@ -206,40 +191,6 @@ class SitePost {
 		const comment = new Comment( null, this._id, this._sid, this.wpcom );
 		return comment.replies( query, fn );
 	}
-
-	/**
-	 * Create a `Like` instance
-	 * @returns {Like} Like instance
-	 */
-	like() {
-		return new Like( this._id, this._sid, this.wpcom );
-	}
-
-	/**
-	 * Create a `Reblog` instance
-	 * @returns {Reblog} Reblog instance
-	 */
-	reblog() {
-		return new Reblog( this._id, this._sid, this.wpcom );
-	}
-
-	/**
-	 * Return a `Subscriber` instance.
-	 *
-	 * Example:
-	 * // Create a Subscriber instance of a post
-	 * var post = wpcom.site( 'en.blog.wordpress.com' ).post( 1234 );
-	 * var subs = post.subscriber();
-	 * @returns {Subscriber} Subscriber instance
-	 */
-	subscriber() {
-		return new Subscriber( this._id, this._sid, this.wpcom );
-	}
 }
-
-// add methods in runtime
-runtimeBuilder( SitePost, sitePostGetMethods, ( item, ctx ) => {
-	return `/sites/${ ctx._sid }/posts/${ ctx._id }/${ item.subpath }`;
-} );
 
 export default SitePost;

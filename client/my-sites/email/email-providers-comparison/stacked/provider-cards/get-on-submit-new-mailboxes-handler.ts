@@ -98,7 +98,7 @@ const getOnSubmitNewMailboxesHandler =
 
 		const checkoutPath = getEmailCheckoutPath(
 			siteSlug,
-			domain.name,
+			domain?.name,
 			currentRoute,
 			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
 		);

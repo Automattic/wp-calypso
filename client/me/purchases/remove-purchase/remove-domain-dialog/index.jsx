@@ -30,7 +30,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate, slug, currentRoute, isGravatarDomain } = this.props;
+		const { translate, slug, currentRoute, isGravatarRestrictedDomain } = this.props;
 
 		return (
 			<Fragment>
@@ -39,7 +39,7 @@ class RemoveDomainDialog extends Component {
 						'Deleting a domain will make all services connected to it unreachable, including your email and website. It will also make the domain available for someone else to register.'
 					) }
 				</p>
-				{ isGravatarDomain && (
+				{ isGravatarRestrictedDomain && (
 					<p>
 						{ translate(
 							'This domain is provided at no cost for the first year for use with your Gravatar profile. This offer is limited to one free domain per user. If you cancel this domain, you will have to pay the standard price to register another domain for your Gravatar profile.'
@@ -239,7 +239,7 @@ export default connect( ( state, ownProps ) => {
 	const selectedDomainName = getName( ownProps.purchase );
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 	return {
-		isGravatarDomain: selectedDomain?.isGravatarDomain,
+		isGravatarRestrictedDomain: selectedDomain?.isGravatarRestrictedDomain,
 		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
 		currentRoute: getCurrentRoute( state ),
 		userEmail: getCurrentUserEmail( state ),

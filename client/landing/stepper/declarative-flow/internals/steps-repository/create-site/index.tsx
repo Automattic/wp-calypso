@@ -1,10 +1,9 @@
+import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
-	ECOMMERCE_FLOW,
 	ENTREPRENEUR_FLOW,
 	StepContainer,
-	WOOEXPRESS_FLOW,
 	addPlanToCart,
 	addProductsToCart,
 	createSiteWithCart,
@@ -15,7 +14,6 @@ import {
 	isImportFocusedFlow,
 	isMigrationSignupFlow,
 	isStartWritingFlow,
-	isWooExpressFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
@@ -30,10 +28,11 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
-import { StepperLoader } from 'calypso/landing/stepper/declarative-flow/internals/components';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -53,7 +52,6 @@ import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
-const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 // Changing this? Consider also updating WRITE_INTENT_DEFAULT_DESIGN so the write *intent* matches the write flow
@@ -101,6 +99,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
+	const [ , isGoalsFirstCumulativeExperience ] = useGoalsFirstCumulativeExperience();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -120,8 +119,6 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	let theme = '';
 	if ( isImportFocusedFlow( flow ) || isCopySiteFlow( flow ) ) {
 		theme = DEFAULT_SITE_MIGRATION_THEME;
-	} else if ( isWooExpressFlow( flow ) ) {
-		theme = DEFAULT_WOOEXPRESS_FLOW;
 	} else if ( isEntrepreneurFlow( flow ) ) {
 		theme = DEFAULT_ENTREPRENEUR_FLOW;
 	} else if ( isStartWritingFlow( flow ) ) {
@@ -156,7 +153,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	// Default visibility is public
 	let siteVisibility = Site.Visibility.PublicIndexed;
-	const wooFlows = [ ECOMMERCE_FLOW, ENTREPRENEUR_FLOW, WOOEXPRESS_FLOW ];
+	const wooFlows = [ ENTREPRENEUR_FLOW ];
 
 	// These flows default to "Coming Soon"
 	if (
@@ -234,7 +231,9 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined
+			shouldSaveSiteGoals ? siteGoals : undefined,
+			isGoalsFirstCumulativeExperience &&
+				config.isEnabled( 'onboarding/enable-write-goal-features' )
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {
@@ -288,17 +287,10 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 	}, [] );
 
 	const getCurrentMessage = () => {
-		return isWooExpressFlow( flow )
-			? __( "Woo! We're creating your store" )
-			: __( 'Creating your site' );
+		return __( 'Creating your site' );
 	};
 
 	const getSubTitle = () => {
-		if ( isWooExpressFlow( flow ) ) {
-			return __(
-				'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
-			);
-		}
 		return null;
 	};
 
@@ -313,11 +305,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 				stepName="create-site"
 				recordTracksEvent={ recordTracksEvent }
 				stepContent={
-					<StepperLoader
-						title={ getCurrentMessage() }
-						subtitle={ subTitle }
-						progress={ progress }
-					/>
+					<Loading title={ getCurrentMessage() } subtitle={ subTitle } progress={ progress } />
 				}
 				showFooterWooCommercePowered={ false }
 			/>

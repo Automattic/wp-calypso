@@ -1,5 +1,5 @@
 import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
-import { numberFormat } from 'i18n-calypso';
+import { numberFormatCompact } from 'i18n-calypso';
 import titlecase from 'to-title-case';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { TagResult } from './controller';
@@ -27,9 +27,7 @@ const TagRow = ( props: TagRowProps ) => {
 		<div className="trending-tags__column" key={ props.slug }>
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
 				<span className="trending-tags__title">{ titlecase( props.title ) }</span>
-				<span className="trending-tags__count">
-					{ numberFormat( props.count, { numberFormatOptions: { notation: 'compact' } } ) }
-				</span>
+				<span className="trending-tags__count">{ numberFormatCompact( props.count ) }</span>
 			</a>
 		</div>
 	);

@@ -12,6 +12,7 @@ import { USER_STORE } from '../stores';
 import { getLoginUrl } from '../utils/path';
 import LaunchPad from './internals/steps-repository/launchpad';
 import Processing from './internals/steps-repository/processing-step';
+import Subscribers from './internals/steps-repository/subscribers';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -29,6 +30,7 @@ const write: Flow = {
 	useSteps() {
 		return [
 			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'subscribers', component: Subscribers },
 			{ slug: 'processing', component: Processing },
 		];
 	},
@@ -56,6 +58,9 @@ const write: Flow = {
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}
+				case 'subscribers': {
+					return navigate( 'launchpad' );
+				}
 			}
 		};
 
@@ -73,7 +78,11 @@ const write: Flow = {
 			}
 		};
 
-		return { goNext, submit };
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { goNext, goToStep, submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {

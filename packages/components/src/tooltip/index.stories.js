@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import Button from '../button';
+import { Button } from '../button';
 import Tooltip from './';
 
 const TooltipWrapper = ( { placement } ) => {

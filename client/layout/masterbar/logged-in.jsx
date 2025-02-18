@@ -42,6 +42,7 @@ import {
 	getSiteHomeUrl,
 	getSite,
 } from 'calypso/state/sites/selectors';
+import canCurrentUserManageSiteOptions from 'calypso/state/sites/selectors/can-current-user-manage-site-options';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -415,9 +416,9 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderLaunchButton() {
-		const { isUnlaunchedSite, siteId, translate } = this.props;
+		const { isUnlaunchedSite, siteId, translate, isManageSiteOptionsEnabled } = this.props;
 
-		if ( ! isUnlaunchedSite ) {
+		if ( ! isUnlaunchedSite || ! isManageSiteOptionsEnabled ) {
 			return null;
 		}
 
@@ -653,6 +654,7 @@ export default connect(
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
+			isManageSiteOptionsEnabled: canCurrentUserManageSiteOptions( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
 			isEcommerce: isEcommercePlan( sitePlanSlug ),
 			siteId: siteId,

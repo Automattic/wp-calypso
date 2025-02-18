@@ -13,7 +13,10 @@ import { QueryStatsParams } from 'calypso/my-sites/stats/hooks/utils';
 import StatsCardUpsell from 'calypso/my-sites/stats/stats-card-upsell';
 import StatsListCard from 'calypso/my-sites/stats/stats-list/stats-list-card';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
-import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
+import {
+	getPathWithUpdatedQueryString,
+	trackStatsAnalyticsEvent,
+} from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-env-stats-feature-supports';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
@@ -57,16 +60,25 @@ type SelectOptionType = {
 interface StatsModuleLocationsProps {
 	query: QueryStatsParams;
 	summaryUrl?: string;
+	initialGeoMode?: string;
 }
 
-const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summaryUrl } ) => {
+const StatsLocations: React.FC< StatsModuleLocationsProps > = ( {
+	query,
+	summaryUrl,
+	initialGeoMode,
+} ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const statType = STAT_TYPE_COUNTRY_VIEWS;
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const supportUrl = isOdysseyStats ? JETPACK_SUPPORT_URL_TRAFFIC : SUPPORT_URL;
 
-	const [ selectedOption, setSelectedOption ] = useState( OPTION_KEYS.COUNTRIES );
+	const urlGeoMode =
+		initialGeoMode || new URLSearchParams( window.location.search ).get( 'geoMode' );
+	const [ selectedOption, setSelectedOption ] = useState(
+		urlGeoMode && urlGeoMode in GEO_MODES ? urlGeoMode : OPTION_KEYS.COUNTRIES
+	);
 
 	const [ countryFilter, setCountryFilter ] = useState< string | null >( null );
 
@@ -99,7 +111,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 	const shouldGateTab = useShouldGateStats( optionLabels[ selectedOption ].feature );
 	const shouldGate = shouldGateStatsModule || shouldGateTab;
 	const geoMode = GEO_MODES[ selectedOption ];
-	const title = optionLabels[ selectedOption ]?.selectLabel;
+	const title = translate( 'Locations' );
 
 	const { supportsLocationsStats: supportsLocationsStatsFeature } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
@@ -218,19 +230,22 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 
 	const titleTooltip = (
 		<StatsInfoArea>
-			{ translate( 'Stats on visitors and their {{link}}viewing location{{/link}}.', {
-				comment: '{{link}} links to support documentation.',
-				components: {
-					link: (
-						<a
-							target="_blank"
-							rel="noreferrer"
-							href={ localizeUrl( `${ supportUrl }#countries` ) }
-						/>
-					),
-				},
-				context: 'Stats: Link in a popover for Countries module when the module has data',
-			} ) }
+			{ translate(
+				'Visitors’ {{link}}viewing location{{/link}} by countries, regions and cities.',
+				{
+					comment: '{{link}} links to support documentation.',
+					components: {
+						link: (
+							<a
+								target="_blank"
+								rel="noreferrer"
+								href={ localizeUrl( `${ supportUrl }#countries` ) }
+							/>
+						),
+					},
+					context: 'Stats: Link in a popover for Countries module when the module has data',
+				}
+			) }
 		</StatsInfoArea>
 	);
 
@@ -271,11 +286,24 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 		return null;
 	};
 
+	const getFinalSummaryUrl = () => {
+		if ( ! summaryUrl ) {
+			return undefined;
+		}
+
+		return getPathWithUpdatedQueryString(
+			{
+				geoMode: selectedOption,
+			},
+			summaryUrl
+		);
+	};
+
 	const moduleOverlay = getModuleOverlay();
 
 	return (
 		<>
-			{ ! shouldGateStatsModule && siteId && statType && (
+			{ ! shouldGate && ! supportsLocationsStatsFeature && geoMode === 'country' && (
 				<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 			) }
 			{ isRequestingData && ! shouldGate && (
@@ -311,7 +339,7 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 						showMore={
 							summaryUrl
 								? {
-										url: summaryUrl,
+										url: getFinalSummaryUrl(),
 										label:
 											Array.isArray( locationData ) && locationData.length >= 10
 												? translate( 'View all', {
@@ -331,13 +359,13 @@ const StatsLocations: React.FC< StatsModuleLocationsProps > = ( { query, summary
 			{ ! isRequestingData && ! hasLocationData && ! shouldGate && (
 				// show empty state
 				<StatsCard
-					title={ translate( 'Locations' ) }
+					title={ title }
 					isEmpty
 					emptyMessage={ emptyMessage }
 					footerAction={
 						summaryUrl
 							? {
-									url: summaryUrl,
+									url: getFinalSummaryUrl(),
 									label: translate( 'View more' ),
 							  }
 							: undefined

@@ -1,7 +1,7 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
 import clsx from 'clsx';
-import { numberFormat } from 'i18n-calypso';
+import { numberFormat, numberFormatCompact } from 'i18n-calypso';
 import React, { Fragment, useState } from 'react';
 import type { HorizontalBarListItemProps } from './types';
 
@@ -105,16 +105,7 @@ const HorizontalBarListItem = ( {
 
 	const renderValue = () => {
 		if ( useShortNumber ) {
-			return (
-				<span>
-					{ numberFormat( value, {
-						numberFormatOptions: {
-							notation: 'compact',
-							maximumFractionDigits: 1,
-						},
-					} ) }
-				</span>
-			);
+			return <span>{ numberFormatCompact( value ) }</span>;
 		}
 
 		if ( formatValue ) {

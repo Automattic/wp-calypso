@@ -202,14 +202,6 @@ export function DomainFormControl( {
 		);
 	};
 
-	const isReskinnedSupportedFlow = () => {
-		if ( ! flow ) {
-			return false;
-		}
-
-		return isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow );
-	};
-
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -251,7 +243,7 @@ export function DomainFormControl( {
 					includeWordPressDotCom={ includeWordPressDotCom ?? true }
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
-					isReskinned
+					isOnboarding
 					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
@@ -270,7 +262,9 @@ export function DomainFormControl( {
 					showSkipButton={ showSkipButton }
 					shouldQuerySubdomains={ shouldQuerySubdomains }
 					suggestion={ initialQuery }
-					handleClickUseYourDomain={ onUseYourDomainClick }
+					handleClickUseYourDomain={ ( event: React.MouseEvent, domain: string ) =>
+						onUseYourDomainClick( domain )
+					}
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: false,
@@ -289,7 +283,7 @@ export function DomainFormControl( {
 		content = renderDomainForm();
 	}
 
-	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+	if ( ( isDomainUpsellFlow( flow ) || isSiteAssemblerFlow( flow ) ) && ! showUseYourDomain ) {
 		sideContent = getSideContent();
 	}
 

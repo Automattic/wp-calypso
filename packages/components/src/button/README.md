@@ -1,5 +1,9 @@
 # Button
 
+This button has been deprecated due to aggressive and generic CSS that breaks many other buttons when imported. Use the [`Button` component](https://wordpress.github.io/gutenberg/?path=/docs/components-button--docs) from `@wordpress/components` instead.
+
+---
+
 Buttons express what action will occur when the user clicks or taps it. Buttons are used to trigger an action, and they can be used for any type of action, including navigation.
 
 ## Usage

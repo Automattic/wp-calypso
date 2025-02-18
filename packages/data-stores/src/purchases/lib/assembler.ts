@@ -12,6 +12,7 @@ export function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditC
 		billPeriodDays: Number( purchase.bill_period_days ),
 		billPeriodLabel: purchase.bill_period_label,
 		mostRecentRenewDate: purchase.most_recent_renew_date,
+		asyncPendingPaymentBlockIsSet: purchase.async_pending_payment_block_is_set,
 		canDisableAutoRenew: Boolean( purchase.can_disable_auto_renew ),
 		canReenableAutoRenewal: Boolean( purchase.can_reenable_auto_renewal ),
 		canExplicitRenew: Boolean( purchase.can_explicit_renew ),

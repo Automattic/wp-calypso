@@ -40,11 +40,7 @@ const SitePicker: Step = function SitePicker( { navigation, flow } ) {
 					</div>
 				}
 				formattedHeader={
-					<FormattedHeader
-						align="center"
-						subHeaderAlign="center"
-						headerText={ translate( 'Select your site' ) }
-					/>
+					<FormattedHeader align="center" headerText={ translate( 'Select your site' ) } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 				flowName={ flow }

@@ -14,19 +14,24 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import useCreateAgencyMutation from '../../agency-details-form/hooks/use-create-agency-mutation';
+import { getSignupDataFromRequestParameters } from '../../lib/signup-data-from-reqest-parameters';
 import {
 	clearSignupDataFromLocalStorage,
 	getSignupDataFromLocalStorage,
+	saveSignupDataToLocalStorage,
 } from '../../lib/signup-data-to-local-storage';
+import { useHandleWPCOMRedirect } from '../../signup-form/hooks/use-handle-wpcom-redirect';
+
 import './style.scss';
 
 export default function AgencySignupFinish() {
 	const notificationId = 'a4a-agency-signup-form';
 	const userLoggedIn = useSelector( isUserLoggedIn );
-	const signupData = getSignupDataFromLocalStorage();
+	const signupData = getSignupDataFromRequestParameters() ?? getSignupDataFromLocalStorage();
 	const agency = useSelector( getActiveAgency );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const handleWPCOMRedirect = useHandleWPCOMRedirect();
 
 	const createAgency = useCreateAgencyMutation( {
 		onSuccess: () => {
@@ -48,9 +53,16 @@ export default function AgencySignupFinish() {
 
 	useEffect( () => {
 		function createAgencyHandler() {
-			// Added to prevent typescript errors and for additional safety
-			if ( ! userLoggedIn || ! signupData ) {
+			// If the signup data is not present, redirect to the signup page.
+			if ( ! signupData ) {
 				page.redirect( A4A_SIGNUP_LINK );
+				return;
+			}
+
+			// If the user is not logged in, save the signup data to local storage and redirect to the WPCOM login page.
+			if ( ! userLoggedIn ) {
+				saveSignupDataToLocalStorage( signupData );
+				handleWPCOMRedirect( signupData );
 				return;
 			}
 

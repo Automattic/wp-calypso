@@ -4,6 +4,7 @@ import pagejs from '@automattic/calypso-router';
 import { Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import A4APluginsJetpackBanner from 'calypso/a8c-for-agencies/sections/plugins/plugins-jetpack-banner';
 import QueryJetpackSitesFeatures from 'calypso/components/data/query-jetpack-sites-features';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -41,6 +42,7 @@ import {
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import getSelectedOrAllSitesWithJetpackPlugin from 'calypso/state/selectors/get-selected-or-all-sites-with-jetpack-plugin';
 import getSites from 'calypso/state/selectors/get-sites';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { PluginActionName, PluginActions, Site } from '../hooks/types';
@@ -51,7 +53,6 @@ import { PluginComponentProps } from '../plugin-management-v2/types';
 import PluginsListDataViews from '../plugins-list/plugins-list-dataviews';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Plugin } from 'calypso/state/plugins/installed/types';
-
 import './style.scss';
 
 interface PluginActionCallback {
@@ -107,7 +108,9 @@ const PluginsDashboard = ( {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isJetpackCloudOrA8CForAgencies = isJetpackCloud() || isA8CForAgencies();
-	const allSites = useSelector( ( state ) => getSites( state ) );
+	const allSites = useSelector( ( state ) =>
+		isA8CForAgencies() ? getSelectedOrAllSitesWithJetpackPlugin( state ) : getSites( state )
+	);
 	const siteIds = siteObjectsToSiteIds( allSites ) ?? [];
 	const wporgPlugins = useSelector( ( state ) => getAllWporgPlugins( state ) );
 	const isLoading = useSelector(
@@ -342,6 +345,7 @@ const PluginsDashboard = ( {
 			<QueryProductsList />
 			<LayoutColumn className="sites-overview" wide>
 				<LayoutTop withNavigation={ false }>
+					{ isA8CForAgencies() && ! pluginSlug && <A4APluginsJetpackBanner /> }
 					<LayoutHeader>
 						<Title>{ translate( 'Manage Plugins' ) }</Title>
 						{ ! pluginSlug && (

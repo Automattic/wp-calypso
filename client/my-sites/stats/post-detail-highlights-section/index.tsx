@@ -1,8 +1,8 @@
-import { Card, Count, PostStatsCard } from '@automattic/components';
+import { Card, Count } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import PostStatsCard from 'calypso/components/post-stats-card';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -11,6 +11,7 @@ import getEnvStatsFeatureSupportChecks from 'calypso/state/sites/selectors/get-e
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
+import { truncateWithLimit, getProcessedText } from '../text-utils';
 
 import './style.scss';
 
@@ -27,38 +28,10 @@ type Post = {
 	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
 	comment_count: number | null;
+	url: string | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
-
-function truncateWithLimit( text: string, limit: number ): string {
-	// Determine if any processing is needed.
-	const trimmedText = text.trim();
-	if ( trimmedText.length <= limit ) {
-		return trimmedText;
-	}
-
-	// Find the last whitespace character within the limit.
-	const truncatedText = trimmedText.substring( 0, limit );
-	const lastWhitespaceIndex = truncatedText.lastIndexOf( ' ' );
-
-	// If there's no whitespace within the limit, truncate at the limit.
-	if ( lastWhitespaceIndex === -1 ) {
-		return truncatedText + '...';
-	}
-
-	// Truncate at the last whitespace character.
-	return trimmedText.substring( 0, lastWhitespaceIndex ) + '...';
-}
-
-function getProcessedTitle( post: Post ): string {
-	const title = post?.title || '';
-	if ( ! title ) {
-		return '';
-	}
-
-	return decodeEntities( stripHTML( title ) );
-}
 
 export default function PostDetailHighlightsSection( {
 	siteId,
@@ -77,8 +50,9 @@ export default function PostDetailHighlightsSection( {
 	const postData = {
 		date: post?.date,
 		post_thumbnail: post?.post_thumbnail?.URL || null,
-		title: truncateWithLimit( getProcessedTitle( post ), POST_STATS_CARD_TITLE_LIMIT ),
+		title: truncateWithLimit( getProcessedText( post?.title ), POST_STATS_CARD_TITLE_LIMIT ),
 	};
+
 	const { supportsEmailStats } = useSelector( ( state ) =>
 		getEnvStatsFeatureSupportChecks( state, siteId )
 	);
@@ -127,6 +101,7 @@ export default function PostDetailHighlightsSection( {
 							viewCount={ viewCount }
 							commentCount={ post?.comment_count || 0 }
 							locale={ userLocale }
+							titleLink={ post?.url || undefined }
 						/>
 
 						<Card className="highlight-card">

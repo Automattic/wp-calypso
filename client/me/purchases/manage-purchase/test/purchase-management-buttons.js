@@ -59,6 +59,7 @@ const purchase = {
 	regular_price_text: '$300',
 	product_display_price: '<abbr title="United States Dollars">$</abbr>300',
 	is_cancelable: false,
+	async_pending_payment_block_is_set: false,
 	can_explicit_renew: true,
 	can_disable_auto_renew: false,
 	can_reenable_auto_renewal: false,

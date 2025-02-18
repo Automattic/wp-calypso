@@ -1,0 +1,11 @@
+.is-section-a8c-for-agencies-plugins {
+	.wpcom-site {
+		.main.hosting-dashboard-layout.sites-dashboard.sites-dashboard__layout:not(.preview-hidden) {
+			.hosting-dashboard-layout-column__container {
+				.hosting-dashboard-layout__top-wrapper {
+					display: block;
+				}
+			}
+		}
+	}
+}

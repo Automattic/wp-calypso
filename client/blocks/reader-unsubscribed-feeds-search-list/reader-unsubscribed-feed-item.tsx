@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, ExternalLink } from '@automattic/components';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -7,7 +7,6 @@ import { filterURLForDisplay } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import { SiteIcon } from 'calypso/blocks/site-icon';
-import ExternalLink from 'calypso/components/external-link';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { useResendEmailVerification } from '../../landing/stepper/hooks/use-resend-email-verification';

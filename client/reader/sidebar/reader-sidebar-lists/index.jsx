@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -18,17 +19,32 @@ export class ReaderSidebarLists extends Component {
 		translate: PropTypes.func,
 	};
 
+	selectMenu = () => {
+		const { onClick, lists, isOpen, path } = this.props;
+		const defaultSelection = lists?.length
+			? `/reader/list/${ lists[ 0 ]?.owner }/${ lists[ 0 ]?.slug }`
+			: '/reader/list/new';
+		if ( ! isOpen ) {
+			onClick();
+		}
+		if ( path !== defaultSelection ) {
+			page( defaultSelection );
+		}
+	};
+
 	render() {
 		const { translate, isOpen, onClick, path, ...passedProps } = this.props;
+
 		return (
 			<li>
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
-					onClick={ onClick }
+					onClick={ this.selectMenu }
 					customIcon={ <ReaderListIcon viewBox="-3 0 24 24" /> }
 					disableFlyout
 					className={ path.startsWith( '/reader/list' ) && 'sidebar__menu--selected' }
+					expandableIconClick={ onClick }
 				>
 					<li>
 						<ReaderSidebarListsList path={ path } { ...passedProps } />

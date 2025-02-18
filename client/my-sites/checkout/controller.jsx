@@ -41,7 +41,6 @@ import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
-	BUSINESS_PLAN_UPGRADE_UPSELL,
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
@@ -366,24 +365,9 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
 		upsellType = CONCIERGE_SUPPORT_SESSION;
 		upgradeItem = 'concierge-session';
-	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
-		upgradeItem = context.params.upgradeItem;
-
-		switch ( upgradeItem ) {
-			case 'business':
-			case 'business-2-years':
-			case 'business-3-years':
-			case 'business-monthly':
-				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
-				break;
-			default:
-				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
-		}
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
 		upgradeItem = context.params.domain;
-	} else {
-		upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
