@@ -1,14 +1,8 @@
-import { formatCurrency } from '@automattic/format-currency';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { useTranslate } from 'i18n-calypso';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import InlineSupportLink from 'calypso/components/inline-support-link';
+import DomainToPlanCreditMessage from 'calypso/components/domain-to-plan-credit-message';
 import Notice from 'calypso/components/notice';
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { PlanSlug } from '@automattic/calypso-products';
-
 type Props = {
 	className?: string;
 	onDismissClick?: () => void;
@@ -22,12 +16,7 @@ const PlanNoticeDomainToPlanCredit = ( {
 	siteId,
 	visiblePlans,
 }: Props ) => {
-	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const domainToPlanCreditsApplicable = useDomainToPlanCreditsApplicable( siteId, visiblePlans );
-	const upgradeCreditDocsUrl = localizeUrl(
-		'https://wordpress.com/support/manage-purchases/upgrade-your-plan/#upgrade-credit'
-	);
 	const showNotice =
 		visiblePlans &&
 		visiblePlans.length > 0 &&
@@ -46,24 +35,7 @@ const PlanNoticeDomainToPlanCredit = ( {
 					status="is-success"
 					theme="light"
 				>
-					{ translate(
-						'You have {{b}}%(amountInCurrency)s{{/b}} in {{a}}upgrade credits{{/a}} available from your current domain. This credit will be applied to the pricing below at checkout if you purchase a plan today!',
-						{
-							args: {
-								amountInCurrency: formatCurrency(
-									domainToPlanCreditsApplicable,
-									currencyCode ?? '',
-									{
-										isSmallestUnit: true,
-									}
-								),
-							},
-							components: {
-								b: <strong />,
-								a: <InlineSupportLink supportLink={ upgradeCreditDocsUrl } />,
-							},
-						}
-					) }
+					<DomainToPlanCreditMessage amount={ domainToPlanCreditsApplicable } />
 				</Notice>
 			) }
 		</>

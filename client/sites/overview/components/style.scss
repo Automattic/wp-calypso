@@ -16,6 +16,7 @@ $blueberry-color: #3858e9;
 	grid-template-rows: auto auto;
 	grid-column-gap: 16px;
 	grid-row-gap: 16px;
+	grid-auto-flow: row;
 
 	&__plan-card-header {
 		.hosting-overview__development-site-badge {
@@ -130,27 +131,16 @@ $blueberry-color: #3858e9;
 
 }
 
+.hosting-overview__domain-to-plan-credit-notice {
+	grid-column: 1 / -1;
+}
+
 .hosting-overview__navigation-header {
 	grid-column: 1 / -1;
-	grid-row: 1;
-
+	
 	&.navigation-header {
 		margin-bottom: 16px;
 	}
-}
-
-.hosting-overview__plan,
-.hosting-overview__quick-actions {
-	grid-row: 2;
-}
-
-.hosting-card.site-backup-card,
-.hosting-card.support-card {
-	grid-row: 3;
-}
-
-.hosting-overview__active-domains {
-	grid-row: 4;
 }
 
 .hosting-overview__navigation-header,

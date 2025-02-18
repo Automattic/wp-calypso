@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -7,6 +8,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ActiveDomainsCard from './active-domains-card';
 import MigrationOverview from './migration-overview';
 import PlanCard from './plan-card';
+import PlanCreditNotice from './plan-credit-notice';
 import QuickActionsCard from './quick-actions-card';
 import SiteBackupCard from './site-backup-card';
 import SupportCard from './support-card';
@@ -35,6 +37,7 @@ const HostingOverview: FC = () => {
 				title={ translate( 'Overview' ) }
 				subtitle={ subtitle }
 			/>
+			{ isEnabled( 'domain-to-plan-credit' ) && <PlanCreditNotice /> }
 			<PlanCard />
 			<QuickActionsCard />
 			<SiteBackupCard />
