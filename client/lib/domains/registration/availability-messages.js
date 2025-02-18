@@ -616,6 +616,10 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case domainAvailability.INVALID_LENGTH:
+			message = translate( 'The domain name is too long.' );
+			break;
+
 		case 'blocked':
 			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
 			message = translate(
