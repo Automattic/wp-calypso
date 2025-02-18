@@ -165,7 +165,6 @@ export function DomainFormControl( {
 				<CalypsoShoppingCartProvider>
 					<UseMyDomain
 						analyticsSection={ analyticsSection }
-						basePath={ path }
 						initialQuery={ domainForm?.lastQuery }
 						initialMode={ inputMode.domainInput }
 						onNextStep={ null }
