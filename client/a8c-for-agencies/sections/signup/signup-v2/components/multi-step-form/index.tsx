@@ -25,23 +25,16 @@ const MultiStepForm = () => {
 	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
 
 	const steps = [
-		{ label: translate( 'Sign up' ), isActive: currentStep === 1, isComplete: currentStep > 1 },
+		{ label: translate( 'Sign up' ), isActive: currentStep > 0, value: ( currentStep - 1 ) * 50 },
 		{
 			label: translate( 'Personalize' ),
-			isActive: currentStep === 2 || currentStep === 3 || currentStep === 4,
-			isComplete: currentStep > 2,
-			half: true,
-		},
-		{
-			label: '',
-			isActive: currentStep === 5,
-			isComplete: currentStep > 5,
-			half: true,
+			isActive: currentStep > 3,
+			value: ( currentStep - 4 ) * 50,
 		},
 		{
 			label: translate( 'Finish survey' ),
-			isActive: currentStep === 6,
-			isComplete: currentStep > 6,
+			isActive: currentStep > 5,
+			value: ( currentStep - 5 ) * 100,
 		},
 	];
 
