@@ -1,5 +1,9 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
+import { Icon, Button, ButtonGroup } from '@wordpress/components';
+import { chartBar, trendingUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
@@ -26,6 +30,11 @@ const ChartHeader = ( {
 			treatAtomicAsJetpackSite: false,
 		} );
 	} );
+
+	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
+
+	const [ chartType, setChartType ] = useState( 'line' );
+
 	const onGatedHandler = ( events, source, statType ) => {
 		// Stop the popup from showing for Jetpack sites.
 		if ( isSiteJetpackNotAtomic ) {
@@ -34,6 +43,11 @@ const ChartHeader = ( {
 
 		events.forEach( ( event ) => recordTracksEvent( event.name, event.params ) );
 		dispatch( toggleUpsellModal( siteId, statType ) );
+	};
+
+	const handleChartTypeChange = ( newType ) => {
+		setChartType( newType );
+		//TODO: add tracks event for chart type change
 	};
 
 	return (
@@ -53,6 +67,24 @@ const ChartHeader = ( {
 				intervals={ intervals }
 				onGatedHandler={ onGatedHandler }
 			/>
+			{ isChartLibraryEnabled && (
+				<ButtonGroup className="stats-chart-tabs__type-toggle">
+					<Button
+						icon={ <Icon icon={ trendingUp } /> }
+						isSmall
+						isPrimary={ chartType === 'line' }
+						onClick={ () => handleChartTypeChange( 'line' ) }
+						aria-label="Switch to line chart"
+					/>
+					<Button
+						icon={ <Icon icon={ chartBar } /> }
+						isSmall
+						isPrimary={ chartType === 'bar' }
+						onClick={ () => handleChartTypeChange( 'bar' ) }
+						aria-label="Switch to bar chart"
+					/>
+				</ButtonGroup>
+			) }
 		</div>
 	);
 };
