@@ -2,6 +2,11 @@ import { APIError } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import A4ALogo, {
+	LOGO_COLOR_SECONDARY_ALT,
+	LOGO_COLOR_SECONDARY,
+} from 'calypso/a8c-for-agencies/components/a4a-logo';
+import { useIsDarkMode } from 'calypso/a8c-for-agencies/hooks/use-is-dark-mode';
 import { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useCreateSignupMutation from '../../../hooks/use-create-signup-mutation';
@@ -16,10 +21,11 @@ import PersonalizationForm from './personalization';
 import './style.scss';
 
 const MultiStepForm = () => {
+	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
 	const [ currentStep, setCurrentStep ] = useState( 1 );
 	const dispatch = useDispatch();
-	const notificationId = 'a4a-agency-signup-form';
+	const isDarkMode = useIsDarkMode();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
 	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
@@ -103,6 +109,11 @@ const MultiStepForm = () => {
 
 	return (
 		<div className="signup-multi-step-form">
+			<A4ALogo
+				fullA4AV2
+				colors={ { secondary: isDarkMode ? LOGO_COLOR_SECONDARY_ALT : LOGO_COLOR_SECONDARY } }
+				className="multi-step-form__logo-narrow"
+			/>
 			<StepProgress steps={ steps } />
 
 			{ currentForm }
