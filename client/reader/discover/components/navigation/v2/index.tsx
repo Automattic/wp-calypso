@@ -70,7 +70,9 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 	];
 
 	// Only show the add new tab if the user is logged in.
-	const filteredTabs = baseTabs.filter( ( tab ) => tab.slug !== 'add-new' || isLoggedIn );
+	const filteredTabs = baseTabs.filter(
+		( tab ) => ( tab.slug !== 'add-new' && tab.slug !== 'reddit' ) || isLoggedIn
+	);
 
 	// Add localization to paths if needed.
 	const tabs = filteredTabs.map( ( tab ) => ( {
