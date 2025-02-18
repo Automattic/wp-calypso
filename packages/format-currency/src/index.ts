@@ -50,10 +50,12 @@ export function createFormatter(): CurrencyFormatter {
 		const numberFormatOptions: Intl.NumberFormatOptions = {
 			style: 'currency',
 			currency: code,
-			...( isNoDecimals( number, options )
-				? { maximumFractionDigits: 0, minimumFractionDigits: 0 }
-				: {} ),
-			...( options.signForPositive ? { signDisplay: 'exceptZero' } : {} ),
+			...( options.stripZeros &&
+				Number.isInteger( number ) && {
+					maximumFractionDigits: 0,
+					minimumFractionDigits: 0,
+				} ),
+			...( options.signForPositive && { signDisplay: 'exceptZero' } ),
 		};
 
 		return getCachedFormatter( {
@@ -285,14 +287,6 @@ function getLocaleFromBrowser() {
 		return window.navigator.languages[ 0 ];
 	}
 	return window.navigator?.language ?? fallbackLocale;
-}
-
-function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
-	// TODO clk numberFormatCurrency only isInteger part stays - the rest is same with "decimals" argument
-	if ( options.stripZeros && Number.isInteger( number ) ) {
-		return true;
-	}
-	return false;
 }
 
 function prepareNumberForFormatting(
