@@ -69,7 +69,7 @@ class StatsModule extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { data, isRealTime, query, requesting } = this.props;
+		const { data, isRealTime, query, requesting, statType } = this.props;
 		if ( ! requesting && prevProps.requesting ) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( { loaded: true } );
@@ -90,10 +90,12 @@ class StatsModule extends Component {
 		const now = moment();
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
+			// Some special data index keys depend on the statType.
+			const dataIndexId = 'statsCountryViews' === statType ? 'countryCode' : 'id';
 			const updatedHistory = this.updateHistory( dataHistory, data );
 			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
+			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data, dataIndexId );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -131,14 +133,14 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( prevData, newData ) {
+	calculateDiff( prevData, newData, dataIndexId ) {
 		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
+		const prevDataMap = new Map( prevData.map( ( item ) => [ item[ dataIndexId ], item ] ) );
 
 		// Calculate the difference value for each new item.
 		const diff = newData.map( ( item ) => {
 			// Pull matching data from previous snapshot, or default to 0 if not found.
-			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
+			const prevItem = prevDataMap.get( item[ dataIndexId ] ) || { value: 0 };
 			return {
 				...item,
 				diffValue: item.value - prevItem.value,

@@ -9,6 +9,7 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { STATS_PRODUCT_NAME } from 'calypso/my-sites/stats/constants';
+import StatsModuleCountries from 'calypso/my-sites/stats/features/modules/stats-countries';
 import StatsModuleTopPosts from 'calypso/my-sites/stats/features/modules/stats-top-posts';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { requestSiteStats } from 'calypso/state/stats/lists/actions';
@@ -56,7 +57,7 @@ function StatsRealtime() {
 	useEffect( () => {
 		// TODO: This array determines which requests are fired.
 		// Currently firing two requests but only displaying top posts.
-		const statTypes = [ 'statsTopPosts', 'statsReferrers' ];
+		const statTypes = [ 'statsTopPosts', 'statsCountryViews' ];
 
 		// Function to dispatch the request
 		const fetchStats = () => {
@@ -67,7 +68,7 @@ function StatsRealtime() {
 
 		// Initial fetch, followed by timed fetch.
 		fetchStats();
-		const intervalInMilliseconds = 15000; // 15 seconds
+		const intervalInMilliseconds = 2000; // 15 seconds
 		const intervalId = setInterval( fetchStats, intervalInMilliseconds );
 
 		// Clear the interval when the component unmounts
@@ -102,6 +103,14 @@ function StatsRealtime() {
 						query={ query }
 						summaryUrl={ url }
 						className={ halfWidthModuleClasses }
+						isRealTime
+					/>
+					<StatsModuleCountries
+						moduleStrings={ moduleStrings.countries }
+						period={ period }
+						query={ query }
+						summaryUrl={ url }
+						className={ clsx( 'stats__flexible-grid-item--full' ) }
 						isRealTime
 					/>
 				</StatsModuleListing>
