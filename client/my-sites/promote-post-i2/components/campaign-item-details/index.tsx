@@ -32,6 +32,7 @@ import CampaignDownloadStats from 'calypso/my-sites/promote-post-i2/components/c
 import CampaignStatsLineChart from 'calypso/my-sites/promote-post-i2/components/campaign-stats-line-chart/index.tsx/campaign-stats-line-chart';
 import LocationChart from 'calypso/my-sites/promote-post-i2/components/location-charts';
 import PaymentLinks from 'calypso/my-sites/promote-post-i2/components/payment-links';
+import TspMetricsBanner from 'calypso/my-sites/promote-post-i2/components/tsp-metrics-banner';
 import useOpenPromoteWidget from 'calypso/my-sites/promote-post-i2/hooks/use-open-promote-widget';
 import {
 	campaignStatus,
@@ -636,6 +637,11 @@ export default function CampaignItemDetails( props: Props ) {
 		};
 	}, [ isLoading, hasStats, campaignsStatsIsLoading ] );
 
+	const [ showTspMetricsBanner, setShowTspMetricsBanner ] = useState( true );
+	const closeTspMetricsBanner = () => {
+		setShowTspMetricsBanner( false );
+	};
+
 	return (
 		<div className="campaign-item__container">
 			<Dialog
@@ -1028,6 +1034,10 @@ export default function CampaignItemDetails( props: Props ) {
 									{ tsp && (
 										<>
 											<div className="campaign-item-details__main-stats-row" ref={ tspTargetRef }>
+												<TspMetricsBanner
+													onClose={ closeTspMetricsBanner }
+													display={ showTspMetricsBanner }
+												/>
 												<div className="campaign-item-details__main-stats-title">
 													<span className="campaign-item-details__title">
 														{ translate( 'Social Engagement' ) }
