@@ -236,6 +236,8 @@ class StatsModule extends Component {
 				value: item[ valueField ],
 			} ) );
 		}
+
+		return [];
 	}
 
 	render() {
