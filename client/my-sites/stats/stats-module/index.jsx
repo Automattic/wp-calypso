@@ -93,7 +93,7 @@ class StatsModule extends Component {
 			const updatedHistory = this.updateHistory( dataHistory, data );
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
 			const baseline = this.createBaselineLookup( updatedHistory );
-			const diffData = this.calculateDiff2( baseline, lastSnapshot.data );
+			const diffData = this.calculateDiff( baseline, lastSnapshot.data );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -131,24 +131,7 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( prevData, newData ) {
-		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
-
-		// Calculate the difference value for each new item.
-		const diff = newData.map( ( item ) => {
-			// Pull matching data from previous snapshot, or default to 0 if not found.
-			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
-			return {
-				...item,
-				diffValue: item.value - prevItem.value,
-			};
-		} );
-
-		return diff;
-	}
-
-	calculateDiff2( baseline, latestSnapshot ) {
+	calculateDiff( baseline, latestSnapshot ) {
 		// Create a lookup map for the baseline using item IDs.
 		const baselineMap = new Map( Object.values( baseline ).map( ( item ) => [ item.id, item ] ) );
 
