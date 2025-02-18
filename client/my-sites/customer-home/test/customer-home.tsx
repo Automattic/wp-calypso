@@ -5,6 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 import nock from 'nock';
 import React, { act } from 'react';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHome from '../main';
@@ -12,7 +13,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 jest.mock( '@wordpress/api-fetch' );
 
-jest.mock( '../../../lib/explat', () => ( {
+jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( ( slug ) =>
 		slug === 'calypso_signup_onboarding_goals_first_flow_holdout_v2_20250131'
 			? Promise.resolve( { variationName: 'treatment_cumulative' } )
@@ -157,5 +158,33 @@ describe( 'CustomerHome', () => {
 		act( () => launchSiteButton.click() );
 
 		expect( await screen.findByText( 'Congrats, your site is live!' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows home content when site would be eligible to show launchpad, but user is in control group', async () => {
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
+		} );
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( { variationName: 'control' } );
+
+		renderWithProvider( <CustomerHome site={ testSite } /> );
+
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
+		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows home content when site would be eligible to show launchpad, but user is in treatment_frozen group', async () => {
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
+		} );
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
+			variationName: 'treatment_frozen',
+		} );
+
+		renderWithProvider( <CustomerHome site={ testSite } /> );
+
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
+		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 } );
