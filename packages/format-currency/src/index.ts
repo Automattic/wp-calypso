@@ -8,7 +8,7 @@ import type {
 
 export * from './types';
 
-const formatterCache = new Map< string, Intl.NumberFormat >();
+const formatterCache = new Map();
 const fallbackLocale = 'en';
 const fallbackCurrency = 'USD';
 const geolocationEndpointUrl = 'https://public-api.wordpress.com/geo/';
@@ -272,20 +272,6 @@ function getLocaleFromBrowser() {
 	return window.navigator?.language ?? fallbackLocale;
 }
 
-function getFormatterCacheKey( {
-	locale,
-	currency,
-	noDecimals,
-	signForPositive,
-}: {
-	locale: string;
-	currency: string;
-	noDecimals: boolean;
-	signForPositive: boolean;
-} ): string {
-	return `currency:${ currency },locale:${ locale },noDecimals:${ noDecimals },signForPositive:${ signForPositive }`;
-}
-
 function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
 	// TODO clk numberFormatCurrency only isInteger part stays - the rest is same with "decimals" argument
 	if ( options.stripZeros && Number.isInteger( number ) ) {
@@ -296,6 +282,8 @@ function isNoDecimals( number: number, options: CurrencyObjectOptions ) {
 
 /**
  * Creating an Intl.NumberFormat is expensive, so this allows caching.
+ *
+ * TODO clk numberFormatCurrency caching logic identical to numberFormat, except for fallback
  */
 function getCachedFormatter( {
 	locale,
@@ -308,34 +296,39 @@ function getCachedFormatter( {
 	noDecimals: boolean;
 	signForPositive: boolean;
 } ): Intl.NumberFormat {
-	const cacheKey = getFormatterCacheKey( { locale, currency, noDecimals, signForPositive } );
-	if ( formatterCache.has( cacheKey ) ) {
-		const formatter = formatterCache.get( cacheKey );
-		if ( formatter ) {
-			return formatter;
-		}
-	}
+	const numberFormatOptions: Intl.NumberFormatOptions = {
+		style: 'currency',
+		currency,
+		...( signForPositive ? { signDisplay: 'exceptZero' } : {} ),
+		// There's an option called `trailingZeroDisplay` but it does not yet work
+		// in FF so we have to strip zeros manually.
+		...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
+	};
+	const cacheKey = JSON.stringify( [ locale, numberFormatOptions ] );
 
 	try {
-		const formatter = new Intl.NumberFormat( addNumberingSystemToLocale( locale ), {
-			style: 'currency',
-			currency,
-			...( signForPositive ? { signDisplay: 'exceptZero' } : {} ),
-			// There's an option called `trailingZeroDisplay` but it does not yet work
-			// in FF so we have to strip zeros manually.
-			...( noDecimals ? { maximumFractionDigits: 0, minimumFractionDigits: 0 } : {} ),
-		} );
-
-		formatterCache.set( cacheKey, formatter );
-
-		return formatter;
+		return (
+			formatterCache.get( cacheKey ) ??
+			formatterCache
+				.set(
+					cacheKey,
+					new Intl.NumberFormat( addNumberingSystemToLocale( locale ), numberFormatOptions )
+				)
+				.get( cacheKey )
+		);
 	} catch ( error ) {
 		// If the locale is invalid, creating the NumberFormat will throw.
 		// eslint-disable-next-line no-console
 		console.warn(
 			`formatCurrency was called with a non-existent locale "${ locale }"; falling back to ${ fallbackLocale }`
 		);
-		return getCachedFormatter( { locale: fallbackLocale, currency, noDecimals, signForPositive } );
+
+		return getCachedFormatter( {
+			locale: fallbackLocale,
+			currency,
+			noDecimals,
+			signForPositive,
+		} );
 	}
 }
 
