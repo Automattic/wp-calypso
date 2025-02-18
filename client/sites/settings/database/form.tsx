@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, MaterialIcon } from '@automattic/components';
 import { PanelBody } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
@@ -69,7 +70,8 @@ export default function PhpMyAdminForm( { disabled }: PhpMyAdminFormProps ) {
 	const [ isRestorePasswordDialogVisible, setIsRestorePasswordDialogVisible ] = useState( false );
 	const { openPhpMyAdmin, loading } = useOpenPhpMyAdmin();
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	let isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	isUntangled = isUntangled && config.isEnabled( 'untangling/settings-i2' );
 
 	const form = (
 		<div className="phpmyadmin-card__wrapper">

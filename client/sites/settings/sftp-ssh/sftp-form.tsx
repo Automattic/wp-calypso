@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner, ExternalLink } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -382,7 +383,8 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 		</div>
 	);
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	let isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	isUntangled = isUntangled && config.isEnabled( 'untangling/settings-i2' );
 
 	let ContainerComponent = HostingCard;
 	if ( isUntangled ) {
