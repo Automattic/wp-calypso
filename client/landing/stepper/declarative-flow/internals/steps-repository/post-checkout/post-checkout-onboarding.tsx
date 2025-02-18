@@ -104,7 +104,7 @@ const PostCheckoutOnboarding: Step = ( { navigation } ) => {
 		isExternallyManagedThemeAvailable,
 	] );
 
-	return <Loading />;
+	return <Loading className="wpcom-loading__boot" />;
 };
 
 export default PostCheckoutOnboarding;
