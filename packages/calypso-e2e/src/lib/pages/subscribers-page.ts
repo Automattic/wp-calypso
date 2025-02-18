@@ -42,14 +42,13 @@ export class SubscribersPage {
 	 * @param {string} identifier Identifier to locate and remove.
 	 */
 	async removeSubscriber( identifier: string ) {
-		// First find the row containing the subscriber
-		const row = this.anchor.getByRole( 'row' ).filter( { hasText: identifier } );
-
-		// Wait for the row to be visible
-		await row.waitFor( { state: 'visible' } );
-
-		// Find and click the actions button within that row
-		await row.locator( 'button.dataviews-all-actions-button[aria-label="Actions"]' ).click();
+		// First open the hamburger menu of the row containing the subscriber
+		// to remove.
+		await this.anchor
+			.getByRole( 'row' )
+			.filter( { hasText: identifier } )
+			.getByRole( 'button', { name: 'Actions' } )
+			.click();
 
 		// Click on the remove menu item.
 		await this.page.getByRole( 'menuitem', { name: 'Remove' } ).click();
@@ -61,6 +60,9 @@ export class SubscribersPage {
 			.click();
 
 		// Ensure the subscriber is no longer present.
-		await row.waitFor( { state: 'detached', timeout: 5000 } );
+		await this.anchor
+			.getByRole( 'row' )
+			.filter( { hasText: identifier } )
+			.waitFor( { state: 'detached' } );
 	}
 }
