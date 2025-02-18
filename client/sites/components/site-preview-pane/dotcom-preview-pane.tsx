@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import HostingFeaturesIcon from 'calypso/sites/hosting-features/components/hosting-features-icon';
@@ -60,12 +60,6 @@ interface Props {
 	closeSitePreviewPane: () => void;
 	changeSitePreviewPane: ( siteId: number ) => void;
 }
-
-const OVERLAY_MODAL_SELECTORS = [
-	'body.modal-open',
-	'#wpnc-panel.wpnt-open',
-	'div.help-center__container:not(.is-minimized)',
-];
 
 const DotcomPreviewPane = ( {
 	site,
@@ -238,25 +232,6 @@ const DotcomPreviewPane = ( {
 		adminUrl: site.options?.admin_url || `${ site.URL }/wp-admin`,
 		withIcon: true,
 	};
-
-	useEffect( () => {
-		const handleKeydown = ( e: KeyboardEvent ) => {
-			if ( e.key !== 'Escape' ) {
-				return;
-			}
-
-			if ( document.querySelector( OVERLAY_MODAL_SELECTORS.join( ',' ) ) ) {
-				return;
-			}
-
-			closeSitePreviewPane();
-		};
-
-		document.addEventListener( 'keydown', handleKeydown, true );
-		return () => {
-			document.removeEventListener( 'keydown', handleKeydown, true );
-		};
-	}, [ closeSitePreviewPane ] );
 
 	const { data: stagingSites } = useStagingSite( site.ID, {
 		enabled: ! site.is_wpcom_staging_site && site.is_wpcom_atomic,
