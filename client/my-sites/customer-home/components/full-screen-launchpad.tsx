@@ -61,7 +61,9 @@ export const FullScreenLaunchpad = ( {
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
-					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site' );
+					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site', {
+						context: launchpadContext,
+					} );
 					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
