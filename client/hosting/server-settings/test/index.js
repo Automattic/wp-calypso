@@ -121,6 +121,7 @@ const createTestStore = ( {
 		explatExperiments: {
 			experimentAssignments: {},
 		},
+		preferences: {},
 	} );
 	return store;
 };

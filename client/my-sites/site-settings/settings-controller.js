@@ -38,7 +38,8 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  * @returns
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		const slug = context.path.split( '/' )[ 2 ];
@@ -76,7 +77,8 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  * - /settings/general can always redirect to /wp-admin/options-general.php
  */
 export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		return page.redirect( `/sites/settings/site` );
@@ -90,9 +92,9 @@ export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
  * since /sites/settings/site/:site looks broken for those users.
  */
 export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
-	const state = context.store.getState();
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
-	const siteSlug = getSelectedSiteSlug( state );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const siteSlug = getSelectedSiteSlug( getState() );
 
 	if ( ! isUntangled ) {
 		return page.redirect( `/settings/general/${ siteSlug }` );

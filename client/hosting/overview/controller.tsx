@@ -21,9 +21,11 @@ export function hostingOverview( context: PageJSContext, next: () => void ) {
 }
 
 export async function hostingConfiguration( context: PageJSContext, next: () => void ) {
+	const { getState, dispatch } = context.store;
+
 	// Update the url and show the notice after a redirect
 	if ( context.query && context.query.hosting_features === 'activated' ) {
-		context.store.dispatch(
+		dispatch(
 			successNotice( i18n.translate( 'Hosting features activated successfully!' ), {
 				displayOnNextPage: true,
 			} )
@@ -35,7 +37,7 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
@@ -52,7 +54,8 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 }
 
 export async function hostingActivate( context: PageJSContext, next: () => void ) {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
