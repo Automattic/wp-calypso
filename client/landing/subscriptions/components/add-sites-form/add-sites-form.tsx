@@ -1,6 +1,6 @@
-import { Button, FormInputValidation } from '@automattic/components';
+import { FormInputValidation } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { TextControl } from '@wordpress/components';
+import { Button, TextControl } from '@wordpress/components';
 import { check, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -64,62 +64,67 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 		[ validateInputValue ]
 	);
 
-	const onAddSite = useCallback( () => {
-		if ( ! isLoggedIn ) {
-			setShowLoginDialog( true );
-			return;
-		}
+	const onSubmit = useCallback(
+		( e: React.FormEvent ) => {
+			e.preventDefault();
 
-		if ( isValidInput ) {
-			setIsSubmitting( true );
-			subscribe(
-				{ url: inputValue },
-				{
-					onSuccess: ( data ) => {
-						if ( data?.info === 'already_subscribed' ) {
-							showWarningNotice( inputValue );
-						} else {
-							if ( data?.subscription?.blog_ID ) {
-								recordSiteSubscribed( {
-									blog_id: data?.subscription?.blog_ID,
-									url: inputValue,
-									source: SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL,
-								} );
+			if ( ! isLoggedIn ) {
+				setShowLoginDialog( true );
+				return;
+			}
+
+			if ( isValidInput ) {
+				setIsSubmitting( true );
+				subscribe(
+					{ url: inputValue },
+					{
+						onSuccess: ( data ) => {
+							if ( data?.info === 'already_subscribed' ) {
+								showWarningNotice( inputValue );
+							} else {
+								if ( data?.subscription?.blog_ID ) {
+									recordSiteSubscribed( {
+										blog_id: data?.subscription?.blog_ID,
+										url: inputValue,
+										source: SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL,
+									} );
+								}
+
+								showSuccessNotice( inputValue );
+
+								// Reset fields.
+								setInputValue( '' );
+								setIsValidInput( false );
 							}
-
-							showSuccessNotice( inputValue );
-
-							// Reset fields.
-							setInputValue( '' );
-							setIsValidInput( false );
-						}
-						onAddFinished();
-					},
-					onError: ( error: SubscriptionError ) => {
-						showErrorNotice( inputValue, error );
-						onAddFinished();
-					},
-					onSettled: (): void => {
-						setIsSubmitting( false );
-					},
-				}
-			);
-		}
-	}, [
-		inputValue,
-		isValidInput,
-		isLoggedIn,
-		onAddFinished,
-		recordSiteSubscribed,
-		showErrorNotice,
-		showSuccessNotice,
-		showWarningNotice,
-		subscribe,
-	] );
+							onAddFinished();
+						},
+						onError: ( error: SubscriptionError ) => {
+							showErrorNotice( inputValue, error );
+							onAddFinished();
+						},
+						onSettled: (): void => {
+							setIsSubmitting( false );
+						},
+					}
+				);
+			}
+		},
+		[
+			inputValue,
+			isValidInput,
+			isLoggedIn,
+			onAddFinished,
+			recordSiteSubscribed,
+			showErrorNotice,
+			showSuccessNotice,
+			showWarningNotice,
+			subscribe,
+		]
+	);
 
 	return (
 		<>
-			<div className="subscriptions-add-sites__form--container">
+			<form onSubmit={ onSubmit } className="subscriptions-add-sites__form--container">
 				<div className="subscriptions-add-sites__form-field">
 					<TextControl
 						className={ clsx(
@@ -139,15 +144,16 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 				</div>
 
 				<Button
-					primary
-					className="subscriptions-add-sites__save-button"
+					variant="primary"
+					className="button subscriptions-add-sites__save-button"
 					disabled={ ! inputValue || !! inputFieldError || subscribing }
-					busy={ isSubmitting }
-					onClick={ onAddSite }
+					isBusy={ isSubmitting }
+					type="submit"
+					__next40pxDefaultSize
 				>
 					{ translate( 'Add site' ) }
 				</Button>
-			</div>
+			</form>
 
 			<ReaderJoinConversationDialog
 				isVisible={ showLoginDialog }
