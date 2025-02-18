@@ -35,10 +35,6 @@ body.is-section-reader .layout.is-section-reader .site-subscriptions-manager {
 
 		@media (max-width: $break-small) {
 			padding: 0 16px;
-
-			.navigation-header {
-				padding: 16px 0;
-			}
 		}
 
 		@extend %search-component-subscriptions-style;
