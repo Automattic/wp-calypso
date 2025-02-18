@@ -131,11 +131,8 @@ class StatsModule extends Component {
 	}
 
 	calculateDiff( history ) {
-		const baseline = this.createBaselineLookup( history );
+		const baselineMap = this.createBaselineLookupMap( history );
 		const lastSnapshot = history[ history.length - 1 ].data;
-
-		// Convert baseline object to Map for optimized lookups.
-		const baselineMap = new Map( Object.values( baseline ).map( ( item ) => [ item.id, item ] ) );
 
 		return lastSnapshot.map( ( item ) => {
 			const baselineItem = baselineMap.get( item.id ) || { value: 0 };
@@ -146,14 +143,14 @@ class StatsModule extends Component {
 		} );
 	}
 
-	createBaselineLookup( history ) {
+	createBaselineLookupMap( history ) {
 		const key = 'id';
-		const lookup = {};
+		const lookup = new Map();
 
 		history.forEach( ( snapshot ) => {
 			snapshot.data.forEach( ( item ) => {
-				if ( ! lookup[ item[ key ] ] ) {
-					lookup[ item[ key ] ] = item;
+				if ( ! lookup.has( item[ key ] ) ) {
+					lookup.set( item[ key ], item );
 				}
 			} );
 		} );
