@@ -77,9 +77,12 @@
 		}
 	}
 
-	.accessible-focus &:focus {
+	.accessible-focus &:focus:not(:disabled) {
 		border-color: var(--color-primary);
-		box-shadow: 0 0 0 2px var(--color-primary-light);
+		box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) var(--color-primary-light);
+
+		// Windows High Contrast mode will show this outline, but not the box-shadow.
+		outline: 3px solid transparent;
 	}
 
 	&.is-compact {
@@ -125,7 +128,7 @@
 // Primary buttons
 .button.is-primary {
 	background-color: var(--color-accent);
-	border-color: var(--color-accent);
+	border: 0;
 	color: var(--color-text-inverted);
 
 	&:hover,
@@ -135,8 +138,8 @@
 		color: var(--color-text-inverted);
 	}
 
-	.accessible-focus &:focus {
-		box-shadow: 0 0 0 2px var(--color-accent-light);
+	.accessible-focus &:focus:not(:disabled) {
+		box-shadow: inset 0 0 0 1px var(--color-surface), 0 0 0 var(--wp-admin-border-width-focus, 2px) var(--color-accent);
 	}
 
 	&.is-compact {
