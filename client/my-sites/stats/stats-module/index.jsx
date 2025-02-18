@@ -91,9 +91,9 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const firstSnapshot = updatedHistory[ 0 ];
 			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
+			const baseline = this.createBaselineLookup( updatedHistory );
+			const diffData = this.calculateDiff2( baseline, lastSnapshot.data );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -146,6 +146,36 @@ class StatsModule extends Component {
 		} );
 
 		return diff;
+	}
+
+	calculateDiff2( baseline, latestSnapshot ) {
+		// Create a lookup map for the baseline using item IDs.
+		const baselineMap = new Map( Object.values( baseline ).map( ( item ) => [ item.id, item ] ) );
+
+		// Calculate the difference value for each item in the latest snapshot.
+		// Note that items are guaranteed to exist in the baseline.
+		return latestSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item.id );
+			return {
+				...item,
+				diffValue: item.value - baselineItem.value,
+			};
+		} );
+	}
+
+	createBaselineLookup( history ) {
+		const key = 'id';
+		const lookup = {};
+
+		history.forEach( ( snapshot ) => {
+			snapshot.data.forEach( ( item ) => {
+				if ( ! lookup[ item[ key ] ] ) {
+					lookup[ item[ key ] ] = item;
+				}
+			} );
+		} );
+
+		return lookup;
 	}
 
 	getModuleLabel() {
