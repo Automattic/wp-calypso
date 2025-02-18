@@ -1,3 +1,4 @@
+import { CALYPSO_HELP_WITH_HELP_CENTER } from '@automattic/urls';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -26,7 +27,7 @@ export default function SupportCard( { domain, backUrl }: { domain: string; back
 			{ createInterpolateElement( __( 'Need help? <a>Contact support</a>' ), {
 				a: (
 					<SupportLinkStyle
-						href={ addQueryArgs( '/help/contact', {
+						href={ addQueryArgs( CALYPSO_HELP_WITH_HELP_CENTER, {
 							redirect_to: backUrl || `${ window.location.pathname }?siteSlug=${ domain }`,
 						} ) }
 						target="_blank"
