@@ -300,17 +300,6 @@ function removeUserStepFromFlow( flow ) {
 	};
 }
 
-function removeP2DetailsStepFromFlow( flow ) {
-	if ( ! flow ) {
-		return;
-	}
-
-	return {
-		...flow,
-		steps: reject( flow.steps, ( stepName ) => stepName === 'p2-details' ),
-	};
-}
-
 function filterDestination( destination, dependencies, flowName, localeSlug ) {
 	// Check for site slug before heading to checkout.
 	// Sometimes, previous visits to the signup flow will have cart items leftovers.
@@ -361,10 +350,6 @@ const Flows = {
 			if ( ! isUserStepOnly ) {
 				flow = removeUserStepFromFlow( flow );
 			}
-		}
-
-		if ( flowName === 'p2v1' && isUserLoggedIn ) {
-			flow = removeP2DetailsStepFromFlow( flow );
 		}
 
 		return Flows.filterExcludedSteps( flow );
