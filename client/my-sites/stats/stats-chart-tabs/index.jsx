@@ -144,18 +144,26 @@ class StatModuleChartTabs extends Component {
 				/>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState
-						headingText={
-							selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
-						}
-						infoText={
-							selectedPeriod === 'hour'
-								? translate( 'Try selecting a different time frame.' )
-								: null
-						}
-					/>
-				</Chart>
+
+				{ chartType === 'bar' ? (
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
+						<StatsEmptyState
+							headingText={
+								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
+							}
+							infoText={
+								selectedPeriod === 'hour'
+									? translate( 'Try selecting a different time frame.' )
+									: null
+							}
+						/>
+					</Chart>
+				) : (
+					<div className="stats-chart-tabs__line-chart-placeholder">
+						<span>Line chart coming soon</span>
+					</div>
+				) }
+
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ countsComp }
