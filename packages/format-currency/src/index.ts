@@ -268,7 +268,7 @@ export function createFormatter(): CurrencyFormatter {
 		currency: string
 	): number | undefined {
 		const formatter = getFormatter( 0, currency, { locale } );
-		return formatter.resolvedOptions().maximumFractionDigits ?? 3; // 3 is the default for Intl.NumberFormat
+		return formatter.resolvedOptions().maximumFractionDigits ?? 3; // 3 is the default for Intl.NumberFormat if minimumFractionDigits is not set
 	}
 
 	return {
