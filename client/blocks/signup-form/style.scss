@@ -245,23 +245,6 @@ body.is-section-accept-invite {
 				&:hover {
 					color: var(--studio-blue-50, #0675c4);
 				}
-
-				&:focus {
-					outline: 1px dashed var(--studio-blue-50, #0675c4);
-					outline-offset: 3px;
-					box-shadow: none;
-					border-radius: 0;
-				}
-			}
-
-			button.button:not(.is-borderless) {
-				border-radius: 4px;
-
-				&:focus {
-					box-shadow: none;
-					outline: 2px solid var(--studio-blue-60, #055d9c);
-					outline-offset: 1px;
-				}
 			}
 		}
 	}
