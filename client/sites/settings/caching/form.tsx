@@ -126,14 +126,14 @@ export default function CachingForm( { disabled }: CachingFormProps ) {
 				}
 		  );
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+	const isUntangled = config.isEnabled( 'untangling/hosting-menu' );
 
 	return (
 		<HostingCard
 			fallthrough={ isUntangled }
 			className="cache-card"
 			headingId="cache"
-			title={ translate( 'Caching', {
+			title={ translate( 'Performance optimization', {
 				comment: 'Heading text for a card on the Server Settings page',
 				textOnly: true,
 			} ) }

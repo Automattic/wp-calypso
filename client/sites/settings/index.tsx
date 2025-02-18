@@ -8,31 +8,26 @@ import { siteSelection, navigation, sites } from 'calypso/my-sites/controller';
 import { redirectSiteSettingsIfDuplicatedViewsDisabled } from 'calypso/my-sites/site-settings/settings-controller';
 import {
 	SETTINGS_SITE,
+	SETTINGS_ADMINISTRATION,
 	SETTINGS_ADMINISTRATION_RESET_SITE,
 	SETTINGS_ADMINISTRATION_TRANSFER_SITE,
 	SETTINGS_ADMINISTRATION_DELETE_SITE,
-	SETTINGS_PERFORMANCE,
-	SETTINGS_SERVER,
-	SETTINGS_DATABASE,
-	SETTINGS_SFTP_SSH,
+	SETTINGS_CACHING,
+	SETTINGS_WEB_SERVER,
 } from 'calypso/sites/components/site-preview-pane/constants';
-import { siteDashboard } from 'calypso/sites/controller';
+import { showHostingFeaturesNoticeIfPresent, siteDashboard } from 'calypso/sites/controller';
 import {
 	redirectIfCantDeleteSite,
 	redirectIfCantStartSiteOwnerTransfer,
 } from './administration/controller';
 import {
 	siteSettings,
+	administrationSettings,
+	cachingSettings,
+	webServerSettings,
 	administrationToolDeleteSite,
 	administrationToolResetSite,
 	administrationToolTransferSite,
-	serverSettings,
-	sftpSshSettings,
-	databaseSettings,
-	performanceSettings,
-	redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
-	redirectToSiteSettingsIfHostingFeaturesNotSupported,
-	redirectToHostingConfigIfDuplicatedViewsDisabled,
 } from './controller';
 
 export default function () {
@@ -49,6 +44,16 @@ export default function () {
 		clientRender
 	);
 
+	page( '/sites/settings/administration', siteSelection, sites, makeLayout, clientRender );
+	page(
+		'/sites/settings/administration/:site',
+		siteSelection,
+		navigation,
+		administrationSettings,
+		siteDashboard( SETTINGS_ADMINISTRATION ),
+		makeLayout,
+		clientRender
+	);
 	page(
 		'/sites/settings/site/:site/reset-site',
 		siteSelection,
@@ -80,54 +85,26 @@ export default function () {
 		clientRender
 	);
 
-	page( '/sites/settings/server', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/settings/caching', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sites/settings/server/:site',
+		'/sites/settings/caching/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
-		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
-		serverSettings,
-		siteDashboard( SETTINGS_SERVER ),
+		showHostingFeaturesNoticeIfPresent,
+		cachingSettings,
+		siteDashboard( SETTINGS_CACHING ),
 		makeLayout,
 		clientRender
 	);
 
-	page( '/sites/settings/sftp-ssh', siteSelection, sites, makeLayout, clientRender );
+	page( '/sites/settings/web-server', siteSelection, sites, makeLayout, clientRender );
 	page(
-		'/sites/settings/sftp-ssh/:site',
+		'/sites/settings/web-server/:site',
 		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
-		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
 		navigation,
-		sftpSshSettings,
-		siteDashboard( SETTINGS_SFTP_SSH ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/settings/database', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/settings/database/:site',
-		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
-		redirectToSiteSettingsIfAdvancedHostingFeaturesNotSupported,
-		navigation,
-		databaseSettings,
-		siteDashboard( SETTINGS_DATABASE ),
-		makeLayout,
-		clientRender
-	);
-
-	page( '/sites/settings/performance', siteSelection, sites, makeLayout, clientRender );
-	page(
-		'/sites/settings/performance/:site',
-		siteSelection,
-		redirectToHostingConfigIfDuplicatedViewsDisabled,
-		redirectToSiteSettingsIfHostingFeaturesNotSupported,
-		navigation,
-		performanceSettings,
-		siteDashboard( SETTINGS_PERFORMANCE ),
+		showHostingFeaturesNoticeIfPresent,
+		webServerSettings,
+		siteDashboard( SETTINGS_WEB_SERVER ),
 		makeLayout,
 		clientRender
 	);

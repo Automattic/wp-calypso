@@ -2,15 +2,12 @@ import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Button, FormLabel, Spinner, ExternalLink } from '@automattic/components';
 import { PanelBody, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { HostingCard, HostingCardDescription } from 'calypso/components/hosting-card';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import NavigationHeader from 'calypso/components/navigation-header';
 import { useCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice';
-import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { useSelector } from 'calypso/state';
@@ -38,7 +35,6 @@ import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-ho
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import useSftpSshSettingTitle from './hooks/use-sftp-ssh-setting-title';
 import { SftpCardLoadingPlaceholder } from './sftp-card-loading-placeholder';
 import SshKeys from './ssh-keys';
 import './sftp-form.scss';
@@ -89,10 +85,18 @@ const disableSshAccess = ( siteId: number | null ) =>
 	);
 
 type SftpFormProps = {
+	ContainerComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	DescriptionComponent: React.ComponentType< any >; // eslint-disable-line @typescript-eslint/no-explicit-any
+	upsell?: React.ReactNode;
 	disabled?: boolean;
 };
 
-export const SftpForm = ( { disabled }: SftpFormProps ) => {
+export const SftpForm = ( {
+	ContainerComponent,
+	DescriptionComponent,
+	upsell,
+	disabled,
+}: SftpFormProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -193,7 +197,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 			setIsLoading( false );
 			setPasswordLoading( false );
 		}
-	}, [ username, password, siteHasSftpFeature ] );
+	}, [ username, password ] );
 
 	useEffect( () => {
 		setSshAccessLoading( false );
@@ -382,24 +386,6 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 		</div>
 	);
 
-	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
-
-	let ContainerComponent = HostingCard;
-	if ( isUntangled ) {
-		ContainerComponent =
-			hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading
-				? SftpCardLoadingPlaceholder
-				: React.Fragment;
-	}
-
-	let DescriptionComponent = HostingCardDescription;
-	if ( isUntangled ) {
-		DescriptionComponent = ( { children } ) => {
-			const title = useSftpSshSettingTitle();
-			return <NavigationHeader title={ title } subtitle={ children } />;
-		};
-	}
-
 	return (
 		<ContainerComponent
 			className="sftp-card"
@@ -407,6 +393,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 			title={
 				siteHasSshFeature ? translate( 'SFTP/SSH credentials' ) : translate( 'SFTP credentials' )
 			}
+			isLoading={ hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading }
 		>
 			{ ! ( hasSftpFeatureAndIsLoading || hasSshFeatureAndIsLoading ) && (
 				<DescriptionComponent>
@@ -422,7 +409,7 @@ export const SftpForm = ( { disabled }: SftpFormProps ) => {
 						: featureExplanation }
 				</DescriptionComponent>
 			) }
-			{ form }
+			{ upsell ?? form }
 		</ContainerComponent>
 	);
 };
