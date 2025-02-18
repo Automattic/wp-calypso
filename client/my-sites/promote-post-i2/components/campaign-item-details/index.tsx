@@ -6,6 +6,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, DropdownMenu, Spinner } from '@wordpress/components';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
 import { chevronDown, chevronLeft, Icon } from '@wordpress/icons';
+import cookie from 'cookie';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment/moment';
 import React, { useEffect, useRef, useState } from 'react';
@@ -112,6 +113,15 @@ const ChartSourceDateRangeLabels = {
 	[ ChartSourceDateRanges.LAST_14_DAYS ]: __( 'Last 14 days' ),
 	[ ChartSourceDateRanges.LAST_30_DAYS ]: __( 'Last 30 days' ),
 	[ ChartSourceDateRanges.WHOLE_CAMPAIGN ]: __( 'Whole Campaign' ),
+};
+
+const HIDE_TSP_METRICS_BANNER_COOKIE = 'blaze-hide-tsp-metrics-banner';
+
+const setHideTspMetricsBannerCookie = ( value: boolean ) => {
+	document.cookie = cookie.serialize( HIDE_TSP_METRICS_BANNER_COOKIE, ( +value ).toString(), {
+		path: '/',
+		maxAge: 365 * 24 * 60 * 60, // 1 year
+	} );
 };
 
 export default function CampaignItemDetails( props: Props ) {
@@ -637,9 +647,16 @@ export default function CampaignItemDetails( props: Props ) {
 		};
 	}, [ isLoading, hasStats, campaignsStatsIsLoading ] );
 
-	const [ showTspMetricsBanner, setShowTspMetricsBanner ] = useState( true );
+	const cookies = cookie.parse( document.cookie );
+
+	const initialHideTspMetricsBanner = ( cookies[ HIDE_TSP_METRICS_BANNER_COOKIE ] ?? '0' ) === '1';
+	const [ showTspMetricsBanner, setShowTspMetricsBanner ] = useState(
+		! initialHideTspMetricsBanner
+	);
+
 	const closeTspMetricsBanner = () => {
 		setShowTspMetricsBanner( false );
+		setHideTspMetricsBannerCookie( true );
 	};
 
 	return (
