@@ -23,6 +23,7 @@ type SubscriptionError = {
 const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
+	const [ isSubmitting, setIsSubmitting ] = useState< boolean >( false );
 	const [ inputFieldError, setInputFieldError ] = useState< string | null >( null );
 	const [ isValidInput, setIsValidInput ] = useState( false );
 	const [ showLoginDialog, setShowLoginDialog ] = useState( false );
@@ -70,6 +71,7 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 		}
 
 		if ( isValidInput ) {
+			setIsSubmitting( true );
 			subscribe(
 				{ url: inputValue },
 				{
@@ -86,12 +88,19 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 							}
 
 							showSuccessNotice( inputValue );
+
+							// Reset fields.
+							setInputValue( '' );
+							setIsValidInput( false );
 						}
 						onAddFinished();
 					},
 					onError: ( error: SubscriptionError ) => {
 						showErrorNotice( inputValue, error );
 						onAddFinished();
+					},
+					onSettled: (): void => {
+						setIsSubmitting( false );
 					},
 				}
 			);
@@ -133,6 +142,7 @@ const AddSitesForm = ( { onAddFinished = () => {} }: AddSitesFormProps ) => {
 					primary
 					className="subscriptions-add-sites__save-button"
 					disabled={ ! inputValue || !! inputFieldError || subscribing }
+					busy={ isSubmitting }
 					onClick={ onAddSite }
 				>
 					{ translate( 'Add site' ) }
