@@ -80,8 +80,12 @@ function getLocation( path ) {
 				return 'discover_latest';
 			} else if ( path.indexOf( '/discover/tags' ) === 0 ) {
 				return `discover_tag:${ selectedTag }`;
+			} else if ( path.split( '?' )[ 0 ] === '/discover' ) {
+				return `discover_recommended`;
 			}
-			return `discover_recommended`;
+			// Ideally we should not get here, but its good to have a fallback if other tabs are
+			// added and not handled.
+			return `discover_unknown`;
 		}
 
 		// old discover v1, can be removed once above feature check is fully rolled out.
