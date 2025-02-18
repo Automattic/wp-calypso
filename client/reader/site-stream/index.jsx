@@ -23,7 +23,7 @@ import EmptyContent from './empty';
 const emptyContent = () => <EmptyContent />;
 
 const SiteStream = ( props ) => {
-	const { className = 'is-site-stream', showBack = true, siteId } = props;
+	const { className = 'is-site-stream', siteId } = props;
 	const translate = useTranslate();
 	const site = useSelector( ( state ) => getSite( state, siteId ) );
 	const feed = useSelector( ( state ) => site && site.feed_ID && getFeed( state, site.feed_ID ) );
@@ -83,7 +83,7 @@ const SiteStream = ( props ) => {
 			<ReaderFeedHeader
 				site={ site }
 				feed={ feed }
-				showBack={ showBack }
+				showBack={ false }
 				streamKey={ props.streamKey }
 			/>
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }

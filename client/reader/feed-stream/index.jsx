@@ -25,7 +25,7 @@ const getReaderSiteId = ( feed ) => ( feed && feed.blog_ID === 0 ? null : feed &
 const emptyContent = () => <EmptyContent />;
 
 const FeedStream = ( props ) => {
-	const { className = 'is-site-stream', feedId, showBack = true } = props;
+	const { className = 'is-site-stream', feedId } = props;
 	const translate = useTranslate();
 	let feed = useSelector( ( state ) => getFeed( state, feedId ) );
 	const siteId = getReaderSiteId( feed );
@@ -88,7 +88,7 @@ const FeedStream = ( props ) => {
 			<ReaderFeedHeader
 				feed={ feed }
 				site={ site }
-				showBack={ showBack }
+				showBack={ false }
 				streamKey={ props.streamKey }
 			/>
 			{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }

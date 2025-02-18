@@ -3,7 +3,7 @@
 .back-button {
 	margin: 0;
 	position: fixed;
-	top: var(--masterbar-height);
+	top: calc(var(--masterbar-height) + 20px);
 	left: 0;
 	z-index: z-index(".masterbar", ".reader-back");
 
@@ -11,21 +11,10 @@
 		padding: 20px 8px 16px;
 
 		@include breakpoint-deprecated( ">660px" ) {
-			padding: 18px 40px 18px 20px;
+			padding: 18px 40px 18px 10px;
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 46px;
-		background: var(--color-surface);
-		border-bottom: 1px solid var(--color-neutral-0);
-	}
-}
-
-.back-button__label {
 	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}

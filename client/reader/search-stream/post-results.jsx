@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { RelatedPostCard } from 'calypso/blocks/reader-related-card';
-import HeaderBack from 'calypso/reader/header-back';
 import Stream from 'calypso/reader/stream';
 import PostPlaceholder from 'calypso/reader/stream/post-placeholder';
 import EmptyContent from './empty';
@@ -14,6 +13,7 @@ class PostResults extends Component {
 		query: PropTypes.string,
 		streamKey: PropTypes.string,
 		fixedHeaderHeight: PropTypes.number,
+		showBack: PropTypes.bool,
 	};
 
 	placeholderFactory = ( { key, ...rest } ) => {
@@ -46,7 +46,6 @@ class PostResults extends Component {
 				isMain={ false }
 				fixedHeaderHeight={ this.props.fixedHeaderHeight }
 			>
-				{ this.props.showBack && <HeaderBack /> }
 				<div ref={ this.handleStreamMounted } />
 			</Stream>
 		);
