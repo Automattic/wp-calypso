@@ -208,58 +208,53 @@ export const SiteLogsDataViews = ( {
 						}
 					) }
 				/>
-				<div className="site-logs-toolbar">
-					<DateControl
-						dateRange={ dateRange }
-						onApplyButtonClick={ handleTimeChange }
-						shortcutList={ supportedShortcutList }
-						onShortcutClick={ ( shortcut, closePopoverAndCommit ) => {
-							/* Time change is handled by onApplyButtonClick */
-							closePopoverAndCommit();
-						} }
-						tooltip={ translate( 'Select a date range' ) }
+				<ToggleGroupControl
+					className="site-logs-toolbar__toggle"
+					hideLabelFromVision
+					label=""
+					onChange={ ( value ) => {
+						if ( value === 'php' || value === 'web' ) {
+							navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
+							setView( ( view: View ) => ( {
+								...view,
+								filters: [],
+								sort: {
+									field: getSortField( value ),
+									direction: view?.sort?.direction || 'desc',
+								},
+								titleField: getSortField( value ),
+								fields: getVisibleFields( value ),
+							} ) );
+						}
+					} }
+					value={ logType }
+					__nextHasNoMarginBottom
+				>
+					<ToggleGroupControlOption
+						className="site-logs-toolbar__toggle-option"
+						label={ translate( 'PHP error', {
+							textOnly: true,
+						} ) }
+						value="php"
 					/>
-					<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">
-						<span>{ translate( 'Log type' ) }</span>
-						<ToggleGroupControl
-							className="site-logs-toolbar__toggle"
-							hideLabelFromVision
-							label=""
-							onChange={ ( value ) => {
-								if ( value === 'php' || value === 'web' ) {
-									navigate( window.location.pathname.replace( /\/[^/]+$/, '/' + value ) );
-									setView( ( view: View ) => ( {
-										...view,
-										filters: [],
-										sort: {
-											field: getSortField( value ),
-											direction: view?.sort?.direction || 'desc',
-										},
-										titleField: getSortField( value ),
-										fields: getVisibleFields( value ),
-									} ) );
-								}
-							} }
-							value={ logType }
-							__nextHasNoMarginBottom
-						>
-							<ToggleGroupControlOption
-								className="site-logs-toolbar__toggle-option"
-								label={ translate( 'PHP error', {
-									textOnly: true,
-								} ) }
-								value="php"
-							/>
-							<ToggleGroupControlOption
-								className="site-logs-toolbar__toggle-option"
-								label={ translate( 'Web server', {
-									textOnly: true,
-								} ) }
-								value="web"
-							/>
-						</ToggleGroupControl>
-					</label>
-				</div>
+					<ToggleGroupControlOption
+						className="site-logs-toolbar__toggle-option"
+						label={ translate( 'Web server', {
+							textOnly: true,
+						} ) }
+						value="web"
+					/>
+				</ToggleGroupControl>
+				<DateControl
+					dateRange={ dateRange }
+					onApplyButtonClick={ handleTimeChange }
+					shortcutList={ supportedShortcutList }
+					onShortcutClick={ ( shortcut, closePopoverAndCommit ) => {
+						/* Time change is handled by onApplyButtonClick */
+						closePopoverAndCommit();
+					} }
+					tooltip={ translate( 'Select a date range' ) }
+				/>
 			</div>
 			<DataViews< PHPLog | ServerLog >
 				data={ data }

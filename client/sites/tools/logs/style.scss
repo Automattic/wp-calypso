@@ -1,3 +1,21 @@
+.site-logs-header {
+	align-items: center;
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+
+	.date-control {
+		flex-shrink: 0;
+	}
+
+	.site-logs-toolbar__toggle {
+		border-color: var( --color-neutral-10 );
+	}
+	.site-logs-toolbar__toggle-option {
+		white-space: nowrap;
+	}
+}
+
 // This is to compensate the padding set by the wrapper .hosting-dashboard-item-view__content
 .site-logs .dataviews-wrapper {
 	margin-right: -48px;
