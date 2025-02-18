@@ -25,7 +25,7 @@
 		"form-data": "^4.0.0",
 		"jest-docblock": "^29.7.0",
 		"mailosaur": "^8.4.0",
-		"nock": "^13.5.4",
+		"nock": "^13.5.6",
 		"playwright": "1.48.2",
 		"totp-generator": "^0.0.12"
 	},

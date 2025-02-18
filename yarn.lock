@@ -378,7 +378,7 @@ __metadata:
     form-data: "npm:^4.0.0"
     jest-docblock: "npm:^29.7.0"
     mailosaur: "npm:^8.4.0"
-    nock: "npm:^13.5.4"
+    nock: "npm:^13.5.6"
     node-fetch: "npm:^2.7.0"
     playwright: "npm:1.48.2"
     totp-generator: "npm:^0.0.12"
@@ -687,9 +687,9 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.5.2"
+    "@testing-library/user-event": "npm:^14.6.0"
     "@types/canvas-confetti": "npm:^1.6.0"
     "@types/react-slider": "npm:^1.3.6"
     "@wordpress/base-styles": "npm:^5.16.0"
@@ -738,9 +738,9 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.5.2"
+    "@testing-library/user-event": "npm:^14.6.0"
     "@wordpress/i18n": "npm:^5.16.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
     debug: "npm:^4.3.3"
@@ -794,7 +794,7 @@ __metadata:
     fast-json-stable-stringify: "npm:^2.1.0"
     i18n-calypso: "workspace:^"
     jest-fetch-mock: "npm:^3.0.3"
-    nock: "npm:^13.5.4"
+    nock: "npm:^13.5.6"
     node-fetch: "npm:^2.7.0"
     qs: "npm:^6.9.1"
     react: "npm:^18.3.1"
@@ -861,7 +861,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/components": "npm:^29.2.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
@@ -900,7 +900,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/components": "npm:^29.2.0"
     "@wordpress/html-entities": "npm:^4.16.0"
@@ -934,7 +934,7 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/base-styles": "npm:^5.16.0"
     "@wordpress/components": "npm:^29.2.0"
@@ -974,7 +974,7 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@tanstack/react-query": "npm:^5.15.5"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/components": "npm:^29.2.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
@@ -1237,7 +1237,7 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@types/react": "npm:^18.2.6"
     "@wordpress/compose": "npm:^7.16.0"
@@ -1289,7 +1289,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     clsx: "npm:^2.1.1"
     debug: "npm:^4.3.4"
@@ -1442,7 +1442,7 @@ __metadata:
     "@automattic/wpcom-checkout": "workspace:^"
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/i18n": "npm:^5.16.0"
     "@wordpress/react-i18n": "npm:^4.16.0"
@@ -1728,9 +1728,9 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.5.2"
+    "@testing-library/user-event": "npm:^14.6.0"
     "@wordpress/data": "npm:^10.16.0"
     "@wordpress/element": "npm:^6.16.0"
     "@wordpress/icons": "npm:^10.16.0"
@@ -1775,7 +1775,7 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     clsx: "npm:^2.1.1"
     postcss: "npm:^8.5.1"
@@ -1825,9 +1825,9 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.5.2"
+    "@testing-library/user-event": "npm:^14.6.0"
     "@wordpress/base-styles": "npm:^5.16.0"
     "@wordpress/components": "npm:^29.2.0"
     "@wordpress/compose": "npm:^7.16.0"
@@ -1856,7 +1856,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     debug: "npm:^4.3.3"
     typescript: "npm:^5.3.3"
@@ -1900,7 +1900,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/search": "workspace:^"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     typescript: "npm:^5.3.3"
   peerDependencies:
@@ -1919,7 +1919,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/components": "npm:^29.2.0"
     "@wordpress/element": "npm:^6.16.0"
@@ -2285,7 +2285,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@stripe/stripe-js": "npm:^1.54.2"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
     "@wordpress/data": "npm:^10.16.0"
     "@wordpress/i18n": "npm:^5.16.0"
@@ -8249,7 +8249,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.1.3, @testing-library/jest-dom@npm:^6.4.5":
+"@testing-library/jest-dom@npm:^6.1.3, @testing-library/jest-dom@npm:^6.6.3":
   version: 6.6.3
   resolution: "@testing-library/jest-dom@npm:6.6.3"
   dependencies:
@@ -8293,12 +8293,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.5.2":
-  version: 14.5.2
-  resolution: "@testing-library/user-event@npm:14.5.2"
+"@testing-library/user-event@npm:^14.6.0":
+  version: 14.6.1
+  resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 68a0c2aa28a3c8e6eb05cafee29705438d7d8a9427423ce5064d44f19c29e89b5636de46dd2f28620fb10abba75c67130185bbc3aa23ac1163a227a5f36641e1
+  checksum: 75fea130a52bf320d35d46ed54f3eec77e71a56911b8b69a3fe29497b0b9947b2dc80d30f04054ad4ce7f577856ae3e5397ea7dff0ef14944d3909784c7a93fe
   languageName: node
   linkType: hard
 
@@ -8960,13 +8960,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.12":
-  version: 29.5.12
-  resolution: "@types/jest@npm:29.5.12"
+"@types/jest@npm:^29.5.14":
+  version: 29.5.14
+  resolution: "@types/jest@npm:29.5.14"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 25fc8e4c611fa6c4421e631432e9f0a6865a8cb07c9815ec9ac90d630271cad773b2ee5fe08066f7b95bebd18bb967f8ce05d018ee9ab0430f9dfd1d84665b6f
+  checksum: 18e0712d818890db8a8dab3d91e9ea9f7f19e3f83c2e50b312f557017dc81466207a71f3ed79cf4428e813ba939954fa26ffa0a9a7f153181ba174581b1c2aed
   languageName: node
   linkType: hard
 
@@ -14070,9 +14070,9 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.15.5"
     "@tanstack/react-query-persist-client": "npm:^5.15.5"
     "@testing-library/dom": "npm:^10.4.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/react": "npm:^16.2.0"
-    "@testing-library/user-event": "npm:^14.5.2"
+    "@testing-library/user-event": "npm:^14.6.0"
     "@types/react": "npm:^18.2.14"
     "@types/redux-mock-store": "npm:1.5.0"
     "@wordpress/a11y": "npm:^4.16.0"
@@ -14153,18 +14153,18 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-fetch-mock: "npm:^3.0.3"
     jest-mock-process: "npm:^2.0.0"
-    jest-when: "npm:^3.6.0"
+    jest-when: "npm:^3.7.0"
     lodash: "npm:^4.17.21"
     lodash-es: "npm:^4.17.21"
     lru: "npm:^3.1.0"
     lunr: "npm:^2.3.9"
     marked: "npm:^4.0.0"
-    mock-fs: "npm:^5.2.0"
+    mock-fs: "npm:^5.4.1"
     mockdate: "npm:^2.0.5"
     moment: "npm:^2.26.0"
     moment-timezone: "npm:^0.5.40"
     moment-timezone-data-webpack-plugin: "npm:^1.5.1"
-    nock: "npm:^13.5.4"
+    nock: "npm:^13.5.6"
     path-browserify: "npm:^1.0.1"
     percentage-regex: "npm:^3.0.0"
     phone: "npm:^3.1.17"
@@ -21589,8 +21589,8 @@ __metadata:
     "@automattic/interpolate-components": "workspace:^"
     "@babel/runtime": "npm:^7.26.0"
     "@tannin/sprintf": "npm:^1.1.0"
-    "@testing-library/jest-dom": "npm:^6.4.5"
-    "@types/jest": "npm:^29.5.12"
+    "@testing-library/jest-dom": "npm:^6.6.3"
+    "@types/jest": "npm:^29.5.14"
     "@types/react": "npm:^18.2.6"
     "@wordpress/compose": "npm:^7.16.0"
     debug: "npm:^4.3.3"
@@ -23463,10 +23463,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-teamcity@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "jest-teamcity@npm:1.11.0"
-  checksum: 42fb8d33ee71eff5efb52d8e9eb406b80c2b693dd6ac52a9f7e9f6c50b806b516000e0fe1ae84a1e2ff191b66061e65d9e9c4af0983add2c4e28dda029cdf49e
+"jest-teamcity@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "jest-teamcity@npm:1.12.0"
+  checksum: 34cc32ac7f7aec739ab4f0e29ae8f0709312bb80e4fbabca309dca70025d8b02e461859d9ea3567d3e69ac77ef1f75fd1888540938e380e30ecb4451e8d11520
   languageName: node
   linkType: hard
 
@@ -23514,12 +23514,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-when@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "jest-when@npm:3.6.0"
+"jest-when@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "jest-when@npm:3.7.0"
   peerDependencies:
     jest: ">= 25"
-  checksum: 0f7d5491305d91a2aa514d913f74a5dda9a45ca7c691d5c44acccf575732bff72a3ef87dd68d0bf8eb15809eff8ae851421c629568ba2d268906e0c204d8ffda
+  checksum: 0e5cf14a4bfe4aacdf3c748c5b28ea5b04c51072e2ba3d47832586f756cbb849b33c36fffe89bb0741fb836a69bdc1d30072b641dd275b8a27376376c175937e
   languageName: node
   linkType: hard
 
@@ -26368,10 +26368,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mock-fs@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "mock-fs@npm:5.2.0"
-  checksum: e917e71295ee9d805c7d9ab0214a66658db0212f35731ba0c75dc1ccbb9964e6787a6d725561f05fcf569c64cf4a1176f5ce438f98b009227520f646f8abf174
+"mock-fs@npm:^5.4.1":
+  version: 5.5.0
+  resolution: "mock-fs@npm:5.5.0"
+  checksum: 56539c9ab1d29b72c4b3b54f003808c7c51e5c82454a80fc46fd811f40401652da32412bbf26daa4eabff0e44a08eeafbeb6c885c60c1111b5429a4279efbda4
   languageName: node
   linkType: hard
 
@@ -26681,14 +26681,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nock@npm:^13.5.4":
-  version: 13.5.4
-  resolution: "nock@npm:13.5.4"
+"nock@npm:^13.5.6":
+  version: 13.5.6
+  resolution: "nock@npm:13.5.6"
   dependencies:
     debug: "npm:^4.1.0"
     json-stringify-safe: "npm:^5.0.1"
     propagate: "npm:^2.0.0"
-  checksum: 9ca47d9d7e4b1f4adf871d7ca12722f8ef1dc7d2b9610b2568f5d9264eae9f424baa24fd9d91da9920b360d641b4243e89de198bd22c061813254a99cc6252af
+  checksum: 94249a294176a6e521bbb763c214de4aa6b6ab63dff1e299aaaf455886a465d38906891d7f24570d94a43b1e376c239c54d89ff7697124bc57ef188006acc25e
   languageName: node
   linkType: hard
 
@@ -36270,14 +36270,14 @@ __metadata:
     "@storybook/cli": "npm:^7.6.19"
     "@storybook/react": "npm:^7.6.19"
     "@tanstack/eslint-plugin-query": "npm:^5.14.6"
-    "@testing-library/jest-dom": "npm:^6.4.5"
+    "@testing-library/jest-dom": "npm:^6.6.3"
     "@types/chroma-js": "npm:^2.4.5"
     "@types/cookie": "npm:^0.4.1"
     "@types/debug": "npm:^4.1.7"
     "@types/eslint": "npm:^9.6.1"
     "@types/fast-json-stable-stringify": "npm:^2.0.0"
     "@types/gtag.js": "npm:^0.0.20"
-    "@types/jest": "npm:^29.5.12"
+    "@types/jest": "npm:^29.5.14"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^22.7.5"
     "@types/page": "npm:^1.11.5"
@@ -36355,7 +36355,7 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-canvas-mock: "npm:^2.5.2"
     jest-environment-jsdom: "npm:^29.7.0"
-    jest-teamcity: "npm:^1.11.0"
+    jest-teamcity: "npm:^1.12.0"
     jsdom: "npm:^20.0.1"
     loader-utils: "npm:^1.4.2"
     lodash: "npm:^4.17.21"
@@ -36365,7 +36365,7 @@ __metadata:
     mkdirp: "npm:^1.0.4"
     moment: "npm:^2.26.0"
     ncp: "npm:^2.0.0"
-    nock: "npm:^13.5.4"
+    nock: "npm:^13.5.6"
     node-fetch: "npm:^2.7.0"
     npm-run-all: "npm:^4.1.5"
     photon: "workspace:^"
@@ -36436,7 +36436,7 @@ __metadata:
     jest-environment-node: "npm:^29.6.1"
     jest-runner: "npm:^29.6.1"
     jest-runner-groups: "npm:^2.2.0"
-    jest-teamcity: "npm:^1.11.0"
+    jest-teamcity: "npm:^1.12.0"
     lodash: "npm:^4.17.20"
     mailosaur: "npm:^8.4.0"
     node-fetch: "npm:^2.7.0"
