@@ -15,7 +15,7 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[], 
 	}
 
 	const initialMessage = hasDIFMProduct
-		? `User is purchasing DIFM plan${ url ? `. URL: ${ url }` : '' }`
+		? `User is purchasing DIFM plan.${ url ? ` URL: ${ url }` : '' }`
 		: `User is purchasing 100 year plan.`;
 
 	const hasPremiumSupport = hasDIFMProduct || has100YPlan;
