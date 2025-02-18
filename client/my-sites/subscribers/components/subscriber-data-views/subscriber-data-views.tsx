@@ -8,30 +8,31 @@ import { hasTranslation } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import TimeSince from 'calypso/components/time-since';
 import { useSubscribedNewsletterCategories } from 'calypso/data/newsletter-categories';
-import { EmptyListView } from 'calypso/my-sites/subscribers/components/empty-list-view';
-import { SubscriberLaunchpad } from 'calypso/my-sites/subscribers/components/subscriber-launchpad';
-import SubscriberTotals from 'calypso/my-sites/subscribers/components/subscriber-totals';
-import { useSubscriptionPlans, useUnsubscribeModal } from 'calypso/my-sites/subscribers/hooks';
-import { Subscriber } from 'calypso/my-sites/subscribers/types';
 import { useSelector } from 'calypso/state';
 import { getCouponsAndGiftsEnabledForSiteId } from 'calypso/state/memberships/settings/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isSimpleSite } from 'calypso/state/sites/selectors';
 import { SubscribersFilterBy, SubscribersSortBy } from '../../constants';
+import { useSubscriptionPlans, useUnsubscribeModal } from '../../hooks';
 import {
 	useSubscribersQuery,
 	useSubscriberCountQuery,
 	useSubscriberDetailsQuery,
 } from '../../queries';
+import { Subscriber } from '../../types';
+import { EmptyListView } from '../empty-list-view';
 import { SubscriberDetails } from '../subscriber-details';
+import { SubscriberLaunchpad } from '../subscriber-launchpad';
+import SubscriberTotals from '../subscriber-totals';
 import { SubscribersHeader } from '../subscribers-header';
 import { UnsubscribeModal } from '../unsubscribe-modal';
+
 import './style.scss';
 
 type SubscriberDataViewsProps = {
 	siteId: number | null;
-	isUnverified?: boolean;
-	isStagingSite?: boolean;
+	isUnverified: boolean;
 	onGiftSubscription: ( subscriber: Subscriber ) => void;
 };
 
@@ -68,10 +69,9 @@ const defaultView: View = {
 };
 
 const SubscriberDataViews = ( {
-	siteId = null,
-	isUnverified = false,
-	isStagingSite = false,
+	siteId,
 	onGiftSubscription,
+	isUnverified,
 }: SubscriberDataViewsProps ) => {
 	const isMobile = useBreakpoint( '<660px' );
 	const isEnglishLocale = useIsEnglishLocale();
@@ -79,9 +79,10 @@ const SubscriberDataViews = ( {
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
-	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
+	const { isSimple, isAtomic, isStaging } = useSelector( ( state ) => ( {
 		isSimple: isSimpleSite( state ),
 		isAtomic: isAtomicSite( state, siteId ),
+		isStaging: isSiteWpcomStaging( state, siteId ),
 	} ) );
 	const couponsAndGiftsEnabled = useSelector( ( state ) =>
 		getCouponsAndGiftsEnabledForSiteId( state, siteId )
@@ -377,7 +378,7 @@ const SubscriberDataViews = ( {
 			<section className="subscriber-data-views__list">
 				<SubscribersHeader
 					selectedSiteId={ siteId || undefined }
-					disableCta={ isUnverified || isStagingSite }
+					disableCta={ isUnverified || isStaging }
 					hideSubtitle={ !! selectedSubscriber }
 				/>
 				{ shouldShowLaunchpad ? (

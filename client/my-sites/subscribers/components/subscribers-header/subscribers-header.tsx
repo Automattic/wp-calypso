@@ -1,17 +1,22 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { ReactElement } from 'react';
 import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { AddSubscribersModal } from '../add-subscribers-modal';
+import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
 import { SubscribersHeaderPopover } from '../subscribers-header-popover';
+
+import './style.scss';
 
 type SubscribersHeaderProps = {
 	selectedSiteId: number | undefined;
@@ -19,21 +24,23 @@ type SubscribersHeaderProps = {
 	hideSubtitle?: boolean;
 };
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 export const SubscribersHeader = ( {
 	selectedSiteId,
 	disableCta,
 	hideSubtitle,
 }: SubscribersHeaderProps ): ReactElement => {
-	const HELP_CENTER_STORE = HelpCenter.register();
-	const { setShowAddSubscribersModal } = useSubscribersPage();
 	const localizeUrl = useLocalizeUrl();
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const selectedSite = useSelector( getSelectedSite );
 	const siteId = selectedSite?.ID || null;
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
+	const [ isAddSubscribersModalOpen, setIsAddSubscribersModalOpen ] = useState( false );
+	const [ isMigrateSubscribersModalOpen, setIsMigrateSubscribersModalOpen ] = useState( false );
 
 	const openHelpCenter = () => {
-		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
+		setShowSupportDoc( 'wordpress.com/support/paid-newsletters/' );
 	};
 
 	const paidNewsletterUrl = ! isWPCOMSite
@@ -59,30 +66,44 @@ export const SubscribersHeader = ( {
 	};
 
 	return (
-		<NavigationHeader
-			className="stats__section-header modernized-header"
-			title={ translate( 'Subscribers' ) }
-			subtitle={
-				hideSubtitle
-					? null
-					: translate(
-							'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
-							subtitleOptions
-					  )
-			}
-			screenReader={ navItems.insights?.label }
-			navigationItems={ [] }
-		>
-			<Button
-				className="add-subscribers-button"
-				primary
-				disabled={ disableCta }
-				onClick={ () => setShowAddSubscribersModal( true ) }
+		<>
+			<NavigationHeader
+				className="stats__section-header modernized-header"
+				title={ translate( 'Subscribers' ) }
+				subtitle={
+					hideSubtitle
+						? null
+						: translate(
+								'Add subscribers to your site and send them a free or {{link}}paid newsletter{{/link}}.',
+								subtitleOptions
+						  )
+				}
+				screenReader={ navItems.insights?.label }
+				navigationItems={ [] }
 			>
-				<Gridicon icon="plus" size={ 24 } />
-				<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
-			</Button>
-			<SubscribersHeaderPopover siteId={ selectedSiteId } />
-		</NavigationHeader>
+				<Button
+					variant="primary"
+					className="button add-subscribers-button"
+					disabled={ disableCta }
+					onClick={ () => setIsAddSubscribersModalOpen( true ) }
+				>
+					<Gridicon icon="plus" size={ 24 } />
+					<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
+				</Button>
+				<SubscribersHeaderPopover
+					siteId={ selectedSiteId }
+					openMigrateSubscribersModal={ () => setIsMigrateSubscribersModalOpen( true ) }
+				/>
+			</NavigationHeader>
+			{ selectedSite && isAddSubscribersModalOpen && (
+				<AddSubscribersModal
+					site={ selectedSite }
+					onClose={ () => setIsAddSubscribersModalOpen( false ) }
+				/>
+			) }
+			{ selectedSite && isMigrateSubscribersModalOpen && (
+				<MigrateSubscribersModal onClose={ () => setIsMigrateSubscribersModalOpen( false ) } />
+			) }
+		</>
 	);
 };
