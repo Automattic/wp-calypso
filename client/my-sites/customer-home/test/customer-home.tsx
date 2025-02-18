@@ -43,13 +43,13 @@ function makeTestSite( site: Partial< SiteDetails > = {} ): SiteDetails {
 		URL: 'https://example.com',
 		domain: 'example.com',
 		launch_status: 'launched',
+		...site,
 		options: {
 			site_creation_flow: 'onboarding',
 			launchpad_screen: false,
 			created_at: '2025-02-17T00:00:00+00:00',
 			...site.options,
 		},
-		...site,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} as any; // This partial site object should be good enough for testing purposes
 }
