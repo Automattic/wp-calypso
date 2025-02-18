@@ -615,7 +615,7 @@ class Signup extends Component {
 			dependencies.oauth2_client_id && ! progress?.[ 'oauth2-user' ]?.service; // service is set for social signup (e.g. Google, Apple)
 		// If the user is not logged in, we need to log them in first.
 		// And if it's regular oauth client signup, we perform the oauth login because the WPCC user creation code automatically logs the user in.
-		// Theres no need to turn the bearer token into a cookie. If we log user in again, it will cause an activation error.
+		// There’s no need to turn the bearer token into a cookie. If we log user in again, it will cause an activation error.
 		// However, we need to skip this to perform a regular login for social sign in.
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || isRegularOauth2ClientSignup ) ) {
 			debug( `Handling oauth login` );

@@ -570,7 +570,7 @@ export function generateSteps( {
 					);
 				},
 				get subHeaderText() {
-					return i18n.translate( "Don't worry, you can easily change it later." );
+					return i18n.translate( 'Don’t worry, you can easily change it later.' );
 				},
 			},
 			providesDependencies: [
