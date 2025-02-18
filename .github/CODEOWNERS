@@ -18,8 +18,6 @@
 /client/lib/domains/email-forwarding @Automattic/yolo
 /client/lib/gsuite @Automattic/yolo
 /client/lib/titan @Automattic/yolo
-/client/my-sites/checkout/checkout-thank-you/index.tsx @Automattic/yolo
-/client/my-sites/checkout/controller.jsx @Automattic/yolo
 /client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx  @Automattic/yolo
 /client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/yolo
 /client/my-sites/email @Automattic/yolo
