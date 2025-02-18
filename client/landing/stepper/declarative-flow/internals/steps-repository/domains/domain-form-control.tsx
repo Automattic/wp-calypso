@@ -224,13 +224,11 @@ export function DomainFormControl( {
 					isSignupStep
 					key="domainForm"
 					offerUnavailableOption
-					otherManagedSubdomains={ [] }
 					onAddDomain={ onAddDomain }
 					onAddMapping={ onAddMapping }
 					onSave={ setDomainForm }
 					onSkip={ onSkip }
 					products={ productsList }
-					promoTlds={ [] }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
