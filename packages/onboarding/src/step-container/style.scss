@@ -41,6 +41,12 @@
 				padding-inline-end: 20px;
 			}
 		}
+
+		@include break-xlarge {
+			.step-container__header .formatted-header {
+				margin-top: 0;
+			}
+		}
 	}
 
 	.step-container__buttons {
@@ -85,6 +91,8 @@
 			}
 
 			.formatted-header__title {
+				margin: 0;
+
 				@include onboarding-font-recoleta;
 				color: var(--color-neutral-100);
 				font-size: 2rem;
