@@ -10,6 +10,8 @@ import { download } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useCallback, useState, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
+import DateControl from 'calypso/components/date-control';
+import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import NavigationHeader from 'calypso/components/navigation-header';
@@ -17,11 +19,9 @@ import { LogType, PHPLog, ServerLog } from 'calypso/data/hosting/use-site-logs-q
 import { useInterval } from 'calypso/lib/interval';
 import { navigate } from 'calypso/lib/navigate';
 import { useSiteLogsDownloader } from 'calypso/sites/tools/logs/hooks/use-site-logs-downloader';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { DateTimePicker } from './components/date-time-picker';
 import useActions from './hooks/use-actions';
-import { useCurrentSiteGmtOffset } from './hooks/use-current-site-gmt-offset';
 import useData from './hooks/use-data';
 import useFields from './hooks/use-fields';
 import {
@@ -43,8 +43,6 @@ export const SiteLogsDataViews = ( {
 	query: { from: string; to: string };
 } ) => {
 	const moment = useLocalizedMoment();
-	const siteGmtOffset = useCurrentSiteGmtOffset();
-	const ZERO_EPOCH = useMemo( () => moment.unix( 0 ), [ moment ] );
 
 	const dispatch = useDispatch();
 
@@ -107,27 +105,23 @@ export const SiteLogsDataViews = ( {
 		[ query.to, getMomentFromTimestamp ]
 	);
 
-	const handleStartTimeChange = useCallback( ( updatedStartTime: Moment ) => {
+	const handleTimeChange = useCallback( ( updatedStartTime: Moment, updatedEndTime: Moment ) => {
 		setAutoRefresh( false );
 
 		const url = new URL( window.location.href );
+
 		if ( ! updatedStartTime.isValid() ) {
 			url.searchParams.delete( 'from' );
 		} else {
 			url.searchParams.set( 'from', updatedStartTime.unix().toString( 10 ) );
 		}
-		page.replace( url.pathname + url.search );
-	}, [] );
 
-	const handleEndTimeChange = useCallback( ( updatedEndTime: Moment ) => {
-		setAutoRefresh( false );
-
-		const url = new URL( window.location.href );
 		if ( ! updatedEndTime.isValid() ) {
 			url.searchParams.delete( 'to' );
 		} else {
 			url.searchParams.set( 'to', updatedEndTime.unix().toString( 10 ) );
 		}
+
 		page.replace( url.pathname + url.search );
 	}, [] );
 
@@ -166,6 +160,15 @@ export const SiteLogsDataViews = ( {
 		endTime,
 	} );
 	const actions = useActions( { logType, isLoading } );
+	const dateRange = useMemo( () => {
+		const daysInRange = endTime.diff( startTime, 'days' );
+		return {
+			// TODO: Can we simplify this by passing directly the timestamp to DateControl?
+			chartStart: startTime.format( 'YYYY-MM-DD' ),
+			chartEnd: endTime.format( 'YYYY-MM-DD' ),
+			daysInRange,
+		};
+	}, [ startTime, endTime ] );
 
 	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
 	const isDownloading = state.status === 'downloading';
@@ -185,6 +188,10 @@ export const SiteLogsDataViews = ( {
 		} );
 	}, [ downloadLogs, logType, startTime, endTime, view ] );
 
+	const { supportedShortcutList } = useSelector( ( state ) =>
+		getShortcuts( state, dateRange, translate )
+	);
+
 	return (
 		<>
 			<div className="site-logs-header">
@@ -202,31 +209,16 @@ export const SiteLogsDataViews = ( {
 					) }
 				/>
 				<div className="site-logs-toolbar">
-					<label className="site-logs-toolbar__label">
-						<span>{ translate( 'From' ) }</span>
-						<DateTimePicker
-							className="site-logs-toolbar__datepicker"
-							id="from"
-							value={ startTime }
-							onChange={ handleStartTimeChange }
-							gmtOffset={ siteGmtOffset }
-							min={ ZERO_EPOCH }
-							max={ endTime }
-						/>
-					</label>
-
-					<label className="site-logs-toolbar__label">
-						<span>{ translate( 'To' ) }</span>
-						<DateTimePicker
-							className="site-logs-toolbar__datepicker"
-							id="to"
-							value={ endTime }
-							onChange={ handleEndTimeChange }
-							gmtOffset={ siteGmtOffset }
-							min={ startTime }
-							max={ moment() }
-						/>
-					</label>
+					<DateControl
+						dateRange={ dateRange }
+						onApplyButtonClick={ handleTimeChange }
+						shortcutList={ supportedShortcutList }
+						onShortcutClick={ ( shortcut, closePopoverAndCommit ) => {
+							/* Time change is handled by onApplyButtonClick */
+							closePopoverAndCommit();
+						} }
+						tooltip={ translate( 'Select a date range' ) }
+					/>
 					<label className="site-logs-toolbar__label site-logs-toolbar__label_toggle">
 						<span>{ translate( 'Log type' ) }</span>
 						<ToggleGroupControl
