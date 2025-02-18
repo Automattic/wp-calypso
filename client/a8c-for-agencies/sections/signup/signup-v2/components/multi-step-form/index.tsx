@@ -22,6 +22,7 @@ const MultiStepForm = () => {
 	const notificationId = 'a4a-agency-signup-form';
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
+	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
 
 	const steps = [
 		{ label: translate( 'Sign up' ), isActive: currentStep === 1, isComplete: currentStep > 1 },
@@ -67,6 +68,7 @@ const MultiStepForm = () => {
 
 	const clearDataAndRefresh = () => {
 		setFormData( {} );
+		setBlueprintRequested( false );
 		window.location.reload();
 	};
 
@@ -86,13 +88,25 @@ const MultiStepForm = () => {
 			case 4:
 				return <BlueprintForm onContinue={ ( data ) => updateDataAndContinue( data, 5 ) } />;
 			case 5:
-				return <BlueprintForm2 onContinue={ ( data ) => updateDataAndContinue( data, 6 ) } />;
+				return (
+					<BlueprintForm2
+						onContinue={ ( data ) => {
+							setBlueprintRequested( true );
+							updateDataAndContinue( data, 6 );
+						} }
+					/>
+				);
 			case 6:
-				return <FinishSignupSurvey onContinue={ clearDataAndRefresh } />;
+				return (
+					<FinishSignupSurvey
+						onContinue={ clearDataAndRefresh }
+						blueprintRequested={ blueprintRequested }
+					/>
+				);
 			default:
 				return null;
 		}
-	}, [ currentStep, updateDataAndContinue ] );
+	}, [ blueprintRequested, currentStep, updateDataAndContinue ] );
 
 	return (
 		<div className="signup-multi-step-form">
