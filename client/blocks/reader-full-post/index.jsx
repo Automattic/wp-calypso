@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Gridicon, EmbedContainer } from '@automattic/components';
+import { Gridicon, EmbedContainer, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
 import { get, startsWith, pickBy } from 'lodash';
@@ -24,7 +24,6 @@ import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
-import ExternalLink from 'calypso/components/external-link';
 import PostExcerpt from 'calypso/components/post-excerpt';
 import {
 	RelatedPostsFromSameSite,
@@ -238,12 +237,12 @@ export class FullPostView extends Component {
 
 			// Next post - j
 			case 74: {
-				return this.goToNextPost();
+				return this.goToPost( this.props.nextPost );
 			}
 
 			// Previous post - k
 			case 75: {
-				return this.goToPreviousPost();
+				return this.goToPost( this.props.previousPost );
 			}
 		}
 	};
@@ -517,15 +516,14 @@ export class FullPostView extends Component {
 		}
 	};
 
-	goToNextPost = () => {
-		if ( this.props.nextPost ) {
-			this.props.showSelectedPost( { postKey: this.props.nextPost } );
-		}
-	};
-
-	goToPreviousPost = () => {
-		if ( this.props.previousPost ) {
-			this.props.showSelectedPost( { postKey: this.props.previousPost } );
+	goToPost = ( post ) => {
+		const { layout, setSelectedItem, showSelectedPost: showPost } = this.props;
+		if ( post ) {
+			if ( layout === 'recent' && setSelectedItem ) {
+				setSelectedItem( post );
+			} else {
+				showPost( { postKey: post } );
+			}
 		}
 	};
 
@@ -618,7 +616,7 @@ export class FullPostView extends Component {
 			{
 				components: {
 					/* eslint-disable */
-					wpLink: <a href="/read" className="reader-related-card__link" />,
+					wpLink: <a href="/reader" className="reader-related-card__link" />,
 					/* eslint-enable */
 				},
 			}

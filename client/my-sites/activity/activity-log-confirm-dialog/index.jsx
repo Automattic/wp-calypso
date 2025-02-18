@@ -1,6 +1,5 @@
-import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon, ExternalLink } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import ExternalLink from 'calypso/components/external-link';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import ActivityIcon from '../activity-log-item/activity-icon';
 

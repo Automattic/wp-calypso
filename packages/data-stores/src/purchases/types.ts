@@ -8,6 +8,7 @@ export interface Purchase {
 	billPeriodLabel: string;
 	blogCreatedDate: string;
 	canDisableAutoRenew: boolean;
+	asyncPendingPaymentBlockIsSet: boolean;
 	canExplicitRenew: boolean;
 	canReenableAutoRenewal: boolean;
 	costToUnbundle: number;
@@ -29,6 +30,7 @@ export interface Purchase {
 	isCancelable: boolean;
 	isDomain?: boolean;
 	isDomainRegistration?: boolean;
+	isHundredYearDomain?: boolean;
 	isInAppPurchase: boolean;
 	isLocked: boolean;
 	isRechargeable: boolean;
@@ -183,6 +185,7 @@ export interface RawPurchase {
 	most_recent_renew_date: string;
 	can_disable_auto_renew: boolean;
 	can_reenable_auto_renewal: boolean;
+	async_pending_payment_block_is_set: boolean;
 	can_explicit_renew: boolean;
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
@@ -203,6 +206,7 @@ export interface RawPurchase {
 	is_cancelable: boolean;
 	is_domain: boolean;
 	is_domain_registration: boolean;
+	is_hundred_year_domain: boolean;
 	is_locked: boolean;
 	is_iap_purchase: boolean;
 	is_rechargable: boolean;

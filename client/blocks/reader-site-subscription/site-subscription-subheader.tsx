@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { numberFormat, useTranslate } from 'i18n-calypso';
 import React from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import { useRecordViewFeedButtonClicked } from 'calypso/landing/subscriptions/tracks';
 import { getFeedUrl } from 'calypso/reader/route';
 
@@ -57,7 +57,7 @@ const SiteSubscriptionSubheader = ( {
 	const hostname = getHostname( url );
 	if ( hostname !== '' ) {
 		subheaderItems.push(
-			<ExternalLink key={ url } href={ url } rel="noreferrer noopener" target="_blank">
+			<ExternalLink key={ url } href={ url } target="_blank">
 				{ hostname }
 			</ExternalLink>
 		);

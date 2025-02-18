@@ -15,6 +15,7 @@ import GravatarLoginLogo from 'calypso/components/gravatar-login-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
+import WPCloudLogo from 'calypso/components/wp-cloud-logo';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { preventWidows } from 'calypso/lib/formatting';
 import getGravatarOAuth2Flow from 'calypso/lib/get-gravatar-oauth2-flow';
@@ -26,6 +27,7 @@ import {
 	isBlazeProOAuth2Client,
 	isGravatarFlowOAuth2Client,
 	isGravatarOAuth2Client,
+	isPartnerPortalOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -72,7 +74,6 @@ class Login extends Component {
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isWhiteLogin: PropTypes.bool.isRequired,
-		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
 		isFromAkismet: PropTypes.bool,
 		isFromMigrationPlugin: PropTypes.bool,
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
@@ -115,7 +116,6 @@ class Login extends Component {
 	static defaultProps = {
 		isJetpack: false,
 		isWhiteLogin: false,
-		isJetpackWooCommerceFlow: false,
 	};
 
 	componentDidMount() {
@@ -191,7 +191,6 @@ class Login extends Component {
 	showContinueAsUser = () => {
 		const {
 			isJetpack,
-			isJetpackWooCommerceFlow,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -210,7 +209,6 @@ class Login extends Component {
 			! privateSite &&
 			// Show the continue as user flow WooCommerce and Blaze Pro but not for other OAuth2 clients
 			! ( oauth2Client && ! isWCCOM && ! isBlazePro ) &&
-			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
@@ -352,7 +350,6 @@ class Login extends Component {
 			isGravPoweredClient,
 			isGravPoweredLoginPage,
 			isJetpack,
-			isJetpackWooCommerceFlow,
 			isManualRenewalImmediateLoginAttempt,
 			isP2Login,
 			isSignupExistingAccount,
@@ -513,6 +510,32 @@ class Login extends Component {
 				);
 			}
 
+			if ( isPartnerPortalOAuth2Client( oauth2Client ) ) {
+				if ( document.location.search?.includes( 'wpcloud' ) ) {
+					headerText = translate(
+						'Howdy! Log into the WP Cloud Partner Portal with your WordPress.com account.'
+					);
+					preHeader = (
+						<div>
+							<WPCloudLogo className="login__wpcloud-logo" size={ 256 } />
+						</div>
+					);
+				} else if ( document.location.search?.includes( 'jetpack' ) ) {
+					headerText = translate(
+						'Howdy! Log into the Jetpack Partner Portal with your WordPress.com account.'
+					);
+					preHeader = (
+						<div>
+							<JetpackPlusWpComLogo className="login__jetpack-plus-wpcom-logo" size={ 24 } />
+						</div>
+					);
+				} else {
+					headerText = translate(
+						'Howdy! Log into the Automattic Partner Portal with your WordPress.com account.'
+					);
+				}
+			}
+
 			if ( isJetpackCloudOAuth2Client( oauth2Client ) || isA4AOAuth2Client( oauth2Client ) ) {
 				// If users arrived here from the lost password flow, show them a specific message about it
 				postHeader = currentQuery.lostpassword_flow && (
@@ -617,27 +640,6 @@ class Login extends Component {
 			}
 			preHeader = null;
 			postHeader = <p className="login__header-subtitle">{ subtitle }</p>;
-		} else if ( isJetpackWooCommerceFlow ) {
-			headerText = translate( 'Log in to your WordPress.com account' );
-			preHeader = (
-				<div className="login__jetpack-logo">
-					<AsyncLoad
-						require="calypso/components/jetpack-header"
-						placeholder={ null }
-						partnerSlug={ this.props.partnerSlug }
-						isWoo
-						width={ 200 }
-						lightColorScheme
-					/>
-				</div>
-			);
-			postHeader = (
-				<p className="login__header-subtitle">
-					{ translate(
-						'Your account will enable you to start using the features and benefits offered by Jetpack & WooCommerce Services.'
-					) }
-				</p>
-			);
 		} else if ( isFromMigrationPlugin ) {
 			headerText = translate( 'Log in to your account' );
 		} else if ( isJetpack ) {
@@ -1060,8 +1062,6 @@ export default connect(
 			'automattic-for-agencies-client' ===
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 		isWooJPC: isWooJPCFlow( state ),
 		isWCCOM: getIsWCCOM( state ),
 		isWoo: getIsWoo( state ),

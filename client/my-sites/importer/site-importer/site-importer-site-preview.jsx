@@ -1,10 +1,9 @@
-import { Spinner } from '@automattic/components';
+import { Spinner, ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import { loadmShotsPreview } from 'calypso/lib/mshots';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';

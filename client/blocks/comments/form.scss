@@ -45,10 +45,10 @@
 	}
 }
 
-// On /read/conversations, balance the space below and
+// On /reader/conversations, balance the space below and
 // above the "Send" button.  The default negative margin
 // of -19px is intended for the pages like
-// /read/feeds/123456789/posts/9876543210.
+// /reader/feeds/:feed_id/posts/:post_id.
 .conversations__comment-list {
 	.comments__form {
 		button {

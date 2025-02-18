@@ -195,7 +195,10 @@ describe(
 				// Stepper has a quirk where it redirects twice. Playwright hooks to the first one and thinks it was aborted.
 				await fixme_retry( () => page.waitForURL( /launchpad/ ) );
 
-				await page.getByRole( 'button', { name: 'Skip for now' } ).click();
+				// Try to find the skip button with a more specific selector
+				const skipButton = page.getByRole( 'button', { name: /skip (for now|to dashboard)/i } );
+				await skipButton.waitFor( { state: 'visible', timeout: 10000 } );
+				await skipButton.click();
 			} );
 
 			it( 'See Home', async function () {

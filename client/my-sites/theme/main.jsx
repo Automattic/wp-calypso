@@ -43,6 +43,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
+import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
+import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -98,6 +100,7 @@ import {
 	isThemeWooCommerce,
 	isActivatingTheme as getIsActivatingTheme,
 	isInstallingTheme as getIsInstallingTheme,
+	hasActivatedTheme as getHasActivatedTheme,
 } from 'calypso/state/themes/selectors';
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
@@ -176,11 +179,18 @@ class ThemeSheet extends Component {
 		isWide: isWithinBreakpoint( '>960px' ),
 	};
 
+	// This is a plain instance property because we only want to know the state of the
+	// hash at the time of the component mounting.
+	// Checking hash in `componentDidMount` to preserve SSR behavior.
+	isThemeSelectedTask = false;
+
 	scrollToTop = () => {
 		window.scroll( 0, 0 );
 	};
 
 	componentDidMount() {
+		this.isThemeSelectedTask = window.location.hash === HOSTING_THEME_SELCETED_HASH;
+
 		this.scrollToTop();
 
 		const { syncActiveTheme, themeStartActivationSync, siteId, themeId } = this.props;
@@ -204,6 +214,24 @@ class ThemeSheet extends Component {
 
 		if ( defaultOption?.key !== prevProps.defaultOption?.key ) {
 			this.maybeAutoActivate();
+		}
+
+		if (
+			this.props.hasActivatedTheme &&
+			! prevProps.hasActivatedTheme &&
+			this.props.isActive &&
+			! prevProps.isActive &&
+			( this.isThemeSelectedTask || this.props.defaultOption?.key === 'activate' )
+		) {
+			const noticeSettings = {
+				id: 'site-theme-activated',
+				duration: 10000,
+			};
+			this.props.completeLaunchpadTasks(
+				[ 'site_theme_selected' ],
+				this.props.translate( 'Congratulations! You’ve activated your theme!' ),
+				noticeSettings
+			);
 		}
 	}
 
@@ -353,7 +381,7 @@ class ThemeSheet extends Component {
 		} );
 
 		// The embed live demo works only for WP.com themes
-		if ( this.isWpcomOnlyTheme() ) {
+		if ( this.isWebPreviewAvailable() ) {
 			const { preview } = this.props.options;
 			this.onBeforeOptionAction();
 			return preview.action( this.props.themeId );
@@ -393,8 +421,12 @@ class ThemeSheet extends Component {
 		);
 	}
 
-	isWpcomOnlyTheme() {
-		return this.props.isWpcomTheme && ! this.props.isExternallyManagedTheme;
+	isWebPreviewAvailable() {
+		return (
+			this.props.isWpcomTheme &&
+			! this.props.isExternallyManagedTheme &&
+			! this.props.stylesheet.startsWith( 'a8c' )
+		);
 	}
 
 	isThemeCurrentOne() {
@@ -1233,7 +1265,11 @@ class ThemeSheet extends Component {
 						}
 					} }
 				/>
-				<ActivationModal source="details" siteIntent={ this.props.siteIntent } />
+				<ActivationModal
+					source="details"
+					siteIntent={ this.props.siteIntent }
+					showSuccessNotice={ ! this.isThemeSelectedTask }
+				/>
 				<NavigationHeader
 					navigationItems={ navigationItems }
 					compactBreadcrumb={ ! this.state.isWide }
@@ -1250,7 +1286,7 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ this.isWpcomOnlyTheme() ? this.renderWebPreview() : this.renderScreenshot() }
+							{ this.isWebPreviewAvailable() ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
@@ -1464,6 +1500,7 @@ export default connect(
 			themeType: getThemeType( state, themeId ),
 			isActivatingTheme: getIsActivatingTheme( state, siteId ),
 			isInstallingTheme: getIsInstallingTheme( state, themeId, siteId ),
+			hasActivatedTheme: getHasActivatedTheme( state, siteId ),
 		};
 	},
 	{
@@ -1474,5 +1511,9 @@ export default connect(
 		errorNotice,
 	}
 )(
-	withSiteGlobalStylesStatus( withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) ) )
+	withCompleteLaunchpadTasksWithNotice(
+		withSiteGlobalStylesStatus(
+			withSiteGlobalStylesOnPersonal( localize( ThemeSheetWithOptions ) )
+		)
+	)
 );

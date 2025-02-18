@@ -42,7 +42,15 @@ const useCampaignsQueryPaged = (
 				searchCampaignsUrl
 			);
 
-			const { campaigns, page, total_items, total_pages, campaigns_stats } = resultQuery;
+			const {
+				campaigns,
+				page,
+				total_items,
+				total_pages,
+				campaigns_stats,
+				tsp_eligible = false,
+			} = resultQuery;
+
 			const has_more_pages = page < total_pages;
 
 			return {
@@ -52,6 +60,7 @@ const useCampaignsQueryPaged = (
 				total_pages,
 				campaigns_stats,
 				page,
+				tsp_eligible,
 			};
 		},
 		...queryOptions,

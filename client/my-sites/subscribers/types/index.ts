@@ -28,6 +28,7 @@ export type Subscriber = {
 	user_id: number;
 	subscription_id: number;
 	date_subscribed: string;
+	is_email_subscriber: boolean;
 	email_address: string;
 	avatar: string;
 	display_name: string;
@@ -45,6 +46,7 @@ export type SubscriberListArgs = {
 	currentPage: number;
 	perPage?: number;
 	filterOption?: SubscribersFilterBy;
+	filters?: SubscribersFilterBy[];
 	searchTerm?: string;
 	sortTerm?: SubscribersSortBy;
 };

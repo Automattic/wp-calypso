@@ -1,5 +1,4 @@
-import formatNumber from '@automattic/components/src/number-formatters/lib/format-number';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormat } from 'i18n-calypso';
 import wpcomIcon from 'calypso/assets/images/icons/wordpress-logo.svg';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useLicenseLightboxData } from 'calypso/jetpack-cloud/sections/partner-portal/license-lightbox/hooks/use-license-lightbox-data';
@@ -38,7 +37,7 @@ export default function ProductInfo( {
 			{
 				args: {
 					install: presablePlan.install,
-					visits: formatNumber( presablePlan.visits ),
+					visits: numberFormat( presablePlan.visits ),
 					storage: presablePlan.storage,
 				},
 				count: presablePlan.install,

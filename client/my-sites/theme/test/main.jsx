@@ -14,6 +14,27 @@ jest.mock( 'dompurify', () => ( {
 	sanitize: jest.fn().mockImplementation( ( text ) => text ),
 } ) );
 
+const mockWindow = {
+	location: {
+		hash: '',
+		href: 'http://example.com',
+		origin: 'http://example.com',
+		pathname: '/',
+		search: '',
+	},
+	matchMedia: () => ( {
+		matches: false,
+		addListener: () => {},
+		removeListener: () => {},
+	} ),
+	scroll: () => {},
+};
+
+global.window = mockWindow;
+global.document = {
+	readyState: 'complete',
+};
+
 const themeData = {
 	name: 'Twenty Sixteen',
 	author: 'the WordPress team',
@@ -43,6 +64,8 @@ const TestComponent = ( { themeId, store } ) => {
 describe( 'main', () => {
 	afterEach( () => {
 		queryClient.clear();
+		// Reset window hash after each test
+		window.location.hash = '';
 	} );
 
 	test( "doesn't throw an exception without theme data", () => {

@@ -1,4 +1,4 @@
-import { useTranslate, numberFormat } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import ReaderFeedHeaderFollow from 'calypso/blocks/reader-feed-header/follow';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
@@ -45,7 +45,7 @@ const FeedStreamSidebar = ( {
 					{ postCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ numberFormat( postCount, { numberFormatOptions: { notation: 'compact' } } ) }
+								{ numberFormatCompact( postCount ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Post', 'Posts', { count: postCount } ) }
@@ -55,9 +55,7 @@ const FeedStreamSidebar = ( {
 					{ followerCount && (
 						<div className="reader-tag-sidebar-stats__item">
 							<span className="reader-tag-sidebar-stats__count">
-								{ numberFormat( followerCount, {
-									numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
-								} ) }
+								{ numberFormatCompact( followerCount ) }
 							</span>
 							<span className="reader-tag-sidebar-stats__title">
 								{ translate( 'Subscriber', 'Subscribers', { count: followerCount } ) }

@@ -11,6 +11,14 @@ export type { State };
 
 let isRegistered = false;
 
+declare global {
+	interface Window {
+		helpCenterData?: {
+			isProxied: boolean;
+		};
+	}
+}
+
 // All end-to-end tests use a custom user agent containing this string.
 const E2E_USER_AGENT = 'wp-e2e-tests';
 
@@ -24,8 +32,11 @@ export const isSupportSession = () => {
 			// A bit hacky but much easier than passing down data from PHP in Jetpack
 			// Simple
 			!! document.querySelector( '#wp-admin-bar-support-session-details' ) ||
+			!! document.querySelector( '#a8c-support-session-overlay' ) ||
 			// Atomic
-			document.body.classList.contains( 'support-session' )
+			document.body.classList.contains( 'support-session' ) ||
+			// Our failover last hope, don't re-open when proxied.
+			window.helpCenterData?.isProxied
 		);
 	}
 	return false;

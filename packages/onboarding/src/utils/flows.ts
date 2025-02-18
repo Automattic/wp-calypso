@@ -10,9 +10,7 @@ export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const IMPORT_HOSTED_SITE_FLOW = 'import-hosted-site';
-export const ECOMMERCE_FLOW = 'ecommerce';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
-export const WOOEXPRESS_FLOW = 'wooexpress';
 export const FREE_FLOW = 'free';
 export const FREE_POST_SETUP_FLOW = 'free-post-setup';
 export const SITE_MIGRATION_FLOW = 'site-migration';
@@ -72,9 +70,7 @@ export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 };
 
 export const isTailoredSignupFlow = ( flowName: string | null ) => {
-	return Boolean(
-		flowName && ( isNewsletterOrLinkInBioFlow( flowName ) || ECOMMERCE_FLOW === flowName )
-	);
+	return Boolean( flowName && isNewsletterOrLinkInBioFlow( flowName ) );
 };
 
 export const isEntrepreneurSignupFlow = ( flowName: string | null ) => {
@@ -116,10 +112,6 @@ export const isCopySiteFlow = ( flowName: string | null ) => {
 
 export const isEntrepreneurFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ ENTREPRENEUR_FLOW ].includes( flowName ) );
-};
-
-export const isWooExpressFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ WOOEXPRESS_FLOW ].includes( flowName ) );
 };
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {

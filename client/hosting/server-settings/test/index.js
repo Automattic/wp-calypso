@@ -118,6 +118,10 @@ const createTestStore = ( {
 				[ TEST_SITE_ID ]: true,
 			},
 		},
+		explatExperiments: {
+			experimentAssignments: {},
+		},
+		preferences: {},
 	} );
 	return store;
 };

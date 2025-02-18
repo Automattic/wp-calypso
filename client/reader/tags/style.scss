@@ -82,6 +82,16 @@
 			padding-top: 24px;
 		}
 
+		.tags__header,
+		.trending-tags__container,
+		.sticky-container,
+		.alphabetic-tags__table {
+			// Apply max-width at this level so we still have the full width content frame
+			// and scroll containers.
+			max-width: 1140px;
+			margin: 0 auto;
+		}
+
 		@include break-small {
 			.sticky-panel.is-sticky .sticky-panel__content {
 				border-top-left-radius: 4px;

@@ -27,6 +27,7 @@ function MyNotice() {
 | `isLoading`      | `bool`     | false   | If true, the icon is in an animated loading state.                                    |
 | `text`           | `string`   | null    | The message that shows in the notice.                                                 |
 | `showDismiss`    | `bool`     | true    | Whether to show a close action on the right of the notice.                            |
+| `theme`          | `string`   | 'dark'  | Theme of the notice either `light` or `dark`.                                         |
 | `isCompact`      | `bool`     | false   | Whether this is a compact notice (smaller and not full width).                        |
 | `duration`       | `integer`  | 0       | How long to show the notice for in milliseconds.                                      |
 | `onDismissClick` | `function` | null    | A function to call when the notice is dismissed.                                      |

@@ -1,7 +1,7 @@
-import { Gridicon, ShortenedNumber } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate, numberFormat } from 'i18n-calypso';
+import { translate, numberFormatCompact } from 'i18n-calypso';
 import { useCallback, useContext } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
@@ -67,11 +67,7 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 				>
 					{ trendIcon }
 					<div className="sites-overview__stats">
-						<span className="shortened-number">
-							{ numberFormat( totalViews, {
-								numberFormatOptions: { notation: 'compact', maximumFractionDigits: 1 },
-							} ) }
-						</span>
+						<span className="shortened-number">{ numberFormatCompact( totalViews ) }</span>
 					</div>
 				</button>
 			);
@@ -109,7 +105,7 @@ export default function SiteStatsColumn( { site, stats, siteError }: Props ) {
 			{ trendIcon }
 
 			<div className="sites-overview__stats">
-				<ShortenedNumber value={ totalViews } />
+				<span>{ numberFormatCompact( totalViews ) }</span>
 			</div>
 		</span>
 	);

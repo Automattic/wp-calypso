@@ -52,10 +52,10 @@ const ReaderListFollowingItem = ( props ) => {
 	let streamLink;
 
 	if ( follow.feed_ID ) {
-		streamLink = `/read/feeds/${ follow.feed_ID }`;
+		streamLink = `/reader/feeds/${ follow.feed_ID }`;
 	} else if ( follow.blog_ID ) {
 		// If subscription is missing a feed ID, fallback to blog stream
-		streamLink = `/read/blogs/${ follow.blog_ID }`;
+		streamLink = `/reader/blogs/${ follow.blog_ID }`;
 	} else {
 		// Skip it
 		return null;

@@ -1,10 +1,8 @@
-import CloudLogo from '../cloud-logo';
-import CNNLogo from '../cnn-logo';
-import JetpackLogo from '../jetpack-logo';
-import SalesforceLogo from '../salesforce-logo';
-import SlackLogo from '../slack-logo';
-import VIPLogo from '../vip-logo';
-import WooLogo from '../woo-logo';
+import { CloudLogo } from '../cloud-logo';
+import { JetpackLogo } from '../jetpack-logo';
+import { VIPLogo } from '../vip-logo';
+import { WooLogo } from '../woo-logo';
+import { WooCommerceWooLogo } from '../woocommerce-woo-logo';
 
 import './style.scss';
 export default function ProductLogoExample() {
@@ -17,19 +15,13 @@ export default function ProductLogoExample() {
 				<CloudLogo />
 			</div>
 			<div className="logo-container">
-				<CNNLogo />
-			</div>
-			<div className="logo-container">
-				<SalesforceLogo />
-			</div>
-			<div className="logo-container">
-				<SlackLogo />
-			</div>
-			<div className="logo-container">
 				<VIPLogo />
 			</div>
 			<div className="logo-container">
 				<WooLogo />
+			</div>
+			<div className="logo-container">
+				<WooCommerceWooLogo />
 			</div>
 		</div>
 	);

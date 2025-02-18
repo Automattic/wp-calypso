@@ -20,7 +20,7 @@ import moment from 'moment';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import Notice from 'calypso/components/notice';
+import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -346,10 +346,14 @@ class PurchaseNotice extends Component<
 			return null;
 		}
 
+		if ( purchase.isHundredYearDomain ) {
+			return null;
+		}
+
 		if ( is100Year( purchase ) && ! isCloseToExpiration( purchase ) ) {
 			return null;
 		}
-		let noticeStatus = 'is-info';
+		let noticeStatus: NoticeStatus = 'is-info';
 
 		if ( isCloseToExpiration( currentPurchase ) && ! isRecentMonthlyPurchase( currentPurchase ) ) {
 			noticeStatus = 'is-error';
@@ -492,7 +496,7 @@ class PurchaseNotice extends Component<
 			},
 		};
 
-		let noticeStatus = null;
+		let noticeStatus: NoticeStatus = 'is-info';
 		let noticeIcon = null;
 		let noticeActionHref = null;
 		let noticeActionOnClick = null;
@@ -900,7 +904,8 @@ class PurchaseNotice extends Component<
 			isOneTimePurchase( purchase ) ||
 			isIncludedWithPlan( purchase ) ||
 			! this.props.selectedSite ||
-			! purchase.payment.creditCard
+			! purchase.payment.creditCard ||
+			purchase.isHundredYearDomain
 		) {
 			return null;
 		}
@@ -1135,11 +1140,24 @@ class PurchaseNotice extends Component<
 		);
 	}
 
+	renderAsyncPendingPaymentNotice() {
+		const { translate } = this.props;
+		const noticeText = translate(
+			'There is currently a payment processing for this subscription. Please wait for the payment to complete before attempting to make any changes.'
+		);
+
+		return <Notice showDismiss={ false } status="is-warning" text={ noticeText }></Notice>;
+	}
+
 	render() {
 		const { purchase } = this.props;
 
 		if ( this.props.isDataLoading ) {
 			return null;
+		}
+
+		if ( purchase.asyncPendingPaymentBlockIsSet ) {
+			return this.renderAsyncPendingPaymentNotice();
 		}
 
 		if ( isDomainTransfer( purchase ) ) {

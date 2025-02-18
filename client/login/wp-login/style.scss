@@ -1,5 +1,4 @@
 @import "jetpack-connect/colors";
-@import "calypso/components/text-control/style";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/typography/styles/fonts";
 @import "@wordpress/base-styles/breakpoints";
@@ -154,11 +153,10 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-login:not(.is-jetpack-woocommerce-flow):not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
+.layout.is-jetpack-login:not(.is-wccom-oauth-flow):not(.is-woocommerce-core-profiler-flow) {
 	@include jetpack-connect-colors();
 }
 
-.layout.is-jetpack-woocommerce-flow,
 .layout.is-wccom-oauth-flow,
 .layout.is-jetpack-woo-dna-flow {
 	@include woocommerce-colors();
@@ -197,7 +195,6 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-jetpack-woocommerce-flow,
 .layout.is-wccom-oauth-flow {
 	background-color: var(--color-woocommerce-onboarding-background);
 
@@ -269,23 +266,6 @@ $image-height: 47px;
 
 	.wp-login__site-return-link::after {
 		background: none;
-	}
-
-	.woocommerce-muriel-text-control,
-	.muriel-input-text {
-		border-color: var(--color-neutral-20);
-
-		.text-control__label,
-		.components-base-control__label {
-			color: var(--color-neutral-50);
-			font-size: $font-body-extra-small;
-			font-weight: normal;
-		}
-
-		&.active {
-			box-shadow: 0 0 0 2px var(--studio-woocommerce-purple-60);
-			border-color: transparent;
-		}
 	}
 
 	.login__form-footer {
@@ -364,7 +344,11 @@ $image-height: 47px;
 
 	.login form {
 
-		input,
+		// We shouldn't regularly use .components-* classnames. The following is
+		// an exception to opt-out from some style overrides. Ideally, all
+		// input instances would come from `@wordpress/components` and the
+		// following overrides could be safely deleted.
+		input:not(.components-text-control__input),
 		button {
 			/* Note: Same as `button.signup-form__submit, .signup-form__input.form-text-input` */
 			height: 44px;

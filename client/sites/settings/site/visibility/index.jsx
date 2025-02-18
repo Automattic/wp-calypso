@@ -9,6 +9,7 @@ import useFetchAgencyFromBlog from 'calypso/a8c-for-agencies/data/agencies/use-f
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SitePreviewLinks from 'calypso/components/site-preview-links';
+import { useRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { useSelector, useDispatch } from 'calypso/state';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -28,9 +29,9 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../utils';
 import { LaunchConfirmationModal } from './launch-confirmation-modal';
 import { LaunchSiteTrialUpsellNotice } from './launch-site-trial-notice';
+
 import './styles.scss';
 
 const createAgencyBillingMessage = ( agency, agencyLoading = false, agencyError = false ) => {
@@ -224,7 +225,8 @@ const LaunchSite = () => {
 		return <SitePreviewLinks siteUrl={ site.URL } siteId={ siteId } source="launch-settings" />;
 	};
 
-	const isUntangled = isHostingMenuUntangled();
+	const isUntangled = useRemoveDuplicateViewsExperimentEnabled();
+
 	return (
 		<>
 			{ renderConfirmationModal() }

@@ -170,14 +170,22 @@ const MarketplaceProductInstall = ( {
 		}
 	} );
 
+	const { primaryDomain } = useSelector( getPurchaseFlowState );
+
+	const shouldShowNoDirectAccessError =
+		// 1. This is a plugin upload flow (via zip file) and we don't have a primary domain set
+		( isPluginUploadFlow && ! primaryDomain ) ||
+		// 2. This is a marketplace plugin installation but the installation process hasn't started
+		( ! isPluginUploadFlow && ! marketplaceInstallationInProgress );
+
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! marketplaceInstallationInProgress ) {
+		if ( shouldShowNoDirectAccessError ) {
 			waitFor( 2 ).then( () => {
-				! marketplaceInstallationInProgress && setNoDirectAccessError( true );
+				shouldShowNoDirectAccessError && setNoDirectAccessError( true );
 			} );
 		}
-	}, [ marketplaceInstallationInProgress ] );
+	}, [ shouldShowNoDirectAccessError ] );
 
 	// Upload flow startup
 	useEffect( () => {

@@ -16,6 +16,8 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSettingsSource } from 'calypso/my-sites/site-settings/site-tools/utils';
+import { getRemoveDuplicateViewsExperimentAssignment } from 'calypso/state/explat-experiments/actions';
+import { getIsRemoveDuplicateViewsExperimentEnabled } from 'calypso/state/explat-experiments/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -25,7 +27,6 @@ import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
 import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { isHostingMenuUntangled } from '../../../utils';
 import DeleteSiteWarnings from './delete-site-warnings';
 
 import './style.scss';
@@ -169,10 +170,8 @@ class DeleteSite extends Component {
 	};
 
 	_goBack = () => {
-		const { siteSlug } = this.props;
-		const source = isHostingMenuUntangled()
-			? '/sites/settings/administration'
-			: getSettingsSource();
+		const { isUntangled, siteSlug } = this.props;
+		const source = isUntangled ? '/sites/settings/site' : getSettingsSource();
 
 		page( `${ source }/${ siteSlug }` );
 	};
@@ -190,6 +189,10 @@ class DeleteSite extends Component {
 		}
 	}
 
+	componentDidMount() {
+		this.props.getRemoveDuplicateViewsExperimentAssignment();
+	}
+
 	_checkSiteLoaded = ( event ) => {
 		const { siteId } = this.props;
 		if ( ! siteId ) {
@@ -204,6 +207,7 @@ class DeleteSite extends Component {
 	};
 
 	render() {
+		const { isUntangled } = this.state;
 		const { isAtomic, isFreePlan, siteId, hasCancelablePurchases, p2HubP2Count } = this.props;
 		const isAtomicRemovalInProgress = isFreePlan && isAtomic;
 		const canDeleteSite =
@@ -214,7 +218,6 @@ class DeleteSite extends Component {
 			exportContent: translate( 'Export content' ),
 			exportContentFirst: translate( 'Export content first' ),
 		};
-		const isUntangled = isHostingMenuUntangled();
 
 		return (
 			<Panel className="settings-administration__delete-site">
@@ -265,10 +268,12 @@ export default connect(
 		const siteDomain = getSiteDomain( state, siteId );
 		const siteSlug = getSelectedSiteSlug( state );
 		const site = getSite( state, siteId );
+		const isUntangled = getIsRemoveDuplicateViewsExperimentEnabled( state );
 		return {
 			hasLoadedSitePurchasesFromServer: hasLoadedSitePurchasesFromServer( state ),
 			isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			isFreePlan: isFreePlanProduct( site?.plan ),
+			isUntangled,
 			siteDomain,
 			siteId,
 			siteSlug,
@@ -281,5 +286,6 @@ export default connect(
 	{
 		deleteSite,
 		setSelectedSiteId,
+		getRemoveDuplicateViewsExperimentAssignment,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

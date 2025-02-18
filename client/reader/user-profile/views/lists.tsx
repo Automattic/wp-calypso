@@ -61,7 +61,7 @@ const UserLists = ( { user, requestUserLists, lists, isLoading }: UserListsProps
 				{ lists.map( ( list: List ) => (
 					<a
 						className="user-profile__lists-body-link"
-						href={ `/read/list/${ list.owner }/${ list.slug }` }
+						href={ `/reader/list/${ list.owner }/${ list.slug }` }
 						key={ list.ID }
 					>
 						<div className="card reader-post-card is-compact is-clickable">

@@ -42,7 +42,6 @@ const stepNameToModuleName = {
 	'oauth2-user': 'user',
 	'oauth2-name': 'user',
 	'user-social': 'user',
-	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 	'p2-confirm-email': 'p2-confirm-email',
 	'p2-complete-profile': 'p2-complete-profile',

@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import ExternalLinkWithTracking from 'calypso/components/external-link-with-tracking';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -156,7 +156,6 @@ const DomainTransferFAQ: FC = () => {
 									components: {
 										ExternalLinkWithTracking: (
 											<ExternalLinkWithTracking
-												icon={ false }
 												href="https://wordpress.com/help"
 												tracksEventName="domain_transfer_faq_support_link_click"
 											/>

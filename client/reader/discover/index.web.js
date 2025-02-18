@@ -1,9 +1,13 @@
-import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
+import {
+	getAnyLanguageRouteParam,
+	removeLocaleFromPathLocaleInFront,
+} from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
 	makeLayout,
 	redirectInvalidLanguage,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
+	redirectLoggedOutToSignup,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -13,6 +17,7 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
+	userHasHistory,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -20,7 +25,7 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import renderHeaderSection from '../lib/header-section';
 import { DiscoverDocumentHead } from './discover-document-head';
-import { getSelectedTabTitle, DEFAULT_TAB } from './helper';
+import { getSelectedTabTitle, DEFAULT_TAB, isDiscoveryV2Enabled } from './helper';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -30,7 +35,6 @@ const discover = ( context, next ) => {
 	const streamKey = 'discover:recommended';
 	const mcKey = 'discover';
 	const state = context.store.getState();
-
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
 
@@ -44,7 +48,22 @@ const discover = ( context, next ) => {
 	if ( ! isUserLoggedIn( state ) ) {
 		context.renderHeaderSection = renderHeaderSection;
 	}
-	const selectedTab = context.query.selectedTab || DEFAULT_TAB;
+
+	// Handle both old query parameter-based routing and new path-based routing.
+	let selectedTab = DEFAULT_TAB;
+	if ( isDiscoveryV2Enabled() ) {
+		// Extract the tab from the path for v2, ignoring query params.
+		const cleanPath = context.path.split( '?' )[ 0 ];
+		// Remove any locale prefix if it exists to get a clean path.
+		const pathWithoutLocale = removeLocaleFromPathLocaleInFront( cleanPath );
+		const pathParts = pathWithoutLocale.split( '/' );
+		// Now pathParts[2] will consistently be the tab.
+		selectedTab = pathParts[ 2 ] || DEFAULT_TAB;
+	} else {
+		// Use query parameter for v1.
+		selectedTab = context.query.selectedTab || DEFAULT_TAB;
+	}
+
 	const tabTitle = getSelectedTabTitle( selectedTab );
 	context.primary = (
 		<>
@@ -65,9 +84,10 @@ const discover = ( context, next ) => {
 				suppressSiteNameLink
 				isDiscoverStream
 				useCompactCards
-				showBack={ false }
+				showBack={ userHasHistory( context ) }
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
+				query={ context.query }
 			/>
 		</>
 	);
@@ -77,8 +97,7 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
-	router(
-		[ '/discover', `/${ anyLangParam }/discover` ],
+	const commonMiddleware = [
 		redirectInvalidLanguage,
 		redirectWithoutLocaleParamInFrontIfLoggedIn,
 		setLocaleMiddleware(),
@@ -86,6 +105,34 @@ export default function ( router ) {
 		sidebar,
 		discover,
 		makeLayout,
-		clientRender
-	);
+		clientRender,
+	];
+
+	if ( isDiscoveryV2Enabled() ) {
+		// Must be logged in to access.
+		router(
+			[ '/discover/add-new', `/${ anyLangParam }/discover/add-new` ],
+			redirectLoggedOutToSignup,
+			...commonMiddleware
+		);
+
+		router(
+			[
+				'/discover',
+				'/discover/firstposts',
+				'/discover/tags',
+				'/discover/reddit',
+				'/discover/latest',
+				`/${ anyLangParam }/discover`,
+				`/${ anyLangParam }/discover/firstposts`,
+				`/${ anyLangParam }/discover/tags`,
+				`/${ anyLangParam }/discover/reddit`,
+				`/${ anyLangParam }/discover/latest`,
+			],
+			...commonMiddleware
+		);
+	} else {
+		// Original query parameter-based route for v1
+		router( [ '/discover', `/${ anyLangParam }/discover` ], ...commonMiddleware );
+	}
 }

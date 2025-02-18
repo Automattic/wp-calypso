@@ -8,6 +8,12 @@
 			margin-top: 0;	
 		}
 	}
+	
+	.hundred-year-plan__benefits-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 
 	.hundred-year-plan__benefits {
 		margin: 0 0.5rem 2.5rem 0.5rem;
@@ -74,11 +80,11 @@
 
 	.calendly-popup {
 		height: 100%;
-
 	}
 	.calendly-popup-content {
 		height: 100%;
 	}
+	
 	.calendly-popup-close {
 		position: absolute;
 		top: 1.5rem;

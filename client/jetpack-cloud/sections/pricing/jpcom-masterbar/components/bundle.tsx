@@ -1,6 +1,6 @@
+import { ExternalLink } from '@automattic/components';
 import { useLocale, localizeUrl } from '@automattic/i18n-utils';
 import { Fragment } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import AntispamIcon from '../icons/jetpack-bundle-icon-antispam';
 import BackupIcon from '../icons/jetpack-bundle-icon-backup';
 import BoostIcon from '../icons/jetpack-bundle-icon-boost';

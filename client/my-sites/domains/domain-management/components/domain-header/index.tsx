@@ -4,7 +4,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 
 import './style.scss';
 
-type NavigationItem = {
+export type NavigationItem = {
 	label: string;
 	subtitle?: string | ReactNode;
 	href?: string;
@@ -49,6 +49,7 @@ const DomainHeader = ( {
 			mobileItem={ mobileItem }
 			title={ titleOverride || items[ items.length - 1 ].label }
 			subtitle={ subtitleOverride || items[ items.length - 1 ].subtitle }
+			className="domain-header"
 		>
 			{ renderButtons() }
 		</NavigationHeader>

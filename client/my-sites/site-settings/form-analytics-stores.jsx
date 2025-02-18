@@ -1,8 +1,8 @@
+import { ExternalLink } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component } from 'react';
-import ExternalLink from 'calypso/components/external-link';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
@@ -13,7 +13,7 @@ class FormAnalyticsStores extends Component {
 
 	renderExplanation = ( setting ) => {
 		const link = setting.link ? (
-			<ExternalLink icon href={ setting.link.url } target="_blank" rel="noopener noreferrer">
+			<ExternalLink icon href={ setting.link.url } target="_blank">
 				{ setting.link.label }
 			</ExternalLink>
 		) : null;

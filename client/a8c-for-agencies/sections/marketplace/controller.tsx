@@ -12,7 +12,6 @@ import MarketplaceSidebar from '../../components/sidebar-menu/marketplace';
 import AssignLicense from './assign-license';
 import Checkout from './checkout';
 import { MARKETPLACE_TYPE_REFERRAL } from './hoc/with-marketplace-type';
-import HostingOverview from './hosting-overview';
 import HostingOverviewV3 from './hosting-overview-v3';
 import { getValidHostingSection } from './lib/hosting';
 import { getValidBrand } from './lib/product-brand';
@@ -68,22 +67,13 @@ export const marketplaceHostingContext: Callback = ( context, next ) => {
 		return;
 	}
 
-	const { purchase_type } = context.query;
-	const purchaseType = purchase_type === 'referral' ? 'referral' : undefined;
-
 	const section = getValidHostingSection( context.params.section );
-
-	const isV3Enabled = isEnabled( 'a4a-hosting-page-redesign-v3' );
 
 	context.secondary = <MarketplaceSidebar path={ context.path } />;
 	context.primary = (
 		<>
 			<PageViewTracker title="Marketplace > Hosting" path={ context.path } />
-			{ isV3Enabled ? (
-				<HostingOverviewV3 section={ section } />
-			) : (
-				<HostingOverview defaultMarketplaceType={ purchaseType } section={ section } />
-			) }
+			<HostingOverviewV3 section={ section } />
 		</>
 	);
 	next();
