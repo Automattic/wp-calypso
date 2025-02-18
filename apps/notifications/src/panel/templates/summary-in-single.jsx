@@ -16,7 +16,9 @@ class UserHeader extends Component {
 	render() {
 		const grav = this.props.user.media[ 0 ];
 		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } alt="" />;
-		const home_url = this.props.user.ranges[ 0 ].url;
+		const base_home_url = this.props.user.ranges[ 0 ].url;
+		const userId = this.props.user.ranges[ 0 ].id;
+		const home_url = userId ? `https://wordpress.com/reader/users/${ userId }` : base_home_url;
 		const note = this.props.note;
 
 		const get_home_link = function ( classNames, children ) {
