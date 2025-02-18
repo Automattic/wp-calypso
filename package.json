@@ -251,7 +251,7 @@
 		"@storybook/react": "^7.6.19",
 		"@tanstack/eslint-plugin-query": "^5.14.6",
 		"@testing-library/jest-dom": "^6.4.5",
-		"@types/chroma-js": "^2.4.4",
+		"@types/chroma-js": "^2.4.5",
 		"@types/eslint": "^9.6.1",
 		"@types/gtag.js": "^0.0.20",
 		"@types/superagent": "^4.1.24",
