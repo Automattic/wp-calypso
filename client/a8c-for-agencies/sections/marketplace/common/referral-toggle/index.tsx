@@ -37,6 +37,8 @@ const ReferralToggle = () => {
 		}
 	}, [ dispatch, guideModalSeen, marketplaceType, openGuide ] );
 
+	const isUnrestrictedReferralsEnabled = isEnabled( 'a4a-unrestricted-referrals' );
+
 	if ( ! isAutomatedReferrals ) {
 		return null;
 	}
@@ -51,13 +53,13 @@ const ReferralToggle = () => {
 				ref={ wrapperRef }
 			>
 				<ToggleControl
-					disabled={ ! isPayable }
+					disabled={ ! isPayable && ! isUnrestrictedReferralsEnabled }
 					onChange={ toggleMarketplaceType }
 					checked={ marketplaceType === 'referral' }
 					id="a4a-marketplace__toggle-marketplace-type"
 					label={ translate( 'Refer products' ) }
 				/>
-				{ showPopover && (
+				{ ! isUnrestrictedReferralsEnabled && showPopover && (
 					<A4APopover
 						className="referral-toggle__notice"
 						title={ translate( 'Your payment settings require action' ) }
