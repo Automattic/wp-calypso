@@ -1,20 +1,23 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
 .signup-personalization-form {
+    .signup-personalization-form__products-checkbox {
+        .multi-checkbox label {
+            flex: 0 1 calc(32% - 16px); // 3 columns for products
+
+            @media (max-width: 782px) {
+                flex: 0 1 calc(50% - 12px); // 2 columns on tablets
+            }
+
+            @media (max-width: 600px) {
+                flex: 0 1 100%; // Full width on mobile
+            }
+        }
+    }
+
     .multi-checkbox {
         display: flex;
         flex-wrap: wrap;
         gap: 12px 24px;
     }
-
-	.signup-personalization-form__checkbox .a4a-form__section-field {
-		gap: 16px;
-
-		@include break-xlarge {
-			gap: 8px;
-		}
-	}
 
     .multi-checkbox label {
         display: flex;
@@ -23,10 +26,10 @@
         cursor: pointer;
         font-size: rem(14px);
         color: var(--color-neutral-80);
-        flex: 0 1 100%; // Full width on mobile
+        flex: 0 1 calc(50% - 12px); // 2 columns by default, accounting for gap
 
-		@include break-xlarge {
-            flex: 0 1 calc(50% - 12px); // 2 columns
+        @media (max-width: 600px) {
+            flex: 0 1 100%; // Full width on mobile
         }
     }
 

@@ -1,21 +1,15 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
 .contact-form__phone-input {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 16px;
 
-	@include break-xlarge {
-		flex-direction: row;
-		.form-phone-input__country {
-			flex: 1;
-		}
+    .form-phone-input__country {
+        flex: 1;
+    }
 
-		.form-phone-input__phone-number {
-			flex: 1;
-		}
-	}
+    .form-phone-input__phone-number {
+        flex: 1;
+    }
 }
 
 .signup-contact-form__tos  p {
