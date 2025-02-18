@@ -65,9 +65,9 @@ export async function redirectToHostingConfigIfDuplicatedViewsDisabled(
 	context: PageJSContext,
 	next: () => void
 ) {
-	const state = context.store.getState();
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( state );
-	const siteSlug = getSelectedSiteSlug( state );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const siteSlug = getSelectedSiteSlug( getState() );
 
 	if ( ! isUntangled || ! config.isEnabled( 'untangling/settings-i2' ) ) {
 		return page.redirect( `/hosting-config/${ siteSlug }` );
