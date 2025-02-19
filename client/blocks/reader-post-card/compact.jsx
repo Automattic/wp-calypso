@@ -55,7 +55,6 @@ const CompactPost = ( props ) => {
 					siteUrl={ post.feed_URL || post.site_URL }
 					followSource={ READER_DISCOVER }
 					iconSize={ 20 }
-					followLabel={ translate( 'Subscribe' ) }
 					followingLabel={ translate( 'Unsubscribe' ) }
 				/>
 			) }
