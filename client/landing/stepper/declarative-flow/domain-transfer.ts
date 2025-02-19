@@ -17,6 +17,7 @@ import {
 	AssertConditionState,
 	FlowV1,
 } from './internals/types';
+import { STEPS } from './internals/steps';
 import type { UserSelect } from '@automattic/data-stores';
 
 const domainTransfer: FlowV1 = {
@@ -26,6 +27,7 @@ const domainTransfer: FlowV1 = {
 	},
 	isSignupFlow: false,
 	initialize() {
+		// TODO: move to client/landing/stepper/declarative-flow/internals/steps.tsx ?
 		return [
 			{
 				slug: 'intro',
@@ -35,10 +37,7 @@ const domainTransfer: FlowV1 = {
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/domain-transfer-domains' ),
 			},
-			{
-				slug: 'processing',
-				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
-			},
+			STEPS.PROCESSING,
 		];
 	},
 
