@@ -133,7 +133,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/discovery-v2": false,
+		"reader/discovery-v2": true,
 		"readymade-templates/showcase": false,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
