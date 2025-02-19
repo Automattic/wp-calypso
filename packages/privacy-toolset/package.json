@@ -48,7 +48,7 @@
 		"@storybook/cli": "^7.6.19",
 		"@storybook/react": "^7.6.19",
 		"@testing-library/dom": "^10.4.0",
-		"@testing-library/jest-dom": "^6.4.5",
+		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
 		"postcss": "^8.5.1",
 		"require-from-string": "^2.0.2",

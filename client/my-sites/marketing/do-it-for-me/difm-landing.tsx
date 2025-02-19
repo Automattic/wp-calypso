@@ -77,7 +77,6 @@ const ImageSection = styled.div`
 	min-width: 540px;
 	width: 50%;
 	height: 562px;
-	padding-top: 75px;
 	display: flex;
 	align-items: center;
 	justify-content: center;

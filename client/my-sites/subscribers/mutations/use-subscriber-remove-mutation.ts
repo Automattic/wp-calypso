@@ -31,7 +31,9 @@ const useSubscriberRemoveMutation = (
 	const queryClient = useQueryClient();
 	const recordSubscriberRemoved = useRecordSubscriberRemoved();
 	const { hasManySubscribers } = useManySubsSite( siteId );
-	const subscribersCacheKey = getSubscribersCacheKey(
+
+	// Get the cache key for the current page
+	const currentPageCacheKey = getSubscribersCacheKey(
 		siteId,
 		currentPage,
 		perPage,
@@ -98,100 +100,66 @@ const useSubscriberRemoveMutation = (
 			return wasRemoved;
 		},
 		onMutate: async ( subscriber ) => {
-			await queryClient.cancelQueries( { queryKey: subscribersCacheKey } );
-			let page = currentPage;
+			// Cancel any outgoing refetches
+			await queryClient.cancelQueries( { queryKey: [ 'subscribers', siteId ] } );
 
+			// Get the current page data
 			const previousData =
-				queryClient.getQueryData< SubscriberEndpointResponse >( subscribersCacheKey );
-			const previousPages = [];
+				queryClient.getQueryData< SubscriberEndpointResponse >( currentPageCacheKey );
 
 			if ( previousData ) {
-				// This is some complicated logic to remove the subscriber from the list and shift the next page's first item into this page and so on
-				// This is done to avoid a flash of the next page's first item when the query is refetched
-				while ( page <= previousData?.pages ) {
-					const previousSubscribers =
-						queryClient.getQueryData< SubscriberEndpointResponse >( subscribersCacheKey );
+				// Update the current page data
+				const updatedData = {
+					...previousData,
+					subscribers: previousData.subscribers.filter(
+						( s ) => s.subscription_id !== subscriber.subscription_id
+					),
+					total: previousData.total - 1,
+					pages: Math.ceil( ( previousData.total - 1 ) / previousData.per_page ),
+				};
 
-					if ( previousSubscribers ) {
-						// Save previous page data for when query fails and we have to restore
-						previousPages[ page ] = previousSubscribers;
+				// Update the current page cache
+				queryClient.setQueryData( currentPageCacheKey, updatedData );
 
-						// Alter pagination data
-						const total = previousSubscribers.total - 1;
-						const pages = Math.ceil( total / previousSubscribers.per_page );
-
-						// Remove subscriber from list
-						const subscribers = previousSubscribers.subscribers.filter( ( prevSubscriber ) => {
-							return prevSubscriber.subscription_id !== subscriber.subscription_id;
-						} );
-
-						// Take the first subscriber of the next page (if we have it cached) and append it to this list.
-						// The next page will briefly show this item
-						const nextPageQueryData = queryClient.getQueryData< SubscriberEndpointResponse >(
-							getSubscribersCacheKey(
-								siteId,
-								page + 1,
-								perPage,
-								searchTerm,
-								sortTerm,
-								filterOption,
-								filters,
-								hasManySubscribers
-							)
-						);
-						if ( nextPageQueryData && nextPageQueryData.subscribers.length ) {
-							subscribers.push( nextPageQueryData.subscribers[ 0 ] );
-						}
-
-						queryClient.setQueryData( subscribersCacheKey, {
-							...previousSubscribers,
-							subscribers,
-							total,
-							pages,
-						} );
-					}
-
-					page++;
+				// If this was the last item on the page and we're not on the first page,
+				// we'll need to fetch the previous page's data
+				if ( currentPage > 1 && updatedData.subscribers.length === 0 ) {
+					const previousPageCacheKey = getSubscribersCacheKey(
+						siteId,
+						currentPage - 1,
+						perPage,
+						searchTerm,
+						sortTerm,
+						filterOption,
+						filters,
+						hasManySubscribers
+					);
+					await queryClient.invalidateQueries( { queryKey: previousPageCacheKey } );
 				}
 			}
 
+			// Handle subscriber details cache if needed
 			let previousDetailsData;
-
 			if ( invalidateDetailsCache ) {
-				const cacheKey = getSubscriberDetailsCacheKey(
+				const detailsCacheKey = getSubscriberDetailsCacheKey(
 					siteId,
 					subscriber.subscription_id,
 					subscriber.user_id,
 					getSubscriberDetailsType( subscriber.user_id )
 				);
-
-				await queryClient.cancelQueries( { queryKey: cacheKey } );
-
-				previousDetailsData = queryClient.getQueryData< Subscriber >( cacheKey );
+				await queryClient.cancelQueries( { queryKey: detailsCacheKey } );
+				previousDetailsData = queryClient.getQueryData< Subscriber >( detailsCacheKey );
 			}
 
 			return {
-				previousPages,
+				previousData,
 				previousDetailsData,
 			};
 		},
 		onError: ( error, variables, context ) => {
-			if ( context?.previousPages ) {
-				context.previousPages?.forEach( ( previousSubscribers, page ) => {
-					queryClient.setQueryData(
-						getSubscribersCacheKey(
-							siteId,
-							page,
-							perPage,
-							searchTerm,
-							sortTerm,
-							filterOption,
-							filters,
-							hasManySubscribers
-						),
-						previousSubscribers
-					);
-				} );
+			// If the mutation fails, revert the optimistic update
+			if ( context?.previousData ) {
+				queryClient.setQueryData( currentPageCacheKey, context.previousData );
 			}
 
 			if ( context?.previousDetailsData ) {
@@ -201,7 +169,6 @@ const useSubscriberRemoveMutation = (
 					context.previousDetailsData.user_id,
 					getSubscriberDetailsType( context.previousDetailsData.user_id )
 				);
-
 				queryClient.setQueryData( detailsCacheKey, context.previousDetailsData );
 			}
 		},
@@ -213,7 +180,8 @@ const useSubscriberRemoveMutation = (
 			} );
 		},
 		onSettled: ( data, error, subscriber ) => {
-			queryClient.invalidateQueries( { queryKey: subscribersCacheKey } );
+			// Invalidate all subscriber queries to ensure consistency
+			queryClient.invalidateQueries( { queryKey: [ 'subscribers', siteId ] } );
 
 			if ( invalidateDetailsCache ) {
 				const detailsCacheKey = getSubscriberDetailsCacheKey(
@@ -222,7 +190,6 @@ const useSubscriberRemoveMutation = (
 					subscriber.user_id,
 					getSubscriberDetailsType( subscriber.user_id )
 				);
-
 				queryClient.invalidateQueries( { queryKey: detailsCacheKey } );
 			}
 		},
