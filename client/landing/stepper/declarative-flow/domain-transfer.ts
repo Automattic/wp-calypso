@@ -42,17 +42,16 @@ const domainTransfer: FlowV1 = {
 		];
 	},
 
-	useAssertConditions( navigate ): AssertConditionResult {
+	useSideEffect( _currentStepSlug, navigate ) {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 
+		// TODO: use `stepsWithRequiredLogin` instead of `useSideEffect` ?
 		useEffect( () => {
 			if ( ! isLoggedIn && navigate ) {
 				navigate( 'intro' );
 			}
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ isLoggedIn ] );
-
-		return { state: AssertConditionState.SUCCESS };
 	},
 
 	useStepNavigation( _currentStepSlug, navigate ) {
