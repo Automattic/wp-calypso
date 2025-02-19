@@ -1,11 +1,9 @@
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 import { hasCheckoutVersion, ManagedContactDetails, styled } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import useCartKey from '../../use-cart-key';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
 
 // Styled component for checkbox styles
@@ -47,8 +45,6 @@ function shouldShowBusinessOption( taxInfo: ManagedContactDetails ): boolean {
 export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDetails } ) {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
-	const cartKey = useCartKey();
-	const { isLoading, isPendingUpdate } = useShoppingCart( cartKey );
 	const businessUseDetailsInForm = useSelect(
 		( select ) => select( CHECKOUT_STORE ).getBusinessUseDetails(),
 		[]
@@ -61,7 +57,7 @@ export function IsForBusinessCheckbox( { taxInfo }: { taxInfo: ManagedContactDet
 
 	// Ensure the checkbox state is always a boolean
 	const isChecked = Boolean( businessUseDetailsInForm?.is_for_business );
-	const isDisabled = formStatus !== FormStatus.READY || isLoading || isPendingUpdate;
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	// Hide checkbox if not eligible
 	if ( ! isUnitedStateWithBusinessOption || ! hasCheckoutVersion( 'business-use-tax' ) ) {
