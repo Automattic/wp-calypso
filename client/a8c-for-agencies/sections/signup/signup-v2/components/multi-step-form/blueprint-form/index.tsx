@@ -120,7 +120,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 			</FormField>
 
 			<FormField
-				label={ translate( 'What is the main goal you hope to achieve in 2025?' ) }
+				label={ translate( 'What is the main goal you hope to achieve as an agency 2025' ) }
 				error={ validationError.topYearlyGoal }
 				isRequired
 			>
