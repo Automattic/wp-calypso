@@ -1,4 +1,5 @@
-import { Context as PageJSContext } from '@automattic/calypso-router';
+import config from '@automattic/calypso-config';
+import page, { Context as PageJSContext } from '@automattic/calypso-router';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import HostingActivate from 'calypso/hosting/server-settings/hosting-activate';
@@ -21,9 +22,11 @@ export function hostingOverview( context: PageJSContext, next: () => void ) {
 }
 
 export async function hostingConfiguration( context: PageJSContext, next: () => void ) {
+	const { getState, dispatch } = context.store;
+
 	// Update the url and show the notice after a redirect
 	if ( context.query && context.query.hosting_features === 'activated' ) {
-		context.store.dispatch(
+		dispatch(
 			successNotice( i18n.translate( 'Hosting features activated successfully!' ), {
 				displayOnNextPage: true,
 			} )
@@ -35,7 +38,7 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 			removeQueryArgs( window.location.href, 'hosting_features' )
 		);
 	}
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
@@ -52,7 +55,8 @@ export async function hostingConfiguration( context: PageJSContext, next: () => 
 }
 
 export async function hostingActivate( context: PageJSContext, next: () => void ) {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 	context.primary = isUntangled ? (
 		<PanelWithSidebar>
 			<SettingsSidebar />
@@ -65,5 +69,18 @@ export async function hostingActivate( context: PageJSContext, next: () => void 
 			<HostingActivate />
 		</div>
 	);
+	next();
+}
+
+export async function redirectToServerSettingsIfDuplicatedView(
+	context: PageJSContext,
+	next: () => void
+) {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	if ( isUntangled && config.isEnabled( 'untangling/settings-i2' ) ) {
+		const siteParam = context.params.site_id;
+		return page.redirect( `/sites/settings/server/${ siteParam }` );
+	}
 	next();
 }

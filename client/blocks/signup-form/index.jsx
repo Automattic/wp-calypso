@@ -1099,7 +1099,7 @@ class SignupForm extends Component {
 	};
 
 	isHorizontal = () => {
-		return this.props.horizontal || 'videopress-account' === this.props.flowName;
+		return this.props.horizontal;
 	};
 
 	getEmailValue = () => {

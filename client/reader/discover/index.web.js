@@ -7,6 +7,7 @@ import {
 	makeLayout,
 	redirectInvalidLanguage,
 	redirectWithoutLocaleParamInFrontIfLoggedIn,
+	redirectLoggedOutToSignup,
 	render as clientRender,
 } from 'calypso/controller';
 import { setLocaleMiddleware } from 'calypso/controller/shared';
@@ -16,6 +17,7 @@ import {
 	trackPageLoad,
 	trackUpdatesLoaded,
 	trackScrollPage,
+	userHasHistory,
 } from 'calypso/reader/controller-helper';
 import { recordTrack } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -33,7 +35,6 @@ const discover = ( context, next ) => {
 	const streamKey = 'discover:recommended';
 	const mcKey = 'discover';
 	const state = context.store.getState();
-
 	const currentRoute = getCurrentRoute( state );
 	const currentQueryArgs = new URLSearchParams( getCurrentQueryArguments( state ) ).toString();
 
@@ -83,7 +84,7 @@ const discover = ( context, next ) => {
 				suppressSiteNameLink
 				isDiscoverStream
 				useCompactCards
-				showBack={ false }
+				showBack={ userHasHistory( context ) }
 				className="is-discover-stream"
 				selectedTab={ selectedTab }
 				query={ context.query }
@@ -96,43 +97,45 @@ const discover = ( context, next ) => {
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
 
+	const commonMiddleware = [
+		redirectInvalidLanguage,
+		redirectWithoutLocaleParamInFrontIfLoggedIn,
+		setLocaleMiddleware(),
+		updateLastRoute,
+		sidebar,
+		discover,
+		makeLayout,
+		clientRender,
+	];
+
 	if ( isDiscoveryV2Enabled() ) {
+		// Must be logged in to access.
+		router(
+			[
+				'/discover/add-new',
+				'/discover/reddit',
+				`/${ anyLangParam }/discover/add-new`,
+				`/${ anyLangParam }/discover/reddit`,
+			],
+			redirectLoggedOutToSignup,
+			...commonMiddleware
+		);
+
 		router(
 			[
 				'/discover',
-				'/discover/add-new',
 				'/discover/firstposts',
 				'/discover/tags',
-				'/discover/reddit',
 				'/discover/latest',
 				`/${ anyLangParam }/discover`,
-				`/${ anyLangParam }/discover/add-new`,
 				`/${ anyLangParam }/discover/firstposts`,
 				`/${ anyLangParam }/discover/tags`,
-				`/${ anyLangParam }/discover/reddit`,
 				`/${ anyLangParam }/discover/latest`,
 			],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
+			...commonMiddleware
 		);
 	} else {
 		// Original query parameter-based route for v1
-		router(
-			[ '/discover', `/${ anyLangParam }/discover` ],
-			redirectInvalidLanguage,
-			redirectWithoutLocaleParamInFrontIfLoggedIn,
-			setLocaleMiddleware(),
-			updateLastRoute,
-			sidebar,
-			discover,
-			makeLayout,
-			clientRender
-		);
+		router( [ '/discover', `/${ anyLangParam }/discover` ], ...commonMiddleware );
 	}
 }

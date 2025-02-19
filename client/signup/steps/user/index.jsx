@@ -29,7 +29,7 @@ import {
 import { login } from 'calypso/lib/paths';
 import flows from 'calypso/signup/config/flows';
 import GravatarStepWrapper from 'calypso/signup/gravatar-step-wrapper';
-import { isP2Flow, isVideoPressFlow } from 'calypso/signup/is-flow';
+import { isP2Flow } from 'calypso/signup/is-flow';
 import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -39,7 +39,6 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 } from 'calypso/signup/utils';
-import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { loginSocialUser } from 'calypso/state/login/actions';
@@ -74,10 +73,7 @@ function getRedirectToAfterLoginUrl( {
 	) {
 		return initialContext.query.oauth2_redirect;
 	}
-	if (
-		initialContext?.canonicalPath?.startsWith( '/start/account' ) ||
-		initialContext?.canonicalPath?.startsWith( '/start/videopress-account' )
-	) {
+	if ( initialContext?.canonicalPath?.startsWith( '/start/account' ) ) {
 		return initialContext.query.redirect_to;
 	}
 
@@ -264,17 +260,6 @@ export class UserStep extends Component {
 					}
 				);
 			}
-		} else if ( 'videopress-account' === flowName ) {
-			subHeaderText = translate(
-				"First, you'll need a WordPress.com account. Already have one? {{a}}Log in{{/a}}",
-				{
-					components: {
-						a: <a href={ loginUrl } />,
-					},
-					comment:
-						'Link displayed on the VideoPress signup page for users to log in with a WordPress.com account',
-				}
-			);
 		} else if ( 1 === getFlowSteps( flowName, userLoggedIn ).length ) {
 			// Displays specific sub header if users only want to create an account, without a site
 			subHeaderText = translate( 'Welcome to the WordPress.com community.' );
@@ -587,10 +572,6 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
-		if ( isVideoPressFlow( flowName ) ) {
-			return translate( 'Continue' );
-		}
-
 		if ( isWCCOM ) {
 			return translate( 'Get started' );
 		}
@@ -656,20 +637,6 @@ export class UserStep extends Component {
 				/>
 				<div id="g-recaptcha"></div>
 			</>
-		);
-	}
-
-	renderVideoPressSignupStep() {
-		return (
-			<VideoPressStepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.translate( 'Let’s get you signed up' ) }
-				subHeaderText={ this.getSubHeaderText() }
-			>
-				{ this.renderSignupForm() }
-			</VideoPressStepWrapper>
 		);
 	}
 
@@ -745,10 +712,6 @@ export class UserStep extends Component {
 
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
-		}
-
-		if ( isVideoPressFlow( this.props.flowName ) ) {
-			return this.renderVideoPressSignupStep();
 		}
 
 		if ( isGravatarOAuth2Client( this.props.oauth2Client ) && ! this.props.userLoggedIn ) {

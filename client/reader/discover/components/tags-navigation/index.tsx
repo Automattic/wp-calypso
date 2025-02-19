@@ -5,6 +5,8 @@ import ScrollableHorizontalNavigation from 'calypso/components/scrollable-horizo
 import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import wpcom from 'calypso/lib/wp';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { useDispatch } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 interface Tag {
 	title: string;
@@ -56,15 +58,17 @@ export const useRecommendedTags = (): Tag[] => {
 
 const DiscoverTagsNavigation = ( { selectedTag, width, onTagSelect }: Props ) => {
 	const recommendedTags = useRecommendedTags();
+	const dispatch = useDispatch();
 
-	const recordTabClick = () => {
-		recordAction( 'click_discover_tab' );
-		recordGaEvent( 'Clicked Discover Tab' );
+	const recordTabClick = ( tab: string ) => {
+		recordAction( 'click_discover_tag' );
+		recordGaEvent( 'Clicked Discover Tag' );
+		dispatch( recordReaderTracksEvent( 'calypso_reader_discover_tag_tab_clicked', { tag: tab } ) );
 	};
 
 	const menuTabClick = ( tab: string ) => {
 		onTagSelect( tab );
-		recordTabClick();
+		recordTabClick( tab );
 	};
 
 	return (

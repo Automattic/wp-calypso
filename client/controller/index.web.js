@@ -312,13 +312,14 @@ export function redirectIfJetpackNonAtomic( context, next ) {
  * @returns {void}
  */
 export async function redirectToHostingPromoIfNotAtomic( context, next ) {
-	const state = context.store.getState();
+	const { getState, dispatch } = context.store;
+	const state = getState();
 	const site = getSelectedSite( state );
 	const isAtomicSite = !! site?.is_wpcom_atomic || !! site?.is_wpcom_staging_site;
 
 	if ( ! isAtomicSite || site.plan?.expired ) {
 		// Keep the user within the Settings tab
-		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+		const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 		if ( isUntangled ) {
 			return page.redirect( '/sites/settings/site/' + context.params.site_id );
 		}
@@ -400,10 +401,11 @@ export const ssrSetupLocale = ( _context, next ) => {
 };
 
 export const redirectIfDuplicatedView = ( wpAdminPath ) => async ( context, next ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isE2ETest() || isUntangled ) {
-		const state = context.store.getState();
+		const state = getState();
 		const siteId = getSelectedSiteId( state );
 		const wpAdminUrl = getSiteAdminUrl( state, siteId, wpAdminPath );
 		if ( wpAdminUrl ) {

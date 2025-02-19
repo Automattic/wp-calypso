@@ -6,7 +6,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 import { MarketplaceTypeContext } from '../../context';
 import useProductAndPlans from '../../hooks/use-product-and-plans';
-import usePressableOwnershipType from '../../hosting-overview/hooks/use-pressable-ownership-type';
+import usePressableOwnershipType from '../../hosting-overview-v3/hooks/use-pressable-ownership-type';
 import useExistingPressablePlan from '../hooks/use-existing-pressable-plan';
 import PlanSelectionDetails from './details';
 import PlanSelectionFilter from './filter';

@@ -11,6 +11,7 @@ export interface MinimumSite {
 	launch_status?: string;
 	user_interactions?: string[];
 	is_wpcom_staging_site?: boolean;
+	site_owner?: number;
 	options?: {
 		wpcom_production_blog_id?: number;
 		wpcom_staging_blog_ids?: number[];

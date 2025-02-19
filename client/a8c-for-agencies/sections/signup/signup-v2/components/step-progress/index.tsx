@@ -1,3 +1,4 @@
+import { ProgressBar } from '@automattic/components';
 import clsx from 'clsx';
 
 import './style.scss';
@@ -5,7 +6,7 @@ import './style.scss';
 type Step = {
 	label: string;
 	isActive: boolean;
-	isComplete: boolean;
+	value?: number;
 };
 
 type Props = {
@@ -22,11 +23,10 @@ const StepProgress = ( { steps }: Props ) => {
 							key={ step.label }
 							className={ clsx( 'step-progress__step', {
 								'is-active': step.isActive,
-								'is-complete': step.isComplete,
 							} ) }
 						>
-							<div className="step-progress__step-indicator" />
 							<span className="step-progress__step-label">{ step.label }</span>
+							<ProgressBar value={ step.value ?? 0 } total={ 100 } />
 						</div>
 					) ) }
 				</div>
