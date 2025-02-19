@@ -159,8 +159,11 @@ function formatCurrency(
 	const validCurrency = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( validCurrency );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
-
-	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
+	const numberAsFloat = prepareNumberForFormatting(
+		number,
+		currencyPrecision ?? 0,
+		options?.isSmallestUnit
+	);
 	const formatter = getFormatter( numberAsFloat, validCurrency, options );
 	const parts = formatter.formatToParts( numberAsFloat );
 
@@ -225,8 +228,11 @@ function getCurrencyObject(
 	const validCurrency = getValidCurrency( code );
 	const currencyOverride = getCurrencyOverride( validCurrency );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
-
-	const numberAsFloat = prepareNumberForFormatting( number, currencyPrecision ?? 0, options );
+	const numberAsFloat = prepareNumberForFormatting(
+		number,
+		currencyPrecision ?? 0,
+		options?.isSmallestUnit
+	);
 	const formatter = getFormatter( numberAsFloat, validCurrency, options );
 	const parts = formatter.formatToParts( numberAsFloat );
 
@@ -285,34 +291,37 @@ function getCurrencyObject(
 	};
 }
 
+function scaleNumberForPrecision( number: number, currencyPrecision: number ): number {
+	const scale = Math.pow( 10, currencyPrecision );
+	return Math.round( number * scale ) / scale;
+}
+
 function prepareNumberForFormatting(
 	number: number,
 	// currencyPrecision here must be the precision of the currency, regardless
 	// of what precision is requested for display!
 	currencyPrecision: number,
-	options: CurrencyObjectOptions
+	isSmallestUnit?: boolean
 ): number {
 	if ( isNaN( number ) ) {
 		// eslint-disable-next-line no-console
 		console.warn( 'formatCurrency was called with NaN' );
-		number = 0;
+		return 0;
 	}
 
-	if ( options.isSmallestUnit ) {
+	if ( isSmallestUnit ) {
 		if ( ! Number.isInteger( number ) ) {
 			// eslint-disable-next-line no-console
 			console.warn(
 				'formatCurrency was called with isSmallestUnit and a float which will be rounded',
 				number
 			);
-			number = Math.round( number );
 		}
-		number = number / 10 ** currencyPrecision;
+		const smallestUnitDivisor = 10 ** currencyPrecision;
+		return scaleNumberForPrecision( Math.round( number ) / smallestUnitDivisor, currencyPrecision );
 	}
 
-	const scale = Math.pow( 10, currencyPrecision );
-
-	return Math.round( number * scale ) / scale;
+	return scaleNumberForPrecision( number, currencyPrecision );
 }
 
 export default formatCurrency;
