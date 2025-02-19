@@ -1,5 +1,6 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
+import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
@@ -31,6 +32,7 @@ const CompactPost = ( props ) => {
 	} = props;
 
 	const isDiscoverPage = getIsDiscoverPage();
+	const translate = useTranslate();
 
 	const isSmallScreen = useBreakpoint( '<660px' );
 	const [ hasExcerpt, setHasExcerpt ] = useState( true );
@@ -53,6 +55,7 @@ const CompactPost = ( props ) => {
 					siteUrl={ post.feed_URL || post.site_URL }
 					followSource={ READER_DISCOVER }
 					iconSize={ 20 }
+					followingLabel={ translate( 'Unsubscribe' ) }
 				/>
 			) }
 			<ReaderPostEllipsisMenu

@@ -347,6 +347,7 @@ class ReaderPostEllipsisMenu extends Component {
 						followSource={ followSource }
 						iconSize={ 20 }
 						onFollowToggle={ this.openSuggestedFollowsModal }
+						followingLabel={ translate( 'Unsubscribe' ) }
 					/>
 				) }
 
