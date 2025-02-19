@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { usePluginAutoInstallation } from './use-plugin-auto-installation';
 import { useSiteMigrationKey } from './use-site-migration-key';
 import { useSiteTransfer } from './use-site-transfer';
 
@@ -72,9 +73,15 @@ export const usePrepareSiteForMigration = (
 	from?: string,
 	options: Options = {}
 ) => {
+	const plugin = { name: 'wpcom-migration/wpcom_migration', slug: 'wpcom-migration' };
+
 	const siteTransferState = useSiteTransfer( siteId, {
 		retry: options.retry ?? 0,
 		from,
+	} );
+
+	const pluginInstallationState = usePluginAutoInstallation( plugin, siteId, {
+		enabled: Boolean( siteTransferState.completed ),
 	} );
 
 	const {
@@ -82,17 +89,18 @@ export const usePrepareSiteForMigration = (
 		error: migrationKeyError,
 		status: migrationKeyStatus,
 	} = useSiteMigrationKey( siteId, {
-		enabled: Boolean( siteTransferState.completed ),
+		enabled: Boolean( pluginInstallationState.completed ),
 		retry: options.retry ?? 0,
 	} );
 
-	const completed = siteTransferState.completed;
-	const error = siteTransferState.error || migrationKeyError;
-	const criticalError = siteTransferState.error;
+	const completed = siteTransferState.completed && pluginInstallationState.completed;
+	const error = siteTransferState.error || pluginInstallationState.error || migrationKeyError;
+	const criticalError = siteTransferState.error || pluginInstallationState.error;
 
 	const detailedStatus = {
 		siteTransfer: siteTransferState.status,
-		migrationKey: ! siteTransferState.completed ? 'idle' : migrationKeyStatus,
+		pluginInstallation: pluginInstallationState.status,
+		migrationKey: ! pluginInstallationState.completed ? 'idle' : migrationKeyStatus,
 	};
 
 	useLogMigration( completed, siteTransferState.status, criticalError, siteId );
