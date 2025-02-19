@@ -1,9 +1,9 @@
+import page from '@automattic/calypso-router';
 import { DomainData } from '@automattic/data-stores';
 import { Icon } from '@wordpress/components';
 import { lock } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { navigate } from 'calypso/lib/navigate'; // eslint-disable-line no-restricted-imports
 
 interface DomainsTableSslCellProps {
 	domainManagementLink: string;
@@ -45,7 +45,7 @@ export default function DomainsTableSslCell( {
 				className="domains-table-row__ssl-status-button"
 				onClick={ ( event ) => {
 					event.stopPropagation();
-					navigate( `${ domainManagementLink }?ssl-open=true` );
+					page.show( `${ domainManagementLink }?ssl-open=true` );
 				} }
 			>
 				{ getSslStatusText() }
