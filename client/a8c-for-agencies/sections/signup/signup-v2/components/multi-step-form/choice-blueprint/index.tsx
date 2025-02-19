@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { Icon, arrowLeft } from '@wordpress/icons';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -27,12 +27,16 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) =>
 			) }
 		>
 			<FormFooter>
-				<div>
-					<button className="signup-multi-step-form__back-button" onClick={ goBack }>
-						<Icon icon={ arrowLeft } size={ 18 } />
-						{ translate( 'Back' ) }
-					</button>
-				</div>
+				<Button
+					className="signup-multi-step-form__back-button"
+					variant="tertiary"
+					onClick={ goBack }
+					icon={ arrowLeft }
+					iconSize={ 18 }
+				>
+					{ translate( 'Back' ) }
+				</Button>
+
 				<div>
 					<Button
 						className="choice-blueprint__cancel-button"
