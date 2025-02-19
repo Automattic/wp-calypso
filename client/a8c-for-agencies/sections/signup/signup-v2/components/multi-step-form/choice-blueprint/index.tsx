@@ -22,15 +22,17 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) =>
 			title={ preventWidows(
 				translate( 'Grow your business with a free personalized blueprint' )
 			) }
-			description={ translate(
-				`By answering a few simple questions, we'll provide tips on maximizing your agency's impact.`
-			) }
 		>
 			<div className="choice-blueprint__content">
+				<p>
+					{ translate(
+						"Answer a few questions about your agency's goals for the year, and you'll receive a custom program blueprint tailored to your unique objectives. The guide will include:"
+					) }
+				</p>
 				<ul className="choice-blueprint__content-list">
 					<li>
 						{ translate(
-							'Partner strategies that are specifically aligned with your agency’s goals to help you achieve them more efficiently through the Automattic for Agencies Program.'
+							"Partner strategies that are specifically aligned with your agency's goals to help you achieve them more efficiently through the Automattic for Agencies Program."
 						) }
 					</li>
 					<li>
@@ -45,9 +47,7 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) =>
 					</li>
 				</ul>
 
-				<p className="choice-blueprint__content-footer">
-					{ translate( 'The survey will take less than a minute.' ) }
-				</p>
+				<p>{ translate( 'The survey will take less than a minute.' ) }</p>
 			</div>
 			<FormFooter>
 				<Button

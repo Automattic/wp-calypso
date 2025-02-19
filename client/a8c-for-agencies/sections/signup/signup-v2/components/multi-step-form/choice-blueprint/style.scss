@@ -15,15 +15,20 @@
 }
 
 .choice-blueprint__content-list {
-	margin: 0 16px 16px;
-
-	li {
-		margin-block-end: 8px;
-	}
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0 16px 0;
 }
 
-.choice-blueprint__content-list li,
-.choice-blueprint__content-footer {
+.choice-blueprint__content {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.choice-blueprint__content p,
+.choice-blueprint__content-list li {
 	@include body-large;
-	color: var(--color-neutral-60);
+	color: var(--color-text);
 }
