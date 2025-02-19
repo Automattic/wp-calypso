@@ -2,12 +2,13 @@
 @import '@wordpress/base-styles/breakpoints';
 
 .discover-reddit {
+	padding: 0 10px;
 
 	&__instructions {
 		border: 1px solid #e2e2e2;
 		border-radius: 4px;
 		padding: 30px 15px;
-		margin: 100px auto 0;
+		margin: 50px auto 0;
 
 		@include break-mobile {
 			padding: 30px 45px;
@@ -36,6 +37,24 @@
 		}
 
 
+	}
+
+	.subscriptions-add-sites__form--container {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+	}
+
+	.subscriptions-add-sites__form-field {
+		flex: 1;
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	.components-text-control__input {
+		height: 40px;
 	}
 
 	.is-disabled {
