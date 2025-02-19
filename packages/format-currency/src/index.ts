@@ -47,16 +47,16 @@ function getValidCurrency( code: string ): string {
 
 function getLocaleFromBrowser() {
 	if ( typeof window === 'undefined' ) {
-		return FALLBACK_LOCALE;
+		return;
 	}
 	if ( window.navigator?.languages?.length > 0 ) {
 		return window.navigator.languages[ 0 ];
 	}
-	return window.navigator?.language ?? FALLBACK_LOCALE;
+	return window.navigator?.language;
 }
 
 function getLocaleToUse( options: CurrencyObjectOptions ): string {
-	return options.locale ?? defaultLocale ?? getLocaleFromBrowser();
+	return options.locale ?? defaultLocale ?? getLocaleFromBrowser() ?? FALLBACK_LOCALE;
 }
 
 /**
