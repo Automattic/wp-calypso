@@ -26,10 +26,6 @@
 	}
 
 	.step-progress__step.is-active {
-		.step-progress__step-indicator {
-			background-color: var(--color-primary-50);
-		}
-
 		.step-progress__step-label {
 			color: var(--color-neutral-80);
 			font-weight: 600;

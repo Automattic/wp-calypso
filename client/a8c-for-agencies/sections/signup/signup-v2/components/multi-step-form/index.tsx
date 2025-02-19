@@ -20,6 +20,35 @@ import PersonalizationForm from './personalization';
 
 import './style.scss';
 
+type PersonalizationStepProgress = {
+	[ key: number ]: number;
+};
+
+type Step = {
+	label: string;
+	isActive: boolean;
+	value: number;
+};
+
+const personalizationStepProgress: PersonalizationStepProgress = {
+	3: 50,
+	4: 75,
+	5: 100,
+	6: 100,
+};
+
+const getPersonalizationProgress = ( currentStep: number ): number => {
+	return personalizationStepProgress[ currentStep ] ?? 0;
+};
+
+const getSignupProgress = ( step: number ): number => {
+	return step === 1 ? 50 : 100;
+};
+
+const getFinishSurveyProgress = ( step: number ): number => {
+	return step === 6 ? 100 : 0;
+};
+
 const MultiStepForm = () => {
 	const notificationId = 'a4a-agency-signup-form';
 	const translate = useTranslate();
@@ -30,17 +59,21 @@ const MultiStepForm = () => {
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {} );
 	const [ blueprintRequested, setBlueprintRequested ] = useState( false );
 
-	const steps = [
-		{ label: translate( 'Sign up' ), isActive: currentStep > 0, value: ( currentStep - 1 ) * 50 },
+	const steps: Step[] = [
+		{
+			label: translate( 'Sign up' ),
+			isActive: currentStep > 0,
+			value: getSignupProgress( currentStep ),
+		},
 		{
 			label: translate( 'Personalize' ),
 			isActive: currentStep > 3,
-			value: ( currentStep - 4 ) * 50,
+			value: getPersonalizationProgress( currentStep ),
 		},
 		{
 			label: translate( 'Finish survey' ),
 			isActive: currentStep > 5,
-			value: ( currentStep - 6 ) * 100,
+			value: getFinishSurveyProgress( currentStep ),
 		},
 	];
 
