@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { Icon, Button, ButtonGroup } from '@wordpress/components';
 import { chartBar, trendingUp } from '@wordpress/icons';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Legend from 'calypso/components/chart/legend';
 import IntervalDropdown from 'calypso/components/stats-interval-dropdown';
@@ -22,6 +21,8 @@ const ChartHeader = ( {
 	availableLegend,
 	onLegendClick,
 	charts,
+	chartType,
+	onChartTypeChange,
 } ) => {
 	const intervals = useIntervals( siteId );
 	const dispatch = useDispatch();
@@ -32,8 +33,6 @@ const ChartHeader = ( {
 	} );
 
 	const isChartLibraryEnabled = config.isEnabled( 'stats/chart-library' );
-
-	const [ chartType, setChartType ] = useState( 'line' );
 
 	const onGatedHandler = ( events, source, statType ) => {
 		// Stop the popup from showing for Jetpack sites.
@@ -46,8 +45,7 @@ const ChartHeader = ( {
 	};
 
 	const handleChartTypeChange = ( newType ) => {
-		setChartType( newType );
-		//TODO: add tracks event for chart type change
+		onChartTypeChange( newType );
 	};
 
 	return (
@@ -96,6 +94,8 @@ ChartHeader.propTypes = {
 	availableLegend: PropTypes.arrayOf( PropTypes.string ),
 	onLegendClick: PropTypes.func,
 	charts: PropTypes.array,
+	chartType: PropTypes.oneOf( [ 'line', 'bar' ] ).isRequired,
+	onChartTypeChange: PropTypes.func.isRequired,
 };
 
 export default ChartHeader;
