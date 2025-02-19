@@ -9,9 +9,10 @@ import './style.scss';
 type Props = {
 	onContinue: () => void;
 	onSkip: () => void;
+	goBack: () => void;
 };
 
-const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
+const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -42,6 +43,14 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 					{ translate( 'Not right now' ) }
 				</Button>
 			</FormFooter>
+			<Button
+				className="choice-blueprint__go-back-button"
+				variant="secondary"
+				onClick={ goBack }
+				__next40pxDefaultSize
+			>
+				{ translate( 'Go back' ) }
+			</Button>
 		</Form>
 	);
 };

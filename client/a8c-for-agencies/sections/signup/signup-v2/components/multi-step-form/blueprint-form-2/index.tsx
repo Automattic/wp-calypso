@@ -12,6 +12,8 @@ import { AgencyDetailsSignupPayload } from '../../../../types';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	goBack: () => void;
 };
 
 const BlueprintFormRadio = ( {
@@ -40,12 +42,12 @@ const BlueprintFormRadio = ( {
 	);
 };
 
-const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
+const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBack } ) => {
 	const translate = useTranslate();
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		workWithClients: '',
-		workWithClientsOther: '',
-		approachAndChallenges: '',
+		workWithClients: initialFormData.workWithClients || '',
+		workWithClientsOther: initialFormData.workWithClientsOther || '',
+		approachAndChallenges: initialFormData.approachAndChallenges || '',
 	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -115,6 +117,9 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue } ) => {
 			</FormField>
 
 			<FormFooter>
+				<Button variant="secondary" onClick={ goBack } __next40pxDefaultSize>
+					{ translate( 'Go back' ) }
+				</Button>
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
 					{ translate( 'Continue' ) }
 				</Button>

@@ -18,19 +18,21 @@ import './style.scss';
 
 interface Props {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	goBack: () => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 }
 
-export default function PersonalizationForm( { onContinue }: Props ) {
+export default function PersonalizationForm( { onContinue, goBack, initialFormData }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
 	const { validate, validationError, updateValidationError } = usePersonalizationFormValidation();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		country: '',
-		userType: 'agency_owner',
-		managedSites: '1-5',
-		servicesOffered: [],
-		productsOffered: [],
+		country: initialFormData.country || '',
+		userType: initialFormData.userType || 'agency_owner',
+		managedSites: initialFormData.managedSites || '1-5',
+		servicesOffered: initialFormData.servicesOffered || [],
+		productsOffered: initialFormData.productsOffered || [],
 	} );
 
 	const handleInputChange =
@@ -189,6 +191,9 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						</FormFieldset>
 
 						<FormFooter>
+							<Button __next40pxDefaultSize variant="secondary" onClick={ goBack }>
+								{ translate( 'Go back' ) }
+							</Button>
 							<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
 								{ translate( 'Continue' ) }
 							</Button>

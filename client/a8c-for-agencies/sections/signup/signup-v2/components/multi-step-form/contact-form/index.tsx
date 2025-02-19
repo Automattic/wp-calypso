@@ -17,9 +17,10 @@ import './style.scss';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 };
 
-const SignupContactForm = ( { onContinue }: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 	const translate = useTranslate();
 	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
@@ -29,12 +30,12 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	const noCountryList = countriesList.length === 0;
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		firstName: '',
-		lastName: '',
-		email: '',
-		agencyName: '',
-		agencyUrl: '',
-		phoneNumber: '',
+		firstName: initialFormData.firstName || '',
+		lastName: initialFormData.lastName || '',
+		email: initialFormData.email || '',
+		agencyName: initialFormData.agencyName || '',
+		agencyUrl: initialFormData.agencyUrl || '',
+		phoneNumber: initialFormData.phoneNumber || '',
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -146,6 +147,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				phoneInputProps={ {
 					placeholder: translate( 'Phone number' ),
 				} }
+				initialCountryCode="US"
 			/>
 			<TosModal
 				show={ showTosModal }
