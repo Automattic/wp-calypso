@@ -141,7 +141,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 				</Button>
 
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
-					{ translate( 'Continue' ) }
+					{ translate( 'Finish' ) }
 				</Button>
 			</FormFooter>
 		</Form>
