@@ -9,12 +9,13 @@ const NotFoundSiteSubscriptions = () => {
 	return (
 		<div className="not-found-site-subscriptions">
 			{ searchTerm && searchTerm.length
-				? /* translators: the string is the exact text that the user entered into the search input in site subscriptions manager in Reader */
-				  translate( 'No results found for “%s”.', {
-						args: searchTerm,
-						comment:
-							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
-				  } )
+				? translate(
+						"You're not subscribed to any matching sites. Here are some other sites related to your search.",
+						{
+							comment:
+								"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
+						}
+				  )
 				: translate( 'No results found.', {
 						comment:
 							"When users type something into the search field of their site subscriptions manager in Reader, they'll see this message if their search doesn't find any of the websites they're currently subscribed to.",
