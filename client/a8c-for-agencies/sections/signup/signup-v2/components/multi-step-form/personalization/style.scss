@@ -8,11 +8,15 @@
         gap: 12px 24px;
     }
 
-	.signup-personalization-form__checkbox .a4a-form__section-field {
-		gap: 16px;
+	.signup-personalization-form__checkbox {
+		padding-block: 8px;
 
-		@include break-xlarge {
-			gap: 8px;
+		.a4a-form__section-field {
+			gap: 16px;
+
+			@include break-xlarge {
+				gap: 8px;
+			}
 		}
 	}
 

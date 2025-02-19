@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -10,6 +11,8 @@ import { AgencyDetailsSignupPayload } from '../../../../types';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
+	goBack: () => void;
 };
 
 const BlueprintFormRadio = ( {
@@ -38,11 +41,11 @@ const BlueprintFormRadio = ( {
 	);
 };
 
-const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
+const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack } ) => {
 	const translate = useTranslate();
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		topPartneringGoal: '',
-		topYearlyGoal: '',
+		topPartneringGoal: initialFormData.topPartneringGoal || '',
+		topYearlyGoal: initialFormData.topYearlyGoal || '',
 	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -122,6 +125,16 @@ const BlueprintForm: React.FC< Props > = ( { onContinue } ) => {
 			</FormField>
 
 			<FormFooter>
+				<Button
+					className="signup-multi-step-form__back-button"
+					variant="tertiary"
+					onClick={ goBack }
+					icon={ arrowLeft }
+					iconSize={ 18 }
+				>
+					{ translate( 'Back' ) }
+				</Button>
+
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
 					{ translate( 'Continue' ) }
 				</Button>

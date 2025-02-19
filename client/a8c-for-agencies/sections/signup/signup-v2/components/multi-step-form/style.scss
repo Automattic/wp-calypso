@@ -98,6 +98,10 @@
 		@include a4a-font-heading-sm($font-size: rem(14px));
 	}
 
+	.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
+		color: var(--color-text);
+	}
+
 	@media (prefers-color-scheme: dark) {
 		.a4a-form__heading .a4a-form__heading-title,
 		.a4a-form__heading .a4a-form__heading-description,
@@ -106,7 +110,9 @@
 		.signup-personalization-form .multi-checkbox label,
 		.form-phone-input label,
 		.form-radio__label,
-		.components-form-token-field__suggestion {
+		.components-form-token-field__suggestion,
+		.components-button.is-tertiary,
+		.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
 			color: var(--color-text-inverted);
 		}
 
@@ -137,4 +143,3 @@
 		}
 	}
 }
-
