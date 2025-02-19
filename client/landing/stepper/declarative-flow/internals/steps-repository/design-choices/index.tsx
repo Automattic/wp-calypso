@@ -16,7 +16,7 @@ import kebabCase from '../../../../utils/kebabCase';
 import { useBigSkyBeforePlans } from '../../../helpers/use-bigsky-before-plans-experiment';
 import bigSkyBg from './big-sky-bg.png';
 import bigSkyFg from './big-sky-fg.png';
-import hiBigSky from './big-sky-no-text-small.png';
+import hiBigSky from './big-sky-no-text.svg';
 import DesignChoice from './design-choice';
 import GoalsFirstDesignChoice from './goals-first-design-choice';
 import themeChoiceFg from './theme-choice-fg.png';
@@ -167,7 +167,7 @@ const DesignChoicesStep: Step = ( { navigation, flow, stepName } ) => {
 									description={ translate(
 										'Tell our AI what you need, and watch it come to life.'
 									) }
-									imageSrc={ hiBigSky }
+									bgImageSrc={ hiBigSky }
 									destination="launch-big-sky"
 									onSelect={ ( destination ) => {
 										recordTracksEvent( 'calypso_big_sky_choose', {
