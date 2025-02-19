@@ -40,7 +40,7 @@ const MultiStepForm = () => {
 		{
 			label: translate( 'Finish survey' ),
 			isActive: currentStep > 5,
-			value: ( currentStep - 5 ) * 100,
+			value: ( currentStep - 6 ) * 100,
 		},
 	];
 
