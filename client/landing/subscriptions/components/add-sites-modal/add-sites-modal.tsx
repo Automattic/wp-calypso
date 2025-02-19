@@ -1,6 +1,7 @@
 import { Modal } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
+import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL } from 'calypso/landing/subscriptions/tracks/constants';
 import './styles.scss';
 
 type AddSitesModalProps = {
@@ -31,7 +32,10 @@ const AddSitesModal = ( { showModal, onClose, onAddFinished }: AddSitesModalProp
 				{ translate( 'Subscribe to sites, newsletters, and RSS feeds.' ) }
 			</p>
 
-			<AddSitesForm onAddFinished={ onAddFinished } />
+			<AddSitesForm
+				onAddFinished={ onAddFinished }
+				source={ SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL }
+			/>
 		</Modal>
 	);
 };

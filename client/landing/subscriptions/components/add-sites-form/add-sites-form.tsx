@@ -8,13 +8,14 @@ import { useCallback, useState } from 'react';
 import ReaderJoinConversationDialog from 'calypso/blocks/reader-join-conversation/dialog';
 import { isValidUrl } from '../../helpers';
 import { useAddSitesModalNotices } from '../../hooks';
-import { SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL, useRecordSiteSubscribed } from '../../tracks';
+import { useRecordSiteSubscribed } from '../../tracks';
 import './styles.scss';
 
 type AddSitesFormProps = {
 	onAddFinished?: () => void;
 	placeholder?: string;
 	buttonText?: string;
+	source: string;
 };
 
 type SubscriptionError = {
@@ -26,6 +27,7 @@ const AddSitesForm = ( {
 	onAddFinished = () => {},
 	placeholder,
 	buttonText,
+	source,
 }: AddSitesFormProps ) => {
 	const translate = useTranslate();
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -92,7 +94,7 @@ const AddSitesForm = ( {
 									recordSiteSubscribed( {
 										blog_id: data?.subscription?.blog_ID,
 										url: inputValue,
-										source: SOURCE_SUBSCRIPTIONS_ADD_SITES_MODAL,
+										source,
 									} );
 								}
 
@@ -125,6 +127,7 @@ const AddSitesForm = ( {
 			showSuccessNotice,
 			showWarningNotice,
 			subscribe,
+			source,
 		]
 	);
 
