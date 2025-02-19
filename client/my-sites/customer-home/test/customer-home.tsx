@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import apiFetch from '@wordpress/api-fetch';
 import nock from 'nock';
 import React, { act } from 'react';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHome from '../main';
@@ -12,11 +13,16 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 jest.mock( '@wordpress/api-fetch' );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = () => 'development';
-	config.isEnabled = ( property: string ) => property === 'home/launchpad-first';
-	return config;
-} );
+let mockUseExperimentResult = [ false, true ];
+
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn( ( slug ) =>
+		slug === 'calypso_signup_onboarding_goals_first_flow_holdout_v2_20250131'
+			? Promise.resolve( { variationName: 'treatment_cumulative' } )
+			: Promise.reject( new Error( `Unmocked experiment slug: ${ slug }` ) )
+	),
+	useExperiment: jest.fn( () => mockUseExperimentResult ),
+} ) );
 
 jest.mock( '../components/home-content', () => () => (
 	<div data-testid="home-content">Home Content</div>
@@ -41,8 +47,13 @@ function makeTestSite( site: Partial< SiteDetails > = {} ): SiteDetails {
 		URL: 'https://example.com',
 		domain: 'example.com',
 		launch_status: 'launched',
-		options: { site_creation_flow: 'onboarding', launchpad_screen: false, ...site.options },
 		...site,
+		options: {
+			site_creation_flow: 'onboarding',
+			launchpad_screen: false,
+			created_at: '2025-02-17T00:00:00+00:00',
+			...site.options,
+		},
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} as any; // This partial site object should be good enough for testing purposes
 }
@@ -56,16 +67,16 @@ describe( 'CustomerHome', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'should show HomeContent for launched site', () => {
+	it( 'should show HomeContent for launched site', async () => {
 		const testSite = makeTestSite( { launch_status: 'launched' } );
 
 		renderWithProvider( <CustomerHome site={ testSite } /> );
 
-		expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument();
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should show HomeContent for unlaunched site when launchpad is skipped', () => {
+	it( 'should show HomeContent for unlaunched site when launchpad is skipped', async () => {
 		const testSite = makeTestSite( {
 			launch_status: 'unlaunched',
 			options: { launchpad_screen: 'skipped' },
@@ -73,7 +84,7 @@ describe( 'CustomerHome', () => {
 
 		renderWithProvider( <CustomerHome site={ testSite } /> );
 
-		expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument();
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
 		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 
@@ -85,7 +96,7 @@ describe( 'CustomerHome', () => {
 
 		renderWithProvider( <CustomerHome site={ testSite } /> );
 
-		expect( screen.getByTestId( 'launchpad-first' ) ).toBeInTheDocument();
+		await waitFor( () => expect( screen.getByTestId( 'launchpad-first' ) ).toBeInTheDocument() );
 		expect( screen.queryByTestId( 'home-content' ) ).not.toBeInTheDocument();
 
 		// Click the close button
@@ -150,5 +161,34 @@ describe( 'CustomerHome', () => {
 		act( () => launchSiteButton.click() );
 
 		expect( await screen.findByText( 'Congrats, your site is live!' ) ).toBeInTheDocument();
+	} );
+
+	it( 'shows home content when site would be eligible to show launchpad, but user is in control group', async () => {
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
+		} );
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( { variationName: 'control' } );
+
+		renderWithProvider( <CustomerHome site={ testSite } /> );
+
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
+		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows home content when site would be eligible to show launchpad, but user is in treatment_frozen group', async () => {
+		mockUseExperimentResult = [ false, false ];
+		const testSite = makeTestSite( {
+			launch_status: 'unlaunched',
+			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
+		} );
+		( loadExperimentAssignment as jest.Mock ).mockResolvedValue( {
+			variationName: 'treatment_frozen',
+		} );
+
+		renderWithProvider( <CustomerHome site={ testSite } /> );
+
+		await waitFor( () => expect( screen.getByTestId( 'home-content' ) ).toBeInTheDocument() );
+		expect( screen.queryByTestId( 'launchpad-first' ) ).not.toBeInTheDocument();
 	} );
 } );

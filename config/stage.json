@@ -48,7 +48,6 @@
 		"global-styles/on-personal-plan": true,
 		"help": true,
 		"help/gpt-response": true,
-		"home/launchpad-first": false,
 		"hosting-server-settings-enhancements": true,
 		"i18n/empathy-mode": true,
 		"importer/site-backups": true,
