@@ -31,6 +31,17 @@ const ChartTabShape = PropTypes.shape( {
 	legendOptions: PropTypes.arrayOf( PropTypes.string ),
 } );
 
+const transformChartDataToLineFormat = ( chartData, activeLegend ) => {
+	return activeLegend.map( ( legend ) => ( {
+		label: legend,
+		options: {},
+		data: chartData.map( ( record ) => ( {
+			date: new Date( record.data.period ),
+			value: record.data[ legend ] || 0,
+		} ) ),
+	} ) );
+};
+
 class StatModuleChartTabs extends Component {
 	static propTypes = {
 		slug: PropTypes.string,
@@ -182,14 +193,11 @@ class StatModuleChartTabs extends Component {
 					<AsyncLoad
 						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
-						chartData={ this.generateDummyLineChartData() }
+						chartData={ transformChartDataToLineFormat( chartData, this.props.activeLegend ) }
 						height={ 200 }
-						moment={ this.props.moment }
-						formatTimeTick={ ( timestamp ) => {
-							const date = new Date( timestamp );
-							return formatDate( date, this.props.selectedPeriod );
-						} }
-						maxViews={ 100 }
+						moment={ moment }
+						formatTimeTick={ ( timestamp ) => formatDate( new Date( timestamp ), selectedPeriod ) }
+						maxViews={ Math.max( ...chartData.map( ( d ) => d.value ) ) }
 					/>
 				) }
 
