@@ -20,7 +20,7 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate } from './utility';
+import { buildChartData, getQueryDate, formatDate } from './utility';
 
 import './style.scss';
 
@@ -116,13 +116,13 @@ class StatModuleChartTabs extends Component {
 				label: 'Views',
 				options: {},
 				data: [
-					{ date: '2024-01-01', value: 45 },
-					{ date: '2024-01-02', value: 32 },
-					{ date: '2024-01-03', value: 67 },
-					{ date: '2024-01-04', value: 89 },
-					{ date: '2024-01-05', value: 54 },
-					{ date: '2024-01-06', value: 78 },
-					{ date: '2024-01-07', value: 93 },
+					{ date: new Date( '2024-01-01' ), value: 45 },
+					{ date: new Date( '2024-01-02' ), value: 32 },
+					{ date: new Date( '2024-01-03' ), value: 67 },
+					{ date: new Date( '2024-01-04' ), value: 89 },
+					{ date: new Date( '2024-01-05' ), value: 54 },
+					{ date: new Date( '2024-01-06' ), value: 78 },
+					{ date: new Date( '2024-01-07' ), value: 93 },
 				],
 			},
 		];
@@ -179,7 +179,17 @@ class StatModuleChartTabs extends Component {
 						/>
 					</Chart>
 				) : (
-					<LineChart className="stats-chart-tabs__line-chart" chartData={ [] } height={ 200 } />
+					<LineChart
+						className="stats-chart-tabs__line-chart"
+						chartData={ this.generateDummyLineChartData() }
+						height={ 200 }
+						moment={ this.props.moment }
+						formatTimeTick={ ( timestamp ) => {
+							const date = new Date( timestamp );
+							return formatDate( date, this.props.selectedPeriod );
+						} }
+						maxViews={ 100 }
+					/>
 				) }
 
 				<StatTabs
