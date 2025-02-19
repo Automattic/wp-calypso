@@ -38,6 +38,7 @@ export enum SiteIntent {
 	AIAssembler = 'ai-assembler',
 	Newsletter = 'newsletter',
 	NewsletterGoal = 'intent-newsletter-goal',
+	CreateCourseGoal = 'create-course-goal',
 	FreePostSetup = 'free-post-setup', // non-signup flow
 	SiteMigration = 'site-migration',
 	LinkInBioPostSetup = 'link-in-bio-post-setup', // non-signup flow
