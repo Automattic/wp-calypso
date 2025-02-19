@@ -70,7 +70,6 @@
       width: 48px;
       height: 48px;
       border-radius: 50%;
-      background: var(--color-neutral-5);
     }
 
     .signup-wrapper__testimonial-info {
@@ -89,16 +88,6 @@
       font-weight: 600;
       font-size: 1rem;
       color: var(--color-text);
-    }
-
-    .signup-wrapper__testimonial-url {
-      font-size: 0.875rem;
-      color: var(--color-text-subtle);
-      text-decoration: underline;
-
-      .signup-wrapper__testimonial-url:visited {
-        color: var(--color-text-subtle);
-      }
     }
   }
 
@@ -194,4 +183,19 @@
       }
     }
   }
+}
+
+.blueprint-form__radio-group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.blue-print-form__radio {
+	cursor: pointer;
+	padding-block: 4px;
+
+	.form-radio__label {
+		@include a4a-font-body-md;
+	}
 }

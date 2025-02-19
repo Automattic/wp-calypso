@@ -1,7 +1,17 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 .discover-add-new {
 	padding: 10px;
+
+	.notice-banner {
+		margin-bottom: 20px;
+	}
+
+	.is-disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
 }
 
 .discover-add-new__form {

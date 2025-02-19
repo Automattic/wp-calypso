@@ -2,11 +2,13 @@ import { SiteExcerptData } from '@automattic/sites';
 import { DataViews, Field } from '@wordpress/dataviews';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback, useMemo } from 'react';
+import { useQueryReaderTeams } from 'calypso/components/data/query-reader-teams';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { useActions } from './actions';
 import SiteField from './dataviews-fields/site-field';
 import SiteIcon from './site-icon';
@@ -87,9 +89,12 @@ const DotcomSitesDataViews = ( {
 
 	const siteStatusGroups = useSiteStatusGroups();
 
+	useQueryReaderTeams();
+	const isAutomattician = useSelector( isA8cTeamMember );
+
 	// Generate DataViews table field-columns
-	const fields = useMemo< Field< SiteExcerptData >[] >(
-		() => [
+	const fields = useMemo( () => {
+		const dataViewFields: Field< SiteExcerptData >[] = [
 			{
 				id: 'icon',
 				render: ( { item }: { item: SiteExcerptData } ) => {
@@ -164,9 +169,31 @@ const DotcomSitesDataViews = ( {
 				enableSorting: true,
 				getValue: () => null,
 			},
-		],
-		[ __, siteStatusGroups, openSitePreviewPane, dataViewsState.type, userId ]
-	);
+		];
+
+		if ( isAutomattician ) {
+			dataViewFields.push( {
+				id: 'a8c_owned',
+				label: __( 'Include A8C sites' ),
+				enableHiding: false,
+				elements: [
+					{
+						value: true,
+						label: __( 'Yes' ),
+					},
+					{
+						value: false,
+						label: __( 'No' ),
+					},
+				],
+				filterBy: {
+					operators: [ 'is' ],
+				},
+			} );
+		}
+
+		return dataViewFields;
+	}, [ __, siteStatusGroups, openSitePreviewPane, dataViewsState.type, userId, isAutomattician ] );
 
 	const actions = useActions( {
 		openSitePreviewPane,

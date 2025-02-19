@@ -111,7 +111,12 @@ export default function ( router ) {
 	if ( isDiscoveryV2Enabled() ) {
 		// Must be logged in to access.
 		router(
-			[ '/discover/add-new', `/${ anyLangParam }/discover/add-new` ],
+			[
+				'/discover/add-new',
+				'/discover/reddit',
+				`/${ anyLangParam }/discover/add-new`,
+				`/${ anyLangParam }/discover/reddit`,
+			],
 			redirectLoggedOutToSignup,
 			...commonMiddleware
 		);
@@ -121,12 +126,10 @@ export default function ( router ) {
 				'/discover',
 				'/discover/firstposts',
 				'/discover/tags',
-				'/discover/reddit',
 				'/discover/latest',
 				`/${ anyLangParam }/discover`,
 				`/${ anyLangParam }/discover/firstposts`,
 				`/${ anyLangParam }/discover/tags`,
-				`/${ anyLangParam }/discover/reddit`,
 				`/${ anyLangParam }/discover/latest`,
 			],
 			...commonMiddleware

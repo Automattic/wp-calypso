@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CircularProgressBar } from '@automattic/components';
 import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
@@ -16,6 +17,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
 import './full-screen-launchpad.scss';
+import { useLaunchpadContext } from '../cards/launchpad/utils';
 
 export const FullScreenLaunchpad = ( {
 	onClose,
@@ -32,7 +34,7 @@ export const FullScreenLaunchpad = ( {
 	const checklistSlug = site?.options?.site_intent ?? '';
 	const layout = useHomeLayoutQuery( siteId || null );
 
-	const launchpadContext = 'customer-home';
+	const launchpadContext = useLaunchpadContext() ?? 'customer-home';
 
 	const {
 		siteSlug,
@@ -59,6 +61,9 @@ export const FullScreenLaunchpad = ( {
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
+					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site', {
+						context: launchpadContext,
+					} );
 					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
@@ -75,6 +80,10 @@ export const FullScreenLaunchpad = ( {
 			siteId,
 			siteSlug,
 			redirectToHome: false,
+		} );
+
+		recordTracksEvent( 'calypso_full_screen_launchpad_skip', {
+			context: launchpadContext,
 		} );
 
 		dispatch( requestSite( siteId ) );
@@ -118,7 +127,6 @@ export const FullScreenLaunchpad = ( {
 					checklistSlug={ checklistSlug }
 					launchpadContext={ launchpadContext }
 					onPostFilterTasks={ ( tasks ) => tasks.filter( ( task ) => ! task.isLaunchTask ) }
-					onSiteLaunched={ onSiteLaunched }
 					highlightNextAction
 				/>
 				<div className="launchpad-actions">
