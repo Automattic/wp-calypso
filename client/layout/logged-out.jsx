@@ -1,4 +1,3 @@
-import accessibleFocus from '@automattic/accessible-focus';
 import config, { isEnabled } from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
@@ -152,7 +151,6 @@ const LayoutLoggedOut = ( {
 
 	useEffect( () => {
 		isWooJPC && refreshColorScheme( 'default', colorScheme );
-		accessibleFocus(); // Initialize keyboard navigation detection
 	}, [] ); // Empty dependency array ensures it runs only once on mount
 
 	// Open new window to create account page when a logged in action was triggered on the Reader tag embed page and the user is not logged in
