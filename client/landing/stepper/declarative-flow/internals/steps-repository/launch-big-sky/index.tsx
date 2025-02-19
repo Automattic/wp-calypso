@@ -69,7 +69,7 @@ const LaunchBigSky: Step = function () {
 
 			// Set the Assembler theme on the site.
 			if ( ! assemblerThemeActive ) {
-				setDesignOnSite( selectedSiteSlug, getAssemblerDesign() );
+				setDesignOnSite( selectedSiteSlug, getAssemblerDesign(), { enableThemeSetup: true } );
 			}
 			setProgress( 25 );
 

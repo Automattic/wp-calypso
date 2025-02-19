@@ -1,6 +1,6 @@
 export { default as Badge } from './badge';
 export type { BadgeType } from './badge';
-export { default as Button } from './button';
+export { Button } from './button';
 export type { ButtonProps } from './button';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
@@ -45,7 +45,6 @@ export { default as CountComparisonCard } from './highlight-cards/count-comparis
 export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export { default as NoticeBanner } from './notice-banner';
 export { default as MobileHighlightCardListing } from './highlight-cards/mobile-highlight-cards';
-export { default as PostStatsCard } from './post-stats-card';
 export { default as ConfettiAnimation } from './confetti';
 export { default as ComponentSwapper } from './component-swapper';
 export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
@@ -55,7 +54,6 @@ export { default as SegmentedControl } from './segmented-control';
 export { default as SimplifiedSegmentedControl } from './segmented-control/simplified';
 export { default as PlanPrice } from './plan-price';
 export { default as ExternalLink } from './external-link';
-export { default as ExternalLinkWithTracking } from './external-link/with-tracking';
 export * from './theme-type-badge';
 export { default as FlowQuestion } from './flow-question';
 

@@ -20,8 +20,6 @@ export const TOOLS_DEPLOYMENTS = 'tools-deployments';
 export const TOOLS_MONITORING = 'tools-monitoring';
 export const TOOLS_LOGS_PHP = 'tools-logs-php';
 export const TOOLS_LOGS_WEB = 'tools-logs-web';
-export const TOOLS_SFTP_SSH = 'tools-sftp-ssh';
-export const TOOLS_DATABASE = 'tools-database';
 export const TOOLS = 'tools';
 
 export const SETTINGS_SITE = 'settings-site';
@@ -29,9 +27,10 @@ export const SETTINGS_ADMINISTRATION = 'settings-administration';
 export const SETTINGS_ADMINISTRATION_RESET_SITE = 'settings-administration-reset-site';
 export const SETTINGS_ADMINISTRATION_TRANSFER_SITE = 'settings-administration-transfer-site';
 export const SETTINGS_ADMINISTRATION_DELETE_SITE = 'settings-administration-delete-site';
-export const SETTINGS_AGENCY = 'settings-agency';
-export const SETTINGS_CACHING = 'settings-caching';
-export const SETTINGS_WEB_SERVER = 'settings-web-server';
+export const SETTINGS_SERVER = 'settings-server';
+export const SETTINGS_SFTP_SSH = 'settings-sftp-ssh';
+export const SETTINGS_DATABASE = 'settings-database';
+export const SETTINGS_PERFORMANCE = 'settings-performance';
 
 export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ DOTCOM_OVERVIEW ]: 'overview/:site',
@@ -55,15 +54,13 @@ export const FEATURE_TO_ROUTE_MAP: { [ feature: string ]: string } = {
 	[ TOOLS_MONITORING ]: 'sites/tools/monitoring/:site',
 	[ TOOLS_LOGS_PHP ]: 'sites/tools/logs/:site/php',
 	[ TOOLS_LOGS_WEB ]: 'sites/tools/logs/:site/web',
-	[ TOOLS_SFTP_SSH ]: 'sites/tools/sftp-ssh/:site',
-	[ TOOLS_DATABASE ]: 'sites/tools/database/:site',
 	[ TOOLS ]: 'sites/tools/:site',
 	[ SETTINGS_SITE ]: 'sites/settings/site/:site',
-	[ SETTINGS_ADMINISTRATION ]: 'sites/settings/site/:site',
 	[ SETTINGS_ADMINISTRATION_RESET_SITE ]: 'sites/settings/site/:site/reset-site',
 	[ SETTINGS_ADMINISTRATION_TRANSFER_SITE ]: 'sites/settings/site/:site/transfer-site',
 	[ SETTINGS_ADMINISTRATION_DELETE_SITE ]: 'sites/settings/site/:site/delete-site',
-	[ SETTINGS_AGENCY ]: 'sites/settings/agency/:site',
-	[ SETTINGS_CACHING ]: 'sites/settings/caching/:site',
-	[ SETTINGS_WEB_SERVER ]: 'sites/settings/web-server/:site',
+	[ SETTINGS_SERVER ]: 'sites/settings/server/:site',
+	[ SETTINGS_SFTP_SSH ]: 'sites/settings/sftp-ssh/:site',
+	[ SETTINGS_DATABASE ]: 'sites/settings/database/:site',
+	[ SETTINGS_PERFORMANCE ]: 'sites/settings/performance/:site',
 };

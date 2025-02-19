@@ -68,5 +68,6 @@ export const DomainName = styled.div`
 	max-width: 100%;
 	@media ( min-width: 780px ) {
 		max-width: 54%;
+		width: 100%;
 	}
 `;

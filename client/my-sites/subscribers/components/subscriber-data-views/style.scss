@@ -159,6 +159,10 @@ body.is-section-subscribers.is-subscribers-dataviews,
                         }
                     }
 
+                    .subscriber-totals {
+                        padding: 0 24px;
+                    }
+
                     @media ( max-width: $break-wide ) {
                         display: none;
                     }

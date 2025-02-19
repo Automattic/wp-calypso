@@ -1,4 +1,5 @@
-import { CircularProgressBar, ConfettiAnimation } from '@automattic/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { CircularProgressBar } from '@automattic/components';
 import { updateLaunchpadSettings, useSortedLaunchpadTasks } from '@automattic/data-stores';
 import { Launchpad, Task } from '@automattic/launchpad';
 import { Button } from '@wordpress/components';
@@ -16,8 +17,15 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { useLaunchpad } from '../cards/launchpad/use-launchpad';
 import './full-screen-launchpad.scss';
+import { useLaunchpadContext } from '../cards/launchpad/utils';
 
-export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX.Element | null => {
+export const FullScreenLaunchpad = ( {
+	onClose,
+	onSiteLaunch,
+}: {
+	onClose: () => void;
+	onSiteLaunch: () => void;
+} ): JSX.Element | null => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 	const [ isLaunching, setIsLaunching ] = useState( false );
@@ -26,7 +34,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 	const checklistSlug = site?.options?.site_intent ?? '';
 	const layout = useHomeLayoutQuery( siteId || null );
 
-	const launchpadContext = 'customer-home';
+	const launchpadContext = useLaunchpadContext() ?? 'customer-home';
 
 	const {
 		siteSlug,
@@ -53,7 +61,10 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					await refetch?.();
 					await layout?.refetch();
 					await dispatch( requestSite( siteId ) );
-					onClose();
+					recordTracksEvent( 'calypso_full_screen_launchpad_launch_site', {
+						context: launchpadContext,
+					} );
+					onSiteLaunch();
 				} finally {
 					setIsLaunching( false );
 				}
@@ -69,6 +80,10 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 			siteId,
 			siteSlug,
 			redirectToHome: false,
+		} );
+
+		recordTracksEvent( 'calypso_full_screen_launchpad_skip', {
+			context: launchpadContext,
 		} );
 
 		dispatch( requestSite( siteId ) );
@@ -91,7 +106,7 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 		completedSteps >= numberOfSteps - ( launchSiteTask ? 1 : 0 );
 
 	return (
-		<div className="is-launchpad-first" css={ { width: '100%' } }>
+		<div data-testid="launchpad-first" className="is-launchpad-first" css={ { width: '100%' } }>
 			<div
 				className={ clsx( `customer-home-launchpad customer-home__card is-small-hero`, {
 					'all-tasks-completed': isAllTasksCompleted,
@@ -107,12 +122,11 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 					<h2>{ ! isAllTasksCompleted ? __( "Let's get started!" ) : __( "You're all set!" ) }</h2>
 					<span>{ ! isAllTasksCompleted && launchpadTitle }</span>
 				</div>
-				{ isAllTasksCompleted && <ConfettiAnimation /> }
 				<Launchpad
 					siteSlug={ siteSlug }
 					checklistSlug={ checklistSlug }
 					launchpadContext={ launchpadContext }
-					onSiteLaunched={ onSiteLaunched }
+					onPostFilterTasks={ ( tasks ) => tasks.filter( ( task ) => ! task.isLaunchTask ) }
 					highlightNextAction
 				/>
 				<div className="launchpad-actions">
@@ -127,7 +141,12 @@ export const FullScreenLaunchpad = ( { onClose }: { onClose: () => void } ): JSX
 							{ launchSiteTask?.title }
 						</Button>
 					) }
-					<Button onClick={ onSkipLaunchpad } disabled={ isLaunching }>
+					<Button
+						style={ { color: 'var(--color-neutral-100)' } }
+						variant="link"
+						onClick={ onSkipLaunchpad }
+						disabled={ isLaunching }
+					>
 						{ __( 'Skip to dashboard' ) }
 					</Button>
 				</div>

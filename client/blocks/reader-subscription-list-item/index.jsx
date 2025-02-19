@@ -1,3 +1,4 @@
+import { ExternalLink } from '@automattic/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { flowRight as compose, isEmpty, get } from 'lodash';
@@ -7,7 +8,6 @@ import ReaderAvatar from 'calypso/blocks/reader-avatar';
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
-import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import FollowButton from 'calypso/reader/follow-button';
 import {

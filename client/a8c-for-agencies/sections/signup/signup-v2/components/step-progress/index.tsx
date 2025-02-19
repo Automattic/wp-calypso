@@ -6,6 +6,7 @@ type Step = {
 	label: string;
 	isActive: boolean;
 	isComplete: boolean;
+	half?: boolean;
 };
 
 type Props = {
@@ -23,10 +24,11 @@ const StepProgress = ( { steps }: Props ) => {
 							className={ clsx( 'step-progress__step', {
 								'is-active': step.isActive,
 								'is-complete': step.isComplete,
+								'is-half': step.half,
 							} ) }
 						>
-							<div className="step-progress__step-indicator" />
 							<span className="step-progress__step-label">{ step.label }</span>
+							<div className="step-progress__step-indicator" />
 						</div>
 					) ) }
 				</div>

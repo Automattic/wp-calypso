@@ -8,6 +8,7 @@ import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AppPromo from 'calypso/blocks/app-promo';
+import BackButton from 'calypso/components/back-button';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -77,6 +78,7 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: PropTypes.bool,
 		showFollowButton: PropTypes.bool,
 		showFollowInHeader: PropTypes.bool,
+		showBack: PropTypes.bool,
 		sidebarTabTitle: PropTypes.string,
 		streamHeader: PropTypes.func,
 		streamSidebar: PropTypes.func,
@@ -98,6 +100,7 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showFollowButton: true,
 		showFollowInHeader: false,
+		showBack: true,
 		suppressSiteNameLink: false,
 		useCompactCards: false,
 	};
@@ -613,6 +616,12 @@ class ReaderStream extends Component {
 		return this.getScrollContainer( node.parentNode );
 	};
 
+	handleBack = () => {
+		if ( typeof window !== 'undefined' ) {
+			window.history.back();
+		}
+	};
+
 	render() {
 		const { translate, forcePlaceholders, lastPage, streamHeader, streamKey, selectedPostKey } =
 			this.props;
@@ -731,8 +740,8 @@ class ReaderStream extends Component {
 			<TopLevel className={ baseClassnames }>
 				<div ref={ this.overlayRef } className="stream__init-overlay" />
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
-
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />
+				{ this.props.showBack && <BackButton onClick={ this.handleBack } /> }
 				{ this.props.children }
 				{ showingStream && items.length ? this.props.intro?.() : null }
 				{ body }

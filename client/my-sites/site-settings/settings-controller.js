@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import titlecase from 'to-title-case';
-import { redirectIfDuplicatedView } from 'calypso/controller';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
 import { isRemoveDuplicateViewsExperimentEnabled } from 'calypso/lib/remove-duplicate-views-experiment';
@@ -39,7 +38,8 @@ export function redirectToJetpackNewsletterSettingsIfNeeded( context, next ) {
  * @returns
  */
 export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( context, next ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		const slug = context.path.split( '/' )[ 2 ];
@@ -68,9 +68,17 @@ export const redirectToolsIfRemoveDuplicateViewsExperimentEnabled = async ( cont
  * Redirect /settings to /sites/settings/site when the Remove Duplicate Views experiment is enabled.
  *
  * Previously /settings redirected to /settings/general which now redirects to /wp-admin/options-general.php
+ *
+ * This is to maintain previous behavior by providing HE's with a consistent location, `/settings`, to link
+ * to for visibility and site launching options.
+ *
+ * When the experiment is over:
+ * - /settings can always redirect to /sites/settings/site
+ * - /settings/general can always redirect to /wp-admin/options-general.php
  */
 export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
 
 	if ( isUntangled ) {
 		return page.redirect( `/sites/settings/site` );
@@ -80,22 +88,19 @@ export const redirectSettingsIfDuplciatedViewsEnabled = async ( context ) => {
 };
 
 /**
- * Redirect to /sites/settings/site/:site when Classic sites' users try to access the Hosting > Site Settings
- * if the Remove Duplicate Views experiment is enabled.
+ * Redirect to /settings/general if the Remove Duplicate Views experiment is DISABLED
+ * since /sites/settings/site/:site looks broken for those users.
  */
-export async function redirectGeneralSettingsIfDuplicatedViewsEnabled( context, next ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSelectedSiteSlug( state );
+export async function redirectSiteSettingsIfDuplicatedViewsDisabled( context, next ) {
+	const { getState, dispatch } = context.store;
+	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( getState, dispatch );
+	const siteSlug = getSelectedSiteSlug( getState() );
 
-	const isUntangled = await isRemoveDuplicateViewsExperimentEnabled( context.store.getState() );
-	const hasClassicAdminInterfaceStyle =
-		getSiteOption( state, siteId, 'wpcom_admin_interface' ) === 'wp-admin';
-	if ( isUntangled && hasClassicAdminInterfaceStyle ) {
-		return page.redirect( `/sites/settings/site/${ siteSlug }` );
+	if ( ! isUntangled ) {
+		return page.redirect( `/settings/general/${ siteSlug }` );
 	}
 
-	redirectIfDuplicatedView( 'options-general.php' )( context, next );
+	next();
 }
 
 export async function siteSettings( context, next ) {

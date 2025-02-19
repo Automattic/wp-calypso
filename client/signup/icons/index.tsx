@@ -125,29 +125,6 @@ export const bulb = (
 	</svg>
 );
 
-export const check = (
-	<svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M82.4087 41.9905C82.4087 52.4607 78.2507 62.5023 70.8489 69.9077C63.4471 77.313 53.4074 81.4758 42.9372 81.4809C35.0449 70.4373 30.6458 57.2807 30.3081 43.7111C29.9705 30.1415 33.7099 16.7825 41.0432 5.3601L42.9372 2.50011C53.4074 2.50513 63.4471 6.66792 70.8489 14.0733C78.2507 21.4786 82.4087 31.5202 82.4087 41.9905Z"
-			fill="#EFEFEF"
-		/>
-		<path
-			d="M82.4086 41.9906C82.4086 52.7052 78.1522 62.9811 70.5758 70.5575C62.9995 78.1338 52.7237 82.3903 42.0091 82.3903C31.2944 82.3903 21.0186 78.1338 13.4422 70.5575C5.86583 62.9811 1.60947 52.7052 1.60947 41.9906C1.60392 39.5124 1.83224 37.0391 2.29135 34.6038C4.13398 24.702 9.60875 15.8456 17.6423 9.77087C25.6759 3.69614 35.6889 0.841432 45.7181 1.76611C55.7473 2.69079 65.0695 7.3283 71.8569 14.7695C78.6444 22.2107 82.4075 31.9188 82.4086 41.9906V41.9906Z"
-			stroke="#003A5F"
-			strokeWidth="1.68"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M28 45.4943L37.8102 54.0742L56.5989 28.4102"
-			stroke="#003A5F"
-			strokeWidth="3"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
-
 export const jetpack = (
 	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
@@ -253,107 +230,6 @@ export const shoppingCart = (
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			strokeWidth="2"
-		/>
-	</svg>
-);
-
-export const award = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M8.21 13.8899L7 22.9999L12 19.9999L17 22.9999L15.79 13.8799"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
-
-export const frame = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
-			<path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="M5 4H19C20.11 4 21 4.9 21 6V18C21 19.1 20.1 20 19 20H5C3.89 20 3 19.1 3 18V6C3 4.9 3.89 4 5 4ZM5 18H19V8H5V18Z"
-				fill="white"
-			/>
-		</mask>
-		<g mask="url(#mask0_2727_2533)">
-			<rect width="24" height="24" fill="#8C8F94" />
-		</g>
-	</svg>
-);
-
-export const headset = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M7 17C8.105 17 9 16.105 9 15V11C9 9.895 8.105 9 7 9C5.895 9 5 9.895 5 11V15C5 16.105 5.895 17 7 17Z"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M17 17C18.105 17 19 16.105 19 15V11C19 9.895 18.105 9 17 9C15.895 9 15 9.895 15 11V15C15 16.105 15.895 17 17 17Z"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M1 13V12C1 5.925 5.925 1 12 1C18.075 1 23 5.925 23 12V17C23 19.209 21.209 21 19 21H14"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M12 23C13.1046 23 14 22.1046 14 21C14 19.8954 13.1046 19 12 19C10.8954 19 10 19.8954 10 21C10 22.1046 10.8954 23 12 23Z"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-	</svg>
-);
-
-export const mouse = (
-	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M5 9H19"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M12 1V9"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-		/>
-		<path
-			d="M12 23C8.134 23 5 19.866 5 16V5C5 2.791 6.791 1 9 1H15C17.209 1 19 2.791 19 5V16C19 19.866 15.866 23 12 23Z"
-			stroke="#8C8F94"
-			strokeWidth="1.6"
-			strokeMiterlimit="10"
-			strokeLinecap="round"
-			strokeLinejoin="round"
 		/>
 	</svg>
 );

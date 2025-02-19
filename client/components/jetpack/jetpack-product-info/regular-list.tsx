@@ -61,7 +61,7 @@ const JetpackProductInfoRegularList = ( { items }: Props ) => {
 						icon={ check }
 						size={ 20 }
 					/>
-					{ item }
+					<span>{ item }</span>
 				</li>
 			) ) }
 		</ul>

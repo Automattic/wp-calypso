@@ -1,22 +1,25 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { EllipsisMenu } from '@automattic/odie-client';
+import { useGetMostRecentOpenConversation } from '@automattic/odie-client/src/hooks/use-get-most-recent-open-conversation';
 import { clearHelpCenterZendeskConversationStarted } from '@automattic/odie-client/src/utils/storage-utils';
 import { CardHeader, Button, Flex, ToggleControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useMemo, useCallback, useEffect, useState } from '@wordpress/element';
+import { _n } from '@wordpress/i18n';
 import {
 	closeSmall,
 	chevronUp,
 	lineSolid,
-	commentContent,
+	scheduled,
 	page,
 	Icon,
 	comment,
+	commentContent,
 } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import clsx from 'clsx';
-import { Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, useNavigate } from 'react-router-dom';
 import { usePostByUrl } from '../hooks';
 import { useResetSupportInteraction } from '../hooks/use-reset-support-interaction';
 import { DragIcon } from '../icons';
@@ -73,6 +76,8 @@ const SupportModeTitle = () => {
 const ChatEllipsisMenu = () => {
 	const { __ } = useI18n();
 	const resetSupportInteraction = useResetSupportInteraction();
+	const navigate = useNavigate();
+	const { totalNumberOfConversations } = useGetMostRecentOpenConversation();
 	const { areSoundNotificationsEnabled } = useSelect( ( select ) => {
 		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
@@ -87,6 +92,14 @@ const ChatEllipsisMenu = () => {
 		recordTracksEvent( 'calypso_inlinehelp_clear_conversation' );
 	};
 
+	const handleViewChats = () => {
+		recordTracksEvent( 'calypso_inlinehelp_view_open_chats_menu', {
+			total_number_of_conversations: totalNumberOfConversations,
+		} );
+
+		navigate( '/chat-history' );
+	};
+
 	const toggleSoundNotifications = ( event: React.MouseEvent< HTMLButtonElement > ) => {
 		event.stopPropagation();
 		setAreSoundNotificationsEnabled( ! areSoundNotificationsEnabled );
@@ -99,36 +112,44 @@ const ChatEllipsisMenu = () => {
 			trackEventProps={ { source: 'help_center' } }
 		>
 			<div className="conversation-menu__wrapper">
-				<button className="conversation-menu__clear-conversation" onClick={ clearChat }>
+				<button onClick={ clearChat }>
 					<Icon icon={ comment } />
-					<div>{ __( 'New conversation', __i18n_text_domain__ ) }</div>
+					<div>{ __( 'New chat', __i18n_text_domain__ ) }</div>
 				</button>
-				<button onClick={ toggleSoundNotifications }>
+				<Button onClick={ handleViewChats } disabled={ totalNumberOfConversations === 0 }>
+					<Icon icon={ scheduled } />
 					<div>
-						<ToggleControl
-							className="conversation-menu__notification-toggle"
-							label={ __( 'Notification sound', __i18n_text_domain__ ) }
-							checked={ areSoundNotificationsEnabled }
-							onChange={ ( newValue ) => {
-								setAreSoundNotificationsEnabled( newValue );
-							} }
-							__nextHasNoMarginBottom
-						/>
+						{ _n(
+							'View recent chat',
+							'View recent chats',
+							totalNumberOfConversations,
+							__i18n_text_domain__
+						) }
 					</div>
+				</Button>
+				<button onClick={ toggleSoundNotifications }>
+					<ToggleControl
+						className="conversation-menu__notification-toggle"
+						label={ __( 'Notification sound', __i18n_text_domain__ ) }
+						checked={ areSoundNotificationsEnabled }
+						onChange={ ( newValue ) => {
+							setAreSoundNotificationsEnabled( newValue );
+						} }
+						__nextHasNoMarginBottom
+					/>
 				</button>
 			</div>
 		</EllipsisMenu>
 	);
 };
 
-const HeaderText = () => {
+const useHeaderText = () => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 	const [ isConversationWithZendesk, setIsConversationWithZendesk ] = useState< boolean >( false );
 	const { currentSupportInteraction } = useSelect( ( select ) => {
 		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 		return {
-			isChatLoaded: store.getIsChatLoaded(),
 			currentSupportInteraction: store.getCurrentSupportInteraction(),
 		};
 	}, [] );
@@ -138,33 +159,39 @@ const HeaderText = () => {
 			const zendeskEvent = currentSupportInteraction?.events.find(
 				( event ) => event.event_source === 'zendesk'
 			);
-			if ( zendeskEvent ) {
-				setIsConversationWithZendesk( true );
-			} else {
-				setIsConversationWithZendesk( false );
-			}
+			setIsConversationWithZendesk( !! zendeskEvent );
 		}
 	}, [ currentSupportInteraction ] );
 
-	const headerText = useMemo( () => {
-		const getOdieHeader = () => {
-			return isConversationWithZendesk
-				? __( 'Support Team', __i18n_text_domain__ )
-				: __( 'Support Assistant', __i18n_text_domain__ );
-		};
-
+	return useMemo( () => {
 		switch ( pathname ) {
-			case '/odie':
-				return getOdieHeader();
+			case '/':
+				return __( 'Help Center', __i18n_text_domain__ );
+			case '/contact-options':
+				return __( 'Contact Options', __i18n_text_domain__ );
+			case '/inline-chat':
+				return __( 'Live Chat', __i18n_text_domain__ );
 			case '/contact-form':
-				return __( 'Support Assistant', __i18n_text_domain__ );
+				return <SupportModeTitle />;
+			case '/post':
+			case '/post/':
+				return <ArticleTitle />;
+			case '/success':
+				return __( 'Message Submitted', __i18n_text_domain__ );
+			case '/odie':
+				return isConversationWithZendesk
+					? __( 'Support Team', __i18n_text_domain__ )
+					: __( 'Support Assistant', __i18n_text_domain__ );
 			case '/chat-history':
 				return __( 'History', __i18n_text_domain__ );
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
 	}, [ __, isConversationWithZendesk, pathname ] );
+};
 
+const HeaderText = () => {
+	const headerText = useHeaderText();
 	return (
 		<span id="header-text" role="presentation" className="help-center-header__text">
 			{ headerText }
@@ -176,14 +203,26 @@ const Content = ( { onMinimize }: { onMinimize?: () => void } ) => {
 	const { __ } = useI18n();
 	const { pathname } = useLocation();
 
-	const shouldDisplayClearChatButton = pathname.startsWith( '/odie' );
+	const { helpCenterOptions } = useSelect( ( select ) => {
+		const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+		return {
+			helpCenterOptions: store.getHelpCenterOptions(),
+		};
+	}, [] );
+
+	const isChat = pathname.startsWith( '/odie' );
 	const isHelpCenterHome = pathname === '/';
+	// Show the back button if it's not the help center home page and:
+	// - it's a chat and the hideBackButton option is not set
+	// - it's not a chat
+	const shouldShowBackButton =
+		! isHelpCenterHome && ( ( isChat && ! helpCenterOptions?.hideBackButton ) || ! isChat );
 
 	return (
 		<>
-			{ isHelpCenterHome ? <DragIcon /> : <BackButton /> }
+			{ shouldShowBackButton ? <BackButton /> : <DragIcon /> }
 			<HeaderText />
-			{ shouldDisplayClearChatButton && <ChatEllipsisMenu /> }
+			{ isChat && <ChatEllipsisMenu /> }
 			<Button
 				className="help-center-header__minimize"
 				label={ __( 'Minimize Help Center', __i18n_text_domain__ ) }
@@ -206,6 +245,7 @@ const ContentMinimized = ( {
 	onMaximize?: () => void;
 } ) => {
 	const { __ } = useI18n();
+	const headerText = useHeaderText();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	return (
@@ -217,19 +257,7 @@ const ContentMinimized = ( {
 				onKeyUp={ handleClick }
 				role="presentation"
 			>
-				<Routes>
-					<Route path="/" element={ __( 'Help Center', __i18n_text_domain__ ) } />
-					<Route
-						path="/contact-options"
-						element={ __( 'Contact Options', __i18n_text_domain__ ) }
-					/>
-					<Route path="/inline-chat" element={ __( 'Live Chat', __i18n_text_domain__ ) } />
-					<Route path="/contact-form" element={ <SupportModeTitle /> } />
-					<Route path="/post" element={ <ArticleTitle /> } />
-					<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
-					<Route path="/odie" element={ __( 'Support Assistant', __i18n_text_domain__ ) } />
-					<Route path="/chat-history" element={ __( 'History', __i18n_text_domain__ ) } />
-				</Routes>
+				{ headerText }
 				{ unreadCount > 0 && (
 					<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
 				) }

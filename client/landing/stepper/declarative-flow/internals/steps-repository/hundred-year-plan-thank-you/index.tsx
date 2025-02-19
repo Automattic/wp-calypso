@@ -46,7 +46,6 @@ const HundredYearPlanThankYou: Step = function HundredYearPlanThankYou( { flow }
 								},
 							}
 						) }
-						subHeaderAlign="center"
 					/>
 				</>
 			}

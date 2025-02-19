@@ -178,7 +178,7 @@ describe( 'JetpackAuthorize', () => {
 			expect( isWooRedirect( props ) ).toBe( true );
 		} );
 
-		test( 'should return true for new woo onboarding', () => {
+		test( 'should return true for legacy woo onboarding', () => {
 			const props = { authQuery: { from: 'woocommerce-onboarding' } };
 			expect( isWooRedirect( props ) ).toBe( true );
 		} );

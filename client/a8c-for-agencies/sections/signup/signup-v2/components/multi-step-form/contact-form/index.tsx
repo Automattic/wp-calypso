@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -11,6 +11,7 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
+import useContactFormValidation from './hooks/use-contact-form-validation';
 
 import './style.scss';
 
@@ -20,6 +21,8 @@ type Props = {
 
 const SignupContactForm = ( { onContinue }: Props ) => {
 	const translate = useTranslate();
+	const { validate, validationError, updateValidationError, isValidating } =
+		useContactFormValidation();
 
 	const countriesList = useGetSupportedSMSCountries();
 	const noCountryList = countriesList.length === 0;
@@ -47,12 +50,20 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				...prev,
 				[ field ]: event.target.value,
 			} ) );
+			updateValidationError( { [ field ]: undefined } );
 		};
 
-	const handleSubmit = ( e: React.FormEvent ) => {
-		e.preventDefault();
-		onContinue( formData );
-	};
+	const handleSubmit = useCallback(
+		async ( e: React.FormEvent ) => {
+			e.preventDefault();
+			const error = await validate( formData );
+			if ( error ) {
+				return;
+			}
+			onContinue( formData );
+		},
+		[ formData, onContinue, validate ]
+	);
 
 	return (
 		<Form
@@ -65,7 +76,11 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 			) }
 		>
 			<div className="signup-multi-step-form__name-fields">
-				<FormField label={ translate( 'Your first name' ) } isRequired>
+				<FormField
+					error={ validationError.firstName }
+					label={ translate( 'Your first name' ) }
+					isRequired
+				>
 					<FormTextInput
 						name="firstName"
 						value={ formData.firstName }
@@ -74,7 +89,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 					/>
 				</FormField>
 
-				<FormField label={ translate( 'Last name' ) } isRequired>
+				<FormField error={ validationError.lastName } label={ translate( 'Last name' ) } isRequired>
 					<FormTextInput
 						name="lastName"
 						value={ formData.lastName }
@@ -84,7 +99,7 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				</FormField>
 			</div>
 
-			<FormField label={ translate( 'Email' ) } isRequired>
+			<FormField error={ validationError.email } label={ translate( 'Email' ) } isRequired>
 				<FormTextInput
 					name="email"
 					type="email"
@@ -94,7 +109,11 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				/>
 			</FormField>
 
-			<FormField label={ translate( 'Agency name' ) } isRequired>
+			<FormField
+				error={ validationError.agencyName }
+				label={ translate( 'Agency name' ) }
+				isRequired
+			>
 				<FormTextInput
 					name="agencyName"
 					value={ formData.agencyName }
@@ -103,7 +122,11 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				/>
 			</FormField>
 
-			<FormField label={ translate( 'Business URL' ) } isRequired>
+			<FormField
+				error={ validationError.agencyUrl }
+				label={ translate( 'Business URL' ) }
+				isRequired
+			>
 				<FormTextInput
 					name="agencyUrl"
 					value={ formData.agencyUrl }
@@ -114,17 +137,15 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 
 			{ noCountryList && <QuerySmsCountries /> }
 
-			<FormField label={ translate( 'Phone number' ) } showOptionalLabel>
-				<FormPhoneInput
-					isDisabled={ noCountryList }
-					countriesList={ countriesList }
-					onChange={ handlePhoneInputChange }
-					className="contact-form__phone-input"
-					phoneInputProps={ {
-						placeholder: translate( 'Phone number' ),
-					} }
-				/>
-			</FormField>
+			<FormPhoneInput
+				isDisabled={ noCountryList }
+				countriesList={ countriesList }
+				onChange={ handlePhoneInputChange }
+				className="contact-form__phone-input"
+				phoneInputProps={ {
+					placeholder: translate( 'Phone number' ),
+				} }
+			/>
 
 			<div className="signup-contact-form__tos">
 				<p>
@@ -149,7 +170,12 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 			</div>
 
 			<FormFooter>
-				<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
+				<Button
+					__next40pxDefaultSize
+					disabled={ isValidating }
+					variant="primary"
+					onClick={ handleSubmit }
+				>
 					{ translate( 'Continue' ) }
 				</Button>
 			</FormFooter>

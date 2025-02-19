@@ -13,7 +13,7 @@ import { setup } from './pages/controller';
 
 import 'calypso/my-sites/promote-post-i2/style.scss';
 // Needed because the placeholder component that we use doesn't import the css, webpack excludes it from the final build
-import 'calypso/blocks/site/style.scss';
+// import 'calypso/blocks/site/style.scss';
 
 const siteSelection = ( context, next ) => {
 	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );

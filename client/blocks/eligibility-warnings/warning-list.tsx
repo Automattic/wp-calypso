@@ -1,9 +1,8 @@
-import { Card, Badge } from '@automattic/components';
+import { Card, Badge, ExternalLink } from '@automattic/components';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import ActionPanelLink from 'calypso/components/action-panel/link';
-import ExternalLink from 'calypso/components/external-link';
 import type { DomainNames, EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
 interface ExternalProps {
