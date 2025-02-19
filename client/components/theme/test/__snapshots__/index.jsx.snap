@@ -39,8 +39,8 @@ exports[`Theme rendering should match snapshot 1`] = `
         class="theme-card__info-badge-container"
       >
         <components--theme-tier-badge
-          hidebackgroundonupgrade="true"
           islockedstylevariation="false"
+          isthemeshowcase="true"
           themeid="twentyseventeen"
         />
       </div>
