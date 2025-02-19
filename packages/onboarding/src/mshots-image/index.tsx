@@ -275,7 +275,6 @@ const MShotsImageControl = ( {
 				ref={ imgRef }
 				{ ...{ className, style, src, alt, loading } }
 				aria-labelledby={ labelledby }
-				alt={ alt }
 			/>
 		);
 	} // else, prettier doesn't like having an else after a return
@@ -295,7 +294,6 @@ const MShotsImageControl = ( {
 			ref={ imgRef }
 			{ ...{ className, style, src, alt } }
 			aria-labelledby={ labelledby }
-			alt={ alt }
 		/>
 	);
 };
@@ -367,7 +365,6 @@ const MShotsImageTreatment = ( {
 			ref={ imgRef }
 			{ ...{ className, style, src, alt, loading } }
 			aria-labelledby={ labelledby }
-			alt={ alt }
 		/>
 	);
 };
