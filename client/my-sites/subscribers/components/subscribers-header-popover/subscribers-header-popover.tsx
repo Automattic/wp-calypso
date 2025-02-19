@@ -48,7 +48,7 @@ const SubscribersHeaderPopover = ( {
 	const hasMultipleSites = currentUserSiteCount && currentUserSiteCount > 1;
 
 	// No point showing the dropdown if they don't have subscribers or sites
-	if ( ! hasMultipleSites ) {
+	if ( ! hasSubscribers && ! hasMultipleSites ) {
 		return null;
 	}
 
