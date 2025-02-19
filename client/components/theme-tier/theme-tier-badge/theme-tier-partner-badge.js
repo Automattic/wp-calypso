@@ -1,4 +1,5 @@
 import { PremiumBadge } from '@automattic/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'calypso/state';
@@ -15,10 +16,14 @@ const commonBadgeProps = {
 	focusOnShow: false,
 	isClickable: false,
 	shouldHideTooltip: true,
-	shouldHideIcon: true,
+	shouldHideIcon: false,
 };
 
-export default function ThemeTierPartnerBadge( { showPartnerPrice, hideBackgroundOnUpgrade } ) {
+export default function ThemeTierPartnerBadge( {
+	showPartnerPrice,
+	hideBackgroundOnUpgrade,
+	isLongLabel,
+} ) {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const { themeId } = useThemeTierBadgeContext();
@@ -49,10 +54,18 @@ export default function ThemeTierPartnerBadge( { showPartnerPrice, hideBackgroun
 			return (
 				<PremiumBadge
 					{ ...commonBadgeProps }
-					className="theme-tier-badge__content"
-					labelText={ translate( '%(price)s/month', {
-						args: { price: subscriptionPrices.month },
+					className={ clsx( 'theme-tier-badge__content', {
+						'theme-tier-badge__without-background': hideBackgroundOnUpgrade,
 					} ) }
+					labelText={
+						isLongLabel
+							? translate( 'Available for %(price)s/month', {
+									args: { price: subscriptionPrices.month },
+							  } )
+							: translate( '%(price)s/month', {
+									args: { price: subscriptionPrices.month },
+							  } )
+					}
 				/>
 			);
 		}

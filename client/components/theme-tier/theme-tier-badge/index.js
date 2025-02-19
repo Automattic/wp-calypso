@@ -24,7 +24,7 @@ export default function ThemeTierBadge( {
 	showUpgradeBadge = true,
 	themeId,
 	showPartnerPrice = false,
-	hideBackgroundOnUpgrade = false,
+	isThemeShowcase = false,
 } ) {
 	const siteId = useSelector( getSelectedSiteId );
 	const themeType = useSelector(
@@ -50,8 +50,8 @@ export default function ThemeTierBadge( {
 		if ( themeType === BUNDLED_THEME ) {
 			return (
 				<ThemeTierBundledBadge
-					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
-					hideBundledBadge={ hideBackgroundOnUpgrade }
+					hideBackgroundOnUpgrade={ isThemeShowcase }
+					hideBundledBadge={ isThemeShowcase }
 				/>
 			);
 		}
@@ -63,8 +63,8 @@ export default function ThemeTierBadge( {
 		if ( themeType === DOT_ORG_THEME ) {
 			return (
 				<ThemeTierCommunityBadge
-					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
-					hideCommunityBadge={ hideBackgroundOnUpgrade }
+					hideBackgroundOnUpgrade={ isThemeShowcase }
+					hideCommunityBadge={ isThemeShowcase }
 				/>
 			);
 		}
@@ -73,7 +73,8 @@ export default function ThemeTierBadge( {
 			return (
 				<ThemeTierPartnerBadge
 					showPartnerPrice={ showPartnerPrice }
-					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
+					hideBackgroundOnUpgrade={ isThemeShowcase }
+					isLongLabel={ ! isThemeShowcase }
 				/>
 			);
 		}
@@ -82,7 +83,7 @@ export default function ThemeTierBadge( {
 			return (
 				<ThemeTierUpgradeBadge
 					showPartnerPrice={ showPartnerPrice }
-					hideBackgroundOnUpgrade={ hideBackgroundOnUpgrade }
+					hideBackgroundOnUpgrade={ isThemeShowcase }
 				/>
 			);
 		}
@@ -95,7 +96,7 @@ export default function ThemeTierBadge( {
 		themeType,
 		isLockedStyleVariation,
 		showPartnerPrice,
-		hideBackgroundOnUpgrade,
+		isThemeShowcase,
 		showUpgradeBadge,
 	] );
 

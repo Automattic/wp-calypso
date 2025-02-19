@@ -336,11 +336,7 @@ export class Theme extends Component {
 		} );
 
 		return (
-			<ThemeTierBadge
-				themeId={ theme.id }
-				isLockedStyleVariation={ isLocked }
-				hideBackgroundOnUpgrade
-			/>
+			<ThemeTierBadge themeId={ theme.id } isLockedStyleVariation={ isLocked } isThemeShowcase />
 		);
 	};
 

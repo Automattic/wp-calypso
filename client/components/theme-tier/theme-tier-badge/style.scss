@@ -45,15 +45,15 @@
 		background-color: #EBEEFC; /* 50% of wordpress-blue-10 */
 		font-family: $sans;
 	}
-}
 
-.theme-tier-free-included-label {
-	border-radius: 4px;
-	font-family: $sans;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-size: $font-body-extra-small;
+	.theme-tier-free-included-label {
+		border-radius: 4px;
+		font-family: $sans;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: $font-body-extra-small;
+	}
 }
 
 .theme-tier-badge-tooltip,
