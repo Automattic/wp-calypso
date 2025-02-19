@@ -1,0 +1,43 @@
+@import '@automattic/typography/styles/fonts';
+@import '@automattic/typography/styles/variables';
+@import 'assets/stylesheets/shared/mixins/a4a-typography';
+
+.a4a-tos-modal {
+    .components-modal__content {
+        overflow-y: auto;
+    }
+
+    .components-modal__header {
+        margin: 0;
+        padding: 24px;
+        border-bottom: 1px solid var(--color-neutral-10);
+
+        .components-modal__header-heading {
+            @include a4a-font-heading-xl;
+            color: var(--color-neutral-70);
+        }
+    }
+}
+
+.a4a-tos-modal-content {
+    padding: 24px 0;
+}
+
+.a4a-tos-modal-list {
+    @include a4a-font-body-md;
+    color: var(--color-neutral-50);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.a4a-tos-modal-footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-neutral-10);
+    text-align: end;
+
+    .components-button.is-primary {
+        @include a4a-font-label-button;
+        padding: 8px 24px;
+    }
+}
