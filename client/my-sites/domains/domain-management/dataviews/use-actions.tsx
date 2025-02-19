@@ -129,6 +129,7 @@ export function useActions( viewType: 'table' | 'list' | 'grid', onClose?: () =>
 				}
 				return (
 					domain.currentUserIsOwner &&
+					domain.canUpdateContactInfo &&
 					domain.type === domainTypes.REGISTERED &&
 					( isDomainUpdateable( domain ) || isDomainInGracePeriod( domain ) )
 				);
