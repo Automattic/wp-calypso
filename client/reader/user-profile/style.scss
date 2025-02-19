@@ -25,32 +25,6 @@
 					border-block-end: none;
 				}
 			}
-
-			.back-button {
-				position: relative;
-				background: transparent;
-				top: 0;
-				height: auto;
-				border: none;
-
-				.button.is-compact.is-borderless {
-					padding: 20px 0 20px 20px;
-
-					@include breakpoint-deprecated( '<660px' ) {
-						padding: 20px 0 0 20px;
-					}
-				}
-			}
-
-			&.has-back-button {
-				.user-profile__wrapper-content {
-					padding-top: 0;
-				}
-
-				main.main.is-user-profile {
-					margin-top: 0;
-				}
-			}
 		}
 
 		&__lists-body {

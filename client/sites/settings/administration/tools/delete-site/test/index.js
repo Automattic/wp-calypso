@@ -40,6 +40,7 @@ const initialState = {
 	explatExperiments: {
 		experimentAssignments: {},
 	},
+	preferences: {},
 };
 
 const mockDeleteSite = jest.fn();

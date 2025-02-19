@@ -1,0 +1,40 @@
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/breakpoints';
+
+.discover-reddit {
+
+	&__instructions {
+		border: 1px solid #e2e2e2;
+		border-radius: 4px;
+		padding: 30px 15px;
+		margin: 100px auto 0;
+
+		@include break-mobile {
+			padding: 30px 45px;
+		}
+
+		&-icon {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 30px;
+		}
+
+		&-title {
+			margin: 20px 0 30px;
+			font-weight: 500;
+			font-size: $font-title-medium;
+		}
+
+		&-list {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+
+		strong {
+			font-weight: 700;
+		}
+
+
+	}
+}

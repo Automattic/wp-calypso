@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Site } from '@automattic/data-stores';
+import { Site, Onboard } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ENTREPRENEUR_FLOW,
@@ -211,6 +211,20 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
+		const getEnableFeaturesForGoals = () => {
+			if ( ! isGoalsFirstCumulativeExperience ) {
+				return undefined;
+			}
+
+			const featuresForGoals: Onboard.SiteGoal[] = [];
+
+			if ( config.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+				featuresForGoals.push( Onboard.SiteGoal.Write );
+			}
+
+			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
+		};
+
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
 			flow,
@@ -232,8 +246,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			sourceSlug,
 			siteIntent,
 			shouldSaveSiteGoals ? siteGoals : undefined,
-			isGoalsFirstCumulativeExperience &&
-				config.isEnabled( 'onboarding/enable-write-goal-features' )
+			getEnableFeaturesForGoals()
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {

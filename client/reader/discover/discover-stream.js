@@ -9,6 +9,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
+import Reddit from 'calypso/reader/discover/components/reddit';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
@@ -91,6 +92,7 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
+		showBack: true,
 	};
 
 	const HeaderAndNavigation = () => {
@@ -120,6 +122,17 @@ const DiscoverStream = ( props ) => {
 				<HeaderAndNavigation />
 				<div className="reader__content">
 					<DiscoverAddNew />
+				</div>
+			</ReaderMain>
+		);
+	}
+
+	if ( selectedTab === 'reddit' ) {
+		return (
+			<ReaderMain className={ clsx( 'following main', props.className ) }>
+				<HeaderAndNavigation />
+				<div className="reader__content">
+					<Reddit />
 				</div>
 			</ReaderMain>
 		);

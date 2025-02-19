@@ -1,5 +1,4 @@
 import { Button } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { TranslateResult } from 'i18n-calypso';
 import { Children } from 'react';
@@ -49,9 +48,12 @@ function Aside( { heading, cta, children }: AsideProps ) {
 						onClick={ cta.onClick }
 						disabled={ cta.disabled }
 						{ ...( cta.href && { href: cta.href, target: cta.target } ) }
+						icon={ cta.icon }
+						iconPosition="right"
+						iconSize={ 16 }
+						__next40pxDefaultSize
 					>
 						{ cta.label }
-						{ cta.icon && <Icon icon={ cta.icon } size={ 16 } /> }
 					</Button>
 				) }
 			</footer>

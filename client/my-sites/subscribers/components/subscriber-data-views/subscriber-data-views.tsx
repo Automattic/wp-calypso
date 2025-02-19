@@ -77,7 +77,7 @@ const SubscriberDataViews = ( {
 	const isEnglishLocale = useIsEnglishLocale();
 
 	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ filterOption, setFilterOption ] = useState( SubscribersFilterBy.All );
+	const [ filters, setFilters ] = useState< SubscribersFilterBy[] >( [ SubscribersFilterBy.All ] );
 	const [ selectedSubscriber, setSelectedSubscriber ] = useState< Subscriber | null >( null );
 	const { isSimple, isAtomic } = useSelector( ( state ) => ( {
 		isSimple: isSimpleSite( state ),
@@ -104,7 +104,7 @@ const SubscriberDataViews = ( {
 		search: searchTerm,
 		sortTerm: currentView.sort?.field as SubscribersSortBy,
 		sortOrder: currentView.sort?.direction as 'asc' | 'desc',
-		filterOption,
+		filters: filters,
 		limitData: true,
 	} );
 
@@ -144,7 +144,7 @@ const SubscriberDataViews = ( {
 		siteId ?? null,
 		{
 			currentPage: currentView.page ?? 1,
-			filterOption,
+			filters,
 			searchTerm,
 			sortTerm: SubscribersSortBy.DateSubscribed,
 		},
@@ -351,9 +351,12 @@ const SubscriberDataViews = ( {
 		setSearchTerm( currentView.search ?? '' );
 
 		// Handle filter option from the view.
-		setFilterOption(
-			( currentView.filters?.[ 0 ]?.value as SubscribersFilterBy ) ?? SubscribersFilterBy.All
-		);
+		const filterValues =
+			( currentView.filters
+				// Filter out undefined values to prevent unnecessary queries.
+				?.filter( ( filter ) => filter.value !== undefined )
+				.map( ( filter ) => filter.value ) as SubscribersFilterBy[] ) ?? [];
+		setFilters( filterValues.length ? filterValues : [ SubscribersFilterBy.All ] );
 	}, [ currentView.search, currentView.filters ] );
 
 	// Memoize the data and pagination info.
@@ -384,7 +387,7 @@ const SubscriberDataViews = ( {
 						<SubscriberTotals
 							totalSubscribers={ grandTotal }
 							filteredCount={ total }
-							filterOption={ filterOption }
+							filters={ filters }
 							searchTerm={ searchTerm }
 							isLoading={ isLoading }
 						/>

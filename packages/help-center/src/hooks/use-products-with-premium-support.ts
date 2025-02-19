@@ -1,7 +1,7 @@
 import { isDIFMProduct, PLAN_100_YEARS } from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 
-export function useProductsWithPremiumSupport( products: ResponseCartProduct[] ) {
+export function useProductsWithPremiumSupport( products: ResponseCartProduct[], url?: string ) {
 	let hasDIFMProduct = false;
 	let has100YPlan = false;
 
@@ -15,8 +15,8 @@ export function useProductsWithPremiumSupport( products: ResponseCartProduct[] )
 	}
 
 	const initialMessage = hasDIFMProduct
-		? 'User is purchasing DIFM plan.'
-		: 'User is purchasing 100 year plan.';
+		? `User is purchasing DIFM plan.${ url ? ` URL: ${ url }` : '' }`
+		: `User is purchasing 100 year plan.`;
 
 	const hasPremiumSupport = hasDIFMProduct || has100YPlan;
 
