@@ -4,7 +4,13 @@ import { translate } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { DEFAULT_TAB, FIRST_POSTS_TAB, LATEST_TAB } from 'calypso/reader/discover/helper';
+import {
+	DEFAULT_TAB,
+	FIRST_POSTS_TAB,
+	LATEST_TAB,
+	ADD_NEW_TAB,
+	REDDIT_TAB,
+} from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { useDispatch, useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -43,7 +49,7 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 			path: '/discover',
 		},
 		{
-			slug: 'add-new',
+			slug: ADD_NEW_TAB,
 			title: translate( 'Add new' ),
 			path: '/discover/add-new',
 		},
@@ -58,7 +64,7 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 			path: '/discover/tags?selectedTag=dailyprompt',
 		},
 		{
-			slug: 'reddit',
+			slug: REDDIT_TAB,
 			title: translate( 'Reddit' ),
 			path: '/discover/reddit',
 		},
@@ -69,9 +75,9 @@ const DiscoverNavigationV2 = ( { selectedTab }: Props ) => {
 		},
 	];
 
-	// Only show the add new tab if the user is logged in.
+	// Only show the "Add new" and "Reddit" tabs if the user is logged in.
 	const filteredTabs = baseTabs.filter(
-		( tab ) => ( tab.slug !== 'add-new' && tab.slug !== 'reddit' ) || isLoggedIn
+		( tab ) => ( tab.slug !== ADD_NEW_TAB && tab.slug !== REDDIT_TAB ) || isLoggedIn
 	);
 
 	// Add localization to paths if needed.
