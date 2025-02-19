@@ -61,13 +61,14 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 function determineFlow() {
 	const flowNameFromPathName = window.location.pathname.split( '/' )[ 2 ];
 
-	return availableFlows[ flowNameFromPathName ] || availableFlows[ 'site-setup' ];
+	return availableFlows[ flowNameFromPathName ];
 }
+
+const DEFAULT_FLOW = 'onboarding';
+
 interface AppWindow extends Window {
 	BUILD_TARGET: string;
 }
-
-const DEFAULT_FLOW = 'site-setup';
 
 const getSiteIdFromURL = () => {
 	const siteId = new URLSearchParams( window.location.search ).get( 'siteId' );
