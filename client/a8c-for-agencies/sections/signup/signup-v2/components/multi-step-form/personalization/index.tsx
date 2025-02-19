@@ -65,6 +65,7 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 			{ value: 'performance_optimization', label: translate( 'Performance optimization' ) },
 			{ value: 'digital_strategy_marketing', label: translate( 'Digital strategy & marketing' ) },
 			{ value: 'maintenance_support_plans', label: translate( 'Maintenance & support plans' ) },
+			{ value: 'other', label: translate( 'Other' ) },
 		],
 		[ translate ]
 	);
@@ -163,7 +164,7 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 						</FormFieldset>
 
 						<FormFieldset className="signup-personalization-form__checkbox">
-							<FormField label={ translate( 'What services do you offer?' ) } isRequired>
+							<FormField label={ translate( 'What services do you offer?' ) }>
 								<MultiCheckbox
 									id="services_offered"
 									name="services_offered"
@@ -179,7 +180,6 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 								label={ translate(
 									'What Automattic products do you currently offer your clients?'
 								) }
-								isRequired
 							>
 								<MultiCheckbox
 									id="products_offered"

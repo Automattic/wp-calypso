@@ -10,6 +10,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsSignupPayload } from '../../../../types';
+import useBlueprintForm2Validation from './hooks/use-blueprint-form-2-validation';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
@@ -51,8 +52,15 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 		approachAndChallenges: initialFormData.approachAndChallenges || '',
 	} );
 
-	const handleSubmit = ( e: React.FormEvent ) => {
+	const { validate, validationError, updateValidationError } = useBlueprintForm2Validation();
+
+	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
+		const error = await validate( formData );
+		if ( error ) {
+			return;
+		}
+
 		onContinue( formData );
 	};
 
@@ -80,6 +88,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 				label={ translate(
 					"How does your agency typically work with clients regarding Automattic's solutions?"
 				) }
+				error={ validationError.workWithClients }
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
@@ -88,7 +97,10 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 							key={ `work-model-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.workWithClients === option.value }
-							onChange={ () => setFormData( { ...formData, workWithClients: option.value } ) }
+							onChange={ () => {
+								setFormData( { ...formData, workWithClients: option.value } );
+								updateValidationError( { workWithClients: undefined } );
+							} }
 						/>
 					) ) }
 					{ formData.workWithClients === 'other' && (
