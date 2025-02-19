@@ -12,7 +12,6 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
 import {
-	ProvidedDependencies,
 	AssertConditionResult,
 	AssertConditionState,
 	FlowV1,
@@ -66,8 +65,9 @@ const domainTransfer: FlowV1 = {
 			pageTitle: 'Bulk Transfer',
 		} );
 
-		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
-			switch ( _currentStepSlug ) {
+		const submit: ReturnType< Flow[ 'useStepNavigation' ] >[ 'submit' ] = (
+			providedDependencies = {}
+		) => {
 				case 'intro':
 					clearSignupDestinationCookie();
 
@@ -81,7 +81,7 @@ const domainTransfer: FlowV1 = {
 					return navigate( 'processing', undefined );
 				}
 				case 'processing': {
-					setSignupCompleteSlug( providedDependencies?.siteSlug );
+					setSignupCompleteSlug( providedDependencies.siteSlug );
 					setSignupCompleteFlowName( flowName );
 
 					const checkoutBackURL = new URL(
