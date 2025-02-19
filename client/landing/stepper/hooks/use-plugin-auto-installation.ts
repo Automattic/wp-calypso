@@ -31,7 +31,7 @@ const fetchPluginsForSite = async ( siteId: number ): Promise< Response > =>
 		apiNamespace: 'rest/v1.2',
 	} );
 
-const refreshJetpackConnecion = async ( siteId: number ) =>
+const refreshJetpackConnection = async ( siteId: number ) =>
 	wpcom.req.post(
 		{
 			path: `/sites/${ siteId }/migration-force-reconnection`,
@@ -88,7 +88,7 @@ const usePluginStatus = ( pluginSlug: string, siteId?: number, options?: Options
 	} );
 
 	if ( response.isError && remainingAttempts.current >= 0 ) {
-		refreshJetpackConnecion( siteId! );
+		refreshJetpackConnection( siteId! );
 
 		queryClient.invalidateQueries( {
 			queryKey: [ 'onboarding-site-plugin-status', siteId, pluginSlug ],
