@@ -46,11 +46,13 @@ export function useFlowState() {
 			...state,
 			[ key ]: value,
 		} );
+
 		return value as FlowStateManifest[ T ];
 	}
 
 	return {
 		get,
 		set,
+		sessionId: session,
 	};
 }

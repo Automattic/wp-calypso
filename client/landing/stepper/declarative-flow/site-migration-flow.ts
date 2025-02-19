@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -30,12 +31,20 @@ const FLOW_NAME = 'site-migration';
 const siteMigration: Flow = {
 	name: FLOW_NAME,
 	isSignupFlow: false,
+	__experimentalUseSessions: true,
 
 	useSideEffect() {
 		const { setIntent } = useDispatch( ONBOARD_STORE );
 		useEffect( () => {
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [] );
+		const { set, get } = useFlowState();
+		const urlQueryParams = useQuery();
+		const ref = urlQueryParams.get( 'ref' );
+
+		if ( ref && ! get( 'migration' )?.entryPoint ) {
+			set( 'migration', { entryPoint: ref } );
+		}
 	},
 
 	useSteps() {
@@ -91,7 +100,7 @@ const siteMigration: Flow = {
 		return { state: AssertConditionState.SUCCESS };
 	},
 
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( currentStep, _navigate ) {
 		const flowName = this.name;
 		const { siteId } = useSiteData();
 		const variantSlug = this.variantSlug;
@@ -107,10 +116,16 @@ const siteMigration: Flow = {
 			fromQueryParam || '',
 			true
 		);
+
 		const isFromSiteWordPress = ! isLoadingFromData && urlData?.platform === 'wordpress';
+		const { get, sessionId } = useFlowState();
 
 		const exitFlow = ( to: string ) => {
-			window.location.assign( to );
+			return window.location.assign( addQueryArgs( { sessionId }, to ) );
+		};
+
+		const navigate = ( to: string, state?: Parameters< typeof _navigate >[ 1 ] ) => {
+			return _navigate( addQueryArgs( { sessionId }, to ), state );
 		};
 
 		// Call triggerGuidesForStep for the current step
@@ -164,6 +179,7 @@ const siteMigration: Flow = {
 							if ( from ) {
 								return navigate( addQueryArgs( { from }, STEPS.SITE_CREATION_STEP.slug ) );
 							}
+
 							return navigate( 'error' );
 						}
 					}
@@ -578,18 +594,28 @@ const siteMigration: Flow = {
 
 		const goBack = () => {
 			const siteSlug = urlQueryParams.get( 'siteSlug' ) || '';
+			const siteId = urlQueryParams.get( 'siteId' ) || '';
+			const entryPoint = get( 'migration' )?.entryPoint;
+
 			switch ( currentStep ) {
 				case STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug: {
-					if ( urlQueryParams.get( 'ref' ) === 'calypso-importer' ) {
+					if ( entryPoint === 'calypso-importer' ) {
 						return exitFlow( addQueryArgs( { ref: 'site-migration' }, `/import/${ siteSlug }` ) );
 					}
-					return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+
+					return navigate(
+						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IDENTIFY.slug )
+					);
 				}
+
 				case STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug: {
-					return navigate( STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug );
+					return navigate(
+						addQueryArgs( { siteSlug, siteId }, STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug )
+					);
 				}
+
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug: {
-					if ( urlQueryParams.get( 'ref' ) === GUIDED_ONBOARDING_FLOW_REFERRER ) {
+					if ( entryPoint === GUIDED_ONBOARDING_FLOW_REFERRER ) {
 						return exitFlow( '/start/initial-intent' );
 					}
 

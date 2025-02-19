@@ -160,9 +160,10 @@ const siteSetupFlow: FlowV1 = {
 
 		const goToFlow = ( fullStepPath: string ) => {
 			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+			const sessionId = urlQueryParams.get( 'sessionId' );
 
 			return window.location.assign(
-				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+				addQueryArgs( { siteSlug, from, sessionId, origin: `site-setup/${ currentStep }` }, path )
 			);
 		};
 
