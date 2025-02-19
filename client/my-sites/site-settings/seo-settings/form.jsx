@@ -349,7 +349,7 @@ export class SiteSettingsFormSEO extends Component {
 									/>
 								) }
 							</PanelCardHeading>
-							<div compact className="seo-settings__page-title-header">
+							<div className="seo-settings__page-title-header">
 								<img
 									className="seo-settings__page-title-header-image"
 									src={ pageTitleImage }
