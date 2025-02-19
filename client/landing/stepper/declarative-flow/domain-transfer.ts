@@ -11,10 +11,6 @@ import {
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { USER_STORE } from '../stores';
 import { useLoginUrl } from '../utils/path';
-import {
-	AssertConditionResult,
-	AssertConditionState,
-} from './internals/types';
 import { STEPS } from './internals/steps';
 import { Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
