@@ -9,6 +9,7 @@ import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import LineChart from 'calypso/my-sites/stats/components/line-chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
@@ -159,9 +160,7 @@ class StatModuleChartTabs extends Component {
 						/>
 					</Chart>
 				) : (
-					<div className="stats-chart-tabs__line-chart-placeholder">
-						<span>Line chart coming soon</span>
-					</div>
+					<LineChart className="stats-chart-tabs__line-chart" chartData={ [] } height={ 200 } />
 				) }
 
 				<StatTabs
