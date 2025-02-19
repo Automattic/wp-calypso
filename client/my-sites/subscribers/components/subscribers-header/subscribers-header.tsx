@@ -119,6 +119,7 @@ export const SubscribersHeader = ( {
 					isVisible={ showSubscriberModal === 'add' }
 					onClose={ closeSubscriberModal }
 					addSubscribersCallback={ ( importError ) => {
+						closeSubscriberModal();
 						completeImportSubscribersTask();
 						addSubscribersCallback( importError );
 					} }
@@ -129,6 +130,7 @@ export const SubscribersHeader = ( {
 					isVisible={ showSubscriberModal === 'migrate' }
 					onClose={ closeSubscriberModal }
 					migrateSubscribersCallback={ ( selectedSourceSiteId, targetSiteId ) => {
+						closeSubscriberModal();
 						completeImportSubscribersTask();
 						migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
 					} }
