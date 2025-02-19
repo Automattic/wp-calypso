@@ -2634,17 +2634,35 @@ const FEATURES_LIST: FeatureList = {
 					strong: <strong />,
 				},
 			} ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
+		getDescription: () =>
+			i18n.translate( 'Grow your site without limits — unlimited content, users, and traffic.' ),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,
@@ -2702,7 +2720,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONNECT_ANALYTICS ]: {
 		getSlug: () => FEATURE_CONNECT_ANALYTICS,
-		getTitle: () => i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' ),
+		getTitle: () => i18n.translate( 'Connect Google Analytics' ),
 		getDescription: () =>
 			i18n.translate(
 				'Link your accounts to gain more valuable insights in seconds. No coding required.'

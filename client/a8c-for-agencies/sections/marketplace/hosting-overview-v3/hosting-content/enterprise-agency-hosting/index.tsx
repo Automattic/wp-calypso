@@ -1,6 +1,6 @@
 import { VIPLogo } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import { Icon, external } from '@wordpress/icons';
+import { external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { BackgroundType11 } from 'calypso/a8c-for-agencies/components/page-section/backgrounds';
 import SimpleList from 'calypso/a8c-for-agencies/components/simple-list';
@@ -61,9 +61,12 @@ export default function EnterpriseAgencyHosting( { isReferMode }: { isReferMode:
 						onClick={ isReferMode ? onReferClientClick : onRequestDemoClick }
 						target="_blank"
 						variant="primary"
+						icon={ external }
+						iconPosition="right"
+						iconSize={ 16 }
+						__next40pxDefaultSize
 					>
 						{ isReferMode ? translate( 'Refer client' ) : translate( 'Request a Demo' ) }
-						<Icon icon={ external } size={ 16 } />
 					</Button>
 				</HostingPlanSection.Card>
 

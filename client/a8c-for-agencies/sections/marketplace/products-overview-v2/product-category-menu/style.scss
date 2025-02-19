@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 @import "../../variables";
 
@@ -60,7 +61,8 @@
 }
 
 .product-category-menu-title {
-	@include a4a-font-heading-lg;
+	@include heading-x-large;
+
 	color: var(--color-text-inverted);
 	z-index: 10;
 	position: relative;
@@ -71,12 +73,7 @@
 }
 
 .product-category-menu-item {
-	@include a4a-font-heading-md;
 	width: 200px;
 	height: 100px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	background-color: var(--color-primary-0);
-	border-radius: 4px; // eslint-disable-line wpcalypso-border-radius-theme
 }

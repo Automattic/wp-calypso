@@ -254,11 +254,6 @@
 	margin-top: 10px;
 	margin-left: 0;
 
-	&:focus {
-		box-shadow: none !important;
-		border-color: #c3c4c7 !important;
-	}
-
 	@media (min-width: 660px) {
 		width: auto;
 		flex: 1 0 auto;
@@ -280,11 +275,6 @@
 		padding: 0;
 		display: flex;
 		align-items: center;
-
-		&:focus {
-			box-shadow: none !important;
-			border-color: transparent !important;
-		}
 
 		/* Checkmark for selected domains */
 		svg {
@@ -505,18 +495,12 @@ body.is-section-signup.is-white-signup {
 				line-height: 20px;
 				padding: 0.57em 1.17em;
 				border-radius: 4px;
-				border: 1px solid #c3c4c7;
 				letter-spacing: 0.32px;
 				font-size: 0.875rem;
 
 				@include break-mobile {
 					padding: 0.65em 2.8em;
 					width: 100%;
-				}
-
-				&:focus {
-					border-color: var(--color-primary);
-					box-shadow: 0 0 0 2px var(--color-primary-light);
 				}
 			}
 

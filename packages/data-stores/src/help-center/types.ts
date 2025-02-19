@@ -46,3 +46,7 @@ export interface APIFetchOptions {
 }
 
 export type HelpCenterSelect = SelectFromMap< typeof selectors >;
+
+export interface HelpCenterOptions {
+	hideBackButton?: boolean;
+}

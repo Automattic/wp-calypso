@@ -1,4 +1,5 @@
-import { Site } from '@automattic/data-stores';
+import config from '@automattic/calypso-config';
+import { Site, Onboard } from '@automattic/data-stores';
 import { FREE_THEME } from '@automattic/design-picker';
 import {
 	ENTREPRENEUR_FLOW,
@@ -29,6 +30,7 @@ import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
+import { useGoalsFirstCumulativeExperience } from 'calypso/data/experiment/use-goals-first-cumulative-experience';
 import useAddTempSiteToSourceOptionMutation from 'calypso/data/site-migration/use-add-temp-site-mutation';
 import { useSourceMigrationStatusQuery } from 'calypso/data/site-migration/use-source-migration-status-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -97,6 +99,7 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
 	const [ , isGoalsFirstExperiment ] = useGoalsFirstExperiment();
+	const [ , isGoalsFirstCumulativeExperience ] = useGoalsFirstCumulativeExperience();
 
 	/**
 	 * Support singular and multiple domain cart items.
@@ -208,6 +211,20 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 
 		const siteIntent = isMigrationSignupFlow( flow ) ? 'migration' : '';
 
+		const getEnableFeaturesForGoals = () => {
+			if ( ! isGoalsFirstCumulativeExperience ) {
+				return undefined;
+			}
+
+			const featuresForGoals: Onboard.SiteGoal[] = [];
+
+			if ( config.isEnabled( 'onboarding/enable-write-goal-features' ) ) {
+				featuresForGoals.push( Onboard.SiteGoal.Write );
+			}
+
+			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
+		};
+
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
 			flow,
@@ -228,7 +245,8 @@ const CreateSite: Step = function CreateSite( { navigation, flow, data } ) {
 			domainItem,
 			sourceSlug,
 			siteIntent,
-			shouldSaveSiteGoals ? siteGoals : undefined
+			shouldSaveSiteGoals ? siteGoals : undefined,
+			getEnableFeaturesForGoals()
 		);
 
 		if ( preselectedThemeSlug && site?.siteSlug ) {

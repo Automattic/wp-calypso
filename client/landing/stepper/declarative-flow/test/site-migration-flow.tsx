@@ -6,6 +6,7 @@ import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selector
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { HOSTING_INTENT_MIGRATE } from 'calypso/data/hosting/use-add-hosting-trial-mutation';
+import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { GUIDED_ONBOARDING_FLOW_REFERRER } from '../../../../signup/steps/initial-intent/constants';
 import { HOW_TO_MIGRATE_OPTIONS } from '../../constants';
@@ -21,6 +22,14 @@ jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
 	triggerGuidesForStep: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: jest.fn().mockReturnValue( {
+		get: jest.fn(),
+		set: jest.fn(),
+		sessionId: '123',
+	} ),
 } ) );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
@@ -241,6 +250,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			describe( 'back', () => {
+				beforeEach( () => jest.clearAllMocks() );
+
 				it( 'redirects back to SITE_MIGRATION_IDENTIFY step', () => {
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -258,6 +269,12 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				it( 'redirects back to initial-intent flow when the ref is GUIDED_ONBOARDING_FLOW_REFERRER', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValue( { entryPoint: GUIDED_ONBOARDING_FLOW_REFERRER } ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
+
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
 						dependencies: {},
@@ -318,6 +335,12 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'redirects to regular import page when coming from there (ref=calypso-importer)', () => {
+				jest.mocked( useFlowState ).mockReturnValue( {
+					get: jest.fn().mockReturnValue( { migration: { entryPoint: 'calypso-importer' } } ),
+					set: jest.fn(),
+					sessionId: '123',
+				} );
+
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 					dependencies: {
@@ -351,6 +374,11 @@ describe( 'Site Migration Flow', () => {
 					} );
 				} );
 				it( 'redirects back to import flow when the ref is calypso-importer', () => {
+					jest.mocked( useFlowState ).mockReturnValue( {
+						get: jest.fn().mockReturnValue( { entryPoint: 'calypso-importer' } ),
+						set: jest.fn(),
+						sessionId: '123',
+					} );
 					runNavigationBack( {
 						from: STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE,
 						dependencies: {},

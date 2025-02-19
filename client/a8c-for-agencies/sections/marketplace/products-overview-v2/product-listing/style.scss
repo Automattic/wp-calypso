@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .product-listing-section__content,
 .product-listing-section__header {
@@ -29,11 +30,13 @@
 }
 
 .product-listing-section__header-title {
-	@include a4a-font-heading-lg;
+	@include heading-x-large;
 }
 
 .product-listing-section__header-subtitle {
-	@include a4a-font-body-md;
+	@include body-medium;
+
+	color: var(--color-neutral-60);
 	display: none;
 
 	@include break-medium {
@@ -71,13 +74,11 @@
 }
 
 .product-listing-empty__message-heading {
-	// TODO: Replace with Heading LG
-	font-size: rem(15px);
-	font-weight: 500;
+	@include heading-large;
 }
 
 .product-listing-empty__message-description {
-	// TODO: Replace with Body MD
-	font-size: rem(13px);
+	@include body-medium;
+
 	color: var(--color-neutral-50);
 }

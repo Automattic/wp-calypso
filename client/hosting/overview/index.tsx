@@ -30,7 +30,12 @@ import {
 	DOTCOM_OVERVIEW,
 } from 'calypso/sites/components/site-preview-pane/constants';
 import { siteDashboard } from 'calypso/sites/controller';
-import { hostingOverview, hostingConfiguration, hostingActivate } from './controller';
+import {
+	hostingOverview,
+	hostingConfiguration,
+	hostingActivate,
+	redirectToServerSettingsIfDuplicatedView,
+} from './controller';
 
 function registerSiteDomainPage( { path, controllers }: { path: string; controllers: any[] } ) {
 	page(
@@ -74,41 +79,36 @@ export default function () {
 
 	page( '/hosting-config', siteSelection, sites, makeLayout, clientRender );
 
-	if ( isEnabled( 'untangling/hosting-menu' ) ) {
-		page( '/hosting-config/:site', ( context: PageJSContext ) => {
-			page.redirect( `/sites/tools/${ context.params.site }` );
-		} );
-	} else {
-		page(
-			'/hosting-config/:site_id',
-			siteSelection,
-			navigation,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			redirectIfCurrentUserCannot( 'manage_options' ),
-			redirectToHostingPromoIfNotAtomic,
-			handleHostingPanelRedirect,
-			hostingConfiguration,
-			siteDashboard( DOTCOM_HOSTING_CONFIG ),
-			makeLayout,
-			clientRender
-		);
+	page(
+		'/hosting-config/:site_id',
+		siteSelection,
+		navigation,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToHostingPromoIfNotAtomic,
+		redirectToServerSettingsIfDuplicatedView,
+		handleHostingPanelRedirect,
+		hostingConfiguration,
+		siteDashboard( DOTCOM_HOSTING_CONFIG ),
+		makeLayout,
+		clientRender
+	);
 
-		page(
-			'/hosting-config/activate/:site_id',
-			siteSelection,
-			navigation,
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore
-			redirectIfCurrentUserCannot( 'manage_options' ),
-			redirectToHostingPromoIfNotAtomic,
-			handleHostingPanelRedirect,
-			hostingActivate,
-			siteDashboard( DOTCOM_HOSTING_CONFIG ),
-			makeLayout,
-			clientRender
-		);
-	}
+	page(
+		'/hosting-config/activate/:site_id',
+		siteSelection,
+		navigation,
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		redirectIfCurrentUserCannot( 'manage_options' ),
+		redirectToHostingPromoIfNotAtomic,
+		handleHostingPanelRedirect,
+		hostingActivate,
+		siteDashboard( DOTCOM_HOSTING_CONFIG ),
+		makeLayout,
+		clientRender
+	);
 
 	// Domain pages under site overview's context.
 	registerSiteDomainPage( {

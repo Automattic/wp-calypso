@@ -33,6 +33,7 @@ class InlineSupportLink extends Component {
 		statsName: PropTypes.string,
 		showSupportModal: PropTypes.bool,
 		noWrap: PropTypes.bool,
+		onClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -60,10 +61,11 @@ class InlineSupportLink extends Component {
 	}
 
 	onSupportLinkClick( event, supportPostId, url, blogId ) {
-		const { showSupportModal, openDialog } = this.props;
+		const { showSupportModal, openDialog, onClick } = this.props;
 		if ( ! showSupportModal ) {
 			return;
 		}
+		onClick?.();
 		openDialog( event, supportPostId, url, blogId );
 	}
 

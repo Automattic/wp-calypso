@@ -5,6 +5,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
@@ -19,7 +20,7 @@ import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import ChartHeader from './chart-header';
-import { buildChartData, getQueryDate } from './utility';
+import { buildChartData, getQueryDate, formatDate } from './utility';
 
 import './style.scss';
 
@@ -52,6 +53,10 @@ class StatModuleChartTabs extends Component {
 		),
 		isActiveTabLoading: PropTypes.bool,
 		onChangeLegend: PropTypes.func.isRequired,
+	};
+
+	state = {
+		chartType: 'bar',
 	};
 
 	intervalId = null;
@@ -100,9 +105,33 @@ class StatModuleChartTabs extends Component {
 		this.props.queryDayComp && this.props.requestChartCounts( this.props.queryDayComp );
 	};
 
+	handleChartTypeChange = ( newType ) => {
+		this.setState( { chartType: newType } );
+	};
+
+	//TODO: remove this once we connect up the real data
+	generateDummyLineChartData = () => {
+		return [
+			{
+				label: 'Views',
+				options: {},
+				data: [
+					{ date: new Date( '2024-01-01' ), value: 45 },
+					{ date: new Date( '2024-01-02' ), value: 32 },
+					{ date: new Date( '2024-01-03' ), value: 67 },
+					{ date: new Date( '2024-01-04' ), value: 89 },
+					{ date: new Date( '2024-01-05' ), value: 54 },
+					{ date: new Date( '2024-01-06' ), value: 78 },
+					{ date: new Date( '2024-01-07' ), value: 93 },
+				],
+			},
+		];
+	};
+
 	render() {
 		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
 			this.props;
+		const { chartType } = this.state;
 
 		const chartData = this.props.chartData.map( ( record ) => {
 			record.className = record.className?.replaceAll( 'is-selected', '' );
@@ -130,21 +159,40 @@ class StatModuleChartTabs extends Component {
 					slug={ slug }
 					period={ selectedPeriod }
 					queryParams={ queryParams }
+					chartType={ chartType }
+					onChartTypeChange={ this.handleChartTypeChange }
 				/>
 
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState
-						headingText={
-							selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
-						}
-						infoText={
-							selectedPeriod === 'hour'
-								? translate( 'Try selecting a different time frame.' )
-								: null
-						}
+
+				{ chartType === 'bar' ? (
+					<Chart barClick={ this.props.barClick } data={ chartData } minBarWidth={ 35 }>
+						<StatsEmptyState
+							headingText={
+								selectedPeriod === 'hour' ? translate( 'No hourly data available' ) : null
+							}
+							infoText={
+								selectedPeriod === 'hour'
+									? translate( 'Try selecting a different time frame.' )
+									: null
+							}
+						/>
+					</Chart>
+				) : (
+					<AsyncLoad
+						require="calypso/my-sites/stats/components/line-chart"
+						className="stats-chart-tabs__line-chart"
+						chartData={ this.generateDummyLineChartData() }
+						height={ 200 }
+						moment={ this.props.moment }
+						formatTimeTick={ ( timestamp ) => {
+							const date = new Date( timestamp );
+							return formatDate( date, this.props.selectedPeriod );
+						} }
+						maxViews={ 100 }
 					/>
-				</Chart>
+				) }
+
 				<StatTabs
 					data={ this.props.counts }
 					previousData={ countsComp }

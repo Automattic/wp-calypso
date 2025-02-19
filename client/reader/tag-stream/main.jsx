@@ -126,7 +126,7 @@ class TagStream extends Component {
 						// unfollow if that was the case.
 						showFollow={ tag.id && this.isSubscribed() }
 						showSort={ false }
-						showBack={ this.props.showBack }
+						showBack={ false }
 					/>
 					{ emptyContent() }
 				</ReaderMain>
@@ -175,7 +175,6 @@ class TagStream extends Component {
 			>
 				<QueryReaderFollowedTags />
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
-				{ this.props.showBack && <HeaderBack /> }
 			</Stream>
 		);
 	}

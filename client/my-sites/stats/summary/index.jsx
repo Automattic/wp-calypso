@@ -218,7 +218,7 @@ class StatsSummary extends Component {
 				/* eslint-disable wpcalypso/jsx-classname-namespace */
 				summaryView = (
 					<Fragment key="authors-summary">
-						{ this.renderSummaryHeader( path, statType, true, query ) }
+						{ this.renderSummaryHeader( path, statType, false, query ) }
 						<StatsModuleAuthors
 							moduleStrings={ StatsStrings.authors }
 							period={ this.props.period }
@@ -261,7 +261,7 @@ class StatsSummary extends Component {
 
 				summaryView = (
 					<Fragment key="filedownloads-summary">
-						{ this.renderSummaryHeader( path, statType, true, query ) }
+						{ this.renderSummaryHeader( path, statType, false, query ) }
 						<StatsModuleDownloads
 							moduleStrings={ StatsStrings.filedownloads }
 							period={ this.props.period }

@@ -3,8 +3,10 @@ import { Icon, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState, useEffect } from 'react';
 import {
+	A4A_MARKETPLACE_ASSIGN_LICENSE_LINK,
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
+	A4A_SITES_LINK_NEEDS_SETUP,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableHostingProduct,
@@ -59,6 +61,10 @@ export default function LicenseDetailsActions( {
 
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 	const downloadUrl = useLicenseDownloadUrlMutation( licenseKey );
+
+	const redirectUrl = isWPCOMHostingLicense
+		? A4A_SITES_LINK_NEEDS_SETUP
+		: addQueryArgs( { key: licenseKey }, A4A_MARKETPLACE_ASSIGN_LICENSE_LINK );
 
 	const openRevokeDialog = useCallback( () => {
 		setRevokeDialog( true );
@@ -149,13 +155,8 @@ export default function LicenseDetailsActions( {
 				) }
 
 			{ licenseState === LicenseState.Detached && licenseType === LicenseType.Partner && (
-				<Button
-					compact
-					primary
-					className="license-details__assign-button"
-					href={ addQueryArgs( { key: licenseKey }, '/marketplace/assign-license' ) }
-				>
-					{ translate( 'Assign License' ) }
+				<Button compact primary className="license-details__assign-button" href={ redirectUrl }>
+					{ isWPCOMHostingLicense ? translate( 'Create site' ) : translate( 'Assign license' ) }
 				</Button>
 			) }
 

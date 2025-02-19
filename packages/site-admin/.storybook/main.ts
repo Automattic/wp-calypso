@@ -1,4 +1,4 @@
 const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
-const config = { ...storybookDefaultConfig(), staticDirs: [ './public' ] };
+const config = storybookDefaultConfig();
 
 module.exports = config;
