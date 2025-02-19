@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
-import { HelpCenter } from '@automattic/data-stores';
+import { HelpCenter, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
@@ -11,7 +12,8 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSelector } from 'calypso/state';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useAddSubscribersCallback, useMigrateSubscribersCallback } from '../../hooks';
 import { AddSubscribersModal } from '../add-subscribers-modal';
 import { MigrateSubscribersModal } from '../migrate-subscribers-modal';
 import { SubscribersHeaderPopover } from '../subscribers-header-popover';
@@ -33,11 +35,24 @@ export const SubscribersHeader = ( {
 }: SubscribersHeaderProps ): ReactElement => {
 	const localizeUrl = useLocalizeUrl();
 	const { setShowSupportDoc } = useDataStoreDispatch( HELP_CENTER_STORE );
-	const selectedSite = useSelector( getSelectedSite );
-	const siteId = selectedSite?.ID || null;
+	const siteId = useSelector( getSelectedSiteId ) ?? null;
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
-	const [ isAddSubscribersModalOpen, setIsAddSubscribersModalOpen ] = useState( false );
-	const [ isMigrateSubscribersModalOpen, setIsMigrateSubscribersModalOpen ] = useState( false );
+	const addSubscribersCallback = useAddSubscribersCallback( siteId );
+	const migrateSubscribersCallback = useMigrateSubscribersCallback();
+	const [ showSubscriberModal, setShowSubscriberModal ] = useState< 'none' | 'add' | 'migrate' >(
+		'none'
+	);
+
+	const queryClient = useQueryClient();
+	const completeImportSubscribersTask = async () => {
+		if ( selectedSiteSlug ) {
+			await updateLaunchpadSettings( selectedSiteSlug, {
+				checklist_statuses: { import_subscribers: true },
+			} );
+		}
+		queryClient.invalidateQueries( { queryKey: [ 'launchpad' ] } );
+	};
 
 	const openHelpCenter = () => {
 		setShowSupportDoc( localizeUrl( 'https://wordpress.com/support/paid-newsletters/' ) );
@@ -65,6 +80,10 @@ export const SubscribersHeader = ( {
 		},
 	};
 
+	const closeSubscriberModal = () => {
+		setShowSubscriberModal( 'none' );
+	};
+
 	return (
 		<>
 			<NavigationHeader
@@ -85,24 +104,35 @@ export const SubscribersHeader = ( {
 					variant="primary"
 					className="button add-subscribers-button"
 					disabled={ disableCta }
-					onClick={ () => setIsAddSubscribersModalOpen( true ) }
+					onClick={ () => setShowSubscriberModal( 'add' ) }
 				>
 					<Gridicon icon="plus" size={ 24 } />
 					<span className="add-subscribers-button-text">{ translate( 'Add subscribers' ) }</span>
 				</Button>
 				<SubscribersHeaderPopover
 					siteId={ selectedSiteId }
-					openMigrateSubscribersModal={ () => setIsMigrateSubscribersModalOpen( true ) }
+					openMigrateSubscribersModal={ () => setShowSubscriberModal( 'migrate' ) }
 				/>
 			</NavigationHeader>
-			{ selectedSite && isAddSubscribersModalOpen && (
+			{ siteId && (
 				<AddSubscribersModal
-					site={ selectedSite }
-					onClose={ () => setIsAddSubscribersModalOpen( false ) }
+					isVisible={ showSubscriberModal === 'add' }
+					onClose={ closeSubscriberModal }
+					addSubscribersCallback={ ( importError ) => {
+						completeImportSubscribersTask();
+						addSubscribersCallback( importError );
+					} }
 				/>
 			) }
-			{ selectedSite && isMigrateSubscribersModalOpen && (
-				<MigrateSubscribersModal onClose={ () => setIsMigrateSubscribersModalOpen( false ) } />
+			{ siteId && (
+				<MigrateSubscribersModal
+					isVisible={ showSubscriberModal === 'migrate' }
+					onClose={ closeSubscriberModal }
+					migrateSubscribersCallback={ ( selectedSourceSiteId, targetSiteId ) => {
+						completeImportSubscribersTask();
+						migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
+					} }
+				/>
 			) }
 		</>
 	);

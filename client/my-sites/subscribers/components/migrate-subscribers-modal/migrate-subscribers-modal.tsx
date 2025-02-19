@@ -31,7 +31,15 @@ function useOtherOwnedSiteIDs() {
 
 type MigrateSubscribersModalState = 'selection' | 'confirmation';
 
-const MigrateSubscribersModal = ( { onClose }: { onClose: () => void } ) => {
+const MigrateSubscribersModal = ( {
+	isVisible,
+	onClose,
+	migrateSubscribersCallback,
+}: {
+	isVisible: boolean;
+	onClose: () => void;
+	migrateSubscribersCallback: ( selectedSourceSiteId: number, targetSiteId: number ) => void;
+} ) => {
 	const translate = useTranslate();
 	const targetSite = useSelector( getSelectedSite );
 	const targetSiteId = useSelector( getSelectedSiteId );
@@ -53,6 +61,10 @@ const MigrateSubscribersModal = ( { onClose }: { onClose: () => void } ) => {
 	const selectedSourceSiteName = selectedSourceSite?.name || selectedSourceSite?.URL || '';
 
 	const isWPCOMSite = useSelector( ( state ) => getIsSiteWPCOM( state, targetSiteId ) );
+
+	if ( ! isVisible ) {
+		return null;
+	}
 
 	const migrateSubscribersUrl = ! isWPCOMSite
 		? 'https://jetpack.com/support/newsletter/import-subscribers/#migrate-subscribers-from-a-word-press-com-site'
@@ -146,7 +158,9 @@ const MigrateSubscribersModal = ( { onClose }: { onClose: () => void } ) => {
 								source_site_id: sourceSiteId,
 								target_site_id: targetSiteId,
 							} );
-							selectedSourceSiteId && targetSiteId;
+							selectedSourceSiteId &&
+								targetSiteId &&
+								migrateSubscribersCallback( selectedSourceSiteId, targetSiteId );
 						} }
 					>
 						{ translate( 'Confirm subscriber move' ) }

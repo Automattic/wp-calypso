@@ -3,10 +3,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_UNLIMITED_SUBSCRIBERS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { Gridicon, FlowQuestion } from '@automattic/components';
-import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
+import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useState } from '@wordpress/element';
@@ -20,11 +20,22 @@ import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
+import type { ImportSubscribersError } from '@automattic/data-stores/src/subscriber/types';
 
 import './style.scss';
 
-const AddSubscribersModal = ( { site, onClose }: { site: SiteDetails; onClose: () => void } ) => {
+const AddSubscribersModal = ( {
+	isVisible,
+	onClose,
+	addSubscribersCallback,
+}: {
+	isVisible: boolean;
+	onClose: () => void;
+	addSubscribersCallback: ( importError: ImportSubscribersError | undefined ) => void;
+} ) => {
+	const site = useSelector( getSelectedSite );
 	const translate = useTranslate();
 	const [ addingMethod, setAddingMethod ] = useState( '' );
 	const hasUnlimitedSubscribers = useSelector( ( state: AppState ) =>
@@ -36,20 +47,26 @@ const AddSubscribersModal = ( { site, onClose }: { site: SiteDetails; onClose: (
 	const isSubstackSubscriberImporterEnabled = isEnabled( 'importers/newsletter' );
 
 	const modalTitle = translate( 'Add subscribers to %s', {
-		args: [ site.title ],
+		args: [ site?.title || '' ],
 		comment: "%s is the site's title",
 	} );
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
 
+	const importError = useImportError();
 	const isImportInProgress = useInProgressState();
 	const hasStaleImportJobs = useHasStaleImportJobs();
 
 	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
+		addSubscribersCallback( importError );
 	};
+
+	if ( ! isVisible ) {
+		return null;
+	}
 
 	const isFreeSite = site?.plan?.is_free ?? false;
 	const isBusinessTrial = site ? isBusinessTrialSite( site ) : false;
@@ -195,8 +212,8 @@ const AddSubscribersModal = ( { site, onClose }: { site: SiteDetails; onClose: (
 					) }
 					<label className="add-subscribers-modal__label">{ translate( 'Email' ) }</label>
 					<AddSubscriberForm
-						siteId={ site.ID }
-						siteUrl={ site.URL }
+						siteId={ site?.ID || 0 }
+						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						submitBtnAlwaysEnable
 						onImportStarted={ onImportStarted }
@@ -256,8 +273,8 @@ const AddSubscribersModal = ( { site, onClose }: { site: SiteDetails; onClose: (
 						</Notice>
 					) }
 					<UploadSubscribersForm
-						siteId={ site.ID }
-						siteUrl={ site.URL }
+						siteId={ site?.ID || 0 }
+						siteUrl={ site?.URL }
 						hasSubscriberLimit={ hasSubscriberLimit }
 						onImportStarted={ onImportStarted }
 						onImportFinished={ onImportFinished }
