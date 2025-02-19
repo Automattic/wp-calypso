@@ -76,7 +76,7 @@ export default function Transfer( props: WooCommerceInstallProps ) {
 			hideNext
 			hideSkip
 			hideFormattedHeader
-			isWideLayout={ props.isReskinned }
+			isWideLayout
 			stepContent={
 				<>
 					{ isAtomic && (

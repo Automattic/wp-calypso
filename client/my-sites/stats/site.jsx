@@ -32,6 +32,7 @@ import {
 	STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS,
 	STATS_FEATURE_PAGE_TRAFFIC,
 	STATS_FEATURE_INTERVAL_DROPDOWN_WEEK,
+	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import {
@@ -202,7 +203,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
 		supportsDevicesStats: supportsDevicesStatsFeature,
-		supportsLocationsStats: supportsLocationsStatsFeature,
 		isOldJetpack,
 		supportUserFeedback,
 	} = useSelector( ( state ) => getEnvStatsFeatureSupportChecks( state, siteId ) );
@@ -253,7 +253,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const shouldShowUpsells = isOdysseyStats && ! isAtomic;
 	const supportsUTMStats = supportsUTMStatsFeature || isInternal;
 	const supportsDevicesStats = supportsDevicesStatsFeature || isInternal;
-	const supportsLocationsStats = supportsLocationsStatsFeature || isInternal;
 	const getAvailableLegend = () => {
 		const activeTab = getActiveTab( chartTab );
 		// TODO: remove this when we support hourly visitors.
@@ -546,7 +545,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 			) }
 			<NavigationHeader
 				className="stats__section-header modernized-header"
-				title={ translate( 'Jetpack Stats' ) }
+				title={ STATS_PRODUCT_NAME }
 				subtitle={ translate(
 					"Gain insights into the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 					{
@@ -635,7 +634,7 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 								className={ halfWidthModuleClasses }
 							/>
 
-							{ config.isEnabled( 'stats/locations' ) && supportsLocationsStats ? (
+							{ config.isEnabled( 'stats/locations' ) ? (
 								<>
 									<StatsModuleLocations
 										moduleStrings={ moduleStrings.locations }
@@ -800,11 +799,12 @@ const EnableStatsModule = ( props ) => {
 			line={
 				<p>
 					{ translate(
-						'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
+						'Enable %(product)s to see detailed information about your traffic, likes, comments, and subscribers.',
+						{ args: { product: STATS_PRODUCT_NAME } }
 					) }
 				</p>
 			}
-			action={ translate( 'Enable Jetpack Stats' ) }
+			action={ translate( 'Enable %(product)s', { args: { product: STATS_PRODUCT_NAME } } ) }
 			actionCallback={ enableStatsModule }
 		/>
 	);
@@ -869,7 +869,7 @@ const StatsSite = ( props ) => {
 	); // Track the last viewed tab.
 
 	return (
-		<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
+		<Main fullWidthLayout ariaLabel={ STATS_PRODUCT_NAME }>
 			{ config.isEnabled( 'stats/paid-wpcom-v2' ) && ! isOdysseyStats && (
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 			) }
@@ -882,7 +882,7 @@ const StatsSite = ( props ) => {
 			) }
 			{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 			{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
-			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
+			<DocumentHead title={ STATS_PRODUCT_NAME } />
 			<PageViewTracker
 				path={ `/stats/${ period }/:site` }
 				title={ `Stats > ${ titlecase( period ) }` }

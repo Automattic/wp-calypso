@@ -5,7 +5,7 @@ import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
 import { isE2ETest } from '.';
-import type { APIFetchOptions } from './types';
+import type { APIFetchOptions, HelpCenterOptions } from './types';
 import type { SupportInteraction } from '@automattic/odie-client/src/types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
@@ -106,7 +106,22 @@ export const setShowMessagingWidget = ( show: boolean ) =>
 		show,
 	} ) as const;
 
-export const setShowHelpCenter = function* ( show: boolean ) {
+export const setAllowPremiumSupport = ( allow: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_ALLOW_PREMIUM_SUPPORT',
+		allow,
+	} ) as const;
+
+export const setHelpCenterOptions = ( options: HelpCenterOptions ) => ( {
+	type: 'HELP_CENTER_SET_OPTIONS' as const,
+	options,
+} );
+
+export const setShowHelpCenter = function* (
+	show: boolean,
+	allowPremiumSupport = false,
+	options = { hideBackButton: false }
+) {
 	if ( ! isE2ETest() ) {
 		try {
 			if ( canAccessWpcomApis() ) {
@@ -138,6 +153,13 @@ export const setShowHelpCenter = function* ( show: boolean ) {
 	}
 
 	yield setIsMinimized( false );
+	if ( allowPremiumSupport ) {
+		yield setAllowPremiumSupport( true );
+	}
+
+	if ( options?.hideBackButton ) {
+		yield setHelpCenterOptions( options );
+	}
 
 	return {
 		type: 'HELP_CENTER_SET_SHOW',
@@ -212,5 +234,7 @@ export type HelpCenterAction =
 			| typeof setOdieInitialPromptText
 			| typeof setOdieBotNameSlug
 			| typeof setCurrentSupportInteraction
+			| typeof setAllowPremiumSupport
+			| typeof setHelpCenterOptions
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

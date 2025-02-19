@@ -1,8 +1,7 @@
 import { type StarterDesigns, useStarterDesignsQuery } from '@automattic/data-stores';
 import { Design } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
-import { ECOMMERCE_FLOW, StepContainer, isLinkInBioFlow } from '@automattic/onboarding';
-import { useMediaQuery } from '@wordpress/compose';
+import { StepContainer, isLinkInBioFlow } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import AsyncLoad from 'calypso/components/async-load';
@@ -21,25 +20,6 @@ const shouldOnlyDisplayMobileCarousel = ( flow: string | null | undefined ) => {
 	}
 };
 
-const getEcommerceDesigns = ( allDesigns: StarterDesigns ) => {
-	let selectedDesigns = allDesigns?.designs;
-	const selectedDesignSlugs = [ 'tsubaki', 'amulet', 'tazza', 'zaino', 'thriving-artist' ];
-
-	// If we have a restricted set of designs, filter out all unwanted designs
-	const filteredDesigns = selectedDesigns.filter( ( design ) =>
-		selectedDesignSlugs.includes( design.slug )
-	);
-
-	// Now order the filtered set based on the supplied slugs.
-	selectedDesigns = selectedDesignSlugs
-		.map( ( selectedDesignSlug ) =>
-			filteredDesigns.find( ( design ) => design.slug === selectedDesignSlug )
-		)
-		.filter( ( selectedDesign ) => !! selectedDesign ) as Design[];
-
-	return selectedDesigns;
-};
-
 const getLinkInBioDesigns = ( allDesigns: StarterDesigns ) => {
 	const designs =
 		allDesigns?.designs.filter(
@@ -49,23 +29,6 @@ const getLinkInBioDesigns = ( allDesigns: StarterDesigns ) => {
 		) ?? [];
 
 	return designs;
-};
-
-const getCarouselDesktopOptions = (
-	flow: string | null | undefined,
-	isLargerThan1440px: boolean
-) => {
-	switch ( true ) {
-		case flow === ECOMMERCE_FLOW:
-			return {
-				w: isLargerThan1440px ? 1920 : 1280,
-				vpw: 1920,
-				vph: 1280,
-				format: 'png',
-			};
-		default:
-			return;
-	}
 };
 
 const getFlowDesigns = (
@@ -79,8 +42,6 @@ const getFlowDesigns = (
 	switch ( true ) {
 		case isLinkInBioFlow( flow ):
 			return getLinkInBioDesigns( allDesigns );
-		case flow === ECOMMERCE_FLOW:
-			return getEcommerceDesigns( allDesigns );
 		default:
 			return allDesigns?.designs;
 	}
@@ -91,7 +52,6 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
-	const isLargerThan1440px = useMediaQuery( '(min-width: 1440px)' );
 	const { data: allDesigns } = useStarterDesignsQuery( {
 		_locale: locale,
 	} );
@@ -115,7 +75,6 @@ const DesignCarousel: Step = function DesignCarousel( { navigation, flow } ) {
 					onPick={ pickDesign }
 					selectedDesigns={ getFlowDesigns( allDesigns, flow ) }
 					onlyDisplayMobileCarousel={ shouldOnlyDisplayMobileCarousel( flow ) }
-					carouselDesktopOptions={ getCarouselDesktopOptions( flow, isLargerThan1440px ) }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

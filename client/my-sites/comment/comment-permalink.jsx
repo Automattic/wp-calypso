@@ -1,9 +1,8 @@
-import { Card } from '@automattic/components';
+import { Card, ExternalLink } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import ExternalLink from 'calypso/components/external-link';
 import SectionHeader from 'calypso/components/section-header';
 import { getSiteComment } from 'calypso/state/comments/selectors';
 

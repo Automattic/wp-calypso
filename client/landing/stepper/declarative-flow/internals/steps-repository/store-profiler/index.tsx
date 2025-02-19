@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { Button, FormInputValidation, FormLabel } from '@automattic/components';
-import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
@@ -17,7 +17,7 @@ import type { Step } from '../../types';
 import type { UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
-const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
+const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
@@ -163,7 +163,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 		<StepContainer
 			stepName="store-profiler"
 			skipButtonAlign="top"
-			shouldHideNavButtons={ flow === ECOMMERCE_FLOW }
 			goBack={ goBack }
 			hideBack
 			goNext={ goNext }
@@ -179,7 +178,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			showFooterWooCommercePowered={ flow === ECOMMERCE_FLOW }
 		/>
 	);
 };

@@ -8,12 +8,12 @@ import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
 	'add_about_page',
+	'add_first_subscribers',
 	'manage_paid_newsletter_plan',
 	'earn_money',
 	'manage_subscribers',
 	'connect_social_media',
 	'drive_traffic',
-	'site_monitoring_page',
 	'front_page_updated',
 	'post_sharing_enabled',
 	'mobile_app_installed',

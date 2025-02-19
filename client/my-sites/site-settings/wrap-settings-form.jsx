@@ -33,9 +33,9 @@ import {
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-// Maps a field in the settings form to a checklist task slug
+// Maps a field in the settings form to a checklist task slug(s)
 const FIELDS_TO_LAUNCHPAD_TASKS = {
-	blogname: 'site_title',
+	blogname: [ 'site_title', 'setup_general' ],
 	'subscription_options.welcome': 'customize_welcome_message',
 };
 
@@ -111,9 +111,10 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		displaySuccessNotice( noticeSettings ) {
 			const launchpadTasksToComplete = [];
 
-			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlug ] ) => {
+			Object.entries( FIELDS_TO_LAUNCHPAD_TASKS ).forEach( ( [ field, taskSlugs ] ) => {
 				if ( get( this.state.modifiedFields, field ) ) {
-					launchpadTasksToComplete.push( taskSlug );
+					const slugs = Array.isArray( taskSlugs ) ? taskSlugs : [ taskSlugs ];
+					launchpadTasksToComplete.push( ...slugs );
 				}
 			} );
 

@@ -34,6 +34,7 @@ export function activate( themeId, siteId, options ) {
 			purchased,
 			isOnboardingFlow = typeof window !== 'undefined' &&
 				hasQueryArg( window.location.href, 'onboarding' ),
+			showSuccessNotice = true,
 		} = options || {};
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
@@ -83,7 +84,7 @@ export function activate( themeId, siteId, options ) {
 		return activateOrInstallThenActivate( themeId, siteId, {
 			source,
 			purchased,
-			showSuccessNotice: true,
+			showSuccessNotice,
 		} )( dispatch, getState );
 	};
 }

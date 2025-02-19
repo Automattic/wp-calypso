@@ -1,0 +1,46 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/mixins';
+
+.site-admin-site-icon__icon {
+	fill: currentColor;
+	width: 100%;
+	height: 100%;
+
+	// @Todo: Move styles to a parent component.
+	.site-admin-layout.is-full-canvas & {
+		// Make the WordPress icon not so big in full canvas.
+		padding: $grid-unit-15;
+	}
+}
+
+.site-admin-site-icon__image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	background: #333;
+	aspect-ratio: 1 / 1;
+
+	// @Todo: Move styles to a parent component.
+	.site-admin-layout.is-full-canvas & {
+		border-radius: 0;
+	}
+}
+
+// @Todo: Move styles to a parent component.
+.site-admin-editor__view-mode-toggle button:focus {
+	position: relative;
+
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		z-index: 1;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		box-shadow:
+			inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color ),
+			inset 0 0 0 calc( #{$border-width} + var( --wp-admin-border-width-focus ) ) $white;
+	}
+}

@@ -17,7 +17,6 @@ interface SitesListProps extends SitesSortingPreferenceProps {
 	maxResults?: number;
 	searchTerm: string;
 	addToVisibleSites( siteId: number ): void;
-	isReskinned?: boolean;
 	sites: SiteDetailsWithTitle[];
 	onSelect( event: React.MouseEvent, siteId: number ): void;
 	indicator: boolean;
@@ -33,7 +32,6 @@ const SitesList = ( {
 	maxResults,
 	sitesSorting,
 	addToVisibleSites,
-	isReskinned,
 	sites: originalSites,
 	onSelect,
 	indicator,
@@ -69,7 +67,6 @@ const SitesList = ( {
 									onMouseEnter={ onMouseEnter }
 									isHighlighted={ isHighlighted( site.ID ) }
 									isSelected={ isSelected( site ) }
-									isReskinned={ isReskinned }
 								/>
 							);
 						} ) }

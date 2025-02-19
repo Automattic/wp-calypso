@@ -4,23 +4,19 @@ import {
 	isFreeFlow,
 	isNewSiteMigrationFlow,
 	isUpdateDesignFlow,
-	ECOMMERCE_FLOW,
-	isWooExpressFlow,
-	isTransferringHostedSiteCreationFlow,
 	HUNDRED_YEAR_DOMAIN_FLOW,
 	HUNDRED_YEAR_PLAN_FLOW,
 	HUNDRED_YEAR_DOMAIN_TRANSFER,
 	isAnyHostingFlow,
 } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { LoadingBar } from 'calypso/components/loading-bar';
+import Loading from 'calypso/components/loading';
 import availableFlows from 'calypso/landing/stepper/declarative-flow/registered-flows';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
@@ -33,6 +29,7 @@ import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
+
 interface ProcessingStepProps extends StepProps {
 	title?: string;
 	subtitle?: string;
@@ -100,7 +97,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
+	const { setSiteSetupError, clearSiteSetupError } = useDispatch( SITE_STORE );
+
 	useEffect( () => {
+		clearSiteSetupError();
+
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
@@ -112,10 +113,11 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 					// including the values that were updated during the action() running.
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
-				} catch ( e ) {
+				} catch ( e: any ) {
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
 					captureFlowException( e );
+					setSiteSetupError( e.error || e.code, e.message );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
@@ -177,7 +179,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
-	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
 	// Return tailored processing screens for flows that need them
 	if (
@@ -195,26 +196,6 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		return <HundredYearPlanFlowProcessingScreen />;
 	}
 
-	const subtitle = getSubtitle();
-
-	const renderProgressComponent = () => {
-		if ( isWooExpressFlow( flow ) || isTransferringHostedSiteCreationFlow( flow ) ) {
-			return (
-				<LoadingBar
-					progress={ progress }
-					className="processing-step__content woocommerce-install__content"
-				/>
-			);
-		}
-
-		return (
-			<ProgressBar
-				value={ progress >= 0 ? progress * 100 : undefined }
-				className="processing-step__progress-bar"
-			/>
-		);
-	};
-
 	return (
 		<>
 			<DocumentHead title={ __( 'Processing' ) } />
@@ -223,17 +204,10 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 				hideFormattedHeader
 				stepName="processing-step"
 				stepContent={
-					<>
-						<div className="processing-step">
-							<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
-							{ renderProgressComponent() }
-							{ subtitle && <p className="processing-step__subtitle">{ subtitle }</p> }
-						</div>
-					</>
+					<Loading title={ getCurrentMessage() } subtitle={ getSubtitle() } progress={ progress } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 				showJetpackPowered={ isJetpackPowered }
-				showFooterWooCommercePowered={ isWooCommercePowered }
 			/>
 		</>
 	);

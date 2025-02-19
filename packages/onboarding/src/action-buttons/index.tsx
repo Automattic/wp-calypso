@@ -71,22 +71,3 @@ export const NextButton: React.FunctionComponent< React.ComponentProps< typeof B
 		</Button>
 	);
 };
-
-export const SkipButton: React.FunctionComponent< React.ComponentProps< typeof Button > > = ( {
-	className,
-	children,
-	...buttonProps
-} ) => {
-	const { __ } = useI18n();
-
-	return (
-		<Button
-			className={ clsx( 'action_buttons__button action-buttons__skip', className ) }
-			{ ...buttonProps }
-		>
-			{ children ||
-				/* translators: Button label for skipping a step in onboarding */
-				__( 'Skip for now', __i18n_text_domain__ ) }
-		</Button>
-	);
-};

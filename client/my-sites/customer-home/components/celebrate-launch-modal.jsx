@@ -1,4 +1,5 @@
 import { Gridicon, ConfettiAnimation, Tooltip } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Button, Modal } from '@wordpress/components';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -23,6 +24,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 	const hasCustomDomain = Boolean(
 		transformedDomains.find( ( domain ) => ! domain.isWPCOMDomain )
 	);
+	const hasEnTranslation = useHasEnTranslation();
 
 	useEffect( () => {
 		// remove the celebrateLaunch URL param without reloading the page as soon as the modal loads
@@ -54,7 +56,9 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					) }
 				</p>
 			);
-			buttonText = translate( 'Claim your domain' );
+			buttonText = hasEnTranslation( 'Get your domain' )
+				? translate( 'Get your domain' )
+				: translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && isBilledMonthly && ! hasCustomDomain ) {
 			contentElement = (
@@ -64,7 +68,9 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					) }
 				</p>
 			);
-			buttonText = translate( 'Claim your domain' );
+			buttonText = hasEnTranslation( 'Get your domain' )
+				? translate( 'Get your domain' )
+				: translate( 'Claim your domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( isPaidPlan && ! hasCustomDomain ) {
 			contentElement = (
@@ -75,7 +81,9 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 					) }
 				</p>
 			);
-			buttonText = translate( 'Claim your free domain' );
+			buttonText = hasEnTranslation( 'Get your free domain' )
+				? translate( 'Get your free domain' )
+				: translate( 'Claim your free domain' );
 			buttonHref = `/domains/add/${ site.slug }`;
 		} else if ( hasCustomDomain ) {
 			return null;
@@ -85,8 +93,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			<div className="launched__modal-upsell">
 				<div className="launched__modal-upsell-content">{ contentElement }</div>
 				<Button
-					isLarge
-					isPrimary
+					variant="primary"
 					href={ buttonHref }
 					onClick={ () =>
 						dispatch(

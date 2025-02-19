@@ -1,5 +1,14 @@
 import { isDesktop } from '@automattic/viewport';
-import { Icon, desktop, mobile, cloudUpload, payment, settings, login } from '@wordpress/icons';
+import {
+	Icon,
+	desktop,
+	mobile,
+	cloudUpload,
+	payment,
+	settings,
+	login,
+	moreVertical,
+} from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -133,6 +142,7 @@ export default function ContextMenu( { className, domain }: Props ) {
 			className={ className }
 			popoverClassName={ `${ className }-popover` }
 			position="bottom"
+			icon={ <Icon icon={ moreVertical } /> }
 		>
 			{ contextMenuOptions.map( ( option, key ) => (
 				<PopoverMenuItem

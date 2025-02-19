@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { MaterialIcon, ExternalLink, ExternalLinkWithTracking } from '@automattic/components';
+import { MaterialIcon, ExternalLink } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from '@automattic/urls';
 import i18n from 'i18n-calypso';
@@ -329,6 +329,9 @@ import {
 	FEATURE_LIMITED_SITE_ACTIVITY_LOG,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER,
 	FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
+	FEATURE_UPLOAD_VIDEO,
+	FEATURE_STATS_BASIC_20250206,
+	FEATURE_STATS_ADVANCED_20250206,
 } from './constants';
 import type { FeatureList } from './types';
 
@@ -383,17 +386,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All free features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_FREE_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -411,17 +404,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Personal features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PERSONAL_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -442,17 +425,7 @@ const FEATURES_LIST: FeatureList = {
 		getTitle: () =>
 			i18n.translate( '{{a}}All Premium features{{/a}}', {
 				components: {
-					a: (
-						<ExternalLinkWithTracking
-							href="https://jetpack.com/features/comparison"
-							target="_blank"
-							tracksEventName="calypso_plan_link_click"
-							tracksEventProps={ {
-								link_location: 'plan_features_list_item',
-								link_slug: FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
-							} }
-						/>
-					),
+					a: <ExternalLink href="https://jetpack.com/features/comparison" target="_blank" />,
 				},
 			} ),
 		getDescription: () =>
@@ -2450,6 +2423,27 @@ const FEATURES_LIST: FeatureList = {
 		getDescription: () =>
 			i18n.translate( 'The fastest 24/7 support from our expert, friendly Happiness team' ),
 	},
+	[ FEATURE_UPLOAD_VIDEO ]: {
+		getSlug: () => FEATURE_UPLOAD_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () =>
+			i18n.translate(
+				'Upload video files like mp4 and display them beautifully in 4K resolution, with picture-in-picture, subtitles, and without intrusive ads.'
+			),
+	},
+	// For the copy request dated 20250207 in pcNC1U-1vN-p2
+	[ FEATURE_STATS_BASIC_20250206 ]: {
+		getSlug: () => FEATURE_STATS_BASIC_20250206,
+		getTitle: () => i18n.translate( 'Stats' ),
+		getDescription: () =>
+			i18n.translate( 'Access full traffic history, filter by date, and see peak traffic times.' ),
+	},
+	[ FEATURE_STATS_ADVANCED_20250206 ]: {
+		getSlug: () => FEATURE_STATS_ADVANCED_20250206,
+		getTitle: () => i18n.translate( 'Premium stats' ),
+		getDescription: () =>
+			i18n.translate( 'Unlock all stats, including UTM tracking and device insights.' ),
+	},
 	/* END: 2023 Pricing Grid Features */
 
 	/* START: Woo Express Features */
@@ -2640,17 +2634,35 @@ const FEATURES_LIST: FeatureList = {
 					strong: <strong />,
 				},
 			} ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 	[ FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT ]: {
 		getSlug: () => FEATURE_BIG_SKY_WEBSITE_BUILDER_CHECKOUT,
 		getTitle: () => i18n.translate( 'Unlimited AI Website Builder edits' ),
-		getDescription: () => i18n.translate( 'Build your site with our AI Website Builder.' ),
+		getDescription: () =>
+			i18n.getLocaleSlug()?.startsWith( 'en' ) ||
+			i18n.hasTranslation(
+				'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+			)
+				? i18n.translate(
+						'Enjoy unrestricted usage of our AI tool to design your perfect website.'
+				  )
+				: i18n.translate( 'Build your site with our AI Website Builder.' ),
 	},
 
 	[ FEATURE_UNLIMITED_ENTITIES ]: {
 		getSlug: () => FEATURE_UNLIMITED_ENTITIES,
 		getTitle: () => i18n.translate( 'Unlimited pages, posts, users, and visitors' ),
+		getDescription: () =>
+			i18n.translate( 'Grow your site without limits — unlimited content, users, and traffic.' ),
 	},
 	[ FEATURE_WOO_THEMES ]: {
 		getSlug: () => FEATURE_WOO_THEMES,
@@ -2708,7 +2720,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_CONNECT_ANALYTICS ]: {
 		getSlug: () => FEATURE_CONNECT_ANALYTICS,
-		getTitle: () => i18n.translate( 'Connect Google Analytics and Cloudflare Web Analytics' ),
+		getTitle: () => i18n.translate( 'Connect Google Analytics' ),
 		getDescription: () =>
 			i18n.translate(
 				'Link your accounts to gain more valuable insights in seconds. No coding required.'

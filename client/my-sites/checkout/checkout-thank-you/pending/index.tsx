@@ -4,9 +4,9 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { AUTO_RENEWAL } from '@automattic/urls';
-import { ProgressBar } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
+import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -102,17 +102,8 @@ function CheckoutPending( {
 				title="Checkout Pending"
 				properties={ { order_id: orderId, ...( siteSlug && { site: siteSlug } ) } }
 			/>
-			<PendingContent heading={ headingText } />
+			<Loading className="checkout__pending-content" title={ headingText } />
 		</Main>
-	);
-}
-
-function PendingContent( { heading }: { heading: React.ReactNode } ) {
-	return (
-		<div className="pending-content__wrapper">
-			<div className="pending-content__title">{ heading }</div>
-			<ProgressBar className="pending-content__progress-bar" />
-		</div>
 	);
 }
 

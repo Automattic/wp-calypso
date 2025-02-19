@@ -8,7 +8,6 @@ import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/acti
 import { isFormDisabled } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 
 type QrCodeLoginButtonProps = {
@@ -18,10 +17,8 @@ type QrCodeLoginButtonProps = {
 const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const { isDisabled, isJetpackWooCommerceFlow, oauth2Client, isWoo } = useSelector( ( select ) => {
+	const { isDisabled, oauth2Client, isWoo } = useSelector( ( select ) => {
 		return {
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === getCurrentQueryArguments( select )?.from,
 			oauth2Client: getCurrentOAuth2Client( select ) as { id: string },
 			locale: getCurrentLocaleSlug( select ),
 			isWoo: getIsWoo( select ),
@@ -32,10 +29,6 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 	// Is not supported for any oauth 2 client.
 	// n.b this seems to work for woo.com so it's not clear why the above comment is here
 	if ( oauth2Client && ! isWoo ) {
-		return null;
-	}
-
-	if ( isJetpackWooCommerceFlow ) {
 		return null;
 	}
 

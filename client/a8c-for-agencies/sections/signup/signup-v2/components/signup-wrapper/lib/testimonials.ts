@@ -1,19 +1,15 @@
 import { translate } from 'i18n-calypso';
+import TestimonialAvatar1 from 'calypso/assets/images/a8c-for-agencies/signup/testimonial-1.jpg';
 
 export const TESTIMONIALS = [
 	{
-		name: 'Ben Giordano',
-		position: translate( 'Founder' ),
+		name: 'Lauren Robinson',
+		position: translate( 'Growth Strategist' ),
 		quote: translate(
-			"With Pressable's affiliation with Automattic, the same people behind WordPress.com and WordPress VIP, we knew we’d found the right home for our client portfolio."
+			`"Our streamlined process, facilitated by Automattic for Agencies, enhances both website functionality and our clients' business outcomes."`
 		),
-		user: {
-			display_name: 'Ben Giordano',
-			name: 'Ben Giordano',
-			avatar_URL:
-				'https://1.gravatar.com/avatar/dd316be8fcfeeb91a1e5bcc910237196934b8e20992cff41e5b04b8f96abc088?s=96&d=identicon',
-		},
-		url: { url: 'https://freshysites.com', name: 'freshysites.com ↗' },
+		avatar: TestimonialAvatar1,
+		company: { name: 'Big Red Jelly' },
 	},
 ];
 

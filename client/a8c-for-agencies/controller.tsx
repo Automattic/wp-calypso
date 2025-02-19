@@ -39,7 +39,8 @@ const handleMultiUserSupport = ( agency: Agency, pathname: string, next: () => v
 export const requireAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
-	const { pathname, search, hash } = window.location;
+	const { search, hash } = window.location;
+	const pathname = context.pathname;
 
 	if ( agency ) {
 		// If multi-user support is enabled, we need to check if the user has access to the current path
@@ -61,7 +62,8 @@ export const requireClientAccessContext: Callback = ( context, next ) => {
 		return;
 	}
 
-	const { pathname, search, hash } = window.location;
+	const { search, hash } = window.location;
+	const pathname = context.pathname;
 	const args = getQueryArgs( window.location.href );
 	page.redirect(
 		addQueryArgs( A4A_CLIENT_LANDING_LINK, { ...args, return: pathname + search + hash } )
@@ -71,7 +73,7 @@ export const requireClientAccessContext: Callback = ( context, next ) => {
 export const requireTierAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
-	const { pathname } = window.location;
+	const pathname = context.pathname;
 
 	if ( isEnabled( 'a8c-for-agencies-agency-tier' ) && ! isPathAllowedForTier( pathname, agency ) ) {
 		context.primary = <TierPermissionError section={ context.section.name } />;

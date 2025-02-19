@@ -18,12 +18,6 @@ import { GOOGLE_PROVIDER_NAME } from 'calypso/lib/gsuite/constants';
 import { getTitanProductName } from 'calypso/lib/titan';
 import { TITAN_PROVIDER_NAME } from 'calypso/lib/titan/constants';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import {
-	domainManagementAllEmailRoot,
-	domainSiteContextRoot,
-	isUnderDomainManagementAll,
-	isUnderDomainSiteContext,
-} from 'calypso/my-sites/domains/paths';
 import AddEmailAddressesCardPlaceholder from 'calypso/my-sites/email/add-mailboxes/add-users-placeholder';
 import EmailProviderPricingNotice from 'calypso/my-sites/email/add-mailboxes/email-provider-pricing-notice';
 import {
@@ -47,6 +41,7 @@ import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { usePasswordResetEmailField } from 'calypso/my-sites/email/hooks/use-password-reset-email-field';
 import { MAILBOXES_SOURCE } from 'calypso/my-sites/email/mailboxes/constants';
 import {
+	getEmailCheckoutPath,
 	getEmailManagementPath,
 	getMailboxesPath,
 	getTitanSetUpMailboxPath,
@@ -325,17 +320,12 @@ const MailboxesForm = ( {
 		recordContinueEvent( { canContinue: true } );
 		setIsAddingToCart( true );
 
-		const selectedSiteSlug = selectedSite?.slug ?? '';
-		let checkoutPath = '/checkout/' + selectedSiteSlug;
-
-		if ( isUnderDomainManagementAll( currentRoute ) ) {
-			const newEmail = mailboxOperations.mailboxes[ 0 ].getAsCartItem().email;
-			const redirectTo = isUnderDomainSiteContext( currentRoute )
-				? `${ domainSiteContextRoot() }/email/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`
-				: `${ domainManagementAllEmailRoot() }/${ selectedDomainName }/${ selectedSiteSlug }?new-email=${ newEmail }`;
-
-			checkoutPath += '?redirect_to=' + encodeURIComponent( redirectTo );
-		}
+		const checkoutPath = getEmailCheckoutPath(
+			selectedSite?.slug ?? '',
+			selectedDomainName,
+			currentRoute,
+			mailboxOperations.mailboxes[ 0 ].getAsCartItem().email
+		);
 
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )

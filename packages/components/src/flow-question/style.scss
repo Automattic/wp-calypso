@@ -6,6 +6,10 @@ button.flow-question {
 	cursor: pointer;
 	text-align: left;
 
+	svg {
+		display: block;
+	}
+
 	.components-card__body {
 		padding: 22px 22px 24px;
 	}
@@ -26,7 +30,6 @@ button.flow-question {
 
 	.flow-question__icon {
 		align-self: flex-start;
-		padding: 2px 1px 0 0;
 	}
 
 	.flow-question__heading {

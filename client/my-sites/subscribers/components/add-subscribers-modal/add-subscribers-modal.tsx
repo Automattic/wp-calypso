@@ -7,6 +7,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { AddSubscriberForm, UploadSubscribersForm } from '@automattic/subscriber';
 import { useHasStaleImportJobs } from '@automattic/subscriber/src/hooks/use-has-stale-import-jobs';
+import { useImportError } from '@automattic/subscriber/src/hooks/use-import-error';
 import { useInProgressState } from '@automattic/subscriber/src/hooks/use-in-progress-state';
 import { ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { copy, upload, reusableBlock } from '@wordpress/icons';
@@ -18,11 +19,11 @@ import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { useSubscribersPage } from 'calypso/my-sites/subscribers/components/subscribers-page/subscribers-page-context';
 import { isBusinessTrialSite } from 'calypso/sites-dashboard/utils';
-import './style.scss';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { AppState } from 'calypso/types';
+import './style.scss';
 
 type AddSubscribersModalProps = {
 	site: SiteDetails;
@@ -67,14 +68,16 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 
 	const [ isUploading, setIsUploading ] = useState( false );
 	const onImportStarted = ( hasFile: boolean ) => setIsUploading( hasFile );
+
+	const importError = useImportError();
+	const isImportInProgress = useInProgressState();
+	const hasStaleImportJobs = useHasStaleImportJobs();
+
 	const onImportFinished = () => {
 		setIsUploading( false );
 		setAddingMethod( '' );
-		addSubscribersCallback();
+		addSubscribersCallback( importError );
 	};
-
-	const isImportInProgress = useInProgressState();
-	const hasStaleImportJobs = useHasStaleImportJobs();
 
 	if ( ! showAddSubscribersModal ) {
 		return null;
@@ -203,7 +206,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="info" /> }
 							isCompact
-							isReskinned
+							theme="light"
 							status="is-info"
 							showDismiss={ false }
 						>
@@ -219,7 +222,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="notice" /> }
 							isCompact
-							isReskinned
+							theme="light"
 							status="is-warning"
 							showDismiss={ false }
 						>
@@ -265,7 +268,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="info" /> }
 							isCompact
-							isReskinned
+							theme="light"
 							status="is-info"
 							showDismiss={ false }
 						>
@@ -281,7 +284,7 @@ const AddSubscribersModal = ( { site }: AddSubscribersModalProps ) => {
 							className="add-subscribers-modal__notice"
 							icon={ <Gridicon icon="notice" /> }
 							isCompact
-							isReskinned
+							theme="light"
 							status="is-warning"
 							showDismiss={ false }
 						>

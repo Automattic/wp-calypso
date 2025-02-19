@@ -9,6 +9,7 @@ interface Props {
 	onClick: ( event: React.MouseEvent< HTMLButtonElement, MouseEvent > ) => void;
 	buttonLabel?: string | TranslateResult;
 	buttonComponent?: React.ReactNode;
+	icon?: string;
 }
 
 const StatsCardUpsell: React.FC< Props > = ( {
@@ -17,6 +18,7 @@ const StatsCardUpsell: React.FC< Props > = ( {
 	copyText,
 	buttonLabel,
 	buttonComponent,
+	icon = 'lock',
 } ) => {
 	const translate = useTranslate();
 
@@ -24,7 +26,7 @@ const StatsCardUpsell: React.FC< Props > = ( {
 		<div className={ clsx( 'stats-card-upsell', className ) }>
 			<div className="stats-card-upsell__content">
 				<div className="stats-card-upsell__lock">
-					<Gridicon icon="lock" />
+					<Gridicon icon={ icon } />
 				</div>
 				<p className="stats-card-upsell__text">{ copyText }</p>
 				{ buttonComponent ? (

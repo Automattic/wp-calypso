@@ -652,10 +652,6 @@ export function generateSteps( {
 			},
 		},
 
-		'p2-details': {
-			stepName: 'p2-details',
-		},
-
 		'p2-site': {
 			stepName: 'p2-site',
 			apiRequestFunction: createWpForTeamsSite,

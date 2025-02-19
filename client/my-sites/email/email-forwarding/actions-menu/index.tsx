@@ -1,11 +1,11 @@
-import { ConfirmationDialog } from '@automattic/components';
 import {
+	__experimentalConfirmDialog as ConfirmDialog,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	DropdownMenu,
 } from '@wordpress/components';
-import { rotateLeft, trash, moreHorizontalMobile } from '@wordpress/icons';
+import { rotateLeft, trash, moreVertical } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { getEmailForwardAddress } from 'calypso/lib/emails';
@@ -30,7 +30,7 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 
 	return (
 		<>
-			<ConfirmationDialog
+			<ConfirmDialog
 				isOpen={ isOpen }
 				onConfirm={ handleConfirm }
 				onCancel={ handleCancel }
@@ -47,9 +47,9 @@ export const ActionsMenu = ( { mailbox }: { mailbox: Mailbox } ) => {
 						) }
 					</Text>
 				</VStack>
-			</ConfirmationDialog>
+			</ConfirmDialog>
 			<DropdownMenu
-				icon={ moreHorizontalMobile }
+				icon={ moreVertical }
 				label={ translate( 'More options' ) }
 				controls={
 					mailbox.warnings?.length

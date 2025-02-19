@@ -1,7 +1,7 @@
-import { Button, ShortenedNumber } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { Icon, arrowUp, arrowDown, external } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, numberFormatCompact } from 'i18n-calypso';
 import ExpandedCard from './expanded-card';
 import type { SiteStats } from '../types';
 
@@ -62,7 +62,7 @@ export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }:
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
 						<div className="site-expanded-content__card-content-score">
-							<ShortenedNumber value={ data.visitors } />
+							<span>{ numberFormatCompact( data.visitors ) }</span>
 							{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
 						</div>
 						<div className="site-expanded-content__card-content-score-title">
@@ -71,7 +71,7 @@ export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }:
 					</div>
 					<div className="site-expanded-content__card-content-column">
 						<div className="site-expanded-content__card-content-score">
-							<ShortenedNumber value={ data.views } />
+							<span>{ numberFormatCompact( data.views ) }</span>
 							{ getTrendContent( data.viewsTrend, data.viewsChange ) }
 						</div>
 						<div className="site-expanded-content__card-content-score-title">

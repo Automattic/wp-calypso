@@ -1,0 +1,13 @@
+.is-discover-stream {
+	.discover-navigation-v2 {
+		&.section-nav {
+			box-shadow: none;
+			border-bottom: 1px solid var( --color-border-subtle );
+			margin-bottom: 24px;
+		}
+
+		.section-nav-tabs__list {
+			overflow-x: auto;
+		}
+	}
+}

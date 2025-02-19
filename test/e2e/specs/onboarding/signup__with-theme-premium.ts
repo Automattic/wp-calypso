@@ -110,14 +110,6 @@ describe( 'Lifecyle: Premium theme signup, onboard, launch and cancel subscripti
 			await cartCheckoutPage.purchase( { timeout: 90 * 1000 } );
 		} );
 
-		it( 'Skip business plan upsell', async function () {
-			const selector = 'button[data-e2e-button="decline"]';
-
-			const locator = page.locator( selector );
-
-			await locator.click( { timeout: 30 * 1000 } );
-		} );
-
 		it( 'Installs theme in Marketplace thank you page', async () => {
 			await page.getByText( 'Customize this design' ).waitFor();
 		} );
