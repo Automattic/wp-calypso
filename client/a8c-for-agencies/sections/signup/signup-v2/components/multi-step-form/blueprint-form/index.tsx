@@ -8,6 +8,7 @@ import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
 import FormRadio from 'calypso/components/forms/form-radio';
 import { preventWidows } from 'calypso/lib/formatting';
 import { AgencyDetailsSignupPayload } from '../../../../types';
+import useBlueprintFormValidation from './hooks/use-blueprint-form-validation';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
@@ -43,13 +44,19 @@ const BlueprintFormRadio = ( {
 
 const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack } ) => {
 	const translate = useTranslate();
+	const { validate, validationError, updateValidationError } = useBlueprintFormValidation();
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
 		topPartneringGoal: initialFormData.topPartneringGoal || '',
 		topYearlyGoal: initialFormData.topYearlyGoal || '',
 	} );
 
-	const handleSubmit = ( e: React.FormEvent ) => {
+	const handleSubmit = async ( e: React.FormEvent ) => {
 		e.preventDefault();
+		const error = await validate( formData );
+		if ( error ) {
+			return;
+		}
+
 		onContinue( formData );
 	};
 
@@ -94,6 +101,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 		>
 			<FormField
 				label={ translate( 'What is your top goal when partnering with a technology provider?' ) }
+				error={ validationError.topPartneringGoal }
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
@@ -102,7 +110,10 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 							key={ `goal-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.topPartneringGoal === option.value }
-							onChange={ () => setFormData( { ...formData, topPartneringGoal: option.value } ) }
+							onChange={ () => {
+								setFormData( { ...formData, topPartneringGoal: option.value } );
+								updateValidationError( { topPartneringGoal: undefined } );
+							} }
 						/>
 					) ) }
 				</div>
@@ -110,6 +121,7 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 
 			<FormField
 				label={ translate( 'What is the main goal you hope to achieve in 2025?' ) }
+				error={ validationError.topYearlyGoal }
 				isRequired
 			>
 				<div className="blueprint-form__radio-group">
@@ -118,7 +130,10 @@ const BlueprintForm: React.FC< Props > = ( { onContinue, initialFormData, goBack
 							key={ `main-goal-2025-option-${ option.value }` }
 							label={ option.label }
 							checked={ formData.topYearlyGoal === option.value }
-							onChange={ () => setFormData( { ...formData, topYearlyGoal: option.value } ) }
+							onChange={ () => {
+								setFormData( { ...formData, topYearlyGoal: option.value } );
+								updateValidationError( { topYearlyGoal: undefined } );
+							} }
 						/>
 					) ) }
 				</div>
