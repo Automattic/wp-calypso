@@ -1,19 +1,37 @@
 import { useTranslate } from 'i18n-calypso';
+import Notice from 'calypso/components/notice';
 import { AddSitesForm } from 'calypso/landing/subscriptions/components/add-sites-form';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from 'calypso/landing/subscriptions/components/subscription-manager-context';
 import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
 const Reddit = () => {
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const needsEmailVerification = isLoggedIn && ! isEmailVerified;
+
 	return (
 		<div className="discover-reddit">
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
-				<div className="discover-reddit__form">
+				{ needsEmailVerification && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'Please verify your email before subscribing.' ) }
+					>
+						<a href="/me/account" className="notice__action">
+							{ translate( 'Account Settings' ) }
+						</a>
+					</Notice>
+				) }
+				<div className={ `discover-reddit__form${ needsEmailVerification ? ' is-disabled' : '' }` }>
 					<AddSitesForm
 						placeholder={ translate( 'Search by Reddit URL' ) }
 						buttonText={ translate( 'Add Feed' ) }
