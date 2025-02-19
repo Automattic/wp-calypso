@@ -20,7 +20,7 @@
     align-items: flex-start;
     max-width: 30%;
 
-    @include break-medium {
+    @include break-xlarge {
       display: flex;
       flex-direction: column;
       justify-content: space-between;

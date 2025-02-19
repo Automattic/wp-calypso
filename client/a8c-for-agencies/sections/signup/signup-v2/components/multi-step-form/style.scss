@@ -14,6 +14,14 @@
 		}
 	}
 
+	.multi-step-form__logo-narrow {
+		width: 100%;
+		margin-block-end: 16px;
+
+		@media (min-width: #{ ($break-xlarge + 1) }) {
+			display: none;
+		}
+	}
 
 	.a4a-form__heading {
 		.a4a-form__heading-title {

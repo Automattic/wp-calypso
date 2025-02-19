@@ -23,17 +23,9 @@
 		flex-direction: column;
 		gap: 8px;
 		grid-column: span 2;
-
-		&.is-half {
-			grid-column: span 1;
-		}
 	}
 
 	.step-progress__step.is-active {
-		.step-progress__step-indicator {
-			background-color: var(--color-primary-50);
-		}
-
 		.step-progress__step-label {
 			color: var(--color-neutral-80);
 			font-weight: 600;
@@ -44,30 +36,7 @@
 		}
 	}
 
-	.step-progress__step.is-complete {
-		.step-progress__step-indicator {
-			background-color: var(--color-primary-50);
-		}
-
-		.step-progress__step-label {
-			color: var(--color-neutral-80);
-			font-weight: 600;
-
-			@media (prefers-color-scheme: dark) {
-				color: var(--color-text-inverted);
-			}
-		}
-	}
-
-	.step-progress__step:not(.is-active):not(.is-complete) {
-		.step-progress__step-indicator {
-			background-color: var(--color-neutral-5);
-
-			@media (prefers-color-scheme: dark) {
-				opacity: 0.2;
-			}
-		}
-
+	.step-progress__step:not(.is-active) {
 		.step-progress__step-label {
 			color: var(--color-neutral-40);
 
@@ -75,13 +44,6 @@
 				color: var(--color-text-inverted);
 			}
 		}
-	}
-
-	.step-progress__step-indicator {
-		height: 8px;
-		width: 100%;
-		border-radius: 4px;
-		transition: background-color 0.2s ease;
 	}
 
 	.step-progress__step-label {
