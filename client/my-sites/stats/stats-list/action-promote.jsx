@@ -1,4 +1,5 @@
 import { blaze } from '@automattic/components/src/icons';
+import { Tooltip } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -36,6 +37,11 @@ const PromotePost = ( props ) => {
 		);
 	};
 
+	const title = translate( 'Promote', {
+		textOnly: true,
+		context: 'Stats action tooltip: Opens a pop-out post promotion tool',
+	} );
+
 	return (
 		<>
 			{ showPromotePost && (
@@ -46,25 +52,23 @@ const PromotePost = ( props ) => {
 						postId={ postId }
 						keyValue={ keyValue }
 					/>
-					<button
-						onClick={ showDSPWidget }
-						rel="noopener noreferrer"
-						className="stats-list__item-action-wrapper stats-list__item-action-promote module-content-list-item-action-wrapper"
-						title={ translate( 'Promote your post with our ad delivery system.', {
-							textOnly: true,
-							context: 'Stats action tooltip: Opens a pop-out post promotion tool',
-						} ) }
-						aria-label={ translate( 'Promote your post with our ad delivery system.', {
-							textOnly: true,
-							context: 'Stats ARIA label: Opens a pop-out post promotion tool',
-						} ) }
-					>
-						<Icon className="stats-icon" icon={ blaze } size={ 18 } />
+					<Tooltip position="top" text={ title }>
+						<button
+							onClick={ showDSPWidget }
+							rel="noopener noreferrer"
+							className="stats-list__item-action-wrapper stats-list__item-action-promote module-content-list-item-action-wrapper"
+							aria-label={ translate( 'Promote your post with our ad delivery system.', {
+								textOnly: true,
+								context: 'Stats ARIA label: Opens a pop-out post promotion tool',
+							} ) }
+						>
+							<Icon className="stats-icon" icon={ blaze } size={ 18 } />
 
-						<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
-							{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
-						</span>
-					</button>
+							<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
+								{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
+							</span>
+						</button>
+					</Tooltip>
 				</li>
 			) }
 		</>

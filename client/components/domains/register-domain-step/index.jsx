@@ -783,9 +783,10 @@ class RegisterDomainStep extends Component {
 		this.setState( ( state ) => {
 			const newPremiumDomains = { ...state.premiumDomains };
 			delete newPremiumDomains[ domainName ];
+			const searchResults = state.searchResults || [];
 			return {
 				premiumDomains: newPremiumDomains,
-				searchResults: state.searchResults.filter(
+				searchResults: searchResults.filter(
 					( suggestion ) => suggestion.domain_name !== domainName
 				),
 			};
@@ -1452,6 +1453,15 @@ class RegisterDomainStep extends Component {
 				lastQuery: domain,
 				lastFilters: this.state.filters,
 				hideInitialQuery: false,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
+				availabilityError: null,
+				availabilityErrorData: null,
+				availabilityErrorDomain: null,
+				suggestionError: null,
+				suggestionErrorData: null,
+				suggestionErrorDomain: null,
+				lastDomainStatus: null,
 			},
 			this.save
 		);

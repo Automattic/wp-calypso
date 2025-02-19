@@ -6,6 +6,9 @@ import type { SiteDetails } from '@automattic/data-stores';
  */
 export type FlowStateManifest = Partial< {
 	domains: DomainStepResult;
+	migration: {
+		entryPoint: string;
+	};
 	plans: PlansStepResult;
 	newsletterSetup: {
 		siteTitle: string;

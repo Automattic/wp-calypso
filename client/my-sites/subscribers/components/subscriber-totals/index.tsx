@@ -1,3 +1,4 @@
+import { Spinner } from '@wordpress/components';
 import { translate } from 'i18n-calypso';
 import { SubscribersFilterBy } from '../../constants';
 import './style.scss';
@@ -5,13 +6,18 @@ import './style.scss';
 type SubscriberTotalsProps = {
 	totalSubscribers: number;
 	filteredCount: number;
-	filterOption: SubscribersFilterBy;
+	filters: SubscribersFilterBy[];
 	searchTerm: string;
 	isLoading: boolean;
 };
 
-const getFilterLabel = ( filterOption: SubscribersFilterBy, count: number ): string => {
-	switch ( filterOption ) {
+const getFilterLabel = ( filters: SubscribersFilterBy[], count: number ): string => {
+	// Sort to make sure the filter order is consistent.
+	const sortedFilters = [ ...filters ].sort();
+	const filterKey = sortedFilters.join( ',' );
+
+	switch ( filterKey ) {
+		// Single filter cases.
 		case SubscribersFilterBy.Paid:
 			return count === 1 ? translate( 'paid subscriber' ) : translate( 'paid subscribers' );
 		case SubscribersFilterBy.Free:
@@ -20,6 +26,26 @@ const getFilterLabel = ( filterOption: SubscribersFilterBy, count: number ): str
 			return count === 1 ? translate( 'email subscriber' ) : translate( 'email subscribers' );
 		case SubscribersFilterBy.ReaderSubscriber:
 			return count === 1 ? translate( 'reader subscriber' ) : translate( 'reader subscribers' );
+
+		// Two filter combinations.
+		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Paid:
+			return count === 1
+				? translate( 'paid email subscriber' )
+				: translate( 'paid email subscribers' );
+		case SubscribersFilterBy.Paid + ',' + SubscribersFilterBy.ReaderSubscriber:
+			return count === 1
+				? translate( 'paid reader subscriber' )
+				: translate( 'paid reader subscribers' );
+		case SubscribersFilterBy.EmailSubscriber + ',' + SubscribersFilterBy.Free:
+			return count === 1
+				? translate( 'free email subscriber' )
+				: translate( 'free email subscribers' );
+		case SubscribersFilterBy.Free + ',' + SubscribersFilterBy.ReaderSubscriber:
+			return count === 1
+				? translate( 'free reader subscriber' )
+				: translate( 'free reader subscribers' );
+
+		// Default case.
 		default:
 			return count === 1 ? translate( 'subscriber' ) : translate( 'subscribers' );
 	}
@@ -28,16 +54,20 @@ const getFilterLabel = ( filterOption: SubscribersFilterBy, count: number ): str
 const SubscriberTotals: React.FC< SubscriberTotalsProps > = ( {
 	totalSubscribers,
 	filteredCount,
-	filterOption,
+	filters,
 	searchTerm,
 	isLoading,
 } ) => {
 	if ( isLoading ) {
-		return <div className="subscriber-totals is-loading" />;
+		return (
+			<div className="subscriber-totals is-loading">
+				<Spinner />
+			</div>
+		);
 	}
 
-	const isFiltered = filterOption !== SubscribersFilterBy.All || !! searchTerm;
-	const filterLabel = getFilterLabel( filterOption, filteredCount );
+	const isFiltered = ! filters.includes( SubscribersFilterBy.All ) || !! searchTerm;
+	const filterLabel = getFilterLabel( filters, filteredCount );
 
 	return (
 		<div className="subscriber-totals">

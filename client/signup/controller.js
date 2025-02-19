@@ -67,14 +67,6 @@ function setReferrerPolicy() {
 	} catch ( e ) {}
 }
 
-export const addVideoPressSignupClassName = () => {
-	if ( ! document ) {
-		return;
-	}
-
-	document.body.classList.add( 'is-videopress-signup' );
-};
-
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -92,13 +84,6 @@ export const removeP2SignupClassName = function () {
 };
 
 export default {
-	redirectTests( context, next ) {
-		if ( context.pathname.includes( 'videopress' ) ) {
-			addVideoPressSignupClassName();
-		}
-
-		next();
-	},
 	redirectWithoutLocaleIfLoggedIn( context, next ) {
 		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( userLoggedIn && context.params.lang ) {
@@ -127,8 +112,15 @@ export default {
 	},
 
 	saveInitialContext( context, next ) {
+		const userLoggedIn = isUserLoggedIn( context.store.getState() );
 		if ( ! initialContext ) {
 			initialContext = Object.assign( {}, context );
+		} else if (
+			getFlowName( initialContext.params, userLoggedIn ) !==
+			getFlowName( context.params, userLoggedIn )
+		) {
+			// Update the `initialContext` when the flow changes.
+			initialContext = Object.assign( {}, initialContext, context );
 		}
 
 		next();

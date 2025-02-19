@@ -22,8 +22,10 @@ export const getExperimentAssignment = ( experimentName: string ) => {
 
 export const getRemoveDuplicateViewsExperimentAssignment = () => {
 	return async ( dispatch: CalypsoDispatch, getState: () => AppState ) => {
-		const state = getState();
-		const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment( state );
+		const experimentAssignment = await loadRemoveDuplicateViewsExperimentAssignment(
+			getState,
+			dispatch
+		);
 		dispatch( {
 			type: EXPERIMENT_ASSIGNMENT_RECEIVE,
 			experimentName: REMOVE_DUPLICATE_VIEWS_EXPERIMENT,

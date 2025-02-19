@@ -5,8 +5,11 @@ import { useTranslate } from 'i18n-calypso';
 import NavigationHeader from 'calypso/components/navigation-header';
 import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import DiscoverAddNew from 'calypso/reader/discover/components/add-new';
 import DiscoverNavigation from 'calypso/reader/discover/components/navigation/v1';
 import DiscoverNavigationV2 from 'calypso/reader/discover/components/navigation/v2';
+import Reddit from 'calypso/reader/discover/components/reddit';
 import DiscoverTagsNavigation from 'calypso/reader/discover/components/tags-navigation';
 import Stream, { WIDE_DISPLAY_CUTOFF } from 'calypso/reader/stream';
 import { useSelector } from 'calypso/state';
@@ -89,25 +92,55 @@ const DiscoverStream = ( props ) => {
 		useCompactCards: true,
 		sidebarTabTitle: isDefaultTab ? translate( 'Sites' ) : translate( 'Related' ),
 		selectedStreamName: selectedTab,
+		showBack: true,
 	};
+
+	const HeaderAndNavigation = () => {
+		return (
+			<>
+				<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
+				{ isDiscoveryV2Enabled() ? (
+					<DiscoverNavigationV2 selectedTab={ selectedTab } />
+				) : (
+					<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
+				) }
+
+				{ selectedTab === 'tags' && (
+					<DiscoverTagsNavigation
+						width={ props.width }
+						selectedTag={ selectedTag }
+						onTagSelect={ handleTagSelect }
+					/>
+				) }
+			</>
+		);
+	};
+
+	if ( selectedTab === 'add-new' ) {
+		return (
+			<ReaderMain className={ clsx( 'following main', props.className ) }>
+				<HeaderAndNavigation />
+				<div className="reader__content">
+					<DiscoverAddNew />
+				</div>
+			</ReaderMain>
+		);
+	}
+
+	if ( selectedTab === 'reddit' ) {
+		return (
+			<ReaderMain className={ clsx( 'following main', props.className ) }>
+				<HeaderAndNavigation />
+				<div className="reader__content">
+					<Reddit />
+				</div>
+			</ReaderMain>
+		);
+	}
 
 	return (
 		<Stream { ...streamProps }>
-			<DiscoverHeader selectedTab={ effectiveTabSelection } width={ props.width } />
-			{ isDiscoveryV2Enabled() ? (
-				<>
-					<DiscoverNavigationV2 selectedTab={ selectedTab } />
-					{ selectedTab === 'tags' && (
-						<DiscoverTagsNavigation
-							width={ props.width }
-							selectedTag={ selectedTag }
-							onTagSelect={ handleTagSelect }
-						/>
-					) }
-				</>
-			) : (
-				<DiscoverNavigation width={ props.width } selectedTab={ selectedTab } />
-			) }
+			<HeaderAndNavigation />
 		</Stream>
 	);
 };

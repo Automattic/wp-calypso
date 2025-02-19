@@ -1,6 +1,9 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .premier-agency-hosting ul.hosting-additional-features {
 	.gridicon {
-		fill: var(--studio-jetpack-green);
+		fill: var(--color-jetpack);
 	}
 
 	a,
@@ -8,6 +11,105 @@
 	a:hover {
 		text-decoration: underline;
 		color: var(--color-text);
+	}
+}
+
+.pressable-overview-plan-selection__plan-category-tabpanel {
+	.components-tab-panel__tabs {
+		justify-content: center;
+		flex-wrap: wrap;
+		border: 1px solid var(--color-neutral-5);
+		border-radius: 4px;
+		padding: 7px 0;
+		margin: 0 auto 32px;
+		max-width: 600px;
+
+		button {
+			flex: 1;
+			margin: 0 7px;
+
+			&:hover {
+				background-color: initial;
+				color: inherit;
+			}
+
+			&:disabled, &[aria-disabled="true"] {
+				color: var(--color-neutral-20);
+			}
+
+			&.pressable-overview-plan-selection__plan-category-tab-is-active {
+				background-color: var(--color-primary-50);
+				border-color: var(--color-primary-50);
+				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
+			}
+		}
+	}
+}
+
+.pressable-overview-plan-selection__filter-type {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+
+	align-items: center;
+	justify-content: center;
+
+	.pressable-overview-plan-selection__filter-label {
+		@include a4a-font-heading-md($font-size: rem(14px));
+		margin: 0;
+
+	}
+
+	.pressable-overview-plan-selection__filter-radio-control {
+		.components-base-control__label {
+			display: none;
+		}
+
+		.components-radio-control__label {
+			text-align: start;
+		}
+
+		.components-radio-control__group-wrapper {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			padding: 16px;
+			// stylelint-disable-next-line scales/radii
+			border-radius: 8px;
+			background-color: var(--color-neutral-0);
+
+			@include break-large {
+				flex-direction: row;
+				gap: 24px;
+			}
+		}
+
+		.components-radio-control__input[type="radio"]:checked {
+			background-color: var(--color-primary-50);
+		}
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		display: block;
+		margin: 0;
+		text-align: center;
+
+		.pressable-overview-plan-selection__filter-label {
+			width: 100%;
+			margin-block-end: 0.5rem;
+		}
+
+		.pressable-overview-plan-selection__filter-buttons {
+			display: inline-flex;
+			justify-content: space-around;
+			width: 100%;
+			button {
+				width: 50%;
+				text-align: center;
+				justify-content: center;
+			}
+		}
 	}
 }
 

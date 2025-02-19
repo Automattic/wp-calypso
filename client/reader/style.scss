@@ -6,6 +6,10 @@ body.is-section-reader {
 		.main {
 			padding: 24px;
 			border-block-end: 1px solid var(--studio-gray-0);
+			
+			&.search-stream {
+				padding-top: 0;
+			}
 		}
 		.layout__primary > div:not(:has(.recent-feed)) {
 			background: var(--color-surface);

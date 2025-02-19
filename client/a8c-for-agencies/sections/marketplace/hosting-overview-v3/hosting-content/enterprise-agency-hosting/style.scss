@@ -38,8 +38,9 @@
 	@include a4a-font-heading-xl;
 }
 
-.theme-a8c-for-agencies .enterprise-agency-hosting-v3__cta-button.components-button.is-primary {
+.theme-a8c-for-agencies .enterprise-agency-hosting-v3__cta-button.enterprise-agency-hosting-v3__cta-button.enterprise-agency-hosting-v3__cta-button.is-primary {
 	margin-block-start: auto;
+	justify-content: center;
 
 	background-color: var(--color-text);
 	color: var(--color-text-inverted);

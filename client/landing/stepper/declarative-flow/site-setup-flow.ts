@@ -11,6 +11,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { useDispatch as reduxDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getInitialQueryArguments } from 'calypso/state/selectors/get-initial-query-arguments';
+import { requestSite } from 'calypso/state/sites/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useActivateDesign } from '../hooks/use-activate-design';
@@ -159,9 +160,10 @@ const siteSetupFlow: FlowV1 = {
 
 		const goToFlow = ( fullStepPath: string ) => {
 			const path = `/setup/${ fullStepPath }`.replace( /([^:])(\/\/+)/g, '$1/' );
+			const sessionId = urlQueryParams.get( 'sessionId' );
 
 			return window.location.assign(
-				addQueryArgs( { siteSlug, from, origin: `site-setup/${ currentStep }` }, path )
+				addQueryArgs( { siteSlug, from, sessionId, origin: `site-setup/${ currentStep }` }, path )
 			);
 		};
 
@@ -231,7 +233,10 @@ const siteSetupFlow: FlowV1 = {
 						} )
 					);
 
-					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
+					Promise.all( pendingActions )
+						// Refetch the site to get the latest data, including the new intent.
+						.then( () => dispatch( requestSite( siteSlug ) ) )
+						.then( () => window.location.assign( redirectionUrl ) );
 				} );
 			} );
 
