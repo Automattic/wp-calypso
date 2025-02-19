@@ -34,6 +34,8 @@ import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-sto
 
 const SiteIntent = Onboard.SiteIntent;
 
+const { goalsToIntent } = Onboard.utils;
+
 type ExitFlowOptions = {
 	skipLaunchpad?: boolean;
 };
@@ -51,11 +53,7 @@ const siteSetupFlow: FlowV1 = {
 	isSignupFlow: false,
 
 	useSteps() {
-		const isGoalsAtFrontExperiment = useGoalsAtFrontExperimentQueryParam();
-
 		const steps = [
-			STEPS.GOALS,
-			STEPS.INTENT,
 			STEPS.OPTIONS,
 			STEPS.DESIGN_CHOICES,
 			STEPS.DESIGN_SETUP,
@@ -80,10 +78,6 @@ const siteSetupFlow: FlowV1 = {
 			STEPS.ERROR,
 			STEPS.DIFM_STARTING_POINT,
 		];
-
-		if ( isGoalsAtFrontExperiment ) {
-			return [ STEPS.PROCESSING, STEPS.ERROR ];
-		}
 
 		return steps;
 	},
@@ -324,31 +318,6 @@ const siteSetupFlow: FlowV1 = {
 					}
 				}
 
-				case 'goals': {
-					const { intent, skip } = providedDependencies;
-
-					if ( skip ) {
-						return exitFlow( `/home/${ siteId ?? siteSlug }`, {
-							skipLaunchpad: true,
-						} );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Import:
-							return exitFlow( `/setup/site-migration?siteSlug=${ siteSlug }&ref=goals` );
-
-						case SiteIntent.DIFM:
-							return navigate( 'difmStartingPoint' );
-
-						default: {
-							if ( isDesignChoicesStepEnabled ) {
-								return navigate( 'design-choices' );
-							}
-							return navigate( 'designSetup' );
-						}
-					}
-				}
-
 				case 'design-choices': {
 					if ( providedDependencies.destination === 'launch-big-sky' ) {
 						const queryParams = new URLSearchParams( location.search ).toString();
@@ -359,33 +328,6 @@ const siteSetupFlow: FlowV1 = {
 					}
 
 					return navigate( providedDependencies.destination as string );
-				}
-
-				case 'intent': {
-					const submittedIntent = params[ 0 ];
-					switch ( submittedIntent ) {
-						case 'wpadmin': {
-							return exitFlow( `https://wordpress.com/home/${ siteId ?? siteSlug }` );
-						}
-						case 'build': {
-							return navigate( 'designSetup' );
-						}
-						case 'sell': {
-							return navigate( 'options' );
-						}
-						case 'import': {
-							return navigate( 'import' );
-						}
-						case 'write': {
-							return navigate( 'options' );
-						}
-						case 'difm': {
-							return navigate( 'difmStartingPoint' );
-						}
-						default: {
-							return navigate( submittedIntent );
-						}
-					}
 				}
 
 				case 'courses': {
@@ -504,11 +446,6 @@ const siteSetupFlow: FlowV1 = {
 					if ( isDesignChoicesStepEnabled ) {
 						return navigate( 'design-choices' );
 					}
-					return navigate( 'goals' );
-
-				case 'design-choices': {
-					return navigate( 'goals' );
-				}
 
 				case 'importList':
 					if ( backToStep ) {
@@ -558,21 +495,9 @@ const siteSetupFlow: FlowV1 = {
 				case 'importReadyPreview':
 					return navigate( `import?siteSlug=${ siteSlug }` );
 
-				case 'options':
-					return navigate( 'goals' );
-
-				case 'import':
-					return navigate( 'goals' );
-
 				case 'verifyEmail':
 				case 'trialAcknowledge':
 					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
-
-				case 'difmStartingPoint':
-					return navigate( 'goals' );
-
-				default:
-					return navigate( 'intent' );
 			}
 		};
 
@@ -584,17 +509,11 @@ const siteSetupFlow: FlowV1 = {
 					}
 					return navigate( 'bloggerStartingPoint' );
 
-				case 'intent':
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
-
 				case 'import':
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint':
 					return navigate( 'designSetup' );
-
-				default:
-					return navigate( 'intent' );
 			}
 		};
 
@@ -608,7 +527,13 @@ const siteSetupFlow: FlowV1 = {
 			}
 		};
 
-		return { goNext, goBack, goToStep, submit, exitFlow };
+		return {
+			goNext,
+			goBack: currentStep === STEPS.OPTIONS.slug ? undefined : goBack,
+			goToStep,
+			submit,
+			exitFlow,
+		};
 	},
 
 	useAssertConditions(): AssertConditionResult {
@@ -687,6 +612,18 @@ const siteSetupFlow: FlowV1 = {
 		const skippedCheckout = useQuery().get( 'skippedCheckout' );
 
 		const activateDesign = useActivateDesign();
+
+		const { setIntent, setGoals } = useDispatch( ONBOARD_STORE );
+		const { site } = useSiteData();
+
+		useEffect( () => {
+			if ( isGoalsAtFrontExperiment ) {
+				return;
+			}
+
+			setIntent( goalsToIntent( site?.options?.site_goals ?? [], false ) );
+			setGoals( site?.options?.site_goals ?? [] );
+		}, [ isGoalsAtFrontExperiment, site, setIntent, setGoals ] );
 
 		useEffect( () => {
 			if ( ! isGoalsAtFrontExperiment || ! siteSlugOrId || ! siteId ) {

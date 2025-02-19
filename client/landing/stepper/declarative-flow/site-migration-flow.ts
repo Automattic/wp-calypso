@@ -618,8 +618,6 @@ const siteMigration: Flow = {
 					if ( entryPoint === GUIDED_ONBOARDING_FLOW_REFERRER ) {
 						return exitFlow( '/start/initial-intent' );
 					}
-
-					return exitFlow( `/setup/site-setup/goals?${ urlQueryParams }` );
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {

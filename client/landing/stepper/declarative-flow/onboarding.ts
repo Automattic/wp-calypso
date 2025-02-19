@@ -194,7 +194,7 @@ const onboarding: Flow = {
 				];
 			}
 
-			const destination = addQueryArgs( '/setup/site-setup', {
+			const destination = addQueryArgs( '/setup/site-setup/processing', {
 				siteSlug: providedDependencies.siteSlug,
 				...( isGoalsAtFrontExperiment && { 'goals-at-front-experiment': true } ),
 			} );

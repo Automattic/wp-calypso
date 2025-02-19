@@ -84,14 +84,14 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter, flo
 		queryParam = { siteId };
 	}
 
-	// For guided flow, in the variant where the goals are answered in the first step, redirect to the site-setup-wg (without goals).
+	// For guided flow, in the variant where the goals are answered in the first step, redirect to the site-setup flow.
 	// NOTE: we may need a better way to detect the variant where goals are answered in the first step.
 	// The `segmentationSurveyAnswers` are persisted and can affect the following visits of the flow.
 	if (
 		isOnboardingGuidedFlow( flowName ) &&
 		rest.segmentationSurveyAnswers?.[ 'what-are-your-goals' ]
 	) {
-		return addQueryArgs( queryParam, '/setup/site-setup-wg' );
+		return addQueryArgs( queryParam, '/setup/site-setup' );
 	}
 
 	// Add referral param to query args
@@ -244,7 +244,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 		( onboardingSegment === 'blogger' || onboardingSegment === 'merchant' ) &&
 		planType !== TYPE_ECOMMERCE
 	) {
-		return addQueryArgs( queryParams, `/setup/site-setup-wg/options` );
+		return addQueryArgs( queryParams, `/setup/site-setup` );
 	}
 
 	// Not Blog, Merchant, nor Developer/Agency without Entrepreneur/Ecommerce Plan
@@ -254,7 +254,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 		onboardingSegment !== 'developer-or-agency' &&
 		planType !== TYPE_ECOMMERCE
 	) {
-		return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
+		return addQueryArgs( queryParams, `/setup/site-setup/design-choices` );
 	}
 
 	// Entrepreneur/Ecommerce Plan
@@ -269,7 +269,7 @@ function getGuidedOnboardingFlowDestination( dependencies ) {
 		return addQueryArgs( queryParams, '/setup/transferring-hosted-site' );
 	}
 
-	return addQueryArgs( queryParams, `/setup/site-setup-wg/design-choices` );
+	return addQueryArgs( queryParams, `/setup/site-setup/design-choices` );
 }
 
 const flows = generateFlows( {

@@ -325,8 +325,6 @@ const importFlow: Flow = {
 
 		const goToStep = ( step: string ) => {
 			switch ( step ) {
-				case 'goals':
-					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
 				case 'import':
 					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				default:
