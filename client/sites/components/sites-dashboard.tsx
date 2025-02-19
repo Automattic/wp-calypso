@@ -294,7 +294,7 @@ const SitesDashboard = ( {
 	const includeA8CSites =
 		dataViewsState.filters?.some(
 			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
-		) ?? false;
+		) ?? siteType === 'p2';
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
