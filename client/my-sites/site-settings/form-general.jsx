@@ -364,7 +364,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	hideActionbar() {
-		const { translate, fields, updateFields } = this.props;
+		const { translate, fields, handleAutosavingToggle } = this.props;
 		return (
 			<FormFieldset>
 				<FormLabel htmlFor="site-settings__wpcom_hide_action_bar">
@@ -375,9 +375,7 @@ export class SiteSettingsFormGeneral extends Component {
 					__nextHasNoMarginBottom
 					label={ translate( 'Hide the Action Bar.' ) }
 					checked={ !! fields?.wpcom_hide_action_bar }
-					onChange={ ( newValue ) => {
-						updateFields( { wpcom_hide_action_bar: newValue } );
-					} }
+					onChange={ handleAutosavingToggle( 'wpcom_hide_action_bar' ) }
 				/>
 				<FormSettingExplanation>
 					{ translate(
