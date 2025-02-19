@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 main.get-apps {
 	.get-apps__wrapper {
@@ -42,7 +43,7 @@ main.get-apps {
 		font-size: $font-body;
 		font-weight: 500;
 		color: var(--studio-gray-50);
-		margin-bottom: 16px;
+		margin-bottom: $grid-unit-20;
 	}
 
 	.get-apps__card-title {
