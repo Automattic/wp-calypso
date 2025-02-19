@@ -13,23 +13,14 @@
 /client/my-sites/comment* @Automattic/serenity
 
 # Email services
-/client/components/data/query-gsuite-users @Automattic/yolo
-/client/components/domains/contact-details-form-fields/index.jsx @Automattic/yolo
 /client/components/gsuite @Automattic/yolo
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/yolo
 /client/lib/domains/email-forwarding @Automattic/yolo
 /client/lib/gsuite @Automattic/yolo
 /client/lib/titan @Automattic/yolo
-/client/me/purchases/remove-purchase/index.jsx @Automattic/yolo
-/client/my-sites/checkout/checkout-thank-you/index.jsx @Automattic/yolo
-/client/my-sites/checkout/checkout/domain-details-form.jsx @Automattic/yolo
-/client/my-sites/checkout/checkout/index.jsx @Automattic/yolo
-/client/my-sites/checkout/controller.jsx @Automattic/yolo
-/client/my-sites/domains/components/domain-warnings @Automattic/yolo
-/client/my-sites/domains/controller.jsx @Automattic/yolo
+/client/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice.jsx  @Automattic/yolo
+/client/my-sites/domains/email-providers-upsell/index.tsx @Automattic/yolo
 /client/my-sites/email @Automattic/yolo
-/client/state/data-layer/wpcom/gsuite-users @Automattic/yolo
-/client/state/gsuite-users @Automattic/yolo
 
 # Payments
 /client/lib/checkout/ @Automattic/shilling
