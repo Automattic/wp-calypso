@@ -52,7 +52,7 @@ const domainTransfer: FlowV1 = {
 		}, [ isLoggedIn ] );
 	},
 
-	useStepNavigation( _currentStepSlug, navigate ) {
+	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
 			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
@@ -68,6 +68,7 @@ const domainTransfer: FlowV1 = {
 		const submit: ReturnType< Flow[ 'useStepNavigation' ] >[ 'submit' ] = (
 			providedDependencies = {}
 		) => {
+			switch ( currentStepSlug ) {
 				case 'intro':
 					clearSignupDestinationCookie();
 
@@ -104,7 +105,7 @@ const domainTransfer: FlowV1 = {
 		};
 
 		const goBack = () => {
-			switch ( _currentStepSlug ) {
+			switch ( currentStepSlug ) {
 				case 'domains':
 					return navigate( 'intro' );
 				default:
