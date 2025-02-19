@@ -12,13 +12,15 @@ export default function A4AModal( {
 	title,
 	subtile,
 	className,
+	showCloseButton = true,
 }: {
 	onClose: () => void;
 	children: React.ReactNode;
-	extraActions: React.ReactNode;
+	extraActions?: React.ReactNode;
 	title: string;
 	subtile: string;
 	className?: string;
+	showCloseButton?: boolean;
 } ) {
 	const translate = useTranslate();
 
@@ -41,9 +43,11 @@ export default function A4AModal( {
 				{ children }
 			</div>
 			<div className="a4a-modal__footer">
-				<Button variant="secondary" onClick={ onClose }>
-					{ translate( 'Cancel' ) }
-				</Button>
+				{ showCloseButton && (
+					<Button variant="secondary" onClick={ onClose }>
+						{ translate( 'Cancel' ) }
+					</Button>
+				) }
 				{ extraActions }
 			</div>
 		</Modal>

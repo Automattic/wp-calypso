@@ -91,9 +91,7 @@ class StatsModule extends Component {
 
 		if ( ! lastUpdated || now.diff( lastUpdated, 'seconds' ) >= UPDATE_THRESHOLD_IN_SECONDS ) {
 			const updatedHistory = this.updateHistory( dataHistory, data );
-			const firstSnapshot = updatedHistory[ 0 ];
-			const lastSnapshot = updatedHistory[ updatedHistory.length - 1 ];
-			const diffData = this.calculateDiff( firstSnapshot.data, lastSnapshot.data );
+			const diffData = this.calculateDiff( updatedHistory );
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				diffData,
@@ -105,8 +103,9 @@ class StatsModule extends Component {
 
 	updateHistory( history, data ) {
 		// Timestamp the new data snapshot.
+		const now = moment();
 		const newSnapshot = {
-			timestamp: moment(),
+			timestamp: now,
 			data: data,
 		};
 
@@ -114,7 +113,7 @@ class StatsModule extends Component {
 		// This determines the baseline for the diff calculation.
 		const { minutesLimit } = this.props;
 		const filteredHistory = [ ...history, newSnapshot ].filter(
-			( snapshot ) => moment().diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
+			( snapshot ) => now.diff( snapshot.timestamp, 'minutes' ) <= minutesLimit
 		);
 
 		return this.compactHistory( filteredHistory );
@@ -131,21 +130,32 @@ class StatsModule extends Component {
 		return history;
 	}
 
-	calculateDiff( prevData, newData ) {
-		// Create a lookup map for previous data using item IDs.
-		const prevDataMap = new Map( prevData.map( ( item ) => [ item.id, item ] ) );
+	calculateDiff( history ) {
+		const baselineMap = this.createBaselineLookupMap( history );
+		const lastSnapshot = history[ history.length - 1 ].data;
 
-		// Calculate the difference value for each new item.
-		const diff = newData.map( ( item ) => {
-			// Pull matching data from previous snapshot, or default to 0 if not found.
-			const prevItem = prevDataMap.get( item.id ) || { value: 0 };
+		return lastSnapshot.map( ( item ) => {
+			const baselineItem = baselineMap.get( item.id ) || { value: 0 };
 			return {
 				...item,
-				diffValue: item.value - prevItem.value,
+				diffValue: item.value - baselineItem.value,
 			};
 		} );
+	}
 
-		return diff;
+	createBaselineLookupMap( history ) {
+		const key = 'id';
+		const lookup = new Map();
+
+		history.forEach( ( snapshot ) => {
+			snapshot.data.forEach( ( item ) => {
+				if ( ! lookup.has( item[ key ] ) ) {
+					lookup.set( item[ key ], item );
+				}
+			} );
+		} );
+
+		return lookup;
 	}
 
 	getModuleLabel() {
@@ -224,6 +234,8 @@ class StatsModule extends Component {
 				value: item[ valueField ],
 			} ) );
 		}
+
+		return [];
 	}
 
 	render() {
