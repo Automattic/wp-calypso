@@ -1,5 +1,6 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -18,19 +19,21 @@ import './style.scss';
 
 interface Props {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	goBack: () => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 }
 
-export default function PersonalizationForm( { onContinue }: Props ) {
+export default function PersonalizationForm( { onContinue, goBack, initialFormData }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions } = useCountriesAndStates();
 	const { validate, validationError, updateValidationError } = usePersonalizationFormValidation();
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		country: '',
-		userType: 'agency_owner',
-		managedSites: '1-5',
-		servicesOffered: [],
-		productsOffered: [],
+		country: initialFormData.country || '',
+		userType: initialFormData.userType || 'agency_owner',
+		managedSites: initialFormData.managedSites || '1-5',
+		servicesOffered: initialFormData.servicesOffered || [],
+		productsOffered: initialFormData.productsOffered || [],
 	} );
 
 	const handleInputChange =
@@ -189,6 +192,16 @@ export default function PersonalizationForm( { onContinue }: Props ) {
 						</FormFieldset>
 
 						<FormFooter>
+							<Button
+								className="signup-multi-step-form__back-button"
+								variant="tertiary"
+								onClick={ goBack }
+								icon={ arrowLeft }
+								iconSize={ 18 }
+							>
+								{ translate( 'Back' ) }
+							</Button>
+
 							<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
 								{ translate( 'Continue' ) }
 							</Button>

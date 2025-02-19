@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
@@ -12,15 +11,18 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import { useGetSupportedSMSCountries } from 'calypso/jetpack-cloud/sections/agency-dashboard/downtime-monitoring/contact-editor/hooks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useContactFormValidation from './hooks/use-contact-form-validation';
+import TosModal from './tos-modal';
 
 import './style.scss';
 
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
+	initialFormData: Partial< AgencyDetailsSignupPayload >;
 };
 
-const SignupContactForm = ( { onContinue }: Props ) => {
+const SignupContactForm = ( { onContinue, initialFormData }: Props ) => {
 	const translate = useTranslate();
+	const [ showTosModal, setShowTosModal ] = useState( false );
 	const { validate, validationError, updateValidationError, isValidating } =
 		useContactFormValidation();
 
@@ -28,12 +30,12 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 	const noCountryList = countriesList.length === 0;
 
 	const [ formData, setFormData ] = useState< Partial< AgencyDetailsSignupPayload > >( {
-		firstName: '',
-		lastName: '',
-		email: '',
-		agencyName: '',
-		agencyUrl: '',
-		phoneNumber: '',
+		firstName: initialFormData.firstName || '',
+		lastName: initialFormData.lastName || '',
+		email: initialFormData.email || '',
+		agencyName: initialFormData.agencyName || '',
+		agencyUrl: initialFormData.agencyUrl || '',
+		phoneNumber: initialFormData.phoneNumber || '',
 	} );
 
 	const handlePhoneInputChange = ( data: { phoneNumberFull: string } ) => {
@@ -145,6 +147,13 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 				phoneInputProps={ {
 					placeholder: translate( 'Phone number' ),
 				} }
+				initialCountryCode="US"
+			/>
+			<TosModal
+				show={ showTosModal }
+				onClose={ () => {
+					setShowTosModal( false );
+				} }
 			/>
 
 			<div className="signup-contact-form__tos">
@@ -155,13 +164,11 @@ const SignupContactForm = ( { onContinue }: Props ) => {
 							components: {
 								break: <br />,
 								link: (
-									<a
-										href={ localizeUrl(
-											'https://automattic.com/for-agencies/platform-agreement/'
-										) }
-										target="_blank"
-										rel="noopener noreferrer"
-									></a>
+									<button
+										type="button"
+										className="signup-contact-form__tos-link"
+										onClick={ () => setShowTosModal( true ) }
+									></button>
 								),
 							},
 						}

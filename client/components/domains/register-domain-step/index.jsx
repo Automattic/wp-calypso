@@ -1453,6 +1453,15 @@ class RegisterDomainStep extends Component {
 				lastQuery: domain,
 				lastFilters: this.state.filters,
 				hideInitialQuery: false,
+				showAvailabilityNotice: false,
+				showSuggestionNotice: false,
+				availabilityError: null,
+				availabilityErrorData: null,
+				availabilityErrorDomain: null,
+				suggestionError: null,
+				suggestionErrorData: null,
+				suggestionErrorDomain: null,
+				lastDomainStatus: null,
 			},
 			this.save
 		);

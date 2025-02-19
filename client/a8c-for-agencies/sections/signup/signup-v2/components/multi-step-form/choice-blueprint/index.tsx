@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import Form from 'calypso/a8c-for-agencies/components/form';
 import FormFooter from 'calypso/a8c-for-agencies/components/form/footer';
@@ -9,9 +10,10 @@ import './style.scss';
 type Props = {
 	onContinue: () => void;
 	onSkip: () => void;
+	goBack: () => void;
 };
 
-const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
+const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip, goBack } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -26,21 +28,33 @@ const ChoiceBlueprint: React.FC< Props > = ( { onContinue, onSkip } ) => {
 		>
 			<FormFooter>
 				<Button
-					className="choice-blueprint__button"
-					variant="primary"
-					onClick={ onContinue }
-					__next40pxDefaultSize
+					className="signup-multi-step-form__back-button"
+					variant="tertiary"
+					onClick={ goBack }
+					icon={ arrowLeft }
+					iconSize={ 18 }
 				>
-					{ translate( 'Build my custom blueprint' ) }
+					{ translate( 'Back' ) }
 				</Button>
-				<Button
-					className="choice-blueprint__button"
-					variant="secondary"
-					onClick={ onSkip }
-					__next40pxDefaultSize
-				>
-					{ translate( 'Not right now' ) }
-				</Button>
+
+				<div>
+					<Button
+						className="choice-blueprint__cancel-button"
+						variant="tertiary"
+						onClick={ onSkip }
+						__next40pxDefaultSize
+					>
+						{ translate( 'Not right now' ) }
+					</Button>
+					<Button
+						className="choice-blueprint__button"
+						variant="primary"
+						onClick={ onContinue }
+						__next40pxDefaultSize
+					>
+						{ translate( 'Build my custom blueprint' ) }
+					</Button>
+				</div>
 			</FormFooter>
 		</Form>
 	);
