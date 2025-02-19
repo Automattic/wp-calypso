@@ -13,12 +13,15 @@ import type { SiteDetails } from '@automattic/data-stores';
 
 jest.mock( '@wordpress/api-fetch' );
 
+let mockUseExperimentResult = [ false, true ];
+
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( ( slug ) =>
 		slug === 'calypso_signup_onboarding_goals_first_flow_holdout_v2_20250131'
 			? Promise.resolve( { variationName: 'treatment_cumulative' } )
 			: Promise.reject( new Error( `Unmocked experiment slug: ${ slug }` ) )
 	),
+	useExperiment: jest.fn( () => mockUseExperimentResult ),
 } ) );
 
 jest.mock( '../components/home-content', () => () => (
@@ -174,6 +177,7 @@ describe( 'CustomerHome', () => {
 	} );
 
 	it( 'shows home content when site would be eligible to show launchpad, but user is in treatment_frozen group', async () => {
+		mockUseExperimentResult = [ false, false ];
 		const testSite = makeTestSite( {
 			launch_status: 'unlaunched',
 			options: { site_creation_flow: 'onboarding', launchpad_screen: false },
