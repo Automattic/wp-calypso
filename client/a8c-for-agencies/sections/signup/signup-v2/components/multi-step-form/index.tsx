@@ -105,7 +105,6 @@ const MultiStepForm = () => {
 					...rest
 				} = newFormData;
 				const payload = isBlueprintRequested ? newFormData : rest;
-				debugger;
 				createSignup.mutate( payload as AgencyDetailsSignupPayload );
 			}
 		},

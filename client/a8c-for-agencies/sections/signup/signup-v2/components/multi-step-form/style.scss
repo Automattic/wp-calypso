@@ -138,3 +138,18 @@
 	}
 }
 
+.signup-multi-step-form__back-button {
+	cursor: pointer;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	height: 100%;
+}
+
+.blueprint-form, .signup-personalization-form, .choice-blueprint-form {
+	.a4a-form__footer {
+		justify-content: space-between;
+	}
+}
+

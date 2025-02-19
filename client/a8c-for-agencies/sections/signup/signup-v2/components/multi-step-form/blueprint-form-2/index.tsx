@@ -1,4 +1,5 @@
 import { Button } from '@wordpress/components';
+import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -117,9 +118,10 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 			</FormField>
 
 			<FormFooter>
-				<Button variant="secondary" onClick={ goBack } __next40pxDefaultSize>
-					{ translate( 'Go back' ) }
-				</Button>
+				<button className="signup-multi-step-form__back-button" onClick={ goBack }>
+					<Icon icon={ arrowLeft } size={ 18 } />
+					{ translate( 'Back' ) }
+				</button>
 				<Button variant="primary" onClick={ handleSubmit } __next40pxDefaultSize>
 					{ translate( 'Continue' ) }
 				</Button>

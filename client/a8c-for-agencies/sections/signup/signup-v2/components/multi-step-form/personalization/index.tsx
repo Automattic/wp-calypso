@@ -1,5 +1,6 @@
 import { SearchableDropdown } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, arrowLeft } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, ChangeEvent, useMemo } from 'react';
 import Form from 'calypso/a8c-for-agencies/components/form';
@@ -191,9 +192,10 @@ export default function PersonalizationForm( { onContinue, goBack, initialFormDa
 						</FormFieldset>
 
 						<FormFooter>
-							<Button __next40pxDefaultSize variant="secondary" onClick={ goBack }>
-								{ translate( 'Go back' ) }
-							</Button>
+							<button className="signup-multi-step-form__back-button" onClick={ goBack }>
+								<Icon icon={ arrowLeft } size={ 18 } />
+								{ translate( 'Back' ) }
+							</button>
 							<Button __next40pxDefaultSize variant="primary" onClick={ handleSubmit }>
 								{ translate( 'Continue' ) }
 							</Button>
