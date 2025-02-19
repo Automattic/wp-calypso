@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gravatar } from '@automattic/components';
 import { getRelativeTimeString, useLocale } from '@automattic/i18n-utils';
 import { HumanAvatar } from '@automattic/odie-client/src/assets';
-import { useGetSupportInteractionById } from '@automattic/odie-client/src/data/use-get-support-interaction-by-id';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
 import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -10,7 +9,7 @@ import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { HELP_CENTER_STORE } from '../stores';
-import type { ZendeskMessage } from '@automattic/odie-client';
+import type { SupportInteraction, ZendeskMessage } from '@automattic/odie-client';
 
 import './help-center-support-chat-message.scss';
 
@@ -27,7 +26,7 @@ export const HelpCenterSupportChatMessage = ( {
 	badgeCount = 0,
 	isUnread = false,
 	navigateTo = '',
-	supportInteractionId,
+	supportInteraction,
 	sectionName,
 }: {
 	message: ZendeskMessage;
@@ -36,7 +35,7 @@ export const HelpCenterSupportChatMessage = ( {
 	isUnread: boolean;
 	navigateTo: string;
 	altText?: string;
-	supportInteractionId: string | null;
+	supportInteraction: SupportInteraction | undefined;
 	sectionName?: string;
 } ) => {
 	const { __ } = useI18n();
@@ -45,7 +44,6 @@ export const HelpCenterSupportChatMessage = ( {
 	const { displayName, received, text, altText } = message;
 	const helpCenterContext = useHelpCenterContext();
 	const helpCenterContextSectionName = helpCenterContext.sectionName;
-	const { data: supportInteraction } = useGetSupportInteractionById( supportInteractionId );
 	const { setCurrentSupportInteraction } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const messageDisplayName =
 		message.role === 'business' ? __( 'Happiness Engineer', __i18n_text_domain__ ) : displayName;
