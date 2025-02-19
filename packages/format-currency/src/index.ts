@@ -27,6 +27,10 @@ async function geolocateCurrencySymbol(): Promise< void > {
 		'string' === typeof ( geoData as WithGeoCountry )?.country_short ? geoData.country_short : '';
 }
 
+/**
+ * Retrieves the currency override for a given currency.
+ * If the currency is USD and the user is not in the US, it will return `US$`.
+ */
 function getCurrencyOverride( currency: string ): CurrencyOverride | undefined {
 	if ( currency === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
 		return { symbol: 'US$' };
@@ -34,6 +38,10 @@ function getCurrencyOverride( currency: string ): CurrencyOverride | undefined {
 	return defaultCurrencyOverrides[ currency ];
 }
 
+/**
+ * Returns a valid currency code based on a shortlist of currency codes.
+ * Only currencies from the shortlist are allowed. Everything else will fall back to `FALLBACK_CURRENCY`.
+ */
 function getValidCurrency( currency: string ): string {
 	if ( ! getCurrencyOverride( currency ) ) {
 		// eslint-disable-next-line no-console
