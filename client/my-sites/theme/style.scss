@@ -343,7 +343,13 @@ $button-border: 4px;
 	min-height: $iframe-viewport-height-scaled;
 
 	.theme-preview__frame-wrapper {
+		max-height: 100vw;
 		pointer-events: none;
+
+		.theme-preview__frame {
+			max-height: 100%;
+		}
+
 		@include breakpoint-deprecated( ">960px" ) {
 			max-height: calc(100vh - var(--masterbar-height));
 
