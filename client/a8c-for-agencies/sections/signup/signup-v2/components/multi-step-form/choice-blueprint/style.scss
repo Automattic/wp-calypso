@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
 .choice-blueprint__button {
 	width: 200px;
 	justify-content: center;
@@ -9,4 +12,18 @@
 
 .choice-blueprint__cancel-button {
 	margin-inline-end: 8px;
+}
+
+.choice-blueprint__content-list {
+	margin: 0 16px 16px;
+
+	li {
+		margin-block-end: 8px;
+	}
+}
+
+.choice-blueprint__content-list li,
+.choice-blueprint__content-footer {
+	@include body-large;
+	color: var(--color-neutral-60);
 }
