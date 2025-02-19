@@ -1,0 +1,39 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@wordpress/base-styles/breakpoints";
+
+.tsp-metrics-info-banner__container {
+	background-color: var(--studio-gray-0);
+	margin: 16px;
+	display: flex;
+	flex-direction: column;
+	padding: 24px 24px 12px 24px;
+	grid-column: 1 / -1;
+	align-items: center;
+	gap: 16px;
+	position: relative;
+	border-radius: 4px;
+	@media (min-width: $break-large) {
+		flex-direction: row;
+		padding: 24px 45px 12px 24px;
+	}
+
+	.tsp-metrics-info-banner__title {
+		display: block;
+		font-size: 0.875rem;
+		color: var(--studio-gray-100);
+		font-weight: 500;
+		margin-bottom: 12px;
+	}
+	.tsp-metrics-info-banner__text {
+		display: block;
+		font-size: 0.875rem;
+		color: var(--studio-gray-60)
+	}
+
+	.tsp-metrics-info-banner__close {
+		position: absolute;
+		right: 16px;
+		top: 16px;
+		cursor: pointer;
+	}
+}
