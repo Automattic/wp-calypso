@@ -22,6 +22,8 @@ import {
 	buildDiscoverStreamKey,
 	FIRST_POSTS_TAB,
 	isDiscoveryV2Enabled,
+	ADD_NEW_TAB,
+	REDDIT_TAB,
 } from './helper';
 import './style.scss';
 
@@ -32,14 +34,25 @@ export const DiscoverHeader = ( props ) => {
 
 	const { selectedTab } = props;
 	const tabTitle = getSelectedTabTitle( selectedTab );
-	let subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
-		args: [ tabTitle ],
-		comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
-	} );
-	if ( selectedTab === FIRST_POSTS_TAB ) {
-		subHeaderText = translate(
-			'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
-		);
+
+	let subHeaderText;
+	switch ( selectedTab ) {
+		case FIRST_POSTS_TAB:
+			subHeaderText = translate(
+				'Fresh voices, fresh views. Explore first-time posts from new bloggers.'
+			);
+			break;
+		case ADD_NEW_TAB:
+			subHeaderText = translate( 'Subscribe to new blogs, newsletters, and RSS feeds.' );
+			break;
+		case REDDIT_TAB:
+			subHeaderText = translate( 'Follow your favorite subreddits inside the Reader.' );
+			break;
+		default:
+			subHeaderText = translate( 'Explore %s blogs that inspire, educate, and entertain.', {
+				args: [ tabTitle ],
+				comment: '%s is the type of blog being explored e.g. food, art, technology etc.',
+			} );
 	}
 
 	return (
@@ -116,23 +129,18 @@ const DiscoverStream = ( props ) => {
 		);
 	};
 
-	if ( selectedTab === 'add-new' ) {
-		return (
-			<ReaderMain className={ clsx( 'following main', props.className ) }>
-				<HeaderAndNavigation />
-				<div className="reader__content">
-					<DiscoverAddNew />
-				</div>
-			</ReaderMain>
-		);
-	}
+	const TAB_COMPONENTS = {
+		[ ADD_NEW_TAB ]: DiscoverAddNew,
+		[ REDDIT_TAB ]: Reddit,
+	};
 
-	if ( selectedTab === 'reddit' ) {
+	const ContentComponent = TAB_COMPONENTS[ selectedTab ];
+	if ( ContentComponent ) {
 		return (
 			<ReaderMain className={ clsx( 'following main', props.className ) }>
 				<HeaderAndNavigation />
 				<div className="reader__content">
-					<Reddit />
+					<ContentComponent />
 				</div>
 			</ReaderMain>
 		);

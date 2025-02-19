@@ -104,10 +104,17 @@
 		.a4a-form__section-field-label,
 		.a4a-form__section-field-required,
 		.signup-personalization-form .multi-checkbox label,
+		.choice-blueprint__content li,
+		.choice-blueprint__content p,
 		.form-phone-input label,
 		.form-radio__label,
-		.components-form-token-field__suggestion {
+		.components-form-token-field__suggestion,
+		.choice-blueprint__cancel-button.choice-blueprint__cancel-button.choice-blueprint__cancel-button {
 			color: var(--color-text-inverted);
+		}
+
+		.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
+			color: #E6F5FF;
 		}
 
 		input[type="text"].form-text-input,
@@ -138,3 +145,6 @@
 	}
 }
 
+.signup-multi-step-form__back-button.signup-multi-step-form__back-button.signup-multi-step-form__back-button {
+	color: var(--color-neutral-50);
+}

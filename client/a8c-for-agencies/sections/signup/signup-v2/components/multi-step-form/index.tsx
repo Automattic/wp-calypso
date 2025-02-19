@@ -87,12 +87,25 @@ const MultiStepForm = () => {
 	} );
 
 	const updateDataAndContinue = useCallback(
-		( data: Partial< AgencyDetailsSignupPayload >, nextStep: number ) => {
+		(
+			data: Partial< AgencyDetailsSignupPayload >,
+			nextStep: number,
+			isBlueprintRequested = false
+		) => {
 			const newFormData = { ...formData, ...data };
 			setFormData( newFormData );
 			setCurrentStep( nextStep );
 			if ( nextStep === 6 ) {
-				createSignup.mutate( newFormData as AgencyDetailsSignupPayload );
+				const {
+					topPartneringGoal,
+					topYearlyGoal,
+					workWithClients,
+					workWithClientsOther,
+					approachAndChallenges,
+					...rest
+				} = newFormData;
+				const payload = isBlueprintRequested ? newFormData : rest;
+				createSignup.mutate( payload as AgencyDetailsSignupPayload );
 			}
 		},
 		[ formData, createSignup ]
@@ -107,25 +120,45 @@ const MultiStepForm = () => {
 	const currentForm = useMemo( () => {
 		switch ( currentStep ) {
 			case 1:
-				return <SignupContactForm onContinue={ ( data ) => updateDataAndContinue( data, 2 ) } />;
+				return (
+					<SignupContactForm
+						onContinue={ ( data ) => updateDataAndContinue( data, 2 ) }
+						initialFormData={ formData }
+					/>
+				);
 			case 2:
-				return <PersonalizationForm onContinue={ ( data ) => updateDataAndContinue( data, 3 ) } />;
+				return (
+					<PersonalizationForm
+						onContinue={ ( data ) => updateDataAndContinue( data, 3 ) }
+						initialFormData={ formData }
+						goBack={ () => setCurrentStep( 1 ) }
+					/>
+				);
 			case 3:
 				return (
 					<ChoiceBlueprint
 						onContinue={ () => updateDataAndContinue( {}, 4 ) }
 						onSkip={ () => updateDataAndContinue( {}, 6 ) }
+						goBack={ () => setCurrentStep( 2 ) }
 					/>
 				);
 			case 4:
-				return <BlueprintForm onContinue={ ( data ) => updateDataAndContinue( data, 5 ) } />;
+				return (
+					<BlueprintForm
+						onContinue={ ( data ) => updateDataAndContinue( data, 5 ) }
+						initialFormData={ formData }
+						goBack={ () => setCurrentStep( 3 ) }
+					/>
+				);
 			case 5:
 				return (
 					<BlueprintForm2
 						onContinue={ ( data ) => {
 							setBlueprintRequested( true );
-							updateDataAndContinue( data, 6 );
+							updateDataAndContinue( data, 6, true );
 						} }
+						initialFormData={ formData }
+						goBack={ () => setCurrentStep( 4 ) }
 					/>
 				);
 			case 6:
@@ -138,7 +171,7 @@ const MultiStepForm = () => {
 			default:
 				return null;
 		}
-	}, [ blueprintRequested, currentStep, updateDataAndContinue ] );
+	}, [ blueprintRequested, currentStep, formData, updateDataAndContinue ] );
 
 	return (
 		<div className="signup-multi-step-form">
