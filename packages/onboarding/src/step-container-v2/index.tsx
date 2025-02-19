@@ -12,7 +12,8 @@ import './style.scss';
 type ButtonProps = ( () => void ) | ComponentProps< typeof Button >;
 
 interface StepContainerV2Props {
-	heading: ComponentProps< typeof Heading > & {
+	className?: string;
+	heading?: ComponentProps< typeof Heading > & {
 		customPlacement?: boolean;
 	};
 	bottomBar?: {
@@ -46,6 +47,7 @@ const SecondaryButton = ( { label, ...props }: ComponentProps< typeof Button > )
 interface RenderStepProps {
 	heading?: ReactNode;
 	nextButton?: ReactNode;
+	isSmallScreen: boolean;
 }
 
 const normalizeButtonProps = < T extends ComponentProps< typeof Button > >(
@@ -71,6 +73,7 @@ const normalizeButtonProps = < T extends ComponentProps< typeof Button > >(
 };
 
 export const StepContainerV2 = ( {
+	className,
 	heading,
 	bottomBar = { backButton: false },
 	width = 'standard',
@@ -137,14 +140,16 @@ export const StepContainerV2 = ( {
 					'vertical-align-center': verticalAlign === 'center',
 				} ) }
 			>
-				{ heading && ! heading.customPlacement && headingElement }
+				{ ! heading?.customPlacement && headingElement }
 				<div
-					className={ clsx( 'step-container-v2__content', {
+					className={ clsx( 'step-container-v2__content', className, {
+						'large-viewport': ! isSmallScreen,
 						wide: width === 'wide',
 						full: width === 'full',
 					} ) }
 				>
 					{ render( {
+						isSmallScreen,
 						heading: headingElement,
 						nextButton: ! isSmallScreen && nextButtonElement,
 					} ) }

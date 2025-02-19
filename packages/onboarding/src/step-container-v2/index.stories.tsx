@@ -154,45 +154,6 @@ export const User = () => {
 	);
 };
 
-export const DIFM = () => {
-	return (
-		<StepContainerV2
-			heading={ {
-				text: 'Let us build your site',
-				subText: 'One time fee',
-				align: 'left',
-				customPlacement: true,
-			} }
-			backButton={ () => {} }
-			skipButton={ () => {} }
-			nextButton={ {
-				label: 'Hire a professional',
-				onClick: () => {},
-			} }
-			// nextButton will be null on small screens
-			render={ ( { heading, nextButton } ) => {
-				return (
-					<div className="difm">
-						<div className="difm__content">
-							<div>
-								{ heading }
-								<p>DIFM rules</p>
-								{ nextButton }
-							</div>
-							<div>
-								<span>DIFM image</span>
-							</div>
-						</div>
-						<div style={ { textAlign: 'center' } }>
-							<button>FAQ</button>
-						</div>
-					</div>
-				);
-			} }
-		/>
-	);
-};
-
 export const Domains = () => {
 	return (
 		<StepContainerV2

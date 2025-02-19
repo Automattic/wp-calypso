@@ -1,0 +1,10 @@
+.horizontal-step-layout {
+	display: grid;
+	gap: 2rem;
+
+	grid-template-columns: 1fr;
+
+	&.large-viewport {
+		grid-template-columns: 1fr 1fr;
+	}
+}
