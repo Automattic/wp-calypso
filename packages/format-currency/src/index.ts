@@ -27,22 +27,22 @@ async function geolocateCurrencySymbol(): Promise< void > {
 		'string' === typeof ( geoData as WithGeoCountry )?.country_short ? geoData.country_short : '';
 }
 
-function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
-	if ( code === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
+function getCurrencyOverride( currency: string ): CurrencyOverride | undefined {
+	if ( currency === 'USD' && geoLocation !== '' && geoLocation !== 'US' ) {
 		return { symbol: 'US$' };
 	}
-	return defaultCurrencyOverrides[ code ];
+	return defaultCurrencyOverrides[ currency ];
 }
 
-function getValidCurrency( code: string ): string {
-	if ( ! getCurrencyOverride( code ) ) {
+function getValidCurrency( currency: string ): string {
+	if ( ! getCurrencyOverride( currency ) ) {
 		// eslint-disable-next-line no-console
 		console.warn(
-			`getCurrencyObject was called with a non-existent currency "${ code }"; falling back to ${ FALLBACK_CURRENCY }`
+			`getCurrencyObject was called with a non-existent currency "${ currency }"; falling back to ${ FALLBACK_CURRENCY }`
 		);
 		return FALLBACK_CURRENCY;
 	}
-	return code;
+	return currency;
 }
 
 function getLocaleFromBrowser() {
@@ -71,12 +71,12 @@ function setDefaultLocale( locale: string | undefined ): void {
 
 function getFormatter(
 	number: number,
-	code: string,
+	currency: string,
 	options: CurrencyObjectOptions
 ): Intl.NumberFormat {
 	const numberFormatOptions: Intl.NumberFormatOptions = {
 		style: 'currency',
-		currency: code,
+		currency,
 		...( options.stripZeros &&
 			Number.isInteger( number ) && {
 				/**
@@ -146,17 +146,17 @@ function getPrecisionForLocaleAndCurrency( locale: string, currency: string ): n
  * If `isSmallestUnit` is set and the number is not an integer, it will be
  * rounded to an integer.
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
- * @param      {string}                   code       currency code e.g. 'USD'
+ * @param      {string}                   currency   currency code e.g. 'USD'
  * @param      {CurrencyObjectOptions}    options    options object
  * @returns    {string}                  A formatted string.
  */
 function formatCurrency(
 	number: number,
-	code: string,
+	currency: string,
 	options: CurrencyObjectOptions = {}
 ): string {
 	const locale = getLocaleToUse( options );
-	const validCurrency = getValidCurrency( code );
+	const validCurrency = getValidCurrency( currency );
 	const currencyOverride = getCurrencyOverride( validCurrency );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 	const numberAsFloat = prepareNumberForFormatting(
@@ -215,17 +215,17 @@ function formatCurrency(
  * If `isSmallestUnit` is set and the number is not an integer, it will be
  * rounded to an integer.
  * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
- * @param      {string}                   code       currency code e.g. 'USD'
+ * @param      {string}                   currency   currency code e.g. 'USD'
  * @param      {CurrencyObjectOptions}    options    options object
  * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
  */
 function getCurrencyObject(
 	number: number,
-	code: string,
+	currency: string,
 	options: CurrencyObjectOptions = {}
 ): CurrencyObject {
 	const locale = getLocaleToUse( options );
-	const validCurrency = getValidCurrency( code );
+	const validCurrency = getValidCurrency( currency );
 	const currencyOverride = getCurrencyOverride( validCurrency );
 	const currencyPrecision = getPrecisionForLocaleAndCurrency( locale, validCurrency );
 	const numberAsFloat = prepareNumberForFormatting(
