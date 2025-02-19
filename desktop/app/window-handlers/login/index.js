@@ -3,6 +3,10 @@ const config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:authentication' );
 
 module.exports = function ( { view } ) {
+	if ( ! config.oauthLoginEnabled ) {
+		return;
+	}
+
 	view.webContents.on( 'will-navigate', function ( event, url ) {
 		if ( url.includes( '/desktop-start-login' ) ) {
 			event.preventDefault();
