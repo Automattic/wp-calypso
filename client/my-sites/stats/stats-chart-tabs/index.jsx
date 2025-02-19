@@ -120,25 +120,6 @@ class StatModuleChartTabs extends Component {
 		this.setState( { chartType: newType } );
 	};
 
-	//TODO: remove this once we connect up the real data
-	generateDummyLineChartData = () => {
-		return [
-			{
-				label: 'Views',
-				options: {},
-				data: [
-					{ date: new Date( '2024-01-01' ), value: 45 },
-					{ date: new Date( '2024-01-02' ), value: 32 },
-					{ date: new Date( '2024-01-03' ), value: 67 },
-					{ date: new Date( '2024-01-04' ), value: 89 },
-					{ date: new Date( '2024-01-05' ), value: 54 },
-					{ date: new Date( '2024-01-06' ), value: 78 },
-					{ date: new Date( '2024-01-07' ), value: 93 },
-				],
-			},
-		];
-	};
-
 	render() {
 		const { siteId, slug, queryParams, selectedPeriod, isActiveTabLoading, className, countsComp } =
 			this.props;
