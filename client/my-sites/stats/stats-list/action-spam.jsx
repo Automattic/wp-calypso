@@ -1,4 +1,5 @@
 import { Dialog } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import { Icon, warning } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
@@ -86,17 +87,14 @@ class StatsActionSpam extends Component {
 
 		return (
 			<li className="stats-list__spam-action module-content-list-item-action">
-				<button
-					onClick={ this.clickHandler }
-					className={ wrapperClass }
-					title={ title }
-					aria-label={ title }
-				>
-					<Icon className="stats-icon" icon={ warning } size={ 22 } />
-					<span className="stats-list__spam-label module-content-list-item-action-label">
-						{ label }
-					</span>
-				</button>
+				<Tooltip position="top" text={ title }>
+					<button onClick={ this.clickHandler } className={ wrapperClass } aria-label={ title }>
+						<Icon className="stats-icon" icon={ warning } size={ 22 } />
+						<span className="stats-list__spam-label module-content-list-item-action-label">
+							{ label }
+						</span>
+					</button>
+				</Tooltip>
 				{ this.props.inHorizontalBarList && (
 					<Dialog
 						isVisible={ this.state.showConfirmDialog }
