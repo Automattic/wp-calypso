@@ -77,7 +77,7 @@ export async function maybeRedirect( context, next ) {
 
 	const site = getSelectedSite( state );
 
-	if ( await shouldShowLaunchpadFirst( site ) ) {
+	if ( shouldShowLaunchpadFirst( site ) ) {
 		return next();
 	}
 
