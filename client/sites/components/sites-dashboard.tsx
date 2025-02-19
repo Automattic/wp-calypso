@@ -291,10 +291,12 @@ const SitesDashboard = ( {
 		sortOrder: dataViewsState.sort?.direction || undefined,
 	} );
 
-	const includeA8CSites =
+	const hasA8CSitesFilter =
 		dataViewsState.filters?.some(
 			( { field, operator, value } ) => field === 'a8c_owned' && operator === 'is' && value === true
-		) ?? siteType === 'p2';
+		) ?? false;
+
+	const includeA8CSites = siteType === 'p2' || hasA8CSitesFilter;
 
 	// Filter sites list by search query.
 	const filteredSites = useSitesListFiltering( sortedSites, {
@@ -413,6 +415,7 @@ const SitesDashboard = ( {
 
 					<DotcomSitesDataViews
 						sites={ paginatedSites }
+						siteType={ siteType }
 						isLoading={ isLoading || ! initialSortApplied }
 						paginationInfo={ getSitesPagination( filteredSites, perPage ) }
 						dataViewsState={ dataViewsState }
