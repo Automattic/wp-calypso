@@ -28,9 +28,9 @@ const NewsletterCategoriesToggle = ( {
 			/>
 			<FormSettingExplanation>
 				{ i18n.fixMe( {
-					text: 'Newsletter categories let visitors subscribe to specific topics. When enabled, only posts in the selected categories will be emailed. By default, subscribers can choose from your selected categories, or you can pre-select categories in the subscribe block.',
+					text: "Newsletter categories let you select the content that's emailed to subscribers. When enabled, only posts in the selected categories will be sent as newsletters. By default, subscribers can choose from your selected categories, or you can pre-select categories using the subscribe block.",
 					newCopy: translate(
-						'Newsletter categories let visitors subscribe to specific topics. When enabled, only posts in the selected categories will be emailed. By default, subscribers can choose from your selected categories, or you can pre-select categories in the {{link}}subscribe block{{/link}}.',
+						"Newsletter categories let you select the content that's emailed to subscribers. When enabled, only posts in the selected categories will be sent as newsletters. By default, subscribers can choose from your selected categories, or you can pre-select categories using the {{link}}subscribe block{{/link}}.",
 						{
 							components: {
 								link: <InlineSupportLink showIcon={ false } supportContext="subscribe-block" />,
