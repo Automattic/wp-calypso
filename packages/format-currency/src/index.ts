@@ -52,6 +52,10 @@ export function createFormatter(): CurrencyFormatter {
 			currency: code,
 			...( options.stripZeros &&
 				Number.isInteger( number ) && {
+					/**
+					 * There's an option called `trailingZeroDisplay` but it does not yet work
+					 * in FF so we have to strip zeros manually.
+					 */
 					maximumFractionDigits: 0,
 					minimumFractionDigits: 0,
 				} ),
