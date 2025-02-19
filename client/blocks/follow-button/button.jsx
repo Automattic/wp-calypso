@@ -54,7 +54,7 @@ class FollowButton extends Component {
 			menuClasses.push( 'is-following' );
 			label = this.props.followingLabel
 				? this.props.followingLabel
-				: this.props.translate( 'Unsubscribe' );
+				: this.props.translate( 'Subscribed' );
 		}
 
 		if ( this.props.disabled ) {
