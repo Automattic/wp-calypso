@@ -319,8 +319,7 @@ $image-height: 47px;
 		margin: 13px auto;
 		float: none;
 
-		&:hover,
-		&:focus {
+		&:hover {
 			background-color: var(--studio-wordpress-blue-60);
 			border-color: var(--studio-wordpress-blue-60);
 			color: var(--color-text-inverted);

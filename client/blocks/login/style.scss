@@ -607,10 +607,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 				background-color: var(--color-accent-dark) !important;
 				box-shadow: 0 0 0 2px var(--color-accent-dark) !important;
 			}
-
-			.accessible-focus &:focus {
-				box-shadow: 0 0 0 2px var(--color-accent) !important;
-			}
 		}
 	}
 }
