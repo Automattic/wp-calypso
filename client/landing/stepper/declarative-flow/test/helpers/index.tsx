@@ -205,6 +205,14 @@ expect.extend( {
 		} );
 
 		const okResult = results.find( ( result ) => result.pass === true );
+
+		if ( results.length === 0 ) {
+			return {
+				message: () => `number of results of is 0`,
+				pass: false,
+			};
+		}
+
 		if ( ! okResult ) {
 			return {
 				message: () =>
@@ -217,6 +225,7 @@ expect.extend( {
 								result.received?.path
 							) } \n\tquery: ${ this.utils.printReceived( result.received?.query ) }`
 					) }`,
+
 				pass: false,
 			};
 		}

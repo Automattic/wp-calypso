@@ -1,5 +1,11 @@
 .a4a-form__footer {
 	margin-block-start: 8px;
+	padding-block: 24px;
+	border-block-start: 1px solid #C3C4C7;
+
 	display: flex;
 	gap: 24px;
+
+	justify-content: space-between;
+	align-items: center;
 }
