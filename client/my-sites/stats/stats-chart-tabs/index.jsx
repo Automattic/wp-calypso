@@ -5,11 +5,11 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import Chart from 'calypso/components/chart';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import LineChart from 'calypso/my-sites/stats/components/line-chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
@@ -179,7 +179,8 @@ class StatModuleChartTabs extends Component {
 						/>
 					</Chart>
 				) : (
-					<LineChart
+					<AsyncLoad
+						require="calypso/my-sites/stats/components/line-chart"
 						className="stats-chart-tabs__line-chart"
 						chartData={ this.generateDummyLineChartData() }
 						height={ 200 }
