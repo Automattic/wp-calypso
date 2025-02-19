@@ -42,11 +42,12 @@ const QrCodeLoginButton = ( { loginUrl }: QrCodeLoginButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+			className={ clsx( 'social-buttons__button', { disabled: isDisabled } ) }
 			href={ loginUrl }
 			onClick={ handleClick }
 			data-e2e-link="magic-login-link"
 			key="lost-password-link"
+			variant="secondary"
 		>
 			<JetpackLogo monochrome={ isDisabled } size={ 20 } className="social-icons" />
 			<span className="social-buttons__service-name">

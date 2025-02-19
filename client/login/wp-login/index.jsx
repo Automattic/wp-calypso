@@ -3,6 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { get, startsWith } from 'lodash';
@@ -46,7 +47,6 @@ import { withEnhancers } from 'calypso/state/utils';
 import LoginFooter from './login-footer';
 import LoginLinks from './login-links';
 import PrivateSite from './private-site';
-
 import './style.scss';
 
 export class Login extends Component {
@@ -315,7 +315,8 @@ export class Login extends Component {
 
 		if ( this.props.isWCCOM || this.props.isBlazePro || this.props.isWooJPC ) {
 			return (
-				<a
+				<Button
+					variant="link"
 					className="login__lost-password-link"
 					href="/"
 					onClick={ ( event ) => {
@@ -333,7 +334,7 @@ export class Login extends Component {
 					} }
 				>
 					{ this.props.translate( 'Lost your password?' ) }
-				</a>
+				</Button>
 			);
 		}
 
@@ -359,7 +360,8 @@ export class Login extends Component {
 		}
 
 		return (
-			<a
+			<Button
+				variant="link"
 				href={ lostPasswordUrl }
 				key="lost-password-link"
 				className="login__lost-password-link"
@@ -367,7 +369,7 @@ export class Login extends Component {
 				rel="external"
 			>
 				{ this.props.translate( 'Lost your password?' ) }
-			</a>
+			</Button>
 		);
 	}
 

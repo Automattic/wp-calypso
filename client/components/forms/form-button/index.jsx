@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { omit } from 'lodash';
@@ -26,7 +26,7 @@ class FormButton extends Component {
 		return (
 			<Button
 				{ ...omit( props, [ 'isSubmitting', 'moment', 'numberFormat', 'translate' ] ) }
-				primary={ isPrimary }
+				variant={ isPrimary ? 'primary' : 'secondary' }
 				className={ buttonClasses }
 			>
 				{ Children.count( children ) ? children : this.getDefaultButtonAction() }

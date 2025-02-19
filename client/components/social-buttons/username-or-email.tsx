@@ -15,9 +15,10 @@ const UsernameOrEmailButton = ( { onClick }: UsernameOrEmailButtonProps ) => {
 
 	return (
 		<Button
-			className={ clsx( 'social-buttons__button button', { disabled: isDisabled } ) }
+			className={ clsx( 'social-buttons__button', { disabled: isDisabled } ) }
 			onClick={ onClick }
 			disabled={ isDisabled }
+			variant="secondary"
 		>
 			<WordPressLogo
 				className={ clsx( 'social-icons', {

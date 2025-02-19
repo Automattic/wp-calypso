@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import requestExternalAccess from '@automattic/request-external-access';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -147,10 +148,11 @@ class AppleLoginButton extends Component {
 				{ customButton ? (
 					customButton
 				) : (
-					<button
-						className={ clsx( 'social-buttons__button button apple', { disabled: isDisabled } ) }
+					<Button
+						className={ clsx( 'social-buttons__button apple', { disabled: isDisabled } ) }
 						data-social-service="apple"
 						onClick={ this.handleClick }
+						variant="secondary"
 					>
 						<AppleIcon isDisabled={ isDisabled } width={ 17 } height={ 17 } />
 
@@ -161,7 +163,7 @@ class AppleLoginButton extends Component {
 									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
 							} ) }
 						</span>
-					</button>
+					</Button>
 				) }
 			</Fragment>
 		);
