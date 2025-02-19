@@ -13,18 +13,18 @@ body.is-section-reader {
 		}
 
 		.back-button {
-			@media ( max-width: 1300px ) {
+			@media (max-width: 1300px) {
 				position: unset;
 				display: flex;
 			}
 
 			button.is-compact.is-borderless {
-				@media ( max-width: 1300px ) {
+				@media (max-width: 1300px) {
 					margin: 0;
 					padding: 5px 0 0 0;
 				}
 
-				@media ( max-width: $break-small ) {
+				@media (max-width: $break-small) {
 					padding: 0 0 0 14px;
 				}
 			}
@@ -44,9 +44,9 @@ body.is-section-reader {
 		.navigation-header {
 			margin: 0 auto;
 			padding: 0;
-			
+
 			@media (max-width: $break-small) {
-				padding: 16px 0;
+				padding: 0 16px;
 			}
 	
 			&::after {
@@ -58,7 +58,7 @@ body.is-section-reader {
 				width: 110vw;
 				height: 1px;
 				background: var(--color-border-secondary);
-	
+
 				@media screen and (min-width: $break-medium) {
 					margin: 24px 0;
 				}
@@ -67,7 +67,7 @@ body.is-section-reader {
 
 		// For reader/a8c
 		.section-header {
-			@media ( max-width: 1300px ) {
+			@media (max-width: 1300px) {
 				padding-top: 12px;
 			}
 		}
