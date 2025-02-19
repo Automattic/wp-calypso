@@ -1,8 +1,10 @@
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useSiteDomains } from '../../../../hooks/use-site-domains';
 import { useSiteSetupError } from '../../../../hooks/use-site-setup-error';
 import SupportCard from '../store-address/support-card';
@@ -13,7 +15,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-top: 40px;
 `;
 
-const ErrorStep: Step = function ErrorStep( { navigation } ) {
+const ErrorStep: Step = function ErrorStep( { navigation, flow, variantSlug } ) {
 	const { goBack, goNext } = navigation;
 	const { __ } = useI18n();
 	const siteDomains = useSiteDomains();
@@ -24,6 +26,23 @@ const ErrorStep: Step = function ErrorStep( { navigation } ) {
 	if ( siteDomains && siteDomains.length > 0 ) {
 		domain = siteDomains[ 0 ].domain;
 	}
+
+	useEffect( () => {
+		if ( ! error || ! message ) {
+			return;
+		}
+
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: 'Error in Stepper flow',
+			extra: {
+				error,
+				message,
+				flow,
+				variant: variantSlug,
+			},
+		} );
+	}, [ error, flow, message, variantSlug ] );
 
 	const getContent = () => {
 		const errorMessage = [ error, message ].filter( Boolean ).join( ': ' );
