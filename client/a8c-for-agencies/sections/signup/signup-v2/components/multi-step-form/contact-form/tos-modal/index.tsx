@@ -1,6 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Modal, Button } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import A4AModal from 'calypso/a8c-for-agencies/components/a4a-modal';
 
 import './style.scss';
 
@@ -17,20 +18,27 @@ const TosModal = ( { show, onClose }: Props ) => {
 	}
 
 	return (
-		<Modal
+		<A4AModal
 			className="a4a-tos-modal"
-			onRequestClose={ onClose }
+			onClose={ onClose }
 			title={ translate( 'Automattic for Agencies Platform Agreement' ) }
+			subtile=""
+			showCloseButton={ false }
+			extraActions={
+				<Button variant="primary" onClick={ onClose }>
+					{ translate( 'Close' ) }
+				</Button>
+			}
 		>
-			<div>
-				<p>
+			<div className="a4a-tos-modal-content">
+				<div>
 					This Automattic for Agencies Platform Agreement, (the “<strong>Agreement</strong>”) is a
 					legally binding agreement between Automattic Inc. (“<strong>Automattic</strong>”) and you,
 					effective as of the date you first access the Platform (the “Effective Date”). By
 					registering for and participating in Automattic for Agencies (“<strong>A4A</strong>”), you
 					acknowledge and agree that you have read and agree to be bound by the terms of this
 					Agreement.&nbsp;
-				</p>
+				</div>
 				<ol className="a4a-tos-modal-list">
 					<li>
 						<strong>Automattic Services and Access</strong>
@@ -205,7 +213,7 @@ const TosModal = ( { show, onClose }: Props ) => {
 							<li>
 								Automattic may request reasonable backup documentation to verify the numbers
 								included in the monthly report. You will provide the report no later than ten (10)
-								days after Automattic’s request. Additionally, upon Automattic’s request, you will
+								days after Automattic's request. Additionally, upon Automattic's request, you will
 								provide Automattic with a list of your current Customers, or with access to Customer
 								websites.
 							</li>
@@ -243,14 +251,14 @@ const TosModal = ( { show, onClose }: Props ) => {
 								You recognize and acknowledge that the use of any Automattic Trademarks or
 								intellectual property (the “<strong>Automattic Trademarks</strong>”) shall not
 								confer upon you any proprietary rights to the Automattic Trademarks and you: (i)
-								shall not question, contest or challenge Automattic’s ownership of any of
-								Automattic’s Trademarks nor shall you claim any right, title or interest in any of
+								shall not question, contest or challenge Automattic's ownership of any of
+								Automattic's Trademarks nor shall you claim any right, title or interest in any of
 								the Automattic Trademarks, except the right to use the same pursuant to the terms
 								and conditions of this Agreement, (ii) shall not encourage or assist others directly
 								or indirectly to do so, either during the term (as defined above) or after its
 								expiration, and (iii) shall not utilize the Automattic Trademarks in any manner that
 								would diminish the value of the Automattic Trademarks or harm the reputation of
-								Automattic. You additionally agree not to compete with Automattic’s own sales
+								Automattic. You additionally agree not to compete with Automattic's own sales
 								efforts, including, but not limited to, buying the Automattic Trademarks or other
 								related keywords in SEM. Automattic must pre-approve any marketing materials or
 								activities that use the Automattic Trademarks.
@@ -258,10 +266,10 @@ const TosModal = ( { show, onClose }: Props ) => {
 
 							<li>
 								Except as&nbsp;expressly permitted under this Agreement, or as otherwise permitted
-								by Automattic in writing,&nbsp; you may not, without Automattic’s prior written
+								by Automattic in writing,&nbsp; you may not, without Automattic's prior written
 								consent, publish any materials, make any announcements or publications containing or
 								concerning Automattic or use the Automattic Trademarks. If approval is granted, you
-								agree to abide by Automattic’s published trademark guidelines at all times,
+								agree to abide by Automattic's published trademark guidelines at all times,
 								available at{ ' ' }
 								<a href={ localizeUrl( 'https://automattic.com/press/brand-materials/' ) }>
 									https://automattic.com/press/brand-materials/
@@ -306,12 +314,12 @@ const TosModal = ( { show, onClose }: Props ) => {
 
 							<li>
 								Suspension Rights. Automattic may suspend access to or remove access to the
-								Automattic Products for you or your Customers or affiliates in Automattic’s sole
+								Automattic Products for you or your Customers or affiliates in Automattic's sole
 								discretion, if Automattic believes that you or a Customer of yours is engaged in:
 								(a) any activity that may harm Automattic, its brand/reputation its systems or any
 								third-party systems, (b) fraudulent or illegal activity or any other activity that
 								could result in legal liability to Automattic or any third party; or (c) any other
-								reason, subject to Automattic’s reasonable discretion. Any such suspension may
+								reason, subject to Automattic's reasonable discretion. Any such suspension may
 								continue until the activity giving rise to the suspension has been cured and
 								Automattic has received satisfactory assurances that it will not recur. Automattic
 								reserves the right to work directly with your Customers and affiliates to resolve
@@ -370,10 +378,10 @@ const TosModal = ( { show, onClose }: Props ) => {
 								You additionally represent and warrant to Automattic that: (1) you shall access and
 								use A4A solely as contemplated under this Agreement to license Automattic Products
 								for your use on behalf of your Customers; (2) you have all appropriate rights,
-								licenses, and consents to incorporate the Automattic Products into your Customers’
+								licenses, and consents to incorporate the Automattic Products into your Customers'
 								products and services, and to bind Customers to the applicable Automattic terms of
 								service for each Automattic Product; (3) you shall not place excessive calls to
-								Automattic’s systems or otherwise overburden Automattic systems, as determined by
+								Automattic's systems or otherwise overburden Automattic systems, as determined by
 								Automattic; (4) you shall not use or allow the use of Automattic APIs to send or
 								facilitate the sending of unsolicited communications or for any fraudulent purpose;
 								(5) you shall not modify, decompile, reverse engineer or otherwise alter or seek to
@@ -389,7 +397,7 @@ const TosModal = ( { show, onClose }: Props ) => {
 								(10) you will not sublicense or subcontract any of the services you have agreed to
 								perform for your client related to the Automattic Products without advance written
 								permission from Automattic; and (11) you shall not engage in any activity that, in
-								Automattic’s sole discretion would harm the reputation or brand of Automattic.
+								Automattic's sole discretion would harm the reputation or brand of Automattic.
 							</li>
 
 							<li>
@@ -412,26 +420,26 @@ const TosModal = ( { show, onClose }: Props ) => {
 						<strong>Indemnification</strong>
 					</li>
 				</ol>
-				<p>
+				<div>
 					You will indemnify, defend and hold harmless Automattic, its affiliates, subsidiaries, and
 					its directors, officers and employees against any liability, damage, loss or expense
-					(including reasonable attorneys’ fees and costs) incurred by Automattic in connection with
+					(including reasonable attorneys' fees and costs) incurred by Automattic in connection with
 					any claim arising out of or relating to this Agreement or A4A.&nbsp;
-				</p>
+				</div>
 				<ol start={ 8 } className="a4a-tos-modal-list">
 					<li>
 						<strong>Limitation of Liability</strong>
 					</li>
 				</ol>
-				<p>
+				<div>
 					Except for your breach of confidentiality obligations in Section 5, your indemnification
 					obligations in Section 7, or your gross negligence or willful misconduct, in no event will
 					Automattic or you be liable for indirect, special, incidental, punitive or consequential
 					damages arising out of or related to this Agreement, however caused, and under whatever
 					cause of action of theory of liability even if a party has been advised of the possibility
-					of such damages. To the maximum extent permitted by applicable law, Automattic’s total
+					of such damages. To the maximum extent permitted by applicable law, Automattic's total
 					aggregate liability will not exceed $1,000.&nbsp;
-				</p>
+				</div>
 				<ol start={ 9 } className="a4a-tos-modal-list">
 					<li>
 						<strong>Miscellaneous</strong>
@@ -454,7 +462,7 @@ const TosModal = ( { show, onClose }: Props ) => {
 
 							<li>
 								Notices. All notices must be in English, in writing and sent by email to the other
-								party’s email address as indicated below. Notice will be treated as given on
+								party's email address as indicated below. Notice will be treated as given on
 								receipt, as verified by electronic log. If to you: any email address used to
 								register with A4A or one of your Automattic accounts. If to Automattic, with copies
 								to <a href="mailto:partnerships@automattic.com">partnerships@automattic.com</a> and{ ' ' }
@@ -472,7 +480,7 @@ const TosModal = ( { show, onClose }: Props ) => {
 							<li>
 								Amendment. We may modify this Agreement from time to time, for example, to reflect
 								changes to A4A (e.g., adding new features or benefits, or retiring certain features)
-								or for legal, regulatory, or security reasons. If we do this, we’ll provide notice
+								or for legal, regulatory, or security reasons. If we do this, we'll provide notice
 								of the changes, such as by posting the amended Agreement and updating the “Last
 								Modified” date or, if the changes, in our sole discretion, are material, we may
 								notify you through our services or other communications. Any changes will apply on a
@@ -519,12 +527,7 @@ const TosModal = ( { show, onClose }: Props ) => {
 					<em>Last updated: May 1, 2024</em>
 				</p>
 			</div>
-			<div className="a4a-tos-modal-footer">
-				<Button variant="primary" onClick={ onClose }>
-					{ translate( 'Close' ) }
-				</Button>
-			</div>
-		</Modal>
+		</A4AModal>
 	);
 };
 
