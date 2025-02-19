@@ -14,12 +14,12 @@ import { useLoginUrl } from '../utils/path';
 import {
 	AssertConditionResult,
 	AssertConditionState,
-	FlowV1,
 } from './internals/types';
 import { STEPS } from './internals/steps';
+import { Flow } from './internals/types';
 import type { UserSelect } from '@automattic/data-stores';
 
-const domainTransfer: FlowV1 = {
+const domainTransfer: Flow = {
 	name: DOMAIN_TRANSFER,
 	get title() {
 		return translate( 'Bulk domain transfer' );
