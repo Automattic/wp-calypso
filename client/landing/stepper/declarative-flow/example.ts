@@ -117,40 +117,44 @@ const newsletter: Flow = {
 						createSite( {
 							theme: DEFAULT_NEWSLETTER_THEME,
 							siteIntent: Onboard.SiteIntent.Newsletter,
+						} ).then( ( siteCreationResult ) => {
+							// update site settings but return the siteCreationResult when done.
+							return saveSiteSettings( siteCreationResult.siteSlug, {
+								launchpad_screen: 'full',
+							} ).then( () => siteCreationResult );
 						} )
 					);
 					return navigate( 'processing', null, true );
-
 				case 'processing': {
-					if ( providedDependencies?.siteId && providedDependencies?.siteSlug ) {
-						await saveSiteSettings( providedDependencies?.siteSlug, {
-							launchpad_screen: 'full',
-						} );
+					const siteFragment = ( providedDependencies.siteId ||
+						providedDependencies.siteSlug ||
+						siteId ) as string;
 
+					if ( siteFragment ) {
 						initializeLaunchpadState( {
-							siteId: providedDependencies?.siteId as number,
-							siteSlug: providedDependencies?.siteSlug as string,
+							siteId: siteFragment,
+							siteSlug: siteFragment,
 						} );
 					}
 
-					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
+					if ( providedDependencies?.goToHome ) {
 						return window.location.replace(
-							addQueryArgs( `/home/${ siteId ?? providedDependencies?.siteSlug }`, {
+							addQueryArgs( `/home/${ siteFragment }`, {
 								celebrateLaunch: true,
 								launchpadComplete: true,
 							} )
 						);
 					}
 
-					if ( providedDependencies?.goToCheckout && providedDependencies?.siteSlug ) {
+					if ( providedDependencies?.goToCheckout ) {
 						persistSignupDestination( launchpadUrl );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								providedDependencies?.siteSlug as string
-							) }?redirect_to=${ encodeURIComponent( launchpadUrl ) }&signup=1`
+							`/checkout/${ encodeURIComponent( siteFragment ) }?redirect_to=${ encodeURIComponent(
+								launchpadUrl
+							) }&signup=1`
 						);
 					}
 

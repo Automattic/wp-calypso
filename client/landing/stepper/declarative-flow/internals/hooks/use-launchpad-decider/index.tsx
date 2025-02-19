@@ -38,19 +38,17 @@ export const useLaunchpadDecider = ( { exitFlow, navigate }: Props ) => {
 	return {
 		getPostFlowUrl: ( { flow, siteId, siteSlug }: PostFlowUrlProps ) => {
 			const sessionId = getQueryArg( window.location.href, 'sessionId' );
-			let redirectURL = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`;
+			let redirectURL = addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug } );
 
 			if ( showCustomerHome ) {
-				redirectURL = `/home/${ siteSlug }`;
+				redirectURL = `/home/${ siteSlug || siteId }`;
 			}
 
 			if ( siteId ) {
-				redirectURL = `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }&siteId=${ siteId }`;
+				redirectURL = addQueryArgs( `/setup/${ flow }/launchpad`, { siteSlug, siteId } );
 			}
 
-			redirectURL = addQueryArgs( redirectURL, { sessionId } );
-
-			return redirectURL;
+			return addQueryArgs( redirectURL, { sessionId } );
 		},
 		postFlowNavigator: ( { siteId, siteSlug }: SiteProps ) => {
 			if ( showCustomerHome ) {
