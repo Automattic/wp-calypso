@@ -86,7 +86,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 			<CalypsoShoppingCartProvider>
 				<UseMyDomainComponent
 					analyticsSection="signup"
-					basePath=""
 					initialQuery={ getInitialQuery() }
 					initialMode={ getInitialMode() }
 					isSignupStep
